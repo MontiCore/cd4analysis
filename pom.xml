@@ -1,0 +1,229 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- == PROJECT COORDINATES ============================================= -->
+
+  <groupId>de.monticore.lang</groupId>
+  <artifactId>cd4analysis</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <properties>
+
+    <!-- .. Libraries ..................................................... -->
+
+    <guava.version>18.0</guava.version>
+    <junit.version>4.11</junit.version>
+    <monticore.version>4.0.0-SNAPSHOT</monticore.version>
+    <se-commons.version>1.6.2-SNAPSHOT</se-commons.version>
+    <antlr.version>4.3</antlr.version>
+
+    <!-- .. Plugins ....................................................... -->
+
+    <monticore.maven.version>3.3.0-SNAPSHOT</monticore.maven.version>
+    <monticore.generator.version>4.0.1-SNAPSHOT</monticore.generator.version>
+
+    <compiler.plugin>3.2</compiler.plugin>
+    <release.plugin>2.5.1</release.plugin>
+    <source.plugin>2.4</source.plugin>
+
+    <!-- Classifiers -->
+
+    <grammars.classifier>grammars</grammars.classifier>
+    <symbols.classifier>symbols</symbols.classifier>
+    <models.classifier>models</models.classifier>
+
+    <!-- .. Misc .......................................................... -->
+
+    <java.version>1.8</java.version>
+    <wagon.provider.version>2.6</wagon.provider.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <!-- == PROJECT METAINFORMATION ========================================= -->
+
+  <name>CD4Analysis</name>
+  <url>http://lab11.se.rwth-aachen.de/nexus/service/local/repositories/se-sites/content/monticore/${project.version}/</url>
+  <inceptionYear>2013</inceptionYear>
+
+  <organization>
+    <name>Department of Software Engineering, RWTH Aachen University</name>
+    <url>http://www.se-rwth.de/</url>
+  </organization>
+
+  <mailingLists>
+    <mailingList>
+      <name>Developer</name>
+      <post>monticore-dev@se-rwth.de</post>
+    </mailingList>
+  </mailingLists>
+
+  <issueManagement>
+    <system>Trac</system>
+    <url>https://sselab.de/lab2/private/trac/MontiCore/</url>
+  </issueManagement>
+
+  <!-- == DEFAULT BUILD SETTINGS =========================================== -->
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>${wagon.provider.version}</version>
+      </extension>
+    </extensions>
+
+    <plugins>
+        <!-- MontiCore Configuration -->
+        <plugin>
+          <groupId>de.monticore.maven</groupId>
+          <artifactId>monticore-maven-plugin</artifactId>
+          <version>${monticore.maven.version}</version>
+          <configuration>
+            <buildIncrementally>true</buildIncrementally>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>clean</goal>
+                <goal>configure</goal>
+                <goal>generate</goal>
+              </goals>
+              <configuration>
+                <arguments>
+                  <argument>-synthesis grammar prepareCheck</argument>
+                  <argument>-synthesis grammar check</argument>
+                  <argument>-synthesis grammar generatemc4</argument>
+                </arguments>
+              </configuration>
+            </execution>
+          </executions>
+
+          <dependencies>
+            <dependency>
+              <groupId>de.monticore</groupId>
+              <artifactId>de.monticore</artifactId>
+              <version>${monticore.generator.version}</version>
+            </dependency>
+          </dependencies>
+
+        </plugin>
+
+        <!-- Other Configuration -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${compiler.plugin}</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>${release.plugin}</version>
+          <configuration>
+            <tagNameFormat>monticore-@{project.version}</tagNameFormat>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${source.plugin}</version>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      <!-- Create grammars jar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+    </plugins>
+
+  </build>
+
+  <dependencies>
+      <dependency>
+        <groupId>de.se_rwth.commons</groupId>
+        <artifactId>se-commons-logging</artifactId>
+        <version>${se-commons.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+
+       <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-annotations</artifactId>
+        <version>${antlr.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>${antlr.version}</version>
+      </dependency>
+
+      <!-- MontiCore Dependencies -->
+      <dependency>
+        <groupId>de.monticore</groupId>
+        <artifactId>monticore-runtime</artifactId>
+        <version>${monticore.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.monticore</groupId>
+        <artifactId>monticore-grammar</artifactId>
+        <version>${monticore.version}</version>
+      </dependency>
+
+      <!-- Grammar Dependencies -->
+      <dependency>
+        <groupId>de.monticore</groupId>
+        <artifactId>monticore-grammar</artifactId>
+        <version>${monticore.version}</version>
+        <classifier>${grammars.classifier}</classifier>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- .. Test Libraries ............................................... -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+  </dependencies>
+
+  <!-- == DISTRIBUTION ==================================================== -->
+
+  <distributionManagement>
+    <repository>
+      <id>se-nexus</id>
+      <url>http://lab11.se.rwth-aachen.de/nexus/content/repositories/monticore-releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>se-nexus</id>
+      <url>http://lab11.se.rwth-aachen.de/nexus/content/repositories/monticore-snapshots/</url>
+    </snapshotRepository>
+    <site>
+      <id>se-nexus</id>
+      <url>dav:http://lab11.se.rwth-aachen.de/nexus/content/sites/se-sites/monticore/${project.version}/</url>
+    </site>
+  </distributionManagement>
+
+</project>
