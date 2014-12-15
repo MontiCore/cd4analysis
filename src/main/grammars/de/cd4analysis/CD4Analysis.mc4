@@ -20,19 +20,15 @@ grammar CD4Analysis extends de.monticore.types.Types {
   
   CDClass = Modifier?  "class" Name
     ( "extends"  superclasses:ReferenceType)?
-    ( "implements" interfaces:ReferenceType
-              ("," interfaces:ReferenceType)* )?
+    ( "implements" interfaces:(ReferenceType || ",")* )?
     ( "{" cDAttributes:CDAttribute* "}" | ";" );
   
   CDInterface = "interface" Name
-    ( "extends" interfaces:ReferenceType
-           ("," interfaces:ReferenceType)* )?  ";";
+    ( "extends" interfaces:(ReferenceType || ",")* )?  ";";
   
   CDEnum = "enum" Name
-    ( "implements" interfaces:ReferenceType
-              ("," interfaces:ReferenceType)* )?
-    ( "{" (    cDEnumConstants:CDEnumConstant
-          ("," cDEnumConstants:CDEnumConstant)* ";")?
+    ( "implements" interfaces:(ReferenceType || ",")* )?
+    ( "{" ( cDEnumConstants:(CDEnumConstant || ",")* ";")?
       "}" | ";" );
   
   CDEnumConstant = Name;
@@ -40,8 +36,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   CDAttribute = Modifier?  Type Name ("=" Value)? ";";
   
   CDAssociation = Stereotype? 
-    (   association:["association"]
-      | composition:["composition"])
+    (["association"] | ["composition"])
     (Derived:[DERIVED:"/"])?  Name?
     leftModifier:Modifier?
     leftCardinality:Cardinality?
@@ -70,11 +65,11 @@ grammar CD4Analysis extends de.monticore.types.Types {
    
   CDQualifier = Name | Type;
   
-  Stereotype = "<<" values:StereoValue ("," values:StereoValue)* ">>";
+  Stereotype = "<<" values:(StereoValue || ",")* ">>";
   
   StereoValue = Name;
   
-  QualifiedName = parts:Name ("." parts:Name)*;
+  QualifiedName = parts:(Name || ".")*;
   
   Value = Literal;
 }
