@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
 public class CDTypeTest {
@@ -57,34 +58,64 @@ public class CDTypeTest {
   @Test
   public void testGetMethods() {
     CDMethodSymbol methodSymbol1 = new CDMethodSymbol("method1");
+    CDMethodSymbol constructor = new CDMethodSymbol("constructor");
+    constructor.setConstructor(true);
     CDMethodSymbol methodSymbol2 = new CDMethodSymbol("method2");
-    CDMethodSymbol methodSymbol3 = new CDMethodSymbol("method3");
 
     CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
     typeSymbol.addMethod(methodSymbol1);
     typeSymbol.addMethod(methodSymbol2);
-    typeSymbol.addMethod(methodSymbol3);
+    typeSymbol.addConstructor(constructor);
 
     ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
     typeScope.setResolvers(Arrays.asList(DefaultResolver.newResolver(CDMethodSymbol.class,
         CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //
-    assertEquals(3, typeSymbol.getMethods().size());
+    assertEquals(2, typeSymbol.getMethods().size());
     assertSame(methodSymbol1, typeSymbol.getMethods().get(0));
     assertSame(methodSymbol2, typeSymbol.getMethods().get(1));
-    assertSame(methodSymbol3, typeSymbol.getMethods().get(2));
 
     assertSame(methodSymbol1, typeSymbol.getMethod("method1").orNull());
     assertSame(methodSymbol2, typeSymbol.getMethod("method2").orNull());
-    assertSame(methodSymbol3, typeSymbol.getMethod("method3").orNull());
+    // Only methods are found
+    assertFalse(typeSymbol.getMethod("constructor").isPresent());
 
     // Test CDTypeScope methods //
     assertEquals(3, typeScope.getSymbols().size());
     assertSame(methodSymbol1, typeScope.resolve("method1", CDMethodSymbol.KIND).orNull());
     assertSame(methodSymbol2, typeScope.resolve("method2", CDMethodSymbol.KIND).orNull());
-    assertSame(methodSymbol3, typeScope.resolve("method3", CDMethodSymbol.KIND).orNull());
+    assertSame(constructor, typeScope.resolve("constructor", CDMethodSymbol.KIND).orNull());
+  }
+
+  @Test
+  public void testGetConstructors() {
+    CDMethodSymbol constructorSymbol1 = new CDMethodSymbol("constructor1");
+    constructorSymbol1.setConstructor(true);
+    CDMethodSymbol method = new CDMethodSymbol("method");
+    CDMethodSymbol constructorSymbol2 = new CDMethodSymbol("constructor2");
+    constructorSymbol2.setConstructor(true);
+
+    CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
+    typeSymbol.addConstructor(constructorSymbol1);
+    typeSymbol.addMethod(method);
+    typeSymbol.addConstructor(constructorSymbol2);
+
+    ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
+    typeScope.setResolvers(Arrays.asList(DefaultResolver.newResolver(CDMethodSymbol.class,
+        CDMethodSymbol.KIND)));
+
+    // Test CDTypeSymbol methods //
+    assertEquals(2, typeSymbol.getConstructors().size());
+    assertSame(constructorSymbol1, typeSymbol.getConstructors().get(0));
+    assertSame(constructorSymbol2, typeSymbol.getConstructors().get(1));
+
+    // Test CDTypeScope methods //
+    assertEquals(3, typeScope.getSymbols().size());
+    assertSame(constructorSymbol1, typeScope.resolve("constructor1", CDMethodSymbol.KIND).orNull());
+    assertSame(constructorSymbol2, typeScope.resolve("constructor2", CDMethodSymbol.KIND).orNull());
+    assertSame(method, typeScope.resolve("method", CDMethodSymbol.KIND).orNull());
 
   }
 
-}
+  }

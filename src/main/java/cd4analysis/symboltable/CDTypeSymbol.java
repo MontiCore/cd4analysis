@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
 public class CDTypeSymbol extends TypeSymbol {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
   
-  private final List<CDMethodSymbol> constructors = new ArrayList<>();
   private final List<CDTypeSymbol> superClasses = new ArrayList<>();
   private final List<CDTypeSymbol> interfaces = new ArrayList<>();
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
@@ -70,7 +70,7 @@ public class CDTypeSymbol extends TypeSymbol {
   }
   
   public void addField(CDFieldSymbol field) {
-    getSpannedScope().define(field);
+    getSpannedScope().define(requireNonNull(field));
   }
   
   public List<CDFieldSymbol> getFields() {
@@ -78,10 +78,13 @@ public class CDTypeSymbol extends TypeSymbol {
   }
 
   public Optional<CDFieldSymbol> getField(String fieldName) {
+    checkArgument(!isNullOrEmpty(fieldName));
+
     return getSpannedScope().resolveLocally(fieldName, CDFieldSymbol.KIND);
   }
   
   public void addMethod(CDMethodSymbol method) {
+    requireNonNull(method);
     checkArgument(!method.isConstructor());
 
     getSpannedScope().define(method);
@@ -91,26 +94,35 @@ public class CDTypeSymbol extends TypeSymbol {
     final List<CDMethodSymbol> methods = new ArrayList<>();
     final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
 
-    methods.addAll(resolvedMethods.stream().collect(Collectors.toList()));
+    methods.addAll(resolvedMethods.stream().filter(
+        method -> !method.isConstructor()).collect(Collectors.toList()));
     return ImmutableList.copyOf(methods);
   }
 
   public Optional<CDMethodSymbol> getMethod(String methodName) {
-    Optional<CDMethodSymbol> method = getSpannedScope().resolve(methodName, CDMethodSymbol.KIND);
+    checkArgument(!isNullOrEmpty(methodName));
 
+    Optional<CDMethodSymbol> method = getSpannedScope().resolve(methodName, CDMethodSymbol.KIND);
     if (method.isPresent() && !method.get().isConstructor()) {
       return method;
     }
-
     return Optional.absent();
-
   }
   
   public void addConstructor(CDMethodSymbol constructor) {
-    this.constructors.add(constructor);
+    requireNonNull(constructor);
+    checkArgument(constructor.isConstructor());
+
+    getSpannedScope().define(constructor);
   }
   
   public List<CDMethodSymbol> getConstructors() {
+    final List<CDMethodSymbol> constructors = new ArrayList<>();
+    final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
+
+    constructors.addAll(resolvedMethods.stream().filter(
+        method -> method.isConstructor()).collect(Collectors.toList()));
+
     return ImmutableList.copyOf(constructors);
   }
   
