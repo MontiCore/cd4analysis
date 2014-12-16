@@ -1,8 +1,0 @@
-package de.cd4analysis.cocos;
-
-classdiagram A {
-  class C {
-    String a;
-    String a;
-  }
-}

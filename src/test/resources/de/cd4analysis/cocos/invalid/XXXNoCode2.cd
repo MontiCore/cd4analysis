@@ -1,0 +1,10 @@
+package de.cd4analysis.cocos;
+
+classdiagram XXXNoCode2 {
+  class A;
+  class B;
+  interface A;
+  class B;
+  enum C;
+  class C;
+}

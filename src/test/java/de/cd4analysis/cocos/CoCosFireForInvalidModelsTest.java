@@ -79,9 +79,6 @@ public class CoCosFireForInvalidModelsTest {
         Log.info(msg, logname);
       }
       
-      assertEquals("Unexpected count of CoCoErrors for model " + invalidModelTest.modelFilename,
-          invalidModelTest.expectedErrors.size(), actualErrors.size());
-      
       // check that all expected error codes and their corresponding messages
       // are included in the actual errors.
       for (ExpectedCoCoError expectedError : invalidModelTest.expectedErrors) {
@@ -95,6 +92,11 @@ public class CoCosFireForInvalidModelsTest {
         assertTrue("Could not find expected CoCoError " + expectedError.toString() + " for model "
             + invalidModelTest.modelFilename, found);
       }
+      
+      // ensure that we do not have other errors than the ones expected
+      assertEquals("Unexpected count of CoCoErrors for model " + invalidModelTest.modelFilename,
+          invalidModelTest.expectedErrors.size(), actualErrors.size());
+      
     }
   }
   

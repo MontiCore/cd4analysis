@@ -1,0 +1,6 @@
+package de.cd4analysis.cocos;
+
+classdiagram D00XX {
+  class DAO;
+  class Factory;
+}

@@ -1,0 +1,8 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0531 {
+  class C extends C2;
+  class C2 extends C;
+  interface I extends I2;
+  interface I2 extends I;
+}

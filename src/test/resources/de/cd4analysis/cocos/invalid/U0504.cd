@@ -1,0 +1,7 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0504 {
+  enum E {
+    a, b, a, c;
+  }
+}

@@ -1,0 +1,7 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0530 {
+  interface i;
+  class c;
+  enum e;
+}
