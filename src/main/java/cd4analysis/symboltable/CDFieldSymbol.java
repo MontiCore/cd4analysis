@@ -14,7 +14,6 @@ public class CDFieldSymbol extends AbstractSymbol {
 
   private CDTypeSymbol definingType;
   // TODO PN use access modifier class for visibility
-  private Visibility visibility = Visibility.DEFAULT;
 
   private boolean isFinal;
   private boolean isLocal;
@@ -40,16 +39,7 @@ public class CDFieldSymbol extends AbstractSymbol {
   public CDTypeSymbol getType() {
     return type;
   }
-  
 
-  public void setVisibility(Visibility visibility) {
-    this.visibility = visibility;
-  }
-  
-  public Visibility getVisibility() {
-    return visibility;
-  }
-  
   public void setDefiningType(CDTypeSymbol definingType) {
     this.definingType = definingType;
   }

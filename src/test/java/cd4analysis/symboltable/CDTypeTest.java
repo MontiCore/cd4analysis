@@ -1,0 +1,90 @@
+/*
+ * Copyright (c) 2014 RWTH Aachen. All rights reserved.
+ *
+ * http://www.se-rwth.de/
+ */
+package cd4analysis.symboltable;
+
+import de.monticore.symboltable.ScopeManipulationApi;
+import de.monticore.symboltable.resolving.DefaultResolver;
+import org.junit.Test;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
+public class CDTypeTest {
+
+  @Test
+  public void testGetFields() {
+    CDTypeSymbol dummyType = new CDTypeSymbol("Dummy");
+
+    CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyType);
+    CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyType);
+    CDFieldSymbol fieldSymbol3 = new CDFieldSymbol("field3", dummyType);
+
+    CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
+    typeSymbol.addField(fieldSymbol1);
+    typeSymbol.addField(fieldSymbol2);
+    typeSymbol.addField(fieldSymbol3);
+
+    ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
+    typeScope.setResolvers(Arrays.asList(DefaultResolver.newResolver(CDFieldSymbol.class,
+        CDFieldSymbol.KIND)));
+
+
+    // Test CDTypeSymbol methods //
+
+    assertEquals(3, typeSymbol.getFields().size());
+    assertSame(fieldSymbol1, typeSymbol.getFields().get(0));
+    assertSame(fieldSymbol2, typeSymbol.getFields().get(1));
+    assertSame(fieldSymbol3, typeSymbol.getFields().get(2));
+
+    assertSame(fieldSymbol1, typeSymbol.getField("field1").orNull());
+    assertSame(fieldSymbol2, typeSymbol.getField("field2").orNull());
+    assertSame(fieldSymbol3, typeSymbol.getField("field3").orNull());
+
+
+    // Test CDTypeScope methods //
+
+    assertEquals(3, typeScope.getSymbols().size());
+    assertSame(fieldSymbol1, typeScope.resolve("field1", CDFieldSymbol.KIND).orNull());
+    assertSame(fieldSymbol2, typeScope.resolve("field2", CDFieldSymbol.KIND).orNull());
+    assertSame(fieldSymbol3, typeScope.resolve("field3", CDFieldSymbol.KIND).orNull());
+  }
+
+  @Test
+  public void testGetMethods() {
+    CDMethodSymbol methodSymbol1 = new CDMethodSymbol("method1");
+    CDMethodSymbol methodSymbol2 = new CDMethodSymbol("method2");
+    CDMethodSymbol methodSymbol3 = new CDMethodSymbol("method3");
+
+    CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
+    typeSymbol.addMethod(methodSymbol1);
+    typeSymbol.addMethod(methodSymbol2);
+    typeSymbol.addMethod(methodSymbol3);
+
+    ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
+    typeScope.setResolvers(Arrays.asList(DefaultResolver.newResolver(CDMethodSymbol.class,
+        CDMethodSymbol.KIND)));
+
+    // Test CDTypeSymbol methods //
+    assertEquals(3, typeSymbol.getMethods().size());
+    assertSame(methodSymbol1, typeSymbol.getMethods().get(0));
+    assertSame(methodSymbol2, typeSymbol.getMethods().get(1));
+    assertSame(methodSymbol3, typeSymbol.getMethods().get(2));
+
+    assertSame(methodSymbol1, typeSymbol.getMethod("method1").orNull());
+    assertSame(methodSymbol2, typeSymbol.getMethod("method2").orNull());
+    assertSame(methodSymbol3, typeSymbol.getMethod("method3").orNull());
+
+    // Test CDTypeScope methods //
+    assertEquals(3, typeScope.getSymbols().size());
+    assertSame(methodSymbol1, typeScope.resolve("method1", CDMethodSymbol.KIND).orNull());
+    assertSame(methodSymbol2, typeScope.resolve("method2", CDMethodSymbol.KIND).orNull());
+    assertSame(methodSymbol3, typeScope.resolve("method3", CDMethodSymbol.KIND).orNull());
+
+  }
+
+}

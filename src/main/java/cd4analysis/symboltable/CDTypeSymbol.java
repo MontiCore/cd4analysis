@@ -1,5 +1,6 @@
 package cd4analysis.symboltable;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.types.TypeSymbol;
@@ -7,16 +8,15 @@ import mc.helper.NameHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 public class CDTypeSymbol extends TypeSymbol {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
   
-  private final List<CDFieldSymbol> fields = new ArrayList<>();
-  
-  private final List<CDMethodSymbol> methods = new ArrayList<>();
   private final List<CDMethodSymbol> constructors = new ArrayList<>();
   private final List<CDTypeSymbol> superClasses = new ArrayList<>();
   private final List<CDTypeSymbol> interfaces = new ArrayList<>();
@@ -32,6 +32,7 @@ public class CDTypeSymbol extends TypeSymbol {
 
   protected CDTypeSymbol(String name) {
     super(name, KIND);
+    setSpannedScope(new CDTypeScope(Optional.absent()));
   }
   
 
@@ -69,19 +70,40 @@ public class CDTypeSymbol extends TypeSymbol {
   }
   
   public void addField(CDFieldSymbol field) {
-    fields.add(field);
+    getSpannedScope().define(field);
   }
   
   public List<CDFieldSymbol> getFields() {
-    return ImmutableList.copyOf(fields);
+    return getSpannedScope().resolveLocally(CDFieldSymbol.KIND);
+  }
+
+  public Optional<CDFieldSymbol> getField(String fieldName) {
+    return getSpannedScope().resolveLocally(fieldName, CDFieldSymbol.KIND);
   }
   
   public void addMethod(CDMethodSymbol method) {
-    this.methods.add(method);
+    checkArgument(!method.isConstructor());
+
+    getSpannedScope().define(method);
   }
   
   public List<CDMethodSymbol> getMethods() {
+    final List<CDMethodSymbol> methods = new ArrayList<>();
+    final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
+
+    methods.addAll(resolvedMethods.stream().collect(Collectors.toList()));
     return ImmutableList.copyOf(methods);
+  }
+
+  public Optional<CDMethodSymbol> getMethod(String methodName) {
+    Optional<CDMethodSymbol> method = getSpannedScope().resolve(methodName, CDMethodSymbol.KIND);
+
+    if (method.isPresent() && !method.get().isConstructor()) {
+      return method;
+    }
+
+    return Optional.absent();
+
   }
   
   public void addConstructor(CDMethodSymbol constructor) {
@@ -102,12 +124,12 @@ public class CDTypeSymbol extends TypeSymbol {
   
   public List<String> getEnumConstants() {
     final List<String> enums = new ArrayList<>();
-    for (CDFieldSymbol field: fields) {
+    for (CDFieldSymbol field: getFields()) {
       if (field.isEnumConstant()) {
         enums.add(field.getName());
       }
     }
-    return enums;
+    return ImmutableList.copyOf(enums);
   }
   
   public List<? extends Symbol> getChildren() {

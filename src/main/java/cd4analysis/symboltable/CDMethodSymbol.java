@@ -1,6 +1,8 @@
 package cd4analysis.symboltable;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import de.monticore.symboltable.BaseScope;
 import de.monticore.symboltable.ScopeSpanningSymbol;
 import de.monticore.symboltable.types.Parameter;
 
@@ -21,13 +23,13 @@ public class CDMethodSymbol extends ScopeSpanningSymbol {
   private boolean isAbstract = false;
   private boolean isStatic = false;
   private boolean isFinal = false;
-  private Visibility visibility = Visibility.DEFAULT;
   private boolean isConstructor = false;
   private boolean isEllipsisParameterMethod = false;
   private boolean hasBody = false;
   
   protected CDMethodSymbol(String name) {
     super(name, KIND);
+    setSpannedScope(new BaseScope(Optional.absent(), true));
   }
   
   public String getExtendedName() {
@@ -92,14 +94,6 @@ public class CDMethodSymbol extends ScopeSpanningSymbol {
   
   public CDTypeSymbol getDefiningType() {
     return definingType;
-  }
-  
-  public void setVisibility(Visibility visibility) {
-    this.visibility = visibility;
-  }
-  
-  public Visibility getVisibility() {
-    return visibility;
   }
   
   public void setStatic(boolean isStatic) {
