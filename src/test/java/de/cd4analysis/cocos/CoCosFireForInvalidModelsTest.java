@@ -12,14 +12,11 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.RecognitionException;
-import org.junit.Test;
 
-import cd4analysis.cocos.CD4ACoCoChecker;
 import cd4analysis.cocos.CoCoChecker;
 import cd4analysis.cocos.CoCoError;
 
@@ -39,34 +36,33 @@ import de.se_rwth.commons.logging.Log;
  */
 public class CoCosFireForInvalidModelsTest {
   
-  private static String LOGNAME = CoCosFireForInvalidModelsTest.class.getName();
+  private String logname;
   
-  // holds all models and their expected errors.
-  private Collection<InvalidModelTest> modelTests = Arrays.asList(
-      
-      // tests for model A.cd
-      new InvalidModelTest("A.cd", Arrays.asList(
-          new ExpectedCoCoError("0x???", "Attribute a is already defined in class C."),
-          new ExpectedCoCoError("0x???", "Attribute b is already defined in class B.")
-          )
-      ),
-      
-      // tests for model B.cd
-      new InvalidModelTest("B.cd", Arrays.asList(
-          new ExpectedCoCoError("0x???",
-              "Attribute a is already defined in class C."))
-      )
-      
-      // TODO ... tests for all CoCos of CD4A
-      
-      );
+  private String modelPath;
   
-  @Test
-  public void testCoCosForInvalidModels() {
-    CoCoChecker checker = new CD4ACoCoChecker();
-    
-    for (InvalidModelTest invalidModelTest : modelTests) {
-      Log.info("Checking CoCos for invalid model " + invalidModelTest.modelFilename, LOGNAME);
+  /**
+   * Constructor for de.cd4analysis.cocos.CoCosFireForInvalidModelsTest
+   * 
+   * @param modelTests
+   * @param logname
+   * @param modelPath
+   */
+  public CoCosFireForInvalidModelsTest(String logname, String modelPath) {
+    this.logname = logname;
+    this.modelPath = modelPath;
+  }
+  
+  /**
+   * Loads the models and executes all CoCos registered in the checker and
+   * collects their errors and asserts, that all expected errors occur.
+   * 
+   * @param checker
+   * @param invalidModelsCoCoTests
+   */
+  public void testCoCosForInvalidModels(CoCoChecker checker,
+      Collection<InvalidModelTest> invalidModelsCoCoTests) {
+    for (InvalidModelTest invalidModelTest : invalidModelsCoCoTests) {
+      Log.info("Checking CoCos for invalid model " + invalidModelTest.modelFilename, logname);
       
       ASTCDCompilationUnit cdDef = loadModel(invalidModelTest.modelFilename);
       Collection<CoCoError> actualErrors = new ArrayList<CoCoError>();
@@ -80,7 +76,7 @@ public class CoCosFireForInvalidModelsTest {
       Collection<String> fullMsgs = actualErrors.stream().map(e -> e.buildErrorMsg())
           .collect(Collectors.toList());
       for (String msg : fullMsgs) {
-        Log.info(msg, LOGNAME);
+        Log.info(msg, logname);
       }
       
       assertEquals("Unexpected count of CoCoErrors for model " + invalidModelTest.modelFilename,
@@ -103,7 +99,7 @@ public class CoCosFireForInvalidModelsTest {
   }
   
   private ASTCDCompilationUnit loadModel(String modelFilename) {
-    Path model = Paths.get("src/test/resources/de/cd4analysis/cocos/invalid/" + modelFilename);
+    Path model = Paths.get(modelPath + modelFilename);
     CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
     try {
       Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
@@ -115,7 +111,7 @@ public class CoCosFireForInvalidModelsTest {
     throw new RuntimeException("Error during model loading.");
   }
   
-  private static class InvalidModelTest {
+  protected static class InvalidModelTest {
     public String modelFilename;
     
     public Collection<ExpectedCoCoError> expectedErrors;
@@ -128,7 +124,7 @@ public class CoCosFireForInvalidModelsTest {
     }
   }
   
-  private static class ExpectedCoCoError {
+  protected static class ExpectedCoCoError {
     public String code;
     
     public String msg;
