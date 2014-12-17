@@ -1,0 +1,23 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0455 {
+  class C1 {
+    String attr;
+  }
+  class C2 extends C1 {
+    int attr;
+  }
+  class C3 extends C1 {
+    String attr;
+  }
+
+  class C4 {
+    int attr;
+  }
+  class C5 extends C4 {
+    String attr;
+  }
+  class C6 extends C4 {
+    int attr;
+  }
+}

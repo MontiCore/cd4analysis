@@ -1,0 +1,16 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0533_U0534 {
+  interface I;
+  enum E;
+  class C;
+  
+  class C1 implements E;
+  class C2 implements C;
+  class C3 implements I;
+
+  enum E1 implements E;
+  enum E2 implements C;
+  enum E3 implements I;
+  
+}

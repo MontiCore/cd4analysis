@@ -1,0 +1,10 @@
+package de.cd4analysis.cocos;
+
+classdiagram XXXNoCode4 {
+  class C {
+    String a;
+    String a;
+    String b;
+    int b;
+  }
+}

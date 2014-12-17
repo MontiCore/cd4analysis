@@ -1,0 +1,7 @@
+package de.cd4analysis.cocos;
+
+classdiagram D0410 {
+  class C {
+    AnUndefinedType attr;
+  }
+}

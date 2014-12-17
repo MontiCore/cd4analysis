@@ -1,0 +1,9 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0496_U0497 {
+  interface I;
+  enum E;
+  class C1 extends I;
+  class C2 extends E;
+  
+}
