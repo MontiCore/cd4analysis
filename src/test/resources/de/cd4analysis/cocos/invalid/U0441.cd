@@ -54,7 +54,7 @@ classdiagram U0441 {
   
 
   // valid
-  association assocName A rC0_1 -> B;
+  association assocName2 A rC0_1 -> B;
   composition A rC0_2 ->       B;
   
   association A rC1_1 ->       B;
