@@ -4,13 +4,7 @@ classdiagram U0440 {
   class A;
   class B;
 
-  // invalid
   association Assoc1 A->B;
   association Assoc2 A<->B;
   association Assoc3 A<-B;
-
-  // valid  
-  association assoc4 A->B;
-  association assoc5 A<->B;
-  association assoc6 A<-B;
 }

@@ -1,0 +1,11 @@
+package de.cd4analysis.cocos;
+
+classdiagram U0440 {
+  class A;
+  class B;
+
+  // valid  
+  association assoc4 A->B;
+  association assoc5 A<->B;
+  association assoc6 A<-B;
+}
