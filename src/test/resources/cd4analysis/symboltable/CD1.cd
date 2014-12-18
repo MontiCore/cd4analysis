@@ -1,0 +1,5 @@
+package cd4analysis.symboltable;
+
+classdiagram CD1 {
+  class Person;
+}

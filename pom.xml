@@ -179,6 +179,13 @@
       </dependency>
 
       <!-- MontiCore Dependencies -->
+    <!-- remove this dependency as soon as ASTs for MC4 exist. -->
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>de.monticore.re</artifactId>
+      <version>${monticore.generator.version}</version>
+    </dependency>
+
       <dependency>
         <groupId>de.monticore</groupId>
         <artifactId>monticore-runtime</artifactId>
