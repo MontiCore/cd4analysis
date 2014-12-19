@@ -7,36 +7,27 @@ package cd4analysis.cocos;
 
 import java.util.HashMap;
 
+import cd4analysis.cocos._tobegenerated.CD4AClassCoCo;
 import de.cd4analysis._ast.ASTCDAttribute;
 import de.cd4analysis._ast.ASTCDClass;
 import de.monticore.cocos.AbstractContextCondition;
+import de.monticore.cocos.CoCoError;
+import de.monticore.cocos.ContextConditionResult;
 
 /**
- * TODO: Write me!
+ * Example CoCo
  *
- * @author (last commit) $Author$
- * @version $Revision$, $Date$
- * @since TODO: add version number
+ * @author Robert Heim
  */
-public class UniqueAttributeInClassCoco extends AbstractContextCondition implements ClassCoCo {
-  private static String NAME = CoCoChecker.class.getName();
+public class UniqueAttributeInClassCoco extends AbstractContextCondition implements CD4AClassCoCo {
+  private static String NAME = UniqueAttributeInClassCoco.class.getName();
   
-  private String errorCode = "0x???";
+  public static final String ERROR_CODE = "0x???";
   
-  private String errorMsgFormat = "Attribute %s is already defined in class %s.";
+  public static final String ERROR_MSG_FORMAT = "Attribute %s is already defined in class %s.";
   
   @Override
-  public String getName() {
-    return NAME;
-  }
-  
-  /**
-   * @see cd4analysis.cocos.ClassCoCo#check(de.cd4analysis._ast.ASTCDClass)
-   */
-  @Override
-  public CoCoResult check(ASTCDClass node) {
-    CoCoResult result = new CoCoResult();
-    
+  public ContextConditionResult check(ASTCDClass node) {
     HashMap<String, ASTCDAttribute> duplicates = new HashMap<>();
     
     for (ASTCDAttribute field : node.getCDAttributes()) {
@@ -48,21 +39,22 @@ public class UniqueAttributeInClassCoco extends AbstractContextCondition impleme
     if (!duplicates.isEmpty()) {
       for (ASTCDAttribute duplicate : duplicates.values()) {
         CoCoError e = new CoCoError(
-            errorCode,
-            String.format(errorMsgFormat, duplicate.getName(), node.getName()),
-            "src position");
-        result.addError(e);
+            ERROR_CODE,
+            String.format(ERROR_MSG_FORMAT, duplicate.getName(), node.getName()),
+            node.get_SourcePositionStart());
+        addError(e);
       }
     }
-    return result;
+    
+    return getResult();
   }
   
   /**
-   * @see cd4analysis.cocos.ClassCoCo#getErrorCode()
+   * @see de.monticore.cocos.ContextCondition#getName()
    */
   @Override
-  public String getErrorCode() {
-    return errorCode;
+  public String getName() {
+    return NAME;
   }
   
 }
