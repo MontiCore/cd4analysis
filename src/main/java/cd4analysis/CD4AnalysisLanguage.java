@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.AbstractModelingLanguage;
 import de.monticore.cocos.ContextConditionProfile;
+import de.monticore.modelloader.ModelNameCalculator;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
@@ -37,5 +38,10 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
   @Override
   public Optional<? extends ContextConditionProfile> getContextConditionProfile() {
     return Optional.absent();
+  }
+
+  @Override
+  public ModelNameCalculator getModelNameCalculator() {
+    return new CD4AnalysisModelNameCalculator();
   }
 }

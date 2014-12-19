@@ -17,6 +17,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class CDTypeReferenceTest {
 
   @Test
@@ -38,7 +41,8 @@ public class CDTypeReferenceTest {
     CDTypeSymbol cdType = (CDTypeSymbol) globalScope.resolve("cd4analysis.symboltable.CD2.Person", CDTypeSymbol
         .KIND).orNull();
 
-    // assertNotNull(cdType);
+    assertNotNull(cdType);
+    assertEquals("cd4analysis.symboltable.CD2.Person", cdType.getName());
 
   }
 
