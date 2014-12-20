@@ -5,7 +5,9 @@
  */
 package cd4analysis.symboltable;
 
+import cd4analysis.symboltable.references.CDTypeSymbolReference;
 import com.google.common.base.Optional;
+import de.cd4analysis._ast.ASTCDAttribute;
 import de.cd4analysis._ast.ASTCDClass;
 import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.cd4analysis._ast.ASTCDDefinition;
@@ -51,6 +53,10 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     addToStackAndSetEnclosingIfExists(scope);
   }
 
+  public void endVisit(ASTCDCompilationUnit ast) {
+    removeCurrentScope();
+  }
+
   public void visit(ASTCDDefinition cdDefinition) {
     // TODO PN needed?
   }
@@ -60,6 +66,19 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
     defineInScope(cdTypeSymbol);
     addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
+  }
+
+  public void endVisit(ASTCDClass astClass) {
+    removeCurrentScope();
+  }
+
+  public void visit(ASTCDAttribute astAttribute) {
+    String typeName = "A_Type"; // TODO PN use TypePrinter for astAttribute.getType() instead
+    CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope().get());
+
+    CDFieldSymbol field = new CDFieldSymbol(astAttribute.getName(), typeReference);
+
+    defineInScope(field);
   }
 
 

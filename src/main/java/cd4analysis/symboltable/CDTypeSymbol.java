@@ -2,6 +2,7 @@ package cd4analysis.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.types.TypeSymbol;
 import mc.helper.NameHelper;
@@ -33,6 +34,7 @@ public class CDTypeSymbol extends TypeSymbol {
   protected CDTypeSymbol(String name) {
     super(name, KIND);
     setSpannedScope(new CDTypeScope(Optional.absent()));
+    ((ScopeManipulationApi)getSpannedScope()).setSpanningSymbol(this);
   }
   
 
@@ -121,7 +123,7 @@ public class CDTypeSymbol extends TypeSymbol {
     final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
 
     constructors.addAll(resolvedMethods.stream().filter(
-        method -> method.isConstructor()).collect(Collectors.toList()));
+        CDMethodSymbol::isConstructor).collect(Collectors.toList()));
 
     return ImmutableList.copyOf(constructors);
   }

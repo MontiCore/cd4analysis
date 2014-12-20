@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class CD4AnalysisSymbolTableCreatorTest {
@@ -21,6 +22,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
         CDTypeSymbol.KIND));
+    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDFieldSymbol.class,
+        CDFieldSymbol.KIND));
 
     CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
@@ -38,10 +41,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     assertTrue(topScope instanceof CompilationUnitScope);
 
-    CDTypeSymbol cdType = (CDTypeSymbol) topScope.resolve("Person", CDTypeSymbol.KIND).orNull();
-    assertNotNull(cdType);
+    CDTypeSymbol personType = (CDTypeSymbol) topScope.resolve("Person", CDTypeSymbol.KIND).orNull();
+    assertNotNull(personType);
 
-    assertEquals("cd4analysis.symboltable.CD1.Person", cdType.getName());
+    assertNotNull(personType.getSpannedScope());
+    assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
+    assertEquals("cd4analysis.symboltable.CD1.Person", personType.getName());
+    assertEquals(1, personType.getFields().size());
+    assertEquals("name", personType.getField("name").get().getName());
 
   }
   

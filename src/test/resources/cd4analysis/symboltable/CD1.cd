@@ -1,5 +1,12 @@
 package cd4analysis.symboltable;
 
 classdiagram CD1 {
-  class Person;
+  class Person {
+     String name;
+  }
+  interface Printable;
+
+  class Prof extends Person {
+     String uni;
+  }
 }
