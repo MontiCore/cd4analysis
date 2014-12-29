@@ -18,8 +18,9 @@ import static java.util.Objects.requireNonNull;
 public class CDTypeSymbol extends TypeSymbol {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
-  
-  private final List<CDTypeSymbol> superClasses = new ArrayList<>();
+
+  private CDTypeSymbol superClass;
+
   private final List<CDTypeSymbol> interfaces = new ArrayList<>();
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
   private final List<Stereotype> stereotypes = new ArrayList<>();
@@ -36,16 +37,15 @@ public class CDTypeSymbol extends TypeSymbol {
     setSpannedScope(new CDTypeScope(Optional.absent()));
     ((ScopeManipulationApi)getSpannedScope()).setSpanningSymbol(this);
   }
-  
 
-  public List<CDTypeSymbol> getSuperClasses() {
-    return ImmutableList.copyOf(superClasses);
+  public Optional<CDTypeSymbol> getSuperClass() {
+    return Optional.of(superClass);
   }
-  
-  public void addSuperClass(CDTypeSymbol superClass) {
-    this.superClasses.add(requireNonNull(superClass));
+
+  public void setSuperClass(CDTypeSymbol superClass) {
+    this.superClass = superClass;
   }
-  
+
   public List<CDTypeSymbol> getInterfaces() {
     return ImmutableList.copyOf(interfaces);
   }
@@ -56,7 +56,9 @@ public class CDTypeSymbol extends TypeSymbol {
   
   public List<CDTypeSymbol> getSuperTypes() {
     List<CDTypeSymbol> superTypes = new ArrayList<>();
-    superTypes.addAll(getSuperClasses());
+    if (getSuperClass().isPresent()) {
+      superTypes.add(getSuperClass().get());
+    }
     superTypes.addAll(getInterfaces());
     return superTypes;
   }

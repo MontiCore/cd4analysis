@@ -41,6 +41,11 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
+  public String getName() {
+    return getReferencedSymbol().getName();
+  }
+
+  @Override
   public void addStereotype(Stereotype stereotype) {
     getReferencedSymbol().addStereotype(stereotype);
   }
@@ -56,13 +61,13 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public List<CDTypeSymbol> getSuperClasses() {
-    return getReferencedSymbol().getSuperClasses();
+  public Optional<CDTypeSymbol> getSuperClass() {
+    return getReferencedSymbol().getSuperClass();
   }
 
   @Override
-  public void addSuperClass(CDTypeSymbol superClass) {
-    getReferencedSymbol().addSuperClass(superClass);
+  public void setSuperClass(CDTypeSymbol superClass) {
+    getReferencedSymbol().setSuperClass(superClass);
   }
 
   @Override

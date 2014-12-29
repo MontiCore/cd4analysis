@@ -75,7 +75,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         superSymbol = new CDTypeSymbolReference(Names.getQualifiedName(astSuperClass.getName()),
             currentScope().get());
 
-        cdTypeSymbol.addSuperClass(superSymbol);
+        cdTypeSymbol.setSuperClass(superSymbol);
       }
 
     }

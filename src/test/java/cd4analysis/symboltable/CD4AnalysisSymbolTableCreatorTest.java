@@ -54,8 +54,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
 
-    assertEquals(1, profType.getSuperClasses().size());
-
+    assertTrue(profType.getSuperClass().isPresent());
+    assertEquals(personType.getName(), profType.getSuperClass().get().getName());
   }
   
 }
