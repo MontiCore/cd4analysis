@@ -17,6 +17,8 @@ import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.types._ast.ASTMCImportStatement;
+import de.monticore.types._ast.ASTSimpleReferenceType;
+import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
 import javax.annotation.Nullable;
@@ -63,6 +65,20 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
   public void visit(ASTCDClass astClass) {
     CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
+
+    if (astClass.getSuperclasses() != null) {
+      CDTypeSymbolReference superSymbol;
+
+      // TODO PN replace by type converter
+      if (astClass.getSuperclasses() instanceof ASTSimpleReferenceType) {
+        ASTSimpleReferenceType astSuperClass = (ASTSimpleReferenceType) astClass.getSuperclasses();
+        superSymbol = new CDTypeSymbolReference(Names.getQualifiedName(astSuperClass.getName()),
+            currentScope().get());
+
+        cdTypeSymbol.addSuperClass(superSymbol);
+      }
+
+    }
 
     defineInScope(cdTypeSymbol);
     addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);

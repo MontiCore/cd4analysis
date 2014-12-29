@@ -50,6 +50,12 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
 
+    CDTypeSymbol profType = (CDTypeSymbol) topScope.resolve("Prof", CDTypeSymbol.KIND).orNull();
+    assertNotNull(profType);
+    assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
+
+    assertEquals(1, profType.getSuperClasses().size());
+
   }
   
 }
