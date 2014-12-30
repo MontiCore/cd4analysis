@@ -146,7 +146,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public List<String> getEnumConstants() {
+  public List<CDFieldSymbol> getEnumConstants() {
     return getReferencedSymbol().getEnumConstants();
   }
 

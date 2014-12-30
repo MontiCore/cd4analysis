@@ -80,6 +80,16 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(enumType);
     assertEquals("cd4analysis.symboltable.CD1.E", enumType.getName());
     assertTrue(enumType.isEnum());
+    // Enum Constants
+    assertEquals(2, enumType.getEnumConstants().size());
+    assertEquals("A", enumType.getEnumConstants().get(0).getName());
+    assertEquals(enumType.getName(), enumType.getEnumConstants().get(0).getType().getName());
+    assertEquals("B", enumType.getEnumConstants().get(1).getName());
+    assertEquals(enumType.getName(), enumType.getEnumConstants().get(1).getType().getName());
+    assertEquals(enumType.getEnumConstants(), enumType.getFields());
+    // Interfaces
+    assertEquals(1, enumType.getInterfaces().size());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getName());
 
   }
   

@@ -137,14 +137,11 @@ public class CDTypeSymbol extends TypeSymbol {
   public List<CDAssociationSymbol> getAssociations() {
     return ImmutableList.copyOf(associations);
   }
-  
-  public List<String> getEnumConstants() {
-    final List<String> enums = new ArrayList<>();
-    for (CDFieldSymbol field: getFields()) {
-      if (field.isEnumConstant()) {
-        enums.add(field.getName());
-      }
-    }
+
+  public List<CDFieldSymbol> getEnumConstants() {
+    final List<CDFieldSymbol> enums = getFields().stream()
+        .filter(CDFieldSymbol::isEnumConstant)
+        .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
   }
   

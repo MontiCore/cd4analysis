@@ -11,8 +11,8 @@ classdiagram CD1 {
      String uni;
   }
 
-  enum E {
-    A, B, C;
+  enum E implements Printable {
+    A, B;
   }
 
 }

@@ -12,9 +12,6 @@ public class CDFieldSymbol extends AbstractSymbol {
 
   private final CDTypeSymbol type;
 
-  private CDTypeSymbol definingType;
-  // TODO PN use access modifier class for visibility
-
   private boolean isFinal;
   private boolean isLocal;
   private boolean isReadOnly;
@@ -40,14 +37,6 @@ public class CDFieldSymbol extends AbstractSymbol {
     return type;
   }
 
-  public void setDefiningType(CDTypeSymbol definingType) {
-    this.definingType = definingType;
-  }
-  
-  public CDTypeSymbol getDefiningType() {
-    return definingType;
-  }
-  
   public boolean isStatic() {
     return isStatic;
   }
