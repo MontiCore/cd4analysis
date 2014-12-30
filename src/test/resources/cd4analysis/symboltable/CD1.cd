@@ -5,8 +5,9 @@ classdiagram CD1 {
      String name;
   }
   interface Printable;
+  interface Callable;
 
-  class Prof extends Person {
+  class Prof extends Person implements Printable, Callable {
      String uni;
   }
 }

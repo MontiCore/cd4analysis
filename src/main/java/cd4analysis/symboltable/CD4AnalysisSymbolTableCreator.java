@@ -11,12 +11,14 @@ import de.cd4analysis._ast.ASTCDAttribute;
 import de.cd4analysis._ast.ASTCDClass;
 import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.cd4analysis._ast.ASTCDDefinition;
+import de.cd4analysis._ast.ASTCDInterface;
 import de.monticore.symboltable.CompilationUnitScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.types._ast.ASTMCImportStatement;
+import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTSimpleReferenceType;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -67,24 +69,47 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
 
     if (astClass.getSuperclasses() != null) {
-      CDTypeSymbolReference superSymbol;
+      CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(astClass.getSuperclasses());
+      cdTypeSymbol.setSuperClass(superClassSymbol);
+    }
 
-      // TODO PN replace by type converter
-      if (astClass.getSuperclasses() instanceof ASTSimpleReferenceType) {
-        ASTSimpleReferenceType astSuperClass = (ASTSimpleReferenceType) astClass.getSuperclasses();
-        superSymbol = new CDTypeSymbolReference(Names.getQualifiedName(astSuperClass.getName()),
-            currentScope().get());
-
-        cdTypeSymbol.setSuperClass(superSymbol);
+    if (astClass.getInterfaces() != null) {
+      for (ASTReferenceType superInterface : astClass.getInterfaces()) {
+        CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference
+            (superInterface);
+        cdTypeSymbol.addInterface(superInterfaceSymbol);
       }
-
     }
 
     defineInScope(cdTypeSymbol);
     addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
   }
 
+  private CDTypeSymbolReference createCDTypeSymbolFromReference(ASTReferenceType astReferenceType) {
+    // TODO PN replace by type converter
+    CDTypeSymbolReference superSymbol = null;
+    if (astReferenceType instanceof ASTSimpleReferenceType) {
+      ASTSimpleReferenceType astSuperClass = (ASTSimpleReferenceType) astReferenceType;
+      superSymbol = new CDTypeSymbolReference(Names.getQualifiedName(astSuperClass.getName()),
+        currentScope().get());
+    }
+
+    return superSymbol;
+  }
+
   public void endVisit(ASTCDClass astClass) {
+    removeCurrentScope();
+  }
+
+  public void visit(ASTCDInterface astClass) {
+    CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
+    cdTypeSymbol.setInterface(true);
+
+    defineInScope(cdTypeSymbol);
+    addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
+  }
+
+  public void endVisit(ASTCDInterface astInterface) {
     removeCurrentScope();
   }
 

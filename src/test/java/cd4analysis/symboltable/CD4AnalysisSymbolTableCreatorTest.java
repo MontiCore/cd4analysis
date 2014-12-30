@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 public class CD4AnalysisSymbolTableCreatorTest {
 
   @Test
-  public void test() {
+  public void testSymbolTableCreation() {
     ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
         CDTypeSymbol.KIND));
@@ -53,9 +53,20 @@ public class CD4AnalysisSymbolTableCreatorTest {
     CDTypeSymbol profType = (CDTypeSymbol) topScope.resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
-
+    // Super class
     assertTrue(profType.getSuperClass().isPresent());
     assertEquals(personType.getName(), profType.getSuperClass().get().getName());
+    // Interfaces
+    assertEquals(2, profType.getInterfaces().size());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", profType.getInterfaces().get(0).getName());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", profType.getInterfaces().get(1).getName());
+
+
+    CDTypeSymbol printableType = (CDTypeSymbol) topScope.resolve("Printable", CDTypeSymbol.KIND)
+        .orNull();
+    assertNotNull(printableType);
+    assertEquals("cd4analysis.symboltable.CD1.Printable", printableType.getName());
+    assertTrue(printableType.isInterface());
   }
   
 }
