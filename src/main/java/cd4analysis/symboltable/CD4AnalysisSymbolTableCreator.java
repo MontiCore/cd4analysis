@@ -71,8 +71,11 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     }
 
     if (astClass.getModifier() != null) {
-      if (astClass.getModifier().getStereotype() != null) {
-        for (ASTStereoValue stereoValue : astClass.getModifier().getStereotype().getValues()) {
+      final ASTModifier astModifier = astClass.getModifier();
+      cdTypeSymbol.setAbstract(astModifier.isAbstract());
+
+      if (astModifier.getStereotype() != null) {
+        for (ASTStereoValue stereoValue : astModifier.getStereotype().getValues()) {
           // TODO PN value and name are always the same. Is this ok?
           Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
           cdTypeSymbol.addStereotype(stereotype);
@@ -103,7 +106,22 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope().get());
 
     CDFieldSymbol field = new CDFieldSymbol(astAttribute.getName(), typeReference);
-    field.setDerived(astAttribute.getModifier().isDerived());
+
+    if (astAttribute.getModifier() != null) {
+      final ASTModifier astModifier = astAttribute.getModifier();
+
+      field.setDerived(astModifier.isDerived());
+
+      if (astModifier.getStereotype() != null) {
+        for (ASTStereoValue stereoValue : astModifier.getStereotype().getValues()) {
+          // TODO PN value and name are always the same. Is this ok?
+          Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+          field.addStereotype(stereotype);
+        }
+      }
+    }
+
+
 
     defineInScope(field);
   }

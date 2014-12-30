@@ -12,6 +12,7 @@ public class CDFieldSymbol extends AbstractSymbol {
 
   private final CDTypeSymbol type;
 
+  // TODO PN remove unneeded modifiers
   private boolean isFinal;
   private boolean isLocal;
   private boolean isReadOnly;
