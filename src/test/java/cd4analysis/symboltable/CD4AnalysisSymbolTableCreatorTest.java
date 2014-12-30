@@ -10,10 +10,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CD4AnalysisSymbolTableCreatorTest {
 
@@ -53,15 +50,15 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("name", personType.getField("name").get().getName());
     // Stereotypes
     assertEquals(2, personType.getStereotypes().size());
-    assertEquals("S1", personType.getStereotype("S1").getName());
-    assertEquals("S2", personType.getStereotype("S2").getName());
+    assertEquals("S1", personType.getStereotype("S1").get().getName());
+    assertEquals("S2", personType.getStereotype("S2").get().getName());
     // TODO PN name and value are not distinguished. Is this ok?
-    assertEquals("S1", personType.getStereotype("S1").getValue());
-    assertEquals("S2", personType.getStereotype("S2").getValue());
+    assertEquals("S1", personType.getStereotype("S1").get().getValue());
+    assertEquals("S2", personType.getStereotype("S2").get().getValue());
     // Field Stereotypes
     assertEquals(1, personType.getField("name").get().getStereotypes().size());
-    assertEquals("SF", personType.getField("name").get().getStereotype("SF").getName());
-    assertEquals("SF", personType.getField("name").get().getStereotype("SF").getValue());
+    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getName());
+    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getValue());
 
     CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);
@@ -114,6 +111,10 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(associationSymbol.isBidirectional());
     assertEquals(personType.getName(), associationSymbol.getSourceType().getName());
     assertEquals(profType.getName(), associationSymbol.getTargetType().getName());
+    assertEquals(Cardinality.STAR, associationSymbol.getSourceCardinality().getMax());
+    assertTrue(associationSymbol.getSourceCardinality().isMultiple());
+    assertEquals(1, associationSymbol.getTargetCardinality().getMax());
+    assertFalse(associationSymbol.getTargetCardinality().isMultiple());
 
   }
   

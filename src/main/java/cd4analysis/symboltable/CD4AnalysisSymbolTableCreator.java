@@ -121,8 +121,6 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       }
     }
 
-
-
     defineInScope(field);
   }
 
@@ -187,8 +185,29 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     CDAssociationSymbol associationSymbol = new CDAssociationSymbol(astAssociation.getName(),
         leftReference, rightReference);
 
+    if (astAssociation.isAssociation()) {
+      associationSymbol.setRelationship(Relationship.ASSOCIATION);
+    }
+    else if (astAssociation.isComposition()) {
+      associationSymbol.setRelationship(Relationship.COMPOSITE);
+    }
+
+    associationSymbol.setSourceCardinality(Cardinality.convertCardinality(astAssociation
+        .getLeftCardinality()));
+    associationSymbol.setTargetCardinality(Cardinality.convertCardinality(astAssociation
+        .getRightCardinality()));
+
     associationSymbol.setBidirectional(astAssociation.isBidirectional());
     // TODO PN set further properties
+
+
+    if (astAssociation.getStereotype() != null) {
+      for (ASTStereoValue stereoValue : astAssociation.getStereotype().getValues()) {
+        // TODO PN value and name are always the same. Is this ok?
+        Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+        associationSymbol.addStereotype(stereotype);
+      }
+    }
 
     defineInScope(associationSymbol);
   }

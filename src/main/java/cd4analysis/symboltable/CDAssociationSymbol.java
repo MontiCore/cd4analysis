@@ -19,7 +19,8 @@ public class CDAssociationSymbol extends AbstractSymbol {
   
   private Cardinality sourceCardinality;
   private Cardinality targetCardinality;
-  
+
+  // TODO PN ASK: Don't we distinguish between left and right qualifier (resp. role)?
   private String qualifier;
   private String role;
   private boolean bidirectional = false;
@@ -98,6 +99,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
   
   @Override
   public String getName() {
+
     if (!super.getName().isEmpty()) {
       return super.getName();
     }

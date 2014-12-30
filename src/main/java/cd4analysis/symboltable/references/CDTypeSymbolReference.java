@@ -56,7 +56,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public Stereotype getStereotype(String name) {
+  public Optional<Stereotype> getStereotype(String name) {
     return getReferencedSymbol().getStereotype(name);
   }
 

@@ -201,14 +201,15 @@ public class CDTypeSymbol extends TypeSymbol {
   public List<Stereotype> getStereotypes() {
     return stereotypes;
   }
-  
-  public Stereotype getStereotype(String name) {
+
+
+  public Optional<Stereotype> getStereotype(String name) {
     for (Stereotype stereotype: this.stereotypes) {
       if (stereotype.getName().equals(name)) {
-        return stereotype;
+        return Optional.of(stereotype);
       }
     }
-    return null;
+    return Optional.absent();
   }
   
   public boolean containsStereotype(String name, String value) {
