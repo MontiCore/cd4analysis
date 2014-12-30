@@ -11,6 +11,7 @@ import de.cd4analysis._ast.ASTCDAttribute;
 import de.cd4analysis._ast.ASTCDClass;
 import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.cd4analysis._ast.ASTCDDefinition;
+import de.cd4analysis._ast.ASTCDEnum;
 import de.cd4analysis._ast.ASTCDInterface;
 import de.monticore.symboltable.CompilationUnitScope;
 import de.monticore.symboltable.ImportStatement;
@@ -101,9 +102,17 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     removeCurrentScope();
   }
 
-  public void visit(ASTCDInterface astClass) {
-    CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
+  public void visit(ASTCDInterface astInterface) {
+    CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astInterface.getName());
     cdTypeSymbol.setInterface(true);
+
+    if (astInterface.getInterfaces() != null) {
+      for (ASTReferenceType superInterface : astInterface.getInterfaces()) {
+        CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference
+            (superInterface);
+        cdTypeSymbol.addInterface(superInterfaceSymbol);
+      }
+    }
 
     defineInScope(cdTypeSymbol);
     addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
@@ -112,6 +121,19 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   public void endVisit(ASTCDInterface astInterface) {
     removeCurrentScope();
   }
+
+  public void visit(ASTCDEnum astEnum) {
+    CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astEnum.getName());
+    cdTypeSymbol.setEnum(true);
+
+    defineInScope(cdTypeSymbol);
+    addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
+  }
+
+  public void endVisit(ASTCDEnum astEnum) {
+    removeCurrentScope();
+  }
+
 
   public void visit(ASTCDAttribute astAttribute) {
     String typeName = "A_Type"; // TODO PN use TypePrinter for astAttribute.getType() instead

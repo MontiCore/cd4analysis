@@ -41,7 +41,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     assertTrue(topScope instanceof CompilationUnitScope);
 
-    CDTypeSymbol personType = (CDTypeSymbol) topScope.resolve("Person", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol personType = topScope.<CDTypeSymbol>resolve("Person", CDTypeSymbol.KIND).orNull();
     assertNotNull(personType);
 
     assertNotNull(personType.getSpannedScope());
@@ -50,7 +50,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
 
-    CDTypeSymbol profType = (CDTypeSymbol) topScope.resolve("Prof", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
     // Super class
@@ -62,11 +62,25 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1.Callable", profType.getInterfaces().get(1).getName());
 
 
-    CDTypeSymbol printableType = (CDTypeSymbol) topScope.resolve("Printable", CDTypeSymbol.KIND)
+    CDTypeSymbol printableType = topScope.<CDTypeSymbol>resolve("Printable", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(printableType);
     assertEquals("cd4analysis.symboltable.CD1.Printable", printableType.getName());
     assertTrue(printableType.isInterface());
+
+    CDTypeSymbol callableType = topScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)
+        .orNull();
+    assertNotNull(callableType);
+    assertEquals("cd4analysis.symboltable.CD1.Callable", callableType.getName());
+    assertTrue(callableType.isInterface());
+    assertEquals(1, callableType.getInterfaces().size());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", callableType.getInterfaces().get(0).getName());
+
+    CDTypeSymbol enumType = topScope.<CDTypeSymbol>resolve("E", CDTypeSymbol.KIND).orNull();
+    assertNotNull(enumType);
+    assertEquals("cd4analysis.symboltable.CD1.E", enumType.getName());
+    assertTrue(enumType.isEnum());
+
   }
   
 }

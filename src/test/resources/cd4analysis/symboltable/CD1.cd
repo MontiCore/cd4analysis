@@ -5,9 +5,14 @@ classdiagram CD1 {
      String name;
   }
   interface Printable;
-  interface Callable;
+  interface Callable extends Printable;
 
   class Prof extends Person implements Printable, Callable {
      String uni;
   }
+
+  enum E {
+    A, B, C;
+  }
+
 }
