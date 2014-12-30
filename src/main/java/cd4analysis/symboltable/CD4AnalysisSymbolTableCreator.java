@@ -70,6 +70,16 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       cdTypeSymbol.setSuperClass(superClassSymbol);
     }
 
+    if (astClass.getModifier() != null) {
+      if (astClass.getModifier().getStereotype() != null) {
+        for (ASTStereoValue stereoValue : astClass.getModifier().getStereotype().getValues()) {
+          // TODO PN value and name are always the same. Is this ok?
+          Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+          cdTypeSymbol.addStereotype(stereotype);
+        }
+      }
+    }
+
     addInterfacesToType(cdTypeSymbol, astClass.getInterfaces());
 
     defineInScope(cdTypeSymbol);
@@ -93,6 +103,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope().get());
 
     CDFieldSymbol field = new CDFieldSymbol(astAttribute.getName(), typeReference);
+    field.setDerived(astAttribute.getModifier().isDerived());
 
     defineInScope(field);
   }

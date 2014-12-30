@@ -1,14 +1,14 @@
 package cd4analysis.symboltable;
 
 classdiagram CD1 {
-  class Person {
-     String name;
+  <<S1, S2>> class Person {
+     <<SF>> String name;
   }
   interface Printable;
   interface Callable extends Printable;
 
   class Prof extends Person implements Printable, Callable {
-     String uni;
+     / String uni;
   }
 
   enum E implements Printable {

@@ -49,10 +49,20 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1.Person", personType.getName());
     assertEquals(1, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
+    // Stereotypes
+    assertEquals(2, personType.getStereotypes().size());
+    assertEquals("S1", personType.getStereotype("S1").getName());
+    assertEquals("S2", personType.getStereotype("S2").getName());
+    // TODO PN name and value are not distinguished. Is this ok?
+    assertEquals("S1", personType.getStereotype("S1").getValue());
+    assertEquals("S2", personType.getStereotype("S2").getValue());
 
     CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
+    assertEquals(1, profType.getFields().size());
+    assertEquals("uni", profType.getField("uni").get().getName());
+    assertTrue(profType.getField("uni").get().isDerived());
     // Super class
     assertTrue(profType.getSuperClass().isPresent());
     assertEquals(personType.getName(), profType.getSuperClass().get().getName());
