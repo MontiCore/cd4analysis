@@ -177,6 +177,22 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
 
+  public void visit(ASTCDAssociation astAssociation) {
+    CDTypeSymbolReference leftReference = new CDTypeSymbolReference(Names.getQualifiedName(
+        astAssociation.getLeftReferenceName().getParts()), currentScope().get());
+
+    CDTypeSymbolReference rightReference = new CDTypeSymbolReference(Names.getQualifiedName(
+        astAssociation.getRightReferenceName().getParts()), currentScope().get());
+
+    CDAssociationSymbol associationSymbol = new CDAssociationSymbol(astAssociation.getName(),
+        leftReference, rightReference);
+
+    associationSymbol.setBidirectional(astAssociation.isBidirectional());
+    // TODO PN set further properties
+
+    defineInScope(associationSymbol);
+  }
+
 
 
 

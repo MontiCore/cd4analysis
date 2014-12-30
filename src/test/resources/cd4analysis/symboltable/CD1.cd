@@ -15,4 +15,6 @@ classdiagram CD1 {
     A, B;
   }
 
+  association member [*] Person <-> Prof [*];
+
 }

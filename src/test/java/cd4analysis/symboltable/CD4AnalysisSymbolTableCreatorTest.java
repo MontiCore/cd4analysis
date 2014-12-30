@@ -24,6 +24,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
         CDTypeSymbol.KIND));
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDFieldSymbol.class,
         CDFieldSymbol.KIND));
+    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAssociationSymbol.class,
+        CDAssociationSymbol.KIND));
 
     CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
@@ -104,6 +106,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Interfaces
     assertEquals(1, enumType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getName());
+
+    CDAssociationSymbol associationSymbol = topScope.<CDAssociationSymbol>resolve("member",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(associationSymbol);
+    assertEquals("member", associationSymbol.getName());
+    assertTrue(associationSymbol.isBidirectional());
+    assertEquals(personType.getName(), associationSymbol.getSourceType().getName());
+    assertEquals(profType.getName(), associationSymbol.getTargetType().getName());
 
   }
   
