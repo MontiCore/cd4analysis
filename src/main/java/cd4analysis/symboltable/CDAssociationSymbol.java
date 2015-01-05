@@ -115,6 +115,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
     if (getRole() != null) {
       return getRole();
     }
+    // TODO PN ambiguous exception if several associations have same target
     return NameHelper.firstToLower(NameHelper.getSimplenameFromComplexname(getTargetType().getName())).intern();
   }
   

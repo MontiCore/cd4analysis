@@ -62,6 +62,10 @@ public class SocNetSymboltableTest {
     testGroupType(profile);
 
     testMemberAssociation();
+    testOrginaizersAssociation();
+
+    testRelationshipType();
+    testInvitedAssociation();
 
   }
 
@@ -129,6 +133,7 @@ public class SocNetSymboltableTest {
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(groupAssoc);
     assertEquals("group", groupAssoc.getName());
+    assertEquals("member", groupAssoc.getAssocName());
     assertTrue(groupAssoc.isBidirectional());
     assertEquals(PACKAGE + "Person", groupAssoc.getSourceType().getName());
     assertEquals(PACKAGE + "Group", groupAssoc.getTargetType().getName());
@@ -142,6 +147,7 @@ public class SocNetSymboltableTest {
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(personAssoc);
     assertEquals("person", personAssoc.getName());
+    assertEquals("member", personAssoc.getAssocName());
     assertTrue(personAssoc.isBidirectional());
     assertEquals(PACKAGE + "Group", personAssoc.getSourceType().getName());
     assertEquals(PACKAGE + "Person", personAssoc.getTargetType().getName());
@@ -152,16 +158,57 @@ public class SocNetSymboltableTest {
   }
 
   private void testOrginaizersAssociation() {
-    CDAssociationSymbol associationSymbol = topScope.<CDAssociationSymbol>resolve("member",
+    // ->
+    CDAssociationSymbol organizedAssoc = topScope.<CDAssociationSymbol>resolve("organized",
         CDAssociationSymbol.KIND).orNull();
-    assertNotNull(associationSymbol);
-    assertEquals("member", associationSymbol.getName());
-    assertTrue(associationSymbol.isBidirectional());
-    assertEquals(PACKAGE + "Person", associationSymbol.getSourceType().getName());
-    assertEquals(PACKAGE + "Group", associationSymbol.getTargetType().getName());
-    assertEquals(Cardinality.STAR, associationSymbol.getSourceCardinality().getMax());
-    assertTrue(associationSymbol.getSourceCardinality().isMultiple());
-    assertEquals(Cardinality.STAR, associationSymbol.getTargetCardinality().getMax());
-    assertTrue(associationSymbol.getTargetCardinality().isMultiple());
+    assertNotNull(organizedAssoc);
+    assertEquals("organized", organizedAssoc.getName());
+    assertEquals("organized", organizedAssoc.getRole());
+    assertNull(organizedAssoc.getAssocName());
+    assertTrue(organizedAssoc.isBidirectional());
+    assertEquals(PACKAGE + "Person", organizedAssoc.getSourceType().getName());
+    assertEquals(PACKAGE + "Group", organizedAssoc.getTargetType().getName());
+    assertEquals(1, organizedAssoc.getSourceCardinality().getMax());
+    assertFalse(organizedAssoc.getSourceCardinality().isMultiple());
+    assertEquals(Cardinality.STAR, organizedAssoc.getTargetCardinality().getMax());
+    assertTrue(organizedAssoc.getTargetCardinality().isMultiple());
+
+    // <-
+    CDAssociationSymbol organizerAssoc = topScope.<CDAssociationSymbol>resolve("organizer",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(organizerAssoc);
+    assertEquals("organizer", organizerAssoc.getName());
+    assertEquals("organizer", organizerAssoc.getRole());
+    assertNull(organizerAssoc.getAssocName());
+    assertTrue(organizerAssoc.isBidirectional());
+    assertEquals(PACKAGE + "Group", organizerAssoc.getSourceType().getName());
+    assertEquals(PACKAGE + "Person", organizerAssoc.getTargetType().getName());
+    assertEquals(Cardinality.STAR, organizerAssoc.getSourceCardinality().getMax());
+    assertTrue(organizerAssoc.getSourceCardinality().isMultiple());
+    assertEquals(1, organizerAssoc.getTargetCardinality().getMax());
+    assertFalse(organizerAssoc.getTargetCardinality().isMultiple());
+  }
+
+  private void testRelationshipType() {
+    CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("Relationship", CDTypeSymbol.KIND)
+        .orNull();
+    assertNotNull(relationship);
+    assertEquals(PACKAGE + "Relationship", relationship.getName());
+    assertFalse(relationship.getSuperClass().isPresent());
+    assertEquals(3, relationship.getFields().size());
+    assertTrue(relationship.getField("isPending").isPresent());
+    assertTrue(relationship.getField("requested").isPresent());
+    assertTrue(relationship.getField("accepted").isPresent());
+  }
+
+  private void testInvitedAssociation() {
+    // ->
+    // TODO PN ambiguous exception is thrown, because two associations target Profile, etc. -> Profile
+//    CDAssociationSymbol organizedAssoc = topScope.<CDAssociationSymbol>resolve("profile",
+//        CDAssociationSymbol.KIND).orNull();
+//    assertNotNull(organizedAssoc);
+    // TODO PN continue
+
+    // <-
   }
 }
