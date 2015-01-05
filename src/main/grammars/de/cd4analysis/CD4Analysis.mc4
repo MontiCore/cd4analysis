@@ -21,20 +21,50 @@ grammar CD4Analysis extends de.monticore.types.Types {
   CDClass = Modifier?  "class" Name
     ( "extends"  superclasses:ReferenceType)?
     ( "implements" interfaces:(ReferenceType || ",")* )?
-    ( "{" cDAttributes:CDAttribute* "}" | ";" );
+    ( "{" 
+      ( cDAttributes:CDAttribute
+      | cDConstructors:CDConstructor
+      | cDMethods:CDMethod )*
+      "}" 
+    | ";" );
   
   CDInterface = "interface" Name
-    ( "extends" interfaces:(ReferenceType || ",")* )?  ";";
-  
+    ( "extends" interfaces:(ReferenceType || ",")* )? ( "{" 
+      ( cDAttributes:CDAttribute
+      | cDMethods:CDMethod )*
+      "}" 
+    | ";" );
+    
   CDEnum = "enum" Name
     ( "implements" interfaces:(ReferenceType || ",")* )?
-    ( "{" ( cDEnumConstants:(CDEnumConstant || ",")* ";")?
+    ( "{" ( cDEnumConstants:(CDEnumConstant || ",")* 
+    ( cDConstructors:CDConstructor | cDMethods:CDMethod)*
+    ";")?
       "}" | ";" );
+  
   
   CDEnumConstant = Name;
   
   CDAttribute = Modifier?  Type Name ("=" Value)? ";";
   
+  CDConstructor =
+    Modifier
+    TypeParameters?
+    Name "(" (cDParameters:(CDParameter || ",")*)? ")"
+    ("throws" exceptions:(QualifiedName || "," )*)?
+    ";";
+        
+  CDMethod =
+    Modifier
+    TypeParameters?
+    ReturnType
+    Name "(" (cDParameters:(CDParameter || ",")*)? ")"
+    ("throws" exceptions:(QualifiedName || ",")*)?
+    ";";
+  
+  CDParameter =
+    Type (Ellipsis:["..."])? Name;
+        
   CDAssociation = Stereotype? 
     (["association"] | ["composition"])
     (Derived:[DERIVED:"/"])?  Name?
@@ -69,8 +99,6 @@ grammar CD4Analysis extends de.monticore.types.Types {
   Stereotype = "<<" values:(StereoValue || ",")* ">>";
   
   StereoValue = Name;
-  
-  QualifiedName = parts:(Name || ".")*;
   
   Value = Literal;
 }

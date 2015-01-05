@@ -23,7 +23,7 @@ import de.cd4analysis._parser.CDCompilationUnitMCParser;
 public class CD4AnalysisParserTest {
   
   @Test
-  public void testParse() throws RecognitionException, IOException {
+  public void testSocNet() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/cd4analysis/parser/SocNet.cd");
     CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
     Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
@@ -31,4 +31,12 @@ public class CD4AnalysisParserTest {
     assertTrue(cdDef.isPresent());
   }
   
-}
+  @Test
+  public void testExample1() throws RecognitionException, IOException {
+    Path model = Paths.get("src/test/resources/de/cd4analysis/parser/Example1.cd");
+    CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    assertFalse(parser.hasErrors());
+    assertTrue(cdDef.isPresent());
+  }
+ }

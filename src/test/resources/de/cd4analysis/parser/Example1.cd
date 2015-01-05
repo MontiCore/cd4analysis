@@ -1,0 +1,16 @@
+package de.cd4analysis.parser;
+
+classdiagram Example1 {
+
+  // Parsing constructor and method
+  class A {
+    public A();
+    public void foo();
+  }
+
+  // Parsing constructor and method with Parameter
+  class B {
+    public B(int i);
+    public void foo(int i);
+  }
+}
