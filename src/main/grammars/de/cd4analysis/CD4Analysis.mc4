@@ -57,11 +57,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     (["abstract"]
       | Derived:["derived"] | Derived:[DERIVED:"/"] )*;
     
-  Cardinality =
-    "[" ( many:[foo:"*"]
-          | lowerBoundLit:IntLiteral
-            (".." (upperBoundLit:IntLiteral | noUpperLimit:["*"]) )?
-    )"]";
+  Cardinality = many:["[*]"] | one:["[1]"] | oneToMany:["[1..*]"] | optional:["[0..1]"];
    
   CDQualifier = Name | Type;
   

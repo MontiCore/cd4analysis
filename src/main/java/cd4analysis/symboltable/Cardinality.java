@@ -51,17 +51,14 @@ public class Cardinality {
     if (aSTCard.isMany()) {
       return new Cardinality(0, Cardinality.STAR);
     }
-    if (aSTCard.getLowerBoundLit() != null) {
-      int min = aSTCard.getLowerBoundLit().getValue();
-      if (aSTCard.getUpperBoundLit() == null && !aSTCard.isNoUpperLimit()) {
-        return new Cardinality(min, min);
-      }
-      if (aSTCard.getUpperBoundLit() != null) {
-        return new Cardinality(min, aSTCard.getUpperBoundLit().getValue());
-      }
-      else {
-        return new Cardinality(min, Cardinality.STAR);
-      }
+    if (aSTCard.isOne()) {
+      return new Cardinality(1, 1);
+    }
+    if (aSTCard.isOptional()) {
+      return new Cardinality(0, 1);
+    }
+    if (aSTCard.isOneToMany()) {
+      return new Cardinality(1, Cardinality.STAR);
     }
     return new Cardinality();
   }
