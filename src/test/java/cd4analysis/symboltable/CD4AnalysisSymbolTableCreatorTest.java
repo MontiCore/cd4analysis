@@ -107,21 +107,37 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, enumType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getName());
 
-    CDAssociationSymbol associationSymbol = topScope.<CDAssociationSymbol>resolve("member",
+    // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
+    // A -> B
+    CDAssociationSymbol left2RightAssocSymbol = topScope.<CDAssociationSymbol>resolve("prof",
         CDAssociationSymbol.KIND).orNull();
-    assertNotNull(associationSymbol);
-    assertEquals("member", associationSymbol.getName());
-    assertTrue(associationSymbol.isBidirectional());
-    assertEquals(personType.getName(), associationSymbol.getSourceType().getName());
-    assertEquals(profType.getName(), associationSymbol.getTargetType().getName());
-    assertEquals(Cardinality.STAR, associationSymbol.getSourceCardinality().getMax());
-    assertTrue(associationSymbol.getSourceCardinality().isMultiple());
-    assertEquals(1, associationSymbol.getTargetCardinality().getMax());
-    assertFalse(associationSymbol.getTargetCardinality().isMultiple());
-    // Associations
-    assertEquals(1, associationSymbol.getStereotypes().size());
-    assertEquals("SA", associationSymbol.getStereotype("SA").get().getValue());
-    assertEquals("SA", associationSymbol.getStereotype("SA").get().getName());
+    assertNotNull(left2RightAssocSymbol);
+    assertEquals("prof", left2RightAssocSymbol.getName());
+    assertEquals("member", left2RightAssocSymbol.getAssocName());
+    assertTrue(left2RightAssocSymbol.isBidirectional());
+    assertEquals(personType.getName(), left2RightAssocSymbol.getSourceType().getName());
+    assertEquals(profType.getName(), left2RightAssocSymbol.getTargetType().getName());
+    assertEquals(Cardinality.STAR, left2RightAssocSymbol.getSourceCardinality().getMax());
+    assertTrue(left2RightAssocSymbol.getSourceCardinality().isMultiple());
+    assertEquals(1, left2RightAssocSymbol.getTargetCardinality().getMax());
+    assertFalse(left2RightAssocSymbol.getTargetCardinality().isMultiple());
+    // A <- B
+    CDAssociationSymbol right2LeftAssocSymbol = topScope.<CDAssociationSymbol>resolve("person",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(right2LeftAssocSymbol);
+    assertEquals("person", right2LeftAssocSymbol.getName());
+    assertEquals("member", right2LeftAssocSymbol.getAssocName());
+    assertTrue(right2LeftAssocSymbol.isBidirectional());
+    assertEquals(profType.getName(), right2LeftAssocSymbol.getSourceType().getName());
+    assertEquals(personType.getName(), right2LeftAssocSymbol.getTargetType().getName());
+    assertEquals(1, right2LeftAssocSymbol.getSourceCardinality().getMax());
+    assertFalse(right2LeftAssocSymbol.getSourceCardinality().isMultiple());
+    assertEquals(Cardinality.STAR, right2LeftAssocSymbol.getTargetCardinality().getMax());
+    assertTrue(right2LeftAssocSymbol.getTargetCardinality().isMultiple());
+    // Stereotype
+    assertEquals(1, right2LeftAssocSymbol.getStereotypes().size());
+    assertEquals("SA", right2LeftAssocSymbol.getStereotype("SA").get().getValue());
+    assertEquals("SA", right2LeftAssocSymbol.getStereotype("SA").get().getName());
 
   }
   

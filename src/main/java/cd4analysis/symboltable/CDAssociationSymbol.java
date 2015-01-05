@@ -8,30 +8,30 @@ import mc.helper.NameHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends AbstractSymbol {
   
   public static final CDAssociationSymbolKind KIND = new CDAssociationSymbolKind();
-  
+
   private final CDTypeSymbol sourceType;
   private final CDTypeSymbol targetType;
   
   private Cardinality sourceCardinality;
   private Cardinality targetCardinality;
 
-  // TODO PN ASK: Don't we distinguish between left and right qualifier (resp. role)?
   private String qualifier;
   private String role;
   private boolean bidirectional = false;
-  
+
+  private String assocName;
+
   private Relationship relationship = Relationship.ASSOCIATION;
   
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  protected CDAssociationSymbol(String assocName, CDTypeSymbol sourceType, CDTypeSymbol targetType) {
-    super(nullToEmpty(assocName), KIND);
+  protected CDAssociationSymbol(CDTypeSymbol sourceType, CDTypeSymbol targetType) {
+    super("", KIND);
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
   }
@@ -81,7 +81,15 @@ public class CDAssociationSymbol extends AbstractSymbol {
   public String getQualifier() {
     return qualifier;
   }
-  
+
+  public void setAssocName(String assocName) {
+    this.assocName = assocName;
+  }
+
+  public String getAssocName() {
+    return assocName;
+  }
+
   public void setBidirectional(boolean bidirectional) {
     this.bidirectional = bidirectional;
   }

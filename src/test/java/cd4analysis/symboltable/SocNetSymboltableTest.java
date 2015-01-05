@@ -21,6 +21,9 @@ import static org.junit.Assert.*;
 
 public class SocNetSymboltableTest {
 
+  final static String PACKAGE = "cd4analysis.symboltable.SocNet.";
+  private Scope topScope;
+
   @Test
   public void testSocNet() {
     ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
@@ -43,16 +46,28 @@ public class SocNetSymboltableTest {
       throw new RuntimeException(e);
     }
 
-    final String PACKAGE = "cd4analysis.symboltable.SocNet.";
-    Scope topScope = cdLanguage.getSymbolTableCreator(resolverConfiguration, null).get()
+
+    topScope = cdLanguage.getSymbolTableCreator(resolverConfiguration, null).get()
         .createFromAST(compilationUnit);
 
     assertTrue(topScope instanceof CompilationUnitScope);
 
-    assertEquals(21, topScope.getSymbols().size());
-    assertEquals(21, topScope.resolveLocally(SymbolKind.INSTANCE).size());
+    assertEquals(31, topScope.getSymbols().size());
+    assertEquals(31, topScope.resolveLocally(SymbolKind.INSTANCE).size());
 
     // TODO PN test types of all fields
+    CDTypeSymbol profile = testProfileType();
+
+    testPersonType(profile);
+    testGroupType(profile);
+
+    testMemberAssociation();
+
+  }
+
+
+
+  private CDTypeSymbol testProfileType() {
     CDTypeSymbol profile = topScope.<CDTypeSymbol>resolve("Profile", CDTypeSymbol.KIND).orNull();
     assertNotNull(profile);
     assertEquals(PACKAGE + "Profile", profile.getName());
@@ -71,8 +86,10 @@ public class SocNetSymboltableTest {
     CDFieldSymbol friendsField = profile.getField("friends").get();
     assertEquals("friends", friendsField.getName());
     assertTrue(friendsField.isDerived());
+    return profile;
+  }
 
-
+  private void testPersonType(CDTypeSymbol profile) {
     CDTypeSymbol person = topScope.<CDTypeSymbol>resolve("Person", CDTypeSymbol.KIND).orNull();
     assertNotNull(person);
     assertEquals(PACKAGE + "Person", person.getName());
@@ -88,7 +105,63 @@ public class SocNetSymboltableTest {
     assertTrue(person.getField("zip").isPresent());
     assertTrue(person.getField("city").isPresent());
     assertTrue(person.getField("country").isPresent());
+  }
 
+  private void testGroupType(CDTypeSymbol profile) {
+    CDTypeSymbol group = topScope.<CDTypeSymbol>resolve("Group", CDTypeSymbol.KIND).orNull();
+    assertNotNull(group);
+    assertEquals(PACKAGE + "Group", group.getName());
+    assertTrue(group.getSuperClass().isPresent());
+    assertSame(profile, ((CDTypeSymbolReference) (group.getSuperClass().get()))
+        .getReferencedSymbol());
+    assertEquals(profile.getName(), group.getSuperClass().get().getName());
+    assertEquals(4, group.getFields().size());
+    assertTrue(group.getField("isOpen").isPresent());
+    assertTrue(group.getField("created").isPresent());
+    assertTrue(group.getField("purpose").isPresent());
+    assertTrue(group.getField("members").isPresent());
+    assertTrue(group.getField("members").get().isDerived());
+  }
 
+  private void testMemberAssociation() {
+    // Person -> Group
+    CDAssociationSymbol groupAssoc = topScope.<CDAssociationSymbol>resolve("group",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(groupAssoc);
+    assertEquals("group", groupAssoc.getName());
+    assertTrue(groupAssoc.isBidirectional());
+    assertEquals(PACKAGE + "Person", groupAssoc.getSourceType().getName());
+    assertEquals(PACKAGE + "Group", groupAssoc.getTargetType().getName());
+    assertEquals(Cardinality.STAR, groupAssoc.getSourceCardinality().getMax());
+    assertTrue(groupAssoc.getSourceCardinality().isMultiple());
+    assertEquals(Cardinality.STAR, groupAssoc.getTargetCardinality().getMax());
+    assertTrue(groupAssoc.getTargetCardinality().isMultiple());
+
+    // Person <- Group
+    CDAssociationSymbol personAssoc = topScope.<CDAssociationSymbol>resolve("person",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(personAssoc);
+    assertEquals("person", personAssoc.getName());
+    assertTrue(personAssoc.isBidirectional());
+    assertEquals(PACKAGE + "Group", personAssoc.getSourceType().getName());
+    assertEquals(PACKAGE + "Person", personAssoc.getTargetType().getName());
+    assertEquals(Cardinality.STAR, personAssoc.getSourceCardinality().getMax());
+    assertTrue(personAssoc.getSourceCardinality().isMultiple());
+    assertEquals(Cardinality.STAR, personAssoc.getTargetCardinality().getMax());
+    assertTrue(personAssoc.getTargetCardinality().isMultiple());
+  }
+
+  private void testOrginaizersAssociation() {
+    CDAssociationSymbol associationSymbol = topScope.<CDAssociationSymbol>resolve("member",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(associationSymbol);
+    assertEquals("member", associationSymbol.getName());
+    assertTrue(associationSymbol.isBidirectional());
+    assertEquals(PACKAGE + "Person", associationSymbol.getSourceType().getName());
+    assertEquals(PACKAGE + "Group", associationSymbol.getTargetType().getName());
+    assertEquals(Cardinality.STAR, associationSymbol.getSourceCardinality().getMax());
+    assertTrue(associationSymbol.getSourceCardinality().isMultiple());
+    assertEquals(Cardinality.STAR, associationSymbol.getTargetCardinality().getMax());
+    assertTrue(associationSymbol.getTargetCardinality().isMultiple());
   }
 }
