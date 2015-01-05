@@ -13,7 +13,7 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
-import de.monticore.types._ast.ASTMCImportStatement;
+import de.monticore.types._ast.ASTImportStatement;
 import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTReferenceTypeList;
 import de.monticore.types._ast.ASTSimpleReferenceType;
@@ -45,7 +45,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
     final List<ImportStatement> imports = new ArrayList<>();
     if (compilationUnit.getImportStatements() != null) {
-      for (ASTMCImportStatement imp : compilationUnit.getImportStatements()) {
+      for (ASTImportStatement imp : compilationUnit.getImportStatements()) {
         imports.add(new ImportStatement(dotSeparatedStringFromList(imp.getImportList()), imp.isStar()));
       }
     }

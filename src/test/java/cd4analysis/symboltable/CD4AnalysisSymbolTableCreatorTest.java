@@ -115,6 +115,10 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(associationSymbol.getSourceCardinality().isMultiple());
     assertEquals(1, associationSymbol.getTargetCardinality().getMax());
     assertFalse(associationSymbol.getTargetCardinality().isMultiple());
+    // Associations
+    assertEquals(1, associationSymbol.getStereotypes().size());
+    assertEquals("SA", associationSymbol.getStereotype("SA").get().getValue());
+    assertEquals("SA", associationSymbol.getStereotype("SA").get().getName());
 
   }
   
