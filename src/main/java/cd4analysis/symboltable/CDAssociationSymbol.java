@@ -8,6 +8,7 @@ import mc.helper.NameHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends AbstractSymbol {
@@ -30,7 +31,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
   protected CDAssociationSymbol(String assocName, CDTypeSymbol sourceType, CDTypeSymbol targetType) {
-    super(requireNonNull(assocName), KIND);
+    super(nullToEmpty(assocName), KIND);
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
   }

@@ -1,6 +1,7 @@
 package cd4analysis.symboltable;
 
 import cd4analysis.CD4AnalysisLanguage;
+import cd4analysis.symboltable.references.CDTypeSymbolReference;
 import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.CompilationUnitScope;
 import de.monticore.symboltable.ResolverConfiguration;
@@ -69,6 +70,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Super class
     assertTrue(profType.getSuperClass().isPresent());
     assertEquals(personType.getName(), profType.getSuperClass().get().getName());
+    // The referenced symbol is the SAME as the one in the symbol table.
+    assertSame(personType, ((CDTypeSymbolReference) profType.getSuperClass().get()).getReferencedSymbol());
     // Interfaces
     assertEquals(2, profType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", profType.getInterfaces().get(0).getName());

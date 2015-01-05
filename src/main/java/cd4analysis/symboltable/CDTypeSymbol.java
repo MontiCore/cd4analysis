@@ -39,7 +39,7 @@ public class CDTypeSymbol extends TypeSymbol {
   }
 
   public Optional<CDTypeSymbol> getSuperClass() {
-    return Optional.of(superClass);
+    return Optional.fromNullable(superClass);
   }
 
   public void setSuperClass(CDTypeSymbol superClass) {
