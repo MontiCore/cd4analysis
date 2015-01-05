@@ -55,6 +55,11 @@ grammar CD4Analysis extends de.monticore.types.Types {
   
   Modifier = Stereotype?
     (["abstract"]
+      | ["final"]
+      | ["static"]
+      | Private:["private"] | Private:[PRIVATE:"-"]  // TODO: Vereinfachung (Bug)
+      | Protected:["protected"] | Protected:[PROTECTED:"#"]
+      | Public:["public"] | Public:[PUBLIC:"+"]
       | Derived:["derived"] | Derived:[DERIVED:"/"] )*;
     
   Cardinality = many:["[*]"] | one:["[1]"] | oneToMany:["[1..*]"] | optional:["[0..1]"];
