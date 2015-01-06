@@ -52,12 +52,13 @@ grammar CD4Analysis extends de.monticore.types.Types {
   
  
   /** ASTCDInterface represents an Interface in a Classdiagram
+    @attribute modifier       Optional Modifier of this Interface
     @attribute name           Name of this Interface
     @attribute interfaces     List of Interfaces extended by this Interface
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
-  CDInterface = "interface" Name
+  CDInterface = Modifier? "interface" Name
     ( "extends" interfaces:(ReferenceType || ",")* )? ( "{" 
       ( cDAttributes:CDAttribute
       | cDMethods:CDMethod )*
@@ -66,6 +67,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     
     
   /** ASTCDEnum represents an Enumeration (enum type) in a Classdiagram
+    @attribute modifier        Optional Modifier of this Enum
     @attribute name            Name of this Enum
     @attribute interfaces      List of Interfaces implemented by this Enum
     @attribute cDEnumConstants List of the Enum Constants
@@ -73,7 +75,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
-  CDEnum = "enum" Name
+  CDEnum = Modifier? "enum" Name
     ( "implements" interfaces:(ReferenceType || ",")* )?
     ( "{" ( cDEnumConstants:(CDEnumConstant || ",")* 
     ( cDConstructors:CDConstructor | cDMethods:CDMethod)*
