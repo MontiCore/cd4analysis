@@ -76,6 +76,13 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(2, profType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", profType.getInterfaces().get(0).getName());
     assertEquals("cd4analysis.symboltable.CD1.Callable", profType.getInterfaces().get(1).getName());
+    assertEquals(3, profType.getSuperTypes().size());
+
+    // Resolve field from super class
+    CDFieldSymbol fieldOfSuper = profType.getSpannedScope().<CDFieldSymbol>resolve("name", CDFieldSymbol.KIND).orNull();
+    assertNotNull(fieldOfSuper);
+    assertSame(personType.getField("name").get(), fieldOfSuper);
+    assertFalse(profType.getField("name").isPresent());
 
 
     CDTypeSymbol printableType = topScope.<CDTypeSymbol>resolve("Printable", CDTypeSymbol.KIND)

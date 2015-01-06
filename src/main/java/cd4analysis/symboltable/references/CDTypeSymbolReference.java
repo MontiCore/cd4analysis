@@ -12,6 +12,7 @@ import cd4analysis.symboltable.CDTypeSymbol;
 import cd4analysis.symboltable.Stereotype;
 import com.google.common.base.Optional;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.references.TypeReference;
 import de.monticore.symboltable.references.TypeReferenceImpl;
@@ -33,6 +34,16 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public CDTypeSymbol getReferencedSymbol() {
     return typeReference.getReferencedSymbol();
+  }
+
+  @Override
+  public Scope getSpannedScope() {
+    return getReferencedSymbol().getSpannedScope();
+  }
+
+  @Override
+  public void setDefinedInScope(ScopeManipulationApi scope) {
+    getReferencedSymbol().setDefinedInScope(scope);
   }
 
   @Override
@@ -234,4 +245,5 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   public void setActualTypeArguments(List<ActualTypeArgument> actualTypeArguments) {
     typeReference.setActualTypeArguments(actualTypeArguments);
   }
+
 }
