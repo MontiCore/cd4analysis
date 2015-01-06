@@ -12,7 +12,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDDefinition   
   */
   CDCompilationUnit =
-    ("package" Package:(Name& || ".")* ";")? 
+    ("package" Package:(Name& || ".")+ ";")? 
     (ImportStatements:ImportStatement)*
     CDDefinition;
 
@@ -42,7 +42,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDClass = Modifier?  "class" Name
   ( "extends"  superclasses:ReferenceType)?
-  ( "implements" interfaces:(ReferenceType || ",")* )?
+  ( "implements" interfaces:(ReferenceType || ",")+ )?
   ( "{" 
     ( cDAttributes:CDAttribute
     | cDConstructors:CDConstructor
@@ -59,7 +59,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes   List of Attributes of this Interface
   */
   CDInterface = Modifier? "interface" Name
-    ( "extends" interfaces:(ReferenceType || ",")* )? ( "{" 
+    ( "extends" interfaces:(ReferenceType || ",")+ )? ( "{" 
       ( cDAttributes:CDAttribute
       | cDMethods:CDMethod )*
       "}" 
@@ -76,8 +76,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes    List of Attributes of this Enum
   */
   CDEnum = Modifier? "enum" Name
-    ( "implements" interfaces:(ReferenceType || ",")* )?
-    ( "{" ( cDEnumConstants:(CDEnumConstant || ",")* 
+    ( "implements" interfaces:(ReferenceType || ",")+ )?
+    ( "{" ( cDEnumConstants:(CDEnumConstant || ",")+ 
     ( cDConstructors:CDConstructor | cDMethods:CDMethod)*
     ";")? "}"
     | ";" );
@@ -96,7 +96,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
       @attribute name             Name of this Constant
       @attribute cDEnumParameters List of optional parameters of this Constant
   */
-  CDEnumConstant = Name ( "(" cDEnumParameters:(CDEnumParameter || ",")* ")" )?;
+  CDEnumConstant = Name ( "(" cDEnumParameters:(CDEnumParameter || ",")+ ")" )?;
   
  
   /** ASTCDEnumParameter represents a Parameter of an Enumeration Constant
@@ -112,8 +112,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDConstructor =
     Modifier
-    Name "(" (cDParameters:(CDParameter || ",")*)? ")"
-    ("throws" exceptions:(QualifiedName || "," )*)?
+    Name "(" cDParameters:(CDParameter || ",")* ")"
+    ("throws" exceptions:(QualifiedName || "," )+)?
     ";";
         
  
@@ -127,8 +127,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
   CDMethod =
     Modifier
     ReturnType
-    Name "(" (cDParameters:(CDParameter || ",")*)? ")"
-    ("throws" exceptions:(QualifiedName || ",")*)?
+    Name "(" cDParameters:(CDParameter || ",")* ")"
+    ("throws" exceptions:(QualifiedName || ",")+)?
     ";";
   
  
@@ -222,7 +222,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   /** ASTStereotype represents Stereotypes in a Classdiagram
     @attribute values List of Values of this Stereotype
   */
-  Stereotype = "<<" values:(StereoValue || ",")* ">>";
+  Stereotype = "<<" values:(StereoValue || ",")+ ">>";
   
 
   /** ASTStereoValue represents a Value of a Stereotype in a Classdiagram
