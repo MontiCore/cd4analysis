@@ -24,19 +24,18 @@ public class CDTypeReferenceTest {
 
   @Test
   public void test() {
-    ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
-        CDTypeSymbol.KIND));
-
     CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
     final IOPaths ioPaths = new IOPaths(new ArrayList<>(), Arrays.asList(Paths
         .get("src/test/resources")), Paths.get(""));
-    ModelLoader modelLoader = new ModelLoader(ioPaths.getModelPath(), resolverConfiguration);
+    ModelLoader modelLoader = new ModelLoader(ioPaths.getModelPath());
     modelLoader.setModelingLanguages(Arrays.asList(cdLanguage));
 
-    GlobalScope globalScope = new GlobalScope(modelLoader);
-    globalScope.setResolvers(resolverConfiguration.getTopScopeResolvers());
+    ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
+    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
+        CDTypeSymbol.KIND));
+
+    GlobalScope globalScope = new GlobalScope(modelLoader, resolverConfiguration);
 
     CDTypeSymbol cdType = (CDTypeSymbol) globalScope.resolve("cd4analysis.symboltable.CD2.Person", CDTypeSymbol
         .KIND).orNull();
