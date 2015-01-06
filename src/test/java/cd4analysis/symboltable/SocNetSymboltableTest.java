@@ -58,14 +58,16 @@ public class SocNetSymboltableTest {
     // TODO PN test types of all fields
     CDTypeSymbol profile = testProfileType();
 
-    testPersonType(profile);
-    testGroupType(profile);
+    testPersonClass(profile);
+    testGroupClass(profile);
 
     testMemberAssociation();
     testOrginaizersAssociation();
 
-    testRelationshipType();
+    testRelationshipClass();
     testInvitedAssociation();
+
+    testRelationTypeEnum();
 
   }
 
@@ -93,7 +95,7 @@ public class SocNetSymboltableTest {
     return profile;
   }
 
-  private void testPersonType(CDTypeSymbol profile) {
+  private void testPersonClass(CDTypeSymbol profile) {
     CDTypeSymbol person = topScope.<CDTypeSymbol>resolve("Person", CDTypeSymbol.KIND).orNull();
     assertNotNull(person);
     assertEquals(PACKAGE + "Person", person.getName());
@@ -111,7 +113,7 @@ public class SocNetSymboltableTest {
     assertTrue(person.getField("country").isPresent());
   }
 
-  private void testGroupType(CDTypeSymbol profile) {
+  private void testGroupClass(CDTypeSymbol profile) {
     CDTypeSymbol group = topScope.<CDTypeSymbol>resolve("Group", CDTypeSymbol.KIND).orNull();
     assertNotNull(group);
     assertEquals(PACKAGE + "Group", group.getName());
@@ -189,7 +191,7 @@ public class SocNetSymboltableTest {
     assertFalse(organizerAssoc.getTargetCardinality().isMultiple());
   }
 
-  private void testRelationshipType() {
+  private void testRelationshipClass() {
     CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("Relationship", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(relationship);
@@ -210,5 +212,24 @@ public class SocNetSymboltableTest {
     // TODO PN continue
 
     // <-
+  }
+
+  private void testRelationTypeEnum() {
+    CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("RelationType", CDTypeSymbol.KIND)
+        .orNull();
+    assertNotNull(relationship);
+    assertEquals(PACKAGE + "RelationType", relationship.getName());
+    assertFalse(relationship.getSuperClass().isPresent());
+    assertTrue(relationship.isEnum());
+    assertEquals(5, relationship.getFields().size());
+    assertEquals(5, relationship.getEnumConstants().size());
+    assertTrue(relationship.getField("FRIEND").isPresent());
+    assertTrue(relationship.getField("FRIEND").get().isFinal());
+    assertTrue(relationship.getField("FRIEND").get().isStatic());
+
+    assertTrue(relationship.getField("FAMILY").isPresent());
+    assertTrue(relationship.getField("FOLLOWER").isPresent());
+    assertTrue(relationship.getField("COLLEAGUE").isPresent());
+    assertTrue(relationship.getField("OTHER").isPresent());
   }
 }

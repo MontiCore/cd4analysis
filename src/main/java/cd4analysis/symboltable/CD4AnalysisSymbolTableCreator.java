@@ -168,6 +168,10 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       for (ASTCDEnumConstant astConstant : astEnum.getCDEnumConstants()) {
         CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(), enumSymbol);
         constantSymbol.setEnumConstant(true);
+        // enum constants are implicitly public static final (Java Langspec 3rd Edition Chapter 8.9 Enums)
+        constantSymbol.setStatic(true);
+        constantSymbol.setFinal(true);
+
         enumSymbol.addField(constantSymbol);
       }
     }
@@ -204,7 +208,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         }
         ASTCDQualifier qualifier = cdAssoc.getLeftQualifier();
         if (qualifier != null) {
-          if ((qualifier.getName() != null) && (qualifier.getName() != "")) {
+          if ((qualifier.getName() != null) && (!qualifier.getName().equals(""))) {
             assocLeft2RightSymbol.setQualifier(qualifier.getName());
           }
           else if (qualifier.getType() != null) {
@@ -233,7 +237,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         }
         ASTCDQualifier qualifier = cdAssoc.getRightQualifier();
         if (qualifier != null) {
-          if ((qualifier.getName() != null) && (qualifier.getName() != "")) {
+          if ((qualifier.getName() != null) && (qualifier.getName().equals(""))) {
             assocRight2LeftSymbol.setQualifier(qualifier.getName());
           }
           else if (qualifier.getType() != null) {
