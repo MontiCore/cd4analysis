@@ -8,6 +8,7 @@ import mc.helper.NameHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends AbstractSymbol {
@@ -20,11 +21,11 @@ public class CDAssociationSymbol extends AbstractSymbol {
   private Cardinality sourceCardinality;
   private Cardinality targetCardinality;
 
-  private String qualifier;
-  private String role;
+  private String qualifier = "";
+  private String role = "";
   private boolean bidirectional = false;
 
-  private String assocName;
+  private String assocName = "";
 
   private Relationship relationship = Relationship.ASSOCIATION;
   
@@ -67,7 +68,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
   }
 
   public void setRole(String role) {
-    this.role = role;
+    this.role = nullToEmpty(role);
   }
 
   public String getRole() {
@@ -75,7 +76,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
   }
 
   public void setQualifier(String qualifier) {
-    this.qualifier = qualifier;
+    this.qualifier = nullToEmpty(qualifier);
   }
   
   public String getQualifier() {
@@ -83,7 +84,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
   }
 
   public void setAssocName(String assocName) {
-    this.assocName = assocName;
+    this.assocName = nullToEmpty(assocName);
   }
 
   public String getAssocName() {
@@ -112,7 +113,7 @@ public class CDAssociationSymbol extends AbstractSymbol {
     if (!super.getName().isEmpty()) {
       return super.getName();
     }
-    if (getRole() != null) {
+    if (!getRole().isEmpty()) {
       return getRole();
     }
     // TODO PN ambiguous exception if several associations have same target

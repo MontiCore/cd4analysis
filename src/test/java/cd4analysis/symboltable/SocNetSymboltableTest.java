@@ -56,7 +56,7 @@ public class SocNetSymboltableTest {
     assertEquals(31, topScope.resolveLocally(SymbolKind.INSTANCE).size());
 
     // TODO PN test types of all fields
-    CDTypeSymbol profile = testProfileType();
+    CDTypeSymbol profile = testProfileClass();
 
     testPersonClass(profile);
     testGroupClass(profile);
@@ -68,16 +68,26 @@ public class SocNetSymboltableTest {
     testInvitedAssociation();
 
     testRelationTypeEnum();
+    testRelationTypeAssociation();
+
+    testPostInterface();
+
+    testReceivedAssociation();
+    testInstantMessageClass();
+    testPhotoMessageClass();
+
+    testPhotoAssociation();
+    testPhotoClass();
+    testTagClass();
 
   }
 
-
-
-  private CDTypeSymbol testProfileType() {
+  private CDTypeSymbol testProfileClass() {
     CDTypeSymbol profile = topScope.<CDTypeSymbol>resolve("Profile", CDTypeSymbol.KIND).orNull();
     assertNotNull(profile);
     assertEquals(PACKAGE + "Profile", profile.getName());
     assertTrue(profile.isAbstract());
+    assertFalse(profile.isInterface());
     assertFalse(profile.getSuperClass().isPresent());
     assertEquals(3, profile.getFields().size());
 
@@ -166,7 +176,7 @@ public class SocNetSymboltableTest {
     assertNotNull(organizedAssoc);
     assertEquals("organized", organizedAssoc.getName());
     assertEquals("organized", organizedAssoc.getRole());
-    assertNull(organizedAssoc.getAssocName());
+    assertTrue(organizedAssoc.getAssocName().isEmpty());
     assertTrue(organizedAssoc.isBidirectional());
     assertEquals(PACKAGE + "Person", organizedAssoc.getSourceType().getName());
     assertEquals(PACKAGE + "Group", organizedAssoc.getTargetType().getName());
@@ -181,7 +191,7 @@ public class SocNetSymboltableTest {
     assertNotNull(organizerAssoc);
     assertEquals("organizer", organizerAssoc.getName());
     assertEquals("organizer", organizerAssoc.getRole());
-    assertNull(organizerAssoc.getAssocName());
+    assertTrue(organizerAssoc.getAssocName().isEmpty());
     assertTrue(organizerAssoc.isBidirectional());
     assertEquals(PACKAGE + "Group", organizerAssoc.getSourceType().getName());
     assertEquals(PACKAGE + "Person", organizerAssoc.getTargetType().getName());
@@ -232,4 +242,122 @@ public class SocNetSymboltableTest {
     assertTrue(relationship.getField("COLLEAGUE").isPresent());
     assertTrue(relationship.getField("OTHER").isPresent());
   }
+
+  private void testRelationTypeAssociation() {
+    // ->
+    CDAssociationSymbol assoc = topScope.<CDAssociationSymbol>resolve("relationType",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(assoc);
+    assertEquals("relationType", assoc.getName());
+    assertTrue(assoc.getRole().isEmpty());
+    assertTrue(assoc.getAssocName().isEmpty());
+    assertFalse(assoc.isBidirectional());
+    assertEquals(PACKAGE + "Relationship", assoc.getSourceType().getName());
+    assertEquals(PACKAGE + "RelationType", assoc.getTargetType().getName());
+    assertEquals(1, assoc.getSourceCardinality().getMax());
+    assertFalse(assoc.getSourceCardinality().isMultiple());
+    assertEquals(1, assoc.getTargetCardinality().getMax());
+    assertFalse(assoc.getTargetCardinality().isMultiple());
+
+    // <- does not exist, because association is uni-directional
+  }
+
+  private void testPostInterface() {
+    CDTypeSymbol post = topScope.<CDTypeSymbol>resolve("Post", CDTypeSymbol.KIND).orNull();
+    assertNotNull(post);
+    assertEquals(PACKAGE + "Post", post.getName());
+    assertTrue(post.isAbstract());
+    assertTrue(post.isInterface());
+  }
+
+  private void testReceivedAssociation() {
+    // ->
+    // TODO PN ambiguous exception is thrown, because two associations target Profile, etc. -> Profile
+//    CDAssociationSymbol postAssoc = topScope.<CDAssociationSymbol>resolve("post",
+//        CDAssociationSymbol.KIND).orNull();
+//    assertNotNull(postAssoc);
+    // TODO PN continue
+
+    // <-
+//    CDAssociationSymbol profileAssoc = topScope.<CDAssociationSymbol>resolve("profile",
+//        CDAssociationSymbol.KIND).orNull();
+//    assertNotNull(profileAssoc);
+//    assertEquals("organizer", profileAssoc.getName());
+    // TODO PN continue
+  }
+
+  private void testInstantMessageClass() {
+    CDTypeSymbol symbol = topScope.<CDTypeSymbol>resolve("InstantMessage", CDTypeSymbol.KIND).orNull();
+    assertNotNull(symbol);
+    assertEquals(PACKAGE + "InstantMessage", symbol.getName());
+    assertFalse(symbol.getSuperClass().isPresent());
+    assertEquals(1, symbol.getInterfaces().size());
+    assertEquals(PACKAGE + "Post", symbol.getInterfaces().get(0).getName());
+    assertEquals(2, symbol.getFields().size());
+    assertTrue(symbol.getField("timestamp").isPresent());
+    assertTrue(symbol.getField("content").isPresent());
+  }
+
+  private void testPhotoMessageClass() {
+    CDTypeSymbol symbol = topScope.<CDTypeSymbol>resolve("PhotoMessage", CDTypeSymbol.KIND).orNull();
+    assertNotNull(symbol);
+    assertEquals(PACKAGE + "PhotoMessage", symbol.getName());
+    assertTrue(symbol.getSuperClass().isPresent());
+    assertEquals(PACKAGE + "InstantMessage", symbol.getSuperClass().get().getName());
+    assertEquals(0, symbol.getFields().size());
+  }
+
+  private void testPhotoAssociation() {
+    // ->
+    CDAssociationSymbol photoMessageAssoc = topScope.<CDAssociationSymbol>resolve("photoMessage",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(photoMessageAssoc);
+    assertTrue(photoMessageAssoc.getRole().isEmpty());
+    assertEquals("photoMessage", photoMessageAssoc.getName());
+    assertTrue(photoMessageAssoc.getAssocName().isEmpty());
+    assertTrue(photoMessageAssoc.isBidirectional());
+    assertEquals(PACKAGE + "Photo", photoMessageAssoc.getSourceType().getName());
+    assertEquals(PACKAGE + "PhotoMessage", photoMessageAssoc.getTargetType().getName());
+    assertEquals(Cardinality.STAR, photoMessageAssoc.getSourceCardinality().getMax());
+    assertTrue(photoMessageAssoc.getSourceCardinality().isMultiple());
+    assertEquals(1, photoMessageAssoc.getTargetCardinality().getMax());
+    assertFalse(photoMessageAssoc.getTargetCardinality().isMultiple());
+
+    // <-
+    CDAssociationSymbol photoAssoc = topScope.<CDAssociationSymbol>resolve("picture",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(photoAssoc);
+    assertEquals("picture", photoAssoc.getName());
+    assertEquals("picture", photoAssoc.getRole());
+    assertTrue(photoAssoc.getAssocName().isEmpty());
+    assertTrue(photoAssoc.isBidirectional());
+    assertEquals(PACKAGE + "PhotoMessage", photoAssoc.getSourceType().getName());
+    assertEquals(PACKAGE + "Photo", photoAssoc.getTargetType().getName());
+    assertEquals(1, photoAssoc.getSourceCardinality().getMax());
+    assertFalse(photoAssoc.getSourceCardinality().isMultiple());
+    assertEquals(Cardinality.STAR, photoAssoc.getTargetCardinality().getMax());
+    assertTrue(photoAssoc.getTargetCardinality().isMultiple());
+  }
+
+  private void testPhotoClass() {
+    CDTypeSymbol photo = topScope.<CDTypeSymbol>resolve("Photo", CDTypeSymbol.KIND).orNull();
+    assertNotNull(photo);
+    assertEquals(PACKAGE + "Photo", photo.getName());
+    assertFalse(photo.getSuperClass().isPresent());
+    assertEquals(2, photo.getFields().size());
+    assertTrue(photo.getField("height").isPresent());
+    assertTrue(photo.getField("width").isPresent());
+  }
+
+  private void testTagClass() {
+    CDTypeSymbol photo = topScope.<CDTypeSymbol>resolve("Tag", CDTypeSymbol.KIND).orNull();
+    assertNotNull(photo);
+    assertEquals(PACKAGE + "Tag", photo.getName());
+    assertFalse(photo.getSuperClass().isPresent());
+    assertEquals(1, photo.getFields().size());
+    assertTrue(photo.getField("confirmed").isPresent());
+  }
+
+  // TODO PN test last to associations as soon as ambiguous problem with associations is solved.
+
 }

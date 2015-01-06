@@ -139,6 +139,8 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   public void visit(ASTCDInterface astInterface) {
     CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astInterface.getName());
     cdTypeSymbol.setInterface(true);
+    // Interfaces are always abstract
+    cdTypeSymbol.setAbstract(true);
 
     addInterfacesToType(cdTypeSymbol, astInterface.getInterfaces());
 
