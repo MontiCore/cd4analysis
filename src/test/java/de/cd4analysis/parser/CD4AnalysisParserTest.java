@@ -39,4 +39,14 @@ public class CD4AnalysisParserTest {
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
   }
- }
+
+  @Test
+  public void testExample2() throws RecognitionException, IOException {
+    Path model = Paths.get("src/test/resources/de/cd4analysis/parser/Example2.cd");
+    CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    assertFalse(parser.hasErrors());
+    assertTrue(cdDef.isPresent());
+  }
+  
+}

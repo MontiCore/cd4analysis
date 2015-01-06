@@ -13,4 +13,10 @@ classdiagram Example1 {
     public B(int i);
     public void foo(int i);
   }
+  
+  // Parsing interface with attribute and method
+  interface I {
+    int att = 0;
+    private int foo();
+  }
 }
