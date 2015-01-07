@@ -13,9 +13,7 @@ public class CDFieldSymbol extends AbstractSymbol {
 
   private final CDTypeSymbol type;
 
-  // TODO PN remove unneeded modifiers
   private boolean isFinal;
-  private boolean isLocal;
   private boolean isReadOnly;
   private boolean isDerived;
   private boolean isStatic;
@@ -63,14 +61,6 @@ public class CDFieldSymbol extends AbstractSymbol {
     this.isInitialized = isInitialized;
   }
 
-  public boolean isLocal() {
-    return isLocal;
-  }
-  
-  public void setLocal(boolean isLocal) {
-    this.isLocal = isLocal;
-  }
-  
   public boolean isReadOnly() {
     return isReadOnly;
   }
