@@ -3,6 +3,8 @@ package cd4analysis.symboltable;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.Symbol;
+import de.monticore.symboltable.modifiers.AccessModifier;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.types.TypeSymbol;
 import mc.helper.NameHelper;
 
@@ -29,6 +31,8 @@ public class CDTypeSymbol extends TypeSymbol {
   private boolean isLocal = false;
   private boolean isInterface = false;
   private boolean isEnum = false;
+
+  private AccessModifier accessModifier = BasicAccessModifier.ABSENT;
   
 
   protected CDTypeSymbol(String name) {
@@ -218,7 +222,6 @@ public class CDTypeSymbol extends TypeSymbol {
       }
     }
     return false;
-    
   }
   
   public void addStereotype(Stereotype stereotype) {
@@ -227,5 +230,17 @@ public class CDTypeSymbol extends TypeSymbol {
   
   public String getModelName() {
     return NameHelper.getQualifier(getName());
+  }
+
+  public void setPrivate() {
+    this.accessModifier = BasicAccessModifier.PRIVATE;
+  }
+
+  public void setProtected() {
+    this.accessModifier = BasicAccessModifier.PROTECTED;
+  }
+
+  public void setPublic() {
+    this.accessModifier = BasicAccessModifier.PUBLIC;
   }
 }
