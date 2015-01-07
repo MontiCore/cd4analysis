@@ -27,8 +27,6 @@ public class CDTypeSymbol extends TypeSymbol {
   
   private boolean isAbstract = false;
   private boolean isFinal = false;
-  // TODO PN is local == private? If yes, remove it
-  private boolean isLocal = false;
   private boolean isInterface = false;
   private boolean isEnum = false;
 
@@ -168,14 +166,6 @@ public class CDTypeSymbol extends TypeSymbol {
   
   public boolean isFinal() {
     return isFinal;
-  }
-  
-  public void setLocal(boolean isLocal) {
-    this.isLocal = isLocal;
-  }
-  
-  public boolean isLocal() {
-    return isLocal;
   }
   
   public void setInterface(boolean isInterface) {

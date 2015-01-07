@@ -198,16 +198,6 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public void setLocal(boolean isLocal) {
-    getReferencedSymbol().setLocal(isLocal);
-  }
-
-  @Override
-  public boolean isLocal() {
-    return getReferencedSymbol().isLocal();
-  }
-
-  @Override
   public void setInterface(boolean isInterface) {
     getReferencedSymbol().setInterface(isInterface);
   }

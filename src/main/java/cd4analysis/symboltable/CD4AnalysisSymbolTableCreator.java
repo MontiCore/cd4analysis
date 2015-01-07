@@ -13,6 +13,7 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
+import de.monticore.symboltable.types.Parameter;
 import de.monticore.types._ast.ASTImportStatement;
 import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.ASTReferenceType;
@@ -61,7 +62,6 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDDefinition cdDefinition) {
-    // TODO PN needed?
   }
 
   public void endVisit(ASTCDDefinition cdDefinition) {
@@ -91,6 +91,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   private void setModifiersOfType(CDTypeSymbol typeSymbol, ASTModifier astModifier) {
     if (astModifier != null) {
       typeSymbol.setAbstract(astModifier.isAbstract());
+      typeSymbol.setFinal(astModifier.isFinal());
 
       if (astModifier.isProtected()) {
         typeSymbol.setProtected();
@@ -134,6 +135,8 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       final ASTModifier astModifier = astAttribute.getModifier();
 
       fieldSymbol.setDerived(astModifier.isDerived());
+      fieldSymbol.setStatic(astModifier.isStatic());
+      fieldSymbol.setFinal(astModifier.isFinal());
 
       if (astModifier.isProtected()) {
         fieldSymbol.setProtected();
@@ -181,8 +184,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   private void addInterfacesToType(CDTypeSymbol typeSymbol, ASTReferenceTypeList interfaces) {
     if (interfaces != null) {
       for (ASTReferenceType superInterface : interfaces) {
-        CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference
-            (superInterface);
+        CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
         typeSymbol.addInterface(superInterfaceSymbol);
       }
     }
@@ -221,6 +223,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
 
   private void visitAssociationSymbol(ASTCDAssociation cdAssoc) {
+    // TODO PN check if all association cardinalities are set correctly.
     if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
       CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
               .getLeftReferenceName(),
@@ -315,6 +318,101 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     if (astStereotype != null) {
       for (ASTStereoValue val : astStereotype.getValues()) {
         associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
+      }
+    }
+  }
+
+  public void visit(ASTCDMethod cdMethod) {
+    CDMethodSymbol methodEntry = new CDMethodSymbol(cdMethod.getName());
+
+    // Modifier
+    final ASTModifier astModifier = cdMethod.getModifier();
+    if (astModifier != null) {
+      methodEntry.setAbstract(astModifier.isAbstract());
+      methodEntry.setStatic(astModifier.isStatic());
+      methodEntry.setFinal(astModifier.isFinal());
+
+      if (astModifier.isPrivate()) {
+        methodEntry.setPrivate();
+      }
+      else if(astModifier.isProtected()) {
+        methodEntry.setProtected();
+      }
+      else {
+        methodEntry.setPublic();
+      }
+
+      addStereotypes(methodEntry, astModifier.getStereotype());
+    }
+
+    // TODO PN use ASTTypesConverter
+    CDTypeSymbolReference returnEntry = new CDTypeSymbolReference("TODO_RETURN_TYPE",
+        currentScope().get());
+    /*ASTTypesConverter
+    .astReturnTypeToTypeEntry
+        (CDTypeEntryCreator.getInstance(), cdMethod.getReturnType());
+    if (returnEntry == null) {
+      delegator.addErrorToCurrentResource("Return type couldn't be converted: " + ASTTypesConverter.astReturnTypeToString(cdMethod.getReturnType()));
+    }
+    else {*/
+      methodEntry.setReturnType(returnEntry);
+    //}
+
+    // Parameters
+    if (cdMethod.getCDParameters() != null) {
+      CDTypeSymbolReference paramTypeEntry = null;
+      for (ASTCDParameter parameter : cdMethod.getCDParameters()) {
+        String paramName = parameter.getName();
+        // TODO PN use ASTTypesConverter
+        //paramTypeEntry = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // parameter.getType());
+        paramTypeEntry = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
+        if (parameter.isEllipsis()) {
+          methodEntry.setEllipsisParameterMethod(true);
+          // ellipsis parameters are (like) arrays
+          // TODO: Ist das so?
+          // paramTypeEntry = CDTypeEntryCreator.getInstance().create(paramTypeEntry, 1);
+        }
+        methodEntry.addParameter(new Parameter<>(paramName, paramTypeEntry));
+        // TODO PN add fieldEntries instead of parameter?
+
+        CDFieldSymbol fieldEntry = new CDFieldSymbol(paramName, paramTypeEntry);
+
+      }
+    }
+
+    // Exceptions
+    if (cdMethod.getExceptions() != null) {
+      for (ASTQualifiedName exceptionName : cdMethod.getExceptions()) {
+        CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(), currentScope().get());
+        methodEntry.addException(exception);
+      }
+    }
+
+
+    // Set defining type
+    if (currentSymbol().isPresent()) {
+      if (currentSymbol().get() instanceof CDTypeSymbol) {
+        CDTypeSymbol definingType = (CDTypeSymbol) currentSymbol().get();
+        methodEntry.setDefiningType(definingType);
+
+        if (definingType.isInterface()) {
+          methodEntry.setAbstract(true);
+        }
+      }
+    }
+
+    defineInScope(methodEntry);
+    addScopeToStackAndSetEnclosingIfExists(methodEntry);
+  }
+
+  public void endVisit(ASTCDMethod astMethod) {
+    removeCurrentScope();
+  }
+
+  private void addStereotypes(CDMethodSymbol methodEntry, ASTStereotype astStereotype) {
+    if (astStereotype != null) {
+      for (ASTStereoValue val : astStereotype.getValues()) {
+        methodEntry.addStereotype(new Stereotype(val.getName(), val.getName()));
       }
     }
   }

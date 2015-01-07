@@ -16,6 +16,8 @@ import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
 import static org.junit.Assert.*;
 
+// TODO PN test types for all symbols, i.e., return type of methods, parameter types, field
+// types, etc.
 public class CD4AnalysisSymbolTableCreatorTest {
 
   @Test
@@ -25,6 +27,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
         CDTypeSymbol.KIND));
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDFieldSymbol.class,
         CDFieldSymbol.KIND));
+    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDMethodSymbol.class,
+        CDMethodSymbol.KIND));
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAssociationSymbol.class,
         CDAssociationSymbol.KIND));
 
@@ -51,6 +55,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
     assertEquals("cd4analysis.symboltable.CD1.Person", personType.getName());
     assertTrue(personType.isPublic());
+    // Fields
     assertEquals(3, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
     assertTrue(personType.getField("name").get().isPublic());
@@ -58,6 +63,10 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(personType.getField("secondName").get().isPrivate());
     assertEquals("age", personType.getField("age").get().getName());
     assertTrue(personType.getField("age").get().isProtected());
+    // Field Stereotypes
+    assertEquals(1, personType.getField("name").get().getStereotypes().size());
+    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getName());
+    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getValue());
     // Stereotypes
     assertEquals(2, personType.getStereotypes().size());
     assertEquals("S1", personType.getStereotype("S1").get().getName());
@@ -65,10 +74,15 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // TODO PN name and value are not distinguished. Is this ok?
     assertEquals("S1", personType.getStereotype("S1").get().getValue());
     assertEquals("S2", personType.getStereotype("S2").get().getValue());
-    // Field Stereotypes
-    assertEquals(1, personType.getField("name").get().getStereotypes().size());
-    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getName());
-    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getValue());
+    // Methods
+    CDMethodSymbol getNameMethod = personType.getMethod("getName").orNull();
+    assertNotNull(getNameMethod);
+    assertEquals("getName", getNameMethod.getName());
+    assertTrue(getNameMethod.isPublic());
+    assertFalse(getNameMethod.isConstructor());
+    assertFalse(getNameMethod.isFinal());
+    assertEquals(0, getNameMethod.getParameters().size());
+
 
     CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);

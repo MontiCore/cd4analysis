@@ -5,8 +5,14 @@ classdiagram CD1 {
      <<SF>> public String name;
      protected int age;
      private String secondName;
+
+     String getName();
   }
-  protected interface Printable;
+
+  protected interface Printable {
+    protected void print();
+  }
+
   interface Callable extends Printable;
 
   private class Prof extends Person implements Printable, Callable {

@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.BaseScope;
 import de.monticore.symboltable.ScopeSpanningSymbol;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.types.Parameter;
 
 import java.util.ArrayList;
@@ -155,12 +156,28 @@ public class CDMethodSymbol extends ScopeSpanningSymbol {
     this.isEllipsisParameterMethod = isEllipsisParameterMethod;
   }
 
-  public void setBody(boolean hasBody) {
-    this.hasBody = hasBody;
+  public void setPrivate() {
+    setAccessModifier(BasicAccessModifier.PRIVATE);
   }
-  
-  public boolean hasBody() {
-    return this.hasBody;
+
+  public void setProtected() {
+    setAccessModifier(BasicAccessModifier.PROTECTED);
+  }
+
+  public void setPublic() {
+    setAccessModifier(BasicAccessModifier.PUBLIC);
+  }
+
+  public boolean isPrivate() {
+    return getAccessModifier() == BasicAccessModifier.PRIVATE;
+  }
+
+  public boolean isProtected() {
+    return getAccessModifier() == BasicAccessModifier.PROTECTED;
+  }
+
+  public boolean isPublic() {
+    return getAccessModifier() == BasicAccessModifier.PUBLIC;
   }
 
   @Override
