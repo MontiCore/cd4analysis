@@ -14,6 +14,7 @@ import com.google.common.base.Optional;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.Symbol;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.references.TypeReference;
 import de.monticore.symboltable.references.TypeReferenceImpl;
 import de.monticore.symboltable.types.ActualTypeArgument;
@@ -54,6 +55,16 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public String getName() {
     return getReferencedSymbol().getName();
+  }
+
+  @Override
+  public AccessModifier getAccessModifier() {
+    return getReferencedSymbol().getAccessModifier();
+  }
+
+  @Override
+  public void setAccessModifier(AccessModifier accessModifier) {
+    getReferencedSymbol().setAccessModifier(accessModifier);
   }
 
   @Override
@@ -229,6 +240,41 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public boolean isGeneric() {
     return getReferencedSymbol().isGeneric();
+  }
+
+  @Override
+  public void setPrivate() {
+    getReferencedSymbol().setPrivate();
+  }
+
+  @Override
+  public void setProtected() {
+    getReferencedSymbol().setProtected();
+  }
+
+  @Override
+  public void setPublic() {
+    getReferencedSymbol().setPublic();
+  }
+
+  @Override
+  public boolean isPrivate() {
+    return getReferencedSymbol().isPrivate();
+  }
+
+  @Override
+  public boolean isProtected() {
+    return getReferencedSymbol().isProtected();
+  }
+
+  @Override
+  public boolean isPublic() {
+    return getReferencedSymbol().isPublic();
+  }
+
+  @Override
+  public int getDimension() {
+    return getReferencedSymbol().getDimension();
   }
 
   @Override

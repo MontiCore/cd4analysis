@@ -4,14 +4,14 @@ classdiagram CD1 {
   <<S1, S2>> class Person {
      <<SF>> String name;
   }
-  interface Printable;
+  protected interface Printable;
   interface Callable extends Printable;
 
-  class Prof extends Person implements Printable, Callable {
+  private class Prof extends Person implements Printable, Callable {
      / String uni;
   }
 
-  enum E implements Printable {
+  public enum E implements Printable {
     A, B;
   }
 

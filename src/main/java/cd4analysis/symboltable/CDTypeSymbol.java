@@ -3,7 +3,6 @@ package cd4analysis.symboltable;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.Symbol;
-import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.types.TypeSymbol;
 import mc.helper.NameHelper;
@@ -28,12 +27,10 @@ public class CDTypeSymbol extends TypeSymbol {
   
   private boolean isAbstract = false;
   private boolean isFinal = false;
+  // TODO PN is local == private? If yes, remove it
   private boolean isLocal = false;
   private boolean isInterface = false;
   private boolean isEnum = false;
-
-  private AccessModifier accessModifier = BasicAccessModifier.ABSENT;
-  
 
   protected CDTypeSymbol(String name) {
     super(name, KIND);
@@ -233,14 +230,26 @@ public class CDTypeSymbol extends TypeSymbol {
   }
 
   public void setPrivate() {
-    this.accessModifier = BasicAccessModifier.PRIVATE;
+    setAccessModifier(BasicAccessModifier.PRIVATE);
   }
 
   public void setProtected() {
-    this.accessModifier = BasicAccessModifier.PROTECTED;
+    setAccessModifier(BasicAccessModifier.PROTECTED);
   }
 
   public void setPublic() {
-    this.accessModifier = BasicAccessModifier.PUBLIC;
+    setAccessModifier(BasicAccessModifier.PUBLIC);
+  }
+
+  public boolean isPrivate() {
+    return getAccessModifier() == BasicAccessModifier.PRIVATE;
+  }
+
+  public boolean isProtected() {
+    return getAccessModifier() == BasicAccessModifier.PROTECTED;
+  }
+
+  public boolean isPublic() {
+    return getAccessModifier() == BasicAccessModifier.PUBLIC;
   }
 }

@@ -6,6 +6,7 @@ import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.CompilationUnitScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.resolving.DefaultResolver;
 import org.junit.Test;
 
@@ -47,6 +48,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
     assertEquals("cd4analysis.symboltable.CD1.Person", personType.getName());
+    assertTrue(personType.isPublic());
     assertEquals(1, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
     // Stereotypes
@@ -64,6 +66,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
+    assertTrue(profType.isPrivate());
     assertEquals(1, profType.getFields().size());
     assertEquals("uni", profType.getField("uni").get().getName());
     assertTrue(profType.getField("uni").get().isDerived());
@@ -90,12 +93,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(printableType);
     assertEquals("cd4analysis.symboltable.CD1.Printable", printableType.getName());
     assertTrue(printableType.isInterface());
+    assertTrue(printableType.isProtected());
 
     CDTypeSymbol callableType = topScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(callableType);
     assertEquals("cd4analysis.symboltable.CD1.Callable", callableType.getName());
     assertTrue(callableType.isInterface());
+    assertTrue(callableType.isPublic());
     assertEquals(1, callableType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", callableType.getInterfaces().get(0).getName());
 
@@ -103,6 +108,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(enumType);
     assertEquals("cd4analysis.symboltable.CD1.E", enumType.getName());
     assertTrue(enumType.isEnum());
+    assertTrue(enumType.isPublic());
     // Enum Constants
     assertEquals(2, enumType.getEnumConstants().size());
     assertEquals("A", enumType.getEnumConstants().get(0).getName());
@@ -145,6 +151,26 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, right2LeftAssocSymbol.getStereotypes().size());
     assertEquals("SA", right2LeftAssocSymbol.getStereotype("SA").get().getValue());
     assertEquals("SA", right2LeftAssocSymbol.getStereotype("SA").get().getName());
+
+
+    // Modifier Test //
+
+
+    // Class is public
+    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, BasicAccessModifier.PUBLIC).isPresent());
+    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, BasicAccessModifier.PROTECTED).isPresent());
+    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, BasicAccessModifier.PRIVATE).isPresent());
+
+    // Prof is private
+    assertFalse(topScope.resolve("Prof", CDTypeSymbol.KIND, BasicAccessModifier.PUBLIC).isPresent());
+    assertFalse(topScope.resolve("Prof", CDTypeSymbol.KIND, BasicAccessModifier.PROTECTED).isPresent());
+    assertTrue(topScope.resolve("Prof", CDTypeSymbol.KIND, BasicAccessModifier.PRIVATE).isPresent());
+
+    // Printable is protected
+    assertFalse(topScope.resolve("Printable", CDTypeSymbol.KIND, BasicAccessModifier.PUBLIC)
+        .isPresent());
+    assertTrue(topScope.resolve("Printable", CDTypeSymbol.KIND, BasicAccessModifier.PROTECTED).isPresent());
+    assertTrue(topScope.resolve("Printable", CDTypeSymbol.KIND, BasicAccessModifier.PRIVATE).isPresent());
 
   }
   

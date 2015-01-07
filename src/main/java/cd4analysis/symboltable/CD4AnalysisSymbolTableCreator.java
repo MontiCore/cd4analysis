@@ -78,9 +78,29 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       cdTypeSymbol.setSuperClass(superClassSymbol);
     }
 
-    if (astClass.getModifier() != null) {
-      final ASTModifier astModifier = astClass.getModifier();
+    final ASTModifier astModifier = astClass.getModifier();
+
+    setModifiersOfType(cdTypeSymbol, astModifier);
+
+    addInterfacesToType(cdTypeSymbol, astClass.getInterfaces());
+
+    defineInScope(cdTypeSymbol);
+    addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
+  }
+
+  private void setModifiersOfType(CDTypeSymbol cdTypeSymbol, ASTModifier astModifier) {
+    if (astModifier != null) {
       cdTypeSymbol.setAbstract(astModifier.isAbstract());
+
+      if (astModifier.isProtected()) {
+        cdTypeSymbol.setProtected();
+      }
+      else if (astModifier.isPrivate()) {
+        cdTypeSymbol.setPrivate();
+      } else {
+        // public is default
+        cdTypeSymbol.setPublic();
+      }
 
       if (astModifier.getStereotype() != null) {
         for (ASTStereoValue stereoValue : astModifier.getStereotype().getValues()) {
@@ -90,11 +110,6 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         }
       }
     }
-
-    addInterfacesToType(cdTypeSymbol, astClass.getInterfaces());
-
-    defineInScope(cdTypeSymbol);
-    addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
   }
 
   private CDTypeSymbolReference createCDTypeSymbolFromReference(ASTReferenceType astReferenceType) {
@@ -143,6 +158,11 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     cdTypeSymbol.setAbstract(true);
 
     addInterfacesToType(cdTypeSymbol, astInterface.getInterfaces());
+    setModifiersOfType(cdTypeSymbol, astInterface.getModifier());
+
+    // Interfaces are always abstract
+    cdTypeSymbol.setAbstract(true);
+
 
     defineInScope(cdTypeSymbol);
     addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
@@ -179,6 +199,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     }
 
     addInterfacesToType(enumSymbol, astEnum.getInterfaces());
+    setModifiersOfType(enumSymbol, astEnum.getModifier());
 
     defineInScope(enumSymbol);
     addScopeToStackAndSetEnclosingIfExists(enumSymbol);
