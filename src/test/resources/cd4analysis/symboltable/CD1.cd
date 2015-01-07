@@ -2,7 +2,9 @@ package cd4analysis.symboltable;
 
 classdiagram CD1 {
   <<S1, S2>> class Person {
-     <<SF>> String name;
+     <<SF>> public String name;
+     protected int age;
+     private String secondName;
   }
   protected interface Printable;
   interface Callable extends Printable;

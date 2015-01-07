@@ -16,6 +16,8 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.se_rwth.commons.logging.Log;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
 
 public class CDTypeScope extends BaseScope {
 
@@ -39,13 +41,8 @@ public class CDTypeScope extends BaseScope {
 
 
     if (!resolvedSymbol.isPresent()) {
-      CDTypeSymbol spanningSymbol = (CDTypeSymbol) getSpanningSymbol().get();
-      CDTypeSymbol superClass = spanningSymbol.getSuperClass().orNull();
-
-      if (superClass != null) {
-        Log.trace("Continue in scope of super class " + superClass.getName(), CDTypeScope.class.getSimpleName());
-        resolvedSymbol = superClass.getSpannedScope().resolve(name, kind);
-      }
+      // To resolve symbols of super class, they must at least be protected.
+      resolvedSymbol = resolveInSuperClass(name, kind, PROTECTED);
     }
 
     return resolvedSymbol;
@@ -56,15 +53,27 @@ public class CDTypeScope extends BaseScope {
     Optional<T> resolvedSymbol = super.resolve(name, kind, modifier);
 
     if (!resolvedSymbol.isPresent()) {
-      CDTypeSymbol spanningSymbol = (CDTypeSymbol) getSpanningSymbol().get();
-      CDTypeSymbol superClass = spanningSymbol.getSuperClass().orNull();
-
-      if (superClass != null) {
-        Log.trace("Continue in scope of super class " + superClass.getName(), CDTypeScope.class.getSimpleName());
-        resolvedSymbol = superClass.getSpannedScope().resolve(name, kind, modifier);
-      }
+      resolvedSymbol = resolveInSuperClass(name, kind, modifier);
     }
 
+    return resolvedSymbol;
+  }
+
+  private <T extends Symbol> Optional<T> resolveInSuperClass(String name, SymbolKind kind, AccessModifier modifier) {
+    Optional<T> resolvedSymbol = Optional.absent();
+
+    CDTypeSymbol spanningSymbol = (CDTypeSymbol) getSpanningSymbol().get();
+    CDTypeSymbol superClass = spanningSymbol.getSuperClass().orNull();
+
+    if (superClass != null) {
+      Log.trace("Continue in scope of super class " + superClass.getName(), CDTypeScope.class
+          .getSimpleName());
+      // Private symbols cannot be resolved from the super class. So, the modifier must at
+      // least be protected when searching in the super class scope
+      AccessModifier modifierForSuperClass = (modifier == PRIVATE) ? PROTECTED : modifier;
+
+      resolvedSymbol = superClass.getSpannedScope().resolve(name, kind, modifierForSuperClass);
+    }
     return resolvedSymbol;
   }
 

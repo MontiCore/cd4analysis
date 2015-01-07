@@ -71,42 +71,42 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDClass astClass) {
-    CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
+    CDTypeSymbol typeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
 
     if (astClass.getSuperclasses() != null) {
       CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(astClass.getSuperclasses());
-      cdTypeSymbol.setSuperClass(superClassSymbol);
+      typeSymbol.setSuperClass(superClassSymbol);
     }
 
     final ASTModifier astModifier = astClass.getModifier();
 
-    setModifiersOfType(cdTypeSymbol, astModifier);
+    setModifiersOfType(typeSymbol, astModifier);
 
-    addInterfacesToType(cdTypeSymbol, astClass.getInterfaces());
+    addInterfacesToType(typeSymbol, astClass.getInterfaces());
 
-    defineInScope(cdTypeSymbol);
-    addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
+    defineInScope(typeSymbol);
+    addScopeToStackAndSetEnclosingIfExists(typeSymbol);
   }
 
-  private void setModifiersOfType(CDTypeSymbol cdTypeSymbol, ASTModifier astModifier) {
+  private void setModifiersOfType(CDTypeSymbol typeSymbol, ASTModifier astModifier) {
     if (astModifier != null) {
-      cdTypeSymbol.setAbstract(astModifier.isAbstract());
+      typeSymbol.setAbstract(astModifier.isAbstract());
 
       if (astModifier.isProtected()) {
-        cdTypeSymbol.setProtected();
+        typeSymbol.setProtected();
       }
       else if (astModifier.isPrivate()) {
-        cdTypeSymbol.setPrivate();
+        typeSymbol.setPrivate();
       } else {
         // public is default
-        cdTypeSymbol.setPublic();
+        typeSymbol.setPublic();
       }
 
       if (astModifier.getStereotype() != null) {
         for (ASTStereoValue stereoValue : astModifier.getStereotype().getValues()) {
           // TODO PN value and name are always the same. Is this ok?
           Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
-          cdTypeSymbol.addStereotype(stereotype);
+          typeSymbol.addStereotype(stereotype);
         }
       }
     }
@@ -128,23 +128,33 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     String typeName = "TODO_Type"; // TODO PN use TypePrinter for astAttribute.getType() instead
     CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope().get());
 
-    CDFieldSymbol field = new CDFieldSymbol(astAttribute.getName(), typeReference);
+    CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
 
     if (astAttribute.getModifier() != null) {
       final ASTModifier astModifier = astAttribute.getModifier();
 
-      field.setDerived(astModifier.isDerived());
+      fieldSymbol.setDerived(astModifier.isDerived());
+
+      if (astModifier.isProtected()) {
+        fieldSymbol.setProtected();
+      }
+      else if (astModifier.isPrivate()) {
+        fieldSymbol.setPrivate();
+      } else {
+        // public is default
+        fieldSymbol.setPublic();
+      }
 
       if (astModifier.getStereotype() != null) {
         for (ASTStereoValue stereoValue : astModifier.getStereotype().getValues()) {
           // TODO PN value and name are always the same. Is this ok?
           Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
-          field.addStereotype(stereotype);
+          fieldSymbol.addStereotype(stereotype);
         }
       }
     }
 
-    defineInScope(field);
+    defineInScope(fieldSymbol);
   }
 
   public void endVisit(ASTCDClass astClass) {
@@ -152,28 +162,28 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDInterface astInterface) {
-    CDTypeSymbol cdTypeSymbol = new CDTypeSymbol(packageName + "." + astInterface.getName());
-    cdTypeSymbol.setInterface(true);
+    CDTypeSymbol typeSymbol = new CDTypeSymbol(packageName + "." + astInterface.getName());
+    typeSymbol.setInterface(true);
     // Interfaces are always abstract
-    cdTypeSymbol.setAbstract(true);
+    typeSymbol.setAbstract(true);
 
-    addInterfacesToType(cdTypeSymbol, astInterface.getInterfaces());
-    setModifiersOfType(cdTypeSymbol, astInterface.getModifier());
+    addInterfacesToType(typeSymbol, astInterface.getInterfaces());
+    setModifiersOfType(typeSymbol, astInterface.getModifier());
 
     // Interfaces are always abstract
-    cdTypeSymbol.setAbstract(true);
+    typeSymbol.setAbstract(true);
 
 
-    defineInScope(cdTypeSymbol);
-    addScopeToStackAndSetEnclosingIfExists(cdTypeSymbol);
+    defineInScope(typeSymbol);
+    addScopeToStackAndSetEnclosingIfExists(typeSymbol);
   }
 
-  private void addInterfacesToType(CDTypeSymbol cdTypeSymbol, ASTReferenceTypeList interfaces) {
+  private void addInterfacesToType(CDTypeSymbol typeSymbol, ASTReferenceTypeList interfaces) {
     if (interfaces != null) {
       for (ASTReferenceType superInterface : interfaces) {
         CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference
             (superInterface);
-        cdTypeSymbol.addInterface(superInterfaceSymbol);
+        typeSymbol.addInterface(superInterfaceSymbol);
       }
     }
   }

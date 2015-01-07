@@ -6,12 +6,14 @@ import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.CompilationUnitScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.resolving.DefaultResolver;
 import org.junit.Test;
 
 import java.io.IOException;
 
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
 import static org.junit.Assert.*;
 
 public class CD4AnalysisSymbolTableCreatorTest {
@@ -49,8 +51,13 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
     assertEquals("cd4analysis.symboltable.CD1.Person", personType.getName());
     assertTrue(personType.isPublic());
-    assertEquals(1, personType.getFields().size());
+    assertEquals(3, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
+    assertTrue(personType.getField("name").get().isPublic());
+    assertEquals("secondName", personType.getField("secondName").get().getName());
+    assertTrue(personType.getField("secondName").get().isPrivate());
+    assertEquals("age", personType.getField("age").get().getName());
+    assertTrue(personType.getField("age").get().isProtected());
     // Stereotypes
     assertEquals(2, personType.getStereotypes().size());
     assertEquals("S1", personType.getStereotype("S1").get().getName());
@@ -80,13 +87,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1.Printable", profType.getInterfaces().get(0).getName());
     assertEquals("cd4analysis.symboltable.CD1.Callable", profType.getInterfaces().get(1).getName());
     assertEquals(3, profType.getSuperTypes().size());
-
-    // Resolve field from super class
-    CDFieldSymbol fieldOfSuper = profType.getSpannedScope().<CDFieldSymbol>resolve("name", CDFieldSymbol.KIND).orNull();
-    assertNotNull(fieldOfSuper);
-    assertSame(personType.getField("name").get(), fieldOfSuper);
-    assertFalse(profType.getField("name").isPresent());
-
 
     CDTypeSymbol printableType = topScope.<CDTypeSymbol>resolve("Printable", CDTypeSymbol.KIND)
         .orNull();
@@ -155,22 +155,41 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Modifier Test //
 
-
     // Class is public
-    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, BasicAccessModifier.PUBLIC).isPresent());
-    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, BasicAccessModifier.PROTECTED).isPresent());
-    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, BasicAccessModifier.PRIVATE).isPresent());
+    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, PUBLIC).isPresent());
+    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, PROTECTED)
+        .isPresent());
+    assertTrue(topScope.resolve("Person", CDTypeSymbol.KIND, PRIVATE).isPresent());
 
     // Prof is private
-    assertFalse(topScope.resolve("Prof", CDTypeSymbol.KIND, BasicAccessModifier.PUBLIC).isPresent());
-    assertFalse(topScope.resolve("Prof", CDTypeSymbol.KIND, BasicAccessModifier.PROTECTED).isPresent());
-    assertTrue(topScope.resolve("Prof", CDTypeSymbol.KIND, BasicAccessModifier.PRIVATE).isPresent());
+    assertFalse(topScope.resolve("Prof", CDTypeSymbol.KIND, PUBLIC).isPresent());
+    assertFalse(topScope.resolve("Prof", CDTypeSymbol.KIND, PROTECTED).isPresent());
+    assertTrue(topScope.resolve("Prof", CDTypeSymbol.KIND, PRIVATE).isPresent());
 
     // Printable is protected
-    assertFalse(topScope.resolve("Printable", CDTypeSymbol.KIND, BasicAccessModifier.PUBLIC)
+    assertFalse(topScope.resolve("Printable", CDTypeSymbol.KIND, PUBLIC)
         .isPresent());
-    assertTrue(topScope.resolve("Printable", CDTypeSymbol.KIND, BasicAccessModifier.PROTECTED).isPresent());
-    assertTrue(topScope.resolve("Printable", CDTypeSymbol.KIND, BasicAccessModifier.PRIVATE).isPresent());
+    assertTrue(topScope.resolve("Printable", CDTypeSymbol.KIND, PROTECTED).isPresent());
+    assertTrue(topScope.resolve("Printable", CDTypeSymbol.KIND, PRIVATE).isPresent());
+
+
+    // Resolve fields from super class //
+    // public fields can be resolved
+    assertTrue(profType.getSpannedScope().<CDFieldSymbol>resolve("name", CDFieldSymbol.KIND).isPresent());
+    assertFalse(profType.getField("name").isPresent());
+
+    // protected fields can be resolved
+    assertTrue(profType.getSpannedScope().<CDFieldSymbol>resolve("age", CDFieldSymbol.KIND).isPresent());
+    assertFalse(profType.getField("age").isPresent());
+
+    // private fields CANNOT be resolved...
+    assertFalse(profType.getSpannedScope().<CDFieldSymbol>resolve("secondName", CDFieldSymbol.KIND).isPresent());
+    // ... even if resolving with the private access modifier.
+    assertFalse(profType.getSpannedScope().<CDFieldSymbol>resolve("secondName", CDFieldSymbol.KIND, PRIVATE).isPresent());
+    assertFalse(profType.getField("secondName").isPresent());
+
+
+
 
   }
   

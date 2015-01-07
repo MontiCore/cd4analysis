@@ -3,6 +3,7 @@ package cd4analysis.symboltable;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.AbstractSymbol;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,6 +112,31 @@ public class CDFieldSymbol extends AbstractSymbol {
   public void addStereotype(Stereotype stereotype) {
     this.stereotypes.add(stereotype);
   }
+
+  public void setPrivate() {
+    setAccessModifier(BasicAccessModifier.PRIVATE);
+  }
+
+  public void setProtected() {
+    setAccessModifier(BasicAccessModifier.PROTECTED);
+  }
+
+  public void setPublic() {
+    setAccessModifier(BasicAccessModifier.PUBLIC);
+  }
+
+  public boolean isPrivate() {
+    return getAccessModifier() == BasicAccessModifier.PRIVATE;
+  }
+
+  public boolean isProtected() {
+    return getAccessModifier() == BasicAccessModifier.PROTECTED;
+  }
+
+  public boolean isPublic() {
+    return getAccessModifier() == BasicAccessModifier.PUBLIC;
+  }
+
 
   @Override
   public String toString() {
