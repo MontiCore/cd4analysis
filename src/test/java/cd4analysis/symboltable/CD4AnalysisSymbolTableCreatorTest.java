@@ -75,13 +75,17 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("S1", personType.getStereotype("S1").get().getValue());
     assertEquals("S2", personType.getStereotype("S2").get().getValue());
     // Methods
+    assertEquals(2, personType.getMethods().size());
     CDMethodSymbol getNameMethod = personType.getMethod("getName").orNull();
     assertNotNull(getNameMethod);
     assertEquals("getName", getNameMethod.getName());
     assertTrue(getNameMethod.isPublic());
     assertFalse(getNameMethod.isConstructor());
     assertFalse(getNameMethod.isFinal());
+    assertFalse(getNameMethod.isAbstract());
     assertEquals(0, getNameMethod.getParameters().size());
+    assertTrue(personType.getMethod("getAge").isPresent());
+    assertTrue(personType.getMethod("getAge").get().isPrivate());
 
 
     CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
@@ -108,6 +112,15 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1.Printable", printableType.getName());
     assertTrue(printableType.isInterface());
     assertTrue(printableType.isProtected());
+    // Methods
+    CDMethodSymbol printMethod = printableType.getMethod("print").orNull();
+    assertNotNull(printMethod);
+    assertEquals("print", printMethod.getName());
+    assertTrue(printMethod.isProtected());
+    assertFalse(printMethod.isConstructor());
+    assertFalse(printMethod.isFinal());
+    assertTrue(printMethod.isAbstract());
+    assertEquals(0, printMethod.getParameters().size());
 
     CDTypeSymbol callableType = topScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)
         .orNull();
@@ -189,22 +202,35 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Resolve fields from super class //
     // public fields can be resolved
-    assertTrue(profType.getSpannedScope().<CDFieldSymbol>resolve("name", CDFieldSymbol.KIND).isPresent());
+    assertTrue(profType.getSpannedScope().resolve("name", CDFieldSymbol.KIND).isPresent());
     assertFalse(profType.getField("name").isPresent());
 
     // protected fields can be resolved
-    assertTrue(profType.getSpannedScope().<CDFieldSymbol>resolve("age", CDFieldSymbol.KIND).isPresent());
+    assertTrue(profType.getSpannedScope().resolve("age", CDFieldSymbol.KIND).isPresent());
     assertFalse(profType.getField("age").isPresent());
 
     // private fields CANNOT be resolved...
-    assertFalse(profType.getSpannedScope().<CDFieldSymbol>resolve("secondName", CDFieldSymbol.KIND).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("secondName", CDFieldSymbol.KIND).isPresent());
     // ... even if resolving with the private access modifier.
-    assertFalse(profType.getSpannedScope().<CDFieldSymbol>resolve("secondName", CDFieldSymbol.KIND, PRIVATE).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("secondName", CDFieldSymbol.KIND, PRIVATE).isPresent());
     assertFalse(profType.getField("secondName").isPresent());
 
+    // Resolve methods from super types //
+    // public methods can be resolved
+    assertTrue(profType.getSpannedScope().resolve("getName", CDMethodSymbol.KIND).isPresent());
+    assertSame(getNameMethod, profType.getSpannedScope().resolve("getName", CDMethodSymbol.KIND).get());
+    assertFalse(profType.getMethod("getName").isPresent());
 
+    // protected methods can be resolved
+    assertTrue(profType.getSpannedScope().resolve("print", CDMethodSymbol.KIND).isPresent());
+    assertSame(printMethod, profType.getSpannedScope().resolve("print", CDMethodSymbol.KIND).get());
+    assertFalse(profType.getMethod("print").isPresent());
 
-
+    // private methods CANNOT be resolved...
+    assertFalse(profType.getSpannedScope().resolve("getAge", CDMethodSymbol.KIND).isPresent());
+    // ... even if resolving with the private access modifier.
+    assertFalse(profType.getSpannedScope().resolve("getAge", CDMethodSymbol.KIND, PRIVATE).isPresent());
+    assertFalse(profType.getMethod("getAge").isPresent());
   }
   
 }

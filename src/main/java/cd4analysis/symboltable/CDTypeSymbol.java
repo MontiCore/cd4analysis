@@ -104,7 +104,7 @@ public class CDTypeSymbol extends TypeSymbol {
   public Optional<CDMethodSymbol> getMethod(String methodName) {
     checkArgument(!isNullOrEmpty(methodName));
 
-    Optional<CDMethodSymbol> method = getSpannedScope().resolve(methodName, CDMethodSymbol.KIND);
+    Optional<CDMethodSymbol> method = getSpannedScope().resolveLocally(methodName, CDMethodSymbol.KIND);
     if (method.isPresent() && !method.get().isConstructor()) {
       return method;
     }

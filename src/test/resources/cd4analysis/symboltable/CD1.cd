@@ -7,6 +7,7 @@ classdiagram CD1 {
      private String secondName;
 
      String getName();
+     private int getAge();
   }
 
   protected interface Printable {

@@ -25,10 +25,6 @@ public class CDTypeScope extends BaseScope {
     super(enclosingScope, true);
   }
 
-  public CDTypeScope() {
-    this(Optional.absent());
-  }
-
   @Override
   public void setSpanningSymbol(ScopeSpanningSymbol symbol) {
     checkArgument(symbol instanceof CDTypeSymbol);
@@ -41,8 +37,8 @@ public class CDTypeScope extends BaseScope {
 
 
     if (!resolvedSymbol.isPresent()) {
-      // To resolve symbols of super class, they must at least be protected.
-      resolvedSymbol = resolveInSuperClass(name, kind, PROTECTED);
+      // To resolve symbols of super types, they must at least be protected.
+      resolvedSymbol = resolveInSuperTypes(name, kind, PROTECTED);
     }
 
     return resolvedSymbol;
@@ -53,34 +49,55 @@ public class CDTypeScope extends BaseScope {
     Optional<T> resolvedSymbol = super.resolve(name, kind, modifier);
 
     if (!resolvedSymbol.isPresent()) {
-      resolvedSymbol = resolveInSuperClass(name, kind, modifier);
+      resolvedSymbol = resolveInSuperTypes(name, kind, modifier);
     }
 
     return resolvedSymbol;
   }
 
-  private <T extends Symbol> Optional<T> resolveInSuperClass(String name, SymbolKind kind, AccessModifier modifier) {
+  private <T extends Symbol> Optional<T> resolveInSuperTypes(String name, SymbolKind kind, AccessModifier modifier) {
     Optional<T> resolvedSymbol = Optional.absent();
 
     CDTypeSymbol spanningSymbol = (CDTypeSymbol) getSpanningSymbol().get();
-    CDTypeSymbol superClass = spanningSymbol.getSuperClass().orNull();
 
-    if (superClass != null) {
-      Log.trace("Continue in scope of super class " + superClass.getName(), CDTypeScope.class
-          .getSimpleName());
-      // Private symbols cannot be resolved from the super class. So, the modifier must at
-      // least be protected when searching in the super class scope
-      AccessModifier modifierForSuperClass = (modifier == PRIVATE) ? PROTECTED : modifier;
-
-      resolvedSymbol = superClass.getSpannedScope().resolve(name, kind, modifierForSuperClass);
+    // resolve in super class
+    if (spanningSymbol.getSuperClass().isPresent()) {
+      resolvedSymbol = resolveInSuperType(name, kind, modifier, spanningSymbol.getSuperClass().get());
     }
+
+    // resolve in interfaces
+    if (!resolvedSymbol.isPresent()) {
+      for (CDTypeSymbol interfaze : spanningSymbol.getInterfaces()) {
+        resolvedSymbol = resolveInSuperType(name, kind, modifier, interfaze);
+
+        // Stop as soon as symbol is found in an interface. Note that the other option is to
+        // search in all interfaces and throw an ambiguous exception if more than one symbol is
+        // found. => TODO PN discuss it!
+        if (resolvedSymbol.isPresent()) {
+          break;
+        }
+      }
+    }
+
     return resolvedSymbol;
+  }
+
+  private <T extends Symbol> Optional<T> resolveInSuperType(String name, SymbolKind kind,
+      AccessModifier modifier, CDTypeSymbol superType) {
+
+    Log.trace("Continue in scope of super class " + superType.getName(), CDTypeScope.class.getSimpleName());
+    // Private symbols cannot be resolved from the super class. So, the modifier must at
+    // least be protected when searching in the super class scope
+    AccessModifier modifierForSuperClass = (modifier == PRIVATE) ? PROTECTED : modifier;
+
+    return superType.getSpannedScope().resolve(name, kind, modifierForSuperClass);
   }
 
   @Override
   public Optional<? extends Symbol> resolve(SymbolPredicate predicate) {
     Optional<? extends Symbol> resolvedSymbol = super.resolve(predicate);
 
+    // TODO PN resolve in super types?
 
     if (!resolvedSymbol.isPresent()) {
       CDTypeSymbol spanningSymbol = (CDTypeSymbol) getSpanningSymbol().get();
