@@ -11,7 +11,7 @@ classdiagram CD1 {
   }
 
   protected interface Printable {
-    protected void print();
+    protected void print(String... s);
   }
 
   interface Callable extends Printable;

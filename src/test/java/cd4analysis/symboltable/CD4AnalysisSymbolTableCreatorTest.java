@@ -75,6 +75,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("S1", personType.getStereotype("S1").get().getValue());
     assertEquals("S2", personType.getStereotype("S2").get().getValue());
     // Methods
+    // TODO PN test return type and exception type of methods
     assertEquals(2, personType.getMethods().size());
     CDMethodSymbol setNameMethod = personType.getMethod("setName").orNull();
     assertNotNull(setNameMethod);
@@ -84,6 +85,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(setNameMethod.isConstructor());
     assertFalse(setNameMethod.isFinal());
     assertFalse(setNameMethod.isAbstract());
+    assertFalse(setNameMethod.isEllipsisParameterMethod());
     // Parameters
     assertEquals(2, setNameMethod.getParameters().size());
     assertEquals("name", setNameMethod.getParameters().get(0).getName());
@@ -128,7 +130,10 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(printMethod.isConstructor());
     assertFalse(printMethod.isFinal());
     assertTrue(printMethod.isAbstract());
-    assertEquals(0, printMethod.getParameters().size());
+    assertTrue(printMethod.isEllipsisParameterMethod());
+    assertEquals(1, printMethod.getParameters().size());
+    assertEquals("s", printMethod.getParameters().get(0).getName());
+
 
     CDTypeSymbol callableType = topScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)
         .orNull();
