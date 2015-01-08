@@ -322,60 +322,63 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDMethod cdMethod) {
-    CDMethodSymbol methodEntry = new CDMethodSymbol(cdMethod.getName());
+    CDMethodSymbol methodSymbol = new CDMethodSymbol(cdMethod.getName());
 
     // Modifier
     final ASTModifier astModifier = cdMethod.getModifier();
     if (astModifier != null) {
-      methodEntry.setAbstract(astModifier.isAbstract());
-      methodEntry.setStatic(astModifier.isStatic());
-      methodEntry.setFinal(astModifier.isFinal());
+      methodSymbol.setAbstract(astModifier.isAbstract());
+      methodSymbol.setStatic(astModifier.isStatic());
+      methodSymbol.setFinal(astModifier.isFinal());
 
       if (astModifier.isPrivate()) {
-        methodEntry.setPrivate();
+        methodSymbol.setPrivate();
       }
       else if(astModifier.isProtected()) {
-        methodEntry.setProtected();
+        methodSymbol.setProtected();
       }
       else {
-        methodEntry.setPublic();
+        methodSymbol.setPublic();
       }
 
-      addStereotypes(methodEntry, astModifier.getStereotype());
+      addStereotypes(methodSymbol, astModifier.getStereotype());
     }
 
     // TODO PN use ASTTypesConverter
-    CDTypeSymbolReference returnEntry = new CDTypeSymbolReference("TODO_RETURN_TYPE",
+    CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference("TODO_RETURN_TYPE",
         currentScope().get());
     /*ASTTypesConverter
     .astReturnTypeToTypeEntry
         (CDTypeEntryCreator.getInstance(), cdMethod.getReturnType());
-    if (returnEntry == null) {
+    if (returnSymbol == null) {
       delegator.addErrorToCurrentResource("Return type couldn't be converted: " + ASTTypesConverter.astReturnTypeToString(cdMethod.getReturnType()));
     }
     else {*/
-      methodEntry.setReturnType(returnEntry);
+      methodSymbol.setReturnType(returnSymbol);
     //}
 
     // Parameters
     if (cdMethod.getCDParameters() != null) {
-      CDTypeSymbolReference paramTypeEntry;
+      CDTypeSymbolReference paramTypeSymbol;
 
       for (ASTCDParameter astParameter : cdMethod.getCDParameters()) {
         String paramName = astParameter.getName();
         // TODO PN use ASTTypesConverter
-        //paramTypeEntry = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // astParameter.getType());
-        paramTypeEntry = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
+        //paramTypeSymbol = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // astParameter.getType());
+        paramTypeSymbol = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
         if (astParameter.isEllipsis()) {
-          methodEntry.setEllipsisParameterMethod(true);
+          methodSymbol.setEllipsisParameterMethod(true);
           // ellipsis parameters are (like) arrays
           // TODO: Ist das so?
-          // paramTypeEntry = CDTypeEntryCreator.getInstance().create(paramTypeEntry, 1);
+          // paramTypeSymbol = CDTypeEntryCreator.getInstance().create(paramTypeSymbol, 1);
         }
 
-        CDAttributeSymbol parameterSymbol = new CDAttributeSymbol(paramName, paramTypeEntry);
+        CDAttributeSymbol parameterSymbol = new CDAttributeSymbol(paramName, paramTypeSymbol);
         parameterSymbol.setParameter(true);
-        methodEntry.addParameter(parameterSymbol);
+        // Parameters are always private
+        parameterSymbol.setPrivate();
+
+        methodSymbol.addParameter(parameterSymbol);
       }
     }
 
@@ -383,7 +386,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     if (cdMethod.getExceptions() != null) {
       for (ASTQualifiedName exceptionName : cdMethod.getExceptions()) {
         CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(), currentScope().get());
-        methodEntry.addException(exception);
+        methodSymbol.addException(exception);
       }
     }
 
@@ -392,26 +395,26 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     if (currentSymbol().isPresent()) {
       if (currentSymbol().get() instanceof CDTypeSymbol) {
         CDTypeSymbol definingType = (CDTypeSymbol) currentSymbol().get();
-        methodEntry.setDefiningType(definingType);
+        methodSymbol.setDefiningType(definingType);
 
         if (definingType.isInterface()) {
-          methodEntry.setAbstract(true);
+          methodSymbol.setAbstract(true);
         }
       }
     }
 
-    defineInScope(methodEntry);
-    addScopeToStackAndSetEnclosingIfExists(methodEntry);
+    defineInScope(methodSymbol);
+    addScopeToStackAndSetEnclosingIfExists(methodSymbol);
   }
 
   public void endVisit(ASTCDMethod astMethod) {
     removeCurrentScope();
   }
 
-  private void addStereotypes(CDMethodSymbol methodEntry, ASTStereotype astStereotype) {
+  private void addStereotypes(CDMethodSymbol methodSymbol, ASTStereotype astStereotype) {
     if (astStereotype != null) {
       for (ASTStereoValue val : astStereotype.getValues()) {
-        methodEntry.addStereotype(new Stereotype(val.getName(), val.getName()));
+        methodSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
       }
     }
   }

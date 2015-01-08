@@ -79,13 +79,21 @@ public class CD4AnalysisSymbolTableCreatorTest {
     CDMethodSymbol setNameMethod = personType.getMethod("setName").orNull();
     assertNotNull(setNameMethod);
     assertEquals("setName", setNameMethod.getName());
+    assertSame(personType, setNameMethod.getDefiningType());
     assertTrue(setNameMethod.isPublic());
     assertFalse(setNameMethod.isConstructor());
     assertFalse(setNameMethod.isFinal());
     assertFalse(setNameMethod.isAbstract());
-    assertEquals(1, setNameMethod.getParameters().size());
+    // Parameters
+    assertEquals(2, setNameMethod.getParameters().size());
+    assertEquals("name", setNameMethod.getParameters().get(0).getName());
+    assertTrue(setNameMethod.getParameters().get(0).isParameter());
+    assertEquals("prefix", setNameMethod.getParameters().get(1).getName());
+    assertTrue(setNameMethod.getParameters().get(1).isParameter());
+
     assertTrue(personType.getMethod("getAge").isPresent());
     assertTrue(personType.getMethod("getAge").get().isPrivate());
+    assertEquals(0, personType.getMethod("getAge").get().getParameters().size());
 
 
     CDTypeSymbol profType = topScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
