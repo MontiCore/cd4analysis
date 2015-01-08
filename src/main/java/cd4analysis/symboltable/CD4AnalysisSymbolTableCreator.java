@@ -65,7 +65,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void endVisit(ASTCDDefinition cdDefinition) {
-    cdDefinition.getCDAssociations().forEach(this::visitAssociationSymbol);
+    cdDefinition.getCDAssociations().forEach(this::handleAssociation);
   }
 
   public void visit(ASTCDClass astClass) {
@@ -220,105 +220,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
 
-  private void visitAssociationSymbol(ASTCDAssociation cdAssoc) {
-    // TODO PN check if all association cardinalities are set correctly.
-    if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
-      CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
-              .getLeftReferenceName(),
-          cdAssoc.getRightReferenceName());
 
-      if (assocLeft2RightSymbol != null) {
-        if (cdAssoc.isComposition()) {
-          assocLeft2RightSymbol.setRelationship(Relationship.COMPOSITE);
-        }
-
-        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc
-            .getRightCardinality()));
-        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc
-            .getLeftCardinality()));
-        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole());
-        if (cdAssoc.getRightModifier() != null) {
-          addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().getStereotype());
-        }
-        ASTCDQualifier qualifier = cdAssoc.getLeftQualifier();
-        if (qualifier != null) {
-          if ((qualifier.getName() != null) && (!qualifier.getName().equals(""))) {
-            assocLeft2RightSymbol.setQualifier(qualifier.getName());
-          }
-          else if (qualifier.getType() != null) {
-            // TODO PN get type
-//            assocLeft2RightSymbol.setQualifier(qualifier.printType());
-            assocLeft2RightSymbol.setQualifier("TODO_QUALIFIER_TYPE");
-          }
-        }
-        assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
-      }
-    }
-
-    if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
-      CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
-          .getRightReferenceName(), cdAssoc.getLeftReferenceName());
-      // complete association properties
-      if (assocRight2LeftSymbol != null) {
-        if (cdAssoc.isComposition()) {
-          assocRight2LeftSymbol.setRelationship(Relationship.PART);
-        }
-        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality()));
-        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality()));
-        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole());
-        if (cdAssoc.getLeftModifier() != null) {
-          addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().getStereotype());
-        }
-        ASTCDQualifier qualifier = cdAssoc.getRightQualifier();
-        if (qualifier != null) {
-          if ((qualifier.getName() != null) && (qualifier.getName().equals(""))) {
-            assocRight2LeftSymbol.setQualifier(qualifier.getName());
-          }
-          else if (qualifier.getType() != null) {
-            // TODO PN get type
-//            assocRight2LeftSymbol.setQualifier(qualifier.printType());
-            assocRight2LeftSymbol.setQualifier("TODO_QUALIFIER_TYPE");
-          }
-        }
-        assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
-      }
-    }
-  }
-
-  private CDAssociationSymbol createAssociationSymbol(ASTCDAssociation cdAssoc, ASTQualifiedName
-      sourceName, ASTQualifiedName targetName) {
-    CDTypeSymbolReference sourceType = new CDTypeSymbolReference(Names.getQualifiedName(
-        sourceName.getParts()), currentScope().get());
-
-    CDTypeSymbolReference targetType = new CDTypeSymbolReference(Names.getQualifiedName(
-        targetName.getParts()), currentScope().get());
-
-    CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
-
-    associationSymbol.setAssocName(cdAssoc.getName());
-
-    addStereotypes(associationSymbol, cdAssoc.getStereotype());
-
-    if ((sourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(sourceName.getParts())))) {
-      Log.error("0xU0270 Association referenced type " + sourceName + " wasn't declared in the "
-          + "class diagram " + packageName + ". Pos: " + cdAssoc.get_SourcePositionStart());
-      return null;
-    }
-
-    sourceType.addAssociation(associationSymbol);
-
-    defineInScope(associationSymbol);
-
-    return associationSymbol;
-  }
-
-  private void addStereotypes(CDAssociationSymbol associationSymbol, ASTStereotype astStereotype) {
-    if (astStereotype != null) {
-      for (ASTStereoValue val : astStereotype.getValues()) {
-        associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
-      }
-    }
-  }
 
   public void visit(ASTCDMethod cdMethod) {
     CDMethodSymbol methodSymbol = new CDMethodSymbol(cdMethod.getName());
@@ -424,6 +326,113 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         if (definingType.isInterface()) {
           methodSymbol.setAbstract(true);
         }
+      }
+    }
+  }
+
+  private void handleAssociation(ASTCDAssociation cdAssoc) {
+    // TODO PN check if all association cardinalities are set correctly.
+    handleLeftToRightAssociation(cdAssoc);
+    handleRightToLeftAssociation(cdAssoc);
+  }
+
+  private void handleRightToLeftAssociation(ASTCDAssociation cdAssoc) {
+    if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
+      CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
+          .getRightReferenceName(), cdAssoc.getLeftReferenceName());
+      // complete association properties
+      if (assocRight2LeftSymbol != null) {
+        if (cdAssoc.isComposition()) {
+          assocRight2LeftSymbol.setRelationship(Relationship.PART);
+        }
+        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc
+            .getLeftCardinality()));
+        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality()));
+        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole());
+        if (cdAssoc.getLeftModifier() != null) {
+          addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().getStereotype());
+        }
+        ASTCDQualifier qualifier = cdAssoc.getRightQualifier();
+        if (qualifier != null) {
+          if ((qualifier.getName() != null) && (qualifier.getName().equals(""))) {
+            assocRight2LeftSymbol.setQualifier(qualifier.getName());
+          }
+          else if (qualifier.getType() != null) {
+            // TODO PN get type
+            //            assocRight2LeftSymbol.setQualifier(qualifier.printType());
+            assocRight2LeftSymbol.setQualifier("TODO_QUALIFIER_TYPE");
+          }
+        }
+        assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
+      }
+    }
+  }
+
+  private void handleLeftToRightAssociation(ASTCDAssociation cdAssoc) {
+    if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
+      CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc.getLeftReferenceName(),
+          cdAssoc.getRightReferenceName());
+
+      if (assocLeft2RightSymbol != null) {
+        if (cdAssoc.isComposition()) {
+          assocLeft2RightSymbol.setRelationship(Relationship.COMPOSITE);
+        }
+
+        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc
+            .getRightCardinality()));
+        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality()));
+        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole());
+        if (cdAssoc.getRightModifier() != null) {
+          addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().getStereotype());
+        }
+
+        ASTCDQualifier qualifier = cdAssoc.getLeftQualifier();
+        if (qualifier != null) {
+          if ((qualifier.getName() != null) && (!qualifier.getName().equals(""))) {
+            assocLeft2RightSymbol.setQualifier(qualifier.getName());
+          }
+          else if (qualifier.getType() != null) {
+            // TODO PN get type
+            //            assocLeft2RightSymbol.setQualifier(qualifier.printType());
+            assocLeft2RightSymbol.setQualifier("TODO_QUALIFIER_TYPE");
+          }
+        }
+        assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
+      }
+    }
+  }
+
+  private CDAssociationSymbol createAssociationSymbol(ASTCDAssociation cdAssoc, ASTQualifiedName
+      sourceName, ASTQualifiedName targetName) {
+    CDTypeSymbolReference sourceType = new CDTypeSymbolReference(Names.getQualifiedName(
+        sourceName.getParts()), currentScope().get());
+
+    CDTypeSymbolReference targetType = new CDTypeSymbolReference(Names.getQualifiedName(
+        targetName.getParts()), currentScope().get());
+
+    CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
+
+    associationSymbol.setAssocName(cdAssoc.getName());
+
+    addStereotypes(associationSymbol, cdAssoc.getStereotype());
+
+    if ((sourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(sourceName.getParts())))) {
+      Log.error("0xU0270 Association referenced type " + sourceName + " wasn't declared in the "
+          + "class diagram " + packageName + ". Pos: " + cdAssoc.get_SourcePositionStart());
+      return null;
+    }
+
+    sourceType.addAssociation(associationSymbol);
+
+    defineInScope(associationSymbol);
+
+    return associationSymbol;
+  }
+
+  private void addStereotypes(CDAssociationSymbol associationSymbol, ASTStereotype astStereotype) {
+    if (astStereotype != null) {
+      for (ASTStereoValue val : astStereotype.getValues()) {
+        associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
       }
     }
   }
