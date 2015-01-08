@@ -162,35 +162,70 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
     // A -> B
-    CDAssociationSymbol left2RightAssocSymbol = topScope.<CDAssociationSymbol>resolve("prof",
+    CDAssociationSymbol memberAssocLeft2Right = topScope.<CDAssociationSymbol>resolve("prof",
         CDAssociationSymbol.KIND).orNull();
-    assertNotNull(left2RightAssocSymbol);
-    assertEquals("prof", left2RightAssocSymbol.getName());
-    assertEquals("member", left2RightAssocSymbol.getAssocName());
-    assertTrue(left2RightAssocSymbol.isBidirectional());
-    assertEquals(personType.getName(), left2RightAssocSymbol.getSourceType().getName());
-    assertEquals(profType.getName(), left2RightAssocSymbol.getTargetType().getName());
-    assertEquals(Cardinality.STAR, left2RightAssocSymbol.getSourceCardinality().getMax());
-    assertTrue(left2RightAssocSymbol.getSourceCardinality().isMultiple());
-    assertEquals(1, left2RightAssocSymbol.getTargetCardinality().getMax());
-    assertFalse(left2RightAssocSymbol.getTargetCardinality().isMultiple());
+    assertNotNull(memberAssocLeft2Right);
+    assertEquals("prof", memberAssocLeft2Right.getName());
+    assertEquals("member", memberAssocLeft2Right.getAssocName());
+    assertTrue(memberAssocLeft2Right.isBidirectional());
+    assertEquals(personType.getName(), memberAssocLeft2Right.getSourceType().getName());
+    assertEquals(profType.getName(), memberAssocLeft2Right.getTargetType().getName());
+    assertEquals(0, memberAssocLeft2Right.getSourceCardinality().getMin());
+    assertEquals(Cardinality.STAR, memberAssocLeft2Right.getSourceCardinality().getMax());
+    assertTrue(memberAssocLeft2Right.getSourceCardinality().isMultiple());
+    assertEquals(1, memberAssocLeft2Right.getTargetCardinality().getMin());
+    assertEquals(1, memberAssocLeft2Right.getTargetCardinality().getMax());
+    assertFalse(memberAssocLeft2Right.getTargetCardinality().isMultiple());
     // A <- B
-    CDAssociationSymbol right2LeftAssocSymbol = topScope.<CDAssociationSymbol>resolve("person",
+    CDAssociationSymbol memberAssocRight2Left = topScope.<CDAssociationSymbol>resolve("person",
         CDAssociationSymbol.KIND).orNull();
-    assertNotNull(right2LeftAssocSymbol);
-    assertEquals("person", right2LeftAssocSymbol.getName());
-    assertEquals("member", right2LeftAssocSymbol.getAssocName());
-    assertTrue(right2LeftAssocSymbol.isBidirectional());
-    assertEquals(profType.getName(), right2LeftAssocSymbol.getSourceType().getName());
-    assertEquals(personType.getName(), right2LeftAssocSymbol.getTargetType().getName());
-    assertEquals(1, right2LeftAssocSymbol.getSourceCardinality().getMax());
-    assertFalse(right2LeftAssocSymbol.getSourceCardinality().isMultiple());
-    assertEquals(Cardinality.STAR, right2LeftAssocSymbol.getTargetCardinality().getMax());
-    assertTrue(right2LeftAssocSymbol.getTargetCardinality().isMultiple());
+    assertNotNull(memberAssocRight2Left);
+    assertEquals("person", memberAssocRight2Left.getName());
+    assertEquals("member", memberAssocRight2Left.getAssocName());
+    assertTrue(memberAssocRight2Left.isBidirectional());
+    assertEquals(profType.getName(), memberAssocRight2Left.getSourceType().getName());
+    assertEquals(personType.getName(), memberAssocRight2Left.getTargetType().getName());
+    assertEquals(1, memberAssocRight2Left.getSourceCardinality().getMin());
+    assertEquals(1, memberAssocRight2Left.getSourceCardinality().getMax());
+    assertFalse(memberAssocRight2Left.getSourceCardinality().isMultiple());
+    assertEquals(0, memberAssocRight2Left.getTargetCardinality().getMin());
+    assertEquals(Cardinality.STAR, memberAssocRight2Left.getTargetCardinality().getMax());
+    assertTrue(memberAssocRight2Left.getTargetCardinality().isMultiple());
     // Stereotype
-    assertEquals(1, right2LeftAssocSymbol.getStereotypes().size());
-    assertEquals("SA", right2LeftAssocSymbol.getStereotype("SA").get().getValue());
-    assertEquals("SA", right2LeftAssocSymbol.getStereotype("SA").get().getName());
+    assertEquals(1, memberAssocRight2Left.getStereotypes().size());
+    assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getValue());
+    assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getName());
+
+    // A -> B
+    CDAssociationSymbol ecAssocLeft2Right = topScope.<CDAssociationSymbol>resolve("callable",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(ecAssocLeft2Right);
+    assertEquals("callable", ecAssocLeft2Right.getName());
+    assertEquals("ec", ecAssocLeft2Right.getAssocName());
+    assertTrue(ecAssocLeft2Right.isBidirectional());
+    assertEquals("cd4analysis.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getName());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getName());
+    assertEquals(1, ecAssocLeft2Right.getSourceCardinality().getMin());
+    assertEquals(Cardinality.STAR, ecAssocLeft2Right.getSourceCardinality().getMax());
+    assertTrue(ecAssocLeft2Right.getSourceCardinality().isMultiple());
+    assertEquals(0, ecAssocLeft2Right.getTargetCardinality().getMin());
+    assertEquals(1, ecAssocLeft2Right.getTargetCardinality().getMax());
+    assertFalse(ecAssocLeft2Right.getTargetCardinality().isMultiple());
+    // A <- B
+    CDAssociationSymbol ecAssocRight2Left = topScope.<CDAssociationSymbol>resolve("e",
+        CDAssociationSymbol.KIND).orNull();
+    assertNotNull(ecAssocRight2Left);
+    assertEquals("e", ecAssocRight2Left.getName());
+    assertEquals("ec", ecAssocRight2Left.getAssocName());
+    assertTrue(ecAssocRight2Left.isBidirectional());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getName());
+    assertEquals("cd4analysis.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getName());
+    assertEquals(0, ecAssocRight2Left.getSourceCardinality().getMin());
+    assertEquals(1, ecAssocRight2Left.getSourceCardinality().getMax());
+    assertFalse(ecAssocRight2Left.getSourceCardinality().isMultiple());
+    assertEquals(1, ecAssocRight2Left.getTargetCardinality().getMin());
+    assertEquals(Cardinality.STAR, ecAssocRight2Left.getTargetCardinality().getMax());
+    assertTrue(ecAssocRight2Left.getTargetCardinality().isMultiple());
 
 
     // Modifier Test //

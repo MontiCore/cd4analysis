@@ -60,7 +60,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     removeCurrentScope();
   }
 
-  public void visit(ASTCDDefinition cdDefinition) {
+  public void visit(ASTCDDefinition astDefinition) {
     // nothing to do here...
   }
 
@@ -179,9 +179,9 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     addScopeToStackAndSetEnclosingIfExists(typeSymbol);
   }
 
-  private void addInterfacesToType(CDTypeSymbol typeSymbol, ASTReferenceTypeList interfaces) {
-    if (interfaces != null) {
-      for (ASTReferenceType superInterface : interfaces) {
+  private void addInterfacesToType(CDTypeSymbol typeSymbol, ASTReferenceTypeList astInterfaces) {
+    if (astInterfaces != null) {
+      for (ASTReferenceType superInterface : astInterfaces) {
         CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
         typeSymbol.addInterface(superInterfaceSymbol);
       }
@@ -220,15 +220,13 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
 
+  public void visit(ASTCDMethod astMethod) {
+    CDMethodSymbol methodSymbol = new CDMethodSymbol(astMethod.getName());
 
-
-  public void visit(ASTCDMethod cdMethod) {
-    CDMethodSymbol methodSymbol = new CDMethodSymbol(cdMethod.getName());
-
-    setModifiersOfMethod(methodSymbol, cdMethod.getModifier());
-    setParametersOfMethod(methodSymbol, cdMethod);
+    setModifiersOfMethod(methodSymbol, astMethod.getModifier());
+    setParametersOfMethod(methodSymbol, astMethod);
     setReturnTypeOfMethod(methodSymbol);
-    setExceptionsOfMethod(cdMethod, methodSymbol);
+    setExceptionsOfMethod(methodSymbol, astMethod);
     setDefiningTypeOfMethod(methodSymbol);
 
     defineInScope(methodSymbol);
@@ -308,9 +306,9 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     //}
   }
 
-  private void setExceptionsOfMethod(ASTCDMethod cdMethod, CDMethodSymbol methodSymbol) {
-    if (cdMethod.getExceptions() != null) {
-      for (ASTQualifiedName exceptionName : cdMethod.getExceptions()) {
+  private void setExceptionsOfMethod(CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
+    if (astMethod.getExceptions() != null) {
+      for (ASTQualifiedName exceptionName : astMethod.getExceptions()) {
         CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(), currentScope().get());
         methodSymbol.addException(exception);
       }
@@ -331,7 +329,6 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   private void handleAssociation(ASTCDAssociation cdAssoc) {
-    // TODO PN check if all association cardinalities are set correctly.
     handleLeftToRightAssociation(cdAssoc);
     handleRightToLeftAssociation(cdAssoc);
   }
@@ -402,23 +399,23 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     }
   }
 
-  private CDAssociationSymbol createAssociationSymbol(ASTCDAssociation cdAssoc, ASTQualifiedName
-      sourceName, ASTQualifiedName targetName) {
+  private CDAssociationSymbol createAssociationSymbol(ASTCDAssociation astAssoc, ASTQualifiedName
+      astSourceName, ASTQualifiedName astTargetName) {
     CDTypeSymbolReference sourceType = new CDTypeSymbolReference(Names.getQualifiedName(
-        sourceName.getParts()), currentScope().get());
+        astSourceName.getParts()), currentScope().get());
 
     CDTypeSymbolReference targetType = new CDTypeSymbolReference(Names.getQualifiedName(
-        targetName.getParts()), currentScope().get());
+        astTargetName.getParts()), currentScope().get());
 
     CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
 
-    associationSymbol.setAssocName(cdAssoc.getName());
+    associationSymbol.setAssocName(astAssoc.getName());
 
-    addStereotypes(associationSymbol, cdAssoc.getStereotype());
+    addStereotypes(associationSymbol, astAssoc.getStereotype());
 
-    if ((sourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(sourceName.getParts())))) {
-      Log.error("0xU0270 Association referenced type " + sourceName + " wasn't declared in the "
-          + "class diagram " + packageName + ". Pos: " + cdAssoc.get_SourcePositionStart());
+    if ((astSourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(astSourceName.getParts())))) {
+      Log.error("0xU0270 Association referenced type " + astSourceName + " wasn't declared in the "
+          + "class diagram " + packageName + ". Pos: " + astAssoc.get_SourcePositionStart());
       return null;
     }
 

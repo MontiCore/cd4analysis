@@ -25,5 +25,6 @@ classdiagram CD1 {
   }
 
   <<SA>> association member [*] Person <-> Prof [1];
+  association ec [1..*] E <-> Callable [0..1];
 
 }
