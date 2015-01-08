@@ -29,8 +29,8 @@ public class SocNetSymboltableTest {
     ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
         CDTypeSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDFieldSymbol.class,
-        CDFieldSymbol.KIND));
+    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAttributeSymbol.class,
+        CDAttributeSymbol.KIND));
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAssociationSymbol.class,
         CDAssociationSymbol.KIND));
 
@@ -91,15 +91,15 @@ public class SocNetSymboltableTest {
     assertFalse(profile.getSuperClass().isPresent());
     assertEquals(3, profile.getFields().size());
 
-    CDFieldSymbol profileNameField = profile.getField("profileName").get();
+    CDAttributeSymbol profileNameField = profile.getField("profileName").get();
     assertEquals("profileName", profileNameField.getName());
     assertFalse(profileNameField.isDerived());
 
-    CDFieldSymbol numOfPostsField = profile.getField("numOfPosts").get();
+    CDAttributeSymbol numOfPostsField = profile.getField("numOfPosts").get();
     assertEquals("numOfPosts", numOfPostsField.getName());
     assertTrue(numOfPostsField.isDerived());
 
-    CDFieldSymbol friendsField = profile.getField("friends").get();
+    CDAttributeSymbol friendsField = profile.getField("friends").get();
     assertEquals("friends", friendsField.getName());
     assertTrue(friendsField.isDerived());
     return profile;

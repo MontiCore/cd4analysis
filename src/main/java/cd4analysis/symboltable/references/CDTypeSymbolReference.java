@@ -6,7 +6,7 @@
 package cd4analysis.symboltable.references;
 
 import cd4analysis.symboltable.CDAssociationSymbol;
-import cd4analysis.symboltable.CDFieldSymbol;
+import cd4analysis.symboltable.CDAttributeSymbol;
 import cd4analysis.symboltable.CDMethodSymbol;
 import cd4analysis.symboltable.CDTypeSymbol;
 import cd4analysis.symboltable.Stereotype;
@@ -118,17 +118,17 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public void addField(CDFieldSymbol field) {
+  public void addField(CDAttributeSymbol field) {
     getReferencedSymbol().addField(field);
   }
 
   @Override
-  public List<CDFieldSymbol> getFields() {
+  public List<CDAttributeSymbol> getFields() {
     return getReferencedSymbol().getFields();
   }
 
   @Override
-  public Optional<CDFieldSymbol> getField(String fieldName) {
+  public Optional<CDAttributeSymbol> getField(String fieldName) {
     return getReferencedSymbol().getField(fieldName);
   }
 
@@ -168,7 +168,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public List<CDFieldSymbol> getEnumConstants() {
+  public List<CDAttributeSymbol> getEnumConstants() {
     return getReferencedSymbol().getEnumConstants();
   }
 

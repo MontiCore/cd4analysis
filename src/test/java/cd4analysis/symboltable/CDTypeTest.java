@@ -21,9 +21,9 @@ public class CDTypeTest {
   public void testGetFields() {
     CDTypeSymbol dummyType = new CDTypeSymbol("Dummy");
 
-    CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyType);
-    CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyType);
-    CDFieldSymbol fieldSymbol3 = new CDFieldSymbol("field3", dummyType);
+    CDAttributeSymbol fieldSymbol1 = new CDAttributeSymbol("field1", dummyType);
+    CDAttributeSymbol fieldSymbol2 = new CDAttributeSymbol("field2", dummyType);
+    CDAttributeSymbol fieldSymbol3 = new CDAttributeSymbol("field3", dummyType);
 
     CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
     typeSymbol.addField(fieldSymbol1);
@@ -31,8 +31,8 @@ public class CDTypeTest {
     typeSymbol.addField(fieldSymbol3);
 
     ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
-    typeScope.setResolvers(Arrays.asList(DefaultResolver.newResolver(CDFieldSymbol.class,
-        CDFieldSymbol.KIND)));
+    typeScope.setResolvers(Arrays.asList(DefaultResolver.newResolver(CDAttributeSymbol.class,
+        CDAttributeSymbol.KIND)));
 
 
     // Test CDTypeSymbol methods //
@@ -50,9 +50,9 @@ public class CDTypeTest {
     // Test CDTypeScope methods //
 
     assertEquals(3, typeScope.getSymbols().size());
-    assertSame(fieldSymbol1, typeScope.resolve("field1", CDFieldSymbol.KIND).orNull());
-    assertSame(fieldSymbol2, typeScope.resolve("field2", CDFieldSymbol.KIND).orNull());
-    assertSame(fieldSymbol3, typeScope.resolve("field3", CDFieldSymbol.KIND).orNull());
+    assertSame(fieldSymbol1, typeScope.resolve("field1", CDAttributeSymbol.KIND).orNull());
+    assertSame(fieldSymbol2, typeScope.resolve("field2", CDAttributeSymbol.KIND).orNull());
+    assertSame(fieldSymbol3, typeScope.resolve("field3", CDAttributeSymbol.KIND).orNull());
   }
 
   @Test

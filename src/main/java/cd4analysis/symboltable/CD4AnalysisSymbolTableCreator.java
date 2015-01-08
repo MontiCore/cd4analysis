@@ -129,7 +129,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     String typeName = "TODO_Type"; // TODO PN use TypePrinter for astAttribute.getType() instead
     CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope().get());
 
-    CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
+    CDAttributeSymbol fieldSymbol = new CDAttributeSymbol(astAttribute.getName(), typeReference);
 
     if (astAttribute.getModifier() != null) {
       final ASTModifier astModifier = astAttribute.getModifier();
@@ -200,7 +200,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
     if (astEnum.getCDEnumConstants() != null) {
       for (ASTCDEnumConstant astConstant : astEnum.getCDEnumConstants()) {
-        CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(), enumSymbol);
+        CDAttributeSymbol constantSymbol = new CDAttributeSymbol(astConstant.getName(), enumSymbol);
         constantSymbol.setEnumConstant(true);
         // enum constants are implicitly public static final (Java Langspec 3rd Edition Chapter 8.9 Enums)
         constantSymbol.setStatic(true);
@@ -375,7 +375,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         methodEntry.addParameter(new Parameter<>(paramName, paramTypeEntry));
         // TODO PN add fieldEntries instead of parameter?
 
-        CDFieldSymbol fieldEntry = new CDFieldSymbol(paramName, paramTypeEntry);
+        CDAttributeSymbol fieldEntry = new CDAttributeSymbol(paramName, paramTypeEntry);
 
       }
     }

@@ -25,8 +25,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
         CDTypeSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDFieldSymbol.class,
-        CDFieldSymbol.KIND));
+    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAttributeSymbol.class,
+        CDAttributeSymbol.KIND));
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDMethodSymbol.class,
         CDMethodSymbol.KIND));
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAssociationSymbol.class,
@@ -202,17 +202,17 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Resolve fields from super class //
     // public fields can be resolved
-    assertTrue(profType.getSpannedScope().resolve("name", CDFieldSymbol.KIND).isPresent());
+    assertTrue(profType.getSpannedScope().resolve("name", CDAttributeSymbol.KIND).isPresent());
     assertFalse(profType.getField("name").isPresent());
 
     // protected fields can be resolved
-    assertTrue(profType.getSpannedScope().resolve("age", CDFieldSymbol.KIND).isPresent());
+    assertTrue(profType.getSpannedScope().resolve("age", CDAttributeSymbol.KIND).isPresent());
     assertFalse(profType.getField("age").isPresent());
 
     // private fields CANNOT be resolved...
-    assertFalse(profType.getSpannedScope().resolve("secondName", CDFieldSymbol.KIND).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("secondName", CDAttributeSymbol.KIND).isPresent());
     // ... even if resolving with the private access modifier.
-    assertFalse(profType.getSpannedScope().resolve("secondName", CDFieldSymbol.KIND, PRIVATE).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("secondName", CDAttributeSymbol.KIND, PRIVATE).isPresent());
     assertFalse(profType.getField("secondName").isPresent());
 
     // Resolve methods from super types //

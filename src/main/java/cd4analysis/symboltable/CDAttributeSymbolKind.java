@@ -7,8 +7,8 @@ package cd4analysis.symboltable;
 
 import de.monticore.symboltable.SymbolKind;
 
-public class CDFieldSymbolKind extends SymbolKind {
+public class CDAttributeSymbolKind extends SymbolKind {
 
-  protected CDFieldSymbolKind() {
+  protected CDAttributeSymbolKind() {
   }
 }

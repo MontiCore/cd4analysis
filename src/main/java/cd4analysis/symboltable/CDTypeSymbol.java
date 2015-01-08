@@ -71,18 +71,18 @@ public class CDTypeSymbol extends TypeSymbol {
     return "CD type " + getName();  
   }
   
-  public void addField(CDFieldSymbol field) {
+  public void addField(CDAttributeSymbol field) {
     getSpannedScope().define(requireNonNull(field));
   }
   
-  public List<CDFieldSymbol> getFields() {
-    return getSpannedScope().resolveLocally(CDFieldSymbol.KIND);
+  public List<CDAttributeSymbol> getFields() {
+    return getSpannedScope().resolveLocally(CDAttributeSymbol.KIND);
   }
 
-  public Optional<CDFieldSymbol> getField(String fieldName) {
+  public Optional<CDAttributeSymbol> getField(String fieldName) {
     checkArgument(!isNullOrEmpty(fieldName));
 
-    return getSpannedScope().resolveLocally(fieldName, CDFieldSymbol.KIND);
+    return getSpannedScope().resolveLocally(fieldName, CDAttributeSymbol.KIND);
   }
   
   public void addMethod(CDMethodSymbol method) {
@@ -104,7 +104,8 @@ public class CDTypeSymbol extends TypeSymbol {
   public Optional<CDMethodSymbol> getMethod(String methodName) {
     checkArgument(!isNullOrEmpty(methodName));
 
-    Optional<CDMethodSymbol> method = getSpannedScope().resolveLocally(methodName, CDMethodSymbol.KIND);
+    Optional<CDMethodSymbol> method = getSpannedScope().resolveLocally(methodName, CDMethodSymbol
+        .KIND);
     if (method.isPresent() && !method.get().isConstructor()) {
       return method;
     }
@@ -136,9 +137,9 @@ public class CDTypeSymbol extends TypeSymbol {
     return ImmutableList.copyOf(associations);
   }
 
-  public List<CDFieldSymbol> getEnumConstants() {
-    final List<CDFieldSymbol> enums = getFields().stream()
-        .filter(CDFieldSymbol::isEnumConstant)
+  public List<CDAttributeSymbol> getEnumConstants() {
+    final List<CDAttributeSymbol> enums = getFields().stream()
+        .filter(CDAttributeSymbol::isEnumConstant)
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
   }

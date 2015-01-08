@@ -8,9 +8,9 @@ import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDFieldSymbol extends AbstractSymbol {
+public class CDAttributeSymbol extends AbstractSymbol {
 
-  public static final CDFieldSymbolKind KIND = new CDFieldSymbolKind();
+  public static final CDAttributeSymbolKind KIND = new CDAttributeSymbolKind();
 
   private final CDTypeSymbol type;
 
@@ -25,7 +25,7 @@ public class CDFieldSymbol extends AbstractSymbol {
   
   private List<Stereotype> stereotypes = new ArrayList<>();
   
-  protected CDFieldSymbol(String name, CDTypeSymbol type) {
+  protected CDAttributeSymbol(String name, CDTypeSymbol type) {
     super(name, KIND);
     this.type = type;
   }
@@ -140,7 +140,7 @@ public class CDFieldSymbol extends AbstractSymbol {
 
   @Override
   public String toString() {
-    return  CDFieldSymbol.class.getSimpleName() + " " + getName();
+    return  CDAttributeSymbol.class.getSimpleName() + " " + getName();
   }
 
 }
