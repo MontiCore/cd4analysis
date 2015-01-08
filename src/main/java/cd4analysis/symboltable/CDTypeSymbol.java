@@ -93,11 +93,11 @@ public class CDTypeSymbol extends TypeSymbol {
   }
   
   public List<CDMethodSymbol> getMethods() {
-    final List<CDMethodSymbol> methods = new ArrayList<>();
     final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
 
-    methods.addAll(resolvedMethods.stream().filter(
-        method -> !method.isConstructor()).collect(Collectors.toList()));
+    final List<CDMethodSymbol> methods = resolvedMethods.stream().filter(
+        method -> !method.isConstructor()).collect(Collectors.toList());
+
     return ImmutableList.copyOf(methods);
   }
 
@@ -120,11 +120,10 @@ public class CDTypeSymbol extends TypeSymbol {
   }
   
   public List<CDMethodSymbol> getConstructors() {
-    final List<CDMethodSymbol> constructors = new ArrayList<>();
     final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
 
-    constructors.addAll(resolvedMethods.stream().filter(
-        CDMethodSymbol::isConstructor).collect(Collectors.toList()));
+    final List<CDMethodSymbol> constructors = resolvedMethods.stream().filter(
+        CDMethodSymbol::isConstructor).collect(Collectors.toList());
 
     return ImmutableList.copyOf(constructors);
   }

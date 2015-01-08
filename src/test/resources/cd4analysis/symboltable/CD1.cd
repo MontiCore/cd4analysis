@@ -6,7 +6,7 @@ classdiagram CD1 {
      protected int age;
      private String secondName;
 
-     String getName();
+     String setName(String name);
      private int getAge();
   }
 

@@ -13,7 +13,6 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
-import de.monticore.symboltable.types.Parameter;
 import de.monticore.types._ast.ASTImportStatement;
 import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.ASTReferenceType;
@@ -360,23 +359,23 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
     // Parameters
     if (cdMethod.getCDParameters() != null) {
-      CDTypeSymbolReference paramTypeEntry = null;
-      for (ASTCDParameter parameter : cdMethod.getCDParameters()) {
-        String paramName = parameter.getName();
+      CDTypeSymbolReference paramTypeEntry;
+
+      for (ASTCDParameter astParameter : cdMethod.getCDParameters()) {
+        String paramName = astParameter.getName();
         // TODO PN use ASTTypesConverter
-        //paramTypeEntry = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // parameter.getType());
+        //paramTypeEntry = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // astParameter.getType());
         paramTypeEntry = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
-        if (parameter.isEllipsis()) {
+        if (astParameter.isEllipsis()) {
           methodEntry.setEllipsisParameterMethod(true);
           // ellipsis parameters are (like) arrays
           // TODO: Ist das so?
           // paramTypeEntry = CDTypeEntryCreator.getInstance().create(paramTypeEntry, 1);
         }
-        methodEntry.addParameter(new Parameter<>(paramName, paramTypeEntry));
-        // TODO PN add fieldEntries instead of parameter?
 
-        CDAttributeSymbol fieldEntry = new CDAttributeSymbol(paramName, paramTypeEntry);
-
+        CDAttributeSymbol parameterSymbol = new CDAttributeSymbol(paramName, paramTypeEntry);
+        parameterSymbol.setParameter(true);
+        methodEntry.addParameter(parameterSymbol);
       }
     }
 

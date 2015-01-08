@@ -1,21 +1,22 @@
 package cd4analysis.symboltable;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.BaseScope;
 import de.monticore.symboltable.ScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
-import de.monticore.symboltable.types.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 public class CDMethodSymbol extends ScopeSpanningSymbol {
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
   
   private CDTypeSymbol returnType;
-  private List<Parameter<CDTypeSymbol>> parameters = new ArrayList<>();
   private List<CDTypeSymbol> typeParameters = new ArrayList<>();
   private List<CDTypeSymbol> exceptions = new ArrayList<>();
   private List<Stereotype> stereotypes = new ArrayList<>();
@@ -26,35 +27,39 @@ public class CDMethodSymbol extends ScopeSpanningSymbol {
   private boolean isFinal = false;
   private boolean isConstructor = false;
   private boolean isEllipsisParameterMethod = false;
-  private boolean hasBody = false;
-  
+
   protected CDMethodSymbol(String name) {
     super(name, KIND);
-    setSpannedScope(new BaseScope(Optional.absent(), true));
+    spannedScope = new BaseScope(true);
+    spannedScope.setSpanningSymbol(this);
   }
   
   public String getExtendedName() {
     return "CD method " + getName();  
   }
-  
+
   public CDTypeSymbol getReturnType() {
     return returnType;
   }
   
   public void setReturnType(CDTypeSymbol type) {
-    this.returnType = type;
+    this.returnType = requireNonNull(type);
   }
   
-  public List<Parameter<CDTypeSymbol>> getParameters() {
+  public List<CDAttributeSymbol> getParameters() {
+    List<CDAttributeSymbol> resolvedAttributes = getSpannedScope().resolveLocally(CDAttributeSymbol.KIND);
+
+    final List<CDAttributeSymbol> parameters = resolvedAttributes.stream().filter(
+        CDAttributeSymbol::isParameter).collect(Collectors.toList());
+
     return ImmutableList.copyOf(parameters);
   }
-  
-  public void setParameters(List<Parameter<CDTypeSymbol>> parameters) {
-    this.parameters = parameters;
-  }
-  
-  public void addParameter(Parameter<CDTypeSymbol> paramType) {
-    this.parameters.add(paramType);
+
+  public void addParameter(CDAttributeSymbol paramType) {
+    requireNonNull(paramType);
+    checkArgument(paramType.isParameter(), "Only parameters can be added.");
+
+    getSpannedScope().define(paramType);
   }
   
   public List<CDTypeSymbol> getTypeParameters() {

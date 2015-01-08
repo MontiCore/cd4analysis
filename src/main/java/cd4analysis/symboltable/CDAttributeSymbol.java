@@ -22,6 +22,8 @@ public class CDAttributeSymbol extends AbstractSymbol {
   private boolean isEnumConstant;
 
   private boolean isInitialized;
+
+  private boolean isParameter = false;
   
   private List<Stereotype> stereotypes = new ArrayList<>();
   
@@ -107,6 +109,14 @@ public class CDAttributeSymbol extends AbstractSymbol {
     }
     return false;
     
+  }
+
+  public void setParameter(boolean isParameter) {
+    this.isParameter = isParameter;
+  }
+
+  public boolean isParameter() {
+    return isParameter;
   }
 
   public void addStereotype(Stereotype stereotype) {

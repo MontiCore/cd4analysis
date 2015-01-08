@@ -76,14 +76,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("S2", personType.getStereotype("S2").get().getValue());
     // Methods
     assertEquals(2, personType.getMethods().size());
-    CDMethodSymbol getNameMethod = personType.getMethod("getName").orNull();
-    assertNotNull(getNameMethod);
-    assertEquals("getName", getNameMethod.getName());
-    assertTrue(getNameMethod.isPublic());
-    assertFalse(getNameMethod.isConstructor());
-    assertFalse(getNameMethod.isFinal());
-    assertFalse(getNameMethod.isAbstract());
-    assertEquals(0, getNameMethod.getParameters().size());
+    CDMethodSymbol setNameMethod = personType.getMethod("setName").orNull();
+    assertNotNull(setNameMethod);
+    assertEquals("setName", setNameMethod.getName());
+    assertTrue(setNameMethod.isPublic());
+    assertFalse(setNameMethod.isConstructor());
+    assertFalse(setNameMethod.isFinal());
+    assertFalse(setNameMethod.isAbstract());
+    assertEquals(1, setNameMethod.getParameters().size());
     assertTrue(personType.getMethod("getAge").isPresent());
     assertTrue(personType.getMethod("getAge").get().isPrivate());
 
@@ -217,9 +217,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Resolve methods from super types //
     // public methods can be resolved
-    assertTrue(profType.getSpannedScope().resolve("getName", CDMethodSymbol.KIND).isPresent());
-    assertSame(getNameMethod, profType.getSpannedScope().resolve("getName", CDMethodSymbol.KIND).get());
-    assertFalse(profType.getMethod("getName").isPresent());
+    assertTrue(profType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND).isPresent());
+    assertSame(setNameMethod, profType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND).get());
+    assertFalse(profType.getMethod("setName").isPresent());
 
     // protected methods can be resolved
     assertTrue(profType.getSpannedScope().resolve("print", CDMethodSymbol.KIND).isPresent());
