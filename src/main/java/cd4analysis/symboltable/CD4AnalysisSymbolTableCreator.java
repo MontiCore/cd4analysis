@@ -53,7 +53,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     }
 
     CompilationUnitScope scope = new CompilationUnitScope(Optional.absent(), packageName, imports);
-    addToStackAndSetEnclosingIfExists(scope);
+    putOnStackAndSetEnclosingIfExists(scope);
   }
 
   public void endVisit(ASTCDCompilationUnit ast) {
@@ -83,7 +83,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     addInterfacesToType(typeSymbol, astClass.getInterfaces());
 
     defineInScope(typeSymbol);
-    addScopeToStackAndSetEnclosingIfExists(typeSymbol);
+    putScopeOnStackAndSetEnclosingIfExists(typeSymbol);
   }
 
   private void setModifiersOfType(CDTypeSymbol typeSymbol, ASTModifier astModifier) {
@@ -176,7 +176,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
 
     defineInScope(typeSymbol);
-    addScopeToStackAndSetEnclosingIfExists(typeSymbol);
+    putScopeOnStackAndSetEnclosingIfExists(typeSymbol);
   }
 
   private void addInterfacesToType(CDTypeSymbol typeSymbol, ASTReferenceTypeList astInterfaces) {
@@ -212,7 +212,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     setModifiersOfType(enumSymbol, astEnum.getModifier());
 
     defineInScope(enumSymbol);
-    addScopeToStackAndSetEnclosingIfExists(enumSymbol);
+    putScopeOnStackAndSetEnclosingIfExists(enumSymbol);
   }
 
   public void endVisit(ASTCDEnum astEnum) {
@@ -230,7 +230,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     setDefiningTypeOfMethod(methodSymbol);
 
     defineInScope(methodSymbol);
-    addScopeToStackAndSetEnclosingIfExists(methodSymbol);
+    putScopeOnStackAndSetEnclosingIfExists(methodSymbol);
   }
 
   public void endVisit(ASTCDMethod astMethod) {
