@@ -19,13 +19,13 @@ public class CD4AGlobalScopeTestFactory {
 
   public static GlobalScope create() {
     final ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
+    resolverConfiguration.addTopScopeResolver(DefaultResolver.newResolver(CDTypeSymbol.class,
         CDTypeSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAttributeSymbol.class,
+    resolverConfiguration.addTopScopeResolver(DefaultResolver.newResolver(CDAttributeSymbol.class,
         CDAttributeSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDMethodSymbol.class,
+    resolverConfiguration.addTopScopeResolver(DefaultResolver.newResolver(CDMethodSymbol.class,
         CDMethodSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAssociationSymbol.class,
+    resolverConfiguration.addTopScopeResolver(DefaultResolver.newResolver(CDAssociationSymbol.class,
         CDAssociationSymbol.KIND));
 
 
