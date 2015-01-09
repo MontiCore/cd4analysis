@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class CD4AGlobalScopeTestFactory {
 
-  public static GlobalScope createGlobalScope() {
+  public static GlobalScope create() {
     final ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
     resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
         CDTypeSymbol.KIND));

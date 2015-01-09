@@ -17,7 +17,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
   @Test
   public void testSymbolTableCreation() {
 
-    GlobalScope globalScope = CD4AGlobalScopeTestFactory.createGlobalScope();
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     CDTypeSymbol personType = globalScope.<CDTypeSymbol>resolve("cd4analysis.symboltable.CD1.Person", CDTypeSymbol.KIND).orNull();
     assertNotNull(personType);

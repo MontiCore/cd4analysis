@@ -20,7 +20,7 @@ public class SocNetSymboltableTest {
 
   @Test
   public void testSocNet() {
-    GlobalScope globalScope = CD4AGlobalScopeTestFactory.createGlobalScope();
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     // Besides resolving the Profile symbol the symbol table is initialized
     globalScope.resolve(PACKAGE + "Profile", CDTypeSymbol.KIND);
