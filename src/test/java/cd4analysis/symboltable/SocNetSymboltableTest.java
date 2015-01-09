@@ -5,17 +5,11 @@
  */
 package cd4analysis.symboltable;
 
-import cd4analysis.CD4AnalysisLanguage;
 import cd4analysis.symboltable.references.CDTypeSymbolReference;
-import de.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.symboltable.CompilationUnitScope;
-import de.monticore.symboltable.ResolverConfiguration;
+import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.SymbolKind;
-import de.monticore.symboltable.resolving.DefaultResolver;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static org.junit.Assert.*;
 
@@ -26,36 +20,20 @@ public class SocNetSymboltableTest {
 
   @Test
   public void testSocNet() {
-    ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDTypeSymbol.class,
-        CDTypeSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAttributeSymbol.class,
-        CDAttributeSymbol.KIND));
-    resolverConfiguration.addTopScopeResolvers(DefaultResolver.newResolver(CDAssociationSymbol.class,
-        CDAssociationSymbol.KIND));
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.createGlobalScope();
 
-    CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
+    // Besides resolving the Profile symbol the symbol table is initialized
+    globalScope.resolve(PACKAGE + "Profile", CDTypeSymbol.KIND);
 
-    ASTCDCompilationUnit compilationUnit;
-    try {
-      compilationUnit = cdLanguage.getParser().parse
-          ("src/test/resources/cd4analysis/symboltable/SocNet.cd").get();
-      assertNotNull(compilationUnit);
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-
-    topScope = cdLanguage.getSymbolTableCreator(resolverConfiguration, null).get()
-        .createFromAST(compilationUnit);
-
-    assertTrue(topScope instanceof CompilationUnitScope);
+    // Continue with compilationScope. Else, if globalScope was used, all symbols had to be
+    // resolved by their qualified name.
+    topScope = globalScope.getSubScopes().get(0);
 
     assertEquals(31, topScope.getSymbols().size());
     assertEquals(31, topScope.resolveLocally(SymbolKind.INSTANCE).size());
 
     // TODO PN test types of all fields
+
     CDTypeSymbol profile = testProfileClass();
 
     testPersonClass(profile);
