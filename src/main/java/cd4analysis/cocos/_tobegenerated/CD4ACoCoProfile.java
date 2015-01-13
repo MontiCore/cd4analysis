@@ -5,11 +5,11 @@
  */
 package cd4analysis.cocos._tobegenerated;
 
-import java.util.Collection;
-
 import com.google.common.collect.Sets;
-
+import de.monticore.cocos.ContextCondition;
 import de.monticore.cocos.ContextConditionProfile;
+
+import java.util.Collection;
 
 /**
  * TODO: generate this file
@@ -39,5 +39,10 @@ public class CD4ACoCoProfile extends ContextConditionProfile {
   
   public Collection<CD4AAttributeCoCo> getAstCDAttributeCocos() {
     return this.astCDAttributeCocos;
+  }
+
+  @Override
+  protected Collection<ContextCondition> getAll() {
+    return null;
   }
 }

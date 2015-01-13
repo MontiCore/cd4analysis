@@ -56,8 +56,11 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     putOnStackAndSetEnclosingIfExists(scope);
   }
 
-  public void endVisit(ASTCDCompilationUnit ast) {
+  public void endVisit(ASTCDCompilationUnit compilationUnit) {
     removeCurrentScope();
+
+    Log.info("Finished build of symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
+        CD4AnalysisSymbolTableCreator.class.getSimpleName());
   }
 
   public void visit(ASTCDDefinition astDefinition) {
