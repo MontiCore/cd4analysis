@@ -28,9 +28,10 @@ import java.util.List;
 
 import static mc.helper.NameHelper.dotSeparatedStringFromList;
 
+// TODO PN introduce CD4AnalysisSymbolTableCreationVisitor as soon as the CD4ABaseVisitor is generated
 public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
-  String fullClassDiagramName = "";
+  private String fullClassDiagramName = "";
 
   public CD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable ScopeManipulationApi enclosingScope) {
     super(resolverConfig, enclosingScope);
