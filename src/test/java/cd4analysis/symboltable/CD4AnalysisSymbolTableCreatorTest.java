@@ -28,12 +28,16 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
-    assertEquals("cd4analysis.symboltable.CD1.Person", personType.getName());
+    assertEquals("Person", personType.getName());
+    assertEquals("cd4analysis.symboltable.CD1.Person", personType.getFullName());
+    assertEquals("cd4analysis.symboltable.CD1", personType.getPackageName());
     assertTrue(personType.isPublic());
     // Fields
     assertEquals(3, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
     assertTrue(personType.getField("name").get().isPublic());
+    assertEquals("cd4analysis.symboltable.CD1.Person.name", personType.getField("name").get().getFullName());
+    assertEquals("cd4analysis.symboltable.CD1", personType.getField("name").get().getPackageName());
     assertEquals("secondName", personType.getField("secondName").get().getName());
     assertTrue(personType.getField("secondName").get().isPrivate());
     assertEquals("age", personType.getField("age").get().getName());
@@ -75,7 +79,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     CDTypeSymbol profType = compilationScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND).orNull();
     assertNotNull(profType);
-    assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getName());
+    assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getFullName());
     assertTrue(profType.isPrivate());
     assertEquals(1, profType.getFields().size());
     assertEquals("uni", profType.getField("uni").get().getName());
@@ -88,14 +92,16 @@ public class CD4AnalysisSymbolTableCreatorTest {
         .getReferencedSymbol());
     // Interfaces
     assertEquals(2, profType.getInterfaces().size());
-    assertEquals("cd4analysis.symboltable.CD1.Printable", profType.getInterfaces().get(0).getName());
-    assertEquals("cd4analysis.symboltable.CD1.Callable", profType.getInterfaces().get(1).getName());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", profType.getInterfaces().get(0).getFullName());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", profType.getInterfaces().get(1).getFullName());
     assertEquals(3, profType.getSuperTypes().size());
 
     CDTypeSymbol printableType = compilationScope.<CDTypeSymbol>resolve("Printable", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(printableType);
-    assertEquals("cd4analysis.symboltable.CD1.Printable", printableType.getName());
+    assertEquals("Printable", printableType.getName());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", printableType.getFullName());
+    assertEquals("cd4analysis.symboltable.CD1", printableType.getPackageName());
     assertTrue(printableType.isInterface());
     assertTrue(printableType.isProtected());
     // Methods
@@ -114,15 +120,15 @@ public class CD4AnalysisSymbolTableCreatorTest {
     CDTypeSymbol callableType = compilationScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(callableType);
-    assertEquals("cd4analysis.symboltable.CD1.Callable", callableType.getName());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", callableType.getFullName());
     assertTrue(callableType.isInterface());
     assertTrue(callableType.isPublic());
     assertEquals(1, callableType.getInterfaces().size());
-    assertEquals("cd4analysis.symboltable.CD1.Printable", callableType.getInterfaces().get(0).getName());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", callableType.getInterfaces().get(0).getFullName());
 
     CDTypeSymbol enumType = compilationScope.<CDTypeSymbol>resolve("E", CDTypeSymbol.KIND).orNull();
     assertNotNull(enumType);
-    assertEquals("cd4analysis.symboltable.CD1.E", enumType.getName());
+    assertEquals("cd4analysis.symboltable.CD1.E", enumType.getFullName());
     assertTrue(enumType.isEnum());
     assertTrue(enumType.isPublic());
     // Enum Constants
@@ -134,7 +140,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(enumType.getEnumConstants(), enumType.getFields());
     // Interfaces
     assertEquals(1, enumType.getInterfaces().size());
-    assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getName());
+    assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getFullName());
 
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
     // A -> B
@@ -179,8 +185,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("callable", ecAssocLeft2Right.getName());
     assertEquals("ec", ecAssocLeft2Right.getAssocName());
     assertTrue(ecAssocLeft2Right.isBidirectional());
-    assertEquals("cd4analysis.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getName());
-    assertEquals("cd4analysis.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getName());
+    assertEquals("cd4analysis.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getFullName());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getFullName());
     assertEquals(1, ecAssocLeft2Right.getSourceCardinality().getMin());
     assertEquals(Cardinality.STAR, ecAssocLeft2Right.getSourceCardinality().getMax());
     assertTrue(ecAssocLeft2Right.getSourceCardinality().isMultiple());
@@ -194,8 +200,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("e", ecAssocRight2Left.getName());
     assertEquals("ec", ecAssocRight2Left.getAssocName());
     assertTrue(ecAssocRight2Left.isBidirectional());
-    assertEquals("cd4analysis.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getName());
-    assertEquals("cd4analysis.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getName());
+    assertEquals("cd4analysis.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getFullName());
+    assertEquals("cd4analysis.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getFullName());
     assertEquals(0, ecAssocRight2Left.getSourceCardinality().getMin());
     assertEquals(1, ecAssocRight2Left.getSourceCardinality().getMax());
     assertFalse(ecAssocRight2Left.getSourceCardinality().isMultiple());

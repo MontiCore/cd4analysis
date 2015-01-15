@@ -58,6 +58,16 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
+  public String getFullName() {
+    return getReferencedSymbol().getFullName();
+  }
+
+  @Override
+  public String getPackageName() {
+    return getReferencedSymbol().getPackageName();
+  }
+
+  @Override
   public AccessModifier getAccessModifier() {
     return getReferencedSymbol().getAccessModifier();
   }

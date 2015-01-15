@@ -21,7 +21,7 @@ public class CDTypeReferenceTest {
         .KIND).orNull();
 
     assertNotNull(cdType);
-    assertEquals("cd4analysis.symboltable.CD2.Person", cdType.getName());
+    assertEquals("cd4analysis.symboltable.CD2.Person", cdType.getFullName());
 
   }
 

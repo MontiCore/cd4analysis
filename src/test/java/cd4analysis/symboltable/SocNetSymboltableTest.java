@@ -63,7 +63,7 @@ public class SocNetSymboltableTest {
   private CDTypeSymbol testProfileClass() {
     CDTypeSymbol profile = topScope.<CDTypeSymbol>resolve("Profile", CDTypeSymbol.KIND).orNull();
     assertNotNull(profile);
-    assertEquals(PACKAGE + "Profile", profile.getName());
+    assertEquals(PACKAGE + "Profile", profile.getFullName());
     assertTrue(profile.isAbstract());
     assertFalse(profile.isInterface());
     assertFalse(profile.getSuperClass().isPresent());
@@ -86,7 +86,7 @@ public class SocNetSymboltableTest {
   private void testPersonClass(CDTypeSymbol profile) {
     CDTypeSymbol person = topScope.<CDTypeSymbol>resolve("Person", CDTypeSymbol.KIND).orNull();
     assertNotNull(person);
-    assertEquals(PACKAGE + "Person", person.getName());
+    assertEquals(PACKAGE + "Person", person.getFullName());
     assertTrue(person.getSuperClass().isPresent());
     assertSame(profile, ((CDTypeSymbolReference) (person.getSuperClass().get()))
         .getReferencedSymbol());
@@ -104,7 +104,7 @@ public class SocNetSymboltableTest {
   private void testGroupClass(CDTypeSymbol profile) {
     CDTypeSymbol group = topScope.<CDTypeSymbol>resolve("Group", CDTypeSymbol.KIND).orNull();
     assertNotNull(group);
-    assertEquals(PACKAGE + "Group", group.getName());
+    assertEquals(PACKAGE + "Group", group.getFullName());
     assertTrue(group.getSuperClass().isPresent());
     assertSame(profile, ((CDTypeSymbolReference) (group.getSuperClass().get()))
         .getReferencedSymbol());
@@ -125,8 +125,8 @@ public class SocNetSymboltableTest {
     assertEquals("group", groupAssoc.getName());
     assertEquals("member", groupAssoc.getAssocName());
     assertTrue(groupAssoc.isBidirectional());
-    assertEquals(PACKAGE + "Person", groupAssoc.getSourceType().getName());
-    assertEquals(PACKAGE + "Group", groupAssoc.getTargetType().getName());
+    assertEquals(PACKAGE + "Person", groupAssoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "Group", groupAssoc.getTargetType().getFullName());
     assertEquals(Cardinality.STAR, groupAssoc.getSourceCardinality().getMax());
     assertTrue(groupAssoc.getSourceCardinality().isMultiple());
     assertEquals(Cardinality.STAR, groupAssoc.getTargetCardinality().getMax());
@@ -139,8 +139,8 @@ public class SocNetSymboltableTest {
     assertEquals("person", personAssoc.getName());
     assertEquals("member", personAssoc.getAssocName());
     assertTrue(personAssoc.isBidirectional());
-    assertEquals(PACKAGE + "Group", personAssoc.getSourceType().getName());
-    assertEquals(PACKAGE + "Person", personAssoc.getTargetType().getName());
+    assertEquals(PACKAGE + "Group", personAssoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "Person", personAssoc.getTargetType().getFullName());
     assertEquals(Cardinality.STAR, personAssoc.getSourceCardinality().getMax());
     assertTrue(personAssoc.getSourceCardinality().isMultiple());
     assertEquals(Cardinality.STAR, personAssoc.getTargetCardinality().getMax());
@@ -156,8 +156,8 @@ public class SocNetSymboltableTest {
     assertEquals("organized", organizedAssoc.getRole());
     assertTrue(organizedAssoc.getAssocName().isEmpty());
     assertTrue(organizedAssoc.isBidirectional());
-    assertEquals(PACKAGE + "Person", organizedAssoc.getSourceType().getName());
-    assertEquals(PACKAGE + "Group", organizedAssoc.getTargetType().getName());
+    assertEquals(PACKAGE + "Person", organizedAssoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "Group", organizedAssoc.getTargetType().getFullName());
     assertEquals(1, organizedAssoc.getSourceCardinality().getMax());
     assertFalse(organizedAssoc.getSourceCardinality().isMultiple());
     assertEquals(Cardinality.STAR, organizedAssoc.getTargetCardinality().getMax());
@@ -171,8 +171,8 @@ public class SocNetSymboltableTest {
     assertEquals("organizer", organizerAssoc.getRole());
     assertTrue(organizerAssoc.getAssocName().isEmpty());
     assertTrue(organizerAssoc.isBidirectional());
-    assertEquals(PACKAGE + "Group", organizerAssoc.getSourceType().getName());
-    assertEquals(PACKAGE + "Person", organizerAssoc.getTargetType().getName());
+    assertEquals(PACKAGE + "Group", organizerAssoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "Person", organizerAssoc.getTargetType().getFullName());
     assertEquals(Cardinality.STAR, organizerAssoc.getSourceCardinality().getMax());
     assertTrue(organizerAssoc.getSourceCardinality().isMultiple());
     assertEquals(1, organizerAssoc.getTargetCardinality().getMax());
@@ -183,7 +183,7 @@ public class SocNetSymboltableTest {
     CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("Relationship", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(relationship);
-    assertEquals(PACKAGE + "Relationship", relationship.getName());
+    assertEquals(PACKAGE + "Relationship", relationship.getFullName());
     assertFalse(relationship.getSuperClass().isPresent());
     assertEquals(3, relationship.getFields().size());
     assertTrue(relationship.getField("isPending").isPresent());
@@ -206,7 +206,7 @@ public class SocNetSymboltableTest {
     CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("RelationType", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(relationship);
-    assertEquals(PACKAGE + "RelationType", relationship.getName());
+    assertEquals(PACKAGE + "RelationType", relationship.getFullName());
     assertFalse(relationship.getSuperClass().isPresent());
     assertTrue(relationship.isEnum());
     assertEquals(5, relationship.getFields().size());
@@ -230,8 +230,8 @@ public class SocNetSymboltableTest {
     assertTrue(assoc.getRole().isEmpty());
     assertTrue(assoc.getAssocName().isEmpty());
     assertFalse(assoc.isBidirectional());
-    assertEquals(PACKAGE + "Relationship", assoc.getSourceType().getName());
-    assertEquals(PACKAGE + "RelationType", assoc.getTargetType().getName());
+    assertEquals(PACKAGE + "Relationship", assoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "RelationType", assoc.getTargetType().getFullName());
     assertEquals(1, assoc.getSourceCardinality().getMax());
     assertFalse(assoc.getSourceCardinality().isMultiple());
     assertEquals(1, assoc.getTargetCardinality().getMax());
@@ -243,7 +243,7 @@ public class SocNetSymboltableTest {
   private void testPostInterface() {
     CDTypeSymbol post = topScope.<CDTypeSymbol>resolve("Post", CDTypeSymbol.KIND).orNull();
     assertNotNull(post);
-    assertEquals(PACKAGE + "Post", post.getName());
+    assertEquals(PACKAGE + "Post", post.getFullName());
     assertTrue(post.isAbstract());
     assertTrue(post.isInterface());
   }
@@ -267,10 +267,10 @@ public class SocNetSymboltableTest {
   private void testInstantMessageClass() {
     CDTypeSymbol symbol = topScope.<CDTypeSymbol>resolve("InstantMessage", CDTypeSymbol.KIND).orNull();
     assertNotNull(symbol);
-    assertEquals(PACKAGE + "InstantMessage", symbol.getName());
+    assertEquals(PACKAGE + "InstantMessage", symbol.getFullName());
     assertFalse(symbol.getSuperClass().isPresent());
     assertEquals(1, symbol.getInterfaces().size());
-    assertEquals(PACKAGE + "Post", symbol.getInterfaces().get(0).getName());
+    assertEquals(PACKAGE + "Post", symbol.getInterfaces().get(0).getFullName());
     assertEquals(2, symbol.getFields().size());
     assertTrue(symbol.getField("timestamp").isPresent());
     assertTrue(symbol.getField("content").isPresent());
@@ -279,9 +279,9 @@ public class SocNetSymboltableTest {
   private void testPhotoMessageClass() {
     CDTypeSymbol symbol = topScope.<CDTypeSymbol>resolve("PhotoMessage", CDTypeSymbol.KIND).orNull();
     assertNotNull(symbol);
-    assertEquals(PACKAGE + "PhotoMessage", symbol.getName());
+    assertEquals(PACKAGE + "PhotoMessage", symbol.getFullName());
     assertTrue(symbol.getSuperClass().isPresent());
-    assertEquals(PACKAGE + "InstantMessage", symbol.getSuperClass().get().getName());
+    assertEquals(PACKAGE + "InstantMessage", symbol.getSuperClass().get().getFullName());
     assertEquals(0, symbol.getFields().size());
   }
 
@@ -294,8 +294,8 @@ public class SocNetSymboltableTest {
     assertEquals("photoMessage", photoMessageAssoc.getName());
     assertTrue(photoMessageAssoc.getAssocName().isEmpty());
     assertTrue(photoMessageAssoc.isBidirectional());
-    assertEquals(PACKAGE + "Photo", photoMessageAssoc.getSourceType().getName());
-    assertEquals(PACKAGE + "PhotoMessage", photoMessageAssoc.getTargetType().getName());
+    assertEquals(PACKAGE + "Photo", photoMessageAssoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "PhotoMessage", photoMessageAssoc.getTargetType().getFullName());
     assertEquals(Cardinality.STAR, photoMessageAssoc.getSourceCardinality().getMax());
     assertTrue(photoMessageAssoc.getSourceCardinality().isMultiple());
     assertEquals(1, photoMessageAssoc.getTargetCardinality().getMax());
@@ -309,8 +309,8 @@ public class SocNetSymboltableTest {
     assertEquals("picture", photoAssoc.getRole());
     assertTrue(photoAssoc.getAssocName().isEmpty());
     assertTrue(photoAssoc.isBidirectional());
-    assertEquals(PACKAGE + "PhotoMessage", photoAssoc.getSourceType().getName());
-    assertEquals(PACKAGE + "Photo", photoAssoc.getTargetType().getName());
+    assertEquals(PACKAGE + "PhotoMessage", photoAssoc.getSourceType().getFullName());
+    assertEquals(PACKAGE + "Photo", photoAssoc.getTargetType().getFullName());
     assertEquals(1, photoAssoc.getSourceCardinality().getMax());
     assertFalse(photoAssoc.getSourceCardinality().isMultiple());
     assertEquals(Cardinality.STAR, photoAssoc.getTargetCardinality().getMax());
@@ -320,7 +320,7 @@ public class SocNetSymboltableTest {
   private void testPhotoClass() {
     CDTypeSymbol photo = topScope.<CDTypeSymbol>resolve("Photo", CDTypeSymbol.KIND).orNull();
     assertNotNull(photo);
-    assertEquals(PACKAGE + "Photo", photo.getName());
+    assertEquals(PACKAGE + "Photo", photo.getFullName());
     assertFalse(photo.getSuperClass().isPresent());
     assertEquals(2, photo.getFields().size());
     assertTrue(photo.getField("height").isPresent());
@@ -330,7 +330,7 @@ public class SocNetSymboltableTest {
   private void testTagClass() {
     CDTypeSymbol photo = topScope.<CDTypeSymbol>resolve("Tag", CDTypeSymbol.KIND).orNull();
     assertNotNull(photo);
-    assertEquals(PACKAGE + "Tag", photo.getName());
+    assertEquals(PACKAGE + "Tag", photo.getFullName());
     assertFalse(photo.getSuperClass().isPresent());
     assertEquals(1, photo.getFields().size());
     assertTrue(photo.getField("confirmed").isPresent());

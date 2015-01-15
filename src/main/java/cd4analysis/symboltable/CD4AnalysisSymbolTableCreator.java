@@ -30,20 +30,22 @@ import static mc.helper.NameHelper.dotSeparatedStringFromList;
 
 public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
-  private String packageName;
+  String fullClassDiagramName = "";
 
   public CD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable ScopeManipulationApi enclosingScope) {
     super(resolverConfig, enclosingScope);
   }
 
+
   public void visit(ASTCDCompilationUnit compilationUnit) {
     final String cdName = compilationUnit.getCDDefinition().getName();
+
     Log.info("Building Symboltable for CD: " + cdName,
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
-    packageName = dotSeparatedStringFromList(compilationUnit.getPackage());
+    String packageName = dotSeparatedStringFromList(compilationUnit.getPackage());
     // use CD name as part of the package name
-    packageName = packageName.isEmpty() ? cdName : packageName + "." + cdName;
+    fullClassDiagramName = packageName.isEmpty() ? cdName : packageName + "." + cdName;
 
     final List<ImportStatement> imports = new ArrayList<>();
     if (compilationUnit.getImportStatements() != null) {
@@ -52,7 +54,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       }
     }
 
-    CompilationUnitScope scope = new CompilationUnitScope(Optional.absent(), packageName, imports);
+    CompilationUnitScope scope = new CompilationUnitScope(Optional.absent(), fullClassDiagramName, imports);
     putOnStackAndSetEnclosingIfExists(scope);
   }
 
@@ -72,7 +74,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDClass astClass) {
-    CDTypeSymbol typeSymbol = new CDTypeSymbol(packageName + "." + astClass.getName());
+    CDTypeSymbol typeSymbol = new CDTypeSymbol(astClass.getName());
 
     if (astClass.getSuperclasses() != null) {
       CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(astClass.getSuperclasses());
@@ -166,7 +168,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDInterface astInterface) {
-    CDTypeSymbol typeSymbol = new CDTypeSymbol(packageName + "." + astInterface.getName());
+    CDTypeSymbol typeSymbol = new CDTypeSymbol(astInterface.getName());
     typeSymbol.setInterface(true);
     // Interfaces are always abstract
     typeSymbol.setAbstract(true);
@@ -196,7 +198,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDEnum astEnum) {
-    CDTypeSymbol enumSymbol = new CDTypeSymbol(packageName + "." + astEnum.getName());
+    CDTypeSymbol enumSymbol = new CDTypeSymbol(astEnum.getName());
     enumSymbol.setEnum(true);
 
     if (astEnum.getCDEnumConstants() != null) {
@@ -418,7 +420,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
     if ((astSourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(astSourceName.getParts())))) {
       Log.error("0xU0270 Association referenced type " + astSourceName + " wasn't declared in the "
-          + "class diagram " + packageName + ". Pos: " + astAssoc.get_SourcePositionStart());
+          + "class diagram " + fullClassDiagramName + ". Pos: " + astAssoc.get_SourcePositionStart());
       return null;
     }
 
