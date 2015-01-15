@@ -2,6 +2,7 @@ package cd4analysis.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.types.TypeSymbol;
@@ -32,8 +33,11 @@ public class CDTypeSymbol extends TypeSymbol {
 
   protected CDTypeSymbol(String name) {
     super(name, KIND);
-    spannedScope = new CDTypeScope(Optional.absent());
-    spannedScope.setSpanningSymbol(this);
+  }
+
+  @Override
+  protected ScopeManipulationApi createSpannedScope() {
+    return new CDTypeScope(Optional.absent());
   }
 
   public Optional<CDTypeSymbol> getSuperClass() {

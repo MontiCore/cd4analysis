@@ -1,7 +1,6 @@
 package cd4analysis.symboltable;
 
 import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.BaseScope;
 import de.monticore.symboltable.ScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 
@@ -30,8 +29,6 @@ public class CDMethodSymbol extends ScopeSpanningSymbol {
 
   protected CDMethodSymbol(String name) {
     super(name, KIND);
-    spannedScope = new BaseScope(true);
-    spannedScope.setSpanningSymbol(this);
   }
   
   public String getExtendedName() {
