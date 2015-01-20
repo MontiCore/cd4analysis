@@ -108,16 +108,6 @@
               <artifactId>de.monticore</artifactId>
               <version>${monticore.generator.version}</version>
             </dependency>
-             <dependency>
-              <groupId>de.monticore</groupId>
-              <artifactId>de.monticore.fe</artifactId>
-              <version>${monticore.generator.version}</version>
-            </dependency>
-             <dependency>
-              <groupId>de.monticore</groupId>
-              <artifactId>de.monticore.re</artifactId>
-              <version>${monticore.generator.version}</version>
-            </dependency>
           </dependencies>
 
         </plugin>
