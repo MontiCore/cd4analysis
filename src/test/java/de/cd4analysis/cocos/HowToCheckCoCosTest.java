@@ -43,8 +43,7 @@ public class HowToCheckCoCosTest {
     
     @Override
     public ContextConditionResult check(ASTCDClass node) {
-      addError(new CoCoError("0x...", "msg", new SourcePosition(1, 1)));
-      return getResult();
+      return ContextConditionResult.error(new CoCoError("0x...", "msg", new SourcePosition(1, 1)));
     }
     
     @Override
