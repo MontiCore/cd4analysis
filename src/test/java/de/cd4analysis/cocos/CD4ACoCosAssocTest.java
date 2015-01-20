@@ -10,8 +10,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 
-import cd4analysis.cocos._tobegenerated.CD4ACoCoChecker;
-import cd4analysis.cocos._tobegenerated.CD4ACoCoProfile;
+import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.cd4analysis._cocos.CD4AnalysisCoCoProfile;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.cocos.helper.CoCosFireForInvalidModelsHelper;
 import de.monticore.cocos.helper.InvalidModel;
@@ -128,12 +128,12 @@ public class CD4ACoCosAssocTest {
     CoCosFireForInvalidModelsHelper c = new CoCosFireForInvalidModelsHelper(LOGNAME, MODEL_PATH,
         new CDCompilationUnitMCParser());
     
-    CD4ACoCoProfile profile = new CD4ACoCoProfile();
+    CD4AnalysisCoCoProfile profile = new CD4AnalysisCoCoProfile();
     
     // TODO add CoCos
     // profile.addCoCo(coco);
     
-    CD4ACoCoChecker checker = new CD4ACoCoChecker(profile);
+    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker(profile);
     
     // TODO uncomment when CoCos are implemented
     // c.testCoCosForInvalidModels(checker, invalidModelsCoCoTests);

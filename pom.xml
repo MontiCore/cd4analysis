@@ -82,9 +82,9 @@
           <groupId>de.monticore.maven</groupId>
           <artifactId>monticore-maven-plugin</artifactId>
           <version>${monticore.maven.version}</version>
-          <configuration>
+          <!-- <configuration>
             <buildIncrementally>true</buildIncrementally>
-          </configuration>
+          </configuration> -->
           <executions>
             <execution>
               <goals>
@@ -96,7 +96,7 @@
                 <arguments>
                   <argument>-synthesis grammar prepareCheck</argument>
                   <argument>-synthesis grammar check</argument>
-                  <argument>-synthesis grammar generatemc4</argument>
+                  <argument>-synthesis grammar generateparser</argument>
                 </arguments>
               </configuration>
             </execution>
@@ -108,6 +108,16 @@
               <artifactId>de.monticore</artifactId>
               <version>${monticore.generator.version}</version>
             </dependency>
+             <dependency>
+              <groupId>de.monticore</groupId>
+              <artifactId>de.monticore.fe</artifactId>
+              <version>${monticore.generator.version}</version>
+            </dependency>
+             <dependency>
+              <groupId>de.monticore</groupId>
+              <artifactId>de.monticore.re</artifactId>
+              <version>${monticore.generator.version}</version>
+            </dependency>
           </dependencies>
 
         </plugin>
@@ -117,7 +127,7 @@
           <artifactId>monticore-maven-plugin</artifactId>
           <version>4.0.0-SNAPSHOT</version>
           <configuration>
-            <skip>true</skip>
+            <skip>false</skip> 
           </configuration>
           <executions>
             <execution>
@@ -196,30 +206,16 @@
 
       <!-- MontiCore Dependencies -->
     <!-- remove this dependency as soon as ASTs for MC4 exist. -->
-    <dependency>
+   <!--  <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>de.monticore.re</artifactId>
       <version>${monticore.generator.version}</version>
-    </dependency>
+    </dependency> -->
 
       <dependency>
         <groupId>de.monticore</groupId>
         <artifactId>monticore-runtime</artifactId>
         <version>${monticore.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>de.monticore</groupId>
-        <artifactId>monticore-grammar</artifactId>
-        <version>${monticore.version}</version>
-      </dependency>
-
-      <!-- Grammar Dependencies -->
-      <dependency>
-        <groupId>de.monticore</groupId>
-        <artifactId>monticore-grammar</artifactId>
-        <version>${monticore.version}</version>
-        <classifier>${grammars.classifier}</classifier>
-        <scope>provided</scope>
       </dependency>
 
       <!-- .. Test Libraries ............................................... -->

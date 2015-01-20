@@ -18,13 +18,13 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
 
 import cd4analysis.cocos.UniqueAttributeInClassCoco;
-import cd4analysis.cocos._tobegenerated.CD4AClassCoCo;
-import cd4analysis.cocos._tobegenerated.CD4ACoCoChecker;
-import cd4analysis.cocos._tobegenerated.CD4ACoCoProfile;
 
 import com.google.common.base.Optional;
 
 import de.cd4analysis._ast.ASTCDClass;
+import de.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.cd4analysis._cocos.CD4AnalysisCoCoProfile;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.cocos.AbstractContextCondition;
 import de.monticore.cocos.CoCoError;
@@ -38,7 +38,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class HowToCheckCoCosTest {
   
-  public static class MockCoCo extends AbstractContextCondition implements CD4AClassCoCo {
+  public static class MockCoCo extends AbstractContextCondition implements CD4AnalysisASTCDClassCoCo {
     private static final String NAME = MockCoCo.class.getName();
     
     @Override
@@ -55,10 +55,10 @@ public class HowToCheckCoCosTest {
   @Test
   public void test() throws RecognitionException, IOException {
     
-    CD4ACoCoProfile profile = new CD4ACoCoProfile();
+    CD4AnalysisCoCoProfile profile = new CD4AnalysisCoCoProfile();
     profile.addCoCo(new UniqueAttributeInClassCoco());
     profile.addCoCo(new MockCoCo());
-    CD4ACoCoChecker checker = new CD4ACoCoChecker(profile);
+    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker(profile);
     
     MCConcreteParser parser = new CDCompilationUnitMCParser();
     Optional<? extends ASTNode> root = parser.parse(Paths.get(

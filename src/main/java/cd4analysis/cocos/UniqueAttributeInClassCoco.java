@@ -7,22 +7,20 @@ package cd4analysis.cocos;
 
 import java.util.HashMap;
 
-import mc.ast.ASTNode;
-import cd4analysis.cocos._tobegenerated.CD4AClassCoCo;
 import de.cd4analysis._ast.ASTCDAttribute;
 import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDCompilationUnit;
+import de.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.monticore.cocos.AbstractContextCondition;
 import de.monticore.cocos.CoCoError;
 import de.monticore.cocos.ContextConditionResult;
-import de.monticore.utils.ASTNodes;
 
 /**
  * Example CoCo
  *
  * @author Robert Heim
  */
-public class UniqueAttributeInClassCoco extends AbstractContextCondition implements CD4AClassCoCo {
+public class UniqueAttributeInClassCoco extends AbstractContextCondition implements
+    CD4AnalysisASTCDClassCoCo {
   private static String NAME = UniqueAttributeInClassCoco.class.getName();
   
   public static final String ERROR_CODE = "0x???";
