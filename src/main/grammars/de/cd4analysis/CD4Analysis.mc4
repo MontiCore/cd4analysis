@@ -190,7 +190,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     ("[" rightQualifier:CDQualifier "]")?
     rightReferenceName:QualifiedName
     rightCardinality:Cardinality?
-    rightModifier:Modifier ";" ;
+    rightModifier:Modifier? ";" ;
   
  
   Modifier = Stereotype?
