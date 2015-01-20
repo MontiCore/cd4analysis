@@ -12,7 +12,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDDefinition   
   */
   CDCompilationUnit =
-    ("package" Package:(Name& || ".")+ ";")? 
+    // TODO MB, SO? ("package" Package:(Name& || ".")+ ";")? 
+    ("package" Package:Name& ("." Package:Name&)* ";")? 
     (ImportStatements:ImportStatement)*
     CDDefinition;
 
@@ -42,7 +43,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDClass = Modifier?  "class" Name
   ( "extends"  superclasses:ReferenceType)?
-  ( "implements" interfaces:(ReferenceType || ",")+ )?
+  // TODO MB, SO? ( "implements" interfaces:(ReferenceType || ",")+ )?
+  ( "implements" interfaces:ReferenceType ("," interfaces:ReferenceType)* )?
   ( "{" 
     ( cDAttributes:CDAttribute
     | cDConstructors:CDConstructor
@@ -59,7 +61,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes   List of Attributes of this Interface
   */
   CDInterface = Modifier? "interface" Name
-    ( "extends" interfaces:(ReferenceType || ",")+ )? ( "{" 
+   // TODO MB, SO?  ( "extends" interfaces:(ReferenceType || ",")+ )? ( "{" 
+    ( "extends" interfaces:ReferenceType ("," interfaces:ReferenceType)* )? ( "{" 
       ( cDAttributes:CDAttribute
       | cDMethods:CDMethod )*
       "}" 
@@ -112,6 +115,11 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDConstructor =
     Modifier
+    /*
+    // TODO MB, SO?
+     Name "(" cDParameters:(CDParameter || ",")* ")"
+    ("throws" exceptions:(QualifiedName || "," )+)?
+    */
     Name "(" cDParameters:(CDParameter || ",")* ")"
     ("throws" exceptions:(QualifiedName || "," )+)?
     ";";
@@ -127,8 +135,13 @@ grammar CD4Analysis extends de.monticore.types.Types {
   CDMethod =
     Modifier
     ReturnType
-    Name "(" cDParameters:(CDParameter || ",")* ")"
+    /*
+    TODO MB, SO?
+     Name "(" cDParameters:(CDParameter || ",")* ")"
     ("throws" exceptions:(QualifiedName || ",")+)?
+    */
+    Name "(" cDParameters:CDParameter ("," cDParameters:CDParameter)* ")"
+    ("throws" exceptions:QualifiedName ("," exceptions:QualifiedName)*)?
     ";";
   
  
@@ -222,7 +235,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
   /** ASTStereotype represents Stereotypes in a Classdiagram
     @attribute values List of Values of this Stereotype
   */
-  Stereotype = "<<" values:(StereoValue || ",")+ ">>";
+ // TODO MB, SO?  Stereotype = "<<" values:(StereoValue || ",")+ ">>";
+  Stereotype = "<<" values:StereoValue ("," values:StereoValue)* ">>";
   
 
   /** ASTStereoValue represents a Value of a Stereotype in a Classdiagram
