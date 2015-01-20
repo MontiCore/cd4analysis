@@ -2,58 +2,30 @@ package cd4analysis.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.AbstractSymbol;
-import de.monticore.symboltable.modifiers.BasicAccessModifier;
+import de.monticore.symboltable.types.CommonJAttributeSymbol;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDAttributeSymbol extends AbstractSymbol {
+public class CDAttributeSymbol extends CommonJAttributeSymbol {
 
   public static final CDAttributeSymbolKind KIND = new CDAttributeSymbolKind();
 
-  private final CDTypeSymbol type;
-
-  private boolean isFinal;
   private boolean isReadOnly;
   private boolean isDerived;
-  private boolean isStatic;
 
   private boolean isEnumConstant;
 
   private boolean isInitialized;
 
-  private boolean isParameter = false;
-  
   private List<Stereotype> stereotypes = new ArrayList<>();
   
   protected CDAttributeSymbol(String name, CDTypeSymbol type) {
-    super(name, KIND);
-    this.type = type;
+    super(name, KIND, type);
   }
   
   public String getExtendedName() {
     return "CD field " + getName();  
-  }
-  
-  public CDTypeSymbol getType() {
-    return type;
-  }
-
-  public boolean isStatic() {
-    return isStatic;
-  }
-  
-  public void setStatic(boolean isStatic) {
-    this.isStatic = isStatic;
-  }
-  
-  public void setFinal(boolean isFinal) {
-    this.isFinal = isFinal;
-  }
-  
-  public boolean isFinal() {
-    return isFinal;
   }
   
   public boolean isInitialized() {
@@ -111,40 +83,10 @@ public class CDAttributeSymbol extends AbstractSymbol {
     
   }
 
-  public void setParameter(boolean isParameter) {
-    this.isParameter = isParameter;
-  }
 
-  public boolean isParameter() {
-    return isParameter;
-  }
 
   public void addStereotype(Stereotype stereotype) {
     this.stereotypes.add(stereotype);
-  }
-
-  public void setPrivate() {
-    setAccessModifier(BasicAccessModifier.PRIVATE);
-  }
-
-  public void setProtected() {
-    setAccessModifier(BasicAccessModifier.PROTECTED);
-  }
-
-  public void setPublic() {
-    setAccessModifier(BasicAccessModifier.PUBLIC);
-  }
-
-  public boolean isPrivate() {
-    return getAccessModifier() == BasicAccessModifier.PRIVATE;
-  }
-
-  public boolean isProtected() {
-    return getAccessModifier() == BasicAccessModifier.PROTECTED;
-  }
-
-  public boolean isPublic() {
-    return getAccessModifier() == BasicAccessModifier.PUBLIC;
   }
 
 

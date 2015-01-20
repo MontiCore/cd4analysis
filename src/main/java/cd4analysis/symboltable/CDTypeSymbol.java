@@ -2,10 +2,8 @@ package cd4analysis.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.Symbol;
-import de.monticore.symboltable.modifiers.BasicAccessModifier;
-import de.monticore.symboltable.types.TypeSymbol;
+import de.monticore.symboltable.types.CommonJTypeSymbol;
 import mc.helper.NameHelper;
 
 import java.util.ArrayList;
@@ -16,60 +14,38 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
-public class CDTypeSymbol extends TypeSymbol {
+public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSymbol> {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
 
-  private CDTypeSymbol superClass;
-
-  private final List<CDTypeSymbol> interfaces = new ArrayList<>();
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  private boolean isAbstract = false;
-  private boolean isFinal = false;
-  private boolean isInterface = false;
-  private boolean isEnum = false;
+
 
   protected CDTypeSymbol(String name) {
     super(name, KIND);
   }
 
   @Override
-  protected ScopeManipulationApi createSpannedScope() {
-    return new CDTypeScope(Optional.absent());
-  }
-
-  public Optional<CDTypeSymbol> getSuperClass() {
-    return Optional.fromNullable(superClass);
-  }
-
-  public void setSuperClass(CDTypeSymbol superClass) {
-    this.superClass = superClass;
-  }
-
-  public List<CDTypeSymbol> getInterfaces() {
-    return ImmutableList.copyOf(interfaces);
-  }
-  
-  public void addInterface(CDTypeSymbol superInterface) {
-    this.interfaces.add(requireNonNull(superInterface));
-  }
-  
-  public List<CDTypeSymbol> getSuperTypes() {
-    List<CDTypeSymbol> superTypes = new ArrayList<>();
-    if (getSuperClass().isPresent()) {
-      superTypes.add(getSuperClass().get());
-    }
-    superTypes.addAll(getInterfaces());
-    return superTypes;
+  public List<CDTypeSymbol> getFormalTypeParameters() {
+    return super.getFormalTypeParameters();
   }
 
   @Override
-  public List<? extends CDTypeSymbol> getFormalTypeParameters() {
-    return (List<CDTypeSymbol>) super.getFormalTypeParameters();
+  public List<CDTypeSymbol> getInterfaces() {
+    return super.getInterfaces();
   }
-  
+
+  @Override
+  public List<CDTypeSymbol> getSuperTypes() {
+    return super.getSuperTypes();
+  }
+
+  @Override
+  public Optional<CDTypeSymbol> getSuperClass() {
+    return super.getSuperClass();
+  }
 
   public String getExtendedName() {
     return "CD type " + getName();  
@@ -79,7 +55,7 @@ public class CDTypeSymbol extends TypeSymbol {
     getSpannedScope().define(requireNonNull(field));
   }
   
-  public List<CDAttributeSymbol> getFields() {
+  public List<CDAttributeSymbol> getAttribute() {
     return getSpannedScope().resolveLocally(CDAttributeSymbol.KIND);
   }
 
@@ -141,7 +117,7 @@ public class CDTypeSymbol extends TypeSymbol {
   }
 
   public List<CDAttributeSymbol> getEnumConstants() {
-    final List<CDAttributeSymbol> enums = getFields().stream()
+    final List<CDAttributeSymbol> enums = getAttribute().stream()
         .filter(CDAttributeSymbol::isEnumConstant)
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
@@ -149,48 +125,16 @@ public class CDTypeSymbol extends TypeSymbol {
   
   public List<? extends Symbol> getChildren() {
     final List<Symbol> children = new ArrayList<>();
-    children.addAll(getFields());
+    children.addAll(getAttribute());
     children.addAll(getMethods());
     children.addAll(getConstructors());
     children.addAll(getAssociations());
     return children;
   }
   
-  public void setAbstract(boolean isAbstract) {
-    this.isAbstract = isAbstract;
-  }
+
   
-  public boolean isAbstract() {
-    return isAbstract;
-  }
-  
-  public void setFinal(boolean isFinal) {
-    this.isFinal = isFinal;
-  }
-  
-  public boolean isFinal() {
-    return isFinal;
-  }
-  
-  public void setInterface(boolean isInterface) {
-    this.isInterface = isInterface;
-  }
-  
-  public boolean isInterface() {
-    return isInterface;
-  }
-  
-  public void setEnum(boolean isEnum) {
-    this.isEnum = isEnum;
-  }
-  
-  public boolean isEnum() {
-    return isEnum;
-  }
-  
-  public boolean isClass() {
-    return !isInterface() && !isEnum();
-  }
+
   
   public List<Stereotype> getStereotypes() {
     return stereotypes;
@@ -223,27 +167,5 @@ public class CDTypeSymbol extends TypeSymbol {
     return NameHelper.getQualifier(getName());
   }
 
-  public void setPrivate() {
-    setAccessModifier(BasicAccessModifier.PRIVATE);
-  }
 
-  public void setProtected() {
-    setAccessModifier(BasicAccessModifier.PROTECTED);
-  }
-
-  public void setPublic() {
-    setAccessModifier(BasicAccessModifier.PUBLIC);
-  }
-
-  public boolean isPrivate() {
-    return getAccessModifier() == BasicAccessModifier.PRIVATE;
-  }
-
-  public boolean isProtected() {
-    return getAccessModifier() == BasicAccessModifier.PROTECTED;
-  }
-
-  public boolean isPublic() {
-    return getAccessModifier() == BasicAccessModifier.PUBLIC;
-  }
 }

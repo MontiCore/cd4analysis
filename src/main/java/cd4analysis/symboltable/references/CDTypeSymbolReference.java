@@ -18,7 +18,6 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.references.TypeReference;
 import de.monticore.symboltable.references.TypeReferenceImpl;
 import de.monticore.symboltable.types.ActualTypeArgument;
-import de.monticore.symboltable.types.Type;
 
 import java.util.List;
 
@@ -118,7 +117,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public List<? extends CDTypeSymbol> getFormalTypeParameters() {
+  public List<CDTypeSymbol> getFormalTypeParameters() {
     return getReferencedSymbol().getFormalTypeParameters();
   }
 
@@ -133,8 +132,8 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public List<CDAttributeSymbol> getFields() {
-    return getReferencedSymbol().getFields();
+  public List<CDAttributeSymbol> getAttribute() {
+    return getReferencedSymbol().getAttribute();
   }
 
   @Override
@@ -278,7 +277,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public void addFormalTypeParameter(Type formalTypeParameter) {
+  public void addFormalTypeParameter(CDTypeSymbol formalTypeParameter) {
     getReferencedSymbol().addFormalTypeParameter(formalTypeParameter);
   }
 

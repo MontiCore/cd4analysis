@@ -67,7 +67,7 @@ public class SocNetSymboltableTest {
     assertTrue(profile.isAbstract());
     assertFalse(profile.isInterface());
     assertFalse(profile.getSuperClass().isPresent());
-    assertEquals(3, profile.getFields().size());
+    assertEquals(3, profile.getAttribute().size());
 
     CDAttributeSymbol profileNameField = profile.getField("profileName").get();
     assertEquals("profileName", profileNameField.getName());
@@ -91,7 +91,7 @@ public class SocNetSymboltableTest {
     assertSame(profile, ((CDTypeSymbolReference) (person.getSuperClass().get()))
         .getReferencedSymbol());
     assertEquals(profile.getName(), person.getSuperClass().get().getName());
-    assertEquals(7, person.getFields().size());
+    assertEquals(7, person.getAttribute().size());
     assertTrue(person.getField("lastVisit").isPresent());
     assertTrue(person.getField("firstName").isPresent());
     assertTrue(person.getField("secondName").isPresent());
@@ -109,7 +109,7 @@ public class SocNetSymboltableTest {
     assertSame(profile, ((CDTypeSymbolReference) (group.getSuperClass().get()))
         .getReferencedSymbol());
     assertEquals(profile.getName(), group.getSuperClass().get().getName());
-    assertEquals(4, group.getFields().size());
+    assertEquals(4, group.getAttribute().size());
     assertTrue(group.getField("isOpen").isPresent());
     assertTrue(group.getField("created").isPresent());
     assertTrue(group.getField("purpose").isPresent());
@@ -185,7 +185,7 @@ public class SocNetSymboltableTest {
     assertNotNull(relationship);
     assertEquals(PACKAGE + "Relationship", relationship.getFullName());
     assertFalse(relationship.getSuperClass().isPresent());
-    assertEquals(3, relationship.getFields().size());
+    assertEquals(3, relationship.getAttribute().size());
     assertTrue(relationship.getField("isPending").isPresent());
     assertTrue(relationship.getField("requested").isPresent());
     assertTrue(relationship.getField("accepted").isPresent());
@@ -209,7 +209,7 @@ public class SocNetSymboltableTest {
     assertEquals(PACKAGE + "RelationType", relationship.getFullName());
     assertFalse(relationship.getSuperClass().isPresent());
     assertTrue(relationship.isEnum());
-    assertEquals(5, relationship.getFields().size());
+    assertEquals(5, relationship.getAttribute().size());
     assertEquals(5, relationship.getEnumConstants().size());
     assertTrue(relationship.getField("FRIEND").isPresent());
     assertTrue(relationship.getField("FRIEND").get().isFinal());
@@ -271,7 +271,7 @@ public class SocNetSymboltableTest {
     assertFalse(symbol.getSuperClass().isPresent());
     assertEquals(1, symbol.getInterfaces().size());
     assertEquals(PACKAGE + "Post", symbol.getInterfaces().get(0).getFullName());
-    assertEquals(2, symbol.getFields().size());
+    assertEquals(2, symbol.getAttribute().size());
     assertTrue(symbol.getField("timestamp").isPresent());
     assertTrue(symbol.getField("content").isPresent());
   }
@@ -282,7 +282,7 @@ public class SocNetSymboltableTest {
     assertEquals(PACKAGE + "PhotoMessage", symbol.getFullName());
     assertTrue(symbol.getSuperClass().isPresent());
     assertEquals(PACKAGE + "InstantMessage", symbol.getSuperClass().get().getFullName());
-    assertEquals(0, symbol.getFields().size());
+    assertEquals(0, symbol.getAttribute().size());
   }
 
   private void testPhotoAssociation() {
@@ -322,7 +322,7 @@ public class SocNetSymboltableTest {
     assertNotNull(photo);
     assertEquals(PACKAGE + "Photo", photo.getFullName());
     assertFalse(photo.getSuperClass().isPresent());
-    assertEquals(2, photo.getFields().size());
+    assertEquals(2, photo.getAttribute().size());
     assertTrue(photo.getField("height").isPresent());
     assertTrue(photo.getField("width").isPresent());
   }
@@ -332,7 +332,7 @@ public class SocNetSymboltableTest {
     assertNotNull(photo);
     assertEquals(PACKAGE + "Tag", photo.getFullName());
     assertFalse(photo.getSuperClass().isPresent());
-    assertEquals(1, photo.getFields().size());
+    assertEquals(1, photo.getAttribute().size());
     assertTrue(photo.getField("confirmed").isPresent());
   }
 

@@ -38,10 +38,10 @@ public class CDTypeTest {
 
     // Test CDTypeSymbol methods //
 
-    assertEquals(3, typeSymbol.getFields().size());
-    assertSame(fieldSymbol1, typeSymbol.getFields().get(0));
-    assertSame(fieldSymbol2, typeSymbol.getFields().get(1));
-    assertSame(fieldSymbol3, typeSymbol.getFields().get(2));
+    assertEquals(3, typeSymbol.getAttribute().size());
+    assertSame(fieldSymbol1, typeSymbol.getAttribute().get(0));
+    assertSame(fieldSymbol2, typeSymbol.getAttribute().get(1));
+    assertSame(fieldSymbol3, typeSymbol.getAttribute().get(2));
 
     assertSame(fieldSymbol1, typeSymbol.getField("field1").orNull());
     assertSame(fieldSymbol2, typeSymbol.getField("field2").orNull());

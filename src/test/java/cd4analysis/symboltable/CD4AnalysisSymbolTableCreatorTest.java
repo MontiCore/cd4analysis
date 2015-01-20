@@ -33,7 +33,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1", personType.getPackageName());
     assertTrue(personType.isPublic());
     // Fields
-    assertEquals(3, personType.getFields().size());
+    assertEquals(3, personType.getAttribute().size());
     assertEquals("name", personType.getField("name").get().getName());
     assertTrue(personType.getField("name").get().isPublic());
     assertEquals("cd4analysis.symboltable.CD1.Person.name", personType.getField("name").get().getFullName());
@@ -81,7 +81,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getFullName());
     assertTrue(profType.isPrivate());
-    assertEquals(1, profType.getFields().size());
+    assertEquals(1, profType.getAttribute().size());
     assertEquals("uni", profType.getField("uni").get().getName());
     assertTrue(profType.getField("uni").get().isDerived());
     // Super class
@@ -137,7 +137,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(enumType.getName(), enumType.getEnumConstants().get(0).getType().getName());
     assertEquals("B", enumType.getEnumConstants().get(1).getName());
     assertEquals(enumType.getName(), enumType.getEnumConstants().get(1).getType().getName());
-    assertEquals(enumType.getEnumConstants(), enumType.getFields());
+    assertEquals(enumType.getEnumConstants(), enumType.getAttribute());
     // Interfaces
     assertEquals(1, enumType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getFullName());
