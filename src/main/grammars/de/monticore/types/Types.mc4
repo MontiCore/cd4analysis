@@ -156,7 +156,7 @@ grammar Types extends de.monticore.literals.Literals {
           (
             (
               "[" "]"
-              {a.setDimensions(a.getDimensions()+1);}
+              // TODO (SO,MB): {a.setDimensions(a.getDimensions()+1);}
             )+
           )
         );
@@ -172,7 +172,7 @@ grammar Types extends de.monticore.literals.Literals {
         componentType:PrimitiveType
           (
             "[" "]"
-            {a.setDimensions(a.getDimensions()+1);}
+            // TODO SO, MB: {a.setDimensions(a.getDimensions()+1);}
           )+;
     
     /** ASTVoidType represents the return type "void".
