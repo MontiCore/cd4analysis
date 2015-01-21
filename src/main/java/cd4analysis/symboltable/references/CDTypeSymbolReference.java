@@ -13,7 +13,6 @@ import cd4analysis.symboltable.Stereotype;
 import com.google.common.base.Optional;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.ScopeManipulationApi;
-import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.references.TypeReference;
 import de.monticore.symboltable.references.TypeReferenceImpl;
@@ -179,11 +178,6 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public List<CDAttributeSymbol> getEnumConstants() {
     return getReferencedSymbol().getEnumConstants();
-  }
-
-  @Override
-  public List<? extends Symbol> getChildren() {
-    return getReferencedSymbol().getChildren();
   }
 
   @Override

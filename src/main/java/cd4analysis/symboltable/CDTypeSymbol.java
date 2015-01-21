@@ -2,7 +2,6 @@ package cd4analysis.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.types.CommonJTypeSymbol;
 import mc.helper.NameHelper;
 
@@ -14,7 +13,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.requireNonNull;
 
-public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSymbol> {
+public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSymbol, CDMethodSymbol> {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
 
@@ -61,52 +60,10 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSym
 
   public Optional<CDAttributeSymbol> getField(String fieldName) {
     checkArgument(!isNullOrEmpty(fieldName));
-
     return getSpannedScope().resolveLocally(fieldName, CDAttributeSymbol.KIND);
   }
   
-  public void addMethod(CDMethodSymbol method) {
-    requireNonNull(method);
-    checkArgument(!method.isConstructor());
 
-    getSpannedScope().define(method);
-  }
-  
-  public List<CDMethodSymbol> getMethods() {
-    final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
-
-    final List<CDMethodSymbol> methods = resolvedMethods.stream().filter(
-        method -> !method.isConstructor()).collect(Collectors.toList());
-
-    return ImmutableList.copyOf(methods);
-  }
-
-  public Optional<CDMethodSymbol> getMethod(String methodName) {
-    checkArgument(!isNullOrEmpty(methodName));
-
-    Optional<CDMethodSymbol> method = getSpannedScope().resolveLocally(methodName, CDMethodSymbol
-        .KIND);
-    if (method.isPresent() && !method.get().isConstructor()) {
-      return method;
-    }
-    return Optional.absent();
-  }
-  
-  public void addConstructor(CDMethodSymbol constructor) {
-    requireNonNull(constructor);
-    checkArgument(constructor.isConstructor());
-
-    getSpannedScope().define(constructor);
-  }
-  
-  public List<CDMethodSymbol> getConstructors() {
-    final List<CDMethodSymbol> resolvedMethods = getSpannedScope().resolveLocally(CDMethodSymbol.KIND);
-
-    final List<CDMethodSymbol> constructors = resolvedMethods.stream().filter(
-        CDMethodSymbol::isConstructor).collect(Collectors.toList());
-
-    return ImmutableList.copyOf(constructors);
-  }
   
   public void addAssociation(CDAssociationSymbol assoc) {
     this.associations.add(assoc);
@@ -122,19 +79,6 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSym
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
   }
-  
-  public List<? extends Symbol> getChildren() {
-    final List<Symbol> children = new ArrayList<>();
-    children.addAll(getAttribute());
-    children.addAll(getMethods());
-    children.addAll(getConstructors());
-    children.addAll(getAssociations());
-    return children;
-  }
-  
-
-  
-
   
   public List<Stereotype> getStereotypes() {
     return stereotypes;
