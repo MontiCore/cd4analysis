@@ -44,14 +44,10 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     Log.info("Building Symboltable for CD: " + cdName,
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
-    // TODO PN <- RH unklar wo wir in cd4a packagenamen her bekommen, evtl GV fragen, old:
-    //  String packageName = dotSeparatedStringFromList(compilationUnit.getPackage());
-    //  // use CD name as part of the package name
-    //  fullClassDiagramName = packageName.isEmpty() ? cdName : packageName + "." + cdName;
-    // temporarly only use cdName
-    fullClassDiagramName = cdName;
-    // TODO PN<-RH END
-    
+      String packageName = dotSeparatedStringFromList(compilationUnit.getPackage());
+      // use CD name as part of the package name
+      fullClassDiagramName = packageName.isEmpty() ? cdName : packageName + "." + cdName;
+
     final List<ImportStatement> imports = new ArrayList<>();
     if (compilationUnit.getImportStatements() != null) {
       for (ASTImportStatement imp : compilationUnit.getImportStatements()) {
@@ -86,19 +82,11 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       typeSymbol.setSuperClass(superClassSymbol);
     }
 
-    // TODO PN <- RH old: final ASTModifier astModifier = astClass.getModifier();
-    final ASTModifier astModifier;
-    if (astClass.getModifier().isPresent()) {
-      astModifier = astClass.getModifier().get();
-    }
-    else {
-      astModifier = new ASTModifier.Builder().build();
-    }
-    // TODO PN<-RH END
+    final ASTModifier astModifier = astClass.getModifier().or(new ASTModifier.Builder().build());
 
     setModifiersOfType(typeSymbol, astModifier);
 
-    // TODO PN<-RH addInterfacesToType(typeSymbol, astClass.getInterfaces());
+    addInterfacesToType(typeSymbol, astClass.getInterfaces());
 
     defineInScope(typeSymbol);
     putScopeOnStackAndSetEnclosingIfExists(typeSymbol);
@@ -119,15 +107,13 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         typeSymbol.setPublic();
       }
 
-      // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
-//      if (astModifier.getStereotype().isPresent()) {
-//        for (ASTStereoValue stereoValue : astModifier.getStereotype().get().getValues()) {
-//          // TODO PN value and name are always the same. Is this ok?
-//          Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
-//          typeSymbol.addStereotype(stereotype);
-//        }
-//      }
-      // TODO PN<-RH END
+      if (astModifier.getStereotype().isPresent()) {
+        for (ASTStereoValue stereoValue : astModifier.getStereotype().get().getValues()) {
+          // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
+          Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+          typeSymbol.addStereotype(stereotype);
+        }
+      }
     }
   }
 
@@ -166,15 +152,13 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         fieldSymbol.setPublic();
       }
 
-      // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
-//      if (astModifier.getStereotype().isPresent()) {
-//        for (ASTStereoValue stereoValue : astModifier.getStereotype().get().getValues()) {
-//          // TODO PN value and name are always the same. Is this ok?
-//          Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
-//          fieldSymbol.addStereotype(stereotype);
-//        }
-//      }
-      // TODO PN<-RH END
+      if (astModifier.getStereotype().isPresent()) {
+        for (ASTStereoValue stereoValue : astModifier.getStereotype().get().getValues()) {
+          // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
+          Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+          fieldSymbol.addStereotype(stereotype);
+        }
+      }
     }
 
     defineInScope(fieldSymbol);
@@ -190,11 +174,9 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
     // Interfaces are always abstract
     typeSymbol.setAbstract(true);
 
-    // TODO PN<-RH
-//    addInterfacesToType(typeSymbol, astInterface.getInterfaces());
-//    setModifiersOfType(typeSymbol, astInterface.getModifier());
-    // TODO PN<-RH END
-    
+    addInterfacesToType(typeSymbol, astInterface.getInterfaces());
+    setModifiersOfType(typeSymbol, astInterface.getModifier().or(new ASTModifier.Builder().build()));
+
     // Interfaces are always abstract
     typeSymbol.setAbstract(true);
 
@@ -232,11 +214,9 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       }
     }
 
-    // TODO PN<-RH
-//    addInterfacesToType(enumSymbol, astEnum.getInterfaces());
-//    setModifiersOfType(enumSymbol, astEnum.getModifier());
-    // TODO PN<-RH END
-    
+    addInterfacesToType(enumSymbol, astEnum.getInterfaces());
+    setModifiersOfType(enumSymbol, astEnum.getModifier().or(new ASTModifier.Builder().build()));
+
     defineInScope(enumSymbol);
     putScopeOnStackAndSetEnclosingIfExists(enumSymbol);
   }
@@ -279,50 +259,46 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         methodSymbol.setPublic();
       }
 
-      // TODO PN<-RH
       if (astModifier.getStereotype().isPresent()) {
         addStereotypes(methodSymbol, astModifier.getStereotype().get());
       }
-      // TODO PN<-RH END
     }
   }
 
   private void addStereotypes(CDMethodSymbol methodSymbol, ASTStereotype astStereotype) {
-    // TODO PN<-RH stereotypen values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
     if (astStereotype != null) {
-//      for (ASTStereoValue val : astStereotype.getValues()) {
-//        methodSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
-//      }
+      for (ASTStereoValue val : astStereotype.getValues()) {
+        // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
+        methodSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
+      }
     }
   }
 
   private void setParametersOfMethod(CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
-    // TODO PN<-RH Parameter fehlen in Methoden (Bug muss SO beheben, habe ihm ne Mail geschrieben)
-//    if (astMethod.getgetCDParameters() != null) {
-//      CDTypeSymbolReference paramTypeSymbol;
-//
-//      for (ASTCDParameter astParameter : astMethod.getCDParameters()) {
-//        String paramName = astParameter.getName();
-//        // TODO PN use ASTTypesConverter
-//        //paramTypeSymbol = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // astParameter.getType());
-//        paramTypeSymbol = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
-//
-//        if (astParameter.isEllipsis()) {
-//          methodSymbol.setEllipsisParameterMethod(true);
-//          // ellipsis parameters are (like) arrays
-//          // TODO: Ist das so?
-//          // paramTypeSymbol = CDTypeEntryCreator.getInstance().create(paramTypeSymbol, 1);
-//        }
-//
-//        CDAttributeSymbol parameterSymbol = new CDAttributeSymbol(paramName, paramTypeSymbol);
-//        parameterSymbol.setParameter(true);
-//        // Parameters are always private
-//        parameterSymbol.setPrivate();
-//
-//        methodSymbol.addParameter(parameterSymbol);
-//      }
-//    }
-    // TODO PN<-RH END
+    if (astMethod.getCDParameters() != null) {
+      CDTypeSymbolReference paramTypeSymbol;
+
+      for (ASTCDParameter astParameter : astMethod.getCDParameters()) {
+        final String paramName = astParameter.getName();
+        // TODO PN use ASTTypesConverter
+        //paramTypeSymbol = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // astParameter.getType());
+        paramTypeSymbol = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
+
+        if (astParameter.isEllipsis()) {
+          methodSymbol.setEllipsisParameterMethod(true);
+          // ellipsis parameters are (like) arrays
+          // TODO: Ist das so?
+          // paramTypeSymbol = CDTypeEntryCreator.getInstance().create(paramTypeSymbol, 1);
+        }
+
+        final CDAttributeSymbol parameterSymbol = new CDAttributeSymbol(paramName, paramTypeSymbol);
+        parameterSymbol.setParameter(true);
+        // Parameters are always private
+        parameterSymbol.setPrivate();
+
+        methodSymbol.addParameter(parameterSymbol);
+      }
+    }
   }
 
   private void setReturnTypeOfMethod(CDMethodSymbol methodSymbol) {
@@ -340,14 +316,12 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   private void setExceptionsOfMethod(CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
-    // TODO PN<-RH Exceptions fehlen in Methoden (Bug muss SO beheben, habe ihm ne Mail geschrieben)
-//    if (astMethod.getExceptions() != null) {
-//      for (ASTQualifiedName exceptionName : astMethod.getExceptions()) {
-//        CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(), currentScope().get());
-//        methodSymbol.addException(exception);
-//      }
-//    }
-    // TODO PN<-RH END
+    if (astMethod.getExceptions() != null) {
+      for (ASTQualifiedName exceptionName : astMethod.getExceptions()) {
+        CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(), currentScope().get());
+        methodSymbol.addException(exception);
+      }
+    }
   }
 
   private void setDefiningTypeOfMethod(CDMethodSymbol methodSymbol) {
@@ -377,19 +351,14 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         if (cdAssoc.isComposition()) {
           assocRight2LeftSymbol.setRelationship(Relationship.PART);
         }
-        // TODO PN<-RH check if cardinality is present, old: assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality()));
-        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc
-            .getLeftCardinality().get()));
-        // TODO PN<-RH check if cardinality is present, old: assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality()));
-        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().get()));
-        // TODO PN<-RH check if role is present, old: assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole()); 
-        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole().get());
+        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orNull()));
+        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orNull()));
+        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole().orNull());
+
         if (cdAssoc.getLeftModifier().isPresent()) {
-          // TODO PN<-RH check if stereotype is present, old: addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype());
-          addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().get());
+          addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().orNull());
         }
-        // TODO PN<-RH END
-        
+
         if (cdAssoc.getRightQualifier().isPresent()) {
           ASTCDQualifier qualifier = cdAssoc.getRightQualifier().get();
           if ((qualifier.getName() != null) && (qualifier.getName().equals(""))) {
@@ -415,18 +384,13 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         if (cdAssoc.isComposition()) {
           assocLeft2RightSymbol.setRelationship(Relationship.COMPOSITE);
         }
-        // TODO PN<-RH check if cardinality is present, old: assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality()));
-        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().get()));
-        // TODO PN<-RH check if cardinality is present, old: assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality()));
-        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().get()));
-        // TODO PN<-RH check if role is present, old: assocLeft2RightSymbol.setRole(cdAssoc.getRightRole());
-        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole().get());
+        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orNull()));
+        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orNull()));
+        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole().orNull());
         if (cdAssoc.getRightModifier().isPresent()) {
-          // TODO PN<-RH check if stereotype is present, old: addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().getStereotype());
-          addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype().get());
+          addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype().orNull());
         }
-        // TODO PN<-RH END
-        
+
         if (cdAssoc.getLeftQualifier().isPresent()) {
           ASTCDQualifier qualifier = cdAssoc.getLeftQualifier().get();
           if ((qualifier.getName() != null) && (!qualifier.getName().equals(""))) {
@@ -453,11 +417,9 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
     CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
 
-    // TODO PN<-RH check if name is present, old: associationSymbol.setAssocName(astAssoc.getName());
-    associationSymbol.setAssocName(astAssoc.getName().get());
+    associationSymbol.setAssocName(astAssoc.getName().orNull());
 
-    // TODO PN<-RH check if stereotype is present, old: addStereotypes(associationSymbol, astAssoc.getStereotype());
-    addStereotypes(associationSymbol, astAssoc.getStereotype().get());
+    addStereotypes(associationSymbol, astAssoc.getStereotype().orNull());
 
     if ((astSourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(astSourceName.getParts())))) {
       Log.error("0xU0270 Association referenced type " + astSourceName + " wasn't declared in the "
@@ -475,9 +437,9 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   private void addStereotypes(CDAssociationSymbol associationSymbol, ASTStereotype astStereotype) {
     if (astStereotype != null) {
       // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
-//      for (ASTStereoValue val : astStereotype.getValues()) {
-//        associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
-//      }
+      for (ASTStereoValue val : astStereotype.getValues()) {
+        associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
+      }
     }
   }
 }
