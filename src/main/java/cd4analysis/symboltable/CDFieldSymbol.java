@@ -18,7 +18,7 @@ public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
 
   private boolean isInitialized;
 
-  private List<Stereotype> stereotypes = new ArrayList<>();
+  private final List<Stereotype> stereotypes = new ArrayList<>();
   
   protected CDFieldSymbol(String name, CDTypeSymbol type) {
     super(name, KIND, type);

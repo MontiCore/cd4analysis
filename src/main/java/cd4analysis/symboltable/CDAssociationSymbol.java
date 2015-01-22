@@ -2,7 +2,7 @@ package cd4analysis.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.AbstractSymbol;
+import de.monticore.symboltable.CommonSymbol;
 import mc.helper.NameHelper;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
-public class CDAssociationSymbol extends AbstractSymbol {
+public class CDAssociationSymbol extends CommonSymbol {
   
   public static final CDAssociationSymbolKind KIND = new CDAssociationSymbolKind();
 

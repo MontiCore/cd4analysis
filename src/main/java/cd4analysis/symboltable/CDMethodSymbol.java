@@ -10,7 +10,7 @@ public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDFieldSym
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
 
-  private List<Stereotype> stereotypes = new ArrayList<>();
+  private final List<Stereotype> stereotypes = new ArrayList<>();
 
   protected CDMethodSymbol(String name) {
     super(name, KIND);
