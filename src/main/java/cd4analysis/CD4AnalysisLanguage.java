@@ -7,7 +7,7 @@ package cd4analysis;
 
 import cd4analysis.symboltable.CD4AnalysisSymbolTableCreator;
 import cd4analysis.symboltable.CDAssociationSymbol;
-import cd4analysis.symboltable.CDAttributeSymbol;
+import cd4analysis.symboltable.CDFieldSymbol;
 import cd4analysis.symboltable.CDMethodSymbol;
 import cd4analysis.symboltable.CDTypeSymbol;
 import com.google.common.base.Optional;
@@ -29,7 +29,7 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
     super("CD 4 Analysis Language", FILE_ENDING, CDTypeSymbol.KIND);
 
     addResolver(CommonResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDAttributeSymbol.class, CDAttributeSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDFieldSymbol.class, CDFieldSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDMethodSymbol.class, CDMethodSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDAssociationSymbol.class, CDAssociationSymbol
         .KIND));

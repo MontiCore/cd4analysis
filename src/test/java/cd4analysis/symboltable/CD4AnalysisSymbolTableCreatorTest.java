@@ -33,7 +33,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1", personType.getPackageName());
     assertTrue(personType.isPublic());
     // Fields
-    assertEquals(3, personType.getAttribute().size());
+    assertEquals(3, personType.getFields().size());
     assertEquals("name", personType.getField("name").get().getName());
     assertTrue(personType.getField("name").get().isPublic());
     assertEquals("cd4analysis.symboltable.CD1.Person.name", personType.getField("name").get().getFullName());
@@ -81,7 +81,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(profType);
     assertEquals("cd4analysis.symboltable.CD1.Prof", profType.getFullName());
     assertTrue(profType.isPrivate());
-    assertEquals(1, profType.getAttribute().size());
+    assertEquals(1, profType.getFields().size());
     assertEquals("uni", profType.getField("uni").get().getName());
     assertTrue(profType.getField("uni").get().isDerived());
     // Super class
@@ -137,7 +137,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(enumType.getName(), enumType.getEnumConstants().get(0).getType().getName());
     assertEquals("B", enumType.getEnumConstants().get(1).getName());
     assertEquals(enumType.getName(), enumType.getEnumConstants().get(1).getType().getName());
-    assertEquals(enumType.getEnumConstants(), enumType.getAttribute());
+    assertEquals(enumType.getEnumConstants(), enumType.getFields());
     // Interfaces
     assertEquals(1, enumType.getInterfaces().size());
     assertEquals("cd4analysis.symboltable.CD1.Printable", enumType.getInterfaces().get(0).getFullName());
@@ -240,16 +240,16 @@ public class CD4AnalysisSymbolTableCreatorTest {
 //    und dieser für beide einen Eintrag findet => Es darf nur resolveDown im CS funktionieren,
 //        wenn CS das selbe Package hat wie der Qualifier des angefragten Symbols.
 //    2. Anschließend damit weiter machen, dass GS mandatory ist.
-    assertTrue(profType.getSpannedScope().resolve("name", CDAttributeSymbol.KIND).isPresent());
+    assertTrue(profType.getSpannedScope().resolve("name", CDFieldSymbol.KIND).isPresent());
 
     // protected fields can be resolved
-    assertTrue(profType.getSpannedScope().resolve("age", CDAttributeSymbol.KIND).isPresent());
+    assertTrue(profType.getSpannedScope().resolve("age", CDFieldSymbol.KIND).isPresent());
     assertFalse(profType.getField("age").isPresent());
 
     // private fields CANNOT be resolved...
-    assertFalse(profType.getSpannedScope().resolve("secondName", CDAttributeSymbol.KIND).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("secondName", CDFieldSymbol.KIND).isPresent());
     // ... even if resolving with the private access modifier.
-    assertFalse(profType.getSpannedScope().resolve("secondName", CDAttributeSymbol.KIND, PRIVATE).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("secondName", CDFieldSymbol.KIND, PRIVATE).isPresent());
     assertFalse(profType.getField("secondName").isPresent());
 
     // Resolve methods from super types //

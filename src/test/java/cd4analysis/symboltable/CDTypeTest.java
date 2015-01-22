@@ -21,9 +21,9 @@ public class CDTypeTest {
   public void testGetFields() {
     CDTypeSymbol dummyType = new CDTypeSymbol("Dummy");
 
-    CDAttributeSymbol fieldSymbol1 = new CDAttributeSymbol("field1", dummyType);
-    CDAttributeSymbol fieldSymbol2 = new CDAttributeSymbol("field2", dummyType);
-    CDAttributeSymbol fieldSymbol3 = new CDAttributeSymbol("field3", dummyType);
+    CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyType);
+    CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyType);
+    CDFieldSymbol fieldSymbol3 = new CDFieldSymbol("field3", dummyType);
 
     CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
     typeSymbol.addField(fieldSymbol1);
@@ -32,16 +32,16 @@ public class CDTypeTest {
 
     ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
     typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create
-        (CDAttributeSymbol.class,
-            CDAttributeSymbol.KIND)));
+        (CDFieldSymbol.class,
+            CDFieldSymbol.KIND)));
 
 
     // Test CDTypeSymbol methods //
 
-    assertEquals(3, typeSymbol.getAttribute().size());
-    assertSame(fieldSymbol1, typeSymbol.getAttribute().get(0));
-    assertSame(fieldSymbol2, typeSymbol.getAttribute().get(1));
-    assertSame(fieldSymbol3, typeSymbol.getAttribute().get(2));
+    assertEquals(3, typeSymbol.getFields().size());
+    assertSame(fieldSymbol1, typeSymbol.getFields().get(0));
+    assertSame(fieldSymbol2, typeSymbol.getFields().get(1));
+    assertSame(fieldSymbol3, typeSymbol.getFields().get(2));
 
     assertSame(fieldSymbol1, typeSymbol.getField("field1").orNull());
     assertSame(fieldSymbol2, typeSymbol.getField("field2").orNull());
@@ -51,9 +51,9 @@ public class CDTypeTest {
     // Test CDTypeScope methods //
 
     assertEquals(3, typeScope.getSymbols().size());
-    assertSame(fieldSymbol1, typeScope.resolve("field1", CDAttributeSymbol.KIND).orNull());
-    assertSame(fieldSymbol2, typeScope.resolve("field2", CDAttributeSymbol.KIND).orNull());
-    assertSame(fieldSymbol3, typeScope.resolve("field3", CDAttributeSymbol.KIND).orNull());
+    assertSame(fieldSymbol1, typeScope.resolve("field1", CDFieldSymbol.KIND).orNull());
+    assertSame(fieldSymbol2, typeScope.resolve("field2", CDFieldSymbol.KIND).orNull());
+    assertSame(fieldSymbol3, typeScope.resolve("field3", CDFieldSymbol.KIND).orNull());
   }
 
   @Test

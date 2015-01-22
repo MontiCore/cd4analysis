@@ -7,9 +7,9 @@ import de.monticore.symboltable.types.CommonJAttributeSymbol;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDAttributeSymbol extends CommonJAttributeSymbol {
+public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
 
-  public static final CDAttributeSymbolKind KIND = new CDAttributeSymbolKind();
+  public static final CDFieldSymbolKind KIND = new CDFieldSymbolKind();
 
   private boolean isReadOnly;
   private boolean isDerived;
@@ -20,7 +20,7 @@ public class CDAttributeSymbol extends CommonJAttributeSymbol {
 
   private List<Stereotype> stereotypes = new ArrayList<>();
   
-  protected CDAttributeSymbol(String name, CDTypeSymbol type) {
+  protected CDFieldSymbol(String name, CDTypeSymbol type) {
     super(name, KIND, type);
   }
   
@@ -83,8 +83,6 @@ public class CDAttributeSymbol extends CommonJAttributeSymbol {
     
   }
 
-
-
   public void addStereotype(Stereotype stereotype) {
     this.stereotypes.add(stereotype);
   }
@@ -92,7 +90,7 @@ public class CDAttributeSymbol extends CommonJAttributeSymbol {
 
   @Override
   public String toString() {
-    return  CDAttributeSymbol.class.getSimpleName() + " " + getName();
+    return  CDFieldSymbol.class.getSimpleName() + " " + getName();
   }
 
 }

@@ -9,61 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Objects.requireNonNull;
-
-public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSymbol, CDMethodSymbol> {
+public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol> {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
 
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
   private final List<Stereotype> stereotypes = new ArrayList<>();
-  
 
 
   protected CDTypeSymbol(String name) {
-    super(name, KIND, CDAttributeSymbol.KIND, CDMethodSymbol.KIND);
-  }
-
-  @Override
-  public List<CDTypeSymbol> getFormalTypeParameters() {
-    return super.getFormalTypeParameters();
-  }
-
-  @Override
-  public List<CDTypeSymbol> getInterfaces() {
-    return super.getInterfaces();
-  }
-
-  @Override
-  public List<CDTypeSymbol> getSuperTypes() {
-    return super.getSuperTypes();
-  }
-
-  @Override
-  public Optional<CDTypeSymbol> getSuperClass() {
-    return super.getSuperClass();
+    super(name, KIND, CDFieldSymbol.KIND, CDMethodSymbol.KIND);
   }
 
   public String getExtendedName() {
     return "CD type " + getName();  
   }
-  
-  public void addField(CDAttributeSymbol field) {
-    getSpannedScope().define(requireNonNull(field));
-  }
-  
-  public List<CDAttributeSymbol> getAttribute() {
-    return getSpannedScope().resolveLocally(CDAttributeSymbol.KIND);
-  }
-
-  public Optional<CDAttributeSymbol> getField(String fieldName) {
-    checkArgument(!isNullOrEmpty(fieldName));
-    return getSpannedScope().resolveLocally(fieldName, CDAttributeSymbol.KIND);
-  }
-  
-
   
   public void addAssociation(CDAssociationSymbol assoc) {
     this.associations.add(assoc);
@@ -73,9 +33,9 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSym
     return ImmutableList.copyOf(associations);
   }
 
-  public List<CDAttributeSymbol> getEnumConstants() {
-    final List<CDAttributeSymbol> enums = getAttribute().stream()
-        .filter(CDAttributeSymbol::isEnumConstant)
+  public List<CDFieldSymbol> getEnumConstants() {
+    final List<CDFieldSymbol> enums = getFields().stream()
+        .filter(CDFieldSymbol::isEnumConstant)
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
   }
@@ -83,7 +43,6 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSym
   public List<Stereotype> getStereotypes() {
     return stereotypes;
   }
-
 
   public Optional<Stereotype> getStereotype(String name) {
     for (Stereotype stereotype: this.stereotypes) {

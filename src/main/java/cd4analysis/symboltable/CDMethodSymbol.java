@@ -6,14 +6,11 @@ import de.monticore.symboltable.types.CommonJMethodSymbol;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDAttributeSymbol> {
+public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDFieldSymbol> {
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
-  
 
   private List<Stereotype> stereotypes = new ArrayList<>();
-
-
 
   protected CDMethodSymbol(String name) {
     super(name, KIND);
@@ -42,9 +39,7 @@ public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDAttribut
         return true;
       }
     }
-
     return false;
-    
   }
 
   public void addStereotype(Stereotype stereotype) {
