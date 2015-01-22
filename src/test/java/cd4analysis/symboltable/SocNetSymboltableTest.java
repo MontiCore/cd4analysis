@@ -8,7 +8,7 @@ package cd4analysis.symboltable;
 import cd4analysis.symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.SymbolKind;
+import de.monticore.symboltable.Symbol;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -30,7 +30,7 @@ public class SocNetSymboltableTest {
     topScope = globalScope.getSubScopes().get(0);
 
     assertEquals(31, topScope.getSymbols().size());
-    assertEquals(31, topScope.resolveLocally(SymbolKind.INSTANCE).size());
+    assertEquals(31, topScope.resolveLocally(Symbol.KIND).size());
 
     // TODO PN test types of all fields
 
