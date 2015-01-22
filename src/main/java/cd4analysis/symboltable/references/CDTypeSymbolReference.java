@@ -11,8 +11,8 @@ import cd4analysis.symboltable.CDMethodSymbol;
 import cd4analysis.symboltable.CDTypeSymbol;
 import cd4analysis.symboltable.Stereotype;
 import com.google.common.base.Optional;
+import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.references.TypeReference;
 import de.monticore.symboltable.references.TypeReferenceImpl;
@@ -41,7 +41,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public void setDefinedInScope(ScopeManipulationApi scope) {
+  public void setDefinedInScope(MutableScope scope) {
     getReferencedSymbol().setDefinedInScope(scope);
   }
 

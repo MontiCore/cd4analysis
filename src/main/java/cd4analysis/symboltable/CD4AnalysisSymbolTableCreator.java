@@ -10,8 +10,8 @@ import com.google.common.base.Optional;
 import de.cd4analysis._ast.*;
 import de.monticore.symboltable.CompilationUnitScope;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
-import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.types._ast.ASTImportStatement;
 import de.monticore.types._ast.ASTQualifiedName;
@@ -33,7 +33,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
   private String fullClassDiagramName = "";
 
-  public CD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable ScopeManipulationApi enclosingScope) {
+  public CD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable MutableScope enclosingScope) {
     super(resolverConfig, enclosingScope);
   }
 

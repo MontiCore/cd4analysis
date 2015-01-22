@@ -15,8 +15,8 @@ import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.AbstractModelingLanguage;
 import de.monticore.cocos.ContextConditionProfile;
 import de.monticore.modelloader.ModelNameCalculator;
+import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
-import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
 
@@ -41,7 +41,7 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
   }
 
   @Override
-  public Optional<? extends SymbolTableCreator> getSymbolTableCreator(ResolverConfiguration resolverConfiguration, @Nullable ScopeManipulationApi enclosingScope) {
+  public Optional<? extends SymbolTableCreator> getSymbolTableCreator(ResolverConfiguration resolverConfiguration, @Nullable MutableScope enclosingScope) {
     return Optional.of(new CD4AnalysisSymbolTableCreator(resolverConfiguration, enclosingScope));
   }
 
