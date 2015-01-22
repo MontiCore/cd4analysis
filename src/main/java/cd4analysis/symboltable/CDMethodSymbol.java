@@ -6,7 +6,7 @@ import de.monticore.symboltable.types.CommonJMethodSymbol;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDAttributeSymbol, CDMethodSymbol> {
+public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDAttributeSymbol> {
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
   

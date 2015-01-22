@@ -5,9 +5,9 @@
  */
 package cd4analysis.symboltable;
 
-import de.monticore.symboltable.types.CommonJAttributeSymbolKind;
+import de.monticore.symboltable.types.JAttributeSymbolKind;
 
-public class CDAttributeSymbolKind extends CommonJAttributeSymbolKind {
+public class CDAttributeSymbolKind extends JAttributeSymbolKind {
 
   protected CDAttributeSymbolKind() {
   }

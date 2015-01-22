@@ -23,7 +23,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDAttributeSym
 
 
   protected CDTypeSymbol(String name) {
-    super(name, KIND);
+    super(name, KIND, CDAttributeSymbol.KIND, CDMethodSymbol.KIND);
   }
 
   @Override
