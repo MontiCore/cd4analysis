@@ -18,7 +18,7 @@ import de.monticore.modelloader.ModelNameCalculator;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.ScopeManipulationApi;
 import de.monticore.symboltable.SymbolTableCreator;
-import de.monticore.symboltable.resolving.DefaultResolvingFilter;
+import de.monticore.symboltable.resolving.CommonResolvingFilter;
 
 import javax.annotation.Nullable;
 
@@ -28,10 +28,10 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
   public CD4AnalysisLanguage() {
     super("CD 4 Analysis Language", FILE_ENDING, CDTypeSymbol.KIND);
 
-    addResolver(DefaultResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
-    addResolver(DefaultResolvingFilter.create(CDAttributeSymbol.class, CDAttributeSymbol.KIND));
-    addResolver(DefaultResolvingFilter.create(CDMethodSymbol.class, CDMethodSymbol.KIND));
-    addResolver(DefaultResolvingFilter.create(CDAssociationSymbol.class, CDAssociationSymbol
+    addResolver(CommonResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDAttributeSymbol.class, CDAttributeSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDMethodSymbol.class, CDMethodSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDAssociationSymbol.class, CDAssociationSymbol
         .KIND));
   }
 

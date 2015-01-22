@@ -6,7 +6,7 @@
 package cd4analysis.symboltable;
 
 import de.monticore.symboltable.ScopeManipulationApi;
-import de.monticore.symboltable.resolving.DefaultResolvingFilter;
+import de.monticore.symboltable.resolving.CommonResolvingFilter;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class CDTypeTest {
     typeSymbol.addField(fieldSymbol3);
 
     ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Arrays.asList(DefaultResolvingFilter.create
+    typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create
         (CDAttributeSymbol.class,
             CDAttributeSymbol.KIND)));
 
@@ -69,7 +69,7 @@ public class CDTypeTest {
     typeSymbol.addConstructor(constructor);
 
     ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Arrays.asList(DefaultResolvingFilter.create(CDMethodSymbol
+    typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create(CDMethodSymbol
             .class,
         CDMethodSymbol.KIND)));
 
@@ -104,7 +104,7 @@ public class CDTypeTest {
     typeSymbol.addConstructor(constructorSymbol2);
 
     ScopeManipulationApi typeScope = (ScopeManipulationApi) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Arrays.asList(DefaultResolvingFilter.create(CDMethodSymbol
+    typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create(CDMethodSymbol
             .class,
         CDMethodSymbol.KIND)));
 
