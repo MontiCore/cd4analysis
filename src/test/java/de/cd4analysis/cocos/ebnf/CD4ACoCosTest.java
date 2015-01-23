@@ -3,7 +3,7 @@
  *
  * http://www.se-rwth.de/
  */
-package de.cd4analysis.cocos;
+package de.cd4analysis.cocos.ebnf;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,7 +13,6 @@ import mc.ast.SourcePosition;
 import org.junit.Test;
 
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.cd4analysis._cocos.CD4AnalysisCoCoProfile;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.cocos.helper.CoCosFireForInvalidModelsHelper;
 import de.monticore.cocos.helper.InvalidModel;
@@ -119,11 +118,9 @@ public class CD4ACoCosTest {
     CoCosFireForInvalidModelsHelper helper = new CoCosFireForInvalidModelsHelper(LOGNAME,
         MODEL_PATH, new CDCompilationUnitMCParser());
     
-    CD4AnalysisCoCoProfile profile = new CD4AnalysisCoCoProfile();
+    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
     
     // TODO add CoCos
-    
-    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker(profile);
     
     // TODO uncomment when CoCos are implemented
     // helper.testCoCosForInvalidModels(checker, invalidModelsCoCoTests);

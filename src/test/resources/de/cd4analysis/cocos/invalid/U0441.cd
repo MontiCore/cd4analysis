@@ -7,48 +7,48 @@ classdiagram U0441 {
   enum E;
 
   // invalid
-  association assocName A RC0_1 -> B;
-  composition A RC0_2 ->       B;
+  association assocName A (RC0_1) -> B;
+  composition           A (RC0_2) -> B;
   
-  association A RC1_1 ->       B;
-  association A       ->  RC1_2 B;
-  association A RC1_3 ->  RC1_4 B;
+  association A (RC1_1) ->          B;
+  association A         ->  (RC1_2) B;
+  association A (RC1_3) ->  (RC1_4) B;
   
-  association A RC2_1 <-        B;
-  association A       <-  RC2_2 B;
-  association A RC2_3 <-  RC2_4 B;
+  association A (RC2_1) <-          B;
+  association A         <-  (RC2_2) B;
+  association A (RC2_3) <-  (RC2_4) B;
   
-  association A RC3_1 <->       B;
-  association A       <-> RC3_2 B;
-  association A RC3_3 <-> RC3_4 B;
+  association A (RC3_1) <->         B;
+  association A         <-> (RC3_2) B;
+  association A (RC3_3) <-> (RC3_4) B;
 
-  association A RC4_1 --        B;
-  association A       --  RC4_2 B;
-  association A RC4_3 --  RC4_4 B;
+  association A (RC4_1) --          B;
+  association A         --  (RC4_2) B;
+  association A (RC4_3) --  (RC4_4) B;
 
 
-  association A RI1_1 ->        I;
-  association A       ->  RI1_2 I;
-  association A RI1_3 ->  RI1_4 I;
+  association A (RI1_1) ->          I;
+  association A         ->  (RI1_2) I;
+  association A (RI1_3) ->  (RI1_4) I;
   
-  association A RI2_1 <-        I;
-  association A       <-  RI2_2 I;
-  association A RI2_3 <-  RI2_4 I;
+  association A (RI2_1) <-          I;
+  association A         <-  (RI2_2) I;
+  association A (RI2_3) <-  (RI2_4) I;
   
-  association A RI3_1 <->       I;
-  association A       <-> RI3_2 I;
-  association A RI3_3 <-> RI3_4 I;
+  association A (RI3_1) <->         I;
+  association A         <-> (RI3_2) I;
+  association A (RI3_3) <-> (RI3_4) I;
 
-  association A RI4_1 --        I;
-  association A       --  RI4_2 I;
-  association A RI4_3 --  RI4_4 I;
+  association A (RI4_1) --          I;
+  association A         --  (RI4_2) I;
+  association A (RI4_3) --  (RI4_4) I;
   
 
-  association A RE1_1 ->        E;
-  association A       ->  RE1_2 E;
-  association A RE1_3 ->  RE1_4 E;
+  association A (RE1_1) ->          E;
+  association A         ->  (RE1_2) E;
+  association A (RE1_3) ->  (RE1_4) E;
   
-  association A RE4_1 --        E;
-  association A       --  RE4_2 E;
-  association A RE4_3 --  RE4_4 E;
+  association A (RE4_1) --          E;
+  association A         --  (RE4_2) E;
+  association A (RE4_3) --  (RE4_4) E;
 }
