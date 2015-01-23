@@ -233,13 +233,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Resolve fields from super class //
     // public fields can be resolved
     assertFalse(profType.getField("name").isPresent());
-//    HIER IST EIN FEHLER:
-//    1. da "name" nicht in Prof vorhanden ist, wird CD1 wieder neugeladen von GS. Daher sollte GS
-//        erstmal mit Hilfe des ModelNameCalculators checken, ob das Modell bereits geladen ist.
-//        Das Problem scheint daran zu liegen, dass CS name und cd4analysis...name an GS schickt,
-//    und dieser für beide einen Eintrag findet => Es darf nur resolveDown im CS funktionieren,
-//        wenn CS das selbe Package hat wie der Qualifier des angefragten Symbols.
-//    2. Anschließend damit weiter machen, dass GS mandatory ist.
     assertTrue(profType.getSpannedScope().resolve("name", CDFieldSymbol.KIND).isPresent());
 
     // protected fields can be resolved

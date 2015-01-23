@@ -427,8 +427,6 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       return null;
     }
 
-    sourceType.addAssociation(associationSymbol);
-
     defineInScope(associationSymbol);
 
     return associationSymbol;

@@ -13,9 +13,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
 
-  private final List<CDAssociationSymbol> associations = new ArrayList<>();
   private final List<Stereotype> stereotypes = new ArrayList<>();
-
 
   protected CDTypeSymbol(String name) {
     super(name, KIND, CDFieldSymbol.KIND, CDMethodSymbol.KIND);
@@ -26,11 +24,11 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
   
   public void addAssociation(CDAssociationSymbol assoc) {
-    this.associations.add(assoc);
+    spannedScope.define(assoc);
   }
-  
+
   public List<CDAssociationSymbol> getAssociations() {
-    return ImmutableList.copyOf(associations);
+    return spannedScope.resolveLocally(CDAssociationSymbol.KIND);
   }
 
   public List<CDFieldSymbol> getEnumConstants() {
