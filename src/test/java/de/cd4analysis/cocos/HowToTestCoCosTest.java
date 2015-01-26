@@ -30,6 +30,7 @@ import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.cocos.AbstractContextCondition;
 import de.monticore.cocos.CoCoError;
+import de.monticore.cocos.CoCoResultList;
 import de.monticore.cocos.ContextConditionResult;
 import de.monticore.cocos.helper.ExpectedCoCoError;
 
@@ -86,31 +87,31 @@ public class HowToTestCoCosTest {
     
     // no errors check
     checker.addCoCo(succeedingCoco);
-    Boolean result = checker.checkAll(astRoot);
-    assertTrue(result);
-    assertNoCoCoErrors(checker);
+    CoCoResultList result = checker.checkAll(astRoot);
+    assertTrue(result.isSucceeded());
+    assertNoCoCoErrors(result);
     
     // check that expected errors occure
     checker.addCoCo(failingCoCo);
     Collection<ExpectedCoCoError> expectedErrors = Arrays.asList(new ExpectedCoCoError.Builder(
         "0x...").build());
     result = checker.checkAll(astRoot);
-    assertFalse(result);
-    assertExpectedCoCoErrors(checker.getErrors(), expectedErrors, Optional.empty(),
+    assertFalse(result.isSucceeded());
+    assertExpectedCoCoErrors(result.getErrors(), expectedErrors, Optional.empty(),
         LOGNAME);
     
     // disable cocos
     checker.disableAll();
     result = checker.checkAll(astRoot);
-    assertNoCoCoErrors(checker);
+    assertNoCoCoErrors(result);
     
     // enable by prefix
     checker.enableByPrefixes("Failing");
     assertTrue(failingCoCo.isEnabled());
     assertFalse(succeedingCoco.isEnabled());
     result = checker.checkAll(astRoot);
-    assertFalse(result);
-    assertExpectedCoCoErrors(checker.getErrors(), expectedErrors, Optional.empty(),
+    assertFalse(result.isSucceeded());
+    assertExpectedCoCoErrors(result.getErrors(), expectedErrors, Optional.empty(),
         LOGNAME);
     
   }
@@ -121,7 +122,7 @@ public class HowToTestCoCosTest {
     
     @Override
     public ContextConditionResult check(ASTCDClass node) {
-      return ContextConditionResult.empty();
+      return ContextConditionResult.empty(NAME);
     }
     
     @Override
@@ -136,7 +137,7 @@ public class HowToTestCoCosTest {
     
     @Override
     public ContextConditionResult check(ASTCDClass node) {
-      return ContextConditionResult.error(new CoCoError("0x...", "msg", new SourcePosition(1, 1)));
+      return ContextConditionResult.error(NAME, new CoCoError("0x...", "msg", new SourcePosition(1, 1)));
     }
     
     @Override

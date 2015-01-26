@@ -36,7 +36,7 @@ public class UniqueAttributeInClassCoco extends AbstractContextCondition impleme
           .filter(f -> (f != field) && f.getName().equals(field.getName()))
           .forEach(f2 -> duplicates.put(f2.getName(), f2));
     }
-    ContextConditionResult result = ContextConditionResult.empty();
+    ContextConditionResult result = ContextConditionResult.empty(NAME);
     if (!duplicates.isEmpty()) {
       for (ASTCDAttribute duplicate : duplicates.values()) {
         CoCoError e = new CoCoError(
