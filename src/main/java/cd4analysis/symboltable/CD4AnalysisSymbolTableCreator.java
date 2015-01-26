@@ -8,7 +8,7 @@ package cd4analysis.symboltable;
 import cd4analysis.symboltable.references.CDTypeSymbolReference;
 import com.google.common.base.Optional;
 import de.cd4analysis._ast.*;
-import de.monticore.symboltable.CompilationUnitScope;
+import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
@@ -55,7 +55,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       }
     }
 
-    CompilationUnitScope scope = new CompilationUnitScope(Optional.absent(), fullClassDiagramName, imports);
+    ArtifactScope scope = new ArtifactScope(Optional.absent(), fullClassDiagramName, imports);
     putOnStackAndSetEnclosingIfExists(scope);
   }
 

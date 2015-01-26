@@ -1,7 +1,7 @@
 package cd4analysis.symboltable;
 
 import cd4analysis.symboltable.references.CDTypeSymbolReference;
-import de.monticore.symboltable.CompilationUnitScope;
+import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Continue with compilationScope. Else, if globalScope was used, all symbols had to be
     // resolved by their qualified name.
-    CompilationUnitScope compilationScope = (CompilationUnitScope) globalScope.getSubScopes().get(0);
+    ArtifactScope compilationScope = (ArtifactScope) globalScope.getSubScopes().get(0);
 
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
