@@ -16,25 +16,26 @@ import static org.junit.Assert.*;
 public class SocNetSymboltableTest {
 
   final static String PACKAGE = "cd4analysis.symboltable.SocNet.";
-  private Scope topScope;
+  private Scope cdScope;
 
   @Test
   public void testSocNet() {
-    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     // Besides resolving the Profile symbol the symbol table is initialized
     globalScope.resolve(PACKAGE + "Profile", CDTypeSymbol.KIND);
 
-    // Continue with compilationScope. Else, if globalScope was used, all symbols had to be
-    // resolved by their qualified name.
-    topScope = globalScope.getSubScopes().get(0);
+    // Continue with the class diagram scope.Else, if globalScope or artifact scope was used, all
+    // symbols had to be resolved by their qualified name.
+    // Scope Hierarchy: GlobalScope -> ArtifactScope -> ClassDiagramScope ->* ...
+    cdScope = globalScope.getSubScopes().get(0).getSubScopes().get(0);
 
-    assertEquals(31, topScope.getSymbols().size());
-    assertEquals(31, topScope.resolveLocally(Symbol.KIND).size());
+    assertEquals(31, cdScope.getSymbols().size());
+    assertEquals(31, cdScope.resolveLocally(Symbol.KIND).size());
 
     // TODO PN test types of all fields
 
-    CDTypeSymbol profile = testProfileClass();
+    final CDTypeSymbol profile = testProfileClass();
 
     testPersonClass(profile);
     testGroupClass(profile);
@@ -61,7 +62,7 @@ public class SocNetSymboltableTest {
   }
 
   private CDTypeSymbol testProfileClass() {
-    CDTypeSymbol profile = topScope.<CDTypeSymbol>resolve("Profile", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol profile = cdScope.<CDTypeSymbol>resolve("Profile", CDTypeSymbol.KIND).orNull();
     assertNotNull(profile);
     assertEquals(PACKAGE + "Profile", profile.getFullName());
     assertTrue(profile.isAbstract());
@@ -84,7 +85,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testPersonClass(CDTypeSymbol profile) {
-    CDTypeSymbol person = topScope.<CDTypeSymbol>resolve("Person", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol person = cdScope.<CDTypeSymbol>resolve("Person", CDTypeSymbol.KIND).orNull();
     assertNotNull(person);
     assertEquals(PACKAGE + "Person", person.getFullName());
     assertTrue(person.getSuperClass().isPresent());
@@ -102,7 +103,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testGroupClass(CDTypeSymbol profile) {
-    CDTypeSymbol group = topScope.<CDTypeSymbol>resolve("Group", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol group = cdScope.<CDTypeSymbol>resolve("Group", CDTypeSymbol.KIND).orNull();
     assertNotNull(group);
     assertEquals(PACKAGE + "Group", group.getFullName());
     assertTrue(group.getSuperClass().isPresent());
@@ -119,7 +120,7 @@ public class SocNetSymboltableTest {
 
   private void testMemberAssociation() {
     // Person -> Group
-    CDAssociationSymbol groupAssoc = topScope.<CDAssociationSymbol>resolve("group",
+    CDAssociationSymbol groupAssoc = cdScope.<CDAssociationSymbol>resolve("group",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(groupAssoc);
     assertEquals("group", groupAssoc.getName());
@@ -133,7 +134,7 @@ public class SocNetSymboltableTest {
     assertTrue(groupAssoc.getTargetCardinality().isMultiple());
 
     // Person <- Group
-    CDAssociationSymbol personAssoc = topScope.<CDAssociationSymbol>resolve("person",
+    CDAssociationSymbol personAssoc = cdScope.<CDAssociationSymbol>resolve("person",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(personAssoc);
     assertEquals("person", personAssoc.getName());
@@ -149,7 +150,7 @@ public class SocNetSymboltableTest {
 
   private void testOrginaizersAssociation() {
     // ->
-    CDAssociationSymbol organizedAssoc = topScope.<CDAssociationSymbol>resolve("organized",
+    CDAssociationSymbol organizedAssoc = cdScope.<CDAssociationSymbol>resolve("organized",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(organizedAssoc);
     assertEquals("organized", organizedAssoc.getName());
@@ -164,7 +165,7 @@ public class SocNetSymboltableTest {
     assertTrue(organizedAssoc.getTargetCardinality().isMultiple());
 
     // <-
-    CDAssociationSymbol organizerAssoc = topScope.<CDAssociationSymbol>resolve("organizer",
+    CDAssociationSymbol organizerAssoc = cdScope.<CDAssociationSymbol>resolve("organizer",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(organizerAssoc);
     assertEquals("organizer", organizerAssoc.getName());
@@ -180,7 +181,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testRelationshipClass() {
-    CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("Relationship", CDTypeSymbol.KIND)
+    CDTypeSymbol relationship = cdScope.<CDTypeSymbol>resolve("Relationship", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(relationship);
     assertEquals(PACKAGE + "Relationship", relationship.getFullName());
@@ -194,7 +195,7 @@ public class SocNetSymboltableTest {
   private void testInvitedAssociation() {
     // ->
     // TODO PN ambiguous exception is thrown, because two associations target Profile, etc. -> Profile
-//    CDAssociationSymbol organizedAssoc = topScope.<CDAssociationSymbol>resolve("profile",
+//    CDAssociationSymbol organizedAssoc = cdScope.<CDAssociationSymbol>resolve("profile",
 //        CDAssociationSymbol.KIND).orNull();
 //    assertNotNull(organizedAssoc);
     // TODO PN continue
@@ -203,7 +204,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testRelationTypeEnum() {
-    CDTypeSymbol relationship = topScope.<CDTypeSymbol>resolve("RelationType", CDTypeSymbol.KIND)
+    CDTypeSymbol relationship = cdScope.<CDTypeSymbol>resolve("RelationType", CDTypeSymbol.KIND)
         .orNull();
     assertNotNull(relationship);
     assertEquals(PACKAGE + "RelationType", relationship.getFullName());
@@ -223,7 +224,7 @@ public class SocNetSymboltableTest {
 
   private void testRelationTypeAssociation() {
     // ->
-    CDAssociationSymbol assoc = topScope.<CDAssociationSymbol>resolve("relationType",
+    CDAssociationSymbol assoc = cdScope.<CDAssociationSymbol>resolve("relationType",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(assoc);
     assertEquals("relationType", assoc.getName());
@@ -241,7 +242,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testPostInterface() {
-    CDTypeSymbol post = topScope.<CDTypeSymbol>resolve("Post", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol post = cdScope.<CDTypeSymbol>resolve("Post", CDTypeSymbol.KIND).orNull();
     assertNotNull(post);
     assertEquals(PACKAGE + "Post", post.getFullName());
     assertTrue(post.isAbstract());
@@ -251,13 +252,13 @@ public class SocNetSymboltableTest {
   private void testReceivedAssociation() {
     // ->
     // TODO PN ambiguous exception is thrown, because two associations target Profile, etc. -> Profile
-//    CDAssociationSymbol postAssoc = topScope.<CDAssociationSymbol>resolve("post",
+//    CDAssociationSymbol postAssoc = cdScope.<CDAssociationSymbol>resolve("post",
 //        CDAssociationSymbol.KIND).orNull();
 //    assertNotNull(postAssoc);
     // TODO PN continue
 
     // <-
-//    CDAssociationSymbol profileAssoc = topScope.<CDAssociationSymbol>resolve("profile",
+//    CDAssociationSymbol profileAssoc = cdScope.<CDAssociationSymbol>resolve("profile",
 //        CDAssociationSymbol.KIND).orNull();
 //    assertNotNull(profileAssoc);
 //    assertEquals("organizer", profileAssoc.getName());
@@ -265,7 +266,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testInstantMessageClass() {
-    CDTypeSymbol symbol = topScope.<CDTypeSymbol>resolve("InstantMessage", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol symbol = cdScope.<CDTypeSymbol>resolve("InstantMessage", CDTypeSymbol.KIND).orNull();
     assertNotNull(symbol);
     assertEquals(PACKAGE + "InstantMessage", symbol.getFullName());
     assertFalse(symbol.getSuperClass().isPresent());
@@ -277,7 +278,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testPhotoMessageClass() {
-    CDTypeSymbol symbol = topScope.<CDTypeSymbol>resolve("PhotoMessage", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol symbol = cdScope.<CDTypeSymbol>resolve("PhotoMessage", CDTypeSymbol.KIND).orNull();
     assertNotNull(symbol);
     assertEquals(PACKAGE + "PhotoMessage", symbol.getFullName());
     assertTrue(symbol.getSuperClass().isPresent());
@@ -287,7 +288,7 @@ public class SocNetSymboltableTest {
 
   private void testPhotoAssociation() {
     // ->
-    CDAssociationSymbol photoMessageAssoc = topScope.<CDAssociationSymbol>resolve("photoMessage",
+    CDAssociationSymbol photoMessageAssoc = cdScope.<CDAssociationSymbol>resolve("photoMessage",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(photoMessageAssoc);
     assertTrue(photoMessageAssoc.getRole().isEmpty());
@@ -302,7 +303,7 @@ public class SocNetSymboltableTest {
     assertFalse(photoMessageAssoc.getTargetCardinality().isMultiple());
 
     // <-
-    CDAssociationSymbol photoAssoc = topScope.<CDAssociationSymbol>resolve("picture",
+    CDAssociationSymbol photoAssoc = cdScope.<CDAssociationSymbol>resolve("picture",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(photoAssoc);
     assertEquals("picture", photoAssoc.getName());
@@ -318,7 +319,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testPhotoClass() {
-    CDTypeSymbol photo = topScope.<CDTypeSymbol>resolve("Photo", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol photo = cdScope.<CDTypeSymbol>resolve("Photo", CDTypeSymbol.KIND).orNull();
     assertNotNull(photo);
     assertEquals(PACKAGE + "Photo", photo.getFullName());
     assertFalse(photo.getSuperClass().isPresent());
@@ -328,7 +329,7 @@ public class SocNetSymboltableTest {
   }
 
   private void testTagClass() {
-    CDTypeSymbol photo = topScope.<CDTypeSymbol>resolve("Tag", CDTypeSymbol.KIND).orNull();
+    CDTypeSymbol photo = cdScope.<CDTypeSymbol>resolve("Tag", CDTypeSymbol.KIND).orNull();
     assertNotNull(photo);
     assertEquals(PACKAGE + "Tag", photo.getFullName());
     assertFalse(photo.getSuperClass().isPresent());

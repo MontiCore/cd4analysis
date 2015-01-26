@@ -9,6 +9,7 @@ import cd4analysis.symboltable.references.CDTypeSymbolReference;
 import com.google.common.base.Optional;
 import de.cd4analysis._ast.*;
 import de.monticore.symboltable.ArtifactScope;
+import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
@@ -32,6 +33,7 @@ import static mc.helper.NameHelper.dotSeparatedStringFromList;
 public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
   private String fullClassDiagramName = "";
+  private String packageName;
 
   public CD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable MutableScope enclosingScope) {
     super(resolverConfig, enclosingScope);
@@ -39,14 +41,10 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
 
   public void visit(ASTCDCompilationUnit compilationUnit) {
-    final String cdName = compilationUnit.getCDDefinition().getName();
-
-    Log.info("Building Symboltable for CD: " + cdName,
+    Log.info("Building Symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
-      String packageName = dotSeparatedStringFromList(compilationUnit.getPackage());
-      // use CD name as part of the package name
-      fullClassDiagramName = packageName.isEmpty() ? cdName : packageName + "." + cdName;
+    packageName = dotSeparatedStringFromList(compilationUnit.getPackage());
 
     final List<ImportStatement> imports = new ArrayList<>();
     if (compilationUnit.getImportStatements() != null) {
@@ -55,7 +53,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
       }
     }
 
-    ArtifactScope scope = new ArtifactScope(Optional.absent(), fullClassDiagramName, imports);
+    final ArtifactScope scope = new ArtifactScope(Optional.absent(), packageName, imports);
     putOnStackAndSetEnclosingIfExists(scope);
   }
 
@@ -67,11 +65,18 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   }
 
   public void visit(ASTCDDefinition astDefinition) {
-    // nothing to do here...
+    final String cdName = astDefinition.getName();
+
+    fullClassDiagramName = packageName.isEmpty() ? cdName : packageName + "." + cdName;
+
+    final MutableScope cdScope = new CommonScope(true);
+    cdScope.setName(cdName);
+    putOnStackAndSetEnclosingIfExists(cdScope);
   }
 
-  public void endVisit(ASTCDDefinition cdDefinition) {
-    cdDefinition.getCDAssociations().forEach(this::handleAssociation);
+  public void endVisit(ASTCDDefinition astDefinition) {
+    astDefinition.getCDAssociations().forEach(this::handleAssociation);
+    removeCurrentScope();
   }
 
   public void visit(ASTCDClass astClass) {
@@ -344,7 +349,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
   private void handleRightToLeftAssociation(ASTCDAssociation cdAssoc) {
     if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
-      CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
+      final CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
           .getRightReferenceName(), cdAssoc.getLeftReferenceName());
       // complete association properties
       if (assocRight2LeftSymbol != null) {
@@ -360,7 +365,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         }
 
         if (cdAssoc.getRightQualifier().isPresent()) {
-          ASTCDQualifier qualifier = cdAssoc.getRightQualifier().get();
+          final ASTCDQualifier qualifier = cdAssoc.getRightQualifier().get();
           if ((qualifier.getName() != null) && (qualifier.getName().equals(""))) {
             assocRight2LeftSymbol.setQualifier(qualifier.getName());
           }
@@ -377,7 +382,8 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
 
   private void handleLeftToRightAssociation(ASTCDAssociation cdAssoc) {
     if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
-      CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc.getLeftReferenceName(),
+      final CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
+              .getLeftReferenceName(),
           cdAssoc.getRightReferenceName());
 
       if (assocLeft2RightSymbol != null) {
@@ -392,7 +398,7 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
         }
 
         if (cdAssoc.getLeftQualifier().isPresent()) {
-          ASTCDQualifier qualifier = cdAssoc.getLeftQualifier().get();
+          final ASTCDQualifier qualifier = cdAssoc.getLeftQualifier().get();
           if ((qualifier.getName() != null) && (!qualifier.getName().equals(""))) {
             assocLeft2RightSymbol.setQualifier(qualifier.getName());
           }
