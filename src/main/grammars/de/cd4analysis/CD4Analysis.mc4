@@ -34,14 +34,14 @@ grammar CD4Analysis extends de.monticore.types.Types {
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
     @attribute name           Name of this Class
-    @attribute superclasses   List of Superclasses of this Class
+    @attribute superclass     Optional Superclass of this Class
     @attribute interfaces     List of Interfaces implemented by this Class
     @attribute cDConstructors List of Constructors of this Class
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
   CDClass = Modifier?  "class" Name
-  ( "extends"  superclasses:ReferenceType)?
+  ( "extends"  superclass:ReferenceType)?
   ( "implements" interfaces:(ReferenceType || ",")+ )?
   ( "{" 
     ( cDAttributes:CDAttribute

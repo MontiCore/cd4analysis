@@ -82,8 +82,8 @@ public class CD4AnalysisSymbolTableCreator extends SymbolTableCreator {
   public void visit(ASTCDClass astClass) {
     CDTypeSymbol typeSymbol = new CDTypeSymbol(astClass.getName());
 
-    if (astClass.getSuperclasses().isPresent()) {
-      CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(astClass.getSuperclasses().get());
+    if (astClass.getSuperclass().isPresent()) {
+      CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(astClass.getSuperclass().get());
       typeSymbol.setSuperClass(superClassSymbol);
     }
 
