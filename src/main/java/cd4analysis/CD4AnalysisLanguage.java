@@ -14,7 +14,6 @@ import com.google.common.base.Optional;
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.AbstractModelingLanguage;
-import de.monticore.modelloader.ModelNameCalculator;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.SymbolTableCreator;
@@ -31,8 +30,6 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
     addResolver(CommonResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDFieldSymbol.class, CDFieldSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDMethodSymbol.class, CDMethodSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDAssociationSymbol.class, CDAssociationSymbol
-        .KIND));
     addResolver(CommonResolvingFilter.create(CDAssociationSymbol.class, CDAssociationSymbol.KIND));
 
     setModelLoader(new CD4AnalysisModelLoader(this));
@@ -55,11 +52,6 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
     return Optional.of(new CD4AnalysisSymbolTableCreator(resolverConfiguration, enclosingScope));
   }
   
-  @Override
-  public ModelNameCalculator getModelNameCalculator() {
-    return new CD4AnalysisModelNameCalculator();
-  }
-
   @Override
   public CD4AnalysisModelLoader getModelLoader() {
     return (CD4AnalysisModelLoader) super.getModelLoader();
