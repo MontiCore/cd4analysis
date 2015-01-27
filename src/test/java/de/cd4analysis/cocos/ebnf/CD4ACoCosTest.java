@@ -38,7 +38,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   // TODO ... tests for all CoCos of CD4A
   @Test
   public void testDiagramName() {
-    String modelName = "A0134.cd";
+    String modelName = "a0134.cd";
     String errorCode = "0xA0134";
     
     Collection<String> expectedErrors = Arrays.asList(

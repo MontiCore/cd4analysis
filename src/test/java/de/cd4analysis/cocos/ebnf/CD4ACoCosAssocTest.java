@@ -27,10 +27,8 @@ import de.se_rwth.commons.logging.Log;
 public class CD4ACoCosAssocTest extends AbstractCoCoTest {
   /**
    * Constructor for de.cd4analysis.cocos.ebnf.CD4ACoCosAssocTest
-   * 
-   * @param modelPath
    */
-  public CD4ACoCosAssocTest(String modelPath) {
+  public CD4ACoCosAssocTest() {
     super(MODEL_PATH);
   }
   
