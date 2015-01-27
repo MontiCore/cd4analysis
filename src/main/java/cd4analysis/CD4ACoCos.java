@@ -5,10 +5,11 @@
  */
 package cd4analysis;
 
+import cd4analysis.cocos.ebnf.UniqueAttributeInClassCoco;
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 
 /**
- * TODO: Write me!
+ * Set of CoCos for CD4A.
  *
  * @author Robert Heim
  */
@@ -16,7 +17,9 @@ public class CD4ACoCos {
   
   public CD4AnalysisCoCoChecker getCheckerForAllCoCos() {
     CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
-    // TODO RE<-RH profile.addCoCo(coco);
+    
+    checker.addCoCo(new UniqueAttributeInClassCoco());
+    // TODO RE<-RH checker.addCoCo(coco);
     return checker;
   }
 }

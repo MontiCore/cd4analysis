@@ -52,7 +52,7 @@ public abstract class AbstractCoCoTest {
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
     // TODO uncomment when CoCos are implemented
-    //Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
+    Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
   }
   
   private ASTCDCompilationUnit loadModel(String modelFilename) {

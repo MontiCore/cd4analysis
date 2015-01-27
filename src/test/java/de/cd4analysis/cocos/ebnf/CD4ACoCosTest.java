@@ -10,10 +10,15 @@ import java.util.Collection;
 
 import mc.ast.SourcePosition;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cd4analysis.cocos.AbstractCoCoTest;
 import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.LogMock;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * TODO: Write me!
@@ -33,9 +38,23 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     super(MODEL_PATH);
   }
   
+  @BeforeClass
+  public static void init() {
+    LogMock.init();
+    Log.enableFailQuick(false);
+    LogMock.setProduceOutput(false);
+  }
+  
+  @Before
+  public void setUp() {
+    LogMock.getFindings().clear();
+  }
+  
   private static String MODEL_PATH = "src/test/resources/de/cd4analysis/cocos/invalid/";
   
   // TODO ... tests for all CoCos of CD4A
+  
+  @Ignore
   @Test
   public void testDiagramName() {
     String modelName = "a0134.cd";
@@ -48,6 +67,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
   @Test
   public void testFileName() {
     String modelName = "XXXNoCode1.cd";
@@ -63,6 +83,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testReservedNames() {
     String modelName = "D00XX.cd";
     String errorCode = "0xD00XX";
@@ -74,7 +96,9 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
-  public void testDuplicateNames() {
+  @Ignore
+  @Test
+  public void testDuplicateTypeNames() {
     String modelName = "XXXNoCode2.cd";
     String errorCode = "XXXNoCode2";
     
@@ -96,6 +120,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInvalidTypeName() {
     String modelName = "U0530.cd";
     String errorCode = "0xU0530";
@@ -111,6 +137,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testDuplicateEnumConstant() {
     String modelName = "U0504.cd";
     String errorCode = "0xU0504";
@@ -121,6 +149,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInheritanceCycle() {
     String modelName = "U0531.cd";
     String errorCode = "0xU0531";
@@ -134,6 +164,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInvalidClassExtends() {
     String modelName = "U0496_U0497.cd";
     String errorCode = "0xU0496_0xU0497";
@@ -147,6 +179,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInvalidInterfaceExtends() {
     String modelName = "XXXNoCode3.cd";
     String errorCode = "XXXNoCode3";
@@ -160,6 +194,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInvalidImplements() {
     String modelName = "U0533_U0534.cd";
     String errorCode = "0xU0533_0xU0534";
@@ -177,6 +213,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInvalidAssignment() {
     String modelName = "U0447.cd";
     String errorCode = "0xU0447";
@@ -193,7 +231,9 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
-  public void testInvalidAttributeName() {
+  @Ignore
+  @Test
+  public void testInvalidAttributes() {
     String modelName = "U0454.cd";
     String errorCode = "0xU0454";
     
@@ -208,6 +248,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testInvalidAttributeOverride() {
     String modelName = "U0455.cd";
     String errorCode = "0xU0455";
@@ -224,6 +266,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Ignore
+  @Test
   public void testUndefinedType() {
     String modelName = "D0410.cd";
     String errorCode = "0xD0410";
@@ -235,13 +279,14 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     testModelForErrors(modelName, expectedErrors);
   }
   
+  @Test
   public void testDuplicateAttributes() {
     String modelName = "XXXNoCode4.cd";
     String errorCode = "XXXNoCode4";
     
     Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C.")
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C.")
         );
     testModelForErrors(modelName, expectedErrors);
   }

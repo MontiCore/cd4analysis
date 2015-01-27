@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cd4analysis.cocos.AbstractCoCoTest;
@@ -46,6 +47,7 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
     LogMock.getFindings().clear();
   }
   
+  @Ignore
   @Test
   public void testAssocName() {
     String modelName = "U0440.cd";
@@ -60,7 +62,7 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
   }
   
   // TODO ... tests for all CoCos of CD4A
-  
+  @Ignore
   @Test
   public void testInvalidRoleNames() {
     String modelName = "U0441.cd";

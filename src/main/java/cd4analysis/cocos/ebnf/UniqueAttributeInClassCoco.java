@@ -3,7 +3,7 @@
  *
  * http://www.se-rwth.de/
  */
-package cd4analysis.cocos;
+package cd4analysis.cocos.ebnf;
 
 import java.util.HashMap;
 
@@ -14,15 +14,16 @@ import de.monticore.cocos.CoCoHelper;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Example CoCo
+ * Ensures that an attribute name does not occur twice in a class.
  *
  * @author Robert Heim
  */
 public class UniqueAttributeInClassCoco implements CD4AnalysisASTCDClassCoCo {
   
-  public static final String ERROR_CODE = "0x???";
+  // TODO error code
+  public static final String ERROR_CODE = "XXXNoCode4";
   
-  public static final String ERROR_MSG_FORMAT = "Attribute %s is already defined in class %s.";
+  public static final String ERROR_MSG_FORMAT = "Attribute %s is defined multiple times in class %s.";
   
   @Override
   public void check(ASTCDClass node) {
