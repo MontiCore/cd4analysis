@@ -11,7 +11,6 @@ import cd4analysis.symboltable.CDFieldSymbol;
 import cd4analysis.symboltable.CDMethodSymbol;
 import cd4analysis.symboltable.CDTypeSymbol;
 import com.google.common.base.Optional;
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.AbstractModelingLanguage;
 import de.monticore.symboltable.MutableScope;
@@ -35,12 +34,6 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
     setModelLoader(new CD4AnalysisModelLoader(this));
   }
 
-  private CD4AnalysisCoCoChecker createCoCos() {
-    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
-    // TODO RE<-RH profile.addCoCo(coco);
-    return checker;
-  }
-  
   @Override
   public CDCompilationUnitMCParser getParser() {
     return new CDCompilationUnitMCParser();
