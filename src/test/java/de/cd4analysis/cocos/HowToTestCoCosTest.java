@@ -5,9 +5,6 @@
  */
 package de.cd4analysis.cocos;
 
-import static de.monticore.cocos.helper.Assert.assertExpectedCoCoErrors;
-import static de.monticore.cocos.helper.Assert.assertNoCoCoErrors;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -15,12 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import mc.ast.SourcePosition;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.cd4analysis._ast.ASTCDClass;
@@ -28,11 +25,10 @@ import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
-import de.monticore.cocos.AbstractContextCondition;
-import de.monticore.cocos.CoCoError;
-import de.monticore.cocos.CoCoResultList;
-import de.monticore.cocos.ContextConditionResult;
-import de.monticore.cocos.helper.ExpectedCoCoError;
+import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.LogMock;
+import de.monticore.cocos.helper.Assert;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Simple test showing how to test CoCos.
@@ -41,12 +37,19 @@ import de.monticore.cocos.helper.ExpectedCoCoError;
  */
 public class HowToTestCoCosTest {
   
-  private static String LOGNAME = HowToTestCoCosTest.class.getSimpleName();
-  
   private ASTCDCompilationUnit astRoot;
+  
+  @BeforeClass
+  public static void init() {
+    LogMock.init();
+    Log.enableFailQuick(false);
+    LogMock.setProduceOutput(false);
+  }
   
   @Before
   public void setUp() throws RecognitionException, IOException {
+    LogMock.getFindings().clear();
+    
     Path model = Paths.get("src/test/resources/de/cd4analysis/cocos/valid/A.cd");
     CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
     com.google.common.base.Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
@@ -60,21 +63,19 @@ public class HowToTestCoCosTest {
     
     // succeeding coco
     SucceedingCoCo succeedingCoCo = new SucceedingCoCo();
-    ContextConditionResult succeedingResult = succeedingCoCo.check(clazz);
+    succeedingCoCo.check(clazz);
     
-    assertTrue(succeedingResult.isSucceeded());
-    assertNoCoCoErrors(succeedingResult);
+    assertTrue(LogMock.getFindings().isEmpty());
     
     // failing coco with expected errors
     FailingCoCo failingCoCo = new FailingCoCo();
-    ContextConditionResult failingResult = failingCoCo.check(clazz);
+    failingCoCo.check(clazz);
     
-    Collection<ExpectedCoCoError> expectedErrors = Arrays.asList(new ExpectedCoCoError.Builder(
-        "0x...").msg("msg").build());
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg("0x...", "msg", new SourcePosition(1, 1))
+        );
     
-    assertFalse(failingResult.isSucceeded());
-    assertExpectedCoCoErrors(failingResult.getErrors(), expectedErrors, Optional.empty(),
-        LOGNAME);
+    Assert.assertErrors(expectedErrors, LogMock.getFindings());
   }
   
   @Test
@@ -87,62 +88,27 @@ public class HowToTestCoCosTest {
     
     // no errors check
     checker.addCoCo(succeedingCoco);
-    CoCoResultList result = checker.checkAll(astRoot);
-    assertTrue(result.isSucceeded());
-    assertNoCoCoErrors(result);
+    checker.checkAll(astRoot);
+    assertTrue(LogMock.getFindings().isEmpty());
     
     // check that expected errors occure
     checker.addCoCo(failingCoCo);
-    Collection<ExpectedCoCoError> expectedErrors = Arrays.asList(new ExpectedCoCoError.Builder(
-        "0x...").build());
-    result = checker.checkAll(astRoot);
-    assertFalse(result.isSucceeded());
-    assertExpectedCoCoErrors(result.getErrors(), expectedErrors, Optional.empty(),
-        LOGNAME);
-    
-    // disable cocos
-    checker.disableAll();
-    result = checker.checkAll(astRoot);
-    assertNoCoCoErrors(result);
-    
-    // enable by prefix
-    checker.enableByPrefixes("Failing");
-    assertTrue(failingCoCo.isEnabled());
-    assertFalse(succeedingCoco.isEnabled());
-    result = checker.checkAll(astRoot);
-    assertFalse(result.isSucceeded());
-    assertExpectedCoCoErrors(result.getErrors(), expectedErrors, Optional.empty(),
-        LOGNAME);
-    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg("0x...", "msg", new SourcePosition(1, 1))
+        );
+    checker.checkAll(astRoot);
+    Assert.assertErrors(expectedErrors, LogMock.getFindings());
   }
   
-  private static class SucceedingCoCo extends AbstractContextCondition implements
-      CD4AnalysisASTCDClassCoCo {
-    private static final String NAME = SucceedingCoCo.class.getSimpleName();
-    
-    @Override
-    public ContextConditionResult check(ASTCDClass node) {
-      return ContextConditionResult.empty(NAME);
-    }
-    
-    @Override
-    public String getName() {
-      return NAME;
+  private static class SucceedingCoCo implements CD4AnalysisASTCDClassCoCo {
+    public void check(ASTCDClass node) {
+      // nothing
     }
   }
   
-  private static class FailingCoCo extends AbstractContextCondition implements
-      CD4AnalysisASTCDClassCoCo {
-    private static final String NAME = FailingCoCo.class.getSimpleName();
-    
-    @Override
-    public ContextConditionResult check(ASTCDClass node) {
-      return ContextConditionResult.error(NAME, new CoCoError("0x...", "msg", new SourcePosition(1, 1)));
-    }
-    
-    @Override
-    public String getName() {
-      return NAME;
+  private static class FailingCoCo implements CD4AnalysisASTCDClassCoCo {
+    public void check(ASTCDClass node) {
+      Log.error(CoCoHelper.buildErrorMsg("0x...", "msg", new SourcePosition(1, 1)));
     }
   }
 }

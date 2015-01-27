@@ -12,10 +12,8 @@ import mc.ast.SourcePosition;
 
 import org.junit.Test;
 
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.cd4analysis._parser.CDCompilationUnitMCParser;
-import de.monticore.cocos.helper.CoCosFireForInvalidModelsHelper;
-import de.monticore.cocos.helper.InvalidModel;
+import de.cd4analysis.cocos.AbstractCoCoTest;
+import de.monticore.cocos.CoCoHelper;
 
 /**
  * TODO: Write me!
@@ -24,106 +22,228 @@ import de.monticore.cocos.helper.InvalidModel;
  * @version $Revision$, $Date$
  * @since TODO: add version number
  */
-public class CD4ACoCosTest {
-  private static String LOGNAME = CD4ACoCosTest.class.getName();
+public class CD4ACoCosTest extends AbstractCoCoTest {
+  
+  /**
+   * Constructor for de.cd4analysis.cocos.ebnf.CD4ACoCosTest
+   * 
+   * @param modelPath
+   */
+  public CD4ACoCosTest() {
+    super(MODEL_PATH);
+  }
   
   private static String MODEL_PATH = "src/test/resources/de/cd4analysis/cocos/invalid/";
   
-  // holds all models and their expected errors.
-  private Collection<InvalidModel> invalidModelsCoCoTests = Arrays
-      .asList(
-          new InvalidModel.Builder("A0134.cd", "0xA0134")
-              .addExpected("First character of the diagram name a0134 must be upper-case.")
-              .build(),
-          new InvalidModel.Builder("XXXNoCode1.cd", "XXXNoCode1")
-              .addExpected(
-                  "The name of the diagram XXXNoCode1_bad is not identical to the name of the filel XXXNoCode1.cd (without its fileextension).")
-              .build(),
-          new InvalidModel.Builder("D00XX.cd", "D00XX")
-              .addExpected("Name DAO is reserved for internal use.")
-              .addExpected("Name Factory is reserved for internal use.")
-              .build(),
-          new InvalidModel.Builder("XXXNoCode2.cd", "XXXNoCode2")
-              .addExpected(
-                  "The name A is used several times. Classes, interfaces and enumerations may not use the same names.")
-              .addExpected(
-                  "The name B is used several times. Classes, interfaces and enumerations may not use the same names.")
-              .addExpected(
-                  "The name C is used several times. Classes, interfaces and enumerations may not use the same names.")
-              .build(),
-          new InvalidModel.Builder("U0530.cd", "0xU0530")
-              .addExpected("The first character of the interface i must be upper-case.")
-              .addExpected("The first character of the class c must be upper-case.")
-              .addExpected("The first character of the enum e must be upper-case.")
-              .build(),
-          new InvalidModel.Builder("U0504.cd", "0xU0504")
-              .addExpected("Duplicate enum constant: a.")
-              .build(),
-          new InvalidModel.Builder(
-              "U0531.cd", "0xU0531")
-              .addExpected(
-                  "The class C2 introduces an inheritance cycle. Inheritance may not be cyclic.")
-              .addExpected(
-                  "The interface I2 introduces an inheritance cycle. Inheritance may not be cyclic.")
-              .build(),
-          new InvalidModel.Builder("U0496_U0497.cd", "U0496_U0497")
-              .addExpected("Class C1 cannot extend interface I. A class may only extend classes.")
-              .addExpected("Class C2 cannot extend enum E. A class may only extend classes.")
-              .build(),
-          new InvalidModel.Builder("XXXNoCode3.cd", "XXXNoCode3")
-              .addExpected(
-                  "Interface I1 cannot extend class C. An interface may only extend interfaces.")
-              .addExpected(
-                  "Interface I2 cannot extend enum E. An interface may only extend interfaces.")
-              .build(),
-          new InvalidModel.Builder("U0533_U0534.cd", "U0533_U0534")
-              .addExpected(
-                  "The class C1 cannot implement class C. Only interfaces may be implemented.")
-              .addExpected(
-                  "The class C2 cannot implement enum E. Only interfaces may be implemented.")
-              .addExpected(
-                  "The enum E1 cannot implement class C. Only interfaces may be implemented.")
-              .addExpected(
-                  "The enum E2 cannot implement enum E. Only interfaces may be implemented.")
-              .build(),
-          new InvalidModel.Builder("U0447.cd", "0xU0447")
-              .addExpected(
-                  "The value assignment for the attribute a in class C1 is not compatible to its type String.")
-              .addExpected(
-                  "The value assignment for the attribute b in class C1 is not compatible to its type int.")
-              .build(),
-          new InvalidModel.Builder("U0454.cd", "0xU0454")
-              .addError("Attribute Attr must start in lower-case.", new SourcePosition(5, 12))
-              .build(),
-          new InvalidModel.Builder("U0455.cd", "0xU0455")
-              .addExpected(
-                  "Class C2 overrides the attribute attr (type: String) of class C1 with the different type int.")
-              .addExpected(
-                  "Class C5 overrides the attribute attr (type: int) of class C4 with the different type String.")
-              .build(),
-          new InvalidModel.Builder("D0410.cd", "D0410")
-              .addExpected("Type AnUndefinedType of the attribute attr is unkown.")
-              .build(),
-          new InvalidModel.Builder("XXXNoCode4.cd", "XXXNoCode4")
-              .addExpected("Attribute a is defined multiple times in class C.")
-              .addExpected("Attribute b is defined multiple times in class C.")
-              .build()
-      
-      // TODO ... tests for all CoCos of CD4A
-      
-      );
+  // TODO ... tests for all CoCos of CD4A
+  @Test
+  public void testDiagramName() {
+    String modelName = "A0134.cd";
+    String errorCode = "0xA0134";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "First character of the diagram name a0134 must be upper-case.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
   
   @Test
-  public void test() {
-    CoCosFireForInvalidModelsHelper helper = new CoCosFireForInvalidModelsHelper(LOGNAME,
-        MODEL_PATH, new CDCompilationUnitMCParser());
+  public void testFileName() {
+    String modelName = "XXXNoCode1.cd";
+    String errorCode = "XXXNoCode1";
     
-    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
+    Collection<String> expectedErrors = Arrays
+        .asList(
+        CoCoHelper
+            .buildErrorMsg(
+                errorCode,
+                "The name of the diagram XXXNoCode1_bad is not identical to the name of the filel XXXNoCode1.cd (without its fileextension).")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testReservedNames() {
+    String modelName = "D00XX.cd";
+    String errorCode = "0xD00XX";
     
-    // TODO add CoCos
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode, "Name DAO is reserved for internal use."),
+        CoCoHelper.buildErrorMsg(errorCode, "Name Factory is reserved for internal use.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testDuplicateNames() {
+    String modelName = "XXXNoCode2.cd";
+    String errorCode = "XXXNoCode2";
     
-    // TODO uncomment when CoCos are implemented
-    // helper.testCoCosForInvalidModels(checker, invalidModelsCoCoTests);
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "The name A is used several times. Classes, interfaces and enumerations may not use the same names."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "The name B is used several times. Classes, interfaces and enumerations may not use the same names."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "The name C is used several times. Classes, interfaces and enumerations may not use the same names.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidTypeName() {
+    String modelName = "U0530.cd";
+    String errorCode = "0xU0530";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The first character of the interface i must be upper-case."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The first character of the class c must be upper-case."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The first character of the enum e must be upper-case.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testDuplicateEnumConstant() {
+    String modelName = "U0504.cd";
+    String errorCode = "0xU0504";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode, "Duplicate enum constant: a.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInheritanceCycle() {
+    String modelName = "U0531.cd";
+    String errorCode = "0xU0531";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The class C2 introduces an inheritance cycle. Inheritance may not be cyclic."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The interface I2 introduces an inheritance cycle. Inheritance may not be cyclic.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidClassExtends() {
+    String modelName = "U0496_U0497.cd";
+    String errorCode = "0xU0496_0xU0497";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "Class C1 cannot extend interface I. A class may only extend classes."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "Class C2 cannot extend enum E. A class may only extend classes.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidInterfaceExtends() {
+    String modelName = "XXXNoCode3.cd";
+    String errorCode = "XXXNoCode3";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "Interface I1 cannot extend class C. An interface may only extend interfaces."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "Interface I2 cannot extend enum E. An interface may only extend interfaces.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidImplements() {
+    String modelName = "U0533_U0534.cd";
+    String errorCode = "0xU0533_0xU0534";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The class C1 cannot implement class C. Only interfaces may be implemented."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The class C2 cannot implement enum E. Only interfaces may be implemented."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The enum E1 cannot implement class C. Only interfaces may be implemented."),
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The enum E2 cannot implement enum E. Only interfaces may be implemented.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidAssignment() {
+    String modelName = "U0447.cd";
+    String errorCode = "0xU0447";
+    
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The value assignment for the attribute a in class C1 is not compatible to its type String."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The value assignment for the attribute b in class C1 is not compatible to its type int.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidAttributeName() {
+    String modelName = "U0454.cd";
+    String errorCode = "0xU0454";
+    
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The value assignment for the attribute a in class C1 is not compatible to its type String."),
+            CoCoHelper.buildErrorMsg(errorCode, "Attribute Attr must start in lower-case.",
+                new SourcePosition(5, 12))
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testInvalidAttributeOverride() {
+    String modelName = "U0455.cd";
+    String errorCode = "0xU0455";
+    
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "Class C2 overrides the attribute attr (type: String) of class C1 with the different type int."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "Class C5 overrides the attribute attr (type: int) of class C4 with the different type String.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testUndefinedType() {
+    String modelName = "D0410.cd";
+    String errorCode = "0xD0410";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper
+            .buildErrorMsg(errorCode, "Type AnUndefinedType of the attribute attr is unkown.")
+        );
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  public void testDuplicateAttributes() {
+    String modelName = "XXXNoCode4.cd";
+    String errorCode = "XXXNoCode4";
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C.")
+        );
+    testModelForErrors(modelName, expectedErrors);
   }
   
 }

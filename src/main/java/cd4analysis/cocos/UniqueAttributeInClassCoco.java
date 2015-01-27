@@ -10,25 +10,22 @@ import java.util.HashMap;
 import de.cd4analysis._ast.ASTCDAttribute;
 import de.cd4analysis._ast.ASTCDClass;
 import de.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
-import de.monticore.cocos.AbstractContextCondition;
-import de.monticore.cocos.CoCoError;
-import de.monticore.cocos.ContextConditionResult;
+import de.monticore.cocos.CoCoHelper;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Example CoCo
  *
  * @author Robert Heim
  */
-public class UniqueAttributeInClassCoco extends AbstractContextCondition implements
-    CD4AnalysisASTCDClassCoCo {
-  private static String NAME = UniqueAttributeInClassCoco.class.getName();
+public class UniqueAttributeInClassCoco implements CD4AnalysisASTCDClassCoCo {
   
   public static final String ERROR_CODE = "0x???";
   
   public static final String ERROR_MSG_FORMAT = "Attribute %s is already defined in class %s.";
   
   @Override
-  public ContextConditionResult check(ASTCDClass node) {
+  public void check(ASTCDClass node) {
     HashMap<String, ASTCDAttribute> duplicates = new HashMap<>();
     
     for (ASTCDAttribute field : node.getCDAttributes()) {
@@ -36,26 +33,15 @@ public class UniqueAttributeInClassCoco extends AbstractContextCondition impleme
           .filter(f -> (f != field) && f.getName().equals(field.getName()))
           .forEach(f2 -> duplicates.put(f2.getName(), f2));
     }
-    ContextConditionResult result = ContextConditionResult.empty(NAME);
+    
     if (!duplicates.isEmpty()) {
       for (ASTCDAttribute duplicate : duplicates.values()) {
-        CoCoError e = new CoCoError(
+        Log.error(CoCoHelper.buildErrorMsg(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, duplicate.getName(), node.getName()),
-            node.get_SourcePositionStart());
-        result.addError(e);
+            node.get_SourcePositionStart()));
       }
     }
-    
-    return result;
-  }
-  
-  /**
-   * @see de.monticore.cocos.ContextCondition#getName()
-   */
-  @Override
-  public String getName() {
-    return NAME;
   }
   
 }
