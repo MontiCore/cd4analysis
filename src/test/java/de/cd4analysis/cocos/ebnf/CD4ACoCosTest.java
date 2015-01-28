@@ -64,7 +64,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode,
             "First character of the diagram name a0134 must be upper-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -80,7 +80,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
                 errorCode,
                 "The name of the diagram XXXNoCode1_bad is not identical to the name of the filel XXXNoCode1.cd (without its fileextension).")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -93,7 +93,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode, "Name DAO is reserved for internal use."),
         CoCoHelper.buildErrorMsg(errorCode, "Name Factory is reserved for internal use.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -117,7 +117,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
                     errorCode,
                     "The name C is used several times. Classes, interfaces and enumerations may not use the same names.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -134,7 +134,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode,
             "The first character of the enum e must be upper-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -146,7 +146,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Duplicate enum constant: a.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -161,7 +161,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode,
             "The interface I2 introduces an inheritance cycle. Inheritance may not be cyclic.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -176,7 +176,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode,
             "Class C2 cannot extend enum E. A class may only extend classes.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -191,7 +191,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode,
             "Interface I2 cannot extend enum E. An interface may only extend interfaces.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -210,7 +210,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode,
             "The enum E2 cannot implement enum E. Only interfaces may be implemented.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -228,7 +228,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
                 .buildErrorMsg(errorCode,
                     "The value assignment for the attribute b in class C1 is not compatible to its type int.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -245,7 +245,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
             CoCoHelper.buildErrorMsg(errorCode, "Attribute Attr must start in lower-case.",
                 new SourcePosition(5, 12))
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -263,7 +263,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
                 .buildErrorMsg(errorCode,
                     "Class C5 overrides the attribute attr (type: int) of class C4 with the different type String.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
@@ -276,7 +276,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper
             .buildErrorMsg(errorCode, "Type AnUndefinedType of the attribute attr is unkown.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Test
@@ -288,7 +288,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),
         CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
 }

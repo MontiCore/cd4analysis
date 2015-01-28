@@ -6,6 +6,7 @@
 package cd4analysis;
 
 import cd4analysis.cocos.ebnf.UniqueAttributeInClassCoco;
+import cd4analysis.cocos.mcg.AssociationModifierCoCo;
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 
 /**
@@ -19,6 +20,7 @@ public class CD4ACoCos {
     CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
     
     checker.addCoCo(new UniqueAttributeInClassCoco());
+    checker.addCoCo(new AssociationModifierCoCo());
     // TODO RE<-RH checker.addCoCo(coco);
     return checker;
   }

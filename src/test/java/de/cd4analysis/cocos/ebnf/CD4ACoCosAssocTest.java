@@ -58,7 +58,7 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
         CoCoHelper.buildErrorMsg(errorCode, "Association Assoc2 must start in lower-case."),
         CoCoHelper.buildErrorMsg(errorCode, "Association Assoc3 must start in lower-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   // TODO ... tests for all CoCos of CD4A
@@ -171,7 +171,7 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
             CoCoHelper.buildErrorMsg(errorCode,
                 "Role RE4_4 of association (A RE4_3 -- RE4_4 E) must start in lower-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
 }

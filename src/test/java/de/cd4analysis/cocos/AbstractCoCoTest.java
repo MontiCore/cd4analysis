@@ -46,12 +46,12 @@ public abstract class AbstractCoCoTest {
    * @param modelName
    * @param expectedErrorSuffixes
    */
-  protected void testModelForErrors(String modelName, Collection<String> expectedErrorSuffixes) {
+  protected void testModelForErrorSuffixes(String modelName,
+      Collection<String> expectedErrorSuffixes) {
     CD4AnalysisCoCoChecker checker = new CD4ACoCos().getCheckerForAllCoCos();
     
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    // TODO uncomment when CoCos are implemented
     Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
   }
   

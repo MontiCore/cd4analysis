@@ -1,0 +1,10 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD_1_44 {
+  class A;
+  class B;
+
+  association Assoc1 abstract A -> B;
+  association Assoc2 A -> B abstract;
+
+}
