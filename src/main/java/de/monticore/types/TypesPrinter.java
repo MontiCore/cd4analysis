@@ -3,6 +3,7 @@ package de.monticore.types;
 /**
  * @deprecated STATE DEL PN will be implemented with new symbol table concept
  */
+import mc.helper.NameHelper;
 import de.monticore.types._ast.ASTArrayType;
 import de.monticore.types._ast.ASTPrimitiveType;
 import de.monticore.types._ast.ASTReferenceType;
@@ -251,15 +252,14 @@ public class TypesPrinter {
     return getInstance().doPrintArrayType(type);
   }
   
-//TODO GV, MB
   protected String doPrintArrayType(ASTArrayType type) {
-//    if (type != null) {
-//      String dimension = "";
-//      for (int i = 0; i < type.getDimensions(); i++) {
-//        dimension += "[]";
-//      }
-//      return doPrintType(type.getComponentType()) + dimension;
-//    }
+    if (type != null) {
+      String dimension = "";
+      for (int i = 0; i < type.getDimensions(); i++) {
+        dimension += "[]";
+      }
+      return doPrintType(type.getComponentType()) + dimension;
+    }
     return "";
   }
   
@@ -296,10 +296,9 @@ public class TypesPrinter {
   }
   
   protected String doPrintSimpleReferenceType(ASTSimpleReferenceType type) {
-    // TODO GV, MB
-//    if (type != null) {
-//      return NameHelper.dotSeparatedStringFromList(type.getName()) + doPrintTypeArguments(type.getTypeArguments());
-//    }
+    if (type != null && type.getTypeArguments().isPresent()) {
+      return NameHelper.dotSeparatedStringFromList(type.getName()) + doPrintTypeArguments(type.getTypeArguments().get());
+    }
     return "";
   }
   
