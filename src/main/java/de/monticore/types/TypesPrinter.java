@@ -1,4 +1,4 @@
-package types;
+package de.monticore.types;
 
 /**
  * @deprecated STATE DEL PN will be implemented with new symbol table concept

@@ -1,0 +1,86 @@
+package de.cd4analysis.prettyprint;
+
+import java.util.List;
+import java.util.Set;
+import java.util.Date;
+
+classdiagram Example1{
+
+  interface Post;
+
+  abstract class Profile{
+    String profileName;
+    derived int numOfPosts;
+    derived int friends;
+  }
+
+  class Person extends Profile{
+    Date lastVisit;
+    String firstName;
+    String secondName;
+    Date dateOfBirth;
+    int zip;
+    String city;
+    String country;
+  }
+
+  class Group extends Profile{
+    boolean isOpen;
+    Date created;
+    String purpose;
+    derived int members;
+  }
+
+  class Relationship{
+    boolean isPending;
+    Date requested;
+    Date accepted;
+  }
+
+  class InstantMessage implements Post{
+    Date timestamp;
+    String content;
+  }
+
+  class PhotoMessage extends InstantMessage;
+
+  class Photo{
+    double height;
+    double width;
+  }
+
+  class Tag{
+    boolean confirmed;
+  }
+
+  enum RelationType{
+    FRIEND,
+    FAMILY,
+    FOLLOWER,
+    COLLEAGUE,
+    OTHER;
+  }
+
+  association member  [*]  Person <-> Group  [*]  ;
+
+  association  [1]  Person (organizer) <-> (organized) [profileName] Group  [*]  ;
+
+  association invited  [*]  Relationship <-> Profile  [1]  ;
+
+  association initiated  [*]  Relationship <-> Profile  [1]  ;
+
+  association Relationship -> RelationType  [1]  ;
+
+  association received  [*]  Profile <-> Post  [*]  <<ordered>>;
+
+  association sent  [1]  Profile <-> Post  [*]  <<ordered>>;
+
+  association  [*]  InstantMessage <-> (replyTo) InstantMessage  [1]  ;
+
+  association  [*]  Photo (picture) <-> PhotoMessage ;
+
+  association  [1]  Person (tagged) <-> Tag  [*]  ;
+
+  association  [*]  Tag <-> Photo  [1]  ;
+
+}
