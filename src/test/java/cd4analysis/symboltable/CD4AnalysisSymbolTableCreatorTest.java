@@ -3,7 +3,7 @@ package cd4analysis.symboltable;
 import cd4analysis.symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.Scope;
 import org.junit.Test;
 
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
@@ -31,7 +31,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, artifactScope.getSubScopes().size());
     // Continue with the class diagram scope.Else, if globalScope or artifact scope was used, all
     // symbols had to be resolved by their qualified name.
-    final MutableScope cdScope = artifactScope.getSubScopes().get(0);
+    final Scope cdScope = artifactScope.getSubScopes().get(0);
 
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
