@@ -10,6 +10,7 @@ import cd4analysis.symboltable.CDAssociationSymbol;
 import cd4analysis.symboltable.CDFieldSymbol;
 import cd4analysis.symboltable.CDMethodSymbol;
 import cd4analysis.symboltable.CDTypeSymbol;
+import cd4analysis.symboltable.CommonCD4AnalysisSymbolTableCreator;
 import com.google.common.base.Optional;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.AbstractModelingLanguage;
@@ -40,7 +41,7 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
   @Override
   public Optional<CD4AnalysisSymbolTableCreator> getSymbolTableCreator(
       ResolverConfiguration resolverConfiguration, @Nullable MutableScope enclosingScope) {
-    return Optional.of(new CD4AnalysisSymbolTableCreator(resolverConfiguration, enclosingScope));
+    return Optional.of(new CommonCD4AnalysisSymbolTableCreator(resolverConfiguration, enclosingScope));
   }
   
   @Override
