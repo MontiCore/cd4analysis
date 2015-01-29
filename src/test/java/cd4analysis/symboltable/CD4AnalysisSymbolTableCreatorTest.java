@@ -1,6 +1,10 @@
 package cd4analysis.symboltable;
 
 import cd4analysis.symboltable.references.CDTypeSymbolReference;
+import de.cd4analysis._ast.ASTCDAssociation;
+import de.cd4analysis._ast.ASTCDAttribute;
+import de.cd4analysis._ast.ASTCDClass;
+import de.cd4analysis._ast.ASTCDMethod;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
@@ -39,20 +43,26 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("cd4analysis.symboltable.CD1.Person", personType.getFullName());
     assertEquals("cd4analysis.symboltable", personType.getPackageName());
     assertTrue(personType.isPublic());
+    // AST
+    assertTrue(personType.getAstNode().isPresent());
+    assertTrue(personType.getAstNode().get() instanceof ASTCDClass);
     // Fields
     assertEquals(3, personType.getFields().size());
-    assertEquals("name", personType.getField("name").get().getName());
-    assertTrue(personType.getField("name").get().isPublic());
-    assertEquals("cd4analysis.symboltable.CD1.Person.name", personType.getField("name").get().getFullName());
-    assertEquals("cd4analysis.symboltable", personType.getField("name").get().getPackageName());
+    final CDFieldSymbol nameField = personType.getField("name").get();
+    assertEquals("name", nameField.getName());
+    assertTrue(nameField.isPublic());
+    assertEquals("cd4analysis.symboltable.CD1.Person.name", nameField.getFullName());
+    assertEquals("cd4analysis.symboltable", nameField.getPackageName());
+    assertTrue(nameField.getAstNode().isPresent());
+    assertTrue(nameField.getAstNode().get() instanceof ASTCDAttribute);
     assertEquals("secondName", personType.getField("secondName").get().getName());
     assertTrue(personType.getField("secondName").get().isPrivate());
     assertEquals("age", personType.getField("age").get().getName());
     assertTrue(personType.getField("age").get().isProtected());
     // Field Stereotypes
-    assertEquals(1, personType.getField("name").get().getStereotypes().size());
-    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getName());
-    assertEquals("SF", personType.getField("name").get().getStereotype("SF").get().getValue());
+    assertEquals(1, nameField.getStereotypes().size());
+    assertEquals("SF", nameField.getStereotype("SF").get().getName());
+    assertEquals("SF", nameField.getStereotype("SF").get().getValue());
     // Stereotypes
     assertEquals(2, personType.getStereotypes().size());
     assertEquals("S1", personType.getStereotype("S1").get().getName());
@@ -78,6 +88,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(setNameMethod.getParameters().get(0).isParameter());
     assertEquals("prefix", setNameMethod.getParameters().get(1).getName());
     assertTrue(setNameMethod.getParameters().get(1).isParameter());
+    // AST
+    assertTrue(setNameMethod.getAstNode().isPresent());
+    assertTrue(setNameMethod.getAstNode().get() instanceof ASTCDMethod);
 
     assertTrue(personType.getMethod("getAge").isPresent());
     assertTrue(personType.getMethod("getAge").get().isPrivate());
@@ -166,6 +179,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, memberAssocLeft2Right.getTargetCardinality().getMin());
     assertEquals(1, memberAssocLeft2Right.getTargetCardinality().getMax());
     assertFalse(memberAssocLeft2Right.getTargetCardinality().isMultiple());
+    // AST
+    assertTrue(memberAssocLeft2Right.getAstNode().isPresent());
+    assertTrue(memberAssocLeft2Right.getAstNode().get() instanceof ASTCDAssociation);
     // A <- B
     final CDAssociationSymbol memberAssocRight2Left = cdScope.<CDAssociationSymbol>resolve("person",
         CDAssociationSymbol.KIND).orNull();
@@ -181,6 +197,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(0, memberAssocRight2Left.getTargetCardinality().getMin());
     assertEquals(Cardinality.STAR, memberAssocRight2Left.getTargetCardinality().getMax());
     assertTrue(memberAssocRight2Left.getTargetCardinality().isMultiple());
+    // AST
+    assertTrue(memberAssocRight2Left.getAstNode().isPresent());
+    assertTrue(memberAssocRight2Left.getAstNode().get() instanceof ASTCDAssociation);
     // Stereotype
     assertEquals(1, memberAssocRight2Left.getStereotypes().size());
     assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getValue());

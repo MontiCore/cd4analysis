@@ -104,6 +104,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     addInterfacesToType(typeSymbol, astClass.getInterfaces());
 
     defineInScope(typeSymbol);
+    typeSymbol.setAstNode(astClass);
+
     putScopeOnStackAndSetEnclosingIfExists(typeSymbol);
   }
 
@@ -179,6 +181,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
 
     defineInScope(fieldSymbol);
+    fieldSymbol.setAstNode(astAttribute);
   }
 
   @Override
@@ -201,6 +204,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
 
     defineInScope(typeSymbol);
+    typeSymbol.setAstNode(astInterface);
+
     putScopeOnStackAndSetEnclosingIfExists(typeSymbol);
   }
 
@@ -239,6 +244,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     setModifiersOfType(enumSymbol, astEnum.getModifier().or(new ASTModifier.Builder().build()));
 
     defineInScope(enumSymbol);
+    enumSymbol.setAstNode(astEnum);
+
     putScopeOnStackAndSetEnclosingIfExists(enumSymbol);
   }
 
@@ -258,6 +265,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     setDefiningTypeOfMethod(methodSymbol);
 
     defineInScope(methodSymbol);
+    methodSymbol.setAstNode(astMethod);
+
     putScopeOnStackAndSetEnclosingIfExists(methodSymbol);
   }
 
@@ -454,6 +463,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
 
     defineInScope(associationSymbol);
+    associationSymbol.setAstNode(astAssoc);
 
     return associationSymbol;
   }
