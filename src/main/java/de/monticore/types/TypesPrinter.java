@@ -5,11 +5,13 @@ package de.monticore.types;
  */
 import mc.helper.NameHelper;
 import de.monticore.types._ast.ASTArrayType;
+import de.monticore.types._ast.ASTComplexReferenceType;
 import de.monticore.types._ast.ASTPrimitiveType;
 import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTReferenceTypeList;
 import de.monticore.types._ast.ASTReturnType;
 import de.monticore.types._ast.ASTSimpleReferenceType;
+import de.monticore.types._ast.ASTSimpleReferenceTypeList;
 import de.monticore.types._ast.ASTType;
 import de.monticore.types._ast.ASTTypeArgument;
 import de.monticore.types._ast.ASTTypeArgumentList;
@@ -91,12 +93,9 @@ public class TypesPrinter {
     if (type instanceof ASTSimpleReferenceType) {
       return doPrintSimpleReferenceType((ASTSimpleReferenceType) type);
     }
-    // TODO MB, GV
-    /*
-    if (type instanceof ASTQualifiedType) {
-      return doPrintQualifiedType((ASTQualifiedType) type);
+    if (type instanceof ASTComplexReferenceType) {
+      return doPrintComplexReferenceType((ASTComplexReferenceType) type);
     }
-    */
     return "";
   }
   
@@ -303,28 +302,43 @@ public class TypesPrinter {
   }
   
   /**
-   * Converts an ASTQualifiedType to a String
+   * Converts an ComplexReferenceType to a String
    * 
-   * @param type ASTQualifiedType to be converted
+   * @param type ComplexReferenceType to be converted
    * @return String representation of "type"
    */
-  // TODO MB, GV
-  /*
-  public static String printQualifiedType(ASTQualifiedType type) {
-    return getInstance().doPrintQualifiedType(type);
+  public static String printComplexReferenceType(ASTComplexReferenceType type) {
+    return getInstance().doPrintComplexReferenceType(type);
   }
   
-  protected String doPrintQualifiedType(ASTQualifiedType type) {
+  protected String doPrintComplexReferenceType(ASTComplexReferenceType type) {
     String ret = "";
-    if (type != null) {
-      if (type.getQualification() != null) {
-        ret += doPrintType(type.getQualification()) + ".";
-      }
-      ret += type.getName() + doPrintTypeArguments(type.getTypeArguments());
+    if (type != null && type.getSimpleReferenceType() != null) {
+      return doPrintSimpleReferenceTypeList(type.getSimpleReferenceType());
     }
     return ret;
   }
-  */
+  
+  /**
+   * Converts an ASTSimpleReferenceTypeList to a String
+   * @param type ComplexReferenceType to be converted
+   * @return String representation of "type"
+   */
+  public static String printSimpleReferenceTypeList(ASTSimpleReferenceTypeList type) {
+    return getInstance().doPrintSimpleReferenceTypeList(type);
+  }
+
+  protected String doPrintSimpleReferenceTypeList(ASTSimpleReferenceTypeList argList) {
+    String ret = "";
+    if (argList != null) {
+      String sep = "";
+      for (ASTSimpleReferenceType arg : argList) {
+        ret += sep + doPrintSimpleReferenceType(arg);
+        sep = ". ";
+      }
+    }
+    return ret;
+  }
   
   /**
    * Converts ASTTypeArguments to a String
@@ -375,18 +389,17 @@ public class TypesPrinter {
     return getInstance().doPrintWildcardType(type);
   }
   
-  // TODO GV, MB
   protected String doPrintWildcardType(ASTWildcardType type) {
     String ret = "";
-//    if (type != null) {
-//      ret = "?";
-//      if (type.getUpperBound() != null) {
-//        ret += " extends " + doPrintType(type.getUpperBound());
-//      }
-//      else if (type.getLowerBound() != null) {
-//        ret += " super " + doPrintType(type.getLowerBound());
-//      }
-//    }
+    if (type != null) {
+      ret = "?";
+      if (type.getUpperBound().isPresent()) {
+        ret += " extends " + doPrintType(type.getUpperBound().get());
+      }
+      else if (type.getLowerBound().isPresent()) {
+        ret += " super " + doPrintType(type.getLowerBound().get());
+      }
+    }
     return ret;
   }
   
