@@ -3,7 +3,7 @@ package cd4analysis.symboltable;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.types.CommonJTypeSymbol;
-import mc.helper.NameHelper;
+import de.se_rwth.commons.Names;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  protected CDTypeSymbol(String name) {
+  public CDTypeSymbol(final String name) {
     super(name, KIND, CDFieldSymbol.KIND, CDMethodSymbol.KIND);
   }
 
@@ -65,7 +65,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
   
   public String getModelName() {
-    return NameHelper.getQualifier(getName());
+    return Names.getQualifier(getName());
   }
 
 
