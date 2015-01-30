@@ -7,7 +7,7 @@ import de.cd4analysis._ast.ASTCDClass;
 import de.cd4analysis._ast.ASTCDMethod;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.MutableScope;
 import org.junit.Test;
 
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
@@ -15,13 +15,13 @@ import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
 import static org.junit.Assert.*;
 
-// TODO PN test types for all symbols, i.e., return type of methods, parameter types, field
-// types, etc.
 public class CD4AnalysisSymbolTableCreatorTest {
 
   @Test
   public void testSymbolTableCreation() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+
 
 
     final CDTypeSymbol personType = globalScope.<CDTypeSymbol>resolve("cd4analysis.symboltable.CD1"
@@ -32,10 +32,18 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, globalScope.getSubScopes().size());
     final ArtifactScope artifactScope = (ArtifactScope) globalScope.getSubScopes().get(0);
 
+
+
     assertEquals(1, artifactScope.getSubScopes().size());
     // Continue with the class diagram scope.Else, if globalScope or artifact scope was used, all
     // symbols had to be resolved by their qualified name.
-    final Scope cdScope = artifactScope.getSubScopes().get(0);
+    final MutableScope cdScope = artifactScope.getSubScopes().get(0);
+
+    // TODO PN find better solution
+    // Quickfix for using default types: add built-in types
+    cdScope.define(new CDTypeSymbol("int"));
+    cdScope.define(new CDTypeSymbol("boolean"));
+    cdScope.define(new CDTypeSymbol("String"));
 
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
@@ -53,6 +61,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(nameField.isPublic());
     assertEquals("cd4analysis.symboltable.CD1.Person.name", nameField.getFullName());
     assertEquals("cd4analysis.symboltable", nameField.getPackageName());
+    assertEquals("String", nameField.getType().getName());
+    // AST
     assertTrue(nameField.getAstNode().isPresent());
     assertTrue(nameField.getAstNode().get() instanceof ASTCDAttribute);
     assertEquals("secondName", personType.getField("secondName").get().getName());
@@ -71,7 +81,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("S1", personType.getStereotype("S1").get().getValue());
     assertEquals("S2", personType.getStereotype("S2").get().getValue());
     // Methods
-    // TODO PN test return type and exception type of methods
     assertEquals(2, personType.getMethods().size());
     final CDMethodSymbol setNameMethod = personType.getMethod("setName").orNull();
     assertNotNull(setNameMethod);
@@ -82,12 +91,15 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(setNameMethod.isFinal());
     assertFalse(setNameMethod.isAbstract());
     assertFalse(setNameMethod.isEllipsisParameterMethod());
+    assertEquals("String", setNameMethod.getReturnType().getName());
     // Parameters
     assertEquals(2, setNameMethod.getParameters().size());
     assertEquals("name", setNameMethod.getParameters().get(0).getName());
     assertTrue(setNameMethod.getParameters().get(0).isParameter());
-    assertEquals("prefix", setNameMethod.getParameters().get(1).getName());
-    assertTrue(setNameMethod.getParameters().get(1).isParameter());
+    final CDFieldSymbol prefixParameter = setNameMethod.getParameters().get(1);
+    assertEquals("prefix", prefixParameter.getName());
+    assertTrue(prefixParameter.isParameter());
+    assertEquals("String", prefixParameter.getType().getName());
     // AST
     assertTrue(setNameMethod.getAstNode().isPresent());
     assertTrue(setNameMethod.getAstNode().get() instanceof ASTCDMethod);

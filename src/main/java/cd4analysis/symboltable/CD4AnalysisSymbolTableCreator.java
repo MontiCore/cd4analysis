@@ -14,6 +14,7 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.SymbolTableCreator;
+import de.monticore.types.TypesPrinter;
 import de.monticore.types._ast.ASTImportStatement;
 import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.ASTReferenceType;
@@ -148,7 +149,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
   @Override
   public default void visit(final ASTCDAttribute astAttribute) {
-    final String typeName = "TODO_Type"; // TODO PN use TypePrinter for astAttribute.getType() instead
+    final String typeName = TypesPrinter.printType(astAttribute.getType());
+
     final CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName,
         currentScope().get());
 
@@ -260,7 +262,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     setModifiersOfMethod(methodSymbol, astMethod.getModifier());
     setParametersOfMethod(methodSymbol, astMethod);
-    setReturnTypeOfMethod(methodSymbol);
+    setReturnTypeOfMethod(methodSymbol, astMethod);
     setExceptionsOfMethod(methodSymbol, astMethod);
     setDefiningTypeOfMethod(methodSymbol);
 
@@ -312,9 +314,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
       for (ASTCDParameter astParameter : astMethod.getCDParameters()) {
         final String paramName = astParameter.getName();
-        // TODO PN use ASTTypesConverter
-        //paramTypeSymbol = ASTTypesConverter.astTypeToTypeEntry(CDTypeEntryCreator.getInstance(), // astParameter.getType());
-        paramTypeSymbol = new CDTypeSymbolReference("TODO_TYPE", currentScope().get());
+        paramTypeSymbol = new CDTypeSymbolReference(
+            TypesPrinter.printType(astParameter.getType()), currentScope().get());
 
         if (astParameter.isEllipsis()) {
           methodSymbol.setEllipsisParameterMethod(true);
@@ -333,19 +334,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void setReturnTypeOfMethod(final CDMethodSymbol methodSymbol) {
+  public default void setReturnTypeOfMethod(final CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
     // TODO PN use ASTTypesConverter
-    final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference("TODO_RETURN_TYPE",
-        currentScope().get());
-    /*ASTTypesConverter
-    .astReturnTypeToTypeEntry
-        (CDTypeEntryCreator.getInstance(), cdMethod.getReturnType());
-    if (returnSymbol == null) {
-      delegator.addErrorToCurrentResource("Return type couldn't be converted: " + ASTTypesConverter.astReturnTypeToString(cdMethod.getReturnType()));
-    }
-    else {*/
+    final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
+        TypesPrinter.printReturnType(astMethod.getReturnType()), currentScope().get());
     methodSymbol.setReturnType(returnSymbol);
-    //}
   }
 
   public default void setExceptionsOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
@@ -399,9 +392,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
             assocRight2LeftSymbol.setQualifier(qualifier.getName());
           }
           else if (qualifier.getType() != null) {
-            // TODO PN get type
-            //            assocRight2LeftSymbol.setQualifier(qualifier.printType());
-            assocRight2LeftSymbol.setQualifier("TODO_QUALIFIER_TYPE");
+            assocRight2LeftSymbol.setQualifier(TypesPrinter.printType(qualifier.getType()));
           }
         }
         assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
@@ -432,9 +423,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
             assocLeft2RightSymbol.setQualifier(qualifier.getName());
           }
           else if (qualifier.getType() != null) {
-            // TODO PN get type
-            //            assocLeft2RightSymbol.setQualifier(qualifier.printType());
-            assocLeft2RightSymbol.setQualifier("TODO_QUALIFIER_TYPE");
+            assocLeft2RightSymbol.setQualifier(TypesPrinter.printType(qualifier.getType()));
           }
         }
         assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());

@@ -3,24 +3,9 @@ package de.monticore.types;
 /**
  * @deprecated STATE DEL PN will be implemented with new symbol table concept
  */
+
+import de.monticore.types._ast.*;
 import mc.helper.NameHelper;
-import de.monticore.types._ast.ASTArrayType;
-import de.monticore.types._ast.ASTComplexReferenceType;
-import de.monticore.types._ast.ASTPrimitiveType;
-import de.monticore.types._ast.ASTReferenceType;
-import de.monticore.types._ast.ASTReferenceTypeList;
-import de.monticore.types._ast.ASTReturnType;
-import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.types._ast.ASTSimpleReferenceTypeList;
-import de.monticore.types._ast.ASTType;
-import de.monticore.types._ast.ASTTypeArgument;
-import de.monticore.types._ast.ASTTypeArgumentList;
-import de.monticore.types._ast.ASTTypeArguments;
-import de.monticore.types._ast.ASTTypeParameters;
-import de.monticore.types._ast.ASTTypeVariableDeclaration;
-import de.monticore.types._ast.ASTTypeVariableDeclarationList;
-import de.monticore.types._ast.ASTVoidType;
-import de.monticore.types._ast.ASTWildcardType;
 
 // TODO GV: used in dexMC4 - remove this class after the first bootstrapping of MC4
 /**
@@ -236,6 +221,7 @@ public class TypesPrinter {
   
   protected String doPrintPrimitiveType(ASTPrimitiveType type) {
     if (type != null) {
+      // TODO GV, MB <- PN just prints the object id, not the value of the primitve
       return type.toString();
     }
     return "";
@@ -295,9 +281,15 @@ public class TypesPrinter {
   }
   
   protected String doPrintSimpleReferenceType(ASTSimpleReferenceType type) {
-    if (type != null && type.getTypeArguments().isPresent()) {
-      return NameHelper.dotSeparatedStringFromList(type.getName()) + doPrintTypeArguments(type.getTypeArguments().get());
+    if (type != null) {
+      if(type.getTypeArguments().isPresent()) {
+        return NameHelper.dotSeparatedStringFromList(type.getName()) + doPrintTypeArguments(type.getTypeArguments().get());
+      }
+      else {
+        return NameHelper.dotSeparatedStringFromList(type.getName());
+      }
     }
+
     return "";
   }
   
