@@ -1,0 +1,169 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0019 {
+
+  class A;
+
+  class B;
+
+  enum E;
+
+  interface I;
+
+  association assoc0 A [LeftTypedQualifier] -> A ;
+
+  association assoc1 A [LeftTypedQualifier] -> B ;
+
+  association assoc2 A [LeftTypedQualifier] -> E ;
+
+  association assoc3 A [LeftTypedQualifier] -> I ;
+
+  association assoc4 B [LeftTypedQualifier] -> A ;
+
+  association assoc5 B [LeftTypedQualifier] -> B ;
+
+  association assoc6 B [LeftTypedQualifier] -> E ;
+
+  association assoc7 B [LeftTypedQualifier] -> I ;
+
+  association assoc8 I [LeftTypedQualifier] -> A ;
+
+  association assoc9 I [LeftTypedQualifier] -> B ;
+
+  association assoc10 I [LeftTypedQualifier] -> E ;
+
+  association assoc11 I [LeftTypedQualifier] -> I ;
+
+  association assoc12 A <- [RightTypedQualifier] A ;
+
+  association assoc13 A <- [RightTypedQualifier] B ;
+
+  association assoc14 A <- [RightTypedQualifier] I ;
+
+  association assoc15 B <- [RightTypedQualifier] A ;
+
+  association assoc16 B <- [RightTypedQualifier] B ;
+
+  association assoc17 B <- [RightTypedQualifier] I ;
+
+  association assoc18 E <- [RightTypedQualifier] A ;
+
+  association assoc19 E <- [RightTypedQualifier] B ;
+
+  association assoc20 E <- [RightTypedQualifier] I ;
+
+  association assoc21 I <- [RightTypedQualifier] A ;
+
+  association assoc22 I <- [RightTypedQualifier] B ;
+
+  association assoc23 I <- [RightTypedQualifier] I ;
+
+  association assoc24 A [LeftTypedQualifier] <-> [RightTypedQualifier] A ;
+
+  association assoc25 A [LeftTypedQualifier] <-> A ;
+
+  association assoc26 A <-> [RightTypedQualifier] A ;
+
+  association assoc27 A [LeftTypedQualifier] <-> [RightTypedQualifier] B ;
+
+  association assoc28 A [LeftTypedQualifier] <-> B ;
+
+  association assoc29 A <-> [RightTypedQualifier] B ;
+
+  association assoc30 A [LeftTypedQualifier] <-> [RightTypedQualifier] I ;
+
+  association assoc31 A [LeftTypedQualifier] <-> I ;
+
+  association assoc32 A <-> [RightTypedQualifier] I ;
+
+  association assoc33 B [LeftTypedQualifier] <-> [RightTypedQualifier] A ;
+
+  association assoc34 B [LeftTypedQualifier] <-> A ;
+
+  association assoc35 B <-> [RightTypedQualifier] A ;
+
+  association assoc36 B [LeftTypedQualifier] <-> [RightTypedQualifier] B ;
+
+  association assoc37 B [LeftTypedQualifier] <-> B ;
+
+  association assoc38 B <-> [RightTypedQualifier] B ;
+
+  association assoc39 B [LeftTypedQualifier] <-> [RightTypedQualifier] I ;
+
+  association assoc40 B [LeftTypedQualifier] <-> I ;
+
+  association assoc41 B <-> [RightTypedQualifier] I ;
+
+  association assoc42 I [LeftTypedQualifier] <-> [RightTypedQualifier] A ;
+
+  association assoc43 I [LeftTypedQualifier] <-> A ;
+
+  association assoc44 I <-> [RightTypedQualifier] A ;
+
+  association assoc45 I [LeftTypedQualifier] <-> [RightTypedQualifier] B ;
+
+  association assoc46 I [LeftTypedQualifier] <-> B ;
+
+  association assoc47 I <-> [RightTypedQualifier] B ;
+
+  association assoc48 I [LeftTypedQualifier] <-> [RightTypedQualifier] I ;
+
+  association assoc49 I [LeftTypedQualifier] <-> I ;
+
+  association assoc50 I <-> [RightTypedQualifier] I ;
+
+  association assoc51 A [LeftTypedQualifier] -- [RightTypedQualifier] A ;
+
+  association assoc52 A [LeftTypedQualifier] -- A ;
+
+  association assoc53 A -- [RightTypedQualifier] A ;
+
+  association assoc54 A [LeftTypedQualifier] -- [RightTypedQualifier] B ;
+
+  association assoc55 A [LeftTypedQualifier] -- B ;
+
+  association assoc56 A -- [RightTypedQualifier] B ;
+
+  association assoc57 A [LeftTypedQualifier] -- [RightTypedQualifier] I ;
+
+  association assoc58 A [LeftTypedQualifier] -- I ;
+
+  association assoc59 A -- [RightTypedQualifier] I ;
+
+  association assoc60 B [LeftTypedQualifier] -- [RightTypedQualifier] A ;
+
+  association assoc61 B [LeftTypedQualifier] -- A ;
+
+  association assoc62 B -- [RightTypedQualifier] A ;
+
+  association assoc63 B [LeftTypedQualifier] -- [RightTypedQualifier] B ;
+
+  association assoc64 B [LeftTypedQualifier] -- B ;
+
+  association assoc65 B -- [RightTypedQualifier] B ;
+
+  association assoc66 B [LeftTypedQualifier] -- [RightTypedQualifier] I ;
+
+  association assoc67 B [LeftTypedQualifier] -- I ;
+
+  association assoc68 B -- [RightTypedQualifier] I ;
+
+  association assoc69 I [LeftTypedQualifier] -- [RightTypedQualifier] A ;
+
+  association assoc70 I [LeftTypedQualifier] -- A ;
+
+  association assoc71 I -- [RightTypedQualifier] A ;
+
+  association assoc72 I [LeftTypedQualifier] -- [RightTypedQualifier] B ;
+
+  association assoc73 I [LeftTypedQualifier] -- B ;
+
+  association assoc74 I -- [RightTypedQualifier] B ;
+
+  association assoc75 I [LeftTypedQualifier] -- [RightTypedQualifier] I ;
+
+  association assoc76 I [LeftTypedQualifier] -- I ;
+
+  association assoc77 I -- [RightTypedQualifier] I ;
+  
+}

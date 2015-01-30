@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram U0504 {
+classdiagram CD4AC0006 {
   enum E {
     a, b, a, c;
   }

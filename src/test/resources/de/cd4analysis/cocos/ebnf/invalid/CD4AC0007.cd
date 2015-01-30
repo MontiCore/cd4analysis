@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram U0531 {
+classdiagram CD4AC0007 {
   class C extends C2;
   class C2 extends C;
   interface I extends I2;

@@ -5,6 +5,8 @@
  */
 package de.cd4analysis.cocos.ebnf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -57,37 +59,29 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testDiagramName() {
-    String modelName = "a0134.cd";
-    String errorCode = "0xA0134";
+    String modelName = "cD4AC0001.cd";
+    String errorCode = "0xCD4AC0001";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
-            "First character of the diagram name a0134 must be upper-case.")
+            "First character of the diagram name cD4AC0001 must be upper-case.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
-  }
-  
-  @Ignore
-  @Test
-  public void testFileName() {
-    String modelName = "XXXNoCode1.cd";
-    String errorCode = "XXXNoCode1";
     
-    Collection<String> expectedErrors = Arrays
-        .asList(
-        CoCoHelper
-            .buildErrorMsg(
-                errorCode,
-                "The name of the diagram XXXNoCode1_bad is not identical to the name of the filel XXXNoCode1.cd (without its fileextension).")
+    modelName = "CD4AC0002";
+    errorCode = "0xCD4AC0002";
+    expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode,
+            "The name of the diagram CD4AC0002Invalid is not identical to the name of the file CD4AC0002 (without its fileextension).")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
   
   @Ignore
   @Test
-  public void testReservedNames() {
-    String modelName = "D00XX.cd";
-    String errorCode = "0xD00XX";
+  public void testNames() {
+    String modelName = "CD4AC0003.cd";
+    String errorCode = "0xCD4AC0003";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Name DAO is reserved for internal use."),
@@ -99,8 +93,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testDuplicateTypeNames() {
-    String modelName = "XXXNoCode2.cd";
-    String errorCode = "XXXNoCode2";
+    String modelName = "CD4AC0004.cd";
+    String errorCode = "0xCD4AC0004";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -123,8 +117,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidTypeName() {
-    String modelName = "U0530.cd";
-    String errorCode = "0xU0530";
+    String modelName = "0xCD4AC0005.cd";
+    String errorCode = "0xCD4AC0005";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -140,8 +134,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testDuplicateEnumConstant() {
-    String modelName = "U0504.cd";
-    String errorCode = "0xU0504";
+    String modelName = "CD4AC0006.cd";
+    String errorCode = "0xCD4AC0006";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Duplicate enum constant: a.")
@@ -152,8 +146,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInheritanceCycle() {
-    String modelName = "U0531.cd";
-    String errorCode = "0xU0531";
+    String modelName = "CD4AC0007.cd";
+    String errorCode = "0xCD4AC0007";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -167,8 +161,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidClassExtends() {
-    String modelName = "U0496_U0497.cd";
-    String errorCode = "0xU0496_0xU0497";
+    String modelName = "CD4AC0008.cd";
+    String errorCode = "0xCD4AC0008";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -182,8 +176,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidInterfaceExtends() {
-    String modelName = "XXXNoCode3.cd";
-    String errorCode = "XXXNoCode3";
+    String modelName = "CD4AC0009.cd";
+    String errorCode = "0xCD4AC0009";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -197,8 +191,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidImplements() {
-    String modelName = "U0533_U0534.cd";
-    String errorCode = "0xU0533_0xU0534";
+    String modelName = "CD4AC0010.cd";
+    String errorCode = "0xCD4AC0010";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -216,8 +210,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidAssignment() {
-    String modelName = "U0447.cd";
-    String errorCode = "0xU0447";
+    String modelName = "CD4AC0011.cd";
+    String errorCode = "0xCD4AC0011";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -234,14 +228,11 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidAttributes() {
-    String modelName = "U0454.cd";
-    String errorCode = "0xU0454";
+    String modelName = "CD4AC0012.cd";
+    String errorCode = "CD4AC0012";
     
     Collection<String> expectedErrors = Arrays
         .asList(
-            CoCoHelper
-                .buildErrorMsg(errorCode,
-                    "The value assignment for the attribute a in class C1 is not compatible to its type String."),
             CoCoHelper.buildErrorMsg(errorCode, "Attribute Attr must start in lower-case.",
                 new SourcePosition(5, 12))
         );
@@ -251,8 +242,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidAttributeOverride() {
-    String modelName = "U0455.cd";
-    String errorCode = "0xU0455";
+    String modelName = "CD4AC0013.cd";
+    String errorCode = "0xCD4AC0013";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -261,7 +252,10 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
                     "Class C2 overrides the attribute attr (type: String) of class C1 with the different type int."),
             CoCoHelper
                 .buildErrorMsg(errorCode,
-                    "Class C5 overrides the attribute attr (type: int) of class C4 with the different type String.")
+                    "Class C5 overrides the attribute attr (type: int) of class C4 with the different type String."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "Class C8 overrides the attribute t1 (type: T1) of class C7 with the different type T2.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
@@ -269,8 +263,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testUndefinedType() {
-    String modelName = "D0410.cd";
-    String errorCode = "0xD0410";
+    String modelName = "CD4AC0014.cd";
+    String errorCode = "0xCD4AC0014";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper
@@ -281,12 +275,13 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
   
   @Test
   public void testDuplicateAttributes() {
-    String modelName = "XXXNoCode4.cd";
-    String errorCode = "XXXNoCode4";
+    String modelName = "CD4AC0015.cd";
+    String errorCode = "0xCD4AC0015";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C.")
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C."),
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute c is defined multiple times in class C.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }

@@ -5,6 +5,8 @@
  */
 package de.cd4analysis.cocos;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,9 +41,10 @@ public abstract class AbstractCoCoTest {
   }
   
   /**
-   * Asserts that each of the expectedErrorSuffixes is found at least once as a
-   * suffix in any of the actual produced errors that occurred when the
-   * {@link CD4AnalysisCoCoChecker} run on the given modelName.
+   * Asserts that each of the expectedErrorSuffixes is found as a suffix in any
+   * of the actual produced errors that occurred when the
+   * {@link CD4AnalysisCoCoChecker} run on the given modelName. Furthermore, it
+   * is asserted that there are not any other errors.
    * 
    * @param modelName
    * @param expectedErrorSuffixes
@@ -52,7 +55,8 @@ public abstract class AbstractCoCoTest {
     
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
+    assertEquals(expectedErrorSuffixes.size(), LogMock.getFindings().size());
+    Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());    
   }
   
   private ASTCDCompilationUnit loadModel(String modelFilename) {

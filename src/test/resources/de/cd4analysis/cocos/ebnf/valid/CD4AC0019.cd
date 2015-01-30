@@ -1,0 +1,12 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0019 {
+  class A;
+  class B;
+  interface I;
+  enum E;
+
+  association assoc1 A [String] -> B;
+  association assoc2 A [I]      -> B;
+  association assoc3 A [E]      -> B;
+}

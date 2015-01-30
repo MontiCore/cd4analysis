@@ -26,6 +26,7 @@ public class CD4ACoCoHelper {
    * @param assoc
    * @return the formatted string.
    */
+  // TODO RH use PrettyPrinter
   public static String printAssociation(ASTCDAssociation assoc) {
     StringBuilder r = new StringBuilder();
     if (assoc.getName().isPresent()) {
@@ -36,7 +37,7 @@ public class CD4ACoCoHelper {
     r.append(Joiner.on(".").join(assoc.getLeftReferenceName().getParts()));
     r.append(" ");
     if (assoc.getLeftRole().isPresent()) {
-      r.append(assoc.getLeftRole().get());
+      r.append("(" + assoc.getLeftRole().get() + ")");
       r.append(" ");
     }
     if (assoc.isLeftToRight()) {
@@ -53,7 +54,7 @@ public class CD4ACoCoHelper {
     }
     r.append(" ");
     if (assoc.getRightRole().isPresent()) {
-      r.append(assoc.getRightRole().get());
+      r.append("(" + assoc.getRightRole().get() + ")");
       r.append(" ");
     }
     r.append(Joiner.on(".").join(assoc.getRightReferenceName().getParts()));

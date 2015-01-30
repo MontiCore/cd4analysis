@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram D0410 {
+classdiagram CD4AC0014 {
   class C {
     AnUndefinedType attr;
   }

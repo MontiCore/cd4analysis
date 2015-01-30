@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram U0454 {
+classdiagram CD4AC0012 {
   class C1 {
     String Attr;
   }  

@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram U0496_U0497 {
+classdiagram CD4AC0008 {
   interface I;
   enum E;
   class C1 extends I;

@@ -1,0 +1,23 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0018 {
+  class A;
+  class B;
+  interface I;
+  enum E;
+
+  composition comp13 A        ->     B;
+  composition comp14 A [1]    ->     B;
+  composition comp15 A [0..1] ->     B;
+  composition comp16 A [0..1] -> [*] B;
+
+  composition comp17 A        ->     E;
+  composition comp18 A [1]    ->     E;
+  composition comp19 A [0..1] ->     E;
+  composition comp20 A [0..1] -> [*] E;
+
+  composition comp21 A        ->     I;
+  composition comp22 A [1]    ->     I;
+  composition comp23 A [0..1] ->     I;
+  composition comp24 A [0..1] -> [*] I;
+}

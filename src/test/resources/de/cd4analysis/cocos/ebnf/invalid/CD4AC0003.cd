@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram D00XX {
+classdiagram CD4AC0003 {
   class DAO;
   class Factory;
 }

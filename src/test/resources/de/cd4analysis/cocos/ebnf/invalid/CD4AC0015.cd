@@ -1,10 +1,14 @@
 package de.cd4analysis.cocos;
 
-classdiagram XXXNoCode4 {
+classdiagram CD4AC0015 {
+  class T1;
+  class T2;
   class C {
     String a;
     String a;
     String b;
     int b;
+    T1 c;
+    T2 c;
   }
 }

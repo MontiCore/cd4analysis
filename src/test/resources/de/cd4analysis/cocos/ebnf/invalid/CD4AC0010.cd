@@ -1,6 +1,6 @@
 package de.cd4analysis.cocos;
 
-classdiagram U0533_U0534 {
+classdiagram CD4AC0010 {
   interface I;
   enum E;
   class C;

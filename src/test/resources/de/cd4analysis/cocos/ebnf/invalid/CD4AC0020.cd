@@ -1,0 +1,26 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0019 {
+  class A;
+  class B {
+    String attrInB;
+  }
+  interface I;
+  enum E;
+
+
+  // invalid
+  // type
+  association assoc1 A [NotDefinedType] ->        B;
+  
+  // name
+  association assoc1 A [attrInB] ->        B;
+  
+  // valid
+
+  // type
+  association assoc1 A [String] ->        B;
+  
+  // name
+  association assoc1 A [attrInB] ->        B;
+}
