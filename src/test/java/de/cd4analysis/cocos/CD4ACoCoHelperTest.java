@@ -64,15 +64,15 @@ public class CD4ACoCoHelperTest {
         "TypeName")));
     
     assoc.setLeftRole("leftRole");
-    assertEquals("expectedName (left.TypeName leftRole <-> right.TypeName)",
+    assertEquals("expectedName (left.TypeName (leftRole) <-> right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
     
     assoc.setRightRole("rightRole");
-    assertEquals("expectedName (left.TypeName leftRole <-> rightRole right.TypeName)",
+    assertEquals("expectedName (left.TypeName (leftRole) <-> (rightRole) right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
     
     assoc.setLeftRole(null);
-    assertEquals("expectedName (left.TypeName <-> rightRole right.TypeName)",
+    assertEquals("expectedName (left.TypeName <-> (rightRole) right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
   }
   

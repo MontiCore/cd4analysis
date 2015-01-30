@@ -52,7 +52,7 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     LogMock.getFindings().clear();
   }
   
-  private static String MODEL_PATH = "src/test/resources/de/cd4analysis/cocos/invalid/";
+  private static String MODEL_PATH = "src/test/resources/de/cd4analysis/cocos/ebnf/invalid/";
   
   // TODO ... tests for all CoCos of CD4A
   

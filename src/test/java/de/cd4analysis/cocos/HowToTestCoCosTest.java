@@ -50,7 +50,7 @@ public class HowToTestCoCosTest {
   public void setUp() throws RecognitionException, IOException {
     LogMock.getFindings().clear();
     
-    Path model = Paths.get("src/test/resources/de/cd4analysis/cocos/valid/A.cd");
+    Path model = Paths.get("src/test/resources/de/cd4analysis/cocos/ebnf/valid/A.cd");
     CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
     com.google.common.base.Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
     assertTrue(cdDef.isPresent());
