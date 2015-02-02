@@ -106,8 +106,14 @@ public class AssocTestGeneratorTool {
     p.prettyPrint(i, printer);
     
     for (ASTCDAssociation a : allPossibilities) {
-      a.setAssociation(true);
-      a.setName("assoc" + c);
+      if (a.isComposition()) {
+        a.setName("comp" + c);
+      }
+      else {
+        a.setAssociation(true);
+        a.setName("assoc" + c);
+      }
+      
       p.prettyPrint(a, printer);
       c++;
     }
@@ -293,7 +299,7 @@ public class AssocTestGeneratorTool {
    */
   public static List<ASTCDAssociation> allCardinalityCombinations(ASTCDAssociation assoc) {
     List<ASTCDAssociation> re = new ArrayList<>();
-    String[] cardinalities = { "0..1", "1", "0..1", "*" };
+    String[] cardinalities = { "0..1", "1", "1..*", "*" };
     
     for (String c1 : cardinalities) {
       // only left side
