@@ -5,6 +5,7 @@
  */
 package de.cd4analysis.cocos.ebnf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -14,7 +15,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cd4analysis.cocos.AbstractCoCoTest;
-import de.cd4analysis.cocos.AssocTestGenerator;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
 import de.se_rwth.commons.logging.Log;
@@ -2882,6 +2882,21 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
                     errorCode,
                     "Association assoc21 (I -- E) is invalid, because an association's source may not be an Enumeration.")
         );
+    testModelForErrorSuffixes(modelName, expectedErrors);
+  }
+  
+  @Ignore
+  @Test
+  public void testExternalTypeAsSource() {
+    // AssocTestGenerator.generateEnumAsSource();
+    String modelName = "CD4AC0022.cd";
+    String errorCode = "0xCD4AC0022";
+    
+    Collection<String> expectedErrors = new ArrayList<>();
+    for (int i = 0; i <= 5; i++) {
+      expectedErrors.add(CoCoHelper.buildErrorMsg(errorCode, "Association assoc" + i
+          + " is invalid, because an association's source may not be an external type."));
+    }
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
 }

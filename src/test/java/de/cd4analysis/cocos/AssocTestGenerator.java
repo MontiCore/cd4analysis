@@ -142,9 +142,9 @@ public class AssocTestGenerator {
   }
   
   public static void main(String[] args) {
-    generateEnumAsSource();
+    
   }
-  
+   
   /**
    * 0xCD4AC0021
    */

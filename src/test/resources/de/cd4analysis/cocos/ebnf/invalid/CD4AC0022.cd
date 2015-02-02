@@ -1,0 +1,14 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0022 {
+
+  class A;
+
+  association assoc0 String  -> A ;
+  association assoc1 String <-> A ;
+  association assoc2 A      <-> String ;
+  association assoc3 String --  A ;
+  association assoc4 A      -- String ;
+  association assoc5 A      <- String ;
+
+}
