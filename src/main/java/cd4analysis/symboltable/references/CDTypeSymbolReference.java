@@ -41,8 +41,8 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
 
   @Override
-  public void setDefinedInScope(MutableScope scope) {
-    getReferencedSymbol().setDefinedInScope(scope);
+  public void setDefiningScope(MutableScope scope) {
+    getReferencedSymbol().setDefiningScope(scope);
   }
 
   @Override
