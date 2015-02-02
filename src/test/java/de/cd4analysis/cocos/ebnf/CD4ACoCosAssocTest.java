@@ -14,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cd4analysis.cocos.AbstractCoCoTest;
+import de.cd4analysis.cocos.AssocTestGenerator;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
 import de.se_rwth.commons.logging.Log;
@@ -309,35 +310,1274 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testCompositeCardinality() {
+    // AssocTestGenerator.generateInvalidCompositeCardinalities();
     String modelName = "CD4AC0018.cd";
     String errorCode = "0xCD4AC0018";
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp1 has an invalid cardinality 0."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp2 has an invalid cardinality *."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp3 has an invalid cardinality 0."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp4 has an invalid cardinality *."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp5 has an invalid cardinality 0."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp6 has an invalid cardinality *."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp7 has an invalid cardinality 0."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp8 has an invalid cardinality *."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp9 has an invalid cardinality 0."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp10 has an invalid cardinality *."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp11 has an invalid cardinality 0."),
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The composite of composition comp12 has an invalid cardinality *.")
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp0 (A -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp1 (A -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp2 (A -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp3 (A -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp4 (A -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp5 (A -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp6 (A -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp7 (A -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp8 (A -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp9 (A -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp10 (A -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp11 (A -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp12 (A -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp13 (A -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp14 (A -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp15 (A -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp16 (A -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp17 (A -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp18 (A -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp19 (A -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp20 (A -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp21 (A -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp22 (A -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp23 (A -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp24 (A -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp25 (A -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp26 (A -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp27 (A -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp28 (A -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp29 (A -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp30 (A -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp31 (A -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp32 (A -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp33 (A -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp34 (A -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp35 (A -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp36 (A -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp37 (A -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp38 (A -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp39 (A -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp40 (B -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp41 (B -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp42 (B -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp43 (B -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp44 (B -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp45 (B -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp46 (B -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp47 (B -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp48 (B -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp49 (B -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp50 (B -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp51 (B -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp52 (B -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp53 (B -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp54 (B -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp55 (B -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp56 (B -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp57 (B -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp58 (B -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp59 (B -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp60 (B -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp61 (B -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp62 (B -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp63 (B -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp64 (B -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp65 (B -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp66 (B -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp67 (B -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp68 (B -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp69 (B -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp70 (B -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp71 (B -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp72 (B -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp73 (B -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp74 (B -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp75 (B -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp76 (B -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp77 (B -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp78 (B -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp79 (B -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp80 (I -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp81 (I -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp82 (I -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp83 (I -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp84 (I -> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp85 (I -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp86 (I -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp87 (I -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp88 (I -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp89 (I -> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp90 (I -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp91 (I -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp92 (I -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp93 (I -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp94 (I -> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp95 (I -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp96 (I -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp97 (I -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp98 (I -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp99 (I -> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp100 (I -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp101 (I -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp102 (I -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp103 (I -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp104 (I -> E) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp105 (I -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp106 (I -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp107 (I -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp108 (I -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp109 (I -> E) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp110 (I -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp111 (I -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp112 (I -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp113 (I -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp114 (I -> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp115 (I -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp116 (I -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp117 (I -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp118 (I -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp119 (I -> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp120 (A <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp121 (A <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp122 (A <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp123 (A <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp124 (A <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp125 (A <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp126 (A <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp127 (A <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp128 (A <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp129 (A <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp130 (A <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp131 (A <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp132 (A <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp133 (A <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp134 (A <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp135 (A <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp136 (A <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp137 (A <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp138 (A <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp139 (A <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp140 (A <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp141 (A <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp142 (A <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp143 (A <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp144 (A <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp145 (A <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp146 (A <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp147 (A <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp148 (A <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp149 (A <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp150 (B <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp151 (B <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp152 (B <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp153 (B <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp154 (B <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp155 (B <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp156 (B <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp157 (B <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp158 (B <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp159 (B <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp160 (B <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp161 (B <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp162 (B <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp163 (B <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp164 (B <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp165 (B <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp166 (B <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp167 (B <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp168 (B <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp169 (B <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp170 (B <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp171 (B <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp172 (B <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp173 (B <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp174 (B <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp175 (B <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp176 (B <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp177 (B <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp178 (B <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp179 (B <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp180 (E <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp181 (E <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp182 (E <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp183 (E <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp184 (E <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp185 (E <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp186 (E <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp187 (E <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp188 (E <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp189 (E <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp190 (E <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp191 (E <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp192 (E <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp193 (E <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp194 (E <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp195 (E <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp196 (E <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp197 (E <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp198 (E <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp199 (E <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp200 (E <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp201 (E <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp202 (E <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp203 (E <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp204 (E <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp205 (E <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp206 (E <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp207 (E <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp208 (E <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp209 (E <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp210 (I <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp211 (I <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp212 (I <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp213 (I <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp214 (I <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp215 (I <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp216 (I <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp217 (I <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp218 (I <- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp219 (I <- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp220 (I <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp221 (I <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp222 (I <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp223 (I <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp224 (I <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp225 (I <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp226 (I <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp227 (I <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp228 (I <- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp229 (I <- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp230 (I <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp231 (I <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp232 (I <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp233 (I <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp234 (I <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp235 (I <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp236 (I <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp237 (I <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp238 (I <- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp239 (I <- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp240 (A <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp241 (A <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp242 (A <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp243 (A <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp244 (A <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp245 (A <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp246 (A <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp247 (A <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp248 (A <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp249 (A <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp250 (A <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp251 (A <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp252 (A <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp253 (A <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp254 (A <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp255 (A <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp256 (A <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp257 (A <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp258 (A <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp259 (A <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp260 (A <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp261 (A <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp262 (A <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp263 (A <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp264 (A <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp265 (A <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp266 (A <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp267 (A <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp268 (A <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp269 (A <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp270 (B <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp271 (B <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp272 (B <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp273 (B <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp274 (B <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp275 (B <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp276 (B <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp277 (B <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp278 (B <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp279 (B <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp280 (B <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp281 (B <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp282 (B <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp283 (B <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp284 (B <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp285 (B <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp286 (B <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp287 (B <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp288 (B <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp289 (B <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp290 (B <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp291 (B <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp292 (B <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp293 (B <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp294 (B <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp295 (B <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp296 (B <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp297 (B <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp298 (B <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp299 (B <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp300 (I <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp301 (I <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp302 (I <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp303 (I <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp304 (I <-> A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp305 (I <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp306 (I <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp307 (I <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp308 (I <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp309 (I <-> A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp310 (I <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp311 (I <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp312 (I <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp313 (I <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp314 (I <-> B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp315 (I <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp316 (I <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp317 (I <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp318 (I <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp319 (I <-> B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp320 (I <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp321 (I <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp322 (I <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp323 (I <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp324 (I <-> I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp325 (I <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp326 (I <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp327 (I <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp328 (I <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp329 (I <-> I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp330 (A -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp331 (A -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp332 (A -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp333 (A -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp334 (A -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp335 (A -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp336 (A -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp337 (A -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp338 (A -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp339 (A -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp340 (A -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp341 (A -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp342 (A -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp343 (A -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp344 (A -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp345 (A -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp346 (A -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp347 (A -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp348 (A -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp349 (A -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp350 (A -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp351 (A -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp352 (A -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp353 (A -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp354 (A -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp355 (A -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp356 (A -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp357 (A -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp358 (A -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp359 (A -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp360 (B -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp361 (B -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp362 (B -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp363 (B -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp364 (B -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp365 (B -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp366 (B -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp367 (B -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp368 (B -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp369 (B -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp370 (B -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp371 (B -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp372 (B -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp373 (B -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp374 (B -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp375 (B -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp376 (B -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp377 (B -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp378 (B -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp379 (B -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp380 (B -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp381 (B -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp382 (B -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp383 (B -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp384 (B -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp385 (B -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp386 (B -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp387 (B -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp388 (B -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp389 (B -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp390 (I -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp391 (I -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp392 (I -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp393 (I -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp394 (I -- A) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp395 (I -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp396 (I -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp397 (I -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp398 (I -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp399 (I -- A) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp400 (I -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp401 (I -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp402 (I -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp403 (I -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp404 (I -- B) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp405 (I -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp406 (I -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp407 (I -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp408 (I -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp409 (I -- B) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp410 (I -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp411 (I -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp412 (I -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp413 (I -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp414 (I -- I) has an invalid cardinality [1..*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp415 (I -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp416 (I -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp417 (I -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp418 (I -- I) has an invalid cardinality [*] larger than one."),
+            CoCoHelper
+                .buildErrorMsg(errorCode,
+                    "The composite of composition comp419 (I -- I) has an invalid cardinality [*] larger than one.")
         );
+    
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
   

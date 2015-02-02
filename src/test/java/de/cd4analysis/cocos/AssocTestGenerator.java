@@ -6,13 +6,12 @@
 package de.cd4analysis.cocos;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import cd4analysis.cocos.CD4ACoCoHelper;
-
-import com.google.common.collect.Iterables;
-
 import de.cd4analysis._ast.ASTCDAssociation;
+import de.cd4analysis._ast.ASTCardinality;
 import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.cd4analysis.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
@@ -143,64 +142,96 @@ public class AssocTestGenerator {
   }
   
   public static void main(String[] args) {
+    
+    
+  }
+  
+  public static void generateInvalidCompositeCardinalities() {
     ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
       @Override
       public String print(ASTCDAssociation assoc) {
-        String msg = "The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.";
-        String qualifier = null;
-        String referencedClass = null;
-        if (assoc.getLeftQualifier().isPresent()) {
-          qualifier = assoc.getLeftQualifier().get().getName();
-          if (assoc.getRightReferenceName() != null
-              && assoc.getRightReferenceName().getParts().size() > 0) {
-            referencedClass = Iterables.getLast(assoc.getRightReferenceName().getParts());
+        String msg = "The composite of composition %s has an invalid cardinality %s larger than one.";
+        ASTCardinality cardinality = null;
+        
+        if (assoc.isRightToLeft()) {
+          if (assoc.getRightCardinality().isPresent()) {
+            cardinality = assoc.getRightCardinality().get();
           }
-          
         }
         else {
-          if (assoc.getRightQualifier().isPresent()) {
-            qualifier = assoc.getRightQualifier().get().getName();
-            if (assoc.getLeftReferenceName() != null
-                && assoc.getLeftReferenceName().getParts().size() > 0) {
-              referencedClass = Iterables.getLast(assoc.getLeftReferenceName().getParts());
-            }
+          // all other directions are interpreted as: left side is the
+          // composite, right side are the elements.
+          if (assoc.getLeftCardinality().isPresent()) {
+            cardinality = assoc.getLeftCardinality().get();
           }
         }
-        if (null == qualifier) {
-          throw new RuntimeException("At least one of the qualifiers must be set.");
+        
+        String invalidCardinalityStr = null;
+        if (cardinality != null) {
+          if (cardinality.isMany()) {
+            invalidCardinalityStr = "[*]";
+          }
+          else if (cardinality.isOneToMany()) {
+            invalidCardinalityStr = "[1..*]";
+          }
         }
-        if (null == referencedClass) {
-          throw new RuntimeException("The referenced class must be set.");
+        if (null != invalidCardinalityStr) {
+          return "  CoCoHelper.buildErrorMsg(errorCode, \""
+              + String.format(msg, CD4ACoCoHelper.printAssociation(assoc), invalidCardinalityStr)
+              + "\"),";
+          
         }
-        return "  CoCoHelper.buildErrorMsg(errorCode, \""
-            + String.format(msg, qualifier, CD4ACoCoHelper.printAssociation(assoc),
-                referencedClass) + "\"),";
+        // all other cases are valid:
+        // if no cardinality was set on the composite's side it is interpreted
+        // as 1. Correct cardinalities on the composite's side are [1] and
+        // [0..1].
+        return "";
       }
     };
-    AssocTestGenerator.generateQualifiedAssocTests(false, "String", "String", errorMessagePrinter);
-  }
-  
-  public static void generateSth() {
-    // ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
-    // boolean validModel = false;
-    // List<ASTCDAssociation> allPossibilities = allDirections(assoc)
-    // .stream()
-    // .flatMap(a -> allTypeCombinations(a, true).stream())
-    // // .flatMap(a -> allModifierCombinations(a, validModel).stream())
-    // // .flatMap(a -> allRolePositions(a, validModel).stream())
-    // // .flatMap(a -> allCardinalityCombinations(a).stream())
-    // .flatMap(a -> allTypedQualifierPositions(a, true).stream())
-    // .collect(Collectors.toList());
-    //
-    // printAssociations(allPossibilities);
-    // printTestCases(allPossibilities, new ErrorMessagePrinter() {
-    // @Override
-    // public String print(ASTCDAssociation assoc) {
-    // String msg =
-    // "Association %s is invalid, because an association's source may not be an Enumeration.";
-    // return "  CoCoHelper.buildErrorMsg(errorCode, \""
-    // + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
-    // }
-    // });
+    Predicate<ASTCDAssociation> isInvalidCompositeCardinality = new Predicate<ASTCDAssociation>() {
+      @Override
+      public boolean test(ASTCDAssociation assoc) {
+        ASTCardinality cardinality = null;
+        
+        if (assoc.isRightToLeft()) {
+          if (assoc.getRightCardinality().isPresent()) {
+            cardinality = assoc.getRightCardinality().get();
+          }
+        }
+        else {
+          // all other directions are interpreted as: left side is the
+          // composite, right side are the elements.
+          if (assoc.getLeftCardinality().isPresent()) {
+            cardinality = assoc.getLeftCardinality().get();
+          }
+        }
+        if (cardinality != null) {
+          if (cardinality.isMany()) {
+            return true;
+          }
+          else if (cardinality.isOneToMany()) {
+            return true;
+          }
+        }
+        // other cases are valid
+        return false;
+      }
+    };
+    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    assoc.setComposition(true);
+    List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool.allDirections(assoc)
+        .stream()
+        .flatMap(a -> AssocTestGeneratorTool.allTypeCombinations(a, true).stream())
+        .flatMap(a -> AssocTestGeneratorTool.allCardinalityCombinations(a).stream())
+        .filter(isInvalidCompositeCardinality)
+        .collect(Collectors.toList());
+    String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
+    System.out.println(modelContents);
+    
+    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    AssocTestGeneratorTool.printTestCases(allPossibilities, errorMessagePrinter);
+    
+    System.out.println(");");
+    
   }
 }

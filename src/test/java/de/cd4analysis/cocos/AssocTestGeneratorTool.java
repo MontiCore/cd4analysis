@@ -130,7 +130,13 @@ public class AssocTestGeneratorTool {
       ErrorMessagePrinter errorMsgPrinter) {
     int c = 0;
     for (ASTCDAssociation a : allPossibilities) {
-      a.setName("assoc" + c);
+      if (a.isComposition()) {
+        a.setName("comp" + c);
+      }
+      else {
+        a.setAssociation(true);
+        a.setName("assoc" + c);
+      }
       System.out.println(errorMsgPrinter.print(a));
       c++;
     }
