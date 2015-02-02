@@ -142,8 +142,34 @@ public class AssocTestGenerator {
   }
   
   public static void main(String[] args) {
+    generateEnumAsSource();
+  }
+  
+  /**
+   * 0xCD4AC0021
+   */
+  public static void generateEnumAsSource() {
+    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool.allDirections(assoc)
+        .stream()
+        .flatMap(a -> AssocTestGeneratorTool.allTypeCombinations(a, false).stream())
+        .collect(Collectors.toList());
+    String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
+    System.out.println(modelContents);
     
+    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
     
+    ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
+      @Override
+      public String print(ASTCDAssociation assoc) {
+        String msg = "Association %s is invalid, because an association's source may not be an Enumeration.";
+        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
+      }
+    };
+    AssocTestGeneratorTool.printTestCases(allPossibilities, errorMessagePrinter);
+    
+    System.out.println(");");
   }
   
   public static void generateInvalidCompositeCardinalities() {

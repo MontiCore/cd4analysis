@@ -1,0 +1,57 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0021 {
+
+  class A;
+
+  class B;
+
+  enum E;
+
+  interface I;
+
+  association assoc0 E -> A ;
+
+  association assoc1 E -> B ;
+
+  association assoc2 E -> E ;
+
+  association assoc3 E -> I ;
+
+  association assoc4 A <- E ;
+
+  association assoc5 B <- E ;
+
+  association assoc6 E <- E ;
+
+  association assoc7 I <- E ;
+
+  association assoc8 A <-> E ;
+
+  association assoc9 B <-> E ;
+
+  association assoc10 E <-> A ;
+
+  association assoc11 E <-> B ;
+
+  association assoc12 E <-> E ;
+
+  association assoc13 E <-> I ;
+
+  association assoc14 I <-> E ;
+
+  association assoc15 A -- E ;
+
+  association assoc16 B -- E ;
+
+  association assoc17 E -- A ;
+
+  association assoc18 E -- B ;
+
+  association assoc19 E -- E ;
+
+  association assoc20 E -- I ;
+
+  association assoc21 I -- E ;
+
+}

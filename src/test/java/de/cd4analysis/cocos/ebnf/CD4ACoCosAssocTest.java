@@ -2783,4 +2783,105 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
     
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
+  
+  @Ignore
+  @Test
+  public void testEnumAsSource() {
+    // AssocTestGenerator.generateEnumAsSource();
+    String modelName = "CD4AC0021.cd";
+    String errorCode = "0xCD4AC0021";
+    
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc3 (E -> I) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc4 (A <- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc5 (B <- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc6 (E <- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc7 (I <- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc8 (A <-> E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc9 (B <-> E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc10 (E <-> A) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc11 (E <-> B) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc12 (E <-> E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc13 (E <-> I) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc14 (I <-> E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc15 (A -- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc16 (B -- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc17 (E -- A) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc18 (E -- B) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc19 (E -- E) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc20 (E -- I) is invalid, because an association's source may not be an Enumeration."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc21 (I -- E) is invalid, because an association's source may not be an Enumeration.")
+        );
+    testModelForErrorSuffixes(modelName, expectedErrors);
+  }
 }
