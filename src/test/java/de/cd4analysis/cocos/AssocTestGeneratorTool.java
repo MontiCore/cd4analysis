@@ -51,7 +51,7 @@ import de.se_rwth.commons.StringTransformations;
  *         //.flatMap(a -> allModifierCombinations(a, validModel).stream())
  *         //.flatMap(a -> allRolePositions(a, validModel).stream())
  *         //.flatMap(a -> allCardinalityCombinations(a).stream())
- *         //.flatMap(a -> allTypedQualifierPositions(a, validModel).stream())
+ *         //.flatMap(a -> allQualifierPositions(a, validModel).stream())
  *     .collect(Collectors.toList());
  *     
  * printAssociations(allPossibilities);
@@ -394,21 +394,21 @@ public class AssocTestGeneratorTool {
   }
   
   /**
-   * Generates possible type-qualifiers combinations for the given association.
+   * Generates possible qualifiers combinations for the given association.
    * 
    * @param assoc
    * @param valid if true only valid positions are generated (e.g. A <- [T] B,
    * but not A [T] <- B or A [T] <- [T] B, false only invalid ones are generated
    * @return
    */
-  public static List<ASTCDAssociation> allTypedQualifierPositions(ASTCDAssociation assoc,
-      boolean valid, String leftTypedQualifier, String rightTypedQualifier) {
+  public static List<ASTCDAssociation> allQualifierPositions(ASTCDAssociation assoc,
+      boolean valid, String leftQualifier, String rightQualifier) {
     List<ASTCDAssociation> re = new ArrayList<>();
     
     ASTCDQualifier ql = CD4AnalysisNodeFactory.createASTCDQualifier();
-    ql.setName(leftTypedQualifier);
+    ql.setName(leftQualifier);
     ASTCDQualifier qr = CD4AnalysisNodeFactory.createASTCDQualifier();
-    qr.setName(rightTypedQualifier);
+    qr.setName(rightQualifier);
     
     if (assoc.isBidirectional() || assoc.isSimple()) {
       if (valid) {

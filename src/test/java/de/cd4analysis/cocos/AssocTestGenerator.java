@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cd4analysis.cocos.CD4ACoCoHelper;
+
+import com.google.common.collect.Iterables;
+
 import de.cd4analysis._ast.ASTCDAssociation;
 import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.cd4analysis.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
@@ -70,19 +73,22 @@ import de.cd4analysis.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 public class AssocTestGenerator {
   
   /**
-   * @param leftTypedQualifier
-   * @param rightTypedQualifier
+   * 0xCD4A0019, 0xCD4A0020
+   * 
+   * @param valid whether the associations should be valid or not.
+   * @param leftQualifier
+   * @param rightQualifier
    */
-  public static void generateTypedQualifiedAssocTests(String leftTypedQualifier,
-      String rightTypedQualifier) {
+  public static void generateQualifiedAssocTests(boolean valid, String leftQualifier,
+      String rightQualifier, ErrorMessagePrinter errorMsgPrinter) {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
     List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool
         .allDirections(assoc)
         .stream()
         .flatMap(a -> AssocTestGeneratorTool.allTypeCombinations(a, true).stream())
         .flatMap(
-            a -> AssocTestGeneratorTool.allTypedQualifierPositions(a, true, leftTypedQualifier,
-                rightTypedQualifier).stream())
+            a -> AssocTestGeneratorTool.allQualifierPositions(a, valid, leftQualifier,
+                rightQualifier).stream())
         .collect(Collectors.toList());
     
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
@@ -90,34 +96,13 @@ public class AssocTestGenerator {
     
     System.out.println("Collection<String> expectedErrors = Arrays.asList(");
     
-    AssocTestGeneratorTool.printTestCases(allPossibilities, new ErrorMessagePrinter() {
-      @Override
-      public String print(ASTCDAssociation assoc) {
-        String msg = "The type %s of the typed qualified association %s could not be found. Only external datatypes and types defined within the classdiagram may be used.";
-        String undefinedType = null;
-        if (assoc.getLeftQualifier().isPresent()) {
-          undefinedType = assoc.getLeftQualifier().get().getName();
-        }
-        else {
-          if (assoc.getRightQualifier().isPresent()) {
-            undefinedType = assoc.getRightQualifier().get().getName();
-          }
-        }
-        if (null == undefinedType) {
-          throw new RuntimeException("At least one of the qualifies must be set.");
-        }
-        return "  CoCoHelper.buildErrorMsg(errorCode, \""
-            + String.format(msg, undefinedType, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
-      }
-    });
+    AssocTestGeneratorTool.printTestCases(allPossibilities, errorMsgPrinter);
+    
     System.out.println(");");
   }
   
   /**
    * 0xCD4AC0017
-   * 
-   * @param leftTypedQualifier
-   * @param rightTypedQualifier
    */
   public static void generateInvalidRoleNamesTests() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
@@ -126,7 +111,7 @@ public class AssocTestGenerator {
         .stream()
         .flatMap(a -> AssocTestGeneratorTool.allTypeCombinations(a, true).stream())
         .flatMap(a -> AssocTestGeneratorTool.allRolePositions(a, true).stream())
-                .map(a -> AssocTestGeneratorTool.capitalizeRoles(a))
+        .map(a -> AssocTestGeneratorTool.capitalizeRoles(a))
         .collect(Collectors.toList());
     
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
@@ -158,9 +143,41 @@ public class AssocTestGenerator {
   }
   
   public static void main(String[] args) {
-    // generateTypedQualifiedAssocTests("LeftTypedQualifier",
-    // "RightTypedQualifier");
-    generateInvalidRoleNamesTests();
+    ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
+      @Override
+      public String print(ASTCDAssociation assoc) {
+        String msg = "The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.";
+        String qualifier = null;
+        String referencedClass = null;
+        if (assoc.getLeftQualifier().isPresent()) {
+          qualifier = assoc.getLeftQualifier().get().getName();
+          if (assoc.getRightReferenceName() != null
+              && assoc.getRightReferenceName().getParts().size() > 0) {
+            referencedClass = Iterables.getLast(assoc.getRightReferenceName().getParts());
+          }
+          
+        }
+        else {
+          if (assoc.getRightQualifier().isPresent()) {
+            qualifier = assoc.getRightQualifier().get().getName();
+            if (assoc.getLeftReferenceName() != null
+                && assoc.getLeftReferenceName().getParts().size() > 0) {
+              referencedClass = Iterables.getLast(assoc.getLeftReferenceName().getParts());
+            }
+          }
+        }
+        if (null == qualifier) {
+          throw new RuntimeException("At least one of the qualifiers must be set.");
+        }
+        if (null == referencedClass) {
+          throw new RuntimeException("The referenced class must be set.");
+        }
+        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+            + String.format(msg, qualifier, CD4ACoCoHelper.printAssociation(assoc),
+                referencedClass) + "\"),";
+      }
+    };
+    AssocTestGenerator.generateQualifiedAssocTests(false, "String", "String", errorMessagePrinter);
   }
   
   public static void generateSth() {

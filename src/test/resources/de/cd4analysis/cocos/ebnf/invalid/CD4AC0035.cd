@@ -1,0 +1,109 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0035 {
+
+  class A;
+
+  class B;
+
+  enum E;
+
+  interface I;
+
+  association assoc0 A -> [String] A ;
+
+  association assoc1 A [String] -> [String] A ;
+
+  association assoc2 A -> [String] B ;
+
+  association assoc3 A [String] -> [String] B ;
+
+  association assoc4 A -> [String] E ;
+
+  association assoc5 A [String] -> [String] E ;
+
+  association assoc6 A -> [String] I ;
+
+  association assoc7 A [String] -> [String] I ;
+
+  association assoc8 B -> [String] A ;
+
+  association assoc9 B [String] -> [String] A ;
+
+  association assoc10 B -> [String] B ;
+
+  association assoc11 B [String] -> [String] B ;
+
+  association assoc12 B -> [String] E ;
+
+  association assoc13 B [String] -> [String] E ;
+
+  association assoc14 B -> [String] I ;
+
+  association assoc15 B [String] -> [String] I ;
+
+  association assoc16 I -> [String] A ;
+
+  association assoc17 I [String] -> [String] A ;
+
+  association assoc18 I -> [String] B ;
+
+  association assoc19 I [String] -> [String] B ;
+
+  association assoc20 I -> [String] E ;
+
+  association assoc21 I [String] -> [String] E ;
+
+  association assoc22 I -> [String] I ;
+
+  association assoc23 I [String] -> [String] I ;
+
+  association assoc24 A [String] <- A ;
+
+  association assoc25 A [String] <- [String] A ;
+
+  association assoc26 A [String] <- B ;
+
+  association assoc27 A [String] <- [String] B ;
+
+  association assoc28 A [String] <- I ;
+
+  association assoc29 A [String] <- [String] I ;
+
+  association assoc30 B [String] <- A ;
+
+  association assoc31 B [String] <- [String] A ;
+
+  association assoc32 B [String] <- B ;
+
+  association assoc33 B [String] <- [String] B ;
+
+  association assoc34 B [String] <- I ;
+
+  association assoc35 B [String] <- [String] I ;
+
+  association assoc36 E [String] <- A ;
+
+  association assoc37 E [String] <- [String] A ;
+
+  association assoc38 E [String] <- B ;
+
+  association assoc39 E [String] <- [String] B ;
+
+  association assoc40 E [String] <- I ;
+
+  association assoc41 E [String] <- [String] I ;
+
+  association assoc42 I [String] <- A ;
+
+  association assoc43 I [String] <- [String] A ;
+
+  association assoc44 I [String] <- B ;
+
+  association assoc45 I [String] <- [String] B ;
+
+  association assoc46 I [String] <- I ;
+
+  association assoc47 I [String] <- [String] I ;
+}
+

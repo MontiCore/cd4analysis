@@ -1,26 +1,170 @@
 package de.cd4analysis.cocos;
 
-classdiagram CD4AC0019 {
+classdiagram CD4AC0020 {
+
   class A;
-  class B {
-    String attrInB;
-  }
-  interface I;
+
+  class B;
+
   enum E;
 
+  interface I;
 
-  // invalid
-  // type
-  association assoc1 A [NotDefinedType] ->        B;
-  
-  // name
-  association assoc1 A [attrInB] ->        B;
-  
-  // valid
+  association assoc0 A [leftAttributeQualifier] -> A ;
 
-  // type
-  association assoc1 A [String] ->        B;
-  
-  // name
-  association assoc1 A [attrInB] ->        B;
+  association assoc1 A [leftAttributeQualifier] -> B ;
+
+  association assoc2 A [leftAttributeQualifier] -> E ;
+
+  association assoc3 A [leftAttributeQualifier] -> I ;
+
+  association assoc4 B [leftAttributeQualifier] -> A ;
+
+  association assoc5 B [leftAttributeQualifier] -> B ;
+
+  association assoc6 B [leftAttributeQualifier] -> E ;
+
+  association assoc7 B [leftAttributeQualifier] -> I ;
+
+  association assoc8 I [leftAttributeQualifier] -> A ;
+
+  association assoc9 I [leftAttributeQualifier] -> B ;
+
+  association assoc10 I [leftAttributeQualifier] -> E ;
+
+  association assoc11 I [leftAttributeQualifier] -> I ;
+
+  association assoc12 A <- [rightAttributeQualifier] A ;
+
+  association assoc13 A <- [rightAttributeQualifier] B ;
+
+  association assoc14 A <- [rightAttributeQualifier] I ;
+
+  association assoc15 B <- [rightAttributeQualifier] A ;
+
+  association assoc16 B <- [rightAttributeQualifier] B ;
+
+  association assoc17 B <- [rightAttributeQualifier] I ;
+
+  association assoc18 E <- [rightAttributeQualifier] A ;
+
+  association assoc19 E <- [rightAttributeQualifier] B ;
+
+  association assoc20 E <- [rightAttributeQualifier] I ;
+
+  association assoc21 I <- [rightAttributeQualifier] A ;
+
+  association assoc22 I <- [rightAttributeQualifier] B ;
+
+  association assoc23 I <- [rightAttributeQualifier] I ;
+
+  association assoc24 A [leftAttributeQualifier] <-> [rightAttributeQualifier] A ;
+
+  association assoc25 A [leftAttributeQualifier] <-> A ;
+
+  association assoc26 A <-> [rightAttributeQualifier] A ;
+
+  association assoc27 A [leftAttributeQualifier] <-> [rightAttributeQualifier] B ;
+
+  association assoc28 A [leftAttributeQualifier] <-> B ;
+
+  association assoc29 A <-> [rightAttributeQualifier] B ;
+
+  association assoc30 A [leftAttributeQualifier] <-> [rightAttributeQualifier] I ;
+
+  association assoc31 A [leftAttributeQualifier] <-> I ;
+
+  association assoc32 A <-> [rightAttributeQualifier] I ;
+
+  association assoc33 B [leftAttributeQualifier] <-> [rightAttributeQualifier] A ;
+
+  association assoc34 B [leftAttributeQualifier] <-> A ;
+
+  association assoc35 B <-> [rightAttributeQualifier] A ;
+
+  association assoc36 B [leftAttributeQualifier] <-> [rightAttributeQualifier] B ;
+
+  association assoc37 B [leftAttributeQualifier] <-> B ;
+
+  association assoc38 B <-> [rightAttributeQualifier] B ;
+
+  association assoc39 B [leftAttributeQualifier] <-> [rightAttributeQualifier] I ;
+
+  association assoc40 B [leftAttributeQualifier] <-> I ;
+
+  association assoc41 B <-> [rightAttributeQualifier] I ;
+
+  association assoc42 I [leftAttributeQualifier] <-> [rightAttributeQualifier] A ;
+
+  association assoc43 I [leftAttributeQualifier] <-> A ;
+
+  association assoc44 I <-> [rightAttributeQualifier] A ;
+
+  association assoc45 I [leftAttributeQualifier] <-> [rightAttributeQualifier] B ;
+
+  association assoc46 I [leftAttributeQualifier] <-> B ;
+
+  association assoc47 I <-> [rightAttributeQualifier] B ;
+
+  association assoc48 I [leftAttributeQualifier] <-> [rightAttributeQualifier] I ;
+
+  association assoc49 I [leftAttributeQualifier] <-> I ;
+
+  association assoc50 I <-> [rightAttributeQualifier] I ;
+
+  association assoc51 A [leftAttributeQualifier] -- [rightAttributeQualifier] A ;
+
+  association assoc52 A [leftAttributeQualifier] -- A ;
+
+  association assoc53 A -- [rightAttributeQualifier] A ;
+
+  association assoc54 A [leftAttributeQualifier] -- [rightAttributeQualifier] B ;
+
+  association assoc55 A [leftAttributeQualifier] -- B ;
+
+  association assoc56 A -- [rightAttributeQualifier] B ;
+
+  association assoc57 A [leftAttributeQualifier] -- [rightAttributeQualifier] I ;
+
+  association assoc58 A [leftAttributeQualifier] -- I ;
+
+  association assoc59 A -- [rightAttributeQualifier] I ;
+
+  association assoc60 B [leftAttributeQualifier] -- [rightAttributeQualifier] A ;
+
+  association assoc61 B [leftAttributeQualifier] -- A ;
+
+  association assoc62 B -- [rightAttributeQualifier] A ;
+
+  association assoc63 B [leftAttributeQualifier] -- [rightAttributeQualifier] B ;
+
+  association assoc64 B [leftAttributeQualifier] -- B ;
+
+  association assoc65 B -- [rightAttributeQualifier] B ;
+
+  association assoc66 B [leftAttributeQualifier] -- [rightAttributeQualifier] I ;
+
+  association assoc67 B [leftAttributeQualifier] -- I ;
+
+  association assoc68 B -- [rightAttributeQualifier] I ;
+
+  association assoc69 I [leftAttributeQualifier] -- [rightAttributeQualifier] A ;
+
+  association assoc70 I [leftAttributeQualifier] -- A ;
+
+  association assoc71 I -- [rightAttributeQualifier] A ;
+
+  association assoc72 I [leftAttributeQualifier] -- [rightAttributeQualifier] B ;
+
+  association assoc73 I [leftAttributeQualifier] -- B ;
+
+  association assoc74 I -- [rightAttributeQualifier] B ;
+
+  association assoc75 I [leftAttributeQualifier] -- [rightAttributeQualifier] I ;
+
+  association assoc76 I [leftAttributeQualifier] -- I ;
+
+  association assoc77 I -- [rightAttributeQualifier] I ;
+
 }
+
