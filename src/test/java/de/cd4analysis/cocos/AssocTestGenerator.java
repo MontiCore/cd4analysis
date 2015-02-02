@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 import cd4analysis.cocos.CD4ACoCoHelper;
 import de.cd4analysis._ast.ASTCDAssociation;
 import de.cd4analysis._ast.ASTCardinality;
+import de.cd4analysis._ast.ASTModifier;
+import de.cd4analysis._ast.ASTStereoValueList;
+import de.cd4analysis._ast.ASTStereotype;
 import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.cd4analysis.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
@@ -142,9 +145,98 @@ public class AssocTestGenerator {
   }
   
   public static void main(String[] args) {
+    generateInvalidOrderedAssocs();
+  }
+  
+  /**
+   * 0xCD4AC0024
+   */
+  public static void generateInvalidOrderedAssocs() {
+    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    
+    // dirty, but we don't have time: the predicate will set the
+    // ordered-stereotype as well
+    // this predicate ensures a correct position of the <<ordered>> stereotype
+    // and an invalid cardinality ( [1] or [0..1] ).
+    Predicate<ASTCDAssociation> isInvalidOrderedAssoc = new Predicate<ASTCDAssociation>() {
+      @Override
+      public boolean test(ASTCDAssociation assoc) {
+        
+        ASTCardinality cardinality = null;
+        ASTModifier modifier = null;
+        
+        ASTStereoValueList stereoOrdered = CD4AnalysisNodeFactory.createASTStereoValueList();
+        stereoOrdered.add(CD4AnalysisNodeFactory.createASTStereoValue("ordered"));
+        ASTStereotype stereoType = CD4AnalysisNodeFactory.createASTStereotype(stereoOrdered);
+        
+        boolean rightSideInvalid = false;
+        if (assoc.getRightCardinality().isPresent()) {
+          cardinality = assoc.getRightCardinality().get();
+          if (cardinality.isOne() || cardinality.isOptional()) {
+            if (!assoc.getRightModifier().isPresent()) {
+              modifier = CD4AnalysisNodeFactory.createASTModifier();
+              assoc.setRightModifier(modifier);
+            }
+            modifier = assoc.getRightModifier().get();
+            modifier.setStereotype(stereoType);
+            rightSideInvalid = true;
+          }
+        }
+        boolean leftSideInvalid = false;
+        if (assoc.getLeftCardinality().isPresent()) {
+          cardinality = assoc.getLeftCardinality().get();
+          if (cardinality.isOne() || cardinality.isOptional()) {
+            if (!assoc.getLeftModifier().isPresent()) {
+              modifier = CD4AnalysisNodeFactory.createASTModifier();
+              assoc.setLeftModifier(modifier);
+            }
+            modifier = assoc.getLeftModifier().get();
+            modifier.setStereotype(stereoType);
+            leftSideInvalid = true;
+          }
+        }
+        
+        // A -> B
+        if (assoc.isLeftToRight()) {
+          return rightSideInvalid;
+        }
+        // A <- B
+        else if (assoc.isRightToLeft()) {
+          return leftSideInvalid;
+        }
+        // A <-> B | A -- B
+        else if (assoc.isBidirectional() || assoc.isSimple()) {
+          return (leftSideInvalid || rightSideInvalid);
+        }
+        return false;
+      }
+    };
+    
+    List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool.allDirections(assoc)
+        .stream()
+        .flatMap(a -> AssocTestGeneratorTool.allTypeCombinations(a, true).stream())
+        .flatMap(a -> AssocTestGeneratorTool.allCardinalityCombinations(a).stream())
+        .filter(isInvalidOrderedAssoc)
+        .collect(Collectors.toList());
+    String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
+    System.out.println(modelContents);
+    
+    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    
+    ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
+      @Override
+      public String print(ASTCDAssociation assoc) {
+        String msg = "Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.";
+        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
+      }
+    };
+    AssocTestGeneratorTool.printTestCases(allPossibilities, errorMessagePrinter);
+    
+    System.out.println(");");
     
   }
-   
+  
   /**
    * 0xCD4AC0021
    */

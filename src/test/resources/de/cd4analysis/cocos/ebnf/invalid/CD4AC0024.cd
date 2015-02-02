@@ -1,0 +1,1069 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0024 {
+
+    class A;
+
+  class B;
+
+  enum E;
+
+  interface I;
+
+  association assoc0 A -> A  [0..1]  <<ordered>>;
+
+  association assoc1 <<ordered>> [0..1]  A -> A  [0..1]  <<ordered>>;
+
+  association assoc2 <<ordered>> [0..1]  A -> A  [1]  <<ordered>>;
+
+  association assoc3 A -> A  [1]  <<ordered>>;
+
+  association assoc4 <<ordered>> [1]  A -> A  [0..1]  <<ordered>>;
+
+  association assoc5 <<ordered>> [1]  A -> A  [1]  <<ordered>>;
+
+  association assoc6  [1..*]  A -> A  [0..1]  <<ordered>>;
+
+  association assoc7  [1..*]  A -> A  [1]  <<ordered>>;
+
+  association assoc8  [*]  A -> A  [0..1]  <<ordered>>;
+
+  association assoc9  [*]  A -> A  [1]  <<ordered>>;
+
+  association assoc10 A -> B  [0..1]  <<ordered>>;
+
+  association assoc11 <<ordered>> [0..1]  A -> B  [0..1]  <<ordered>>;
+
+  association assoc12 <<ordered>> [0..1]  A -> B  [1]  <<ordered>>;
+
+  association assoc13 A -> B  [1]  <<ordered>>;
+
+  association assoc14 <<ordered>> [1]  A -> B  [0..1]  <<ordered>>;
+
+  association assoc15 <<ordered>> [1]  A -> B  [1]  <<ordered>>;
+
+  association assoc16  [1..*]  A -> B  [0..1]  <<ordered>>;
+
+  association assoc17  [1..*]  A -> B  [1]  <<ordered>>;
+
+  association assoc18  [*]  A -> B  [0..1]  <<ordered>>;
+
+  association assoc19  [*]  A -> B  [1]  <<ordered>>;
+
+  association assoc20 A -> E  [0..1]  <<ordered>>;
+
+  association assoc21 <<ordered>> [0..1]  A -> E  [0..1]  <<ordered>>;
+
+  association assoc22 <<ordered>> [0..1]  A -> E  [1]  <<ordered>>;
+
+  association assoc23 A -> E  [1]  <<ordered>>;
+
+  association assoc24 <<ordered>> [1]  A -> E  [0..1]  <<ordered>>;
+
+  association assoc25 <<ordered>> [1]  A -> E  [1]  <<ordered>>;
+
+  association assoc26  [1..*]  A -> E  [0..1]  <<ordered>>;
+
+  association assoc27  [1..*]  A -> E  [1]  <<ordered>>;
+
+  association assoc28  [*]  A -> E  [0..1]  <<ordered>>;
+
+  association assoc29  [*]  A -> E  [1]  <<ordered>>;
+
+  association assoc30 A -> I  [0..1]  <<ordered>>;
+
+  association assoc31 <<ordered>> [0..1]  A -> I  [0..1]  <<ordered>>;
+
+  association assoc32 <<ordered>> [0..1]  A -> I  [1]  <<ordered>>;
+
+  association assoc33 A -> I  [1]  <<ordered>>;
+
+  association assoc34 <<ordered>> [1]  A -> I  [0..1]  <<ordered>>;
+
+  association assoc35 <<ordered>> [1]  A -> I  [1]  <<ordered>>;
+
+  association assoc36  [1..*]  A -> I  [0..1]  <<ordered>>;
+
+  association assoc37  [1..*]  A -> I  [1]  <<ordered>>;
+
+  association assoc38  [*]  A -> I  [0..1]  <<ordered>>;
+
+  association assoc39  [*]  A -> I  [1]  <<ordered>>;
+
+  association assoc40 B -> A  [0..1]  <<ordered>>;
+
+  association assoc41 <<ordered>> [0..1]  B -> A  [0..1]  <<ordered>>;
+
+  association assoc42 <<ordered>> [0..1]  B -> A  [1]  <<ordered>>;
+
+  association assoc43 B -> A  [1]  <<ordered>>;
+
+  association assoc44 <<ordered>> [1]  B -> A  [0..1]  <<ordered>>;
+
+  association assoc45 <<ordered>> [1]  B -> A  [1]  <<ordered>>;
+
+  association assoc46  [1..*]  B -> A  [0..1]  <<ordered>>;
+
+  association assoc47  [1..*]  B -> A  [1]  <<ordered>>;
+
+  association assoc48  [*]  B -> A  [0..1]  <<ordered>>;
+
+  association assoc49  [*]  B -> A  [1]  <<ordered>>;
+
+  association assoc50 B -> B  [0..1]  <<ordered>>;
+
+  association assoc51 <<ordered>> [0..1]  B -> B  [0..1]  <<ordered>>;
+
+  association assoc52 <<ordered>> [0..1]  B -> B  [1]  <<ordered>>;
+
+  association assoc53 B -> B  [1]  <<ordered>>;
+
+  association assoc54 <<ordered>> [1]  B -> B  [0..1]  <<ordered>>;
+
+  association assoc55 <<ordered>> [1]  B -> B  [1]  <<ordered>>;
+
+  association assoc56  [1..*]  B -> B  [0..1]  <<ordered>>;
+
+  association assoc57  [1..*]  B -> B  [1]  <<ordered>>;
+
+  association assoc58  [*]  B -> B  [0..1]  <<ordered>>;
+
+  association assoc59  [*]  B -> B  [1]  <<ordered>>;
+
+  association assoc60 B -> E  [0..1]  <<ordered>>;
+
+  association assoc61 <<ordered>> [0..1]  B -> E  [0..1]  <<ordered>>;
+
+  association assoc62 <<ordered>> [0..1]  B -> E  [1]  <<ordered>>;
+
+  association assoc63 B -> E  [1]  <<ordered>>;
+
+  association assoc64 <<ordered>> [1]  B -> E  [0..1]  <<ordered>>;
+
+  association assoc65 <<ordered>> [1]  B -> E  [1]  <<ordered>>;
+
+  association assoc66  [1..*]  B -> E  [0..1]  <<ordered>>;
+
+  association assoc67  [1..*]  B -> E  [1]  <<ordered>>;
+
+  association assoc68  [*]  B -> E  [0..1]  <<ordered>>;
+
+  association assoc69  [*]  B -> E  [1]  <<ordered>>;
+
+  association assoc70 B -> I  [0..1]  <<ordered>>;
+
+  association assoc71 <<ordered>> [0..1]  B -> I  [0..1]  <<ordered>>;
+
+  association assoc72 <<ordered>> [0..1]  B -> I  [1]  <<ordered>>;
+
+  association assoc73 B -> I  [1]  <<ordered>>;
+
+  association assoc74 <<ordered>> [1]  B -> I  [0..1]  <<ordered>>;
+
+  association assoc75 <<ordered>> [1]  B -> I  [1]  <<ordered>>;
+
+  association assoc76  [1..*]  B -> I  [0..1]  <<ordered>>;
+
+  association assoc77  [1..*]  B -> I  [1]  <<ordered>>;
+
+  association assoc78  [*]  B -> I  [0..1]  <<ordered>>;
+
+  association assoc79  [*]  B -> I  [1]  <<ordered>>;
+
+  association assoc80 I -> A  [0..1]  <<ordered>>;
+
+  association assoc81 <<ordered>> [0..1]  I -> A  [0..1]  <<ordered>>;
+
+  association assoc82 <<ordered>> [0..1]  I -> A  [1]  <<ordered>>;
+
+  association assoc83 I -> A  [1]  <<ordered>>;
+
+  association assoc84 <<ordered>> [1]  I -> A  [0..1]  <<ordered>>;
+
+  association assoc85 <<ordered>> [1]  I -> A  [1]  <<ordered>>;
+
+  association assoc86  [1..*]  I -> A  [0..1]  <<ordered>>;
+
+  association assoc87  [1..*]  I -> A  [1]  <<ordered>>;
+
+  association assoc88  [*]  I -> A  [0..1]  <<ordered>>;
+
+  association assoc89  [*]  I -> A  [1]  <<ordered>>;
+
+  association assoc90 I -> B  [0..1]  <<ordered>>;
+
+  association assoc91 <<ordered>> [0..1]  I -> B  [0..1]  <<ordered>>;
+
+  association assoc92 <<ordered>> [0..1]  I -> B  [1]  <<ordered>>;
+
+  association assoc93 I -> B  [1]  <<ordered>>;
+
+  association assoc94 <<ordered>> [1]  I -> B  [0..1]  <<ordered>>;
+
+  association assoc95 <<ordered>> [1]  I -> B  [1]  <<ordered>>;
+
+  association assoc96  [1..*]  I -> B  [0..1]  <<ordered>>;
+
+  association assoc97  [1..*]  I -> B  [1]  <<ordered>>;
+
+  association assoc98  [*]  I -> B  [0..1]  <<ordered>>;
+
+  association assoc99  [*]  I -> B  [1]  <<ordered>>;
+
+  association assoc100 I -> E  [0..1]  <<ordered>>;
+
+  association assoc101 <<ordered>> [0..1]  I -> E  [0..1]  <<ordered>>;
+
+  association assoc102 <<ordered>> [0..1]  I -> E  [1]  <<ordered>>;
+
+  association assoc103 I -> E  [1]  <<ordered>>;
+
+  association assoc104 <<ordered>> [1]  I -> E  [0..1]  <<ordered>>;
+
+  association assoc105 <<ordered>> [1]  I -> E  [1]  <<ordered>>;
+
+  association assoc106  [1..*]  I -> E  [0..1]  <<ordered>>;
+
+  association assoc107  [1..*]  I -> E  [1]  <<ordered>>;
+
+  association assoc108  [*]  I -> E  [0..1]  <<ordered>>;
+
+  association assoc109  [*]  I -> E  [1]  <<ordered>>;
+
+  association assoc110 I -> I  [0..1]  <<ordered>>;
+
+  association assoc111 <<ordered>> [0..1]  I -> I  [0..1]  <<ordered>>;
+
+  association assoc112 <<ordered>> [0..1]  I -> I  [1]  <<ordered>>;
+
+  association assoc113 I -> I  [1]  <<ordered>>;
+
+  association assoc114 <<ordered>> [1]  I -> I  [0..1]  <<ordered>>;
+
+  association assoc115 <<ordered>> [1]  I -> I  [1]  <<ordered>>;
+
+  association assoc116  [1..*]  I -> I  [0..1]  <<ordered>>;
+
+  association assoc117  [1..*]  I -> I  [1]  <<ordered>>;
+
+  association assoc118  [*]  I -> I  [0..1]  <<ordered>>;
+
+  association assoc119  [*]  I -> I  [1]  <<ordered>>;
+
+  association assoc120 <<ordered>> [0..1]  A <- A ;
+
+  association assoc121 <<ordered>> [0..1]  A <- A  [0..1]  <<ordered>>;
+
+  association assoc122 <<ordered>> [0..1]  A <- A  [1]  <<ordered>>;
+
+  association assoc123 <<ordered>> [0..1]  A <- A  [1..*]  ;
+
+  association assoc124 <<ordered>> [0..1]  A <- A  [*]  ;
+
+  association assoc125 <<ordered>> [1]  A <- A ;
+
+  association assoc126 <<ordered>> [1]  A <- A  [0..1]  <<ordered>>;
+
+  association assoc127 <<ordered>> [1]  A <- A  [1]  <<ordered>>;
+
+  association assoc128 <<ordered>> [1]  A <- A  [1..*]  ;
+
+  association assoc129 <<ordered>> [1]  A <- A  [*]  ;
+
+  association assoc130 <<ordered>> [0..1]  A <- B ;
+
+  association assoc131 <<ordered>> [0..1]  A <- B  [0..1]  <<ordered>>;
+
+  association assoc132 <<ordered>> [0..1]  A <- B  [1]  <<ordered>>;
+
+  association assoc133 <<ordered>> [0..1]  A <- B  [1..*]  ;
+
+  association assoc134 <<ordered>> [0..1]  A <- B  [*]  ;
+
+  association assoc135 <<ordered>> [1]  A <- B ;
+
+  association assoc136 <<ordered>> [1]  A <- B  [0..1]  <<ordered>>;
+
+  association assoc137 <<ordered>> [1]  A <- B  [1]  <<ordered>>;
+
+  association assoc138 <<ordered>> [1]  A <- B  [1..*]  ;
+
+  association assoc139 <<ordered>> [1]  A <- B  [*]  ;
+
+  association assoc140 <<ordered>> [0..1]  A <- I ;
+
+  association assoc141 <<ordered>> [0..1]  A <- I  [0..1]  <<ordered>>;
+
+  association assoc142 <<ordered>> [0..1]  A <- I  [1]  <<ordered>>;
+
+  association assoc143 <<ordered>> [0..1]  A <- I  [1..*]  ;
+
+  association assoc144 <<ordered>> [0..1]  A <- I  [*]  ;
+
+  association assoc145 <<ordered>> [1]  A <- I ;
+
+  association assoc146 <<ordered>> [1]  A <- I  [0..1]  <<ordered>>;
+
+  association assoc147 <<ordered>> [1]  A <- I  [1]  <<ordered>>;
+
+  association assoc148 <<ordered>> [1]  A <- I  [1..*]  ;
+
+  association assoc149 <<ordered>> [1]  A <- I  [*]  ;
+
+  association assoc150 <<ordered>> [0..1]  B <- A ;
+
+  association assoc151 <<ordered>> [0..1]  B <- A  [0..1]  <<ordered>>;
+
+  association assoc152 <<ordered>> [0..1]  B <- A  [1]  <<ordered>>;
+
+  association assoc153 <<ordered>> [0..1]  B <- A  [1..*]  ;
+
+  association assoc154 <<ordered>> [0..1]  B <- A  [*]  ;
+
+  association assoc155 <<ordered>> [1]  B <- A ;
+
+  association assoc156 <<ordered>> [1]  B <- A  [0..1]  <<ordered>>;
+
+  association assoc157 <<ordered>> [1]  B <- A  [1]  <<ordered>>;
+
+  association assoc158 <<ordered>> [1]  B <- A  [1..*]  ;
+
+  association assoc159 <<ordered>> [1]  B <- A  [*]  ;
+
+  association assoc160 <<ordered>> [0..1]  B <- B ;
+
+  association assoc161 <<ordered>> [0..1]  B <- B  [0..1]  <<ordered>>;
+
+  association assoc162 <<ordered>> [0..1]  B <- B  [1]  <<ordered>>;
+
+  association assoc163 <<ordered>> [0..1]  B <- B  [1..*]  ;
+
+  association assoc164 <<ordered>> [0..1]  B <- B  [*]  ;
+
+  association assoc165 <<ordered>> [1]  B <- B ;
+
+  association assoc166 <<ordered>> [1]  B <- B  [0..1]  <<ordered>>;
+
+  association assoc167 <<ordered>> [1]  B <- B  [1]  <<ordered>>;
+
+  association assoc168 <<ordered>> [1]  B <- B  [1..*]  ;
+
+  association assoc169 <<ordered>> [1]  B <- B  [*]  ;
+
+  association assoc170 <<ordered>> [0..1]  B <- I ;
+
+  association assoc171 <<ordered>> [0..1]  B <- I  [0..1]  <<ordered>>;
+
+  association assoc172 <<ordered>> [0..1]  B <- I  [1]  <<ordered>>;
+
+  association assoc173 <<ordered>> [0..1]  B <- I  [1..*]  ;
+
+  association assoc174 <<ordered>> [0..1]  B <- I  [*]  ;
+
+  association assoc175 <<ordered>> [1]  B <- I ;
+
+  association assoc176 <<ordered>> [1]  B <- I  [0..1]  <<ordered>>;
+
+  association assoc177 <<ordered>> [1]  B <- I  [1]  <<ordered>>;
+
+  association assoc178 <<ordered>> [1]  B <- I  [1..*]  ;
+
+  association assoc179 <<ordered>> [1]  B <- I  [*]  ;
+
+  association assoc180 <<ordered>> [0..1]  E <- A ;
+
+  association assoc181 <<ordered>> [0..1]  E <- A  [0..1]  <<ordered>>;
+
+  association assoc182 <<ordered>> [0..1]  E <- A  [1]  <<ordered>>;
+
+  association assoc183 <<ordered>> [0..1]  E <- A  [1..*]  ;
+
+  association assoc184 <<ordered>> [0..1]  E <- A  [*]  ;
+
+  association assoc185 <<ordered>> [1]  E <- A ;
+
+  association assoc186 <<ordered>> [1]  E <- A  [0..1]  <<ordered>>;
+
+  association assoc187 <<ordered>> [1]  E <- A  [1]  <<ordered>>;
+
+  association assoc188 <<ordered>> [1]  E <- A  [1..*]  ;
+
+  association assoc189 <<ordered>> [1]  E <- A  [*]  ;
+
+  association assoc190 <<ordered>> [0..1]  E <- B ;
+
+  association assoc191 <<ordered>> [0..1]  E <- B  [0..1]  <<ordered>>;
+
+  association assoc192 <<ordered>> [0..1]  E <- B  [1]  <<ordered>>;
+
+  association assoc193 <<ordered>> [0..1]  E <- B  [1..*]  ;
+
+  association assoc194 <<ordered>> [0..1]  E <- B  [*]  ;
+
+  association assoc195 <<ordered>> [1]  E <- B ;
+
+  association assoc196 <<ordered>> [1]  E <- B  [0..1]  <<ordered>>;
+
+  association assoc197 <<ordered>> [1]  E <- B  [1]  <<ordered>>;
+
+  association assoc198 <<ordered>> [1]  E <- B  [1..*]  ;
+
+  association assoc199 <<ordered>> [1]  E <- B  [*]  ;
+
+  association assoc200 <<ordered>> [0..1]  E <- I ;
+
+  association assoc201 <<ordered>> [0..1]  E <- I  [0..1]  <<ordered>>;
+
+  association assoc202 <<ordered>> [0..1]  E <- I  [1]  <<ordered>>;
+
+  association assoc203 <<ordered>> [0..1]  E <- I  [1..*]  ;
+
+  association assoc204 <<ordered>> [0..1]  E <- I  [*]  ;
+
+  association assoc205 <<ordered>> [1]  E <- I ;
+
+  association assoc206 <<ordered>> [1]  E <- I  [0..1]  <<ordered>>;
+
+  association assoc207 <<ordered>> [1]  E <- I  [1]  <<ordered>>;
+
+  association assoc208 <<ordered>> [1]  E <- I  [1..*]  ;
+
+  association assoc209 <<ordered>> [1]  E <- I  [*]  ;
+
+  association assoc210 <<ordered>> [0..1]  I <- A ;
+
+  association assoc211 <<ordered>> [0..1]  I <- A  [0..1]  <<ordered>>;
+
+  association assoc212 <<ordered>> [0..1]  I <- A  [1]  <<ordered>>;
+
+  association assoc213 <<ordered>> [0..1]  I <- A  [1..*]  ;
+
+  association assoc214 <<ordered>> [0..1]  I <- A  [*]  ;
+
+  association assoc215 <<ordered>> [1]  I <- A ;
+
+  association assoc216 <<ordered>> [1]  I <- A  [0..1]  <<ordered>>;
+
+  association assoc217 <<ordered>> [1]  I <- A  [1]  <<ordered>>;
+
+  association assoc218 <<ordered>> [1]  I <- A  [1..*]  ;
+
+  association assoc219 <<ordered>> [1]  I <- A  [*]  ;
+
+  association assoc220 <<ordered>> [0..1]  I <- B ;
+
+  association assoc221 <<ordered>> [0..1]  I <- B  [0..1]  <<ordered>>;
+
+  association assoc222 <<ordered>> [0..1]  I <- B  [1]  <<ordered>>;
+
+  association assoc223 <<ordered>> [0..1]  I <- B  [1..*]  ;
+
+  association assoc224 <<ordered>> [0..1]  I <- B  [*]  ;
+
+  association assoc225 <<ordered>> [1]  I <- B ;
+
+  association assoc226 <<ordered>> [1]  I <- B  [0..1]  <<ordered>>;
+
+  association assoc227 <<ordered>> [1]  I <- B  [1]  <<ordered>>;
+
+  association assoc228 <<ordered>> [1]  I <- B  [1..*]  ;
+
+  association assoc229 <<ordered>> [1]  I <- B  [*]  ;
+
+  association assoc230 <<ordered>> [0..1]  I <- I ;
+
+  association assoc231 <<ordered>> [0..1]  I <- I  [0..1]  <<ordered>>;
+
+  association assoc232 <<ordered>> [0..1]  I <- I  [1]  <<ordered>>;
+
+  association assoc233 <<ordered>> [0..1]  I <- I  [1..*]  ;
+
+  association assoc234 <<ordered>> [0..1]  I <- I  [*]  ;
+
+  association assoc235 <<ordered>> [1]  I <- I ;
+
+  association assoc236 <<ordered>> [1]  I <- I  [0..1]  <<ordered>>;
+
+  association assoc237 <<ordered>> [1]  I <- I  [1]  <<ordered>>;
+
+  association assoc238 <<ordered>> [1]  I <- I  [1..*]  ;
+
+  association assoc239 <<ordered>> [1]  I <- I  [*]  ;
+
+  association assoc240 <<ordered>> [0..1]  A <-> A ;
+
+  association assoc241 A <-> A  [0..1]  <<ordered>>;
+
+  association assoc242 <<ordered>> [0..1]  A <-> A  [0..1]  <<ordered>>;
+
+  association assoc243 <<ordered>> [0..1]  A <-> A  [1]  <<ordered>>;
+
+  association assoc244 <<ordered>> [0..1]  A <-> A  [1..*]  ;
+
+  association assoc245 <<ordered>> [0..1]  A <-> A  [*]  ;
+
+  association assoc246 <<ordered>> [1]  A <-> A ;
+
+  association assoc247 A <-> A  [1]  <<ordered>>;
+
+  association assoc248 <<ordered>> [1]  A <-> A  [0..1]  <<ordered>>;
+
+  association assoc249 <<ordered>> [1]  A <-> A  [1]  <<ordered>>;
+
+  association assoc250 <<ordered>> [1]  A <-> A  [1..*]  ;
+
+  association assoc251 <<ordered>> [1]  A <-> A  [*]  ;
+
+  association assoc252  [1..*]  A <-> A  [0..1]  <<ordered>>;
+
+  association assoc253  [1..*]  A <-> A  [1]  <<ordered>>;
+
+  association assoc254  [*]  A <-> A  [0..1]  <<ordered>>;
+
+  association assoc255  [*]  A <-> A  [1]  <<ordered>>;
+
+  association assoc256 <<ordered>> [0..1]  A <-> B ;
+
+  association assoc257 A <-> B  [0..1]  <<ordered>>;
+
+  association assoc258 <<ordered>> [0..1]  A <-> B  [0..1]  <<ordered>>;
+
+  association assoc259 <<ordered>> [0..1]  A <-> B  [1]  <<ordered>>;
+
+  association assoc260 <<ordered>> [0..1]  A <-> B  [1..*]  ;
+
+  association assoc261 <<ordered>> [0..1]  A <-> B  [*]  ;
+
+  association assoc262 <<ordered>> [1]  A <-> B ;
+
+  association assoc263 A <-> B  [1]  <<ordered>>;
+
+  association assoc264 <<ordered>> [1]  A <-> B  [0..1]  <<ordered>>;
+
+  association assoc265 <<ordered>> [1]  A <-> B  [1]  <<ordered>>;
+
+  association assoc266 <<ordered>> [1]  A <-> B  [1..*]  ;
+
+  association assoc267 <<ordered>> [1]  A <-> B  [*]  ;
+
+  association assoc268  [1..*]  A <-> B  [0..1]  <<ordered>>;
+
+  association assoc269  [1..*]  A <-> B  [1]  <<ordered>>;
+
+  association assoc270  [*]  A <-> B  [0..1]  <<ordered>>;
+
+  association assoc271  [*]  A <-> B  [1]  <<ordered>>;
+
+  association assoc272 <<ordered>> [0..1]  A <-> I ;
+
+  association assoc273 A <-> I  [0..1]  <<ordered>>;
+
+  association assoc274 <<ordered>> [0..1]  A <-> I  [0..1]  <<ordered>>;
+
+  association assoc275 <<ordered>> [0..1]  A <-> I  [1]  <<ordered>>;
+
+  association assoc276 <<ordered>> [0..1]  A <-> I  [1..*]  ;
+
+  association assoc277 <<ordered>> [0..1]  A <-> I  [*]  ;
+
+  association assoc278 <<ordered>> [1]  A <-> I ;
+
+  association assoc279 A <-> I  [1]  <<ordered>>;
+
+  association assoc280 <<ordered>> [1]  A <-> I  [0..1]  <<ordered>>;
+
+  association assoc281 <<ordered>> [1]  A <-> I  [1]  <<ordered>>;
+
+  association assoc282 <<ordered>> [1]  A <-> I  [1..*]  ;
+
+  association assoc283 <<ordered>> [1]  A <-> I  [*]  ;
+
+  association assoc284  [1..*]  A <-> I  [0..1]  <<ordered>>;
+
+  association assoc285  [1..*]  A <-> I  [1]  <<ordered>>;
+
+  association assoc286  [*]  A <-> I  [0..1]  <<ordered>>;
+
+  association assoc287  [*]  A <-> I  [1]  <<ordered>>;
+
+  association assoc288 <<ordered>> [0..1]  B <-> A ;
+
+  association assoc289 B <-> A  [0..1]  <<ordered>>;
+
+  association assoc290 <<ordered>> [0..1]  B <-> A  [0..1]  <<ordered>>;
+
+  association assoc291 <<ordered>> [0..1]  B <-> A  [1]  <<ordered>>;
+
+  association assoc292 <<ordered>> [0..1]  B <-> A  [1..*]  ;
+
+  association assoc293 <<ordered>> [0..1]  B <-> A  [*]  ;
+
+  association assoc294 <<ordered>> [1]  B <-> A ;
+
+  association assoc295 B <-> A  [1]  <<ordered>>;
+
+  association assoc296 <<ordered>> [1]  B <-> A  [0..1]  <<ordered>>;
+
+  association assoc297 <<ordered>> [1]  B <-> A  [1]  <<ordered>>;
+
+  association assoc298 <<ordered>> [1]  B <-> A  [1..*]  ;
+
+  association assoc299 <<ordered>> [1]  B <-> A  [*]  ;
+
+  association assoc300  [1..*]  B <-> A  [0..1]  <<ordered>>;
+
+  association assoc301  [1..*]  B <-> A  [1]  <<ordered>>;
+
+  association assoc302  [*]  B <-> A  [0..1]  <<ordered>>;
+
+  association assoc303  [*]  B <-> A  [1]  <<ordered>>;
+
+  association assoc304 <<ordered>> [0..1]  B <-> B ;
+
+  association assoc305 B <-> B  [0..1]  <<ordered>>;
+
+  association assoc306 <<ordered>> [0..1]  B <-> B  [0..1]  <<ordered>>;
+
+  association assoc307 <<ordered>> [0..1]  B <-> B  [1]  <<ordered>>;
+
+  association assoc308 <<ordered>> [0..1]  B <-> B  [1..*]  ;
+
+  association assoc309 <<ordered>> [0..1]  B <-> B  [*]  ;
+
+  association assoc310 <<ordered>> [1]  B <-> B ;
+
+  association assoc311 B <-> B  [1]  <<ordered>>;
+
+  association assoc312 <<ordered>> [1]  B <-> B  [0..1]  <<ordered>>;
+
+  association assoc313 <<ordered>> [1]  B <-> B  [1]  <<ordered>>;
+
+  association assoc314 <<ordered>> [1]  B <-> B  [1..*]  ;
+
+  association assoc315 <<ordered>> [1]  B <-> B  [*]  ;
+
+  association assoc316  [1..*]  B <-> B  [0..1]  <<ordered>>;
+
+  association assoc317  [1..*]  B <-> B  [1]  <<ordered>>;
+
+  association assoc318  [*]  B <-> B  [0..1]  <<ordered>>;
+
+  association assoc319  [*]  B <-> B  [1]  <<ordered>>;
+
+  association assoc320 <<ordered>> [0..1]  B <-> I ;
+
+  association assoc321 B <-> I  [0..1]  <<ordered>>;
+
+  association assoc322 <<ordered>> [0..1]  B <-> I  [0..1]  <<ordered>>;
+
+  association assoc323 <<ordered>> [0..1]  B <-> I  [1]  <<ordered>>;
+
+  association assoc324 <<ordered>> [0..1]  B <-> I  [1..*]  ;
+
+  association assoc325 <<ordered>> [0..1]  B <-> I  [*]  ;
+
+  association assoc326 <<ordered>> [1]  B <-> I ;
+
+  association assoc327 B <-> I  [1]  <<ordered>>;
+
+  association assoc328 <<ordered>> [1]  B <-> I  [0..1]  <<ordered>>;
+
+  association assoc329 <<ordered>> [1]  B <-> I  [1]  <<ordered>>;
+
+  association assoc330 <<ordered>> [1]  B <-> I  [1..*]  ;
+
+  association assoc331 <<ordered>> [1]  B <-> I  [*]  ;
+
+  association assoc332  [1..*]  B <-> I  [0..1]  <<ordered>>;
+
+  association assoc333  [1..*]  B <-> I  [1]  <<ordered>>;
+
+  association assoc334  [*]  B <-> I  [0..1]  <<ordered>>;
+
+  association assoc335  [*]  B <-> I  [1]  <<ordered>>;
+
+  association assoc336 <<ordered>> [0..1]  I <-> A ;
+
+  association assoc337 I <-> A  [0..1]  <<ordered>>;
+
+  association assoc338 <<ordered>> [0..1]  I <-> A  [0..1]  <<ordered>>;
+
+  association assoc339 <<ordered>> [0..1]  I <-> A  [1]  <<ordered>>;
+
+  association assoc340 <<ordered>> [0..1]  I <-> A  [1..*]  ;
+
+  association assoc341 <<ordered>> [0..1]  I <-> A  [*]  ;
+
+  association assoc342 <<ordered>> [1]  I <-> A ;
+
+  association assoc343 I <-> A  [1]  <<ordered>>;
+
+  association assoc344 <<ordered>> [1]  I <-> A  [0..1]  <<ordered>>;
+
+  association assoc345 <<ordered>> [1]  I <-> A  [1]  <<ordered>>;
+
+  association assoc346 <<ordered>> [1]  I <-> A  [1..*]  ;
+
+  association assoc347 <<ordered>> [1]  I <-> A  [*]  ;
+
+  association assoc348  [1..*]  I <-> A  [0..1]  <<ordered>>;
+
+  association assoc349  [1..*]  I <-> A  [1]  <<ordered>>;
+
+  association assoc350  [*]  I <-> A  [0..1]  <<ordered>>;
+
+  association assoc351  [*]  I <-> A  [1]  <<ordered>>;
+
+  association assoc352 <<ordered>> [0..1]  I <-> B ;
+
+  association assoc353 I <-> B  [0..1]  <<ordered>>;
+
+  association assoc354 <<ordered>> [0..1]  I <-> B  [0..1]  <<ordered>>;
+
+  association assoc355 <<ordered>> [0..1]  I <-> B  [1]  <<ordered>>;
+
+  association assoc356 <<ordered>> [0..1]  I <-> B  [1..*]  ;
+
+  association assoc357 <<ordered>> [0..1]  I <-> B  [*]  ;
+
+  association assoc358 <<ordered>> [1]  I <-> B ;
+
+  association assoc359 I <-> B  [1]  <<ordered>>;
+
+  association assoc360 <<ordered>> [1]  I <-> B  [0..1]  <<ordered>>;
+
+  association assoc361 <<ordered>> [1]  I <-> B  [1]  <<ordered>>;
+
+  association assoc362 <<ordered>> [1]  I <-> B  [1..*]  ;
+
+  association assoc363 <<ordered>> [1]  I <-> B  [*]  ;
+
+  association assoc364  [1..*]  I <-> B  [0..1]  <<ordered>>;
+
+  association assoc365  [1..*]  I <-> B  [1]  <<ordered>>;
+
+  association assoc366  [*]  I <-> B  [0..1]  <<ordered>>;
+
+  association assoc367  [*]  I <-> B  [1]  <<ordered>>;
+
+  association assoc368 <<ordered>> [0..1]  I <-> I ;
+
+  association assoc369 I <-> I  [0..1]  <<ordered>>;
+
+  association assoc370 <<ordered>> [0..1]  I <-> I  [0..1]  <<ordered>>;
+
+  association assoc371 <<ordered>> [0..1]  I <-> I  [1]  <<ordered>>;
+
+  association assoc372 <<ordered>> [0..1]  I <-> I  [1..*]  ;
+
+  association assoc373 <<ordered>> [0..1]  I <-> I  [*]  ;
+
+  association assoc374 <<ordered>> [1]  I <-> I ;
+
+  association assoc375 I <-> I  [1]  <<ordered>>;
+
+  association assoc376 <<ordered>> [1]  I <-> I  [0..1]  <<ordered>>;
+
+  association assoc377 <<ordered>> [1]  I <-> I  [1]  <<ordered>>;
+
+  association assoc378 <<ordered>> [1]  I <-> I  [1..*]  ;
+
+  association assoc379 <<ordered>> [1]  I <-> I  [*]  ;
+
+  association assoc380  [1..*]  I <-> I  [0..1]  <<ordered>>;
+
+  association assoc381  [1..*]  I <-> I  [1]  <<ordered>>;
+
+  association assoc382  [*]  I <-> I  [0..1]  <<ordered>>;
+
+  association assoc383  [*]  I <-> I  [1]  <<ordered>>;
+
+  association assoc384 <<ordered>> [0..1]  A -- A ;
+
+  association assoc385 A -- A  [0..1]  <<ordered>>;
+
+  association assoc386 <<ordered>> [0..1]  A -- A  [0..1]  <<ordered>>;
+
+  association assoc387 <<ordered>> [0..1]  A -- A  [1]  <<ordered>>;
+
+  association assoc388 <<ordered>> [0..1]  A -- A  [1..*]  ;
+
+  association assoc389 <<ordered>> [0..1]  A -- A  [*]  ;
+
+  association assoc390 <<ordered>> [1]  A -- A ;
+
+  association assoc391 A -- A  [1]  <<ordered>>;
+
+  association assoc392 <<ordered>> [1]  A -- A  [0..1]  <<ordered>>;
+
+  association assoc393 <<ordered>> [1]  A -- A  [1]  <<ordered>>;
+
+  association assoc394 <<ordered>> [1]  A -- A  [1..*]  ;
+
+  association assoc395 <<ordered>> [1]  A -- A  [*]  ;
+
+  association assoc396  [1..*]  A -- A  [0..1]  <<ordered>>;
+
+  association assoc397  [1..*]  A -- A  [1]  <<ordered>>;
+
+  association assoc398  [*]  A -- A  [0..1]  <<ordered>>;
+
+  association assoc399  [*]  A -- A  [1]  <<ordered>>;
+
+  association assoc400 <<ordered>> [0..1]  A -- B ;
+
+  association assoc401 A -- B  [0..1]  <<ordered>>;
+
+  association assoc402 <<ordered>> [0..1]  A -- B  [0..1]  <<ordered>>;
+
+  association assoc403 <<ordered>> [0..1]  A -- B  [1]  <<ordered>>;
+
+  association assoc404 <<ordered>> [0..1]  A -- B  [1..*]  ;
+
+  association assoc405 <<ordered>> [0..1]  A -- B  [*]  ;
+
+  association assoc406 <<ordered>> [1]  A -- B ;
+
+  association assoc407 A -- B  [1]  <<ordered>>;
+
+  association assoc408 <<ordered>> [1]  A -- B  [0..1]  <<ordered>>;
+
+  association assoc409 <<ordered>> [1]  A -- B  [1]  <<ordered>>;
+
+  association assoc410 <<ordered>> [1]  A -- B  [1..*]  ;
+
+  association assoc411 <<ordered>> [1]  A -- B  [*]  ;
+
+  association assoc412  [1..*]  A -- B  [0..1]  <<ordered>>;
+
+  association assoc413  [1..*]  A -- B  [1]  <<ordered>>;
+
+  association assoc414  [*]  A -- B  [0..1]  <<ordered>>;
+
+  association assoc415  [*]  A -- B  [1]  <<ordered>>;
+
+  association assoc416 <<ordered>> [0..1]  A -- I ;
+
+  association assoc417 A -- I  [0..1]  <<ordered>>;
+
+  association assoc418 <<ordered>> [0..1]  A -- I  [0..1]  <<ordered>>;
+
+  association assoc419 <<ordered>> [0..1]  A -- I  [1]  <<ordered>>;
+
+  association assoc420 <<ordered>> [0..1]  A -- I  [1..*]  ;
+
+  association assoc421 <<ordered>> [0..1]  A -- I  [*]  ;
+
+  association assoc422 <<ordered>> [1]  A -- I ;
+
+  association assoc423 A -- I  [1]  <<ordered>>;
+
+  association assoc424 <<ordered>> [1]  A -- I  [0..1]  <<ordered>>;
+
+  association assoc425 <<ordered>> [1]  A -- I  [1]  <<ordered>>;
+
+  association assoc426 <<ordered>> [1]  A -- I  [1..*]  ;
+
+  association assoc427 <<ordered>> [1]  A -- I  [*]  ;
+
+  association assoc428  [1..*]  A -- I  [0..1]  <<ordered>>;
+
+  association assoc429  [1..*]  A -- I  [1]  <<ordered>>;
+
+  association assoc430  [*]  A -- I  [0..1]  <<ordered>>;
+
+  association assoc431  [*]  A -- I  [1]  <<ordered>>;
+
+  association assoc432 <<ordered>> [0..1]  B -- A ;
+
+  association assoc433 B -- A  [0..1]  <<ordered>>;
+
+  association assoc434 <<ordered>> [0..1]  B -- A  [0..1]  <<ordered>>;
+
+  association assoc435 <<ordered>> [0..1]  B -- A  [1]  <<ordered>>;
+
+  association assoc436 <<ordered>> [0..1]  B -- A  [1..*]  ;
+
+  association assoc437 <<ordered>> [0..1]  B -- A  [*]  ;
+
+  association assoc438 <<ordered>> [1]  B -- A ;
+
+  association assoc439 B -- A  [1]  <<ordered>>;
+
+  association assoc440 <<ordered>> [1]  B -- A  [0..1]  <<ordered>>;
+
+  association assoc441 <<ordered>> [1]  B -- A  [1]  <<ordered>>;
+
+  association assoc442 <<ordered>> [1]  B -- A  [1..*]  ;
+
+  association assoc443 <<ordered>> [1]  B -- A  [*]  ;
+
+  association assoc444  [1..*]  B -- A  [0..1]  <<ordered>>;
+
+  association assoc445  [1..*]  B -- A  [1]  <<ordered>>;
+
+  association assoc446  [*]  B -- A  [0..1]  <<ordered>>;
+
+  association assoc447  [*]  B -- A  [1]  <<ordered>>;
+
+  association assoc448 <<ordered>> [0..1]  B -- B ;
+
+  association assoc449 B -- B  [0..1]  <<ordered>>;
+
+  association assoc450 <<ordered>> [0..1]  B -- B  [0..1]  <<ordered>>;
+
+  association assoc451 <<ordered>> [0..1]  B -- B  [1]  <<ordered>>;
+
+  association assoc452 <<ordered>> [0..1]  B -- B  [1..*]  ;
+
+  association assoc453 <<ordered>> [0..1]  B -- B  [*]  ;
+
+  association assoc454 <<ordered>> [1]  B -- B ;
+
+  association assoc455 B -- B  [1]  <<ordered>>;
+
+  association assoc456 <<ordered>> [1]  B -- B  [0..1]  <<ordered>>;
+
+  association assoc457 <<ordered>> [1]  B -- B  [1]  <<ordered>>;
+
+  association assoc458 <<ordered>> [1]  B -- B  [1..*]  ;
+
+  association assoc459 <<ordered>> [1]  B -- B  [*]  ;
+
+  association assoc460  [1..*]  B -- B  [0..1]  <<ordered>>;
+
+  association assoc461  [1..*]  B -- B  [1]  <<ordered>>;
+
+  association assoc462  [*]  B -- B  [0..1]  <<ordered>>;
+
+  association assoc463  [*]  B -- B  [1]  <<ordered>>;
+
+  association assoc464 <<ordered>> [0..1]  B -- I ;
+
+  association assoc465 B -- I  [0..1]  <<ordered>>;
+
+  association assoc466 <<ordered>> [0..1]  B -- I  [0..1]  <<ordered>>;
+
+  association assoc467 <<ordered>> [0..1]  B -- I  [1]  <<ordered>>;
+
+  association assoc468 <<ordered>> [0..1]  B -- I  [1..*]  ;
+
+  association assoc469 <<ordered>> [0..1]  B -- I  [*]  ;
+
+  association assoc470 <<ordered>> [1]  B -- I ;
+
+  association assoc471 B -- I  [1]  <<ordered>>;
+
+  association assoc472 <<ordered>> [1]  B -- I  [0..1]  <<ordered>>;
+
+  association assoc473 <<ordered>> [1]  B -- I  [1]  <<ordered>>;
+
+  association assoc474 <<ordered>> [1]  B -- I  [1..*]  ;
+
+  association assoc475 <<ordered>> [1]  B -- I  [*]  ;
+
+  association assoc476  [1..*]  B -- I  [0..1]  <<ordered>>;
+
+  association assoc477  [1..*]  B -- I  [1]  <<ordered>>;
+
+  association assoc478  [*]  B -- I  [0..1]  <<ordered>>;
+
+  association assoc479  [*]  B -- I  [1]  <<ordered>>;
+
+  association assoc480 <<ordered>> [0..1]  I -- A ;
+
+  association assoc481 I -- A  [0..1]  <<ordered>>;
+
+  association assoc482 <<ordered>> [0..1]  I -- A  [0..1]  <<ordered>>;
+
+  association assoc483 <<ordered>> [0..1]  I -- A  [1]  <<ordered>>;
+
+  association assoc484 <<ordered>> [0..1]  I -- A  [1..*]  ;
+
+  association assoc485 <<ordered>> [0..1]  I -- A  [*]  ;
+
+  association assoc486 <<ordered>> [1]  I -- A ;
+
+  association assoc487 I -- A  [1]  <<ordered>>;
+
+  association assoc488 <<ordered>> [1]  I -- A  [0..1]  <<ordered>>;
+
+  association assoc489 <<ordered>> [1]  I -- A  [1]  <<ordered>>;
+
+  association assoc490 <<ordered>> [1]  I -- A  [1..*]  ;
+
+  association assoc491 <<ordered>> [1]  I -- A  [*]  ;
+
+  association assoc492  [1..*]  I -- A  [0..1]  <<ordered>>;
+
+  association assoc493  [1..*]  I -- A  [1]  <<ordered>>;
+
+  association assoc494  [*]  I -- A  [0..1]  <<ordered>>;
+
+  association assoc495  [*]  I -- A  [1]  <<ordered>>;
+
+  association assoc496 <<ordered>> [0..1]  I -- B ;
+
+  association assoc497 I -- B  [0..1]  <<ordered>>;
+
+  association assoc498 <<ordered>> [0..1]  I -- B  [0..1]  <<ordered>>;
+
+  association assoc499 <<ordered>> [0..1]  I -- B  [1]  <<ordered>>;
+
+  association assoc500 <<ordered>> [0..1]  I -- B  [1..*]  ;
+
+  association assoc501 <<ordered>> [0..1]  I -- B  [*]  ;
+
+  association assoc502 <<ordered>> [1]  I -- B ;
+
+  association assoc503 I -- B  [1]  <<ordered>>;
+
+  association assoc504 <<ordered>> [1]  I -- B  [0..1]  <<ordered>>;
+
+  association assoc505 <<ordered>> [1]  I -- B  [1]  <<ordered>>;
+
+  association assoc506 <<ordered>> [1]  I -- B  [1..*]  ;
+
+  association assoc507 <<ordered>> [1]  I -- B  [*]  ;
+
+  association assoc508  [1..*]  I -- B  [0..1]  <<ordered>>;
+
+  association assoc509  [1..*]  I -- B  [1]  <<ordered>>;
+
+  association assoc510  [*]  I -- B  [0..1]  <<ordered>>;
+
+  association assoc511  [*]  I -- B  [1]  <<ordered>>;
+
+  association assoc512 <<ordered>> [0..1]  I -- I ;
+
+  association assoc513 I -- I  [0..1]  <<ordered>>;
+
+  association assoc514 <<ordered>> [0..1]  I -- I  [0..1]  <<ordered>>;
+
+  association assoc515 <<ordered>> [0..1]  I -- I  [1]  <<ordered>>;
+
+  association assoc516 <<ordered>> [0..1]  I -- I  [1..*]  ;
+
+  association assoc517 <<ordered>> [0..1]  I -- I  [*]  ;
+
+  association assoc518 <<ordered>> [1]  I -- I ;
+
+  association assoc519 I -- I  [1]  <<ordered>>;
+
+  association assoc520 <<ordered>> [1]  I -- I  [0..1]  <<ordered>>;
+
+  association assoc521 <<ordered>> [1]  I -- I  [1]  <<ordered>>;
+
+  association assoc522 <<ordered>> [1]  I -- I  [1..*]  ;
+
+  association assoc523 <<ordered>> [1]  I -- I  [*]  ;
+
+  association assoc524  [1..*]  I -- I  [0..1]  <<ordered>>;
+
+  association assoc525  [1..*]  I -- I  [1]  <<ordered>>;
+
+  association assoc526  [*]  I -- I  [0..1]  <<ordered>>;
+
+  association assoc527  [*]  I -- I  [1]  <<ordered>>;
+
+}

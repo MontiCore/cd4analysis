@@ -2899,4 +2899,2130 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
     }
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
+  
+  @Ignore
+  @Test
+  public void testInvalidOrderedAssocs() {
+    // AssocTestGenerator.generateInvalidOrderedAssocs();
+    String modelName = "CD4AC0024.cd";
+    String errorCode = "0xCD4AC0024";
+    
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc0 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc1 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc2 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc3 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc4 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc5 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc6 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc7 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc8 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc9 (A -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc10 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc11 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc12 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc13 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc14 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc15 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc16 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc17 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc18 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc19 (A -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc20 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc21 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc22 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc23 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc24 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc25 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc26 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc27 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc28 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc29 (A -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc30 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc31 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc32 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc33 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc34 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc35 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc36 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc37 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc38 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc39 (A -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc40 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc41 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc42 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc43 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc44 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc45 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc46 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc47 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc48 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc49 (B -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc50 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc51 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc52 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc53 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc54 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc55 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc56 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc57 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc58 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc59 (B -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc60 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc61 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc62 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc63 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc64 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc65 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc66 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc67 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc68 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc69 (B -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc70 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc71 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc72 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc73 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc74 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc75 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc76 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc77 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc78 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc79 (B -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc80 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc81 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc82 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc83 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc84 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc85 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc86 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc87 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc88 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc89 (I -> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc90 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc91 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc92 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc93 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc94 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc95 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc96 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc97 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc98 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc99 (I -> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc100 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc101 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc102 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc103 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc104 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc105 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc106 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc107 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc108 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc109 (I -> E) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc110 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc111 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc112 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc113 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc114 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc115 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc116 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc117 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc118 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc119 (I -> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc120 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc121 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc122 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc123 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc124 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc125 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc126 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc127 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc128 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc129 (A <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc130 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc131 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc132 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc133 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc134 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc135 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc136 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc137 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc138 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc139 (A <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc140 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc141 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc142 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc143 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc144 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc145 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc146 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc147 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc148 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc149 (A <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc150 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc151 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc152 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc153 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc154 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc155 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc156 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc157 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc158 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc159 (B <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc160 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc161 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc162 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc163 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc164 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc165 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc166 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc167 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc168 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc169 (B <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc170 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc171 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc172 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc173 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc174 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc175 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc176 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc177 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc178 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc179 (B <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc180 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc181 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc182 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc183 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc184 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc185 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc186 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc187 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc188 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc189 (E <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc190 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc191 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc192 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc193 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc194 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc195 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc196 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc197 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc198 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc199 (E <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc200 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc201 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc202 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc203 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc204 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc205 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc206 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc207 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc208 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc209 (E <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc210 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc211 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc212 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc213 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc214 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc215 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc216 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc217 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc218 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc219 (I <- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc220 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc221 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc222 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc223 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc224 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc225 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc226 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc227 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc228 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc229 (I <- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc230 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc231 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc232 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc233 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc234 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc235 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc236 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc237 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc238 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc239 (I <- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc240 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc241 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc242 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc243 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc244 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc245 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc246 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc247 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc248 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc249 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc250 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc251 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc252 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc253 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc254 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc255 (A <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc256 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc257 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc258 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc259 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc260 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc261 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc262 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc263 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc264 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc265 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc266 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc267 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc268 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc269 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc270 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc271 (A <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc272 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc273 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc274 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc275 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc276 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc277 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc278 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc279 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc280 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc281 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc282 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc283 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc284 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc285 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc286 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc287 (A <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc288 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc289 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc290 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc291 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc292 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc293 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc294 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc295 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc296 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc297 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc298 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc299 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc300 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc301 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc302 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc303 (B <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc304 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc305 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc306 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc307 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc308 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc309 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc310 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc311 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc312 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc313 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc314 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc315 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc316 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc317 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc318 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc319 (B <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc320 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc321 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc322 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc323 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc324 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc325 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc326 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc327 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc328 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc329 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc330 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc331 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc332 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc333 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc334 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc335 (B <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc336 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc337 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc338 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc339 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc340 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc341 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc342 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc343 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc344 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc345 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc346 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc347 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc348 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc349 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc350 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc351 (I <-> A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc352 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc353 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc354 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc355 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc356 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc357 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc358 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc359 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc360 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc361 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc362 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc363 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc364 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc365 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc366 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc367 (I <-> B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc368 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc369 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc370 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc371 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc372 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc373 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc374 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc375 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc376 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc377 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc378 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc379 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc380 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc381 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc382 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc383 (I <-> I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc384 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc385 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc386 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc387 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc388 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc389 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc390 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc391 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc392 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc393 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc394 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc395 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc396 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc397 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc398 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc399 (A -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc400 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc401 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc402 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc403 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc404 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc405 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc406 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc407 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc408 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc409 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc410 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc411 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc412 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc413 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc414 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc415 (A -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc416 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc417 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc418 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc419 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc420 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc421 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc422 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc423 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc424 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc425 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc426 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc427 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc428 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc429 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc430 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc431 (A -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc432 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc433 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc434 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc435 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc436 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc437 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc438 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc439 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc440 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc441 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc442 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc443 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc444 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc445 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc446 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc447 (B -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc448 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc449 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc450 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc451 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc452 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc453 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc454 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc455 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc456 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc457 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc458 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc459 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc460 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc461 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc462 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc463 (B -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc464 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc465 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc466 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc467 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc468 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc469 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc470 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc471 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc472 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc473 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc474 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc475 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc476 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc477 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc478 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc479 (B -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc480 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc481 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc482 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc483 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc484 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc485 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc486 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc487 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc488 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc489 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc490 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc491 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc492 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc493 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc494 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc495 (I -- A) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc496 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc497 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc498 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc499 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc500 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc501 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc502 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc503 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc504 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc505 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc506 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc507 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc508 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc509 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc510 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc511 (I -- B) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc512 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc513 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc514 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc515 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc516 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc517 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc518 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc519 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc520 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc521 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc522 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc523 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc524 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc525 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc526 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association assoc527 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.")
+        );
+    
+    testModelForErrorSuffixes(modelName, expectedErrors);
+  }
 }
