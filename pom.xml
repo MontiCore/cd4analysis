@@ -14,7 +14,7 @@
 
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
-    <monticore.version>4.0.0-SNAPSHOT</monticore.version>
+    <monticore.version>4.0.2-SNAPSHOT</monticore.version>
     <se-commons.version>1.6.2-SNAPSHOT</se-commons.version>
     <antlr.version>4.3</antlr.version>
 
@@ -82,9 +82,6 @@
           <groupId>de.monticore.maven</groupId>
           <artifactId>monticore-maven-plugin</artifactId>
           <version>${monticore.maven.version}</version>
-          <!-- <configuration>
-            <buildIncrementally>true</buildIncrementally>
-          </configuration> -->
           <executions>
             <execution>
               <goals>
@@ -199,6 +196,19 @@
         <groupId>de.monticore</groupId>
         <artifactId>monticore-runtime</artifactId>
         <version>${monticore.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>de.monticore</groupId>
+        <artifactId>monticore-grammar</artifactId>
+        <version>${monticore.version}</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>de.monticore</groupId>
+        <artifactId>monticore-grammar</artifactId>
+        <version>${monticore.version}</version>
+        <classifier>${grammars.classifier}</classifier>
       </dependency>
 
       <!-- .. Test Libraries ............................................... -->
