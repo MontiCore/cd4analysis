@@ -12,16 +12,19 @@
 
     <!-- .. Libraries ..................................................... -->
 
+    <monticore.version>4.0.2-SNAPSHOT</monticore.version>
+    <monticore.astgenerator.version>4.0.2-SNAPSHOT</monticore.astgenerator.version>
+    <monticore.parsergenerator.version>4.0.1-SNAPSHOT</monticore.parsergenerator.version>
+
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
-    <monticore.version>4.0.2-SNAPSHOT</monticore.version>
     <se-commons.version>1.6.2-SNAPSHOT</se-commons.version>
     <antlr.version>4.3</antlr.version>
 
     <!-- .. Plugins ....................................................... -->
 
-    <monticore.maven.version>3.3.0-SNAPSHOT</monticore.maven.version>
-    <monticore.generator.version>4.0.1-SNAPSHOT</monticore.generator.version>
+    <mc3.maven.version>3.3.0-SNAPSHOT</mc3.maven.version>
+    <mc4.maven.version>4.0.0.1</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
@@ -77,86 +80,96 @@
     </extensions>
 
     <plugins>
-        <!-- MontiCore Configuration -->
-        <plugin>
-          <groupId>de.monticore.maven</groupId>
-          <artifactId>monticore-maven-plugin</artifactId>
-          <version>${monticore.maven.version}</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>clean</goal>
-                <goal>configure</goal>
-                <goal>generate</goal>
-              </goals>
-              <configuration>
-                <arguments>
-                  <argument>-synthesis grammar prepareCheck</argument>
-                  <argument>-synthesis grammar check</argument>
-                  <argument>-synthesis grammar generateparser</argument>
-                </arguments>
-              </configuration>
-            </execution>
-          </executions>
+      <!-- MontiCore Configuration -->
 
-          <dependencies>
-            <dependency>
-              <groupId>de.monticore</groupId>
-              <artifactId>de.monticore</artifactId>
-              <version>${monticore.generator.version}</version>
-            </dependency>
-          </dependencies>
+      <!-- MontiCore AST Generation -->
+      <plugin>
+        <groupId>de.monticore.mojo</groupId>
+        <artifactId>monticore-maven-plugin</artifactId>
+        <version>${mc4.maven.version}</version>
+        <configuration>
+          <skip>false</skip>
+        </configuration>
+        <executions>
+          <execution>
+            <id>ast-generation</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>monticore-generator</artifactId>
+            <version>${monticore.astgenerator.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
-        </plugin>
+      <!-- MontiCore Parser Generation -->
+      <plugin>
+        <groupId>de.monticore.maven</groupId>
+        <artifactId>monticore-maven-plugin</artifactId>
+        <version>${mc3.maven.version}</version>
+        <executions>
+          <execution>
+            <id>parser-generation</id>
+            <goals>
+              <goal>clean</goal>
+              <goal>configure</goal>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <arguments>
+                <argument>-synthesis grammar prepareCheck</argument>
+                <argument>-synthesis grammar check</argument>
+                <argument>-synthesis grammar generateparser</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>de.monticore</artifactId>
+            <version>${monticore.parsergenerator.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
-        <plugin>
-          <groupId>de.monticore.mojo</groupId>
-          <artifactId>monticore-maven-plugin</artifactId>
-          <version>4.0.0-SNAPSHOT</version>
-          <configuration>
-            <skip>false</skip> 
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate</goal>
-              </goals>              
-            </execution>
-          </executions>
-        </plugin>
+      <!-- Other Configuration -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.plugin}</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
 
-        <!-- Other Configuration -->
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${compiler.plugin}</version>
-          <configuration>
-            <source>${java.version}</source>
-            <target>${java.version}</target>
-          </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${release.plugin}</version>
+        <configuration>
+          <tagNameFormat>monticore-@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
 
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>${release.plugin}</version>
-          <configuration>
-            <tagNameFormat>monticore-@{project.version}</tagNameFormat>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>${source.plugin}</version>
-          <executions>
-            <execution>
-              <phase>package</phase>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${source.plugin}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Create grammars jar -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -167,65 +180,65 @@
   </build>
 
   <dependencies>
-      <dependency>
-        <groupId>de.se_rwth.commons</groupId>
-        <artifactId>se-commons-logging</artifactId>
-        <version>${se-commons.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>de.se_rwth.commons</groupId>
+      <artifactId>se-commons-logging</artifactId>
+      <version>${se-commons.version}</version>
+    </dependency>
 
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
 
-       <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-annotations</artifactId>
-        <version>${antlr.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-annotations</artifactId>
+      <version>${antlr.version}</version>
+    </dependency>
 
-      <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-runtime</artifactId>
-        <version>${antlr.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>${antlr.version}</version>
+    </dependency>
 
-      <!-- MontiCore Dependencies -->
-      <dependency>
-        <groupId>de.monticore</groupId>
-        <artifactId>monticore-runtime</artifactId>
-        <version>${monticore.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>de.monticore</groupId>
-        <artifactId>monticore-grammar</artifactId>
-        <version>${monticore.version}</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>de.monticore</groupId>
-        <artifactId>monticore-grammar</artifactId>
-        <version>${monticore.version}</version>
-        <classifier>${grammars.classifier}</classifier>
-      </dependency>
+    <!-- MontiCore Dependencies -->
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-runtime</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
 
-      <!-- .. Test Libraries ............................................... -->
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      
-      <dependency>
-        <groupId>de.monticore</groupId>
-        <artifactId>monticore-runtime</artifactId>
-        <version>${monticore.version}</version>
-        <type>test-jar</type>
-        <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-grammar</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-grammar</artifactId>
+      <version>${monticore.version}</version>
+      <classifier>${grammars.classifier}</classifier>
+    </dependency>
+
+    <!-- .. Test Libraries ............................................... -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-runtime</artifactId>
+      <version>${monticore.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
