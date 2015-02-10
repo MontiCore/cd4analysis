@@ -1,0 +1,8 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3003 {
+	class A {
+		String a;
+	}
+	class B;
+}
