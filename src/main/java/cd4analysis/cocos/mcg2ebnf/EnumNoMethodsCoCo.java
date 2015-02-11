@@ -5,10 +5,8 @@
  */
 package cd4analysis.cocos.mcg2ebnf;
 
-import de.cd4analysis._ast.ASTCDClass;
 import de.cd4analysis._ast.ASTCDEnum;
 import de.cd4analysis._ast.ASTCDMethod;
-import de.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
 import de.monticore.cocos.CoCoHelper;
 import de.se_rwth.commons.logging.Log;
