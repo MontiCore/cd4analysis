@@ -12,6 +12,8 @@ import cd4analysis.cocos.mcg2ebnf.AttributeModifierOnlyDerivedCoCo;
 import cd4analysis.cocos.mcg2ebnf.ClassModifierOnlyAbstractCoCo;
 import cd4analysis.cocos.mcg2ebnf.ClassNoConstructorsCoCo;
 import cd4analysis.cocos.mcg2ebnf.ClassNoMethodsCoCo;
+import cd4analysis.cocos.mcg2ebnf.EnumNoConstructorsCoCo;
+import cd4analysis.cocos.mcg2ebnf.EnumNoModifierCoCo;
 import cd4analysis.cocos.mcg2ebnf.InterfaceNoAttributesCoCo;
 import cd4analysis.cocos.mcg2ebnf.InterfaceNoMethodsCoCo;
 import cd4analysis.cocos.mcg2ebnf.InterfaceNoModifierCoCo;
@@ -71,5 +73,7 @@ public class CD4ACoCos {
     checker.addCoCo(new InterfaceNoModifierCoCo());
     checker.addCoCo(new InterfaceNoAttributesCoCo());
     checker.addCoCo(new InterfaceNoMethodsCoCo());
+    checker.addCoCo(new EnumNoModifierCoCo());
+    checker.addCoCo(new EnumNoConstructorsCoCo());
   }
 }

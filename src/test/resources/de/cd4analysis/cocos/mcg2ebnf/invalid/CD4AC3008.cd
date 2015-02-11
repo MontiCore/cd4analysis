@@ -1,0 +1,18 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3008 {
+
+	public enum A;
+	protected enum B;
+	private enum C;
+	static enum D;
+	final enum E;
+	/ enum F;
+
+	public enum G {
+	}
+
+	public enum H {
+		ENTRY;
+	}
+}

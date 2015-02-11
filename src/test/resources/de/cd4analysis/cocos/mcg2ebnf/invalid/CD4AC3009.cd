@@ -1,0 +1,16 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3009 {
+	enum A {
+		E;
+		A();
+	}
+	enum B {
+		E(1);
+		B (int a);
+	}
+	enum C {
+		E("asd", 1);
+		C (String a, int b);
+	}
+}
