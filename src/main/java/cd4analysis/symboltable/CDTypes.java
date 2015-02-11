@@ -50,12 +50,18 @@ public class CDTypes {
   
   public final static String BooleanPimitive = "boolean";
   
+  //Well known types
+  public final static String String = "java.lang.String";
+  
+  
   public static Collection<String> wrapperTypes = Arrays.asList(
       Integer, Double, Short, Byte, Float, Long, Character, Boolean);
   
   public static Collection<String> primitiveTypes = Arrays.asList(
       IntPimitive, DoublePimitive, ShortPimitive, BytePimitive, Float, LongPimitive, CharPimitive,
       BooleanPimitive);
+  
+  public static Collection<String> dataTypes = Arrays.asList(String);
   
   /**
    * Checks is the given type an implicit type
@@ -74,6 +80,13 @@ public class CDTypes {
    */
   public static boolean isPrimitiveType(String typeName) {
     return primitiveTypes.contains(typeName);
+  }
+  
+  public static boolean isString(CDFieldSymbol fieldSymbol) {
+    System.err.println("######################################");
+    System.err.println(fieldSymbol.getFullName());
+    System.err.println("######################################");
+    return String.equals(fieldSymbol.getFullName());
   }
   
 }
