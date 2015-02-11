@@ -10,6 +10,7 @@ classdiagram CD4AC3008 {
 	/ enum F;
 
 	public enum G {
+		;
 	}
 
 	public enum H {

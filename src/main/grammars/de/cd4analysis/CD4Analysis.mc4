@@ -77,9 +77,10 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDEnum = Modifier? "enum" Name
     ( "implements" interfaces:(ReferenceType || ",")+ )?
-    ( "{" ( cDEnumConstants:(CDEnumConstant || ",")+ 
-    ( cDConstructors:CDConstructor | cDMethods:CDMethod)*
-    ";")? "}"
+    ( "{"
+        cDEnumConstants:(CDEnumConstant || ",")* ";" 
+        ( cDConstructors:CDConstructor | cDMethods:CDMethod)*
+      "}"
     | ";" );
   
  

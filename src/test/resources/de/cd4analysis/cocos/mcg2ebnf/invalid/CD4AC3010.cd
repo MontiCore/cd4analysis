@@ -1,0 +1,13 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3010 {
+	enum A {
+		E;
+		public void m();
+	}
+	enum B {
+		E;
+		public void m(String a);
+		public String m2(String a, int b);
+	}
+}

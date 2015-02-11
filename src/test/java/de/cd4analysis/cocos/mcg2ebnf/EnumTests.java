@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cd4analysis.CD4ACoCos;
@@ -75,8 +74,7 @@ public class EnumTests extends AbstractCoCoTest {
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
   }
- 
-  @Ignore("waiting for https://sselab.de/lab2/private/trac/MontiCore/ticket/1461")
+  
   @Test
   public void noConstructorsCoCoTest() {
     String modelName = "CD4AC3009.cd";
@@ -93,4 +91,18 @@ public class EnumTests extends AbstractCoCoTest {
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
   }
   
+  @Test
+  public void noMethodsCoCoTest() {
+    String modelName = "CD4AC3010.cd";
+    String errorCode = "0xCD4AC3010";
+    
+    testModelNoErrors("valid/" + modelName);
+    
+    Collection<String> expectedErrors = Arrays.asList(
+        CoCoHelper.buildErrorMsg(errorCode, "Enum A may not have methods."),
+        CoCoHelper.buildErrorMsg(errorCode, "Enum B may not have methods.")
+        );
+    
+    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+  }
 }
