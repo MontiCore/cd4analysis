@@ -1,0 +1,5 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3006 {
+	interface A;
+}

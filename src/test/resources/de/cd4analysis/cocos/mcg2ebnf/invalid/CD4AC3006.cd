@@ -1,0 +1,16 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3006 {
+	
+	interface A {
+		String a;
+	}
+	interface B {
+		int a;
+	}
+	
+	class T;
+	interface C {
+		T t;
+	}
+}

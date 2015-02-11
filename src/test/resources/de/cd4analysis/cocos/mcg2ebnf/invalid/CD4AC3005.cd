@@ -1,0 +1,12 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3005 {
+
+	public interface A;
+	protected interface B;
+	private interface C;
+	static interface D;
+	final interface E;
+	/ interface F;
+
+}
