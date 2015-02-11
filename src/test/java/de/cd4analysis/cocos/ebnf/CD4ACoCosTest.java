@@ -5,8 +5,6 @@
  */
 package de.cd4analysis.cocos.ebnf;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -17,6 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import cd4analysis.CD4ACoCos;
+import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis.cocos.AbstractCoCoTest;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
@@ -38,6 +38,14 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
    */
   public CD4ACoCosTest() {
     super(MODEL_PATH);
+  }
+  
+  /**
+   * @see de.cd4analysis.cocos.AbstractCoCoTest#getChecker()
+   */
+  @Override
+  protected CD4AnalysisCoCoChecker getChecker() {
+    return CD4ACoCos.getCheckerForEbnfCoCos();
   }
   
   @BeforeClass
@@ -70,9 +78,12 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     
     modelName = "CD4AC0002";
     errorCode = "0xCD4AC0002";
-    expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode,
-            "The name of the diagram CD4AC0002Invalid is not identical to the name of the file CD4AC0002 (without its fileextension).")
+    expectedErrors = Arrays
+        .asList(
+        CoCoHelper
+            .buildErrorMsg(
+                errorCode,
+                "The name of the diagram CD4AC0002Invalid is not identical to the name of the file CD4AC0002 (without its fileextension).")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
@@ -233,8 +244,8 @@ public class CD4ACoCosTest extends AbstractCoCoTest {
     
     Collection<String> expectedErrors = Arrays
         .asList(
-            CoCoHelper.buildErrorMsg(errorCode, "Attribute Attr must start in lower-case.",
-                new SourcePosition(5, 12))
+        CoCoHelper.buildErrorMsg(errorCode, "Attribute Attr must start in lower-case.",
+            new SourcePosition(5, 12))
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }

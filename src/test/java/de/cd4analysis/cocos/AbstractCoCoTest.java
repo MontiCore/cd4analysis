@@ -59,6 +59,8 @@ public abstract class AbstractCoCoTest {
     Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
   }
   
+  abstract protected CD4AnalysisCoCoChecker getChecker();
+  
   /**
    * Asserts that no error occurred when the {@link CD4AnalysisCoCoChecker} run
    * on the given modelName.
@@ -66,7 +68,7 @@ public abstract class AbstractCoCoTest {
    * @param modelName
    */
   protected void testModelNoErrors(String modelName) {
-    CD4AnalysisCoCoChecker checker = new CD4ACoCos().getCheckerForAllCoCos();
+    CD4AnalysisCoCoChecker checker = getChecker();
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
     assertEquals(0, LogMock.getFindings().size());

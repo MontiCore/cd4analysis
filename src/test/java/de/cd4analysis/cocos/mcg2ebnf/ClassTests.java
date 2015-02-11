@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import cd4analysis.CD4ACoCos;
+import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis.cocos.AbstractCoCoTest;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
@@ -27,11 +29,17 @@ public class ClassTests extends AbstractCoCoTest {
   
   /**
    * Constructor for de.cd4analysis.cocos.mcg2ebnf.ClassTests
-   * 
-   * @param modelPath
    */
   public ClassTests() {
     super(MODEL_PATH);
+  }
+  
+  /**
+   * @see de.cd4analysis.cocos.AbstractCoCoTest#getChecker()
+   */
+  @Override
+  protected CD4AnalysisCoCoChecker getChecker() {
+    return CD4ACoCos.getCheckerForMcg2EbnfCoCos();
   }
   
   @BeforeClass

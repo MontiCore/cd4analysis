@@ -14,6 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import cd4analysis.CD4ACoCos;
+import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis.cocos.AbstractCoCoTest;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
@@ -35,6 +37,14 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
   }
   
   private static String MODEL_PATH = "src/test/resources/de/cd4analysis/cocos/ebnf/invalid/";
+  
+  /**
+   * @see de.cd4analysis.cocos.AbstractCoCoTest#getChecker()
+   */
+  @Override
+  protected CD4AnalysisCoCoChecker getChecker() {
+    return CD4ACoCos.getCheckerForEbnfCoCos();
+  }
   
   @BeforeClass
   public static void init() {
@@ -64,6 +74,7 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
   
   @Test
   public void testInvalidRoleNames() {
+    // AssocTestGenerator.generateInvalidRoleNamesTests();
     String modelName = "CD4AC0017.cd";
     String errorCode = "0xCD4AC0017";
     

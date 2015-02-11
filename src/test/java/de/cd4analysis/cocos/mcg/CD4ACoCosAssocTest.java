@@ -14,6 +14,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import cd4analysis.CD4ACoCos;
+import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis.cocos.AbstractCoCoTest;
 import de.monticore.cocos.LogMock;
 import de.se_rwth.commons.logging.Log;
@@ -34,6 +36,14 @@ public class CD4ACoCosAssocTest extends AbstractCoCoTest {
   }
   
   private static String MODEL_PATH = "src/test/resources/de/cd4analysis/cocos/mcg/invalid/";
+  
+  /**
+   * @see de.cd4analysis.cocos.AbstractCoCoTest#getChecker()
+   */
+  @Override
+  protected CD4AnalysisCoCoChecker getChecker() {
+    return CD4ACoCos.getCheckerForMcgCoCos();
+  }
   
   @BeforeClass
   public static void init() {
