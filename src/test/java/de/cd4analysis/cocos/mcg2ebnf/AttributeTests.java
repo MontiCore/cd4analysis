@@ -20,7 +20,7 @@ import de.monticore.cocos.LogMock;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Tests the CoCos that restrict ASTCDClass to match the EBNF grammar.
+ * Tests the CoCos that restrict ASTCDAttribute to match the EBNF grammar.
  *
  * @author Robert Heim
  */
