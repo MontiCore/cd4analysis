@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import cd4analysis.CD4ACoCos;
@@ -76,4 +77,39 @@ public class AssociationTests extends AbstractCoCoTest {
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
   }
   
+  @Ignore("waiting for https://sselab.de/lab2/private/trac/MontiCore/ticket/1462")
+  @Test
+  public void associationEndModifierRestrictionCoCoTest() {
+    String modelName = "CD4AC3012.cd";
+    String errorCode = "0xCD4AC3012";
+    
+    LogMock.setProduceOutput(true);
+    testModelNoErrors("valid/" + modelName);
+    
+    Collection<String> expectedErrors = Arrays
+        .asList(
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association ends of association assoc1 (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            CoCoHelper
+                .buildErrorMsg(
+                    errorCode,
+                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>.")
+        );
+    
+    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+  }
 }
