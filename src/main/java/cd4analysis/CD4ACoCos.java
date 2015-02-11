@@ -8,6 +8,7 @@ package cd4analysis;
 import cd4analysis.cocos.ebnf.RoleNamesLowerCaseCoco;
 import cd4analysis.cocos.ebnf.UniqueAttributeInClassCoco;
 import cd4analysis.cocos.mcg.AssociationModifierCoCo;
+import cd4analysis.cocos.mcg2ebnf.AssociationNoStereotypesCoCo;
 import cd4analysis.cocos.mcg2ebnf.AttributeModifierOnlyDerivedCoCo;
 import cd4analysis.cocos.mcg2ebnf.ClassModifierOnlyAbstractCoCo;
 import cd4analysis.cocos.mcg2ebnf.ClassNoConstructorsCoCo;
@@ -77,5 +78,6 @@ public class CD4ACoCos {
     checker.addCoCo(new EnumNoModifierCoCo());
     checker.addCoCo(new EnumNoConstructorsCoCo());
     checker.addCoCo(new EnumNoMethodsCoCo());
+    checker.addCoCo(new AssociationNoStereotypesCoCo());
   }
 }

@@ -1,0 +1,12 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3011 {
+
+	class A;
+	class B;
+	
+	<<theStereoType>> association assoc1 A -> B;
+	<<theStereoType>> association A <- B;
+	<<theStereoType>> association A <-> B;
+	<<theStereoType>> association A -- B;
+}

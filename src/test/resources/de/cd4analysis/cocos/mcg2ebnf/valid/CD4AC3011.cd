@@ -1,0 +1,12 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC3011 {
+
+	class A;
+	class B;
+	
+	association assoc1 A -> B;
+	association A <- B;
+	association A <-> B;
+	association A -- B;
+}
