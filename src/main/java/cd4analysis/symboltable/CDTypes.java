@@ -93,11 +93,7 @@ public class CDTypes {
   }
 
   public static boolean isString(CDTypeSymbol typeSymbol) {
-    
-    System.err.println("TEST for isString: #######################################################");
-    System.err.println(typeSymbol.getFullName());
     boolean returnValue = String.equals(typeSymbol.getFullName())|| (typeSymbol.getFullName().lastIndexOf('.') == -1 && String.equals("java.lang." + typeSymbol.getFullName()));
-    System.err.println("RETURN: "+returnValue);
     return returnValue;
   }
 
