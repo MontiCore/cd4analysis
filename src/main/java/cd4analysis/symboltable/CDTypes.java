@@ -64,7 +64,7 @@ public class CDTypes {
       Double, Short, Byte, Float, Long, Character, Boolean);
 
   public static Collection<String> primitiveTypes = Arrays.asList(IntPimitive,
-      DoublePimitive, ShortPimitive, BytePimitive, Float, LongPimitive,
+      DoublePimitive, ShortPimitive, BytePimitive, FloatPimitive, LongPimitive,
       CharPimitive, BooleanPimitive);
 
   public static Collection<String> dataTypes = Arrays.asList(String);
@@ -90,6 +90,64 @@ public class CDTypes {
    */
   public static boolean isPrimitiveType(String typeName) {
     return primitiveTypes.contains(typeName);
+  }
+  
+  /**
+   * Converts the given primitive type to the wrapper type
+   * 
+   * @param primitiveType
+   * @return wrapper type if the given type is a primitive type else the given type
+   */
+  public static String primitiveToWrapper(String primitiveType) {
+    switch (primitiveType) {
+      case IntPimitive:
+        return Integer;
+      case DoublePimitive:
+        return Double;
+      case ShortPimitive:
+        return Short;
+      case BytePimitive:
+        return Byte;
+      case FloatPimitive:
+        return Float;
+      case LongPimitive:
+        return Long;
+      case CharPimitive:
+        return Character;
+      case BooleanPimitive:
+        return Boolean;
+      default:
+        return primitiveType;
+    }
+  }
+  
+  /**
+   * Converts the given wrapper type to the primitive type
+   * 
+   * @param wrapperType
+   * @return primitive type if the given type is a wrapper type else the given type
+   */
+  public static String wrapperToPrimitive(String wrapperType) {
+    switch (wrapperType) {
+      case Integer:
+        return IntPimitive;
+      case Double:
+        return DoublePimitive;
+      case Short:
+        return ShortPimitive;
+      case Byte:
+        return BytePimitive;
+      case Float:
+        return FloatPimitive;
+      case Long:
+        return LongPimitive;
+      case Character:
+        return CharPimitive;
+      case Boolean:
+        return BooleanPimitive;
+      default:
+        return wrapperType;
+    }
   }
 
   public static boolean isString(CDTypeSymbol typeSymbol) {
