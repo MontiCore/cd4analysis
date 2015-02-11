@@ -14,7 +14,6 @@ import java.util.Collection;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import cd4analysis.CD4ACoCos;
 import de.cd4analysis._ast.ASTCDCompilationUnit;
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.cd4analysis._parser.CDCompilationUnitMCParser;
@@ -41,6 +40,14 @@ public abstract class AbstractCoCoTest {
   }
   
   /**
+   * The {@link CD4AnalysisCoCoChecker} to use with a set of CoCos already
+   * assigned.
+   * 
+   * @return
+   */
+  abstract protected CD4AnalysisCoCoChecker getChecker();
+  
+  /**
    * Asserts that each of the expectedErrorSuffixes is found as a suffix in any
    * of the actual produced errors that occurred when the
    * {@link CD4AnalysisCoCoChecker} run on the given modelName. Furthermore, it
@@ -51,15 +58,13 @@ public abstract class AbstractCoCoTest {
    */
   protected void testModelForErrorSuffixes(String modelName,
       Collection<String> expectedErrorSuffixes) {
-    CD4AnalysisCoCoChecker checker = new CD4ACoCos().getCheckerForAllCoCos();
+    CD4AnalysisCoCoChecker checker = getChecker();
     
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
     assertEquals(expectedErrorSuffixes.size(), LogMock.getFindings().size());
     Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
   }
-  
-  abstract protected CD4AnalysisCoCoChecker getChecker();
   
   /**
    * Asserts that no error occurred when the {@link CD4AnalysisCoCoChecker} run

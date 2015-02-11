@@ -59,13 +59,12 @@ public class CD4ACoCos {
   
   private static void addEbnfCoCos(CD4AnalysisCoCoChecker checker) {
     checker.addCoCo(new UniqueAttributeInClassCoco());
-    checker.addCoCo(new AssociationModifierCoCo());
     checker.addCoCo(new RoleNamesLowerCaseCoco());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   
   private static void addMcgCoCos(CD4AnalysisCoCoChecker checker) {
-    
+    checker.addCoCo(new AssociationModifierCoCo());
   }
   
   private static void addMcg2EbnfCoCos(CD4AnalysisCoCoChecker checker) {
