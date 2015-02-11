@@ -52,6 +52,8 @@ public class CDTypes {
 
   // Well known types
   public final static String String = "java.lang.String";
+  
+  public final static String JAVA_LANG_PACKAGE = "java.lang.";
 
   // Collection types
   public final static String Collection = "java.util.Collection";
@@ -71,7 +73,7 @@ public class CDTypes {
 
   public static Collection<String> collectionTypes = Arrays.asList(Collection,
       List, Map);
-
+  
   /**
    * Checks is the given type an implicit type
    * 
@@ -80,7 +82,7 @@ public class CDTypes {
   public static boolean isWrapperType(String typeName) {
     return wrapperTypes.contains(typeName)
         || (typeName.lastIndexOf('.') == -1 && wrapperTypes
-            .contains("java.lang." + typeName));
+            .contains(JAVA_LANG_PACKAGE + typeName));
   }
 
   /**
@@ -99,6 +101,37 @@ public class CDTypes {
    * @return wrapper type if the given type is a primitive type else the given type
    */
   public static String primitiveToWrapper(String primitiveType) {
+    String wrapperName = primitiveType;
+    switch (primitiveType) {
+      case IntPimitive:
+        wrapperName = Integer.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case DoublePimitive:
+        wrapperName = Double.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case ShortPimitive:
+        wrapperName = Short.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case BytePimitive:
+        wrapperName = Byte.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case FloatPimitive:
+        wrapperName = Float.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case LongPimitive:
+        wrapperName = Long.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case CharPimitive:
+        wrapperName = Character.replaceFirst(JAVA_LANG_PACKAGE, "");
+      case BooleanPimitive:
+        wrapperName = Boolean.replaceFirst(JAVA_LANG_PACKAGE, "");
+      default:
+        break;
+    }
+    return wrapperName;
+  }
+  
+  /**
+   * Converts the given primitive type to the wrapper type
+   * 
+   * @param primitiveType
+   * @return wrapper type if the given type is a primitive type else the given type
+   */
+  public static String primitiveToQualifiedWrapper(String primitiveType) {
     switch (primitiveType) {
       case IntPimitive:
         return Integer;
@@ -128,6 +161,9 @@ public class CDTypes {
    * @return primitive type if the given type is a wrapper type else the given type
    */
   public static String wrapperToPrimitive(String wrapperType) {
+    if (wrapperType.indexOf('.') == -1) {
+      wrapperType = JAVA_LANG_PACKAGE + wrapperType;
+    }
     switch (wrapperType) {
       case Integer:
         return IntPimitive;
