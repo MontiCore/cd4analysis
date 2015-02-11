@@ -104,6 +104,11 @@
             <artifactId>monticore-generator</artifactId>
             <version>${monticore.astgenerator.version}</version>
           </dependency>
+          <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>monticore-runtime</artifactId>
+            <version>${monticore.astgenerator.version}</version>
+          </dependency>
         </dependencies>
       </plugin>
 
