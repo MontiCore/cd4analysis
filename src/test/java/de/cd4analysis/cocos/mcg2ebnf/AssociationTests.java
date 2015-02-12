@@ -76,14 +76,12 @@ public class AssociationTests extends AbstractCoCoTest {
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
   }
-  
-  @Ignore("waiting for https://sselab.de/lab2/private/trac/MontiCore/ticket/1462")
+
   @Test
   public void associationEndModifierRestrictionCoCoTest() {
     String modelName = "CD4AC3012.cd";
     String errorCode = "0xCD4AC3012";
     
-    LogMock.setProduceOutput(true);
     testModelNoErrors("valid/" + modelName);
     
     Collection<String> expectedErrors = Arrays
