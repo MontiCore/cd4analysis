@@ -8,6 +8,12 @@ package cd4analysis;
 import cd4analysis.cocos.ebnf.RoleNamesLowerCaseCoco;
 import cd4analysis.cocos.ebnf.UniqueAttributeInClassCoco;
 import cd4analysis.cocos.mcg.AssociationModifierCoCo;
+import cd4analysis.cocos.mcg.AttributeNotAbstractCoCo;
+import cd4analysis.cocos.mcg.ClassInvalidModifiersCoCo;
+import cd4analysis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
+import cd4analysis.cocos.mcg.EnumInvalidModifiersCoCo;
+import cd4analysis.cocos.mcg.InterfaceAttributesStaticCoCo;
+import cd4analysis.cocos.mcg.InterfaceInvalidModifiersCoCo;
 import cd4analysis.cocos.mcg2ebnf.AssociationEndModifierRestrictionCoCo;
 import cd4analysis.cocos.mcg2ebnf.AssociationNoStereotypesCoCo;
 import cd4analysis.cocos.mcg2ebnf.AttributeModifierOnlyDerivedCoCo;
@@ -65,6 +71,12 @@ public class CD4ACoCos {
   
   private static void addMcgCoCos(CD4AnalysisCoCoChecker checker) {
     checker.addCoCo(new AssociationModifierCoCo());
+    checker.addCoCo(new InterfaceAttributesStaticCoCo());
+    checker.addCoCo(new InterfaceInvalidModifiersCoCo());
+    checker.addCoCo(new AttributeNotAbstractCoCo());
+    checker.addCoCo(new ModifierNotMultipleVisibilitiesCoCo());
+    checker.addCoCo(new ClassInvalidModifiersCoCo());
+    checker.addCoCo(new EnumInvalidModifiersCoCo());
   }
   
   private static void addMcg2EbnfCoCos(CD4AnalysisCoCoChecker checker) {

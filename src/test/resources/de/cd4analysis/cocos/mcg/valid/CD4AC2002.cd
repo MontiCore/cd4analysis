@@ -1,0 +1,13 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC2002 {
+  class A {
+    String b;
+    private String c;
+    static String d;
+  }
+
+  interface I {
+    static String a;
+  }
+}

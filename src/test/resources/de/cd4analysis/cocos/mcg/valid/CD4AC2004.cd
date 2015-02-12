@@ -1,0 +1,26 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC2004 {
+  class A;
+
+  public class B;
+  
+  protected class C;
+  
+  private class D;
+  
+  interface I_A;
+
+  public interface I_B;
+  
+  enum E_A;
+
+  public enum E_B;
+  
+  class C_A {
+    String a;
+    public String b;
+    protected String c;
+    private String d;
+  }
+}

@@ -1,0 +1,11 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC2005 {
+  abstract enum A;
+  derived enum B;
+  / enum C;
+  final enum D;
+  private enum E;
+  protected enum F;
+  static enum G;
+}

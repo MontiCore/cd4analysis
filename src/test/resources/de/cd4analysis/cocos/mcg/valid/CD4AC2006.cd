@@ -1,0 +1,6 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC2006 {
+  public interface A;
+  interface B;
+}

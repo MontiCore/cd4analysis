@@ -5,11 +5,10 @@
  */
 package de.cd4analysis.cocos;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.antlr.v4.runtime.RecognitionException;
@@ -62,7 +61,7 @@ public abstract class AbstractCoCoTest {
     
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    assertEquals(expectedErrorSuffixes.size(), LogMock.getFindings().size());
+    Assert.assertEqualErrorCounts(expectedErrorSuffixes, LogMock.getFindings());
     Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
   }
   
@@ -76,7 +75,7 @@ public abstract class AbstractCoCoTest {
     CD4AnalysisCoCoChecker checker = getChecker();
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    assertEquals(0, LogMock.getFindings().size());
+    Assert.assertEqualErrorCounts(new ArrayList<String>(), LogMock.getFindings());
   }
   
   private ASTCDCompilationUnit loadModel(String modelFilename) {

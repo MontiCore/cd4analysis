@@ -1,0 +1,11 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC2003 {
+  public class A;
+
+  protected class B;
+  
+  private class C;
+  
+  class D;
+}
