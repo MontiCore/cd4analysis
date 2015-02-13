@@ -1,0 +1,14 @@
+package de.cd4analysis.cocos;
+
+classdiagram CD4AC0034 {
+  class A {
+    String a = null;
+    / String a1;
+    
+    String b = "b";
+    / String b1;
+    
+    int c = 1;
+    / int c1;
+  }
+}

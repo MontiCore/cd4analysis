@@ -28,11 +28,11 @@ import de.se_rwth.commons.logging.Log;
  * @version $Revision$, $Date$
  * @since TODO: add version number
  */
-public class CD4ACoCosAssocTest extends AbstractCoCoTest {
+public class AssocTests extends AbstractCoCoTest {
   /**
    * Constructor for de.cd4analysis.cocos.ebnf.CD4ACoCosAssocTest
    */
-  public CD4ACoCosAssocTest() {
+  public AssocTests() {
     super(MODEL_PATH);
   }
   
