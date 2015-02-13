@@ -90,7 +90,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute name     Name of this Attribute
     @attribute value    Value of this Attribute
   */
-  CDAttribute = Modifier?  Type Name ("=" Value)? ";"; 
+  CDAttribute = Modifier? Type Name ("=" Value)? ";"; 
    
   /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
       in a Classdiagram
