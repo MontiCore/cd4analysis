@@ -1,4 +1,4 @@
-package de.cd4analysis.cocos;
+package de.monticore.umlcd4a.cocos.mcg.valid;
 
 classdiagram CD4AC2001 {
   interface A {

@@ -1,4 +1,4 @@
-package de.cd4analysis.cocos;
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
 classdiagram CD4AC0009 {
   enum E;

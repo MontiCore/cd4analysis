@@ -1,4 +1,4 @@
-package de.cd4analysis.cocos;
+package de.monticore.umlcd4a.cocos.mcg.invalid;
 
 classdiagram CD_1_44 {
   class A;

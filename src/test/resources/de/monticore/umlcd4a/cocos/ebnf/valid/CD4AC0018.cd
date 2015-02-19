@@ -1,4 +1,4 @@
-package de.cd4analysis.cocos;
+package de.monticore.umlcd4a.cocos.ebnf.valid;
 
 classdiagram CD4AC0018 {
   class A;

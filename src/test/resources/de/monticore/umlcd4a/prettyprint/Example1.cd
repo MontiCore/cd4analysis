@@ -1,4 +1,4 @@
-package de.cd4analysis.prettyprint;
+package de.monticore.umlcd4a.prettyprint;
 
 import java.util.List;
 import java.util.Set;
