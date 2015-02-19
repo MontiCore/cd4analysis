@@ -24,7 +24,8 @@ public class CDAssociationSymbol extends CommonSymbol {
   private String qualifier = "";
   private String role = "";
   private boolean bidirectional = false;
-
+  private boolean derived = false;
+  
   private String assocName = "";
 
   private Relationship relationship = Relationship.ASSOCIATION;
@@ -97,6 +98,14 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   public boolean isBidirectional() {
     return bidirectional;
+  }
+  
+  public void setDerived(boolean derived) {
+    this.derived = derived;
+  }
+  
+  public boolean isDerived() {
+    return this.derived;
   }
   
   public void setRelationship(Relationship relationship) {

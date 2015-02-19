@@ -375,6 +375,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           .getRightReferenceName(), cdAssoc.getLeftReferenceName());
       // complete association properties
       if (assocRight2LeftSymbol != null) {
+        assocRight2LeftSymbol.setDerived(cdAssoc.isDerived());
         if (cdAssoc.isComposition()) {
           assocRight2LeftSymbol.setRelationship(Relationship.PART);
         }
@@ -407,6 +408,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           cdAssoc.getRightReferenceName());
 
       if (assocLeft2RightSymbol != null) {
+        assocLeft2RightSymbol.setDerived(cdAssoc.isDerived());
         if (cdAssoc.isComposition()) {
           assocLeft2RightSymbol.setRelationship(Relationship.COMPOSITE);
         }
