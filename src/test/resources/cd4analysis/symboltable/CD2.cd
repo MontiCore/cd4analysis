@@ -1,6 +1,0 @@
-package cd4analysis.symboltable;
-
-classdiagram CD2 {
-  class Animal;
-  class Person;
-}
