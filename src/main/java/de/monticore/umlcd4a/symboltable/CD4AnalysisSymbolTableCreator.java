@@ -5,7 +5,6 @@ package de.monticore.umlcd4a.symboltable;/*
  */
 
 import com.google.common.base.Optional;
-
 import de.cd4analysis._ast.*;
 import de.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.monticore.symboltable.ArtifactScope;
@@ -405,8 +404,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   public default void handleLeftToRightAssociation(final ASTCDAssociation cdAssoc) {
     if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
       final CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
-              .getLeftReferenceName(),
-          cdAssoc.getRightReferenceName());
+              .getLeftReferenceName(), cdAssoc.getRightReferenceName());
 
       if (assocLeft2RightSymbol != null) {
         assocLeft2RightSymbol.setDerived(cdAssoc.isDerived());
@@ -443,6 +441,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         astTargetName.getParts()), currentScope().get());
 
     final CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
+
+    if (sourceType.existsReferencedSymbol()) {
+      // TODO PN use association reference instead?
+      sourceType.addAssociation(associationSymbol);
+    }
+    // the else case should be checked by a context conditions
+
 
     associationSymbol.setAssocName(astAssoc.getName().orNull());
 

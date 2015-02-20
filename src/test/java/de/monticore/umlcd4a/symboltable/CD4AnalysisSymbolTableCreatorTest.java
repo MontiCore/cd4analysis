@@ -7,13 +7,7 @@ import de.cd4analysis._ast.ASTCDMethod;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
-import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
-import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
-import de.monticore.umlcd4a.symboltable.Cardinality;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
-
 import org.junit.Test;
 
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
@@ -30,6 +24,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     final CDTypeSymbol personType = globalScope.<CDTypeSymbol> resolve(
         "de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orNull();
+    assertNotNull(personType);
 
     // Scope Hierarchy: GlobalScope -> ArtifactScope -> ClassDiagramScope ->* ...
     assertEquals(1, globalScope.getSubScopes().size());
@@ -57,6 +52,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(personType.getAstNode().isPresent());
     assertTrue(personType.getAstNode().get() instanceof ASTCDClass);
+    // Associations
+    assertEquals(1, personType.getAssociations().size());
     // Fields
     assertEquals(3, personType.getFields().size());
     final CDFieldSymbol nameField = personType.getField("name").get();
@@ -131,6 +128,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable", profType.getInterfaces().get(0).getFullName());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", profType.getInterfaces().get(1).getFullName());
     assertEquals(3, profType.getSuperTypes().size());
+    // Associations
+    assertEquals(1, profType.getAssociations().size());
 
     final CDTypeSymbol printableType = cdScope.<CDTypeSymbol>resolve("Printable", CDTypeSymbol.KIND)
         .orNull();
@@ -151,6 +150,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(printMethod.isEllipsisParameterMethod());
     assertEquals(1, printMethod.getParameters().size());
     assertEquals("s", printMethod.getParameters().get(0).getName());
+    // Associations
+    assertEquals(0, printableType.getAssociations().size());
 
 
     final CDTypeSymbol callableType = cdScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)

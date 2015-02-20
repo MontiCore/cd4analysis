@@ -6,7 +6,6 @@
 package de.monticore.umlcd4a.symboltable.references;
 
 import com.google.common.base.Optional;
-
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -34,6 +33,11 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public CDTypeSymbol getReferencedSymbol() {
     return typeReference.getReferencedSymbol();
+  }
+
+  @Override
+  public boolean existsReferencedSymbol() {
+    return typeReference.existsReferencedSymbol();
   }
 
   @Override

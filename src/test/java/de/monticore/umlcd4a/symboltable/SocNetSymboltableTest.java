@@ -8,12 +8,7 @@ package de.monticore.umlcd4a.symboltable;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.Symbol;
-import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
-import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
-import de.monticore.umlcd4a.symboltable.Cardinality;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -105,6 +100,8 @@ public class SocNetSymboltableTest {
     assertTrue(person.getField("zip").isPresent());
     assertTrue(person.getField("city").isPresent());
     assertTrue(person.getField("country").isPresent());
+
+    assertEquals(3, person.getAssociations().size());
   }
 
   private void testGroupClass(CDTypeSymbol profile) {
