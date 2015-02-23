@@ -127,13 +127,26 @@ public class CDTypes {
   }
   
   /**
-   * Converts the given primitive type to the wrapper type
+   * Derives the Wrapper to a given primitive type. If the
+   * parameter isn't a primitive type, the result is the given type
    * 
    * @param primitiveType
    * @return wrapper type if the given type is a primitive type else the given
    * type
    */
   public static String primitiveToQualifiedWrapper(String primitiveType) {
+    return primitiveToQualifiedWrapperOrDefault(primitiveType, primitiveType);
+  }
+  
+  /**
+   * Derives the Wrapper to a given primitive type. If the
+   * parameter isn't a primitive type, the result is the given default type
+   * 
+   * @param primitiveType - the given type
+   * @param defaultType - default type
+   * @return the wrapped version
+   */
+  public static String primitiveToQualifiedWrapperOrDefault(String primitiveType, String defaultType) {
     switch (primitiveType) {
       case IntPimitive:
         return Integer;
@@ -152,7 +165,7 @@ public class CDTypes {
       case BooleanPimitive:
         return Boolean;
       default:
-        return primitiveType;
+        return defaultType;
     }
   }
   
