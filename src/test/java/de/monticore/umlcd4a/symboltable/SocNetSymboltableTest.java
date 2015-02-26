@@ -122,10 +122,10 @@ public class SocNetSymboltableTest {
 
   private void testMemberAssociation() {
     // Person -> Group
-    CDAssociationSymbol groupAssoc = cdScope.<CDAssociationSymbol>resolve("group",
-        CDAssociationSymbol.KIND).orNull();
+    CDAssociationSymbol groupAssoc = (CDAssociationSymbol) cdScope.resolve(
+        new CDAssociationNameAndTargetNamePredicate("member", "Group")).orNull();
     assertNotNull(groupAssoc);
-    assertEquals("group", groupAssoc.getName());
+    assertEquals("member", groupAssoc.getName());
     assertEquals("member", groupAssoc.getAssocName());
     assertTrue(groupAssoc.isBidirectional());
     assertEquals(PACKAGE + "Person", groupAssoc.getSourceType().getFullName());
@@ -136,10 +136,10 @@ public class SocNetSymboltableTest {
     assertTrue(groupAssoc.getTargetCardinality().isMultiple());
 
     // Person <- Group
-    CDAssociationSymbol personAssoc = cdScope.<CDAssociationSymbol>resolve("person",
-        CDAssociationSymbol.KIND).orNull();
+    CDAssociationSymbol personAssoc = (CDAssociationSymbol) cdScope.resolve(
+        new CDAssociationNameAndTargetNamePredicate("member", "Person")).orNull();
     assertNotNull(personAssoc);
-    assertEquals("person", personAssoc.getName());
+    assertEquals("member", personAssoc.getName());
     assertEquals("member", personAssoc.getAssocName());
     assertTrue(personAssoc.isBidirectional());
     assertEquals(PACKAGE + "Group", personAssoc.getSourceType().getFullName());
@@ -226,11 +226,11 @@ public class SocNetSymboltableTest {
 
   private void testRelationTypeAssociation() {
     // ->
-    CDAssociationSymbol assoc = cdScope.<CDAssociationSymbol>resolve("relationType",
+    CDAssociationSymbol assoc = cdScope.<CDAssociationSymbol>resolve("RelationType",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(assoc);
-    assertEquals("relationType", assoc.getName());
-    assertTrue(assoc.getRole().isEmpty());
+    assertEquals("RelationType", assoc.getName());
+    assertEquals("RelationType", assoc.getRole());
     assertTrue(assoc.getAssocName().isEmpty());
     assertFalse(assoc.isBidirectional());
     assertEquals(PACKAGE + "Relationship", assoc.getSourceType().getFullName());
@@ -290,11 +290,11 @@ public class SocNetSymboltableTest {
 
   private void testPhotoAssociation() {
     // ->
-    CDAssociationSymbol photoMessageAssoc = cdScope.<CDAssociationSymbol>resolve("photoMessage",
+    CDAssociationSymbol photoMessageAssoc = cdScope.<CDAssociationSymbol>resolve("PhotoMessage",
         CDAssociationSymbol.KIND).orNull();
     assertNotNull(photoMessageAssoc);
-    assertTrue(photoMessageAssoc.getRole().isEmpty());
-    assertEquals("photoMessage", photoMessageAssoc.getName());
+    assertEquals("PhotoMessage", photoMessageAssoc.getName());
+    assertEquals("PhotoMessage", photoMessageAssoc.getRole());
     assertTrue(photoMessageAssoc.getAssocName().isEmpty());
     assertTrue(photoMessageAssoc.isBidirectional());
     assertEquals(PACKAGE + "Photo", photoMessageAssoc.getSourceType().getFullName());

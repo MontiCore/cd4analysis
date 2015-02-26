@@ -119,8 +119,8 @@ public class CDAssociationSymbol extends CommonSymbol {
   @Override
   public String getName() {
 
-    if (!super.getName().isEmpty()) {
-      return super.getName();
+    if (!getAssocName().isEmpty()) {
+      return assocName;
     }
     if (!getRole().isEmpty()) {
       return getRole();

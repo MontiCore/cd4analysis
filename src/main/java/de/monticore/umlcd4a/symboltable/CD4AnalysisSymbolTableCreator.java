@@ -381,7 +381,17 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
         assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orNull()));
         assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orNull()));
-        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole().orNull());
+
+        // Set role
+        String role = cdAssoc.getLeftRole().or("");
+        if (role.equals("")) {
+          role = cdAssoc.getName().or("");
+          if (role.equals("")) {
+            role = NameHelper.getSimplenameFromComplexname(cdAssoc.getLeftReferenceName().getParts());
+          }
+        }
+
+        assocRight2LeftSymbol.setRole(role);
 
         if (cdAssoc.getLeftModifier().isPresent()) {
           addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().orNull());
@@ -413,7 +423,17 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
         assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orNull()));
         assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orNull()));
-        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole().orNull());
+
+        // Set role
+        String role = cdAssoc.getRightRole().or("");
+        if (role.equals("")) {
+          role = cdAssoc.getName().or("");
+          if (role.equals("")) {
+            role = NameHelper.getSimplenameFromComplexname(cdAssoc.getRightReferenceName().getParts());
+          }
+        }
+        assocLeft2RightSymbol.setRole(role);
+
         if (cdAssoc.getRightModifier().isPresent()) {
           addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype().orNull());
         }
@@ -449,7 +469,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     // the else case should be checked by a context conditions
 
 
-    associationSymbol.setAssocName(astAssoc.getName().orNull());
+    associationSymbol.setAssocName(astAssoc.getName().or(""));
 
     addStereotypes(associationSymbol, astAssoc.getStereotype().orNull());
 
