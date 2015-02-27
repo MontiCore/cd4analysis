@@ -152,7 +152,7 @@ public class ASTCDTransformation {
     ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
     interfaceNames.forEach(i -> interfaces.add(createSimpleRefType(i)));
     ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
-        .superclass(createSimpleRefType(className)).interfaces(interfaces).build();
+        .superclass(createSimpleRefType(superClassName)).interfaces(interfaces).build();
     addCdClass(astDef, astClass);
   }
   
