@@ -15,8 +15,7 @@ public class CDAssociationNameAndTargetNamePredicate implements SymbolPredicate 
   private final String assocName;
   private final String assocTargetName;
 
-  public CDAssociationNameAndTargetNamePredicate(final String assocName, final String
-      assocTargetName) {
+  public CDAssociationNameAndTargetNamePredicate(final String assocName, final String assocTargetName) {
     this.assocName = nullToEmpty(assocName);
     this.assocTargetName = nullToEmpty(assocTargetName);
   }

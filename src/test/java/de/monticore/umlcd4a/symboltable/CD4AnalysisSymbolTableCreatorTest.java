@@ -39,9 +39,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // TODO PN find better solution
     // Quickfix for using default types: add built-in types
-    cdScope.define(new CDTypeSymbol("int"));
-    cdScope.define(new CDTypeSymbol("boolean"));
-    cdScope.define(new CDTypeSymbol("String"));
+    globalScope.define(new CDTypeSymbol("int"));
+    globalScope.define(new CDTypeSymbol("boolean"));
+    globalScope.define(new CDTypeSymbol("String"));
 
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
@@ -304,6 +304,28 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // ... even if resolving with the private access modifier.
     assertFalse(profType.getSpannedScope().resolve("getAge", CDMethodSymbol.KIND, PRIVATE).isPresent());
     assertFalse(profType.getMethod("getAge").isPresent());
+
+
+    // resolve method by signature
+    assertTrue(personType.getSpannedScope().resolve(
+        new CDMethodSignaturePredicate("setName", "String", "String")).isPresent());
+    assertSame(setNameMethod, personType.getSpannedScope().resolve(
+        new CDMethodSignaturePredicate("setName", "String", "String")).get());
+
+    assertFalse(personType.getSpannedScope().resolve(
+        new CDMethodSignaturePredicate("setName", "String")).isPresent());
+
+    assertFalse(personType.getSpannedScope().resolve(
+        new CDMethodSignaturePredicate("setName", "String", "int")).isPresent());
+
+    assertFalse(personType.getSpannedScope().resolve(
+        new CDMethodSignaturePredicate("setName", "String", "String", "String")).isPresent());
+
+    assertFalse(personType.getSpannedScope().resolve(
+        new CDMethodSignaturePredicate("getAge", "String", "String")).isPresent());
+
+
   }
+
 
 }
