@@ -9,6 +9,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import de.cd4analysis._ast.ASTCDInterface;
 import de.cd4analysis._ast.ASTCDMethod;
 import de.cd4analysis._ast.ASTCDParameter;
 import de.cd4analysis._ast.ASTCDParameterList;
+import de.cd4analysis._ast.ASTModifier;
 import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.cd4analysis._parser.CDAttributeMCParser;
 import de.cd4analysis._parser.CDMethodMCParser;
@@ -57,7 +59,7 @@ public class ASTCDTransformation {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition));
     Optional<ASTCDAttribute> astAttribute = Optional.absent();
     try {
-      astAttribute = new CDAttributeMCParser().parse(attributeDefinition);
+      astAttribute = new CDAttributeMCParser().parse(new StringReader(attributeDefinition));
       if (!astAttribute.isPresent()) {
         Log.error("Attribute can't be added to the CD class " + astClass.getName()
             + "\nWrong attribute definition: " + attributeDefinition);
@@ -84,7 +86,7 @@ public class ASTCDTransformation {
     checkArgument(!Strings.isNullOrEmpty(methodDefinition));
     Optional<ASTCDMethod> astMethod = Optional.absent();
     try {
-      astMethod = new CDMethodMCParser().parse(methodDefinition);
+      astMethod = new CDMethodMCParser().parse(new StringReader(methodDefinition));
       if (!astMethod.isPresent()) {
         Log.error("Method can't be added to the CD class " + astClass.getName()
             + "\nWrong method definition: " + methodDefinition);
@@ -111,6 +113,7 @@ public class ASTCDTransformation {
     
     ASTCDMethod astMethod = ASTCDMethod.getBuilder()
         .name(methodName)
+        .modifier(ASTModifier.getBuilder().r_public(true).build())
         .returnType(createSimpleRefType(returnType))
         .cDParameters(createCdMethodParameters(paramTypes))
         .build();
@@ -137,7 +140,6 @@ public class ASTCDTransformation {
   
   public static ASTCDParameterList createCdMethodParameters(List<String> paramTypes) {
     checkNotNull(paramTypes);
-    checkArgument(!paramTypes.isEmpty());
     ASTCDParameterList params = CD4AnalysisNodeFactory.createASTCDParameterList();
     paramTypes.forEach(param -> params.add(ASTCDParameter.getBuilder()
         .type(createSimpleRefType(param))
