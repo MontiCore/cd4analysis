@@ -90,17 +90,17 @@ public class ASTTransformationTest {
   @Test
   public void testAddCdAttribute() {
     ASTCDClass astClass = ASTCDTransformation.addCdClass(astDef, "A");
-    ASTCDAttribute attr1 = ASTCDTransformation.addCdAttribute(astClass, "a", "String");
-    assertTrue(attr1 != null);
-    assertEquals(attr1.getName(), "a");
-    assertTrue(attr1.getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType)attr1.getType()).getName(), Lists.newArrayList("String"));
+    Optional<ASTCDAttribute> attr1 = ASTCDTransformation.addCdAttribute(astClass, "a", "String");
+    assertTrue(attr1.isPresent());
+    assertEquals(attr1.get().getName(), "a");
+    assertTrue(attr1.get().getType() instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType)attr1.get().getType()).getName(), Lists.newArrayList("String"));
     
-    ASTCDAttribute attr2 = ASTCDTransformation.addCdAttribute(astClass, "b", "a.b.C");
-    assertTrue(attr2 != null);
-    assertEquals(attr2.getName(), "b");
-    assertTrue(attr2.getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType)attr2.getType()).getName(), Lists.newArrayList("a", "b", "C"));
+    Optional<ASTCDAttribute> attr2 = ASTCDTransformation.addCdAttribute(astClass, "b", "a.b.C");
+    assertTrue(attr2.isPresent());
+    assertEquals(attr2.get().getName(), "b");
+    assertTrue(attr2.get().getType() instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType)attr2.get().getType()).getName(), Lists.newArrayList("a", "b", "C"));
   }
   
   @Test
