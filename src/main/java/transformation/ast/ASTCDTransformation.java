@@ -41,7 +41,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class ASTCDTransformation {
   
-  public static void addCdAttribute(ASTCDClass astClass, String attrName, String attrType) {
+  public static ASTCDAttribute addCdAttribute(ASTCDClass astClass, String attrName, String attrType) {
     checkArgument(!Strings.isNullOrEmpty(attrName));
     checkArgument(!Strings.isNullOrEmpty(attrType));
     ASTType attributeType = ASTSimpleReferenceType.getBuilder()
@@ -49,13 +49,15 @@ public class ASTCDTransformation {
     ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(attributeType)
         .build();
     addCdAttribute(astClass, attribute);
+    return attribute;
   }
   
-  public static void addCdAttributeUsingDefinition(ASTCDClass astClass, String attributeDefinition) {
+  public static Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass, String attributeDefinition) {
     checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition));
+    Optional<ASTCDAttribute> astAttribute = Optional.absent();
     try {
-      Optional<ASTCDAttribute> astAttribute = new CDAttributeMCParser().parse(attributeDefinition);
+      astAttribute = new CDAttributeMCParser().parse(attributeDefinition);
       if (!astAttribute.isPresent()) {
         Log.error("Attribute can't be added to the CD class " + astClass.getName()
             + "\nWrong attribute definition: " + attributeDefinition);
@@ -68,6 +70,7 @@ public class ASTCDTransformation {
       Log.error("Attribute can't be added to the CD class " + astClass.getName()
           + "\nCatched exception: " + e);
     }
+    return astAttribute;
   }
   
   public static void addCdAttribute(ASTCDClass astClass, ASTCDAttribute astAttribute) {
@@ -76,11 +79,12 @@ public class ASTCDTransformation {
     astClass.getCDAttributes().add(astAttribute);
   }
   
-  public static void addCdMethodUsingDefinition(ASTCDClass astClass, String methodDefinition) {
+  public static Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDClass astClass, String methodDefinition) {
     checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(methodDefinition));
+    Optional<ASTCDMethod> astMethod = Optional.absent();
     try {
-      Optional<ASTCDMethod> astMethod = new CDMethodMCParser().parse(methodDefinition);
+      astMethod = new CDMethodMCParser().parse(methodDefinition);
       if (!astMethod.isPresent()) {
         Log.error("Method can't be added to the CD class " + astClass.getName()
             + "\nWrong method definition: " + methodDefinition);
@@ -93,13 +97,14 @@ public class ASTCDTransformation {
       Log.error("Method can't be added to the CD class " + astClass.getName()
           + "\nCatched exception: " + e);
     }
+    return astMethod;
   }
   
-  public static void addCdMethod(ASTCDClass astClass, String methodName) {
-    addCdMethod(astClass, methodName, "void", Lists.newArrayList());
+  public static ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
+    return addCdMethod(astClass, methodName, "void", Lists.newArrayList());
   }
   
-  public static void addCdMethod(ASTCDClass astClass, String methodName, String returnType,
+  public static ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName, String returnType,
       List<String> paramTypes) {
     checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(methodName));
@@ -110,6 +115,7 @@ public class ASTCDTransformation {
         .cDParameters(createCdMethodParameters(paramTypes))
         .build();
     addCdMethod(astClass, astMethod);
+    return astMethod;
   }
   
   public static void addCdMethod(ASTCDClass astClass, ASTCDMethod astMethod) {
@@ -139,13 +145,15 @@ public class ASTCDTransformation {
     return params;
   }
   
-  public static void addCdClass(ASTCDDefinition astDef, String className) {
+  public static ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(className));
-    addCdClass(astDef, ASTCDClass.getBuilder().name(className).build());
+    ASTCDClass astClass = ASTCDClass.getBuilder().name(className).build();
+    addCdClass(astDef, astClass);
+    return astClass;
   }
   
-  public static void addCdClass(ASTCDDefinition astDef, String className, String superClassName,
+  public static ASTCDClass addCdClass(ASTCDDefinition astDef, String className, String superClassName,
       List<String> interfaceNames) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(className));
@@ -154,6 +162,7 @@ public class ASTCDTransformation {
     ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
         .superclass(createSimpleRefType(superClassName)).interfaces(interfaces).build();
     addCdClass(astDef, astClass);
+    return astClass;
   }
   
   public static void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
@@ -162,10 +171,12 @@ public class ASTCDTransformation {
     astDef.getCDClasses().add(astClass);
   }
   
-  public static void addCdInterface(ASTCDDefinition astDef, String interfaceName) {
+  public static ASTCDInterface addCdInterface(ASTCDDefinition astDef, String interfaceName) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(interfaceName));
-    addCdInterface(astDef, ASTCDInterface.getBuilder().name(interfaceName).build());
+    ASTCDInterface astInterface = ASTCDInterface.getBuilder().name(interfaceName).build();
+    addCdInterface(astDef, astInterface);
+    return astInterface;
   }
   
   public static void addCdInterface(ASTCDDefinition astDef, ASTCDInterface astInterface) {
@@ -174,7 +185,7 @@ public class ASTCDTransformation {
     astDef.getCDInterfaces().add(astInterface);
   }
   
-  public static void addCdInterface(ASTCDDefinition astDef, String interfaceName,
+  public static ASTCDInterface addCdInterface(ASTCDDefinition astDef, String interfaceName,
       List<String> interfaceNames) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(interfaceName));
@@ -183,6 +194,7 @@ public class ASTCDTransformation {
     ASTCDInterface astInterface = ASTCDInterface.getBuilder().name(interfaceName)
         .interfaces(interfaces).build();
     addCdInterface(astDef, astInterface);
+    return astInterface;
   }
   
 }
