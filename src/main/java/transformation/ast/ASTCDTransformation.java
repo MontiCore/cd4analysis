@@ -45,10 +45,21 @@ import de.se_rwth.commons.logging.Log;
  */
 public class ASTCDTransformation {
   
-  public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName, String attrType) {
+  /**
+   * Creates an instance of the {@link ASTCDAttribute} with the given name and
+   * type and adds it to the given class
+   * 
+   * @param astClass
+   * @param attrName
+   * @param attrType
+   * @return Optional of the created ast node or Optional.absent() if the
+   * attribute type couldn't be parsed
+   */
+  public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
+      String attrType) {
     checkArgument(!Strings.isNullOrEmpty(attrName));
     checkArgument(!Strings.isNullOrEmpty(attrType));
-    Optional<ASTType> attributeType = createSimpleRefType(attrType);
+    Optional<ASTType> attributeType = createType(attrType);
     if (!attributeType.isPresent()) {
       Log.error("Attribute can't be added to the CD class " + astClass.getName());
       return Optional.absent();
@@ -59,6 +70,15 @@ public class ASTCDTransformation {
     return Optional.of(attribute);
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDAttribute} using given attribute
+   * definition ( e.g. private List<A> a; ) and adds it to the given class
+   * 
+   * @param astClass
+   * @param attributeDefinition attribute definition to parse
+   * @return Optional of the created ast node or Optional.absent() if the
+   * attribute definition couldn't be parsed
+   */
   public static Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
       String attributeDefinition) {
     checkNotNull(astClass);
@@ -81,12 +101,27 @@ public class ASTCDTransformation {
     return astAttribute;
   }
   
+  /**
+   * Adds the given attribute to the given class
+   * 
+   * @param astClass
+   * @param astAttribute
+   */
   public static void addCdAttribute(ASTCDClass astClass, ASTCDAttribute astAttribute) {
     checkNotNull(astClass);
     checkNotNull(astAttribute);
     astClass.getCDAttributes().add(astAttribute);
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDMethod} using the given method
+   * definition ( e.g. protected String getValue(Date d); ) and adds it to the given class
+   * 
+   * @param astClass
+   * @param methodDefinition method definition to parse
+   * @return Optional of the created {@link ASTCDMethod} node or
+   * Optional.absent() if the method definition couldn't be parsed
+   */
   public static Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDClass astClass,
       String methodDefinition) {
     checkNotNull(astClass);
@@ -109,41 +144,69 @@ public class ASTCDTransformation {
     return astMethod;
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDMethod} with the given name, default
+   * return type and the empty parameter list and adds it to the given class
+   * 
+   * @param astClass
+   * @param methodName
+   * @return The created {@link ASTCDMethod} node
+   */
   public static ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
     return addCdMethod(astClass, methodName, "void", Lists.newArrayList()).get();
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDMethod} with the given name, return
+   * type and parameter types and adds it to the given class
+   * 
+   * @param astClass
+   * @param methodName
+   * @param returnType
+   * @param paramTypes
+   * @return Optional of the created {@link ASTCDMethod} node or
+   * Optional.absent() if the method definition couldn't be parsed
+   */
   public static Optional<ASTCDMethod> addCdMethod(ASTCDClass astClass, String methodName,
       String returnType,
       List<String> paramTypes) {
     checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(methodName));
-    Optional<ASTCDMethod> astMethod = Optional.absent();
     Optional<ASTReturnType> parsedReturnType = createReturnType(returnType);
     Optional<ASTCDParameterList> cdParameters = createCdMethodParameters(paramTypes);
     if (!parsedReturnType.isPresent() || !cdParameters.isPresent()) {
       Log.error("Method " + methodName + " can't be added to the CD class " + astClass.getName());
+      return Optional.absent();
     }
-    else {
-      ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
-          .name(methodName)
-          .modifier(ASTModifier.getBuilder().r_public(true).build())
-          .returnType(parsedReturnType.get())
-          .cDParameters(cdParameters.get())
-          .build();
-      addCdMethod(astClass, cdMethod);
-      return Optional.of(cdMethod);
-    }
-    
-    return astMethod;
+    ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
+        .name(methodName)
+        .modifier(ASTModifier.getBuilder().r_public(true).build())
+        .returnType(parsedReturnType.get())
+        .cDParameters(cdParameters.get())
+        .build();
+    addCdMethod(astClass, cdMethod);
+    return Optional.of(cdMethod);
   }
   
+  /**
+   * Adds the given method to the given class
+   * 
+   * @param astClass
+   * @param astMethod
+   */
   public static void addCdMethod(ASTCDClass astClass, ASTCDMethod astMethod) {
     checkNotNull(astClass);
     checkNotNull(astMethod);
     astClass.getCDMethods().add(astMethod);
   }
   
+  /**
+   * Creates an instance of the {@link ASTReturnType} using the type definition
+   * 
+   * @param typeName
+   * @return Optional of the created {@link ASTReturnType} node or
+   * Optional.absent() if the type definition couldn't be parsed
+   */
   public static Optional<ASTReturnType> createReturnType(String typeName) {
     checkArgument(!Strings.isNullOrEmpty(typeName));
     Optional<ASTReturnType> astType = Optional.absent();
@@ -160,28 +223,43 @@ public class ASTCDTransformation {
     return astType;
   }
   
-  public static Optional<ASTType> createSimpleRefType(String typeName) {
+  /**
+   * Creates an instance of the {@link ASTType} using the type definition
+   * 
+   * @param typeName
+   * @return Optional of the created {@link ASTType} node or Optional.absent()
+   * if the type definition couldn't be parsed
+   */
+  public static Optional<ASTType> createType(String typeName) {
     checkArgument(!Strings.isNullOrEmpty(typeName));
     Optional<ASTType> astType = Optional.absent();
     try {
       astType = new TypeMCParser().parse(new StringReader(typeName));
       if (!astType.isPresent()) {
-        Log.error("Parameter type " + typeName + " wasn't defined correctly");
+        Log.error("The type " + typeName + " wasn't defined correctly");
       }
     }
     catch (RecognitionException | IOException e) {
-      Log.error("Parameter type  " + typeName + " wasn't defined correctly: "
+      Log.error("The type  " + typeName + " wasn't defined correctly: "
           + "\nCatched exception: " + e);
     }
     return astType;
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDParameterList} using the list of the
+   * type definitions
+   * 
+   * @param paramTypes
+   * @return Optional of the created {@link ASTCDParameterList} node or
+   * Optional.absent() if one of the type definition couldn't be parsed
+   */
   public static Optional<ASTCDParameterList> createCdMethodParameters(List<String> paramTypes) {
     checkNotNull(paramTypes);
     ASTCDParameterList params = CD4AnalysisNodeFactory.createASTCDParameterList();
     List<ASTType> types = Lists.newArrayList();
     for (String paramType : paramTypes) {
-      Optional<ASTType> type = createSimpleRefType(paramType);
+      Optional<ASTType> type = createType(paramType);
       if (!type.isPresent()) {
         return Optional.absent();
       }
@@ -193,6 +271,14 @@ public class ASTCDTransformation {
     return Optional.of(params);
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDClass} with the given name and adds
+   * it to the given CD definition type definitions
+   * 
+   * @param astDef
+   * @param className
+   * @return created {@link ASTCDClass} node
+   */
   public static ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(className));
@@ -201,37 +287,64 @@ public class ASTCDTransformation {
     return astClass;
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDClass} with the given name, super
+   * class and the list of extended interface names and adds it to the given CD
+   * definition
+   * 
+   * @param astDef
+   * @param className
+   * @param superClassName
+   * @param interfaceNames
+   * @return Optional of the created {@link ASTCDClass} node or
+   * Optional.absent() if the super class- or one of the interface-definitions
+   * couldn't be parsed
+   */
   public static Optional<ASTCDClass> addCdClass(ASTCDDefinition astDef, String className,
       String superClassName,
       List<String> interfaceNames) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(className));
-    Optional<ASTType> superClass = createSimpleRefType(superClassName);
+    Optional<ASTType> superClass = createType(superClassName);
     ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
     for (String paramType : interfaceNames) {
-      Optional<ASTType> type = createSimpleRefType(paramType);
+      Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
         Log.error("Class " + className + " can't be added to the CD drfinition.");
         return Optional.absent();
       }
-      interfaces.add((ASTReferenceType)type.get());
+      interfaces.add((ASTReferenceType) type.get());
     }
     if (!superClass.isPresent()) {
       Log.error("Class " + className + " can't be added to the CD drfinition.");
       return Optional.absent();
     }
     ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
-        .superclass((ASTReferenceType)superClass.get()).interfaces(interfaces).build();
+        .superclass((ASTReferenceType) superClass.get()).interfaces(interfaces).build();
     addCdClass(astDef, astClass);
     return Optional.of(astClass);
   }
   
+  /**
+   * Adds the given class to the given CD definition
+   * 
+   * @param astDef
+   * @param astClass
+   */
   public static void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
     checkNotNull(astDef);
     checkNotNull(astClass);
     astDef.getCDClasses().add(astClass);
   }
   
+  /**
+   * Creates an instance of the {@link ASTCDInterface} with the given name and
+   * adds it to the given CD definition type definitions
+   * 
+   * @param astDef
+   * @param interfaceName
+   * @return created {@link ASTCDInterface} node
+   */
   public static ASTCDInterface addCdInterface(ASTCDDefinition astDef, String interfaceName) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(interfaceName));
@@ -240,24 +353,41 @@ public class ASTCDTransformation {
     return astInterface;
   }
   
+  /**
+   * Adds the given interface to the given CD definition
+   * 
+   * @param astDef
+   * @param astInterface
+   */
   public static void addCdInterface(ASTCDDefinition astDef, ASTCDInterface astInterface) {
     checkNotNull(astDef);
     checkNotNull(astInterface);
     astDef.getCDInterfaces().add(astInterface);
   }
   
-  public static Optional<ASTCDInterface> addCdInterface(ASTCDDefinition astDef, String interfaceName,
+  /**
+   * Creates an instance of the {@link ASTCDInterface} with the given name and
+   * the list of extended interface names and adds it to the given CD definition
+   * 
+   * @param astDef
+   * @param interfaceName
+   * @param interfaceNames
+   * @return Optional of the created {@link ASTCDInterface} node or
+   * Optional.absent() if one of the interface-definitions couldn't be parsed
+   */
+  public static Optional<ASTCDInterface> addCdInterface(ASTCDDefinition astDef,
+      String interfaceName,
       List<String> interfaceNames) {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(interfaceName));
     ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
     for (String paramType : interfaceNames) {
-      Optional<ASTType> type = createSimpleRefType(paramType);
+      Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
         Log.error("Class " + interfaceName + " can't be added to the CD drfinition.");
         return Optional.absent();
       }
-      interfaces.add((ASTReferenceType)type.get());
+      interfaces.add((ASTReferenceType) type.get());
     }
     ASTCDInterface astInterface = ASTCDInterface.getBuilder().name(interfaceName)
         .interfaces(interfaces).build();
