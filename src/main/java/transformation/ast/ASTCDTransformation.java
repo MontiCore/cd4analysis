@@ -29,6 +29,7 @@ import de.cd4analysis._ast.ASTModifier;
 import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.cd4analysis._parser.CDAttributeMCParser;
 import de.cd4analysis._parser.CDMethodMCParser;
+import de.cd4analysis._parser.ModifierMCParser;
 import de.cd4analysis._parser.ReturnTypeMCParser;
 import de.cd4analysis._parser.TypeMCParser;
 import de.monticore.types._ast.ASTReferenceType;
@@ -45,6 +46,12 @@ import de.se_rwth.commons.logging.Log;
  */
 public class ASTCDTransformation {
   
+  public static final String PARAM_NAME_PREFIX = "param";
+  
+  public static final String DEFAULT_RETURN_TYPE = "void";
+  
+  public static final String DEFAULT_MODIFIER = "public";
+  
   // -------------------- Attributes --------------------
   
   /**
@@ -59,14 +66,33 @@ public class ASTCDTransformation {
    */
   public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
       String attrType) {
+    return addCdAttribute(astClass, attrName, attrType, DEFAULT_MODIFIER);
+  }
+  
+  /**
+   * Creates an instance of the {@link ASTCDAttribute} with the given name and
+   * type and adds it to the given class
+   * 
+   * @param astClass
+   * @param attrName
+   * @param attrType
+   * @param modifier
+   * @return Optional of the created ast node or Optional.absent() if the
+   * attribute type couldn't be parsed
+   */
+  public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
+      String attrType, String modifier) {
+    checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(attrName));
     checkArgument(!Strings.isNullOrEmpty(attrType));
-    Optional<ASTType> attributeType = createType(attrType);
-    if (!attributeType.isPresent()) {
-      Log.error("Attribute can't be added to the CD class " + astClass.getName());
+    Optional<ASTType> parsedType = createType(attrType);
+    Optional<ASTModifier> parsedModifier = createModifier(modifier);
+    if (!parsedType.isPresent() || !parsedModifier.isPresent()) {
+      Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
       return Optional.absent();
     }
-    ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(attributeType.get())
+    ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
+        .modifier(parsedModifier.get())
         .build();
     addCdAttribute(astClass, attribute);
     return Optional.of(attribute);
@@ -156,13 +182,13 @@ public class ASTCDTransformation {
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
-        Log.error("Class " + className + " can't be added to the CD drfinition.");
+        Log.error("Class " + className + " can't be added to the CD definition.");
         return Optional.absent();
       }
       interfaces.add((ASTReferenceType) type.get());
     }
     if (!superClass.isPresent()) {
-      Log.error("Class " + className + " can't be added to the CD drfinition.");
+      Log.error("Class " + className + " can't be added to the CD definition.");
       return Optional.absent();
     }
     ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
@@ -232,7 +258,7 @@ public class ASTCDTransformation {
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
-        Log.error("Class " + interfaceName + " can't be added to the CD drfinition.");
+        Log.error("Interface " + interfaceName + " can't be added to the CD definition.");
         return Optional.absent();
       }
       interfaces.add((ASTReferenceType) type.get());
@@ -286,7 +312,8 @@ public class ASTCDTransformation {
    * @return The created {@link ASTCDMethod} node
    */
   public static ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
-    return addCdMethod(astClass, methodName, "void", Lists.newArrayList()).get();
+    return addCdMethod(astClass, methodName, DEFAULT_RETURN_TYPE, DEFAULT_MODIFIER,
+        Lists.newArrayList()).get();
   }
   
   /**
@@ -301,13 +328,14 @@ public class ASTCDTransformation {
    * Optional.absent() if the method definition couldn't be parsed
    */
   public static Optional<ASTCDMethod> addCdMethod(ASTCDClass astClass, String methodName,
-      String returnType,
+      String returnType, String modifier,
       List<String> paramTypes) {
     checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(methodName));
     Optional<ASTReturnType> parsedReturnType = createReturnType(returnType);
     Optional<ASTCDParameterList> cdParameters = createCdMethodParameters(paramTypes);
-    if (!parsedReturnType.isPresent() || !cdParameters.isPresent()) {
+    Optional<ASTModifier> parsedModifier = createModifier(modifier);
+    if (!parsedReturnType.isPresent() || !cdParameters.isPresent() || !parsedModifier.isPresent()) {
       Log.error("Method " + methodName + " can't be added to the CD class " + astClass.getName());
       return Optional.absent();
     }
@@ -315,6 +343,7 @@ public class ASTCDTransformation {
         .name(methodName)
         .modifier(ASTModifier.getBuilder().r_public(true).build())
         .returnType(parsedReturnType.get())
+        .modifier(parsedModifier.get())
         .cDParameters(cdParameters.get())
         .build();
     addCdMethod(astClass, cdMethod);
@@ -354,7 +383,7 @@ public class ASTCDTransformation {
     }
     types.forEach(param -> params.add(ASTCDParameter.getBuilder()
         .type(param)
-        .name("param" + types.indexOf(param)).build()));
+        .name(PARAM_NAME_PREFIX + types.indexOf(param)).build()));
     return Optional.of(params);
   }
   
@@ -404,6 +433,30 @@ public class ASTCDTransformation {
           + "\nCatched exception: " + e);
     }
     return astType;
+  }
+  
+  /**
+   * Creates an instance of the {@link ASTModifier} using the modifier
+   * definition
+   * 
+   * @param modifier
+   * @return Optional of the created {@link ASTModifier} node or
+   * Optional.absent() if the type definition couldn't be parsed
+   */
+  public static Optional<ASTModifier> createModifier(String modifier) {
+    checkArgument(!Strings.isNullOrEmpty(modifier));
+    Optional<ASTModifier> astModifier = Optional.absent();
+    try {
+      astModifier = new ModifierMCParser().parse(new StringReader(modifier));
+      if (!astModifier.isPresent()) {
+        Log.error("The modifier " + modifier + " wasn't defined correctly");
+      }
+    }
+    catch (RecognitionException | IOException e) {
+      Log.error("The modifier  " + modifier + " wasn't defined correctly: "
+          + "\nCatched exception: " + e);
+    }
+    return astModifier;
   }
   
 }

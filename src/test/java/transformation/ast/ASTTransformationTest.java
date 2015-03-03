@@ -137,7 +137,7 @@ public class ASTTransformationTest {
     assertEquals(method1.getName(), "test1");
     assertTrue(method1.getReturnType() instanceof ASTVoidType);
     
-    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethod(astClass, "test2", "Integer", Lists.newArrayList("A", "a.b.C", "List<String>"));
+    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethod(astClass, "test2", "Integer", "protected final static", Lists.newArrayList("A", "a.b.C", "List<String>"));
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getReturnType() instanceof ASTSimpleReferenceType);
@@ -157,6 +157,10 @@ public class ASTTransformationTest {
     assertEquals(param2Type.getTypeArguments().get().getTypeArguments().size(), 1);
     assertTrue(param2Type.getTypeArguments().get().getTypeArguments().get(0) instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)param2Type.getTypeArguments().get().getTypeArguments().get(0)).getName(), Lists.newArrayList("String"));
+    assertTrue(method2.get().getModifier() != null);
+    assertTrue(method2.get().getModifier().isProtected());
+    assertTrue(method2.get().getModifier().isFinal());
+    assertTrue(method2.get().getModifier().isStatic());
   }
   
   @Test
