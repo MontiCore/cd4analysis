@@ -50,7 +50,7 @@ public class ASTCDTransformation {
   
   public static final String DEFAULT_RETURN_TYPE = "void";
   
-  public static final String DEFAULT_MODIFIER = "public";
+  public static final String DEFAULT_METHOD_MODIFIER = "public";
   
   // -------------------- Attributes --------------------
   
@@ -66,7 +66,18 @@ public class ASTCDTransformation {
    */
   public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
       String attrType) {
-    return addCdAttribute(astClass, attrName, attrType, DEFAULT_MODIFIER);
+    checkNotNull(astClass);
+    checkArgument(!Strings.isNullOrEmpty(attrName));
+    checkArgument(!Strings.isNullOrEmpty(attrType));
+    Optional<ASTType> parsedType = createType(attrType);
+    if (!parsedType.isPresent()) {
+      Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
+      return Optional.absent();
+    }
+    ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
+        .build();
+    addCdAttribute(astClass, attribute);
+    return Optional.of(attribute);
   }
   
   /**
@@ -178,6 +189,10 @@ public class ASTCDTransformation {
     checkNotNull(astDef);
     checkArgument(!Strings.isNullOrEmpty(className));
     Optional<ASTType> superClass = createType(superClassName);
+    if (!superClass.isPresent()) {
+      Log.error("Class " + className + " can't be added to the CD definition.");
+      return Optional.absent();
+    }
     ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
@@ -186,10 +201,6 @@ public class ASTCDTransformation {
         return Optional.absent();
       }
       interfaces.add((ASTReferenceType) type.get());
-    }
-    if (!superClass.isPresent()) {
-      Log.error("Class " + className + " can't be added to the CD definition.");
-      return Optional.absent();
     }
     ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
         .superclass((ASTReferenceType) superClass.get()).interfaces(interfaces).build();
@@ -312,7 +323,7 @@ public class ASTCDTransformation {
    * @return The created {@link ASTCDMethod} node
    */
   public static ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
-    return addCdMethod(astClass, methodName, DEFAULT_RETURN_TYPE, DEFAULT_MODIFIER,
+    return addCdMethod(astClass, methodName, DEFAULT_RETURN_TYPE, DEFAULT_METHOD_MODIFIER,
         Lists.newArrayList()).get();
   }
   
@@ -341,7 +352,6 @@ public class ASTCDTransformation {
     }
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
         .name(methodName)
-        .modifier(ASTModifier.getBuilder().r_public(true).build())
         .returnType(parsedReturnType.get())
         .modifier(parsedModifier.get())
         .cDParameters(cdParameters.get())

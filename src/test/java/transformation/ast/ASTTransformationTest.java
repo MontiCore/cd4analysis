@@ -95,12 +95,30 @@ public class ASTTransformationTest {
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr1.get().getType()).getName(), Lists.newArrayList("String"));
+    assertTrue(!attr1.get().getModifier().isPresent());
     
     Optional<ASTCDAttribute> attr2 = ASTCDTransformation.addCdAttribute(astClass, "b", "a.b.C");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr2.get().getType()).getName(), Lists.newArrayList("a", "b", "C"));
+    assertTrue(!attr2.get().getModifier().isPresent());
+    
+    Optional<ASTCDAttribute> attr3 = ASTCDTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
+    assertTrue(attr3.isPresent());
+    assertEquals(attr3.get().getName(), "c");
+    assertTrue(attr3.get().getType() instanceof ASTSimpleReferenceType);
+    ASTSimpleReferenceType attrType = (ASTSimpleReferenceType)attr3.get().getType();
+    assertEquals(attrType.getName(), Lists.newArrayList("List"));
+    assertTrue(attrType.getTypeArguments().isPresent());
+    assertEquals(attrType.getTypeArguments().get().getTypeArguments().size(), 1);
+    assertTrue(attrType.getTypeArguments().get().getTypeArguments().get(0) instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType)attrType.getTypeArguments().get().getTypeArguments().get(0)).getName(), Lists.newArrayList("String"));
+    assertTrue(attr3.get().getModifier().isPresent());
+    assertTrue(attr3.get().getModifier().get().isPrivate());
+    assertTrue(attr3.get().getModifier().get().isStatic());
+    assertTrue(!attr3.get().getModifier().get().isPublic());
+    assertTrue(!attr3.get().getModifier().get().isFinal());
   }
   
   @Test
@@ -137,7 +155,7 @@ public class ASTTransformationTest {
     assertEquals(method1.getName(), "test1");
     assertTrue(method1.getReturnType() instanceof ASTVoidType);
     
-    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethod(astClass, "test2", "Integer", "protected final static", Lists.newArrayList("A", "a.b.C", "List<String>"));
+    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethod(astClass, "test2", "Integer", "protected static final", Lists.newArrayList("A", "a.b.C", "List<String>"));
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getReturnType() instanceof ASTSimpleReferenceType);
@@ -159,6 +177,7 @@ public class ASTTransformationTest {
     assertEquals(((ASTSimpleReferenceType)param2Type.getTypeArguments().get().getTypeArguments().get(0)).getName(), Lists.newArrayList("String"));
     assertTrue(method2.get().getModifier() != null);
     assertTrue(method2.get().getModifier().isProtected());
+    assertTrue(!method2.get().getModifier().isPublic());
     assertTrue(method2.get().getModifier().isFinal());
     assertTrue(method2.get().getModifier().isStatic());
   }
@@ -173,13 +192,13 @@ public class ASTTransformationTest {
     assertTrue(method1.get().getModifier() != null);
     assertTrue(method1.get().getModifier().isPublic());
     
-    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethodUsingDefinition(astClass, "static final private Integer test2(A param0, a.b.C param1, List<String> param2);");
+    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethodUsingDefinition(astClass, "protected static final Integer test2(A param0, a.b.C param1, List<String> param2);");
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getReturnType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)method2.get().getReturnType()).getName(), Lists.newArrayList("Integer"));
     assertTrue(method2.get().getModifier() != null);
-    assertTrue(method2.get().getModifier().isPrivate());
+    assertTrue(method2.get().getModifier().isProtected());
     assertTrue(!method2.get().getModifier().isPublic());
     assertTrue(method2.get().getModifier().isStatic());
     assertTrue(method2.get().getModifier().isFinal());
