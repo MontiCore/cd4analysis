@@ -13,7 +13,7 @@
     <!-- .. Libraries ..................................................... -->
 
     <monticore.version>4.0.2-SNAPSHOT</monticore.version>
-    <monticore.astgenerator.version>4.0.0.3</monticore.astgenerator.version>
+    <monticore.astgenerator.version>4.0.0.4</monticore.astgenerator.version>
     <monticore.parsergenerator.version>4.0.1-SNAPSHOT</monticore.parsergenerator.version>
 
     <guava.version>18.0</guava.version>
