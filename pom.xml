@@ -13,7 +13,7 @@
     <!-- .. Libraries ..................................................... -->
 
     <monticore.version>4.0.2-SNAPSHOT</monticore.version>
-    <monticore.astgenerator.version>4.0.0.4</monticore.astgenerator.version>
+    <monticore.astgenerator.version>4.0.0.M1</monticore.astgenerator.version>
     <monticore.parsergenerator.version>4.0.1-SNAPSHOT</monticore.parsergenerator.version>
 
     <guava.version>18.0</guava.version>
@@ -24,7 +24,7 @@
     <!-- .. Plugins ....................................................... -->
 
     <mc3.maven.version>3.3.0-SNAPSHOT</mc3.maven.version>
-    <mc4.maven.version>4.0.0.1</mc4.maven.version>
+    <mc4.maven.version>4.0.0.M1</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
@@ -98,19 +98,7 @@
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>de.monticore</groupId>
-            <artifactId>monticore-generator</artifactId>
-            <version>${monticore.astgenerator.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>de.monticore</groupId>
-            <artifactId>monticore-runtime</artifactId>
-            <version>${monticore.astgenerator.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
+       </plugin>
 
       <!-- MontiCore Parser Generation -->
       <plugin>

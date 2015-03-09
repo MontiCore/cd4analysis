@@ -399,11 +399,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
         if (cdAssoc.getRightQualifier().isPresent()) {
           final ASTCDQualifier qualifier = cdAssoc.getRightQualifier().get();
-          if ((qualifier.getName() != null) && (qualifier.getName().equals(""))) {
-            assocRight2LeftSymbol.setQualifier(qualifier.getName());
+          if ((qualifier.getName().isPresent()) && (qualifier.getName().equals(""))) {
+            assocRight2LeftSymbol.setQualifier(qualifier.getName().get());
           }
-          else if (qualifier.getType() != null) {
-            assocRight2LeftSymbol.setQualifier(TypesPrinter.printType(qualifier.getType()));
+          else if (qualifier.getType().isPresent()) {
+            assocRight2LeftSymbol.setQualifier(TypesPrinter.printType(qualifier.getType().get()));
           }
         }
         assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
@@ -440,11 +440,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
         if (cdAssoc.getLeftQualifier().isPresent()) {
           final ASTCDQualifier qualifier = cdAssoc.getLeftQualifier().get();
-          if ((qualifier.getName() != null) && (!qualifier.getName().equals(""))) {
-            assocLeft2RightSymbol.setQualifier(qualifier.getName());
+          if ((qualifier.getName().isPresent()) && (!qualifier.getName().equals(""))) {
+            assocLeft2RightSymbol.setQualifier(qualifier.getName().get());
           }
-          else if (qualifier.getType() != null) {
-            assocLeft2RightSymbol.setQualifier(TypesPrinter.printType(qualifier.getType()));
+          else if (qualifier.getType().isPresent()) {
+            assocLeft2RightSymbol.setQualifier(TypesPrinter.printType(qualifier.getType().get()));
           }
         }
         assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());

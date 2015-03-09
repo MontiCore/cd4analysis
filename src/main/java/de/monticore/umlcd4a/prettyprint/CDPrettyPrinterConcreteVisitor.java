@@ -344,11 +344,13 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * @param a qualifier
    */
   public void ownVisit(ASTCDQualifier a) {
-    if (a.getName() != null) {
-      printer.print(a.getName());
+    if (a.getName().isPresent()) {
+      printer.print(a.getName().get());
     }
     else {
-      visitor.startVisit(a.getType());
+      if (a.getType().isPresent()) {
+        visitor.startVisit(a.getType().get());
+      }
     }
   }
   
