@@ -18,6 +18,7 @@ import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Stereotype;
 
+import java.util.Collection;
 import java.util.List;
 
 public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference<CDTypeSymbol> {
@@ -268,6 +269,21 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public boolean isPublic() {
     return getReferencedSymbol().isPublic();
+  }
+
+  @Override
+  public Collection<CDFieldSymbol> getAllVisibleFieldsOfSuperTypes() {
+    return getReferencedSymbol().getAllVisibleFieldsOfSuperTypes();
+  }
+
+  @Override
+  public boolean hasSuperType(String superTypeName) {
+    return getReferencedSymbol().hasSuperType(superTypeName);
+  }
+
+  @Override
+  public boolean hasSuperTypeByFullName(String superTypeFullName) {
+    return getReferencedSymbol().hasSuperTypeByFullName(superTypeFullName);
   }
 
   @Override

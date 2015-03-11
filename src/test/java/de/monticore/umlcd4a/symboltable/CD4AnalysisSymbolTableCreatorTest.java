@@ -354,14 +354,28 @@ public class CD4AnalysisSymbolTableCreatorTest {
         new CDMethodSignaturePredicate("getAge", "String", "String")).isPresent());
 
 
-    final Collection<CDFieldSymbol> superFieldsOfProf = profType.getAllFieldsOfSuperTypes();
 
-    assertEquals(4, superFieldsOfProf.size());
+    // getAllVisibleFieldsOfSuperTypes()
+    final Collection<CDFieldSymbol> superFieldsOfProf = profType.getAllVisibleFieldsOfSuperTypes();
+
+    assertEquals(3, superFieldsOfProf.size());
+    // fields of direct super class //
     assertTrue(superFieldsOfProf.contains(nameField));
     assertTrue(superFieldsOfProf.contains(ageField));
-    assertTrue(superFieldsOfProf.contains(secondNameField));
+    // secondName is private
+    assertFalse(superFieldsOfProf.contains(secondNameField));
+    // fields of super super class //
     assertTrue(superFieldsOfProf.contains(extinctField));
 
+    // hasSuperType()
+    assertTrue(profType.hasSuperType("Prof"));
+    assertTrue(profType.hasSuperType("Person"));
+    assertTrue(profType.hasSuperType("Creature"));
+
+    // hasSuperTypeByFullName()
+    assertTrue(profType.hasSuperTypeByFullName("de.monticore.umlcd4a.symboltable.CD1.Prof"));
+    assertTrue(profType.hasSuperTypeByFullName("de.monticore.umlcd4a.symboltable.CD1.Person"));
+    assertTrue(profType.hasSuperTypeByFullName("de.monticore.umlcd4a.symboltable.CD1.Creature"));
   }
 
 
