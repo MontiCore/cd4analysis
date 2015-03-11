@@ -10,6 +10,8 @@ import de.monticore.symboltable.MutableScope;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
@@ -21,16 +23,13 @@ public class CD4AnalysisSymbolTableCreatorTest {
   public void testSymbolTableCreation() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-
-    final CDTypeSymbol personType = globalScope.<CDTypeSymbol> resolve(
-        "de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orNull();
-    assertNotNull(personType);
+    final CDTypeSymbol creatureType = globalScope.<CDTypeSymbol> resolve(
+        "de.monticore.umlcd4a.symboltable.CD1.Creature", CDTypeSymbol.KIND).orNull();
+    assertNotNull(creatureType);
 
     // Scope Hierarchy: GlobalScope -> ArtifactScope -> ClassDiagramScope ->* ...
     assertEquals(1, globalScope.getSubScopes().size());
     final ArtifactScope artifactScope = (ArtifactScope) globalScope.getSubScopes().get(0);
-
-
 
     assertEquals(1, artifactScope.getSubScopes().size());
     // Continue with the class diagram scope.Else, if globalScope or artifact scope was used, all
@@ -42,7 +41,30 @@ public class CD4AnalysisSymbolTableCreatorTest {
     globalScope.define(new CDTypeSymbol("int"));
     globalScope.define(new CDTypeSymbol("boolean"));
     globalScope.define(new CDTypeSymbol("String"));
+    final CDTypeSymbol builtInList = new CDTypeSymbol("List");
+    builtInList.setPackageName("java.util");
+    globalScope.define(builtInList);
 
+
+    assertNotNull(creatureType.getSpannedScope());
+    assertSame(creatureType, creatureType.getSpannedScope().getSpanningSymbol().get());
+    assertEquals("Creature", creatureType.getName());
+    assertTrue(creatureType.isAbstract());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Creature", creatureType.getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable", creatureType.getPackageName());
+    assertTrue(creatureType.isPublic());
+    // AST
+    assertTrue(creatureType.getAstNode().isPresent());
+    assertTrue(creatureType.getAstNode().get() instanceof ASTCDClass);
+    // Fields
+    assertEquals(1, creatureType.getFields().size());
+    final CDFieldSymbol extinctField = creatureType.getField("extinct").get();
+    assertEquals("extinct", extinctField.getName());
+
+
+    final CDTypeSymbol personType = globalScope.<CDTypeSymbol> resolve(
+        "de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orNull();
+    assertNotNull(personType);
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
     assertEquals("Person", personType.getName());
@@ -65,9 +87,11 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(nameField.getAstNode().isPresent());
     assertTrue(nameField.getAstNode().get() instanceof ASTCDAttribute);
-    assertEquals("secondName", personType.getField("secondName").get().getName());
-    assertTrue(personType.getField("secondName").get().isPrivate());
-    assertEquals("age", personType.getField("age").get().getName());
+    final CDFieldSymbol secondNameField = personType.getField("secondName").get();
+    assertEquals("secondName", secondNameField.getName());
+    assertTrue(secondNameField.isPrivate());
+    final CDFieldSymbol ageField = personType.getField("age").get();
+    assertEquals("age", ageField.getName());
     assertTrue(personType.getField("age").get().isProtected());
     // Field Stereotypes
     assertEquals(1, nameField.getStereotypes().size());
@@ -114,9 +138,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(profType);
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Prof", profType.getFullName());
     assertTrue(profType.isPrivate());
-    assertEquals(1, profType.getFields().size());
+    assertEquals(2, profType.getFields().size());
     assertEquals("uni", profType.getField("uni").get().getName());
     assertTrue(profType.getField("uni").get().isDerived());
+    final CDFieldSymbol profFieldPP = profType.getField("pp").orNull();
+    assertNotNull(profFieldPP);
+    final CDTypeSymbolReference personList = (CDTypeSymbolReference) profFieldPP.getType();
+    // TODO PN uncomment
+//    assertEquals("List", personList.getName());
     // Super class
     assertTrue(profType.getSuperClass().isPresent());
     assertEquals(personType.getName(), profType.getSuperClass().get().getName());
@@ -324,6 +353,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(personType.getSpannedScope().resolve(
         new CDMethodSignaturePredicate("getAge", "String", "String")).isPresent());
 
+
+    final Collection<CDFieldSymbol> superFieldsOfProf = profType.getAllFieldsOfSuperTypes();
+
+    assertEquals(4, superFieldsOfProf.size());
+    assertTrue(superFieldsOfProf.contains(nameField));
+    assertTrue(superFieldsOfProf.contains(ageField));
+    assertTrue(superFieldsOfProf.contains(secondNameField));
+    assertTrue(superFieldsOfProf.contains(extinctField));
 
   }
 

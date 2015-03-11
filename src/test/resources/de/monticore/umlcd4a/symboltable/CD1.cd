@@ -1,7 +1,12 @@
 package de.monticore.umlcd4a.symboltable;
 
 classdiagram CD1 {
-  <<S1, S2>> class Person {
+
+  abstract class Creature {
+     boolean extinct;
+  }
+
+  <<S1, S2>> class Person extends Creature {
      <<SF>> public String name;
      protected int age;
      private String secondName;
@@ -18,6 +23,7 @@ classdiagram CD1 {
 
   private class Prof extends Person implements Printable, Callable {
      / String uni;
+    List<Person> pp;
   }
 
   public enum E implements Printable {

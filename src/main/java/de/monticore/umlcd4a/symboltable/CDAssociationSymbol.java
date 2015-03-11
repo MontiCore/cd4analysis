@@ -32,7 +32,7 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  protected CDAssociationSymbol(CDTypeSymbol sourceType, CDTypeSymbol targetType) {
+  protected CDAssociationSymbol(final CDTypeSymbol sourceType, final CDTypeSymbol targetType) {
     super("", KIND);
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
@@ -52,11 +52,11 @@ public class CDAssociationSymbol extends CommonSymbol {
     return sourceCardinality;
   }
 
-  public void setSourceCardinality(Cardinality sourceCardinality) {
+  public void setSourceCardinality(final Cardinality sourceCardinality) {
     this.sourceCardinality = sourceCardinality;
   }
 
-  public void setTargetCardinality(Cardinality cardinality) {
+  public void setTargetCardinality(final Cardinality cardinality) {
     this.targetCardinality = cardinality;
   }
 
@@ -68,7 +68,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     return targetCardinality;
   }
 
-  public void setRole(String role) {
+  public void setRole(final String role) {
     this.role = nullToEmpty(role);
   }
 
@@ -76,7 +76,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     return role;
   }
 
-  public void setQualifier(String qualifier) {
+  public void setQualifier(final String qualifier) {
     this.qualifier = nullToEmpty(qualifier);
   }
   
@@ -84,7 +84,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     return qualifier;
   }
 
-  public void setAssocName(String assocName) {
+  public void setAssocName(final String assocName) {
     this.assocName = nullToEmpty(assocName);
   }
 
@@ -92,7 +92,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     return assocName;
   }
 
-  public void setBidirectional(boolean bidirectional) {
+  public void setBidirectional(final boolean bidirectional) {
     this.bidirectional = bidirectional;
   }
   
@@ -100,7 +100,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     return bidirectional;
   }
   
-  public void setDerived(boolean derived) {
+  public void setDerived(final boolean derived) {
     this.derived = derived;
   }
   
@@ -108,7 +108,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     return this.derived;
   }
   
-  public void setRelationship(Relationship relationship) {
+  public void setRelationship(final Relationship relationship) {
     this.relationship = relationship;
   }
   
@@ -133,8 +133,8 @@ public class CDAssociationSymbol extends CommonSymbol {
     return ImmutableList.copyOf(stereotypes);
   }
   
-  public Optional<Stereotype> getStereotype(String name) {
-    for (Stereotype stereotype: this.stereotypes) {
+  public Optional<Stereotype> getStereotype(final String name) {
+    for (final Stereotype stereotype: this.stereotypes) {
       if (stereotype.getName().equals(name)) {
         return Optional.of(stereotype);
       }
@@ -142,8 +142,8 @@ public class CDAssociationSymbol extends CommonSymbol {
     return Optional.absent();
   }
 
-  public boolean containsStereotype(String name, String value) {
-    for (Stereotype stereotype: this.stereotypes) {
+  public boolean containsStereotype(final String name, final String value) {
+    for (final Stereotype stereotype: this.stereotypes) {
       if (stereotype.compare(name, value)) {
         return true;
       }
@@ -152,7 +152,7 @@ public class CDAssociationSymbol extends CommonSymbol {
     
   }
 
-  public void addStereotype(Stereotype stereotype) {
+  public void addStereotype(final Stereotype stereotype) {
     this.stereotypes.add(stereotype);
   }
 

@@ -2,11 +2,15 @@ package de.monticore.umlcd4a.symboltable;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import de.monticore.symboltable.types.CommonJTypeSymbol;
 import de.se_rwth.commons.Names;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol> {
@@ -69,5 +73,15 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return Names.getQualifier(getName());
   }
 
+  public Collection<CDFieldSymbol> getAllFieldsOfSuperTypes() {
+    final Set<CDFieldSymbol> allSuperTypeFields = new LinkedHashSet<>();
+
+    for (CDTypeSymbol superType : getSuperTypes()) {
+      allSuperTypeFields.addAll(superType.getFields());
+      allSuperTypeFields.addAll(superType.getAllFieldsOfSuperTypes());
+    }
+
+    return ImmutableSet.copyOf(allSuperTypeFields);
+  }
 
 }
