@@ -177,7 +177,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDAssociation = Stereotype? 
     (["association"] | ["composition"])
-    (Derived:[DERIVED:"/"])?  Name?
+    ([Derived:"/"])?  Name?
     leftModifier:Modifier?
     leftCardinality:Cardinality?
     leftReferenceName:QualifiedName
@@ -198,10 +198,10 @@ grammar CD4Analysis extends de.monticore.types.Types {
     (["abstract"]
       | ["final"]
       | ["static"]
-      | Private:["private"] | Private:[PRIVATE:"-"]  // TODO: Vereinfachung (Bug)
-      | Protected:["protected"] | Protected:[PROTECTED:"#"]
-      | Public:["public"] | Public:[PUBLIC:"+"]
-      | Derived:["derived"] | Derived:[DERIVED:"/"] )*;
+      | Private:["private"] | [Private:"-"]  // TODO: Vereinfachung (Bug)
+      | Protected:["protected"] | [Protected:"#"]
+      | Public:["public"] | [Public:"+"]
+      | Derived:["derived"] | [Derived:"/"] )*;
     
 
   /** ASTCardinality represents a Cardinality in a Classdiagram
