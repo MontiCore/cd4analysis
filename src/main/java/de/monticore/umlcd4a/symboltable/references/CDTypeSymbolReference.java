@@ -25,6 +25,8 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
 
   private final TypeReference<CDTypeSymbol> typeReference;
 
+
+
   public CDTypeSymbolReference(String name, Scope definingScopeOfReference) {
     super(name);
 
@@ -305,5 +307,4 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   public void setActualTypeArguments(List<ActualTypeArgument> actualTypeArguments) {
     typeReference.setActualTypeArguments(actualTypeArguments);
   }
-
 }

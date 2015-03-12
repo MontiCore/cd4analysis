@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
 public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol> {
@@ -22,6 +23,8 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
+
+  private String stringRepresentation = "";
 
   public CDTypeSymbol(final String name) {
     super(name, KIND, CDFieldSymbol.KIND, CDMethodSymbol.KIND);
@@ -128,6 +131,19 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return false;
   }
 
+  /**
+   * Sets the string representation of this type reference. This can include the type parameters,
+   * e.g., <code>List&lt;E&gt;</pre></code>
+   * @param stringRepresentation
+   */
+  public void setStringRepresentation(final String stringRepresentation) {
+    this.stringRepresentation = nullToEmpty(stringRepresentation);
+  }
 
-
+  public String getStringRepresentation() {
+    if (stringRepresentation.isEmpty()) {
+      return getName();
+    }
+    return stringRepresentation;
+  }
 }

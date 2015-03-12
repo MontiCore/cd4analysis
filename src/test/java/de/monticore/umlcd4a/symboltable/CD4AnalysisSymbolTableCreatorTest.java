@@ -144,8 +144,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     final CDFieldSymbol profFieldPP = profType.getField("pp").orNull();
     assertNotNull(profFieldPP);
     final CDTypeSymbolReference personList = (CDTypeSymbolReference) profFieldPP.getType();
-    // TODO PN uncomment
-//    assertEquals("List", personList.getName());
+    assertEquals("List", personList.getName());
+    assertEquals("List<Person>", personList.getStringRepresentation());
     // Super class
     assertTrue(profType.getSuperClass().isPresent());
     assertEquals(personType.getName(), profType.getSuperClass().get().getName());

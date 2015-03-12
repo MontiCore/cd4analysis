@@ -149,10 +149,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
   @Override
   public default void visit(final ASTCDAttribute astAttribute) {
-    final String typeName = TypesPrinter.printType(astAttribute.getType());
+    final String typeName = TypesPrinter.printTypeWithoutTypeArguments(astAttribute.getType());
 
-    final CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName,
-        currentScope().get());
+    // TODO PN type arguments are not set yet. For every argument a CDTypeSymbolReference must be created.
+
+    final CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope().get());
+    typeReference.setStringRepresentation(TypesPrinter.printType(astAttribute.getType()));
+
 
     final CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
 
