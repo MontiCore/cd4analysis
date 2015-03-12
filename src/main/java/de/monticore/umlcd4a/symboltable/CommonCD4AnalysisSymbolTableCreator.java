@@ -11,7 +11,6 @@ import de.monticore.symboltable.ResolverConfiguration;
 
 import javax.annotation.Nullable;
 
-// TODO PN introduce CD4AnalysisSymbolTableCreationVisitor as soon as the CD4ABaseVisitor is generated
 public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreator implements
     CD4AnalysisSymbolTableCreator {
 
