@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram CD4AC0034 {
+classdiagram C4A34 {
   class A {
     / String a = null;
     / String b = "b";

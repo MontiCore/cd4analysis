@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram CD4AC0008 {
+classdiagram C4A08 {
   interface I;
   enum E;
   class C1 extends I;

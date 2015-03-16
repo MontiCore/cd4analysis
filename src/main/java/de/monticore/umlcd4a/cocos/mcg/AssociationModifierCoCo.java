@@ -18,6 +18,9 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class AssociationModifierCoCo implements CD4AnalysisASTCDAssociationCoCo {
+  public static final String ERROR_CODE = "0xCD4AC2002";
+  
+  public static final String ERROR_MSG_FORMAT = "The modifier abstract can not be used for associations at association %s.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
@@ -40,7 +43,7 @@ public class AssociationModifierCoCo implements CD4AnalysisASTCDAssociationCoCo 
   
   private void error(ASTCDAssociation assoc, ASTModifier mod) {
     Log.error(CoCoHelper.buildErrorMsg("CD-1-44", String.format(
-        "The modifier abstract can not be used for associations at association %s.",
+        ERROR_MSG_FORMAT,
         CD4ACoCoHelper.printAssociation(assoc)),
         mod.get_SourcePositionStart()));
   }

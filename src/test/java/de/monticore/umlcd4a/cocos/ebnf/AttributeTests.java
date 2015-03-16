@@ -65,8 +65,8 @@ public class AttributeTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidAssignment() {
-    String modelName = "CD4AC0011.cd";
-    String errorCode = "0xCD4AC0011";
+    String modelName = "C4A11.cd";
+    String errorCode = "0xC4A11";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -83,8 +83,8 @@ public class AttributeTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidAttributes() {
-    String modelName = "CD4AC0012.cd";
-    String errorCode = "CD4AC0012";
+    String modelName = "C4A12.cd";
+    String errorCode = "C4A12";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -97,8 +97,8 @@ public class AttributeTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidAttributeOverride() {
-    String modelName = "CD4AC0013.cd";
-    String errorCode = "0xCD4AC0013";
+    String modelName = "C4A13.cd";
+    String errorCode = "0xC4A13";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -118,8 +118,8 @@ public class AttributeTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testUndefinedType() {
-    String modelName = "CD4AC0014.cd";
-    String errorCode = "0xCD4AC0014";
+    String modelName = "C4A14.cd";
+    String errorCode = "0xC4A14";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper
@@ -130,8 +130,8 @@ public class AttributeTests extends AbstractCoCoTest {
   
   @Test
   public void testDuplicateAttributes() {
-    String modelName = "CD4AC0015.cd";
-    String errorCode = "0xCD4AC0015";
+    String modelName = "C4A15.cd";
+    String errorCode = "0xC4A15";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),

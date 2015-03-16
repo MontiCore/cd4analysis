@@ -59,8 +59,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testDuplicateTypeNames() {
-    String modelName = "CD4AC0004.cd";
-    String errorCode = "0xCD4AC0004";
+    String modelName = "C4A04.cd";
+    String errorCode = "0xC4A04";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -83,8 +83,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidTypeName() {
-    String modelName = "0xCD4AC0005.cd";
-    String errorCode = "0xCD4AC0005";
+    String modelName = "C4A05.cd";
+    String errorCode = "0xC4A05";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -100,8 +100,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testDuplicateEnumConstant() {
-    String modelName = "CD4AC0006.cd";
-    String errorCode = "0xCD4AC0006";
+    String modelName = "C4A06.cd";
+    String errorCode = "0xC4A06";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Duplicate enum constant: a.")
@@ -112,8 +112,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInheritanceCycle() {
-    String modelName = "CD4AC0007.cd";
-    String errorCode = "0xCD4AC0007";
+    String modelName = "C4A07.cd";
+    String errorCode = "0xC407";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -127,8 +127,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidClassExtends() {
-    String modelName = "CD4AC0008.cd";
-    String errorCode = "0xCD4AC0008";
+    String modelName = "C4A08.cd";
+    String errorCode = "0xC4A08";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -142,8 +142,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidInterfaceExtends() {
-    String modelName = "CD4AC0009.cd";
-    String errorCode = "0xCD4AC0009";
+    String modelName = "C4A09.cd";
+    String errorCode = "0xC4A09";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
@@ -157,8 +157,8 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidImplements() {
-    String modelName = "CD4AC0010.cd";
-    String errorCode = "0xCD4AC0010";
+    String modelName = "C4A10.cd";
+    String errorCode = "0xC4A10";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,

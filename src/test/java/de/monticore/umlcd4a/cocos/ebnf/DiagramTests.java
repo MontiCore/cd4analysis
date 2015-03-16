@@ -59,23 +59,23 @@ public class DiagramTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testDiagramName() {
-    String modelName = "cD4AC0001.cd";
-    String errorCode = "0xCD4AC0001";
+    String modelName = "c4A01.cd";
+    String errorCode = "0xC4A01";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode,
-            "First character of the diagram name cD4AC0001 must be upper-case.")
+            "First character of the diagram name c4A01 must be upper-case.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
     
-    modelName = "CD4AC0002";
-    errorCode = "0xCD4AC0002";
+    modelName = "C4A02";
+    errorCode = "0xC4A02";
     expectedErrors = Arrays
         .asList(
         CoCoHelper
             .buildErrorMsg(
                 errorCode,
-                "The name of the diagram CD4AC0002Invalid is not identical to the name of the file CD4AC0002 (without its fileextension).")
+                "The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
@@ -84,8 +84,8 @@ public class DiagramTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testNames() {
-    String modelName = "CD4AC0003.cd";
-    String errorCode = "0xCD4AC0003";
+    String modelName = "C4A03.cd";
+    String errorCode = "0xC4A03";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Name DAO is reserved for internal use."),

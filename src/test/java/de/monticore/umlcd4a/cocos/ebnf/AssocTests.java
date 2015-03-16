@@ -61,8 +61,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testAssocName() {
-    String modelName = "CD4AC0016.cd";
-    String errorCode = "0xCD4AC0016";
+    String modelName = "C4A16.cd";
+    String errorCode = "0xC4A16";
     
     Collection<String> expectedErrors = Arrays.asList(
         CoCoHelper.buildErrorMsg(errorCode, "Association Assoc1 must start in lower-case."),
@@ -75,8 +75,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Test
   public void testInvalidRoleNames() {
     // AssocTestGenerator.generateInvalidRoleNamesTests();
-    String modelName = "CD4AC0017.cd";
-    String errorCode = "0xCD4AC0017";
+    String modelName = "C4A17.cd";
+    String errorCode = "0xC4A17";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -322,8 +322,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Test
   public void testCompositeCardinality() {
     // AssocTestGenerator.generateInvalidCompositeCardinalities();
-    String modelName = "CD4AC0018.cd";
-    String errorCode = "0xCD4AC0018";
+    String modelName = "C4A18.cd";
+    String errorCode = "0xC4A18";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -1619,8 +1619,8 @@ public class AssocTests extends AbstractCoCoTest {
     // CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
     // }
     // });
-    String modelName = "CD4AC0019.cd";
-    String errorCode = "0xCD4AC0019";
+    String modelName = "C4A19.cd";
+    String errorCode = "0xC4A19";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -1985,8 +1985,8 @@ public class AssocTests extends AbstractCoCoTest {
     // referencedClass) + "\"),";
     // }
     // });
-    String modelName = "CD4AC0020.cd";
-    String errorCode = "0xCD4AC0020";
+    String modelName = "C4A20.cd";
+    String errorCode = "0xC4A20";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -2309,8 +2309,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testQualifiedAssocInvalidQualifierPosition() {
-    String modelName = "CD4AC0035.cd";
-    String errorCode = "0xCD4AC0035";
+    String modelName = "C4A35.cd";
+    String errorCode = "0xC4A35";
     
     // attribute qualifier
     
@@ -2595,7 +2595,7 @@ public class AssocTests extends AbstractCoCoTest {
     // };
     // AssocTestGenerator.generateQualifiedAssocTests(false, "String", "String",
     // errorMessagePrinter);
-    modelName = "CD4AC0035_2.cd";
+    modelName = "C4A35_2.cd";
     expectedErrors = Arrays
         .asList(
             CoCoHelper
@@ -2799,8 +2799,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Test
   public void testEnumAsSource() {
     // AssocTestGenerator.generateEnumAsSource();
-    String modelName = "CD4AC0021.cd";
-    String errorCode = "0xCD4AC0021";
+    String modelName = "C4A21.cd";
+    String errorCode = "0xC4A21";
     
     Collection<String> expectedErrors = Arrays
         .asList(
@@ -2900,8 +2900,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Test
   public void testExternalTypeAsSource() {
     // AssocTestGenerator.generateEnumAsSource();
-    String modelName = "CD4AC0022.cd";
-    String errorCode = "0xCD4AC0022";
+    String modelName = "C4A22.cd";
+    String errorCode = "0xC4A22";
     
     Collection<String> expectedErrors = new ArrayList<>();
     for (int i = 0; i <= 5; i++) {
@@ -2915,8 +2915,8 @@ public class AssocTests extends AbstractCoCoTest {
   @Test
   public void testInvalidOrderedAssocs() {
     // AssocTestGenerator.generateInvalidOrderedAssocs();
-    String modelName = "CD4AC0024.cd";
-    String errorCode = "0xCD4AC0024";
+    String modelName = "C4A24.cd";
+    String errorCode = "0xC4A24";
     
     Collection<String> expectedErrors = Arrays
         .asList(

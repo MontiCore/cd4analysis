@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram CD4AC0016 {
+classdiagram C4A16 {
   class A;
   class B;
 

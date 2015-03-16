@@ -59,8 +59,8 @@ public class TypesTest extends AbstractCoCoTest {
   @Ignore
   @Test
   public void testInvalidInitializationOfDerivedAttr() {
-    String modelName = "CD4AC0034.cd";
-    String errorCode = "0xCD4AC0034";
+    String modelName = "C4A34.cd";
+    String errorCode = "0xC4A34";
     
     /* (Hinweis fuer Implementierung: UMLP verbietet das, da UMLP eine
      * Derivation-Rule oder eine Initialisierung erwartet - in CD4A gibt es

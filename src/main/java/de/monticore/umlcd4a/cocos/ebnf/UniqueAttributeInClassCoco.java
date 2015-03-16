@@ -20,7 +20,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class UniqueAttributeInClassCoco implements CD4AnalysisASTCDClassCoCo {
   
-  public static final String ERROR_CODE = "0xCD4AC0015";
+  public static final String ERROR_CODE = "0xC4A15";
   
   public static final String ERROR_MSG_FORMAT = "Attribute %s is defined multiple times in class %s.";
   

@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.valid;
 
-classdiagram CD4AC0018 {
+classdiagram C4A18 {
   class A;
   class B;
   interface I;

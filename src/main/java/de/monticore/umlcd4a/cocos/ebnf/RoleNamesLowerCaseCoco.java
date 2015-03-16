@@ -20,7 +20,7 @@ import de.se_rwth.commons.logging.Log;
  */
 public class RoleNamesLowerCaseCoco implements CD4AnalysisASTCDAssociationCoCo {
   
-  public static final String ERROR_CODE = "0xCD4AC0017";
+  public static final String ERROR_CODE = "0xC4A17";
   
   public static final String ERROR_MSG_FORMAT = "Role %s of association %s must start in lower-case.";
   

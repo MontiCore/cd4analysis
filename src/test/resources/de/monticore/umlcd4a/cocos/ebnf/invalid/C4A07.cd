@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram CD4AC0007 {
+classdiagram C4A07 {
   class C extends C2;
   class C2 extends C;
   interface I extends I2;
