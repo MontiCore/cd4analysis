@@ -1,0 +1,9 @@
+package de.monticore.umlcd4a.cocos.all.valid;
+
+classdiagram BuiltInTypes {
+  class A {
+    Optional<String> a;
+    List<String> b;
+    Set<String> c;
+  }
+}
