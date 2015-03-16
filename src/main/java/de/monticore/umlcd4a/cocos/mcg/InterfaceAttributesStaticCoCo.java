@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class InterfaceAttributesStaticCoCo implements CD4AnalysisASTCDInterfaceCoCo {
-  public static final String ERROR_CODE = "0xCD4AC2001";
+  public static final String ERROR_CODE = "0xC4A51";
   
   public static final String ERROR_MSG_FORMAT = "Attribute %s in interface %s must be static.";
   

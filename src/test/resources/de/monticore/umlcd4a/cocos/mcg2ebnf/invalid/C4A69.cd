@@ -1,0 +1,16 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.invalid;
+
+classdiagram C4A69 {
+	enum A {
+		;
+		A();
+	}
+	enum B {
+		E(1);
+		B (int a);
+	}
+	enum C {
+		E("asd", 1);
+		C (String a, int b);
+	}
+}

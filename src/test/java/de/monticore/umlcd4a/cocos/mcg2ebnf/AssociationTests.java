@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
@@ -57,8 +56,8 @@ public class AssociationTests extends AbstractCoCoTest {
   
   @Test
   public void noStereotypesCoCoTest() {
-    String modelName = "CD4AC3011.cd";
-    String errorCode = "0xCD4AC3011";
+    String modelName = "C4A71.cd";
+    String errorCode = "0xC4A71";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -79,8 +78,8 @@ public class AssociationTests extends AbstractCoCoTest {
 
   @Test
   public void associationEndModifierRestrictionCoCoTest() {
-    String modelName = "CD4AC3012.cd";
-    String errorCode = "0xCD4AC3012";
+    String modelName = "C4A72.cd";
+    String errorCode = "0xC4A72";
     
     testModelNoErrors("valid/" + modelName);
     

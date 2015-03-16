@@ -59,8 +59,8 @@ public class AssocTests extends AbstractCoCoTest {
   
   @Test
   public void testAssocInvalidModifier() {
-    String modelName = "CD_1_44.cd";
-    String errorCode = "CD-1-44";
+    String modelName = "C4A57.cd";
+    String errorCode = "0xC4A57";
     
     Collection<String> expectedErrors = Arrays
         .asList(

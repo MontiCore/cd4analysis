@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.valid;
+
+classdiagram C4A68 {
+
+	enum A;
+	enum B {
+		;
+	}
+	enum C {
+		ENTRY, ENTRY2;
+	}
+}

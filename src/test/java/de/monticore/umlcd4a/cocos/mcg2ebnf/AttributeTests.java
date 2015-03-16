@@ -55,8 +55,8 @@ public class AttributeTests extends AbstractCoCoTest {
   
   @Test
   public void modifierOnlyDerivedCoCoTest() {
-    String modelName = "CD4AC3004.cd";
-    String errorCode = "0xCD4AC3004";
+    String modelName = "C4A64.cd";
+    String errorCode = "0xC4A64";
     
     testModelNoErrors("valid/" + modelName);
     

@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg.invalid;
+
+classdiagram C4A53 {
+  derived class A;
+  / class B;
+
+  static class C;
+  
+  public static class D;
+  
+  public / class E;
+}

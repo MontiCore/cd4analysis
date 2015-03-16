@@ -1,5 +1,0 @@
-package de.monticore.umlcd4a.cocos.mcg2ebnf.valid;
-
-classdiagram CD4AC3001 {
-	abstract class A;
-}

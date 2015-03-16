@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg.invalid;
+
+classdiagram C4A51 {
+  interface A {
+    String a;
+    private String b;
+    protected String c;
+    public String d;
+    final String e;
+    derived String f;
+  }
+}

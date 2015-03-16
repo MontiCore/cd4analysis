@@ -1,0 +1,11 @@
+package de.monticore.umlcd4a.cocos.mcg.invalid;
+
+classdiagram C4A56 {
+  abstract interface A;
+  derived interface B;
+  / interface C;
+  final interface D;
+  private interface E;
+  protected interface F;
+  static interface G;
+}

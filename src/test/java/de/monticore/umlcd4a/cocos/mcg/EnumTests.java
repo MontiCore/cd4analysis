@@ -56,8 +56,8 @@ public class EnumTests extends AbstractCoCoTest {
   
   @Test
   public void invalidModifiersCoCo() {
-    String modelName = "CD4AC2005.cd";
-    String errorCode = "0xCD4AC2005";
+    String modelName = "C4A55.cd";
+    String errorCode = "0xC4A55";
     
     testModelNoErrors("valid/" + modelName);
     

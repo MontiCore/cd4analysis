@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class ClassInvalidModifiersCoCo implements CD4AnalysisASTCDClassCoCo {
-  public static final String ERROR_CODE = "0xCD4AC2003";
+  public static final String ERROR_CODE = "0xC4A53";
   
   public static final String ERROR_MSG_FORMAT = "Class %s has invalid modifier %s.";
   

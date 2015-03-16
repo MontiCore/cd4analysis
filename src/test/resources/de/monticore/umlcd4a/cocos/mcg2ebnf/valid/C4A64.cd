@@ -1,0 +1,8 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.valid;
+
+classdiagram C4A64 {
+	class A {
+		/ String a;
+		derived String b;
+	}
+}

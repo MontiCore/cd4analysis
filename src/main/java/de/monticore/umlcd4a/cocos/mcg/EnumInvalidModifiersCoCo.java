@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class EnumInvalidModifiersCoCo implements CD4AnalysisASTCDEnumCoCo {
-  public static final String ERROR_CODE = "0xCD4AC2005";
+  public static final String ERROR_CODE = "0xC4A55";
   
   public static final String ERROR_MSG_FORMAT = "Enum %s has invalid modifier %s.";
   

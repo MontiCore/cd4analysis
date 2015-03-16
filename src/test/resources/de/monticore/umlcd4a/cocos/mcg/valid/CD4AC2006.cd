@@ -1,6 +1,0 @@
-package de.monticore.umlcd4a.cocos.mcg.valid;
-
-classdiagram CD4AC2006 {
-  public interface A;
-  interface B;
-}

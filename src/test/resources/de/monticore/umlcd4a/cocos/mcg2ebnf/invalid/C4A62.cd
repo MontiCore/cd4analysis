@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.invalid;
+
+classdiagram C4A62 {
+	class A {
+		String a;
+		public A();
+	}
+	class B {
+		public B(String a);
+		public B(String a, int b);
+	}
+}

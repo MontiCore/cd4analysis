@@ -23,7 +23,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAssociationCoCo {
-  public static final String ERROR_CODE = "0xCD4AC3012";
+  public static final String ERROR_CODE = "0xC4A72";
   
   public static final String ERROR_MSG_FORMAT = "Association ends of association %s may not have modifieres except the stereotype <<ordered>>.";
   

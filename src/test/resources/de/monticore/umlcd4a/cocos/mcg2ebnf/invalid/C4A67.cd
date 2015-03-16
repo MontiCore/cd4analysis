@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.invalid;
+
+classdiagram C4A67 {
+	interface A {
+		public void m();
+	}
+	interface B {
+		public void m(String a);
+		public String m2(String a, int b);
+	}
+
+}

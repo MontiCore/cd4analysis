@@ -1,0 +1,11 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.valid;
+
+classdiagram C4A72 {
+
+	class A;
+	class B;
+	
+	association assoc1 <<ordered>> A -> B;
+	association assoc1 A -> B <<ordered>>;
+
+}

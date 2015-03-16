@@ -1,7 +1,0 @@
-package de.monticore.umlcd4a.cocos.mcg2ebnf.valid;
-
-classdiagram CD4AC3002 {
-	class A {
-		String a;
-	}
-}

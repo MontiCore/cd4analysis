@@ -1,0 +1,13 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.invalid;
+
+classdiagram C4A70 {
+	enum A {
+		E;
+		public void m();
+	}
+	enum B {
+		E;
+		public void m(String a);
+		public String m2(String a, int b);
+	}
+}

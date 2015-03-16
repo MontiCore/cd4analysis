@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class InterfaceNoAttributesCoCo implements CD4AnalysisASTCDInterfaceCoCo {
-  public static final String ERROR_CODE = "0xCD4AC3006";
+  public static final String ERROR_CODE = "0xC4A66";
   
   public static final String ERROR_MSG_FORMAT = "Interface %s may not have attributes.";
   

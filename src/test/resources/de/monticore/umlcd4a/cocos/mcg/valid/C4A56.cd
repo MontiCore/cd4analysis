@@ -1,0 +1,6 @@
+package de.monticore.umlcd4a.cocos.mcg.valid;
+
+classdiagram C4A56 {
+  public interface A;
+  interface B;
+}

@@ -55,8 +55,8 @@ public class ClassTests extends AbstractCoCoTest {
 
   @Test
   public void invalidModifiersCoCoTest() {
-    String modelName = "CD4AC2003.cd";
-    String errorCode = "0xCD4AC2003";
+    String modelName = "C4A53.cd";
+    String errorCode = "0xC4A53";
     
     testModelNoErrors("valid/" + modelName);
     

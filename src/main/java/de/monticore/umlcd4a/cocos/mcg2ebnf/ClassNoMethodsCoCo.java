@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class ClassNoMethodsCoCo implements CD4AnalysisASTCDClassCoCo {
-  public static final String ERROR_CODE = "0xCD4AC3003";
+  public static final String ERROR_CODE = "0xC4A63";
   
   public static final String ERROR_MSG_FORMAT = "Class %s may not have any methods.";
   

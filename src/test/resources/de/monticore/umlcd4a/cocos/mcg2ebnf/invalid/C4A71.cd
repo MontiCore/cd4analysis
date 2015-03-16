@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.invalid;
+
+classdiagram C4A71 {
+
+	class A;
+	class B;
+	
+	<<theStereoType>> association assoc1 A -> B;
+	<<theStereoType>> association A <- B;
+	<<theStereoType>> association A <-> B;
+	<<theStereoType>> association A -- B;
+}

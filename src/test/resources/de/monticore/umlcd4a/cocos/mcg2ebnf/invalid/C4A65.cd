@@ -1,0 +1,12 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.invalid;
+
+classdiagram C4A65 {
+
+	public interface A;
+	protected interface B;
+	private interface C;
+	static interface D;
+	final interface E;
+	/ interface F;
+
+}

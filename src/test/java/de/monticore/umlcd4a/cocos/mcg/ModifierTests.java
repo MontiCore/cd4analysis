@@ -56,8 +56,8 @@ public class ModifierTests extends AbstractCoCoTest {
   
   @Test
   public void notMultipleVisibilitiesCoCoTest() {
-    String modelName = "CD4AC2004.cd";
-    String errorCode = "0xCD4AC2004";
+    String modelName = "C4A54.cd";
+    String errorCode = "0xC4A54";
     
     testModelNoErrors("valid/" + modelName);
     

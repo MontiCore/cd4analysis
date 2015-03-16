@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class ModifierNotMultipleVisibilitiesCoCo implements CD4AnalysisASTModifierCoCo {
-  public static final String ERROR_CODE = "0xCD4AC2004";
+  public static final String ERROR_CODE = "0xC4A54";
   
   public static final String ERROR_MSG_FORMAT = "Only none or one visibility is supported, but multiple visibilities were found.";
   

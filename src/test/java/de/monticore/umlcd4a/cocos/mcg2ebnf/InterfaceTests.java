@@ -56,8 +56,8 @@ public class InterfaceTests extends AbstractCoCoTest {
   
   @Test
   public void noModifierCoCo() {
-    String modelName = "CD4AC3005.cd";
-    String errorCode = "0xCD4AC3005";
+    String modelName = "C4A65.cd";
+    String errorCode = "0xC4A65";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -75,8 +75,8 @@ public class InterfaceTests extends AbstractCoCoTest {
   
   @Test
   public void noAttributesCoCoTest() {
-    String modelName = "CD4AC3006.cd";
-    String errorCode = "0xCD4AC3006";
+    String modelName = "C4A66.cd";
+    String errorCode = "0xC4A66";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -91,8 +91,8 @@ public class InterfaceTests extends AbstractCoCoTest {
   
   @Test
   public void noMethodsCoCoTest() {
-    String modelName = "CD4AC3007.cd";
-    String errorCode = "0xCD4AC3007";
+    String modelName = "C4A67.cd";
+    String errorCode = "0xC4A67";
     
     testModelNoErrors("valid/" + modelName);
     

@@ -56,8 +56,8 @@ public class ClassTests extends AbstractCoCoTest {
   
   @Test
   public void modifierOnlyAbstractCoCoTest() {
-    String modelName = "CD4AC3001.cd";
-    String errorCode = "0xCD4AC3001";
+    String modelName = "C4A61.cd";
+    String errorCode = "0xC4A61";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -83,8 +83,8 @@ public class ClassTests extends AbstractCoCoTest {
   
   @Test
   public void noConstructorsCoCoTest() {
-    String modelName = "CD4AC3002.cd";
-    String errorCode = "0xCD4AC3002";
+    String modelName = "C4A62.cd";
+    String errorCode = "0xC4A62";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -98,8 +98,8 @@ public class ClassTests extends AbstractCoCoTest {
   
   @Test
   public void noMethodsCoCoTest() {
-    String modelName = "CD4AC3003.cd";
-    String errorCode = "0xCD4AC3003";
+    String modelName = "C4A63.cd";
+    String errorCode = "0xC4A63";
     
     testModelNoErrors("valid/" + modelName);
     

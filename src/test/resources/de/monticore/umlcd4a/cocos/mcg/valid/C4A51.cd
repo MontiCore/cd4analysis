@@ -1,0 +1,8 @@
+package de.monticore.umlcd4a.cocos.mcg.valid;
+
+classdiagram C4A51 {
+  interface A {
+    static String a;
+    static private String a;
+  }
+}

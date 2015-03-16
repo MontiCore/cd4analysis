@@ -56,8 +56,8 @@ public class AttributeTests extends AbstractCoCoTest {
   
   @Test
   public void attributesNotAbstractCoCoTest() {
-    String modelName = "CD4AC2002.cd";
-    String errorCode = "0xCD4AC2002";
+    String modelName = "C4A52.cd";
+    String errorCode = "0xC4A52";
     
     testModelNoErrors("valid/" + modelName);
     

@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceCoCo {
-  public static final String ERROR_CODE = "0xCD4AC2006";
+  public static final String ERROR_CODE = "0xC4A56";
   
   public static final String ERROR_MSG_FORMAT = "Interface %s has invalid modifier %s.";
   

@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class InterfaceNoModifierCoCo implements CD4AnalysisASTCDInterfaceCoCo {
-  public static final String ERROR_CODE = "0xCD4AC3005";
+  public static final String ERROR_CODE = "0xC4A65";
   
   public static final String ERROR_MSG_FORMAT = "Interface %s may not have modifiers.";
   

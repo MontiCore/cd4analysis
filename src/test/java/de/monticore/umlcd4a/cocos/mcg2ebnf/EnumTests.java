@@ -56,8 +56,8 @@ public class EnumTests extends AbstractCoCoTest {
   
   @Test
   public void noModifierCoCo() {
-    String modelName = "CD4AC3008.cd";
-    String errorCode = "0xCD4AC3008";
+    String modelName = "C4A68.cd";
+    String errorCode = "0xC4A68";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -77,8 +77,8 @@ public class EnumTests extends AbstractCoCoTest {
   
   @Test
   public void noConstructorsCoCoTest() {
-    String modelName = "CD4AC3009.cd";
-    String errorCode = "0xCD4AC3009";
+    String modelName = "C4A69.cd";
+    String errorCode = "0xC4A69";
     
     testModelNoErrors("valid/" + modelName);
     
@@ -93,8 +93,8 @@ public class EnumTests extends AbstractCoCoTest {
   
   @Test
   public void noMethodsCoCoTest() {
-    String modelName = "CD4AC3010.cd";
-    String errorCode = "0xCD4AC3010";
+    String modelName = "C4A70.cd";
+    String errorCode = "0xC4A70";
     
     testModelNoErrors("valid/" + modelName);
     

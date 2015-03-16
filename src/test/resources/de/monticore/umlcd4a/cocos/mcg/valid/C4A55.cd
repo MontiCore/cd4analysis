@@ -1,0 +1,6 @@
+package de.monticore.umlcd4a.cocos.mcg.valid;
+
+classdiagram C4A55 {
+  public enum A;
+  enum B;
+}

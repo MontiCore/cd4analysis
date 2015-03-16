@@ -1,0 +1,7 @@
+package de.monticore.umlcd4a.cocos.mcg2ebnf.valid;
+
+classdiagram C4A65 {
+
+	interface A;
+
+}

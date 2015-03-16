@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class EnumNoConstructorsCoCo implements CD4AnalysisASTCDEnumCoCo {
-  public static final String ERROR_CODE = "0xCD4AC3009";
+  public static final String ERROR_CODE = "0xC4A69";
   
   public static final String ERROR_MSG_FORMAT = "Enum %s may not have constructors.";
   

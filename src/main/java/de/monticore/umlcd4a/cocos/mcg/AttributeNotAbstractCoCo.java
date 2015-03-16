@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
  * @author Robert Heim
  */
 public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
-  public static final String ERROR_CODE = "0xCD4AC2002";
+  public static final String ERROR_CODE = "0xC4A52";
   
   public static final String ERROR_MSG_FORMAT = "Attribute %s may not be abstract.";
   
