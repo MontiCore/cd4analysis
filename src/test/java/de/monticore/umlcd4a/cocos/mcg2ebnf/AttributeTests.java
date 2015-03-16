@@ -32,7 +32,7 @@ public class AttributeTests extends AbstractCoCoTest {
    */
   @Override
   protected CD4AnalysisCoCoChecker getChecker() {
-    return CD4ACoCos.getCheckerForMcg2EbnfCoCos();
+    return new CD4ACoCos().getCheckerForMcg2EbnfCoCos();
   }
   /**
    * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.AttributeTests

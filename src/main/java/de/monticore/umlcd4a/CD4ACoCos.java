@@ -35,7 +35,7 @@ import de.monticore.umlcd4a.cocos.mcg2ebnf.InterfaceNoModifierCoCo;
  */
 public class CD4ACoCos {
   
-  public static CD4AnalysisCoCoChecker getCheckerForAllCoCos() {
+  public CD4AnalysisCoCoChecker getCheckerForAllCoCos() {
     CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
     
     addEbnfCoCos(checker);
@@ -45,31 +45,31 @@ public class CD4ACoCos {
     return checker;
   }
   
-  public static CD4AnalysisCoCoChecker getCheckerForMcgCoCos() {
+  public CD4AnalysisCoCoChecker getCheckerForMcgCoCos() {
     CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
     addMcgCoCos(checker);
     return checker;
   }
   
-  public static CD4AnalysisCoCoChecker getCheckerForEbnfCoCos() {
+  public CD4AnalysisCoCoChecker getCheckerForEbnfCoCos() {
     CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
     addEbnfCoCos(checker);
     return checker;
   }
   
-  public static CD4AnalysisCoCoChecker getCheckerForMcg2EbnfCoCos() {
+  public CD4AnalysisCoCoChecker getCheckerForMcg2EbnfCoCos() {
     CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
     addMcg2EbnfCoCos(checker);
     return checker;
   }
   
-  private static void addEbnfCoCos(CD4AnalysisCoCoChecker checker) {
+  private void addEbnfCoCos(CD4AnalysisCoCoChecker checker) {
     checker.addCoCo(new UniqueAttributeInClassCoco());
     checker.addCoCo(new RoleNamesLowerCaseCoco());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   
-  private static void addMcgCoCos(CD4AnalysisCoCoChecker checker) {
+  private void addMcgCoCos(CD4AnalysisCoCoChecker checker) {
     checker.addCoCo(new AssociationModifierCoCo());
     checker.addCoCo(new InterfaceAttributesStaticCoCo());
     checker.addCoCo(new InterfaceInvalidModifiersCoCo());
@@ -79,7 +79,7 @@ public class CD4ACoCos {
     checker.addCoCo(new EnumInvalidModifiersCoCo());
   }
   
-  private static void addMcg2EbnfCoCos(CD4AnalysisCoCoChecker checker) {
+  private void addMcg2EbnfCoCos(CD4AnalysisCoCoChecker checker) {
     checker.addCoCo(new ClassModifierOnlyAbstractCoCo());
     checker.addCoCo(new ClassNoConstructorsCoCo());
     checker.addCoCo(new ClassNoMethodsCoCo());

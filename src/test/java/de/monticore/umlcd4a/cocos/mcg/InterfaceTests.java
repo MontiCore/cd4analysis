@@ -39,7 +39,7 @@ public class InterfaceTests extends AbstractCoCoTest {
    */
   @Override
   protected CD4AnalysisCoCoChecker getChecker() {
-    return CD4ACoCos.getCheckerForMcgCoCos();
+    return new CD4ACoCos().getCheckerForMcgCoCos();
   }
   
   @BeforeClass

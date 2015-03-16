@@ -45,7 +45,7 @@ public class AttributeTests extends AbstractCoCoTest {
    */
   @Override
   protected CD4AnalysisCoCoChecker getChecker() {
-    return CD4ACoCos.getCheckerForEbnfCoCos();
+    return new CD4ACoCos().getCheckerForEbnfCoCos();
   }
   
   @BeforeClass

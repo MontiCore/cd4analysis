@@ -33,7 +33,7 @@ public class AssociationTests extends AbstractCoCoTest {
    */
   @Override
   protected CD4AnalysisCoCoChecker getChecker() {
-    return CD4ACoCos.getCheckerForMcg2EbnfCoCos();
+    return new CD4ACoCos().getCheckerForMcg2EbnfCoCos();
   }
   
   /**
