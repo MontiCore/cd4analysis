@@ -34,6 +34,12 @@ public class ASTTransformationTest {
   
   private ASTCDDefinition astDef;
   
+  private ASTCDTransformation astTransformation;
+  
+  public ASTTransformationTest() {
+    astTransformation = new ASTCDTransformation();
+  }
+  
   @Before
   public void init() {
     astDef = ASTCDDefinition.getBuilder().name("ASTTransformationTest").build();
@@ -43,11 +49,11 @@ public class ASTTransformationTest {
   public void testAddCdClass() {
     assertTrue(astDef.getCDClasses().isEmpty());
     
-    ASTCDTransformation.addCdClass(astDef, "A");
+    astTransformation.addCdClass(astDef, "A");
     assertEquals(astDef.getCDClasses().size(), 1);
     assertEquals(astDef.getCDClasses().get(0).getName(), "A");
     
-    Optional<ASTCDClass> cdClass1 = ASTCDTransformation.addCdClass(astDef, "B", "superC", Lists.newArrayList("i1", "i2"));
+    Optional<ASTCDClass> cdClass1 = astTransformation.addCdClass(astDef, "B", "superC", Lists.newArrayList("i1", "i2"));
     assertTrue(cdClass1.isPresent());
     assertEquals(cdClass1.get().getName(), "B");
     
@@ -71,11 +77,11 @@ public class ASTTransformationTest {
   public void testAddCdInterface() {
     assertTrue(astDef.getCDInterfaces().isEmpty());
     
-    ASTCDTransformation.addCdInterface(astDef, "I1");
+    astTransformation.addCdInterface(astDef, "I1");
     assertEquals(astDef.getCDInterfaces().size(), 1);
     assertEquals(astDef.getCDInterfaces().get(0).getName(), "I1");
     
-    ASTCDTransformation.addCdInterface(astDef, "I2", Lists.newArrayList("SuperI1", "SuperI2"));
+    astTransformation.addCdInterface(astDef, "I2", Lists.newArrayList("SuperI1", "SuperI2"));
     assertEquals(astDef.getCDInterfaces().size(), 2);
     ASTCDInterface astInterface = astDef.getCDInterfaces().get(1);
     assertEquals(astInterface.getName(), "I2");
@@ -89,22 +95,22 @@ public class ASTTransformationTest {
   
   @Test
   public void testAddCdAttribute() {
-    ASTCDClass astClass = ASTCDTransformation.addCdClass(astDef, "A");
-    Optional<ASTCDAttribute> attr1 = ASTCDTransformation.addCdAttribute(astClass, "a", "String");
+    ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
+    Optional<ASTCDAttribute> attr1 = astTransformation.addCdAttribute(astClass, "a", "String");
     assertTrue(attr1.isPresent());
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr1.get().getType()).getName(), Lists.newArrayList("String"));
     assertTrue(!attr1.get().getModifier().isPresent());
     
-    Optional<ASTCDAttribute> attr2 = ASTCDTransformation.addCdAttribute(astClass, "b", "a.b.C");
+    Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttribute(astClass, "b", "a.b.C");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr2.get().getType()).getName(), Lists.newArrayList("a", "b", "C"));
     assertTrue(!attr2.get().getModifier().isPresent());
     
-    Optional<ASTCDAttribute> attr3 = ASTCDTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
+    Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
     assertTrue(attr3.isPresent());
     assertEquals(attr3.get().getName(), "c");
     assertTrue(attr3.get().getType() instanceof ASTSimpleReferenceType);
@@ -123,14 +129,14 @@ public class ASTTransformationTest {
   
   @Test
   public void testAddCdAttributeUsingDefinition() {
-    ASTCDClass astClass = ASTCDTransformation.addCdClass(astDef, "A");
-    Optional<ASTCDAttribute> attr1 = ASTCDTransformation.addCdAttributeUsingDefinition(astClass, "String a;");
+    ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
+    Optional<ASTCDAttribute> attr1 = astTransformation.addCdAttributeUsingDefinition(astClass, "String a;");
     assertTrue(attr1.isPresent());
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr1.get().getType()).getName(), Lists.newArrayList("String"));
     
-    Optional<ASTCDAttribute> attr2 = ASTCDTransformation.addCdAttributeUsingDefinition(astClass, "protected a.b.C b;");
+    Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttributeUsingDefinition(astClass, "protected a.b.C b;");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().getModifier().isPresent());
@@ -138,7 +144,7 @@ public class ASTTransformationTest {
     assertTrue(attr2.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr2.get().getType()).getName(), Lists.newArrayList("a", "b", "C"));
     
-    Optional<ASTCDAttribute> attr3 = ASTCDTransformation.addCdAttributeUsingDefinition(astClass, "+Date d;");
+    Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttributeUsingDefinition(astClass, "+Date d;");
     assertTrue(attr3.isPresent());
     assertEquals(attr3.get().getName(), "d");
     assertTrue(attr3.get().getModifier().isPresent());
@@ -149,13 +155,13 @@ public class ASTTransformationTest {
   
   @Test
   public void testAddCdMethod() {
-    ASTCDClass astClass = ASTCDTransformation.addCdClass(astDef, "A");
-    ASTCDMethod method1 = ASTCDTransformation.addCdMethod(astClass, "test1");
+    ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
+    ASTCDMethod method1 = astTransformation.addCdMethod(astClass, "test1");
     assertTrue(method1 != null);
     assertEquals(method1.getName(), "test1");
     assertTrue(method1.getReturnType() instanceof ASTVoidType);
     
-    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethod(astClass, "test2", "Integer", "protected static final", Lists.newArrayList("A", "a.b.C", "List<String>"));
+    Optional<ASTCDMethod> method2 = astTransformation.addCdMethod(astClass, "test2", "Integer", "protected static final", Lists.newArrayList("A", "a.b.C", "List<String>"));
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getReturnType() instanceof ASTSimpleReferenceType);
@@ -184,15 +190,15 @@ public class ASTTransformationTest {
   
   @Test
   public void testAddCdMethodUsingDefinition() {
-    ASTCDClass astClass = ASTCDTransformation.addCdClass(astDef, "A");
-    Optional<ASTCDMethod> method1 = ASTCDTransformation.addCdMethodUsingDefinition(astClass, "public void test1();");
+    ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
+    Optional<ASTCDMethod> method1 = astTransformation.addCdMethodUsingDefinition(astClass, "public void test1();");
     assertTrue(method1.isPresent());
     assertEquals(method1.get().getName(), "test1");
     assertTrue(method1.get().getReturnType() instanceof ASTVoidType);
     assertTrue(method1.get().getModifier() != null);
     assertTrue(method1.get().getModifier().isPublic());
     
-    Optional<ASTCDMethod> method2 = ASTCDTransformation.addCdMethodUsingDefinition(astClass, "protected static final Integer test2(A param0, a.b.C param1, List<String> param2);");
+    Optional<ASTCDMethod> method2 = astTransformation.addCdMethodUsingDefinition(astClass, "protected static final Integer test2(A param0, a.b.C param1, List<String> param2);");
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getReturnType() instanceof ASTSimpleReferenceType);
@@ -213,7 +219,7 @@ public class ASTTransformationTest {
     assertTrue(method2.get().getCDParameters().get(2).getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)method2.get().getCDParameters().get(2).getType()).getName(), Lists.newArrayList("List"));
     
-    Optional<ASTCDMethod> method3 = ASTCDTransformation.addCdMethodUsingDefinition(astClass, "protected Date foo(String a, int b);");
+    Optional<ASTCDMethod> method3 = astTransformation.addCdMethodUsingDefinition(astClass, "protected Date foo(String a, int b);");
     assertTrue(method3.isPresent());
     assertEquals(method3.get().getName(), "foo");
     assertTrue(method3.get().getReturnType() instanceof ASTSimpleReferenceType);

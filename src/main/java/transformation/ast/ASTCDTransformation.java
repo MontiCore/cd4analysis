@@ -64,14 +64,17 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.absent() if the
    * attribute type couldn't be parsed
    */
-  public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
+  public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
       String attrType) {
-    checkNotNull(astClass);
-    checkArgument(!Strings.isNullOrEmpty(attrName));
-    checkArgument(!Strings.isNullOrEmpty(attrType));
+    checkArgument(!Strings.isNullOrEmpty(attrName),
+        "Attribute can't be added to the CD class because of null or empty attribute name");
+    checkNotNull(astClass, "Attribute '" + attrName
+        + "' can't be added to the CD class because of null reference to the class");
+    checkArgument(!Strings.isNullOrEmpty(attrType), "Attribute '" + attrName
+        + "' can't be added to the CD class because of null or empty attribute type");
     Optional<ASTType> parsedType = createType(attrType);
     if (!parsedType.isPresent()) {
-      Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
+      Log.error("Attribute '" + attrName + "' can't be added to the CD class " + astClass.getName());
       return Optional.absent();
     }
     ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
@@ -81,8 +84,8 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name and
-   * type and adds it to the given class
+   * Creates an instance of the {@link ASTCDAttribute} with the given name, type
+   * and modifier and adds it to the given class
    * 
    * @param astClass
    * @param attrName
@@ -91,11 +94,16 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.absent() if the
    * attribute type couldn't be parsed
    */
-  public static Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
+  public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
       String attrType, String modifier) {
-    checkNotNull(astClass);
-    checkArgument(!Strings.isNullOrEmpty(attrName));
-    checkArgument(!Strings.isNullOrEmpty(attrType));
+    checkArgument(!Strings.isNullOrEmpty(attrName),
+        "Attribute can't be added to the CD class because of null or empty attribute name");
+    checkNotNull(astClass, "Attribute '" + attrName
+        + "' can't be added to the CD class because of null reference to the class");
+    checkArgument(!Strings.isNullOrEmpty(attrType), "Attribute '" + attrName
+        + "' can't be added to the CD class because of null or empty attribute type");
+    checkArgument(!Strings.isNullOrEmpty(modifier), "Attribute '" + attrName
+        + "' can't be added to the CD class because of null or empty modifier");
     Optional<ASTType> parsedType = createType(attrType);
     Optional<ASTModifier> parsedModifier = createModifier(modifier);
     if (!parsedType.isPresent() || !parsedModifier.isPresent()) {
@@ -118,10 +126,12 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.absent() if the
    * attribute definition couldn't be parsed
    */
-  public static Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
+  public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
       String attributeDefinition) {
-    checkNotNull(astClass);
-    checkArgument(!Strings.isNullOrEmpty(attributeDefinition));
+    checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
+        "Attribute can't be added to the CD class because of null or empty attribute definition");
+    checkNotNull(astClass, "Attribute '" + attributeDefinition
+        + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDAttribute> astAttribute = Optional.absent();
     try {
       astAttribute = new CDAttributeMCParser().parse(new StringReader(attributeDefinition));
@@ -146,8 +156,12 @@ public class ASTCDTransformation {
    * @param astClass
    * @param astAttribute
    */
-  public static void addCdAttribute(ASTCDClass astClass, ASTCDAttribute astAttribute) {
-    checkNotNull(astClass);
+  public void addCdAttribute(ASTCDClass astClass, ASTCDAttribute astAttribute) {
+    checkNotNull(
+        astAttribute,
+        "ASTCDAttribute attribute node can't be added to the CD class because of null reference to the added node");
+    checkNotNull(astClass, "Attribute '" + astAttribute.getName()
+        + "' can't be added to the CD class because of null reference to the class");
     checkNotNull(astAttribute);
     astClass.getCDAttributes().add(astAttribute);
   }
@@ -162,9 +176,11 @@ public class ASTCDTransformation {
    * @param className
    * @return created {@link ASTCDClass} node
    */
-  public static ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
-    checkNotNull(astDef);
-    checkArgument(!Strings.isNullOrEmpty(className));
+  public ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
+    checkArgument(!Strings.isNullOrEmpty(className),
+        "Class can't be added to the CD definition because of null or empty class name");
+    checkNotNull(astDef, "Class " + className
+        + " can't be added to the CD definition because of the null reference to the CD definition");
     ASTCDClass astClass = ASTCDClass.getBuilder().name(className).build();
     addCdClass(astDef, astClass);
     return astClass;
@@ -183,11 +199,14 @@ public class ASTCDTransformation {
    * Optional.absent() if the super class- or one of the interface-definitions
    * couldn't be parsed
    */
-  public static Optional<ASTCDClass> addCdClass(ASTCDDefinition astDef, String className,
+  public Optional<ASTCDClass> addCdClass(ASTCDDefinition astDef, String className,
       String superClassName,
       List<String> interfaceNames) {
-    checkNotNull(astDef);
-    checkArgument(!Strings.isNullOrEmpty(className));
+    checkArgument(!Strings.isNullOrEmpty(className),
+        "Class can't be added to the CD definition because of null or empty class name");
+    checkNotNull(astDef, "Class " + className
+        + " can't be added to the CD definition because of the null reference to the CD definition");
+    
     Optional<ASTType> superClass = createType(superClassName);
     if (!superClass.isPresent()) {
       Log.error("Class " + className + " can't be added to the CD definition.");
@@ -214,7 +233,12 @@ public class ASTCDTransformation {
    * @param astDef
    * @param astClass
    */
-  public static void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
+  public void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
+    checkNotNull(
+        astClass,
+        "ASTCDClass node can't be added to the CD class because of null reference to the added node");
+    checkNotNull(astDef, "Class " + astClass.getName()
+        + " can't be added to the CD definition because of the null reference to the CD definition");
     checkNotNull(astDef);
     checkNotNull(astClass);
     astDef.getCDClasses().add(astClass);
@@ -230,9 +254,11 @@ public class ASTCDTransformation {
    * @param interfaceName
    * @return created {@link ASTCDInterface} node
    */
-  public static ASTCDInterface addCdInterface(ASTCDDefinition astDef, String interfaceName) {
-    checkNotNull(astDef);
-    checkArgument(!Strings.isNullOrEmpty(interfaceName));
+  public ASTCDInterface addCdInterface(ASTCDDefinition astDef, String interfaceName) {
+    checkArgument(!Strings.isNullOrEmpty(interfaceName),
+        "Interface can't be added to the CD definition because of null or empty interface name");
+    checkNotNull(astDef, "Interface " + interfaceName
+        + " can't be added to the CD definition because of the null reference to the CD definition");
     ASTCDInterface astInterface = ASTCDInterface.getBuilder().name(interfaceName).build();
     addCdInterface(astDef, astInterface);
     return astInterface;
@@ -244,9 +270,12 @@ public class ASTCDTransformation {
    * @param astDef
    * @param astInterface
    */
-  public static void addCdInterface(ASTCDDefinition astDef, ASTCDInterface astInterface) {
-    checkNotNull(astDef);
-    checkNotNull(astInterface);
+  public void addCdInterface(ASTCDDefinition astDef, ASTCDInterface astInterface) {
+    checkNotNull(
+        astInterface,
+        "ASTCDInterface node can't be added to the CD class because of null reference to the added node");
+    checkNotNull(astDef, "Interface " + astInterface.getName()
+        + " can't be added to the CD definition because of the null reference to the CD definition");
     astDef.getCDInterfaces().add(astInterface);
   }
   
@@ -260,11 +289,13 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTCDInterface} node or
    * Optional.absent() if one of the interface-definitions couldn't be parsed
    */
-  public static Optional<ASTCDInterface> addCdInterface(ASTCDDefinition astDef,
+  public Optional<ASTCDInterface> addCdInterface(ASTCDDefinition astDef,
       String interfaceName,
       List<String> interfaceNames) {
-    checkNotNull(astDef);
-    checkArgument(!Strings.isNullOrEmpty(interfaceName));
+    checkArgument(!Strings.isNullOrEmpty(interfaceName),
+        "Interface can't be added to the CD definition because of null or empty interface name");
+    checkNotNull(astDef, "Interface " + interfaceName
+        + " can't be added to the CD definition because of the null reference to the CD definition");
     ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
@@ -292,10 +323,12 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.absent() if the method definition couldn't be parsed
    */
-  public static Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDClass astClass,
+  public Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDClass astClass,
       String methodDefinition) {
-    checkNotNull(astClass);
-    checkArgument(!Strings.isNullOrEmpty(methodDefinition));
+    checkArgument(!Strings.isNullOrEmpty(methodDefinition),
+        "Method can't be added to the CD class because of null or empty method definition");
+    checkNotNull(astClass, "Method '" + methodDefinition
+        + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDMethod> astMethod = Optional.absent();
     try {
       astMethod = new CDMethodMCParser().parse(new StringReader(methodDefinition));
@@ -322,7 +355,7 @@ public class ASTCDTransformation {
    * @param methodName
    * @return The created {@link ASTCDMethod} node
    */
-  public static ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
+  public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
     return addCdMethod(astClass, methodName, DEFAULT_RETURN_TYPE, DEFAULT_METHOD_MODIFIER,
         Lists.newArrayList()).get();
   }
@@ -338,7 +371,7 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.absent() if the method definition couldn't be parsed
    */
-  public static Optional<ASTCDMethod> addCdMethod(ASTCDClass astClass, String methodName,
+  public Optional<ASTCDMethod> addCdMethod(ASTCDClass astClass, String methodName,
       String returnType, String modifier,
       List<String> paramTypes) {
     checkNotNull(astClass);
@@ -366,9 +399,12 @@ public class ASTCDTransformation {
    * @param astClass
    * @param astMethod
    */
-  public static void addCdMethod(ASTCDClass astClass, ASTCDMethod astMethod) {
-    checkNotNull(astClass);
-    checkNotNull(astMethod);
+  public void addCdMethod(ASTCDClass astClass, ASTCDMethod astMethod) {
+    checkNotNull(
+        astMethod,
+        "ASTCDMethod method node can't be added to the CD class because of null reference to the added node");
+    checkNotNull(astClass, "Method '" + astMethod.getName()
+        + "' can't be added to the CD class because of null reference to the class");
     astClass.getCDMethods().add(astMethod);
   }
   
@@ -380,8 +416,9 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTCDParameterList} node or
    * Optional.absent() if one of the type definition couldn't be parsed
    */
-  public static Optional<ASTCDParameterList> createCdMethodParameters(List<String> paramTypes) {
-    checkNotNull(paramTypes);
+  public Optional<ASTCDParameterList> createCdMethodParameters(List<String> paramTypes) {
+    checkNotNull(paramTypes,
+        "AST parameters node can't be created: the list of the given type names is null");
     ASTCDParameterList params = CD4AnalysisNodeFactory.createASTCDParameterList();
     List<ASTType> types = Lists.newArrayList();
     for (String paramType : paramTypes) {
@@ -406,8 +443,9 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTReturnType} node or
    * Optional.absent() if the type definition couldn't be parsed
    */
-  public static Optional<ASTReturnType> createReturnType(String typeName) {
-    checkArgument(!Strings.isNullOrEmpty(typeName));
+  public Optional<ASTReturnType> createReturnType(String typeName) {
+    checkArgument(!Strings.isNullOrEmpty(typeName),
+        "AST return type node can't be created because of null or empty return type definition");
     Optional<ASTReturnType> astType = Optional.absent();
     try {
       astType = new ReturnTypeMCParser().parse(new StringReader(typeName));
@@ -429,8 +467,9 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTType} node or Optional.absent()
    * if the type definition couldn't be parsed
    */
-  public static Optional<ASTType> createType(String typeName) {
-    checkArgument(!Strings.isNullOrEmpty(typeName));
+  public Optional<ASTType> createType(String typeName) {
+    checkArgument(!Strings.isNullOrEmpty(typeName),
+        "AST type node can't be created because of null or empty type definition");
     Optional<ASTType> astType = Optional.absent();
     try {
       astType = new TypeMCParser().parse(new StringReader(typeName));
@@ -453,8 +492,9 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTModifier} node or
    * Optional.absent() if the type definition couldn't be parsed
    */
-  public static Optional<ASTModifier> createModifier(String modifier) {
-    checkArgument(!Strings.isNullOrEmpty(modifier));
+  public Optional<ASTModifier> createModifier(String modifier) {
+    checkArgument(!Strings.isNullOrEmpty(modifier),
+        "AST node for the modfier definition can't be created because of null or empty modifier definition");
     Optional<ASTModifier> astModifier = Optional.absent();
     try {
       astModifier = new ModifierMCParser().parse(new StringReader(modifier));
