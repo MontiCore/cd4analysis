@@ -20,14 +20,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDCompilationUnit;
-import de.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
 import de.monticore.cocos.helper.Assert;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 import de.se_rwth.commons.logging.Log;
 
 /**

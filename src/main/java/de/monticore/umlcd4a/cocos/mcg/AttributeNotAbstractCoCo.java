@@ -5,9 +5,9 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.cocos.CoCoHelper;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**

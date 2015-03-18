@@ -5,18 +5,19 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
-import de.monticore.umlcd4a.CD4ACoCos;
-import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
-import de.se_rwth.commons.logging.Log;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
+import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.LogMock;
+import de.monticore.umlcd4a.CD4ACoCos;
+import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the class cocos.

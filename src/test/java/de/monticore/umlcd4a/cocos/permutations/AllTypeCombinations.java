@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
 
 public class AllTypeCombinations implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {

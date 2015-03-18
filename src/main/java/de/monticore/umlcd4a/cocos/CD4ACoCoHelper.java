@@ -9,8 +9,8 @@ import java.util.Iterator;
 
 import com.google.common.base.Joiner;
 
-import de.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
 
 /**
  * Helper to print associations in default formats.

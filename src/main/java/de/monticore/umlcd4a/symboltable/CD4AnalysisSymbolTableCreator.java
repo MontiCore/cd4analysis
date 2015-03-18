@@ -4,9 +4,16 @@ package de.monticore.umlcd4a.symboltable;/*
  * http://www.se-rwth.de/
  */
 
+import static java.util.Objects.requireNonNull;
+import static mc.helper.NameHelper.dotSeparatedStringFromList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import mc.helper.NameHelper;
+
 import com.google.common.base.Optional;
-import de.cd4analysis._ast.*;
-import de.cd4analysis._visitor.CD4AnalysisVisitor;
+
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.ImportStatement;
@@ -19,16 +26,25 @@ import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTReferenceTypeList;
 import de.monticore.types._ast.ASTSimpleReferenceType;
+import de.monticore.umlcd4a._ast.ASTCD4AnalysisBase;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._ast.ASTCDEnum;
+import de.monticore.umlcd4a._ast.ASTCDEnumConstant;
+import de.monticore.umlcd4a._ast.ASTCDInterface;
+import de.monticore.umlcd4a._ast.ASTCDMethod;
+import de.monticore.umlcd4a._ast.ASTCDParameter;
+import de.monticore.umlcd4a._ast.ASTCDQualifier;
+import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.ASTStereoValue;
+import de.monticore.umlcd4a._ast.ASTStereotype;
+import de.monticore.umlcd4a._visitor.CD4AnalysisVisitor;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import mc.helper.NameHelper;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Objects.requireNonNull;
-import static mc.helper.NameHelper.dotSeparatedStringFromList;
 
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
 

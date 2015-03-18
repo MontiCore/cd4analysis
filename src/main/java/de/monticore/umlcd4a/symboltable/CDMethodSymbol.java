@@ -1,10 +1,11 @@
 package de.monticore.umlcd4a.symboltable;
 
-import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.types.CommonJMethodSymbol;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.ImmutableList;
+
+import de.monticore.symboltable.types.CommonJMethodSymbol;
 
 public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDFieldSymbol> {
 

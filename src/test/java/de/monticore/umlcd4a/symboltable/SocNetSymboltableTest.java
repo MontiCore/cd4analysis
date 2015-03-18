@@ -5,13 +5,18 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.Symbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class SocNetSymboltableTest {
 

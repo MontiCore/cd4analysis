@@ -5,12 +5,12 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
+import java.nio.file.Paths;
+
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
-
-import java.nio.file.Paths;
 
 public class CD4AGlobalScopeTestFactory {
 

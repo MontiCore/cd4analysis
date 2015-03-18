@@ -5,14 +5,14 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
-import de.monticore.symboltable.Symbol;
-import de.monticore.symboltable.SymbolPredicate;
+import static com.google.common.base.Strings.emptyToNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Strings.emptyToNull;
-import static java.util.Objects.requireNonNull;
+import de.monticore.symboltable.Symbol;
+import de.monticore.symboltable.SymbolPredicate;
 
 public class CDMethodSignaturePredicate implements SymbolPredicate {
 

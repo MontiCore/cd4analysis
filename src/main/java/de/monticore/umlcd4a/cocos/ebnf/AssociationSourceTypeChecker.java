@@ -1,12 +1,12 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDDefinition;
-import de.cd4analysis._ast.ASTCDEnum;
-import de.cd4analysis._ast.ASTCDEnumList;
-import de.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._ast.ASTCDEnum;
+import de.monticore.umlcd4a._ast.ASTCDEnumList;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 
 public class AssociationSourceTypeChecker implements

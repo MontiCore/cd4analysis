@@ -2,13 +2,14 @@ package de.monticore.umlcd4a.cocos.permutations;
 
 import java.util.Collection;
 
+import mc.ast.ASTNode;
+
 import com.google.common.base.Optional;
 
-import mc.ast.ASTNode;
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._ast.ASTCDClass;
 import de.monticore.types._ast.ASTSimpleReferenceType;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.utils.ASTNodes;
 
 class IdSetters {

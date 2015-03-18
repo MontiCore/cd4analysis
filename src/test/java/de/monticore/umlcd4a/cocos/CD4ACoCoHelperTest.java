@@ -11,10 +11,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.types._ast.TypesNodeFactory;
-import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 
 /**
  * Test for {@link CD4ACoCoHelper}.

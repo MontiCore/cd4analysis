@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTModifier;
-import de.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 
 public class SetModifier implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {

@@ -5,19 +5,16 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
-import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.resolving.CommonResolvingFilter;
-import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
-import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
-
-import org.junit.Test;
-
-import java.util.Arrays;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+
+import java.util.Arrays;
+
+import org.junit.Test;
+
+import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.resolving.CommonResolvingFilter;
 
 public class CDTypeTest {
 

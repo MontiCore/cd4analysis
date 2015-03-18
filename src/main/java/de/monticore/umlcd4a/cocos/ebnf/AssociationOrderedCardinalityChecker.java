@@ -1,19 +1,14 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import com.google.common.base.Optional;
-
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDAssociationList;
-import de.cd4analysis._ast.ASTCDDefinition;
-import de.cd4analysis._ast.ASTModifier;
-import de.cd4analysis._ast.ASTStereoValue;
-import de.cd4analysis._ast.ASTStereoValueList;
-import de.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.cocos.CoCoHelper;
-import de.monticore.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAssociationList;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.ASTStereoValue;
+import de.monticore.umlcd4a._ast.ASTStereoValueList;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
-import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
-import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 
 public class AssociationOrderedCardinalityChecker implements
     CD4AnalysisASTCDDefinitionCoCo {

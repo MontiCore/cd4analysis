@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.symboltable;
 
-import de.cd4analysis._ast.ASTCardinality;
+import de.monticore.umlcd4a._ast.ASTCardinality;
 
 /**
  * Cardinality of an association end

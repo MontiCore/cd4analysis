@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.function.UnaryOperator;
 
 import mc.ast.ASTNode;
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.utils.ASTNodes;
 
 public class SetAttributeNameEqualsTargetType implements

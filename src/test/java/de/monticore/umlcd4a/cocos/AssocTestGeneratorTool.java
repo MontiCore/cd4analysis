@@ -11,19 +11,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import mc.helper.IndentPrinter;
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDEnum;
-import de.cd4analysis._ast.ASTCDInterface;
-import de.cd4analysis._ast.ASTCDQualifier;
-import de.cd4analysis._ast.ASTCardinality;
-import de.cd4analysis._ast.ASTModifier;
-import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.TypesNodeFactory;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDEnum;
+import de.monticore.umlcd4a._ast.ASTCDInterface;
+import de.monticore.umlcd4a._ast.ASTCDQualifier;
+import de.monticore.umlcd4a._ast.ASTCardinality;
+import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a.prettyprint.CDConcretePrettyPrinter;
 import de.se_rwth.commons.StringTransformations;
 

@@ -1,21 +1,26 @@
 package de.monticore.umlcd4a.symboltable;
 
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDMethod;
-import de.monticore.symboltable.ArtifactScope;
-import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.MutableScope;
-import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
-import org.junit.Test;
-
-import java.util.Collection;
-
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
 import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+
+import org.junit.Test;
+
+import de.monticore.symboltable.ArtifactScope;
+import de.monticore.symboltable.GlobalScope;
+import de.monticore.symboltable.MutableScope;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDMethod;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
 public class CD4AnalysisSymbolTableCreatorTest {
 

@@ -1,7 +1,6 @@
 package de.monticore.umlcd4a.cocos.permutations;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,18 +8,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import mc.ast.ASTNode;
-
-import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.types._ast.ASTSimpleReferenceType;
 import de.monticore.types._ast.TypesNodeFactory;
-import de.monticore.utils.ASTNodes;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 
 public class CreateInheritanceTree implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {

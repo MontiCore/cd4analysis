@@ -20,9 +20,8 @@ import org.junit.Test;
 
 import com.google.common.base.Optional;
 
-import de.cd4analysis._ast.ASTCDCompilationUnit;
-import de.cd4analysis._parser.CDCompilationUnitMCParser;
-import de.monticore.umlcd4a.prettyprint.CDConcretePrettyPrinter;
+import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 
 public class CD4AnalysisPrettyPrinterTest {
   

@@ -5,13 +5,12 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
-import de.monticore.symboltable.GlobalScope;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import de.monticore.symboltable.GlobalScope;
 
 public class CDTypeReferenceTest {
 

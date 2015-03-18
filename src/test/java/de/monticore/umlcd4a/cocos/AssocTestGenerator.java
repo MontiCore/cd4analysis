@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import de.cd4analysis._ast.ASTCDAssociation;
-import de.cd4analysis._ast.ASTCardinality;
-import de.cd4analysis._ast.ASTModifier;
-import de.cd4analysis._ast.ASTStereoValueList;
-import de.cd4analysis._ast.ASTStereotype;
-import de.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCardinality;
+import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.ASTStereoValueList;
+import de.monticore.umlcd4a._ast.ASTStereotype;
+import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
 /**

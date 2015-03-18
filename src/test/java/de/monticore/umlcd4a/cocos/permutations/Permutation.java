@@ -9,7 +9,6 @@ import java.util.function.BiConsumer;
 import mc.ast.ASTNode;
 import mc.helper.IndentPrinter;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import de.monticore.umlcd4a.prettyprint.CDConcretePrettyPrinter;

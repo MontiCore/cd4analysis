@@ -1,14 +1,12 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDDefinition;
-import de.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types._ast.ASTType;
-import de.monticore.types._ast.ASTTypeArgument;
-import de.monticore.types._ast.ASTTypeArguments;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
 
 public class ValidTypeParamterChecker implements CD4AnalysisASTCDDefinitionCoCo {
 

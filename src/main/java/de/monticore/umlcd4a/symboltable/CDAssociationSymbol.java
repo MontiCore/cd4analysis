@@ -1,15 +1,17 @@
 package de.monticore.umlcd4a.symboltable;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.CommonSymbol;
-import mc.helper.NameHelper;
+import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Strings.nullToEmpty;
-import static java.util.Objects.requireNonNull;
+import mc.helper.NameHelper;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+
+import de.monticore.symboltable.CommonSymbol;
 
 public class CDAssociationSymbol extends CommonSymbol {
   

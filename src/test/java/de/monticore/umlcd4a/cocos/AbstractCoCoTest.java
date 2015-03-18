@@ -13,11 +13,11 @@ import java.util.Collection;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import de.cd4analysis._ast.ASTCDCompilationUnit;
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.cocos.LogMock;
 import de.monticore.cocos.helper.Assert;
+import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 
 /**
  * TODO: Write me!

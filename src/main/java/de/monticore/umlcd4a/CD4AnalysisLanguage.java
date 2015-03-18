@@ -5,21 +5,21 @@
  */
 package de.monticore.umlcd4a;
 
+import javax.annotation.Nullable;
+
 import com.google.common.base.Optional;
 
-import de.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.AbstractModelingLanguage;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
+import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.CommonCD4AnalysisSymbolTableCreator;
-
-import javax.annotation.Nullable;
 
 public class CD4AnalysisLanguage extends AbstractModelingLanguage {
   public static final String FILE_ENDING = "cd";

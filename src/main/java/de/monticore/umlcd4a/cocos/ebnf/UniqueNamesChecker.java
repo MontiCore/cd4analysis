@@ -3,15 +3,15 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDClassList;
-import de.cd4analysis._ast.ASTCDDefinition;
-import de.cd4analysis._ast.ASTCDEnum;
-import de.cd4analysis._ast.ASTCDEnumList;
-import de.cd4analysis._ast.ASTCDInterface;
-import de.cd4analysis._ast.ASTCDInterfaceList;
-import de.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.cocos.CoCoHelper;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDClassList;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._ast.ASTCDEnum;
+import de.monticore.umlcd4a._ast.ASTCDEnumList;
+import de.monticore.umlcd4a._ast.ASTCDInterface;
+import de.monticore.umlcd4a._ast.ASTCDInterfaceList;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
 
 /**
  * Checks uniqueness of class,interface and enum names

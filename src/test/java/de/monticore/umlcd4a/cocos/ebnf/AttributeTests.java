@@ -15,10 +15,10 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cocos.CoCoHelper;
 import de.monticore.cocos.LogMock;
 import de.monticore.umlcd4a.CD4ACoCos;
+import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
 import de.se_rwth.commons.logging.Log;
 

@@ -14,15 +14,15 @@ import org.junit.Test;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 
-import de.cd4analysis._ast.ASTCDAttribute;
-import de.cd4analysis._ast.ASTCDClass;
-import de.cd4analysis._ast.ASTCDDefinition;
-import de.cd4analysis._ast.ASTCDInterface;
-import de.cd4analysis._ast.ASTCDMethod;
 import de.monticore.types._ast.ASTConstantsTypes;
 import de.monticore.types._ast.ASTPrimitiveType;
 import de.monticore.types._ast.ASTSimpleReferenceType;
 import de.monticore.types._ast.ASTVoidType;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._ast.ASTCDInterface;
+import de.monticore.umlcd4a._ast.ASTCDMethod;
 
 /**
  * Test for the utility class {@link ASTCDTransformation}

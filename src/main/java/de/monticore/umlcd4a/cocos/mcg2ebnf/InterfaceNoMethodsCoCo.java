@@ -5,10 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.cd4analysis._ast.ASTCDInterface;
-import de.cd4analysis._ast.ASTCDMethod;
-import de.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
 import de.monticore.cocos.CoCoHelper;
+import de.monticore.umlcd4a._ast.ASTCDInterface;
+import de.monticore.umlcd4a._ast.ASTCDMethod;
+import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**

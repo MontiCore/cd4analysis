@@ -1,10 +1,8 @@
 package de.monticore.umlcd4a.symboltable;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import de.monticore.symboltable.types.CommonJTypeSymbol;
-import de.se_rwth.commons.Names;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,9 +11,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.nullToEmpty;
-import static java.util.Objects.requireNonNull;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import de.monticore.symboltable.types.CommonJTypeSymbol;
+import de.se_rwth.commons.Names;
 
 public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol> {
   

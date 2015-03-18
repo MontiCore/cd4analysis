@@ -5,11 +5,11 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
+import javax.annotation.Nullable;
+
 import de.monticore.symboltable.CommonSymbolTableCreator;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
-
-import javax.annotation.Nullable;
 
 public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreator implements
     CD4AnalysisSymbolTableCreator {

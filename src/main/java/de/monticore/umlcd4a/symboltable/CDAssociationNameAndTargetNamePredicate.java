@@ -5,10 +5,9 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.SymbolPredicate;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 public class CDAssociationNameAndTargetNamePredicate implements SymbolPredicate {
 

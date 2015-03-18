@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a;
 
-import de.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.ebnf.RoleNamesLowerCaseCoco;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueAttributeInClassCoco;
 import de.monticore.umlcd4a.cocos.mcg.AssociationModifierCoCo;
