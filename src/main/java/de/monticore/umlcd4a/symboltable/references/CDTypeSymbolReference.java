@@ -5,11 +5,7 @@
  */
 package de.monticore.umlcd4a.symboltable.references;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.google.common.base.Optional;
-
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -22,10 +18,12 @@ import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Stereotype;
 
+import java.util.Collection;
+import java.util.List;
+
 public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference<CDTypeSymbol> {
 
   private final TypeReference<CDTypeSymbol> typeReference;
-
 
 
   public CDTypeSymbolReference(String name, Scope definingScopeOfReference) {
@@ -52,6 +50,11 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public void setDefiningScope(MutableScope scope) {
     getReferencedSymbol().setDefiningScope(scope);
+  }
+
+  @Override
+  public Scope getDefiningScope() {
+    return getReferencedSymbol().getDefiningScope();
   }
 
   @Override
