@@ -27,6 +27,7 @@ import de.monticore.umlcd4a.cocos.mcg2ebnf.EnumNoModifierCoCo;
 import de.monticore.umlcd4a.cocos.mcg2ebnf.InterfaceNoAttributesCoCo;
 import de.monticore.umlcd4a.cocos.mcg2ebnf.InterfaceNoMethodsCoCo;
 import de.monticore.umlcd4a.cocos.mcg2ebnf.InterfaceNoModifierCoCo;
+import de.monticore.umlcd4a.cocos.mcg2ebnf.StereoValueNoValueCoCo;
 
 /**
  * Set of CoCos for CD4A.
@@ -92,5 +93,6 @@ public class CD4ACoCos {
     checker.addCoCo(new EnumNoMethodsCoCo());
     checker.addCoCo(new AssociationNoStereotypesCoCo());
     checker.addCoCo(new AssociationEndModifierRestrictionCoCo());
+    checker.addCoCo(new StereoValueNoValueCoCo());
   }
 }
