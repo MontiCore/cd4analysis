@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTCardinality;
 import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.ASTStereoValue;
 import de.monticore.umlcd4a._ast.ASTStereoValueList;
 import de.monticore.umlcd4a._ast.ASTStereotype;
 import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
@@ -165,7 +166,7 @@ public class AssocTestGenerator {
         ASTModifier modifier = null;
         
         ASTStereoValueList stereoOrdered = CD4AnalysisNodeFactory.createASTStereoValueList();
-        stereoOrdered.add(CD4AnalysisNodeFactory.createASTStereoValue("ordered"));
+        stereoOrdered.add(ASTStereoValue.getBuilder().name("ordered").build());
         ASTStereotype stereoType = CD4AnalysisNodeFactory.createASTStereotype(stereoOrdered);
         
         boolean rightSideInvalid = false;

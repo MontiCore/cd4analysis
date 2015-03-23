@@ -1,7 +1,7 @@
 package de.monticore.umlcd4a;
 
 /*
-   MCG for CD 4 Analysis, Version Mar. 18th, 2015
+   MCG for CD 4 Analysis, Version Mar. 23th, 2015
 */
 
 grammar CD4Analysis extends de.monticore.types.Types {
@@ -229,7 +229,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   /** ASTStereoValue represents a Value of a Stereotype in a Classdiagram
       @attribute name  Name of the Stereotype-Value
   */
-  StereoValue = Name;
+  StereoValue = Name ("=" value:String)?;
 
   /** ASTValue represents a Value
       @attribute literal  Value
