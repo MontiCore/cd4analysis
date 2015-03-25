@@ -22,6 +22,7 @@ import org.junit.Test;
 import com.google.common.base.Optional;
 
 import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 
 public class CD4AnalysisParserTest {
@@ -53,7 +54,7 @@ public class CD4AnalysisParserTest {
   @Test
   public void testSocNet() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/SocNet.cd");
-    CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
+    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
     Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
@@ -67,7 +68,7 @@ public class CD4AnalysisParserTest {
   @Test
   public void testExample1() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/Example1.cd");
-    CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
+    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
     Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
@@ -76,7 +77,7 @@ public class CD4AnalysisParserTest {
   @Test
   public void testExample2() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/Example2.cd");
-    CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
+    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
     Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());

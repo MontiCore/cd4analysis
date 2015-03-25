@@ -32,6 +32,7 @@ import de.monticore.umlcd4a._ast.ASTCDParameter;
 import de.monticore.umlcd4a._ast.ASTCDParameterList;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
+import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a._parser.CDAttributeMCParser;
 import de.monticore.umlcd4a._parser.CDMethodMCParser;
 import de.monticore.umlcd4a._parser.ModifierMCParser;
@@ -134,7 +135,7 @@ public class ASTCDTransformation {
         + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDAttribute> astAttribute = Optional.absent();
     try {
-      astAttribute = new CDAttributeMCParser().parse(new StringReader(attributeDefinition));
+      astAttribute = CD4AnalysisParserFactory.createCDAttributeMCParser().parse(new StringReader(attributeDefinition));
       if (!astAttribute.isPresent()) {
         Log.error("Attribute can't be added to the CD class " + astClass.getName()
             + "\nWrong attribute definition: " + attributeDefinition);
@@ -331,7 +332,7 @@ public class ASTCDTransformation {
         + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDMethod> astMethod = Optional.absent();
     try {
-      astMethod = new CDMethodMCParser().parse(new StringReader(methodDefinition));
+      astMethod = CD4AnalysisParserFactory.createCDMethodMCParser().parse(new StringReader(methodDefinition));
       if (!astMethod.isPresent()) {
         Log.error("Method can't be added to the CD class " + astClass.getName()
             + "\nWrong method definition: " + methodDefinition);
@@ -448,7 +449,7 @@ public class ASTCDTransformation {
         "AST return type node can't be created because of null or empty return type definition");
     Optional<ASTReturnType> astType = Optional.absent();
     try {
-      astType = new ReturnTypeMCParser().parse(new StringReader(typeName));
+      astType = CD4AnalysisParserFactory.createReturnTypeMCParser().parse(new StringReader(typeName));
       if (!astType.isPresent()) {
         Log.error("Return type " + typeName + " wasn't defined correctly");
       }
@@ -472,7 +473,7 @@ public class ASTCDTransformation {
         "AST type node can't be created because of null or empty type definition");
     Optional<ASTType> astType = Optional.absent();
     try {
-      astType = new TypeMCParser().parse(new StringReader(typeName));
+      astType = CD4AnalysisParserFactory.createTypeMCParser().parse(new StringReader(typeName));
       if (!astType.isPresent()) {
         Log.error("The type " + typeName + " wasn't defined correctly");
       }
@@ -497,7 +498,7 @@ public class ASTCDTransformation {
         "AST node for the modfier definition can't be created because of null or empty modifier definition");
     Optional<ASTModifier> astModifier = Optional.absent();
     try {
-      astModifier = new ModifierMCParser().parse(new StringReader(modifier));
+      astModifier = CD4AnalysisParserFactory.createModifierMCParser().parse(new StringReader(modifier));
       if (!astModifier.isPresent()) {
         Log.error("The modifier " + modifier + " wasn't defined correctly");
       }
