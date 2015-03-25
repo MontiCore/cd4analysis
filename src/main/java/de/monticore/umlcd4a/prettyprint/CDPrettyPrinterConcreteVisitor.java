@@ -505,6 +505,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    */
   public void visit(ASTStereoValue a) {
     printer.print(a.getName());
+    if (a.getValue().isPresent()) {
+      printer.print("=" + a.getValue().get());
+    }
   }
   
   /**
