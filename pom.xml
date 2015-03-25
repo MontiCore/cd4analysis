@@ -13,7 +13,8 @@
     <!-- .. Libraries ..................................................... -->
 
     <monticore.version>4.0.2-SNAPSHOT</monticore.version>
-    <monticore.astgenerator.version>4.0.2-SNAPSHOT</monticore.astgenerator.version>
+    <monticore.astgenerator.version>4.0.0.M1</monticore.astgenerator.version>
+    <monticore.parsergenerator.version>4.0.1-SNAPSHOT</monticore.parsergenerator.version>
 
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
@@ -22,7 +23,8 @@
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.0.2-SNAPSHOT</mc4.maven.version>
+    <mc3.maven.version>3.3.0-SNAPSHOT</mc3.maven.version>
+    <mc4.maven.version>4.0.0.M1</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
@@ -97,6 +99,37 @@
           </execution>
         </executions>
        </plugin>
+
+      <!-- MontiCore Parser Generation -->
+      <plugin>
+        <groupId>de.monticore.maven</groupId>
+        <artifactId>monticore-maven-plugin</artifactId>
+        <version>${mc3.maven.version}</version>
+        <executions>
+          <execution>
+            <id>parser-generation</id>
+            <goals>
+              <goal>clean</goal>
+              <goal>configure</goal>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <arguments>
+                <argument>-synthesis grammar prepareCheck</argument>
+                <argument>-synthesis grammar check</argument>
+                <argument>-synthesis grammar generateparser</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>de.monticore</artifactId>
+            <version>${monticore.parsergenerator.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
 
       <!-- Other Configuration -->
       <plugin>

@@ -27,7 +27,6 @@ import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 import de.se_rwth.commons.logging.Log;
 
@@ -52,7 +51,7 @@ public class HowToTestCoCosTest {
     LogMock.getFindings().clear();
     
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/A.cd");
-    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
+    CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
     com.google.common.base.Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
     assertTrue(cdDef.isPresent());
     this.astRoot = cdDef.get();
