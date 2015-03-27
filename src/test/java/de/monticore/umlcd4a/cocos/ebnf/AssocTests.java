@@ -2904,7 +2904,7 @@ public class AssocTests extends AbstractCoCoTest {
     String errorCode = "0xC4A22";
     
     Collection<String> expectedErrors = new ArrayList<>();
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 4; i++) {
       expectedErrors.add(CoCoHelper.buildErrorMsg(errorCode, "Association assoc" + i
           + " is invalid, because an association's source may not be an external type."));
     }
