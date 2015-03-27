@@ -413,7 +413,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     if (a.isBidirectional()) {
       printer.print("<->");
     }
-    if (a.isSimple()) {
+    if (a.isUnspecified()) {
       printer.print("--");
     }
     // print right role

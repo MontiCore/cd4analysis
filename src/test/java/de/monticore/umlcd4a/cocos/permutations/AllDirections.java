@@ -30,7 +30,7 @@ public class AllDirections implements
     
     // --
     Permutation<ASTCDAssociation> simple = assocPermutation.copy();
-    simple.delegate().setSimple(true);
+    simple.delegate().setUnspecified(true);
     successorPermutations.add(simple);
     
     return successorPermutations;

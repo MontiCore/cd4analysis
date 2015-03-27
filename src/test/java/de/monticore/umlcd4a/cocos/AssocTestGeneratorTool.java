@@ -378,13 +378,13 @@ public class AssocTestGeneratorTool {
         boolean invalidCase = false;
         
         if (tLeft.equals("E")) {
-          if (assoc.isLeftToRight() || assoc.isSimple() || assoc.isBidirectional()) {
+          if (assoc.isLeftToRight() || assoc.isUnspecified() || assoc.isBidirectional()) {
             invalidCase = true;
           }
         }
         
         if (tRight.equals("E")) {
-          if (assoc.isRightToLeft() || assoc.isSimple() || assoc.isBidirectional()) {
+          if (assoc.isRightToLeft() || assoc.isUnspecified() || assoc.isBidirectional()) {
             
             invalidCase = true;
           }
@@ -422,7 +422,7 @@ public class AssocTestGeneratorTool {
     ASTCDQualifier qr = CD4AnalysisNodeFactory.createASTCDQualifier();
     qr.setName(rightQualifier);
     
-    if (assoc.isBidirectional() || assoc.isSimple()) {
+    if (assoc.isBidirectional() || assoc.isUnspecified()) {
       if (valid) {
         ASTCDAssociation clone = assoc.deepClone();
         clone.setLeftQualifier(ql.deepClone());
@@ -509,7 +509,7 @@ public class AssocTestGeneratorTool {
     String leftRole = "leftRole";
     String rightRole = "rightRole";
     
-    if (assoc.isBidirectional() || assoc.isSimple()) {
+    if (assoc.isBidirectional() || assoc.isUnspecified()) {
       if (valid) {
         ASTCDAssociation clone = assoc.deepClone();
         clone.setLeftRole(leftRole);
@@ -584,7 +584,7 @@ public class AssocTestGeneratorTool {
     
     // --
     clone = assoc.deepClone();
-    clone.setSimple(true);
+    clone.setUnspecified(true);
     re.add(clone);
     return re;
   }

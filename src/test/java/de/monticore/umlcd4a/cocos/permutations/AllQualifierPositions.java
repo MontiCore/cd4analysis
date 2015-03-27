@@ -24,7 +24,7 @@ public class AllQualifierPositions implements
   public Set<Permutation<ASTCDAssociation>> apply(Permutation<ASTCDAssociation> assocPermutation) {
     Set<Permutation<ASTCDAssociation>> successorPermutations = new LinkedHashSet<>();
     
-    if (assocPermutation.delegate().isBidirectional() || assocPermutation.delegate().isSimple()) {
+    if (assocPermutation.delegate().isBidirectional() || assocPermutation.delegate().isUnspecified()) {
       successorPermutations.addAll(bidirectionalOrSimple(assocPermutation));
     }
     if (assocPermutation.delegate().isLeftToRight()) {

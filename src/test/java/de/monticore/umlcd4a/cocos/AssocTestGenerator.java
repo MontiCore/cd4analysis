@@ -205,7 +205,7 @@ public class AssocTestGenerator {
           return leftSideInvalid;
         }
         // A <-> B | A -- B
-        else if (assoc.isBidirectional() || assoc.isSimple()) {
+        else if (assoc.isBidirectional() || assoc.isUnspecified()) {
           return (leftSideInvalid || rightSideInvalid);
         }
         return false;

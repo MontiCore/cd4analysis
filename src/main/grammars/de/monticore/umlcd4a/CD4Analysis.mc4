@@ -163,7 +163,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
                                   right to left ("<-")
     @attribute bidirectional      True if Association is navigable in 
                                   both directions ("<->")
-    @attribute simple             True if navigation of Association is 
+    @attribute unspecified        True if navigation of Association is 
                                   not specified  ("--")
     @attribute rightRole          Role of the Class or Interface on the right
                                   side of this Association
@@ -186,7 +186,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     (   leftToRight:["->"]
       | rightToLeft:["<-"]
       | bidirectional:["<->"]
-      | simple:["--"] )
+      | unspecified:["--"] )
     ("(" rightRole:Name ")")?
     ("[" rightQualifier:CDQualifier "]")?
     rightReferenceName:QualifiedName

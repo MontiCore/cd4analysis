@@ -44,7 +44,7 @@ public class TestGenerate {
     cdAssociation.setLeftReferenceName(leftReferenceName);
     ASTQualifiedName rightReferenceName = createASTQualifiedName(Arrays.asList("RightType"));
     cdAssociation.setRightReferenceName(rightReferenceName);
-    cdAssociation.setSimple(true);
+    cdAssociation.setUnspecified(true);
     
     Permutation<ASTCDAssociation> assocPermutation = new Permutation<>(cdAssociation);
     assocPermutation.addIdSetter(this::setReferenceNameId);

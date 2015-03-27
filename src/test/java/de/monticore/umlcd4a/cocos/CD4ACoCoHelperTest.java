@@ -45,10 +45,10 @@ public class CD4ACoCoHelperTest {
         CD4ACoCoHelper.printAssociation(assoc));
     assoc.setRightToLeft(false);
     
-    assoc.setSimple(true);
+    assoc.setUnspecified(true);
     assertEquals("expectedName (left.TypeName -- right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
-    assoc.setSimple(false);
+    assoc.setUnspecified(false);
     
   }
   

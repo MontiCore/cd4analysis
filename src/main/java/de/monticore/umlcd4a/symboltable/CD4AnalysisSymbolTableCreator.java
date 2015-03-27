@@ -372,7 +372,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
   // TODO PN discuss: We can have TWO symbols for the SAME association ast. So, no link ast->symbol possible?
   public default void handleRightToLeftAssociation(final ASTCDAssociation cdAssoc) {
-    if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
+    if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isUnspecified()) {
       final CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
           .getRightReferenceName(), cdAssoc.getLeftReferenceName());
       // complete association properties
@@ -408,13 +408,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
             assocRight2LeftSymbol.setQualifier(TypesPrinter.printType(qualifier.getType().get()));
           }
         }
-        assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
+        assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
       }
     }
   }
 
   public default void handleLeftToRightAssociation(final ASTCDAssociation cdAssoc) {
-    if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isSimple()) {
+    if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isUnspecified()) {
       final CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
               .getLeftReferenceName(), cdAssoc.getRightReferenceName());
 
@@ -449,7 +449,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
             assocLeft2RightSymbol.setQualifier(TypesPrinter.printType(qualifier.getType().get()));
           }
         }
-        assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isSimple());
+        assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
       }
     }
   }

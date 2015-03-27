@@ -52,7 +52,7 @@ public class CD4ACoCoHelper {
     else if (assoc.isBidirectional()) {
       r.append("<->");
     }
-    else if (assoc.isSimple()) {
+    else if (assoc.isUnspecified()) {
       r.append("--");
     }
     r.append(" ");
