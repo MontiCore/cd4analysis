@@ -13,6 +13,7 @@ import de.monticore.AbstractModelingLanguage;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
+import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
@@ -36,7 +37,7 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
 
   @Override
   public CDCompilationUnitMCParser getParser() {
-    return new CDCompilationUnitMCParser();
+    return CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
   }
   
   @Override

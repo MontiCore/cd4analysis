@@ -17,6 +17,7 @@ import de.monticore.cocos.LogMock;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 
 /**
@@ -27,7 +28,7 @@ import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
 public abstract class AbstractCoCoTest {
   private String modelPath;
   
-  private CDCompilationUnitMCParser parser = new CDCompilationUnitMCParser();
+  private CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
   
   /**
    * Constructor for de.monticore.umlcd4a.cocos.AbstractCoCoTest
