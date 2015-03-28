@@ -69,6 +69,9 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     Log.info("Finished build of symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
+
+    // TODO PN test this
+    setEnclosingScopeOfNodes(compilationUnit);
   }
 
   @Override
