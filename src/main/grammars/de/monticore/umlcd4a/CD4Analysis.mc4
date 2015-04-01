@@ -30,6 +30,10 @@ grammar CD4Analysis extends de.monticore.types.Types {
     | cDEnums:CDEnum
     | cDAssociations:CDAssociation)* "}";
   
+  interface CDType;
+  
+  ast CDType =
+    method public String getName() {};
 
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
@@ -40,7 +44,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
-  CDClass = Modifier?  "class" Name
+  CDClass astimplements CDType = Modifier?  "class" Name
   ( "extends"  superclass:ReferenceType)?
   ( "implements" interfaces:(ReferenceType || ",")+ )?
   ( "{" 
@@ -58,7 +62,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
-  CDInterface = Modifier? "interface" Name
+  CDInterface astimplements CDType = Modifier? "interface" Name
     ( "extends" interfaces:(ReferenceType || ",")+ )? ( "{" 
       ( cDAttributes:CDAttribute
       | cDMethods:CDMethod )*
@@ -75,7 +79,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
-  CDEnum = Modifier? "enum" Name
+  CDEnum astimplements CDType = Modifier? "enum" Name
     ( "implements" interfaces:(ReferenceType || ",")+ )?
     ( "{"
         cDEnumConstants:(CDEnumConstant || ",")* ";" 
