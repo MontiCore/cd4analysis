@@ -1,6 +1,0 @@
-package de.monticore.umlcd4a.visitor;
-
-classdiagram CD1 {
-  class A;
-  class B;
-}
