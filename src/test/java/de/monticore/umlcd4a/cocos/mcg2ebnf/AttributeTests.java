@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -43,14 +43,12 @@ public class AttributeTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   @Test
@@ -60,22 +58,22 @@ public class AttributeTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode,
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode,
             "Attribute a has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute b has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute c has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute d has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute e has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute f has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute g has invalid modifiers. Only \"/\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Attribute h has invalid modifiers. Only \"/\" is permitted.")
         );
     

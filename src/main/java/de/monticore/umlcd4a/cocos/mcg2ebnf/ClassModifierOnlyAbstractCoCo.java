@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
@@ -31,10 +31,10 @@ public class ClassModifierOnlyAbstractCoCo implements CD4AnalysisASTCDClassCoCo 
       ASTModifier abstractMod = ASTModifier.getBuilder().r_abstract(true).build();
       ASTModifier emptyMod = ASTModifier.getBuilder().build();
       if (!(actualMod.deepEquals(abstractMod) || actualMod.deepEquals(emptyMod))) {
-        Log.error(CoCoHelper.buildErrorMsg(
+        CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName()),
-            actualMod.get_SourcePositionStart()));
+            actualMod.get_SourcePositionStart());
       }
     }
   }

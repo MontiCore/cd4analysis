@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTModifierCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -36,10 +36,10 @@ public class ModifierNotMultipleVisibilitiesCoCo implements CD4AnalysisASTModifi
       visibilityCount++;
     }
     if (visibilityCount > 1) {
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           ERROR_MSG_FORMAT,
-          mod.get_SourcePositionStart()));
+          mod.get_SourcePositionStart());
     }
   }
 }

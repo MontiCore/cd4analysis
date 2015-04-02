@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -44,14 +44,12 @@ public class InterfaceTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   @Test
@@ -61,13 +59,13 @@ public class InterfaceTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute a in interface A must be static."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute b in interface A must be static."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute c in interface A must be static."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute d in interface A must be static."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute e in interface A must be static."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute f in interface A must be static.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Attribute a in interface A must be static."),
+        CoCoFinding.error(errorCode, "Attribute b in interface A must be static."),
+        CoCoFinding.error(errorCode, "Attribute c in interface A must be static."),
+        CoCoFinding.error(errorCode, "Attribute d in interface A must be static."),
+        CoCoFinding.error(errorCode, "Attribute e in interface A must be static."),
+        CoCoFinding.error(errorCode, "Attribute f in interface A must be static.")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
@@ -80,14 +78,14 @@ public class InterfaceTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Interface A has invalid modifier \"abstract\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Interface B has invalid modifier \"derived\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Interface C has invalid modifier \"derived\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Interface D has invalid modifier \"final\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Interface E has invalid modifier \"private\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Interface F has invalid modifier \"protected\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Interface G has invalid modifier \"static\".")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Interface A has invalid modifier \"abstract\"."),
+        CoCoFinding.error(errorCode, "Interface B has invalid modifier \"derived\"."),
+        CoCoFinding.error(errorCode, "Interface C has invalid modifier \"derived\"."),
+        CoCoFinding.error(errorCode, "Interface D has invalid modifier \"final\"."),
+        CoCoFinding.error(errorCode, "Interface E has invalid modifier \"private\"."),
+        CoCoFinding.error(errorCode, "Interface F has invalid modifier \"protected\"."),
+        CoCoFinding.error(errorCode, "Interface G has invalid modifier \"static\".")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);

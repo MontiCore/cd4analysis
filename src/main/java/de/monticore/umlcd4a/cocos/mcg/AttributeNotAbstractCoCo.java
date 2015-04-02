@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -26,10 +26,10 @@ public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
   @Override
   public void check(ASTCDAttribute attr) {
     if (attr.getModifier().isPresent() && attr.getModifier().get().isAbstract()) {
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, attr.getName()),
-          attr.get_SourcePositionStart()));
+          attr.get_SourcePositionStart());
     }
   }
   

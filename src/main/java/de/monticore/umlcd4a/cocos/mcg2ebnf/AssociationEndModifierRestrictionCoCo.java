@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._ast.ASTStereoValue;
@@ -52,10 +52,10 @@ public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAs
     ASTModifier orderedMod = ASTModifier.getBuilder().stereotype(orderedStereo).build();
     ASTModifier emptyMod = ASTModifier.getBuilder().build();
     if (!(actualMod.deepEquals(orderedMod) || actualMod.deepEquals(emptyMod))) {
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, CD4ACoCoHelper.printAssociation(assoc)),
-          actualMod.get_SourcePositionStart()));
+          actualMod.get_SourcePositionStart());
     }
     
   }

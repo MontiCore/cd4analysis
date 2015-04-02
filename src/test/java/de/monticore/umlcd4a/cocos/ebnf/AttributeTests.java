@@ -15,8 +15,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -50,14 +50,12 @@ public class AttributeTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
@@ -68,13 +66,13 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A11.cd";
     String errorCode = "0xC4A11";
     
-    Collection<String> expectedErrors = Arrays
+    Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
-            CoCoHelper
-                .buildErrorMsg(errorCode,
+            CoCoFinding
+                .error(errorCode,
                     "The value assignment for the attribute a in class C1 is not compatible to its type String."),
-            CoCoHelper
-                .buildErrorMsg(errorCode,
+            CoCoFinding
+                .error(errorCode,
                     "The value assignment for the attribute b in class C1 is not compatible to its type int.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
@@ -86,9 +84,9 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A12.cd";
     String errorCode = "C4A12";
     
-    Collection<String> expectedErrors = Arrays
+    Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute Attr must start in lower-case.",
+        CoCoFinding.error(errorCode, "Attribute Attr must start in lower-case.",
             new SourcePosition(5, 12))
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
@@ -100,16 +98,16 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A13.cd";
     String errorCode = "0xC4A13";
     
-    Collection<String> expectedErrors = Arrays
+    Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
-            CoCoHelper
-                .buildErrorMsg(errorCode,
+            CoCoFinding
+                .error(errorCode,
                     "Class C2 overrides the attribute attr (type: String) of class C1 with the different type int."),
-            CoCoHelper
-                .buildErrorMsg(errorCode,
+            CoCoFinding
+                .error(errorCode,
                     "Class C5 overrides the attribute attr (type: int) of class C4 with the different type String."),
-            CoCoHelper
-                .buildErrorMsg(errorCode,
+            CoCoFinding
+                .error(errorCode,
                     "Class C8 overrides the attribute t1 (type: T1) of class C7 with the different type T2.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
@@ -121,9 +119,9 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A14.cd";
     String errorCode = "0xC4A14";
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper
-            .buildErrorMsg(errorCode, "Type AnUndefinedType of the attribute attr is unkown.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding
+            .error(errorCode, "Type AnUndefinedType of the attribute attr is unkown.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
@@ -133,10 +131,10 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A15.cd";
     String errorCode = "0xC4A15";
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute a is defined multiple times in class C."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute b is defined multiple times in class C."),
-        CoCoHelper.buildErrorMsg(errorCode, "Attribute c is defined multiple times in class C.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Attribute a is defined multiple times in class C."),
+        CoCoFinding.error(errorCode, "Attribute b is defined multiple times in class C."),
+        CoCoFinding.error(errorCode, "Attribute c is defined multiple times in class C.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }

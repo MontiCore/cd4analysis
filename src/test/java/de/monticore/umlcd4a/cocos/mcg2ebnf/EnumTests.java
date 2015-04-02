@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -44,14 +44,12 @@ public class EnumTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   @Test
@@ -61,15 +59,15 @@ public class EnumTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Enum A may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum B may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum C may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum D may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum E may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum F may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum G may not have modifiers."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum H may not have modifiers.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Enum A may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum B may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum C may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum D may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum E may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum F may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum G may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum H may not have modifiers.")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
@@ -82,10 +80,10 @@ public class EnumTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Enum A may not have constructors."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum B may not have constructors."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum C may not have constructors.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Enum A may not have constructors."),
+        CoCoFinding.error(errorCode, "Enum B may not have constructors."),
+        CoCoFinding.error(errorCode, "Enum C may not have constructors.")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
@@ -98,9 +96,9 @@ public class EnumTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Enum A may not have methods."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum B may not have methods.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Enum A may not have methods."),
+        CoCoFinding.error(errorCode, "Enum B may not have methods.")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);

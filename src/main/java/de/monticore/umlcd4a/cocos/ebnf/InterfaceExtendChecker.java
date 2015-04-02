@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTReferenceTypeList;
@@ -41,7 +41,7 @@ public class InterfaceExtendChecker implements CD4AnalysisASTCDDefinitionCoCo {
             superKindType = "Enum";
           }
 
-          CoCoHelper.buildErrorMsg(ERROR_CODE,
+          CoCoLog.error(ERROR_CODE,
               String.format(ERROR_MSG_FORMAT, name, superKindType, superKindName),
               iface.get_SourcePositionStart());
 

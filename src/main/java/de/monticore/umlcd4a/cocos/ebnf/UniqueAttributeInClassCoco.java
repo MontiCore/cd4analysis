@@ -7,7 +7,7 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.HashMap;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
@@ -36,10 +36,10 @@ public class UniqueAttributeInClassCoco implements CD4AnalysisASTCDClassCoCo {
     
     if (!duplicates.isEmpty()) {
       for (ASTCDAttribute duplicate : duplicates.values()) {
-        Log.error(CoCoHelper.buildErrorMsg(
+        CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, duplicate.getName(), node.getName()),
-            node.get_SourcePositionStart()));
+            node.get_SourcePositionStart());
       }
     }
   }

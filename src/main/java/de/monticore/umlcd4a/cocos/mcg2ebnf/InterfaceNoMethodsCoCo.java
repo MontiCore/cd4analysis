@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDInterface;
 import de.monticore.umlcd4a._ast.ASTCDMethod;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
@@ -28,10 +28,10 @@ public class InterfaceNoMethodsCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   public void check(ASTCDInterface node) {
     if (node.getCDMethods().size() > 0) {
       ASTCDMethod method = node.getCDMethods().get(0);
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, node.getName()),
-          method.get_SourcePositionStart()));
+          method.get_SourcePositionStart());
     }
   }
   

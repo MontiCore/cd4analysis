@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTStereoValue;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTStereoValueCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -26,10 +26,10 @@ public class StereoValueNoValueCoCo implements CD4AnalysisASTStereoValueCoCo {
   @Override
   public void check(ASTStereoValue node) {
     if (node.getValue().isPresent()) {
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, node.getName()),
-          node.get_SourcePositionStart()));
+          node.get_SourcePositionStart());
       
     }
   }

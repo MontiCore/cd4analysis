@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo;
@@ -42,9 +42,9 @@ public class AssociationModifierCoCo implements CD4AnalysisASTCDAssociationCoCo 
   }
   
   private void error(ASTCDAssociation assoc, ASTModifier mod) {
-    Log.error(CoCoHelper.buildErrorMsg(ERROR_CODE, String.format(
+    CoCoLog.error(ERROR_CODE, String.format(
         ERROR_MSG_FORMAT,
         CD4ACoCoHelper.printAssociation(assoc)),
-        mod.get_SourcePositionStart()));
+        mod.get_SourcePositionStart());
   }
 }

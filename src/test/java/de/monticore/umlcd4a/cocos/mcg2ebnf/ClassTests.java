@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -44,14 +44,12 @@ public class ClassTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   @Test
@@ -61,20 +59,20 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode,
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode,
             "Class A has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Class B has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Class C has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Class D has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Class E has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Class F has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoHelper.buildErrorMsg(errorCode,
+        CoCoFinding.error(errorCode,
             "Class G has invalid modifiers. Only \"abstract\" is permitted.")
         );
     
@@ -88,9 +86,9 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Class A may not have constructors."),
-        CoCoHelper.buildErrorMsg(errorCode, "Class B may not have constructors.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Class A may not have constructors."),
+        CoCoFinding.error(errorCode, "Class B may not have constructors.")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
@@ -103,9 +101,9 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Class A may not have any methods."),
-        CoCoHelper.buildErrorMsg(errorCode, "Class B may not have any methods.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Class A may not have any methods."),
+        CoCoFinding.error(errorCode, "Class B may not have any methods.")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);

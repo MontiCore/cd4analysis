@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
@@ -29,16 +29,16 @@ public class ClassInvalidModifiersCoCo implements CD4AnalysisASTCDClassCoCo {
     if (node.getModifier().isPresent()) {
       ASTModifier mod = node.getModifier().get();
       if (mod.isDerived()) {
-        Log.error(CoCoHelper.buildErrorMsg(
+        CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName(), "\"derived\""),
-            mod.get_SourcePositionStart()));
+            mod.get_SourcePositionStart());
       }
       if (mod.isStatic()) {
-        Log.error(CoCoHelper.buildErrorMsg(
+        CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName(), "\"static\""),
-            mod.get_SourcePositionStart()));
+            mod.get_SourcePositionStart());
       }
     }
   }

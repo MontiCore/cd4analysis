@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTCDAssociationList;
 import de.monticore.umlcd4a._ast.ASTCDDefinition;
@@ -29,7 +29,7 @@ public class AssociationOrderedCardinalityChecker implements
           && !assoc.getLeftCardinality().get().isOne()) {
 
 
-        CoCoHelper.buildErrorMsg(ERROR_CODE,
+        CoCoLog.error(ERROR_CODE,
             printErrorOnEnum(assoc),
             assoc.get_SourcePositionStart());
       }
@@ -40,7 +40,7 @@ public class AssociationOrderedCardinalityChecker implements
           && !assoc.getRightCardinality().get().isOne()) {
 
 
-        CoCoHelper.buildErrorMsg(ERROR_CODE,
+        CoCoLog.error(ERROR_CODE,
             printErrorOnEnum(assoc),
             assoc.get_SourcePositionStart());
       }

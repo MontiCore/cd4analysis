@@ -58,15 +58,15 @@ import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
  *      {@literal @}Override
  *      public String print(ASTCDAssociation assoc) {
  *        String msg = "Association %s is invalid, because an association's source may not be an Enumeration.";
- *        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+ *        return "  CoCoFinding.error(errorCode, \""
  *            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
  *      }
  *    });
  * 
  * output:
- *   CoCoHelper.buildErrorMsg(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoHelper.buildErrorMsg(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoHelper.buildErrorMsg(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
  *   // ...
  * </pre>
  * 
@@ -137,7 +137,7 @@ public class AssocTestGenerator {
         if (null == invalidRoleName) {
           throw new RuntimeException("At least one of the roles must be set.");
         }
-        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+        return "  CoCoFinding.error(errorCode, \""
             + String.format(msg, invalidRoleName, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
       }
     });
@@ -227,7 +227,7 @@ public class AssocTestGenerator {
       @Override
       public String print(ASTCDAssociation assoc) {
         String msg = "Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.";
-        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+        return "  CoCoFinding.error(errorCode, \""
             + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
       }
     };
@@ -255,7 +255,7 @@ public class AssocTestGenerator {
       @Override
       public String print(ASTCDAssociation assoc) {
         String msg = "Association %s is invalid, because an association's source may not be an Enumeration.";
-        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+        return "  CoCoFinding.error(errorCode, \""
             + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
       }
     };
@@ -294,7 +294,7 @@ public class AssocTestGenerator {
           }
         }
         if (null != invalidCardinalityStr) {
-          return "  CoCoHelper.buildErrorMsg(errorCode, \""
+          return "  CoCoFinding.error(errorCode, \""
               + String.format(msg, CD4ACoCoHelper.printAssociation(assoc), invalidCardinalityStr)
               + "\"),";
           

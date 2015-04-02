@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types._ast.ASTType;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
@@ -20,7 +20,7 @@ public class ValidTypeParamterChecker implements CD4AnalysisASTCDDefinitionCoCo 
         ASTType type = attr.getType();
         if (TypesPrinter.printType(type).matches("*<*<")) {
 
-          CoCoHelper.buildErrorMsg(ERROR_CODE,
+          CoCoLog.error(ERROR_CODE,
               String.format(ERROR_MSG_FORMAT, TypesPrinter.printType(type)),
               type.get_SourcePositionStart());
 

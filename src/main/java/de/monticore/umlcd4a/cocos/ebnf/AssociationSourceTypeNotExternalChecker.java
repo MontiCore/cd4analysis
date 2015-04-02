@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTCDAssociationList;
@@ -50,7 +50,7 @@ public class AssociationSourceTypeNotExternalChecker implements
 			String assocString = CD4ACoCoHelper.printAssociation(assoc);
 			
 			
-      CoCoHelper.buildErrorMsg(ERROR_CODE,
+			CoCoLog.error(ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, assocString),
           assoc.get_SourcePositionStart());
 		}

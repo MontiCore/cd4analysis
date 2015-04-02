@@ -3,7 +3,7 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._ast.ASTCDClassList;
 import de.monticore.umlcd4a._ast.ASTCDDefinition;
@@ -39,7 +39,7 @@ public class UniqueNamesChecker implements CD4AnalysisASTCDDefinitionCoCo {
 
       if (usedNames.contains(className)) {
 
-        CoCoHelper.buildErrorMsg(ERROR_CODE,
+        CoCoLog.error(ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, className),
             cdType.get_SourcePositionStart());
       }
@@ -52,7 +52,7 @@ public class UniqueNamesChecker implements CD4AnalysisASTCDDefinitionCoCo {
 
       if (usedNames.contains(className)) {
 
-        CoCoHelper.buildErrorMsg(ERROR_CODE,
+        CoCoLog.error(ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, className),
             cdType.get_SourcePositionStart());
       }
@@ -65,7 +65,7 @@ public class UniqueNamesChecker implements CD4AnalysisASTCDDefinitionCoCo {
 
       if (usedNames.contains(className)) {
 
-        CoCoHelper.buildErrorMsg(ERROR_CODE,
+        CoCoLog.error(ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, className),
             cdType.get_SourcePositionStart());
       }

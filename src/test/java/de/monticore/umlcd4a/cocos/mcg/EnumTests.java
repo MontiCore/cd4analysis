@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -44,14 +44,12 @@ public class EnumTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   @Test
@@ -61,14 +59,14 @@ public class EnumTests extends AbstractCoCoTest {
     
     testModelNoErrors("valid/" + modelName);
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Enum A has invalid modifier \"abstract\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum B has invalid modifier \"derived\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum C has invalid modifier \"derived\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum D has invalid modifier \"final\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum E has invalid modifier \"private\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum F has invalid modifier \"protected\"."),
-        CoCoHelper.buildErrorMsg(errorCode, "Enum G has invalid modifier \"static\".")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Enum A has invalid modifier \"abstract\"."),
+        CoCoFinding.error(errorCode, "Enum B has invalid modifier \"derived\"."),
+        CoCoFinding.error(errorCode, "Enum C has invalid modifier \"derived\"."),
+        CoCoFinding.error(errorCode, "Enum D has invalid modifier \"final\"."),
+        CoCoFinding.error(errorCode, "Enum E has invalid modifier \"private\"."),
+        CoCoFinding.error(errorCode, "Enum F has invalid modifier \"protected\"."),
+        CoCoFinding.error(errorCode, "Enum G has invalid modifier \"static\".")
         );
     
     testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);

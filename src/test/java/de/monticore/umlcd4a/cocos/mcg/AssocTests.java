@@ -5,8 +5,6 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import static de.monticore.cocos.CoCoHelper.buildErrorMsg;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -14,7 +12,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -47,14 +46,12 @@ public class AssocTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   @Test
@@ -62,11 +59,11 @@ public class AssocTests extends AbstractCoCoTest {
     String modelName = "C4A57.cd";
     String errorCode = "0xC4A57";
     
-    Collection<String> expectedErrors = Arrays
+    Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
-            buildErrorMsg(errorCode,
+            CoCoFinding.error(errorCode,
                 "The modifier abstract can not be used for associations at association Assoc1 (A -> B)."),
-            buildErrorMsg(errorCode,
+            CoCoFinding.error(errorCode,
                 "The modifier abstract can not be used for associations at association Assoc2 (A -> B).")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);

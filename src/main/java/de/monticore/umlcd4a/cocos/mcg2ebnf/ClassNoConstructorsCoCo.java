@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._ast.ASTCDConstructor;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
@@ -28,10 +28,10 @@ public class ClassNoConstructorsCoCo implements CD4AnalysisASTCDClassCoCo {
   public void check(ASTCDClass node) {
     if (node.getCDConstructors().size() > 0) {
       ASTCDConstructor constr = node.getCDConstructors().get(0);
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, node.getName()),
-          constr.get_SourcePositionStart()));
+          constr.get_SourcePositionStart());
     }
   }
   

@@ -66,15 +66,15 @@ import de.se_rwth.commons.StringTransformations;
  *      {@literal @}Override
  *      public String print(ASTCDAssociation assoc) {
  *        String msg = "Association %s is invalid, because an association's source may not be an Enumeration.";
- *        return "  CoCoHelper.buildErrorMsg(errorCode, \""
+ *        return "  CoCoFinding.error(errorCode, \""
  *            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
  *      }
  *    });
  * 
  * output:
- *   CoCoHelper.buildErrorMsg(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoHelper.buildErrorMsg(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoHelper.buildErrorMsg(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
  *   // ...
  * </pre>
  * 

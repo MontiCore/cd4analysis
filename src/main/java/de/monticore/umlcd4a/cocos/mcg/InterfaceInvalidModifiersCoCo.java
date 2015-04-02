@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDInterface;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
@@ -39,10 +39,10 @@ public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceC
   
   private void check(boolean invalid, String modifier, ASTModifier mod, ASTCDInterface node) {
     if (invalid) {
-      Log.error(CoCoHelper.buildErrorMsg(
+      CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, node.getName(), "\"" + modifier + "\""),
-          mod.get_SourcePositionStart()));
+          mod.get_SourcePositionStart());
     }
   }
 }

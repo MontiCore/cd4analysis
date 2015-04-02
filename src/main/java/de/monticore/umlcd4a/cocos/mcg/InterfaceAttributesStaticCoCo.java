@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoHelper;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._ast.ASTCDInterface;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
@@ -28,10 +28,10 @@ public class InterfaceAttributesStaticCoCo implements CD4AnalysisASTCDInterfaceC
   public void check(ASTCDInterface node) {
     for (ASTCDAttribute attr : node.getCDAttributes()) {
       if (!attr.getModifier().isPresent() || !attr.getModifier().get().isStatic()) {
-        Log.error(CoCoHelper.buildErrorMsg(
+        CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, attr.getName(), node.getName()),
-            attr.get_SourcePositionStart()));
+            attr.get_SourcePositionStart());
       }
     }
   }

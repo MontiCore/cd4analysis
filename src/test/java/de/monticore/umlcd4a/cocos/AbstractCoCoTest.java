@@ -5,15 +5,20 @@
  */
 package de.monticore.umlcd4a.cocos;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
@@ -57,13 +62,13 @@ public abstract class AbstractCoCoTest {
    * @param expectedErrorSuffixes
    */
   protected void testModelForErrorSuffixes(String modelName,
-      Collection<String> expectedErrorSuffixes) {
+      Collection<CoCoFinding> expectedErrorSuffixes) {
     CD4AnalysisCoCoChecker checker = getChecker();
     
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    Assert.assertEqualErrorCounts(expectedErrorSuffixes, LogMock.getFindings());
-    Assert.assertErrorsWithSuffix(expectedErrorSuffixes, LogMock.getFindings());
+    Assert.assertEqualErrorCounts(expectedErrorSuffixes.stream().map(f -> f.buildMsg()).collect(Collectors.toList()), CoCoLog.getFindings().stream().map(f -> f.buildMsg()).collect(Collectors.toList()));
+    Assert.assertErrorsWithSuffix(expectedErrorSuffixes.stream().map(f->f.buildMsg()).collect(Collectors.toList()), CoCoLog.getFindings().stream().map(f -> f.buildMsg()).collect(Collectors.toList()));
   }
   
   /**
@@ -76,7 +81,7 @@ public abstract class AbstractCoCoTest {
     CD4AnalysisCoCoChecker checker = getChecker();
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    Assert.assertEqualErrorCounts(new ArrayList<String>(), LogMock.getFindings());
+    assertTrue(CoCoLog.getFindings().isEmpty());
   }
   
   private ASTCDCompilationUnit loadModel(String modelFilename) {

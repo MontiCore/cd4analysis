@@ -13,8 +13,8 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoHelper;
-import de.monticore.cocos.LogMock;
+import de.monticore.cocos.CoCoFinding;
+import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
@@ -43,14 +43,12 @@ public class DiagramTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    LogMock.init();
-    Log.enableFailQuick(false);
-    LogMock.setProduceOutput(false);
+    CoCoLog.setDelegateToLog(false);
   }
   
   @Before
   public void setUp() {
-    LogMock.getFindings().clear();
+    CoCoLog.getFindings().clear();
   }
   
   private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
@@ -62,8 +60,8 @@ public class DiagramTests extends AbstractCoCoTest {
     String modelName = "c4A01.cd";
     String errorCode = "0xC4A01";
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode,
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode,
             "First character of the diagram name c4A01 must be upper-case.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
@@ -72,8 +70,8 @@ public class DiagramTests extends AbstractCoCoTest {
     errorCode = "0xC4A02";
     expectedErrors = Arrays
         .asList(
-        CoCoHelper
-            .buildErrorMsg(
+        CoCoFinding
+            .error(
                 errorCode,
                 "The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
         );
@@ -87,9 +85,9 @@ public class DiagramTests extends AbstractCoCoTest {
     String modelName = "C4A03.cd";
     String errorCode = "0xC4A03";
     
-    Collection<String> expectedErrors = Arrays.asList(
-        CoCoHelper.buildErrorMsg(errorCode, "Name DAO is reserved for internal use."),
-        CoCoHelper.buildErrorMsg(errorCode, "Name Factory is reserved for internal use.")
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Name DAO is reserved for internal use."),
+        CoCoFinding.error(errorCode, "Name Factory is reserved for internal use.")
         );
     testModelForErrorSuffixes(modelName, expectedErrors);
   }
