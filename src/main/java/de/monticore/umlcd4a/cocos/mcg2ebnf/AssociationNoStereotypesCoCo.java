@@ -10,7 +10,6 @@ import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTStereotype;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Stereotypes are forbidding for Associations in the ebnf.

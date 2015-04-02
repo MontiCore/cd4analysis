@@ -9,7 +9,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._ast.ASTCDInterface;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Disables usage of attributes in interfaces.

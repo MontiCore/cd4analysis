@@ -9,7 +9,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Classes may not be derived nor static.

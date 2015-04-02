@@ -9,7 +9,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDConstructor;
 import de.monticore.umlcd4a._ast.ASTCDEnum;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Disables usage of constructors in classes.

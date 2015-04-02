@@ -9,7 +9,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Only modifier "derived" is allowed in the ebnf.

@@ -8,7 +8,6 @@ package de.monticore.umlcd4a.cocos.mcg;
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTModifierCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Modifiers may only have none or exactly one visibility.

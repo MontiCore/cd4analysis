@@ -11,7 +11,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._ast.ASTCDClass;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Ensures that an attribute name does not occur twice in a class.

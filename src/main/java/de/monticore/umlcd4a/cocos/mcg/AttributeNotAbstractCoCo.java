@@ -8,7 +8,6 @@ package de.monticore.umlcd4a.cocos.mcg;
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Attributes may not be abstract all others are allowed.

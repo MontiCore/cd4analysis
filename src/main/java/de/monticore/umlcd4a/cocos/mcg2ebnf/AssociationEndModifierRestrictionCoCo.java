@@ -14,7 +14,6 @@ import de.monticore.umlcd4a._ast.ASTStereotype;
 import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * On both sides only the stereotype <<ordered>> is allowed, all other

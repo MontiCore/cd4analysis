@@ -8,7 +8,6 @@ package de.monticore.umlcd4a.cocos.mcg2ebnf;
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTStereoValue;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTStereoValueCoCo;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * StereoValues may only have a name but not a value.
