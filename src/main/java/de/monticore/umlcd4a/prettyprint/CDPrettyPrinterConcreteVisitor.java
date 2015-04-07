@@ -24,6 +24,7 @@ import de.monticore.umlcd4a._ast.ASTCDQualifier;
 import de.monticore.umlcd4a._ast.ASTCardinality;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._ast.ASTStereoValue;
+import de.monticore.umlcd4a._ast.ASTStereoValueList;
 import de.monticore.umlcd4a._ast.ASTStereotype;
 import de.monticore.umlcd4a._ast.ASTStereotypeList;
 
@@ -496,6 +497,20 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    */
   public void endVisit(ASTStereotype a) {
     printer.print(">>");
+  }
+
+  /**
+   * Prints stereovaluelist and adds a delimiter between the items
+   * 
+   * @param a stereotype value
+   */
+  public void ownVisit(ASTStereoValueList a) {
+    String delim = "";
+    for (ASTStereoValue v : a) {
+      printer.print(delim);
+      visitor.startVisit(v);
+      delim = ",";
+    }
   }
 
   /**
