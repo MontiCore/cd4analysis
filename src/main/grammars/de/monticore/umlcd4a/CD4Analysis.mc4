@@ -13,7 +13,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDCompilationUnit =
     ("package" Package:(Name& || ".")+ ";")? 
-    (ImportStatements:ImportStatement)*
+    (ImportStatement)*
     CDDefinition;
 
 
@@ -26,9 +26,9 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDDefinition = "classdiagram" Name "{"
   (   cDClasses:CDClass
-    | cDInterfaces:CDInterface
-    | cDEnums:CDEnum
-    | cDAssociations:CDAssociation)* "}";
+    | CDInterface
+    | CDEnum
+    | CDAssociation)* "}";
   
   interface CDType;
   
@@ -48,9 +48,9 @@ grammar CD4Analysis extends de.monticore.types.Types {
   ( "extends"  superclass:ReferenceType)?
   ( "implements" interfaces:(ReferenceType || ",")+ )?
   ( "{" 
-    ( cDAttributes:CDAttribute
-    | cDConstructors:CDConstructor
-    | cDMethods:CDMethod )*
+    ( CDAttribute
+    | CDConstructor
+    | CDMethod )*
     "}" 
   | ";" );
   
@@ -64,8 +64,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDInterface astimplements ASTCDType = Modifier? "interface" Name
     ( "extends" interfaces:(ReferenceType || ",")+ )? ( "{" 
-      ( cDAttributes:CDAttribute
-      | cDMethods:CDMethod )*
+      ( CDAttribute
+      | CDMethod )*
       "}" 
     | ";" );
     
@@ -82,8 +82,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
   CDEnum astimplements ASTCDType = Modifier? "enum" Name
     ( "implements" interfaces:(ReferenceType || ",")+ )?
     ( "{"
-        cDEnumConstants:(CDEnumConstant || ",")* ";" 
-        ( cDConstructors:CDConstructor | cDMethods:CDMethod)*
+        (CDEnumConstant || ",")* ";" 
+        ( CDConstructor | CDMethod)*
       "}"
     | ";" );
   
@@ -117,7 +117,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDConstructor =
     Modifier
-     Name "(" cDParameters:(CDParameter || ",")* ")"
+     Name "(" (CDParameter || ",")* ")"
     ("throws" exceptions:(QualifiedName || "," )+)?
     ";";
         
@@ -132,7 +132,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   CDMethod =
     Modifier
     ReturnType
-     Name "(" cDParameters:(CDParameter || ",")* ")"
+     Name "(" (CDParameter || ",")* ")"
     ("throws" exceptions:(QualifiedName || ",")+)?
     ";";
   
