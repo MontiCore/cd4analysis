@@ -50,8 +50,8 @@ class IdSetters {
         .filter(ASTSimpleReferenceType.class::isInstance)
         .map(ASTSimpleReferenceType.class::cast)
         .forEach(simpleReferenceType -> {
-          String oldName = simpleReferenceType.getName().get(0);
-          simpleReferenceType.getName().set(0, oldName + id);
+          String oldName = simpleReferenceType.getNames().get(0);
+          simpleReferenceType.getNames().set(0, oldName + id);
         });
   }
   

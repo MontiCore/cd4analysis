@@ -44,7 +44,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
-  CDClass astimplements CDType = Modifier?  "class" Name
+  CDClass astimplements ASTCDType = Modifier?  "class" Name
   ( "extends"  superclass:ReferenceType)?
   ( "implements" interfaces:(ReferenceType || ",")+ )?
   ( "{" 
@@ -62,7 +62,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
-  CDInterface astimplements CDType = Modifier? "interface" Name
+  CDInterface astimplements ASTCDType = Modifier? "interface" Name
     ( "extends" interfaces:(ReferenceType || ",")+ )? ( "{" 
       ( cDAttributes:CDAttribute
       | cDMethods:CDMethod )*
@@ -79,7 +79,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
-  CDEnum astimplements CDType = Modifier? "enum" Name
+  CDEnum astimplements ASTCDType = Modifier? "enum" Name
     ( "implements" interfaces:(ReferenceType || ",")+ )?
     ( "{"
         cDEnumConstants:(CDEnumConstant || ",")* ";" 

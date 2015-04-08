@@ -82,7 +82,7 @@ public class CreateInheritanceTree implements
     ASTSimpleReferenceType reference = TypesNodeFactory.createASTSimpleReferenceType();
     ArrayList<String> name = new ArrayList<String>();
     name.add(superClass.getName());
-    reference.setName(name);
+    reference.setNames(name);
     return reference;
   }
   

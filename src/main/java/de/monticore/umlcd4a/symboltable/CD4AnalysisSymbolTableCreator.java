@@ -145,7 +145,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     CDTypeSymbolReference superSymbol = null;
     if (astReferenceType instanceof ASTSimpleReferenceType) {
       ASTSimpleReferenceType astSuperClass = (ASTSimpleReferenceType) astReferenceType;
-      superSymbol = new CDTypeSymbolReference(Names.getQualifiedName(astSuperClass.getName()),
+      superSymbol = new CDTypeSymbolReference(Names.getQualifiedName(astSuperClass.getNames()),
           currentScope().get());
     }
 

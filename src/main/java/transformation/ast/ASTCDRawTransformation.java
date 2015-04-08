@@ -279,7 +279,7 @@ public class ASTCDRawTransformation {
    */
   public ASTSimpleReferenceType createType(String typeName) {
     return ASTSimpleReferenceType.getBuilder()
-        .name(Arrays.asList(typeName.split("\\."))).build();
+        .names(Arrays.asList(typeName.split("\\."))).build();
   }
   
 }

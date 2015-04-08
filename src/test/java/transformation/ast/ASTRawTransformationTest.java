@@ -64,18 +64,18 @@ public class ASTRawTransformationTest {
     assertTrue(astClass.getSuperclass().get() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType superClass = (ASTSimpleReferenceType) astClass
         .getSuperclass().get();
-    assertEquals(superClass.getName(), Lists.newArrayList("superC"));
+    assertEquals(superClass.getNames(), Lists.newArrayList("superC"));
     
     assertEquals(astClass.getInterfaces().size(), 2);
     assertTrue(astClass.getInterfaces().get(0) instanceof ASTSimpleReferenceType);
     assertEquals(
         ((ASTSimpleReferenceType) astClass.getInterfaces().get(0))
-            .getName(),
+            .getNames(),
         Lists.newArrayList("i1"));
     assertTrue(astClass.getInterfaces().get(1) instanceof ASTSimpleReferenceType);
     assertEquals(
         ((ASTSimpleReferenceType) astClass.getInterfaces().get(1))
-            .getName(),
+            .getNames(),
         Lists.newArrayList("i2"));
   }
   
@@ -96,10 +96,10 @@ public class ASTRawTransformationTest {
     assertEquals(astInterface.getInterfaces().size(), 2);
     assertTrue(astInterface.getInterfaces().get(0) instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType) astInterface.getInterfaces()
-        .get(0)).getName(), Lists.newArrayList("SuperI1"));
+        .get(0)).getNames(), Lists.newArrayList("SuperI1"));
     assertTrue(astInterface.getInterfaces().get(1) instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType) astInterface.getInterfaces()
-        .get(1)).getName(), Lists.newArrayList("SuperI2"));
+        .get(1)).getNames(), Lists.newArrayList("SuperI2"));
   }
   
   @Test
@@ -110,7 +110,7 @@ public class ASTRawTransformationTest {
     assertNotNull(attr1);
     assertEquals(attr1.getName(), "a");
     assertTrue(attr1.getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) attr1.getType()).getName(),
+    assertEquals(((ASTSimpleReferenceType) attr1.getType()).getNames(),
         Lists.newArrayList("String"));
     assertTrue(!attr1.getModifier().isPresent());
     
@@ -119,7 +119,7 @@ public class ASTRawTransformationTest {
     assertNotNull(attr2);
     assertEquals(attr2.getName(), "b");
     assertTrue(attr2.getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) attr2.getType()).getName(),
+    assertEquals(((ASTSimpleReferenceType) attr2.getType()).getNames(),
         Lists.newArrayList("a", "b", "C"));
     assertTrue(!attr2.getModifier().isPresent());
     
@@ -139,22 +139,22 @@ public class ASTRawTransformationTest {
     assertEquals(method2.getName(), "test2");
     assertTrue(method2.getReturnType() instanceof ASTSimpleReferenceType);
     assertEquals(
-        ((ASTSimpleReferenceType) method2.getReturnType()).getName(),
+        ((ASTSimpleReferenceType) method2.getReturnType()).getNames(),
         Lists.newArrayList("Integer"));
     assertEquals(method2.getCDParameters().size(), 3);
     assertEquals(method2.getCDParameters().get(0).getName(), "param0");
     assertTrue(method2.getCDParameters().get(0).getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType) method2.getCDParameters().get(0)
-        .getType()).getName(), Lists.newArrayList("A"));
+        .getType()).getNames(), Lists.newArrayList("A"));
     assertEquals(method2.getCDParameters().get(1).getName(), "param1");
     assertTrue(method2.getCDParameters().get(1).getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType) method2.getCDParameters().get(1)
-        .getType()).getName(), Lists.newArrayList("a", "b", "C"));
+        .getType()).getNames(), Lists.newArrayList("a", "b", "C"));
     assertEquals(method2.getCDParameters().get(2).getName(), "param2");
     assertTrue(method2.getCDParameters().get(2).getType() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType param2Type = (ASTSimpleReferenceType) method2
         .getCDParameters().get(2).getType();
-    assertEquals(param2Type.getName(), Lists.newArrayList("String"));
+    assertEquals(param2Type.getNames(), Lists.newArrayList("String"));
     assertTrue(method2.getModifier() != null);
     assertTrue(method2.getModifier().isPublic());
   }
