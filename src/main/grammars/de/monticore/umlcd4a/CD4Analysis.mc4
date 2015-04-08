@@ -1,7 +1,7 @@
 package de.monticore.umlcd4a;
 
 /*
-   MCG for CD 4 Analysis, Version Apr. 1st, 2015
+   MCG for CD 4 Analysis, Version Apr. 8th, 2015
 */
 
 grammar CD4Analysis extends de.monticore.types.Types {
