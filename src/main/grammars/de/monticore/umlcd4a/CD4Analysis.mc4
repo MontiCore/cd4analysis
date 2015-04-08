@@ -30,11 +30,6 @@ grammar CD4Analysis extends de.monticore.types.Types {
     | CDEnum
     | CDAssociation)* "}";
   
-  interface CDType;
-  
-  ast CDType =
-    method public String getName() {};
-
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
     @attribute name           Name of this Class
