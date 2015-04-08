@@ -12,13 +12,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import mc.helper.IndentPrinter;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
-
-import com.google.common.base.Optional;
 
 import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;

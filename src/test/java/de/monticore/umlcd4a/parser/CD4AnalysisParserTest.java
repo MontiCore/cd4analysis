@@ -11,11 +11,10 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
-
-import com.google.common.base.Optional;
 
 import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;

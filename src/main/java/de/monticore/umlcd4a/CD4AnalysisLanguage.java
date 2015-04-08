@@ -5,9 +5,9 @@
  */
 package de.monticore.umlcd4a;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
-import com.google.common.base.Optional;
+import javax.annotation.Nullable;
 
 import de.monticore.AbstractModelingLanguage;
 import de.monticore.symboltable.MutableScope;

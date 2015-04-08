@@ -11,10 +11,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Optional;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -33,11 +33,6 @@ import de.monticore.umlcd4a._ast.ASTCDParameterList;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a._parser.CDAttributeMCParser;
-import de.monticore.umlcd4a._parser.CDMethodMCParser;
-import de.monticore.umlcd4a._parser.ModifierMCParser;
-import de.monticore.umlcd4a._parser.ReturnTypeMCParser;
-import de.monticore.umlcd4a._parser.TypeMCParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -62,7 +57,7 @@ public class ASTCDTransformation {
    * @param astClass
    * @param attrName
    * @param attrType
-   * @return Optional of the created ast node or Optional.absent() if the
+   * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
@@ -76,7 +71,7 @@ public class ASTCDTransformation {
     Optional<ASTType> parsedType = createType(attrType);
     if (!parsedType.isPresent()) {
       Log.error("Attribute '" + attrName + "' can't be added to the CD class " + astClass.getName());
-      return Optional.absent();
+      return Optional.empty();
     }
     ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
         .build();
@@ -92,7 +87,7 @@ public class ASTCDTransformation {
    * @param attrName
    * @param attrType
    * @param modifier
-   * @return Optional of the created ast node or Optional.absent() if the
+   * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
@@ -109,7 +104,7 @@ public class ASTCDTransformation {
     Optional<ASTModifier> parsedModifier = createModifier(modifier);
     if (!parsedType.isPresent() || !parsedModifier.isPresent()) {
       Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
-      return Optional.absent();
+      return Optional.empty();
     }
     ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
         .modifier(parsedModifier.get())
@@ -124,7 +119,7 @@ public class ASTCDTransformation {
    * 
    * @param astClass
    * @param attributeDefinition attribute definition to parse
-   * @return Optional of the created ast node or Optional.absent() if the
+   * @return Optional of the created ast node or Optional.empty() if the
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
@@ -133,7 +128,7 @@ public class ASTCDTransformation {
         "Attribute can't be added to the CD class because of null or empty attribute definition");
     checkNotNull(astClass, "Attribute '" + attributeDefinition
         + "' can't be added to the CD class because of null reference to the class");
-    Optional<ASTCDAttribute> astAttribute = Optional.absent();
+    Optional<ASTCDAttribute> astAttribute = Optional.empty();
     try {
       astAttribute = CD4AnalysisParserFactory.createCDAttributeMCParser().parse(new StringReader(attributeDefinition));
       if (!astAttribute.isPresent()) {
@@ -197,7 +192,7 @@ public class ASTCDTransformation {
    * @param superClassName
    * @param interfaceNames
    * @return Optional of the created {@link ASTCDClass} node or
-   * Optional.absent() if the super class- or one of the interface-definitions
+   * Optional.empty() if the super class- or one of the interface-definitions
    * couldn't be parsed
    */
   public Optional<ASTCDClass> addCdClass(ASTCDDefinition astDef, String className,
@@ -211,14 +206,14 @@ public class ASTCDTransformation {
     Optional<ASTType> superClass = createType(superClassName);
     if (!superClass.isPresent()) {
       Log.error("Class " + className + " can't be added to the CD definition.");
-      return Optional.absent();
+      return Optional.empty();
     }
     ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
         Log.error("Class " + className + " can't be added to the CD definition.");
-        return Optional.absent();
+        return Optional.empty();
       }
       interfaces.add((ASTReferenceType) type.get());
     }
@@ -288,7 +283,7 @@ public class ASTCDTransformation {
    * @param interfaceName
    * @param interfaceNames
    * @return Optional of the created {@link ASTCDInterface} node or
-   * Optional.absent() if one of the interface-definitions couldn't be parsed
+   * Optional.empty() if one of the interface-definitions couldn't be parsed
    */
   public Optional<ASTCDInterface> addCdInterface(ASTCDDefinition astDef,
       String interfaceName,
@@ -302,7 +297,7 @@ public class ASTCDTransformation {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
         Log.error("Interface " + interfaceName + " can't be added to the CD definition.");
-        return Optional.absent();
+        return Optional.empty();
       }
       interfaces.add((ASTReferenceType) type.get());
     }
@@ -322,7 +317,7 @@ public class ASTCDTransformation {
    * @param astClass
    * @param methodDefinition method definition to parse
    * @return Optional of the created {@link ASTCDMethod} node or
-   * Optional.absent() if the method definition couldn't be parsed
+   * Optional.empty() if the method definition couldn't be parsed
    */
   public Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDClass astClass,
       String methodDefinition) {
@@ -330,7 +325,7 @@ public class ASTCDTransformation {
         "Method can't be added to the CD class because of null or empty method definition");
     checkNotNull(astClass, "Method '" + methodDefinition
         + "' can't be added to the CD class because of null reference to the class");
-    Optional<ASTCDMethod> astMethod = Optional.absent();
+    Optional<ASTCDMethod> astMethod = Optional.empty();
     try {
       astMethod = CD4AnalysisParserFactory.createCDMethodMCParser().parse(new StringReader(methodDefinition));
       if (!astMethod.isPresent()) {
@@ -370,7 +365,7 @@ public class ASTCDTransformation {
    * @param returnType
    * @param paramTypes
    * @return Optional of the created {@link ASTCDMethod} node or
-   * Optional.absent() if the method definition couldn't be parsed
+   * Optional.empty() if the method definition couldn't be parsed
    */
   public Optional<ASTCDMethod> addCdMethod(ASTCDClass astClass, String methodName,
       String returnType, String modifier,
@@ -382,7 +377,7 @@ public class ASTCDTransformation {
     Optional<ASTModifier> parsedModifier = createModifier(modifier);
     if (!parsedReturnType.isPresent() || !cdParameters.isPresent() || !parsedModifier.isPresent()) {
       Log.error("Method " + methodName + " can't be added to the CD class " + astClass.getName());
-      return Optional.absent();
+      return Optional.empty();
     }
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
         .name(methodName)
@@ -415,7 +410,7 @@ public class ASTCDTransformation {
    * 
    * @param paramTypes
    * @return Optional of the created {@link ASTCDParameterList} node or
-   * Optional.absent() if one of the type definition couldn't be parsed
+   * Optional.empty() if one of the type definition couldn't be parsed
    */
   public Optional<ASTCDParameterList> createCdMethodParameters(List<String> paramTypes) {
     checkNotNull(paramTypes,
@@ -425,7 +420,7 @@ public class ASTCDTransformation {
     for (String paramType : paramTypes) {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent()) {
-        return Optional.absent();
+        return Optional.empty();
       }
       types.add(type.get());
     }
@@ -442,12 +437,12 @@ public class ASTCDTransformation {
    * 
    * @param typeName
    * @return Optional of the created {@link ASTReturnType} node or
-   * Optional.absent() if the type definition couldn't be parsed
+   * Optional.empty() if the type definition couldn't be parsed
    */
   public Optional<ASTReturnType> createReturnType(String typeName) {
     checkArgument(!Strings.isNullOrEmpty(typeName),
         "AST return type node can't be created because of null or empty return type definition");
-    Optional<ASTReturnType> astType = Optional.absent();
+    Optional<ASTReturnType> astType = Optional.empty();
     try {
       astType = CD4AnalysisParserFactory.createReturnTypeMCParser().parse(new StringReader(typeName));
       if (!astType.isPresent()) {
@@ -465,13 +460,13 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTType} using the type definition
    * 
    * @param typeName
-   * @return Optional of the created {@link ASTType} node or Optional.absent()
+   * @return Optional of the created {@link ASTType} node or Optional.empty()
    * if the type definition couldn't be parsed
    */
   public Optional<ASTType> createType(String typeName) {
     checkArgument(!Strings.isNullOrEmpty(typeName),
         "AST type node can't be created because of null or empty type definition");
-    Optional<ASTType> astType = Optional.absent();
+    Optional<ASTType> astType = Optional.empty();
     try {
       astType = CD4AnalysisParserFactory.createTypeMCParser().parse(new StringReader(typeName));
       if (!astType.isPresent()) {
@@ -491,12 +486,12 @@ public class ASTCDTransformation {
    * 
    * @param modifier
    * @return Optional of the created {@link ASTModifier} node or
-   * Optional.absent() if the type definition couldn't be parsed
+   * Optional.empty() if the type definition couldn't be parsed
    */
   public Optional<ASTModifier> createModifier(String modifier) {
     checkArgument(!Strings.isNullOrEmpty(modifier),
         "AST node for the modfier definition can't be created because of null or empty modifier definition");
-    Optional<ASTModifier> astModifier = Optional.absent();
+    Optional<ASTModifier> astModifier = Optional.empty();
     try {
       astModifier = CD4AnalysisParserFactory.createModifierMCParser().parse(new StringReader(modifier));
       if (!astModifier.isPresent()) {

@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;

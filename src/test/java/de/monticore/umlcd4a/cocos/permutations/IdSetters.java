@@ -1,11 +1,9 @@
 package de.monticore.umlcd4a.cocos.permutations;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import mc.ast.ASTNode;
-
-import com.google.common.base.Optional;
-
 import de.monticore.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;

@@ -44,17 +44,17 @@ public class CDTypeTest {
     assertSame(fieldSymbol2, typeSymbol.getFields().get(1));
     assertSame(fieldSymbol3, typeSymbol.getFields().get(2));
 
-    assertSame(fieldSymbol1, typeSymbol.getField("field1").orNull());
-    assertSame(fieldSymbol2, typeSymbol.getField("field2").orNull());
-    assertSame(fieldSymbol3, typeSymbol.getField("field3").orNull());
+    assertSame(fieldSymbol1, typeSymbol.getField("field1").orElse(null));
+    assertSame(fieldSymbol2, typeSymbol.getField("field2").orElse(null));
+    assertSame(fieldSymbol3, typeSymbol.getField("field3").orElse(null));
 
 
     // Test CDTypeScope methods //
 
     assertEquals(3, typeScope.getSymbols().size());
-    assertSame(fieldSymbol1, typeScope.resolve("field1", CDFieldSymbol.KIND).orNull());
-    assertSame(fieldSymbol2, typeScope.resolve("field2", CDFieldSymbol.KIND).orNull());
-    assertSame(fieldSymbol3, typeScope.resolve("field3", CDFieldSymbol.KIND).orNull());
+    assertSame(fieldSymbol1, typeScope.resolve("field1", CDFieldSymbol.KIND).orElse(null));
+    assertSame(fieldSymbol2, typeScope.resolve("field2", CDFieldSymbol.KIND).orElse(null));
+    assertSame(fieldSymbol3, typeScope.resolve("field3", CDFieldSymbol.KIND).orElse(null));
   }
 
   @Test
@@ -79,16 +79,16 @@ public class CDTypeTest {
     assertSame(methodSymbol1, typeSymbol.getMethods().get(0));
     assertSame(methodSymbol2, typeSymbol.getMethods().get(1));
 
-    assertSame(methodSymbol1, typeSymbol.getMethod("method1").orNull());
-    assertSame(methodSymbol2, typeSymbol.getMethod("method2").orNull());
+    assertSame(methodSymbol1, typeSymbol.getMethod("method1").orElse(null));
+    assertSame(methodSymbol2, typeSymbol.getMethod("method2").orElse(null));
     // Only methods are found
     assertFalse(typeSymbol.getMethod("constructor").isPresent());
 
     // Test CDTypeScope methods //
     assertEquals(3, typeScope.getSymbols().size());
-    assertSame(methodSymbol1, typeScope.resolve("method1", CDMethodSymbol.KIND).orNull());
-    assertSame(methodSymbol2, typeScope.resolve("method2", CDMethodSymbol.KIND).orNull());
-    assertSame(constructor, typeScope.resolve("constructor", CDMethodSymbol.KIND).orNull());
+    assertSame(methodSymbol1, typeScope.resolve("method1", CDMethodSymbol.KIND).orElse(null));
+    assertSame(methodSymbol2, typeScope.resolve("method2", CDMethodSymbol.KIND).orElse(null));
+    assertSame(constructor, typeScope.resolve("constructor", CDMethodSymbol.KIND).orElse(null));
   }
 
   @Test
@@ -116,9 +116,9 @@ public class CDTypeTest {
 
     // Test CDTypeScope methods //
     assertEquals(3, typeScope.getSymbols().size());
-    assertSame(constructorSymbol1, typeScope.resolve("constructor1", CDMethodSymbol.KIND).orNull());
-    assertSame(constructorSymbol2, typeScope.resolve("constructor2", CDMethodSymbol.KIND).orNull());
-    assertSame(method, typeScope.resolve("method", CDMethodSymbol.KIND).orNull());
+    assertSame(constructorSymbol1, typeScope.resolve("constructor1", CDMethodSymbol.KIND).orElse(null));
+    assertSame(constructorSymbol2, typeScope.resolve("constructor2", CDMethodSymbol.KIND).orElse(null));
+    assertSame(method, typeScope.resolve("method", CDMethodSymbol.KIND).orElse(null));
 
   }
 

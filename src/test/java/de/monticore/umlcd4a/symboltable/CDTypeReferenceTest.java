@@ -19,7 +19,7 @@ public class CDTypeReferenceTest {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     CDTypeSymbol cdType = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person", CDTypeSymbol
-        .KIND).orNull();
+        .KIND).orElse(null);
 
     assertNotNull(cdType);
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", cdType.getFullName());

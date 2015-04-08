@@ -28,7 +28,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
   protected void createSymbolTableFromAST(final ASTCDCompilationUnit ast, final String modelName,
       final MutableScope enclosingScope, final ResolverConfiguration resolverConfiguration) {
     final CD4AnalysisSymbolTableCreator symbolTableCreator = getModelingLanguage().getSymbolTableCreator
-        (resolverConfiguration, enclosingScope).orNull();
+        (resolverConfiguration, enclosingScope).orElse(null);
 
     if (symbolTableCreator != null) {
       Log.info("Start creation of symbol table for model \"" + modelName + "\".", CD4AnalysisModelLoader.class

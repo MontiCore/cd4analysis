@@ -2,8 +2,8 @@ package de.monticore.umlcd4a.symboltable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.types.CommonJAttributeSymbol;
@@ -71,7 +71,7 @@ public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
         return Optional.of(stereotype);
       }
     }
-    return Optional.absent();
+    return Optional.empty();
   }
 
   public boolean containsStereotype(String name, String value) {

@@ -10,9 +10,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collector;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.RecognitionException;
@@ -87,7 +86,7 @@ public abstract class AbstractCoCoTest {
   private ASTCDCompilationUnit loadModel(String modelFilename) {
     Path model = Paths.get(modelPath + modelFilename);
     try {
-      com.google.common.base.Optional<ASTCDCompilationUnit> root = parser.parse(model.toString());
+      Optional<ASTCDCompilationUnit> root = parser.parse(model.toString());
       if (root.isPresent()) {
         return root.get();
       }

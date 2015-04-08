@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import mc.ast.SourcePosition;
 
@@ -29,7 +30,6 @@ import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Simple test showing how to test CoCos.
@@ -51,7 +51,7 @@ public class HowToTestCoCosTest {
     
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/A.cd");
     CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
-    com.google.common.base.Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
     assertTrue(cdDef.isPresent());
     this.astRoot = cdDef.get();
   }

@@ -26,7 +26,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     final CDTypeSymbol creatureType = globalScope.<CDTypeSymbol> resolve(
-        "de.monticore.umlcd4a.symboltable.CD1.Creature", CDTypeSymbol.KIND).orNull();
+        "de.monticore.umlcd4a.symboltable.CD1.Creature", CDTypeSymbol.KIND).orElse(null);
     assertNotNull(creatureType);
 
     // Scope Hierarchy: GlobalScope -> ArtifactScope -> ClassDiagramScope ->* ...
@@ -67,7 +67,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
 
     final CDTypeSymbol personType = globalScope.<CDTypeSymbol> resolve(
-        "de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orNull();
+        "de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orElse(null);
     assertNotNull(personType);
     assertNotNull(personType.getSpannedScope());
     assertSame(personType, personType.getSpannedScope().getSpanningSymbol().get());
@@ -114,7 +114,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("S2", personType.getStereotype("S2").get().getValue());
     // Methods
     assertEquals(2, personType.getMethods().size());
-    final CDMethodSymbol setNameMethod = personType.getMethod("setName").orNull();
+    final CDMethodSymbol setNameMethod = personType.getMethod("setName").orElse(null);
     assertNotNull(setNameMethod);
     assertEquals("setName", setNameMethod.getName());
     assertSame(personType, setNameMethod.getDefiningType());
@@ -144,14 +144,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
 
     final CDTypeSymbol profType = cdScope.<CDTypeSymbol>resolve("Prof", CDTypeSymbol.KIND)
-        .orNull();
+        .orElse(null);
     assertNotNull(profType);
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Prof", profType.getFullName());
     assertTrue(profType.isPrivate());
     assertEquals(2, profType.getFields().size());
     assertEquals("uni", profType.getField("uni").get().getName());
     assertTrue(profType.getField("uni").get().isDerived());
-    final CDFieldSymbol profFieldPP = profType.getField("pp").orNull();
+    final CDFieldSymbol profFieldPP = profType.getField("pp").orElse(null);
     assertNotNull(profFieldPP);
     final CDTypeSymbolReference personList = (CDTypeSymbolReference) profFieldPP.getType();
     assertEquals("List", personList.getName());
@@ -171,7 +171,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, profType.getAssociations().size());
 
     final CDTypeSymbol printableType = cdScope.<CDTypeSymbol>resolve("Printable", CDTypeSymbol.KIND)
-        .orNull();
+        .orElse(null);
     assertNotNull(printableType);
     assertEquals("Printable", printableType.getName());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable", printableType.getFullName());
@@ -179,7 +179,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(printableType.isInterface());
     assertTrue(printableType.isProtected());
     // Methods
-    final CDMethodSymbol printMethod = printableType.getMethod("print").orNull();
+    final CDMethodSymbol printMethod = printableType.getMethod("print").orElse(null);
     assertNotNull(printMethod);
     assertEquals("print", printMethod.getName());
     assertTrue(printMethod.isProtected());
@@ -199,7 +199,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
 
     final CDTypeSymbol callableType = cdScope.<CDTypeSymbol>resolve("Callable", CDTypeSymbol.KIND)
-        .orNull();
+        .orElse(null);
     assertNotNull(callableType);
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", callableType.getFullName());
     assertTrue(callableType.isInterface());
@@ -207,7 +207,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, callableType.getInterfaces().size());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable", callableType.getInterfaces().get(0).getFullName());
 
-    final CDTypeSymbol enumType = cdScope.<CDTypeSymbol>resolve("E", CDTypeSymbol.KIND).orNull();
+    final CDTypeSymbol enumType = cdScope.<CDTypeSymbol>resolve("E", CDTypeSymbol.KIND).orElse(null);
     assertNotNull(enumType);
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", enumType.getFullName());
     assertTrue(enumType.isEnum());
@@ -231,7 +231,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
     // A -> B
     final CDAssociationSymbol memberAssocLeft2Right = (CDAssociationSymbol) cdScope.resolve(
-        new CDAssociationNameAndTargetNamePredicate("member", "Prof")).orNull();
+        new CDAssociationNameAndTargetNamePredicate("member", "Prof")).orElse(null);
     assertNotNull(memberAssocLeft2Right);
     assertEquals("member", memberAssocLeft2Right.getName());
     assertEquals("member", memberAssocLeft2Right.getAssocName());
@@ -249,7 +249,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(memberAssocLeft2Right.getAstNode().get() instanceof ASTCDAssociation);
     // A <- B
     final CDAssociationSymbol memberAssocRight2Left = (CDAssociationSymbol) cdScope.resolve(
-        new CDAssociationNameAndTargetNamePredicate("member", "Person")).orNull();
+        new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
     assertNotNull(memberAssocRight2Left);
     assertEquals("member", memberAssocRight2Left.getName());
     assertEquals("member", memberAssocRight2Left.getAssocName());
@@ -272,7 +272,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // A -> B
     final CDAssociationSymbol ecAssocLeft2Right = (CDAssociationSymbol) cdScope.resolve(
-        new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orNull();
+        new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
     assertNotNull(ecAssocLeft2Right);
     assertEquals("ec", ecAssocLeft2Right.getName());
     assertEquals("ec", ecAssocLeft2Right.getAssocName());
@@ -287,7 +287,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(ecAssocLeft2Right.getTargetCardinality().isMultiple());
     // A <- B
     final CDAssociationSymbol ecAssocRight2Left = (CDAssociationSymbol) cdScope.resolve(
-        new CDAssociationNameAndTargetNamePredicate("ec", "E")).orNull();
+        new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
     assertNotNull(ecAssocRight2Left);
     assertEquals("ec", ecAssocRight2Left.getName());
     assertEquals("ec", ecAssocRight2Left.getAssocName());

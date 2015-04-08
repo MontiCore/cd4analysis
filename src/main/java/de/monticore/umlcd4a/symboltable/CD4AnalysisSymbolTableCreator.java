@@ -4,7 +4,14 @@ package de.monticore.umlcd4a.symboltable;/*
  * http://www.se-rwth.de/
  */
 
-import com.google.common.base.Optional;
+import static java.util.Objects.requireNonNull;
+import static mc.helper.NameHelper.dotSeparatedStringFromList;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import mc.helper.NameHelper;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.ImportStatement;
@@ -17,18 +24,25 @@ import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTReferenceTypeList;
 import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.umlcd4a._ast.*;
+import de.monticore.umlcd4a._ast.ASTCD4AnalysisBase;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
+import de.monticore.umlcd4a._ast.ASTCDEnum;
+import de.monticore.umlcd4a._ast.ASTCDEnumConstant;
+import de.monticore.umlcd4a._ast.ASTCDInterface;
+import de.monticore.umlcd4a._ast.ASTCDMethod;
+import de.monticore.umlcd4a._ast.ASTCDParameter;
+import de.monticore.umlcd4a._ast.ASTCDQualifier;
+import de.monticore.umlcd4a._ast.ASTModifier;
+import de.monticore.umlcd4a._ast.ASTStereoValue;
+import de.monticore.umlcd4a._ast.ASTStereotype;
 import de.monticore.umlcd4a._visitor.CD4AnalysisVisitor;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import mc.helper.NameHelper;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.util.Objects.requireNonNull;
-import static mc.helper.NameHelper.dotSeparatedStringFromList;
 
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
 
@@ -59,7 +73,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       }
     }
 
-    final ArtifactScope scope = new ArtifactScope(Optional.absent(), getPackageName(), imports);
+    final ArtifactScope scope = new ArtifactScope(Optional.empty(), getPackageName(), imports);
     putOnStackAndSetEnclosingIfExists(scope);
   }
 
@@ -83,7 +97,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     final MutableScope cdScope = new CommonScope(true);
     cdScope.setName(cdName);
 
-    astDefinition.setEnclosingScope(currentScope().orNull());
+    astDefinition.setEnclosingScope(currentScope().orElse(null));
 
     putOnStackAndSetEnclosingIfExists(cdScope);
   }
@@ -104,7 +118,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       classSymbol.setSuperClass(superClassSymbol);
     }
 
-    final ASTModifier astModifier = astClass.getModifier().or(new ASTModifier.Builder().build());
+    final ASTModifier astModifier = astClass.getModifier().orElse(new ASTModifier.Builder().build());
 
     setModifiersOfType(classSymbol, astModifier);
 
@@ -206,7 +220,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     interfaceSymbol.setAbstract(true);
 
     addInterfacesToType(interfaceSymbol, astInterface.getInterfaces());
-    setModifiersOfType(interfaceSymbol, astInterface.getModifier().or(new ASTModifier.Builder().build()));
+    setModifiersOfType(interfaceSymbol, astInterface.getModifier().orElse(new ASTModifier.Builder().build()));
 
     // Interfaces are always abstract
     interfaceSymbol.setAbstract(true);
@@ -249,7 +263,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
 
     addInterfacesToType(enumSymbol, astEnum.getInterfaces());
-    setModifiersOfType(enumSymbol, astEnum.getModifier().or(new ASTModifier.Builder().build()));
+    setModifiersOfType(enumSymbol, astEnum.getModifier().orElse(new ASTModifier.Builder().build()));
 
     defineInScopeAndSetLinkBetweenSymbolAndAst(enumSymbol, astEnum);
 
@@ -384,13 +398,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         if (cdAssoc.isComposition()) {
           assocRight2LeftSymbol.setRelationship(Relationship.PART);
         }
-        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orNull()));
-        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orNull()));
+        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orElse(null)));
+        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orElse(null)));
 
         // Set role
-        String role = cdAssoc.getLeftRole().or("");
+        String role = cdAssoc.getLeftRole().orElse("");
         if (role.equals("")) {
-          role = cdAssoc.getName().or("");
+          role = cdAssoc.getName().orElse("");
           if (role.equals("")) {
             role = NameHelper.getSimplenameFromComplexname(cdAssoc.getLeftReferenceName().getParts());
           }
@@ -399,7 +413,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         assocRight2LeftSymbol.setRole(role);
 
         if (cdAssoc.getLeftModifier().isPresent()) {
-          addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().orNull());
+          addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().orElse(null));
         }
 
         if (cdAssoc.getRightQualifier().isPresent()) {
@@ -426,13 +440,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         if (cdAssoc.isComposition()) {
           assocLeft2RightSymbol.setRelationship(Relationship.COMPOSITE);
         }
-        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orNull()));
-        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orNull()));
+        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orElse(null)));
+        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orElse(null)));
 
         // Set role
-        String role = cdAssoc.getRightRole().or("");
+        String role = cdAssoc.getRightRole().orElse("");
         if (role.equals("")) {
-          role = cdAssoc.getName().or("");
+          role = cdAssoc.getName().orElse("");
           if (role.equals("")) {
             role = NameHelper.getSimplenameFromComplexname(cdAssoc.getRightReferenceName().getParts());
           }
@@ -440,7 +454,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         assocLeft2RightSymbol.setRole(role);
 
         if (cdAssoc.getRightModifier().isPresent()) {
-          addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype().orNull());
+          addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype().orElse(null));
         }
 
         if (cdAssoc.getLeftQualifier().isPresent()) {
@@ -474,9 +488,9 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     // the else case should be checked by a context conditions
 
 
-    associationSymbol.setAssocName(astAssoc.getName().or(""));
+    associationSymbol.setAssocName(astAssoc.getName().orElse(""));
 
-    addStereotypes(associationSymbol, astAssoc.getStereotype().orNull());
+    addStereotypes(associationSymbol, astAssoc.getStereotype().orElse(null));
 
     if ((astSourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(astSourceName.getParts())))) {
       Log.error("0xU0270 Association referenced type " + astSourceName + " wasn't declared in the "

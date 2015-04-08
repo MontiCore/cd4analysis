@@ -5,10 +5,10 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import mc.helper.NameHelper;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.CommonSymbol;
@@ -141,7 +141,7 @@ public class CDAssociationSymbol extends CommonSymbol {
         return Optional.of(stereotype);
       }
     }
-    return Optional.absent();
+    return Optional.empty();
   }
 
   public boolean containsStereotype(final String name, final String value) {

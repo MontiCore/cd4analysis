@@ -4,12 +4,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import mc.helper.IndentPrinter;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 
 import de.monticore.literals.prettyprint.LiteralsConcretePrettyPrinter;
@@ -70,7 +70,7 @@ public class AstPrinter {
    * Same as <code>printModifier(Optional<ASTModifier> modifier)</code>
    */
   public String printModifier(ASTModifier modifier) {
-    return printModifier(Optional.fromNullable(modifier));
+    return printModifier(Optional.ofNullable(modifier));
   }
   
   /**

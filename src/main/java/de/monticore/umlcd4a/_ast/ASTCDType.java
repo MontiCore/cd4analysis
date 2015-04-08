@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a._ast;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * HW super type for classes, interfaces and enums
