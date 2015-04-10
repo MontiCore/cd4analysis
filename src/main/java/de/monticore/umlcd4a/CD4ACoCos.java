@@ -6,8 +6,13 @@
 package de.monticore.umlcd4a;
 
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a.cocos.ebnf.DiagramNameUpperCase;
+import de.monticore.umlcd4a.cocos.ebnf.EnumConstantsUnique;
+import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
 import de.monticore.umlcd4a.cocos.ebnf.RoleNamesLowerCaseCoco;
+import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueAttributeInClassCoco;
+import de.monticore.umlcd4a.cocos.ebnf.UniqueTypeNames;
 import de.monticore.umlcd4a.cocos.mcg.AssociationModifierCoCo;
 import de.monticore.umlcd4a.cocos.mcg.AttributeNotAbstractCoCo;
 import de.monticore.umlcd4a.cocos.mcg.ClassInvalidModifiersCoCo;
@@ -65,6 +70,11 @@ public class CD4ACoCos {
   }
   
   private void addEbnfCoCos(CD4AnalysisCoCoChecker checker) {
+    checker.addCoCo(new DiagramNameUpperCase());
+    checker.addCoCo(new NoKeywordsUsed());
+    checker.addCoCo(new UniqueTypeNames());
+    checker.addCoCo(new TypeNameUpperCase());
+    checker.addCoCo(new EnumConstantsUnique());
     checker.addCoCo(new UniqueAttributeInClassCoco());
     checker.addCoCo(new RoleNamesLowerCaseCoco());
     // TODO RE<-RH checker.addCoCo(coco);

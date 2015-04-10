@@ -68,7 +68,7 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Interface F may not have modifiers.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -84,7 +84,7 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Interface C may not have attributes.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -99,6 +99,6 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Interface B may not have methods.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

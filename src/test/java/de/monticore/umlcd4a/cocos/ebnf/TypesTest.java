@@ -79,6 +79,6 @@ public class TypesTest extends AbstractCoCoTest {
                 .error(errorCode,
                     " Invalid initialization of the derived attribute c. Derived attributes may not be initialized.")
         );
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

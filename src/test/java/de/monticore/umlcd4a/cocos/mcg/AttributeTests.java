@@ -66,6 +66,6 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Attribute d may not be abstract.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

@@ -18,7 +18,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos for diagrams in general.
@@ -53,8 +52,6 @@ public class DiagramTests extends AbstractCoCoTest {
   
   private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
-
-  @Ignore
   @Test
   public void testDiagramName() {
     String modelName = "c4A01.cd";
@@ -64,22 +61,28 @@ public class DiagramTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode,
             "First character of the diagram name c4A01 must be upper-case.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
+  }
+  
+  @Ignore("TODO RH we cannot check this yet because the file name is not part of the ast/st")
+  @Test
+  public void testFileNameEqualsModelName() {
     
-    modelName = "C4A02";
+    String modelName = "C4A02.cd";
+    String errorCode = "0xC4A02";
+    
+    modelName = "C4A02.cd";
     errorCode = "0xC4A02";
-    expectedErrors = Arrays
+    Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
         CoCoFinding
             .error(
                 errorCode,
                 "The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
-
-  @Ignore
   @Test
   public void testNames() {
     String modelName = "C4A03.cd";
@@ -89,8 +92,7 @@ public class DiagramTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Name DAO is reserved for internal use."),
         CoCoFinding.error(errorCode, "Name Factory is reserved for internal use.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
-  
   
 }

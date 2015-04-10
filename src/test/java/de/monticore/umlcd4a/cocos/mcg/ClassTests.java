@@ -67,6 +67,6 @@ public class ClassTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Class E has invalid modifier \"derived\".")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

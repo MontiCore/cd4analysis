@@ -75,7 +75,7 @@ public class AttributeTests extends AbstractCoCoTest {
                 .error(errorCode,
                     "The value assignment for the attribute b in class C1 is not compatible to its type int.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -89,7 +89,7 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Attribute Attr must start in lower-case.",
             new SourcePosition(5, 12))
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -110,7 +110,7 @@ public class AttributeTests extends AbstractCoCoTest {
                 .error(errorCode,
                     "Class C8 overrides the attribute t1 (type: T1) of class C7 with the different type T2.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -123,7 +123,7 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding
             .error(errorCode, "Type AnUndefinedType of the attribute attr is unkown.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Test
@@ -136,7 +136,7 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Attribute b is defined multiple times in class C."),
         CoCoFinding.error(errorCode, "Attribute c is defined multiple times in class C.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
 }

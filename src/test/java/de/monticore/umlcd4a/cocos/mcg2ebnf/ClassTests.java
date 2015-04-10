@@ -76,7 +76,7 @@ public class ClassTests extends AbstractCoCoTest {
             "Class G has invalid modifiers. Only \"abstract\" is permitted.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -91,7 +91,7 @@ public class ClassTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Class B may not have constructors.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -106,6 +106,6 @@ public class ClassTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Class B may not have any methods.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

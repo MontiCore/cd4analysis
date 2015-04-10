@@ -69,6 +69,6 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum G has invalid modifier \"static\".")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

@@ -71,7 +71,7 @@ public class AssociationTests extends AbstractCoCoTest {
                 "Association (A -- B) may not have stereotypes.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 
   @Test
@@ -105,6 +105,6 @@ public class AssociationTests extends AbstractCoCoTest {
                     "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

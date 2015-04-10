@@ -68,7 +68,7 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Attribute f in interface A must be static.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -88,6 +88,6 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Interface G has invalid modifier \"static\".")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

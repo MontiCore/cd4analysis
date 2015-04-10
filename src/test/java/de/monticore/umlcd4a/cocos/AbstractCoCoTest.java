@@ -52,22 +52,22 @@ public abstract class AbstractCoCoTest {
   abstract protected CD4AnalysisCoCoChecker getChecker();
   
   /**
-   * Asserts that each of the expectedErrorSuffixes is found as a suffix in any
-   * of the actual produced errors that occurred when the
+   * Asserts that each of the expectedErrors is found (checking code and msg) in
+   * any of the actual produced errors that occurred when the
    * {@link CD4AnalysisCoCoChecker} run on the given modelName. Furthermore, it
    * is asserted that there are not any other errors.
    * 
    * @param modelName
-   * @param expectedErrorSuffixes
+   * @param expectedErrors
    */
-  protected void testModelForErrorSuffixes(String modelName,
-      Collection<CoCoFinding> expectedErrorSuffixes) {
+  protected void testModelForErrors(String modelName,
+      Collection<CoCoFinding> expectedErrors) {
     CD4AnalysisCoCoChecker checker = getChecker();
     
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    Assert.assertEqualErrorCounts(expectedErrorSuffixes.stream().map(f -> f.buildMsg()).collect(Collectors.toList()), CoCoLog.getFindings().stream().map(f -> f.buildMsg()).collect(Collectors.toList()));
-    Assert.assertErrorsWithSuffix(expectedErrorSuffixes.stream().map(f->f.buildMsg()).collect(Collectors.toList()), CoCoLog.getFindings().stream().map(f -> f.buildMsg()).collect(Collectors.toList()));
+    Assert.assertEqualErrorCounts(expectedErrors, CoCoLog.getFindings());
+    Assert.assertErrorCodeAndMsg(expectedErrors, CoCoLog.getFindings());
   }
   
   /**

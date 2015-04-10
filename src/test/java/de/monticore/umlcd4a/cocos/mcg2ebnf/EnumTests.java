@@ -70,7 +70,7 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum H may not have modifiers.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -86,7 +86,7 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum C may not have constructors.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
   @Test
@@ -101,6 +101,6 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum B may not have methods.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

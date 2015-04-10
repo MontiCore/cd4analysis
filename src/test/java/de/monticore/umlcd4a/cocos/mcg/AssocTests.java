@@ -66,7 +66,7 @@ public class AssocTests extends AbstractCoCoTest {
             CoCoFinding.error(errorCode,
                 "The modifier abstract can not be used for associations at association Assoc2 (A -> B).")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
 }

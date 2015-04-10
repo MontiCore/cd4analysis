@@ -77,7 +77,7 @@ public class AttributeTests extends AbstractCoCoTest {
             "Attribute h has invalid modifiers. Only \"/\" is permitted.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
   
 }

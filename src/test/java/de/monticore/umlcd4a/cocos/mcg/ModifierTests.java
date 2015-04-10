@@ -79,6 +79,6 @@ public class ModifierTests extends AbstractCoCoTest {
                 "Only none or one visibility is supported, but multiple visibilities were found.")
         );
     
-    testModelForErrorSuffixes("invalid/" + modelName, expectedErrors);
+    testModelForErrors("invalid/" + modelName, expectedErrors);
   }
 }

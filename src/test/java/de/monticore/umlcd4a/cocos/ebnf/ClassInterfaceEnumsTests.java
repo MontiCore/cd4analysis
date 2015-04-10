@@ -54,7 +54,6 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
   
   private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
-  @Ignore
   @Test
   public void testDuplicateTypeNames() {
     String modelName = "C4A04.cd";
@@ -75,10 +74,9 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
                     errorCode,
                     "The name C is used several times. Classes, interfaces and enumerations may not use the same names.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testInvalidTypeName() {
     String modelName = "C4A05.cd";
@@ -86,16 +84,15 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode,
-            "The first character of the interface i must be upper-case."),
+            "The first character of the interface i must be upper-case."),
         CoCoFinding.error(errorCode,
-            "The first character of the class c must be upper-case."),
+            "The first character of the class c must be upper-case."),
         CoCoFinding.error(errorCode,
-            "The first character of the enum e must be upper-case.")
+            "The first character of the enum e must be upper-case.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testDuplicateEnumConstant() {
     String modelName = "C4A06.cd";
@@ -104,7 +101,7 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Duplicate enum constant: a.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -119,7 +116,7 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode,
             "The interface I2 introduces an inheritance cycle. Inheritance may not be cyclic.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -134,7 +131,7 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode,
             "Class C2 cannot extend enum E. A class may only extend classes.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -149,7 +146,7 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode,
             "Interface I2 cannot extend enum E. An interface may only extend interfaces.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
   
   @Ignore
@@ -168,6 +165,6 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode,
             "The enum E2 cannot implement enum E. Only interfaces may be implemented.")
         );
-    testModelForErrorSuffixes(modelName, expectedErrors);
+    testModelForErrors(modelName, expectedErrors);
   }
 }
