@@ -27,9 +27,14 @@ public class AttributeModifierOnlyDerivedCoCo implements CD4AnalysisASTCDAttribu
   public void check(ASTCDAttribute node) {
     if (node.getModifier().isPresent()) {
       ASTModifier actualMod = node.getModifier().get();
-      ASTModifier derivedMod = ASTModifier.getBuilder().derived(true).build();
-      ASTModifier emptyMod = ASTModifier.getBuilder().build();
-      if (!(actualMod.deepEquals(derivedMod) || actualMod.deepEquals(emptyMod))) {
+      boolean hasInvalidModifier = actualMod.isAbstract()
+          | actualMod.isFinal()
+          | actualMod.isPrivate()
+          | actualMod.isProtected()
+          | actualMod.isPublic()
+          | actualMod.isStatic()
+          | actualMod.getStereotype().isPresent();
+      if (hasInvalidModifier) {
         CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName()),

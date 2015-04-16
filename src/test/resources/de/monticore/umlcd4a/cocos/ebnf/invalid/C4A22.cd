@@ -7,7 +7,7 @@ classdiagram C4A22 {
   association assoc0 String  -> A ;
   association assoc1 String <-> A ;
   association assoc2 A      <-> String ;
-  association assoc3 String --  A ;
+  association assoc3 String --  String ;
   association assoc4 A      <- String ;
 
 }

@@ -5,14 +5,12 @@
  */
 package de.monticore.umlcd4a.cocos;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.RecognitionException;
 
@@ -80,7 +78,7 @@ public abstract class AbstractCoCoTest {
     CD4AnalysisCoCoChecker checker = getChecker();
     ASTCDCompilationUnit root = loadModel(modelName);
     checker.checkAll(root);
-    assertTrue(CoCoLog.getFindings().isEmpty());
+    Assert.assertEqualErrorCounts(new ArrayList<CoCoFinding>(), CoCoLog.getFindings());
   }
   
   private ASTCDCompilationUnit loadModel(String modelFilename) {

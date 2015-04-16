@@ -9,9 +9,7 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._ast.ASTStereoValue;
-import de.monticore.umlcd4a._ast.ASTStereoValueList;
 import de.monticore.umlcd4a._ast.ASTStereotype;
-import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 
@@ -42,19 +40,23 @@ public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAs
   }
   
   private void check(ASTCDAssociation assoc, ASTModifier actualMod) {
-    // allowed is ordered stereotype or completely empty modifier
-    
-    ASTStereoValueList values = CD4AnalysisNodeFactory.createASTStereoValueList();
-    values.add(ASTStereoValue.getBuilder().name("ordered").build());
-    ASTStereotype orderedStereo = CD4AnalysisNodeFactory.createASTStereotype(values);
-    
-    ASTModifier orderedMod = ASTModifier.getBuilder().stereotype(orderedStereo).build();
-    ASTModifier emptyMod = ASTModifier.getBuilder().build();
-    if (!(actualMod.deepEquals(orderedMod) || actualMod.deepEquals(emptyMod))) {
+    if (!ModifierCheckHelper.isEmptyModifier(actualMod)) {
       CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, CD4ACoCoHelper.printAssociation(assoc)),
           actualMod.get_SourcePositionStart());
+    }
+    
+    if (actualMod.getStereotype().isPresent()) {
+      ASTStereotype stereo = actualMod.getStereotype().get();
+      for (ASTStereoValue val : stereo.getValues()) {
+        if (!val.getName().equals("ordered")) {
+          CoCoLog.error(
+              ERROR_CODE,
+              String.format(ERROR_MSG_FORMAT, CD4ACoCoHelper.printAssociation(assoc)),
+              val.get_SourcePositionStart());
+        }
+      }
     }
     
   }

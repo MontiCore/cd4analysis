@@ -27,9 +27,14 @@ public class ClassModifierOnlyAbstractCoCo implements CD4AnalysisASTCDClassCoCo 
   public void check(ASTCDClass node) {
     if (node.getModifier().isPresent()) {
       ASTModifier actualMod = node.getModifier().get();
-      ASTModifier abstractMod = ASTModifier.getBuilder().r_abstract(true).build();
-      ASTModifier emptyMod = ASTModifier.getBuilder().build();
-      if (!(actualMod.deepEquals(abstractMod) || actualMod.deepEquals(emptyMod))) {
+      boolean hasInvalidModifier = actualMod.isDerived()
+          | actualMod.isFinal()
+          | actualMod.isPrivate()
+          | actualMod.isProtected()
+          | actualMod.isPublic()
+          | actualMod.isStatic()
+          | actualMod.getStereotype().isPresent();
+      if (hasInvalidModifier) {
         CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName()),

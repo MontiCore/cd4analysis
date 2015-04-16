@@ -27,8 +27,7 @@ public class InterfaceNoModifierCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   public void check(ASTCDInterface node) {
     if (node.getModifier().isPresent()) {
       ASTModifier actualMod = node.getModifier().get();
-      ASTModifier emptyMod = ASTModifier.getBuilder().build();
-      if (!actualMod.deepEquals(emptyMod)) {
+      if (!ModifierCheckHelper.isEmptyModifierAndNoStereo(actualMod)) {
         CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName()),

@@ -27,8 +27,7 @@ public class EnumNoModifierCoCo implements CD4AnalysisASTCDEnumCoCo {
   public void check(ASTCDEnum node) {
     if (node.getModifier().isPresent()) {
       ASTModifier actualMod = node.getModifier().get();
-      ASTModifier emptyMod = ASTModifier.getBuilder().build();
-      if (!actualMod.deepEquals(emptyMod)) {
+      if (!ModifierCheckHelper.isEmptyModifierAndNoStereo(actualMod)) {
         CoCoLog.error(
             ERROR_CODE,
             String.format(ERROR_MSG_FORMAT, node.getName()),
@@ -36,5 +35,4 @@ public class EnumNoModifierCoCo implements CD4AnalysisASTCDEnumCoCo {
       }
     }
   }
-  
 }

@@ -16,4 +16,6 @@ classdiagram C4A68 {
 	public enum H {
 		ENTRY;
 	}
+
+	<<aStereo>> enum I;
 }

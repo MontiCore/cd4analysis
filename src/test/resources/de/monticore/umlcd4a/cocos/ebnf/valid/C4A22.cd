@@ -1,0 +1,11 @@
+package de.monticore.umlcd4a.cocos.ebnf.valid;
+
+classdiagram C4A22 {
+
+  class A;
+
+  association assoc0 A      -> String;
+  association assoc1 String <- A;
+  association assoc2 String -- A;
+
+}

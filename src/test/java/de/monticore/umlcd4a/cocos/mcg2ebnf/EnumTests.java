@@ -17,7 +17,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos that restrict ASTCDEnum to match the EBNF grammar.
@@ -67,7 +66,8 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum E may not have modifiers."),
         CoCoFinding.error(errorCode, "Enum F may not have modifiers."),
         CoCoFinding.error(errorCode, "Enum G may not have modifiers."),
-        CoCoFinding.error(errorCode, "Enum H may not have modifiers.")
+        CoCoFinding.error(errorCode, "Enum H may not have modifiers."),
+        CoCoFinding.error(errorCode, "Enum I may not have modifiers.")
         );
     
     testModelForErrors("invalid/" + modelName, expectedErrors);

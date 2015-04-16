@@ -20,7 +20,6 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
-import de.se_rwth.commons.logging.Log;
 
 /**
  * TODO: Write me!
