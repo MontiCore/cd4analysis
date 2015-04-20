@@ -24,14 +24,9 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class ModifierTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/";
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";
   
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.ClassTests
-   */
-  public ModifierTests() {
-    super(MODEL_PATH);
-  }
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -56,7 +51,7 @@ public class ModifierTests extends AbstractCoCoTest {
     String modelName = "C4A54.cd";
     String errorCode = "0xC4A54";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
@@ -78,6 +73,6 @@ public class ModifierTests extends AbstractCoCoTest {
                 "Only none or one visibility is supported, but multiple visibilities were found.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

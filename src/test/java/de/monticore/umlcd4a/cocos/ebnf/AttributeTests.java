@@ -31,15 +31,6 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
 public class AttributeTests extends AbstractCoCoTest {
   
   /**
-   * Constructor for de.monticore.umlcd4a.cocos.ebnf.CD4ACoCosTest
-   * 
-   * @param modelPath
-   */
-  public AttributeTests() {
-    super(MODEL_PATH);
-  }
-  
-  /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
    */
   @Override
@@ -57,7 +48,7 @@ public class AttributeTests extends AbstractCoCoTest {
     CoCoLog.getFindings().clear();
   }
   
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
   @Ignore
   @Test
@@ -74,7 +65,7 @@ public class AttributeTests extends AbstractCoCoTest {
                 .error(errorCode,
                     "The value assignment for the attribute b in class C1 is not compatible to its type int.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -88,7 +79,7 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Attribute Attr must start in lower-case.",
             new SourcePosition(5, 12))
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -109,7 +100,7 @@ public class AttributeTests extends AbstractCoCoTest {
                 .error(errorCode,
                     "Class C8 overrides the attribute t1 (type: T1) of class C7 with the different type T2.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -122,7 +113,7 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding
             .error(errorCode, "Type AnUndefinedType of the attribute attr is unkown.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -135,7 +126,7 @@ public class AttributeTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Attribute b is defined multiple times in class C."),
         CoCoFinding.error(errorCode, "Attribute c is defined multiple times in class C.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
 }

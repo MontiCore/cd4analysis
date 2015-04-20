@@ -24,20 +24,16 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class AttributeTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/";
-
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
+  
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
+  
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
    */
   @Override
   protected CD4AnalysisCoCoChecker getChecker() {
     return new CD4ACoCos().getCheckerForMcg2EbnfCoCos();
-  }
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.AttributeTests
-   */
-  public AttributeTests() {
-    super(MODEL_PATH);
   }
   
   @BeforeClass
@@ -55,7 +51,7 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A64.cd";
     String errorCode = "0xC4A64";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode,
@@ -76,7 +72,7 @@ public class AttributeTests extends AbstractCoCoTest {
             "Attribute h has invalid modifiers. Only \"/\" is permitted.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
 }

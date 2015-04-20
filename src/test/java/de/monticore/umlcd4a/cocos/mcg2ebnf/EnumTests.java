@@ -24,14 +24,9 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class EnumTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/";
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
   
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.ClassTests
-   */
-  public EnumTests() {
-    super(MODEL_PATH);
-  }
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -56,7 +51,7 @@ public class EnumTests extends AbstractCoCoTest {
     String modelName = "C4A68.cd";
     String errorCode = "0xC4A68";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Enum A may not have modifiers."),
@@ -70,7 +65,7 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum I may not have modifiers.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -78,7 +73,7 @@ public class EnumTests extends AbstractCoCoTest {
     String modelName = "C4A69.cd";
     String errorCode = "0xC4A69";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Enum A may not have constructors."),
@@ -86,7 +81,7 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum C may not have constructors.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -94,13 +89,13 @@ public class EnumTests extends AbstractCoCoTest {
     String modelName = "C4A70.cd";
     String errorCode = "0xC4A70";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Enum A may not have methods."),
         CoCoFinding.error(errorCode, "Enum B may not have methods.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

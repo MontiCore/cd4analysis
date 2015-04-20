@@ -16,8 +16,6 @@ public class DiagramNameUpperCase implements CD4AnalysisASTCDDefinitionCoCo {
       CoCoLog.error(ERROR_CODE,
           String.format(ERROR_MSG_FORMAT, cdDefinition.getName()),
           cdDefinition.get_SourcePositionStart());
-      
     }
-    
   }
 }

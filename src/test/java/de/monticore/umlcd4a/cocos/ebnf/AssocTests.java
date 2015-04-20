@@ -28,14 +28,8 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @since TODO: add version number
  */
 public class AssocTests extends AbstractCoCoTest {
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.ebnf.CD4ACoCosAssocTest
-   */
-  public AssocTests() {
-    super(MODEL_PATH);
-  }
   
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -66,7 +60,7 @@ public class AssocTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Association Assoc2 must start in lower-case."),
         CoCoFinding.error(errorCode, "Association Assoc3 must start in lower-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -258,7 +252,7 @@ public class AssocTests extends AbstractCoCoTest {
                 .error(errorCode,
                     "Role RightRole of association assoc77 (I -- (RightRole) I) must start in lower-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -1532,7 +1526,7 @@ public class AssocTests extends AbstractCoCoTest {
                     "The composite of composition comp419 (I -- I) has an invalid cardinality [*] larger than one.")
         );
     
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -1880,7 +1874,7 @@ public class AssocTests extends AbstractCoCoTest {
                     errorCode,
                     "The type RightTypedQualifier of the typed qualified association assoc77 (I -- I) could not be found. Only external datatypes and types defined within the classdiagram may be used.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -2246,7 +2240,7 @@ public class AssocTests extends AbstractCoCoTest {
                     errorCode,
                     "The qualified association assoc77 (I -- I) expects the attribute rightAttributeQualifier to exist in the referenced class I.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -2494,7 +2488,7 @@ public class AssocTests extends AbstractCoCoTest {
                     "The qualifier leftAttributeQualifier of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
         );
     
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
     
     // typed qualifier
     
@@ -2735,7 +2729,7 @@ public class AssocTests extends AbstractCoCoTest {
                     "The qualifier String of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
         );
     
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -2836,7 +2830,7 @@ public class AssocTests extends AbstractCoCoTest {
                     errorCode,
                     "Association assoc21 (I -- E) is invalid, because an association's source may not be an Enumeration.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -2850,7 +2844,7 @@ public class AssocTests extends AbstractCoCoTest {
       expectedErrors.add(CoCoFinding.error(errorCode, "Association assoc" + i
           + " is invalid, because an association's source may not be an external type."));
     }
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore
@@ -4976,6 +4970,6 @@ public class AssocTests extends AbstractCoCoTest {
                     "Association assoc527 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.")
         );
     
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

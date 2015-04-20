@@ -24,14 +24,9 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class InterfaceTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/";
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
   
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.ClassTests
-   */
-  public InterfaceTests() {
-    super(MODEL_PATH);
-  }
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -56,7 +51,7 @@ public class InterfaceTests extends AbstractCoCoTest {
     String modelName = "C4A65.cd";
     String errorCode = "0xC4A65";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Interface A may not have modifiers."),
@@ -67,7 +62,7 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Interface F may not have modifiers.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -75,7 +70,7 @@ public class InterfaceTests extends AbstractCoCoTest {
     String modelName = "C4A66.cd";
     String errorCode = "0xC4A66";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Interface A may not have attributes."),
@@ -83,7 +78,7 @@ public class InterfaceTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Interface C may not have attributes.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -91,13 +86,13 @@ public class InterfaceTests extends AbstractCoCoTest {
     String modelName = "C4A67.cd";
     String errorCode = "0xC4A67";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Interface A may not have methods."),
         CoCoFinding.error(errorCode, "Interface B may not have methods.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

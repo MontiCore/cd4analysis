@@ -24,7 +24,9 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class AssociationTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/";
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
+  
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -32,13 +34,6 @@ public class AssociationTests extends AbstractCoCoTest {
   @Override
   protected CD4AnalysisCoCoChecker getChecker() {
     return new CD4ACoCos().getCheckerForMcg2EbnfCoCos();
-  }
-  
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.AttributeTests
-   */
-  public AssociationTests() {
-    super(MODEL_PATH);
   }
   
   @BeforeClass
@@ -56,7 +51,7 @@ public class AssociationTests extends AbstractCoCoTest {
     String modelName = "C4A71.cd";
     String errorCode = "0xC4A71";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
@@ -70,15 +65,15 @@ public class AssociationTests extends AbstractCoCoTest {
                 "Association (A -- B) may not have stereotypes.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-
+  
   @Test
   public void associationEndModifierRestrictionCoCoTest() {
     String modelName = "C4A72.cd";
     String errorCode = "0xC4A72";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
@@ -104,6 +99,6 @@ public class AssociationTests extends AbstractCoCoTest {
                     "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>.")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

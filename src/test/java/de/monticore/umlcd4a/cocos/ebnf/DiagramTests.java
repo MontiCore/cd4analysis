@@ -26,13 +26,6 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  */
 public class DiagramTests extends AbstractCoCoTest {
   /**
-   * Constructor for de.monticore.umlcd4a.cocos.ebnf.DiagramTests
-   */
-  public DiagramTests() {
-    super(MODEL_PATH);
-  }
-  
-  /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
    */
   @Override
@@ -50,7 +43,7 @@ public class DiagramTests extends AbstractCoCoTest {
     CoCoLog.getFindings().clear();
   }
   
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
   @Test
   public void testDiagramName() {
@@ -61,7 +54,7 @@ public class DiagramTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode,
             "First character of the diagram name c4A01 must be upper-case.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Ignore("TODO RH we cannot check this yet because the file name is not part of the ast/st")
@@ -80,7 +73,7 @@ public class DiagramTests extends AbstractCoCoTest {
                 errorCode,
                 "The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
@@ -92,7 +85,7 @@ public class DiagramTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Name DAO is reserved for internal use."),
         CoCoFinding.error(errorCode, "Name Factory is reserved for internal use.")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
 }

@@ -24,14 +24,8 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class EnumTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/";
-  
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.ClassTests
-   */
-  public EnumTests() {
-    super(MODEL_PATH);
-  }
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -56,7 +50,7 @@ public class EnumTests extends AbstractCoCoTest {
     String modelName = "C4A55.cd";
     String errorCode = "0xC4A55";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Enum A has invalid modifier \"abstract\"."),
@@ -68,6 +62,6 @@ public class EnumTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Enum G has invalid modifier \"static\".")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

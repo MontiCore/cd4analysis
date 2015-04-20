@@ -14,6 +14,7 @@ public class NoKeywordsUsed implements CD4AnalysisASTCDDefinitionCoCo {
   
   public static final String ERROR_MSG_FORMAT = "Name %s is reserved for internal use.";
   
+  // TODO AR <- RH Liste vervollständigen
   private String[] keywords = { "DAO", "Factory" };
   
   @Override

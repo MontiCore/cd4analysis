@@ -24,14 +24,9 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class ClassTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/";
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";
   
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.ClassTests
-   */
-  public ClassTests() {
-    super(MODEL_PATH);
-  }
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -50,13 +45,13 @@ public class ClassTests extends AbstractCoCoTest {
   public void setUp() {
     CoCoLog.getFindings().clear();
   }
-
+  
   @Test
   public void invalidModifiersCoCoTest() {
     String modelName = "C4A53.cd";
     String errorCode = "0xC4A53";
     
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Class A has invalid modifier \"derived\"."),
@@ -66,6 +61,6 @@ public class ClassTests extends AbstractCoCoTest {
         CoCoFinding.error(errorCode, "Class E has invalid modifier \"derived\".")
         );
     
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

@@ -20,14 +20,7 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class BuiltInTypesTests extends AbstractCoCoTest {
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/all/";
-  
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.mcg2ebnf.ClassTests
-   */
-  public BuiltInTypesTests() {
-    super(MODEL_PATH);
-  }
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/all/valid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -53,7 +46,7 @@ public class BuiltInTypesTests extends AbstractCoCoTest {
   @Test
   public void notMultipleVisibilitiesCoCoTest() {
     String modelName = "BuiltInTypes.cd";
-
-    testModelNoErrors("valid/" + modelName);
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
   }
 }

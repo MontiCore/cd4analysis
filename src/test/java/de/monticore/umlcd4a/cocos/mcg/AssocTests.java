@@ -26,14 +26,7 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @since TODO: add version number
  */
 public class AssocTests extends AbstractCoCoTest {
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.ebnf.CD4ACoCosAssocTest
-   */
-  public AssocTests() {
-    super(MODEL_PATH);
-  }
-  
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
@@ -65,7 +58,7 @@ public class AssocTests extends AbstractCoCoTest {
             CoCoFinding.error(errorCode,
                 "The modifier abstract can not be used for associations at association Assoc2 (A -> B).")
         );
-    testModelForErrors(modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
 }

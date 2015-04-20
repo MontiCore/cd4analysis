@@ -25,14 +25,6 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
  * @author Robert Heim
  */
 public class TypesTest extends AbstractCoCoTest {
-  
-  /**
-   * Constructor for de.monticore.umlcd4a.cocos.ebnf.TypesTest
-   */
-  public TypesTest() {
-    super(MODEL_PATH);
-  }
-  
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
    */
@@ -51,7 +43,7 @@ public class TypesTest extends AbstractCoCoTest {
     CoCoLog.getFindings().clear();
   }
   
-  private static String MODEL_PATH = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/";
+  private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
   @Ignore
   @Test
@@ -78,6 +70,6 @@ public class TypesTest extends AbstractCoCoTest {
                 .error(errorCode,
                     " Invalid initialization of the derived attribute c. Derived attributes may not be initialized.")
         );
-    testModelForErrors("invalid/" + modelName, expectedErrors);
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }

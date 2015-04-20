@@ -20,7 +20,6 @@ public class EnumConstantsUnique implements CD4AnalysisASTCDEnumCoCo {
   
   @Override
   public void check(ASTCDEnum node) {
-    
     Collection<String> usedNames = new HashSet<String>();
     for (ASTCDEnumConstant constant : node.getCDEnumConstants()) {
       String name = constant.getName();
