@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.monticore.cocos.CoCoFinding;
@@ -162,21 +161,22 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testInvalidImplements() {
     String modelName = "C4A10.cd";
     String errorCode = "0xC4A10";
     
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode,
-            "The class C1 cannot implement class C. Only interfaces may be implemented."),
+            "The class C1 cannot implement enum E. Only interfaces may be implemented."),
         CoCoFinding.error(errorCode,
-            "The class C2 cannot implement enum E. Only interfaces may be implemented."),
+            "The class C2 cannot implement class C. Only interfaces may be implemented."),
         CoCoFinding.error(errorCode,
-            "The enum E1 cannot implement class C. Only interfaces may be implemented."),
+            "The enum E1 cannot implement enum E. Only interfaces may be implemented."),
         CoCoFinding.error(errorCode,
-            "The enum E2 cannot implement enum E. Only interfaces may be implemented.")
+            "The enum E2 cannot implement class C. Only interfaces may be implemented.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
