@@ -10,6 +10,7 @@ import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternalCoCo;
 import de.monticore.umlcd4a.cocos.ebnf.DiagramNameUpperCase;
 import de.monticore.umlcd4a.cocos.ebnf.EnumConstantsUnique;
 import de.monticore.umlcd4a.cocos.ebnf.ExtendsNotCyclic;
+import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
 import de.monticore.umlcd4a.cocos.ebnf.RoleNamesLowerCaseCoco;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
@@ -81,6 +82,7 @@ public class CD4ACoCos {
     checker.addCoCo(new RoleNamesLowerCaseCoco());
     checker.addCoCo(new AssociationSourceTypeNotExternalCoCo());
     checker.addCoCo(new ExtendsNotCyclic());
+    checker.addCoCo(new InterfaceExtendsOnlyInterfaces());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   

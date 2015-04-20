@@ -1,0 +1,9 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A09 {
+  enum E;
+  class C;
+  interface I1 extends I2;
+  interface I2;
+  
+}
