@@ -19,18 +19,18 @@ public class ClassExtendsOnlyClasses implements CD4AnalysisASTCDClassCoCo {
   public static final String ERROR_MSG_FORMAT = "Class %s cannot extend %s %s. A class may only extend classes.";
   
   @Override
-  public void check(ASTCDClass iface) {
-    CDTypeSymbol symbol = (CDTypeSymbol) iface.getSymbol().get();
+  public void check(ASTCDClass clazz) {
+    CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol().get();
     Optional<CDTypeSymbol> optSuperType = symbol.getSuperClass();
     if (optSuperType.isPresent()) {
       CDTypeSymbol superType = optSuperType.get();
       if (!superType.isClass()) {
         CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, iface.getName(),
+            String.format(ERROR_MSG_FORMAT, clazz.getName(),
                 superType.isInterface()
                     ? "interface"
                     : "enum", superType.getName()),
-            iface.get_SourcePositionStart());
+            clazz.get_SourcePositionStart());
       }
     }
   }
