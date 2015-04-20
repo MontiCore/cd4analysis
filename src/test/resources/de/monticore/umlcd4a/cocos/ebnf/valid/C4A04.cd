@@ -1,0 +1,10 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A04 {
+  class A;
+  class B;
+  interface A1;
+  class B1;
+  enum C;
+  class C1;
+}

@@ -130,11 +130,12 @@ public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testInvalidClassExtends() {
     String modelName = "C4A08.cd";
     String errorCode = "0xC4A08";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode,

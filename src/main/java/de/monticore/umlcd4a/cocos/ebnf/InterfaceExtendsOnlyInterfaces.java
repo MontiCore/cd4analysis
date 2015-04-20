@@ -22,12 +22,12 @@ public class InterfaceExtendsOnlyInterfaces implements CD4AnalysisASTCDInterface
     for (CDTypeSymbol superType : symbol.getInterfaces()) {
       if (!superType.isInterface()) {
         CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, iface.getName(), superType.isClass()
-                ? "class"
-                : "enum", superType.getName()),
+            String.format(ERROR_MSG_FORMAT, iface.getName(),
+                superType.isClass()
+                    ? "class"
+                    : "enum", superType.getName()),
             iface.get_SourcePositionStart());
       }
     }
-    
   }
 }

@@ -2,7 +2,6 @@ package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
 classdiagram C4A08 {
   interface I;
-  enum E;
-  class C1 extends I;
-  class C2 extends E;
+  class C1 extends C2;
+  class C2 implements I;
 }
