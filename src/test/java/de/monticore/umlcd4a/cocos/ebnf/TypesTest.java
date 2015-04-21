@@ -43,7 +43,28 @@ public class TypesTest extends AbstractCoCoTest {
     CoCoLog.getFindings().clear();
   }
   
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/";
+  
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
+  
+  @Test
+  public void testNestedGeneric() {
+    String modelName = "C4A29.cd";
+    String errorCode = "0xC4A29";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
+    Collection<CoCoFinding> expectedErrors = Arrays
+        .asList(
+            CoCoFinding
+                .error(errorCode,
+                    "Invalid type parameter List<Optional<String>>. Generic types may not be nested."),
+            CoCoFinding
+                .error(errorCode,
+                    "Invalid type parameter Optional<List<String>>. Generic types may not be nested.")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
   
   @Ignore
   @Test
@@ -56,7 +77,7 @@ public class TypesTest extends AbstractCoCoTest {
      * derivation-rules aber nicht und es soll eine leere Methode generiert
      * werden, die dann ueberschrieben werden kann). Die entsprechende UMLP CoCo
      * soll in CD4A geloescht werden. */
-    testModelNoErrors("valid/" + modelName);
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(

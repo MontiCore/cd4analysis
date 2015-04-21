@@ -1,0 +1,10 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A29 {
+  class C1 {
+    List<Optional<String>> a;
+  }  
+  class C2 {
+    Optional<List<String>> a;
+  }  
+}
