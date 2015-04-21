@@ -5,6 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -18,6 +22,8 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.Slf4jLog;
 
 /**
  * Tests CoCos dealing with types.
@@ -64,6 +70,53 @@ public class TypesTest extends AbstractCoCoTest {
                     "Invalid type parameter Optional<List<String>>. Generic types may not be nested.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+  
+  private static class NoSystemExit extends Log {
+    public static final void init() {
+      setLog(new NoSystemExit());
+    }
+    
+    /**
+     * @see de.se_rwth.commons.logging.Log#doGetErrorCount()
+     */
+    @Override
+    protected int doGetErrorCount() {
+      // always prevents system exit
+      return 0;
+    }
+  }
+  
+  @Test
+  public void testUnparameterizedGenerics() {
+    // Note that a generic with no type parameter results in a parse error and
+    // hence there exists no explicit CoCo.
+    
+    String modelName = "C4A30.cd";
+    String errorCode = "0xC4A30";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
+    // NOTE: the invalid models produce parse error !
+    
+    // prevent junit to system.exit... :)
+    
+    NoSystemExit.init();
+    
+    Collection<CoCoFinding> expectedErrors = new ArrayList<>();
+    try {
+      testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+      fail("Expected a parse error for model " + MODEL_PATH_INVALID + modelName);
+    }
+    catch (Exception e) {
+      assertEquals("Error during loading of model " + MODEL_PATH_INVALID + modelName + ".",
+          e.getMessage());
+    }
+    finally {
+      // "restore" Logger? (actually we do not know which logger was set
+      // before...)
+      Slf4jLog.init();
+    }
   }
   
   @Ignore
