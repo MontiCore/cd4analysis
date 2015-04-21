@@ -202,6 +202,17 @@ public class CDTypes {
     }
   }
   
+  /**
+   * Converts the given wrapper type to the primitive type
+   * 
+   * @param type
+   * @return primitive type if the given type is a wrapper type else the given
+   * type converted to simple type
+   */
+  public static String wrapperToPrimitiveOrSimple(String type) {
+    return wrapperToPrimitive(type).replaceFirst(JAVA_LANG_PACKAGE, "");
+  }
+  
   public static boolean isString(CDTypeSymbol typeSymbol) {
     boolean returnValue = String.equals(typeSymbol.getFullName())
         || (typeSymbol.getFullName().lastIndexOf('.') == -1 && String.equals("java.lang."
