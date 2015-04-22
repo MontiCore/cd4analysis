@@ -31,6 +31,8 @@ import de.monticore.umlcd4a._ast.ASTValue;
 @SuppressWarnings("deprecation")
 public class AstPrinter {
   
+  public static final String EMPTY_STRING = "";
+  
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final static
    * 
