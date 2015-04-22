@@ -16,11 +16,11 @@ import java.util.Optional;
  */
 public interface ASTCDType extends mc.ast.ASTNode, ASTCD4AnalysisBase {
   
-  public String getName();
+  String getName();
   
-  public Optional<ASTModifier> getModifier();
+  Optional<ASTModifier> getModifier();
   
-  public de.monticore.types._ast.ASTReferenceTypeList getInterfaces();
+  de.monticore.types._ast.ASTReferenceTypeList getInterfaces();
   
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
