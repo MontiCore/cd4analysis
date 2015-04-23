@@ -5,10 +5,6 @@
  */
 package de.monticore.umlcd4a.symboltable.references;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -20,6 +16,10 @@ import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Stereotype;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference<CDTypeSymbol> {
 
@@ -70,11 +70,6 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public String getModelName() {
     return getReferencedSymbol().getModelName();
-  }
-
-  @Override
-  public String getName() {
-    return getReferencedSymbol().getName();
   }
 
   @Override

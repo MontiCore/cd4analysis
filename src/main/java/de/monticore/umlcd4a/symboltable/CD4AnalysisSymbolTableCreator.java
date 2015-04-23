@@ -4,14 +4,6 @@ package de.monticore.umlcd4a.symboltable;/*
  * http://www.se-rwth.de/
  */
 
-import static java.util.Objects.requireNonNull;
-import static mc.helper.NameHelper.dotSeparatedStringFromList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import mc.helper.NameHelper;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.ImportStatement;
@@ -24,25 +16,19 @@ import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.types._ast.ASTReferenceType;
 import de.monticore.types._ast.ASTReferenceTypeList;
 import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.umlcd4a._ast.ASTCD4AnalysisBase;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a._ast.ASTCDDefinition;
-import de.monticore.umlcd4a._ast.ASTCDEnum;
-import de.monticore.umlcd4a._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a._ast.ASTCDInterface;
-import de.monticore.umlcd4a._ast.ASTCDMethod;
-import de.monticore.umlcd4a._ast.ASTCDParameter;
-import de.monticore.umlcd4a._ast.ASTCDQualifier;
-import de.monticore.umlcd4a._ast.ASTModifier;
-import de.monticore.umlcd4a._ast.ASTStereoValue;
-import de.monticore.umlcd4a._ast.ASTStereotype;
+import de.monticore.umlcd4a._ast.*;
 import de.monticore.umlcd4a._visitor.CD4AnalysisVisitor;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+import mc.helper.NameHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
+import static mc.helper.NameHelper.dotSeparatedStringFromList;
 
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
 
@@ -53,14 +39,14 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
    * @param rootNode the root node
    * @return the first scope that was created
    */
-  public default Scope createFromAST(ASTCD4AnalysisBase rootNode) {
+  default Scope createFromAST(ASTCD4AnalysisBase rootNode) {
     requireNonNull(rootNode);
     rootNode.accept(this);
     return getFirstCreatedScope();
   }
 
   @Override
-  public default void visit(final ASTCDCompilationUnit compilationUnit) {
+  default void visit(final ASTCDCompilationUnit compilationUnit) {
     Log.info("Building Symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
@@ -78,7 +64,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void endVisit(final ASTCDCompilationUnit compilationUnit) {
+  default void endVisit(final ASTCDCompilationUnit compilationUnit) {
     removeCurrentScope();
 
     Log.info("Finished build of symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
@@ -89,7 +75,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void visit(final ASTCDDefinition astDefinition) {
+  default void visit(final ASTCDDefinition astDefinition) {
     final String cdName = astDefinition.getName();
 
     setFullClassDiagramName(getPackageName().isEmpty() ? cdName : (getPackageName() + "." + cdName));
@@ -103,13 +89,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void endVisit(final ASTCDDefinition astDefinition) {
+  default void endVisit(final ASTCDDefinition astDefinition) {
     astDefinition.getCDAssociations().forEach(this::handleAssociation);
     removeCurrentScope();
   }
 
   @Override
-  public default void visit(final ASTCDClass astClass) {
+  default void visit(final ASTCDClass astClass) {
     final CDTypeSymbol classSymbol = new CDTypeSymbol(astClass.getName());
 
     if (astClass.getSuperclass().isPresent()) {
@@ -129,7 +115,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     putScopeOnStackAndSetEnclosingIfExists(classSymbol);
   }
 
-  public default void setModifiersOfType(final CDTypeSymbol typeSymbol, final ASTModifier astModifier) {
+  default void setModifiersOfType(final CDTypeSymbol typeSymbol, final ASTModifier astModifier) {
     if (astModifier != null) {
       typeSymbol.setAbstract(astModifier.isAbstract());
       typeSymbol.setFinal(astModifier.isFinal());
@@ -154,7 +140,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default CDTypeSymbolReference createCDTypeSymbolFromReference(final ASTReferenceType astReferenceType) {
+  default CDTypeSymbolReference createCDTypeSymbolFromReference(final ASTReferenceType astReferenceType) {
     // TODO PN replace by type converter
     CDTypeSymbolReference superSymbol = null;
     if (astReferenceType instanceof ASTSimpleReferenceType) {
@@ -167,7 +153,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void visit(final ASTCDAttribute astAttribute) {
+  default void visit(final ASTCDAttribute astAttribute) {
     final String typeName = TypesPrinter.printTypeWithoutTypeArguments(astAttribute.getType());
 
     // TODO PN type arguments are not set yet. For every argument a CDTypeSymbolReference must be created.
@@ -208,12 +194,12 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void endVisit(final ASTCDClass astClass) {
+  default void endVisit(final ASTCDClass astClass) {
     removeCurrentScope();
   }
 
   @Override
-  public default void visit(final ASTCDInterface astInterface) {
+  default void visit(final ASTCDInterface astInterface) {
     final CDTypeSymbol interfaceSymbol = new CDTypeSymbol(astInterface.getName());
     interfaceSymbol.setInterface(true);
     // Interfaces are always abstract
@@ -231,7 +217,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     putScopeOnStackAndSetEnclosingIfExists(interfaceSymbol);
   }
 
-  public default void addInterfacesToType(final CDTypeSymbol typeSymbol, final ASTReferenceTypeList astInterfaces) {
+  default void addInterfacesToType(final CDTypeSymbol typeSymbol, final ASTReferenceTypeList astInterfaces) {
     if (astInterfaces != null) {
       for (final ASTReferenceType superInterface : astInterfaces) {
         final CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
@@ -241,12 +227,12 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void endVisit(final ASTCDInterface astInterface) {
+  default void endVisit(final ASTCDInterface astInterface) {
     removeCurrentScope();
   }
 
   @Override
-  public default void visit(final ASTCDEnum astEnum) {
+  default void visit(final ASTCDEnum astEnum) {
     final CDTypeSymbol enumSymbol = new CDTypeSymbol(astEnum.getName());
     enumSymbol.setEnum(true);
 
@@ -271,12 +257,12 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void endVisit(final ASTCDEnum astEnum) {
+  default void endVisit(final ASTCDEnum astEnum) {
     removeCurrentScope();
   }
 
   @Override
-  public default void visit(final ASTCDMethod astMethod) {
+  default void visit(final ASTCDMethod astMethod) {
     final CDMethodSymbol methodSymbol = new CDMethodSymbol(astMethod.getName());
 
     setModifiersOfMethod(methodSymbol, astMethod.getModifier());
@@ -291,11 +277,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   @Override
-  public default void endVisit(final ASTCDMethod astMethod) {
+  default void endVisit(final ASTCDMethod astMethod) {
     removeCurrentScope();
   }
 
-  public default void setModifiersOfMethod(final CDMethodSymbol methodSymbol, final ASTModifier astModifier) {
+  default void setModifiersOfMethod(final CDMethodSymbol methodSymbol, final ASTModifier astModifier) {
     if (astModifier != null) {
       methodSymbol.setAbstract(astModifier.isAbstract());
       methodSymbol.setStatic(astModifier.isStatic());
@@ -317,7 +303,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void addStereotypes(final CDMethodSymbol methodSymbol, final ASTStereotype astStereotype) {
+  default void addStereotypes(final CDMethodSymbol methodSymbol, final ASTStereotype astStereotype) {
     if (astStereotype != null) {
       for (final ASTStereoValue val : astStereotype.getValues()) {
         // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
@@ -326,7 +312,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void setParametersOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
+  default void setParametersOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
     if (astMethod.getCDParameters() != null) {
       CDTypeSymbolReference paramTypeSymbol;
 
@@ -352,14 +338,14 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void setReturnTypeOfMethod(final CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
+  default void setReturnTypeOfMethod(final CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
     // TODO PN use ASTTypesConverter
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
         TypesPrinter.printReturnType(astMethod.getReturnType()), currentScope().get());
     methodSymbol.setReturnType(returnSymbol);
   }
 
-  public default void setExceptionsOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
+  default void setExceptionsOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
     if (astMethod.getExceptions() != null) {
       for (final ASTQualifiedName exceptionName : astMethod.getExceptions()) {
         final CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(),
@@ -369,7 +355,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void setDefiningTypeOfMethod(final CDMethodSymbol methodSymbol) {
+  default void setDefiningTypeOfMethod(final CDMethodSymbol methodSymbol) {
     if (currentSymbol().isPresent()) {
       if (currentSymbol().get() instanceof CDTypeSymbol) {
         final CDTypeSymbol definingType = (CDTypeSymbol) currentSymbol().get();
@@ -382,13 +368,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void handleAssociation(final ASTCDAssociation cdAssoc) {
+  default void handleAssociation(final ASTCDAssociation cdAssoc) {
     handleLeftToRightAssociation(cdAssoc);
     handleRightToLeftAssociation(cdAssoc);
   }
 
   // TODO PN discuss: We can have TWO symbols for the SAME association ast. So, no link ast->symbol possible?
-  public default void handleRightToLeftAssociation(final ASTCDAssociation cdAssoc) {
+  default void handleRightToLeftAssociation(final ASTCDAssociation cdAssoc) {
     if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isUnspecified()) {
       final CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
           .getRightReferenceName(), cdAssoc.getLeftReferenceName());
@@ -430,7 +416,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default void handleLeftToRightAssociation(final ASTCDAssociation cdAssoc) {
+  default void handleLeftToRightAssociation(final ASTCDAssociation cdAssoc) {
     if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isUnspecified()) {
       final CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
               .getLeftReferenceName(), cdAssoc.getRightReferenceName());
@@ -471,7 +457,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public default CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc,
+  default CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc,
       final ASTQualifiedName astSourceName, final ASTQualifiedName astTargetName) {
     final CDTypeSymbolReference sourceType = new CDTypeSymbolReference(Names.getQualifiedName(
         astSourceName.getParts()), currentScope().get());
@@ -504,7 +490,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     return associationSymbol;
   }
 
-  public default void addStereotypes(final CDAssociationSymbol associationSymbol,
+  default void addStereotypes(final CDAssociationSymbol associationSymbol,
       final ASTStereotype astStereotype) {
     if (astStereotype != null) {
       // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail geschrieben)
@@ -514,11 +500,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
 
-  public void setPackageName(String name);
-  public String getPackageName();
+  void setPackageName(String name);
+  String getPackageName();
 
-  public void setFullClassDiagramName(String name);
-  public String getFullClassDiagramName();
+  void setFullClassDiagramName(String name);
+  String getFullClassDiagramName();
 
 
 }
