@@ -6,22 +6,22 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>cd4analysis</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
 
   <properties>
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>4.1.2-SNAPSHOT</monticore.version>
+    <monticore.version>4.1.2</monticore.version>
 
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
-    <se-commons.version>1.7.0-SNAPSHOT</se-commons.version>
+    <se-commons.version>1.7.0</se-commons.version>
     <antlr.version>4.3</antlr.version>
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.1.2-SNAPSHOT</mc4.maven.version>
+    <mc4.maven.version>4.1.2</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
