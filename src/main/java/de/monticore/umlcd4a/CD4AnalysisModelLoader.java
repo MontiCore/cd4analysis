@@ -31,7 +31,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
         (resolverConfiguration, enclosingScope).orElse(null);
 
     if (symbolTableCreator != null) {
-      Log.info("Start creation of symbol table for model \"" + modelName + "\".", CD4AnalysisModelLoader.class
+      Log.debug("Start creation of symbol table for model \"" + modelName + "\".", CD4AnalysisModelLoader.class
           .getSimpleName());
       final Scope scope = symbolTableCreator.createFromAST(ast);
 
@@ -40,7 +40,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
             + " is scope \"" + scope.getName() + "\"");
       }
 
-      Log.info("Created symbol table for model \"" + modelName + "\".", CD4AnalysisModelLoader.class
+      Log.debug("Created symbol table for model \"" + modelName + "\".", CD4AnalysisModelLoader.class
           .getSimpleName());
     }
     else {

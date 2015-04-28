@@ -47,7 +47,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
   @Override
   default void visit(final ASTCDCompilationUnit compilationUnit) {
-    Log.info("Building Symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
+    Log.debug("Building Symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
     setPackageName(dotSeparatedStringFromList(compilationUnit.getPackage()));
@@ -67,7 +67,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   default void endVisit(final ASTCDCompilationUnit compilationUnit) {
     removeCurrentScope();
 
-    Log.info("Finished build of symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
+    Log.debug("Finished build of symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
     // TODO PN test this
