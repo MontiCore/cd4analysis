@@ -7,6 +7,8 @@ package de.monticore.umlcd4a;
 
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternalCoCo;
+import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
+import de.monticore.umlcd4a.cocos.ebnf.AttributeTypeCompatible;
 import de.monticore.umlcd4a.cocos.ebnf.ClassExtendsOnlyClasses;
 import de.monticore.umlcd4a.cocos.ebnf.ClassImplementOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.DiagramNameUpperCase;
@@ -91,6 +93,8 @@ public class CD4ACoCos {
     checker.addCoCo(new ClassImplementOnlyInterfaces());
     checker.addCoCo(new EnumImplementOnlyInterfaces());
     checker.addCoCo(new GenericsNotNested());
+    checker.addCoCo(new AttributeTypeCompatible());
+    checker.addCoCo(new AttributeNameLowerCase());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   

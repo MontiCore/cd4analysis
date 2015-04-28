@@ -334,7 +334,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print attribute value
     if (a.getValue().isPresent()) {
       printer.print(" = ");
-      visitor.startVisit(a.getValue().get().getLiteral());
+      visitor.startVisit(a.getValue().get().getSignedLiteral());
     }
     printer.println(";");
   }

@@ -233,6 +233,6 @@ grammar CD4Analysis extends de.monticore.types.Types {
   /** ASTValue represents a Value
       @attribute literal  Value
   */
-  Value = Literal;
+  Value = SignedLiteral;
     
 }

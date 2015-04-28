@@ -1,0 +1,41 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A11 {
+  class C1 {
+    String a = "str";
+
+    int b = 1;
+    Integer b2 = 1;
+    int b3 = -1;
+    Integer b4 = -1;
+
+    float c = 1f;
+    Float c2 = 1f;
+    float c3 = 1.1f;
+    Float c4 = 1.1f;
+    float c5 = -1f;
+    Float c6 = -1f;
+    float c7 = -1.1f;
+    Float c8 = -1.1f;
+
+    double d = 0d;
+    Double d2 = 0d;
+    Double d3 = 1.0;
+    double d4 = 1.0;
+    Double d5 = 1.1d;
+    double d6 = -0d;
+    Double d7 = -0d;
+    Double d8 = -1.0;
+    double d9 = -1.0;
+    Double d10 = -1.1d;
+    
+    
+    long e1 = 1L;
+    Long e2 = 1L;
+    long e3 = -1L;
+    Long e4 = -1L;
+
+    Character f = 'a';
+    char f2 = 'a';
+  }  
+}

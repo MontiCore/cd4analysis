@@ -48,13 +48,16 @@ public class AttributeTests extends AbstractCoCoTest {
     CoCoLog.getFindings().clear();
   }
   
+  private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/";
+  
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
-  @Ignore
   @Test
   public void testInvalidAssignment() {
     String modelName = "C4A11.cd";
     String errorCode = "0xC4A11";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
@@ -63,16 +66,45 @@ public class AttributeTests extends AbstractCoCoTest {
                     "The value assignment for the attribute a in class C1 is not compatible to its type String."),
             CoCoFinding
                 .error(errorCode,
-                    "The value assignment for the attribute b in class C1 is not compatible to its type int.")
+                    "The value assignment for the attribute b in class C1 is not compatible to its type int."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute b2 in class C1 is not compatible to its type Integer."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute c in class C1 is not compatible to its type float."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute c2 in class C1 is not compatible to its type float."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute c3 in class C1 is not compatible to its type Float."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute d in class C1 is not compatible to its type Double."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute d2 in class C1 is not compatible to its type double."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute e in class C1 is not compatible to its type long."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute e2 in class C1 is not compatible to its type Long."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute f in class C1 is not compatible to its type Character."),
+            CoCoFinding
+                .error(errorCode,
+                    "The value assignment for the attribute f2 in class C1 is not compatible to its type char.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testInvalidAttributes() {
     String modelName = "C4A12.cd";
-    String errorCode = "C4A12";
+    String errorCode = "0xC4A12";
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
