@@ -1,0 +1,26 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A14 {
+  class C {
+    String a1;
+    char a2;
+    Character a3;
+    int a4;
+    Integer a5;
+    double a6;
+    Double a7;
+    float a8;
+    Float a9;
+    long a10;
+    Long a11;
+    boolean a12;
+    Boolean a13;
+    Date a14;
+    C2 a15;
+    I a16;
+    E a17;
+  }
+  class C2;
+  interface I;
+  enum E;
+}

@@ -45,8 +45,6 @@ public class AttributeOverriddenTypeMatch
     
     if (!overriddenSymbols.isEmpty()) {
       CDFieldSymbol anOverriddenSym = overriddenSymbols.get(0);
-      // String typeName = TypesPrinter.printType(node.getType());
-      // see TypeChecker javadoc for more information
       CoCoLog.error(ERROR_CODE,
           String.format(ERROR_MSG_FORMAT,
               subClassSym.getName(),
