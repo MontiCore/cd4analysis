@@ -1,7 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
 classdiagram C4A35 {
-
   class A;
 
   class B;

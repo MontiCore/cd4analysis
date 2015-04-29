@@ -7,6 +7,7 @@ package de.monticore.umlcd4a;
 
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierAttributeExistsInTarget;
+import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierTypeExists;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternalCoCo;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
@@ -105,6 +106,7 @@ public class CD4ACoCos {
     checker.addCoCo(new CompositionCardinalityValid());
     checker.addCoCo(new AssociationQualifierTypeExists());
     checker.addCoCo(new AssociationQualifierAttributeExistsInTarget());
+    checker.addCoCo(new AssociationQualifierOnCorrectSide());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   

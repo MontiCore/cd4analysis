@@ -17,8 +17,12 @@ import org.junit.Test;
 import de.monticore.cocos.CoCoFinding;
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
+import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.monticore.umlcd4a.cocos.AssocTestGenerator;
+import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
 /**
  * Tests the codes and messages of CoCos regarding associations.
@@ -30,6 +34,7 @@ import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
 public class AssocTests extends AbstractCoCoTest {
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
+  
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/";
   
   /**
@@ -1937,252 +1942,9 @@ public class AssocTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testQualifiedAssocInvalidQualifierPosition() {
-    String modelName = "C4A35.cd";
-    String errorCode = "0xC4A35";
-    
-    // attribute qualifier
-    
-    // ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
-    // @Override
-    // public String print(ASTCDAssociation assoc) {
-    // String msg =
-    // "The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.";
-    // String qualifier = null;
-    // String referencedClass = null;
-    // if (assoc.getLeftQualifier().isPresent()) {
-    // qualifier = assoc.getLeftQualifier().get().getName();
-    // if (assoc.getRightReferenceName() != null
-    // && assoc.getRightReferenceName().getParts().size() > 0) {
-    // referencedClass =
-    // Iterables.getLast(assoc.getRightReferenceName().getParts());
-    // }
-    //
-    // }
-    // else {
-    // if (assoc.getRightQualifier().isPresent()) {
-    // qualifier = assoc.getRightQualifier().get().getName();
-    // if (assoc.getLeftReferenceName() != null
-    // && assoc.getLeftReferenceName().getParts().size() > 0) {
-    // referencedClass =
-    // Iterables.getLast(assoc.getLeftReferenceName().getParts());
-    // }
-    // }
-    // }
-    // if (null == qualifier) {
-    // throw new
-    // RuntimeException("At least one of the qualifiers must be set.");
-    // }
-    // if (null == referencedClass) {
-    // throw new RuntimeException("The referenced class must be set.");
-    // }
-    // return "  CoCoFinding.error(errorCode, \""
-    // + String.format(msg, qualifier, CD4ACoCoFinding.printAssociation(assoc),
-    // referencedClass) + "\"),";
-    // }
-    // };
-    // AssocTestGenerator.generateQualifiedAssocTests(false,
-    // "leftAttributeQualifier",
-    // "rightAttributeQualifier", errorMessagePrinter);
-    Collection<CoCoFinding> expectedErrors = Arrays
-        .asList(
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc0 (A -> A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc1 (A -> A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc2 (A -> B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc3 (A -> B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc4 (A -> E) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc5 (A -> E) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc6 (A -> I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc7 (A -> I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc8 (B -> A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc9 (B -> A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc10 (B -> B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc11 (B -> B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc12 (B -> E) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc13 (B -> E) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc14 (B -> I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc15 (B -> I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc16 (I -> A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc17 (I -> A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc18 (I -> B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc19 (I -> B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc20 (I -> E) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc21 (I -> E) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier rightAttributeQualifier of the qualified association assoc22 (I -> I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc23 (I -> I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc24 (A <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc25 (A <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc26 (A <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc27 (A <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc28 (A <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc29 (A <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc30 (B <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc31 (B <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc32 (B <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc33 (B <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc34 (B <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc35 (B <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc36 (E <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc37 (E <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc38 (E <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc39 (E <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc40 (E <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc41 (E <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc42 (I <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc43 (I <- A) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc44 (I <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc45 (I <- B) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc46 (I <- I) is at an invalid position regarding the association's direction."),
-            CoCoFinding
-                .error(
-                    errorCode,
-                    "The qualifier leftAttributeQualifier of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
-        );
-    
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+    // consists of 2 tests: typed qualifier and attribute qualifier
     
     // typed qualifier
     
@@ -2192,42 +1954,29 @@ public class AssocTests extends AbstractCoCoTest {
     // String msg =
     // "The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.";
     // String qualifier = null;
-    // String referencedClass = null;
-    // if (assoc.getLeftQualifier().isPresent()) {
-    // qualifier = assoc.getLeftQualifier().get().getName();
-    // if (assoc.getRightReferenceName() != null
-    // && assoc.getRightReferenceName().getParts().size() > 0) {
-    // referencedClass =
-    // Iterables.getLast(assoc.getRightReferenceName().getParts());
+    // if (assoc.isRightToLeft()) {
+    // // left qualifier must present and is at an invalid position
+    // qualifier = assoc.getLeftQualifier().get().getName().get();
     // }
-    //
+    // else if (assoc.isLeftToRight()) {
+    // // right qualifier must present and is at an invalid position
+    // qualifier = assoc.getRightQualifier().get().getName().get();
     // }
     // else {
-    // if (assoc.getRightQualifier().isPresent()) {
-    // qualifier = assoc.getRightQualifier().get().getName();
-    // if (assoc.getLeftReferenceName() != null
-    // && assoc.getLeftReferenceName().getParts().size() > 0) {
-    // referencedClass =
-    // Iterables.getLast(assoc.getLeftReferenceName().getParts());
-    // }
-    // }
-    // }
-    // if (null == qualifier) {
-    // throw new
-    // RuntimeException("At least one of the qualifiers must be set.");
-    // }
-    // if (null == referencedClass) {
-    // throw new RuntimeException("The referenced class must be set.");
+    // throw new RuntimeException("invalid test case.");
     // }
     // return "  CoCoFinding.error(errorCode, \""
-    // + String.format(msg, qualifier, CD4ACoCoFinding.printAssociation(assoc),
-    // referencedClass) + "\"),";
+    // + String.format(msg, qualifier, CD4ACoCoHelper.printAssociation(assoc)) +
+    // "\"),";
     // }
     // };
-    // AssocTestGenerator.generateQualifiedAssocTests(false, "String", "String",
-    // errorMessagePrinter);
-    modelName = "C4A35_2.cd";
-    expectedErrors = Arrays
+    // AssocTestGenerator.generateQualifiedAssocTests(false,
+    // "String",
+    // "String", errorMessagePrinter);
+    String modelName = "C4A35.cd";
+    String errorCode = "0xC4A35";
+    
+    Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
             CoCoFinding
                 .error(
@@ -2423,6 +2172,235 @@ public class AssocTests extends AbstractCoCoTest {
                     "The qualifier String of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
         );
     
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+    
+    CoCoLog.getFindings().clear();
+    
+    // attribute qualifier
+    modelName = "C4A35_2.cd";
+
+    // ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
+    // @Override
+    // public String print(ASTCDAssociation assoc) {
+    // String msg =
+    // "The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.";
+    // String qualifier = null;
+    // if (assoc.isRightToLeft()) {
+    // // left qualifier must present and is at an invalid position
+    // qualifier = assoc.getLeftQualifier().get().getName().get();
+    // }
+    // else if (assoc.isLeftToRight()) {
+    // // right qualifier must present and is at an invalid position
+    // qualifier = assoc.getRightQualifier().get().getName().get();
+    // }
+    // else {
+    // throw new RuntimeException("invalid test case.");
+    // }
+    // return "  CoCoFinding.error(errorCode, \""
+    // + String.format(msg, qualifier, CD4ACoCoHelper.printAssociation(assoc)) +
+    // "\"),";
+    // }
+    // };
+    // AssocTestGenerator.generateQualifiedAssocTests(false,
+    // "leftAttributeQualifier",
+    // "rightAttributeQualifier", errorMessagePrinter);
+    
+    expectedErrors = Arrays
+        .asList(
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc0 (A -> A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc1 (A -> A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc2 (A -> B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc3 (A -> B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc4 (A -> E) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc5 (A -> E) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc6 (A -> I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc7 (A -> I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc8 (B -> A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc9 (B -> A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc10 (B -> B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc11 (B -> B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc12 (B -> E) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc13 (B -> E) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc14 (B -> I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc15 (B -> I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc16 (I -> A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc17 (I -> A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc18 (I -> B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc19 (I -> B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc20 (I -> E) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc21 (I -> E) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc22 (I -> I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier rightAttributeQualifier of the qualified association assoc23 (I -> I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc24 (A <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc25 (A <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc26 (A <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc27 (A <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc28 (A <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc29 (A <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc30 (B <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc31 (B <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc32 (B <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc33 (B <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc34 (B <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc35 (B <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc36 (E <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc37 (E <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc38 (E <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc39 (E <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc40 (E <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc41 (E <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc42 (I <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc43 (I <- A) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc44 (I <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc45 (I <- B) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc46 (I <- I) is at an invalid position regarding the association's direction."),
+            CoCoFinding
+                .error(
+                    errorCode,
+                    "The qualifier leftAttributeQualifier of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
+        );
+
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   

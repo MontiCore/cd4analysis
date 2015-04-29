@@ -13,7 +13,7 @@ classdiagram C4A35_2 {
   }
 
   enum E {
-   	leftAttributeQualifier;
+   	leftAttributeQualifier,
   	rightAttributeQualifier;
   }
 
@@ -117,5 +117,6 @@ classdiagram C4A35_2 {
   association assoc46 I [leftAttributeQualifier] <- I ;
 
   association assoc47 I [leftAttributeQualifier] <- [rightAttributeQualifier] I ;
+
 }
 
