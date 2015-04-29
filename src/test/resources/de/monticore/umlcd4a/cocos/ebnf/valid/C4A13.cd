@@ -8,20 +8,20 @@ classdiagram C4A13 {
     String attr;
   }
   class C2 extends C1 {
-    int attr;
+    String attr;
   }
-
+  
   class C4 {
     int attr;
   }
   class C5 extends C4 {
-    String attr;
+    int attr;
   }
-
+  
   class C7 {
     T1 t1;
-  }  
+  }
   class C8 extends C7 {
-    T2 t1;
+    T1 t1;
   }
 }

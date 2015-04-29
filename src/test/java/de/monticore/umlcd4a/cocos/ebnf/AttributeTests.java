@@ -114,11 +114,12 @@ public class AttributeTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testInvalidAttributeOverride() {
     String modelName = "C4A13.cd";
     String errorCode = "0xC4A13";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
