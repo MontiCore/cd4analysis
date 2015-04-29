@@ -2514,7 +2514,6 @@ public class AssocTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testInvalidOrderedAssocs() {
     // AssocTestGenerator.generateInvalidOrderedAssocs();
