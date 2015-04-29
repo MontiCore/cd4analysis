@@ -5,11 +5,8 @@
  */
 package de.monticore.umlcd4a.cocos;
 
-import java.util.Iterator;
-
 import com.google.common.base.Joiner;
 
-import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._ast.ASTCardinality;
 
@@ -64,19 +61,6 @@ public class CD4ACoCoHelper {
     r.append(Joiner.on(".").join(assoc.getRightReferenceName().getParts()));
     r.append(")");
     return r.toString();
-  }
-  
-  public static String qualifiedNameToString(ASTQualifiedName name) {
-    StringBuilder sb = new StringBuilder();
-    
-    Iterator<String> it = name.getParts().iterator();
-    while (it.hasNext()) {
-      sb.append(it.next());
-      if (it.hasNext()) {
-        sb.append(".");
-      }
-    }
-    return sb.toString();
   }
   
   /**

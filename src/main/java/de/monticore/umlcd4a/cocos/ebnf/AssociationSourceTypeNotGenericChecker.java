@@ -36,7 +36,7 @@ public class AssociationSourceTypeNotGenericChecker implements
   private void printErrorOnGeneric(ASTQualifiedName sourceType,
       ASTCDAssociation assoc) {
 
-    String s = CD4ACoCoHelper.qualifiedNameToString(sourceType);
+    String s = sourceType.toString();
 
     if (s.contains("<")) {
 

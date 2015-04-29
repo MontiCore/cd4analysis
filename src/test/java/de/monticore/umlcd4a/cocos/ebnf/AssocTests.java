@@ -17,12 +17,8 @@ import org.junit.Test;
 import de.monticore.cocos.CoCoFinding;
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
 import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
-import de.monticore.umlcd4a.cocos.AssocTestGenerator;
-import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
-import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
 /**
  * Tests the codes and messages of CoCos regarding associations.
@@ -2404,7 +2400,6 @@ public class AssocTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testEnumAsSource() {
     // AssocTestGenerator.generateEnumAsSource();

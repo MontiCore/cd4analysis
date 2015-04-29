@@ -8,7 +8,6 @@ import de.monticore.umlcd4a._ast.ASTModifier;
 import de.monticore.umlcd4a._ast.ASTStereoValue;
 import de.monticore.umlcd4a._ast.ASTStereoValueList;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
-import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 
 public class AssociationOrderedCardinalityChecker implements
     CD4AnalysisASTCDDefinitionCoCo {
@@ -67,8 +66,8 @@ public class AssociationOrderedCardinalityChecker implements
     if(assoc.getName().isPresent()) {
       assocName = assoc.getName().get();
     } 
-    String typeA = CD4ACoCoHelper.qualifiedNameToString(assoc.getLeftReferenceName());
-    String typeB = CD4ACoCoHelper.qualifiedNameToString(assoc.getRightReferenceName());
+    String typeA = assoc.getLeftReferenceName().toString();
+    String typeB = assoc.getRightReferenceName().toString();
     
     
     String roleA = "";

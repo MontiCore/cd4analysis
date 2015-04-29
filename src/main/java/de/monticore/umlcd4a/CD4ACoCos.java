@@ -9,6 +9,7 @@ import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierAttributeExistsInTarget;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierTypeExists;
+import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceNotEnum;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternalCoCo;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeOverriddenTypeMatch;
@@ -107,6 +108,7 @@ public class CD4ACoCos {
     checker.addCoCo(new AssociationQualifierTypeExists());
     checker.addCoCo(new AssociationQualifierAttributeExistsInTarget());
     checker.addCoCo(new AssociationQualifierOnCorrectSide());
+    checker.addCoCo(new AssociationSourceNotEnum());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   
