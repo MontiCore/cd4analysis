@@ -16,7 +16,6 @@ import de.monticore.literals._ast.ASTLongLiteral;
 import de.monticore.literals._ast.ASTSignedLiteral;
 import de.monticore.literals._ast.ASTStringLiteral;
 import de.monticore.literals._visitor.LiteralsInheritanceVisitor;
-import de.monticore.literals._visitor.LiteralsVisitor;
 import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
@@ -28,7 +27,7 @@ import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
  *
  * @author Robert Heim
  */
-public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo, LiteralsVisitor {
+public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   
   public static final String ERROR_CODE = "0xC4A11";
   
@@ -57,8 +56,8 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo, L
   }
   
   /**
-   * This visitor checks for an {@link ASTLiteral} if it is assignable to a given
-   * type (see constructor). We use a visitor to avoid if (lit instanceof
+   * This visitor checks for an {@link ASTLiteral} if it is assignable to a
+   * given type (see constructor). We use a visitor to avoid if (lit instanceof
    * ASTIntLiteral) ...<br/>
    * We use the inheritance visitor because we then don't need to differentiate
    * between Signed and unsigned numerical literals. The
