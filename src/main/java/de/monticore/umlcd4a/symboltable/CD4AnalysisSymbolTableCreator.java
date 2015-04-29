@@ -369,12 +369,15 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
 
   default void handleAssociation(final ASTCDAssociation cdAssoc) {
-    handleLeftToRightAssociation(cdAssoc);
-    handleRightToLeftAssociation(cdAssoc);
+    CDAssociationSymbol s = handleLeftToRightAssociation(cdAssoc);
+    CDAssociationSymbol s2 = handleRightToLeftAssociation(cdAssoc);
+    // TODO PN <- RH remove quick fix see #1627 maybe merge symbols?
+    setLinkBetweenSymbolAndNode(s!= null? s : s2, cdAssoc);
   }
 
   // TODO PN discuss: We can have TWO symbols for the SAME association ast. So, no link ast->symbol possible?
-  default void handleRightToLeftAssociation(final ASTCDAssociation cdAssoc) {
+  // TODO PN <- RH remove returns, its only a quick fix see #1627
+  default CDAssociationSymbol handleRightToLeftAssociation(final ASTCDAssociation cdAssoc) {
     if (cdAssoc.isRightToLeft() || cdAssoc.isBidirectional() || cdAssoc.isUnspecified()) {
       final CDAssociationSymbol assocRight2LeftSymbol = createAssociationSymbol(cdAssoc, cdAssoc
           .getRightReferenceName(), cdAssoc.getLeftReferenceName());
@@ -413,10 +416,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
         assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
       }
+      return assocRight2LeftSymbol;
     }
+    return null;
   }
 
-  default void handleLeftToRightAssociation(final ASTCDAssociation cdAssoc) {
+  // TODO PN <- RH remove returns, its only a quick fix see #1627
+  default CDAssociationSymbol handleLeftToRightAssociation(final ASTCDAssociation cdAssoc) {
     if (cdAssoc.isLeftToRight() || cdAssoc.isBidirectional() || cdAssoc.isUnspecified()) {
       final CDAssociationSymbol assocLeft2RightSymbol = createAssociationSymbol(cdAssoc, cdAssoc
               .getLeftReferenceName(), cdAssoc.getRightReferenceName());
@@ -454,7 +460,9 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
         assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
       }
-    }
+      return assocLeft2RightSymbol;
+    }    
+    return null;
   }
 
   default CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc,

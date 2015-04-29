@@ -19,6 +19,9 @@ classdiagram C4A14 {
     C2 a15;
     I a16;
     E a17;
+    Optional<String> a18;
+    Set<String> a19;
+    List<String> a20;
   }
   class C2;
   interface I;
