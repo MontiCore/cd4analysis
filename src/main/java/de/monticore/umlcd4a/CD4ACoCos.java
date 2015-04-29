@@ -11,6 +11,7 @@ import de.monticore.umlcd4a.cocos.ebnf.AssociationOrderedCardinalityGreaterOne;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierAttributeExistsInTarget;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierTypeExists;
+import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceNotEnum;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternal;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
@@ -28,7 +29,6 @@ import de.monticore.umlcd4a.cocos.ebnf.ExtendsNotCyclic;
 import de.monticore.umlcd4a.cocos.ebnf.GenericsNotNested;
 import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
-import de.monticore.umlcd4a.cocos.ebnf.RoleNamesLowerCaseCoco;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueTypeNames;
 import de.monticore.umlcd4a.cocos.mcg.AssociationModifierCoCo;
@@ -94,7 +94,6 @@ public class CD4ACoCos {
     checker.addCoCo(new TypeNameUpperCase());
     checker.addCoCo(new EnumConstantsUnique());
     checker.addCoCo(new AttributeUniqueInClassCoco());
-    checker.addCoCo(new RoleNamesLowerCaseCoco());
     checker.addCoCo(new AssociationSourceTypeNotExternal());
     checker.addCoCo(new ExtendsNotCyclic());
     checker.addCoCo(new InterfaceExtendsOnlyInterfaces());
@@ -113,6 +112,7 @@ public class CD4ACoCos {
     checker.addCoCo(new AssociationSourceNotEnum());
     checker.addCoCo(new AssociationOrderedCardinalityGreaterOne());
     checker.addCoCo(new AssociationNameLowerCase());
+    checker.addCoCo(new AssociationRoleNameLowerCase());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   
