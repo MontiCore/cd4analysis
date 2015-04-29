@@ -10,7 +10,7 @@ import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierAttributeExistsInTarg
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierTypeExists;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceNotEnum;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternalCoCo;
+import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternal;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeOverriddenTypeMatch;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeTypeCompatible;
@@ -93,7 +93,7 @@ public class CD4ACoCos {
     checker.addCoCo(new EnumConstantsUnique());
     checker.addCoCo(new AttributeUniqueInClassCoco());
     checker.addCoCo(new RoleNamesLowerCaseCoco());
-    checker.addCoCo(new AssociationSourceTypeNotExternalCoCo());
+    checker.addCoCo(new AssociationSourceTypeNotExternal());
     checker.addCoCo(new ExtendsNotCyclic());
     checker.addCoCo(new InterfaceExtendsOnlyInterfaces());
     checker.addCoCo(new ClassExtendsOnlyClasses());

@@ -15,7 +15,7 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  *
  * @author Robert Heim
  */
-public class AssociationSourceTypeNotExternalCoCo implements
+public class AssociationSourceTypeNotExternal implements
     CD4AnalysisASTCDAssociationCoCo {
   
   public static final String ERROR_CODE = "0xC4A22";
