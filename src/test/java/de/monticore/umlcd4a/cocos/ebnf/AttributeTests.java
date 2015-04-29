@@ -12,7 +12,6 @@ import mc.ast.SourcePosition;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.monticore.cocos.CoCoFinding;
@@ -136,7 +135,6 @@ public class AttributeTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore
   @Test
   public void testUndefinedType() {
     String modelName = "C4A14.cd";

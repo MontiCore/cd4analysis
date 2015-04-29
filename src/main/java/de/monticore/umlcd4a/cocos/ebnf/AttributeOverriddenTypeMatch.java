@@ -20,7 +20,7 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  *
  * @author Robert Heim
  */
-public class AttributeOveriddenTypeMatch
+public class AttributeOverriddenTypeMatch
     implements CD4AnalysisASTCDAttributeCoCo {
   
   public static final String ERROR_CODE = "0xC4A13";
