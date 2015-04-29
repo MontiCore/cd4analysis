@@ -51,7 +51,6 @@ public class AssocTests extends AbstractCoCoTest {
     CoCoLog.getFindings().clear();
   }
   
-  @Ignore
   @Test
   public void testAssocName() {
     String modelName = "C4A16.cd";
