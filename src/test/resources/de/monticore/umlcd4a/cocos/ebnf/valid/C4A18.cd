@@ -6,18 +6,18 @@ classdiagram C4A18 {
   interface I;
   enum E;
 
-  composition comp13 A        ->     B;
-  composition comp14 A [1]    ->     B;
-  composition comp15 A [0..1] ->     B;
-  composition comp16 A [0..1] -> [*] B;
+  composition comp13 A        -> B;
+  composition comp14 [1] A    -> B;
+  composition comp15 [0..1] A -> B;
+  composition comp16 [0..1] A -> B [*];
 
-  composition comp17 A        ->     E;
-  composition comp18 A [1]    ->     E;
-  composition comp19 A [0..1] ->     E;
-  composition comp20 A [0..1] -> [*] E;
+  composition comp17 A        -> E;
+  composition comp18 [1] A    -> E;
+  composition comp19 [0..1] A -> E;
+  composition comp20 [0..1] A -> E [*];
 
-  composition comp21 A        ->     I;
-  composition comp22 A [1]    ->     I;
-  composition comp23 A [0..1] ->     I;
-  composition comp24 A [0..1] -> [*] I;
+  composition comp21 A        -> I;
+  composition comp22 [1] A    -> I;
+  composition comp23 [0..1] A -> I;
+  composition comp24 [0..1] A -> I [*];
 }

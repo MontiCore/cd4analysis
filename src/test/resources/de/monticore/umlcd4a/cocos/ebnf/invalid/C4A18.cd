@@ -250,604 +250,364 @@ classdiagram C4A18 {
 
   composition comp119  [*]  I -> I  [*]  ;
 
-  composition comp120  [0..1]  A <- A  [1..*]  ;
+  composition comp120  [1..*]  A <-> A ;
 
-  composition comp121  [0..1]  A <- A  [*]  ;
+  composition comp121  [1..*]  A <-> A  [0..1]  ;
 
-  composition comp122  [1]  A <- A  [1..*]  ;
+  composition comp122  [1..*]  A <-> A  [1]  ;
 
-  composition comp123  [1]  A <- A  [*]  ;
+  composition comp123  [1..*]  A <-> A  [1..*]  ;
 
-  composition comp124 A <- A  [1..*]  ;
+  composition comp124  [1..*]  A <-> A  [*]  ;
 
-  composition comp125  [1..*]  A <- A  [1..*]  ;
+  composition comp125  [*]  A <-> A ;
 
-  composition comp126  [1..*]  A <- A  [*]  ;
+  composition comp126  [*]  A <-> A  [0..1]  ;
 
-  composition comp127 A <- A  [*]  ;
+  composition comp127  [*]  A <-> A  [1]  ;
 
-  composition comp128  [*]  A <- A  [1..*]  ;
+  composition comp128  [*]  A <-> A  [1..*]  ;
 
-  composition comp129  [*]  A <- A  [*]  ;
+  composition comp129  [*]  A <-> A  [*]  ;
 
-  composition comp130  [0..1]  A <- B  [1..*]  ;
+  composition comp130  [1..*]  A <-> B ;
 
-  composition comp131  [0..1]  A <- B  [*]  ;
+  composition comp131  [1..*]  A <-> B  [0..1]  ;
 
-  composition comp132  [1]  A <- B  [1..*]  ;
+  composition comp132  [1..*]  A <-> B  [1]  ;
 
-  composition comp133  [1]  A <- B  [*]  ;
+  composition comp133  [1..*]  A <-> B  [1..*]  ;
 
-  composition comp134 A <- B  [1..*]  ;
+  composition comp134  [1..*]  A <-> B  [*]  ;
 
-  composition comp135  [1..*]  A <- B  [1..*]  ;
+  composition comp135  [*]  A <-> B ;
 
-  composition comp136  [1..*]  A <- B  [*]  ;
+  composition comp136  [*]  A <-> B  [0..1]  ;
 
-  composition comp137 A <- B  [*]  ;
+  composition comp137  [*]  A <-> B  [1]  ;
 
-  composition comp138  [*]  A <- B  [1..*]  ;
+  composition comp138  [*]  A <-> B  [1..*]  ;
 
-  composition comp139  [*]  A <- B  [*]  ;
+  composition comp139  [*]  A <-> B  [*]  ;
 
-  composition comp140  [0..1]  A <- I  [1..*]  ;
+  composition comp140  [1..*]  A <-> I ;
 
-  composition comp141  [0..1]  A <- I  [*]  ;
+  composition comp141  [1..*]  A <-> I  [0..1]  ;
 
-  composition comp142  [1]  A <- I  [1..*]  ;
+  composition comp142  [1..*]  A <-> I  [1]  ;
 
-  composition comp143  [1]  A <- I  [*]  ;
+  composition comp143  [1..*]  A <-> I  [1..*]  ;
 
-  composition comp144 A <- I  [1..*]  ;
+  composition comp144  [1..*]  A <-> I  [*]  ;
 
-  composition comp145  [1..*]  A <- I  [1..*]  ;
+  composition comp145  [*]  A <-> I ;
 
-  composition comp146  [1..*]  A <- I  [*]  ;
+  composition comp146  [*]  A <-> I  [0..1]  ;
 
-  composition comp147 A <- I  [*]  ;
+  composition comp147  [*]  A <-> I  [1]  ;
 
-  composition comp148  [*]  A <- I  [1..*]  ;
+  composition comp148  [*]  A <-> I  [1..*]  ;
 
-  composition comp149  [*]  A <- I  [*]  ;
+  composition comp149  [*]  A <-> I  [*]  ;
 
-  composition comp150  [0..1]  B <- A  [1..*]  ;
+  composition comp150  [1..*]  B <-> A ;
 
-  composition comp151  [0..1]  B <- A  [*]  ;
+  composition comp151  [1..*]  B <-> A  [0..1]  ;
 
-  composition comp152  [1]  B <- A  [1..*]  ;
+  composition comp152  [1..*]  B <-> A  [1]  ;
 
-  composition comp153  [1]  B <- A  [*]  ;
+  composition comp153  [1..*]  B <-> A  [1..*]  ;
 
-  composition comp154 B <- A  [1..*]  ;
+  composition comp154  [1..*]  B <-> A  [*]  ;
 
-  composition comp155  [1..*]  B <- A  [1..*]  ;
+  composition comp155  [*]  B <-> A ;
 
-  composition comp156  [1..*]  B <- A  [*]  ;
+  composition comp156  [*]  B <-> A  [0..1]  ;
 
-  composition comp157 B <- A  [*]  ;
+  composition comp157  [*]  B <-> A  [1]  ;
 
-  composition comp158  [*]  B <- A  [1..*]  ;
+  composition comp158  [*]  B <-> A  [1..*]  ;
 
-  composition comp159  [*]  B <- A  [*]  ;
+  composition comp159  [*]  B <-> A  [*]  ;
 
-  composition comp160  [0..1]  B <- B  [1..*]  ;
+  composition comp160  [1..*]  B <-> B ;
 
-  composition comp161  [0..1]  B <- B  [*]  ;
+  composition comp161  [1..*]  B <-> B  [0..1]  ;
 
-  composition comp162  [1]  B <- B  [1..*]  ;
+  composition comp162  [1..*]  B <-> B  [1]  ;
 
-  composition comp163  [1]  B <- B  [*]  ;
+  composition comp163  [1..*]  B <-> B  [1..*]  ;
 
-  composition comp164 B <- B  [1..*]  ;
+  composition comp164  [1..*]  B <-> B  [*]  ;
 
-  composition comp165  [1..*]  B <- B  [1..*]  ;
+  composition comp165  [*]  B <-> B ;
 
-  composition comp166  [1..*]  B <- B  [*]  ;
+  composition comp166  [*]  B <-> B  [0..1]  ;
 
-  composition comp167 B <- B  [*]  ;
+  composition comp167  [*]  B <-> B  [1]  ;
 
-  composition comp168  [*]  B <- B  [1..*]  ;
+  composition comp168  [*]  B <-> B  [1..*]  ;
 
-  composition comp169  [*]  B <- B  [*]  ;
+  composition comp169  [*]  B <-> B  [*]  ;
 
-  composition comp170  [0..1]  B <- I  [1..*]  ;
+  composition comp170  [1..*]  B <-> I ;
 
-  composition comp171  [0..1]  B <- I  [*]  ;
+  composition comp171  [1..*]  B <-> I  [0..1]  ;
 
-  composition comp172  [1]  B <- I  [1..*]  ;
+  composition comp172  [1..*]  B <-> I  [1]  ;
 
-  composition comp173  [1]  B <- I  [*]  ;
+  composition comp173  [1..*]  B <-> I  [1..*]  ;
 
-  composition comp174 B <- I  [1..*]  ;
+  composition comp174  [1..*]  B <-> I  [*]  ;
 
-  composition comp175  [1..*]  B <- I  [1..*]  ;
+  composition comp175  [*]  B <-> I ;
 
-  composition comp176  [1..*]  B <- I  [*]  ;
+  composition comp176  [*]  B <-> I  [0..1]  ;
 
-  composition comp177 B <- I  [*]  ;
+  composition comp177  [*]  B <-> I  [1]  ;
 
-  composition comp178  [*]  B <- I  [1..*]  ;
+  composition comp178  [*]  B <-> I  [1..*]  ;
 
-  composition comp179  [*]  B <- I  [*]  ;
+  composition comp179  [*]  B <-> I  [*]  ;
 
-  composition comp180  [0..1]  E <- A  [1..*]  ;
+  composition comp180  [1..*]  I <-> A ;
 
-  composition comp181  [0..1]  E <- A  [*]  ;
+  composition comp181  [1..*]  I <-> A  [0..1]  ;
 
-  composition comp182  [1]  E <- A  [1..*]  ;
+  composition comp182  [1..*]  I <-> A  [1]  ;
 
-  composition comp183  [1]  E <- A  [*]  ;
+  composition comp183  [1..*]  I <-> A  [1..*]  ;
 
-  composition comp184 E <- A  [1..*]  ;
+  composition comp184  [1..*]  I <-> A  [*]  ;
 
-  composition comp185  [1..*]  E <- A  [1..*]  ;
+  composition comp185  [*]  I <-> A ;
 
-  composition comp186  [1..*]  E <- A  [*]  ;
+  composition comp186  [*]  I <-> A  [0..1]  ;
 
-  composition comp187 E <- A  [*]  ;
+  composition comp187  [*]  I <-> A  [1]  ;
 
-  composition comp188  [*]  E <- A  [1..*]  ;
+  composition comp188  [*]  I <-> A  [1..*]  ;
 
-  composition comp189  [*]  E <- A  [*]  ;
+  composition comp189  [*]  I <-> A  [*]  ;
 
-  composition comp190  [0..1]  E <- B  [1..*]  ;
+  composition comp190  [1..*]  I <-> B ;
 
-  composition comp191  [0..1]  E <- B  [*]  ;
+  composition comp191  [1..*]  I <-> B  [0..1]  ;
 
-  composition comp192  [1]  E <- B  [1..*]  ;
+  composition comp192  [1..*]  I <-> B  [1]  ;
 
-  composition comp193  [1]  E <- B  [*]  ;
+  composition comp193  [1..*]  I <-> B  [1..*]  ;
 
-  composition comp194 E <- B  [1..*]  ;
+  composition comp194  [1..*]  I <-> B  [*]  ;
 
-  composition comp195  [1..*]  E <- B  [1..*]  ;
+  composition comp195  [*]  I <-> B ;
 
-  composition comp196  [1..*]  E <- B  [*]  ;
+  composition comp196  [*]  I <-> B  [0..1]  ;
 
-  composition comp197 E <- B  [*]  ;
+  composition comp197  [*]  I <-> B  [1]  ;
 
-  composition comp198  [*]  E <- B  [1..*]  ;
+  composition comp198  [*]  I <-> B  [1..*]  ;
 
-  composition comp199  [*]  E <- B  [*]  ;
+  composition comp199  [*]  I <-> B  [*]  ;
 
-  composition comp200  [0..1]  E <- I  [1..*]  ;
+  composition comp200  [1..*]  I <-> I ;
 
-  composition comp201  [0..1]  E <- I  [*]  ;
+  composition comp201  [1..*]  I <-> I  [0..1]  ;
 
-  composition comp202  [1]  E <- I  [1..*]  ;
+  composition comp202  [1..*]  I <-> I  [1]  ;
 
-  composition comp203  [1]  E <- I  [*]  ;
+  composition comp203  [1..*]  I <-> I  [1..*]  ;
 
-  composition comp204 E <- I  [1..*]  ;
+  composition comp204  [1..*]  I <-> I  [*]  ;
 
-  composition comp205  [1..*]  E <- I  [1..*]  ;
+  composition comp205  [*]  I <-> I ;
 
-  composition comp206  [1..*]  E <- I  [*]  ;
+  composition comp206  [*]  I <-> I  [0..1]  ;
 
-  composition comp207 E <- I  [*]  ;
+  composition comp207  [*]  I <-> I  [1]  ;
 
-  composition comp208  [*]  E <- I  [1..*]  ;
+  composition comp208  [*]  I <-> I  [1..*]  ;
 
-  composition comp209  [*]  E <- I  [*]  ;
+  composition comp209  [*]  I <-> I  [*]  ;
 
-  composition comp210  [0..1]  I <- A  [1..*]  ;
+  composition comp210  [1..*]  A -- A ;
 
-  composition comp211  [0..1]  I <- A  [*]  ;
+  composition comp211  [1..*]  A -- A  [0..1]  ;
 
-  composition comp212  [1]  I <- A  [1..*]  ;
+  composition comp212  [1..*]  A -- A  [1]  ;
 
-  composition comp213  [1]  I <- A  [*]  ;
+  composition comp213  [1..*]  A -- A  [1..*]  ;
 
-  composition comp214 I <- A  [1..*]  ;
+  composition comp214  [1..*]  A -- A  [*]  ;
 
-  composition comp215  [1..*]  I <- A  [1..*]  ;
+  composition comp215  [*]  A -- A ;
 
-  composition comp216  [1..*]  I <- A  [*]  ;
+  composition comp216  [*]  A -- A  [0..1]  ;
 
-  composition comp217 I <- A  [*]  ;
+  composition comp217  [*]  A -- A  [1]  ;
 
-  composition comp218  [*]  I <- A  [1..*]  ;
+  composition comp218  [*]  A -- A  [1..*]  ;
 
-  composition comp219  [*]  I <- A  [*]  ;
+  composition comp219  [*]  A -- A  [*]  ;
 
-  composition comp220  [0..1]  I <- B  [1..*]  ;
+  composition comp220  [1..*]  A -- B ;
 
-  composition comp221  [0..1]  I <- B  [*]  ;
+  composition comp221  [1..*]  A -- B  [0..1]  ;
 
-  composition comp222  [1]  I <- B  [1..*]  ;
+  composition comp222  [1..*]  A -- B  [1]  ;
 
-  composition comp223  [1]  I <- B  [*]  ;
+  composition comp223  [1..*]  A -- B  [1..*]  ;
 
-  composition comp224 I <- B  [1..*]  ;
+  composition comp224  [1..*]  A -- B  [*]  ;
 
-  composition comp225  [1..*]  I <- B  [1..*]  ;
+  composition comp225  [*]  A -- B ;
 
-  composition comp226  [1..*]  I <- B  [*]  ;
+  composition comp226  [*]  A -- B  [0..1]  ;
 
-  composition comp227 I <- B  [*]  ;
+  composition comp227  [*]  A -- B  [1]  ;
 
-  composition comp228  [*]  I <- B  [1..*]  ;
+  composition comp228  [*]  A -- B  [1..*]  ;
 
-  composition comp229  [*]  I <- B  [*]  ;
+  composition comp229  [*]  A -- B  [*]  ;
 
-  composition comp230  [0..1]  I <- I  [1..*]  ;
+  composition comp230  [1..*]  A -- I ;
 
-  composition comp231  [0..1]  I <- I  [*]  ;
+  composition comp231  [1..*]  A -- I  [0..1]  ;
 
-  composition comp232  [1]  I <- I  [1..*]  ;
+  composition comp232  [1..*]  A -- I  [1]  ;
 
-  composition comp233  [1]  I <- I  [*]  ;
+  composition comp233  [1..*]  A -- I  [1..*]  ;
 
-  composition comp234 I <- I  [1..*]  ;
+  composition comp234  [1..*]  A -- I  [*]  ;
 
-  composition comp235  [1..*]  I <- I  [1..*]  ;
+  composition comp235  [*]  A -- I ;
 
-  composition comp236  [1..*]  I <- I  [*]  ;
+  composition comp236  [*]  A -- I  [0..1]  ;
 
-  composition comp237 I <- I  [*]  ;
+  composition comp237  [*]  A -- I  [1]  ;
 
-  composition comp238  [*]  I <- I  [1..*]  ;
+  composition comp238  [*]  A -- I  [1..*]  ;
 
-  composition comp239  [*]  I <- I  [*]  ;
+  composition comp239  [*]  A -- I  [*]  ;
 
-  composition comp240  [1..*]  A <-> A ;
+  composition comp240  [1..*]  B -- A ;
 
-  composition comp241  [1..*]  A <-> A  [0..1]  ;
+  composition comp241  [1..*]  B -- A  [0..1]  ;
 
-  composition comp242  [1..*]  A <-> A  [1]  ;
+  composition comp242  [1..*]  B -- A  [1]  ;
 
-  composition comp243  [1..*]  A <-> A  [1..*]  ;
+  composition comp243  [1..*]  B -- A  [1..*]  ;
 
-  composition comp244  [1..*]  A <-> A  [*]  ;
+  composition comp244  [1..*]  B -- A  [*]  ;
 
-  composition comp245  [*]  A <-> A ;
+  composition comp245  [*]  B -- A ;
 
-  composition comp246  [*]  A <-> A  [0..1]  ;
+  composition comp246  [*]  B -- A  [0..1]  ;
 
-  composition comp247  [*]  A <-> A  [1]  ;
+  composition comp247  [*]  B -- A  [1]  ;
 
-  composition comp248  [*]  A <-> A  [1..*]  ;
+  composition comp248  [*]  B -- A  [1..*]  ;
 
-  composition comp249  [*]  A <-> A  [*]  ;
+  composition comp249  [*]  B -- A  [*]  ;
 
-  composition comp250  [1..*]  A <-> B ;
+  composition comp250  [1..*]  B -- B ;
 
-  composition comp251  [1..*]  A <-> B  [0..1]  ;
+  composition comp251  [1..*]  B -- B  [0..1]  ;
 
-  composition comp252  [1..*]  A <-> B  [1]  ;
+  composition comp252  [1..*]  B -- B  [1]  ;
 
-  composition comp253  [1..*]  A <-> B  [1..*]  ;
+  composition comp253  [1..*]  B -- B  [1..*]  ;
 
-  composition comp254  [1..*]  A <-> B  [*]  ;
+  composition comp254  [1..*]  B -- B  [*]  ;
 
-  composition comp255  [*]  A <-> B ;
+  composition comp255  [*]  B -- B ;
 
-  composition comp256  [*]  A <-> B  [0..1]  ;
+  composition comp256  [*]  B -- B  [0..1]  ;
 
-  composition comp257  [*]  A <-> B  [1]  ;
+  composition comp257  [*]  B -- B  [1]  ;
 
-  composition comp258  [*]  A <-> B  [1..*]  ;
+  composition comp258  [*]  B -- B  [1..*]  ;
 
-  composition comp259  [*]  A <-> B  [*]  ;
+  composition comp259  [*]  B -- B  [*]  ;
 
-  composition comp260  [1..*]  A <-> I ;
+  composition comp260  [1..*]  B -- I ;
 
-  composition comp261  [1..*]  A <-> I  [0..1]  ;
+  composition comp261  [1..*]  B -- I  [0..1]  ;
 
-  composition comp262  [1..*]  A <-> I  [1]  ;
+  composition comp262  [1..*]  B -- I  [1]  ;
 
-  composition comp263  [1..*]  A <-> I  [1..*]  ;
+  composition comp263  [1..*]  B -- I  [1..*]  ;
 
-  composition comp264  [1..*]  A <-> I  [*]  ;
+  composition comp264  [1..*]  B -- I  [*]  ;
 
-  composition comp265  [*]  A <-> I ;
+  composition comp265  [*]  B -- I ;
 
-  composition comp266  [*]  A <-> I  [0..1]  ;
+  composition comp266  [*]  B -- I  [0..1]  ;
 
-  composition comp267  [*]  A <-> I  [1]  ;
+  composition comp267  [*]  B -- I  [1]  ;
 
-  composition comp268  [*]  A <-> I  [1..*]  ;
+  composition comp268  [*]  B -- I  [1..*]  ;
 
-  composition comp269  [*]  A <-> I  [*]  ;
+  composition comp269  [*]  B -- I  [*]  ;
 
-  composition comp270  [1..*]  B <-> A ;
+  composition comp270  [1..*]  I -- A ;
 
-  composition comp271  [1..*]  B <-> A  [0..1]  ;
+  composition comp271  [1..*]  I -- A  [0..1]  ;
 
-  composition comp272  [1..*]  B <-> A  [1]  ;
+  composition comp272  [1..*]  I -- A  [1]  ;
 
-  composition comp273  [1..*]  B <-> A  [1..*]  ;
+  composition comp273  [1..*]  I -- A  [1..*]  ;
 
-  composition comp274  [1..*]  B <-> A  [*]  ;
+  composition comp274  [1..*]  I -- A  [*]  ;
 
-  composition comp275  [*]  B <-> A ;
+  composition comp275  [*]  I -- A ;
 
-  composition comp276  [*]  B <-> A  [0..1]  ;
+  composition comp276  [*]  I -- A  [0..1]  ;
 
-  composition comp277  [*]  B <-> A  [1]  ;
+  composition comp277  [*]  I -- A  [1]  ;
 
-  composition comp278  [*]  B <-> A  [1..*]  ;
+  composition comp278  [*]  I -- A  [1..*]  ;
 
-  composition comp279  [*]  B <-> A  [*]  ;
+  composition comp279  [*]  I -- A  [*]  ;
 
-  composition comp280  [1..*]  B <-> B ;
+  composition comp280  [1..*]  I -- B ;
 
-  composition comp281  [1..*]  B <-> B  [0..1]  ;
+  composition comp281  [1..*]  I -- B  [0..1]  ;
 
-  composition comp282  [1..*]  B <-> B  [1]  ;
+  composition comp282  [1..*]  I -- B  [1]  ;
 
-  composition comp283  [1..*]  B <-> B  [1..*]  ;
+  composition comp283  [1..*]  I -- B  [1..*]  ;
 
-  composition comp284  [1..*]  B <-> B  [*]  ;
+  composition comp284  [1..*]  I -- B  [*]  ;
 
-  composition comp285  [*]  B <-> B ;
+  composition comp285  [*]  I -- B ;
 
-  composition comp286  [*]  B <-> B  [0..1]  ;
+  composition comp286  [*]  I -- B  [0..1]  ;
 
-  composition comp287  [*]  B <-> B  [1]  ;
+  composition comp287  [*]  I -- B  [1]  ;
 
-  composition comp288  [*]  B <-> B  [1..*]  ;
+  composition comp288  [*]  I -- B  [1..*]  ;
 
-  composition comp289  [*]  B <-> B  [*]  ;
+  composition comp289  [*]  I -- B  [*]  ;
 
-  composition comp290  [1..*]  B <-> I ;
+  composition comp290  [1..*]  I -- I ;
 
-  composition comp291  [1..*]  B <-> I  [0..1]  ;
+  composition comp291  [1..*]  I -- I  [0..1]  ;
 
-  composition comp292  [1..*]  B <-> I  [1]  ;
+  composition comp292  [1..*]  I -- I  [1]  ;
 
-  composition comp293  [1..*]  B <-> I  [1..*]  ;
+  composition comp293  [1..*]  I -- I  [1..*]  ;
 
-  composition comp294  [1..*]  B <-> I  [*]  ;
+  composition comp294  [1..*]  I -- I  [*]  ;
 
-  composition comp295  [*]  B <-> I ;
+  composition comp295  [*]  I -- I ;
 
-  composition comp296  [*]  B <-> I  [0..1]  ;
+  composition comp296  [*]  I -- I  [0..1]  ;
 
-  composition comp297  [*]  B <-> I  [1]  ;
+  composition comp297  [*]  I -- I  [1]  ;
 
-  composition comp298  [*]  B <-> I  [1..*]  ;
+  composition comp298  [*]  I -- I  [1..*]  ;
 
-  composition comp299  [*]  B <-> I  [*]  ;
-
-  composition comp300  [1..*]  I <-> A ;
-
-  composition comp301  [1..*]  I <-> A  [0..1]  ;
-
-  composition comp302  [1..*]  I <-> A  [1]  ;
-
-  composition comp303  [1..*]  I <-> A  [1..*]  ;
-
-  composition comp304  [1..*]  I <-> A  [*]  ;
-
-  composition comp305  [*]  I <-> A ;
-
-  composition comp306  [*]  I <-> A  [0..1]  ;
-
-  composition comp307  [*]  I <-> A  [1]  ;
-
-  composition comp308  [*]  I <-> A  [1..*]  ;
-
-  composition comp309  [*]  I <-> A  [*]  ;
-
-  composition comp310  [1..*]  I <-> B ;
-
-  composition comp311  [1..*]  I <-> B  [0..1]  ;
-
-  composition comp312  [1..*]  I <-> B  [1]  ;
-
-  composition comp313  [1..*]  I <-> B  [1..*]  ;
-
-  composition comp314  [1..*]  I <-> B  [*]  ;
-
-  composition comp315  [*]  I <-> B ;
-
-  composition comp316  [*]  I <-> B  [0..1]  ;
-
-  composition comp317  [*]  I <-> B  [1]  ;
-
-  composition comp318  [*]  I <-> B  [1..*]  ;
-
-  composition comp319  [*]  I <-> B  [*]  ;
-
-  composition comp320  [1..*]  I <-> I ;
-
-  composition comp321  [1..*]  I <-> I  [0..1]  ;
-
-  composition comp322  [1..*]  I <-> I  [1]  ;
-
-  composition comp323  [1..*]  I <-> I  [1..*]  ;
-
-  composition comp324  [1..*]  I <-> I  [*]  ;
-
-  composition comp325  [*]  I <-> I ;
-
-  composition comp326  [*]  I <-> I  [0..1]  ;
-
-  composition comp327  [*]  I <-> I  [1]  ;
-
-  composition comp328  [*]  I <-> I  [1..*]  ;
-
-  composition comp329  [*]  I <-> I  [*]  ;
-
-  composition comp330  [1..*]  A -- A ;
-
-  composition comp331  [1..*]  A -- A  [0..1]  ;
-
-  composition comp332  [1..*]  A -- A  [1]  ;
-
-  composition comp333  [1..*]  A -- A  [1..*]  ;
-
-  composition comp334  [1..*]  A -- A  [*]  ;
-
-  composition comp335  [*]  A -- A ;
-
-  composition comp336  [*]  A -- A  [0..1]  ;
-
-  composition comp337  [*]  A -- A  [1]  ;
-
-  composition comp338  [*]  A -- A  [1..*]  ;
-
-  composition comp339  [*]  A -- A  [*]  ;
-
-  composition comp340  [1..*]  A -- B ;
-
-  composition comp341  [1..*]  A -- B  [0..1]  ;
-
-  composition comp342  [1..*]  A -- B  [1]  ;
-
-  composition comp343  [1..*]  A -- B  [1..*]  ;
-
-  composition comp344  [1..*]  A -- B  [*]  ;
-
-  composition comp345  [*]  A -- B ;
-
-  composition comp346  [*]  A -- B  [0..1]  ;
-
-  composition comp347  [*]  A -- B  [1]  ;
-
-  composition comp348  [*]  A -- B  [1..*]  ;
-
-  composition comp349  [*]  A -- B  [*]  ;
-
-  composition comp350  [1..*]  A -- I ;
-
-  composition comp351  [1..*]  A -- I  [0..1]  ;
-
-  composition comp352  [1..*]  A -- I  [1]  ;
-
-  composition comp353  [1..*]  A -- I  [1..*]  ;
-
-  composition comp354  [1..*]  A -- I  [*]  ;
-
-  composition comp355  [*]  A -- I ;
-
-  composition comp356  [*]  A -- I  [0..1]  ;
-
-  composition comp357  [*]  A -- I  [1]  ;
-
-  composition comp358  [*]  A -- I  [1..*]  ;
-
-  composition comp359  [*]  A -- I  [*]  ;
-
-  composition comp360  [1..*]  B -- A ;
-
-  composition comp361  [1..*]  B -- A  [0..1]  ;
-
-  composition comp362  [1..*]  B -- A  [1]  ;
-
-  composition comp363  [1..*]  B -- A  [1..*]  ;
-
-  composition comp364  [1..*]  B -- A  [*]  ;
-
-  composition comp365  [*]  B -- A ;
-
-  composition comp366  [*]  B -- A  [0..1]  ;
-
-  composition comp367  [*]  B -- A  [1]  ;
-
-  composition comp368  [*]  B -- A  [1..*]  ;
-
-  composition comp369  [*]  B -- A  [*]  ;
-
-  composition comp370  [1..*]  B -- B ;
-
-  composition comp371  [1..*]  B -- B  [0..1]  ;
-
-  composition comp372  [1..*]  B -- B  [1]  ;
-
-  composition comp373  [1..*]  B -- B  [1..*]  ;
-
-  composition comp374  [1..*]  B -- B  [*]  ;
-
-  composition comp375  [*]  B -- B ;
-
-  composition comp376  [*]  B -- B  [0..1]  ;
-
-  composition comp377  [*]  B -- B  [1]  ;
-
-  composition comp378  [*]  B -- B  [1..*]  ;
-
-  composition comp379  [*]  B -- B  [*]  ;
-
-  composition comp380  [1..*]  B -- I ;
-
-  composition comp381  [1..*]  B -- I  [0..1]  ;
-
-  composition comp382  [1..*]  B -- I  [1]  ;
-
-  composition comp383  [1..*]  B -- I  [1..*]  ;
-
-  composition comp384  [1..*]  B -- I  [*]  ;
-
-  composition comp385  [*]  B -- I ;
-
-  composition comp386  [*]  B -- I  [0..1]  ;
-
-  composition comp387  [*]  B -- I  [1]  ;
-
-  composition comp388  [*]  B -- I  [1..*]  ;
-
-  composition comp389  [*]  B -- I  [*]  ;
-
-  composition comp390  [1..*]  I -- A ;
-
-  composition comp391  [1..*]  I -- A  [0..1]  ;
-
-  composition comp392  [1..*]  I -- A  [1]  ;
-
-  composition comp393  [1..*]  I -- A  [1..*]  ;
-
-  composition comp394  [1..*]  I -- A  [*]  ;
-
-  composition comp395  [*]  I -- A ;
-
-  composition comp396  [*]  I -- A  [0..1]  ;
-
-  composition comp397  [*]  I -- A  [1]  ;
-
-  composition comp398  [*]  I -- A  [1..*]  ;
-
-  composition comp399  [*]  I -- A  [*]  ;
-
-  composition comp400  [1..*]  I -- B ;
-
-  composition comp401  [1..*]  I -- B  [0..1]  ;
-
-  composition comp402  [1..*]  I -- B  [1]  ;
-
-  composition comp403  [1..*]  I -- B  [1..*]  ;
-
-  composition comp404  [1..*]  I -- B  [*]  ;
-
-  composition comp405  [*]  I -- B ;
-
-  composition comp406  [*]  I -- B  [0..1]  ;
-
-  composition comp407  [*]  I -- B  [1]  ;
-
-  composition comp408  [*]  I -- B  [1..*]  ;
-
-  composition comp409  [*]  I -- B  [*]  ;
-
-  composition comp410  [1..*]  I -- I ;
-
-  composition comp411  [1..*]  I -- I  [0..1]  ;
-
-  composition comp412  [1..*]  I -- I  [1]  ;
-
-  composition comp413  [1..*]  I -- I  [1..*]  ;
-
-  composition comp414  [1..*]  I -- I  [*]  ;
-
-  composition comp415  [*]  I -- I ;
-
-  composition comp416  [*]  I -- I  [0..1]  ;
-
-  composition comp417  [*]  I -- I  [1]  ;
-
-  composition comp418  [*]  I -- I  [1..*]  ;
-
-  composition comp419  [*]  I -- I  [*]  ;
+  composition comp299  [*]  I -- I  [*]  ;
 
 }

@@ -96,7 +96,7 @@ public class AssocTestGenerator {
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
     System.out.println(modelContents);
     
-    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    System.out.println("Collection<CoCoFinding> expectedErrors = Arrays.asList(");
     
     AssocTestGeneratorTool.printTestCases(allPossibilities, errorMsgPrinter);
     
@@ -119,7 +119,7 @@ public class AssocTestGenerator {
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
     System.out.println(modelContents);
     
-    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    System.out.println("Collection<CoCoFinding> expectedErrors = Arrays.asList(");
     
     AssocTestGeneratorTool.printTestCases(allPossibilities, new ErrorMessagePrinter() {
       @Override
@@ -145,7 +145,7 @@ public class AssocTestGenerator {
   }
   
   public static void main(String[] args) {
-    generateInvalidOrderedAssocs();
+    generateInvalidCompositeCardinalities();
   }
   
   /**
@@ -221,7 +221,7 @@ public class AssocTestGenerator {
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
     System.out.println(modelContents);
     
-    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    System.out.println("Collection<CoCoFinding> expectedErrors = Arrays.asList(");
     
     ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
       @Override
@@ -249,7 +249,7 @@ public class AssocTestGenerator {
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
     System.out.println(modelContents);
     
-    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    System.out.println("Collection<CoCoFinding> expectedErrors = Arrays.asList(");
     
     ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
       @Override
@@ -268,7 +268,7 @@ public class AssocTestGenerator {
     ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
       @Override
       public String print(ASTCDAssociation assoc) {
-        String msg = "The composite of composition %s has an invalid cardinality %s larger than one.";
+        String msg = "The composition %s has an invalid cardinality %s larger than one.";
         ASTCardinality cardinality = null;
         
         if (assoc.isRightToLeft()) {
@@ -286,12 +286,7 @@ public class AssocTestGenerator {
         
         String invalidCardinalityStr = null;
         if (cardinality != null) {
-          if (cardinality.isMany()) {
-            invalidCardinalityStr = "[*]";
-          }
-          else if (cardinality.isOneToMany()) {
-            invalidCardinalityStr = "[1..*]";
-          }
+          invalidCardinalityStr = CD4ACoCoHelper.printCardinality(cardinality);
         }
         if (null != invalidCardinalityStr) {
           return "  CoCoFinding.error(errorCode, \""
@@ -315,6 +310,10 @@ public class AssocTestGenerator {
           if (assoc.getRightCardinality().isPresent()) {
             cardinality = assoc.getRightCardinality().get();
           }
+          // we don't allow navigation direction <- for compositions so we mark
+          // them as not beeing invalid here as we don't want them in the test
+          // for the cardinality checks
+          return false;
         }
         else {
           // all other directions are interpreted as: left side is the
@@ -346,7 +345,7 @@ public class AssocTestGenerator {
     String modelContents = AssocTestGeneratorTool.printAssociations(allPossibilities);
     System.out.println(modelContents);
     
-    System.out.println("Collection<String> expectedErrors = Arrays.asList(");
+    System.out.println("Collection<CoCoFinding> expectedErrors = Arrays.asList(");
     AssocTestGeneratorTool.printTestCases(allPossibilities, errorMessagePrinter);
     
     System.out.println(");");

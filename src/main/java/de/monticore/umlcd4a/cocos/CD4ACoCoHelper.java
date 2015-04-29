@@ -11,6 +11,7 @@ import com.google.common.base.Joiner;
 
 import de.monticore.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a._ast.ASTCardinality;
 
 /**
  * Helper to print associations in default formats.
@@ -71,10 +72,33 @@ public class CD4ACoCoHelper {
     Iterator<String> it = name.getParts().iterator();
     while (it.hasNext()) {
       sb.append(it.next());
-      if(it.hasNext()) {
+      if (it.hasNext()) {
         sb.append(".");
       }
     }
     return sb.toString();
+  }
+  
+  /**
+   * Prints the cardinality String.
+   * 
+   * @param cardinality
+   * @return
+   */
+  public static String printCardinality(ASTCardinality cardinality) {
+    String cardStr = null;
+    if (cardinality.isMany()) {
+      cardStr = "[*]";
+    }
+    if (cardinality.isOne()) {
+      cardStr = "[1]";
+    }
+    if (cardinality.isOneToMany()) {
+      cardStr = "[1..*]";
+    }
+    if (cardinality.isOptional()) {
+      cardStr = "[0..*]";
+    }
+    return cardStr;
   }
 }

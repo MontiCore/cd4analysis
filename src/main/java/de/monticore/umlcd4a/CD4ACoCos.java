@@ -11,8 +11,10 @@ import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeOverriddenTypeMatch;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeTypeCompatible;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeTypeExists;
+import de.monticore.umlcd4a.cocos.ebnf.AttributeUniqueInClassCoco;
 import de.monticore.umlcd4a.cocos.ebnf.ClassExtendsOnlyClasses;
 import de.monticore.umlcd4a.cocos.ebnf.ClassImplementOnlyInterfaces;
+import de.monticore.umlcd4a.cocos.ebnf.CompositionCardinalityValid;
 import de.monticore.umlcd4a.cocos.ebnf.DiagramNameUpperCase;
 import de.monticore.umlcd4a.cocos.ebnf.EnumConstantsUnique;
 import de.monticore.umlcd4a.cocos.ebnf.EnumImplementOnlyInterfaces;
@@ -22,7 +24,6 @@ import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
 import de.monticore.umlcd4a.cocos.ebnf.RoleNamesLowerCaseCoco;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
-import de.monticore.umlcd4a.cocos.ebnf.AttributeUniqueInClassCoco;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueTypeNames;
 import de.monticore.umlcd4a.cocos.mcg.AssociationModifierCoCo;
 import de.monticore.umlcd4a.cocos.mcg.AttributeNotAbstractCoCo;
@@ -99,6 +100,7 @@ public class CD4ACoCos {
     checker.addCoCo(new AttributeNameLowerCase());
     checker.addCoCo(new AttributeOverriddenTypeMatch());
     checker.addCoCo(new AttributeTypeExists());
+    checker.addCoCo(new CompositionCardinalityValid());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   
