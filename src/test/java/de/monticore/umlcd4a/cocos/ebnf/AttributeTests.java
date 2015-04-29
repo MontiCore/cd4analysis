@@ -154,6 +154,8 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A15.cd";
     String errorCode = "0xC4A15";
     
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Attribute a is defined multiple times in class C."),
         CoCoFinding.error(errorCode, "Attribute b is defined multiple times in class C."),

@@ -1,0 +1,13 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A15 {
+  class T1;
+  class T2;
+  class C {
+    String a;
+    String b;
+    int b2;
+    T1 c;
+    T2 c2;
+  }
+}

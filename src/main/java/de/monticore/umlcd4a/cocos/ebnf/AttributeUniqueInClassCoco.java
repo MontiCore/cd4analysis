@@ -17,7 +17,7 @@ import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
  *
  * @author Robert Heim
  */
-public class UniqueAttributeInClassCoco implements CD4AnalysisASTCDClassCoCo {
+public class AttributeUniqueInClassCoco implements CD4AnalysisASTCDClassCoCo {
   
   public static final String ERROR_CODE = "0xC4A15";
   

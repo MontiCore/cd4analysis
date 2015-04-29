@@ -22,7 +22,7 @@ import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
 import de.monticore.umlcd4a.cocos.ebnf.RoleNamesLowerCaseCoco;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
-import de.monticore.umlcd4a.cocos.ebnf.UniqueAttributeInClassCoco;
+import de.monticore.umlcd4a.cocos.ebnf.AttributeUniqueInClassCoco;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueTypeNames;
 import de.monticore.umlcd4a.cocos.mcg.AssociationModifierCoCo;
 import de.monticore.umlcd4a.cocos.mcg.AttributeNotAbstractCoCo;
@@ -86,7 +86,7 @@ public class CD4ACoCos {
     checker.addCoCo(new UniqueTypeNames());
     checker.addCoCo(new TypeNameUpperCase());
     checker.addCoCo(new EnumConstantsUnique());
-    checker.addCoCo(new UniqueAttributeInClassCoco());
+    checker.addCoCo(new AttributeUniqueInClassCoco());
     checker.addCoCo(new RoleNamesLowerCaseCoco());
     checker.addCoCo(new AssociationSourceTypeNotExternalCoCo());
     checker.addCoCo(new ExtendsNotCyclic());
