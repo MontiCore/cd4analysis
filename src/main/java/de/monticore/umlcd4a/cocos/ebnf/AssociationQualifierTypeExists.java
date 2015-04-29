@@ -57,10 +57,10 @@ public class AssociationQualifierTypeExists
   }
   
   /**
-   * TODO: Write me!
+   * Does the actual check.
    * 
-   * @param qualifier
-   * @param node
+   * @param qualifier qualifier under test
+   * @param node the association under test
    * @return whether there was a coco error or not
    */
   private boolean check(ASTCDQualifier qualifier, ASTCDAssociation node) {
