@@ -234,7 +234,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
         new CDAssociationNameAndTargetNamePredicate("member", "Prof")).orElse(null);
     assertNotNull(memberAssocLeft2Right);
     assertEquals("member", memberAssocLeft2Right.getName());
-    assertEquals("member", memberAssocLeft2Right.getAssocName());
+    assertEquals("member", memberAssocLeft2Right.getAssocName().orElse(""));
     assertTrue(memberAssocLeft2Right.isBidirectional());
     assertEquals(personType.getName(), memberAssocLeft2Right.getSourceType().getName());
     assertEquals(profType.getName(), memberAssocLeft2Right.getTargetType().getName());
@@ -252,7 +252,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
         new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
     assertNotNull(memberAssocRight2Left);
     assertEquals("member", memberAssocRight2Left.getName());
-    assertEquals("member", memberAssocRight2Left.getAssocName());
+    assertEquals("member", memberAssocRight2Left.getAssocName().orElse(""));
     assertTrue(memberAssocRight2Left.isBidirectional());
     assertEquals(profType.getName(), memberAssocRight2Left.getSourceType().getName());
     assertEquals(personType.getName(), memberAssocRight2Left.getTargetType().getName());
@@ -275,7 +275,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
         new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
     assertNotNull(ecAssocLeft2Right);
     assertEquals("ec", ecAssocLeft2Right.getName());
-    assertEquals("ec", ecAssocLeft2Right.getAssocName());
+    assertEquals("ec", ecAssocLeft2Right.getAssocName().orElse(""));
     assertTrue(ecAssocLeft2Right.isBidirectional());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getFullName());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getFullName());
@@ -290,7 +290,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
         new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
     assertNotNull(ecAssocRight2Left);
     assertEquals("ec", ecAssocRight2Left.getName());
-    assertEquals("ec", ecAssocRight2Left.getAssocName());
+    assertEquals("ec", ecAssocRight2Left.getAssocName().orElse(""));
     assertTrue(ecAssocRight2Left.isBidirectional());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getFullName());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getFullName());

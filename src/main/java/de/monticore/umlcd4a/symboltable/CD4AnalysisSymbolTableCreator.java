@@ -20,6 +20,7 @@ import de.monticore.umlcd4a._ast.*;
 import de.monticore.umlcd4a._visitor.CD4AnalysisVisitor;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
+import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 import mc.helper.NameHelper;
 
@@ -389,17 +390,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
         assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orElse(null)));
         assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orElse(null)));
-
-        // Set role
-        String role = cdAssoc.getLeftRole().orElse("");
-        if (role.equals("")) {
-          role = cdAssoc.getName().orElse("");
-          if (role.equals("")) {
-            role = NameHelper.getSimplenameFromComplexname(cdAssoc.getLeftReferenceName().getParts());
-          }
-        }
-
-        assocRight2LeftSymbol.setRole(role);
+        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole());
 
         if (cdAssoc.getLeftModifier().isPresent()) {
           addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().orElse(null));
@@ -407,11 +398,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
         if (cdAssoc.getRightQualifier().isPresent()) {
           final ASTCDQualifier qualifier = cdAssoc.getRightQualifier().get();
-          if ((qualifier.getName().isPresent()) && (qualifier.getName().equals(""))) {
-            assocRight2LeftSymbol.setQualifier(qualifier.getName().get());
+          if ((qualifier.getName().isPresent()) && (!qualifier.getName().get().isEmpty())) {
+            assocRight2LeftSymbol.setQualifier(qualifier.getName());
           }
           else if (qualifier.getType().isPresent()) {
-            assocRight2LeftSymbol.setQualifier(TypesPrinter.printType(qualifier.getType().get()));
+            assocRight2LeftSymbol.setQualifier(Optional.of(TypesPrinter.printType(qualifier.getType().get())));
           }
         }
         assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
@@ -434,16 +425,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
         assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.getRightCardinality().orElse(null)));
         assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.getLeftCardinality().orElse(null)));
-
-        // Set role
-        String role = cdAssoc.getRightRole().orElse("");
-        if (role.equals("")) {
-          role = cdAssoc.getName().orElse("");
-          if (role.equals("")) {
-            role = NameHelper.getSimplenameFromComplexname(cdAssoc.getRightReferenceName().getParts());
-          }
-        }
-        assocLeft2RightSymbol.setRole(role);
+        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole());
 
         if (cdAssoc.getRightModifier().isPresent()) {
           addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype().orElse(null));
@@ -451,11 +433,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
         if (cdAssoc.getLeftQualifier().isPresent()) {
           final ASTCDQualifier qualifier = cdAssoc.getLeftQualifier().get();
-          if ((qualifier.getName().isPresent()) && (!qualifier.getName().equals(""))) {
-            assocLeft2RightSymbol.setQualifier(qualifier.getName().get());
+          if ((qualifier.getName().isPresent()) && (!qualifier.getName().get().isEmpty())) {
+            assocLeft2RightSymbol.setQualifier(qualifier.getName());
           }
           else if (qualifier.getType().isPresent()) {
-            assocLeft2RightSymbol.setQualifier(TypesPrinter.printType(qualifier.getType().get()));
+            assocLeft2RightSymbol.setQualifier(Optional.of(TypesPrinter.printType(qualifier.getType().get())));
           }
         }
         assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
@@ -482,7 +464,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     // the else case should be checked by a context conditions
 
 
-    associationSymbol.setAssocName(astAssoc.getName().orElse(""));
+    associationSymbol.setAssocName(astAssoc.getName());
 
     addStereotypes(associationSymbol, astAssoc.getStereotype().orElse(null));
 

@@ -95,6 +95,55 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
 
     return ImmutableSet.copyOf(allVisibleSuperTypeFields);
   }
+  
+  /**
+   * Gets all visible fields including inherited.
+   * 
+   * @return visible fields including inherited fields.
+   */
+  public Collection<CDFieldSymbol> getAllVisibleFields() {
+    final Set<CDFieldSymbol> allFields = new LinkedHashSet<>();
+    allFields.addAll(getAllVisibleFieldsOfSuperTypes());
+    allFields.addAll(getFields());
+    // filter-out all private fields
+    final Set<CDFieldSymbol> allVisibleFields = allFields.stream().
+        filter(field -> !field.isPrivate())
+        .collect(Collectors.toCollection(LinkedHashSet::new));
+    return ImmutableSet.copyOf(allVisibleFields);
+  }
+
+  /**
+   * Derived names of all outgoing associations (i.e., derived from role name,
+   * assoc name or the referenced type in lower case). This does not include
+   * inherited associations. A name might exist twice (which for example can
+   * be forbidden by a CoCo which uses this method)
+   * 
+   * @return (derived) names of outgoing associations
+   */
+  public List<String> getOutgoingAssocNames() {
+    final List<String> names = new ArrayList<>();
+    for (CDAssociationSymbol s : associations) {
+      names.add(s.getName());
+    }
+    return ImmutableList.copyOf(names);
+  }
+
+  /**
+   * Derived names of all outgoing associations (i.e., derived from role name,
+   * assoc name or the referenced type in lower case). This includes inherited
+   * associations. A name might exist twice (which for example can be forbidden
+   * by a CoCo which uses this method)
+   * 
+   * @return (derived) names of all outgoing associations
+   */
+  public List<String> getAllOutgoingAssocNames() {
+    final List<String> allNames = new ArrayList<>();
+    for (CDTypeSymbol superType : getSuperTypes()) {
+      allNames.addAll(superType.getAllOutgoingAssocNames());
+    }
+    allNames.addAll(getOutgoingAssocNames());
+    return ImmutableList.copyOf(allNames);
+  }
 
   public boolean hasSuperType(final String superTypeName) {
     requireNonNull(superTypeName);

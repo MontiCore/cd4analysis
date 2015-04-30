@@ -1,35 +1,39 @@
 package de.monticore.umlcd4a.symboltable;
 
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import mc.helper.NameHelper;
-
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.CommonSymbol;
+import de.se_rwth.commons.Names;
+import de.se_rwth.commons.StringTransformations;
 
 public class CDAssociationSymbol extends CommonSymbol {
   
   public static final CDAssociationSymbolKind KIND = new CDAssociationSymbolKind();
-
+  
   private final CDTypeSymbol sourceType;
+  
   private final CDTypeSymbol targetType;
   
   private Cardinality sourceCardinality;
+  
   private Cardinality targetCardinality;
-
-  private String qualifier = "";
-  private String role = "";
+  
+  private Optional<String> qualifier = Optional.empty();
+  
+  private Optional<String> role = Optional.empty();
+  
   private boolean bidirectional = false;
+  
   private boolean derived = false;
   
-  private String assocName = "";
-
+  private Optional<String> assocName = Optional.empty();
+  
   private Relationship relationship = Relationship.ASSOCIATION;
   
   private final List<Stereotype> stereotypes = new ArrayList<>();
@@ -39,11 +43,11 @@ public class CDAssociationSymbol extends CommonSymbol {
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
   }
-
+  
   @Override
   public String toString() {
     return CDAssociationSymbol.class.getSimpleName() + " " + getName() + "/" + getRole() + ": "
-        + "" + getSourceType() .getName() + " -> " + getTargetType().getName();
+        + "" + getSourceType().getName() + " -> " + getTargetType().getName();
   }
   
   public CDTypeSymbol getTargetType() {
@@ -53,47 +57,47 @@ public class CDAssociationSymbol extends CommonSymbol {
   public Cardinality getSourceCardinality() {
     return sourceCardinality;
   }
-
+  
   public void setSourceCardinality(final Cardinality sourceCardinality) {
     this.sourceCardinality = sourceCardinality;
   }
-
+  
   public void setTargetCardinality(final Cardinality cardinality) {
     this.targetCardinality = cardinality;
   }
-
+  
   public CDTypeSymbol getSourceType() {
     return sourceType;
   }
-
+  
   public Cardinality getTargetCardinality() {
     return targetCardinality;
   }
-
-  public void setRole(final String role) {
-    this.role = nullToEmpty(role);
-  }
-
-  public String getRole() {
-    return role;
-  }
-
-  public void setQualifier(final String qualifier) {
-    this.qualifier = nullToEmpty(qualifier);
+  
+  public void setRole(final Optional<String> role) {
+    this.role = role;
   }
   
-  public String getQualifier() {
+  public Optional<String> getRole() {
+    return role;
+  }
+  
+  public void setQualifier(final Optional<String> qualifier) {
+    this.qualifier = qualifier;
+  }
+  
+  public Optional<String> getQualifier() {
     return qualifier;
   }
-
-  public void setAssocName(final String assocName) {
-    this.assocName = nullToEmpty(assocName);
+  
+  public void setAssocName(final Optional<String> assocName) {
+    this.assocName = assocName;
   }
-
-  public String getAssocName() {
+  
+  public Optional<String> getAssocName() {
     return assocName;
   }
-
+  
   public void setBidirectional(final boolean bidirectional) {
     this.bidirectional = bidirectional;
   }
@@ -120,15 +124,14 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   @Override
   public String getName() {
-
-    if (!getAssocName().isEmpty()) {
-      return assocName;
+    if (role.isPresent()) {
+      return role.get();
     }
-    if (!getRole().isEmpty()) {
-      return getRole();
+    if (assocName.isPresent()) {
+      return assocName.get();
     }
-    // TODO PN ambiguous exception if several associations have same target
-    return NameHelper.firstToLower(NameHelper.getSimplenameFromComplexname(getTargetType().getName())).intern();
+    return StringTransformations.uncapitalize(Names.getSimpleName(getTargetType().getName()))
+        .intern();
   }
   
   public List<Stereotype> getStereotypes() {
@@ -136,16 +139,16 @@ public class CDAssociationSymbol extends CommonSymbol {
   }
   
   public Optional<Stereotype> getStereotype(final String name) {
-    for (final Stereotype stereotype: this.stereotypes) {
+    for (final Stereotype stereotype : this.stereotypes) {
       if (stereotype.getName().equals(name)) {
         return Optional.of(stereotype);
       }
     }
     return Optional.empty();
   }
-
+  
   public boolean containsStereotype(final String name, final String value) {
-    for (final Stereotype stereotype: this.stereotypes) {
+    for (final Stereotype stereotype : this.stereotypes) {
       if (stereotype.compare(name, value)) {
         return true;
       }
@@ -153,10 +156,9 @@ public class CDAssociationSymbol extends CommonSymbol {
     return false;
     
   }
-
+  
   public void addStereotype(final Stereotype stereotype) {
     this.stereotypes.add(stereotype);
   }
-
-
+  
 }

@@ -26,7 +26,10 @@ public class CDAssociationNameAndTargetNamePredicate implements SymbolPredicate 
         (symbol instanceof CDAssociationSymbol)) {
       CDAssociationSymbol assocSymbol = (CDAssociationSymbol) symbol;
 
-      return assocSymbol.getAssocName().equals(assocName)
+      if (!assocSymbol.getAssocName().isPresent()) {
+        return false;
+      }
+      return assocSymbol.getAssocName().get().equals(assocName)
           && assocSymbol.getTargetType().getName().equals(assocTargetName);
 
     }
