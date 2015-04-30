@@ -63,7 +63,7 @@ public class AssocTests extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
   @Test
   public void testAssocNameConflictAttribute() {
     String modelName = "C4A25.cd";
@@ -108,6 +108,19 @@ public class AssocTests extends AbstractCoCoTest {
          CoCoFinding.error(errorCode, "Association theInterface conflicts with the attribute theInterface in BSup.")
          );
      testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+
+
+  @Test
+  public void testAssocRoleConflictAttribute() {
+    String modelName = "C4A27.cd";
+    String errorCode = "0xC4A27";
+
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "The automatically introduced role name c of class C for association (C <- D) conflicts with an attribute in B."),
+        CoCoFinding.error(errorCode, "The role name assoc of class C for association (D <-> (assoc) C) conflicts with an attribute in B.")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 
   @Test

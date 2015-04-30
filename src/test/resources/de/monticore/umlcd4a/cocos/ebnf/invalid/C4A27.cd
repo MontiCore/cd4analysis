@@ -1,0 +1,16 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A27 {
+  class A;
+  class B {
+    int c;
+  }
+  class C ;
+  class D extends B;
+
+  association assoc A <- B;
+ 
+  // auto role: c
+  association C <- D;
+  association D <-> (assoc) C;
+}
