@@ -69,6 +69,8 @@ public class AssocTests extends AbstractCoCoTest {
     String modelName = "C4A25.cd";
     String errorCode = "0xC4A25";
     
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
     Collection<CoCoFinding> expectedErrors = Arrays.asList(
         CoCoFinding.error(errorCode, "Association a conflicts with the attribute a in B.")
         );
@@ -86,12 +88,19 @@ public class AssocTests extends AbstractCoCoTest {
          );
      testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
 
-    modelName = "C4A25_2.cd";
-    CoCoLog.getFindings().clear();
-    expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Association a1 conflicts with the attribute a1 in BSup.")
-        );
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+     modelName = "C4A25_2.cd";
+     CoCoLog.getFindings().clear();
+     expectedErrors = Arrays.asList(
+         CoCoFinding.error(errorCode, "Association a1 conflicts with the attribute a1 in BSup.")
+         );
+     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+
+     modelName = "C4A25_3.cd";
+     CoCoLog.getFindings().clear();
+     expectedErrors = Arrays.asList(
+         CoCoFinding.error(errorCode, "Association attr conflicts with the attribute attr in BSup.")
+         );
+     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 
   @Test

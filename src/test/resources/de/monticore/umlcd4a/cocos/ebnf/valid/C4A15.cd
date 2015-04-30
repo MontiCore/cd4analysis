@@ -1,4 +1,4 @@
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+package de.monticore.umlcd4a.cocos.ebnf.valid;
 
 classdiagram C4A15 {
   class T1;

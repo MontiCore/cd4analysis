@@ -1,8 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
@@ -53,39 +51,39 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
    */
   private boolean check(CDTypeSymbol sourceType, String assocName, ASTCDAssociation assoc) {
     // attributes
-    List<CDFieldSymbol> conflictingAttributes = sourceType.getAllVisibleFields().stream()
+    Optional<CDFieldSymbol> conflictingAttribute = sourceType.getAllVisibleFields().stream()
         .filter(f -> f.getName().equals(assocName))
-        .collect(Collectors.toList());
+        .findAny();
     
-    if (!conflictingAttributes.isEmpty()) {
+    if (conflictingAttribute.isPresent()) {
       CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, assocName, assocName, sourceType.getName()),
+          String.format(ERROR_MSG_FORMAT, assocName, assocName, conflictingAttribute.get()
+              .getEnclosingScope().getSpanningSymbol().get().getName()),
           assoc.get_SourcePositionStart());
       return true;
     }
     
-    // automatically introduced attributes from inherited associations
-    
-    List<CDAssociationSymbol> inheritedOutgoingAssocsWithSameName = sourceType
-        .getInheritedAssociations().stream()
-        .filter(a -> a.getDerivedName().equals(assocName))
-        .collect(Collectors.toList());
-    
     // automatically introduced attributes from other assocs of the source type
     // that are not defined by assoc name (same assoc name would be found by
     // other coco)
-    inheritedOutgoingAssocsWithSameName.addAll(sourceType.getAssociations().stream()
+    Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getAssociations().stream()
         .filter(a -> !a.getAssocName().isPresent())
         .filter(a -> a.getDerivedName().equals(assocName))
-        .collect(Collectors.toList()));
-    
-    if (!inheritedOutgoingAssocsWithSameName.isEmpty()) {
+        .findAny();
+    if (!conflictingAssoc.isPresent()) {
+      // automatically introduced attributes from inherited associations
+      conflictingAssoc = sourceType
+          .getInheritedAssociations().stream()
+          .filter(a -> a.getDerivedName().equals(assocName))
+          .findAny();
+    }
+    if (conflictingAssoc.isPresent()) {
       CoCoLog.error(
           ERROR_CODE,
           String.format(ERROR_MSG_FORMAT,
               assocName,
               assocName,
-              inheritedOutgoingAssocsWithSameName.get(0).getSourceType().getName()),
+              conflictingAssoc.get().getSourceType().getName()),
           assoc.get_SourcePositionStart());
       return true;
     }

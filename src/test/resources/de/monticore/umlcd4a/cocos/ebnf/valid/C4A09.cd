@@ -1,4 +1,4 @@
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+package de.monticore.umlcd4a.cocos.ebnf.valid;
 
 classdiagram C4A09 {
   interface I1 extends I2;
