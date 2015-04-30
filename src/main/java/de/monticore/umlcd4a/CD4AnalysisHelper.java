@@ -7,6 +7,7 @@ package de.monticore.umlcd4a;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
@@ -70,4 +71,9 @@ public class CD4AnalysisHelper {
     return types;
   }
   
+  public static List<String> getCDTypeNames(ASTCDDefinition ast) {
+    return getCDTypes(ast).stream().map(ASTCDType::getName)
+        .collect(Collectors.toList());
+  }
+
 }
