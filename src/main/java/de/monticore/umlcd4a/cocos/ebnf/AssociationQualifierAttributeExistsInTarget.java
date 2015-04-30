@@ -38,11 +38,13 @@ public class AssociationQualifierAttributeExistsInTarget
     
     // TODO RH checks einkommentieren wenn #1627 bearbeitet wurde
     if (node.getLeftQualifier().isPresent()) {
-      //err = check(node.getLeftQualifier().get(), node.getRightReferenceName(), node);
+      // err = check(node.getLeftQualifier().get(),
+      // node.getRightReferenceName(), node);
     }
     
     if (!err && node.getRightQualifier().isPresent()) {
-      //check(node.getRightQualifier().get(), node.getLeftReferenceName(), node);
+      // check(node.getRightQualifier().get(), node.getLeftReferenceName(),
+      // node);
     }
   }
   
@@ -74,9 +76,12 @@ public class AssociationQualifierAttributeExistsInTarget
       String expectedAttributeName = qualifier.getName().get();
       Optional<CDTypeSymbol> referencedClassSymOpt = node.getEnclosingScope().get()
           .resolve(referencedClass.toString(), CDTypeSymbol.KIND);
-      if (referencedClassSymOpt.isPresent()) {
+      if (!referencedClassSymOpt.isPresent()) {
+        // TODO symbol must exist??? s. #1627
+      }
+      else {
         CDTypeSymbol referencedClassSym = referencedClassSymOpt.get();
-        if (referencedClassSym.isClass()) {
+        if (referencedClassSym.isClass() || referencedClassSym.isEnum()) {
           if (!referencedClassSym.getField(expectedAttributeName).isPresent()) {
             hasError = true;
             CoCoLog.error(ERROR_CODE,

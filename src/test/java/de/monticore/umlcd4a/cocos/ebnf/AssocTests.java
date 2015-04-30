@@ -1619,6 +1619,8 @@ public class AssocTests extends AbstractCoCoTest {
     String modelName = "C4A20.cd";
     String errorCode = "0xC4A20";
     
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
             CoCoFinding

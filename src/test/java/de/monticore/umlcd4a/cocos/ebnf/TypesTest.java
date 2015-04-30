@@ -78,6 +78,23 @@ public class TypesTest extends AbstractCoCoTest {
     }
     
     /**
+     * @see de.se_rwth.commons.logging.Log#doError(java.lang.String)
+     */
+    @Override
+    protected void doError(String msg) {
+      // prevent output
+    }
+    
+    /**
+     * @see de.se_rwth.commons.logging.Log#doError(java.lang.String,
+     * java.lang.Throwable)
+     */
+    @Override
+    protected void doError(String msg, Throwable t) {
+      // prevent output
+    }
+    
+    /**
      * @see de.se_rwth.commons.logging.Log#doGetErrorCount()
      */
     @Override
