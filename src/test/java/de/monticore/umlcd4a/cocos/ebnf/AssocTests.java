@@ -101,6 +101,13 @@ public class AssocTests extends AbstractCoCoTest {
          CoCoFinding.error(errorCode, "Association attr conflicts with the attribute attr in BSup.")
          );
      testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+
+     modelName = "C4A25_4.cd";
+     CoCoLog.getFindings().clear();
+     expectedErrors = Arrays.asList(
+         CoCoFinding.error(errorCode, "Association theInterface conflicts with the attribute theInterface in BSup.")
+         );
+     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 
   @Test
