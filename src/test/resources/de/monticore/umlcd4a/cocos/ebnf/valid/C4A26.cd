@@ -1,0 +1,11 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A26 {
+  class A;
+  class B;
+  class C;
+  class D;
+
+  association assoc1 A -> B;
+  association assoc2 C <-> D;
+}

@@ -2175,7 +2175,7 @@ public class AssocTests extends AbstractCoCoTest {
     
     // attribute qualifier
     modelName = "C4A35_2.cd";
-
+    
     // ErrorMessagePrinter errorMessagePrinter = new ErrorMessagePrinter() {
     // @Override
     // public String print(ASTCDAssociation assoc) {
@@ -2397,7 +2397,7 @@ public class AssocTests extends AbstractCoCoTest {
                     errorCode,
                     "The qualifier leftAttributeQualifier of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
         );
-
+    
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
@@ -4637,6 +4637,20 @@ public class AssocTests extends AbstractCoCoTest {
                     "Association assoc527 (I -- I) is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.")
         );
     
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+  
+  @Test
+  public void testAssocNameNotUnique() {
+    String modelName = "C4A26.cd";
+    String errorCode = "0xC4A26";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Association assoc1 is defined multiple times."),
+        CoCoFinding.error(errorCode, "Association assoc1 is defined multiple times.")
+        );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 }
