@@ -123,7 +123,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   public List<String> getOutgoingAssocNames() {
     final List<String> names = new ArrayList<>();
     for (CDAssociationSymbol s : associations) {
-      names.add(s.getName());
+      names.add(s.getDerivedName());
     }
     return ImmutableList.copyOf(names);
   }
