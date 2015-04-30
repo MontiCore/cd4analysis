@@ -124,6 +124,19 @@ public class AssocTests extends AbstractCoCoTest {
   }
 
   @Test
+  public void testAssocRoleConflictRole() {
+    String modelName = "C4A28.cd";
+    String errorCode = "0xC4A28";
+
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "The automatically introduced role name a of class A for association (E -> A) conflicts with the automatically introduced role name a for association (A <- B)."),
+        CoCoFinding.error(errorCode, "The automatically introduced role name c of class C for association (C <- D) conflicts with the role name c for association (A (c) <-> B)."),
+        CoCoFinding.error(errorCode, "The role name a of class C for association (D <-> (a) C) conflicts with the automatically introduced role name a for association (A <- B).")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+
+  @Test
   public void testInvalidRoleNames() {
     // AssocTestGenerator.generateInvalidRoleNamesTests();
     String modelName = "C4A17.cd";

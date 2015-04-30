@@ -15,6 +15,7 @@ import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierTypeExists;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithAttribute;
+import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithOtherRoleNames;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceNotEnum;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternal;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
@@ -119,6 +120,7 @@ public class CD4ACoCos {
     checker.addCoCo(new AssociationNameUnique());
     checker.addCoCo(new AssociationNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithAttribute());
+    checker.addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNames());
     // TODO RE<-RH checker.addCoCo(coco);
   }
   
