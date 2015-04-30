@@ -23,7 +23,7 @@ import de.monticore.umlcd4a._ast.ASTStereotype;
  *
  */
 // TODO: check implementations
-public class Cd4analysisHelper {
+public class CD4AnalysisHelper {
   
   public static boolean hasStereotype(ASTCDAttribute ast,
       String stereotypeName) {
