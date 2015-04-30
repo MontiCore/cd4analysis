@@ -64,7 +64,6 @@ public class AssociationSourceTypeNotExternal implements
   private boolean isExternal(ASTQualifiedName sourceType, ASTCDAssociation assoc) {
     Optional<CDTypeSymbol> sourceSym = assoc.getEnclosingScope().get()
         .resolve(sourceType.toString(), CDTypeSymbol.KIND);
-    System.err.println(sourceType.toString());
     if (sourceSym.isPresent()) {
       return false;
     }
