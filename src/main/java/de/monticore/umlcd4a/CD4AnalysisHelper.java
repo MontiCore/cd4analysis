@@ -5,13 +5,16 @@
  */
 package de.monticore.umlcd4a;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
 import de.monticore.umlcd4a._ast.ASTCDAttribute;
 import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.umlcd4a._ast.ASTCDDefinition;
 import de.monticore.umlcd4a._ast.ASTCDMethod;
+import de.monticore.umlcd4a._ast.ASTCDType;
 import de.monticore.umlcd4a._ast.ASTStereotype;
 
 /**
@@ -57,6 +60,14 @@ public class CD4AnalysisHelper {
   
   public static boolean isAbstract(ASTCDClass clazz) {
     return clazz.getModifier().isPresent() && clazz.getModifier().get().isAbstract();
+  }
+  
+  public static List<ASTCDType> getCDTypes(ASTCDDefinition ast) {
+    List<ASTCDType> types = new ArrayList<ASTCDType>();
+    types.addAll(ast.getCDClasses());
+    types.addAll(ast.getCDInterfaces());
+    types.addAll(ast.getCDEnums());
+    return types;
   }
   
 }
