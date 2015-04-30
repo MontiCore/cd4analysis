@@ -1,0 +1,14 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A25_2 {
+
+  
+  class A;
+  class BSup;
+  class B extends BSup;
+  class C;
+  class D extends B;
+
+  association A (a1) <- BSup;
+  association a1 C <- BSup;
+}

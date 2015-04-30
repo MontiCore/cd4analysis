@@ -75,15 +75,15 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   public String getFullName() {
     return getReferencedSymbol().getFullName();
   }
-  
+
   @Override
-  public List<String> getAllOutgoingAssocNames() {
-    return getReferencedSymbol().getAllOutgoingAssocNames();
+  public List<CDAssociationSymbol> getInheritedAssociations() {
+    return getReferencedSymbol().getInheritedAssociations();
   }
   
   @Override
-  public List<String> getOutgoingAssocNames() {
-    return getReferencedSymbol().getAllOutgoingAssocNames();
+  public List<CDAssociationSymbol> getAllAssociations() {
+    return getReferencedSymbol().getAllAssociations();
   }
   
   @Override

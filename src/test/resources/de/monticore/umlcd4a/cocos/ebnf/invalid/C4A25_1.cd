@@ -1,0 +1,22 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A25_1 {
+
+  class A {
+    String attrA1;
+    String attrA2;
+    String attrA3;
+    String attrA4;
+    String attrA5;
+    String attrA6;
+  }
+
+  class B;
+
+  association attrA1 A -> B;
+  association attrA2 A <-> B;
+  association attrA3 B <-> A;
+  association attrA4 A -- B;
+  association attrA5 B -- A;
+  association attrA6 B <- A;
+}

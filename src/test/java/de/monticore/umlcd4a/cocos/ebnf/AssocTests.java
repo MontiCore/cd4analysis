@@ -65,6 +65,36 @@ public class AssocTests extends AbstractCoCoTest {
   }
   
   @Test
+  public void testAssocNameConflictAttribute() {
+    String modelName = "C4A25.cd";
+    String errorCode = "0xC4A25";
+    
+    Collection<CoCoFinding> expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Association a conflicts with the attribute a in B.")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+    
+    modelName = "C4A25_1.cd";
+    CoCoLog.getFindings().clear();
+     expectedErrors = Arrays.asList(
+         CoCoFinding.error(errorCode, "Association attrA1 conflicts with the attribute attrA1 in A."),
+         CoCoFinding.error(errorCode, "Association attrA2 conflicts with the attribute attrA2 in A."),
+         CoCoFinding.error(errorCode, "Association attrA3 conflicts with the attribute attrA3 in A."),
+         CoCoFinding.error(errorCode, "Association attrA4 conflicts with the attribute attrA4 in A."),
+         CoCoFinding.error(errorCode, "Association attrA6 conflicts with the attribute attrA6 in A."),
+         CoCoFinding.error(errorCode, "Association attrA5 conflicts with the attribute attrA5 in A.")
+         );
+     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+
+    modelName = "C4A25_2.cd";
+    CoCoLog.getFindings().clear();
+    expectedErrors = Arrays.asList(
+        CoCoFinding.error(errorCode, "Association a1 conflicts with the attribute a1 in BSup.")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+
+  @Test
   public void testInvalidRoleNames() {
     // AssocTestGenerator.generateInvalidRoleNamesTests();
     String modelName = "C4A17.cd";

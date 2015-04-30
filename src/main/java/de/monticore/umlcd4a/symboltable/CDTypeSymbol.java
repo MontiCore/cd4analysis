@@ -21,28 +21,29 @@ import de.se_rwth.commons.Names;
 public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol> {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
-
+  
   private final List<Stereotype> stereotypes = new ArrayList<>();
+  
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
-
+  
   private String stringRepresentation = "";
-
+  
   public CDTypeSymbol(final String name) {
     super(name, KIND, CDFieldSymbol.KIND, CDMethodSymbol.KIND);
   }
-
+  
   public String getExtendedName() {
-    return "CD type " + getName();  
+    return "CD type " + getName();
   }
   
   public void addAssociation(final CDAssociationSymbol assoc) {
     associations.add(assoc);
   }
-
+  
   public List<CDAssociationSymbol> getAssociations() {
     return ImmutableList.copyOf(associations);
   }
-
+  
   public List<CDFieldSymbol> getEnumConstants() {
     final List<CDFieldSymbol> enums = getFields().stream()
         .filter(CDFieldSymbol::isEnumConstant)
@@ -53,9 +54,9 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   public List<Stereotype> getStereotypes() {
     return stereotypes;
   }
-
+  
   public Optional<Stereotype> getStereotype(String name) {
-    for (Stereotype stereotype: this.stereotypes) {
+    for (Stereotype stereotype : this.stereotypes) {
       if (stereotype.getName().equals(name)) {
         return Optional.of(stereotype);
       }
@@ -64,7 +65,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
   
   public boolean containsStereotype(String name, String value) {
-    for (Stereotype stereotype: this.stereotypes) {
+    for (Stereotype stereotype : this.stereotypes) {
       if (stereotype.compare(name, value)) {
         return true;
       }
@@ -79,20 +80,20 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   public String getModelName() {
     return Names.getQualifier(getName());
   }
-
+  
   public Collection<CDFieldSymbol> getAllVisibleFieldsOfSuperTypes() {
     final Set<CDFieldSymbol> allSuperTypeFields = new LinkedHashSet<>();
-
+    
     for (CDTypeSymbol superType : getSuperTypes()) {
       allSuperTypeFields.addAll(superType.getFields());
       allSuperTypeFields.addAll(superType.getAllVisibleFieldsOfSuperTypes());
     }
-
+    
     // filter-out all private fields
     final Set<CDFieldSymbol> allVisibleSuperTypeFields = allSuperTypeFields.stream().
         filter(field -> !field.isPrivate())
         .collect(Collectors.toCollection(LinkedHashSet::new));
-
+    
     return ImmutableSet.copyOf(allVisibleSuperTypeFields);
   }
   
@@ -111,85 +112,73 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
         .collect(Collectors.toCollection(LinkedHashSet::new));
     return ImmutableSet.copyOf(allVisibleFields);
   }
-
-  /**
-   * Derived names of all outgoing associations (i.e., derived from role name,
-   * assoc name or the referenced type in lower case). This does not include
-   * inherited associations. A name might exist twice (which for example can
-   * be forbidden by a CoCo which uses this method)
-   * 
-   * @return (derived) names of outgoing associations
-   */
-  public List<String> getOutgoingAssocNames() {
-    final List<String> names = new ArrayList<>();
-    for (CDAssociationSymbol s : associations) {
-      names.add(s.getDerivedName());
-    }
-    return ImmutableList.copyOf(names);
-  }
-
-  /**
-   * Derived names of all outgoing associations (i.e., derived from role name,
-   * assoc name or the referenced type in lower case). This includes inherited
-   * associations. A name might exist twice (which for example can be forbidden
-   * by a CoCo which uses this method)
-   * 
-   * @return (derived) names of all outgoing associations
-   */
-  public List<String> getAllOutgoingAssocNames() {
-    final List<String> allNames = new ArrayList<>();
+  
+  public List<CDAssociationSymbol> getInheritedAssociations() {
+    final List<CDAssociationSymbol> allNames = new ArrayList<>();
     for (CDTypeSymbol superType : getSuperTypes()) {
-      allNames.addAll(superType.getAllOutgoingAssocNames());
+      allNames.addAll(superType.getAllAssociations());
     }
-    allNames.addAll(getOutgoingAssocNames());
     return ImmutableList.copyOf(allNames);
   }
-
+  
+  /**
+   * Get all associations including inherited
+   * 
+   * @return
+   */
+  public List<CDAssociationSymbol> getAllAssociations() {
+    final List<CDAssociationSymbol> allNames = new ArrayList<>();
+    allNames.addAll(getInheritedAssociations());
+    allNames.addAll(getAssociations());
+    return ImmutableList.copyOf(allNames);
+  }
+  
   public boolean hasSuperType(final String superTypeName) {
     requireNonNull(superTypeName);
     checkArgument(!superTypeName.isEmpty());
-
+    
     // Every type is a super type of itself.
     if (superTypeName.equals(getName())) {
       return true;
     }
-
+    
     for (final CDTypeSymbol superType : getSuperTypes()) {
       if (superType.hasSuperType(superTypeName)) {
         return true;
       }
     }
-
+    
     return false;
   }
-
+  
   public boolean hasSuperTypeByFullName(final String superTypeFullName) {
     requireNonNull(superTypeFullName);
     checkArgument(!superTypeFullName.isEmpty());
-
+    
     // Every type is a super type of itself.
     if (superTypeFullName.equals(getFullName())) {
       return true;
     }
-
+    
     for (final CDTypeSymbol superType : getSuperTypes()) {
       if (superType.hasSuperTypeByFullName(superTypeFullName)) {
         return true;
       }
     }
-
+    
     return false;
   }
-
+  
   /**
-   * Sets the string representation of this type reference. This can include the type parameters,
-   * e.g., <code>List&lt;E&gt;</pre></code>
+   * Sets the string representation of this type reference. This can include the
+   * type parameters, e.g., <code>List&lt;E&gt;</pre></code>
+   * 
    * @param stringRepresentation
    */
   public void setStringRepresentation(final String stringRepresentation) {
     this.stringRepresentation = nullToEmpty(stringRepresentation);
   }
-
+  
   public String getStringRepresentation() {
     if (stringRepresentation.isEmpty()) {
       return getName();
