@@ -46,7 +46,8 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   @Override
   public String toString() {
-    return CDAssociationSymbol.class.getSimpleName() + " " + getName() + "/" + getRole() + ": "
+    return CDAssociationSymbol.class.getSimpleName() + " " + getDerivedName() + "/" + getRole()
+        + ": "
         + "" + getSourceType().getName() + " -> " + getTargetType().getName();
   }
   
@@ -124,6 +125,10 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   @Override
   public String getName() {
+    return assocName.orElse("");
+  }
+  
+  public String getDerivedName() {
     if (role.isPresent()) {
       return role.get();
     }

@@ -157,10 +157,14 @@ public class SocNetSymboltableTest {
 
   private void testOrginaizersAssociation() {
     // ->
-    CDAssociationSymbol organizedAssoc = cdScope.<CDAssociationSymbol>resolve("organized",
-        CDAssociationSymbol.KIND).orElse(null);
+    CDTypeSymbol person = cdScope.<CDTypeSymbol>resolve("Person",
+        CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(person);
+    CDAssociationSymbol organizedAssoc = person.getAssociations().stream().filter(a -> a.getDerivedName().equals("organized")).findAny().orElse(null);
     assertNotNull(organizedAssoc);
-    assertEquals("organized", organizedAssoc.getName());
+    assertFalse(organizedAssoc.getAssocName().isPresent());
+    assertEquals("", organizedAssoc.getName());
+    assertEquals("organized", organizedAssoc.getDerivedName());
     assertEquals("organized", organizedAssoc.getRole().orElse(""));
     assertFalse(organizedAssoc.getAssocName().isPresent());
     assertTrue(organizedAssoc.isBidirectional());
@@ -172,10 +176,14 @@ public class SocNetSymboltableTest {
     assertTrue(organizedAssoc.getTargetCardinality().isMultiple());
 
     // <-
-    CDAssociationSymbol organizerAssoc = cdScope.<CDAssociationSymbol>resolve("organizer",
-        CDAssociationSymbol.KIND).orElse(null);
+    CDTypeSymbol group = cdScope.<CDTypeSymbol>resolve("Group",
+        CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(group);
+    CDAssociationSymbol organizerAssoc = group.getAssociations().stream().filter(a -> a.getDerivedName().equals("organizer")).findAny().orElse(null);
     assertNotNull(organizerAssoc);
-    assertEquals("organizer", organizerAssoc.getName());
+    assertEquals("", organizerAssoc.getName());
+    assertFalse(organizerAssoc.getAssocName().isPresent());
+    assertEquals("organizer", organizerAssoc.getDerivedName());
     assertEquals("organizer", organizerAssoc.getRole().orElse(""));
     assertFalse(organizerAssoc.getAssocName().isPresent());
     assertTrue(organizerAssoc.isBidirectional());
@@ -231,10 +239,13 @@ public class SocNetSymboltableTest {
 
   private void testRelationTypeAssociation() {
     // ->
-    CDAssociationSymbol assoc = cdScope.<CDAssociationSymbol>resolve("relationType",
-        CDAssociationSymbol.KIND).orElse(null);
+    CDTypeSymbol relationship = cdScope.<CDTypeSymbol>resolve("Relationship",
+        CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(relationship);
+    CDAssociationSymbol assoc = relationship.getAssociations().stream().filter(a -> a.getDerivedName().equals("relationType")).findAny().orElse(null);
     assertNotNull(assoc);
-    assertEquals("relationType", assoc.getName());
+    assertEquals("", assoc.getName());
+    assertEquals("relationType", assoc.getDerivedName());
     assertFalse(assoc.getRole().isPresent());
     assertFalse(assoc.getAssocName().isPresent());
     assertFalse(assoc.isBidirectional());
@@ -295,10 +306,13 @@ public class SocNetSymboltableTest {
 
   private void testPhotoAssociation() {
     // ->
-    CDAssociationSymbol photoMessageAssoc = cdScope.<CDAssociationSymbol>resolve("photoMessage",
-        CDAssociationSymbol.KIND).orElse(null);
+    CDTypeSymbol photo = cdScope.<CDTypeSymbol>resolve("Photo",
+        CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(photo);
+    CDAssociationSymbol photoMessageAssoc = photo.getAssociations().stream().filter(a -> a.getDerivedName().equals("photoMessage")).findAny().orElse(null);
     assertNotNull(photoMessageAssoc);
-    assertEquals("photoMessage", photoMessageAssoc.getName());
+    assertEquals("", photoMessageAssoc.getName());
+    assertEquals("photoMessage", photoMessageAssoc.getDerivedName());
     assertFalse(photoMessageAssoc.getRole().isPresent());
     assertFalse(photoMessageAssoc.getAssocName().isPresent());
     assertTrue(photoMessageAssoc.isBidirectional());
@@ -310,10 +324,13 @@ public class SocNetSymboltableTest {
     assertFalse(photoMessageAssoc.getTargetCardinality().isMultiple());
 
     // <-
-    CDAssociationSymbol photoAssoc = cdScope.<CDAssociationSymbol>resolve("picture",
-        CDAssociationSymbol.KIND).orElse(null);
+    CDTypeSymbol photoMsg = cdScope.<CDTypeSymbol>resolve("PhotoMessage",
+        CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(photoMsg);
+    CDAssociationSymbol photoAssoc = photoMsg.getAssociations().stream().filter(a -> a.getDerivedName().equals("picture")).findAny().orElse(null);
     assertNotNull(photoAssoc);
-    assertEquals("picture", photoAssoc.getName());
+    assertEquals("", photoAssoc.getName());
+    assertEquals("picture", photoAssoc.getDerivedName());
     assertEquals("picture", photoAssoc.getRole().orElse(""));
     assertFalse(photoAssoc.getAssocName().isPresent());
     assertTrue(photoAssoc.isBidirectional());
