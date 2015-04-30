@@ -25,7 +25,7 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
       }
       catch (ResolvedSeveralEntriesException e) {
         // TODO currently there exist two symbols for bidirectional associations, see #1627
-        boolean isValid = a.isBidirectional() && e.getSymbols().size() == 2;
+        boolean isValid = (a.isBidirectional() || a.isUnspecified()) && e.getSymbols().size() == 2;
         if (!isValid) {
           CoCoLog.error(ERROR_CODE,
               String.format(ERROR_MSG_FORMAT, a.getName().get()),
