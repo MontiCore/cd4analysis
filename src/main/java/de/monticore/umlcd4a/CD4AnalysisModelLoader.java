@@ -50,7 +50,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
   }
 
   @Override
-  protected String calculateModelName(String name) {
+  public String calculateModelName(String name) {
     checkArgument(!isNullOrEmpty(name));
 
     // a.b.CD.MyClass => a.b.CD is model name
