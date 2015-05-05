@@ -45,7 +45,7 @@
   <!-- == PROJECT METAINFORMATION ========================================= -->
 
   <name>CD4Analysis</name>
-  <url>http://lab11.se.rwth-aachen.de/nexus/service/local/repositories/se-sites/content/monticore/${project.version}/</url>
+  <url>http://nexus.se.rwth-aachen.de/service/local/repositories/se-sites/content/monticore/${project.version}/</url>
   <inceptionYear>2013</inceptionYear>
 
   <organization>
@@ -199,15 +199,15 @@
   <distributionManagement>
     <repository>
       <id>se-nexus</id>
-      <url>http://lab11.se.rwth-aachen.de/nexus/content/repositories/monticore-releases/</url>
+      <url>http://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/</url>
     </repository>
     <snapshotRepository>
       <id>se-nexus</id>
-      <url>http://lab11.se.rwth-aachen.de/nexus/content/repositories/monticore-snapshots/</url>
+      <url>http://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/</url>
     </snapshotRepository>
     <site>
       <id>se-nexus</id>
-      <url>dav:http://lab11.se.rwth-aachen.de/nexus/content/sites/se-sites/monticore/${project.version}/</url>
+      <url>dav:http://nexus.se.rwth-aachen.de/content/sites/se-sites/monticore/${project.version}/</url>
     </site>
   </distributionManagement>
 
