@@ -1,7 +1,7 @@
 package de.monticore.umlcd4a;
 
 /*
-   MCG for CD 4 Analysis, Version Apr. 28th, 2015
+   MCG for CD 4 Analysis, Version May. 05th, 2015
 */
 
 grammar CD4Analysis extends de.monticore.types.Types {
@@ -197,10 +197,10 @@ grammar CD4Analysis extends de.monticore.types.Types {
     (["abstract"]
       | ["final"]
       | ["static"]
-      | Private:["private"] | [Private:"-"]  // TODO: Vereinfachung (Bug)
-      | Protected:["protected"] | [Protected:"#"]
-      | Public:["public"] | [Public:"+"]
-      | Derived:["derived"] | [Derived:"/"] )*;
+      | ["private"] | [private:"-"]
+      | ["protected"] | [protected:"#"]
+      | ["public"] | [public:"+"]
+      | ["derived"] | [derived:"/"] )*;
     
 
   /** ASTCardinality represents a Cardinality in a Classdiagram
