@@ -10,9 +10,7 @@ import de.monticore.umlcd4a.cocos.ebnf.AssociationNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationNameNoConflictWithAttribute;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationNameUnique;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationOrderedCardinalityGreaterOne;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierAttributeExistsInTarget;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierTypeExists;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithAttribute;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithOtherRoleNames;
@@ -110,8 +108,9 @@ public class CD4ACoCos {
     checker.addCoCo(new AttributeOverriddenTypeMatch());
     checker.addCoCo(new AttributeTypeExists());
     checker.addCoCo(new CompositionCardinalityValid());
-    checker.addCoCo(new AssociationQualifierTypeExists());
-    checker.addCoCo(new AssociationQualifierAttributeExistsInTarget());
+    // TODO see #1632
+    // checker.addCoCo(new AssociationQualifierTypeExists());
+    // checker.addCoCo(new AssociationQualifierAttributeExistsInTarget());
     checker.addCoCo(new AssociationQualifierOnCorrectSide());
     checker.addCoCo(new AssociationSourceNotEnum());
     checker.addCoCo(new AssociationOrderedCardinalityGreaterOne());
@@ -121,7 +120,6 @@ public class CD4ACoCos {
     checker.addCoCo(new AssociationNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNames());
-    // TODO RE<-RH checker.addCoCo(coco);
   }
   
   private void addMcgCoCos(CD4AnalysisCoCoChecker checker) {
