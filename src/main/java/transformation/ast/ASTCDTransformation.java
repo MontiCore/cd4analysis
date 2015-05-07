@@ -439,6 +439,55 @@ public class ASTCDTransformation {
   }
   
   /**
+   * Creates an instance of the {@link ASTCDMethod} using the given method
+   * definition ( e.g. protected String getValue(Date d); ) and adds it to the
+   * given interface
+   * 
+   * @param astInterface
+   * @param methodDefinition method definition to parse
+   * @return Optional of the created {@link ASTCDMethod} node or
+   * Optional.empty() if the method definition couldn't be parsed
+   */
+  public Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDInterface astInterface,
+      String methodDefinition) {
+    checkArgument(!Strings.isNullOrEmpty(methodDefinition),
+        "Method can't be added to the CD interface because of null or empty method definition");
+    checkNotNull(astInterface, "Method '" + methodDefinition
+        + "' can't be added to the CD interface because of null reference to the interface");
+    Optional<ASTCDMethod> astMethod = Optional.empty();
+    try {
+      astMethod = CD4AnalysisParserFactory.createCDMethodMCParser().parse(new StringReader(methodDefinition));
+      if (!astMethod.isPresent()) {
+        Log.error("Method can't be added to the CD interface " + astInterface.getName()
+            + "\nWrong method definition: " + methodDefinition);
+      }
+      else {
+        addCdMethod(astInterface, astMethod.get());
+      }
+    }
+    catch (RecognitionException | IOException e) {
+      Log.error("Method can't be added to the CD interface " + astInterface.getName()
+          + "\nCatched exception: " + e);
+    }
+    return astMethod;
+  }
+  
+  /**
+   * Adds the given method to the given interface
+   * 
+   * @param astInterface
+   * @param astMethod
+   */
+  public void addCdMethod(ASTCDInterface astInterface, ASTCDMethod astMethod) {
+    checkNotNull(
+        astMethod,
+        "ASTCDMethod method node can't be added to the CD interface because of null reference to the added node");
+    checkNotNull(astInterface, "Method '" + astMethod.getName()
+        + "' can't be added to the CD class because of null reference to the interface");
+    astInterface.getCDMethods().add(astMethod);
+  }
+  
+  /**
    * Creates an instance of the {@link ASTCDParameterList} using the list of the
    * type definitions
    * 
