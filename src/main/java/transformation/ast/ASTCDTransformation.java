@@ -224,6 +224,40 @@ public class ASTCDTransformation {
   }
   
   /**
+   * Creates an instance of the {@link ASTCDMethod} using the given method
+   * definition ( e.g. protected String getValue(Date d); ) and adds it to the
+   * given class
+   * 
+   * @param astCd
+   * @param classDefinition method definition to parse
+   * @return Optional of the created {@link ASTCDMethod} node or
+   * Optional.empty() if the method definition couldn't be parsed
+   */
+  public Optional<ASTCDClass> addCdClassUsingDefinition(ASTCDDefinition astCd,
+      String classDefinition) {
+    checkArgument(!Strings.isNullOrEmpty(classDefinition),
+        "Class can't be added to the classdiagram because of null or empty class definition");
+    checkNotNull(astCd, "Class '" + classDefinition
+        + "' can't be added to the classdiagram because of null reference to the classdiagram");
+    Optional<ASTCDClass> astClass = Optional.empty();
+    try {
+      astClass = CD4AnalysisParserFactory.createCDClassMCParser().parse(new StringReader(classDefinition));
+      if (!astClass.isPresent()) {
+        Log.error("Method can't be added to the CD class " + astCd.getName()
+            + "\nWrong method definition: " + classDefinition);
+      }
+      else {
+        addCdClass(astCd, astClass.get());
+      }
+    }
+    catch (RecognitionException | IOException e) {
+      Log.error("Method can't be added to the CD class " + astCd.getName()
+          + "\nCatched exception: " + e);
+    }
+    return astClass;
+  }
+  
+  /**
    * Adds the given class to the given CD definition
    * 
    * @param astDef
