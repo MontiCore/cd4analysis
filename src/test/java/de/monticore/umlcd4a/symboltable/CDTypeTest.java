@@ -9,12 +9,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 
-import java.util.Arrays;
-
-import org.junit.Test;
+import java.util.Collections;
 
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
+import org.junit.Test;
 
 public class CDTypeTest {
 
@@ -32,9 +31,8 @@ public class CDTypeTest {
     typeSymbol.addField(fieldSymbol3);
 
     MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create
-        (CDFieldSymbol.class,
-            CDFieldSymbol.KIND)));
+    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create
+        (CDFieldSymbol.class, CDFieldSymbol.KIND)));
 
 
     // Test CDTypeSymbol methods //
@@ -70,8 +68,7 @@ public class CDTypeTest {
     typeSymbol.addConstructor(constructor);
 
     MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create(CDMethodSymbol
-            .class,
+    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.class,
         CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //
@@ -105,8 +102,7 @@ public class CDTypeTest {
     typeSymbol.addConstructor(constructorSymbol2);
 
     MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Arrays.asList(CommonResolvingFilter.create(CDMethodSymbol
-            .class,
+    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.class,
         CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //
