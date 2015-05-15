@@ -1,12 +1,11 @@
 package de.monticore.umlcd4a.symboltable;
 
+import com.google.common.collect.ImmutableList;
+import de.monticore.symboltable.types.CommonJAttributeSymbol;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import com.google.common.collect.ImmutableList;
-
-import de.monticore.symboltable.types.CommonJAttributeSymbol;
 
 public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
 
@@ -21,7 +20,7 @@ public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  protected CDFieldSymbol(String name, CDTypeSymbol type) {
+  public CDFieldSymbol(String name, CDTypeSymbol type) {
     super(name, KIND, type);
   }
   
