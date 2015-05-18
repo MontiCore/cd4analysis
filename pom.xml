@@ -6,7 +6,7 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>cd4analysis</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
 
   <properties>
 
