@@ -22,14 +22,12 @@ import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
-import mc.helper.NameHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
-import static mc.helper.NameHelper.dotSeparatedStringFromList;
 
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
 
@@ -51,12 +49,12 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     Log.debug("Building Symboltable for CD: " + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
 
-    setPackageName(dotSeparatedStringFromList(compilationUnit.getPackage()));
+    setPackageName(Names.getQualifiedName(compilationUnit.getPackage()));
 
     final List<ImportStatement> imports = new ArrayList<>();
     if (compilationUnit.getImportStatements() != null) {
       for (ASTImportStatement imp : compilationUnit.getImportStatements()) {
-        imports.add(new ImportStatement(dotSeparatedStringFromList(imp.getImportList()), imp.isStar()));
+        imports.add(new ImportStatement(Names.getQualifiedName(imp.getImportList()), imp.isStar()));
       }
     }
 
@@ -468,7 +466,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     addStereotypes(associationSymbol, astAssoc.getStereotype().orElse(null));
 
-    if ((astSourceName.getParts().size() > 1 && !sourceType.getName().equals(NameHelper.dotSeparatedStringFromList(astSourceName.getParts())))) {
+    if ((astSourceName.getParts().size() > 1 && !sourceType.getName().equals(Names.getQualifiedName(astSourceName.getParts())))) {
       Log.error("0xU0270 Association referenced type " + astSourceName + " wasn't declared in the "
           + "class diagram " + getFullClassDiagramName() + ". Pos: " + astAssoc.get_SourcePositionStart());
       return null;

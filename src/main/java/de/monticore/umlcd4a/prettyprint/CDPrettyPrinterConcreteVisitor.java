@@ -3,7 +3,6 @@ package de.monticore.umlcd4a.prettyprint;
 import mc.ast.ConcretePrettyPrinter;
 import mc.ast.PrettyPrinter;
 import mc.helper.IndentPrinter;
-import mc.helper.NameHelper;
 import de.monticore.types._ast.ASTImportStatement;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.umlcd4a._ast.ASTCDAssociation;
@@ -27,6 +26,7 @@ import de.monticore.umlcd4a._ast.ASTStereoValue;
 import de.monticore.umlcd4a._ast.ASTStereoValueList;
 import de.monticore.umlcd4a._ast.ASTStereotype;
 import de.monticore.umlcd4a._ast.ASTStereotypeList;
+import de.se_rwth.commons.Names;
 
 /**
  * This class is responsible for pretty-printing class diagrams. It is implemented using the Visitor
@@ -65,11 +65,11 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   public void ownVisit(ASTCDCompilationUnit unit) {
     if (unit.getPackage() != null && !unit.getPackage().isEmpty()) {
       printer
-          .println("package " + NameHelper.dotSeparatedStringFromList(unit.getPackage()) + ";\n");
+          .println("package " + Names.getQualifiedName(unit.getPackage()) + ";\n");
     }
     if (unit.getImportStatements() != null && !unit.getImportStatements().isEmpty()) {
       for (ASTImportStatement s : unit.getImportStatements()) {
-        printer.print("import " + NameHelper.dotSeparatedStringFromList(s.getImportList()));
+        printer.print("import " + Names.getQualifiedName(s.getImportList()));
         if (s.isStar()) {
           printer.println(".*;");
         }

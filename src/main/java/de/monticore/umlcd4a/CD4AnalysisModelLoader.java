@@ -7,7 +7,6 @@ package de.monticore.umlcd4a;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import mc.helper.NameHelper;
 import de.monticore.modelloader.ModelingLanguageModelLoader;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.MutableScope;
@@ -54,7 +53,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
     checkArgument(!isNullOrEmpty(name));
 
     // a.b.CD.MyClass => a.b.CD is model name
-    if (NameHelper.isQualifiedName(name)) {
+    if (!Names.getQualifier(name).isEmpty()) {
       return Names.getQualifier(name);
     }
 
