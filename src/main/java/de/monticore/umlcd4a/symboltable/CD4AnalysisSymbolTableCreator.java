@@ -80,12 +80,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     setFullClassDiagramName(getPackageName().isEmpty() ? cdName : (getPackageName() + "." + cdName));
 
     final CDSymbol cdSymbol = new CDSymbol(cdName);
-    defineInScope(cdSymbol);
-    setCDSymbol(cdSymbol);
-
-    // TODO PN<-RH enclosing scope of astDefinition ArtifactScope or cdSymbol?
-    astDefinition.setEnclosingScope(currentScope().orElse(null));
-    putScopeOnStackAndSetEnclosingIfExists(cdSymbol);
+    defineInScopeAndLinkWithAst(cdSymbol, astDefinition);
   }
 
   @Override
@@ -110,12 +105,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     addInterfacesToType(classSymbol, astClass.getInterfaces());
 
-    defineInScopeAndSetLinkBetweenSymbolAndAst(classSymbol, astClass);
-    
-    // TODO PN<-RH how to add symbol to CDSymbol? is it fine this way?
-    getCDSymbol().addType(classSymbol);
-    
-    putScopeOnStackAndSetEnclosingIfExists(classSymbol);
+    defineInScopeAndLinkWithAst(classSymbol, astClass);
   }
 
   default void setModifiersOfType(final CDTypeSymbol typeSymbol, final ASTModifier astModifier) {
@@ -215,12 +205,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     interfaceSymbol.setAbstract(true);
 
 
-    defineInScopeAndSetLinkBetweenSymbolAndAst(interfaceSymbol, astInterface);
-    
-    // TODO PN<-RH how to add symbol to CDSymbol? is it fine this way?
-    getCDSymbol().addType(interfaceSymbol);
-    
-    putScopeOnStackAndSetEnclosingIfExists(interfaceSymbol);
+    defineInScopeAndLinkWithAst(interfaceSymbol, astInterface);
   }
 
   default void addInterfacesToType(final CDTypeSymbol typeSymbol, final ASTReferenceTypeList astInterfaces) {
@@ -257,12 +242,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     addInterfacesToType(enumSymbol, astEnum.getInterfaces());
     setModifiersOfType(enumSymbol, astEnum.getModifier().orElse(new ASTModifier.Builder().build()));
 
-    defineInScopeAndSetLinkBetweenSymbolAndAst(enumSymbol, astEnum);
-    
-    // TODO PN<-RH how to add symbol to CDSymbol? is it fine this way?
-    getCDSymbol().addType(enumSymbol);
-
-    putScopeOnStackAndSetEnclosingIfExists(enumSymbol);
+    defineInScopeAndLinkWithAst(enumSymbol, astEnum);
   }
 
   @Override
@@ -503,8 +483,5 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
   void setFullClassDiagramName(String name);
   String getFullClassDiagramName();
-
-  void setCDSymbol(CDSymbol cdSymbol);
-  CDSymbol getCDSymbol();
 
 }
