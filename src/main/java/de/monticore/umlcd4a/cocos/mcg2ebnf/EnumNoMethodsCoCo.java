@@ -6,9 +6,9 @@
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDEnum;
-import de.monticore.umlcd4a._ast.ASTCDMethod;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
 
 /**
  * Disables usage of methods in enums.
@@ -21,7 +21,7 @@ public class EnumNoMethodsCoCo implements CD4AnalysisASTCDEnumCoCo {
   public static final String ERROR_MSG_FORMAT = "Enum %s may not have methods.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo#check(de.monticore.umlcd4a._ast.ASTCDEnum)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum)
    */
   @Override
   public void check(ASTCDEnum node) {

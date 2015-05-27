@@ -1,6 +1,6 @@
-package de.monticore.umlcd4a._ast;
+package de.monticore.umlcd4a.cd4analysis._ast;
 
-import de.monticore.types._ast.ASTReferenceTypeList;
+import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDEnum extends ASTCDEnumTOP {

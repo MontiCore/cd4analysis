@@ -14,16 +14,16 @@ import com.google.common.collect.Collections2;
 
 import de.monticore.literals.prettyprint.LiteralsConcretePrettyPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types._ast.ASTImportStatement;
-import de.monticore.types._ast.ASTImportStatementList;
-import de.monticore.types._ast.ASTQualifiedName;
-import de.monticore.types._ast.ASTReferenceType;
-import de.monticore.types._ast.ASTReturnType;
-import de.monticore.types._ast.ASTType;
-import de.monticore.umlcd4a._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a._ast.ASTCDParameter;
-import de.monticore.umlcd4a._ast.ASTModifier;
-import de.monticore.umlcd4a._ast.ASTValue;
+import de.monticore.types.types._ast.ASTImportStatement;
+import de.monticore.types.types._ast.ASTImportStatementList;
+import de.monticore.types.types._ast.ASTQualifiedName;
+import de.monticore.types.types._ast.ASTReferenceType;
+import de.monticore.types.types._ast.ASTReturnType;
+import de.monticore.types.types._ast.ASTType;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTValue;
 
 /******************************************************************************
  * AST specific helper to print AST nodes.

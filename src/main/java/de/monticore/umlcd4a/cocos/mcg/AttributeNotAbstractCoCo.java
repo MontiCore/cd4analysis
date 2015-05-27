@@ -6,8 +6,8 @@
 package de.monticore.umlcd4a.cocos.mcg;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 
 /**
  * Attributes may not be abstract all others are allowed.
@@ -20,7 +20,7 @@ public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
   public static final String ERROR_MSG_FORMAT = "Attribute %s may not be abstract.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a._ast.ASTCDAttribute)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute attr) {

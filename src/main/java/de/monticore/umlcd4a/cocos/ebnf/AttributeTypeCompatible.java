@@ -6,19 +6,19 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.literals._ast.ASTBooleanLiteral;
-import de.monticore.literals._ast.ASTCharLiteral;
-import de.monticore.literals._ast.ASTDoubleLiteral;
-import de.monticore.literals._ast.ASTFloatLiteral;
-import de.monticore.literals._ast.ASTIntLiteral;
-import de.monticore.literals._ast.ASTLiteral;
-import de.monticore.literals._ast.ASTLongLiteral;
-import de.monticore.literals._ast.ASTSignedLiteral;
-import de.monticore.literals._ast.ASTStringLiteral;
-import de.monticore.literals._visitor.LiteralsInheritanceVisitor;
+import de.monticore.literals.literals._ast.ASTBooleanLiteral;
+import de.monticore.literals.literals._ast.ASTCharLiteral;
+import de.monticore.literals.literals._ast.ASTDoubleLiteral;
+import de.monticore.literals.literals._ast.ASTFloatLiteral;
+import de.monticore.literals.literals._ast.ASTIntLiteral;
+import de.monticore.literals.literals._ast.ASTLiteral;
+import de.monticore.literals.literals._ast.ASTLongLiteral;
+import de.monticore.literals.literals._ast.ASTSignedLiteral;
+import de.monticore.literals.literals._ast.ASTStringLiteral;
+import de.monticore.literals.literals._visitor.LiteralsInheritanceVisitor;
 import de.monticore.types.TypesPrinter;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 
 /**
@@ -34,7 +34,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   public static final String ERROR_MSG_FORMAT = "The value assignment for the attribute %s in class %s is not compatible to its type %s.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a._ast.ASTCDAttribute)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {

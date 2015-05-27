@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 
@@ -28,7 +28,7 @@ public class AttributeOverriddenTypeMatch
   public static final String ERROR_MSG_FORMAT = "Class %s overrides the attribute %s (type: %s) of class %s with the different type %s.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a._ast.ASTCDAttribute)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {

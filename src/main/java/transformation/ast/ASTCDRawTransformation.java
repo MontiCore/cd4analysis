@@ -10,20 +10,20 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.monticore.types._ast.ASTReferenceTypeList;
-import de.monticore.types._ast.ASTReturnType;
-import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.types._ast.ASTVoidType;
-import de.monticore.types._ast.TypesNodeFactory;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDDefinition;
-import de.monticore.umlcd4a._ast.ASTCDInterface;
-import de.monticore.umlcd4a._ast.ASTCDMethod;
-import de.monticore.umlcd4a._ast.ASTCDParameter;
-import de.monticore.umlcd4a._ast.ASTCDParameterList;
-import de.monticore.umlcd4a._ast.ASTModifier;
-import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
+import de.monticore.types.types._ast.ASTReferenceTypeList;
+import de.monticore.types.types._ast.ASTReturnType;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import de.monticore.types.types._ast.ASTVoidType;
+import de.monticore.types.types._ast.TypesNodeFactory;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameterList;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 /**
  * Some raw (no parameter checks) help methods for the CD ast transformations.

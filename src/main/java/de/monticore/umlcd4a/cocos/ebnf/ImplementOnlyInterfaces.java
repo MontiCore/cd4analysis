@@ -1,7 +1,7 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDType;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 
 /**

@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Optional;
 
 import mc.ast.ASTNode;
-import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.utils.ASTNodes;
 
 class IdSetters {

@@ -1,10 +1,10 @@
-package de.monticore.umlcd4a._ast;
+package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
 import mc.helper.IndentPrinter;
 import de.monticore.literals.prettyprint.LiteralsConcretePrettyPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types._ast.ASTType;
+import de.monticore.types.types._ast.ASTType;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP
     implements ASTCD4AnalysisBase {

@@ -1,8 +1,8 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 
 /**
  * Checks that attribute names start lower-case.

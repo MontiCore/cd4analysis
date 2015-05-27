@@ -16,9 +16,9 @@ import java.util.Optional;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
 
-import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
+import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
 
 public class CD4AnalysisParserTest {
   

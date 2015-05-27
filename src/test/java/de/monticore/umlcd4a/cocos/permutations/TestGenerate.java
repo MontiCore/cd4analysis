@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.permutations;
 
-import static de.monticore.types._ast.TypesNodeFactory.createASTQualifiedName;
+import static de.monticore.types.types._ast.TypesNodeFactory.createASTQualifiedName;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,9 +13,9 @@ import mc.ast.ASTNode;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.monticore.types._ast.ASTQualifiedName;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
+import de.monticore.types.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.utils.ASTNodes;
 
 /**

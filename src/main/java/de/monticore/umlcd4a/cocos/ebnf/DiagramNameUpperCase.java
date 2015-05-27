@@ -1,8 +1,8 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDDefinition;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 
 public class DiagramNameUpperCase implements CD4AnalysisASTCDDefinitionCoCo {
   

@@ -5,8 +5,8 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 
 /**
  * See {@link ImplementOnlyInterfaces}.
@@ -17,7 +17,7 @@ public class ClassImplementOnlyInterfaces extends ImplementOnlyInterfaces implem
     CD4AnalysisASTCDClassCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a._ast.ASTCDClass)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass)
    */
   @Override
   public void check(ASTCDClass node) {

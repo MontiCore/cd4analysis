@@ -9,8 +9,8 @@ import java.util.Optional;
 
 import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.BuiltInTypes;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 
@@ -27,7 +27,7 @@ public class AttributeTypeExists
   public static final String ERROR_MSG_FORMAT = "Type %s of the attribute %s is unknown.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a._ast.ASTCDAttribute)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {

@@ -10,12 +10,12 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Iterables;
 
-import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.types._ast.TypesNodeFactory;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import de.monticore.types.types._ast.TypesNodeFactory;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 public class CreateInheritanceTree implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {

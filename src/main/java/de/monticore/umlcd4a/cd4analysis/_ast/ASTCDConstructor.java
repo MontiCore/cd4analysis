@@ -1,33 +1,22 @@
-package de.monticore.umlcd4a._ast;
+package de.monticore.umlcd4a.cd4analysis._ast;
 
-import de.monticore.types.TypesPrinter;
-import de.monticore.types._ast.ASTQualifiedNameList;
-import de.monticore.types._ast.ASTReturnType;
+import de.monticore.types.types._ast.ASTQualifiedNameList;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
-public class ASTCDMethod extends ASTCDMethodTOP {
+public class ASTCDConstructor extends ASTCDConstructorTOP {
   
   private AstPrinter printer = new AstPrinter();
   
-  protected ASTCDMethod() {
+  protected ASTCDConstructor() {
   }
   
-  protected ASTCDMethod(ASTModifier modifier,
-      ASTReturnType returnType,
+  protected ASTCDConstructor(
+      ASTModifier modifier,
       String name,
       ASTCDParameterList cDParameters,
       ASTQualifiedNameList exceptions)
   {
-    super(modifier, returnType, name, cDParameters, exceptions);
-  }
-  
-  /**
-   * Prints a return type
-   * 
-   * @return String representation of the ASTreturnType
-   */
-  public String printReturnType() {
-    return TypesPrinter.printReturnType(getReturnType());
+    super(modifier, name, cDParameters, exceptions);
   }
   
   /**
@@ -79,4 +68,5 @@ public class ASTCDMethod extends ASTCDMethodTOP {
   public String printThrowsDecl() {
     return printer.printThrowsDecl(getExceptions());
   }
+  
 }

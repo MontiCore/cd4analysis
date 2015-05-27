@@ -6,9 +6,9 @@
 package de.monticore.umlcd4a.cocos.mcg;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDInterface;
-import de.monticore.umlcd4a._ast.ASTModifier;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
 
 /**
  * Interfaces may only be public (or have no modifier).
@@ -21,7 +21,7 @@ public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceC
   public static final String ERROR_MSG_FORMAT = "Interface %s has invalid modifier %s.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a._ast.ASTCDInterface)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface)
    */
   @Override
   public void check(ASTCDInterface node) {

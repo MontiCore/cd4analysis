@@ -24,10 +24,10 @@ import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.Scope;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
-import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
+import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 
 /**

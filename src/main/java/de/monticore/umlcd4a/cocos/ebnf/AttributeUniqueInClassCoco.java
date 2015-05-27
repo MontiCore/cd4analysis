@@ -8,9 +8,9 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import java.util.HashMap;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 
 /**
  * Ensures that an attribute name does not occur twice in a class.

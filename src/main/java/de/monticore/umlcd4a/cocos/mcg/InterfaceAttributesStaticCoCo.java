@@ -6,9 +6,9 @@
 package de.monticore.umlcd4a.cocos.mcg;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDInterface;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
 
 /**
  * Attributes in interfaces must be static.
@@ -21,7 +21,7 @@ public class InterfaceAttributesStaticCoCo implements CD4AnalysisASTCDInterfaceC
   public static final String ERROR_MSG_FORMAT = "Attribute %s in interface %s must be static.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a._ast.ASTCDInterface)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface)
    */
   @Override
   public void check(ASTCDInterface node) {

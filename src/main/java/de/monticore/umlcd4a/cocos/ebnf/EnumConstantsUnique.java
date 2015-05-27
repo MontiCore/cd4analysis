@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDEnum;
-import de.monticore.umlcd4a._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
 
 /**
  * Checks uniqueness among the enum constants.

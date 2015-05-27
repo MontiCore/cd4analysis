@@ -6,9 +6,9 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.ASTCDQualifier;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 
 /**

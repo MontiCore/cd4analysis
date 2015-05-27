@@ -24,12 +24,12 @@ import org.junit.Test;
 import de.monticore.cocos.CoCoFinding;
 import de.monticore.cocos.CoCoLog;
 import de.monticore.cocos.helper.Assert;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
-import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a._parser.CDCompilationUnitMCParser;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
+import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
 
 /**
  * Simple test showing how to test CoCos.

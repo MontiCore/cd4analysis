@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDDefinition;
-import de.monticore.umlcd4a._ast.ASTCDMethod;
-import de.monticore.umlcd4a._ast.ASTCDType;
-import de.monticore.umlcd4a._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
 
 /**
  * TODO: Write me!

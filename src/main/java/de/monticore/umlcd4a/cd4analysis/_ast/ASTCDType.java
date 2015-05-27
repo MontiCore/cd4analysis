@@ -3,11 +3,13 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.umlcd4a._ast;
+package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
 
 import java.util.Optional;
+
+import de.monticore.types.types._ast.ASTReferenceTypeList;
 
 /**
  * HW super type for classes, interfaces and enums
@@ -20,7 +22,7 @@ public interface ASTCDType extends mc.ast.ASTNode, ASTCD4AnalysisBase {
   
   Optional<ASTModifier> getModifier();
   
-  de.monticore.types._ast.ASTReferenceTypeList getInterfaces();
+  ASTReferenceTypeList getInterfaces();
   
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final

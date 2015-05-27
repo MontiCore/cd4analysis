@@ -3,8 +3,8 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import java.util.Optional;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 
 /**

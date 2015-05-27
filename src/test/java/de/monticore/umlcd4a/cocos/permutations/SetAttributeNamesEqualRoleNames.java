@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.function.UnaryOperator;
 
 import mc.ast.ASTNode;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.utils.ASTNodes;
 
 public class SetAttributeNamesEqualRoleNames implements

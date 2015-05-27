@@ -12,9 +12,9 @@ import java.util.Optional;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.symboltable.references.TypeReference;
-import de.monticore.symboltable.references.TypeReferenceImpl;
-import de.monticore.symboltable.types.ActualTypeArgument;
+import de.monticore.symboltable.types.references.ActualTypeArgument;
+import de.monticore.symboltable.types.references.CommonTypeReference;
+import de.monticore.symboltable.types.references.TypeReference;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
@@ -28,7 +28,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   public CDTypeSymbolReference(String name, Scope definingScopeOfReference) {
     super(name);
     
-    typeReference = new TypeReferenceImpl<>(name, CDTypeSymbol.KIND, definingScopeOfReference);
+    typeReference = new CommonTypeReference<>(name, CDTypeSymbol.KIND, definingScopeOfReference);
   }
   
   @Override
@@ -55,17 +55,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   public Scope getEnclosingScope() {
     return getReferencedSymbol().getEnclosingScope();
   }
-  
-  @Override
-  public void setDefiningScope(MutableScope scope) {
-    setEnclosingScope(scope);
-  }
-  
-  @Override
-  public Scope getDefiningScope() {
-    return getEnclosingScope();
-  }
-  
+    
   @Override
   public String getModelName() {
     return getReferencedSymbol().getModelName();

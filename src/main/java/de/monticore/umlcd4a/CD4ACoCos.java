@@ -5,7 +5,7 @@
  */
 package de.monticore.umlcd4a;
 
-import de.monticore.umlcd4a._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationNameNoConflictWithAttribute;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationNameUnique;

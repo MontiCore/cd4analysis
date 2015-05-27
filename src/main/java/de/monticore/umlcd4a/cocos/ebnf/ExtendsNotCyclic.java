@@ -10,10 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDDefinition;
-import de.monticore.umlcd4a._ast.ASTCDInterface;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 
 /**

@@ -14,13 +14,13 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import de.monticore.types._ast.ASTSimpleReferenceType;
-import de.monticore.types._ast.ASTVoidType;
-import de.monticore.umlcd4a._ast.ASTCDAttribute;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDDefinition;
-import de.monticore.umlcd4a._ast.ASTCDInterface;
-import de.monticore.umlcd4a._ast.ASTCDMethod;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import de.monticore.types.types._ast.ASTVoidType;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 
 /**
  * Test for the utility class {@link ASTCDRawTransformation}

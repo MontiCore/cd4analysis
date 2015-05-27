@@ -1,9 +1,9 @@
-package de.monticore.umlcd4a._ast;
+package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types._ast.ASTReferenceType;
-import de.monticore.types._ast.ASTReferenceTypeList;
+import de.monticore.types.types._ast.ASTReferenceType;
+import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDClass extends ASTCDClassTOP {

@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.permutations;
 
-import static de.monticore.types._ast.TypesNodeFactory.createASTQualifiedName;
+import static de.monticore.types.types._ast.TypesNodeFactory.createASTQualifiedName;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -8,8 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.monticore.types._ast.ASTQualifiedName;
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.types.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 
 public class AllTypeCombinations implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {

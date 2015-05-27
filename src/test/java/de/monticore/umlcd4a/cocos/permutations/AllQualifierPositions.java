@@ -4,9 +4,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
-import de.monticore.umlcd4a._ast.ASTCDQualifier;
-import de.monticore.umlcd4a._ast.CD4AnalysisNodeFactory;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 public class AllQualifierPositions implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {

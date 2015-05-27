@@ -6,9 +6,9 @@
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
 import de.monticore.cocos.CoCoLog;
-import de.monticore.umlcd4a._ast.ASTCDClass;
-import de.monticore.umlcd4a._ast.ASTCDMethod;
-import de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 
 /**
  * Disables usage of methods in classes.
@@ -21,7 +21,7 @@ public class ClassNoMethodsCoCo implements CD4AnalysisASTCDClassCoCo {
   public static final String ERROR_MSG_FORMAT = "Class %s may not have any methods.";
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a._ast.ASTCDClass)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass)
    */
   @Override
   public void check(ASTCDClass node) {

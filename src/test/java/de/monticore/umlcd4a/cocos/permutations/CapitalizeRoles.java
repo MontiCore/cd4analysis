@@ -2,7 +2,7 @@ package de.monticore.umlcd4a.cocos.permutations;
 
 import java.util.function.Function;
 
-import de.monticore.umlcd4a._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.se_rwth.commons.StringTransformations;
 
 public class CapitalizeRoles implements
