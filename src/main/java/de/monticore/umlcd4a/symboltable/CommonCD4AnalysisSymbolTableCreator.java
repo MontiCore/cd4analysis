@@ -16,6 +16,7 @@ public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreato
 
   private String packageName = "";
   private String fullClassDiagramName = "";
+  private CDSymbol cdSymbol;
 
   public CommonCD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable
   MutableScope enclosingScope) {
@@ -41,5 +42,21 @@ public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreato
   @Override
   public String getFullClassDiagramName() {
     return fullClassDiagramName;
+  }
+  
+  /**
+   * @see de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator#setCDSymbol(de.monticore.umlcd4a.symboltable.CDSymbol)
+   */
+  @Override
+  public void setCDSymbol(CDSymbol cdSymbol) {
+    this.cdSymbol = cdSymbol;
+  }
+  
+  /**
+   * @see de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator#getCDSymbol()
+   */
+  @Override
+  public CDSymbol getCDSymbol() {
+    return cdSymbol;
   }
 }

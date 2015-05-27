@@ -79,12 +79,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     setFullClassDiagramName(getPackageName().isEmpty() ? cdName : (getPackageName() + "." + cdName));
 
-    final MutableScope cdScope = new CommonScope(true);
-    cdScope.setName(cdName);
+    final CDSymbol cdSymbol = new CDSymbol(cdName);
+    defineInScope(cdSymbol);
+    setCDSymbol(cdSymbol);
 
+    // TODO PN<-RH enclosing scope of astDefinition ArtifactScope or cdSymbol?
     astDefinition.setEnclosingScope(currentScope().orElse(null));
-
-    putOnStackAndSetEnclosingIfExists(cdScope);
+    putScopeOnStackAndSetEnclosingIfExists(cdSymbol);
   }
 
   @Override
@@ -110,7 +111,10 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     addInterfacesToType(classSymbol, astClass.getInterfaces());
 
     defineInScopeAndSetLinkBetweenSymbolAndAst(classSymbol, astClass);
-
+    
+    // TODO PN<-RH how to add symbol to CDSymbol? is it fine this way?
+    getCDSymbol().addType(classSymbol);
+    
     putScopeOnStackAndSetEnclosingIfExists(classSymbol);
   }
 
@@ -212,7 +216,10 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
 
     defineInScopeAndSetLinkBetweenSymbolAndAst(interfaceSymbol, astInterface);
-
+    
+    // TODO PN<-RH how to add symbol to CDSymbol? is it fine this way?
+    getCDSymbol().addType(interfaceSymbol);
+    
     putScopeOnStackAndSetEnclosingIfExists(interfaceSymbol);
   }
 
@@ -251,6 +258,9 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     setModifiersOfType(enumSymbol, astEnum.getModifier().orElse(new ASTModifier.Builder().build()));
 
     defineInScopeAndSetLinkBetweenSymbolAndAst(enumSymbol, astEnum);
+    
+    // TODO PN<-RH how to add symbol to CDSymbol? is it fine this way?
+    getCDSymbol().addType(enumSymbol);
 
     putScopeOnStackAndSetEnclosingIfExists(enumSymbol);
   }
@@ -494,5 +504,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   void setFullClassDiagramName(String name);
   String getFullClassDiagramName();
 
+  void setCDSymbol(CDSymbol cdSymbol);
+  CDSymbol getCDSymbol();
 
 }

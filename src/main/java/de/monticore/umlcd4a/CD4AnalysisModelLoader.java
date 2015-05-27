@@ -52,6 +52,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
   public String calculateModelName(String name) {
     checkArgument(!isNullOrEmpty(name));
 
+    // TODO PN<-RH this breaks resolve(a.b.CD, CDSymbol.KIND)
     // a.b.CD.MyClass => a.b.CD is model name
     if (!Names.getQualifier(name).isEmpty()) {
       return Names.getQualifier(name);

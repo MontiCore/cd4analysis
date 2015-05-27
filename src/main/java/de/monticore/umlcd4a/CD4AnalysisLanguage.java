@@ -19,6 +19,7 @@ import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
+import de.monticore.umlcd4a.symboltable.CDSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.CommonCD4AnalysisSymbolTableCreator;
 
@@ -28,6 +29,7 @@ public class CD4AnalysisLanguage extends AbstractModelingLanguage {
   public CD4AnalysisLanguage() {
     super("CD 4 Analysis Language", FILE_ENDING, CDTypeSymbol.KIND);
     
+    addResolver(CommonResolvingFilter.create(CDSymbol.class, CDSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDFieldSymbol.class, CDFieldSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDMethodSymbol.class, CDMethodSymbol.KIND));
