@@ -15,7 +15,6 @@ import de.monticore.symboltable.GlobalScope;
 
 public class CDSymbolTest {
   
-  @Ignore("#1647")
   @Test
   public void testResolveCD() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();

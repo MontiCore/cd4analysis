@@ -6,6 +6,7 @@
 package de.monticore.umlcd4a.symboltable;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import de.monticore.symboltable.CommonScopeSpanningSymbol;
 
@@ -33,5 +34,9 @@ public class CDSymbol extends CommonScopeSpanningSymbol {
    */
   public Collection<CDTypeSymbol> getTypes() {
     return spannedScope.resolveLocally(CDTypeSymbol.KIND);
+  }
+
+  public Optional<CDTypeSymbol> getType(String name) {
+    return spannedScope.resolveLocally(name, CDTypeSymbol.KIND);
   }
 }
