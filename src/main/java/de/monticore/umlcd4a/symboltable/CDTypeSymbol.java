@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-
 import de.monticore.symboltable.types.CommonJTypeSymbol;
 import de.se_rwth.commons.Names;
 
@@ -185,4 +184,5 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     }
     return stringRepresentation;
   }
+
 }

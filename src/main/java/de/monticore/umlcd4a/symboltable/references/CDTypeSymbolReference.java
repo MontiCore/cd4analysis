@@ -40,7 +40,21 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   public boolean existsReferencedSymbol() {
     return typeReference.existsReferencedSymbol();
   }
-  
+
+  @Override
+  public boolean isReferencedSymbolLoaded() {
+    return typeReference.isReferencedSymbolLoaded();
+  }
+
+  @Override
+  public String getName() {
+    if (isReferencedSymbolLoaded()) {
+      return getReferencedSymbol().getName();
+    }
+
+    return super.getName();
+  }
+
   @Override
   public Scope getSpannedScope() {
     return getReferencedSymbol().getSpannedScope();

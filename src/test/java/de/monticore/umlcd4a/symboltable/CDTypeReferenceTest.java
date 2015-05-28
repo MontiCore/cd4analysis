@@ -8,9 +8,8 @@ package de.monticore.umlcd4a.symboltable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Optional;
-
 import de.monticore.symboltable.GlobalScope;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
 
 public class CDTypeReferenceTest {
@@ -19,14 +18,11 @@ public class CDTypeReferenceTest {
   public void test() {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    Optional<CDTypeSymbol> cdType = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person", CDTypeSymbol.KIND);
-    assertTrue(cdType.isPresent());
+    CDTypeSymbolReference ref = new CDTypeSymbolReference("de.monticore.umlcd4a.symboltable.CD2.Person", globalScope);
 
-    assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", cdType.get().getFullName());
-
-    Optional<CDFieldSymbol> cdField = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person.name", CDFieldSymbol.KIND);
-    assertTrue(cdField.isPresent());
-
+    assertTrue(ref.existsReferencedSymbol());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", ref.getFullName());
+    assertEquals("Person", ref.getName());
   }
 
 }

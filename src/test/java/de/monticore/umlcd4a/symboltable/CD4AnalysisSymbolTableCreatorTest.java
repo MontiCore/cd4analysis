@@ -11,8 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.junit.Test;
-
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
@@ -23,6 +21,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
+import org.junit.Test;
 
 public class CD4AnalysisSymbolTableCreatorTest {
 
