@@ -32,6 +32,7 @@ import de.monticore.umlcd4a.cocos.ebnf.GenericsNotNested;
 import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
+import de.monticore.umlcd4a.cocos.ebnf.TypeNoInitializationOfDerivedAttribute;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueTypeNames;
 import de.monticore.umlcd4a.cocos.mcg.AssociationModifierCoCo;
 import de.monticore.umlcd4a.cocos.mcg.AttributeNotAbstractCoCo;
@@ -120,6 +121,7 @@ public class CD4ACoCos {
     checker.addCoCo(new AssociationNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNames());
+    checker.addCoCo(new TypeNoInitializationOfDerivedAttribute());
   }
   
   private void addMcgCoCos(CD4AnalysisCoCoChecker checker) {

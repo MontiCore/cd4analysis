@@ -2,7 +2,7 @@ package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
 classdiagram C4A34 {
   class A {
-    / String a = null;
+    / String a = "a";
     / String b = "b";
     / int c = 1;
   }
