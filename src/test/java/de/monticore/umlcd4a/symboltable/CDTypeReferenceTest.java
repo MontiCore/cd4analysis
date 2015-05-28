@@ -6,14 +6,12 @@
 package de.monticore.umlcd4a.symboltable;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.Test;
-
 import de.monticore.symboltable.GlobalScope;
+import org.junit.Test;
 
 public class CDTypeReferenceTest {
 
@@ -21,15 +19,13 @@ public class CDTypeReferenceTest {
   public void test() {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    Optional<CDSymbol> cdSymbol= globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2", CDSymbol.KIND);
-    assertTrue(cdSymbol.isPresent());
-    assertEquals("CD2", cdSymbol.get().getName());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD2", cdSymbol.get().getFullName());
-
-    Optional<CDTypeSymbol> cdType = cdSymbol.get().getType("Person");
+    Optional<CDTypeSymbol> cdType = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person", CDTypeSymbol.KIND);
     assertTrue(cdType.isPresent());
 
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", cdType.get().getFullName());
+
+    Optional<CDFieldSymbol> cdField = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person.name", CDFieldSymbol.KIND);
+    assertTrue(cdField.isPresent());
 
   }
 
