@@ -11,12 +11,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.Symbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
+import org.junit.Test;
 
 public class SocNetSymboltableTest {
 
@@ -36,7 +34,7 @@ public class SocNetSymboltableTest {
 
     cdScope = cdSymbol.getSpannedScope();
 
-    assertEquals(31, cdScope.getSymbols().size());
+    assertEquals(31, cdScope.getSymbolsSize());
 
     final CDTypeSymbol profile = testProfileClass();
 
