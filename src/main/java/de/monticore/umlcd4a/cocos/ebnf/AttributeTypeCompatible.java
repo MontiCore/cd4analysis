@@ -13,6 +13,7 @@ import de.monticore.literals.literals._ast.ASTFloatLiteral;
 import de.monticore.literals.literals._ast.ASTIntLiteral;
 import de.monticore.literals.literals._ast.ASTLiteral;
 import de.monticore.literals.literals._ast.ASTLongLiteral;
+import de.monticore.literals.literals._ast.ASTSignedIntLiteral;
 import de.monticore.literals.literals._ast.ASTSignedLiteral;
 import de.monticore.literals.literals._ast.ASTStringLiteral;
 import de.monticore.literals.literals._visitor.LiteralsInheritanceVisitor;
@@ -121,6 +122,12 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
      */
     @Override
     public void visit(ASTIntLiteral node) {
+      check("int", "Integer");
+    }
+
+    // TODO RH this should not be required, because ASTSignedIntLiteral astextends ASTIntLiteral 
+    @Override
+    public void visit(ASTSignedIntLiteral node) {
       check("int", "Integer");
     }
     
