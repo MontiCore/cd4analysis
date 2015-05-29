@@ -70,7 +70,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
 
     final ArtifactScope scope = new ArtifactScope(Optional.empty(), getPackageName(), imports);
-    putOnStackAndSetEnclosingIfExists(scope);
+    putOnStack(scope);
   }
 
   @Override
