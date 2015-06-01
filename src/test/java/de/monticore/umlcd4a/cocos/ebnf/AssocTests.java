@@ -1653,7 +1653,7 @@ public class AssocTests extends AbstractCoCoTest {
     // @Override
     // public String print(ASTCDAssociation assoc) {
     // String msg =
-    // "The qualified association %s expects the attribute %s to exist in the referenced class %s.";
+    // "The qualified association %s expects the attribute %s to exist in the referenced type %s.";
     // String attrQualifier = null;
     // String referencedClass = null;
     // if (assoc.getLeftQualifier().isPresent()) {
@@ -1698,315 +1698,315 @@ public class AssocTests extends AbstractCoCoTest {
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc0 (A -> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc0 (A -> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc1 (A -> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc1 (A -> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc2 (A -> E) expects the attribute leftAttributeQualifier to exist in the referenced class E."),
+                    "The qualified association assoc2 (A -> E) expects the attribute leftAttributeQualifier to exist in the referenced type E."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc3 (A -> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc3 (A -> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc4 (B -> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc4 (B -> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc5 (B -> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc5 (B -> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc6 (B -> E) expects the attribute leftAttributeQualifier to exist in the referenced class E."),
+                    "The qualified association assoc6 (B -> E) expects the attribute leftAttributeQualifier to exist in the referenced type E."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc7 (B -> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc7 (B -> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc8 (I -> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc8 (I -> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc9 (I -> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc9 (I -> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc10 (I -> E) expects the attribute leftAttributeQualifier to exist in the referenced class E."),
+                    "The qualified association assoc10 (I -> E) expects the attribute leftAttributeQualifier to exist in the referenced type E."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc11 (I -> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc11 (I -> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc12 (A <- A) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc12 (A <- A) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc13 (A <- B) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc13 (A <- B) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc14 (A <- I) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc14 (A <- I) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc15 (B <- A) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc15 (B <- A) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc16 (B <- B) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc16 (B <- B) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc17 (B <- I) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc17 (B <- I) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc18 (E <- A) expects the attribute rightAttributeQualifier to exist in the referenced class E."),
+                    "The qualified association assoc18 (E <- A) expects the attribute rightAttributeQualifier to exist in the referenced type E."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc19 (E <- B) expects the attribute rightAttributeQualifier to exist in the referenced class E."),
+                    "The qualified association assoc19 (E <- B) expects the attribute rightAttributeQualifier to exist in the referenced type E."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc20 (E <- I) expects the attribute rightAttributeQualifier to exist in the referenced class E."),
+                    "The qualified association assoc20 (E <- I) expects the attribute rightAttributeQualifier to exist in the referenced type E."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc21 (I <- A) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc21 (I <- A) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc22 (I <- B) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc22 (I <- B) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc23 (I <- I) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc23 (I <- I) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc24 (A <-> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc24 (A <-> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc25 (A <-> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc25 (A <-> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc26 (A <-> A) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc26 (A <-> A) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc27 (A <-> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc27 (A <-> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc28 (A <-> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc28 (A <-> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc29 (A <-> B) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc29 (A <-> B) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc30 (A <-> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc30 (A <-> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc31 (A <-> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc31 (A <-> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc32 (A <-> I) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc32 (A <-> I) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc33 (B <-> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc33 (B <-> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc34 (B <-> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc34 (B <-> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc35 (B <-> A) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc35 (B <-> A) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc36 (B <-> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc36 (B <-> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc37 (B <-> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc37 (B <-> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc38 (B <-> B) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc38 (B <-> B) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc39 (B <-> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc39 (B <-> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc40 (B <-> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc40 (B <-> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc41 (B <-> I) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc41 (B <-> I) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc42 (I <-> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc42 (I <-> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc43 (I <-> A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc43 (I <-> A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc44 (I <-> A) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc44 (I <-> A) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc45 (I <-> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc45 (I <-> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc46 (I <-> B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc46 (I <-> B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc47 (I <-> B) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc47 (I <-> B) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc48 (I <-> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc48 (I <-> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc49 (I <-> I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc49 (I <-> I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc50 (I <-> I) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc50 (I <-> I) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc51 (A -- A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc51 (A -- A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc52 (A -- A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc52 (A -- A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc53 (A -- A) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc53 (A -- A) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc54 (A -- B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc54 (A -- B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc55 (A -- B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc55 (A -- B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc56 (A -- B) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc56 (A -- B) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc57 (A -- I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc57 (A -- I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc58 (A -- I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc58 (A -- I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc59 (A -- I) expects the attribute rightAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc59 (A -- I) expects the attribute rightAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc60 (B -- A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc60 (B -- A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc61 (B -- A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc61 (B -- A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc62 (B -- A) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc62 (B -- A) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc63 (B -- B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc63 (B -- B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc64 (B -- B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc64 (B -- B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc65 (B -- B) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc65 (B -- B) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc66 (B -- I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc66 (B -- I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc67 (B -- I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc67 (B -- I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc68 (B -- I) expects the attribute rightAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc68 (B -- I) expects the attribute rightAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc69 (I -- A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc69 (I -- A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc70 (I -- A) expects the attribute leftAttributeQualifier to exist in the referenced class A."),
+                    "The qualified association assoc70 (I -- A) expects the attribute leftAttributeQualifier to exist in the referenced type A."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc71 (I -- A) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc71 (I -- A) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc72 (I -- B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc72 (I -- B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc73 (I -- B) expects the attribute leftAttributeQualifier to exist in the referenced class B."),
+                    "The qualified association assoc73 (I -- B) expects the attribute leftAttributeQualifier to exist in the referenced type B."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc74 (I -- B) expects the attribute rightAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc74 (I -- B) expects the attribute rightAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc75 (I -- I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc75 (I -- I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc76 (I -- I) expects the attribute leftAttributeQualifier to exist in the referenced class I."),
+                    "The qualified association assoc76 (I -- I) expects the attribute leftAttributeQualifier to exist in the referenced type I."),
             CoCoFinding
                 .error(
                     errorCode,
-                    "The qualified association assoc77 (I -- I) expects the attribute rightAttributeQualifier to exist in the referenced class I.")
+                    "The qualified association assoc77 (I -- I) expects the attribute rightAttributeQualifier to exist in the referenced type I.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }

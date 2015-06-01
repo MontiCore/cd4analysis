@@ -26,7 +26,7 @@ public class AssociationQualifierAttributeExistsInTarget
   
   public static final String ERROR_CODE = "0xC4A20";
   
-  public static final String ERROR_MSG_FORMAT = "The qualified association %s expects the attribute %s to exist in the referenced class %s.";
+  public static final String ERROR_MSG_FORMAT = "The qualified association %s expects the attribute %s to exist in the referenced type %s.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
@@ -68,29 +68,27 @@ public class AssociationQualifierAttributeExistsInTarget
    * @param node the association under test
    * @return whether there was a coco error or not
    */
-  private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedClass,
+  private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedType,
       ASTCDAssociation node) {
     boolean hasError = false;
     if (isAttributeQualifier(qualifier)) {
       // TODO must always be name and not type see #1626
       String expectedAttributeName = qualifier.getName().get();
-      Optional<CDTypeSymbol> referencedClassSymOpt = node.getEnclosingScope().get()
-          .resolve(referencedClass.toString(), CDTypeSymbol.KIND);
-      if (!referencedClassSymOpt.isPresent()) {
+      Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope().get()
+          .resolve(referencedType.toString(), CDTypeSymbol.KIND);
+      if (!referencedTypeSymOpt.isPresent()) {
         // TODO symbol must exist??? s. #1627
       }
       else {
-        CDTypeSymbol referencedClassSym = referencedClassSymOpt.get();
-        if (referencedClassSym.isClass() || referencedClassSym.isEnum()) {
-          if (!referencedClassSym.getField(expectedAttributeName).isPresent()) {
-            hasError = true;
-            CoCoLog.error(ERROR_CODE,
-                String.format(ERROR_MSG_FORMAT,
-                    CD4ACoCoHelper.printAssociation(node),
-                    expectedAttributeName,
-                    referencedClassSym.getName()),
-                qualifier.get_SourcePositionStart());
-          }
+        CDTypeSymbol referencedTypeSym = referencedTypeSymOpt.get();
+        if (!referencedTypeSym.getField(expectedAttributeName).isPresent()) {
+          hasError = true;
+          CoCoLog.error(ERROR_CODE,
+              String.format(ERROR_MSG_FORMAT,
+                  CD4ACoCoHelper.printAssociation(node),
+                  expectedAttributeName,
+                  referencedTypeSym.getName()),
+              qualifier.get_SourcePositionStart());
         }
       }
     }
