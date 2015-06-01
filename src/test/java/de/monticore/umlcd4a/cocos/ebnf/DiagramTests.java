@@ -75,17 +75,5 @@ public class DiagramTests extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
-  @Test
-  public void testNames() {
-    String modelName = "C4A03.cd";
-    String errorCode = "0xC4A03";
-    
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Name DAO is reserved for internal use."),
-        CoCoFinding.error(errorCode, "Name Factory is reserved for internal use.")
-        );
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
-  }
-  
+
 }

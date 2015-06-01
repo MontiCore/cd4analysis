@@ -30,7 +30,6 @@ import de.monticore.umlcd4a.cocos.ebnf.EnumImplementOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.ExtendsNotCyclic;
 import de.monticore.umlcd4a.cocos.ebnf.GenericsNotNested;
 import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
-import de.monticore.umlcd4a.cocos.ebnf.NoKeywordsUsed;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNameUpperCase;
 import de.monticore.umlcd4a.cocos.ebnf.TypeNoInitializationOfDerivedAttribute;
 import de.monticore.umlcd4a.cocos.ebnf.UniqueTypeNames;
@@ -92,7 +91,6 @@ public class CD4ACoCos {
   
   private void addEbnfCoCos(CD4AnalysisCoCoChecker checker) {
     checker.addCoCo(new DiagramNameUpperCase());
-    checker.addCoCo(new NoKeywordsUsed());
     checker.addCoCo(new UniqueTypeNames());
     checker.addCoCo(new TypeNameUpperCase());
     checker.addCoCo(new EnumConstantsUnique());

@@ -1,6 +1,0 @@
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
-
-classdiagram C4A03 {
-  class DAO;
-  class Factory;
-}
