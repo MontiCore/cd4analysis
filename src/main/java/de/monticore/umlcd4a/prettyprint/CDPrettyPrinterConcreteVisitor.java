@@ -346,7 +346,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    */
   public void ownVisit(ASTCDQualifier a) {
     if (a.getName().isPresent()) {
+      printer.print("[");
       printer.print(a.getName().get());
+      printer.print("]");
     }
     else {
       if (a.getType().isPresent()) {

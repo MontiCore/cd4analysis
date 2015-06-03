@@ -8,6 +8,8 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import java.util.Optional;
 
 import de.monticore.cocos.CoCoLog;
+import de.monticore.types.TypesPrinter;
+import de.monticore.types.types._ast.ASTType;
 import de.monticore.umlcd4a.BuiltInTypes;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
@@ -46,17 +48,6 @@ public class AssociationQualifierTypeExists
   }
   
   /**
-   * TODO derived attribute in ast?
-   * 
-   * @param qualifier
-   * @return
-   */
-  private boolean isTypeQualifier(ASTCDQualifier qualifier) {
-    // TODO must always be name and not type see #1626
-    return Character.isUpperCase(qualifier.getName().get().charAt(0));
-  }
-  
-  /**
    * Does the actual check.
    * 
    * @param qualifier qualifier under test
@@ -65,13 +56,13 @@ public class AssociationQualifierTypeExists
    */
   private boolean check(ASTCDQualifier qualifier, ASTCDAssociation node) {
     boolean hasError = false;
-    if (isTypeQualifier(qualifier)) {
-      // TODO must always be name and not type see #1626
-      String typeName = qualifier.getName().get();
+    if (qualifier.getType().isPresent()) {
+      ASTType type = qualifier.getType().get();
+      String typeName = TypesPrinter.printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {
-        Optional<CDTypeSymbol> subClassSym = qualifier.getEnclosingScope().get()
+        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope().get()
             .resolve(typeName, CDTypeSymbol.KIND);
-        if (!subClassSym.isPresent()) {
+        if (!typeSym.isPresent()) {
           hasError = true;
           CoCoLog.error(ERROR_CODE,
               String.format(ERROR_MSG_FORMAT,

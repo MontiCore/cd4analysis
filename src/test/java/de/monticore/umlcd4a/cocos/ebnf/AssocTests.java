@@ -16,7 +16,9 @@ import org.junit.Test;
 
 import de.monticore.cocos.CoCoFinding;
 import de.monticore.cocos.CoCoLog;
+import de.monticore.cocos.helper.Assert;
 import de.monticore.umlcd4a.CD4ACoCos;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
 
@@ -2010,7 +2012,7 @@ public class AssocTests extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
   @Test
   public void testQualifiedAssocInvalidQualifierPosition() {
     // consists of 2 tests: typed qualifier and attribute qualifier
@@ -2241,7 +2243,13 @@ public class AssocTests extends AbstractCoCoTest {
                     "The qualifier String of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
         );
     
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+    ASTCDCompilationUnit root = loadModel(MODEL_PATH_INVALID + modelName);
+    AssociationQualifierOnCorrectSide coco = new AssociationQualifierOnCorrectSide();
+    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
+    checker.addCoCo(coco);
+    checker.checkAll(root);
+    Assert.assertEqualErrorCounts(expectedErrors, CoCoLog.getFindings());
+    Assert.assertErrorCodeAndMsg(expectedErrors, CoCoLog.getFindings());
     
     CoCoLog.getFindings().clear();
     
@@ -2470,7 +2478,11 @@ public class AssocTests extends AbstractCoCoTest {
                     "The qualifier leftAttributeQualifier of the qualified association assoc47 (I <- I) is at an invalid position regarding the association's direction.")
         );
     
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+
+    root = loadModel(MODEL_PATH_INVALID + modelName);
+    checker.checkAll(root);
+    Assert.assertEqualErrorCounts(expectedErrors, CoCoLog.getFindings());
+    Assert.assertErrorCodeAndMsg(expectedErrors, CoCoLog.getFindings());
   }
   
   @Test

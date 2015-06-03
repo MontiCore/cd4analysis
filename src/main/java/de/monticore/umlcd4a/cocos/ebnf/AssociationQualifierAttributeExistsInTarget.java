@@ -14,6 +14,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that attribute of the attribute-qualifier of an association exists in
@@ -49,17 +50,6 @@ public class AssociationQualifierAttributeExistsInTarget
   }
   
   /**
-   * TODO derived attribute in ast?
-   * 
-   * @param qualifier
-   * @return
-   */
-  private boolean isAttributeQualifier(ASTCDQualifier qualifier) {
-    // TODO must always be name and not type see #1626
-    return Character.isLowerCase(qualifier.getName().get().charAt(0));
-  }
-  
-  /**
    * Does the actual check.
    * 
    * @param qualifier qualifier under test * @param referencedClass the
@@ -71,13 +61,14 @@ public class AssociationQualifierAttributeExistsInTarget
   private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedType,
       ASTCDAssociation node) {
     boolean hasError = false;
-    if (isAttributeQualifier(qualifier)) {
-      // TODO must always be name and not type see #1626
+    if (qualifier.getName().isPresent()) {
       String expectedAttributeName = qualifier.getName().get();
       Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope().get()
           .resolve(referencedType.toString(), CDTypeSymbol.KIND);
       if (!referencedTypeSymOpt.isPresent()) {
         // TODO symbol must exist??? s. #1627
+        Log.error(String.format("0xC4A80 The referenced type %s cannot be resolved.",
+            referencedType.toString()));
       }
       else {
         CDTypeSymbol referencedTypeSym = referencedTypeSymOpt.get();

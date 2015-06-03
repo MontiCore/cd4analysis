@@ -44,7 +44,7 @@ classdiagram SocNet {
 
   // A Group has organizers
   association [1] Person (organizer) <->
-                         (organized) [profileName] Group [*];
+                         (organized) [[profileName]] Group [*];
 
   /********************************************
    * Relationships

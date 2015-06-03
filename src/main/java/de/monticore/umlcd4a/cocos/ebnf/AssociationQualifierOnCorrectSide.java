@@ -10,6 +10,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.monticore.umlcd4a.symboltable.CDQualifierSymbol;
 
 /**
  * Checks that qualifier is at the correct side w.r.t. navigation direction.
@@ -53,13 +54,14 @@ public class AssociationQualifierOnCorrectSide
    * @return whether there was a coco error or not
    */
   private void error(ASTCDQualifier qualifier, ASTCDAssociation node) {
-    // TODO must always be name and not type see #1626
-    String qualifierName = qualifier.getName().get();
+    CDQualifierSymbol sym = (CDQualifierSymbol) qualifier.getSymbol().get();
+    String qualifierName = sym.getName();
     CoCoLog.error(ERROR_CODE,
         String.format(ERROR_MSG_FORMAT,
             qualifierName,
             CD4ACoCoHelper.printAssociation(node)),
         qualifier.get_SourcePositionStart());
+    
   }
   
 }

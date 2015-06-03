@@ -24,7 +24,7 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   private Cardinality targetCardinality;
   
-  private Optional<String> qualifier = Optional.empty();
+  private Optional<CDQualifierSymbol> qualifier = Optional.empty();
   
   private Optional<String> role = Optional.empty();
   
@@ -83,11 +83,11 @@ public class CDAssociationSymbol extends CommonSymbol {
     return role;
   }
   
-  public void setQualifier(final Optional<String> qualifier) {
+  public void setQualifier(final Optional<CDQualifierSymbol> qualifier) {
     this.qualifier = qualifier;
   }
   
-  public Optional<String> getQualifier() {
+  public Optional<CDQualifierSymbol> getQualifier() {
     return qualifier;
   }
   

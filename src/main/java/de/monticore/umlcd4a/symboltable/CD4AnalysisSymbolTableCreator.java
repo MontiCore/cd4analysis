@@ -393,15 +393,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype().orElse(null));
         }
 
-        if (cdAssoc.getRightQualifier().isPresent()) {
-          final ASTCDQualifier qualifier = cdAssoc.getRightQualifier().get();
-          if ((qualifier.getName().isPresent()) && (!qualifier.getName().get().isEmpty())) {
-            assocRight2LeftSymbol.setQualifier(qualifier.getName());
-          }
-          else if (qualifier.getType().isPresent()) {
-            assocRight2LeftSymbol.setQualifier(Optional.of(TypesPrinter.printType(qualifier.getType().get())));
-          }
+        if (cdAssoc.getLeftQualifier().isPresent()) {
+          handleCDQualifier(assocRight2LeftSymbol, cdAssoc.getLeftQualifier().get());
         }
+        if (cdAssoc.getRightQualifier().isPresent()) {
+          handleCDQualifier(assocRight2LeftSymbol, cdAssoc.getRightQualifier().get());
+        }
+
         assocRight2LeftSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
       }
       return assocRight2LeftSymbol;
@@ -429,19 +427,37 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         }
 
         if (cdAssoc.getLeftQualifier().isPresent()) {
-          final ASTCDQualifier qualifier = cdAssoc.getLeftQualifier().get();
-          if ((qualifier.getName().isPresent()) && (!qualifier.getName().get().isEmpty())) {
-            assocLeft2RightSymbol.setQualifier(qualifier.getName());
-          }
-          else if (qualifier.getType().isPresent()) {
-            assocLeft2RightSymbol.setQualifier(Optional.of(TypesPrinter.printType(qualifier.getType().get())));
-          }
+          handleCDQualifier(assocLeft2RightSymbol, cdAssoc.getLeftQualifier().get());
         }
+        if (cdAssoc.getRightQualifier().isPresent()) {
+          handleCDQualifier(assocLeft2RightSymbol, cdAssoc.getRightQualifier().get());
+        }
+        
         assocLeft2RightSymbol.setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
       }
       return assocLeft2RightSymbol;
     }    
     return null;
+  }
+  
+  /**
+   * Creates {@link CDQualifierSymbol} for the given qualifier
+   * 
+   * @param assocSymbol the association symbol who's qualifier will be set
+   * @param qualifier the ast qualifier to create the symbol for
+   */
+  default void handleCDQualifier(final CDAssociationSymbol assocSymbol,
+      final ASTCDQualifier qualifier) {
+    if (qualifier.getName().isPresent()) {
+      CDQualifierSymbol s = new CDQualifierSymbol(qualifier.getName().get());
+      setLinkBetweenSymbolAndNode(s, qualifier);
+      assocSymbol.setQualifier(Optional.of(s));
+    }
+    else if (qualifier.getType().isPresent()) {
+      CDQualifierSymbol s = new CDQualifierSymbol(qualifier.getType().get());
+      setLinkBetweenSymbolAndNode(s, qualifier);
+      assocSymbol.setQualifier(Optional.of(s));
+    }
   }
 
   default CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc,

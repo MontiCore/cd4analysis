@@ -1,7 +1,7 @@
 package de.monticore.umlcd4a;
 
 /*
-   MCG for CD 4 Analysis, Version May. 05th, 2015
+   MCG for CD 4 Analysis, Version Jun. 03th, 2015
 */
 
 grammar CD4Analysis extends de.monticore.types.Types {
@@ -216,7 +216,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute name     Abstract name of the Qualifier if not a type
     @attribute type     Type of the Qualifier if not an abstract name
   */
-  CDQualifier = Name | Type;
+  CDQualifier = "[" Name "]" | Type;
     
 
   /** ASTStereotype represents Stereotypes in a Classdiagram

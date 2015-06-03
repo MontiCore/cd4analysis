@@ -91,7 +91,7 @@ public abstract class AbstractCoCoTest {
     Assert.assertEqualErrorCounts(new ArrayList<CoCoFinding>(), CoCoLog.getFindings());
   }
   
-  private ASTCDCompilationUnit loadModel(String modelFullQualifiedFilename) {
+  protected ASTCDCompilationUnit loadModel(String modelFullQualifiedFilename) {
     Path model = Paths.get(modelFullQualifiedFilename);
     
     try {
