@@ -180,14 +180,14 @@ grammar CD4Analysis extends de.monticore.types.Types {
     leftModifier:Modifier?
     leftCardinality:Cardinality?
     leftReferenceName:QualifiedName
-    ("[" leftQualifier:CDQualifier "]")?
+    leftQualifier:CDQualifier?
     ("(" leftRole:Name ")")?
     (   leftToRight:["->"]
       | rightToLeft:["<-"]
       | bidirectional:["<->"]
       | unspecified:["--"] )
     ("(" rightRole:Name ")")?
-    ("[" rightQualifier:CDQualifier "]")?
+    rightQualifier:CDQualifier?
     rightReferenceName:QualifiedName
     rightCardinality:Cardinality?
     rightModifier:Modifier? ";" ;
@@ -216,7 +216,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute name     Abstract name of the Qualifier if not a type
     @attribute type     Type of the Qualifier if not an abstract name
   */
-  CDQualifier = "[" Name "]" | Type;
+  CDQualifier = "[[" Name "]]" | "[" Type "]";
     
 
   /** ASTStereotype represents Stereotypes in a Classdiagram

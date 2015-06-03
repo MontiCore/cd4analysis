@@ -346,13 +346,15 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    */
   public void ownVisit(ASTCDQualifier a) {
     if (a.getName().isPresent()) {
-      printer.print("[");
+      printer.print("[[");
       printer.print(a.getName().get());
-      printer.print("]");
+      printer.print("]]");
     }
     else {
       if (a.getType().isPresent()) {
+        printer.print("[");
         visitor.startVisit(a.getType().get());
+        printer.print("]");
       }
     }
   }
@@ -396,9 +398,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     printer.print(" ");
     // print left qualifier
     if (a.getLeftQualifier().isPresent()) {
-      printer.print("[");
       visitor.startVisit(a.getLeftQualifier().get());
-      printer.print("] ");
     }
     // print left role
     if (a.getLeftRole().isPresent()) {
