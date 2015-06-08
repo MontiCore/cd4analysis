@@ -278,7 +278,7 @@ public class CDSymbolTable {
   }
   
   public boolean isTypeDefinedInModel(CDTypeSymbol type) {
-    String currentScopeName = this.cdScope.getName();
+    String currentScopeName = this.cdScope.getName().get();
     if (type instanceof CDTypeSymbolReference) {
       CDTypeSymbolReference ca = (CDTypeSymbolReference) type;
       if (ca.existsReferencedSymbol()) {
