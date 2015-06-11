@@ -104,6 +104,7 @@ public class TypesTest extends AbstractCoCoTest {
     }
   }
   
+  @Ignore
   @Test
   public void testUnparameterizedGenerics() {
     // Note that a generic with no type parameter results in a parse error and
