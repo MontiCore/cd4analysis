@@ -23,17 +23,17 @@ public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
   public String calculateModelName(String name, SymbolKind kind) {
     String modelName = name;
 
-    if (CDSymbol.KIND.isSame(kind)) {
+    if (CDSymbol.KIND.isKindOf(kind)) {
       // e.g., if p.CD, return unchanged
       modelName = name;
     }
-    else if (CDTypeSymbol.KIND.isSame(kind)) {
+    else if (CDTypeSymbol.KIND.isKindOf(kind)) {
       // e.g., if p.CD.Clazz, return p.CD
       if (!Names.getQualifier(name).isEmpty()) {
         modelName = Names.getQualifier(name);
       }
     }
-    else if (CDFieldSymbol.KIND.isSame(kind)) {
+    else if (CDFieldSymbol.KIND.isKindOf(kind)) {
       // e.g., if p.CD.Clazz.Field return p.CD
       List<String> nameParts = Splitter.on(".").splitToList(name);
 
