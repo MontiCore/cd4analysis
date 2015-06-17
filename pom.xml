@@ -14,6 +14,7 @@
 
     <monticore.version>4.1.5-SNAPSHOT</monticore.version>
 
+    <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
     <se-commons.version>1.7.2</se-commons.version>
@@ -94,7 +95,7 @@
             </goals>
           </execution>
         </executions>
-       </plugin>
+      </plugin>
 
       <!-- Other Configuration -->
       <plugin>
@@ -143,6 +144,11 @@
       <artifactId>se-commons-logging</artifactId>
       <version>${se-commons.version}</version>
     </dependency>
+    <dependency>
+      <groupId>de.se_rwth.commons</groupId>
+      <artifactId>se-commons-utilities</artifactId>
+      <version>${se-commons.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -174,6 +180,12 @@
       <artifactId>monticore-grammar</artifactId>
       <version>${monticore.version}</version>
       <classifier>${grammars.classifier}</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>${findbugs.version}</version>
     </dependency>
 
     <!-- .. Test Libraries ............................................... -->
