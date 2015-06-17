@@ -6,6 +6,7 @@
 package de.monticore.umlcd4a;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -15,13 +16,12 @@ import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.se_rwth.commons.Names;
-import de.se_rwth.commons.logging.Log;
 
 public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
 
   @Override
-  public String calculateModelName(String name, SymbolKind kind) {
-    String modelName = name;
+  public Optional<String> calculateModelName(final String name, final SymbolKind kind) {
+    String modelName = null;
 
     if (CDSymbol.KIND.isKindOf(kind)) {
       // e.g., if p.CD, return unchanged
@@ -44,10 +44,7 @@ public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
       }
 
     }
-    else {
-      Log.warn("0xC4B70 Symbol kind '" + kind.getName() + "' is unknown.");
-    }
 
-    return modelName;
+    return Optional.ofNullable(modelName);
   }
 }
