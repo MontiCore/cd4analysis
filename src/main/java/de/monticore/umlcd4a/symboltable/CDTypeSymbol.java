@@ -77,7 +77,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
   
   public String getModelName() {
-    return Names.getQualifier(getName());
+    return Names.getQualifier(getFullName());
   }
   
   public Collection<CDFieldSymbol> getAllVisibleFieldsOfSuperTypes() {
