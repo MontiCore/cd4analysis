@@ -7,11 +7,12 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 import mc.ast.ASTNode;
-import mc.helper.IndentPrinter;
 
 import com.google.common.collect.Sets;
 
-import de.monticore.umlcd4a.prettyprint.CDConcretePrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisBase;
+import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.monticore.utils.ForwardingASTNode;
 
 public class Permutation<T extends ASTNode> extends ForwardingASTNode<T> {
@@ -63,10 +64,15 @@ public class Permutation<T extends ASTNode> extends ForwardingASTNode<T> {
   @Override
   public String toString() {
     IndentPrinter indentPrinter = new IndentPrinter();
-    CDConcretePrettyPrinter prettyPrinter = new CDConcretePrettyPrinter();
-    prettyPrinter.prettyPrint(delegate, indentPrinter);
+    CDPrettyPrinterConcreteVisitor prettyPrinter = new CDPrettyPrinterConcreteVisitor(indentPrinter);
+    // TODO MB,SO Find better solution
+    if (delegate instanceof ASTCD4AnalysisBase) {
+      prettyPrinter.visit(delegate);
+    }
     for (ASTNode astNode : astNodes) {
-      prettyPrinter.prettyPrint(astNode, indentPrinter);
+      if (astNode instanceof ASTCD4AnalysisBase) {
+        prettyPrinter.prettyprint((ASTCD4AnalysisBase) astNode);
+      }
     }
     return indentPrinter.getContent();
   }

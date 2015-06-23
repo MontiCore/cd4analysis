@@ -1,10 +1,12 @@
 package de.monticore.umlcd4a.prettyprint;
 
-import mc.ast.ConcretePrettyPrinter;
-import mc.ast.PrettyPrinter;
-import mc.helper.IndentPrinter;
+import java.util.Iterator;
+
+import de.monticore.prettyprint.CommentPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.types.types._ast.ASTImportStatement;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisBase;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
@@ -14,7 +16,6 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstantList;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumParameter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
@@ -26,6 +27,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValueList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotypeList;
+import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.se_rwth.commons.Names;
 
 /**
@@ -37,12 +39,7 @@ import de.se_rwth.commons.Names;
  * 
  * @author Martin Schindler
  */
-public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVisitor {
-  
-  // printer to use
-  private IndentPrinter printer;
-  
-  private PrettyPrinter prettyPrinter;
+public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVisitor implements CD4AnalysisVisitor {
   
   /**
    * Constructor.
@@ -51,10 +48,8 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * when embedding is detected.
    * @param printer the printer to write to.
    */
-  public CDPrettyPrinterConcreteVisitor(PrettyPrinter parent, IndentPrinter printer) {
+  public CDPrettyPrinterConcreteVisitor(IndentPrinter printer) {
     super(printer);
-    this.prettyPrinter = parent;
-    this.printer = printer;
   }
   
   /**
@@ -62,24 +57,25 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a CD compilation unit
    */
-  public void ownVisit(ASTCDCompilationUnit unit) {
+  @Override
+  public void handle(ASTCDCompilationUnit unit) {
     if (unit.getPackage() != null && !unit.getPackage().isEmpty()) {
       printer
           .println("package " + Names.getQualifiedName(unit.getPackage()) + ";\n");
     }
     if (unit.getImportStatements() != null && !unit.getImportStatements().isEmpty()) {
       for (ASTImportStatement s : unit.getImportStatements()) {
-        printer.print("import " + Names.getQualifiedName(s.getImportList()));
+        getPrinter().print("import " + Names.getQualifiedName(s.getImportList()));
         if (s.isStar()) {
-          printer.println(".*;");
+          getPrinter().println(".*;");
         }
         else {
-          printer.println(";");
+          getPrinter().println(";");
         }
       }
-      printer.println();
+      getPrinter().println();
     }
-    visitor.startVisit(unit.getCDDefinition());
+    unit.getCDDefinition().accept(getRealThis());
   }
   
   /**
@@ -87,19 +83,20 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a class diagram definition
    */
-  public void ownVisit(ASTCDDefinition a) {
+  @Override
+  public void handle(ASTCDDefinition a) {
     
     // print classdiagram name and parameters
-    printer.print("classdiagram " + a.getName());
+    getPrinter().print("classdiagram " + a.getName());
     // print body
-    printer.println("{");
-    printer.indent();
-    visitor.startVisit(a.getCDInterfaces());
-    visitor.startVisit(a.getCDClasses());
-    visitor.startVisit(a.getCDEnums());
-    visitor.startVisit(a.getCDAssociations());
-    printer.unindent();
-    printer.print("\n}\n");
+    getPrinter().println("{");
+    getPrinter().indent();
+    a.getCDInterfaces().accept(getRealThis());
+    a.getCDClasses().accept(getRealThis());
+    a.getCDEnums().accept(getRealThis());
+    a.getCDAssociations().accept(getRealThis());
+    getPrinter().unindent();
+    getPrinter().print("\n}\n");
   }
   
   /**
@@ -107,39 +104,40 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a class
    */
-  public void ownVisit(ASTCDClass a) {
-    printer.println();
+  @Override
+  public void handle(ASTCDClass a) {
+    getPrinter().println();
     // print completeness
     // print class modifier
     if (a.getModifier().isPresent()) {
-      visitor.startVisit(a.getModifier().get());
+      a.getModifier().get().accept(getRealThis());
     }
     // print class name
-    printer.print("class " + a.getName());
+    getPrinter().print("class " + a.getName());
     // print generic type parameters
     // print superclasses
     if (a.getSuperclass().isPresent()) {
-      printer.print(" extends ");
-      visitor.startVisit(a.getSuperclass().get());
+      getPrinter().print(" extends ");
+      a.getSuperclass().get().accept(getRealThis());
     }
     // print interfaces
     if (a.getInterfaces().size() != 0) {
-      printer.print(" implements ");
-      visitor.startVisit(a.getInterfaces());
+      getPrinter().print(" implements ");
+      a.getInterfaces().accept(getRealThis());
     }
     // print class body
     if (a.getCDConstructors().size() != 0 || a.getCDMethods().size() != 0
         || a.getCDAttributes().size() != 0) {
-      printer.println("{");
-      printer.indent();
-      visitor.startVisit(a.getCDAttributes());
-      visitor.startVisit(a.getCDConstructors());
-      visitor.startVisit(a.getCDMethods());
-      printer.unindent();
-      printer.println("}");
+      getPrinter().println("{");
+      getPrinter().indent();
+      a.getCDAttributes().accept(getRealThis());
+      a.getCDConstructors().accept(getRealThis());
+      a.getCDMethods().accept(getRealThis());
+      getPrinter().unindent();
+      getPrinter().println("}");
     }
     else {
-      printer.println(";");
+      getPrinter().println(";");
     }
   }
   
@@ -148,30 +146,31 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a interface
    */
-  public void ownVisit(ASTCDInterface a) {
-    printer.println();
+  @Override
+  public void handle(ASTCDInterface a) {
+    getPrinter().println();
     // print modifier
     if (a.getModifier().isPresent()) {
-      visitor.startVisit(a.getModifier().get());
+      a.getModifier().get().accept(getRealThis());
     }
     // print interface name
-    printer.print("interface " + a.getName());
+    getPrinter().print("interface " + a.getName());
     // print implemented interfaces
     if (a.getInterfaces().size() != 0) {
-      printer.print(" extends ");
-      visitor.startVisit(a.getInterfaces());
+      getPrinter().print(" extends ");
+      a.getInterfaces().accept(getRealThis());
     }
     // print interface body
     if (a.getCDMethods().size() != 0 || a.getCDAttributes().size() != 0) {
-      printer.println("{");
-      printer.indent();
-      visitor.startVisit(a.getCDAttributes());
-      visitor.startVisit(a.getCDMethods());
-      printer.unindent();
-      printer.println("}");
+      getPrinter().println("{");
+      getPrinter().indent();
+      a.getCDAttributes().accept(getRealThis());
+      a.getCDMethods().accept(getRealThis());
+      getPrinter().unindent();
+      getPrinter().println("}");
     }
     else {
-      printer.println(";");
+      getPrinter().println(";");
     }
   }
   
@@ -180,38 +179,39 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a enum
    */
-  public void ownVisit(ASTCDEnum a) {
-    printer.println();
+  @Override
+  public void handle(ASTCDEnum a) {
+    getPrinter().println();
     // print enum modifier
     if (a.getModifier().isPresent()) {
-      visitor.startVisit(a.getModifier().get());
+      a.getModifier().get().accept(getRealThis());
     }
     // print enum name
-    printer.print("enum " + a.getName());
+    getPrinter().print("enum " + a.getName());
     // print interfaces
     if (a.getInterfaces().size() != 0) {
-      printer.print(" implements ");
-      visitor.startVisit(a.getInterfaces());
+      getPrinter().print(" implements ");
+      a.getInterfaces().accept(getRealThis());
     }
     // print enum body
     if (a.getCDEnumConstants().size() != 0 || a.getCDConstructors().size() != 0
         || a.getCDMethods().size() != 0) {
-      printer.println("{");
-      printer.indent();
+      getPrinter().println("{");
+      getPrinter().indent();
       if (a.getCDEnumConstants().size() != 0) {
-        visitor.startVisit(a.getCDEnumConstants());
-        printer.println(";");
+        a.getCDEnumConstants().accept(getRealThis());
+        getPrinter().println(";");
       }
       if (a.getCDConstructors().size() != 0 || a.getCDMethods().size() != 0) {
-        printer.println();
-        visitor.startVisit(a.getCDConstructors());
-        visitor.startVisit(a.getCDMethods());
+        getPrinter().println();
+        a.getCDConstructors().accept(getRealThis());
+        a.getCDMethods().accept(getRealThis());
       }
-      printer.unindent();
-      printer.println("}");
+      getPrinter().unindent();
+      getPrinter().println("}");
     }
     else {
-      printer.println(";");
+      getPrinter().println(";");
     }
   }
   
@@ -220,19 +220,16 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a enum constant
    */
-  public void ownVisit(ASTCDEnumConstant a) {
+  @Override
+  public void handle(ASTCDEnumConstant a) {
     // print enum name
-    printer.print(a.getName());
+    getPrinter().print(a.getName());
     // print parameters
     if (!a.getCDEnumParameters().isEmpty()) {
-      printer.print("(");
-      printList(a.getCDEnumParameters().iterator(), ", ");
-      printer.print(")");
+      getPrinter().print("(");
+      printSeparator(a.getCDEnumParameters().iterator(), ", ");
+      getPrinter().print(")");
     }
-  }
-  
-  public void ownVisit(ASTCDEnumParameter a) {
-    prettyPrinter.prettyPrint(a.getValue(), printer);
   }
   
   /**
@@ -240,8 +237,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a list of enum constants
    */
-  public void ownVisit(ASTCDEnumConstantList a) {
-    printList(a.iterator(), ",\n");
+  @Override
+  public void handle(ASTCDEnumConstantList a) {
+    printSeparator(a.iterator(), ",\n");
   }
   
   /**
@@ -249,27 +247,28 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a method
    */
-  public void ownVisit(ASTCDMethod a) {
-    ConcretePrettyPrinter.printPreComments(a, printer);
+  @Override
+  public void handle(ASTCDMethod a) {
+    CommentPrettyPrinter.printPreComments(a, printer);
     
     // print modifier
-    visitor.startVisit(a.getModifier());
+    a.getModifier().accept(getRealThis());
     // print generics
     // print return type
-    visitor.startVisit(a.getReturnType());
+    a.getReturnType().accept(getRealThis());
     // print name
-    printer.print(" " + a.getName());
+    getPrinter().print(" " + a.getName());
     // print parameters
-    printer.print("(");
-    visitor.startVisit(a.getCDParameters());
-    printer.print(")");
+    getPrinter().print("(");
+    a.getCDParameters().accept(getRealThis());
+    getPrinter().print(")");
     // print exception
     if (a.getExceptions().size() != 0) {
-      printer.print(" throws ");
-      visitor.startVisit(a.getExceptions());
+      getPrinter().print(" throws ");
+      a.getExceptions().accept(getRealThis());
     }
-    printer.println(";");
-    ConcretePrettyPrinter.printPostComments(a, printer);
+    getPrinter().println(";");
+    CommentPrettyPrinter.printPostComments(a, printer);
   }
   
   /**
@@ -277,21 +276,22 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a constructor
    */
-  public void ownVisit(ASTCDConstructor a) {
+  @Override
+  public void handle(ASTCDConstructor a) {
     // print modifier
-    visitor.startVisit(a.getModifier());
+    a.getModifier().accept(getRealThis());
     // print name
-    printer.print(a.getName());
+    getPrinter().print(a.getName());
     // print parameters
-    printer.print("(");
-    visitor.startVisit(a.getCDParameters());
-    printer.print(")");
+    getPrinter().print("(");
+    a.getCDParameters().accept(getRealThis());
+    getPrinter().print(")");
     // print exception
     if (a.getExceptions().size() != 0) {
-      printer.print(" throws ");
-      visitor.startVisit(a.getExceptions());
+      getPrinter().print(" throws ");
+      a.getExceptions().accept(getRealThis());
     }
-    printer.println(";");
+    getPrinter().println(";");
   }
   
   /**
@@ -299,13 +299,14 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a parameter
    */
-  public void ownVisit(ASTCDParameter a) {
-    visitor.startVisit(a.getType());
+  @Override
+  public void handle(ASTCDParameter a) {
+    a.getType().accept(getRealThis());
     if (a.isEllipsis()) {
-      printer.print("...");
+      getPrinter().print("...");
     }
-    printer.print(" ");
-    printer.print(a.getName());
+    getPrinter().print(" ");
+    getPrinter().print(a.getName());
   }
   
   /**
@@ -313,8 +314,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a list of parameters
    */
-  public void ownVisit(ASTCDParameterList a) {
-    printList(a.iterator(), ", ");
+  @Override
+  public void handle(ASTCDParameterList a) {
+    printSeparator(a.iterator(), ", ");
   }
   
   /**
@@ -322,21 +324,22 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a attribute
    */
-  public void ownVisit(ASTCDAttribute a) {
+  @Override
+  public void handle(ASTCDAttribute a) {
     // print modifier
     if (a.getModifier().isPresent()) {
-      visitor.startVisit(a.getModifier().get());
+      a.getModifier().get().accept(getRealThis());
     }
     // print type
-    visitor.startVisit(a.getType());
+    a.getType().accept(getRealThis());
     // print name
-    printer.print(" " + a.getName());
+    getPrinter().print(" " + a.getName());
     // print attribute value
     if (a.getValue().isPresent()) {
-      printer.print(" = ");
-      visitor.startVisit(a.getValue().get().getSignedLiteral());
+      getPrinter().print(" = ");
+      a.getValue().get().getSignedLiteral().accept(getRealThis());
     }
-    printer.println(";");
+    getPrinter().println(";");
   }
   
   /**
@@ -344,17 +347,18 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a qualifier
    */
-  public void ownVisit(ASTCDQualifier a) {
+  @Override
+  public void handle(ASTCDQualifier a) {
     if (a.getName().isPresent()) {
-      printer.print("[[");
-      printer.print(a.getName().get());
-      printer.print("]]");
+      getPrinter().print("[[");
+      getPrinter().print(a.getName().get());
+      getPrinter().print("]]");
     }
     else {
       if (a.getType().isPresent()) {
-        printer.print("[");
-        visitor.startVisit(a.getType().get());
-        printer.print("]");
+        getPrinter().print("[");
+        a.getType().get().accept(getRealThis());
+        getPrinter().print("]");
       }
     }
   }
@@ -364,113 +368,115 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a association, aggregation or composition
    */
-  public void ownVisit(ASTCDAssociation a) {
-    printer.println();
+  @Override
+  public void handle(ASTCDAssociation a) {
+    getPrinter().println();
     // print stereotype
     if (a.getStereotype().isPresent()) {
-      visitor.startVisit(a.getStereotype().get());
-      printer.print(" ");
+      a.getStereotype().get().accept(getRealThis());
+      getPrinter().print(" ");
     }
     // print type of the link
     if (a.isAssociation()) {
-      printer.print("association ");
+      getPrinter().print("association ");
     }
     else if (a.isComposition()) {
-      printer.print("composition ");
+      getPrinter().print("composition ");
     }
     // print name
     if (a.isDerived()) {
-      printer.print("/");
+      getPrinter().print("/");
     }
     if (a.getName().isPresent()) {
-      printer.print(a.getName().get() + " ");
+      getPrinter().print(a.getName().get() + " ");
     }
     // print left modifier
     if (a.getLeftModifier().isPresent())
-      visitor.startVisit(a.getLeftModifier().get());
+      a.getLeftModifier().get().accept(getRealThis());
     // print left cardinality
     if (a.getLeftCardinality().isPresent()) {
-      visitor.startVisit(a.getLeftCardinality().get());
-      printer.print(" ");
+      a.getLeftCardinality().get().accept(getRealThis());
+      getPrinter().print(" ");
     }
     // print left link class
-    visitor.startVisit(a.getLeftReferenceName());
-    printer.print(" ");
+    a.getLeftReferenceName().accept(getRealThis());
+    getPrinter().print(" ");
     // print left qualifier
     if (a.getLeftQualifier().isPresent()) {
-      visitor.startVisit(a.getLeftQualifier().get());
+      a.getLeftQualifier().get().accept(getRealThis());
     }
     // print left role
     if (a.getLeftRole().isPresent()) {
-      printer.print("(");
-      printer.print(a.getLeftRole().get());
-      printer.print(") ");
+      getPrinter().print("(");
+      getPrinter().print(a.getLeftRole().get());
+      getPrinter().print(") ");
     }
     // print arrow
     if (a.isLeftToRight()) {
-      printer.print("->");
+      getPrinter().print("->");
     }
     if (a.isRightToLeft()) {
-      printer.print("<-");
+      getPrinter().print("<-");
     }
     if (a.isBidirectional()) {
-      printer.print("<->");
+      getPrinter().print("<->");
     }
     if (a.isUnspecified()) {
-      printer.print("--");
+      getPrinter().print("--");
     }
     // print right role
     if (a.getRightRole().isPresent()) {
-      printer.print(" (");
-      printer.print(a.getRightRole().get());
-      printer.print(")");
+      getPrinter().print(" (");
+      getPrinter().print(a.getRightRole().get());
+      getPrinter().print(")");
     }
     // print right qualifier
     if (a.getRightQualifier().isPresent()) {
-      printer.print(" [");
-      visitor.startVisit(a.getRightQualifier().get());
-      printer.print("]");
+      getPrinter().print(" [");
+      a.getRightQualifier().get().accept(getRealThis());
+      getPrinter().print("]");
     }
     // print right link class
-    printer.print(" ");
-    visitor.startVisit(a.getRightReferenceName());
+    getPrinter().print(" ");
+    a.getRightReferenceName().accept(getRealThis());
     // print right cardinality
     if (a.getRightCardinality().isPresent()) {
-      printer.print(" ");
-      visitor.startVisit(a.getRightCardinality().get());
+      getPrinter().print(" ");
+      a.getRightCardinality().get().accept(getRealThis());
     }
-    printer.print(" ");
+    getPrinter().print(" ");
     // print right modifier
     if (a.getRightModifier().isPresent()) {
-      visitor.startVisit(a.getRightModifier().get());
+      a.getRightModifier().get().accept(getRealThis());
     }
-    printer.println(";");
+    getPrinter().println(";");
   }
   
-  public void ownVisit(ASTModifier a) {
+  @Override
+  public void handle(ASTModifier a) {
     if (a.getStereotype().isPresent()) {
-      visitor.startVisit(a.getStereotype().get());
+      a.getStereotype().get().accept(getRealThis());
     }
     if (a.isAbstract()) {
-      printer.print("abstract ");
+      getPrinter().print("abstract ");
     }
     if (a.isFinal()) {
-      printer.print("final ");
+      getPrinter().print("final ");
     }
     if (a.isStatic()) {
-      printer.print("static ");
+      getPrinter().print("static ");
     }
     if (a.isPrivate()) {
-      printer.print("private ");
+      getPrinter().print("private ");
     }
     if (a.isProtected()) {
-      printer.print("protected ");
+      getPrinter().print("protected ");
     }
     if (a.isPublic()) {
-      printer.print("public ");
+      getPrinter().print("public ");
     }
     if (a.isDerived()) {
-      printer.print("derived ");
+      getPrinter().print("derived ");
     }
   }
   
@@ -479,8 +485,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a list of stereotype values
    */
-  public void ownVisit(ASTStereotypeList a) {
-    printList(a.iterator(), " ");
+  @Override
+  public void handle(ASTStereotypeList a) {
+    printSeparator(a.iterator(), " ");
   }
 
   /**
@@ -488,8 +495,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a stereotype
    */
+  @Override
   public void visit(ASTStereotype a) {
-    printer.print("<<");
+    getPrinter().print("<<");
   }
   
   /**
@@ -497,8 +505,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a stereotype
    */
+  @Override
   public void endVisit(ASTStereotype a) {
-    printer.print(">>");
+    getPrinter().print(">>");
   }
 
   /**
@@ -506,13 +515,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a stereotype value
    */
-  public void ownVisit(ASTStereoValueList a) {
-    String delim = "";
-    for (ASTStereoValue v : a) {
-      printer.print(delim);
-      visitor.startVisit(v);
-      delim = ",";
-    }
+  @Override
+  public void handle(ASTStereoValueList a) {
+    printSeparator(a.iterator(), ",");
   }
 
   /**
@@ -520,8 +525,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a stereotype value
    */
+  @Override
   public void visit(ASTStereoValue a) {
-    printer.print(a.getName());
+    getPrinter().print(a.getName());
     if (a.getValue().isPresent()) {
       printer.print("=\"" + a.getValue().get() + "\"");
     }
@@ -532,21 +538,49 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * 
    * @param a cardinality
    */
-  public void ownVisit(ASTCardinality a) {
+  @Override
+  public void handle(ASTCardinality a) {
     if (a.isMany()) {
-      printer.print(" [*] ");
+      getPrinter().print(" [*] ");
     }
     if (a.isOne()) {
-      printer.print(" [1] ");
+      getPrinter().print(" [1] ");
     }
     if (a.isOneToMany()) {
-      printer.print(" [1..*] ");
+      getPrinter().print(" [1..*] ");
     }
     if (a.isOptional()) {
-      printer.print(" [0..1] ");
+      getPrinter().print(" [0..1] ");
     }
  
   }
 
+  /**
+   * Prints a list of ASTQualifiedNames in an ownVisit method
+   * 
+   * @param iter iterator for the list of ASTQualifiedNames
+   * @param seperator string for seperating the ASTQualifiedNames
+   */
+  private void printSeparator(Iterator<? extends ASTCD4AnalysisBase> iter, String seperator) {
+    // print by iterate through all items
+    String sep = "";
+    while (iter.hasNext()) {
+      getPrinter().print(sep);
+      iter.next().accept(getRealThis());
+      sep = seperator;
+    }
+  }
+  
+  /**
+   * This method prettyprints a given node from class diagram.
+   * 
+   * @param a A node from class diagram.
+   * @return String representation.
+   */
+  public String prettyprint(ASTCD4AnalysisBase a) {
+    getPrinter().clearBuffer();
+    a.accept(getRealThis());
+    return getPrinter().getContent();
+  }
 
 }

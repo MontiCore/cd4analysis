@@ -1,10 +1,9 @@
 package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
-import mc.helper.IndentPrinter;
-import de.monticore.literals.prettyprint.LiteralsConcretePrettyPrinter;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTType;
+import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP
     implements ASTCD4AnalysisBase {
@@ -63,10 +62,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
       return EMPTY_STRING;
     }
     
-    LiteralsConcretePrettyPrinter p = new LiteralsConcretePrettyPrinter();
-    IndentPrinter iPrinter = new IndentPrinter();
-    p.prettyPrint(value.get(), iPrinter);
-    return iPrinter.getContent().trim().intern();
+    return (new AstPrinter().printValue(value));
   }
   
   /**

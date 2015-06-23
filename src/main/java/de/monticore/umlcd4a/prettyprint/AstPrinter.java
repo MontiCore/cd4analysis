@@ -6,13 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import mc.helper.IndentPrinter;
-
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 
-import de.monticore.literals.prettyprint.LiteralsConcretePrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTImportStatement;
 import de.monticore.types.types._ast.ASTImportStatementList;
@@ -28,7 +26,6 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTValue;
 /******************************************************************************
  * AST specific helper to print AST nodes.
  *****************************************************************************/
-@SuppressWarnings("deprecation")
 public class AstPrinter {
   
   public static final String EMPTY_STRING = "";
@@ -210,11 +207,13 @@ public class AstPrinter {
    */
   public String printValue(Optional<ASTValue> value) {
     checkNotNull(value);
+    String output = "";
+    if (value.isPresent()) {
+      IndentPrinter iPrinter = new IndentPrinter();
+      CDPrettyPrinterConcreteVisitor p = new CDPrettyPrinterConcreteVisitor(iPrinter);
+      output = p.prettyprint(value.get()).trim().intern();
+    }
     
-    LiteralsConcretePrettyPrinter p = new LiteralsConcretePrettyPrinter();
-    IndentPrinter iPrinter = new IndentPrinter();
-    p.prettyPrint(value.get(), iPrinter);
-    
-    return iPrinter.getContent().trim().intern();
+    return output;
   }
 }

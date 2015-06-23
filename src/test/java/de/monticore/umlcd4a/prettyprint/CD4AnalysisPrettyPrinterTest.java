@@ -14,11 +14,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import mc.helper.IndentPrinter;
-
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
 
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
@@ -36,11 +35,11 @@ public class CD4AnalysisPrettyPrinterTest {
     
     // prettyprinting input
     IndentPrinter i = new IndentPrinter();
-    CDConcretePrettyPrinter prettyprinter = new CDConcretePrettyPrinter();
-    prettyprinter.prettyPrint(cdDef.get(), i);
+    CDPrettyPrinterConcreteVisitor prettyprinter = new CDPrettyPrinterConcreteVisitor(i);
+    String output = prettyprinter.prettyprint(cdDef.get());
     
     // parsing output of prettyprinter
-    Optional<ASTCDCompilationUnit> printedCdDef = parser.parse(new StringReader(i.getContent()));
+    Optional<ASTCDCompilationUnit> printedCdDef = parser.parse(new StringReader(output));
     assertFalse(parser.hasErrors());
     assertTrue(printedCdDef.isPresent());
     

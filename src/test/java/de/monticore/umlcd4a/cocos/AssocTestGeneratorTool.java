@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import mc.helper.IndentPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.TypesNodeFactory;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
@@ -23,7 +23,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
-import de.monticore.umlcd4a.prettyprint.CDConcretePrettyPrinter;
+import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.se_rwth.commons.StringTransformations;
 
 /**
@@ -84,26 +84,26 @@ public class AssocTestGeneratorTool {
   
   public static String printAssociations(List<ASTCDAssociation> allPossibilities) {
     IndentPrinter printer = new IndentPrinter();
-    CDConcretePrettyPrinter p = new CDConcretePrettyPrinter();
+    CDPrettyPrinterConcreteVisitor p = new CDPrettyPrinterConcreteVisitor(printer);
     int c = 0;
     
     printer.indent();
     
     ASTCDClass classA = CD4AnalysisNodeFactory.createASTCDClass();
     classA.setName("A");
-    p.prettyPrint(classA, printer);
+    p.handle(classA);
     
     ASTCDClass classB = CD4AnalysisNodeFactory.createASTCDClass();
     classB.setName("B");
-    p.prettyPrint(classB, printer);
+    p.handle(classB);
     
     ASTCDEnum e = CD4AnalysisNodeFactory.createASTCDEnum();
     e.setName("E");
-    p.prettyPrint(e, printer);
+    p.handle(e);
     
     ASTCDInterface i = CD4AnalysisNodeFactory.createASTCDInterface();
     i.setName("I");
-    p.prettyPrint(i, printer);
+    p.handle(i);
     
     for (ASTCDAssociation a : allPossibilities) {
       if (a.isComposition()) {
@@ -114,7 +114,7 @@ public class AssocTestGeneratorTool {
         a.setName("assoc" + c);
       }
       
-      p.prettyPrint(a, printer);
+      p.handle(a);
       c++;
     }
     
