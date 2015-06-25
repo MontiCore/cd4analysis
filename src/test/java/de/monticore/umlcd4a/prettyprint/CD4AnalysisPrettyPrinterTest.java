@@ -43,8 +43,7 @@ public class CD4AnalysisPrettyPrinterTest {
     assertFalse(parser.hasErrors());
     assertTrue(printedCdDef.isPresent());
     
-    // TODO (MB,GV) Does not work
-    // assertTrue(cdDef.get().deepEquals(printedCdDef.get()));
+    assertTrue(cdDef.get().deepEquals(printedCdDef.get()));
 
   }
   

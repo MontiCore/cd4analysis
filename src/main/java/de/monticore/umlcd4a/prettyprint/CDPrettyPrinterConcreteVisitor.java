@@ -432,9 +432,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     }
     // print right qualifier
     if (a.getRightQualifier().isPresent()) {
-      getPrinter().print(" [");
       a.getRightQualifier().get().accept(getRealThis());
-      getPrinter().print("]");
     }
     // print right link class
     getPrinter().print(" ");
