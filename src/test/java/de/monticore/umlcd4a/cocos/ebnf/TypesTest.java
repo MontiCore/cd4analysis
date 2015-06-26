@@ -6,12 +6,14 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
+import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -19,11 +21,11 @@ import org.junit.Test;
 
 import de.monticore.cocos.CoCoFinding;
 import de.monticore.cocos.CoCoLog;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
-import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.Slf4jLog;
 
 /**
  * Tests CoCos dealing with types.
@@ -72,95 +74,66 @@ public class TypesTest extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  private static class NoSystemExit extends Log {
-    public static final void init() {
-      setLog(new NoSystemExit());
-    }
-    
-    /**
-     * @see de.se_rwth.commons.logging.Log#doError(java.lang.String)
-     */
-    @Override
-    protected void doError(String msg) {
-      // prevent output
-    }
-    
-    /**
-     * @see de.se_rwth.commons.logging.Log#doError(java.lang.String,
-     * java.lang.Throwable)
-     */
-    @Override
-    protected void doError(String msg, Throwable t) {
-      // prevent output
-    }
-    
-    /**
-     * @see de.se_rwth.commons.logging.Log#doGetErrorCount()
-     */
-    @Override
-    protected int doGetErrorCount() {
-      // always prevents system exit
-      return 0;
-    }
-  }
-  
   @Ignore
   @Test
-  public void testUnparameterizedGenerics() {
-    // Note that a generic with no type parameter results in a parse error and
-    // hence there exists no explicit CoCo.
-    
+  public void testUnparameterizedGenerics() throws RecognitionException, IOException {
     String modelName = "C4A30.cd";
     String errorCode = "0xC4A30";
     
-    testModelNoErrors(MODEL_PATH_VALID + modelName);
-    
-    // NOTE: the invalid models produce parse error !
-    
-    // prevent junit to system.exit... :)
-    
-    NoSystemExit.init();
-    
-    Collection<CoCoFinding> expectedErrors = new ArrayList<>();
-    try {
-      testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
-      fail("Expected a parse error for model " + MODEL_PATH_INVALID + modelName);
-    }
-    catch (Exception e) {
-      assertEquals("Error during loading of model " + MODEL_PATH_INVALID + modelName + ".",
-          e.getMessage());
-    }
-    finally {
-      // "restore" Logger? (actually we do not know which logger was set
-      // before...)
-      Slf4jLog.init();
-    }
-  }
-  
-  @Ignore
-  @Test
-  public void testInvalidInitializationOfDerivedAttr() {
-    String modelName = "C4A34.cd";
-    String errorCode = "0xC4A34";
-    
-    /* (Hinweis fuer Implementierung: UMLP verbietet das, da UMLP eine
-     * Derivation-Rule oder eine Initialisierung erwartet - in CD4A gibt es
-     * derivation-rules aber nicht und es soll eine leere Methode generiert
-     * werden, die dann ueberschrieben werden kann). Die entsprechende UMLP CoCo
-     * soll in CD4A geloescht werden. */
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<CoCoFinding> expectedErrors = Arrays
         .asList(
             CoCoFinding
                 .error(errorCode,
-                    " Invalid initialization of the derived attribute a. Derived attributes may not be initialized."),
+                    "Generic Type List has no type-parameter. References to generic types must be parametrized."),
             CoCoFinding
                 .error(errorCode,
-                    " Invalid initialization of the derived attribute b. Derived attributes may not be initialized."),
+                    "Generic Type Optional has no type-parameter. References to generic types must be parametrized."),
             CoCoFinding
                 .error(errorCode,
-                    " Invalid initialization of the derived attribute c. Derived attributes may not be initialized.")
+                    "Generic Type Set has no type-parameter. References to generic types must be parametrized.")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+    
+    Optional<ASTSimpleReferenceType> type = CD4AnalysisParserFactory
+        .createSimpleReferenceTypeMCParser().parseString("a.b.C<S>");
+    assertTrue(type.isPresent());
+    CoCoLog.getFindings().clear();
+    CoCoLog.setDelegateToLog(false);
+    // check the coco
+    new GenericTypeHasParameters().check(type.get());
+    // asert expected error
+    assertEquals(0, CoCoLog.getFindings().size());
+    
+    type = CD4AnalysisParserFactory.createSimpleReferenceTypeMCParser().parseString("a.b.C<>");
+    assertTrue(type.isPresent());
+    new GenericTypeHasParameters().check(type.get());
+    // asert expected error
+    assertEquals(1, CoCoLog.getFindings().size());
+    
+    assertEquals(1, CoCoLog.getFindings().stream().filter(f -> f.buildMsg().contains(errorCode))
+        .count());
+  }
+  
+  @Test
+  public void testInvalidInitializationOfDerivedAttr() {
+    String modelName = "C4A34.cd";
+    String errorCode = "0xC4A34";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
+    Collection<CoCoFinding> expectedErrors = Arrays
+        .asList(
+            CoCoFinding
+                .error(errorCode,
+                    "Invalid initialization of the derived attribute a. Derived attributes may not be initialized."),
+            CoCoFinding
+                .error(errorCode,
+                    "Invalid initialization of the derived attribute b. Derived attributes may not be initialized."),
+            CoCoFinding
+                .error(errorCode,
+                    "Invalid initialization of the derived attribute c. Derived attributes may not be initialized.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }

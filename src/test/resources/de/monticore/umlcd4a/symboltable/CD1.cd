@@ -1,5 +1,7 @@
 package de.monticore.umlcd4a.symboltable;
 
+import de.monticore.umlcd4a.symboltable.CD2;
+
 classdiagram CD1 {
 
   abstract class Creature {

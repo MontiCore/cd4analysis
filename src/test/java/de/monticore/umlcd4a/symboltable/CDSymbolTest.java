@@ -8,7 +8,6 @@ package de.monticore.umlcd4a.symboltable;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.monticore.symboltable.GlobalScope;
@@ -22,6 +21,8 @@ public class CDSymbolTest {
         CDSymbol.KIND).orElse(null);
     assertNotNull(cd);
     assertEquals(6, cd.getTypes().size());
+    assertEquals(1, cd.getImports().size());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD2", cd.getImports().get(0));
   }
   
 }
