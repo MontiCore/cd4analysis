@@ -45,4 +45,14 @@ public class CD4AnalysisResolvingTest {
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person.name", cdField.get().getFullName());
   }
 
+  @Test
+  public void test() {
+    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.XXX", CDTypeSymbol.KIND);
+    globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.XXX", CDTypeSymbol.KIND);
+
+    assertEquals(1, globalScope.getSubScopes().size());
+  }
+
 }
