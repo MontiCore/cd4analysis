@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 
 import de.monticore.symboltable.GlobalScope;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CD4AnalysisResolvingTest {
@@ -46,6 +47,7 @@ public class CD4AnalysisResolvingTest {
   }
 
   @Test
+  @Ignore
   public void test() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
