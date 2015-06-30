@@ -46,7 +46,7 @@ public class CD4AnalysisResolvingTest {
   }
 
   @Test
-  public void test() {
+  public void testModelIsLoadedOnlyOnceEvenIfSymbolCannontBeResolved() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.XXX", CDTypeSymbol.KIND);
