@@ -7,6 +7,8 @@ package de.monticore.umlcd4a.symboltable;/*
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
@@ -108,14 +111,34 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     removeCurrentScope();
   }
   
+  // TODO think about external Stereotypes...
+  default Collection<String> getExternals(ASTCDType type) {
+    Collection<String> externals = new HashSet<>();
+    final ASTModifier astModifier = type.getModifier()
+        .orElse(new ASTModifier.Builder().build());
+    
+    if (astModifier.getStereotype().isPresent()) {
+      for (ASTStereoValue stereo : astModifier.getStereotype().get().getValues()) {
+        if ("externalType".equals(stereo.getName()) && stereo.getValue().isPresent()) {
+          externals.add(stereo.getValue().get());
+        }
+      }
+    }
+    
+    return externals;
+  }
+  
   @Override
   default void visit(final ASTCDClass astClass) {
     final CDTypeSymbol classSymbol = new CDTypeSymbol(astClass.getName());
     
+    Collection<String> externals = getExternals(astClass);
     if (astClass.getSuperclass().isPresent()) {
-      final CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(astClass
-          .getSuperclass().get());
-      classSymbol.setSuperClass(superClassSymbol);
+      ASTReferenceType superC = astClass.getSuperclass().get();
+      if (!externals.contains(TypesPrinter.printType(superC))) {
+        final CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(superC);
+        classSymbol.setSuperClass(superClassSymbol);
+      }
     }
     
     final ASTModifier astModifier = astClass.getModifier()
@@ -123,7 +146,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     setModifiersOfType(classSymbol, astModifier);
     
-    addInterfacesToType(classSymbol, astClass.getInterfaces());
+    addInterfacesToType(classSymbol, astClass.getInterfaces(), externals);
     
     putInScopeAndLinkWithAst(classSymbol, astClass);
   }
@@ -224,7 +247,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     // Interfaces are always abstract
     interfaceSymbol.setAbstract(true);
     
-    addInterfacesToType(interfaceSymbol, astInterface.getInterfaces());
+    Collection<String> externals = getExternals(astInterface);
+    addInterfacesToType(interfaceSymbol, astInterface.getInterfaces(), externals);
     setModifiersOfType(interfaceSymbol,
         astInterface.getModifier().orElse(new ASTModifier.Builder().build()));
     
@@ -235,11 +259,13 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
   
   default void addInterfacesToType(final CDTypeSymbol typeSymbol,
-      final ASTReferenceTypeList astInterfaces) {
+      final ASTReferenceTypeList astInterfaces, Collection<String> externals) {
     if (astInterfaces != null) {
       for (final ASTReferenceType superInterface : astInterfaces) {
-        final CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
-        typeSymbol.addInterface(superInterfaceSymbol);
+        if (!externals.contains(TypesPrinter.printType(superInterface))) {
+          final CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
+          typeSymbol.addInterface(superInterfaceSymbol);
+        }
       }
     }
   }
@@ -266,8 +292,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         enumSymbol.addField(constantSymbol);
       }
     }
-    
-    addInterfacesToType(enumSymbol, astEnum.getInterfaces());
+    Collection<String> externals = getExternals(astEnum);
+    addInterfacesToType(enumSymbol, astEnum.getInterfaces(), externals);
     setModifiersOfType(enumSymbol, astEnum.getModifier().orElse(new ASTModifier.Builder().build()));
     
     putInScopeAndLinkWithAst(enumSymbol, astEnum);
