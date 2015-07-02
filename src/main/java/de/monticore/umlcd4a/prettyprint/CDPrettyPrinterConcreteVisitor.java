@@ -6,7 +6,7 @@ import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisBase;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
@@ -559,7 +559,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * @param iter iterator for the list of ASTQualifiedNames
    * @param seperator string for seperating the ASTQualifiedNames
    */
-  private void printSeparator(Iterator<? extends ASTCD4AnalysisBase> iter, String seperator) {
+  private void printSeparator(Iterator<? extends ASTCD4AnalysisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -575,7 +575,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * @param a A node from class diagram.
    * @return String representation.
    */
-  public String prettyprint(ASTCD4AnalysisBase a) {
+  public String prettyprint(ASTCD4AnalysisNode a) {
     getPrinter().clearBuffer();
     a.accept(getRealThis());
     return getPrinter().getContent();

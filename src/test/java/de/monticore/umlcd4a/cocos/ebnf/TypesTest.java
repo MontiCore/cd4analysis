@@ -98,7 +98,7 @@ public class TypesTest extends AbstractCoCoTest {
      * @see de.se_rwth.commons.logging.Log#doGetErrorCount()
      */
     @Override
-    protected int doGetErrorCount() {
+    protected long doGetErrorCount() {
       // always prevents system exit
       return 0;
     }

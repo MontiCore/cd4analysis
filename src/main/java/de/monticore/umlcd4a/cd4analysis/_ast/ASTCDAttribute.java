@@ -6,7 +6,7 @@ import de.monticore.types.types._ast.ASTType;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP
-    implements ASTCD4AnalysisBase {
+    implements ASTCD4AnalysisNode {
   
   protected ASTCDAttribute() {
   }

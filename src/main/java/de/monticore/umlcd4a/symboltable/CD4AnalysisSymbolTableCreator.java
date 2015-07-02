@@ -22,7 +22,7 @@ import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisBase;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
@@ -52,7 +52,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
    * @param rootNode the root node
    * @return the first scope that was created
    */
-  default Scope createFromAST(ASTCD4AnalysisBase rootNode) {
+  default Scope createFromAST(ASTCD4AnalysisNode rootNode) {
     requireNonNull(rootNode);
     rootNode.accept(this);
     return getFirstCreatedScope();

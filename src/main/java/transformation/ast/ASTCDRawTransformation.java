@@ -202,7 +202,7 @@ public class ASTCDRawTransformation {
       String returnType, List<String> paramTypes) {
     ASTReturnType astReturnType = createType(returnType);
     ASTCDParameterList cdParameters = createCdMethodParameters(paramTypes);
-    ASTModifier modifier = ASTModifier.getBuilder().r_public(true).build();
+    ASTModifier modifier = ASTModifier.getBuilder().r__public(true).build();
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
         .name(methodName)
         .returnType(astReturnType)
@@ -227,7 +227,7 @@ public class ASTCDRawTransformation {
       List<String> paramTypes) {
     ASTVoidType returnType = ASTVoidType.getBuilder().build();
     ASTCDParameterList cdParameters = createCdMethodParameters(paramTypes);
-    ASTModifier modifier = ASTModifier.getBuilder().r_public(true).build();
+    ASTModifier modifier = ASTModifier.getBuilder().r__public(true).build();
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
         .name(methodName)
         .returnType(returnType)

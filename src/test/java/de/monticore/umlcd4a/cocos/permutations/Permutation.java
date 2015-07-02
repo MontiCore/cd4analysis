@@ -11,7 +11,7 @@ import mc.ast.ASTNode;
 import com.google.common.collect.Sets;
 
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisBase;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.monticore.utils.ForwardingASTNode;
 
@@ -66,12 +66,12 @@ public class Permutation<T extends ASTNode> extends ForwardingASTNode<T> {
     IndentPrinter indentPrinter = new IndentPrinter();
     CDPrettyPrinterConcreteVisitor prettyPrinter = new CDPrettyPrinterConcreteVisitor(indentPrinter);
     // TODO MB,SO Find better solution
-    if (delegate instanceof ASTCD4AnalysisBase) {
+    if (delegate instanceof ASTCD4AnalysisNode) {
       prettyPrinter.visit(delegate);
     }
     for (ASTNode astNode : astNodes) {
-      if (astNode instanceof ASTCD4AnalysisBase) {
-        prettyPrinter.prettyprint((ASTCD4AnalysisBase) astNode);
+      if (astNode instanceof ASTCD4AnalysisNode) {
+        prettyPrinter.prettyprint((ASTCD4AnalysisNode) astNode);
       }
     }
     return indentPrinter.getContent();
