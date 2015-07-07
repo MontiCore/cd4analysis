@@ -17,7 +17,7 @@
     <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
-    <se-commons.version>1.7.4</se-commons.version>
+    <se-commons.version>1.7.5-SNAPSHOT</se-commons.version>
     <antlr.version>4.5</antlr.version>
 
     <!-- .. Plugins ....................................................... -->
