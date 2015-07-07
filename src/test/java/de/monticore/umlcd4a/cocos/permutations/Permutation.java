@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
-import mc.ast.ASTNode;
+import de.monticore.ast.ASTNode;
 
 import com.google.common.collect.Sets;
 

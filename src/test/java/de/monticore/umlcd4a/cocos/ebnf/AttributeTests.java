@@ -8,8 +8,6 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import java.util.Arrays;
 import java.util.Collection;
 
-import mc.ast.SourcePosition;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,6 +17,7 @@ import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.SourcePosition;
 
 /**
  * TODO: Write me!

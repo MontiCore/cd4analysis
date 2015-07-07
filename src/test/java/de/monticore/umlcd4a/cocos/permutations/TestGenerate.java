@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import mc.ast.ASTNode;
+import de.monticore.ast.ASTNode;
 
 import org.junit.Ignore;
 import org.junit.Test;

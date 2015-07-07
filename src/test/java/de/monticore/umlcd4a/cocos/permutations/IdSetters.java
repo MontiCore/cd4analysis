@@ -3,7 +3,7 @@ package de.monticore.umlcd4a.cocos.permutations;
 import java.util.Collection;
 import java.util.Optional;
 
-import mc.ast.ASTNode;
+import de.monticore.ast.ASTNode;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;

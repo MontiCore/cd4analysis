@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
-import mc.ast.SourcePosition;
-
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,6 +28,7 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
+import de.se_rwth.commons.SourcePosition;
 
 /**
  * Simple test showing how to test CoCos.
