@@ -201,7 +201,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     final CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope()
         .get());
     typeReference.setStringRepresentation(TypesPrinter.printType(astAttribute.getType()));
-    
+    typeReference.setAstNode(astAttribute.getType());
+
     final CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
     
     if (astAttribute.getModifier().isPresent()) {
