@@ -97,7 +97,6 @@ public abstract class AbstractCoCoTest {
     try {
       Optional<ASTCDCompilationUnit> root = parser.parse(model.toString());
       if (root.isPresent()) {
-        
         // create Symboltable
         Set<Path> p = new HashSet<>();
         p.add(model.toAbsolutePath());

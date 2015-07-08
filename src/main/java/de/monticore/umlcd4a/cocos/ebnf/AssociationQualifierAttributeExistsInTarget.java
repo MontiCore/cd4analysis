@@ -25,10 +25,6 @@ import de.se_rwth.commons.logging.Log;
 public class AssociationQualifierAttributeExistsInTarget
     implements CD4AnalysisASTCDAssociationCoCo {
   
-  public static final String ERROR_CODE = "0xC4A20";
-  
-  public static final String ERROR_MSG_FORMAT = "The qualified association %s expects the attribute %s to exist in the referenced type %s.";
-  
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
    */
@@ -37,15 +33,12 @@ public class AssociationQualifierAttributeExistsInTarget
     // only check other side when first side generated no error.
     boolean err = false;
     
-    // TODO RH checks einkommentieren wenn #1627 bearbeitet wurde
     if (node.getLeftQualifier().isPresent()) {
-      // err = check(node.getLeftQualifier().get(),
-      // node.getRightReferenceName(), node);
+      err = check(node.getLeftQualifier().get(), node.getRightReferenceName(), node);
     }
     
     if (!err && node.getRightQualifier().isPresent()) {
-      // check(node.getRightQualifier().get(), node.getLeftReferenceName(),
-      // node);
+      check(node.getRightQualifier().get(), node.getLeftReferenceName(), node);
     }
   }
   
@@ -66,7 +59,6 @@ public class AssociationQualifierAttributeExistsInTarget
       Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope().get()
           .resolve(referencedType.toString(), CDTypeSymbol.KIND);
       if (!referencedTypeSymOpt.isPresent()) {
-        // TODO symbol must exist??? s. #1627
         Log.error(String.format("0xC4A80 The referenced type %s cannot be resolved.",
             referencedType.toString()));
       }
@@ -74,8 +66,8 @@ public class AssociationQualifierAttributeExistsInTarget
         CDTypeSymbol referencedTypeSym = referencedTypeSymOpt.get();
         if (!referencedTypeSym.getField(expectedAttributeName).isPresent()) {
           hasError = true;
-          CoCoLog.error(ERROR_CODE,
-              String.format(ERROR_MSG_FORMAT,
+          CoCoLog.error("0xC4A20",
+              String.format("The qualified association %s expects the attribute %s to exist in the referenced type %s.",
                   CD4ACoCoHelper.printAssociation(node),
                   expectedAttributeName,
                   referencedTypeSym.getName()),

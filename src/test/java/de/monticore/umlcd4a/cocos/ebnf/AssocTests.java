@@ -1645,7 +1645,6 @@ public class AssocTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore("waiting for symbol of associations, see #1627")
   @Test
   public void testQualifiedAssoc() {
     
