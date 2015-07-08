@@ -1,8 +1,8 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that association names start lower-case.
@@ -11,16 +11,12 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
  */
 public class AssociationNameLowerCase implements CD4AnalysisASTCDAssociationCoCo {
   
-  public static final String ERROR_CODE = "0xC4A16";
-  
-  public static final String ERROR_MSG_FORMAT = "Association %s must start in lower-case.";
-  
   @Override
   public void check(ASTCDAssociation a) {
     if (a.getName().isPresent()) {
       if (!Character.isLowerCase(a.getName().get().charAt(0))) {
-        CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, a.getName().get()),
+        Log.error(
+            String.format("0xC4A16 Association %s must start in lower-case.", a.getName().get()),
             a.get_SourcePositionStart());
       }
     }

@@ -5,9 +5,9 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Attributes may not be abstract all others are allowed.
@@ -15,9 +15,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
  * @author Robert Heim
  */
 public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
-  public static final String ERROR_CODE = "0xC4A52";
-  
-  public static final String ERROR_MSG_FORMAT = "Attribute %s may not be abstract.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
@@ -25,9 +22,7 @@ public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
   @Override
   public void check(ASTCDAttribute attr) {
     if (attr.getModifier().isPresent() && attr.getModifier().get().isAbstract()) {
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, attr.getName()),
+      Log.error(String.format("0xC4A52 Attribute %s may not be abstract.", attr.getName()),
           attr.get_SourcePositionStart());
     }
   }

@@ -2,13 +2,13 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that role names do not conflict with attributes in source types nor
@@ -20,11 +20,7 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  */
 public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisASTCDAssociationCoCo {
   
-  public static final String ERROR_CODE = "0xC4A27";
-  
   public static final String AUTOMATICALLY_INTRODUCED = " automatically introduced";
-  
-  public static final String ERROR_MSG_FORMAT = "The%s role name %s of class %s for association %s conflicts with an attribute in %s.";
   
   @Override
   public void check(ASTCDAssociation a) {
@@ -68,14 +64,11 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
         .findAny();
     
     if (conflictingAttribute.isPresent()) {
-      CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT,
-              automaticallyIntroduced,
-              roleName,
-              targetType,
-              CD4ACoCoHelper.printAssociation(assoc),
-              conflictingAttribute.get().getEnclosingScope().getSpanningSymbol().get().getName()),
-          assoc.get_SourcePositionStart());
+      error(automaticallyIntroduced,
+          roleName,
+          targetType,
+          assoc,
+          conflictingAttribute.get().getEnclosingScope().getSpanningSymbol().get().getName());
       return true;
     }
     
@@ -97,17 +90,27 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
           .findAny();
     }
     if (conflictingAssoc.isPresent()) {
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT,
-              automaticallyIntroduced,
-              roleName,
-              targetType,
-              CD4ACoCoHelper.printAssociation(assoc),
-              conflictingAssoc.get().getSourceType().getName()),
-          assoc.get_SourcePositionStart());
+      error(automaticallyIntroduced,
+          roleName,
+          targetType,
+          assoc,
+          conflictingAssoc.get().getSourceType().getName());
       return true;
     }
     return false;
+  }
+  
+  private void error(String automaticallyIntroduced, String roleName, String targetType,
+      ASTCDAssociation assoc, String conflictingAttributeName) {
+    Log.error(String
+        .format(
+            "0xC4A27 The%s role name %s of class %s for association %s conflicts with an attribute in %s.",
+            automaticallyIntroduced,
+            roleName,
+            targetType,
+            CD4ACoCoHelper.printAssociation(assoc),
+            conflictingAttributeName,
+            assoc.get_SourcePositionStart()));
+    
   }
 }

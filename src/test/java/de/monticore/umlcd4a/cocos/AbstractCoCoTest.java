@@ -5,10 +5,11 @@
  */
 package de.monticore.umlcd4a.cocos;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
@@ -16,8 +17,6 @@ import java.util.Set;
 
 import org.antlr.v4.runtime.RecognitionException;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
@@ -29,6 +28,8 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * TODO: Write me!
@@ -69,13 +70,13 @@ public abstract class AbstractCoCoTest {
    * @param expectedErrors
    */
   protected void testModelForErrors(String model,
-      Collection<CoCoFinding> expectedErrors) {
+      Collection<Finding> expectedErrors) {
     CD4AnalysisCoCoChecker checker = getChecker();
     
     ASTCDCompilationUnit root = loadModel(model);
     checker.checkAll(root);
-    Assert.assertEqualErrorCounts(expectedErrors, CoCoLog.getFindings());
-    Assert.assertErrorCodeAndMsg(expectedErrors, CoCoLog.getFindings());
+    Assert.assertEqualErrorCounts(expectedErrors, Log.getFindings());
+    Assert.assertErrorMsg(expectedErrors, Log.getFindings());
   }
   
   /**
@@ -88,7 +89,8 @@ public abstract class AbstractCoCoTest {
     CD4AnalysisCoCoChecker checker = getChecker();
     ASTCDCompilationUnit root = loadModel(model);
     checker.checkAll(root);
-    Assert.assertEqualErrorCounts(new ArrayList<CoCoFinding>(), CoCoLog.getFindings());
+    assertEquals(0,
+        Log.getFindings().stream().filter(f -> f.isError()).count());
   }
   
   protected ASTCDCompilationUnit loadModel(String modelFullQualifiedFilename) {

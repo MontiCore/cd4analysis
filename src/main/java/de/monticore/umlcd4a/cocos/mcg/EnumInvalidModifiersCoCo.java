@@ -5,10 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Enums may only be public (or have no modifier).
@@ -16,9 +16,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
  * @author Robert Heim
  */
 public class EnumInvalidModifiersCoCo implements CD4AnalysisASTCDEnumCoCo {
-  public static final String ERROR_CODE = "0xC4A55";
-  
-  public static final String ERROR_MSG_FORMAT = "Enum %s has invalid modifier %s.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum)
@@ -38,9 +35,9 @@ public class EnumInvalidModifiersCoCo implements CD4AnalysisASTCDEnumCoCo {
   
   private void check(boolean invalid, String modifier, ASTModifier mod, ASTCDEnum node) {
     if (invalid) {
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, node.getName(), "\"" + modifier + "\""),
+      Log.error(
+          String.format("0xC4A55 Enum %s has invalid modifier %s.", node.getName(), "\"" + modifier
+              + "\""),
           mod.get_SourcePositionStart());
     }
   }

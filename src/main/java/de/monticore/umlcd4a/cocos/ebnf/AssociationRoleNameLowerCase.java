@@ -1,9 +1,9 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that role names start lower-case.
@@ -11,10 +11,6 @@ import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
  * @author Robert Heim
  */
 public class AssociationRoleNameLowerCase implements CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A17";
-  
-  public static final String ERROR_MSG_FORMAT = "Role %s of association %s must start in lower-case.";
   
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -39,8 +35,8 @@ public class AssociationRoleNameLowerCase implements CD4AnalysisASTCDAssociation
       return false;
     }
     if (!Character.isLowerCase(roleName.charAt(0))) {
-      CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, roleName, CD4ACoCoHelper.printAssociation(assoc)),
+      Log.error(String.format("0xC4A17 Role %s of association %s must start in lower-case.",
+          roleName, CD4ACoCoHelper.printAssociation(assoc)),
           assoc.get_SourcePositionStart());
       return true;
     }

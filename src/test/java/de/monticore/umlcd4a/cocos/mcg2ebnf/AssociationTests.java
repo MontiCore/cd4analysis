@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos that restrict ASTCDAssociation to match the EBNF grammar.
@@ -38,12 +38,12 @@ public class AssociationTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   @Test
@@ -53,16 +53,12 @@ public class AssociationTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding.error(errorCode,
-                "Association assoc1 (A -> B) may not have stereotypes."),
-            CoCoFinding.error(errorCode,
-                "Association (A <- B) may not have stereotypes."),
-            CoCoFinding.error(errorCode,
-                "Association (A <-> B) may not have stereotypes."),
-            CoCoFinding.error(errorCode,
-                "Association (A -- B) may not have stereotypes.")
+            Finding.error(errorCode + " Association assoc1 (A -> B) may not have stereotypes."),
+            Finding.error(errorCode + " Association (A <- B) may not have stereotypes."),
+            Finding.error(errorCode + " Association (A <-> B) may not have stereotypes."),
+            Finding.error(errorCode + " Association (A -- B) may not have stereotypes.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -75,28 +71,28 @@ public class AssociationTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding
+            Finding
                 .error(
-                    errorCode,
-                    "Association ends of association assoc1 (A -> B) may not have modifieres except the stereotype <<ordered>>."),
-            CoCoFinding
+                errorCode
+                    + " Association ends of association assoc1 (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            Finding
                 .error(
-                    errorCode,
-                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
-            CoCoFinding
+                errorCode
+                    + " Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            Finding
                 .error(
-                    errorCode,
-                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
-            CoCoFinding
+                errorCode
+                    + " Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            Finding
                 .error(
-                    errorCode,
-                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
-            CoCoFinding
+                errorCode
+                    + " Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>."),
+            Finding
                 .error(
-                    errorCode,
-                    "Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>.")
+                errorCode
+                    + " Association ends of association (A -> B) may not have modifieres except the stereotype <<ordered>>.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

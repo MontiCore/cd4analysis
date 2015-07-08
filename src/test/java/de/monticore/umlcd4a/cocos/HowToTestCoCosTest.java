@@ -19,8 +19,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
@@ -29,6 +27,8 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.se_rwth.commons.SourcePosition;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Simple test showing how to test CoCos.
@@ -41,12 +41,12 @@ public class HowToTestCoCosTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() throws RecognitionException, IOException {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
     
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/A.cd");
     CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
@@ -63,17 +63,17 @@ public class HowToTestCoCosTest {
     SucceedingCoCo succeedingCoCo = new SucceedingCoCo();
     succeedingCoCo.check(clazz);
     
-    assertTrue(CoCoLog.getFindings().isEmpty());
+    assertTrue(Log.getFindings().isEmpty());
     
     // failing coco with expected errors
     FailingCoCo failingCoCo = new FailingCoCo();
     failingCoCo.check(clazz);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error("0x...", "msg", new SourcePosition(1, 1))
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error("0x... msg", new SourcePosition(1, 1))
         );
     
-    Assert.assertErrors(expectedErrors, CoCoLog.getFindings());
+    Assert.assertErrors(expectedErrors, Log.getFindings());
   }
   
   @Test
@@ -87,15 +87,15 @@ public class HowToTestCoCosTest {
     // no errors check
     checker.addCoCo(succeedingCoco);
     checker.checkAll(astRoot);
-    assertTrue(CoCoLog.getFindings().isEmpty());
+    assertTrue(Log.getFindings().isEmpty());
     
     // check that expected errors occure
     checker.addCoCo(failingCoCo);
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error("0x...", "msg", new SourcePosition(1, 1))
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error("0x... msg", new SourcePosition(1, 1))
         );
     checker.checkAll(astRoot);
-    Assert.assertErrors(expectedErrors, CoCoLog.getFindings());
+    Assert.assertErrors(expectedErrors, Log.getFindings());
   }
   
   private static class SucceedingCoCo implements CD4AnalysisASTCDClassCoCo {
@@ -106,7 +106,7 @@ public class HowToTestCoCosTest {
   
   private static class FailingCoCo implements CD4AnalysisASTCDClassCoCo {
     public void check(ASTCDClass node) {
-      CoCoLog.error("0x...", "msg", new SourcePosition(1, 1));
+      Log.error("0x... msg", new SourcePosition(1, 1));
     }
   }
 }

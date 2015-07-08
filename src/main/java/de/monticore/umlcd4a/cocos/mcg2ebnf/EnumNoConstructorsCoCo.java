@@ -5,10 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Disables usage of constructors in classes.
@@ -16,9 +16,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
  * @author Robert Heim
  */
 public class EnumNoConstructorsCoCo implements CD4AnalysisASTCDEnumCoCo {
-  public static final String ERROR_CODE = "0xC4A69";
-  
-  public static final String ERROR_MSG_FORMAT = "Enum %s may not have constructors.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum)
@@ -27,9 +24,7 @@ public class EnumNoConstructorsCoCo implements CD4AnalysisASTCDEnumCoCo {
   public void check(ASTCDEnum node) {
     if (node.getCDConstructors().size() > 0) {
       ASTCDConstructor constr = node.getCDConstructors().get(0);
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, node.getName()),
+      Log.error(String.format("0xC4A69 Enum %s may not have constructors.", node.getName()),
           constr.get_SourcePositionStart());
     }
   }

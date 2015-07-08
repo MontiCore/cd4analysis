@@ -7,7 +7,6 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTType;
 import de.monticore.umlcd4a.BuiltInTypes;
@@ -16,6 +15,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that type of the type-qualifier of an type-qualified association
@@ -25,11 +25,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  */
 public class AssociationQualifierTypeExists
     implements CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A19";
-  
-  public static final String ERROR_MSG_FORMAT = "The type %s of the typed qualified association %s could not be found. Only external datatypes and types defined within the classdiagram may be used.";
-  
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
    */
@@ -64,10 +59,12 @@ public class AssociationQualifierTypeExists
             .resolve(typeName, CDTypeSymbol.KIND);
         if (!typeSym.isPresent()) {
           hasError = true;
-          CoCoLog.error(ERROR_CODE,
-              String.format(ERROR_MSG_FORMAT,
-                  typeName,
-                  CD4ACoCoHelper.printAssociation(node)),
+          Log.error(
+              String
+                  .format(
+                      "0xC4A19 The type %s of the typed qualified association %s could not be found. Only external datatypes and types defined within the classdiagram may be used.",
+                      typeName,
+                      CD4ACoCoHelper.printAssociation(node)),
               qualifier.get_SourcePositionStart());
         }
       }

@@ -2,7 +2,6 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
@@ -10,6 +9,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValueList;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that the cardinality of an ordered association is greater than 1.
@@ -18,10 +18,6 @@ import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
  */
 public class AssociationOrderedCardinalityGreaterOne implements
     CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A24";
-  
-  public static final String ERROR_MSG_FORMAT = "Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
@@ -51,8 +47,11 @@ public class AssociationOrderedCardinalityGreaterOne implements
   private boolean check(Optional<ASTCardinality> card, ASTCDAssociation assoc) {
     if (card.isPresent()) {
       if (card.get().isOne() || card.get().isOptional()) {
-        CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, CD4ACoCoHelper.printAssociation(assoc)),
+        Log.error(
+            String
+                .format(
+                    "0xC4A24 Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
+                    CD4ACoCoHelper.printAssociation(assoc)),
             assoc.get_SourcePositionStart());
         return true;
       }

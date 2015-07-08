@@ -1,10 +1,10 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that the cardinality of compositions is not larger than one. Note that
@@ -16,10 +16,6 @@ import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
  */
 public class CompositionCardinalityValid implements
     CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A18";
-  
-  public static final String ERROR_MSG_FORMAT = "The composition %s has an invalid cardinality %s larger than one.";
   
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -36,10 +32,10 @@ public class CompositionCardinalityValid implements
       boolean isCardinalityValid = cardinality.isOne() | cardinality.isOptional();
       
       if (!isCardinalityValid) {
-        CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT,
-                CD4ACoCoHelper.printAssociation(assoc),
-                CD4ACoCoHelper.printCardinality(cardinality)),
+        Log.error(String.format(
+            "0xC4A18 The composition %s has an invalid cardinality %s larger than one.",
+            CD4ACoCoHelper.printAssociation(assoc),
+            CD4ACoCoHelper.printCardinality(cardinality)),
             assoc.get_SourcePositionStart());
       }
     }

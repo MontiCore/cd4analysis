@@ -2,12 +2,12 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks if the source of an association is defined within the classdiagram
@@ -17,10 +17,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  */
 public class AssociationSourceTypeNotExternal implements
     CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A22";
-  
-  public static final String ERROR_MSG_FORMAT = "Association %s is invalid, because an association's source may not be an external type.";
   
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -56,8 +52,11 @@ public class AssociationSourceTypeNotExternal implements
     else {
       assocString = CD4ACoCoHelper.printAssociation(assoc);
     }
-    CoCoLog.error(ERROR_CODE,
-        String.format(ERROR_MSG_FORMAT, assocString),
+    Log.error(
+        String
+            .format(
+                "0xC4A22 Association %s is invalid, because an association's source may not be an external type.",
+                assocString),
         assoc.get_SourcePositionStart());
   }
   

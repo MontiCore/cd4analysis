@@ -7,10 +7,10 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.HashMap;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Ensures that an attribute name does not occur twice in a class.
@@ -18,10 +18,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
  * @author Robert Heim
  */
 public class AttributeUniqueInClassCoco implements CD4AnalysisASTCDClassCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A15";
-  
-  public static final String ERROR_MSG_FORMAT = "Attribute %s is defined multiple times in class %s.";
   
   @Override
   public void check(ASTCDClass node) {
@@ -35,9 +31,9 @@ public class AttributeUniqueInClassCoco implements CD4AnalysisASTCDClassCoCo {
     
     if (!duplicates.isEmpty()) {
       for (ASTCDAttribute duplicate : duplicates.values()) {
-        CoCoLog.error(
-            ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, duplicate.getName(), node.getName()),
+        Log.error(
+            String.format("0xC4A15 Attribute %s is defined multiple times in class %s.",
+                duplicate.getName(), node.getName()),
             node.get_SourcePositionStart());
       }
     }

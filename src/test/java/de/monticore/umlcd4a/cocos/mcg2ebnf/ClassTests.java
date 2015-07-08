@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos that restrict ASTCDClass to match the EBNF grammar.
@@ -38,12 +38,12 @@ public class ClassTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   @Test
@@ -53,21 +53,21 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode,
-            "Class A has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Class B has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Class C has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Class D has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Class E has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Class F has invalid modifiers. Only \"abstract\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Class G has invalid modifiers. Only \"abstract\" is permitted.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding
+            .error(errorCode + " Class A has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class B has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class C has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class D has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class E has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class F has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class G has invalid modifiers. Only \"abstract\" is permitted.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -80,9 +80,9 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Class A may not have constructors."),
-        CoCoFinding.error(errorCode, "Class B may not have constructors.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Class A may not have constructors."),
+        Finding.error(errorCode + " Class B may not have constructors.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -95,9 +95,9 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Class A may not have any methods."),
-        CoCoFinding.error(errorCode, "Class B may not have any methods.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Class A may not have any methods."),
+        Finding.error(errorCode + " Class B may not have any methods.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

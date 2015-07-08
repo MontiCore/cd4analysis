@@ -1,8 +1,8 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that attribute names start lower-case.
@@ -11,15 +11,10 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
  */
 public class AttributeNameLowerCase implements CD4AnalysisASTCDAttributeCoCo {
   
-  public static final String ERROR_CODE = "0xC4A12";
-  
-  public static final String ERROR_MSG_FORMAT = "Attribute %s must start in lower-case.";
-  
   @Override
   public void check(ASTCDAttribute a) {
     if (!Character.isLowerCase(a.getName().charAt(0))) {
-      CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, a.getName()),
+      Log.error(String.format("0xC4A12 Attribute %s must start in lower-case.", a.getName()),
           a.get_SourcePositionStart());
     }
   }

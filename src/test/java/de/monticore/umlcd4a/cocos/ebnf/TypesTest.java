@@ -18,13 +18,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests CoCos dealing with types.
@@ -42,12 +42,12 @@ public class TypesTest extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/";
@@ -61,14 +61,14 @@ public class TypesTest extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding
-                .error(errorCode,
-                    "Invalid type parameter List<Optional<String>>. Generic types may not be nested."),
-            CoCoFinding
-                .error(errorCode,
-                    "Invalid type parameter Optional<List<String>>. Generic types may not be nested.")
+            Finding
+                .error(errorCode
+                    + " Invalid type parameter List<Optional<String>>. Generic types may not be nested."),
+            Finding
+                .error(errorCode
+                    + " Invalid type parameter Optional<List<String>>. Generic types may not be nested.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
@@ -80,17 +80,17 @@ public class TypesTest extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding
-                .error(errorCode,
-                    "Generic type List has no type-parameter. References to generic types must be parametrized."),
-            CoCoFinding
-                .error(errorCode,
-                    "Generic type Optional has no type-parameter. References to generic types must be parametrized."),
-            CoCoFinding
-                .error(errorCode,
-                    "Generic type Set has no type-parameter. References to generic types must be parametrized.")
+            Finding
+                .error(errorCode
+                    + " Generic type List has no type-parameter. References to generic types must be parametrized."),
+            Finding
+                .error(errorCode
+                    + " Generic type Optional has no type-parameter. References to generic types must be parametrized."),
+            Finding
+                .error(errorCode
+                    + " Generic type Set has no type-parameter. References to generic types must be parametrized.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
     
@@ -98,20 +98,21 @@ public class TypesTest extends AbstractCoCoTest {
     Optional<ASTSimpleReferenceType> type = CD4AnalysisParserFactory
         .createSimpleReferenceTypeMCParser().parseString("a.b.C<S>");
     assertTrue(type.isPresent());
-    CoCoLog.getFindings().clear();
-    CoCoLog.setDelegateToLog(false);
+    
+    Log.getFindings().clear();
+    
     // check the coco
     new GenericTypeHasParameters().check(type.get());
     // asert expected error
-    assertEquals(0, CoCoLog.getFindings().size());
+    assertEquals(0, Log.getFindings().size());
     
     type = CD4AnalysisParserFactory.createSimpleReferenceTypeMCParser().parseString("a.b.C<>");
     assertTrue(type.isPresent());
     new GenericTypeHasParameters().check(type.get());
     // asert expected error
-    assertEquals(1, CoCoLog.getFindings().size());
+    assertEquals(1, Log.getFindings().size());
     
-    assertEquals(1, CoCoLog.getFindings().stream().filter(f -> f.buildMsg().contains(errorCode))
+    assertEquals(1, Log.getFindings().stream().filter(f -> f.buildMsg().contains(errorCode))
         .count());
   }
   
@@ -122,17 +123,17 @@ public class TypesTest extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding
-                .error(errorCode,
-                    "Generic type List has 1 type-parameter, but 2 where given ('List<String, String>')."),
-            CoCoFinding
-                .error(errorCode,
-                    "Generic type Optional has 1 type-parameter, but 2 where given ('Optional<String, String>')."),
-            CoCoFinding
-                .error(errorCode,
-                    "Generic type Set has 1 type-parameter, but 2 where given ('Set<String, String>').")
+            Finding
+                .error(errorCode
+                    + " Generic type List has 1 type-parameter, but 2 where given ('List<String, String>')."),
+            Finding
+                .error(errorCode
+                    + " Generic type Optional has 1 type-parameter, but 2 where given ('Optional<String, String>')."),
+            Finding
+                .error(errorCode
+                    + " Generic type Set has 1 type-parameter, but 2 where given ('Set<String, String>').")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
@@ -144,17 +145,17 @@ public class TypesTest extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding
-                .error(errorCode,
-                    "Invalid initialization of the derived attribute a. Derived attributes may not be initialized."),
-            CoCoFinding
-                .error(errorCode,
-                    "Invalid initialization of the derived attribute b. Derived attributes may not be initialized."),
-            CoCoFinding
-                .error(errorCode,
-                    "Invalid initialization of the derived attribute c. Derived attributes may not be initialized.")
+            Finding
+                .error(errorCode
+                    + " Invalid initialization of the derived attribute a. Derived attributes may not be initialized."),
+            Finding
+                .error(errorCode
+                    + " Invalid initialization of the derived attribute b. Derived attributes may not be initialized."),
+            Finding
+                .error(errorCode
+                    + " Invalid initialization of the derived attribute c. Derived attributes may not be initialized.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }

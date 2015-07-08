@@ -7,12 +7,12 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that type of the type-qualifier of an type-qualified association
@@ -22,10 +22,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  */
 public class AssociationSourceNotEnum
     implements CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A21";
-  
-  public static final String ERROR_MSG_FORMAT = "Association %s is invalid, because an association's source may not be an Enumeration.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
@@ -57,9 +53,11 @@ public class AssociationSourceNotEnum
         .resolve(sourceName.toString(), CDTypeSymbol.KIND);
     if (sourceSym.isPresent() && sourceSym.get().isEnum()) {
       hasError = true;
-      CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT,
-              CD4ACoCoHelper.printAssociation(node)),
+      Log.error(
+          String
+              .format(
+                  "0xC4A21 Association %s is invalid, because an association's source may not be an Enumeration.",
+                  CD4ACoCoHelper.printAssociation(node)),
           node.get_SourcePositionStart());
     }
     return hasError;

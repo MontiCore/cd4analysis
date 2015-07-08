@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos that restrict ASTCDInterface to match the EBNF grammar.
@@ -38,12 +38,12 @@ public class InterfaceTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   @Test
@@ -53,13 +53,13 @@ public class InterfaceTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Interface A may not have modifiers."),
-        CoCoFinding.error(errorCode, "Interface B may not have modifiers."),
-        CoCoFinding.error(errorCode, "Interface C may not have modifiers."),
-        CoCoFinding.error(errorCode, "Interface D may not have modifiers."),
-        CoCoFinding.error(errorCode, "Interface E may not have modifiers."),
-        CoCoFinding.error(errorCode, "Interface F may not have modifiers.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Interface A may not have modifiers."),
+        Finding.error(errorCode + " Interface B may not have modifiers."),
+        Finding.error(errorCode + " Interface C may not have modifiers."),
+        Finding.error(errorCode + " Interface D may not have modifiers."),
+        Finding.error(errorCode + " Interface E may not have modifiers."),
+        Finding.error(errorCode + " Interface F may not have modifiers.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -72,10 +72,10 @@ public class InterfaceTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Interface A may not have attributes."),
-        CoCoFinding.error(errorCode, "Interface B may not have attributes."),
-        CoCoFinding.error(errorCode, "Interface C may not have attributes.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Interface A may not have attributes."),
+        Finding.error(errorCode + " Interface B may not have attributes."),
+        Finding.error(errorCode + " Interface C may not have attributes.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -88,9 +88,9 @@ public class InterfaceTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Interface A may not have methods."),
-        CoCoFinding.error(errorCode, "Interface B may not have methods.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Interface A may not have methods."),
+        Finding.error(errorCode + " Interface B may not have methods.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

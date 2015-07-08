@@ -5,10 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Only modifier "abstract" is allowed in the ebnf.
@@ -16,9 +16,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
  * @author Robert Heim
  */
 public class ClassModifierOnlyAbstractCoCo implements CD4AnalysisASTCDClassCoCo {
-  public static final String ERROR_CODE = "0xC4A61";
-  
-  public static final String ERROR_MSG_FORMAT = "Class %s has invalid modifiers. Only \"abstract\" is permitted.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass)
@@ -35,9 +32,9 @@ public class ClassModifierOnlyAbstractCoCo implements CD4AnalysisASTCDClassCoCo 
           | actualMod.isStatic()
           | actualMod.getStereotype().isPresent();
       if (hasInvalidModifier) {
-        CoCoLog.error(
-            ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, node.getName()),
+        Log.error(String.format(
+            "0xC4A61 Class %s has invalid modifiers. Only \"abstract\" is permitted.",
+            node.getName()),
             actualMod.get_SourcePositionStart());
       }
     }

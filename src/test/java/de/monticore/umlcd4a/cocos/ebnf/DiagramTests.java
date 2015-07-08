@@ -13,11 +13,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos for diagrams in general.
@@ -35,12 +35,12 @@ public class DiagramTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
@@ -50,9 +50,8 @@ public class DiagramTests extends AbstractCoCoTest {
     String modelName = "c4A01.cd";
     String errorCode = "0xC4A01";
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode,
-            "First character of the diagram name c4A01 must be upper-case.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " First character of the diagram name c4A01 must be upper-case.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
@@ -66,14 +65,14 @@ public class DiagramTests extends AbstractCoCoTest {
     
     modelName = "C4A02.cd";
     errorCode = "0xC4A02";
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-        CoCoFinding
+        Finding
             .error(
-                errorCode,
-                "The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
+            errorCode
+                + " The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-
+  
 }

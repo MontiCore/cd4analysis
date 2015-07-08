@@ -5,12 +5,12 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDQualifierSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that qualifier is at the correct side w.r.t. navigation direction.
@@ -19,10 +19,6 @@ import de.monticore.umlcd4a.symboltable.CDQualifierSymbol;
  */
 public class AssociationQualifierOnCorrectSide
     implements CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A35";
-  
-  public static final String ERROR_MSG_FORMAT = "The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
@@ -56,12 +52,13 @@ public class AssociationQualifierOnCorrectSide
   private void error(ASTCDQualifier qualifier, ASTCDAssociation node) {
     CDQualifierSymbol sym = (CDQualifierSymbol) qualifier.getSymbol().get();
     String qualifierName = sym.getName();
-    CoCoLog.error(ERROR_CODE,
-        String.format(ERROR_MSG_FORMAT,
-            qualifierName,
-            CD4ACoCoHelper.printAssociation(node)),
+    Log.error(
+        String
+            .format(
+                "0xC4A35 The qualifier %s of the qualified association %s is at an invalid position regarding the association's direction.",
+                qualifierName,
+                CD4ACoCoHelper.printAssociation(node)),
         qualifier.get_SourcePositionStart());
-    
   }
   
 }

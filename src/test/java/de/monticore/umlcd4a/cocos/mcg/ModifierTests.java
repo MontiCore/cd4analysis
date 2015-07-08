@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the modifier cocos.
@@ -38,12 +38,12 @@ public class ModifierTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   @Test
@@ -53,24 +53,40 @@ public class ModifierTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays
+    Collection<Finding> expectedErrors = Arrays
         .asList(
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found."),
-            CoCoFinding.error(errorCode,
-                "Only none or one visibility is supported, but multiple visibilities were found.")
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found."),
+            Finding
+                .error(
+                errorCode
+                    + " Only none or one visibility is supported, but multiple visibilities were found.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

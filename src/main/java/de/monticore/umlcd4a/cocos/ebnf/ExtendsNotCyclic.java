@@ -9,12 +9,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that there are no inheritance cycles.
@@ -22,10 +22,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  * @author Robert Heim
  */
 public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A07";
-  
-  public static final String ERROR_MSG_FORMAT = "The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo#check(de.monticore.umlcd4a._ast.ASTCDDefinition)
@@ -96,7 +92,8 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
    * @param symbol the symbol that produced the error
    */
   private void error(String type, CDTypeSymbol symbol) {
-    CoCoLog.error(ERROR_CODE,
-        String.format(ERROR_MSG_FORMAT, type, symbol.getName()));
+    Log.error(String.format(
+        "0xC4A07 The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", type,
+        symbol.getName()));
   }
 }

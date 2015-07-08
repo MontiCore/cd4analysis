@@ -5,10 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Interfaces may only be public (or have no modifier).
@@ -16,9 +16,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
  * @author Robert Heim
  */
 public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceCoCo {
-  public static final String ERROR_CODE = "0xC4A56";
-  
-  public static final String ERROR_MSG_FORMAT = "Interface %s has invalid modifier %s.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface)
@@ -38,9 +35,9 @@ public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceC
   
   private void check(boolean invalid, String modifier, ASTModifier mod, ASTCDInterface node) {
     if (invalid) {
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, node.getName(), "\"" + modifier + "\""),
+      Log.error(
+          String.format("0xC4A56 Interface %s has invalid modifier %s.", node.getName(), "\""
+              + modifier + "\""),
           mod.get_SourcePositionStart());
     }
   }

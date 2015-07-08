@@ -2,12 +2,12 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that association names do not conflict with attributes in source
@@ -16,10 +16,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  * @author Robert Heim
  */
 public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDAssociationCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A25";
-  
-  public static final String ERROR_MSG_FORMAT = "Association %s conflicts with the attribute %s in %s.";
   
   @Override
   public void check(ASTCDAssociation a) {
@@ -56,10 +52,8 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
         .findAny();
     
     if (conflictingAttribute.isPresent()) {
-      CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, assocName, assocName, conflictingAttribute.get()
-              .getEnclosingScope().getSpanningSymbol().get().getName()),
-          assoc.get_SourcePositionStart());
+      error(assocName, conflictingAttribute.get().getEnclosingScope()
+          .getSpanningSymbol().get().getName(), assoc);
       return true;
     }
     
@@ -78,15 +72,17 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
           .findAny();
     }
     if (conflictingAssoc.isPresent()) {
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT,
-              assocName,
-              assocName,
-              conflictingAssoc.get().getSourceType().getName()),
-          assoc.get_SourcePositionStart());
+      error(assocName,
+          conflictingAssoc.get().getSourceType().getName(),
+          assoc);
       return true;
     }
     return false;
+  }
+  
+  private void error(String assocName, String typeName, ASTCDAssociation assoc) {
+    Log.error(String.format("0xC4A25 Association %s conflicts with the attribute %s in %s.",
+        assocName, assocName, typeName),
+        assoc.get_SourcePositionStart());
   }
 }

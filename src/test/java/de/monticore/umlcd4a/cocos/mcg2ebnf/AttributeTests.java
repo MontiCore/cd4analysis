@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the CoCos that restrict ASTCDAttribute to match the EBNF grammar.
@@ -38,12 +38,12 @@ public class AttributeTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   @Test
@@ -53,23 +53,15 @@ public class AttributeTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode,
-            "Attribute a has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute b has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute c has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute d has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute e has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute f has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute g has invalid modifiers. Only \"/\" is permitted."),
-        CoCoFinding.error(errorCode,
-            "Attribute h has invalid modifiers. Only \"/\" is permitted.")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Attribute a has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute b has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute c has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute d has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute e has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute f has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute g has invalid modifiers. Only \"/\" is permitted."),
+        Finding.error(errorCode + " Attribute h has invalid modifiers. Only \"/\" is permitted.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

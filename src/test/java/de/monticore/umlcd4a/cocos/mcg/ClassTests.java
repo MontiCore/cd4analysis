@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.monticore.cocos.CoCoFinding;
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Tests the class cocos.
@@ -38,12 +38,12 @@ public class ClassTests extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    CoCoLog.setDelegateToLog(false);
+    Log.enableFailQuick(false);
   }
   
   @Before
   public void setUp() {
-    CoCoLog.getFindings().clear();
+    Log.getFindings().clear();
   }
   
   @Test
@@ -53,12 +53,12 @@ public class ClassTests extends AbstractCoCoTest {
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
-    Collection<CoCoFinding> expectedErrors = Arrays.asList(
-        CoCoFinding.error(errorCode, "Class A has invalid modifier \"derived\"."),
-        CoCoFinding.error(errorCode, "Class B has invalid modifier \"derived\"."),
-        CoCoFinding.error(errorCode, "Class C has invalid modifier \"static\"."),
-        CoCoFinding.error(errorCode, "Class D has invalid modifier \"static\"."),
-        CoCoFinding.error(errorCode, "Class E has invalid modifier \"derived\".")
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Class A has invalid modifier \"derived\"."),
+        Finding.error(errorCode + " Class B has invalid modifier \"derived\"."),
+        Finding.error(errorCode + " Class C has invalid modifier \"static\"."),
+        Finding.error(errorCode + " Class D has invalid modifier \"static\"."),
+        Finding.error(errorCode + " Class E has invalid modifier \"derived\".")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

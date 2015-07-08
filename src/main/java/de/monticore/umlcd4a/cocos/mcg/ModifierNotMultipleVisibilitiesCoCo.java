@@ -5,9 +5,9 @@
  */
 package de.monticore.umlcd4a.cocos.mcg;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTModifierCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Modifiers may only have none or exactly one visibility.
@@ -15,9 +15,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTModifierCoCo;
  * @author Robert Heim
  */
 public class ModifierNotMultipleVisibilitiesCoCo implements CD4AnalysisASTModifierCoCo {
-  public static final String ERROR_CODE = "0xC4A54";
-  
-  public static final String ERROR_MSG_FORMAT = "Only none or one visibility is supported, but multiple visibilities were found.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTModifierCoCo#check(de.monticore.umlcd4a._ast.ASTModifier)
@@ -35,9 +32,8 @@ public class ModifierNotMultipleVisibilitiesCoCo implements CD4AnalysisASTModifi
       visibilityCount++;
     }
     if (visibilityCount > 1) {
-      CoCoLog.error(
-          ERROR_CODE,
-          ERROR_MSG_FORMAT,
+      Log.error(
+          "0xC4A54 Only none or one visibility is supported, but multiple visibilities were found.",
           mod.get_SourcePositionStart());
     }
   }

@@ -1,4 +1,5 @@
 /*
+
  * Copyright (c) 2015 RWTH Aachen. All rights reserved.
  *
  * http://www.se-rwth.de/
@@ -9,11 +10,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that overridden attributes are of the same kind.
@@ -22,10 +23,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  */
 public class AttributeOverriddenTypeMatch
     implements CD4AnalysisASTCDAttributeCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A13";
-  
-  public static final String ERROR_MSG_FORMAT = "Class %s overrides the attribute %s (type: %s) of class %s with the different type %s.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
@@ -45,13 +42,15 @@ public class AttributeOverriddenTypeMatch
     
     if (!overriddenSymbols.isEmpty()) {
       CDFieldSymbol anOverriddenSym = overriddenSymbols.get(0);
-      CoCoLog.error(ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT,
-              subClassSym.getName(),
-              anOverriddenSym.getName(),
-              anOverriddenSym.getType().getName(),
-              anOverriddenSym.getEnclosingScope().getName(),
-              attrSym.getType().getName()),
+      Log.error(
+          String
+              .format(
+                  "0xC4A13 Class %s overrides the attribute %s (type: %s) of class %s with the different type %s.",
+                  subClassSym.getName(),
+                  anOverriddenSym.getName(),
+                  anOverriddenSym.getType().getName(),
+                  anOverriddenSym.getEnclosingScope().getName().get(),
+                  attrSym.getType().getName()),
           node.get_SourcePositionStart());
     }
   }

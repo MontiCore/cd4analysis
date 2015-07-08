@@ -5,7 +5,6 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.literals.literals._ast.ASTBooleanLiteral;
 import de.monticore.literals.literals._ast.ASTCharLiteral;
 import de.monticore.literals.literals._ast.ASTDoubleLiteral;
@@ -13,14 +12,18 @@ import de.monticore.literals.literals._ast.ASTFloatLiteral;
 import de.monticore.literals.literals._ast.ASTIntLiteral;
 import de.monticore.literals.literals._ast.ASTLiteral;
 import de.monticore.literals.literals._ast.ASTLongLiteral;
+import de.monticore.literals.literals._ast.ASTSignedDoubleLiteral;
+import de.monticore.literals.literals._ast.ASTSignedFloatLiteral;
 import de.monticore.literals.literals._ast.ASTSignedIntLiteral;
 import de.monticore.literals.literals._ast.ASTSignedLiteral;
+import de.monticore.literals.literals._ast.ASTSignedLongLiteral;
 import de.monticore.literals.literals._ast.ASTStringLiteral;
 import de.monticore.literals.literals._visitor.LiteralsInheritanceVisitor;
 import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that an attribute assignment is compatible w.r.t. the attribute's
@@ -29,10 +32,6 @@ import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
  * @author Robert Heim
  */
 public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A11";
-  
-  public static final String ERROR_MSG_FORMAT = "The value assignment for the attribute %s in class %s is not compatible to its type %s.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
@@ -49,8 +48,11 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
       TypeChecker tc = new TypeChecker(typeName);
       lit.accept(tc);
       if (!tc.isAssignable()) {
-        CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, node.getName(), className, typeName),
+        Log.error(
+            String
+                .format(
+                    "0xC4A11 The value assignment for the attribute %s in class %s is not compatible to its type %s.",
+                    node.getName(), className, typeName),
             node.get_SourcePositionStart());
       }
     }
@@ -124,8 +126,8 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     public void visit(ASTIntLiteral node) {
       check("int", "Integer");
     }
-
-    // TODO RH this should not be required, because ASTSignedIntLiteral astextends ASTIntLiteral 
+    
+    // TODO #1728 this should not be required, but getSuperTypes for symbols of Literals does not include superclass ASTIntLiteral
     @Override
     public void visit(ASTSignedIntLiteral node) {
       check("int", "Integer");
@@ -147,6 +149,12 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
       check("float", "Float");
     }
     
+    // TODO #1728 this should not be required, but getSuperTypes for symbols of Literals does not include superclass ASTFloatLiteral
+    @Override
+    public void visit(ASTSignedFloatLiteral node) {
+      check("float", "Float");
+    }
+    
     /**
      * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTDoubleLiteral)
      */
@@ -155,11 +163,23 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
       check("double", "Double");
     }
     
+    // TODO #1728 this should not be required, but getSuperTypes for symbols of Literals does not include superclass ASTDoubleLiteral
+    @Override
+    public void visit(ASTSignedDoubleLiteral node) {
+      check("double", "Double");
+    }
+    
     /**
      * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTLongLiteral)
      */
     @Override
     public void visit(ASTLongLiteral node) {
+      check("long", "Long");
+    }
+    
+    // TODO #1728 this should not be required, but getSuperTypes for symbols of Literals does not include superclass ASTLongLiteral
+    @Override
+    public void visit(ASTSignedLongLiteral node) {
       check("long", "Long");
     }
   }

@@ -5,10 +5,10 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Disables usage of methods in classes.
@@ -16,9 +16,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
  * @author Robert Heim
  */
 public class ClassNoMethodsCoCo implements CD4AnalysisASTCDClassCoCo {
-  public static final String ERROR_CODE = "0xC4A63";
-  
-  public static final String ERROR_MSG_FORMAT = "Class %s may not have any methods.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass)
@@ -27,9 +24,7 @@ public class ClassNoMethodsCoCo implements CD4AnalysisASTCDClassCoCo {
   public void check(ASTCDClass node) {
     if (node.getCDMethods().size() > 0) {
       ASTCDMethod method = node.getCDMethods().get(0);
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT, node.getName()),
+      Log.error(String.format("0xC4A63 Class %s may not have any methods.", node.getName()),
           method.get_SourcePositionStart());
     }
   }

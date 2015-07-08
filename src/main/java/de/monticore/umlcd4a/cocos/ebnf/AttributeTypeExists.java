@@ -7,12 +7,12 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.BuiltInTypes;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that types of attributes are resolvable.
@@ -21,10 +21,6 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
  */
 public class AttributeTypeExists
     implements CD4AnalysisASTCDAttributeCoCo {
-  
-  public static final String ERROR_CODE = "0xC4A14";
-  
-  public static final String ERROR_MSG_FORMAT = "Type %s of the attribute %s is unknown.";
   
   /**
    * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
@@ -37,10 +33,9 @@ public class AttributeTypeExists
       Optional<CDTypeSymbol> subClassSym = node.getEnclosingScope().get()
           .resolve(typeName, CDTypeSymbol.KIND);
       if (!subClassSym.isPresent()) {
-        CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT,
-                typeName,
-                attrSym.getName()),
+        Log.error(String.format("0xC4A14 Type %s of the attribute %s is unknown.",
+            typeName,
+            attrSym.getName()),
             node.get_SourcePositionStart());
       }
     }

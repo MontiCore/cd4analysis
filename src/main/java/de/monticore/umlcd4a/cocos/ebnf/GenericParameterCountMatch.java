@@ -2,11 +2,11 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTTypeArguments;
 import de.monticore.types.types._cocos.TypesASTSimpleReferenceTypeCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that references to generic types uses a correct parameter count (w.r.t
@@ -39,13 +39,12 @@ public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCo
       int actualCount = typeArguments.getTypeArguments().size();
       int expectedCount = 1;
       if (expectedCount != actualCount) {
-        CoCoLog.error("0xC4A31",
-            String.format(
-                "Generic type %s has %d type-parameter, but %d where given ('%s').",
-                typeWithoutGenerics,
-                expectedCount,
-                actualCount,
-                typeName),
+        Log.error(String.format(
+            "0xC4A31 Generic type %s has %d type-parameter, but %d where given ('%s').",
+            typeWithoutGenerics,
+            expectedCount,
+            actualCount,
+            typeName),
             typeArguments.get_SourcePositionStart());
       }
     }

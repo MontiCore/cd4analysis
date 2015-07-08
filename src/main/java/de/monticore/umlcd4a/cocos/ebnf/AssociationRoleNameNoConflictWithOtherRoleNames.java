@@ -2,12 +2,12 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that role names do not conflict with other role names where the source
@@ -18,11 +18,7 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 public class AssociationRoleNameNoConflictWithOtherRoleNames implements
     CD4AnalysisASTCDAssociationCoCo {
   
-  public static final String ERROR_CODE = "0xC4A28";
-  
   public static final String AUTOMATICALLY_INTRODUCED = " automatically introduced";
-  
-  public static final String ERROR_MSG_FORMAT = "The%s role name %s of class %s for association %s conflicts with the%s role name %s for association %s.";
   
   @Override
   public void check(ASTCDAssociation a) {
@@ -84,16 +80,18 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
           : AUTOMATICALLY_INTRODUCED;
       String conflictingRoleName = conflictingAssoc.get().getDerivedName();
       
-      CoCoLog.error(
-          ERROR_CODE,
-          String.format(ERROR_MSG_FORMAT,
-              automaticallyIntroduced,
-              roleName,
-              targetType,
-              CD4ACoCoHelper.printAssociation(assoc),
-              conflictingRoleNameAuto,
-              conflictingRoleName,
-              CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflictingAssoc.get().getAstNode().get())
+      Log.error(
+          String
+              .format(
+                  "0xC4A28 The%s role name %s of class %s for association %s conflicts with the%s role name %s for association %s.",
+                  automaticallyIntroduced,
+                  roleName,
+                  targetType,
+                  CD4ACoCoHelper.printAssociation(assoc),
+                  conflictingRoleNameAuto,
+                  conflictingRoleName,
+                  CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflictingAssoc.get()
+                      .getAstNode().get())
               ),
           assoc.get_SourcePositionStart());
       return true;

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import de.monticore.cocos.CoCoLog;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
+import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks uniqueness among the names of classes, interfaces, and enums.
@@ -15,9 +15,6 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
  * @author Robert Heim
  */
 public class UniqueTypeNames implements CD4AnalysisASTCDDefinitionCoCo {
-  public static final String ERROR_CODE = "0xC4A04";
-  
-  public static final String ERROR_MSG_FORMAT = "The name %s is used several times. Classes, interfaces and enumerations may not use the same names.";
   
   @Override
   public void check(ASTCDDefinition cdDefinition) {
@@ -31,8 +28,11 @@ public class UniqueTypeNames implements CD4AnalysisASTCDDefinitionCoCo {
     for (ASTCDType type : types) {
       String name = type.getName();
       if (usedNames.contains(name)) {
-        CoCoLog.error(ERROR_CODE,
-            String.format(ERROR_MSG_FORMAT, name),
+        Log.error(
+            String
+                .format(
+                    "0xC4A04 The name %s is used several times. Classes, interfaces and enumerations may not use the same names.",
+                    name),
             type.get_SourcePositionStart());
       }
       usedNames.add(name);
