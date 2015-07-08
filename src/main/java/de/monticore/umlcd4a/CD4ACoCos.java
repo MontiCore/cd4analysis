@@ -30,6 +30,7 @@ import de.monticore.umlcd4a.cocos.ebnf.DiagramNameUpperCase;
 import de.monticore.umlcd4a.cocos.ebnf.EnumConstantsUnique;
 import de.monticore.umlcd4a.cocos.ebnf.EnumImplementOnlyInterfaces;
 import de.monticore.umlcd4a.cocos.ebnf.ExtendsNotCyclic;
+import de.monticore.umlcd4a.cocos.ebnf.GenericParameterCountMatch;
 import de.monticore.umlcd4a.cocos.ebnf.GenericTypeHasParameters;
 import de.monticore.umlcd4a.cocos.ebnf.GenericsNotNested;
 import de.monticore.umlcd4a.cocos.ebnf.InterfaceExtendsOnlyInterfaces;
@@ -106,6 +107,7 @@ public class CD4ACoCos {
     checker.addCoCo(new EnumImplementOnlyInterfaces());
     checker.addCoCo(new GenericsNotNested());
     checker.addCoCo(new GenericTypeHasParameters());
+    checker.addCoCo(new GenericParameterCountMatch());
     checker.addCoCo(new AttributeTypeCompatible());
     checker.addCoCo(new AttributeNameLowerCase());
     checker.addCoCo(new AttributeOverriddenTypeMatch());

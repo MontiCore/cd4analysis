@@ -116,6 +116,28 @@ public class TypesTest extends AbstractCoCoTest {
   }
   
   @Test
+  public void testInvalidTypeParameterCount() {
+    String modelName = "C4A31.cd";
+    String errorCode = "0xC4A31";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
+    Collection<CoCoFinding> expectedErrors = Arrays
+        .asList(
+            CoCoFinding
+                .error(errorCode,
+                    "Generic type List has 1 type-parameter, but 2 where given ('List<String, String>')."),
+            CoCoFinding
+                .error(errorCode,
+                    "Generic type Optional has 1 type-parameter, but 2 where given ('Optional<String, String>')."),
+            CoCoFinding
+                .error(errorCode,
+                    "Generic type Set has 1 type-parameter, but 2 where given ('Set<String, String>').")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+  
+  @Test
   public void testInvalidInitializationOfDerivedAttr() {
     String modelName = "C4A34.cd";
     String errorCode = "0xC4A34";
