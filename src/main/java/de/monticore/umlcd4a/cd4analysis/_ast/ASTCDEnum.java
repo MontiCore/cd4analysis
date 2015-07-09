@@ -29,4 +29,7 @@ public class ASTCDEnum extends ASTCDEnumTOP {
     return printer.printEnumConstants(getCDEnumConstants());
   }
   
+  public String printInterfaces() {
+    return printer.printReferenceList(getInterfaces());
+  }
 }
