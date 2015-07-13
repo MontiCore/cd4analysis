@@ -1,0 +1,12 @@
+classdiagram CDWithoutPackage {
+
+  class A extends B {
+
+  }
+
+  class B {
+
+  }
+
+
+}
