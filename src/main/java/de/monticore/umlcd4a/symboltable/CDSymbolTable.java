@@ -5,18 +5,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static de.monticore.symboltable.Symbols.sortSymbolsByPosition;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonSymbol;
@@ -70,13 +68,7 @@ public class CDSymbolTable {
   private GlobalScope createSymboltable(ASTCDCompilationUnit ast,
       List<File> modelPaths) {
     
-    // convert paths
-    Set<Path> p = Sets.newHashSet();
-    for (File mP : modelPaths) {
-      p.add(Paths.get(mP.getAbsolutePath()));
-    }
-    
-    ModelPath modelPath = new ModelPath(p);
+    ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())));
     
     GlobalScope globalScope = new GlobalScope(modelPath,
         cd4AnalysisLang.getModelLoader(), resolverConfiguration);

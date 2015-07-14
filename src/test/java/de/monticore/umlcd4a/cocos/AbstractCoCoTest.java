@@ -11,9 +11,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 import org.antlr.v4.runtime.RecognitionException;
 
@@ -99,10 +97,8 @@ public abstract class AbstractCoCoTest {
     try {
       Optional<ASTCDCompilationUnit> root = parser.parse(model.toString());
       if (root.isPresent()) {
-        // create Symboltable
-        Set<Path> p = new HashSet<>();
-        p.add(model.toAbsolutePath());
-        ModelPath modelPath = new ModelPath(p);
+        // create Symboltable        
+        ModelPath modelPath = new ModelPath(model.toAbsolutePath());
         ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
         resolverConfiguration.addTopScopeResolvers(cd4AnalysisLang.getResolvers());
         this.globalScope = new GlobalScope(modelPath, cd4AnalysisLang.getModelLoader(),
