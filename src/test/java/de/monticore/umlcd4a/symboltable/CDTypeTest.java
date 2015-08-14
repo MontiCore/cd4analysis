@@ -7,13 +7,17 @@ package de.monticore.umlcd4a.symboltable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Collections;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
+import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
-import org.junit.Test;
 
 public class CDTypeTest {
 
@@ -118,4 +122,16 @@ public class CDTypeTest {
 
   }
 
+  @Ignore("TODO PN<-RH is it expected to not override attributes of the same name, but have both of them in the visible fields? s. #1768")
+  @Test
+  public void testOverrideAttribute() {
+    // class B overrides attribute "s" of superclass A.
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    CDTypeSymbol b = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.OverrideAttribute.B", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(b);
+    assertEquals("B", b.getName());
+    // s is overridden in subclass B
+    assertEquals(1, b.getAllVisibleFields().size());
   }
+}

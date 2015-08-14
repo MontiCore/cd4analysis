@@ -1,0 +1,10 @@
+package de.monticore.umlcd4a.symboltable;
+
+classdiagram OverrideAttribute {
+  class A {
+    String s;
+  }
+  class B extends A {
+    String s;
+  }
+}
