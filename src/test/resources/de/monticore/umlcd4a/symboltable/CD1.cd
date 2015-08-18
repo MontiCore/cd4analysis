@@ -12,6 +12,7 @@ classdiagram CD1 {
      <<SF>> public String name;
      protected int age;
      private String secondName;
+     private List<String> address;
 
      String setName(String name, String prefix);
      private int getAge();

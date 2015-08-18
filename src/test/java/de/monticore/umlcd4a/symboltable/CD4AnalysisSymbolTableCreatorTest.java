@@ -14,6 +14,7 @@ import java.util.Collection;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
@@ -21,6 +22,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
+
 import org.junit.Test;
 
 public class CD4AnalysisSymbolTableCreatorTest {
@@ -87,7 +89,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Associations
     assertEquals(1, personType.getAssociations().size());
     // Fields
-    assertEquals(3, personType.getFields().size());
+    assertEquals(4, personType.getFields().size());
     final CDFieldSymbol nameField = personType.getField("name").get();
     assertEquals("name", nameField.getName());
     assertTrue(nameField.isPublic());
@@ -105,6 +107,19 @@ public class CD4AnalysisSymbolTableCreatorTest {
     final CDFieldSymbol ageField = personType.getField("age").get();
     assertEquals("age", ageField.getName());
     assertTrue(personType.getField("age").get().isProtected());
+    
+    //Type arguments
+    final CDFieldSymbol addressField = personType.getField("address").orElse(null);
+    assertNotNull(addressField);
+    final CDTypeSymbolReference stringList = (CDTypeSymbolReference) addressField.getType();
+    assertEquals("List", stringList.getName());
+    assertEquals("List<String>", stringList.getStringRepresentation());
+    assertEquals(1, stringList.getActualTypeArguments().size());
+    ActualTypeArgument typeArgument = stringList.getActualTypeArguments().get(0);
+    assertEquals("String", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+
     // Field Stereotypes
     assertEquals(1, nameField.getStereotypes().size());
     assertEquals("SF", nameField.getStereotype("SF").get().getName());

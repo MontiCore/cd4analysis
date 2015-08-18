@@ -16,12 +16,19 @@ import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.SymbolTableCreator;
+import de.monticore.symboltable.types.references.ActualTypeArgument;
+import de.monticore.types.TypesHelper;
 import de.monticore.types.TypesPrinter;
+import de.monticore.types.types._ast.ASTComplexReferenceType;
 import de.monticore.types.types._ast.ASTImportStatement;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import de.monticore.types.types._ast.ASTType;
+import de.monticore.types.types._ast.ASTTypeArgument;
+import de.monticore.types.types._ast.ASTTypeArguments;
+import de.monticore.types.types._ast.ASTWildcardType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
@@ -200,8 +207,24 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     final CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, currentScope()
         .get());
-    typeReference.setStringRepresentation(TypesPrinter.printType(astAttribute.getType()));
-    typeReference.setAstNode(astAttribute.getType());
+    ASTType astType = astAttribute.getType();
+    typeReference.setStringRepresentation(TypesPrinter.printType(astType));
+    typeReference.setAstNode(astType);
+    
+    if (astType instanceof ASTSimpleReferenceType) {
+      ASTSimpleReferenceType astSimpleReferenceType = (ASTSimpleReferenceType) astType;
+      if (astSimpleReferenceType.getTypeArguments().isPresent()) {
+        addTypeArgumentsToType(typeReference, astSimpleReferenceType.getTypeArguments()
+            .get());
+      }
+    }
+    else if (astType instanceof ASTComplexReferenceType) {
+      ASTComplexReferenceType astComplexReferenceType = (ASTComplexReferenceType) astType;
+      for (ASTSimpleReferenceType astSimpleReferenceType : astComplexReferenceType
+          .getSimpleReferenceTypes()) {
+        // TODO
+      }
+    }
 
     final CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
     
@@ -236,6 +259,96 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     putInScopeAndLinkWithAst(fieldSymbol, astAttribute);
   }
   
+  /**
+   * TODO: Write me!
+   * @param typeReference
+   * @param astTypeArguments
+   */
+  // TODO: use for all type references
+  default void addTypeArgumentsToType(CDTypeSymbolReference typeReference,
+      ASTTypeArguments astTypeArguments) {
+    List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
+    for (ASTTypeArgument astTypeArgument : astTypeArguments.getTypeArguments()) {
+      if (astTypeArgument instanceof ASTWildcardType) {
+        ASTWildcardType astWildcardType = (ASTWildcardType) astTypeArgument;
+        
+        // Three cases can occur here: lower bound, upper bound, no bound
+        ActualTypeArgument actualTypeArgument = null;
+        if (astWildcardType.lowerBoundIsPresent() || astWildcardType.upperBoundIsPresent())
+        {
+          // We have a bound.
+          // Examples: Set<? extends Number>, Set<? super Integer>
+          
+          // new bound
+          ASTType typeBound = null;
+          CDTypeSymbolReference typeBoundSymbolReference = null;
+          if (astWildcardType.lowerBoundIsPresent()) {
+            typeBound = astWildcardType.getLowerBound().get();
+            int dimension = TypesHelper.getArrayDimensionIfArrayOrZero(typeBound);
+            // TODO PN, GV: add dimension?
+            typeBoundSymbolReference = new CDTypeSymbolReference(
+                TypesPrinter.printTypeWithoutTypeArguments(typeBound),
+                currentScope().get());
+            actualTypeArgument = new ActualTypeArgument(true, false, typeBoundSymbolReference);
+          }
+          else {
+            typeBound = astWildcardType.getUpperBound().get();
+            int dimension = TypesHelper.getArrayDimensionIfArrayOrZero(typeBound);
+            // TODO PN, GV: add dimension?
+            typeBoundSymbolReference = new CDTypeSymbolReference(
+                TypesPrinter.printTypeWithoutTypeArguments(typeBound),
+                currentScope().get());
+            actualTypeArgument = new ActualTypeArgument(false, true, typeBoundSymbolReference);
+          }
+          
+          // init bound
+          addTypeArgumentsOfTypeToReference(typeBoundSymbolReference, typeBound);
+        }
+        else {
+          // No bound. Example: Set<?>
+          actualTypeArgument = new ActualTypeArgument(false, false, null);
+        }
+        
+        actualTypeArguments.add(actualTypeArgument);
+      }
+      else if (astTypeArgument instanceof ASTType) {
+        // type argument is a type:
+        // Examples: Set<Integer>, Set<Set<?>>, Set<java.lang.String>
+        ASTType astType = (ASTType) astTypeArgument;
+        CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(
+            TypesPrinter.printTypeWithoutTypeArguments(astType), currentScope().get());
+        // TODO PN, GV: add dimension?
+        // TypesHelper.getArrayDimensionIfArrayOrZero(astType)
+        
+        addTypeArgumentsOfTypeToReference(typeArgumentSymbolReference, astType);
+        
+        //
+        actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
+      }
+      else {
+        Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
+            + astTypeArgument);
+      }
+    }
+    typeReference.setActualTypeArguments(actualTypeArguments);
+  }
+
+  /**
+   * TODO: Write me!
+   * @param javaTypeBoundSymbolReference
+   * @param typeBound
+   */
+  default void addTypeArgumentsOfTypeToReference(
+      CDTypeSymbolReference cdTypeReference, ASTType astType) {
+    if (astType instanceof ASTSimpleReferenceType) {
+      ASTSimpleReferenceType astSimpleReferenceType = (ASTSimpleReferenceType) astType;
+      if (astSimpleReferenceType.getTypeArguments().isPresent()) {
+        ASTTypeArguments astTypeArguments = astSimpleReferenceType.getTypeArguments().get();
+        addTypeArgumentsToType(cdTypeReference, astTypeArguments);
+      }
+    }
+  }
+
   @Override
   default void endVisit(final ASTCDClass astClass) {
     removeCurrentScope();
