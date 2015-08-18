@@ -273,43 +273,32 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         ASTWildcardType astWildcardType = (ASTWildcardType) astTypeArgument;
         
         // Three cases can occur here: lower bound, upper bound, no bound
-        ActualTypeArgument actualTypeArgument = null;
         if (astWildcardType.lowerBoundIsPresent() || astWildcardType.upperBoundIsPresent())
         {
           // We have a bound.
           // Examples: Set<? extends Number>, Set<? super Integer>
           
           // new bound
-          ASTType typeBound = null;
-          CDTypeSymbolReference typeBoundSymbolReference = null;
-          if (astWildcardType.lowerBoundIsPresent()) {
-            typeBound = astWildcardType.getLowerBound().get();
-            int dimension = TypesHelper.getArrayDimensionIfArrayOrZero(typeBound);
-            // TODO PN, GV: add dimension?
-            typeBoundSymbolReference = new CDTypeSymbolReference(
-                TypesPrinter.printTypeWithoutTypeArguments(typeBound),
-                currentScope().get());
-            actualTypeArgument = new ActualTypeArgument(true, false, typeBoundSymbolReference);
-          }
-          else {
-            typeBound = astWildcardType.getUpperBound().get();
-            int dimension = TypesHelper.getArrayDimensionIfArrayOrZero(typeBound);
-            // TODO PN, GV: add dimension?
-            typeBoundSymbolReference = new CDTypeSymbolReference(
-                TypesPrinter.printTypeWithoutTypeArguments(typeBound),
-                currentScope().get());
-            actualTypeArgument = new ActualTypeArgument(false, true, typeBoundSymbolReference);
-          }
+          boolean lowerBound = astWildcardType.lowerBoundIsPresent();
+          ASTType typeBound = lowerBound ? astWildcardType.getLowerBound().get() : astWildcardType
+              .getUpperBound().get();
+          int dimension = TypesHelper.getArrayDimensionIfArrayOrZero(typeBound);
+          // TODO PN, GV: add dimension?
+          CDTypeSymbolReference typeBoundSymbolReference = new CDTypeSymbolReference(
+              TypesPrinter.printTypeWithoutTypeArguments(typeBound),
+              currentScope().get());
+          ActualTypeArgument actualTypeArgument = new ActualTypeArgument(lowerBound, lowerBound,
+              typeBoundSymbolReference);
           
           // init bound
           addTypeArgumentsOfTypeToReference(typeBoundSymbolReference, typeBound);
+          
+          actualTypeArguments.add(actualTypeArgument);
         }
         else {
           // No bound. Example: Set<?>
-          actualTypeArgument = new ActualTypeArgument(false, false, null);
+          actualTypeArguments.add( new ActualTypeArgument(false, false, null));
         }
-        
-        actualTypeArguments.add(actualTypeArgument);
       }
       else if (astTypeArgument instanceof ASTType) {
         // type argument is a type:
@@ -322,12 +311,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         
         addTypeArgumentsOfTypeToReference(typeArgumentSymbolReference, astType);
         
-        //
         actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
       }
       else {
         Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
-            + astTypeArgument);
+            + typeReference);
       }
     }
     typeReference.setActualTypeArguments(actualTypeArguments);
