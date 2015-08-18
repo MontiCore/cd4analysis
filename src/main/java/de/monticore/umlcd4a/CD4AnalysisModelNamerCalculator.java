@@ -8,14 +8,14 @@ package de.monticore.umlcd4a;
 import java.util.List;
 import java.util.Optional;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import de.monticore.CommonModelNameCalculator;
 import de.monticore.symboltable.SymbolKind;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
+import de.se_rwth.commons.Splitters;
 
 public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
 
@@ -35,12 +35,12 @@ public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
     }
     else if (CDFieldSymbol.KIND.isKindOf(kind)) {
       // e.g., if p.CD.Clazz.Field return p.CD
-      List<String> nameParts = Splitter.on(".").splitToList(name);
+      List<String> nameParts = Splitters.DOT.splitToList(name);
 
       // at least 3, because of CD.Clazz.field
       if (nameParts.size() >= 3) {
         // cut the last two name parts (e.g., Clazz.field)
-        modelName = Joiner.on(".").join(nameParts.subList(0, nameParts.size()-2));
+        modelName = Joiners.DOT.join(nameParts.subList(0, nameParts.size()-2));
       }
 
     }
