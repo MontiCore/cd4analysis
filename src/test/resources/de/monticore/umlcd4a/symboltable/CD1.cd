@@ -13,7 +13,8 @@ classdiagram CD1 {
      protected int age;
      private String secondName;
      private List<String> address;
-
+     private List<? extends Printable> text;
+     private List<? super Printable> photo;
      String setName(String name, String prefix);
      private int getAge();
   }

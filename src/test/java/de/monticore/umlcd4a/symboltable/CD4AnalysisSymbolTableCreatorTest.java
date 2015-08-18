@@ -89,7 +89,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Associations
     assertEquals(1, personType.getAssociations().size());
     // Fields
-    assertEquals(4, personType.getFields().size());
+    assertEquals(6, personType.getFields().size());
     final CDFieldSymbol nameField = personType.getField("name").get();
     assertEquals("name", nameField.getName());
     assertTrue(nameField.isPublic());
@@ -118,6 +118,26 @@ public class CD4AnalysisSymbolTableCreatorTest {
     ActualTypeArgument typeArgument = stringList.getActualTypeArguments().get(0);
     assertEquals("String", typeArgument.getType().getName());
     assertFalse(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+    final CDFieldSymbol textField = personType.getField("text").orElse(null);
+    assertNotNull(textField);
+    final CDTypeSymbolReference listLower = (CDTypeSymbolReference) textField.getType();
+    assertEquals("List", listLower.getName());
+    assertEquals("List<? extends Printable>", listLower.getStringRepresentation());
+    assertEquals(1, listLower.getActualTypeArguments().size());
+    typeArgument = listLower.getActualTypeArguments().get(0);
+    assertEquals("Printable", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertTrue(typeArgument.isUpperBound());
+    final CDFieldSymbol photoField = personType.getField("photo").orElse(null);
+    assertNotNull(photoField);
+    final CDTypeSymbolReference listUpper = (CDTypeSymbolReference) photoField.getType();
+    assertEquals("List", listUpper.getName());
+    assertEquals("List<? super Printable>", listUpper.getStringRepresentation());
+    assertEquals(1, listUpper.getActualTypeArguments().size());
+    typeArgument = listUpper.getActualTypeArguments().get(0);
+    assertEquals("Printable", typeArgument.getType().getName());
+    assertTrue(typeArgument.isLowerBound());
     assertFalse(typeArgument.isUpperBound());
 
     // Field Stereotypes

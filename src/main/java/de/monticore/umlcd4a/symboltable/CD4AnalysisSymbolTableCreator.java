@@ -287,7 +287,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           CDTypeSymbolReference typeBoundSymbolReference = new CDTypeSymbolReference(
               TypesPrinter.printTypeWithoutTypeArguments(typeBound),
               currentScope().get());
-          ActualTypeArgument actualTypeArgument = new ActualTypeArgument(lowerBound, lowerBound,
+          ActualTypeArgument actualTypeArgument = new ActualTypeArgument(lowerBound, !lowerBound,
               typeBoundSymbolReference);
           
           // init bound
