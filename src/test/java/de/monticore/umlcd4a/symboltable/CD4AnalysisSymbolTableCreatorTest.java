@@ -89,7 +89,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Associations
     assertEquals(1, personType.getAssociations().size());
     // Fields
-    assertEquals(6, personType.getFields().size());
+    assertEquals(7, personType.getFields().size());
     final CDFieldSymbol nameField = personType.getField("name").get();
     assertEquals("name", nameField.getName());
     assertTrue(nameField.isPublic());
@@ -139,6 +139,18 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("Printable", typeArgument.getType().getName());
     assertTrue(typeArgument.isLowerBound());
     assertFalse(typeArgument.isUpperBound());
+    final CDFieldSymbol hobbiesField = personType.getField("hobbies").orElse(null);
+    assertNotNull(hobbiesField);
+    final CDTypeSymbolReference firstList = (CDTypeSymbolReference) hobbiesField.getType();
+    assertEquals("List", firstList.getName());
+    assertEquals("List<List<String>>", firstList.getStringRepresentation());
+    assertEquals(1, firstList.getActualTypeArguments().size());
+    typeArgument = firstList.getActualTypeArguments().get(0);
+    final CDTypeSymbolReference secondList = (CDTypeSymbolReference) typeArgument.getType();
+    assertEquals("List", secondList.getName());
+    assertEquals("List<String>", secondList.getStringRepresentation());
+    assertEquals(1, secondList.getActualTypeArguments().size());
+    assertEquals("String", secondList.getActualTypeArguments().get(0).getType().getName());
 
     // Field Stereotypes
     assertEquals(1, nameField.getStereotypes().size());
