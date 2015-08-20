@@ -210,7 +210,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     typeReference.setStringRepresentation(TypesPrinter.printType(astType));
     typeReference.setAstNode(astType);
     
-    addTypeArgumentsToType(typeReference, astType);
+    addTypeArgumentsToTypeSymbol(typeReference, astType);
 
     final CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
     
@@ -250,7 +250,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
    * @param typeReference
    * @param astType
    */
-  default void addTypeArgumentsToType(CDTypeSymbolReference typeReference, ASTType astType) {
+  default void addTypeArgumentsToTypeSymbol(CDTypeSymbolReference typeReference, ASTType astType) {
     if (astType instanceof ASTSimpleReferenceType) {
       ASTSimpleReferenceType astSimpleReferenceType = (ASTSimpleReferenceType) astType;
       if (!astSimpleReferenceType.getTypeArguments().isPresent()) {
@@ -284,7 +284,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
                 typeBoundSymbolReference);
             
             // init bound
-            addTypeArgumentsToType(typeBoundSymbolReference, typeBound);
+            addTypeArgumentsToTypeSymbol(typeBoundSymbolReference, typeBound);
             
             actualTypeArguments.add(actualTypeArgument);
           }
@@ -303,7 +303,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           
           typeArgumentSymbolReference.setStringRepresentation(TypesPrinter.printType(astTypeNoBound));
           
-          addTypeArgumentsToType(typeArgumentSymbolReference, astTypeNoBound);
+          addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
           
           actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
         }
@@ -455,7 +455,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         paramTypeSymbol = new CDTypeSymbolReference(
             TypesPrinter.printType(astParameter.getType()), currentScope().get());
         
-        addTypeArgumentsToType(paramTypeSymbol, astParameter.getType());
+        addTypeArgumentsToTypeSymbol(paramTypeSymbol, astParameter.getType());
         
         if (astParameter.isEllipsis()) {
           methodSymbol.setEllipsisParameterMethod(true);
