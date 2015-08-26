@@ -24,6 +24,7 @@ import de.monticore.types.types._ast.ASTImportStatement;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.types.types._ast.ASTReferenceTypeList;
+import de.monticore.types.types._ast.ASTReturnType;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTType;
 import de.monticore.types.types._ast.ASTTypeArgument;
@@ -250,7 +251,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
    * @param typeReference
    * @param astType
    */
-  default void addTypeArgumentsToTypeSymbol(CDTypeSymbolReference typeReference, ASTType astType) {
+  default void addTypeArgumentsToTypeSymbol(CDTypeSymbolReference typeReference, ASTReturnType astType) {
     if (astType instanceof ASTSimpleReferenceType) {
       ASTSimpleReferenceType astSimpleReferenceType = (ASTSimpleReferenceType) astType;
       if (!astSimpleReferenceType.getTypeArguments().isPresent()) {
@@ -479,6 +480,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     // TODO PN use ASTTypesConverter
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
         TypesPrinter.printReturnType(astMethod.getReturnType()), currentScope().get());
+    addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getReturnType());
     methodSymbol.setReturnType(returnSymbol);
   }
   
