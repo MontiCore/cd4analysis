@@ -22,7 +22,7 @@
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.1.6</mc4.maven.version>
+    <mc4.maven.version>4.1.6.1</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
