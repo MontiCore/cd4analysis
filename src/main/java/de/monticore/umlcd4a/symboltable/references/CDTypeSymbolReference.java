@@ -13,22 +13,22 @@ import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
-import de.monticore.symboltable.types.references.CommonTypeReference;
-import de.monticore.symboltable.types.references.TypeReference;
+import de.monticore.symboltable.types.references.CommonJTypeReference;
+import de.monticore.symboltable.types.references.JTypeReference;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Stereotype;
 
-public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference<CDTypeSymbol> {
+public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReference<CDTypeSymbol> {
   
-  private final TypeReference<CDTypeSymbol> typeReference;
+  private final CommonJTypeReference<CDTypeSymbol> typeReference;
   
   public CDTypeSymbolReference(String name, Scope definingScopeOfReference) {
     super(name);
     
-    typeReference = new CommonTypeReference<>(name, CDTypeSymbol.KIND, definingScopeOfReference);
+    typeReference = new CommonJTypeReference<>(name, CDTypeSymbol.KIND, definingScopeOfReference);
   }
   
   @Override
@@ -44,6 +44,26 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   @Override
   public boolean isReferencedSymbolLoaded() {
     return typeReference.isReferencedSymbolLoaded();
+  }
+
+  @Override
+  public List<ActualTypeArgument> getActualTypeArguments() {
+    return typeReference.getActualTypeArguments();
+  }
+
+  @Override
+  public void setActualTypeArguments(List<ActualTypeArgument> actualTypeArguments) {
+    typeReference.setActualTypeArguments(actualTypeArguments);
+  }
+
+  @Override
+  public void setDimension(int dimension) {
+    typeReference.setDimension(dimension);
+  }
+
+  @Override
+  public int getDimension() {
+    return typeReference.getDimension();
   }
 
   @Override
@@ -126,27 +146,27 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
   
   @Override
-  public Optional<CDTypeSymbol> getSuperClass() {
+  public Optional<CDTypeSymbolReference> getSuperClass() {
     return getReferencedSymbol().getSuperClass();
   }
   
   @Override
-  public void setSuperClass(CDTypeSymbol superClass) {
+  public void setSuperClass(CDTypeSymbolReference superClass) {
     getReferencedSymbol().setSuperClass(superClass);
   }
   
   @Override
-  public List<CDTypeSymbol> getInterfaces() {
+  public List<CDTypeSymbolReference> getInterfaces() {
     return getReferencedSymbol().getInterfaces();
   }
   
   @Override
-  public void addInterface(CDTypeSymbol superInterface) {
+  public void addInterface(CDTypeSymbolReference superInterface) {
     getReferencedSymbol().addInterface(superInterface);
   }
   
   @Override
-  public List<CDTypeSymbol> getSuperTypes() {
+  public List<CDTypeSymbolReference> getSuperTypes() {
     return getReferencedSymbol().getSuperTypes();
   }
   
@@ -316,22 +336,8 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements TypeReference
   }
   
   @Override
-  public int getDimension() {
-    return getReferencedSymbol().getDimension();
-  }
-  
-  @Override
   public void addFormalTypeParameter(CDTypeSymbol formalTypeParameter) {
     getReferencedSymbol().addFormalTypeParameter(formalTypeParameter);
   }
   
-  @Override
-  public List<ActualTypeArgument> getActualTypeArguments() {
-    return typeReference.getActualTypeArguments();
-  }
-  
-  @Override
-  public void setActualTypeArguments(List<ActualTypeArgument> actualTypeArguments) {
-    typeReference.setActualTypeArguments(actualTypeArguments);
-  }
 }

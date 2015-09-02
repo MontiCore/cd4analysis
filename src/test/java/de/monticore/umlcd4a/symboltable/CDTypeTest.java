@@ -12,6 +12,8 @@ import static org.junit.Assert.assertSame;
 
 import java.util.Collections;
 
+import de.monticore.symboltable.CommonScope;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -23,11 +25,11 @@ public class CDTypeTest {
 
   @Test
   public void testGetFields() {
-    CDTypeSymbol dummyType = new CDTypeSymbol("Dummy");
+    final CDTypeSymbolReference dummyTypeRef = new CDTypeSymbolReference("Dummy", new CommonScope(false));
 
-    CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyType);
-    CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyType);
-    CDFieldSymbol fieldSymbol3 = new CDFieldSymbol("field3", dummyType);
+    CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyTypeRef);
+    CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyTypeRef);
+    CDFieldSymbol fieldSymbol3 = new CDFieldSymbol("field3", dummyTypeRef);
 
     CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
     typeSymbol.addField(fieldSymbol1);

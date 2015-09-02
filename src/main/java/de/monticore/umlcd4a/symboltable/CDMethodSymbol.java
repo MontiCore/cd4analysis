@@ -6,12 +6,15 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.types.CommonJMethodSymbol;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
-public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDFieldSymbol> {
+public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbolReference, CDFieldSymbol> {
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
+
+  private CDTypeSymbol definingType;
 
   protected CDMethodSymbol(String name) {
     super(name, KIND);
@@ -47,10 +50,16 @@ public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDFieldSym
     this.stereotypes.add(stereotype);
   }
 
-
   @Override
   public String toString() {
     return CDMethodSymbol.class.getSimpleName() + " " + getName() + " of " + getDefiningType();
   }
 
+  public CDTypeSymbol getDefiningType() {
+    return definingType;
+  }
+
+  public void setDefiningType(final CDTypeSymbol definingType) {
+    this.definingType = definingType;
+  }
 }

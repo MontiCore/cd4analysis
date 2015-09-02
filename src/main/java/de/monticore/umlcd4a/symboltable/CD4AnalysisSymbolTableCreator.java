@@ -375,7 +375,9 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     if (astEnum.getCDEnumConstants() != null) {
       for (final ASTCDEnumConstant astConstant : astEnum.getCDEnumConstants()) {
-        final CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(), enumSymbol);
+        final CDTypeSymbolReference enumReference = new CDTypeSymbolReference(enumSymbol.getName(), enumSymbol.getSpannedScope());
+
+        final CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(), enumReference);
         constantSymbol.setEnumConstant(true);
         // enum constants are implicitly public static final (Java Langspec 3rd
         // Edition Chapter 8.9 Enums)
@@ -487,7 +489,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   default void setExceptionsOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
     if (astMethod.getExceptions() != null) {
       for (final ASTQualifiedName exceptionName : astMethod.getExceptions()) {
-        final CDTypeSymbol exception = new CDTypeSymbolReference(exceptionName.toString(),
+        final CDTypeSymbolReference exception = new CDTypeSymbolReference(exceptionName.toString(),
             currentScope().get());
         methodSymbol.addException(exception);
       }
@@ -622,6 +624,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     if (sourceType.existsReferencedSymbol()) {
       // TODO PN use association reference instead?
+      // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
       sourceType.addAssociation(associationSymbol);
     }
     // the else case should be checked by a context conditions

@@ -5,6 +5,7 @@ import java.util.Optional;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -18,7 +19,7 @@ public class ClassExtendExternalType implements CD4AnalysisASTCDClassCoCo {
   @Override
   public void check(ASTCDClass clazz) {
     CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol().get();
-    Optional<CDTypeSymbol> optSuperType = symbol.getSuperClass();
+    Optional<CDTypeSymbolReference> optSuperType = symbol.getSuperClass();
     if (optSuperType.isPresent()) {
       CDTypeSymbol superType = optSuperType.get();
       if (isExternal(superType)) {

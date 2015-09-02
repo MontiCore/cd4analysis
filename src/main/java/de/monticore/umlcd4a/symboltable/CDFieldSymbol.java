@@ -7,8 +7,9 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.types.CommonJAttributeSymbol;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
-public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
+public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbolReference> {
 
   public static final CDFieldSymbolKind KIND = new CDFieldSymbolKind();
 
@@ -21,7 +22,7 @@ public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbol> {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  public CDFieldSymbol(String name, CDTypeSymbol type) {
+  public CDFieldSymbol(String name, CDTypeSymbolReference type) {
     super(name, KIND, type);
   }
   

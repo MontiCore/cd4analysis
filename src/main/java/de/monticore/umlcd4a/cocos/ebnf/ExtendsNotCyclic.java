@@ -14,6 +14,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -69,7 +70,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   private void checkClass(ASTCDClass node) {
     CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol().get();
     Set<CDTypeSymbol> path = new HashSet<>();
-    Optional<CDTypeSymbol> optSuperSymb = symbol.getSuperClass();
+    Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClass();
     while (optSuperSymb.isPresent()) {
       CDTypeSymbol superSymb = optSuperSymb.get();
       Optional<CDTypeSymbol> existingClassWithSameName = path.stream()

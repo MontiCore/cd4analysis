@@ -268,7 +268,7 @@ public class CDSymbolTable {
     
     return allAssociations;
   }
-  
+
   public boolean isTypeDefinedInModel(CDTypeSymbol type) {
     String currentScopeName = this.cdScope.getName().get();
     if (type instanceof CDTypeSymbolReference) {
@@ -276,7 +276,7 @@ public class CDSymbolTable {
       if (ca.existsReferencedSymbol()) {
         Optional<? extends Scope> parentScope = type.getSpannedScope()
             .getEnclosingScope();
-        
+
         if (parentScope.isPresent()
             && currentScopeName.equals(parentScope.get().getName())) {
           return true;
