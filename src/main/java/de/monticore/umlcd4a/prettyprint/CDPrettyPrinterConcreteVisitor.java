@@ -1,3 +1,4 @@
+
 package de.monticore.umlcd4a.prettyprint;
 
 import java.util.Iterator;
@@ -6,6 +7,7 @@ import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.types.types._ast.ASTImportStatement;
+import de.monticore.types.types._visitor.TypesVisitor;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
@@ -40,6 +42,8 @@ import de.se_rwth.commons.Names;
  * @author Martin Schindler
  */
 public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVisitor implements CD4AnalysisVisitor {
+  
+  private CD4AnalysisVisitor realThis = this;
   
   /**
    * Constructor.
@@ -579,6 +583,22 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     getPrinter().clearBuffer();
     a.accept(getRealThis());
     return getPrinter().getContent();
+  }
+
+  /**
+   * @see de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor#getRealThis()
+   */
+  @Override
+  public CD4AnalysisVisitor getRealThis() {
+    return realThis;
+  }
+
+  /**
+   * @see de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor#setRealThis(de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor)
+   */
+  @Override
+  public void setRealThis(CD4AnalysisVisitor realThis) {
+    this.realThis = realThis;
   }
 
 }
