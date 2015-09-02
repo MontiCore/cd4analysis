@@ -11,6 +11,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
@@ -22,15 +25,21 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
-
-import org.junit.Test;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.Slf4jLog;
 
 public class CD4AnalysisSymbolTableCreatorTest {
-
+  
+  @BeforeClass
+  public static void setup() {
+    Slf4jLog.init();
+    Log.enableFailQuick(false);
+  }
+  
   @Test
   public void testSymbolTableCreation() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
-
+    
     final CDSymbol cdSymbol = globalScope.<CDSymbol> resolve(
         "de.monticore.umlcd4a.symboltable.CD1", CDSymbol.KIND).orElse(null);
     assertNotNull(cdSymbol);
@@ -108,50 +117,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("age", ageField.getName());
     assertTrue(personType.getField("age").get().isProtected());
     
-    //Type arguments
-    final CDFieldSymbol addressField = personType.getField("address").orElse(null);
-    assertNotNull(addressField);
-    final CDTypeSymbolReference stringList = (CDTypeSymbolReference) addressField.getType();
-    assertEquals("List", stringList.getName());
-    assertEquals("List<String>", stringList.getStringRepresentation());
-    assertEquals(1, stringList.getActualTypeArguments().size());
-    ActualTypeArgument typeArgument = stringList.getActualTypeArguments().get(0);
-    assertEquals("String", typeArgument.getType().getName());
-    assertFalse(typeArgument.isLowerBound());
-    assertFalse(typeArgument.isUpperBound());
-    final CDFieldSymbol textField = personType.getField("text").orElse(null);
-    assertNotNull(textField);
-    final CDTypeSymbolReference listLower = (CDTypeSymbolReference) textField.getType();
-    assertEquals("List", listLower.getName());
-    assertEquals("List<? extends Printable>", listLower.getStringRepresentation());
-    assertEquals(1, listLower.getActualTypeArguments().size());
-    typeArgument = listLower.getActualTypeArguments().get(0);
-    assertEquals("Printable", typeArgument.getType().getName());
-    assertFalse(typeArgument.isLowerBound());
-    assertTrue(typeArgument.isUpperBound());
-    final CDFieldSymbol photoField = personType.getField("photo").orElse(null);
-    assertNotNull(photoField);
-    final CDTypeSymbolReference listUpper = (CDTypeSymbolReference) photoField.getType();
-    assertEquals("List", listUpper.getName());
-    assertEquals("List<? super Printable>", listUpper.getStringRepresentation());
-    assertEquals(1, listUpper.getActualTypeArguments().size());
-    typeArgument = listUpper.getActualTypeArguments().get(0);
-    assertEquals("Printable", typeArgument.getType().getName());
-    assertTrue(typeArgument.isLowerBound());
-    assertFalse(typeArgument.isUpperBound());
-    final CDFieldSymbol hobbiesField = personType.getField("hobbies").orElse(null);
-    assertNotNull(hobbiesField);
-    final CDTypeSymbolReference firstList = (CDTypeSymbolReference) hobbiesField.getType();
-    assertEquals("List", firstList.getName());
-    assertEquals("List<List<String>>", firstList.getStringRepresentation());
-    assertEquals(1, firstList.getActualTypeArguments().size());
-    typeArgument = firstList.getActualTypeArguments().get(0);
-    final CDTypeSymbolReference secondList = (CDTypeSymbolReference) typeArgument.getType();
-    assertEquals("List", secondList.getName());
-    assertEquals("List<String>", secondList.getStringRepresentation());
-    assertEquals(1, secondList.getActualTypeArguments().size());
-    assertEquals("String", secondList.getActualTypeArguments().get(0).getType().getName());
-
     // Field Stereotypes
     assertEquals(1, nameField.getStereotypes().size());
     assertEquals("SF", nameField.getStereotype("SF").get().getName());
@@ -443,6 +408,70 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(profType.hasSuperTypeByFullName("de.monticore.umlcd4a.symboltable.CD1.Person"));
     assertTrue(profType.hasSuperTypeByFullName("de.monticore.umlcd4a.symboltable.CD1.Creature"));
   }
+  
+  @Test
+  public void testTypeSymbolReferencesForGenerics() {
+    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    final CDSymbol cdSymbol = globalScope.<CDSymbol> resolve(
+        "de.monticore.umlcd4a.symboltable.Generics", CDSymbol.KIND).orElse(null);
+    assertNotNull(cdSymbol);
+    
+    final CDTypeSymbol clazz = globalScope.<CDTypeSymbol> resolve(
+        "de.monticore.umlcd4a.symboltable.Generics.A", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(clazz);
+    assertEquals("de.monticore.umlcd4a.symboltable.Generics.A", clazz.getFullName());
+
+    //Type arguments
+    CDFieldSymbol attribute = clazz.getField("g1").orElse(null);
+    assertNotNull(attribute);
+    CDTypeSymbolReference attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<String>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    ActualTypeArgument typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("String", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+    
+    attribute = clazz.getField("g5").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<? extends B>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("B", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertTrue(typeArgument.isUpperBound());
+    
+    attribute = clazz.getField("g6").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<? super B>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("B", typeArgument.getType().getName());
+    assertTrue(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+    
+    attribute = clazz.getField("g9").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<List<String>>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    
+    CDTypeSymbolReference innerTypeArgument = (CDTypeSymbolReference) typeArgument.getType();
+    assertEquals("List", innerTypeArgument.getName());
+    assertEquals("List<String>", innerTypeArgument.getStringRepresentation());
+    assertEquals(1, innerTypeArgument.getActualTypeArguments().size());
+    assertEquals("String", innerTypeArgument.getActualTypeArguments().get(0).getType().getName());
+
+  }
+
 
 
 }
