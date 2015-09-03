@@ -291,7 +291,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           }
           else {
             // No bound. Example: Set<?>
-            actualTypeArguments.add(new ActualTypeArgument(false, false, null));
+            actualTypeArguments.add(new ActualTypeArgument(false, false, new CDTypeSymbolReference(
+                "?", currentScope().get())));
           }
         }
         else if (astTypeArgument instanceof ASTType) {
