@@ -434,6 +434,28 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(typeArgument.isLowerBound());
     assertFalse(typeArgument.isUpperBound());
     
+    attribute = clazz.getField("g2").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<B>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("B", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+    
+    attribute = clazz.getField("g3").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<C>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("C", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+    
     attribute = clazz.getField("g5").orElse(null);
     assertNotNull(attribute);
     attributeType = (CDTypeSymbolReference) attribute.getType();
@@ -456,6 +478,28 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(typeArgument.isLowerBound());
     assertFalse(typeArgument.isUpperBound());
     
+    attribute = clazz.getField("g7").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<? extends C>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("C", typeArgument.getType().getName());
+    assertFalse(typeArgument.isLowerBound());
+    assertTrue(typeArgument.isUpperBound());
+    
+    attribute = clazz.getField("g8").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<? super C>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("C", typeArgument.getType().getName());
+    assertTrue(typeArgument.isLowerBound());
+    assertFalse(typeArgument.isUpperBound());
+    
     attribute = clazz.getField("g9").orElse(null);
     assertNotNull(attribute);
     attributeType = (CDTypeSymbolReference) attribute.getType();
@@ -463,12 +507,37 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("List<List<String>>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
-    
     CDTypeSymbolReference innerTypeArgument = (CDTypeSymbolReference) typeArgument.getType();
     assertEquals("List", innerTypeArgument.getName());
     assertEquals("List<String>", innerTypeArgument.getStringRepresentation());
     assertEquals(1, innerTypeArgument.getActualTypeArguments().size());
     assertEquals("String", innerTypeArgument.getActualTypeArguments().get(0).getType().getName());
+    
+    attribute = clazz.getField("g10").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<List<B>>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    innerTypeArgument = (CDTypeSymbolReference) typeArgument.getType();
+    assertEquals("List", innerTypeArgument.getName());
+    assertEquals("List<B>", innerTypeArgument.getStringRepresentation());
+    assertEquals(1, innerTypeArgument.getActualTypeArguments().size());
+    assertEquals("B", innerTypeArgument.getActualTypeArguments().get(0).getType().getName());
+    
+    attribute = clazz.getField("g11").orElse(null);
+    assertNotNull(attribute);
+    attributeType = (CDTypeSymbolReference) attribute.getType();
+    assertEquals("List", attributeType.getName());
+    assertEquals("List<List<C>>", attributeType.getStringRepresentation());
+    assertEquals(1, attributeType.getActualTypeArguments().size());
+    typeArgument = attributeType.getActualTypeArguments().get(0);
+    innerTypeArgument = (CDTypeSymbolReference) typeArgument.getType();
+    assertEquals("List", innerTypeArgument.getName());
+    assertEquals("List<C>", innerTypeArgument.getStringRepresentation());
+    assertEquals(1, innerTypeArgument.getActualTypeArguments().size());
+    assertEquals("C", innerTypeArgument.getActualTypeArguments().get(0).getType().getName());
 
   }
 
