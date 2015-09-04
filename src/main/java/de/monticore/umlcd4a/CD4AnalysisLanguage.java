@@ -20,7 +20,7 @@ public class CD4AnalysisLanguage extends CommonModelingLanguage {
   public static final String FILE_ENDING = "cd";
   
   public CD4AnalysisLanguage() {
-    super("CD 4 Analysis Language", FILE_ENDING, CDTypeSymbol.KIND);
+    super("CD 4 Analysis Language", FILE_ENDING);
     
     addResolver(CommonResolvingFilter.create(CDSymbol.class, CDSymbol.KIND));
     addResolver(CommonResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
