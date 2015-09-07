@@ -68,7 +68,7 @@ public class CDSymbolTable {
   private GlobalScope createSymboltable(ASTCDCompilationUnit ast,
       List<File> modelPaths) {
     
-    ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())));
+    ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())).collect(Collectors.toList()));
     
     GlobalScope globalScope = new GlobalScope(modelPath,
         cd4AnalysisLang.getModelLoader(), resolverConfiguration);
