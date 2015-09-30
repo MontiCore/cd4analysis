@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.antlr.v4.runtime.RecognitionException;
 
@@ -73,8 +74,9 @@ public abstract class AbstractCoCoTest {
     
     ASTCDCompilationUnit root = loadModel(model);
     checker.checkAll(root);
-    Assert.assertEqualErrorCounts(expectedErrors, Log.getFindings());
-    Assert.assertErrorMsg(expectedErrors, Log.getFindings());
+    Collection<Finding> errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
+    Assert.assertEqualErrorCounts(expectedErrors, errors);
+    Assert.assertErrorMsg(expectedErrors, errors);
   }
   
   /**

@@ -5930,4 +5930,18 @@ public class AssocTests extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
+  
+  @Test
+  public void testAssocTypesExist() {
+    String modelName = "C4A36.cd";
+    String errorCode = "0xC4A36";
+    
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
+    Collection<Finding> expectedErrors = Arrays.asList(
+        Finding.error(errorCode + " Type B of association (A -- B) is unknown."),
+        Finding.error(errorCode + " Type C of association (C -- A) is unknown.")
+        );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
 }

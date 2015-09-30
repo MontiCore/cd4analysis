@@ -18,6 +18,7 @@ import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithAttribut
 import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithOtherRoleNames;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceNotEnum;
 import de.monticore.umlcd4a.cocos.ebnf.AssociationSourceTypeNotExternal;
+import de.monticore.umlcd4a.cocos.ebnf.AssociationSrcAndTargetTypeExistChecker;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeNameLowerCase;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeOverriddenTypeMatch;
 import de.monticore.umlcd4a.cocos.ebnf.AttributeTypeCompatible;
@@ -124,6 +125,7 @@ public class CD4ACoCos {
     checker.addCoCo(new AssociationNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithAttribute());
     checker.addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNames());
+    checker.addCoCo(new AssociationSrcAndTargetTypeExistChecker());
     checker.addCoCo(new TypeNoInitializationOfDerivedAttribute());
   }
   
