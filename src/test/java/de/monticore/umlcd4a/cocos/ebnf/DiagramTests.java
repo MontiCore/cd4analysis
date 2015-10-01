@@ -5,12 +5,12 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.monticore.umlcd4a.CD4ACoCos;
@@ -56,7 +56,6 @@ public class DiagramTests extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
-  @Ignore("TODO RH we cannot check this yet because the file name is not part of the ast/st")
   @Test
   public void testFileNameEqualsModelName() {
     
@@ -65,12 +64,14 @@ public class DiagramTests extends AbstractCoCoTest {
     
     modelName = "C4A02.cd";
     errorCode = "0xC4A02";
+    String expectedFileName = Paths.get("src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/C4A02.cd").toString();
     Collection<Finding> expectedErrors = Arrays
         .asList(
         Finding
             .error(
             errorCode
-                + " The name of the diagram C4A02Invalid is not identical to the name of the file C4A02 (without its fileextension).")
+                + " The name of the diagram C4A02Invalid is not identical to the name of the file "
+                + expectedFileName + " (without its fileextension).")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
