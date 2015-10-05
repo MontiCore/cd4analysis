@@ -7,7 +7,7 @@ package de.monticore.umlcd4a.cd4analysis._parser;
 
 /**
  * This parser factory is handwritten, because for compilation units we want a
- * handwritten parser that also checks that a filename euqals the model name.
+ * handwritten parser that also checks that a filename equals the model name.
  *
  * @author Robert Heim
  */
