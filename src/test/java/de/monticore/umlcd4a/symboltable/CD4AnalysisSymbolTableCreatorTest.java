@@ -53,12 +53,12 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // TODO PN find better solution
     // Quickfix for using default types: add built-in types
-    globalScope.define(new CDTypeSymbol("int"));
-    globalScope.define(new CDTypeSymbol("boolean"));
-    globalScope.define(new CDTypeSymbol("String"));
+    globalScope.add(new CDTypeSymbol("int"));
+    globalScope.add(new CDTypeSymbol("boolean"));
+    globalScope.add(new CDTypeSymbol("String"));
     final CDTypeSymbol builtInList = new CDTypeSymbol("List");
     builtInList.setPackageName("java.util");
-    globalScope.define(builtInList);
+    globalScope.add(builtInList);
 
 
     final CDTypeSymbol creatureType = cdSymbol.getType("Creature").orElse(null);

@@ -370,6 +370,6 @@ public class CDSymbolTable {
   public void defineType(String typeName) {
     CommonSymbol type = new CDTypeSymbol(Names.getSimpleName(typeName));
     type.setPackageName(Names.getQualifier(typeName));
-    this.globalScope.define(type);
+    this.globalScope.add(type);
   }
 }

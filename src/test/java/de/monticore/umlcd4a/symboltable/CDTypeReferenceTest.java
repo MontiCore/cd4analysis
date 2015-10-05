@@ -31,13 +31,13 @@ public class CDTypeReferenceTest {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     CDSymbol cd = new CDSymbol("CD");
-    globalScope.define(cd);
+    globalScope.add(cd);
 
     MutableScope cdScope = (MutableScope) cd.getSpannedScope();
     cdScope.setResolvingFilters(globalScope.getResolvingFilters());
 
     CDTypeSymbol type = new CDTypeSymbol("Person");
-    cdScope.define(type);
+    cdScope.add(type);
 
     CDTypeSymbolReference ref = new CDTypeSymbolReference("de.monticore.umlcd4a.symboltable.CD2.Person", cd.getSpannedScope());
 

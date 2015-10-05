@@ -90,7 +90,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     // note that the cdsymbol scope is removed in the endVisit of
     // ASTCDDefinition
-    putInScopeAndLinkWithAst(cdSymbol, compilationUnit.getCDDefinition());
+    addToScopeAndLinkWithNode(cdSymbol, compilationUnit.getCDDefinition());
   }
   
   @Override
@@ -155,7 +155,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     addInterfacesToType(classSymbol, astClass.getInterfaces(), externals);
     
-    putInScopeAndLinkWithAst(classSymbol, astClass);
+    addToScopeAndLinkWithNode(classSymbol, astClass);
   }
   
   default void setModifiersOfType(final CDTypeSymbol typeSymbol, final ASTModifier astModifier) {
@@ -243,7 +243,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       }
     }
     
-    putInScopeAndLinkWithAst(fieldSymbol, astAttribute);
+    addToScopeAndLinkWithNode(fieldSymbol, astAttribute);
   }
   
   /**
@@ -349,7 +349,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     // Interfaces are always abstract
     interfaceSymbol.setAbstract(true);
     
-    putInScopeAndLinkWithAst(interfaceSymbol, astInterface);
+    addToScopeAndLinkWithNode(interfaceSymbol, astInterface);
   }
   
   default void addInterfacesToType(final CDTypeSymbol typeSymbol,
@@ -392,7 +392,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     addInterfacesToType(enumSymbol, astEnum.getInterfaces(), externals);
     setModifiersOfType(enumSymbol, astEnum.getModifier().orElse(new ASTModifier.Builder().build()));
     
-    putInScopeAndLinkWithAst(enumSymbol, astEnum);
+    addToScopeAndLinkWithNode(enumSymbol, astEnum);
   }
   
   @Override
@@ -410,7 +410,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     setExceptionsOfMethod(methodSymbol, astMethod);
     setDefiningTypeOfMethod(methodSymbol);
     
-    putInScopeAndLinkWithAst(methodSymbol, astMethod);
+    addToScopeAndLinkWithNode(methodSymbol, astMethod);
   }
   
   @Override
@@ -641,8 +641,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           + astAssoc.get_SourcePositionStart());
       return null;
     }
-    
-    putInScope(associationSymbol);
+
+    addToScope(associationSymbol);
     associationSymbol.setAstNode(astAssoc);
     
     return associationSymbol;
