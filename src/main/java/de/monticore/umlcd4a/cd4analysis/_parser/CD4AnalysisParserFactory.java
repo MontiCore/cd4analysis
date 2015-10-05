@@ -13,16 +13,8 @@ package de.monticore.umlcd4a.cd4analysis._parser;
  */
 public class CD4AnalysisParserFactory extends CD4AnalysisParserFactoryTOP {
   
-  /**
-   * Constructor for
-   * de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory
-   */
-  public CD4AnalysisParserFactory() {
-    factory = this;
-  }
-  
   public static CDCompilationUnitMCParser createCDCompilationUnitMCParser() {
-    if (factory == null) {
+    if (!(factory instanceof CD4AnalysisParserFactory)) {
       factory = new CD4AnalysisParserFactory();
     }
     return factory.doCreateCDCompilationUnitMCParser();
