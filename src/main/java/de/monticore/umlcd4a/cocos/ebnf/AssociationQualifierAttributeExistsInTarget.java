@@ -6,6 +6,7 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
@@ -50,8 +51,7 @@ public class AssociationQualifierAttributeExistsInTarget
    * @param node the association under test
    * @return whether there was a coco error or not
    */
-  private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedType,
-      ASTCDAssociation node) {
+  private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedType, ASTCDAssociation node) {
     boolean hasError = false;
     if (qualifier.getName().isPresent()) {
       String expectedAttributeName = qualifier.getName().get();
@@ -63,7 +63,7 @@ public class AssociationQualifierAttributeExistsInTarget
       }
       else {
         CDTypeSymbol referencedTypeSym = referencedTypeSymOpt.get();
-        if (!referencedTypeSym.getField(expectedAttributeName).isPresent()) {
+        if(!referencedTypeSym.getAllVisibleFields().stream().map( x -> x.getName()).collect(Collectors.toList()).contains(expectedAttributeName)){
           hasError = true;
           Log.error(String.format("0xC4A20 The qualified association %s expects the attribute %s to exist in the referenced type %s.",
                   CD4ACoCoHelper.printAssociation(node),
