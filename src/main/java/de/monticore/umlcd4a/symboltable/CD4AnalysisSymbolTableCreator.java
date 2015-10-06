@@ -541,9 +541,6 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
               .orElse(null));
         }
         
-        if (cdAssoc.getLeftQualifier().isPresent()) {
-          handleCDQualifier(assocRight2LeftSymbol, cdAssoc.getLeftQualifier().get());
-        }
         if (cdAssoc.getRightQualifier().isPresent()) {
           handleCDQualifier(assocRight2LeftSymbol, cdAssoc.getRightQualifier().get());
         }
@@ -580,9 +577,6 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         
         if (cdAssoc.getLeftQualifier().isPresent()) {
           handleCDQualifier(assocLeft2RightSymbol, cdAssoc.getLeftQualifier().get());
-        }
-        if (cdAssoc.getRightQualifier().isPresent()) {
-          handleCDQualifier(assocLeft2RightSymbol, cdAssoc.getRightQualifier().get());
         }
         
         assocLeft2RightSymbol
