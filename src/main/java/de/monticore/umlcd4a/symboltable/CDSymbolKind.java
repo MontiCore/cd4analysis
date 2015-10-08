@@ -7,7 +7,7 @@ package de.monticore.umlcd4a.symboltable;
 
 import de.monticore.symboltable.SymbolKind;
 
-public class CDSymbolKind extends SymbolKind {
+public class CDSymbolKind implements SymbolKind {
   
   protected CDSymbolKind() {
   }
