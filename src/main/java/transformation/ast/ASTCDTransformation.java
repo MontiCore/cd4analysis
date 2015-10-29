@@ -125,14 +125,14 @@ public class ASTCDTransformation {
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
       String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
-        "Attribute can't be added to the CD class because of null or empty attribute definition");
+        "Attribute can't be added to the CD interface because of null or empty attribute definition");
     checkNotNull(astClass, "Attribute '" + attributeDefinition
-        + "' can't be added to the CD class because of null reference to the class");
+        + "' can't be added to the CD interface because of null reference to the interface");
     Optional<ASTCDAttribute> astAttribute = Optional.empty();
     try {
       astAttribute = CD4AnalysisParserFactory.createCDAttributeMCParser().parse(new StringReader(attributeDefinition));
       if (!astAttribute.isPresent()) {
-        Log.error("Attribute can't be added to the CD class " + astClass.getName()
+        Log.error("Attribute can't be added to the CD interface " + astClass.getName()
             + "\nWrong attribute definition: " + attributeDefinition);
       }
       else {
@@ -140,7 +140,40 @@ public class ASTCDTransformation {
       }
     }
     catch (RecognitionException | IOException e) {
-      Log.error("Attribute can't be added to the CD class " + astClass.getName()
+      Log.error("Attribute can't be added to the CD interface " + astClass.getName()
+          + "\nCatched exception: " + e);
+    }
+    return astAttribute;
+  }
+  
+  /**
+   * Creates an instance of the {@link ASTCDAttribute} using given attribute
+   * definition ( e.g. private List<A> a; ) and adds it to the given interface
+   * 
+   * @param astInterface
+   * @param attributeDefinition attribute definition to parse
+   * @return Optional of the created ast node or Optional.empty() if the
+   * attribute definition couldn't be parsed
+   */
+  public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDInterface astInterface,
+      String attributeDefinition) {
+    checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
+        "Attribute can't be added to the CD class because of null or empty attribute definition");
+    checkNotNull(astInterface, "Attribute '" + attributeDefinition
+        + "' can't be added to the CD class because of null reference to the class");
+    Optional<ASTCDAttribute> astAttribute = Optional.empty();
+    try {
+      astAttribute = CD4AnalysisParserFactory.createCDAttributeMCParser().parse(new StringReader(attributeDefinition));
+      if (!astAttribute.isPresent()) {
+        Log.error("Attribute can't be added to the CD class " + astInterface.getName()
+            + "\nWrong attribute definition: " + attributeDefinition);
+      }
+      else {
+        addCdAttribute(astInterface, astAttribute.get());
+      }
+    }
+    catch (RecognitionException | IOException e) {
+      Log.error("Attribute can't be added to the CD class " + astInterface.getName()
           + "\nCatched exception: " + e);
     }
     return astAttribute;
@@ -160,6 +193,22 @@ public class ASTCDTransformation {
         + "' can't be added to the CD class because of null reference to the class");
     checkNotNull(astAttribute);
     astClass.getCDAttributes().add(astAttribute);
+  }
+  
+  /**
+   * Adds the given attribute to the given interface
+   * 
+   * @param astInterface
+   * @param astAttribute
+   */
+  public void addCdAttribute(ASTCDInterface astInterface, ASTCDAttribute astAttribute) {
+    checkNotNull(
+        astAttribute,
+        "ASTCDAttribute attribute node can't be added to the CD interface because of null reference to the added node");
+    checkNotNull(astInterface, "Attribute '" + astAttribute.getName()
+        + "' can't be added to the CD interface because of null reference to the class");
+    checkNotNull(astAttribute);
+    astInterface.getCDAttributes().add(astAttribute);
   }
   
   // -------------------- Classes --------------------
