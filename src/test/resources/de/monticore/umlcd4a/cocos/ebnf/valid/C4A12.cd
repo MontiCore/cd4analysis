@@ -1,0 +1,11 @@
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A12 {
+  class C1 {
+    String attr;
+  }
+
+  abstract class Profile {
+    String profileName;
+  }
+}

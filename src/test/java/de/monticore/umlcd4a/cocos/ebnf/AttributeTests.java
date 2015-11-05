@@ -105,6 +105,8 @@ public class AttributeTests extends AbstractCoCoTest {
     String modelName = "C4A12.cd";
     String errorCode = "0xC4A12";
     
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
+    
     Collection<Finding> expectedErrors = Arrays
         .asList(
         Finding.error(errorCode + " Attribute Attr must start in lower-case.",
