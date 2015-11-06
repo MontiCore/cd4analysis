@@ -5,6 +5,6 @@ classdiagram OverrideAttribute {
     String s;
   }
   class B extends A {
-    String s;
+    int s;
   }
 }

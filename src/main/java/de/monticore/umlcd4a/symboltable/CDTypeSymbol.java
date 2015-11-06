@@ -83,12 +83,19 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   
   public Collection<CDFieldSymbol> getAllVisibleFieldsOfSuperTypes() {
     final Set<CDFieldSymbol> allSuperTypeFields = new LinkedHashSet<>();
-    
+    final List<CDFieldSymbol> fields = getFields();
+
     for (CDTypeSymbol superType : getSuperTypes()) {
-      allSuperTypeFields.addAll(superType.getFields());
-      allSuperTypeFields.addAll(superType.getAllVisibleFieldsOfSuperTypes());
+      for (CDFieldSymbol superField : superType.getFields()) {
+        if (fields.stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(superField.getName()))) {
+          allSuperTypeFields.add(superField);
+        }
+      }
+
+//      allSuperTypeFields.addAll(superType.getAllVisibleFieldsOfSuperTypes());
     }
-    
+
+
     // filter-out all private fields
     final Set<CDFieldSymbol> allVisibleSuperTypeFields = allSuperTypeFields.stream().
         filter(field -> !field.isPrivate())
