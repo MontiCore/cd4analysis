@@ -92,7 +92,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
         }
       }
 
-//      allSuperTypeFields.addAll(superType.getAllVisibleFieldsOfSuperTypes());
+      allSuperTypeFields.addAll(superType.getAllVisibleFieldsOfSuperTypes());
     }
 
 
