@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
-
 import de.monticore.symboltable.types.CommonJMethodSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
-public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbolReference, CDFieldSymbol> {
+public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDTypeSymbolReference, CDFieldSymbol> {
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
 
