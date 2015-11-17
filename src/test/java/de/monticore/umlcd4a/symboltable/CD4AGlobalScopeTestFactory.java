@@ -22,7 +22,7 @@ public class CD4AGlobalScopeTestFactory {
 
     final ModelPath modelPath = new ModelPath(Paths.get("src/test/resources/"));
 
-    return new GlobalScope(modelPath, cdLanguage.getModelLoader(), resolverConfiguration);
+    return new GlobalScope(modelPath, cdLanguage, resolverConfiguration);
   }
 
 }

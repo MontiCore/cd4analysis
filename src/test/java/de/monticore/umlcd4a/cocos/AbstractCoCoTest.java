@@ -14,8 +14,6 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.antlr.v4.runtime.RecognitionException;
-
 import de.monticore.cocos.helper.Assert;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
@@ -29,6 +27,7 @@ import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import org.antlr.v4.runtime.RecognitionException;
 
 /**
  * TODO: Write me!
@@ -103,8 +102,7 @@ public abstract class AbstractCoCoTest {
         ModelPath modelPath = new ModelPath(model.toAbsolutePath());
         ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
         resolverConfiguration.addTopScopeResolvers(cd4AnalysisLang.getResolvers());
-        this.globalScope = new GlobalScope(modelPath, cd4AnalysisLang.getModelLoader(),
-            resolverConfiguration);
+        this.globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolverConfiguration);
         Optional<CD4AnalysisSymbolTableCreator> stc = cd4AnalysisLang
             .getSymbolTableCreator(resolverConfiguration, globalScope);
         if (stc.isPresent()) {

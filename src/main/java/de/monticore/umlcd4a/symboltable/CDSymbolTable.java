@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
-
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonSymbol;
@@ -70,8 +69,7 @@ public class CDSymbolTable {
     
     ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())).collect(Collectors.toList()));
     
-    GlobalScope globalScope = new GlobalScope(modelPath,
-        cd4AnalysisLang.getModelLoader(), resolverConfiguration);
+    GlobalScope globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolverConfiguration);
     
     Optional<CD4AnalysisSymbolTableCreator> stc = cd4AnalysisLang
         .getSymbolTableCreator(resolverConfiguration, globalScope);
