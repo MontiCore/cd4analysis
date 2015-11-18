@@ -5,9 +5,11 @@
  */
 package de.monticore.umlcd4a;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import de.monticore.CommonModelNameCalculator;
 import de.monticore.symboltable.SymbolKind;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
@@ -20,7 +22,7 @@ import de.se_rwth.commons.Splitters;
 public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
 
   @Override
-  public Optional<String> calculateModelName(final String name, final SymbolKind kind) {
+  public Set<String> calculateModelNames(final String name, final SymbolKind kind) {
     String modelName = null;
 
     if (CDSymbol.KIND.isKindOf(kind)) {
@@ -45,6 +47,10 @@ public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
 
     }
 
-    return Optional.ofNullable(modelName);
+    if (modelName != null) {
+      return ImmutableSet.of(modelName);
+    }
+
+    return Collections.emptySet();
   }
 }
