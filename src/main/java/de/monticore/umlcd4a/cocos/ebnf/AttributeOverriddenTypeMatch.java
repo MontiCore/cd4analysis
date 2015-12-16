@@ -6,6 +6,7 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +33,10 @@ public class AttributeOverriddenTypeMatch
     CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol().get();
     CDTypeSymbol subClassSym = (CDTypeSymbol) node.getEnclosingScope().get()
         .getSpanningSymbol().get();
-    Collection<CDFieldSymbol> superAttrs = subClassSym.getAllVisibleFieldsOfSuperTypes();
+    Collection<CDFieldSymbol> superAttrs = new ArrayList<>();
+    subClassSym.getSuperTypes().stream()
+        // Add all attributes of the super types and all inherited attributes of the super types
+        .forEach(sT -> { superAttrs.addAll(sT.getFields()); superAttrs.addAll(sT.getAllVisibleFieldsOfSuperTypes());});
     List<CDFieldSymbol> overriddenSymbols = superAttrs.stream()
         // same name
         .filter(sA -> sA.getName().equals(attrSym.getName()))
@@ -54,5 +58,5 @@ public class AttributeOverriddenTypeMatch
           node.get_SourcePositionStart());
     }
   }
-  
+
 }
