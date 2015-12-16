@@ -1,6 +1,6 @@
 package de.monticore.umlcd4a.cocos.ebnf.valid;
 
-classdiagram C4A25_1 {
+classdiagram C4A25 {
 
   class A {
     String attrA1;
