@@ -30,7 +30,7 @@ import de.se_rwth.commons.logging.Log;
  * @version $Revision$, $Date$
  * @since TODO: add version number
  */
-public class AssocTests extends AbstractCoCoTest {
+public class AssocTest extends AbstractCoCoTest {
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   

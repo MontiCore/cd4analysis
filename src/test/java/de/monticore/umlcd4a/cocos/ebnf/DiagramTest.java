@@ -24,7 +24,7 @@ import de.se_rwth.commons.logging.Log;
  *
  * @author Robert Heim
  */
-public class DiagramTests extends AbstractCoCoTest {
+public class DiagramTest extends AbstractCoCoTest {
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
    */

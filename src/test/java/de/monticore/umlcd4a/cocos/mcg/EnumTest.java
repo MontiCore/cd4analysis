@@ -19,11 +19,11 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Tests the class cocos.
+ * Tests the enum cocos.
  *
  * @author Robert Heim
  */
-public class ClassTests extends AbstractCoCoTest {
+public class EnumTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
@@ -47,18 +47,20 @@ public class ClassTests extends AbstractCoCoTest {
   }
   
   @Test
-  public void invalidModifiersCoCoTest() {
-    String modelName = "C4A53.cd";
-    String errorCode = "0xC4A53";
+  public void invalidModifiersCoCo() {
+    String modelName = "C4A55.cd";
+    String errorCode = "0xC4A55";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Class A has invalid modifier \"derived\"."),
-        Finding.error(errorCode + " Class B has invalid modifier \"derived\"."),
-        Finding.error(errorCode + " Class C has invalid modifier \"static\"."),
-        Finding.error(errorCode + " Class D has invalid modifier \"static\"."),
-        Finding.error(errorCode + " Class E has invalid modifier \"derived\".")
+        Finding.error(errorCode + " Enum A has invalid modifier \"abstract\"."),
+        Finding.error(errorCode + " Enum B has invalid modifier \"derived\"."),
+        Finding.error(errorCode + " Enum C has invalid modifier \"derived\"."),
+        Finding.error(errorCode + " Enum D has invalid modifier \"final\"."),
+        Finding.error(errorCode + " Enum E has invalid modifier \"private\"."),
+        Finding.error(errorCode + " Enum F has invalid modifier \"protected\"."),
+        Finding.error(errorCode + " Enum G has invalid modifier \"static\".")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

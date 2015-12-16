@@ -19,11 +19,11 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Tests the CoCos that restrict ASTCDInterface to match the EBNF grammar.
+ * Tests the CoCos that restrict ASTCDClass to match the EBNF grammar.
  *
  * @author Robert Heim
  */
-public class InterfaceTests extends AbstractCoCoTest {
+public class ClassTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
@@ -47,35 +47,42 @@ public class InterfaceTests extends AbstractCoCoTest {
   }
   
   @Test
-  public void noModifierCoCo() {
-    String modelName = "C4A65.cd";
-    String errorCode = "0xC4A65";
+  public void modifierOnlyAbstractCoCoTest() {
+    String modelName = "C4A61.cd";
+    String errorCode = "0xC4A61";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Interface A may not have modifiers."),
-        Finding.error(errorCode + " Interface B may not have modifiers."),
-        Finding.error(errorCode + " Interface C may not have modifiers."),
-        Finding.error(errorCode + " Interface D may not have modifiers."),
-        Finding.error(errorCode + " Interface E may not have modifiers."),
-        Finding.error(errorCode + " Interface F may not have modifiers.")
+        Finding
+            .error(errorCode + " Class A has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class B has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class C has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class D has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class E has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class F has invalid modifiers. Only \"abstract\" is permitted."),
+        Finding
+            .error(errorCode + " Class G has invalid modifiers. Only \"abstract\" is permitted.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
-  public void noAttributesCoCoTest() {
-    String modelName = "C4A66.cd";
-    String errorCode = "0xC4A66";
+  public void noConstructorsCoCoTest() {
+    String modelName = "C4A62.cd";
+    String errorCode = "0xC4A62";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Interface A may not have attributes."),
-        Finding.error(errorCode + " Interface B may not have attributes."),
-        Finding.error(errorCode + " Interface C may not have attributes.")
+        Finding.error(errorCode + " Class A may not have constructors."),
+        Finding.error(errorCode + " Class B may not have constructors.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -83,14 +90,14 @@ public class InterfaceTests extends AbstractCoCoTest {
   
   @Test
   public void noMethodsCoCoTest() {
-    String modelName = "C4A67.cd";
-    String errorCode = "0xC4A67";
+    String modelName = "C4A63.cd";
+    String errorCode = "0xC4A63";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Interface A may not have methods."),
-        Finding.error(errorCode + " Interface B may not have methods.")
+        Finding.error(errorCode + " Class A may not have any methods."),
+        Finding.error(errorCode + " Class B may not have any methods.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

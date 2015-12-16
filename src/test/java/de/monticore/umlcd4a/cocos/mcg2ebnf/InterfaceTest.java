@@ -19,11 +19,11 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Tests the CoCos that restrict ASTCDEnum to match the EBNF grammar.
+ * Tests the CoCos that restrict ASTCDInterface to match the EBNF grammar.
  *
  * @author Robert Heim
  */
-public class EnumTests extends AbstractCoCoTest {
+public class InterfaceTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
@@ -48,37 +48,34 @@ public class EnumTests extends AbstractCoCoTest {
   
   @Test
   public void noModifierCoCo() {
-    String modelName = "C4A68.cd";
-    String errorCode = "0xC4A68";
+    String modelName = "C4A65.cd";
+    String errorCode = "0xC4A65";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Enum A may not have modifiers."),
-        Finding.error(errorCode + " Enum B may not have modifiers."),
-        Finding.error(errorCode + " Enum C may not have modifiers."),
-        Finding.error(errorCode + " Enum D may not have modifiers."),
-        Finding.error(errorCode + " Enum E may not have modifiers."),
-        Finding.error(errorCode + " Enum F may not have modifiers."),
-        Finding.error(errorCode + " Enum G may not have modifiers."),
-        Finding.error(errorCode + " Enum H may not have modifiers."),
-        Finding.error(errorCode + " Enum I may not have modifiers.")
+        Finding.error(errorCode + " Interface A may not have modifiers."),
+        Finding.error(errorCode + " Interface B may not have modifiers."),
+        Finding.error(errorCode + " Interface C may not have modifiers."),
+        Finding.error(errorCode + " Interface D may not have modifiers."),
+        Finding.error(errorCode + " Interface E may not have modifiers."),
+        Finding.error(errorCode + " Interface F may not have modifiers.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
   @Test
-  public void noConstructorsCoCoTest() {
-    String modelName = "C4A69.cd";
-    String errorCode = "0xC4A69";
+  public void noAttributesCoCoTest() {
+    String modelName = "C4A66.cd";
+    String errorCode = "0xC4A66";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Enum A may not have constructors."),
-        Finding.error(errorCode + " Enum B may not have constructors."),
-        Finding.error(errorCode + " Enum C may not have constructors.")
+        Finding.error(errorCode + " Interface A may not have attributes."),
+        Finding.error(errorCode + " Interface B may not have attributes."),
+        Finding.error(errorCode + " Interface C may not have attributes.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -86,14 +83,14 @@ public class EnumTests extends AbstractCoCoTest {
   
   @Test
   public void noMethodsCoCoTest() {
-    String modelName = "C4A70.cd";
-    String errorCode = "0xC4A70";
+    String modelName = "C4A67.cd";
+    String errorCode = "0xC4A67";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Enum A may not have methods."),
-        Finding.error(errorCode + " Enum B may not have methods.")
+        Finding.error(errorCode + " Interface A may not have methods."),
+        Finding.error(errorCode + " Interface B may not have methods.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

@@ -19,7 +19,7 @@ import de.se_rwth.commons.logging.Log;
  *
  * @author Robert Heim
  */
-public class BuiltInTypesTests extends AbstractCoCoTest {
+public class BuiltInTypesTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/all/valid/";
   
   /**

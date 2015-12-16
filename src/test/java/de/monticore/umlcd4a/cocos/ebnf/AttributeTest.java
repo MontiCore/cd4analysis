@@ -26,7 +26,7 @@ import de.se_rwth.commons.logging.Log;
  * @version $Revision$, $Date$
  * @since TODO: add version number
  */
-public class AttributeTests extends AbstractCoCoTest {
+public class AttributeTest extends AbstractCoCoTest {
   
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()

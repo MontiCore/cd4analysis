@@ -23,7 +23,7 @@ import de.se_rwth.commons.logging.Log;
  *
  * @author Robert Heim
  */
-public class InterfaceTests extends AbstractCoCoTest {
+public class InterfaceTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";

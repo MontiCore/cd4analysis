@@ -19,11 +19,11 @@ import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * Tests the CoCos that restrict ASTCDClass to match the EBNF grammar.
+ * Tests the CoCos that restrict ASTCDEnum to match the EBNF grammar.
  *
  * @author Robert Heim
  */
-public class ClassTests extends AbstractCoCoTest {
+public class EnumTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
   
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/invalid/";
@@ -47,27 +47,22 @@ public class ClassTests extends AbstractCoCoTest {
   }
   
   @Test
-  public void modifierOnlyAbstractCoCoTest() {
-    String modelName = "C4A61.cd";
-    String errorCode = "0xC4A61";
+  public void noModifierCoCo() {
+    String modelName = "C4A68.cd";
+    String errorCode = "0xC4A68";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding
-            .error(errorCode + " Class A has invalid modifiers. Only \"abstract\" is permitted."),
-        Finding
-            .error(errorCode + " Class B has invalid modifiers. Only \"abstract\" is permitted."),
-        Finding
-            .error(errorCode + " Class C has invalid modifiers. Only \"abstract\" is permitted."),
-        Finding
-            .error(errorCode + " Class D has invalid modifiers. Only \"abstract\" is permitted."),
-        Finding
-            .error(errorCode + " Class E has invalid modifiers. Only \"abstract\" is permitted."),
-        Finding
-            .error(errorCode + " Class F has invalid modifiers. Only \"abstract\" is permitted."),
-        Finding
-            .error(errorCode + " Class G has invalid modifiers. Only \"abstract\" is permitted.")
+        Finding.error(errorCode + " Enum A may not have modifiers."),
+        Finding.error(errorCode + " Enum B may not have modifiers."),
+        Finding.error(errorCode + " Enum C may not have modifiers."),
+        Finding.error(errorCode + " Enum D may not have modifiers."),
+        Finding.error(errorCode + " Enum E may not have modifiers."),
+        Finding.error(errorCode + " Enum F may not have modifiers."),
+        Finding.error(errorCode + " Enum G may not have modifiers."),
+        Finding.error(errorCode + " Enum H may not have modifiers."),
+        Finding.error(errorCode + " Enum I may not have modifiers.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -75,14 +70,15 @@ public class ClassTests extends AbstractCoCoTest {
   
   @Test
   public void noConstructorsCoCoTest() {
-    String modelName = "C4A62.cd";
-    String errorCode = "0xC4A62";
+    String modelName = "C4A69.cd";
+    String errorCode = "0xC4A69";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Class A may not have constructors."),
-        Finding.error(errorCode + " Class B may not have constructors.")
+        Finding.error(errorCode + " Enum A may not have constructors."),
+        Finding.error(errorCode + " Enum B may not have constructors."),
+        Finding.error(errorCode + " Enum C may not have constructors.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
@@ -90,14 +86,14 @@ public class ClassTests extends AbstractCoCoTest {
   
   @Test
   public void noMethodsCoCoTest() {
-    String modelName = "C4A63.cd";
-    String errorCode = "0xC4A63";
+    String modelName = "C4A70.cd";
+    String errorCode = "0xC4A70";
     
     testModelNoErrors(MODEL_PATH_VALID + modelName);
     
     Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Class A may not have any methods."),
-        Finding.error(errorCode + " Class B may not have any methods.")
+        Finding.error(errorCode + " Enum A may not have methods."),
+        Finding.error(errorCode + " Enum B may not have methods.")
         );
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);

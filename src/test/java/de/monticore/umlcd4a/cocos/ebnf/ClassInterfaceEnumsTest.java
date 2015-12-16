@@ -23,7 +23,7 @@ import de.se_rwth.commons.logging.Log;
  *
  * @author Robert Heim
  */
-public class ClassInterfaceEnumsTests extends AbstractCoCoTest {
+public class ClassInterfaceEnumsTest extends AbstractCoCoTest {
   /**
    * @see de.monticore.umlcd4a.cocos.AbstractCoCoTest#getChecker()
    */
