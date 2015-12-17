@@ -5,11 +5,11 @@
  */
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
-import de.monticore.umlcd4a.symboltable.CDQualifierSymbol;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -50,8 +50,12 @@ public class AssociationQualifierOnCorrectSide
    * @return whether there was a coco error or not
    */
   private void error(ASTCDQualifier qualifier, ASTCDAssociation node) {
-    CDQualifierSymbol sym = (CDQualifierSymbol) qualifier.getSymbol().get();
-    String qualifierName = sym.getName();
+    String qualifierName = "";
+    if (qualifier.getType().isPresent()) {
+      qualifierName = TypesPrinter.printType(qualifier.getType().get());
+    } else if (qualifier.getName().isPresent()) {
+      qualifierName = qualifier.getName().get();
+    }
     Log.error(
         String
             .format(
