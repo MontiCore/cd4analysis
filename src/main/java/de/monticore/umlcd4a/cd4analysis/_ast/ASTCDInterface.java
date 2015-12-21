@@ -3,7 +3,6 @@
 
 package de.monticore.umlcd4a.cd4analysis._ast;
 
-import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
@@ -15,9 +14,9 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
   
   protected ASTCDInterface(ASTModifier modifier,
       String name,
-      ASTReferenceTypeList interfaces,
-      ASTCDAttributeList cDAttributes,
-      ASTCDMethodList cDMethods) {
+      java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute> cDAttributes,
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod> cDMethods) {
     super(modifier, name, interfaces, cDAttributes,
         cDMethods);
   }

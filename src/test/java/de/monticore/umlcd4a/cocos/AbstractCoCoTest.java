@@ -22,8 +22,7 @@ import de.monticore.symboltable.Scope;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
@@ -37,8 +36,7 @@ import org.antlr.v4.runtime.RecognitionException;
 public abstract class AbstractCoCoTest {
   private final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
   
-  private CDCompilationUnitMCParser parser = CD4AnalysisParserFactory
-      .createCDCompilationUnitMCParser();
+  private CD4AnalysisParser parser = new CD4AnalysisParser();
   
   private GlobalScope globalScope;
   
@@ -96,7 +94,7 @@ public abstract class AbstractCoCoTest {
     Path model = Paths.get(modelFullQualifiedFilename);
     
     try {
-      Optional<ASTCDCompilationUnit> root = parser.parse(model.toString());
+      Optional<ASTCDCompilationUnit> root = parser.parseCDCompilationUnit(model.toString());
       if (root.isPresent()) {
         // create Symboltable        
         ModelPath modelPath = new ModelPath(model.toAbsolutePath());

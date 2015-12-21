@@ -5,16 +5,22 @@
  */
 package de.monticore.umlcd4a;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import de.monticore.CommonModelingLanguage;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolverConfiguration;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
-import de.monticore.umlcd4a.symboltable.*;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
+import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
+import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
+import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
+import de.monticore.umlcd4a.symboltable.CDSymbol;
+import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.monticore.umlcd4a.symboltable.CommonCD4AnalysisSymbolTableCreator;
 
 public class CD4AnalysisLanguage extends CommonModelingLanguage {
   public static final String FILE_ENDING = "cd";
@@ -33,8 +39,8 @@ public class CD4AnalysisLanguage extends CommonModelingLanguage {
   }
 
   @Override
-  public CDCompilationUnitMCParser getParser() {
-    return CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
+  public CD4AnalysisParser getParser() {
+    return new CD4AnalysisParser();
   }
   
   @Override

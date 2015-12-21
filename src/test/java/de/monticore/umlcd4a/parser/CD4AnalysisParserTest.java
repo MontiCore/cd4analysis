@@ -17,16 +17,15 @@ import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 
 public class CD4AnalysisParserTest {
   
   @Test
   public void testSocNet() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/SocNet.cd");
-    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
-    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
   }
@@ -34,8 +33,8 @@ public class CD4AnalysisParserTest {
   @Test
   public void testExample1() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/Example1.cd");
-    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
-    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
   }
@@ -43,8 +42,8 @@ public class CD4AnalysisParserTest {
   @Test
   public void testExample2() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/Example2.cd");
-    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
-    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
   }

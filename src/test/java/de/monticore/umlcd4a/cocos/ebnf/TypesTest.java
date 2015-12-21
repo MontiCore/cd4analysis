@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import org.junit.Test;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
@@ -95,8 +96,8 @@ public class TypesTest extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
     
     // some further tests
-    Optional<ASTSimpleReferenceType> type = CD4AnalysisParserFactory
-        .createSimpleReferenceTypeMCParser().parseString("a.b.C<S>");
+    Optional<ASTSimpleReferenceType> type = (new CD4AnalysisParser())
+        .parseSimpleReferenceType(new StringReader("a.b.C<S>"));
     assertTrue(type.isPresent());
     
     Log.getFindings().clear();
@@ -106,7 +107,8 @@ public class TypesTest extends AbstractCoCoTest {
     // asert expected error
     assertEquals(0, Log.getFindings().size());
     
-    type = CD4AnalysisParserFactory.createSimpleReferenceTypeMCParser().parseString("a.b.C<>");
+    type = (new CD4AnalysisParser())
+        .parseSimpleReferenceType(new StringReader("a.b.C<>"));
     assertTrue(type.isPresent());
     new GenericTypeHasParameters().check(type.get());
     // asert expected error

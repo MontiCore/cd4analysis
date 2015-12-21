@@ -1,9 +1,9 @@
 package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
+
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTReferenceType;
-import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDClass extends ASTCDClassTOP {
@@ -17,10 +17,10 @@ public class ASTCDClass extends ASTCDClassTOP {
       ASTModifier modifier,
       String name,
       ASTReferenceType superclass,
-      ASTReferenceTypeList interfaces,
-      ASTCDAttributeList cDAttributes,
-      ASTCDConstructorList cDConstructors,
-      ASTCDMethodList cDMethods) {
+      java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute> cDAttributes,
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor> cDConstructors,
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod> cDMethods) {
     super(modifier, name, superclass, interfaces, cDAttributes,
         cDConstructors, cDMethods);
   }

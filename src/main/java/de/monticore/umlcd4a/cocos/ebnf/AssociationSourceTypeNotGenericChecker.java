@@ -1,8 +1,9 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import java.util.List;
+
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociationList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
@@ -13,7 +14,7 @@ public class AssociationSourceTypeNotGenericChecker implements
   
   public void check(ASTCDDefinition cdDefinition) {
     
-    ASTCDAssociationList assocList = cdDefinition.getCDAssociations();
+    List<ASTCDAssociation> assocList = cdDefinition.getCDAssociations();
     for (ASTCDAssociation assoc : assocList) {
       
       if (assoc.isLeftToRight() || assoc.isBidirectional()) {

@@ -10,6 +10,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,20 +20,16 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import de.monticore.types.types._ast.ASTReferenceType;
-import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.types.types._ast.ASTReturnType;
 import de.monticore.types.types._ast.ASTType;
-import de.monticore.types.types._ast.TypesNodeFactory;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameterList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -130,7 +127,7 @@ public class ASTCDTransformation {
         + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDAttribute> astAttribute = Optional.empty();
     try {
-      astAttribute = CD4AnalysisParserFactory.createCDAttributeMCParser().parse(new StringReader(attributeDefinition));
+      astAttribute = (new CD4AnalysisParser()).parseCDAttribute(new StringReader(attributeDefinition));
       if (!astAttribute.isPresent()) {
         Log.error("Attribute can't be added to the CD class " + astClass.getName()
             + "\nWrong attribute definition: " + attributeDefinition);
@@ -163,7 +160,7 @@ public class ASTCDTransformation {
         + "' can't be added to the CD interface because of null reference to the interface");
     Optional<ASTCDAttribute> astAttribute = Optional.empty();
     try {
-      astAttribute = CD4AnalysisParserFactory.createCDAttributeMCParser().parse(new StringReader(attributeDefinition));
+      astAttribute = (new CD4AnalysisParser()).parseCDAttribute(new StringReader(attributeDefinition));
       if (!astAttribute.isPresent()) {
         Log.error("Attribute can't be added to the CD interface " + astInterface.getName()
             + "\nWrong attribute definition: " + attributeDefinition);
@@ -257,7 +254,7 @@ public class ASTCDTransformation {
       Log.error("Class " + className + " can't be added to the CD definition.");
       return Optional.empty();
     }
-    ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
+    List<ASTReferenceType> interfaces = new ArrayList<>();
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
@@ -290,7 +287,7 @@ public class ASTCDTransformation {
         + "' can't be added to the classdiagram because of null reference to the classdiagram");
     Optional<ASTCDClass> astClass = Optional.empty();
     try {
-      astClass = CD4AnalysisParserFactory.createCDClassMCParser().parse(new StringReader(classDefinition));
+      astClass = (new CD4AnalysisParser()).parseCDClass(new StringReader(classDefinition));
       if (!astClass.isPresent()) {
         Log.error("Method can't be added to the CD class " + astCd.getName()
             + "\nWrong method definition: " + classDefinition);
@@ -375,7 +372,7 @@ public class ASTCDTransformation {
         "Interface can't be added to the CD definition because of null or empty interface name");
     checkNotNull(astDef, "Interface " + interfaceName
         + " can't be added to the CD definition because of the null reference to the CD definition");
-    ASTReferenceTypeList interfaces = TypesNodeFactory.createASTReferenceTypeList();
+    List<ASTReferenceType> interfaces = new ArrayList<>();
     for (String paramType : interfaceNames) {
       Optional<ASTType> type = createType(paramType);
       if (!type.isPresent() || !(type.get() instanceof ASTReferenceType)) {
@@ -410,7 +407,7 @@ public class ASTCDTransformation {
         + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDMethod> astMethod = Optional.empty();
     try {
-      astMethod = CD4AnalysisParserFactory.createCDMethodMCParser().parse(new StringReader(methodDefinition));
+      astMethod = (new CD4AnalysisParser()).parseCDMethod(new StringReader(methodDefinition));
       if (!astMethod.isPresent()) {
         Log.error("Method can't be added to the CD class " + astClass.getName()
             + "\nWrong method definition: " + methodDefinition);
@@ -456,7 +453,7 @@ public class ASTCDTransformation {
     checkNotNull(astClass);
     checkArgument(!Strings.isNullOrEmpty(methodName));
     Optional<ASTReturnType> parsedReturnType = createReturnType(returnType);
-    Optional<ASTCDParameterList> cdParameters = createCdMethodParameters(paramTypes);
+    Optional<List<ASTCDParameter>> cdParameters = createCdMethodParameters(paramTypes);
     Optional<ASTModifier> parsedModifier = createModifier(modifier);
     if (!parsedReturnType.isPresent() || !cdParameters.isPresent() || !parsedModifier.isPresent()) {
       Log.error("Method " + methodName + " can't be added to the CD class " + astClass.getName());
@@ -505,7 +502,7 @@ public class ASTCDTransformation {
         + "' can't be added to the CD interface because of null reference to the interface");
     Optional<ASTCDMethod> astMethod = Optional.empty();
     try {
-      astMethod = CD4AnalysisParserFactory.createCDMethodMCParser().parse(new StringReader(methodDefinition));
+      astMethod = (new CD4AnalysisParser()).parseCDMethod(new StringReader(methodDefinition));
       if (!astMethod.isPresent()) {
         Log.error("Method can't be added to the CD interface " + astInterface.getName()
             + "\nWrong method definition: " + methodDefinition);
@@ -544,10 +541,10 @@ public class ASTCDTransformation {
    * @return Optional of the created {@link ASTCDParameterList} node or
    * Optional.empty() if one of the type definition couldn't be parsed
    */
-  public Optional<ASTCDParameterList> createCdMethodParameters(List<String> paramTypes) {
+  public Optional<List<ASTCDParameter>> createCdMethodParameters(List<String> paramTypes) {
     checkNotNull(paramTypes,
         "AST parameters node can't be created: the list of the given type names is null");
-    ASTCDParameterList params = CD4AnalysisNodeFactory.createASTCDParameterList();
+    List<ASTCDParameter> params = Lists.newArrayList();
     List<ASTType> types = Lists.newArrayList();
     for (String paramType : paramTypes) {
       Optional<ASTType> type = createType(paramType);
@@ -576,7 +573,7 @@ public class ASTCDTransformation {
         "AST return type node can't be created because of null or empty return type definition");
     Optional<ASTReturnType> astType = Optional.empty();
     try {
-      astType = CD4AnalysisParserFactory.createReturnTypeMCParser().parse(new StringReader(typeName));
+      astType = (new CD4AnalysisParser()).parseReturnType(new StringReader(typeName));
       if (!astType.isPresent()) {
         Log.error("Return type " + typeName + " wasn't defined correctly");
       }
@@ -600,7 +597,7 @@ public class ASTCDTransformation {
         "AST type node can't be created because of null or empty type definition");
     Optional<ASTType> astType = Optional.empty();
     try {
-      astType = CD4AnalysisParserFactory.createTypeMCParser().parse(new StringReader(typeName));
+      astType = (new CD4AnalysisParser()).parseType(new StringReader(typeName));
       if (!astType.isPresent()) {
         Log.error("The type " + typeName + " wasn't defined correctly");
       }
@@ -625,7 +622,7 @@ public class ASTCDTransformation {
         "AST node for the modfier definition can't be created because of null or empty modifier definition");
     Optional<ASTModifier> astModifier = Optional.empty();
     try {
-      astModifier = CD4AnalysisParserFactory.createModifierMCParser().parse(new StringReader(modifier));
+      astModifier = (new CD4AnalysisParser()).parseModifier(new StringReader(modifier));
       if (!astModifier.isPresent()) {
         Log.error("The modifier " + modifier + " wasn't defined correctly");
       }

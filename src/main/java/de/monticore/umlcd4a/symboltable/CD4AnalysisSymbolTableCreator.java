@@ -23,7 +23,6 @@ import de.monticore.types.types._ast.ASTComplexReferenceType;
 import de.monticore.types.types._ast.ASTImportStatement;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTReferenceType;
-import de.monticore.types.types._ast.ASTReferenceTypeList;
 import de.monticore.types.types._ast.ASTReturnType;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTType;
@@ -353,7 +352,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
   
   default void addInterfacesToType(final CDTypeSymbol typeSymbol,
-      final ASTReferenceTypeList astInterfaces, Collection<String> externals) {
+      final List<ASTReferenceType> astInterfaces, Collection<String> externals) {
     if (astInterfaces != null) {
       for (final ASTReferenceType superInterface : astInterfaces) {
         if (!externals.contains(TypesPrinter.printType(superInterface))) {

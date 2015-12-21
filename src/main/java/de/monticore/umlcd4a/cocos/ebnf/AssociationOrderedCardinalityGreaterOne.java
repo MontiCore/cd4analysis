@@ -1,12 +1,12 @@
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import java.util.List;
 import java.util.Optional;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValueList;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
@@ -62,7 +62,7 @@ public class AssociationOrderedCardinalityGreaterOne implements
   
   private boolean isOrdered(ASTModifier mod) {
     if (mod.getStereotype().isPresent()) {
-      ASTStereoValueList list = mod.getStereotype().get().getValues();
+       List<ASTStereoValue> list = mod.getStereotype().get().getValues();
       for (ASTStereoValue l : list) {
         if (l.getName().equals("ordered")) {
           return true;

@@ -19,8 +19,7 @@ import org.junit.Test;
 
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParserFactory;
-import de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 
 public class CD4AnalysisPrettyPrinterTest {
   
@@ -28,8 +27,8 @@ public class CD4AnalysisPrettyPrinterTest {
   public void testSocNet() throws RecognitionException, IOException {
     // Parsing input
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/prettyprint/Example1.cd");
-    CDCompilationUnitMCParser parser = CD4AnalysisParserFactory.createCDCompilationUnitMCParser();
-    Optional<ASTCDCompilationUnit> cdDef = parser.parse(model.toString());
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
     assertFalse(parser.hasErrors());
     assertTrue(cdDef.isPresent());
     
@@ -39,7 +38,7 @@ public class CD4AnalysisPrettyPrinterTest {
     String output = prettyprinter.prettyprint(cdDef.get());
     
     // parsing output of prettyprinter
-    Optional<ASTCDCompilationUnit> printedCdDef = parser.parse(new StringReader(output));
+    Optional<ASTCDCompilationUnit> printedCdDef = parser.parseCDCompilationUnit(new StringReader(output));
     assertFalse(parser.hasErrors());
     assertTrue(printedCdDef.isPresent());
     

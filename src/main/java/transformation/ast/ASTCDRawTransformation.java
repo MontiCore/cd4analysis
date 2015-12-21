@@ -5,25 +5,23 @@
  */
 package transformation.ast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.monticore.types.types._ast.ASTReferenceTypeList;
+import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.types.types._ast.ASTReturnType;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTVoidType;
-import de.monticore.types.types._ast.TypesNodeFactory;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameterList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 /**
  * Some raw (no parameter checks) help methods for the CD ast transformations.
@@ -96,8 +94,7 @@ public class ASTCDRawTransformation {
       List<String> interfaceNames) {
     
     ASTSimpleReferenceType superClass = createType(superClassName);
-    ASTReferenceTypeList interfaces = TypesNodeFactory
-        .createASTReferenceTypeList();
+    List<ASTReferenceType> interfaces = new ArrayList<>();
     for (String interfName : interfaceNames) {
       ASTSimpleReferenceType interf = createType(interfName);
       interfaces.add(interf);
@@ -160,8 +157,7 @@ public class ASTCDRawTransformation {
   public ASTCDInterface addCdInterface(ASTCDDefinition astDef,
       String interfaceName,
       List<String> interfaceNames) {
-    ASTReferenceTypeList interfaces = TypesNodeFactory
-        .createASTReferenceTypeList();
+    List<ASTReferenceType> interfaces = new ArrayList<>();
     for (String interfName : interfaceNames) {
       ASTSimpleReferenceType type = createType(interfName);
       interfaces.add(type);
@@ -201,7 +197,7 @@ public class ASTCDRawTransformation {
   public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName,
       String returnType, List<String> paramTypes) {
     ASTReturnType astReturnType = createType(returnType);
-    ASTCDParameterList cdParameters = createCdMethodParameters(paramTypes);
+    List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
     ASTModifier modifier = ASTModifier.getBuilder().r__public(true).build();
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
         .name(methodName)
@@ -226,7 +222,7 @@ public class ASTCDRawTransformation {
   public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName,
       List<String> paramTypes) {
     ASTVoidType returnType = ASTVoidType.getBuilder().build();
-    ASTCDParameterList cdParameters = createCdMethodParameters(paramTypes);
+    List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
     ASTModifier modifier = ASTModifier.getBuilder().r__public(true).build();
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
         .name(methodName)
@@ -256,9 +252,8 @@ public class ASTCDRawTransformation {
    * @return Optional of the created {@link ASTCDParameterList} node or
    * Optional.absent() if one of the type definition couldn't be parsed
    */
-  public ASTCDParameterList createCdMethodParameters(List<String> paramTypes) {
-    ASTCDParameterList params = CD4AnalysisNodeFactory
-        .createASTCDParameterList();
+  public List<ASTCDParameter> createCdMethodParameters(List<String> paramTypes) {
+    List<ASTCDParameter> params = Lists.newArrayList();
     List<ASTSimpleReferenceType> types = Lists.newArrayList();
     for (String paramType : paramTypes) {
       types.add(createType(paramType));

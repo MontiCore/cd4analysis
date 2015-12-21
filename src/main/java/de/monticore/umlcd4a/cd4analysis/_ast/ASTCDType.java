@@ -7,9 +7,10 @@ package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
 
+import java.util.List;
 import java.util.Optional;
 
-import de.monticore.types.types._ast.ASTReferenceTypeList;
+import de.monticore.types.types._ast.ASTReferenceType;
 
 /**
  * HW super type for classes, interfaces and enums
@@ -22,7 +23,7 @@ public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode 
   
   Optional<ASTModifier> getModifier();
   
-  ASTReferenceTypeList getInterfaces();
+  List<ASTReferenceType> getInterfaces();
   
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final

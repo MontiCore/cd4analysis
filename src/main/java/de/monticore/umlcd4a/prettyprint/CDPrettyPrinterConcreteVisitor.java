@@ -7,7 +7,6 @@ import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.types.types._visitor.TypesVisitor;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
@@ -17,18 +16,14 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstantList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameterList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValueList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotypeList;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.se_rwth.commons.Names;
 
@@ -95,10 +90,10 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print body
     getPrinter().println("{");
     getPrinter().indent();
-    a.getCDInterfaces().accept(getRealThis());
-    a.getCDClasses().accept(getRealThis());
-    a.getCDEnums().accept(getRealThis());
-    a.getCDAssociations().accept(getRealThis());
+    printSeparator(a.getCDInterfaces().iterator(), "");
+    printSeparator(a.getCDClasses().iterator(), "");
+    printSeparator(a.getCDEnums().iterator(), "");
+    printSeparator(a.getCDAssociations().iterator(), "");
     getPrinter().unindent();
     getPrinter().print("\n}\n");
   }
@@ -127,16 +122,16 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print interfaces
     if (a.getInterfaces().size() != 0) {
       getPrinter().print(" implements ");
-      a.getInterfaces().accept(getRealThis());
+      printList(a.getInterfaces().iterator(), ", ");
     }
     // print class body
     if (a.getCDConstructors().size() != 0 || a.getCDMethods().size() != 0
         || a.getCDAttributes().size() != 0) {
       getPrinter().println("{");
       getPrinter().indent();
-      a.getCDAttributes().accept(getRealThis());
-      a.getCDConstructors().accept(getRealThis());
-      a.getCDMethods().accept(getRealThis());
+      printSeparator(a.getCDAttributes().iterator(), "");
+      printSeparator(a.getCDConstructors().iterator(), "");
+      printSeparator(a.getCDMethods().iterator(), "");
       getPrinter().unindent();
       getPrinter().println("}");
     }
@@ -162,14 +157,14 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print implemented interfaces
     if (a.getInterfaces().size() != 0) {
       getPrinter().print(" extends ");
-      a.getInterfaces().accept(getRealThis());
+      printList(a.getInterfaces().iterator(), ", ");
     }
     // print interface body
     if (a.getCDMethods().size() != 0 || a.getCDAttributes().size() != 0) {
       getPrinter().println("{");
       getPrinter().indent();
-      a.getCDAttributes().accept(getRealThis());
-      a.getCDMethods().accept(getRealThis());
+      printSeparator(a.getCDAttributes().iterator(), "");
+      printSeparator(a.getCDMethods().iterator(), "");
       getPrinter().unindent();
       getPrinter().println("}");
     }
@@ -195,7 +190,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print interfaces
     if (a.getInterfaces().size() != 0) {
       getPrinter().print(" implements ");
-      a.getInterfaces().accept(getRealThis());
+      printList(a.getInterfaces().iterator(), ", ");
     }
     // print enum body
     if (a.getCDEnumConstants().size() != 0 || a.getCDConstructors().size() != 0
@@ -203,13 +198,13 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       getPrinter().println("{");
       getPrinter().indent();
       if (a.getCDEnumConstants().size() != 0) {
-        a.getCDEnumConstants().accept(getRealThis());
+        printSeparator(a.getCDEnumConstants().iterator(), ",\n");
         getPrinter().println(";");
       }
       if (a.getCDConstructors().size() != 0 || a.getCDMethods().size() != 0) {
         getPrinter().println();
-        a.getCDConstructors().accept(getRealThis());
-        a.getCDMethods().accept(getRealThis());
+        printSeparator(a.getCDConstructors().iterator(), "");
+        printSeparator(a.getCDMethods().iterator(), "");
       }
       getPrinter().unindent();
       getPrinter().println("}");
@@ -237,16 +232,6 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   }
   
   /**
-   * Prints a list of enum constants in a class diagram
-   * 
-   * @param a list of enum constants
-   */
-  @Override
-  public void handle(ASTCDEnumConstantList a) {
-    printSeparator(a.iterator(), ",\n");
-  }
-  
-  /**
    * Prints a method of a class in a class diagram
    * 
    * @param a method
@@ -264,12 +249,12 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     getPrinter().print(" " + a.getName());
     // print parameters
     getPrinter().print("(");
-    a.getCDParameters().accept(getRealThis());
+    printSeparator(a.getCDParameters().iterator(), ", ");
     getPrinter().print(")");
     // print exception
     if (a.getExceptions().size() != 0) {
       getPrinter().print(" throws ");
-      a.getExceptions().accept(getRealThis());
+      printList(a.getExceptions().iterator(), ", ");
     }
     getPrinter().println(";");
     CommentPrettyPrinter.printPostComments(a, printer);
@@ -288,12 +273,12 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     getPrinter().print(a.getName());
     // print parameters
     getPrinter().print("(");
-    a.getCDParameters().accept(getRealThis());
+    printSeparator(a.getCDParameters().iterator(), ", ");
     getPrinter().print(")");
     // print exception
     if (a.getExceptions().size() != 0) {
       getPrinter().print(" throws ");
-      a.getExceptions().accept(getRealThis());
+      printList(a.getExceptions().iterator(), ", ");
     }
     getPrinter().println(";");
   }
@@ -312,17 +297,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     getPrinter().print(" ");
     getPrinter().print(a.getName());
   }
-  
-  /**
-   * Prints a list of parameters
-   * 
-   * @param a list of parameters
-   */
-  @Override
-  public void handle(ASTCDParameterList a) {
-    printSeparator(a.iterator(), ", ");
-  }
-  
+    
   /**
    * Prints an attribute of class or interface in a class diagram
    * 
@@ -483,45 +458,17 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   }
   
   /**
-   * Prints a list of stereotype values
-   * 
-   * @param a list of stereotype values
-   */
-  @Override
-  public void handle(ASTStereotypeList a) {
-    printSeparator(a.iterator(), " ");
-  }
-
-  /**
    * Prints the start of stereotypes
    * 
    * @param a stereotype
    */
   @Override
-  public void visit(ASTStereotype a) {
+  public void handle(ASTStereotype a) {
     getPrinter().print("<<");
-  }
-  
-  /**
-   * Prints the end of stereotypes
-   * 
-   * @param a stereotype
-   */
-  @Override
-  public void endVisit(ASTStereotype a) {
+    printSeparator(a.getValues().iterator(), ", ");
     getPrinter().print(">>");
   }
-
-  /**
-   * Prints stereovaluelist and adds a delimiter between the items
-   * 
-   * @param a stereotype value
-   */
-  @Override
-  public void handle(ASTStereoValueList a) {
-    printSeparator(a.iterator(), ",");
-  }
-
+  
   /**
    * Prints stereotype values
    * 

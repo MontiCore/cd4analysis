@@ -13,7 +13,6 @@ import com.google.common.collect.Collections2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.types.types._ast.ASTImportStatementList;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.types.types._ast.ASTReturnType;
@@ -79,7 +78,7 @@ public class AstPrinter {
    * @return a string list of all import statements
    */
   public Collection<String> printImportList(
-      ASTImportStatementList importStatements) {
+      List<ASTImportStatement> importStatements) {
     
     return Collections2.transform(importStatements,
         new Function<ASTImportStatement, String>() {

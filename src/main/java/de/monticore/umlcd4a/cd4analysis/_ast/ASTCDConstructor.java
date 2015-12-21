@@ -1,6 +1,5 @@
 package de.monticore.umlcd4a.cd4analysis._ast;
 
-import de.monticore.types.types._ast.ASTQualifiedNameList;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDConstructor extends ASTCDConstructorTOP {
@@ -13,8 +12,8 @@ public class ASTCDConstructor extends ASTCDConstructorTOP {
   protected ASTCDConstructor(
       ASTModifier modifier,
       String name,
-      ASTCDParameterList cDParameters,
-      ASTQualifiedNameList exceptions)
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter> cDParameters,
+      java.util.List<de.monticore.types.types._ast.ASTQualifiedName> exceptions)
   {
     super(modifier, name, cDParameters, exceptions);
   }

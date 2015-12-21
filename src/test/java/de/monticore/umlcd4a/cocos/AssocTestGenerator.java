@@ -5,6 +5,7 @@
  */
 package de.monticore.umlcd4a.cocos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -13,7 +14,6 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValueList;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
@@ -165,7 +165,7 @@ public class AssocTestGenerator {
         ASTCardinality cardinality = null;
         ASTModifier modifier = null;
         
-        ASTStereoValueList stereoOrdered = CD4AnalysisNodeFactory.createASTStereoValueList();
+        List<ASTStereoValue> stereoOrdered = new ArrayList<>();
         stereoOrdered.add(ASTStereoValue.getBuilder().name("ordered").build());
         ASTStereotype stereoType = CD4AnalysisNodeFactory.createASTStereotype(stereoOrdered);
         
