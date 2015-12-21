@@ -6,7 +6,7 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>cd4analysis</artifactId>
-  <version>1.3.6</version>
+  <version>1.3.7-SNAPSHOT</version>
 
   <properties>
 
@@ -22,7 +22,7 @@
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.2.1</mc4.maven.version>
+    <mc4.maven.version>4.3.0</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
