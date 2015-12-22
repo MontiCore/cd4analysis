@@ -120,13 +120,13 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       a.getSuperclass().get().accept(getRealThis());
     }
     // print interfaces
-    if (a.getInterfaces().size() != 0) {
+    if (!a.getInterfaces().isEmpty()) {
       getPrinter().print(" implements ");
       printList(a.getInterfaces().iterator(), ", ");
     }
     // print class body
-    if (a.getCDConstructors().size() != 0 || a.getCDMethods().size() != 0
-        || a.getCDAttributes().size() != 0) {
+    if (!a.getCDConstructors().isEmpty() || !a.getCDMethods().isEmpty()
+        || !a.getCDAttributes().isEmpty()) {
       getPrinter().println("{");
       getPrinter().indent();
       printSeparator(a.getCDAttributes().iterator(), "");
@@ -155,12 +155,12 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print interface name
     getPrinter().print("interface " + a.getName());
     // print implemented interfaces
-    if (a.getInterfaces().size() != 0) {
+    if (!a.getInterfaces().isEmpty()) {
       getPrinter().print(" extends ");
       printList(a.getInterfaces().iterator(), ", ");
     }
     // print interface body
-    if (a.getCDMethods().size() != 0 || a.getCDAttributes().size() != 0) {
+    if (!a.getCDMethods().isEmpty() || !a.getCDAttributes().isEmpty()) {
       getPrinter().println("{");
       getPrinter().indent();
       printSeparator(a.getCDAttributes().iterator(), "");
@@ -188,20 +188,20 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print enum name
     getPrinter().print("enum " + a.getName());
     // print interfaces
-    if (a.getInterfaces().size() != 0) {
+    if (!a.getInterfaces().isEmpty()) {
       getPrinter().print(" implements ");
       printList(a.getInterfaces().iterator(), ", ");
     }
     // print enum body
-    if (a.getCDEnumConstants().size() != 0 || a.getCDConstructors().size() != 0
-        || a.getCDMethods().size() != 0) {
+    if (!a.getCDEnumConstants().isEmpty() || !a.getCDConstructors().isEmpty()
+        || !a.getCDMethods().isEmpty()) {
       getPrinter().println("{");
       getPrinter().indent();
-      if (a.getCDEnumConstants().size() != 0) {
+      if (!a.getCDEnumConstants().isEmpty()) {
         printSeparator(a.getCDEnumConstants().iterator(), ",\n");
         getPrinter().println(";");
       }
-      if (a.getCDConstructors().size() != 0 || a.getCDMethods().size() != 0) {
+      if (!a.getCDConstructors().isEmpty() || !a.getCDMethods().isEmpty()) {
         getPrinter().println();
         printSeparator(a.getCDConstructors().iterator(), "");
         printSeparator(a.getCDMethods().iterator(), "");
@@ -252,7 +252,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     printSeparator(a.getCDParameters().iterator(), ", ");
     getPrinter().print(")");
     // print exception
-    if (a.getExceptions().size() != 0) {
+    if (!a.getExceptions().isEmpty()) {
       getPrinter().print(" throws ");
       printList(a.getExceptions().iterator(), ", ");
     }
@@ -276,7 +276,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     printSeparator(a.getCDParameters().iterator(), ", ");
     getPrinter().print(")");
     // print exception
-    if (a.getExceptions().size() != 0) {
+    if (!a.getExceptions().isEmpty()) {
       getPrinter().print(" throws ");
       printList(a.getExceptions().iterator(), ", ");
     }
