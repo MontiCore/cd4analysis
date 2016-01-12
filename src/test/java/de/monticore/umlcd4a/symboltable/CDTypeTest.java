@@ -134,4 +134,14 @@ public class CDTypeTest {
     assertEquals(1, b.getAllVisibleFields().size());
     assertSame(b.getFields().get(0), b.getAllVisibleFields().iterator().next());
   }
+  
+  @Test
+  public void testGetAllVisibleFields() {
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    CDTypeSymbol b = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.VisibleFields.B", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(b);
+    assertEquals("B", b.getName());
+    assertEquals(1, b.getAllVisibleFields().size());
+  }
 }

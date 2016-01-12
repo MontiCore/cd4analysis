@@ -1,0 +1,11 @@
+package de.monticore.umlcd4a.symboltable;
+
+classdiagram VisibleFields {
+  interface A1 {
+    public int i;
+  }
+  interface A2 extends A1;
+  class B extends A2 {
+    public int i;
+  }
+}

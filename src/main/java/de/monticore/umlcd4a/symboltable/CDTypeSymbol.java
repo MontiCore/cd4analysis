@@ -111,12 +111,17 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
    */
   public Collection<CDFieldSymbol> getAllVisibleFields() {
     final Set<CDFieldSymbol> allFields = new LinkedHashSet<>();
-    allFields.addAll(getAllVisibleFieldsOfSuperTypes());
     allFields.addAll(getFields());
+    // filter-out all fields with same name
+    for (CDFieldSymbol inheritedField: getAllVisibleFieldsOfSuperTypes()) {
+      if (getFields().stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(inheritedField.getName()))) {
+        allFields.add(inheritedField);
+      }   
+    }
     // filter-out all private fields
     final Set<CDFieldSymbol> allVisibleFields = allFields.stream().
         filter(field -> !field.isPrivate())
-        .collect(Collectors.toCollection(LinkedHashSet::new));
+        .collect(Collectors.toCollection(LinkedHashSet::new)); 
     return ImmutableSet.copyOf(allVisibleFields);
   }
   
