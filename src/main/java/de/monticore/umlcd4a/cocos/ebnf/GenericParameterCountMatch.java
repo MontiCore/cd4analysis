@@ -30,7 +30,7 @@ public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCo
   
   private void check(String typeName, ASTTypeArguments typeArguments) {
     // note that "no type arguments" is checked by coco GenericTypeHasParameters
-    if (typeArguments.getTypeArguments().size() > 0) {
+    if (!typeArguments.getTypeArguments().isEmpty()) {
       String typeWithoutGenerics = typeName;
       if (typeName.indexOf('<') > 0) {
         typeWithoutGenerics = typeName.substring(0, typeName.indexOf('<'));

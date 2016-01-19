@@ -280,7 +280,7 @@ public class CDSymbolTable {
           return true;
         }
       }
-    } else if (type instanceof CDTypeSymbol){
+    } else {
       Optional<? extends Scope> parentScope = type.getSpannedScope()
           .getEnclosingScope();
       if (parentScope.isPresent()

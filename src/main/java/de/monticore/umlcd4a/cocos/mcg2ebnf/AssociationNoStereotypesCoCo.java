@@ -25,7 +25,7 @@ public class AssociationNoStereotypesCoCo implements CD4AnalysisASTCDAssociation
   public void check(ASTCDAssociation node) {
     if (node.getStereotype().isPresent()) {
       ASTStereotype stereoType = node.getStereotype().get();
-      if (stereoType.getValues().size() > 0) {
+      if (!stereoType.getValues().isEmpty()) {
         Log.error(
             String.format("0xC4A71 Association %s may not have stereotypes.",
                 CD4ACoCoHelper.printAssociation(node)),

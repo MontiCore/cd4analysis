@@ -22,7 +22,7 @@ public class InterfaceNoMethodsCoCo implements CD4AnalysisASTCDInterfaceCoCo {
    */
   @Override
   public void check(ASTCDInterface node) {
-    if (node.getCDMethods().size() > 0) {
+    if (!node.getCDMethods().isEmpty()) {
       ASTCDMethod method = node.getCDMethods().get(0);
       Log.error(String.format("0xC4A67 Interface %s may not have methods.", node.getName()),
           method.get_SourcePositionStart());

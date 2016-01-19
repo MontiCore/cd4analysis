@@ -22,7 +22,7 @@ public class InterfaceNoAttributesCoCo implements CD4AnalysisASTCDInterfaceCoCo 
    */
   @Override
   public void check(ASTCDInterface node) {
-    if (node.getCDAttributes().size() > 0) {
+    if (!node.getCDAttributes().isEmpty()) {
       ASTCDAttribute attr = node.getCDAttributes().get(0);
       Log.error(String.format("0xC4A66 Interface %s may not have attributes.", node.getName()),
           attr.get_SourcePositionStart());

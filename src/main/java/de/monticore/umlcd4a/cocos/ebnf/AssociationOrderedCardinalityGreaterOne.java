@@ -64,7 +64,7 @@ public class AssociationOrderedCardinalityGreaterOne implements
     if (mod.getStereotype().isPresent()) {
        List<ASTStereoValue> list = mod.getStereotype().get().getValues();
       for (ASTStereoValue l : list) {
-        if (l.getName().equals("ordered")) {
+        if ("ordered".equals(l.getName())) {
           return true;
         }
       }

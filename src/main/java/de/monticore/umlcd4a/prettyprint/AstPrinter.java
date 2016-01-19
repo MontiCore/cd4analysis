@@ -161,7 +161,7 @@ public class AstPrinter {
   public String printThrowsDecl(List<ASTQualifiedName> exceptionList) {
     StringBuilder str = new StringBuilder();
     
-    if (exceptionList.size() > 0) {
+    if (!exceptionList.isEmpty()) {
       str.append("throws ");
     }
     

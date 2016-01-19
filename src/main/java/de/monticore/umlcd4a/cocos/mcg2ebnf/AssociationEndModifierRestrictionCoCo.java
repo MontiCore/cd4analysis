@@ -45,7 +45,7 @@ public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAs
     if (actualMod.getStereotype().isPresent()) {
       ASTStereotype stereo = actualMod.getStereotype().get();
       for (ASTStereoValue val : stereo.getValues()) {
-        if (!val.getName().equals("ordered")) {
+        if (!"ordered".equals(val.getName())) {
           error(assoc, val);
         }
       }

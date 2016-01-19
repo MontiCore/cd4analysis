@@ -102,28 +102,26 @@ public class CDTypes {
    * type
    */
   public static String primitiveToWrapper(String primitiveType) {
-    String wrapperName = primitiveType;
     switch (primitiveType) {
       case IntPimitive:
-        wrapperName = Integer.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Integer.replaceFirst(JAVA_LANG_PACKAGE, "");
       case DoublePimitive:
-        wrapperName = Double.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Double.replaceFirst(JAVA_LANG_PACKAGE, "");
       case ShortPimitive:
-        wrapperName = Short.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Short.replaceFirst(JAVA_LANG_PACKAGE, "");
       case BytePimitive:
-        wrapperName = Byte.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Byte.replaceFirst(JAVA_LANG_PACKAGE, "");
       case FloatPimitive:
-        wrapperName = Float.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Float.replaceFirst(JAVA_LANG_PACKAGE, "");
       case LongPimitive:
-        wrapperName = Long.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Long.replaceFirst(JAVA_LANG_PACKAGE, "");
       case CharPimitive:
-        wrapperName = Character.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Character.replaceFirst(JAVA_LANG_PACKAGE, "");
       case BooleanPimitive:
-        wrapperName = Boolean.replaceFirst(JAVA_LANG_PACKAGE, "");
+        return Boolean.replaceFirst(JAVA_LANG_PACKAGE, "");
       default:
-        break;
+        return primitiveType;
     }
-    return wrapperName;
   }
   
   /**
