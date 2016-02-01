@@ -14,12 +14,21 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 import org.antlr.v4.runtime.RecognitionException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.Slf4jLog;
 
 public class CD4AnalysisParserTest {
+  
+  @BeforeClass
+  public static void setup() {
+    Slf4jLog.init();
+    Log.enableFailQuick(false);
+  }
   
   @Test
   public void testSocNet() throws RecognitionException, IOException {
