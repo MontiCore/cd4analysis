@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
-
 import de.monticore.symboltable.CommonScopeSpanningSymbol;
 
 /**
@@ -30,7 +29,6 @@ public class CDSymbol extends CommonScopeSpanningSymbol {
    * Constructor for de.monticore.umlcd4a.symboltable.CDSymbol
    * 
    * @param name
-   * @param kind
    */
   public CDSymbol(String name) {
     super(name, KIND);
@@ -40,11 +38,11 @@ public class CDSymbol extends CommonScopeSpanningSymbol {
    * @return types
    */
   public Collection<CDTypeSymbol> getTypes() {
-    return spannedScope.resolveLocally(CDTypeSymbol.KIND);
+    return getSpannedScope().resolveLocally(CDTypeSymbol.KIND);
   }
   
   public Optional<CDTypeSymbol> getType(String name) {
-    return spannedScope.resolveLocally(name, CDTypeSymbol.KIND);
+    return getSpannedScope().resolveLocally(name, CDTypeSymbol.KIND);
   }
   
   /**
