@@ -31,7 +31,7 @@ public class CDMethodSignaturePredicate implements SymbolPredicate {
   }
 
   @Override
-  public boolean apply(final Symbol symbol) {
+  public boolean test(final Symbol symbol) {
     if ((symbol != null) &&
         symbol.isKindOf(CDMethodSymbol.KIND) &&
         (symbol instanceof CDMethodSymbol)) {

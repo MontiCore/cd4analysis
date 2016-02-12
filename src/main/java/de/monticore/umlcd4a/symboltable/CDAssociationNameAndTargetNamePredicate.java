@@ -6,6 +6,7 @@
 package de.monticore.umlcd4a.symboltable;
 
 import static com.google.common.base.Strings.nullToEmpty;
+
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.SymbolPredicate;
 
@@ -20,7 +21,7 @@ public class CDAssociationNameAndTargetNamePredicate implements SymbolPredicate 
   }
 
   @Override
-  public boolean apply(final Symbol symbol) {
+  public boolean test(final Symbol symbol) {
     if ((symbol != null) &&
         symbol.isKindOf(CDAssociationSymbol.KIND) &&
         (symbol instanceof CDAssociationSymbol)) {
