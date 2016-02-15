@@ -9,6 +9,17 @@ import de.monticore.symboltable.SymbolKind;
 
 public class CDAssociationSymbolKind implements SymbolKind {
 
-  protected CDAssociationSymbolKind() {
+  private static final String NAME = "de.monticore.umlcd4a.symboltable.CDAssociationSymbolKind";
+
+  protected CDAssociationSymbolKind(){}
+
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public boolean isKindOf(SymbolKind kind) {
+    return NAME.equals(kind.getName()) || SymbolKind.super.isKindOf(kind);
   }
 }

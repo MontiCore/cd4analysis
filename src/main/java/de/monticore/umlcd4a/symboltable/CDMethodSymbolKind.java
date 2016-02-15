@@ -5,10 +5,22 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
+import de.monticore.symboltable.SymbolKind;
 import de.monticore.symboltable.types.JMethodSymbolKind;
 
 public class CDMethodSymbolKind extends JMethodSymbolKind {
 
-  protected CDMethodSymbolKind() {
+  private static final String NAME = "de.monticore.umlcd4a.symboltable.CDMethodSymbolKind";
+
+  protected CDMethodSymbolKind(){}
+
+  @Override
+  public String getName() {
+    return NAME;
+  }
+
+  @Override
+  public boolean isKindOf(SymbolKind kind) {
+    return NAME.equals(kind.getName()) || super.isKindOf(kind);
   }
 }
