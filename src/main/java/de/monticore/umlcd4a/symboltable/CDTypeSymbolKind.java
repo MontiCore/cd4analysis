@@ -10,7 +10,7 @@ import de.monticore.symboltable.types.JTypeSymbolKind;
 
 public class CDTypeSymbolKind extends JTypeSymbolKind {
 
-  private static final String NAME = "de.monticore.umlcd4a.symboltable.CDTypeSymbolKind";
+  private static final String NAME = CDTypeSymbolKind.class.getName();
 
   protected CDTypeSymbolKind() {
   }

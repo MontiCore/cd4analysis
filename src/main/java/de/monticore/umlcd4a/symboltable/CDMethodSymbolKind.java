@@ -10,7 +10,7 @@ import de.monticore.symboltable.types.JMethodSymbolKind;
 
 public class CDMethodSymbolKind extends JMethodSymbolKind {
 
-  private static final String NAME = "de.monticore.umlcd4a.symboltable.CDMethodSymbolKind";
+  private static final String NAME = CDMethodSymbolKind.class.getName();
 
   protected CDMethodSymbolKind(){}
 
