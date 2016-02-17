@@ -35,8 +35,7 @@ public class CDTypeTest {
     typeSymbol.addField(fieldSymbol3);
 
     MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create
-        (CDFieldSymbol.class, CDFieldSymbol.KIND)));
+    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDFieldSymbol.KIND)));
 
 
     // Test CDTypeSymbol methods //
@@ -72,8 +71,7 @@ public class CDTypeTest {
     typeSymbol.addConstructor(constructor);
 
     MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.class,
-        CDMethodSymbol.KIND)));
+    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //
     assertEquals(2, typeSymbol.getMethods().size());
@@ -106,8 +104,7 @@ public class CDTypeTest {
     typeSymbol.addConstructor(constructorSymbol2);
 
     MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
-    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.class,
-        CDMethodSymbol.KIND)));
+    typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //
     assertEquals(2, typeSymbol.getConstructors().size());

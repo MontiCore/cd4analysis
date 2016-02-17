@@ -21,7 +21,6 @@ public class CDSymbolKind implements SymbolKind {
 
   @Override
   public boolean isKindOf(SymbolKind kind) {
-    return NAME.equals(kind.getName())
-        || SymbolKind.super.isKindOf(kind);
+    return NAME.equals(kind.getName()) || SymbolKind.super.isKindOf(kind);
   }
 }

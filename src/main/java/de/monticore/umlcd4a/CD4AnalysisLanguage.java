@@ -5,9 +5,8 @@
  */
 package de.monticore.umlcd4a;
 
-import java.util.Optional;
-
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 import de.monticore.CommonModelingLanguage;
 import de.monticore.symboltable.MutableScope;
@@ -28,11 +27,11 @@ public class CD4AnalysisLanguage extends CommonModelingLanguage {
   public CD4AnalysisLanguage() {
     super("CD 4 Analysis Language", FILE_ENDING);
     
-    addResolver(CommonResolvingFilter.create(CDSymbol.class, CDSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDTypeSymbol.class, CDTypeSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDFieldSymbol.class, CDFieldSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDMethodSymbol.class, CDMethodSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDAssociationSymbol.class, CDAssociationSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDTypeSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDFieldSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDMethodSymbol.KIND));
+    addResolver(CommonResolvingFilter.create(CDAssociationSymbol.KIND));
 
     setModelNameCalculator(new CD4AnalysisModelNamerCalculator());
 
