@@ -25,6 +25,8 @@ public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode 
   
   List<ASTReferenceType> getInterfaces();
   
+  List<ASTCDMethod> getCDMethods();
+  
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
    * 
