@@ -28,6 +28,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
@@ -394,30 +395,30 @@ public class ASTCDTransformation {
    * definition ( e.g. protected String getValue(Date d); ) and adds it to the
    * given class
    * 
-   * @param astClass
+   * @param astType
    * @param methodDefinition method definition to parse
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.empty() if the method definition couldn't be parsed
    */
-  public Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDClass astClass,
+  public Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDType astType,
       String methodDefinition) {
     checkArgument(!Strings.isNullOrEmpty(methodDefinition),
         "Method can't be added to the CD class because of null or empty method definition");
-    checkNotNull(astClass, "Method '" + methodDefinition
+    checkNotNull(astType, "Method '" + methodDefinition
         + "' can't be added to the CD class because of null reference to the class");
     Optional<ASTCDMethod> astMethod = Optional.empty();
     try {
       astMethod = (new CD4AnalysisParser()).parseCDMethod(new StringReader(methodDefinition));
       if (!astMethod.isPresent()) {
-        Log.error("Method can't be added to the CD class " + astClass.getName()
+        Log.error("Method can't be added to the CD class " + astType.getName()
             + "\nWrong method definition: " + methodDefinition);
       }
       else {
-        addCdMethod(astClass, astMethod.get());
+        addCdMethod(astType, astMethod.get());
       }
     }
     catch (RecognitionException | IOException e) {
-      Log.error("Method can't be added to the CD class " + astClass.getName()
+      Log.error("Method can't be added to the CD class " + astType.getName()
           + "\nCatched exception: " + e);
     }
     return astMethod;
@@ -425,14 +426,14 @@ public class ASTCDTransformation {
   
   /**
    * Creates an instance of the {@link ASTCDMethod} with the given name, default
-   * return type and the empty parameter list and adds it to the given class
+   * return type and the empty parameter list and adds it to the given type
    * 
    * @param astClass
    * @param methodName
    * @return The created {@link ASTCDMethod} node
    */
-  public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
-    return addCdMethod(astClass, methodName, DEFAULT_RETURN_TYPE, DEFAULT_METHOD_MODIFIER,
+  public ASTCDMethod addCdMethod(ASTCDType astType, String methodName) {
+    return addCdMethod(astType, methodName, DEFAULT_RETURN_TYPE, DEFAULT_METHOD_MODIFIER,
         Lists.newArrayList()).get();
   }
   
@@ -440,23 +441,23 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTCDMethod} with the given name, return
    * type and parameter types and adds it to the given class
    * 
-   * @param astClass
+   * @param astType
    * @param methodName
    * @param returnType
    * @param paramTypes
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.empty() if the method definition couldn't be parsed
    */
-  public Optional<ASTCDMethod> addCdMethod(ASTCDClass astClass, String methodName,
+  public Optional<ASTCDMethod> addCdMethod(ASTCDType astType, String methodName,
       String returnType, String modifier,
       List<String> paramTypes) {
-    checkNotNull(astClass);
+    checkNotNull(astType);
     checkArgument(!Strings.isNullOrEmpty(methodName));
     Optional<ASTReturnType> parsedReturnType = createReturnType(returnType);
     Optional<List<ASTCDParameter>> cdParameters = createCdMethodParameters(paramTypes);
     Optional<ASTModifier> parsedModifier = createModifier(modifier);
     if (!parsedReturnType.isPresent() || !cdParameters.isPresent() || !parsedModifier.isPresent()) {
-      Log.error("Method " + methodName + " can't be added to the CD class " + astClass.getName());
+      Log.error("Method " + methodName + " can't be added to the CD class " + astType.getName());
       return Optional.empty();
     }
     ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
@@ -465,72 +466,23 @@ public class ASTCDTransformation {
         .modifier(parsedModifier.get())
         .cDParameters(cdParameters.get())
         .build();
-    addCdMethod(astClass, cdMethod);
+    addCdMethod(astType, cdMethod);
     return Optional.of(cdMethod);
   }
   
   /**
-   * Adds the given method to the given class
+   * Adds the given method to the given type
    * 
-   * @param astClass
+   * @param astType
    * @param astMethod
    */
-  public void addCdMethod(ASTCDClass astClass, ASTCDMethod astMethod) {
+  public void addCdMethod(ASTCDType astType, ASTCDMethod astMethod) {
     checkNotNull(
         astMethod,
         "ASTCDMethod method node can't be added to the CD class because of null reference to the added node");
-    checkNotNull(astClass, "Method '" + astMethod.getName()
+    checkNotNull(astType, "Method '" + astMethod.getName()
         + "' can't be added to the CD class because of null reference to the class");
-    astClass.getCDMethods().add(astMethod);
-  }
-  
-  /**
-   * Creates an instance of the {@link ASTCDMethod} using the given method
-   * definition ( e.g. protected String getValue(Date d); ) and adds it to the
-   * given interface
-   * 
-   * @param astInterface
-   * @param methodDefinition method definition to parse
-   * @return Optional of the created {@link ASTCDMethod} node or
-   * Optional.empty() if the method definition couldn't be parsed
-   */
-  public Optional<ASTCDMethod> addCdMethodUsingDefinition(ASTCDInterface astInterface,
-      String methodDefinition) {
-    checkArgument(!Strings.isNullOrEmpty(methodDefinition),
-        "Method can't be added to the CD interface because of null or empty method definition");
-    checkNotNull(astInterface, "Method '" + methodDefinition
-        + "' can't be added to the CD interface because of null reference to the interface");
-    Optional<ASTCDMethod> astMethod = Optional.empty();
-    try {
-      astMethod = (new CD4AnalysisParser()).parseCDMethod(new StringReader(methodDefinition));
-      if (!astMethod.isPresent()) {
-        Log.error("Method can't be added to the CD interface " + astInterface.getName()
-            + "\nWrong method definition: " + methodDefinition);
-      }
-      else {
-        addCdMethod(astInterface, astMethod.get());
-      }
-    }
-    catch (RecognitionException | IOException e) {
-      Log.error("Method can't be added to the CD interface " + astInterface.getName()
-          + "\nCatched exception: " + e);
-    }
-    return astMethod;
-  }
-  
-  /**
-   * Adds the given method to the given interface
-   * 
-   * @param astInterface
-   * @param astMethod
-   */
-  public void addCdMethod(ASTCDInterface astInterface, ASTCDMethod astMethod) {
-    checkNotNull(
-        astMethod,
-        "ASTCDMethod method node can't be added to the CD interface because of null reference to the added node");
-    checkNotNull(astInterface, "Method '" + astMethod.getName()
-        + "' can't be added to the CD class because of null reference to the interface");
-    astInterface.getCDMethods().add(astMethod);
+    astType.getCDMethods().add(astMethod);
   }
   
   /**

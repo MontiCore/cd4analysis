@@ -21,6 +21,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 
 /**
@@ -176,25 +177,25 @@ public class ASTCDRawTransformation {
    * default return type and the empty parameter list and adds it to the
    * given class
    * 
-   * @param astClass
+   * @param astType
    * @param methodName
    * @return The created {@link ASTCDMethod} node
    */
-  public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName) {
-    return addCdMethod(astClass, methodName, Lists.newArrayList());
+  public ASTCDMethod addCdMethod(ASTCDType astType, String methodName) {
+    return addCdMethod(astType, methodName, Lists.newArrayList());
   }
   
   /**
    * Creates an instance of the {@link ASTCDMethod} with the given name,
    * return type and parameter types and adds it to the given class
    * 
-   * @param astClass
+   * @param astType
    * @param methodName
    * @param returnType
    * @param paramTypes
    * @return created {@link ASTCDMethod} node
    */
-  public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName,
+  public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
       String returnType, List<String> paramTypes) {
     ASTReturnType astReturnType = createType(returnType);
     List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
@@ -205,7 +206,7 @@ public class ASTCDRawTransformation {
         .modifier(modifier)
         .cDParameters(cdParameters)
         .build();
-    addCdMethod(astClass, cdMethod);
+    addCdMethod(astType, cdMethod);
     return cdMethod;
   }
   
@@ -214,12 +215,12 @@ public class ASTCDRawTransformation {
    * and parameter types and default return type (void).
    * Created node is added to the given class
    * 
-   * @param astClass
+   * @param astType
    * @param methodName
    * @param paramTypes
    * @return created {@link ASTCDMethod} node
    */
-  public ASTCDMethod addCdMethod(ASTCDClass astClass, String methodName,
+  public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
       List<String> paramTypes) {
     ASTVoidType returnType = ASTVoidType.getBuilder().build();
     List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
@@ -230,18 +231,18 @@ public class ASTCDRawTransformation {
         .modifier(modifier)
         .cDParameters(cdParameters)
         .build();
-    addCdMethod(astClass, cdMethod);
+    addCdMethod(astType, cdMethod);
     return cdMethod;
   }
   
   /**
    * Adds the given method to the given class
    * 
-   * @param astClass
+   * @param astType
    * @param astMethod
    */
-  public void addCdMethod(ASTCDClass astClass, ASTCDMethod astMethod) {
-    astClass.getCDMethods().add(astMethod);
+  public void addCdMethod(ASTCDType astType, ASTCDMethod astMethod) {
+    astType.getCDMethods().add(astMethod);
   }
   
   /**
