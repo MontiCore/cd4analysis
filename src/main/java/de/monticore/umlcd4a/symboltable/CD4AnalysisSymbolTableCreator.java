@@ -86,6 +86,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     
     final ArtifactScope scope = new ArtifactScope(Optional.empty(), getPackageName(), imports);
     putOnStack(scope);
+    scope.setAstNode(compilationUnit);
     
     // note that the cdsymbol scope is removed in the endVisit of
     // ASTCDDefinition
