@@ -10,7 +10,7 @@ import de.monticore.symboltable.types.JAttributeSymbolKind;
 
 public class CDFieldSymbolKind extends JAttributeSymbolKind {
 
-  private static final String NAME = "de.monticore.umlcd4a.symboltable.CDFieldSymbolKind";
+  private static final String NAME = CDFieldSymbolKind.class.getName();
 
   protected CDFieldSymbolKind() {
   }
