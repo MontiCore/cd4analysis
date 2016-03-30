@@ -12,17 +12,20 @@
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>4.3.1-SNAPSHOT</monticore.version>
+    <monticore.version>4.4.0</monticore.version>
 
     <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
     <se-commons.version>1.7.6</se-commons.version>
     <antlr.version>4.5</antlr.version>
+    <emf.common.version>2.5.0</emf.common.version>
+    <emf.ecore.version>2.5.0</emf.ecore.version>
+    <emf.ecore.xmi.version>2.5.0</emf.ecore.xmi.version>
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.3.0</mc4.maven.version>
+    <mc4.maven.version>4.4.0</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
@@ -165,6 +168,24 @@
   </build>
 
   <dependencies>
+  
+      <!-- EMF dependencies -->
+      <dependency>
+        <groupId>org.mod4j.org.eclipse.emf</groupId>
+        <artifactId>ecore</artifactId>
+        <version>${emf.ecore.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mod4j.org.eclipse.emf.ecore</groupId>
+        <artifactId>xmi</artifactId>
+        <version>${emf.ecore.xmi.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mod4j.org.eclipse.emf</groupId>
+        <artifactId>common</artifactId>
+        <version>${emf.common.version}</version>
+      </dependency>
+      
     <dependency>
       <groupId>de.se_rwth.commons</groupId>
       <artifactId>se-commons-logging</artifactId>
@@ -199,6 +220,12 @@
       <groupId>de.monticore</groupId>
       <artifactId>monticore-grammar</artifactId>
       <version>${monticore.version}</version>
+    </dependency>
+    
+     <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-emf-runtime</artifactId>
+        <version>${monticore.version}</version>
     </dependency>
 
     <dependency>
