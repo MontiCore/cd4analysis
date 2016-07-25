@@ -49,6 +49,9 @@ import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
+/**
+ * TODO Use JTypeSymbolsHelper when MC version >= 4.4.1-SNAPSHOT
+ */
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
   
   /**
