@@ -536,6 +536,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         
         assocRight2LeftSymbol
             .setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
+
+        cdAssoc.setRightToLeftSymbol(assocRight2LeftSymbol);
       }
       return assocRight2LeftSymbol;
     }
@@ -570,6 +572,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         
         assocLeft2RightSymbol
             .setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
+
+        cdAssoc.setLeftToRightSymbol(assocLeft2RightSymbol);
       }
       return assocLeft2RightSymbol;
     }

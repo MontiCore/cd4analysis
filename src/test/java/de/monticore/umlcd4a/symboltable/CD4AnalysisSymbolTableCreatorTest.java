@@ -1,19 +1,5 @@
 package de.monticore.umlcd4a.symboltable;
 
-import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
-import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
-import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Collection;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
@@ -27,6 +13,19 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.Collection;
+
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PRIVATE;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PROTECTED;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.PUBLIC;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class CD4AnalysisSymbolTableCreatorTest {
   
@@ -261,6 +260,10 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(memberAssocLeft2Right.getAstNode().isPresent());
     assertTrue(memberAssocLeft2Right.getAstNode().get() instanceof ASTCDAssociation);
+    ASTCDAssociation left2RightNode = (ASTCDAssociation) memberAssocLeft2Right.getAstNode().get();
+    assertTrue(left2RightNode.getLeftToRightSymbol().isPresent());
+    assertSame(memberAssocLeft2Right, left2RightNode.getLeftToRightSymbol().get());
+
     // A <- B
     final CDAssociationSymbol memberAssocRight2Left = (CDAssociationSymbol) cdScope.resolve(new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
     assertNotNull(memberAssocRight2Left);
@@ -278,6 +281,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(memberAssocRight2Left.getAstNode().isPresent());
     assertTrue(memberAssocRight2Left.getAstNode().get() instanceof ASTCDAssociation);
+    ASTCDAssociation right2LeftNode = (ASTCDAssociation) memberAssocRight2Left.getAstNode().get();
+    assertTrue(right2LeftNode.getLeftToRightSymbol().isPresent());
+    assertSame(memberAssocRight2Left, right2LeftNode.getRightToLeftSymbol().get());
     // Stereotype
     assertEquals(1, memberAssocRight2Left.getStereotypes().size());
     assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getValue());
