@@ -12,12 +12,12 @@
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>4.4.1</monticore.version>
+    <monticore.version>4.4.3-SNAPSHOT</monticore.version>
 
     <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
-    <se-commons.version>1.7.6</se-commons.version>
+    <se-commons.version>1.7.7-SNAPSHOT</se-commons.version>
     <antlr.version>4.5</antlr.version>
     <emf.common.version>2.5.0</emf.common.version>
     <emf.ecore.version>2.5.0</emf.ecore.version>
@@ -25,7 +25,7 @@
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.4.1</mc4.maven.version>
+    <mc4.maven.version>4.4.2</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
