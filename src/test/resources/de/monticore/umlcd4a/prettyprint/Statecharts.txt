@@ -1,0 +1,447 @@
+ï»¿astobjectdiagram Example1 {
+  @:ASTCDCompilationUnit<1,0>:ASTCDCompilationUnit {
+    r__package = ["de", "monticore", "umlcd4a", "prettyprint"];
+    @Example1!CDDefinition<5,0>:ASTCDDefinition {
+      name = "Example1";
+      @ASTStatechart!CDClass<17,2>:ASTCDClass {
+        name = "ASTStatechart";
+        @+!Modifier<17,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @name!CDAttribute<18,4>:ASTCDAttribute {
+          name = "name";
+          @#!Modifier<18,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @states!CDAttribute<19,4>:ASTCDAttribute {
+          name = "states";
+          @#!Modifier<19,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @transitions!CDAttribute<20,4>:ASTCDAttribute {
+          name = "transitions";
+          @#!Modifier<20,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @userCode!CDAttribute<21,4>:ASTCDAttribute {
+          name = "userCode";
+          @#!Modifier<21,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTEntryAction!CDClass<24,2>:ASTCDClass {
+        name = "ASTEntryAction";
+        @+!Modifier<24,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @block!CDAttribute<25,4>:ASTCDAttribute {
+          name = "block";
+          @#!Modifier<25,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTExitAction!CDClass<28,2>:ASTCDClass {
+        name = "ASTExitAction";
+        @+!Modifier<28,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @block!CDAttribute<29,4>:ASTCDAttribute {
+          name = "block";
+          @#!Modifier<29,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTState!CDClass<32,2>:ASTCDClass {
+        name = "ASTState";
+        @+!Modifier<32,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @name!CDAttribute<33,4>:ASTCDAttribute {
+          name = "name";
+          @#!Modifier<33,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @entryAction!CDAttribute<34,4>:ASTCDAttribute {
+          name = "entryAction";
+          @#!Modifier<34,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @exitAction!CDAttribute<35,4>:ASTCDAttribute {
+          name = "exitAction";
+          @#!Modifier<35,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @states!CDAttribute<36,4>:ASTCDAttribute {
+          name = "states";
+          @#!Modifier<36,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @transitions!CDAttribute<37,4>:ASTCDAttribute {
+          name = "transitions";
+          @#!Modifier<37,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @r__final!CDAttribute<38,4>:ASTCDAttribute {
+          name = "r__final";
+          @#!Modifier<38,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @initial!CDAttribute<39,4>:ASTCDAttribute {
+          name = "initial";
+          @#!Modifier<39,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTTransition!CDClass<42,2>:ASTCDClass {
+        name = "ASTTransition";
+        @+!Modifier<42,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @from!CDAttribute<43,4>:ASTCDAttribute {
+          name = "from";
+          @#!Modifier<43,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @to!CDAttribute<44,4>:ASTCDAttribute {
+          name = "to";
+          @#!Modifier<44,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @event!CDAttribute<45,4>:ASTCDAttribute {
+          name = "event";
+          @#!Modifier<45,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @arguments!CDAttribute<46,4>:ASTCDAttribute {
+          name = "arguments";
+          @#!Modifier<46,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @guard!CDAttribute<47,4>:ASTCDAttribute {
+          name = "guard";
+          @#!Modifier<47,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @action!CDAttribute<48,4>:ASTCDAttribute {
+          name = "action";
+          @#!Modifier<48,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTArgument!CDClass<51,2>:ASTCDClass {
+        name = "ASTArgument";
+        @+!Modifier<51,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @paramType!CDAttribute<52,4>:ASTCDAttribute {
+          name = "paramType";
+          @#!Modifier<52,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+        @paramName!CDAttribute<53,4>:ASTCDAttribute {
+          name = "paramName";
+          @#!Modifier<53,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTCode!CDClass<56,2>:ASTCDClass {
+        name = "ASTCode";
+        @+!Modifier<56,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @body!CDAttribute<57,4>:ASTCDAttribute {
+          name = "body";
+          @#!Modifier<57,4>:ASTModifier {
+            r__derived = false;
+            r__public = false;
+            r__protected = true;
+            r__private = false;
+            r__static = false;
+            r__final = false;
+            r__abstract = false;
+          }
+        }
+      }
+      @ASTAbstractAnything!CDClass<60,2>:ASTCDClass {
+        name = "ASTAbstractAnything";
+        @abs.+!Modifier<60,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = true;
+        }
+      }
+      @ASTSCStructure!CDInterface<7,2>:ASTCDInterface {
+        name = "ASTSCStructure";
+        @+!Modifier<7,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+      }
+      @ASTBlockStatementExt!CDInterface<9,2>:ASTCDInterface {
+        name = "ASTBlockStatementExt";
+        @+!Modifier<9,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+      }
+      @ASTExpressionExt!CDInterface<11,2>:ASTCDInterface {
+        name = "ASTExpressionExt";
+        @+!Modifier<11,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+      }
+      @ASTClassbodyExt!CDInterface<13,2>:ASTCDInterface {
+        name = "ASTClassbodyExt";
+        @+!Modifier<13,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+      }
+      @ASTStatechartNode!CDInterface<15,2>:ASTCDInterface {
+        name = "ASTStatechartNode";
+        @+!Modifier<15,2>:ASTModifier {
+          r__derived = false;
+          r__public = true;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+      }
+      @StatechartLiterals!CDEnum<62,2>:ASTCDEnum {
+        name = "StatechartLiterals";
+        @ !Modifier<62,2>:ASTModifier {
+          r__derived = false;
+          r__public = false;
+          r__protected = false;
+          r__private = false;
+          r__static = false;
+          r__final = false;
+          r__abstract = false;
+        }
+        @FINAL!CDEnumConstant<63,4>:ASTCDEnumConstant {
+          name = "FINAL";
+        }
+        @INITIAL!CDEnumConstant<64,4>:ASTCDEnumConstant {
+          name = "INITIAL";
+        }
+      }
+    }
+  }
+}
+
