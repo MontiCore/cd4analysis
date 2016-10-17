@@ -19,8 +19,8 @@ import org.junit.Test;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._od.CD4Analysis2OD;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.umlcd4a.reporting.CD4A2OD;
 import de.monticore.umlcd4a.reporting.CD4ANodeIdentHelper;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
@@ -52,11 +52,11 @@ public class ODReportingTest {
     
     IndentPrinter printer = new IndentPrinter();
     ReportingRepository reporting = new ReportingRepository(new CD4ANodeIdentHelper());
-    CD4Analysis2OD visitor = new CD4Analysis2OD(printer, reporting);
+    CD4A2OD visitor = new CD4A2OD(printer, reporting);
     
     // prettyprinting input
     String output = visitor.printObjectDiagram("Example1", cdDef.get());
-    
+    System.out.println(output);
     // TODO MB after next release: Parse the output 
   }
   

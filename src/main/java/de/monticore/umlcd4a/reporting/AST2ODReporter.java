@@ -29,7 +29,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.cd4analysis._od.CD4Analysis2OD;
 import de.se_rwth.commons.Names;
 
 public class AST2ODReporter extends AReporter {
@@ -76,7 +75,7 @@ public class AST2ODReporter extends AReporter {
     if (ast instanceof ASTCDCompilationUnit || ast instanceof ASTCDDefinition) {
       ASTCD4AnalysisNode cd4aNode = (ASTCD4AnalysisNode) ast;
       IndentPrinter pp = new IndentPrinter();
-      CD4Analysis2OD odPrinter = new CD4Analysis2OD(pp, reporting);
+      CD4A2OD odPrinter = new CD4A2OD(pp, reporting);
       odPrinter.printObjectDiagram(Names.getSimpleName(modelName), cd4aNode);
       writeLine(pp.getContent());
     }
