@@ -90,7 +90,6 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         + compilationUnit.getCDDefinition().getName(),
         CD4AnalysisSymbolTableCreator.class.getSimpleName());
     
-    // TODO PN test this
     setEnclosingScopeOfNodes(compilationUnit);
   }
   
