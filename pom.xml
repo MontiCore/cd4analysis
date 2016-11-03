@@ -12,7 +12,7 @@
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>4.5.0</monticore.version>
+    <monticore.version>4.5.1-SNAPSHOT</monticore.version>
 
     <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
@@ -25,7 +25,7 @@
 
     <!-- .. Plugins ....................................................... -->
 
-    <mc4.maven.version>4.5.0</mc4.maven.version>
+    <mc4.maven.version>4.5.0.1</mc4.maven.version>
 
     <compiler.plugin>3.2</compiler.plugin>
     <release.plugin>2.5.1</release.plugin>
@@ -92,6 +92,7 @@
         <version>${mc4.maven.version}</version>
         <configuration>
           <skip>false</skip>
+          <script>de/monticore/monticore_noemf.groovy</script>
         </configuration>
         <executions>
           <execution>

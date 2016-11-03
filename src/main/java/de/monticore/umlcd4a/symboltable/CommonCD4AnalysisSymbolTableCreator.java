@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import de.monticore.symboltable.CommonSymbolTableCreator;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.ResolverConfiguration;
+import de.monticore.symboltable.ResolvingConfiguration;
 
 public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreator implements
     CD4AnalysisSymbolTableCreator {
@@ -17,9 +17,9 @@ public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreato
   private String packageName = "";
   private String fullClassDiagramName = "";
 
-  public CommonCD4AnalysisSymbolTableCreator(ResolverConfiguration resolverConfig, @Nullable
+  public CommonCD4AnalysisSymbolTableCreator(ResolvingConfiguration resolvingConfig, @Nullable
   MutableScope enclosingScope) {
-    super(resolverConfig, enclosingScope);
+    super(resolvingConfig, enclosingScope);
   }
 
 

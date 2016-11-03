@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
+
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonSymbol;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.ResolverConfiguration;
+import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.Symbol;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
@@ -38,7 +39,7 @@ public class CDSymbolTable {
   
   private final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
   
-  private final ResolverConfiguration resolverConfiguration = new ResolverConfiguration();
+  private final ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
   
   private MutableScope cdScope;
   
@@ -49,7 +50,7 @@ public class CDSymbolTable {
   public CDSymbolTable(ASTCDCompilationUnit ast, List<File> modelPaths) {
     checkNotNull(modelPaths);
     
-    resolverConfiguration.addTopScopeResolvers(cd4AnalysisLang.getResolvers());
+    resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvers());
     
     this.globalScope = createSymboltable(ast, modelPaths);
     this.artifactScope = (ArtifactScope) this.globalScope.getSubScopes()
@@ -69,10 +70,10 @@ public class CDSymbolTable {
     
     ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())).collect(Collectors.toList()));
     
-    GlobalScope globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolverConfiguration);
+    GlobalScope globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolvingConfiguration);
     
     Optional<CD4AnalysisSymbolTableCreator> stc = cd4AnalysisLang
-        .getSymbolTableCreator(resolverConfiguration, globalScope);
+        .getSymbolTableCreator(resolvingConfiguration, globalScope);
     
     if (stc.isPresent()) {
       stc.get().createFromAST(ast);

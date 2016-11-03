@@ -5,12 +5,13 @@
  */
 package de.monticore.umlcd4a;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
+
+import javax.annotation.Nullable;
 
 import de.monticore.CommonModelingLanguage;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.ResolverConfiguration;
+import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
@@ -27,11 +28,11 @@ public class CD4AnalysisLanguage extends CommonModelingLanguage {
   public CD4AnalysisLanguage() {
     super("CD 4 Analysis Language", FILE_ENDING);
     
-    addResolver(CommonResolvingFilter.create(CDSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDTypeSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDFieldSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDMethodSymbol.KIND));
-    addResolver(CommonResolvingFilter.create(CDAssociationSymbol.KIND));
+    addResolvingFilter(CommonResolvingFilter.create(CDSymbol.KIND));
+    addResolvingFilter(CommonResolvingFilter.create(CDTypeSymbol.KIND));
+    addResolvingFilter(CommonResolvingFilter.create(CDFieldSymbol.KIND));
+    addResolvingFilter(CommonResolvingFilter.create(CDMethodSymbol.KIND));
+    addResolvingFilter(CommonResolvingFilter.create(CDAssociationSymbol.KIND));
 
     setModelNameCalculator(new CD4AnalysisModelNamerCalculator());
 
@@ -44,8 +45,8 @@ public class CD4AnalysisLanguage extends CommonModelingLanguage {
   
   @Override
   public Optional<CD4AnalysisSymbolTableCreator> getSymbolTableCreator(
-      ResolverConfiguration resolverConfiguration, @Nullable MutableScope enclosingScope) {
-    return Optional.of(new CommonCD4AnalysisSymbolTableCreator(resolverConfiguration, enclosingScope));
+      ResolvingConfiguration resolvingConfiguration, @Nullable MutableScope enclosingScope) {
+    return Optional.of(new CommonCD4AnalysisSymbolTableCreator(resolvingConfiguration, enclosingScope));
   }
   
   @Override

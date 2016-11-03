@@ -6,10 +6,10 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 
-import de.monticore.symboltable.types.CommonJAttributeSymbol;
+import de.monticore.symboltable.types.CommonJFieldSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
-public class CDFieldSymbol extends CommonJAttributeSymbol<CDTypeSymbolReference> {
+public class CDFieldSymbol extends CommonJFieldSymbol<CDTypeSymbolReference> {
 
   public static final CDFieldSymbolKind KIND = new CDFieldSymbolKind();
 
