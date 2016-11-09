@@ -22,6 +22,7 @@ import de.monticore.symboltable.GlobalScope;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.reporting.CD4A2OD;
 import de.monticore.umlcd4a.reporting.CD4ANodeIdentHelper;
+import de.monticore.umlcd4a.reporting.CD4ASymbolTableReporter;
 import de.monticore.umlcd4a.symboltable.CD4AGlobalScopeTestFactory;
 import de.monticore.umlcd4a.symboltable.CDSymbol;
 import de.se_rwth.commons.logging.Log;
@@ -67,7 +68,7 @@ public class ODReportingTest {
     CD4A2OD visitor = new CD4A2OD(printer, reporting);
     
     // prettyprinting input
-    String output = visitor.printObjectDiagram("Example1", cdDef);
+    String output = visitor.printObjectDiagram("18_ObjectDiagram", cdDef);
     System.out.println(output);
     // TODO MB after next release: Parse the output
   }
@@ -75,6 +76,6 @@ public class ODReportingTest {
   @Test
   public void checkODOfSymbolTable() throws IOException {
     ReportingRepository reporting = new ReportingRepository(new CD4ANodeIdentHelper());
-    SymbolTableReporter reporter = new SymbolTableReporter("target", CD_FQN, reporting);
+    SymbolTableReporter reporter = new CD4ASymbolTableReporter("target", CD_FQN, reporting);
     reporter.flush(cdSymbol.getAstNode().get());
   }}
