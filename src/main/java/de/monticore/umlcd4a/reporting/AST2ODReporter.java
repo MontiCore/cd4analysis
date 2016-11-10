@@ -32,9 +32,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.se_rwth.commons.Names;
 
 public class AST2ODReporter extends AReporter {
-  
-  static final String SIMPLE_FILE_NAME = "19_ObjectDiagram";
-  
+    
   private String modelName;
   
   private ReportingRepository reporting;
@@ -42,7 +40,7 @@ public class AST2ODReporter extends AReporter {
   public AST2ODReporter(String outputDir, String modelName, ReportingRepository reporting) {
     super(outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator
         + modelName,
-        SIMPLE_FILE_NAME, ReportingConstants.REPORT_FILE_EXTENSION);
+        Names.getSimpleName(modelName) + "_AST", ReportingConstants.OD_FILE_EXTENSION);
     this.modelName = modelName;
     this.reporting = reporting;
   }
@@ -76,7 +74,7 @@ public class AST2ODReporter extends AReporter {
       ASTCD4AnalysisNode cd4aNode = (ASTCD4AnalysisNode) ast;
       IndentPrinter pp = new IndentPrinter();
       CD4A2OD odPrinter = new CD4A2OD(pp, reporting);
-      odPrinter.printObjectDiagram(Names.getSimpleName(modelName), cd4aNode);
+      odPrinter.printObjectDiagram(Names.getSimpleName(modelName)+"_AST", cd4aNode);
       writeLine(pp.getContent());
     }
   }

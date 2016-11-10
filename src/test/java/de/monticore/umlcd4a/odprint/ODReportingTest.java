@@ -17,10 +17,9 @@ import org.junit.Test;
 import de.monticore.ast.ASTNode;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.reporting.CD4A2OD;
+import de.monticore.umlcd4a.reporting.AST2ODReporter;
 import de.monticore.umlcd4a.reporting.CD4ANodeIdentHelper;
 import de.monticore.umlcd4a.reporting.CD4ASymbolTableReporter;
 import de.monticore.umlcd4a.symboltable.CD4AGlobalScopeTestFactory;
@@ -63,14 +62,9 @@ public class ODReportingTest {
     assertTrue(node instanceof ASTCDDefinition);
     ASTCDDefinition cdDef = (ASTCDDefinition) node;
     
-    IndentPrinter printer = new IndentPrinter();
     ReportingRepository reporting = new ReportingRepository(new CD4ANodeIdentHelper());
-    CD4A2OD visitor = new CD4A2OD(printer, reporting);
-    
-    // prettyprinting input
-    String output = visitor.printObjectDiagram("18_ObjectDiagram", cdDef);
-    System.out.println(output);
-    // TODO MB after next release: Parse the output
+    AST2ODReporter reporter = new AST2ODReporter("target", CD_FQN, reporting);
+    reporter.flush(cdDef);
   }
   
   @Test
@@ -78,4 +72,6 @@ public class ODReportingTest {
     ReportingRepository reporting = new ReportingRepository(new CD4ANodeIdentHelper());
     SymbolTableReporter reporter = new CD4ASymbolTableReporter("target", CD_FQN, reporting);
     reporter.flush(cdSymbol.getAstNode().get());
-  }}
+  }
+  
+}
