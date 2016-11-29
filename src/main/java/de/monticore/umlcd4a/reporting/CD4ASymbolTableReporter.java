@@ -5,13 +5,13 @@
  */
 package de.monticore.umlcd4a.reporting;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.Symbol;
+import de.monticore.symboltable.types.references.JTypeReference;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
@@ -19,7 +19,6 @@ import de.monticore.umlcd4a.symboltable.CDQualifierSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Cardinality;
 import de.monticore.umlcd4a.symboltable.Stereotype;
-import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
 public class CD4ASymbolTableReporter extends SymbolTableReporter {
   
@@ -81,13 +80,12 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
     printer.println("isEnumConstant = " + sym.isEnumConstant() + ";");
     printer.println("isInitialized = " + sym.isInitialized() + ";");
     printer.println("isReadOnly = " + sym.isReadOnly() + ";");
-    printer.println("type = " + repository.getSymbolNameFormatted(sym.getType()) + ";");
     reportStereotypes(sym.getStereotypes());
   }
   
   private void reportAttributes(CDMethodSymbol sym, IndentPrinter printer) {
-    reportTypeReferences("exceptions", sym.getExceptions(), printer);
-    printer.println("returnType = " + repository.getSymbolNameFormatted(sym.getReturnType()) + ";");
+    reportListOfReferences("exceptions", sym.getExceptions(), printer);
+    printer.println("returnType = " + repository.getSymbolNameFormatted((JTypeReference<CDTypeSymbol>) sym.getReturnType()) + ";");
     reportStereotypes(sym.getStereotypes());
   }
   
@@ -98,24 +96,12 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   
   private void reportAttributes(CDTypeSymbol sym, IndentPrinter printer) {
     if (sym.getSuperClass().isPresent()) {
-      printer.println("superClass = " + repository.getSymbolNameFormatted(sym.getSuperClass().get()) + ";");
+      printer.println("superClass = " + repository.getSymbolNameFormatted((JTypeReference<CDTypeSymbol>) sym.getSuperClass().get()) + ";");
     }
-    reportTypeReferences("interface", sym.getInterfaces(), printer);
+    reportListOfReferences("interface", sym.getInterfaces(), printer);
     reportStereotypes(sym.getStereotypes());
   }
-  
-  protected void reportTypeReferences(String prefix, Collection<CDTypeSymbolReference> refList,
-      IndentPrinter printer) {
-    if (!refList.isEmpty()) {
-      for (CDTypeSymbolReference ref : refList) {
-        printer.print(prefix);
-        printer.print(" = ");
-        printer.print(repository.getSymbolNameFormatted(ref));
-        printer.println(";");
-      }
-    }
-  }
-  
+    
   private void reportStereotypes(List<Stereotype> stereotypes) {
     // TODO Auto-generated method stub
     

@@ -36,7 +36,7 @@ import de.se_rwth.commons.logging.Slf4jLog;
  */
 public class ODReportingTest {
   
-  final static String CD_FQN = "de.monticore.umlcd4a.prettyprint.Example1";
+  final static String CD_FQN = "de.monticore.umlcd4a.prettyprint.SocNet";
   
   final static String PACKAGE = CD_FQN + ".";
   

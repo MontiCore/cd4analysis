@@ -3,12 +3,14 @@ package de.monticore.umlcd4a.prettyprint;
 import java.util.List;
 import java.util.Set;
 import java.util.Date;
+import java.util.Formatter;
 
-classdiagram Example1{
+classdiagram SocNet {
 
   interface Post;
 
   abstract class Profile{
+    Formatter t;
     String profileName;
     derived int numOfPosts;
     derived int friends;
