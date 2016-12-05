@@ -48,7 +48,7 @@ public class AST2ODReporter extends AReporter {
   @Override
   protected void writeHeader() {
     writeLine("/*");
-    writeLine(" * ========================================================== Object diagram");
+    writeLine(" * ========================================================== AST for CD4A");
     writeLine(" */");
   }
   
