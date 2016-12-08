@@ -7,14 +7,14 @@ package de.monticore.umlcd4a.reporting;
 
 import java.util.List;
 
-import de.monticore.generating.templateengine.reporting.commons.IASTNodeIdentHelper;
+import de.monticore.ast.ASTNode;
 import de.monticore.generating.templateengine.reporting.commons.Layouter;
 import de.monticore.literals.literals._ast.ASTIntLiteral;
+import de.monticore.types.TypesNodeIdentHelper;
 import de.monticore.types.types._ast.ASTPrimitiveType;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTTypeParameters;
-import de.monticore.types.types._ast.ASTTypeVariableDeclaration;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
@@ -30,7 +30,6 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
-import de.monticore.ast.ASTNode;
 
 /**
  * TODO: Write me!
@@ -39,7 +38,7 @@ import de.monticore.ast.ASTNode;
  * @version $Revision$, $Date$
  * @since TODO: add version number
  */
-public class CD4ANodeIdentHelper implements IASTNodeIdentHelper {
+public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
 
   public String getIdent(ASTCDDefinition a) {
     String type = Layouter.nodeName(a);
@@ -78,11 +77,6 @@ public class CD4ANodeIdentHelper implements IASTNodeIdentHelper {
     return format(name, type);
   }
 
-  public String getIdent(ASTPrimitiveType a) {
-    int p = a.getPrimitive();
-    return format(String.valueOf(p), Layouter.nodeName(a));
-  }
-
   public String getIdent(ASTCardinality a) {
     String cardinality = "";
 
@@ -102,24 +96,8 @@ public class CD4ANodeIdentHelper implements IASTNodeIdentHelper {
     return format(cardinality, Layouter.nodeName(a));
   }
 
-  /* The "local" QualifiedName-class gets a short explanation */
-  public String getIdent(ASTQualifiedName a) {
-    return format(unqualName(a), "!mc.javadsl._ast.ASTQualifiedName");
-  }
-
   public String getIdent(ASTCDAttribute a) {
     return format(a.getName(), Layouter.nodeName(a));
-  }
-
-  public String getIdent(ASTSimpleReferenceType a) {
-    String name = "";
-    for (int i = 0; i < a.getNames().size(); i++) {
-      name += a.getNames().get(i);
-      if (i != a.getNames().size() - 1) {
-        name += ".";
-      }
-    }
-    return format(name, Layouter.nodeName(a));
   }
 
   public String getIdent(ASTStereotype a) {
@@ -142,26 +120,6 @@ public class CD4ANodeIdentHelper implements IASTNodeIdentHelper {
     return format("_", Layouter.nodeName(a));
   }
 
-  public String getIdent(ASTTypeParameters a) {
-	List<ASTTypeVariableDeclaration> l  = a.getTypeVariableDeclarations();
-    String n = "-";
-    if (l == null) {
-      n = "??";
-    }
-    else {
-      if (l.size() == 0) {
-        n += "-";
-      }
-      if (l.size() > 0) {
-        n += l.get(0).getName();
-      }
-      if (l.size() > 1) {
-        n += "..";
-      }
-    }
-    return format(n, Layouter.nodeName(a));
-  }
-
   public String getIdent(ASTCDClass a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
@@ -177,10 +135,6 @@ public class CD4ANodeIdentHelper implements IASTNodeIdentHelper {
     return format(ident, Layouter.nodeName(a));
   }
 
-  private String unqualName(ASTQualifiedName ast) {
-    List<String> parts = ast.getParts();
-    return parts.get(parts.size() - 1);
-  }
 
   public String getIdent(ASTCDEnum a) {
     return format(a.getName(), Layouter.nodeName(a));
@@ -190,10 +144,7 @@ public class CD4ANodeIdentHelper implements IASTNodeIdentHelper {
     return format(a.getName(), Layouter.nodeName(a));
   }
 
-  // TODO: TGr 
-  public String getIdent(ASTIntLiteral a) {
-    return format(a.getSource(),  Layouter.nodeName(a));
-  }
+
 
   @Override
   public String getIdent(ASTNode a) {

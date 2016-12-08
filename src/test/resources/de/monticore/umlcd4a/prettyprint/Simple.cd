@@ -1,0 +1,8 @@
+package de.monticore.umlcd4a.prettyprint;
+
+classdiagram Simple {
+  interface I;
+  class A implements I {
+    int x;
+  }
+}
