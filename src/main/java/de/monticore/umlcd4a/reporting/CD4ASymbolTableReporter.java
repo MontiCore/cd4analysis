@@ -11,7 +11,6 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.Symbol;
-import de.monticore.symboltable.types.references.JTypeReference;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
 import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
@@ -76,6 +75,7 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   }
   
   private void reportAttributes(CDFieldSymbol sym, IndentPrinter printer) {
+    reportCommonJFieldAttributes(sym, printer);
     printer.println("isDerived = " + sym.isDerived() + ";");
     printer.println("isEnumConstant = " + sym.isEnumConstant() + ";");
     printer.println("isInitialized = " + sym.isInitialized() + ";");
@@ -84,8 +84,7 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   }
   
   private void reportAttributes(CDMethodSymbol sym, IndentPrinter printer) {
-    reportListOfReferences("exceptions", sym.getExceptions(), printer);
-    printer.println("returnType = " + repository.getSymbolNameFormatted((JTypeReference<CDTypeSymbol>) sym.getReturnType()) + ";");
+    reportCommonJMethodAttributes(sym, printer);
     reportStereotypes(sym.getStereotypes());
   }
   
@@ -95,10 +94,17 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   }
   
   private void reportAttributes(CDTypeSymbol sym, IndentPrinter printer) {
-    if (sym.getSuperClass().isPresent()) {
-      printer.println("superClass = " + repository.getSymbolNameFormatted((JTypeReference<CDTypeSymbol>) sym.getSuperClass().get()) + ";");
+    reportCommonJTypeAttributes(sym, printer);
+    if (!sym.getAssociations().isEmpty()) {
+      printer.println("associations = " );
+      String delim = "";
+      for (CDAssociationSymbol assocSymbol: sym.getAssociations()) {
+        printer.print(delim);
+        reportSymbol(assocSymbol, printer);
+        delim = ", ";
+      }
+      printer.println(";");
     }
-    reportListOfReferences("interface", sym.getInterfaces(), printer);
     reportStereotypes(sym.getStereotypes());
   }
     
