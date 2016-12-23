@@ -25,7 +25,8 @@ public class BuiltInTypes {
       "float", "Float",
       "long", "Long",
       "boolean", "Boolean",
-      "Date", "List", "Optional", "Set"
+      "Date", "List", "Optional", "Set",
+      "Map"
   });
   
   public static boolean isBuiltInType(String typeName) {

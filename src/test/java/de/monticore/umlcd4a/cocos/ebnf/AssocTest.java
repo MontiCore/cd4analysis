@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.monticore.cocos.helper.Assert;
@@ -5916,7 +5917,12 @@ public class AssocTest extends AbstractCoCoTest {
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
+  /**
+   * The corresponding CoCo is temporary disabled as the association name does not need to be unique within a model.
+   * Instead, it must be unique within a specific class hierarchy.
+   */
+  @Ignore
   @Test
   public void testAssocNameNotUnique() {
     String modelName = "C4A26.cd";

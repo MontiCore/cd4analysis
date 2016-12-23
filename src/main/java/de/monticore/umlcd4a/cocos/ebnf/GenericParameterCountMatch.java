@@ -35,9 +35,12 @@ public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCo
       if (typeName.indexOf('<') > 0) {
         typeWithoutGenerics = typeName.substring(0, typeName.indexOf('<'));
       }
-      
+
       int actualCount = typeArguments.getTypeArguments().size();
       int expectedCount = 1;
+      if (typeName.startsWith("Map")) {
+        expectedCount = 2;
+      }
       if (expectedCount != actualCount) {
         Log.error(String.format(
             "0xC4A31 Generic type %s has %d type-parameter, but %d where given ('%s').",
