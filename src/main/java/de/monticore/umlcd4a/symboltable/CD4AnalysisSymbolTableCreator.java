@@ -269,6 +269,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
                 TypesPrinter.printTypeWithoutTypeArguments(typeBound),
                 currentScope().get());
             typeBoundSymbolReference.setStringRepresentation(TypesPrinter.printWildcardType(astWildcardType));
+            typeBoundSymbolReference.setAstNode(astTypeArgument);
             ActualTypeArgument actualTypeArgument = new ActualTypeArgument(lowerBound, !lowerBound,
                 typeBoundSymbolReference);
             
@@ -292,7 +293,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
           // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoBound)
           
           typeArgumentSymbolReference.setStringRepresentation(TypesPrinter.printType(astTypeNoBound));
-          
+          typeArgumentSymbolReference.setAstNode(astTypeArgument);          
           addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
           
           actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
