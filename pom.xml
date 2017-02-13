@@ -11,7 +11,7 @@
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>4.5.2</monticore.version>
+    <monticore.version>4.5.3-SNAPSHOT</monticore.version>
 
     <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
