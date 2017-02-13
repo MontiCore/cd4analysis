@@ -7,12 +7,12 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.literals.literals._ast.ASTBooleanLiteral;
 import de.monticore.literals.literals._ast.ASTCharLiteral;
-import de.monticore.literals.literals._ast.ASTDoubleLiteral;
-import de.monticore.literals.literals._ast.ASTFloatLiteral;
-import de.monticore.literals.literals._ast.ASTIntLiteral;
 import de.monticore.literals.literals._ast.ASTLiteral;
-import de.monticore.literals.literals._ast.ASTLongLiteral;
+import de.monticore.literals.literals._ast.ASTSignedDoubleLiteral;
+import de.monticore.literals.literals._ast.ASTSignedFloatLiteral;
+import de.monticore.literals.literals._ast.ASTSignedIntLiteral;
 import de.monticore.literals.literals._ast.ASTSignedLiteral;
+import de.monticore.literals.literals._ast.ASTSignedLongLiteral;
 import de.monticore.literals.literals._ast.ASTStringLiteral;
 import de.monticore.literals.literals._visitor.LiteralsInheritanceVisitor;
 import de.monticore.types.TypesPrinter;
@@ -119,7 +119,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
      * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTIntLiteral)
      */
     @Override
-    public void visit(ASTIntLiteral node) {
+    public void visit(ASTSignedIntLiteral node) {
       check("int", "Integer");
     }
     
@@ -135,7 +135,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
      * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTFloatLiteral)
      */
     @Override
-    public void visit(ASTFloatLiteral node) {
+    public void visit(ASTSignedFloatLiteral node) {
       check("float", "Float");
     }
     
@@ -143,7 +143,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
      * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTDoubleLiteral)
      */
     @Override
-    public void visit(ASTDoubleLiteral node) {
+    public void visit(ASTSignedDoubleLiteral node) {
       check("double", "Double");
     }
     
@@ -151,7 +151,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
      * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTLongLiteral)
      */
     @Override
-    public void visit(ASTLongLiteral node) {
+    public void visit(ASTSignedLongLiteral node) {
       check("long", "Long");
     }
     
