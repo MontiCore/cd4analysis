@@ -76,4 +76,16 @@ public class DiagramTest extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
   
+  @Test
+  public void testPackageNameValid() {
+    String modelName = "C4A03.cd";
+    String errorCode = "0xC4A03";
+
+    String packageName = "de.monticore.umlcd4a.cocos.ebnf";
+    Collection<Finding> expectedErrors = Arrays.asList(
+            Finding.error(errorCode + " The package declaration " + packageName + " of the grammar must not differ from the "
+                    + "package of the grammar file.")
+            );
+    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
 }
