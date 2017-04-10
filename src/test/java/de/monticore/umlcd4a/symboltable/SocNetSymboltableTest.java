@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
 
@@ -123,7 +124,7 @@ public class SocNetSymboltableTest {
 
   private void testMemberAssociation() {
     // Person -> Group
-    CDAssociationSymbol groupAssoc = (CDAssociationSymbol) cdScope.resolve(
+    CDAssociationSymbol groupAssoc = (CDAssociationSymbol) cdScope.resolve("member", CDAssociationSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDAssociationNameAndTargetNamePredicate("member", "Group")).orElse(null);
     assertNotNull(groupAssoc);
     assertEquals("member", groupAssoc.getName());
@@ -137,7 +138,7 @@ public class SocNetSymboltableTest {
     assertTrue(groupAssoc.getTargetCardinality().isMultiple());
 
     // Person <- Group
-    CDAssociationSymbol personAssoc = (CDAssociationSymbol) cdScope.resolve(
+    CDAssociationSymbol personAssoc = (CDAssociationSymbol) cdScope.resolve("member", CDAssociationSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
     assertNotNull(personAssoc);
     assertEquals("member", personAssoc.getName());

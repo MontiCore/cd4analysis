@@ -3,6 +3,7 @@ package de.monticore.umlcd4a.symboltable;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
@@ -244,7 +245,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
     // A -> B
     final CDAssociationSymbol memberAssocLeft2Right = (CDAssociationSymbol)
-        cdScope.resolve(new CDAssociationNameAndTargetNamePredicate("member", "Prof")).orElse(null);
+        cdScope.resolve("member", CDAssociationSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+            new CDAssociationNameAndTargetNamePredicate("member", "Prof")).orElse(null);
     assertNotNull(memberAssocLeft2Right);
     assertEquals("member", memberAssocLeft2Right.getName());
     assertEquals("member", memberAssocLeft2Right.getAssocName().orElse(""));
@@ -265,7 +267,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertSame(memberAssocLeft2Right, left2RightNode.getLeftToRightSymbol().get());
 
     // A <- B
-    final CDAssociationSymbol memberAssocRight2Left = (CDAssociationSymbol) cdScope.resolve(new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
+    final CDAssociationSymbol memberAssocRight2Left = (CDAssociationSymbol) cdScope.resolve("member", CDAssociationSymbol.KIND, 
+        BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
     assertNotNull(memberAssocRight2Left);
     assertEquals("member", memberAssocRight2Left.getName());
     assertEquals("member", memberAssocRight2Left.getAssocName().orElse(""));
@@ -290,7 +293,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getName());
 
     // A -> B
-    final CDAssociationSymbol ecAssocLeft2Right = (CDAssociationSymbol) cdScope.resolve(new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
+    final CDAssociationSymbol ecAssocLeft2Right = (CDAssociationSymbol) cdScope.resolve("ec", CDAssociationSymbol.KIND, 
+        BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
     assertNotNull(ecAssocLeft2Right);
     assertEquals("ec", ecAssocLeft2Right.getName());
     assertEquals("ec", ecAssocLeft2Right.getAssocName().orElse(""));
@@ -304,7 +308,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, ecAssocLeft2Right.getTargetCardinality().getMax());
     assertFalse(ecAssocLeft2Right.getTargetCardinality().isMultiple());
     // A <- B
-    final CDAssociationSymbol ecAssocRight2Left = (CDAssociationSymbol) cdScope.resolve(new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
+    final CDAssociationSymbol ecAssocRight2Left = (CDAssociationSymbol) cdScope.resolve("ec", CDAssociationSymbol.KIND,
+        BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
     assertNotNull(ecAssocRight2Left);
     assertEquals("ec", ecAssocRight2Left.getName());
     assertEquals("ec", ecAssocRight2Left.getAssocName().orElse(""));
@@ -373,21 +378,21 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
 
     // resolve method by signature
-    assertTrue(personType.getSpannedScope().resolve(
+    assertTrue(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "String")).isPresent());
-    assertSame(setNameMethod, personType.getSpannedScope().resolve(
+    assertSame(setNameMethod, personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "String")).get());
 
-    assertFalse(personType.getSpannedScope().resolve(
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String")).isPresent());
 
-    assertFalse(personType.getSpannedScope().resolve(
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "int")).isPresent());
 
-    assertFalse(personType.getSpannedScope().resolve(
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "String", "String")).isPresent());
 
-    assertFalse(personType.getSpannedScope().resolve(
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("getAge", "String", "String")).isPresent());
 
 
