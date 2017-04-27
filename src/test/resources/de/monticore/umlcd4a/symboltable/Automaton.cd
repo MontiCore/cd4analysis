@@ -1,0 +1,34 @@
+package de.monticore.umlcd4a.symboltable;
+
+import java.util.List;
+import java.util.Set;
+import java.util.Date;
+
+classdiagram Automaton {
+
+  public interface ASTAutomatonNode;
+
+  public class ASTAutomaton{
+    protected String name;
+    protected java.util.List<Automaton.ASTState> states;
+    protected java.util.List<Automaton.ASTTransition> transitions;
+  }
+
+  public class ASTState{
+    protected String name;
+    protected java.util.List<Automaton.ASTState> states;
+    protected java.util.List<Automaton.ASTTransition> transitions;
+    protected boolean r__final;
+    protected boolean initial;
+  }
+
+  public class ASTTransition{
+    protected String from;
+    protected String input;
+    protected Optional<String> weight;
+    protected String to;
+  }
+
+  enum AutomatonLiterals;
+
+}
