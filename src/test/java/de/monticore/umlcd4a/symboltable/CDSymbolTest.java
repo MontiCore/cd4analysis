@@ -25,4 +25,20 @@ public class CDSymbolTest {
     assertEquals("de.monticore.umlcd4a.symboltable.CD2", cd.getImports().get(0));
   }
   
+  @Test
+  public void testResolveAutomaton() {
+    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    final CDSymbol cd = globalScope.<CDSymbol> resolve("de.monticore.umlcd4a.symboltable.Automaton",
+        CDSymbol.KIND).orElse(null);
+    assertNotNull(cd);
+  }
+  
+  @Test
+  public void testResolveFeatureModel() {
+    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    final CDSymbol cd = globalScope.<CDSymbol> resolve("de.monticore.umlcd4a.symboltable.FeatureModel",
+        CDSymbol.KIND).orElse(null);
+    assertNotNull(cd);
+  }
+  
 }

@@ -40,6 +40,24 @@ public class CD4AnalysisParserTest {
   }
   
   @Test
+  public void testAutomaton() throws RecognitionException, IOException {
+    Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/Automaton.cd");
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
+    assertFalse(parser.hasErrors());
+    assertTrue(cdDef.isPresent());
+  }
+  
+  @Test
+  public void testFeatureModel() throws RecognitionException, IOException {
+    Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/FeatureModel.cd");
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
+    assertFalse(parser.hasErrors());
+    assertTrue(cdDef.isPresent());
+  }
+  
+  @Test
   public void testExample1() throws RecognitionException, IOException {
     Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/Example1.cd");
     CD4AnalysisParser parser = new CD4AnalysisParser();
