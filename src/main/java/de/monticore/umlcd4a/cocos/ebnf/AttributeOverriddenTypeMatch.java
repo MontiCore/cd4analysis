@@ -1,6 +1,6 @@
 /*
 
- * Copyright (c) 2017 RWTH Aachen. All rights reserved.
+ * Copyright (c) 2017, MontiCore. All rights reserved.
  *
  * http://www.se-rwth.de/
  */
