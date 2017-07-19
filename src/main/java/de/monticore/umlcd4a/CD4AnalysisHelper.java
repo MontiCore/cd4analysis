@@ -22,7 +22,6 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
  * TODO: Write me!
  *
  * @author  (last commit) $Author$
- * @version $Revision$,
  *          $Date$
  *
  */

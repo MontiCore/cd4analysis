@@ -12,7 +12,6 @@ import java.util.Collection;
  * TODO: Change me!
  *
  * @author (last commit) $Author$
- * @version $Revision$, $Date$
  */
 public class CDTypes {
   
