@@ -92,4 +92,19 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
   public String printType() {
     return TypesPrinter.printType(type);
   }
+  
+  public String printAnnotation() {
+    if (getModifier().isPresent()) {
+      if (getModifier().get().getStereotype().isPresent()) {
+        StringBuffer sb = new StringBuffer();
+        for (ASTStereoValue s: getModifier().get().getStereotype().get().values) {
+          sb.append(s.getName());
+          sb.append("\n");
+        }
+        return sb.toString();
+      }
+    }
+    return "";
+  }
+
 }
