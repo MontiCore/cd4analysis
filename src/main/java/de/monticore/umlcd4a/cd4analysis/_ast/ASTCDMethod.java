@@ -48,6 +48,19 @@ public class ASTCDMethod extends ASTCDMethodTOP {
     return TypesPrinter.printReturnType(getReturnType());
   }
   
+  public String printAnnotation() {
+    if (getModifier().getStereotype().isPresent()) {
+      StringBuffer sb = new StringBuffer();
+      for (ASTStereoValue s: getModifier().getStereotype().get().values) {
+        sb.append(s.getName());
+        sb.append("\n");
+      }
+      return sb.toString();
+    }
+    
+    return "";
+  }
+
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
    * 
