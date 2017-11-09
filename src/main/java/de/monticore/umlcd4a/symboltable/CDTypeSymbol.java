@@ -62,7 +62,18 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   public List<CDAssociationSymbol> getAssociations() {
     return ImmutableList.copyOf(associations);
   }
-  
+
+  /**
+   * Tries to get an association by name.
+   *
+   * @param name name of the association.
+   */
+  public Optional<CDAssociationSymbol> getAssociation(String name) {
+    return this.getAssociations().stream()
+            .filter(a -> a.getName().equals(name))
+            .findFirst();
+  }
+
   public List<CDFieldSymbol> getEnumConstants() {
     final List<CDFieldSymbol> enums = getFields().stream()
         .filter(CDFieldSymbol::isEnumConstant)

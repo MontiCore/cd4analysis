@@ -7,6 +7,7 @@ package de.monticore.umlcd4a.symboltable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
@@ -140,5 +141,14 @@ public class CDTypeTest {
     assertNotNull(b);
     assertEquals("B", b.getName());
     assertEquals(1, b.getAllVisibleFields().size());
+  }
+
+  @Test
+  public void testGetAssociationByName() {
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    CDTypeSymbol b = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(b);
+    assertTrue(b.getAssociation("member").isPresent());
   }
 }
