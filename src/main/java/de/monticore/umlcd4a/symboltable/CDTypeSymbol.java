@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import de.monticore.symboltable.CommonScope;
+import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.types.CommonJTypeSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
@@ -154,7 +157,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
         .collect(Collectors.toCollection(LinkedHashSet::new)); 
     return ImmutableSet.copyOf(allVisibleFields);
   }
-  
+
   public List<CDAssociationSymbol> getInheritedAssociations() {
     final List<CDAssociationSymbol> allNames = new ArrayList<>();
     for (CDTypeSymbol superType : getSuperTypes()) {
@@ -228,4 +231,91 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return stringRepresentation;
   }
 
+  /**
+   * Gets all visible fields, all visible associations and all methods including inherited.
+   *
+   * @return visible elements including inherited fields.
+   */
+  public Scope getAllKindElements() {
+    MutableScope scope = new CommonScope();
+    addAssociationRoleNamesToScope(scope);
+    getAllVisibleFields().forEach(scope::add);
+    getAllAssociations().forEach(scope::add);
+    getMethods().forEach(scope::add);
+    getEnclosingScope().getResolvingFilters().forEach(scope::addResolver);
+    return scope;
+  }
+
+  /**
+   * Determines whether this is a superType of type
+   */
+  public boolean isSameOrSuperType(CDTypeSymbol type) {
+    if(this.getFullName().equals(type.getFullName())){
+      return true;
+    }
+    for(CDTypeSymbol superType : type.getSuperTypes()) {
+      if(superType.getFullName().equals(this.getFullName())){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * [*] Auction (auctions) -> (bidder) Person [*];
+   * If this is Auction then bidder is added as role name
+   * If this is Person then auctions is added as role name
+   * Purpose: Auction.bidder and Person.auctions can be resolved
+   *
+   * [*] Auction -> Person [*];
+   * If the role name is missing, then the the lowercase type name is used as role name
+   * If this is Auction then person is added as role name
+   * If this is Person then auction is added as role name
+   */
+  protected void addAssociationRoleNamesToScope(MutableScope scope) {
+    for (CDAssociationSymbol assoc : getAllAssociations()) {
+      if(assoc.getSourceType().isSameOrSuperType(this) &&
+              (assoc.getTargetRole().isPresent() ||
+                      // role name can not be derived for self reflevtive associations
+                      !assoc.getTargetType().getFullName().equals(assoc.getSourceType().getFullName()))) {
+
+        String roleName = assoc.getTargetRole().orElse(firstLetterToLowerCase(assoc.getTargetType().getName()));
+        CDAssociationSymbol newAssoc = flatCopyOfAssoc(assoc);
+        newAssoc.setAssocName(Optional.of(roleName));
+        scope.add(newAssoc);
+      }
+      else if(assoc.getTargetType().isSameOrSuperType(this) &&
+              (assoc.getSourceRole().isPresent() ||
+                      // role name can not be derived for self reflevtive associations
+                      !assoc.getTargetType().getFullName().equals(assoc.getSourceType().getFullName()))) {
+
+        String roleName = assoc.getSourceRole().orElse(firstLetterToLowerCase(assoc.getSourceType().getName()));
+        CDAssociationSymbol newAssoc = flatCopyOfAssoc(assoc);
+        newAssoc.setAssocName(Optional.of(roleName));
+        scope.add(newAssoc);
+
+      }
+    }
+  }
+
+  private String firstLetterToLowerCase(String name) {
+    return Character.toLowerCase(name.charAt(0)) +
+            (name.length() > 1 ? name.substring(1) : "");
+  }
+
+  private CDAssociationSymbol flatCopyOfAssoc(CDAssociationSymbol assoc) {
+    CDAssociationSymbol newAssoc = new CDAssociationSymbol(assoc.getSourceType(), assoc.getTargetType());
+    newAssoc.setSourceCardinality(assoc.getSourceCardinality());
+    newAssoc.setTargetCardinality(assoc.getTargetCardinality());
+    newAssoc.setQualifier(assoc.getQualifier());
+    newAssoc.setSourceRole(assoc.getSourceRole());
+    newAssoc.setTargetRole(assoc.getTargetRole());
+    newAssoc.setBidirectional(assoc.isBidirectional());
+    newAssoc.setDerived(assoc.isDerived());
+    newAssoc.setAssocName(assoc.getAssocName());
+    newAssoc.setRelationship(assoc.getRelationship());
+    assoc.getStereotypes().forEach(newAssoc::addStereotype);
+
+    return newAssoc;
+  }
 }

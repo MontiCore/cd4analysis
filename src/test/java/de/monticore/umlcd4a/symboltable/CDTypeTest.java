@@ -16,6 +16,7 @@ import java.util.Collections;
 import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
@@ -150,5 +151,20 @@ public class CDTypeTest {
     CDTypeSymbol b = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.CD1.Person", CDTypeSymbol.KIND).orElse(null);
     assertNotNull(b);
     assertTrue(b.getAssociation("member").isPresent());
+  }
+
+  @Test
+  public void testGetAllKindElements() {
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    CDTypeSymbol cdTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.CD1.Prof", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(cdTypeSymbol);
+    Scope scope = cdTypeSymbol.getAllKindElements();
+    assertEquals(10, scope.getLocalSymbols().size());
+    assertEquals(5, scope.getResolvingFilters().size());
+    CDAssociationSymbol assoc1 = scope.<CDAssociationSymbol>resolve("person", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc1);
+    CDFieldSymbol field1 = scope.<CDFieldSymbol>resolve("uni", CDFieldSymbol.KIND).orElse(null);
+    assertNotNull(field1);
   }
 }
