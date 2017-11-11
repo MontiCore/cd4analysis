@@ -82,19 +82,19 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
     
     // own
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getAssociations().stream()
-        .filter(a -> a.getRole().isPresent() || !a.getAssocName().isPresent())
+        .filter(a -> a.getSourceRole().isPresent() || !a.getAssocName().isPresent())
         .filter(a -> a.getDerivedName().equals(roleName))
         .filter(a -> a != assocSym)
         .findAny();
     if (!conflictingAssoc.isPresent()) {
       // inherited
       conflictingAssoc = sourceType.getInheritedAssociations().stream()
-          .filter(a -> a.getRole().isPresent() || !a.getAssocName().isPresent())
+          .filter(a -> a.getSourceRole().isPresent() || !a.getAssocName().isPresent())
           .filter(a -> a.getDerivedName().equals(roleName))
           .findAny();
     }
     if (conflictingAssoc.isPresent()) {
-      String conflictingRoleNameAuto = conflictingAssoc.get().getRole().isPresent()
+      String conflictingRoleNameAuto = conflictingAssoc.get().getSourceRole().isPresent()
           ? ""
           : AUTOMATICALLY_INTRODUCED;
       String conflictingRoleName = conflictingAssoc.get().getDerivedName();

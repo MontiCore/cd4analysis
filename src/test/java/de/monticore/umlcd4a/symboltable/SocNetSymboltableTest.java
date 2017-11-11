@@ -161,7 +161,7 @@ public class SocNetSymboltableTest {
     assertFalse(organizedAssoc.getAssocName().isPresent());
     assertEquals("", organizedAssoc.getName());
     assertEquals("organized", organizedAssoc.getDerivedName());
-    assertEquals("organized", organizedAssoc.getRole().orElse(""));
+    assertEquals("organized", organizedAssoc.getSourceRole().orElse(""));
     assertFalse(organizedAssoc.getAssocName().isPresent());
     assertTrue(organizedAssoc.isBidirectional());
     assertEquals(PACKAGE + "Person", organizedAssoc.getSourceType().getFullName());
@@ -179,7 +179,7 @@ public class SocNetSymboltableTest {
     assertEquals("", organizerAssoc.getName());
     assertFalse(organizerAssoc.getAssocName().isPresent());
     assertEquals("organizer", organizerAssoc.getDerivedName());
-    assertEquals("organizer", organizerAssoc.getRole().orElse(""));
+    assertEquals("organizer", organizerAssoc.getSourceRole().orElse(""));
     assertFalse(organizerAssoc.getAssocName().isPresent());
     assertTrue(organizerAssoc.isBidirectional());
     assertEquals(PACKAGE + "Group", organizerAssoc.getSourceType().getFullName());
@@ -238,7 +238,7 @@ public class SocNetSymboltableTest {
     assertNotNull(assoc);
     assertEquals("", assoc.getName());
     assertEquals("relationType", assoc.getDerivedName());
-    assertFalse(assoc.getRole().isPresent());
+    assertFalse(assoc.getSourceRole().isPresent());
     assertFalse(assoc.getAssocName().isPresent());
     assertFalse(assoc.isBidirectional());
     assertEquals(PACKAGE + "Relationship", assoc.getSourceType().getFullName());
@@ -304,7 +304,7 @@ public class SocNetSymboltableTest {
     assertNotNull(photoMessageAssoc);
     assertEquals("", photoMessageAssoc.getName());
     assertEquals("photoMessage", photoMessageAssoc.getDerivedName());
-    assertFalse(photoMessageAssoc.getRole().isPresent());
+    assertFalse(photoMessageAssoc.getSourceRole().isPresent());
     assertFalse(photoMessageAssoc.getAssocName().isPresent());
     assertTrue(photoMessageAssoc.isBidirectional());
     assertEquals(PACKAGE + "Photo", photoMessageAssoc.getSourceType().getFullName());
@@ -321,7 +321,7 @@ public class SocNetSymboltableTest {
     assertNotNull(photoAssoc);
     assertEquals("", photoAssoc.getName());
     assertEquals("picture", photoAssoc.getDerivedName());
-    assertEquals("picture", photoAssoc.getRole().orElse(""));
+    assertEquals("picture", photoAssoc.getSourceRole().orElse(""));
     assertFalse(photoAssoc.getAssocName().isPresent());
     assertTrue(photoAssoc.isBidirectional());
     assertEquals(PACKAGE + "PhotoMessage", photoAssoc.getSourceType().getFullName());

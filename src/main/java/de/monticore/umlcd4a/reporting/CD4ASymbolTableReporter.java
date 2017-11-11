@@ -64,8 +64,8 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
       printer.println("assocName = \"" + sym.getAssocName().get() + "\";");
     }
     printer.println("relationShip = \"" + sym.getRelationship().name() + "\";");
-    if (sym.getRole().isPresent()) {
-      printer.println("role = \"" + sym.getRole().get() + "\";");
+    if (sym.getSourceRole().isPresent()) {
+      printer.println("role = \"" + sym.getSourceRole().get() + "\";");
     }
     printer.println("sourceCard = \"" + printCardinality(sym.getSourceCardinality()) + "\";");
     printer.println("targetCard = \"" + printCardinality(sym.getTargetCardinality()) + "\";");

@@ -523,7 +523,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
             .getLeftCardinality().orElse(null)));
         assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc
             .getRightCardinality().orElse(null)));
-        assocRight2LeftSymbol.setRole(cdAssoc.getLeftRole());
+        assocRight2LeftSymbol.setSourceRole(cdAssoc.getLeftRole());
         
         if (cdAssoc.getLeftModifier().isPresent()) {
           addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().get().getStereotype()
@@ -559,7 +559,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
             .getRightCardinality().orElse(null)));
         assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc
             .getLeftCardinality().orElse(null)));
-        assocLeft2RightSymbol.setRole(cdAssoc.getRightRole());
+        assocLeft2RightSymbol.setSourceRole(cdAssoc.getRightRole());
         
         if (cdAssoc.getRightModifier().isPresent()) {
           addStereotypes(assocLeft2RightSymbol, cdAssoc.getRightModifier().get().getStereotype()

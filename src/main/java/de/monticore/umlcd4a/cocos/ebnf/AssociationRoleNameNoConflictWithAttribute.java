@@ -97,14 +97,14 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
     
     // own
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getAssociations().stream()
-        .filter(a -> a.getAssocName().isPresent() && !a.getRole().isPresent())
+        .filter(a -> a.getAssocName().isPresent() && !a.getTargetRole().isPresent())
         .filter(a -> a.getDerivedName().equals(roleName))
         .filter(a -> a != assocSym)
         .findAny();
     if (!conflictingAssoc.isPresent()) {
       // inherited
       conflictingAssoc = sourceType.getInheritedAssociations().stream()
-          .filter(a -> a.getAssocName().isPresent() && !a.getRole().isPresent())
+          .filter(a -> a.getAssocName().isPresent() && !a.getTargetRole().isPresent())
           .filter(a -> a.getDerivedName().equals(roleName))
           .findAny();
     }

@@ -45,8 +45,10 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   private Optional<CDQualifierSymbol> qualifier = Optional.empty();
   
-  private Optional<String> role = Optional.empty();
-  
+  private Optional<String> sourceRole = Optional.empty();
+
+  private Optional<String> targetRole = Optional.empty();
+
   private boolean bidirectional = false;
   
   private boolean derived = false;
@@ -62,12 +64,13 @@ public class CDAssociationSymbol extends CommonSymbol {
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
   }
-  
+
   @Override
   public String toString() {
-    return CDAssociationSymbol.class.getSimpleName() + " " + getDerivedName() + "/" + getRole()
+    return CDAssociationSymbol.class.getSimpleName() + " " + getDerivedName() + "/"
         + ": "
-        + "" + getSourceType().getName() + " -> " + getTargetType().getName();
+        + "" + getSourceType().getName() + "(" + getSourceRole().orElse("") + ")"
+            + " -> " + "(" + getTargetRole().orElse("") + ")" + getTargetType().getName() ;
   }
   
   public CDTypeSymbol getTargetType() {
@@ -93,15 +96,23 @@ public class CDAssociationSymbol extends CommonSymbol {
   public Cardinality getTargetCardinality() {
     return targetCardinality;
   }
-  
-  public void setRole(final Optional<String> role) {
-    this.role = role;
+
+  public Optional<String> getSourceRole() {
+    return sourceRole;
   }
-  
-  public Optional<String> getRole() {
-    return role;
+
+  public void setSourceRole(Optional<String> sourceRole) {
+    this.sourceRole = sourceRole;
   }
-  
+
+  public Optional<String> getTargetRole() {
+    return targetRole;
+  }
+
+  public void setTargetRole(Optional<String> targetRole) {
+    this.targetRole = targetRole;
+  }
+
   public void setQualifier(final Optional<CDQualifierSymbol> qualifier) {
     this.qualifier = qualifier;
   }
@@ -148,8 +159,8 @@ public class CDAssociationSymbol extends CommonSymbol {
   }
   
   public String getDerivedName() {
-    if (role.isPresent()) {
-      return role.get();
+    if (getSourceRole().isPresent()) {
+      return getSourceRole().get();
     }
     if (assocName.isPresent()) {
       return assocName.get();
