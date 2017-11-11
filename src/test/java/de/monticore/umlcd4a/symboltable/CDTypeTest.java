@@ -157,14 +157,40 @@ public class CDTypeTest {
   public void testGetAllKindElements() {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    CDTypeSymbol cdTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.CD1.Prof", CDTypeSymbol.KIND).orElse(null);
+    CDTypeSymbol cdTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.MontiArc.Cmp", CDTypeSymbol.KIND).orElse(null);
     assertNotNull(cdTypeSymbol);
     Scope scope = cdTypeSymbol.getAllKindElements();
-    assertEquals(10, scope.getLocalSymbols().size());
+    assertEquals(5, scope.getLocalSymbols().size());
     assertEquals(5, scope.getResolvingFilters().size());
-    CDAssociationSymbol assoc1 = scope.<CDAssociationSymbol>resolve("person", CDAssociationSymbol.KIND).orElse(null);
+    //CDAssociationSymbol assoc1 = scope.<CDAssociationSymbol>resolve("def", CDAssociationSymbol.KIND).orElse(null);
+    //assertNotNull(assoc1);
+    CDAssociationSymbol assoc2 = scope.<CDAssociationSymbol>resolve("subs", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc2);
+    CDAssociationSymbol assoc3 = scope.<CDAssociationSymbol>resolve("parent", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc3);
+    CDAssociationSymbol assoc4 = scope.<CDAssociationSymbol>resolve("port", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc4);
+/*
+    cdTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.MontiArc.CTDef", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(cdTypeSymbol);
+    scope = cdTypeSymbol.getAllKindElements();
+    assertEquals(5, scope.getLocalSymbols().size());
+    assertEquals(5, scope.getResolvingFilters().size());
+    assoc1 = scope.<CDAssociationSymbol>resolve("instances", CDAssociationSymbol.KIND).orElse(null);
     assertNotNull(assoc1);
-    CDFieldSymbol field1 = scope.<CDFieldSymbol>resolve("uni", CDFieldSymbol.KIND).orElse(null);
+    assoc2 = scope.<CDAssociationSymbol>resolve("subDefs", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc2);
+    assoc3 = scope.<CDAssociationSymbol>resolve("portDef", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc3);
+    CDFieldSymbol field1 = scope.<CDFieldSymbol>resolve("cType", CDFieldSymbol.KIND).orElse(null);
     assertNotNull(field1);
+
+    /*
+    cdTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.MontiArc.PortDef", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(cdTypeSymbol);
+    scope = cdTypeSymbol.getAllKindElements();
+    assoc1 = scope.<CDAssociationSymbol>resolve("ctDef", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(assoc1);
+    */
   }
 }

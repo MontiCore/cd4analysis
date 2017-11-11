@@ -136,7 +136,8 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     
     return ImmutableSet.copyOf(allVisibleSuperTypeFields);
   }
-  
+
+
   /**
    * Gets all visible fields including inherited.
    * 
@@ -165,7 +166,50 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     }
     return ImmutableList.copyOf(allNames);
   }
-  
+
+  public Collection<CDMethodSymbol> getAllVisibleMethodsOfSuperTypes() {
+    final Set<CDMethodSymbol> allSuperTypeMethods = new LinkedHashSet<>();
+    final List<CDMethodSymbol> methods = getMethods();
+
+    for (CDTypeSymbol superType : getSuperTypes()) {
+      for (CDMethodSymbol superMethod : superType.getMethods()) {
+        if (methods.stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(superMethod.getName()))) {
+          allSuperTypeMethods.add(superMethod);
+        }
+      }
+
+      allSuperTypeMethods.addAll(superType.getAllVisibleMethodsOfSuperTypes());
+    }
+
+    // filter-out all private fields
+    final Set<CDMethodSymbol> allVisibleSuperTypeMethods = allSuperTypeMethods.stream().
+            filter(field -> !field.isPrivate())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    return ImmutableSet.copyOf(allVisibleSuperTypeMethods);
+  }
+
+  /**
+   * Gets all visible methods including inherited.
+   *
+   * @return visible methods including inherited methods.
+   */
+  public Collection<CDMethodSymbol> getAllVisibleMethods() {
+    final Set<CDMethodSymbol> allMethods = new LinkedHashSet<>();
+    allMethods.addAll(getMethods());
+    // filter-out all fields with same name
+    for (CDMethodSymbol inheritedMethod: getAllVisibleMethodsOfSuperTypes()) {
+      if (getMethods().stream().noneMatch(cdMethodSymbol -> cdMethodSymbol.getName().equals(inheritedMethod.getName()))) {
+        allMethods.add(inheritedMethod);
+      }
+    }
+    // filter-out all private fields
+    final Set<CDMethodSymbol> allVisibleMethods = allMethods.stream().
+            filter(method -> !method.isPrivate())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    return ImmutableSet.copyOf(allVisibleMethods);
+  }
+
   /**
    * Get all associations including inherited
    * 
@@ -238,11 +282,11 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
    */
   public Scope getAllKindElements() {
     MutableScope scope = new CommonScope();
-    addAssociationRoleNamesToScope(scope);
+    getEnclosingScope().getResolvingFilters().forEach(scope::addResolver);
     getAllVisibleFields().forEach(scope::add);
     getAllAssociations().forEach(scope::add);
-    getMethods().forEach(scope::add);
-    getEnclosingScope().getResolvingFilters().forEach(scope::addResolver);
+    getAllVisibleMethods().forEach(scope::add);
+    addAssociationRoleNamesToScope(scope);
     return scope;
   }
 
@@ -282,9 +326,10 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
         String roleName = assoc.getTargetRole().orElse(firstLetterToLowerCase(assoc.getTargetType().getName()));
         CDAssociationSymbol newAssoc = flatCopyOfAssoc(assoc);
         newAssoc.setAssocName(Optional.of(roleName));
-        scope.add(newAssoc);
+        if(!scope.resolve(roleName, CDAssociationSymbol.KIND).isPresent())
+          scope.add(newAssoc);
       }
-      else if(assoc.getTargetType().isSameOrSuperType(this) &&
+      if(assoc.getTargetType().isSameOrSuperType(this) &&
               (assoc.getSourceRole().isPresent() ||
                       // role name can not be derived for self reflevtive associations
                       !assoc.getTargetType().getFullName().equals(assoc.getSourceType().getFullName()))) {
@@ -292,8 +337,8 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
         String roleName = assoc.getSourceRole().orElse(firstLetterToLowerCase(assoc.getSourceType().getName()));
         CDAssociationSymbol newAssoc = flatCopyOfAssoc(assoc);
         newAssoc.setAssocName(Optional.of(roleName));
-        scope.add(newAssoc);
-
+        if(!scope.resolve(roleName, CDAssociationSymbol.KIND).isPresent())
+          scope.add(newAssoc);
       }
     }
   }
