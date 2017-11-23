@@ -15,6 +15,7 @@ import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SocNetSymboltableTest {
@@ -25,6 +26,7 @@ public class SocNetSymboltableTest {
   private CDSymbol cdSymbol;
   private Scope cdScope;
 
+  @Ignore
   @Test
   public void testSocNet() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();

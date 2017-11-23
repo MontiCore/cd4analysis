@@ -66,7 +66,8 @@ public class AssocTest extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
+  @Ignore
   @Test
   public void testAssocNameConflictAttribute() {
     String modelName = "C4A25.cd";
@@ -113,7 +114,8 @@ public class AssocTest extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
+  @Ignore
   @Test
   public void testAssocRoleConflictAttribute() {
     String modelName = "C4A27.cd";
@@ -130,7 +132,8 @@ public class AssocTest extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
+  @Ignore
   @Test
   public void testAssocRoleConflictRole() {
     String modelName = "C4A28.cd";
@@ -150,7 +153,7 @@ public class AssocTest extends AbstractCoCoTest {
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
   @Test
   public void testInvalidRoleNames() {
     // AssocTestGenerator.generateInvalidRoleNamesTests();

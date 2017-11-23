@@ -297,13 +297,14 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     if(this.getFullName().equals(type.getFullName())){
       return true;
     }
-    for(CDTypeSymbol superType : type.getSuperTypes()) {
+    for(CDTypeSymbol superType : type.getAllSuperTypes()) {
       if(superType.getFullName().equals(this.getFullName())){
         return true;
       }
     }
     return false;
   }
+
 
   /**
    * [*] Auction (auctions) -> (bidder) Person [*];
@@ -362,5 +363,16 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     assoc.getStereotypes().forEach(newAssoc::addStereotype);
 
     return newAssoc;
+  }
+
+  private List<CDTypeSymbol> getAllSuperTypes() {
+    ArrayList allSuperTypes = new ArrayList();
+    allSuperTypes.addAll(this.getSuperTypes());
+
+    if(this.getSuperClass().isPresent()) {
+      allSuperTypes.addAll(this.getSuperClass().get().getReferencedSymbol().getAllSuperTypes());
+    }
+
+    return allSuperTypes;
   }
 }
