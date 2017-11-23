@@ -94,7 +94,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
           .findAny();
     }
     if (conflictingAssoc.isPresent()) {
-      String conflictingRoleNameAuto = conflictingAssoc.get().getSourceRole().isPresent()
+      String conflictingRoleNameAuto = conflictingAssoc.get().getTargetRole().isPresent()
           ? ""
           : AUTOMATICALLY_INTRODUCED;
       String conflictingRoleName = conflictingAssoc.get().getDerivedName();

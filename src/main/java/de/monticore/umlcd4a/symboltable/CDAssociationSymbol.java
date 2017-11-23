@@ -159,11 +159,11 @@ public class CDAssociationSymbol extends CommonSymbol {
   }
   
   public String getDerivedName() {
-    if (getSourceRole().isPresent()) {
-      return getSourceRole().get();
-    }
     if (assocName.isPresent()) {
       return assocName.get();
+    }
+    if (getTargetRole().isPresent()) {
+      return getTargetRole().get();
     }
     return StringTransformations.uncapitalize(Names.getSimpleName(getTargetType().getName()))
         .intern();

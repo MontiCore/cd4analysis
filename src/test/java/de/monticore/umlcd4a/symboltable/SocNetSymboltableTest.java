@@ -26,7 +26,6 @@ public class SocNetSymboltableTest {
   private CDSymbol cdSymbol;
   private Scope cdScope;
 
-  @Ignore
   @Test
   public void testSocNet() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
@@ -163,7 +162,7 @@ public class SocNetSymboltableTest {
     assertFalse(organizedAssoc.getAssocName().isPresent());
     assertEquals("", organizedAssoc.getName());
     assertEquals("organized", organizedAssoc.getDerivedName());
-    assertEquals("organized", organizedAssoc.getSourceRole().orElse(""));
+    assertEquals("organized", organizedAssoc.getTargetRole().orElse(""));
     assertFalse(organizedAssoc.getAssocName().isPresent());
     assertTrue(organizedAssoc.isBidirectional());
     assertEquals(PACKAGE + "Person", organizedAssoc.getSourceType().getFullName());
@@ -181,7 +180,7 @@ public class SocNetSymboltableTest {
     assertEquals("", organizerAssoc.getName());
     assertFalse(organizerAssoc.getAssocName().isPresent());
     assertEquals("organizer", organizerAssoc.getDerivedName());
-    assertEquals("organizer", organizerAssoc.getSourceRole().orElse(""));
+    assertEquals("organizer", organizerAssoc.getTargetRole().orElse(""));
     assertFalse(organizerAssoc.getAssocName().isPresent());
     assertTrue(organizerAssoc.isBidirectional());
     assertEquals(PACKAGE + "Group", organizerAssoc.getSourceType().getFullName());
@@ -306,7 +305,7 @@ public class SocNetSymboltableTest {
     assertNotNull(photoMessageAssoc);
     assertEquals("", photoMessageAssoc.getName());
     assertEquals("photoMessage", photoMessageAssoc.getDerivedName());
-    assertFalse(photoMessageAssoc.getSourceRole().isPresent());
+    assertFalse(photoMessageAssoc.getTargetRole().isPresent());
     assertFalse(photoMessageAssoc.getAssocName().isPresent());
     assertTrue(photoMessageAssoc.isBidirectional());
     assertEquals(PACKAGE + "Photo", photoMessageAssoc.getSourceType().getFullName());
@@ -323,7 +322,7 @@ public class SocNetSymboltableTest {
     assertNotNull(photoAssoc);
     assertEquals("", photoAssoc.getName());
     assertEquals("picture", photoAssoc.getDerivedName());
-    assertEquals("picture", photoAssoc.getSourceRole().orElse(""));
+    assertEquals("picture", photoAssoc.getTargetRole().orElse(""));
     assertFalse(photoAssoc.getAssocName().isPresent());
     assertTrue(photoAssoc.isBidirectional());
     assertEquals(PACKAGE + "PhotoMessage", photoAssoc.getSourceType().getFullName());
