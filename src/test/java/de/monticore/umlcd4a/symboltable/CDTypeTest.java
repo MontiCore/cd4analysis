@@ -186,12 +186,27 @@ public class CDTypeTest {
     CDFieldSymbol field1 = scope.<CDFieldSymbol>resolve("cType", CDFieldSymbol.KIND).orElse(null);
     assertNotNull(field1);
 
-  /* Should work in specification viewing mode
-    cdTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.MontiArc.PortDef", CDTypeSymbol.KIND).orElse(null);
-    assertNotNull(cdTypeSymbol);
-    scope = cdTypeSymbol.getAllKindElements();
-    assoc1 = scope.<CDAssociationSymbol>resolve("ctDef", CDAssociationSymbol.KIND).orElse(null);
-    assertNotNull(assoc1);
-*/
+  }
+
+  @Test
+  public void testAssociationsWithRoles() {
+    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
+    CDTypeSymbol cTDefTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.MontiArc.CTDef", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(cTDefTypeSymbol);
+    Scope scope = cTDefTypeSymbol.getAllKindElements();
+    CDAssociationSymbol subDefAssoc = scope.<CDAssociationSymbol>resolve("subDefs", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(subDefAssoc);
+    assertEquals(-1, subDefAssoc.getTargetCardinality().getMax());
+    assertEquals("SubDef", subDefAssoc.getTargetType().getName());
+
+    CDTypeSymbol subDefTypeSymbol = (CDTypeSymbol) globalScope.resolve("de.monticore.umlcd4a.symboltable.MontiArc.SubDef", CDTypeSymbol.KIND).orElse(null);
+    assertNotNull(subDefTypeSymbol);
+    scope = subDefTypeSymbol.getAllKindElements();
+    CDAssociationSymbol cTDefAssoc = scope.<CDAssociationSymbol>resolve("parentDefs", CDAssociationSymbol.KIND).orElse(null);
+    assertNotNull(cTDefAssoc);
+    assertEquals(1, cTDefAssoc.getTargetCardinality().getMin());
+    assertEquals(1, cTDefAssoc.getTargetCardinality().getMax());
+    assertEquals("CTDef", cTDefAssoc.getTargetType().getName());
   }
 }
