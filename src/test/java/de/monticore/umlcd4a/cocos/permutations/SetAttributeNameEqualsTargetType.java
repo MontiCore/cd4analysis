@@ -53,10 +53,10 @@ public class SetAttributeNameEqualsTargetType implements
   private String determineTypeName(ASTCDAttribute cdAttribute,
       Permutation<ASTCDAssociation> assocPermutation) {
     if (attributeIsOnLeftSide(cdAttribute, assocPermutation)) {
-      return assocPermutation.delegate().getRightReferenceName().getParts().get(0);
+      return assocPermutation.delegate().getRightReferenceName().getPartList().get(0);
     }
     else {
-      return assocPermutation.delegate().getLeftReferenceName().getParts().get(0);
+      return assocPermutation.delegate().getLeftReferenceName().getPartList().get(0);
     }
   }
   

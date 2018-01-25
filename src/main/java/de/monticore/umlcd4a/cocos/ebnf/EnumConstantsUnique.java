@@ -37,7 +37,7 @@ public class EnumConstantsUnique implements CD4AnalysisASTCDEnumCoCo {
   @Override
   public void check(ASTCDEnum node) {
     Collection<String> usedNames = new HashSet<String>();
-    for (ASTCDEnumConstant constant : node.getCDEnumConstants()) {
+    for (ASTCDEnumConstant constant : node.getCDEnumConstantList()) {
       String name = constant.getName();
       if (usedNames.contains(name)) {
         Log.error(String.format("0xC4A06 Duplicate enum constant: %s.", name),

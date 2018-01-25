@@ -22,6 +22,8 @@
 
 package de.monticore.umlcd4a.cd4analysis._ast;
 
+import java.util.Optional;
+
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
@@ -31,7 +33,7 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
   protected ASTCDInterface() {
   }
   
-  protected ASTCDInterface(ASTModifier modifier,
+  protected ASTCDInterface(Optional<ASTModifier> modifier,
       String name,
       java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute> cDAttributes,
@@ -50,7 +52,7 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
    * @return String representation of the superclass
    */
   public String printInterfaces() {
-    return printer.printReferenceList(getInterfaces());
+    return printer.printReferenceList(getInterfaceList());
   }
   
 }

@@ -21,6 +21,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 
 /**
  * Test for the utility class {@link ASTCDRawTransformation}
@@ -39,67 +40,67 @@ public class ASTRawTransformationTest {
   
   @Before
   public void init() {
-    astDef = ASTCDDefinition.getBuilder().name("ASTRawTransformationTest")
+    astDef = CD4AnalysisMill.cDDefinitionBuilder().name("ASTRawTransformationTest")
         .build();
   }
   
   @Test
   public void testAddCdClass() {
-    assertTrue(astDef.getCDClasses().isEmpty());
+    assertTrue(astDef.getCDClassList().isEmpty());
     
     astTransformation.addCdClass(astDef, "A");
-    assertEquals(astDef.getCDClasses().size(), 1);
-    assertEquals(astDef.getCDClasses().get(0).getName(), "A");
+    assertEquals(astDef.getCDClassList().size(), 1);
+    assertEquals(astDef.getCDClassList().get(0).getName(), "A");
     
     ASTCDClass cdClass1 = astTransformation.addCdClass(astDef, "B",
         "superC", Lists.newArrayList("i1", "i2"));
     assertNotNull(cdClass1);
     assertEquals(cdClass1.getName(), "B");
     
-    assertEquals(astDef.getCDClasses().size(), 2);
-    ASTCDClass astClass = astDef.getCDClasses().get(1);
+    assertEquals(astDef.getCDClassList().size(), 2);
+    ASTCDClass astClass = astDef.getCDClassList().get(1);
     assertEquals(astClass.getName(), "B");
     
-    assertTrue(astClass.getSuperclass().isPresent());
-    assertTrue(astClass.getSuperclass().get() instanceof ASTSimpleReferenceType);
+    assertTrue(astClass.isSuperclassPresent());
+    assertTrue(astClass.getSuperclass() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType superClass = (ASTSimpleReferenceType) astClass
-        .getSuperclass().get();
-    assertEquals(superClass.getNames(), Lists.newArrayList("superC"));
+        .getSuperclass();
+    assertEquals(superClass.getNameList(), Lists.newArrayList("superC"));
     
-    assertEquals(astClass.getInterfaces().size(), 2);
-    assertTrue(astClass.getInterfaces().get(0) instanceof ASTSimpleReferenceType);
+    assertEquals(astClass.getInterfaceList().size(), 2);
+    assertTrue(astClass.getInterfaceList().get(0) instanceof ASTSimpleReferenceType);
     assertEquals(
-        ((ASTSimpleReferenceType) astClass.getInterfaces().get(0))
-            .getNames(),
+        ((ASTSimpleReferenceType) astClass.getInterfaceList().get(0))
+            .getNameList(),
         Lists.newArrayList("i1"));
-    assertTrue(astClass.getInterfaces().get(1) instanceof ASTSimpleReferenceType);
+    assertTrue(astClass.getInterfaceList().get(1) instanceof ASTSimpleReferenceType);
     assertEquals(
-        ((ASTSimpleReferenceType) astClass.getInterfaces().get(1))
-            .getNames(),
+        ((ASTSimpleReferenceType) astClass.getInterfaceList().get(1))
+            .getNameList(),
         Lists.newArrayList("i2"));
   }
   
   @Test
   public void testAddCdInterface() {
-    assertTrue(astDef.getCDInterfaces().isEmpty());
+    assertTrue(astDef.getCDInterfaceList().isEmpty());
     
     astTransformation.addCdInterface(astDef, "I1");
-    assertEquals(astDef.getCDInterfaces().size(), 1);
-    assertEquals(astDef.getCDInterfaces().get(0).getName(), "I1");
+    assertEquals(astDef.getCDInterfaceList().size(), 1);
+    assertEquals(astDef.getCDInterfaceList().get(0).getName(), "I1");
     
     astTransformation.addCdInterface(astDef, "I2",
         Lists.newArrayList("SuperI1", "SuperI2"));
-    assertEquals(astDef.getCDInterfaces().size(), 2);
-    ASTCDInterface astInterface = astDef.getCDInterfaces().get(1);
+    assertEquals(astDef.getCDInterfaceList().size(), 2);
+    ASTCDInterface astInterface = astDef.getCDInterfaceList().get(1);
     assertEquals(astInterface.getName(), "I2");
     
-    assertEquals(astInterface.getInterfaces().size(), 2);
-    assertTrue(astInterface.getInterfaces().get(0) instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) astInterface.getInterfaces()
-        .get(0)).getNames(), Lists.newArrayList("SuperI1"));
-    assertTrue(astInterface.getInterfaces().get(1) instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) astInterface.getInterfaces()
-        .get(1)).getNames(), Lists.newArrayList("SuperI2"));
+    assertEquals(astInterface.getInterfaceList().size(), 2);
+    assertTrue(astInterface.getInterfaceList().get(0) instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType) astInterface.getInterfaceList()
+        .get(0)).getNameList(), Lists.newArrayList("SuperI1"));
+    assertTrue(astInterface.getInterfaceList().get(1) instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType) astInterface.getInterfaceList()
+        .get(1)).getNameList(), Lists.newArrayList("SuperI2"));
   }
   
   @Test
@@ -110,18 +111,18 @@ public class ASTRawTransformationTest {
     assertNotNull(attr1);
     assertEquals(attr1.getName(), "a");
     assertTrue(attr1.getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) attr1.getType()).getNames(),
+    assertEquals(((ASTSimpleReferenceType) attr1.getType()).getNameList(),
         Lists.newArrayList("String"));
-    assertTrue(!attr1.getModifier().isPresent());
+    assertTrue(!attr1.isModifierPresent());
     
     ASTCDAttribute attr2 = astTransformation.addCdAttribute(astClass, "b",
         "a.b.C");
     assertNotNull(attr2);
     assertEquals(attr2.getName(), "b");
     assertTrue(attr2.getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) attr2.getType()).getNames(),
+    assertEquals(((ASTSimpleReferenceType) attr2.getType()).getNameList(),
         Lists.newArrayList("a", "b", "C"));
-    assertTrue(!attr2.getModifier().isPresent());
+    assertTrue(!attr2.isModifierPresent());
     
   }
   
@@ -139,22 +140,22 @@ public class ASTRawTransformationTest {
     assertEquals(method2.getName(), "test2");
     assertTrue(method2.getReturnType() instanceof ASTSimpleReferenceType);
     assertEquals(
-        ((ASTSimpleReferenceType) method2.getReturnType()).getNames(),
+        ((ASTSimpleReferenceType) method2.getReturnType()).getNameList(),
         Lists.newArrayList("Integer"));
-    assertEquals(method2.getCDParameters().size(), 3);
-    assertEquals(method2.getCDParameters().get(0).getName(), "param0");
-    assertTrue(method2.getCDParameters().get(0).getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) method2.getCDParameters().get(0)
-        .getType()).getNames(), Lists.newArrayList("A"));
-    assertEquals(method2.getCDParameters().get(1).getName(), "param1");
-    assertTrue(method2.getCDParameters().get(1).getType() instanceof ASTSimpleReferenceType);
-    assertEquals(((ASTSimpleReferenceType) method2.getCDParameters().get(1)
-        .getType()).getNames(), Lists.newArrayList("a", "b", "C"));
-    assertEquals(method2.getCDParameters().get(2).getName(), "param2");
-    assertTrue(method2.getCDParameters().get(2).getType() instanceof ASTSimpleReferenceType);
+    assertEquals(method2.getCDParameterList().size(), 3);
+    assertEquals(method2.getCDParameterList().get(0).getName(), "param0");
+    assertTrue(method2.getCDParameterList().get(0).getType() instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType) method2.getCDParameterList().get(0)
+        .getType()).getNameList(), Lists.newArrayList("A"));
+    assertEquals(method2.getCDParameterList().get(1).getName(), "param1");
+    assertTrue(method2.getCDParameterList().get(1).getType() instanceof ASTSimpleReferenceType);
+    assertEquals(((ASTSimpleReferenceType) method2.getCDParameterList().get(1)
+        .getType()).getNameList(), Lists.newArrayList("a", "b", "C"));
+    assertEquals(method2.getCDParameterList().get(2).getName(), "param2");
+    assertTrue(method2.getCDParameterList().get(2).getType() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType param2Type = (ASTSimpleReferenceType) method2
-        .getCDParameters().get(2).getType();
-    assertEquals(param2Type.getNames(), Lists.newArrayList("String"));
+        .getCDParameterList().get(2).getType();
+    assertEquals(param2Type.getNameList(), Lists.newArrayList("String"));
     assertTrue(method2.getModifier() != null);
     assertTrue(method2.getModifier().isPublic());
   }

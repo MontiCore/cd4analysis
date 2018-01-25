@@ -37,13 +37,13 @@ public class TypeNameUpperCase implements CD4AnalysisASTCDDefinitionCoCo {
   @Override
   public void check(ASTCDDefinition cdDefinition) {
     Collection<ASTCDType> types = new ArrayList<>();
-    types.addAll(cdDefinition.getCDClasses());
+    types.addAll(cdDefinition.getCDClassList());
     check(types, "class");
     types.clear();
-    types.addAll(cdDefinition.getCDInterfaces());
+    types.addAll(cdDefinition.getCDInterfaceList());
     check(types, "interface");
     types.clear();
-    types.addAll(cdDefinition.getCDEnums());
+    types.addAll(cdDefinition.getCDEnumList());
     check(types, "enum");
   }
   

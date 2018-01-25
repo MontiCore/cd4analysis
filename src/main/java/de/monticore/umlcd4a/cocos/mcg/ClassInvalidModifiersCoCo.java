@@ -22,8 +22,8 @@ public class ClassInvalidModifiersCoCo implements CD4AnalysisASTCDClassCoCo {
    */
   @Override
   public void check(ASTCDClass node) {
-    if (node.getModifier().isPresent()) {
-      ASTModifier mod = node.getModifier().get();
+    if (node.isModifierPresent()) {
+      ASTModifier mod = node.getModifier();
       if (mod.isDerived() || mod.isStatic()) {
         Log.error(
             String.format("0xC4A53 Class %s has invalid modifier %s.", node.getName(),

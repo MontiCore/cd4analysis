@@ -21,11 +21,11 @@ public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode 
   
   String getName();
   
-  Optional<ASTModifier> getModifier();
+  Optional<ASTModifier> getModifierOpt();
   
-  List<ASTReferenceType> getInterfaces();
+  List<ASTReferenceType> getInterfaceList();
   
-  List<ASTCDMethod> getCDMethods();
+  List<ASTCDMethod> getCDMethodList();
   
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
@@ -33,13 +33,13 @@ public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode 
    * @return a string, e.g. abstract private final 
    */
   default String printModifier() {
-    Optional<ASTModifier> modifier = getModifier();
+    Optional<ASTModifier> modifier = getModifierOpt();
     if (!modifier.isPresent()) {
       return EMPTY_STRING;
     }
     
     StringBuilder modifierStr = new StringBuilder();
-    if (getModifier().get().isAbstract()) {
+    if (getModifierOpt().get().isAbstract()) {
       modifierStr.append(" abstract ");
     }
     if (modifier.get().isPublic()) {

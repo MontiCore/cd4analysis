@@ -22,8 +22,8 @@ public class EnumNoMethodsCoCo implements CD4AnalysisASTCDEnumCoCo {
    */
   @Override
   public void check(ASTCDEnum node) {
-    if (!node.getCDMethods().isEmpty()) {
-      ASTCDMethod method = node.getCDMethods().get(0);
+    if (!node.getCDMethodList().isEmpty()) {
+      ASTCDMethod method = node.getCDMethodList().get(0);
       Log.error(String.format("0xC4A70 Enum %s may not have methods.", node.getName()),
           method.get_SourcePositionStart());
     }

@@ -23,14 +23,14 @@ public class AssociationModifierCoCo implements CD4AnalysisASTCDAssociationCoCo 
    */
   @Override
   public void check(ASTCDAssociation node) {
-    if (node.getLeftModifier().isPresent()) {
-      ASTModifier mod = node.getLeftModifier().get();
+    if (node.isLeftModifierPresent()) {
+      ASTModifier mod = node.getLeftModifier();
       if (mod.isAbstract()) {
         error(node, mod);
       }
     }
-    if (node.getRightModifier().isPresent()) {
-      ASTModifier mod = node.getRightModifier().get();
+    if (node.isRightModifierPresent()) {
+      ASTModifier mod = node.getRightModifier();
       if (mod.isAbstract()) {
         error(node, mod);
       }

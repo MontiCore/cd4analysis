@@ -36,7 +36,7 @@ public class GenericTypeHasParameters implements TypesASTSimpleReferenceTypeCoCo
   
   @Override
   public void check(ASTSimpleReferenceType type) {
-    Optional<ASTTypeArguments> args = type.getTypeArguments();
+    Optional<ASTTypeArguments> args = type.getTypeArgumentsOpt();
     if (args.isPresent()) {
       String typeName = TypesPrinter.printType(type);
       check(typeName, args.get());
@@ -44,7 +44,7 @@ public class GenericTypeHasParameters implements TypesASTSimpleReferenceTypeCoCo
   }
   
   private void check(String typeName, ASTTypeArguments typeArguments) {
-    if (typeArguments.getTypeArguments().isEmpty()) {
+    if (typeArguments.getTypeArgumentList().isEmpty()) {
       Log.error(
           String
               .format(

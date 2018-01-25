@@ -55,7 +55,7 @@ public class CreateInheritanceTree implements
     Permutation<ASTCDAssociation> successorPermutation = assocPermutation.copy();
     
     ASTCDClass referencedClass = createReferencedClass(successorPermutation.delegate()
-        .getLeftReferenceName().getParts().get(0));
+        .getLeftReferenceName().getPartList().get(0));
     List<ASTCDClass> superClasses = createSuperClasses(referencedClass, inheritanceDepth);
     ASTCDClass topClass = !superClasses.isEmpty()
         ? Iterables.getLast(superClasses)
@@ -87,7 +87,7 @@ public class CreateInheritanceTree implements
   
   private static void addAttributeToTopClass(ASTCDClass topClass) {
     ASTCDAttribute cdAttribute = CD4AnalysisNodeFactory.createASTCDAttribute();
-    topClass.getCDAttributes().add(cdAttribute);
+    topClass.getCDAttributeList().add(cdAttribute);
   }
   
   private static ASTCDClass newSuperClass(ASTCDClass subClass) {
@@ -101,7 +101,7 @@ public class CreateInheritanceTree implements
     ASTSimpleReferenceType reference = TypesNodeFactory.createASTSimpleReferenceType();
     ArrayList<String> name = new ArrayList<String>();
     name.add(superClass.getName());
-    reference.setNames(name);
+    reference.setNameList(name);
     return reference;
   }
   

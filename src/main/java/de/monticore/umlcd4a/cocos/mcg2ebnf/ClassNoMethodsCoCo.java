@@ -22,8 +22,8 @@ public class ClassNoMethodsCoCo implements CD4AnalysisASTCDClassCoCo {
    */
   @Override
   public void check(ASTCDClass node) {
-    if (!node.getCDMethods().isEmpty()) {
-      ASTCDMethod method = node.getCDMethods().get(0);
+    if (!node.getCDMethodList().isEmpty()) {
+      ASTCDMethod method = node.getCDMethodList().get(0);
       Log.error(String.format("0xC4A63 Class %s may not have any methods.", node.getName()),
           method.get_SourcePositionStart());
     }

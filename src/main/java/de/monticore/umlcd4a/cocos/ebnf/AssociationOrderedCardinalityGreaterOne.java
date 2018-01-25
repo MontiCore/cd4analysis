@@ -44,14 +44,14 @@ public class AssociationOrderedCardinalityGreaterOne implements
   @Override
   public void check(ASTCDAssociation assoc) {
     boolean err = false;
-    if (assoc.getLeftModifier().isPresent()
-        && isOrdered(assoc.getLeftModifier().get())) {
-      err = check(assoc.getLeftCardinality(), assoc);
+    if (assoc.isLeftModifierPresent()
+        && isOrdered(assoc.getLeftModifier())) {
+      err = check(assoc.getLeftCardinalityOpt(), assoc);
     }
     
-    if (!err && assoc.getRightModifier().isPresent()
-        && isOrdered(assoc.getRightModifier().get())) {
-      check(assoc.getRightCardinality(), assoc);
+    if (!err && assoc.isRightModifierPresent()
+        && isOrdered(assoc.getRightModifier())) {
+      check(assoc.getRightCardinalityOpt(), assoc);
     }
     
   }
@@ -80,8 +80,8 @@ public class AssociationOrderedCardinalityGreaterOne implements
   }
   
   private boolean isOrdered(ASTModifier mod) {
-    if (mod.getStereotype().isPresent()) {
-       List<ASTStereoValue> list = mod.getStereotype().get().getValues();
+    if (mod.isStereotypePresent()) {
+       List<ASTStereoValue> list = mod.getStereotype().getValueList();
       for (ASTStereoValue l : list) {
         if ("ordered".equals(l.getName())) {
           return true;

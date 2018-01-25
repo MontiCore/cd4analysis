@@ -22,8 +22,8 @@ public class InterfaceAttributesStaticCoCo implements CD4AnalysisASTCDInterfaceC
    */
   @Override
   public void check(ASTCDInterface node) {
-    for (ASTCDAttribute attr : node.getCDAttributes()) {
-      if (!attr.getModifier().isPresent() || !attr.getModifier().get().isStatic()) {
+    for (ASTCDAttribute attr : node.getCDAttributeList()) {
+      if (!attr.isModifierPresent() || !attr.getModifier().isStatic()) {
         Log.error(String.format("0xC4A51 Attribute %s in interface %s must be static.",
             attr.getName(), node.getName()),
             attr.get_SourcePositionStart());

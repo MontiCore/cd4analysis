@@ -49,9 +49,9 @@ public class ASTCDMethod extends ASTCDMethodTOP {
   }
   
   public String printAnnotation() {
-    if (getModifier().getStereotype().isPresent()) {
+    if (getModifier().isStereotypePresent()) {
       StringBuffer sb = new StringBuffer();
-      for (ASTStereoValue s: getModifier().getStereotype().get().values) {
+      for (ASTStereoValue s: getModifier().getStereotype().values) {
         sb.append(s.getName());
         sb.append("\n");
       }
@@ -99,7 +99,7 @@ public class ASTCDMethod extends ASTCDMethodTOP {
    * @return a string list of parameter declarations, e.g. type name
    */
   public String printParametersDecl() {
-    return printer.printCDParametersDecl(getCDParameters());
+    return printer.printCDParametersDecl(getCDParameterList());
   }
   
   /**
@@ -108,6 +108,6 @@ public class ASTCDMethod extends ASTCDMethodTOP {
    * @return a string list of all exceptions
    */
   public String printThrowsDecl() {
-    return printer.printThrowsDecl(getExceptions());
+    return printer.printThrowsDecl(getExceptionList());
   }
 }

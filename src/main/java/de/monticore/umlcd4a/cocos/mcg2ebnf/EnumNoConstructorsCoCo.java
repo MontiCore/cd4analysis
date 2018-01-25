@@ -22,8 +22,8 @@ public class EnumNoConstructorsCoCo implements CD4AnalysisASTCDEnumCoCo {
    */
   @Override
   public void check(ASTCDEnum node) {
-    if (!node.getCDConstructors().isEmpty()) {
-      ASTCDConstructor constr = node.getCDConstructors().get(0);
+    if (!node.getCDConstructorList().isEmpty()) {
+      ASTCDConstructor constr = node.getCDConstructorList().get(0);
       Log.error(String.format("0xC4A69 Enum %s may not have constructors.", node.getName()),
           constr.get_SourcePositionStart());
     }

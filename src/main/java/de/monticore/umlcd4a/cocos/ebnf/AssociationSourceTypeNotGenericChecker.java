@@ -33,7 +33,7 @@ public class AssociationSourceTypeNotGenericChecker implements
   
   public void check(ASTCDDefinition cdDefinition) {
     
-    List<ASTCDAssociation> assocList = cdDefinition.getCDAssociations();
+    List<ASTCDAssociation> assocList = cdDefinition.getCDAssociationList();
     for (ASTCDAssociation assoc : assocList) {
       
       if (assoc.isLeftToRight() || assoc.isBidirectional()) {

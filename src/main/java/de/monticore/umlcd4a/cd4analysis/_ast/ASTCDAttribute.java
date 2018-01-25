@@ -20,6 +20,9 @@
 package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
+
+import java.util.Optional;
+
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTType;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
@@ -31,10 +34,10 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
   }
   
   protected ASTCDAttribute(
-      ASTModifier modifier,
+      Optional<ASTModifier> modifier,
       ASTType type,
       String name,
-      ASTValue value) {
+      Optional<ASTValue> value) {
     super(modifier, type, name, value);
   }
   
@@ -44,7 +47,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return a string, e.g. abstract private final 
    */
   public String printModifier() {
-    if (!modifierIsPresent()) {
+    if (!isModifierPresent()) {
       return EMPTY_STRING;
     }
     
@@ -77,7 +80,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return a string representing the ASTValue
    */
   public String printValue() {
-    if (!valueIsPresent()) {
+    if (!isValuePresent()) {
       return EMPTY_STRING;
     }
     
@@ -94,10 +97,10 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
   }
   
   public String printAnnotation() {
-    if (getModifier().isPresent()) {
-      if (getModifier().get().getStereotype().isPresent()) {
+    if (isModifierPresent()) {
+      if (getModifier().isStereotypePresent()) {
         StringBuffer sb = new StringBuffer();
-        for (ASTStereoValue s: getModifier().get().getStereotype().get().values) {
+        for (ASTStereoValue s: getModifier().getStereotype().values) {
           sb.append(s.getName());
           sb.append("\n");
         }

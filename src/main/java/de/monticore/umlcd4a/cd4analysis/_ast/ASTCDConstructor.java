@@ -75,7 +75,7 @@ public class ASTCDConstructor extends ASTCDConstructorTOP {
    * @return a string list of parameter declarations, e.g. type name
    */
   public String printParametersDecl() {
-    return printer.printCDParametersDecl(getCDParameters());
+    return printer.printCDParametersDecl(getCDParameterList());
   }
   
   /**
@@ -84,7 +84,7 @@ public class ASTCDConstructor extends ASTCDConstructorTOP {
    * @return a string list of all exceptions
    */
   public String printThrowsDecl() {
-    return printer.printThrowsDecl(getExceptions());
+    return printer.printThrowsDecl(getExceptionList());
   }
   
 }

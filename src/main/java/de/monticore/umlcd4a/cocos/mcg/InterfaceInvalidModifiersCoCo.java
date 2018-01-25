@@ -22,8 +22,8 @@ public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceC
    */
   @Override
   public void check(ASTCDInterface node) {
-    if (node.getModifier().isPresent()) {
-      ASTModifier mod = node.getModifier().get();
+    if (node.isModifierPresent()) {
+      ASTModifier mod = node.getModifier();
       check(mod.isAbstract(), "abstract", mod, node);
       check(mod.isDerived(), "derived", mod, node);
       check(mod.isFinal(), "final", mod, node);

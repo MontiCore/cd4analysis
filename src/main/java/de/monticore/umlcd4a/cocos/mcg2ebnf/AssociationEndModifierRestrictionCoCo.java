@@ -27,12 +27,12 @@ public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAs
    */
   @Override
   public void check(ASTCDAssociation node) {
-    if (node.getLeftModifier().isPresent()) {
-      ASTModifier actualMod = node.getLeftModifier().get();
+    if (node.isLeftModifierPresent()) {
+      ASTModifier actualMod = node.getLeftModifier();
       check(node, actualMod);
     }
-    if (node.getRightModifier().isPresent()) {
-      ASTModifier actualMod = node.getRightModifier().get();
+    if (node.isRightModifierPresent()) {
+      ASTModifier actualMod = node.getRightModifier();
       check(node, actualMod);
     }
   }
@@ -42,9 +42,9 @@ public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAs
       error(assoc, actualMod);
     }
     
-    if (actualMod.getStereotype().isPresent()) {
-      ASTStereotype stereo = actualMod.getStereotype().get();
-      for (ASTStereoValue val : stereo.getValues()) {
+    if (actualMod.isStereotypePresent()) {
+      ASTStereotype stereo = actualMod.getStereotype();
+      for (ASTStereoValue val : stereo.getValueList()) {
         if (!"ordered".equals(val.getName())) {
           error(assoc, val);
         }

@@ -15,6 +15,7 @@ import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.types.types._ast.ASTReturnType;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTVoidType;
+import de.monticore.types.types._ast.TypesMill;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
@@ -23,6 +24,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 
 /**
  * Some raw (no parameter checks) help methods for the CD ast transformations.
@@ -45,7 +47,7 @@ public class ASTCDRawTransformation {
   public ASTCDAttribute addCdAttribute(ASTCDClass astClass,
       String attrName,
       String attrType) {
-    ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName)
+    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().name(attrName)
         .type(createType(attrType))
         .build();
     addCdAttribute(astClass, attribute);
@@ -60,7 +62,7 @@ public class ASTCDRawTransformation {
    */
   public void addCdAttribute(ASTCDClass astClass,
       ASTCDAttribute astAttribute) {
-    astClass.getCDAttributes().add(astAttribute);
+    astClass.getCDAttributeList().add(astAttribute);
   }
   
   // -------------------- Classes --------------------
@@ -74,7 +76,7 @@ public class ASTCDRawTransformation {
    * @return created {@link ASTCDClass} node
    */
   public ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
-    ASTCDClass astClass = ASTCDClass.getBuilder().name(className).build();
+    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().name(className).build();
     addCdClass(astDef, astClass);
     return astClass;
   }
@@ -100,7 +102,7 @@ public class ASTCDRawTransformation {
       ASTSimpleReferenceType interf = createType(interfName);
       interfaces.add(interf);
     }
-    ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
+    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().name(className)
         .superclass(superClass).interfaces(interfaces).build();
     addCdClass(astDef, astClass);
     return astClass;
@@ -113,7 +115,7 @@ public class ASTCDRawTransformation {
    * @param astClass
    */
   public void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
-    astDef.getCDClasses().add(astClass);
+    astDef.getCDClassList().add(astClass);
   }
   
   // -------------------- Interfaces --------------------
@@ -128,7 +130,7 @@ public class ASTCDRawTransformation {
    */
   public ASTCDInterface addCdInterface(ASTCDDefinition astDef,
       String interfaceName) {
-    ASTCDInterface astInterface = ASTCDInterface.getBuilder()
+    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder()
         .name(interfaceName).build();
     addCdInterface(astDef, astInterface);
     return astInterface;
@@ -142,7 +144,7 @@ public class ASTCDRawTransformation {
    */
   public void addCdInterface(ASTCDDefinition astDef,
       ASTCDInterface astInterface) {
-    astDef.getCDInterfaces().add(astInterface);
+    astDef.getCDInterfaceList().add(astInterface);
   }
   
   /**
@@ -163,7 +165,7 @@ public class ASTCDRawTransformation {
       ASTSimpleReferenceType type = createType(interfName);
       interfaces.add(type);
     }
-    ASTCDInterface astInterface = ASTCDInterface.getBuilder()
+    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder()
         .name(interfaceName)
         .interfaces(interfaces).build();
     addCdInterface(astDef, astInterface);
@@ -199,8 +201,8 @@ public class ASTCDRawTransformation {
       String returnType, List<String> paramTypes) {
     ASTReturnType astReturnType = createType(returnType);
     List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
-    ASTModifier modifier = ASTModifier.getBuilder().r__public(true).build();
-    ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
+    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().r__public(true).build();
+    ASTCDMethod cdMethod = CD4AnalysisMill.cDMethodBuilder()
         .name(methodName)
         .returnType(astReturnType)
         .modifier(modifier)
@@ -222,10 +224,10 @@ public class ASTCDRawTransformation {
    */
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
       List<String> paramTypes) {
-    ASTVoidType returnType = ASTVoidType.getBuilder().build();
+    ASTVoidType returnType = TypesMill.voidTypeBuilder().build();
     List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
-    ASTModifier modifier = ASTModifier.getBuilder().r__public(true).build();
-    ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
+    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().r__public(true).build();
+    ASTCDMethod cdMethod = CD4AnalysisMill.cDMethodBuilder()
         .name(methodName)
         .returnType(returnType)
         .modifier(modifier)
@@ -242,7 +244,7 @@ public class ASTCDRawTransformation {
    * @param astMethod
    */
   public void addCdMethod(ASTCDType astType, ASTCDMethod astMethod) {
-    astType.getCDMethods().add(astMethod);
+    astType.getCDMethodList().add(astMethod);
   }
   
   /**
@@ -259,7 +261,7 @@ public class ASTCDRawTransformation {
     for (String paramType : paramTypes) {
       types.add(createType(paramType));
     }
-    types.forEach(param -> params.add(ASTCDParameter.getBuilder()
+    types.forEach(param -> params.add(CD4AnalysisMill.cDParameterBuilder()
         .type(param)
         .name(ASTCDTransformation.PARAM_NAME_PREFIX + types.indexOf(param))
         .build()));
@@ -274,7 +276,7 @@ public class ASTCDRawTransformation {
    * @return created {@link ASTSimpleReferenceType} node
    */
   public ASTSimpleReferenceType createType(String typeName) {
-    return ASTSimpleReferenceType.getBuilder()
+    return TypesMill.simpleReferenceTypeBuilder()
         .names(Arrays.asList(typeName.split("\\."))).build();
   }
   

@@ -40,7 +40,7 @@ public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCo
     // note that generics cannot be defined within C4A and only three default
     // default types use generics (Optional, List, Set) and they all have
     // exactly one type parameter.
-    Optional<ASTTypeArguments> args = type.getTypeArguments();
+    Optional<ASTTypeArguments> args = type.getTypeArgumentsOpt();
     if (args.isPresent()) {
       String typeName = TypesPrinter.printType(type);
       check(typeName, args.get());
@@ -49,13 +49,13 @@ public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCo
   
   private void check(String typeName, ASTTypeArguments typeArguments) {
     // note that "no type arguments" is checked by coco GenericTypeHasParameters
-    if (!typeArguments.getTypeArguments().isEmpty()) {
+    if (!typeArguments.getTypeArgumentList().isEmpty()) {
       String typeWithoutGenerics = typeName;
       if (typeName.indexOf('<') > 0) {
         typeWithoutGenerics = typeName.substring(0, typeName.indexOf('<'));
       }
 
-      int actualCount = typeArguments.getTypeArguments().size();
+      int actualCount = typeArguments.getTypeArgumentList().size();
       int expectedCount = 1;
       if (typeName.startsWith("Map")) {
         expectedCount = 2;

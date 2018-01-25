@@ -22,8 +22,8 @@ public class ClassNoConstructorsCoCo implements CD4AnalysisASTCDClassCoCo {
    */
   @Override
   public void check(ASTCDClass node) {
-    if (!node.getCDConstructors().isEmpty()) {
-      ASTCDConstructor constr = node.getCDConstructors().get(0);
+    if (!node.getCDConstructorList().isEmpty()) {
+      ASTCDConstructor constr = node.getCDConstructorList().get(0);
       Log.error(String.format("0xC4A62 Class %s may not have constructors.", node.getName()),
           constr.get_SourcePositionStart());
     }

@@ -30,6 +30,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
 
@@ -71,7 +72,7 @@ public class ASTCDTransformation {
       Log.error("Attribute '" + attrName + "' can't be added to the CD class " + astClass.getName());
       return Optional.empty();
     }
-    ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
+    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().name(attrName).type(parsedType.get())
         .build();
     addCdAttribute(astClass, attribute);
     return Optional.of(attribute);
@@ -104,7 +105,7 @@ public class ASTCDTransformation {
       Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
       return Optional.empty();
     }
-    ASTCDAttribute attribute = ASTCDAttribute.getBuilder().name(attrName).type(parsedType.get())
+    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().name(attrName).type(parsedType.get())
         .modifier(parsedModifier.get())
         .build();
     addCdAttribute(astClass, attribute);
@@ -190,7 +191,7 @@ public class ASTCDTransformation {
     checkNotNull(astClass, "Attribute '" + astAttribute.getName()
         + "' can't be added to the CD class because of null reference to the class");
     checkNotNull(astAttribute);
-    astClass.getCDAttributes().add(astAttribute);
+    astClass.getCDAttributeList().add(astAttribute);
   }
   
   /**
@@ -206,7 +207,7 @@ public class ASTCDTransformation {
     checkNotNull(astInterface, "Attribute '" + astAttribute.getName()
         + "' can't be added to the CD interface because of null reference to the class");
     checkNotNull(astAttribute);
-    astInterface.getCDAttributes().add(astAttribute);
+    astInterface.getCDAttributeList().add(astAttribute);
   }
   
   // -------------------- Classes --------------------
@@ -224,7 +225,7 @@ public class ASTCDTransformation {
         "Class can't be added to the CD definition because of null or empty class name");
     checkNotNull(astDef, "Class " + className
         + " can't be added to the CD definition because of the null reference to the CD definition");
-    ASTCDClass astClass = ASTCDClass.getBuilder().name(className).build();
+    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().name(className).build();
     addCdClass(astDef, astClass);
     return astClass;
   }
@@ -264,7 +265,7 @@ public class ASTCDTransformation {
       }
       interfaces.add((ASTReferenceType) type.get());
     }
-    ASTCDClass astClass = ASTCDClass.getBuilder().name(className)
+    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().name(className)
         .superclass((ASTReferenceType) superClass.get()).interfaces(interfaces).build();
     addCdClass(astDef, astClass);
     return Optional.of(astClass);
@@ -318,7 +319,7 @@ public class ASTCDTransformation {
         + " can't be added to the CD definition because of the null reference to the CD definition");
     checkNotNull(astDef);
     checkNotNull(astClass);
-    astDef.getCDClasses().add(astClass);
+    astDef.getCDClassList().add(astClass);
   }
   
   // -------------------- Interfaces --------------------
@@ -336,7 +337,7 @@ public class ASTCDTransformation {
         "Interface can't be added to the CD definition because of null or empty interface name");
     checkNotNull(astDef, "Interface " + interfaceName
         + " can't be added to the CD definition because of the null reference to the CD definition");
-    ASTCDInterface astInterface = ASTCDInterface.getBuilder().name(interfaceName).build();
+    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder().name(interfaceName).build();
     addCdInterface(astDef, astInterface);
     return astInterface;
   }
@@ -353,7 +354,7 @@ public class ASTCDTransformation {
         "ASTCDInterface node can't be added to the CD class because of null reference to the added node");
     checkNotNull(astDef, "Interface " + astInterface.getName()
         + " can't be added to the CD definition because of the null reference to the CD definition");
-    astDef.getCDInterfaces().add(astInterface);
+    astDef.getCDInterfaceList().add(astInterface);
   }
   
   /**
@@ -382,7 +383,7 @@ public class ASTCDTransformation {
       }
       interfaces.add((ASTReferenceType) type.get());
     }
-    ASTCDInterface astInterface = ASTCDInterface.getBuilder().name(interfaceName)
+    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder().name(interfaceName)
         .interfaces(interfaces).build();
     addCdInterface(astDef, astInterface);
     return Optional.of(astInterface);
@@ -460,7 +461,7 @@ public class ASTCDTransformation {
       Log.error("Method " + methodName + " can't be added to the CD class " + astType.getName());
       return Optional.empty();
     }
-    ASTCDMethod cdMethod = ASTCDMethod.getBuilder()
+    ASTCDMethod cdMethod = CD4AnalysisMill.cDMethodBuilder()
         .name(methodName)
         .returnType(parsedReturnType.get())
         .modifier(parsedModifier.get())
@@ -482,7 +483,7 @@ public class ASTCDTransformation {
         "ASTCDMethod method node can't be added to the CD class because of null reference to the added node");
     checkNotNull(astType, "Method '" + astMethod.getName()
         + "' can't be added to the CD class because of null reference to the class");
-    astType.getCDMethods().add(astMethod);
+    astType.getCDMethodList().add(astMethod);
   }
   
   /**
@@ -505,7 +506,7 @@ public class ASTCDTransformation {
       }
       types.add(type.get());
     }
-    types.forEach(param -> params.add(ASTCDParameter.getBuilder()
+    types.forEach(param -> params.add(CD4AnalysisMill.cDParameterBuilder()
         .type(param)
         .name(PARAM_NAME_PREFIX + types.indexOf(param)).build()));
     return Optional.of(params);

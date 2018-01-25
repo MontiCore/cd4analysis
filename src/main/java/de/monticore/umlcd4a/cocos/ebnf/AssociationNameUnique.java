@@ -34,9 +34,9 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (a.getName().isPresent()) {
+    if (a.isNamePresent()) {
       try {
-        a.getEnclosingScope().get().resolve(a.getName().get(), CDAssociationSymbol.KIND);
+        a.getEnclosingScope().get().resolve(a.getName(), CDAssociationSymbol.KIND);
       }
       catch (ResolvedSeveralEntriesException e) {
         // TODO currently there exist two symbols for bidirectional
@@ -44,7 +44,7 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
         boolean isValid = (a.isBidirectional() || a.isUnspecified()) && e.getSymbols().size() == 2;
         if (!isValid) {
           Log.error(
-              String.format("0xC4A26 Association %s is defined multiple times.", a.getName().get()),
+              String.format("0xC4A26 Association %s is defined multiple times.", a.getName()),
               a.get_SourcePositionStart());
         }
       }

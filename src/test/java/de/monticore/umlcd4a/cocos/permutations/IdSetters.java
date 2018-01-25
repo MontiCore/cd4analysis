@@ -36,8 +36,8 @@ class IdSetters {
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAssociation.class))
         .flatMap(Collection::stream)
         .forEach(cdAssociation -> {
-          cdAssociation.setLeftRole(cdAssociation.getLeftRole().get() + id);
-          cdAssociation.setRightRole(cdAssociation.getRightRole().get() + id);
+          cdAssociation.setLeftRole(cdAssociation.getLeftRole() + id);
+          cdAssociation.setRightRole(cdAssociation.getRightRole() + id);
         });
   }
   
@@ -46,7 +46,7 @@ class IdSetters {
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAssociation.class))
         .flatMap(Collection::stream)
         .forEach(cdAssociation -> {
-          cdAssociation.setName(cdAssociation.getName().get() + id);
+          cdAssociation.setName(cdAssociation.getName() + id);
         });
   }
   
@@ -61,14 +61,14 @@ class IdSetters {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDClass.class))
         .flatMap(Collection::stream)
-        .map(ASTCDClass::getSuperclass)
+        .map(ASTCDClass::getSuperclassOpt)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .filter(ASTSimpleReferenceType.class::isInstance)
         .map(ASTSimpleReferenceType.class::cast)
         .forEach(simpleReferenceType -> {
-          String oldName = simpleReferenceType.getNames().get(0);
-          simpleReferenceType.getNames().set(0, oldName + id);
+          String oldName = simpleReferenceType.getNameList().get(0);
+          simpleReferenceType.getNameList().set(0, oldName + id);
         });
   }
   

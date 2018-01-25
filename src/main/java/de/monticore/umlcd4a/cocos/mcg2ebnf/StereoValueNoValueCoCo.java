@@ -21,7 +21,7 @@ public class StereoValueNoValueCoCo implements CD4AnalysisASTStereoValueCoCo {
    */
   @Override
   public void check(ASTStereoValue node) {
-    if (node.getValue().isPresent()) {
+    if (node.isValuePresent()) {
       Log.error(String.format("0xC4A73 StereoValue %s may not have a value.", node.getName()),
           node.get_SourcePositionStart());
       

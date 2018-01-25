@@ -19,6 +19,8 @@
 
 package de.monticore.umlcd4a.cd4analysis._ast;
 
+import java.util.Optional;
+
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
@@ -29,7 +31,7 @@ public class ASTCDEnum extends ASTCDEnumTOP {
   }
   
   protected ASTCDEnum(
-      ASTModifier modifier,
+      Optional<ASTModifier> modifier,
       String name,
       java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant> cDEnumConstants,
@@ -44,10 +46,10 @@ public class ASTCDEnum extends ASTCDEnumTOP {
   }
   
   public String printEnumConstants() {
-    return printer.printEnumConstants(getCDEnumConstants());
+    return printer.printEnumConstants(getCDEnumConstantList());
   }
   
   public String printInterfaces() {
-    return printer.printReferenceList(getInterfaces());
+    return printer.printReferenceList(getInterfaceList());
   }
 }

@@ -30,7 +30,7 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
       String simpleFileName = Files.getNameWithoutExtension(filename);
       String modelName = ast.get().getCDDefinition().getName();
       String packageName = Names.getPackageFromPath(Names.getPathFromFilename(filename));
-      String packageDeclaration = Names.getQualifiedName(ast.get().getPackage());
+      String packageDeclaration = Names.getQualifiedName(ast.get().getPackageList());
       if (!modelName.equals(simpleFileName)) {
         Log.error("0xC4A02 The name of the diagram " + modelName
             + " is not identical to the name of the file " + filename

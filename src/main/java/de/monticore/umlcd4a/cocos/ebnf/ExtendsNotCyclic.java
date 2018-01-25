@@ -29,10 +29,10 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
    */
   @Override
   public void check(ASTCDDefinition node) {
-    for (ASTCDClass c : node.getCDClasses()) {
+    for (ASTCDClass c : node.getCDClassList()) {
       checkClass(c);
     }
-    for (ASTCDInterface i : node.getCDInterfaces()) {
+    for (ASTCDInterface i : node.getCDInterfaceList()) {
       checkInterfacePath((CDTypeSymbol) i.getSymbol().get(), new HashSet<>());
     }
   }

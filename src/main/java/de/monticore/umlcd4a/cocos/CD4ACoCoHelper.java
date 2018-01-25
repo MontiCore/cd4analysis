@@ -30,15 +30,15 @@ public class CD4ACoCoHelper {
   // TODO RH use PrettyPrinter
   public static String printAssociation(ASTCDAssociation assoc) {
     StringBuilder r = new StringBuilder();
-    if (assoc.getName().isPresent()) {
-      r.append(assoc.getName().get());
+    if (assoc.isNamePresent()) {
+      r.append(assoc.getName());
       r.append(" ");
     }
     r.append("(");
-    r.append(Joiner.on(".").join(assoc.getLeftReferenceName().getParts()));
+    r.append(Joiner.on(".").join(assoc.getLeftReferenceName().getPartList()));
     r.append(" ");
-    if (assoc.getLeftRole().isPresent()) {
-      r.append("(" + assoc.getLeftRole().get() + ")");
+    if (assoc.isLeftRolePresent()) {
+      r.append("(" + assoc.getLeftRole() + ")");
       r.append(" ");
     }
     if (assoc.isLeftToRight()) {
@@ -54,11 +54,11 @@ public class CD4ACoCoHelper {
       r.append("--");
     }
     r.append(" ");
-    if (assoc.getRightRole().isPresent()) {
-      r.append("(" + assoc.getRightRole().get() + ")");
+    if (assoc.isRightRolePresent()) {
+      r.append("(" + assoc.getRightRole() + ")");
       r.append(" ");
     }
-    r.append(Joiner.on(".").join(assoc.getRightReferenceName().getParts()));
+    r.append(Joiner.on(".").join(assoc.getRightReferenceName().getPartList()));
     r.append(")");
     return r.toString();
   }

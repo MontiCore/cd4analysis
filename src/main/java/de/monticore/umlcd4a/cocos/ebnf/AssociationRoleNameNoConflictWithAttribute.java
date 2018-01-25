@@ -43,7 +43,7 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (!a.getName().isPresent()) {
+    if (!a.isNamePresent()) {
       Optional<CDTypeSymbol> leftType = a.getEnclosingScope().get()
           .resolve(a.getLeftReferenceName().toString(), CDTypeSymbol.KIND);
       Optional<CDTypeSymbol> rightType = a.getEnclosingScope().get()
@@ -51,11 +51,11 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
       boolean err = false;
       // source type might be external (in this case we do nothing)
       if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
-        err = check(leftType.get(), a.getRightRole(), a);
+        err = check(leftType.get(), a.getRightRoleOpt(), a);
       }
       if (rightType.isPresent() && !err
           && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
-        check(rightType.get(), a.getLeftRole(), a);
+        check(rightType.get(), a.getLeftRoleOpt(), a);
       }
     }
   }

@@ -34,11 +34,11 @@ public class AssociationRoleNameLowerCase implements CD4AnalysisASTCDAssociation
   @Override
   public void check(ASTCDAssociation assoc) {
     boolean err = false;
-    if (assoc.getLeftRole().isPresent()) {
-      err = check(assoc.getLeftRole().get(), assoc);
+    if (assoc.isLeftRolePresent()) {
+      err = check(assoc.getLeftRole(), assoc);
     }
-    if (!err && assoc.getRightRole().isPresent()) {
-      check(assoc.getRightRole().get(), assoc);
+    if (!err && assoc.isRightRolePresent()) {
+      check(assoc.getRightRole(), assoc);
     }
   }
   

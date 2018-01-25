@@ -32,7 +32,25 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   public ASTCDAssociation() {
   }
 
-  public ASTCDAssociation(ASTStereotype stereotype, String name, ASTModifier leftModifier, ASTCardinality leftCardinality, ASTQualifiedName leftReferenceName, ASTCDQualifier leftQualifier, String leftRole, String rightRole, ASTCDQualifier rightQualifier, ASTQualifiedName rightReferenceName, ASTCardinality rightCardinality, ASTModifier rightModifier, boolean r__composition, boolean r__association, boolean r__derived, boolean unspecified, boolean bidirectional, boolean rightToLeft, boolean leftToRight) {
+  protected  ASTCDAssociation (Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype> stereotype,
+      Optional<String> name,
+      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> leftModifier,
+      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> leftCardinality,
+      de.monticore.types.types._ast.ASTQualifiedName leftReferenceName,
+      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier> leftQualifier,
+      Optional<String> leftRole,
+      Optional<String> rightRole,
+      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier> rightQualifier,
+      de.monticore.types.types._ast.ASTQualifiedName rightReferenceName,
+      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> rightCardinality,
+      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> rightModifier,
+      boolean r__association,
+      boolean r__composition,
+      boolean r__derived,
+      boolean leftToRight,
+      boolean rightToLeft,
+      boolean bidirectional,
+      boolean unspecified)  {
     super(stereotype, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
   }
 

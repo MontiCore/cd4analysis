@@ -39,9 +39,9 @@ public class UniqueTypeNames implements CD4AnalysisASTCDDefinitionCoCo {
   public void check(ASTCDDefinition cdDefinition) {
     
     Collection<ASTCDType> types = new ArrayList<>();
-    types.addAll(cdDefinition.getCDClasses());
-    types.addAll(cdDefinition.getCDEnums());
-    types.addAll(cdDefinition.getCDInterfaces());
+    types.addAll(cdDefinition.getCDClassList());
+    types.addAll(cdDefinition.getCDEnumList());
+    types.addAll(cdDefinition.getCDInterfaceList());
     
     Collection<String> usedNames = new HashSet<String>();
     for (ASTCDType type : types) {

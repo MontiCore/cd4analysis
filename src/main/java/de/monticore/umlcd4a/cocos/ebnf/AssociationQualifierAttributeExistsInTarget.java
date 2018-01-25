@@ -33,12 +33,12 @@ public class AssociationQualifierAttributeExistsInTarget
     // only check other side when first side generated no error.
     boolean err = false;
     
-    if (node.getLeftQualifier().isPresent()) {
-      err = check(node.getLeftQualifier().get(), node.getRightReferenceName(), node);
+    if (node.isLeftQualifierPresent()) {
+      err = check(node.getLeftQualifier(), node.getRightReferenceName(), node);
     }
     
-    if (!err && node.getRightQualifier().isPresent()) {
-      check(node.getRightQualifier().get(), node.getLeftReferenceName(), node);
+    if (!err && node.isRightQualifierPresent()) {
+      check(node.getRightQualifier(), node.getLeftReferenceName(), node);
     }
   }
   
@@ -53,8 +53,8 @@ public class AssociationQualifierAttributeExistsInTarget
    */
   private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedType, ASTCDAssociation node) {
     boolean hasError = false;
-    if (qualifier.getName().isPresent()) {
-      String expectedAttributeName = qualifier.getName().get();
+    if (qualifier.isNamePresent()) {
+      String expectedAttributeName = qualifier.getName();
       Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope().get()
           .resolve(referencedType.toString(), CDTypeSymbol.KIND);
       if (!referencedTypeSymOpt.isPresent()) {

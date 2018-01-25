@@ -21,6 +21,8 @@ package de.monticore.umlcd4a.cd4analysis._ast;
 
 import static de.monticore.umlcd4a.prettyprint.AstPrinter.EMPTY_STRING;
 
+import java.util.Optional;
+
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTReferenceType;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
@@ -33,9 +35,9 @@ public class ASTCDClass extends ASTCDClassTOP {
   }
   
   protected ASTCDClass(
-      ASTModifier modifier,
+      Optional<ASTModifier> modifier,
       String name,
-      ASTReferenceType superclass,
+      Optional<ASTReferenceType> superclass,
       java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute> cDAttributes,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor> cDConstructors,
@@ -50,10 +52,10 @@ public class ASTCDClass extends ASTCDClassTOP {
    * @return String representation of the superclass
    */
   public String printSuperClass() {
-    if (!superclassIsPresent()) {
+    if (!isSuperclassPresent()) {
       return EMPTY_STRING;
     }
-    return TypesPrinter.printType(getSuperclass().get());
+    return TypesPrinter.printType(getSuperclass());
   }
   
   public String printModifier() {
@@ -61,10 +63,10 @@ public class ASTCDClass extends ASTCDClassTOP {
   }
   
   public String printAnnotation() {
-    if (getModifier().isPresent()) {
-      if (getModifier().get().getStereotype().isPresent()) {
+    if (isModifierPresent()) {
+      if (getModifier().isStereotypePresent()) {
         StringBuffer sb = new StringBuffer();
-        for (ASTStereoValue s: getModifier().get().getStereotype().get().values) {
+        for (ASTStereoValue s: getModifier().getStereotype().values) {
           sb.append(s.getName());
           sb.append("\n");
         }
@@ -80,7 +82,7 @@ public class ASTCDClass extends ASTCDClassTOP {
    * @return String representation of the interfaces
    */
   public String printInterfaces() {
-    return printer.printReferenceList(getInterfaces());
+    return printer.printReferenceList(getInterfaceList());
   }
   
 }

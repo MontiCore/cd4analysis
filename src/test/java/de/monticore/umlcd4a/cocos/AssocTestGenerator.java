@@ -15,6 +15,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
@@ -126,12 +127,12 @@ public class AssocTestGenerator {
       public String print(ASTCDAssociation assoc) {
         String msg = "Role %s of association %s must start in lower-case.";
         String invalidRoleName = null;
-        if (assoc.getLeftRole().isPresent()) {
-          invalidRoleName = assoc.getLeftRole().get();
+        if (assoc.isLeftRolePresent()) {
+          invalidRoleName = assoc.getLeftRole();
         }
         else {
-          if (assoc.getRightRole().isPresent()) {
-            invalidRoleName = assoc.getRightRole().get();
+          if (assoc.isRightRolePresent()) {
+            invalidRoleName = assoc.getRightRole();
           }
         }
         if (null == invalidRoleName) {
@@ -166,31 +167,31 @@ public class AssocTestGenerator {
         ASTModifier modifier = null;
         
         List<ASTStereoValue> stereoOrdered = new ArrayList<>();
-        stereoOrdered.add(ASTStereoValue.getBuilder().name("ordered").build());
+        stereoOrdered.add(CD4AnalysisMill.stereoValueBuilder().name("ordered").build());
         ASTStereotype stereoType = CD4AnalysisNodeFactory.createASTStereotype(stereoOrdered);
         
         boolean rightSideInvalid = false;
-        if (assoc.getRightCardinality().isPresent()) {
-          cardinality = assoc.getRightCardinality().get();
+        if (assoc.isRightCardinalityPresent()) {
+          cardinality = assoc.getRightCardinality();
           if (cardinality.isOne() || cardinality.isOptional()) {
-            if (!assoc.getRightModifier().isPresent()) {
+            if (!assoc.isRightModifierPresent()) {
               modifier = CD4AnalysisNodeFactory.createASTModifier();
               assoc.setRightModifier(modifier);
             }
-            modifier = assoc.getRightModifier().get();
+            modifier = assoc.getRightModifier();
             modifier.setStereotype(stereoType);
             rightSideInvalid = true;
           }
         }
         boolean leftSideInvalid = false;
-        if (assoc.getLeftCardinality().isPresent()) {
-          cardinality = assoc.getLeftCardinality().get();
+        if (assoc.isLeftCardinalityPresent()) {
+          cardinality = assoc.getLeftCardinality();
           if (cardinality.isOne() || cardinality.isOptional()) {
-            if (!assoc.getLeftModifier().isPresent()) {
+            if (!assoc.isLeftModifierPresent()) {
               modifier = CD4AnalysisNodeFactory.createASTModifier();
               assoc.setLeftModifier(modifier);
             }
-            modifier = assoc.getLeftModifier().get();
+            modifier = assoc.getLeftModifier();
             modifier.setStereotype(stereoType);
             leftSideInvalid = true;
           }
@@ -272,15 +273,15 @@ public class AssocTestGenerator {
         ASTCardinality cardinality = null;
         
         if (assoc.isRightToLeft()) {
-          if (assoc.getRightCardinality().isPresent()) {
-            cardinality = assoc.getRightCardinality().get();
+          if (assoc.isRightCardinalityPresent()) {
+            cardinality = assoc.getRightCardinality();
           }
         }
         else {
           // all other directions are interpreted as: left side is the
           // composite, right side are the elements.
-          if (assoc.getLeftCardinality().isPresent()) {
-            cardinality = assoc.getLeftCardinality().get();
+          if (assoc.isLeftCardinalityPresent()) {
+            cardinality = assoc.getLeftCardinality();
           }
         }
         
@@ -307,8 +308,8 @@ public class AssocTestGenerator {
         ASTCardinality cardinality = null;
         
         if (assoc.isRightToLeft()) {
-          if (assoc.getRightCardinality().isPresent()) {
-            cardinality = assoc.getRightCardinality().get();
+          if (assoc.isRightCardinalityPresent()) {
+            cardinality = assoc.getRightCardinality();
           }
           // we don't allow navigation direction <- for compositions so we mark
           // them as not beeing invalid here as we don't want them in the test
@@ -318,8 +319,8 @@ public class AssocTestGenerator {
         else {
           // all other directions are interpreted as: left side is the
           // composite, right side are the elements.
-          if (assoc.getLeftCardinality().isPresent()) {
-            cardinality = assoc.getLeftCardinality().get();
+          if (assoc.isLeftCardinalityPresent()) {
+            cardinality = assoc.getLeftCardinality();
           }
         }
         if (cardinality != null) {

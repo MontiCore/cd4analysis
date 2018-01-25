@@ -30,13 +30,12 @@ public class CD4AnalysisHelper {
   
   public static boolean hasStereotype(ASTCDAttribute ast,
       String stereotypeName) {
-    if (!ast.getModifier().isPresent()
-        || !ast.getModifier().get().getStereotype().isPresent()) {
+    if (!ast.isModifierPresent()
+        || !ast.getModifier().isStereotypePresent()) {
       return false;
     }
-    ASTStereotype stereotype = ast.getModifier().get().getStereotype()
-        .get();
-    return stereotype.getValues().stream()
+    ASTStereotype stereotype = ast.getModifier().getStereotype();
+    return stereotype.getValueList().stream()
         .filter(v -> v.getName().equals(stereotypeName)).findAny()
         .isPresent();
   }
@@ -44,12 +43,12 @@ public class CD4AnalysisHelper {
   public static List<String> getStereotypeValues(ASTCDAttribute ast,
       String stereotypeName) {
     List<String> values = Lists.newArrayList();
-    if (ast.getModifier().isPresent()
-        && ast.getModifier().get().getStereotype().isPresent()) {
-      ast.getModifier().get().getStereotype().get().getValues().stream()
+    if (ast.isModifierPresent()
+        && ast.getModifier().isStereotypePresent()) {
+      ast.getModifier().getStereotype().getValueList().stream()
           .filter(value -> value.getName().equals(stereotypeName))
-          .filter(value -> value.getValue().isPresent())
-          .forEach(value -> values.add(value.getValue().get()));
+          .filter(value -> value.isValuePresent())
+          .forEach(value -> values.add(value.getValue()));
     }
     return values;
   }
@@ -59,14 +58,14 @@ public class CD4AnalysisHelper {
   }
   
   public static boolean isAbstract(ASTCDClass clazz) {
-    return clazz.getModifier().isPresent() && clazz.getModifier().get().isAbstract();
+    return clazz.isModifierPresent() && clazz.getModifier().isAbstract();
   }
   
   public static List<ASTCDType> getCDTypes(ASTCDDefinition ast) {
     List<ASTCDType> types = new ArrayList<ASTCDType>();
-    types.addAll(ast.getCDClasses());
-    types.addAll(ast.getCDInterfaces());
-    types.addAll(ast.getCDEnums());
+    types.addAll(ast.getCDClassList());
+    types.addAll(ast.getCDInterfaceList());
+    types.addAll(ast.getCDEnumList());
     return types;
   }
   

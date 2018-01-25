@@ -65,8 +65,8 @@ public class AssociationSourceTypeNotExternal implements
   
   private void error(ASTCDAssociation assoc) {
     String assocString = "";
-    if (assoc.getName().isPresent()) {
-      assocString = assoc.getName().get();
+    if (assoc.isNamePresent()) {
+      assocString = assoc.getName();
     }
     else {
       assocString = CD4ACoCoHelper.printAssociation(assoc);

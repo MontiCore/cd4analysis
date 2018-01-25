@@ -24,7 +24,7 @@ public class EnumConstantNameUpperCase implements CD4AnalysisASTCDEnumCoCo {
    */
   @Override
   public void check(ASTCDEnum node) {
-    for (ASTCDEnumConstant a: node.getCDEnumConstants()){
+    for (ASTCDEnumConstant a: node.getCDEnumConstantList()){
 	  if (!CharMatcher.JAVA_UPPER_CASE.matchesAllOf(a.toString().replaceAll("_",""))) {
         Log.error(String.format("0xC4A73 Enum %s may only have lower case constants.", node.getName()),
           a.get_SourcePositionStart());

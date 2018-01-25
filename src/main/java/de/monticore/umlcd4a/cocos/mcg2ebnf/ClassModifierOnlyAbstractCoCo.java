@@ -22,15 +22,15 @@ public class ClassModifierOnlyAbstractCoCo implements CD4AnalysisASTCDClassCoCo 
    */
   @Override
   public void check(ASTCDClass node) {
-    if (node.getModifier().isPresent()) {
-      ASTModifier actualMod = node.getModifier().get();
+    if (node.isModifierPresent()) {
+      ASTModifier actualMod = node.getModifier();
       boolean hasInvalidModifier = actualMod.isDerived()
           | actualMod.isFinal()
           | actualMod.isPrivate()
           | actualMod.isProtected()
           | actualMod.isPublic()
           | actualMod.isStatic()
-          | actualMod.getStereotype().isPresent();
+          | actualMod.isStereotypePresent();
       if (hasInvalidModifier) {
         Log.error(String.format(
             "0xC4A61 Class %s has invalid modifiers. Only \"abstract\" is permitted.",

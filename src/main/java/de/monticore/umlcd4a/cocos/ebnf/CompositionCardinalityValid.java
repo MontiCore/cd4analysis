@@ -21,6 +21,7 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
+import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
@@ -40,12 +41,12 @@ public class CompositionCardinalityValid implements
   public void check(ASTCDAssociation assoc) {
     if (assoc.isComposition()) {
       ASTCardinality cardinality = null;
-      if (assoc.getLeftCardinality().isPresent()) {
-        cardinality = assoc.getLeftCardinality().get();
+      if (assoc.isLeftCardinalityPresent()) {
+        cardinality = assoc.getLeftCardinality();
       }
       else {
         // default cardinality is 1 for compositions.
-        cardinality = ASTCardinality.getBuilder().one(true).build();
+        cardinality = CD4AnalysisMill.cardinalityBuilder().one(true).build();
       }
       
       boolean isCardinalityValid = cardinality.isOne() | cardinality.isOptional();

@@ -32,12 +32,12 @@ public class CapitalizeRoles implements
     Permutation<ASTCDAssociation> successorPermutation = assocPermutation.copy();
     ASTCDAssociation association = successorPermutation.delegate();
     
-    if (association.getLeftRole().isPresent()) {
-      association.setLeftRole(StringTransformations.capitalize(association.getLeftRole().get()));
+    if (association.isLeftRolePresent()) {
+      association.setLeftRole(StringTransformations.capitalize(association.getLeftRole()));
     }
-    if (association.getRightRole().isPresent()) {
+    if (association.isRightRolePresent()) {
       association
-          .setRightRole(StringTransformations.capitalize(association.getRightRole().get()));
+          .setRightRole(StringTransformations.capitalize(association.getRightRole()));
     }
     return successorPermutation;
   }

@@ -66,7 +66,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
   public String getIdent(ASTCDQualifier a) {
     // TODO AR <- GV: default value?
     String type = Layouter.nodeName(a);
-    String name = a.getName().isPresent() ? a.getName().get() : "";
+    String name = a.isNamePresent() ? a.getName() : "";
     return format(name, type);
   }
 
@@ -100,7 +100,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
   }
 
   public String getIdent(ASTStereotype a) {
-	List<ASTStereoValue> l = a.getValues();
+	List<ASTStereoValue> l = a.getValueList();
     String n = "-";
     if (l != null && l.size() > 0) {
       n = l.get(0).getName();
@@ -125,7 +125,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
 
   public String getIdent(ASTCDAssociation a) {
     String ident = "";
-    java.util.Optional<String> n = a.getName();
+    java.util.Optional<String> n = a.getNameOpt();
     if (n.isPresent() && a.getLeftReferenceName() != null
         && a.getRightReferenceName() != null) {
       ident = unqualName(a.getLeftReferenceName()) + "-"

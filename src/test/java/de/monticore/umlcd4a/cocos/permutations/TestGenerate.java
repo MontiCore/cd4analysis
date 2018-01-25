@@ -85,8 +85,8 @@ public class TestGenerate {
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTQualifiedName.class))
         .flatMap(Collection::stream)
         .forEach(qualifiedName -> {
-          String oldName = qualifiedName.getParts().get(0);
-          qualifiedName.getParts().set(0, oldName + id);
+          String oldName = qualifiedName.getPartList().get(0);
+          qualifiedName.getPartList().set(0, oldName + id);
         });
   }
   

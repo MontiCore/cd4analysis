@@ -23,8 +23,8 @@ public class AttributeUniqueInClassCoco implements CD4AnalysisASTCDClassCoCo {
   public void check(ASTCDClass node) {
     HashMap<String, ASTCDAttribute> duplicates = new HashMap<>();
     
-    for (ASTCDAttribute field : node.getCDAttributes()) {
-      node.getCDAttributes().stream()
+    for (ASTCDAttribute field : node.getCDAttributeList()) {
+      node.getCDAttributeList().stream()
           .filter(f -> (f != field) && f.getName().equals(field.getName()))
           .forEach(f2 -> duplicates.put(f2.getName(), f2));
     }

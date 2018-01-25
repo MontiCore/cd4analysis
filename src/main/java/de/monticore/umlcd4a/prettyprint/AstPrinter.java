@@ -191,7 +191,7 @@ public class AstPrinter {
                   
                   @Override
                   public String apply(ASTQualifiedName arg0) {
-                    return Joiner.on(".").join(arg0.getParts());
+                    return Joiner.on(".").join(arg0.getPartList());
                   }
                   
                 }))).toString();
