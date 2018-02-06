@@ -22,7 +22,7 @@ public class InterfaceNoModifierCoCo implements CD4AnalysisASTCDInterfaceCoCo {
    */
   @Override
   public void check(ASTCDInterface node) {
-    if (node.isModifierPresent()) {
+    if (node.isPresentModifier()) {
       ASTModifier actualMod = node.getModifier();
       if (!ModifierCheckHelper.isEmptyModifierAndNoStereo(actualMod)) {
         Log.error(String.format("0xC4A65 Interface %s may not have modifiers.", node.getName()),

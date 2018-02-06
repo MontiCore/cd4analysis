@@ -30,14 +30,14 @@ public class CD4ACoCoHelper {
   // TODO RH use PrettyPrinter
   public static String printAssociation(ASTCDAssociation assoc) {
     StringBuilder r = new StringBuilder();
-    if (assoc.isNamePresent()) {
+    if (assoc.isPresentName()) {
       r.append(assoc.getName());
       r.append(" ");
     }
     r.append("(");
     r.append(Joiner.on(".").join(assoc.getLeftReferenceName().getPartList()));
     r.append(" ");
-    if (assoc.isLeftRolePresent()) {
+    if (assoc.isPresentLeftRole()) {
       r.append("(" + assoc.getLeftRole() + ")");
       r.append(" ");
     }
@@ -54,7 +54,7 @@ public class CD4ACoCoHelper {
       r.append("--");
     }
     r.append(" ");
-    if (assoc.isRightRolePresent()) {
+    if (assoc.isPresentRightRole()) {
       r.append("(" + assoc.getRightRole() + ")");
       r.append(" ");
     }

@@ -41,12 +41,12 @@ public class CompositionCardinalityValid implements
   public void check(ASTCDAssociation assoc) {
     if (assoc.isComposition()) {
       ASTCardinality cardinality = null;
-      if (assoc.isLeftCardinalityPresent()) {
+      if (assoc.isPresentLeftCardinality()) {
         cardinality = assoc.getLeftCardinality();
       }
       else {
         // default cardinality is 1 for compositions.
-        cardinality = CD4AnalysisMill.cardinalityBuilder().one(true).build();
+        cardinality = CD4AnalysisMill.cardinalityBuilder().setOne(true).build();
       }
       
       boolean isCardinalityValid = cardinality.isOne() | cardinality.isOptional();

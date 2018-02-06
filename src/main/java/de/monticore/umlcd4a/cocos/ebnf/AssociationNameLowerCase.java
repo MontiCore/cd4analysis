@@ -32,7 +32,7 @@ public class AssociationNameLowerCase implements CD4AnalysisASTCDAssociationCoCo
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (a.isNamePresent()) {
+    if (a.isPresentName()) {
       if (!Character.isLowerCase(a.getName().charAt(0))) {
         Log.error(
             String.format("0xC4A16 Association %s must start in lower-case.", a.getName()),

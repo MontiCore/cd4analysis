@@ -33,11 +33,11 @@ public class AssociationQualifierTypeExists
     // only check other side when first side generated no error.
     boolean err = false;
     
-    if (node.isLeftQualifierPresent()) {
+    if (node.isPresentLeftQualifier()) {
       err = check(node.getLeftQualifier(), node);
     }
     
-    if (!err && node.isRightQualifierPresent()) {
+    if (!err && node.isPresentRightQualifier()) {
       check(node.getRightQualifier(), node);
     }
   }
@@ -51,7 +51,7 @@ public class AssociationQualifierTypeExists
    */
   private boolean check(ASTCDQualifier qualifier, ASTCDAssociation node) {
     boolean hasError = false;
-    if (qualifier.isTypePresent()) {
+    if (qualifier.isPresentType()) {
       ASTType type = qualifier.getType();
       String typeName = TypesPrinter.printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {

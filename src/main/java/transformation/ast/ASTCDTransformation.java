@@ -72,7 +72,7 @@ public class ASTCDTransformation {
       Log.error("Attribute '" + attrName + "' can't be added to the CD class " + astClass.getName());
       return Optional.empty();
     }
-    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().name(attrName).type(parsedType.get())
+    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName).setType(parsedType.get())
         .build();
     addCdAttribute(astClass, attribute);
     return Optional.of(attribute);
@@ -105,8 +105,8 @@ public class ASTCDTransformation {
       Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
       return Optional.empty();
     }
-    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().name(attrName).type(parsedType.get())
-        .modifier(parsedModifier.get())
+    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName).setType(parsedType.get())
+        .setModifier(parsedModifier.get())
         .build();
     addCdAttribute(astClass, attribute);
     return Optional.of(attribute);
@@ -225,7 +225,7 @@ public class ASTCDTransformation {
         "Class can't be added to the CD definition because of null or empty class name");
     checkNotNull(astDef, "Class " + className
         + " can't be added to the CD definition because of the null reference to the CD definition");
-    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().name(className).build();
+    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().setName(className).build();
     addCdClass(astDef, astClass);
     return astClass;
   }
@@ -265,8 +265,8 @@ public class ASTCDTransformation {
       }
       interfaces.add((ASTReferenceType) type.get());
     }
-    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().name(className)
-        .superclass((ASTReferenceType) superClass.get()).interfaces(interfaces).build();
+    ASTCDClass astClass = CD4AnalysisMill.cDClassBuilder().setName(className)
+        .setSuperclass((ASTReferenceType) superClass.get()).setInterfaceList(interfaces).build();
     addCdClass(astDef, astClass);
     return Optional.of(astClass);
   }
@@ -337,7 +337,7 @@ public class ASTCDTransformation {
         "Interface can't be added to the CD definition because of null or empty interface name");
     checkNotNull(astDef, "Interface " + interfaceName
         + " can't be added to the CD definition because of the null reference to the CD definition");
-    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder().name(interfaceName).build();
+    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder().setName(interfaceName).build();
     addCdInterface(astDef, astInterface);
     return astInterface;
   }
@@ -383,8 +383,8 @@ public class ASTCDTransformation {
       }
       interfaces.add((ASTReferenceType) type.get());
     }
-    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder().name(interfaceName)
-        .interfaces(interfaces).build();
+    ASTCDInterface astInterface = CD4AnalysisMill.cDInterfaceBuilder().setName(interfaceName)
+        .setInterfaceList(interfaces).build();
     addCdInterface(astDef, astInterface);
     return Optional.of(astInterface);
   }
@@ -462,10 +462,10 @@ public class ASTCDTransformation {
       return Optional.empty();
     }
     ASTCDMethod cdMethod = CD4AnalysisMill.cDMethodBuilder()
-        .name(methodName)
-        .returnType(parsedReturnType.get())
-        .modifier(parsedModifier.get())
-        .cDParameters(cdParameters.get())
+        .setName(methodName)
+        .setReturnType(parsedReturnType.get())
+        .setModifier(parsedModifier.get())
+        .setCDParameterList(cdParameters.get())
         .build();
     addCdMethod(astType, cdMethod);
     return Optional.of(cdMethod);
@@ -507,8 +507,8 @@ public class ASTCDTransformation {
       types.add(type.get());
     }
     types.forEach(param -> params.add(CD4AnalysisMill.cDParameterBuilder()
-        .type(param)
-        .name(PARAM_NAME_PREFIX + types.indexOf(param)).build()));
+        .setType(param)
+        .setName(PARAM_NAME_PREFIX + types.indexOf(param)).build()));
     return Optional.of(params);
   }
   

@@ -66,7 +66,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
   public String getIdent(ASTCDQualifier a) {
     // TODO AR <- GV: default value?
     String type = Layouter.nodeName(a);
-    String name = a.isNamePresent() ? a.getName() : "";
+    String name = a.isPresentName() ? a.getName() : "";
     return format(name, type);
   }
 

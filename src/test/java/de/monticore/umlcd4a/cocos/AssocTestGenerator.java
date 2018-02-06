@@ -127,11 +127,11 @@ public class AssocTestGenerator {
       public String print(ASTCDAssociation assoc) {
         String msg = "Role %s of association %s must start in lower-case.";
         String invalidRoleName = null;
-        if (assoc.isLeftRolePresent()) {
+        if (assoc.isPresentLeftRole()) {
           invalidRoleName = assoc.getLeftRole();
         }
         else {
-          if (assoc.isRightRolePresent()) {
+          if (assoc.isPresentRightRole()) {
             invalidRoleName = assoc.getRightRole();
           }
         }
@@ -167,14 +167,14 @@ public class AssocTestGenerator {
         ASTModifier modifier = null;
         
         List<ASTStereoValue> stereoOrdered = new ArrayList<>();
-        stereoOrdered.add(CD4AnalysisMill.stereoValueBuilder().name("ordered").build());
+        stereoOrdered.add(CD4AnalysisMill.stereoValueBuilder().setName("ordered").build());
         ASTStereotype stereoType = CD4AnalysisNodeFactory.createASTStereotype(stereoOrdered);
         
         boolean rightSideInvalid = false;
-        if (assoc.isRightCardinalityPresent()) {
+        if (assoc.isPresentRightCardinality()) {
           cardinality = assoc.getRightCardinality();
           if (cardinality.isOne() || cardinality.isOptional()) {
-            if (!assoc.isRightModifierPresent()) {
+            if (!assoc.isPresentRightModifier()) {
               modifier = CD4AnalysisNodeFactory.createASTModifier();
               assoc.setRightModifier(modifier);
             }
@@ -184,10 +184,10 @@ public class AssocTestGenerator {
           }
         }
         boolean leftSideInvalid = false;
-        if (assoc.isLeftCardinalityPresent()) {
+        if (assoc.isPresentLeftCardinality()) {
           cardinality = assoc.getLeftCardinality();
           if (cardinality.isOne() || cardinality.isOptional()) {
-            if (!assoc.isLeftModifierPresent()) {
+            if (!assoc.isPresentLeftModifier()) {
               modifier = CD4AnalysisNodeFactory.createASTModifier();
               assoc.setLeftModifier(modifier);
             }
@@ -273,14 +273,14 @@ public class AssocTestGenerator {
         ASTCardinality cardinality = null;
         
         if (assoc.isRightToLeft()) {
-          if (assoc.isRightCardinalityPresent()) {
+          if (assoc.isPresentRightCardinality()) {
             cardinality = assoc.getRightCardinality();
           }
         }
         else {
           // all other directions are interpreted as: left side is the
           // composite, right side are the elements.
-          if (assoc.isLeftCardinalityPresent()) {
+          if (assoc.isPresentLeftCardinality()) {
             cardinality = assoc.getLeftCardinality();
           }
         }
@@ -308,7 +308,7 @@ public class AssocTestGenerator {
         ASTCardinality cardinality = null;
         
         if (assoc.isRightToLeft()) {
-          if (assoc.isRightCardinalityPresent()) {
+          if (assoc.isPresentRightCardinality()) {
             cardinality = assoc.getRightCardinality();
           }
           // we don't allow navigation direction <- for compositions so we mark
@@ -319,7 +319,7 @@ public class AssocTestGenerator {
         else {
           // all other directions are interpreted as: left side is the
           // composite, right side are the elements.
-          if (assoc.isLeftCardinalityPresent()) {
+          if (assoc.isPresentLeftCardinality()) {
             cardinality = assoc.getLeftCardinality();
           }
         }

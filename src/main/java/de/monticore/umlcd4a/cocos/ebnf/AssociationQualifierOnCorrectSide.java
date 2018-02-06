@@ -27,13 +27,13 @@ public class AssociationQualifierOnCorrectSide
   public void check(ASTCDAssociation node) {
     // only check other side when first side generated no error.
     boolean valid = true;
-    if (node.isLeftQualifierPresent()) {
+    if (node.isPresentLeftQualifier()) {
       valid = node.isLeftToRight() | node.isBidirectional() | node.isUnspecified();
       if (!valid) {
         error(node.getLeftQualifier(), node);
       }
     }
-    if (valid && node.isRightQualifierPresent()) {
+    if (valid && node.isPresentRightQualifier()) {
       valid = node.isRightToLeft() | node.isBidirectional() | node.isUnspecified();
       if (!valid) {
         error(node.getRightQualifier(), node);
@@ -51,9 +51,9 @@ public class AssociationQualifierOnCorrectSide
    */
   private void error(ASTCDQualifier qualifier, ASTCDAssociation node) {
     String qualifierName = "";
-    if (qualifier.isTypePresent()) {
+    if (qualifier.isPresentType()) {
       qualifierName = TypesPrinter.printType(qualifier.getType());
-    } else if (qualifier.isNamePresent()) {
+    } else if (qualifier.isPresentName()) {
       qualifierName = qualifier.getName();
     }
     Log.error(

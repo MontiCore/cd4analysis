@@ -22,7 +22,7 @@ public class AttributeModifierOnlyDerivedCoCo implements CD4AnalysisASTCDAttribu
    */
   @Override
   public void check(ASTCDAttribute node) {
-    if (node.isModifierPresent()) {
+    if (node.isPresentModifier()) {
       ASTModifier actualMod = node.getModifier();
       boolean hasInvalidModifier = actualMod.isAbstract()
           | actualMod.isFinal()
@@ -30,7 +30,7 @@ public class AttributeModifierOnlyDerivedCoCo implements CD4AnalysisASTCDAttribu
           | actualMod.isProtected()
           | actualMod.isPublic()
           | actualMod.isStatic()
-          | actualMod.isStereotypePresent();
+          | actualMod.isPresentStereotype();
       if (hasInvalidModifier) {
         Log.error(
             String.format("0xC4A64 Attribute %s has invalid modifiers. Only \"/\" is permitted.",

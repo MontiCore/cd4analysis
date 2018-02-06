@@ -40,7 +40,7 @@ public class ASTRawTransformationTest {
   
   @Before
   public void init() {
-    astDef = CD4AnalysisMill.cDDefinitionBuilder().name("ASTRawTransformationTest")
+    astDef = CD4AnalysisMill.cDDefinitionBuilder().setName("ASTRawTransformationTest")
         .build();
   }
   
@@ -61,7 +61,7 @@ public class ASTRawTransformationTest {
     ASTCDClass astClass = astDef.getCDClassList().get(1);
     assertEquals(astClass.getName(), "B");
     
-    assertTrue(astClass.isSuperclassPresent());
+    assertTrue(astClass.isPresentSuperclass());
     assertTrue(astClass.getSuperclass() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType superClass = (ASTSimpleReferenceType) astClass
         .getSuperclass();
@@ -113,7 +113,7 @@ public class ASTRawTransformationTest {
     assertTrue(attr1.getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType) attr1.getType()).getNameList(),
         Lists.newArrayList("String"));
-    assertTrue(!attr1.isModifierPresent());
+    assertTrue(!attr1.isPresentModifier());
     
     ASTCDAttribute attr2 = astTransformation.addCdAttribute(astClass, "b",
         "a.b.C");
@@ -122,7 +122,7 @@ public class ASTRawTransformationTest {
     assertTrue(attr2.getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType) attr2.getType()).getNameList(),
         Lists.newArrayList("a", "b", "C"));
-    assertTrue(!attr2.isModifierPresent());
+    assertTrue(!attr2.isPresentModifier());
     
   }
   

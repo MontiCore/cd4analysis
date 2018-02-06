@@ -127,14 +127,14 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     getPrinter().println();
     // print completeness
     // print class modifier
-    if (a.isModifierPresent()) {
+    if (a.isPresentModifier()) {
       a.getModifier().accept(getRealThis());
     }
     // print class name
     getPrinter().print("class " + a.getName());
     // print generic type parameters
     // print superclasses
-    if (a.isSuperclassPresent()) {
+    if (a.isPresentSuperclass()) {
       getPrinter().print(" extends ");
       a.getSuperclass().accept(getRealThis());
     }
@@ -168,7 +168,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   public void handle(ASTCDInterface a) {
     getPrinter().println();
     // print modifier
-    if (a.isModifierPresent()) {
+    if (a.isPresentModifier()) {
       a.getModifier().accept(getRealThis());
     }
     // print interface name
@@ -201,7 +201,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   public void handle(ASTCDEnum a) {
     getPrinter().println();
     // print enum modifier
-    if (a.isModifierPresent()) {
+    if (a.isPresentModifier()) {
       a.getModifier().accept(getRealThis());
     }
     // print enum name
@@ -325,7 +325,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   @Override
   public void handle(ASTCDAttribute a) {
     // print modifier
-    if (a.isModifierPresent()) {
+    if (a.isPresentModifier()) {
       a.getModifier().accept(getRealThis());
     }
     // print type
@@ -333,7 +333,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     // print name
     getPrinter().print(" " + a.getName());
     // print attribute value
-    if (a.isValuePresent()) {
+    if (a.isPresentValue()) {
       getPrinter().print(" = ");
       a.getValue().getSignedLiteral().accept(getRealThis());
     }
@@ -347,13 +347,13 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    */
   @Override
   public void handle(ASTCDQualifier a) {
-    if (a.isNamePresent()) {
+    if (a.isPresentName()) {
       getPrinter().print("[[");
       getPrinter().print(a.getName());
       getPrinter().print("]]");
     }
     else {
-      if (a.isTypePresent()) {
+      if (a.isPresentType()) {
         getPrinter().print("[");
         a.getType().accept(getRealThis());
         getPrinter().print("]");
@@ -370,7 +370,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   public void handle(ASTCDAssociation a) {
     getPrinter().println();
     // print stereotype
-    if (a.isStereotypePresent()) {
+    if (a.isPresentStereotype()) {
       a.getStereotype().accept(getRealThis());
       getPrinter().print(" ");
     }
@@ -385,14 +385,14 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     if (a.isDerived()) {
       getPrinter().print("/");
     }
-    if (a.isNamePresent()) {
+    if (a.isPresentName()) {
       getPrinter().print(a.getName() + " ");
     }
     // print left modifier
-    if (a.isLeftModifierPresent())
+    if (a.isPresentLeftModifier())
       a.getLeftModifier().accept(getRealThis());
     // print left cardinality
-    if (a.isLeftCardinalityPresent()) {
+    if (a.isPresentLeftCardinality()) {
       a.getLeftCardinality().accept(getRealThis());
       getPrinter().print(" ");
     }
@@ -400,11 +400,11 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     a.getLeftReferenceName().accept(getRealThis());
     getPrinter().print(" ");
     // print left qualifier
-    if (a.isLeftQualifierPresent()) {
+    if (a.isPresentLeftQualifier()) {
       a.getLeftQualifier().accept(getRealThis());
     }
     // print left role
-    if (a.isLeftRolePresent()) {
+    if (a.isPresentLeftRole()) {
       getPrinter().print("(");
       getPrinter().print(a.getLeftRole());
       getPrinter().print(") ");
@@ -423,26 +423,26 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       getPrinter().print("--");
     }
     // print right role
-    if (a.isRightRolePresent()) {
+    if (a.isPresentRightRole()) {
       getPrinter().print(" (");
       getPrinter().print(a.getRightRole());
       getPrinter().print(")");
     }
     // print right qualifier
-    if (a.isRightQualifierPresent()) {
+    if (a.isPresentRightQualifier()) {
       a.getRightQualifier().accept(getRealThis());
     }
     // print right link class
     getPrinter().print(" ");
     a.getRightReferenceName().accept(getRealThis());
     // print right cardinality
-    if (a.isRightCardinalityPresent()) {
+    if (a.isPresentRightCardinality()) {
       getPrinter().print(" ");
       a.getRightCardinality().accept(getRealThis());
     }
     getPrinter().print(" ");
     // print right modifier
-    if (a.isRightModifierPresent()) {
+    if (a.isPresentRightModifier()) {
       a.getRightModifier().accept(getRealThis());
     }
     getPrinter().println(";");
@@ -450,7 +450,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   
   @Override
   public void handle(ASTModifier a) {
-    if (a.isStereotypePresent()) {
+    if (a.isPresentStereotype()) {
       a.getStereotype().accept(getRealThis());
     }
     if (a.isAbstract()) {
@@ -496,7 +496,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   @Override
   public void visit(ASTStereoValue a) {
     getPrinter().print(a.getName());
-    if (a.isValuePresent()) {
+    if (a.isPresentValue()) {
       printer.print("=\"" + a.getValue() + "\"");
     }
   }

@@ -21,7 +21,7 @@ public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
    */
   @Override
   public void check(ASTCDAttribute attr) {
-    if (attr.isModifierPresent() && attr.getModifier().isAbstract()) {
+    if (attr.isPresentModifier() && attr.getModifier().isAbstract()) {
       Log.error(String.format("0xC4A52 Attribute %s may not be abstract.", attr.getName()),
           attr.get_SourcePositionStart());
     }

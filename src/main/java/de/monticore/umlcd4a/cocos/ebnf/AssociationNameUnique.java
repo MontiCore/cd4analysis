@@ -34,7 +34,7 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (a.isNamePresent()) {
+    if (a.isPresentName()) {
       try {
         a.getEnclosingScope().get().resolve(a.getName(), CDAssociationSymbol.KIND);
       }

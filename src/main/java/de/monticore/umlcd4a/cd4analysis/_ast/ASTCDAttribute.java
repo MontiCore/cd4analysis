@@ -47,7 +47,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return a string, e.g. abstract private final 
    */
   public String printModifier() {
-    if (!isModifierPresent()) {
+    if (!isPresentModifier()) {
       return EMPTY_STRING;
     }
     
@@ -80,7 +80,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return a string representing the ASTValue
    */
   public String printValue() {
-    if (!isValuePresent()) {
+    if (!isPresentValue()) {
       return EMPTY_STRING;
     }
     
@@ -97,8 +97,8 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
   }
   
   public String printAnnotation() {
-    if (isModifierPresent()) {
-      if (getModifier().isStereotypePresent()) {
+    if (isPresentModifier()) {
+      if (getModifier().isPresentStereotype()) {
         StringBuffer sb = new StringBuffer();
         for (ASTStereoValue s: getModifier().getStereotype().values) {
           sb.append(s.getName());

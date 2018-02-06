@@ -22,7 +22,7 @@ public class EnumInvalidModifiersCoCo implements CD4AnalysisASTCDEnumCoCo {
    */
   @Override
   public void check(ASTCDEnum node) {
-    if (node.isModifierPresent()) {
+    if (node.isPresentModifier()) {
       ASTModifier mod = node.getModifier();
       check(mod.isAbstract(), "abstract", mod, node);
       check(mod.isDerived(), "derived", mod, node);

@@ -45,7 +45,7 @@ public class ASTTransformationTest {
   
   @Before
   public void init() {
-    astDef = CD4AnalysisMill.cDDefinitionBuilder().name("ASTTransformationTest").build();
+    astDef = CD4AnalysisMill.cDDefinitionBuilder().setName("ASTTransformationTest").build();
   }
   
   @Test
@@ -64,7 +64,7 @@ public class ASTTransformationTest {
     ASTCDClass astClass = astDef.getCDClassList().get(1);
     assertEquals(astClass.getName(), "B");
     
-    assertTrue(astClass.isSuperclassPresent());
+    assertTrue(astClass.isPresentSuperclass());
     assertTrue(astClass.getSuperclass() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType superClass = (ASTSimpleReferenceType)astClass.getSuperclass();
     assertEquals(superClass.getNameList(), Lists.newArrayList("superC"));
@@ -104,14 +104,14 @@ public class ASTTransformationTest {
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr1.get().getType()).getNameList(), Lists.newArrayList("String"));
-    assertTrue(!attr1.get().isModifierPresent());
+    assertTrue(!attr1.get().isPresentModifier());
     
     Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttribute(astClass, "b", "a.b.C");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr2.get().getType()).getNameList(), Lists.newArrayList("a", "b", "C"));
-    assertTrue(!attr2.get().isModifierPresent());
+    assertTrue(!attr2.get().isPresentModifier());
     
     Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
     assertTrue(attr3.isPresent());
@@ -119,11 +119,11 @@ public class ASTTransformationTest {
     assertTrue(attr3.get().getType() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType attrType = (ASTSimpleReferenceType)attr3.get().getType();
     assertEquals(attrType.getNameList(), Lists.newArrayList("List"));
-    assertTrue(attrType.isTypeArgumentsPresent());
+    assertTrue(attrType.isPresentTypeArguments());
     assertEquals(attrType.getTypeArguments().getTypeArgumentList().size(), 1);
     assertTrue(attrType.getTypeArguments().getTypeArgumentList().get(0) instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attrType.getTypeArguments().getTypeArgumentList().get(0)).getNameList(), Lists.newArrayList("String"));
-    assertTrue(attr3.get().isModifierPresent());
+    assertTrue(attr3.get().isPresentModifier());
     assertTrue(attr3.get().getModifier().isPrivate());
     assertTrue(attr3.get().getModifier().isStatic());
     assertTrue(!attr3.get().getModifier().isPublic());
@@ -143,7 +143,7 @@ public class ASTTransformationTest {
     Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttributeUsingDefinition(astClass, "protected a.b.C b;");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
-    assertTrue(attr2.get().isModifierPresent());
+    assertTrue(attr2.get().isPresentModifier());
     assertTrue(attr2.get().getModifier().isProtected());
     assertTrue(attr2.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr2.get().getType()).getNameList(), Lists.newArrayList("a", "b", "C"));
@@ -151,7 +151,7 @@ public class ASTTransformationTest {
     Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttributeUsingDefinition(astClass, "+Date d;");
     assertTrue(attr3.isPresent());
     assertEquals(attr3.get().getName(), "d");
-    assertTrue(attr3.get().isModifierPresent());
+    assertTrue(attr3.get().isPresentModifier());
     assertTrue(attr3.get().getModifier().isPublic());
     assertTrue(attr3.get().getType() instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)attr3.get().getType()).getNameList(), Lists.newArrayList("Date"));
@@ -181,7 +181,7 @@ public class ASTTransformationTest {
     assertTrue(method2.get().getCDParameterList().get(2).getType() instanceof ASTSimpleReferenceType);
     ASTSimpleReferenceType param2Type = (ASTSimpleReferenceType)method2.get().getCDParameterList().get(2).getType();
     assertEquals(param2Type.getNameList(), Lists.newArrayList("List"));
-    assertTrue(param2Type.isTypeArgumentsPresent());
+    assertTrue(param2Type.isPresentTypeArguments());
     assertEquals(param2Type.getTypeArguments().getTypeArgumentList().size(), 1);
     assertTrue(param2Type.getTypeArguments().getTypeArgumentList().get(0) instanceof ASTSimpleReferenceType);
     assertEquals(((ASTSimpleReferenceType)param2Type.getTypeArguments().getTypeArgumentList().get(0)).getNameList(), Lists.newArrayList("String"));

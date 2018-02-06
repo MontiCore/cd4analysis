@@ -36,7 +36,7 @@ public class ModifierCheckHelper {
    */
   public static boolean isEmptyModifierAndNoStereo(ASTModifier modifier) {
     boolean hasModOrStereo = !isEmptyModifier(modifier);
-    if (modifier.isStereotypePresent()) {
+    if (modifier.isPresentStereotype()) {
       hasModOrStereo |= !modifier.getStereotype().getValueList().isEmpty();
     }
     return !hasModOrStereo;

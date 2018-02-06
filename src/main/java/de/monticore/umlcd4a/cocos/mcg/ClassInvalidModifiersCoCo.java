@@ -22,7 +22,7 @@ public class ClassInvalidModifiersCoCo implements CD4AnalysisASTCDClassCoCo {
    */
   @Override
   public void check(ASTCDClass node) {
-    if (node.isModifierPresent()) {
+    if (node.isPresentModifier()) {
       ASTModifier mod = node.getModifier();
       if (mod.isDerived() || mod.isStatic()) {
         Log.error(

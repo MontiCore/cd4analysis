@@ -41,7 +41,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (!a.isNamePresent()) {
+    if (!a.isPresentName()) {
       Optional<CDTypeSymbol> leftType = a.getEnclosingScope().get()
           .resolve(a.getLeftReferenceName().toString(), CDTypeSymbol.KIND);
       Optional<CDTypeSymbol> rightType = a.getEnclosingScope().get()

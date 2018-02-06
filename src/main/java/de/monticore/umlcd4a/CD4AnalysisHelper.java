@@ -30,8 +30,8 @@ public class CD4AnalysisHelper {
   
   public static boolean hasStereotype(ASTCDAttribute ast,
       String stereotypeName) {
-    if (!ast.isModifierPresent()
-        || !ast.getModifier().isStereotypePresent()) {
+    if (!ast.isPresentModifier()
+        || !ast.getModifier().isPresentStereotype()) {
       return false;
     }
     ASTStereotype stereotype = ast.getModifier().getStereotype();
@@ -43,11 +43,11 @@ public class CD4AnalysisHelper {
   public static List<String> getStereotypeValues(ASTCDAttribute ast,
       String stereotypeName) {
     List<String> values = Lists.newArrayList();
-    if (ast.isModifierPresent()
-        && ast.getModifier().isStereotypePresent()) {
+    if (ast.isPresentModifier()
+        && ast.getModifier().isPresentStereotype()) {
       ast.getModifier().getStereotype().getValueList().stream()
           .filter(value -> value.getName().equals(stereotypeName))
-          .filter(value -> value.isValuePresent())
+          .filter(value -> value.isPresentValue())
           .forEach(value -> values.add(value.getValue()));
     }
     return values;
@@ -58,7 +58,7 @@ public class CD4AnalysisHelper {
   }
   
   public static boolean isAbstract(ASTCDClass clazz) {
-    return clazz.isModifierPresent() && clazz.getModifier().isAbstract();
+    return clazz.isPresentModifier() && clazz.getModifier().isAbstract();
   }
   
   public static List<ASTCDType> getCDTypes(ASTCDDefinition ast) {

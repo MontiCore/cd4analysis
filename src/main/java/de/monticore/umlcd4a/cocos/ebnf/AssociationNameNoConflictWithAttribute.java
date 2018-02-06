@@ -38,7 +38,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (a.isNamePresent()) {
+    if (a.isPresentName()) {
       String assocName = a.getName();
       Optional<CDTypeSymbol> leftType = a.getEnclosingScope().get()
           .resolve(a.getLeftReferenceName().toString(), CDTypeSymbol.KIND);

@@ -49,7 +49,7 @@ public class ASTCDMethod extends ASTCDMethodTOP {
   }
   
   public String printAnnotation() {
-    if (getModifier().isStereotypePresent()) {
+    if (getModifier().isPresentStereotype()) {
       StringBuffer sb = new StringBuffer();
       for (ASTStereoValue s: getModifier().getStereotype().values) {
         sb.append(s.getName());

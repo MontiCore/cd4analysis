@@ -52,7 +52,7 @@ public class ASTCDClass extends ASTCDClassTOP {
    * @return String representation of the superclass
    */
   public String printSuperClass() {
-    if (!isSuperclassPresent()) {
+    if (!isPresentSuperclass()) {
       return EMPTY_STRING;
     }
     return TypesPrinter.printType(getSuperclass());
@@ -63,8 +63,8 @@ public class ASTCDClass extends ASTCDClassTOP {
   }
   
   public String printAnnotation() {
-    if (isModifierPresent()) {
-      if (getModifier().isStereotypePresent()) {
+    if (isPresentModifier()) {
+      if (getModifier().isPresentStereotype()) {
         StringBuffer sb = new StringBuffer();
         for (ASTStereoValue s: getModifier().getStereotype().values) {
           sb.append(s.getName());

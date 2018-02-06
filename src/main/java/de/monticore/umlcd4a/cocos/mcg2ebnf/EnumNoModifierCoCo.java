@@ -22,7 +22,7 @@ public class EnumNoModifierCoCo implements CD4AnalysisASTCDEnumCoCo {
    */
   @Override
   public void check(ASTCDEnum node) {
-    if (node.isModifierPresent()) {
+    if (node.isPresentModifier()) {
       ASTModifier actualMod = node.getModifier();
       if (!ModifierCheckHelper.isEmptyModifierAndNoStereo(actualMod)) {
         Log.error(String.format("0xC4A68 Enum %s may not have modifiers.", node.getName()),

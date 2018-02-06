@@ -34,7 +34,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    */
   @Override
   public void check(ASTCDAttribute node) {
-    if (node.isValuePresent()) {
+    if (node.isPresentValue()) {
       CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol().get();
       String className = symbol.getEnclosingScope().getName().get();
       String typeName = TypesPrinter.printType(node.getType());

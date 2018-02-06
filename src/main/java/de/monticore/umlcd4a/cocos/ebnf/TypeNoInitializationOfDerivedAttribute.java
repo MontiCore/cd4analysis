@@ -32,9 +32,9 @@ public class TypeNoInitializationOfDerivedAttribute implements CD4AnalysisASTCDA
   
   @Override
   public void check(ASTCDAttribute attr) {
-    if (attr.isModifierPresent()) {
+    if (attr.isPresentModifier()) {
       if (attr.getModifier().isDerived()) {
-        if (attr.isValuePresent()) {
+        if (attr.isPresentValue()) {
           Log.error(String.format("0xC4A34 Invalid initialization of the derived attribute %s. Derived attributes may not be initialized.", attr.getName()),
               attr.get_SourcePositionStart());
         }

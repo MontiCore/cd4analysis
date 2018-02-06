@@ -23,7 +23,7 @@ public class AssociationNoStereotypesCoCo implements CD4AnalysisASTCDAssociation
    */
   @Override
   public void check(ASTCDAssociation node) {
-    if (node.isStereotypePresent()) {
+    if (node.isPresentStereotype()) {
       ASTStereotype stereoType = node.getStereotype();
       if (!stereoType.getValueList().isEmpty()) {
         Log.error(

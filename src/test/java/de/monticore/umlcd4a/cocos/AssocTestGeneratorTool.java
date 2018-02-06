@@ -485,10 +485,10 @@ public class AssocTestGeneratorTool {
    */
   public static ASTCDAssociation capitalizeRoles(ASTCDAssociation a) {
     a = a.deepClone();
-    if (a.isLeftRolePresent()) {
+    if (a.isPresentLeftRole()) {
       a.setLeftRole(StringTransformations.capitalize(a.getLeftRole()));
     }
-    if (a.isRightRolePresent()) {
+    if (a.isPresentRightRole()) {
       a.setRightRole(StringTransformations.capitalize(a.getRightRole()));
     }
     return a;
