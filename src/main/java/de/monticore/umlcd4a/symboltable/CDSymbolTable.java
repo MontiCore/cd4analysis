@@ -69,7 +69,7 @@ public class CDSymbolTable {
   public CDSymbolTable(ASTCDCompilationUnit ast, List<File> modelPaths) {
     checkNotNull(modelPaths);
     
-    resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvers());
+    resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
     
     this.globalScope = createSymboltable(ast, modelPaths);
     this.artifactScope = (ArtifactScope) this.globalScope.getSubScopes()

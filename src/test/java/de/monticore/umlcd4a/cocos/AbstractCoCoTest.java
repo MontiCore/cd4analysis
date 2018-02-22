@@ -100,7 +100,7 @@ public abstract class AbstractCoCoTest {
         // create Symboltable        
         ModelPath modelPath = new ModelPath(model.toAbsolutePath());
         ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
-        resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvers());
+        resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
         this.globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolvingConfiguration);
         Optional<CD4AnalysisSymbolTableCreator> stc = cd4AnalysisLang
             .getSymbolTableCreator(resolvingConfiguration, globalScope);

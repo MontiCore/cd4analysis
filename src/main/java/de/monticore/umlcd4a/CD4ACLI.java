@@ -72,7 +72,7 @@ public class CD4ACLI {
     CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
     ResolvingConfiguration resolverConfiguration = new ResolvingConfiguration();
-    resolverConfiguration.addDefaultFilters(cdLanguage.getResolvers());
+    resolverConfiguration.addDefaultFilters(cdLanguage.getResolvingFilters());
 
     GlobalScope globalScope = new GlobalScope(new ModelPath(), cdLanguage,
         resolverConfiguration);

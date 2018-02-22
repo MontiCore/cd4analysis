@@ -18,7 +18,7 @@ public class CD4AGlobalScopeTestFactory {
     final CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
     final ResolvingConfiguration resolverConfiguration = new ResolvingConfiguration();
-    resolverConfiguration.addDefaultFilters(cdLanguage.getResolvers());
+    resolverConfiguration.addDefaultFilters(cdLanguage.getResolvingFilters());
 
     final ModelPath modelPath = new ModelPath(Paths.get("src/test/resources/"));
 
