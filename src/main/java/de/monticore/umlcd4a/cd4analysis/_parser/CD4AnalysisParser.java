@@ -6,6 +6,8 @@
 package de.monticore.umlcd4a.cd4analysis._parser;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import com.google.common.io.Files;
@@ -27,9 +29,11 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
     Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit> ast = super
         .parseCDCompilationUnit(filename);
     if (ast.isPresent()) {
-      String simpleFileName = Files.getNameWithoutExtension(filename);
+      // Use pathName instead of filename (because of correct separators)
+      String pathName = Paths.get(filename).toString();
+      String simpleFileName = Files.getNameWithoutExtension(pathName);
       String modelName = ast.get().getCDDefinition().getName();
-      String packageName = Names.getPackageFromPath(Names.getPathFromFilename(filename));
+      String packageName = Names.getPackageFromPath(Names.getPathFromFilename(pathName));
       String packageDeclaration = Names.getQualifiedName(ast.get().getPackageList());
       if (!modelName.equals(simpleFileName)) {
         Log.error("0xC4A02 The name of the diagram " + modelName
@@ -37,8 +41,8 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
             + " (without its fileextension).");
       }
       if(!packageName.endsWith(packageDeclaration)){
-        Log.error("0xC4A03 The package declaration " + packageDeclaration + " of the grammar must not differ from the "
-                + "package of the grammar file.");
+        Log.error("0xC4A03 The package declaration " + packageDeclaration + " of the diagram must not differ from the "
+                + "package of the diagram file.");
       }
 
     }

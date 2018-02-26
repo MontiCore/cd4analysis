@@ -83,8 +83,8 @@ public class DiagramTest extends AbstractCoCoTest {
 
     String packageName = "de.monticore.umlcd4a.cocos.ebnf";
     Collection<Finding> expectedErrors = Arrays.asList(
-            Finding.error(errorCode + " The package declaration " + packageName + " of the grammar must not differ from the "
-                    + "package of the grammar file.")
+            Finding.error(errorCode + " The package declaration " + packageName + " of the diagram must not differ from the "
+                    + "package of the diagram file.")
             );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
