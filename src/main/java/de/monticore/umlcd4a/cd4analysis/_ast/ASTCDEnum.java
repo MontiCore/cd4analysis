@@ -31,13 +31,14 @@ public class ASTCDEnum extends ASTCDEnumTOP {
   }
   
   protected ASTCDEnum(
+      java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute> cDAttributes,
       Optional<ASTModifier> modifier,
       String name,
       java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant> cDEnumConstants,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor> cDConstructors,
       java.util.List<de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod> cDMethods) {
-    super(modifier, name, interfaces, cDEnumConstants, cDConstructors,
+    super(cDAttributes, modifier, name, interfaces, cDEnumConstants, cDConstructors,
         cDMethods);
   }
   

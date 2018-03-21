@@ -66,7 +66,7 @@ public abstract class AbstractCoCoTest {
    * @param model full qualified model path
    * @param expectedErrors
    */
-  protected void testModelForErrors(String model,
+  protected ASTCDCompilationUnit testModelForErrors(String model,
       Collection<Finding> expectedErrors) {
     CD4AnalysisCoCoChecker checker = getChecker();
     
@@ -75,6 +75,7 @@ public abstract class AbstractCoCoTest {
     Collection<Finding> errors = Log.getFindings().stream().filter(f -> f.isError()).collect(Collectors.toList());
     Assert.assertEqualErrorCounts(expectedErrors, errors);
     Assert.assertErrorMsg(expectedErrors, errors);
+    return root;
   }
   
   /**
@@ -83,12 +84,13 @@ public abstract class AbstractCoCoTest {
    * 
    * @param model full qualified model path
    */
-  protected void testModelNoErrors(String model) {
+  protected ASTCDCompilationUnit testModelNoErrors(String model) {
     CD4AnalysisCoCoChecker checker = getChecker();
     ASTCDCompilationUnit root = loadModel(model);
     checker.checkAll(root);
     assertEquals(0,
         Log.getFindings().stream().filter(f -> f.isError()).count());
+    return root;
   }
   
   protected ASTCDCompilationUnit loadModel(String modelFullQualifiedFilename) {

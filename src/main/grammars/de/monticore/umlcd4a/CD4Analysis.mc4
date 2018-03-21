@@ -100,7 +100,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
         ( CDConstructor | CDMethod)*
       "}"
     | ";" );
-  
+    
+  astrule CDEnum = CDAttribute*;
  
   /** ASTCDAttribute represents an Attribute of a Class or Interface
     @attribute modifier Modifier of this Attribute
