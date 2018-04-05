@@ -37,7 +37,7 @@ abstract public class ImplementOnlyInterfaces {
    * @param node the node to check.
    */
   public void check(String type, ASTCDType node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol().get();
+    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
     for (CDTypeSymbol superType : symbol.getInterfaces()) {
       if (!superType.isInterface()) {
         Log.error(String.format(

@@ -49,7 +49,7 @@ public class AssociationSourceNotEnum
    */
   private boolean check(ASTQualifiedName sourceName, ASTCDAssociation node) {
     boolean hasError = false;
-    Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope().get()
+    Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope()
         .resolve(sourceName.toString(), CDTypeSymbol.KIND);
     if (sourceSym.isPresent() && sourceSym.get().isEnum()) {
       hasError = true;

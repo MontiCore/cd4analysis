@@ -36,7 +36,7 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   public void check(ASTCDAssociation a) {
     if (a.isPresentName()) {
       try {
-        a.getEnclosingScope().get().resolve(a.getName(), CDAssociationSymbol.KIND);
+        a.getEnclosingScope().resolve(a.getName(), CDAssociationSymbol.KIND);
       }
       catch (ResolvedSeveralEntriesException e) {
         // TODO currently there exist two symbols for bidirectional

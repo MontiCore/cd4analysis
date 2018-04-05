@@ -92,8 +92,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(creatureType.getAstNode().isPresent());
     assertTrue(creatureType.getAstNode().get() instanceof ASTCDClass);
-    assertSame(creatureType, creatureType.getAstNode().get().getSymbol().get());
-    assertSame(creatureType.getEnclosingScope(), creatureType.getAstNode().get().getEnclosingScope().get());
+    assertSame(creatureType, creatureType.getAstNode().get().getSymbol());
+    assertSame(creatureType.getEnclosingScope(), creatureType.getAstNode().get().getEnclosingScope());
     // Fields
     assertEquals(1, creatureType.getFields().size());
     final CDFieldSymbol extinctField = creatureType.getField("extinct").get();
@@ -112,8 +112,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(personType.getAstNode().isPresent());
     assertTrue(personType.getAstNode().get() instanceof ASTCDClass);
-    assertSame(personType, personType.getAstNode().get().getSymbol().get());
-    assertSame(personType.getEnclosingScope(), personType.getAstNode().get().getEnclosingScope().get());
+    assertSame(personType, personType.getAstNode().get().getSymbol());
+    assertSame(personType.getEnclosingScope(), personType.getAstNode().get().getEnclosingScope());
     // Associations
     assertEquals(1, personType.getAssociations().size());
     // Fields
@@ -127,8 +127,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(nameField.getAstNode().isPresent());
     assertTrue(nameField.getAstNode().get() instanceof ASTCDAttribute);
-    assertSame(nameField, nameField.getAstNode().get().getSymbol().get());
-    assertSame(nameField.getEnclosingScope(), nameField.getAstNode().get().getEnclosingScope().get());
+    assertSame(nameField, nameField.getAstNode().get().getSymbol());
+    assertSame(nameField.getEnclosingScope(), nameField.getAstNode().get().getEnclosingScope());
     final CDFieldSymbol secondNameField = personType.getField("secondName").get();
     assertEquals("secondName", secondNameField.getName());
     assertTrue(secondNameField.isPrivate());
@@ -170,8 +170,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(setNameMethod.getAstNode().isPresent());
     assertTrue(setNameMethod.getAstNode().get() instanceof ASTCDMethod);
-    assertSame(setNameMethod, setNameMethod.getAstNode().get().getSymbol().get());
-    assertSame(setNameMethod.getEnclosingScope(), setNameMethod.getAstNode().get().getEnclosingScope().get());
+    assertSame(setNameMethod, setNameMethod.getAstNode().get().getSymbol());
+    assertSame(setNameMethod.getEnclosingScope(), setNameMethod.getAstNode().get().getEnclosingScope());
 
     assertTrue(personType.getMethod("getAge").isPresent());
     assertTrue(personType.getMethod("getAge").get().isPrivate());
@@ -225,8 +225,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(printableType.getAstNode().isPresent());
     assertTrue(printableType.getAstNode().get() instanceof ASTCDInterface);
-    assertSame(printableType, printableType.getAstNode().get().getSymbol().get());
-    assertSame(printableType.getEnclosingScope(), printableType.getAstNode().get().getEnclosingScope().get());
+    assertSame(printableType, printableType.getAstNode().get().getSymbol());
+    assertSame(printableType.getEnclosingScope(), printableType.getAstNode().get().getEnclosingScope());
     // Associations
     assertEquals(0, printableType.getAssociations().size());
 
@@ -257,8 +257,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(enumType.getAstNode().isPresent());
     assertTrue(enumType.getAstNode().get() instanceof ASTCDEnum);
-    assertSame(enumType, enumType.getAstNode().get().getSymbol().get());
-    assertSame(enumType.getEnclosingScope(), enumType.getAstNode().get().getEnclosingScope().get());
+    assertSame(enumType, enumType.getAstNode().get().getSymbol());
+    assertSame(enumType.getEnclosingScope(), enumType.getAstNode().get().getEnclosingScope());
 
     final Scope cdScope = cdSymbol.getSpannedScope();
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.

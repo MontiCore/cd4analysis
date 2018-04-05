@@ -55,7 +55,7 @@ public class AssociationQualifierTypeExists
       ASTType type = qualifier.getType();
       String typeName = TypesPrinter.printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {
-        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope().get()
+        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope()
             .resolve(typeName, CDTypeSymbol.KIND);
         if (!typeSym.isPresent()) {
           hasError = true;
