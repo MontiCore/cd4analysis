@@ -8,8 +8,8 @@ package de.monticore.umlcd4a.cocos.mcg2ebnf;
 import de.monticore.ast.ASTNode;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
@@ -43,8 +43,8 @@ public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAs
     }
     
     if (actualMod.isPresentStereotype()) {
-      ASTStereotype stereo = actualMod.getStereotype();
-      for (ASTStereoValue val : stereo.getValueList()) {
+      ASTCDStereotype stereo = actualMod.getStereotype();
+      for (ASTCDStereoValue val : stereo.getValueList()) {
         if (!"ordered".equals(val.getName())) {
           error(assoc, val);
         }

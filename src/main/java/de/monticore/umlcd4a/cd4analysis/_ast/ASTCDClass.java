@@ -66,7 +66,7 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (isPresentModifier()) {
       if (getModifier().isPresentStereotype()) {
         StringBuffer sb = new StringBuffer();
-        for (ASTStereoValue s: getModifier().getStereotype().values) {
+        for (ASTCDStereoValue s: getModifier().getStereotype().values) {
           sb.append(s.getName());
           sb.append("\n");
         }

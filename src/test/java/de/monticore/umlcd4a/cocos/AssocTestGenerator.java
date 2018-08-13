@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
@@ -166,9 +166,9 @@ public class AssocTestGenerator {
         ASTCardinality cardinality = null;
         ASTModifier modifier = null;
         
-        List<ASTStereoValue> stereoOrdered = new ArrayList<>();
-        stereoOrdered.add(CD4AnalysisMill.stereoValueBuilder().setName("ordered").build());
-        ASTStereotype stereoType = CD4AnalysisNodeFactory.createASTStereotype(stereoOrdered);
+        List<ASTCDStereoValue> stereoOrdered = new ArrayList<>();
+        stereoOrdered.add(CD4AnalysisMill.cDStereoValueBuilder().setName("ordered").build());
+        ASTCDStereotype stereoType = CD4AnalysisNodeFactory.createASTCDStereotype(stereoOrdered);
         
         boolean rightSideInvalid = false;
         if (assoc.isPresentRightCardinality()) {

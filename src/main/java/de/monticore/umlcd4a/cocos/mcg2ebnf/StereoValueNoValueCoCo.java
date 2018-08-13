@@ -5,8 +5,8 @@
  */
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTStereoValueCoCo;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDStereoValueCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -14,13 +14,13 @@ import de.se_rwth.commons.logging.Log;
  *
  * @author Robert Heim
  */
-public class StereoValueNoValueCoCo implements CD4AnalysisASTStereoValueCoCo {
+public class StereoValueNoValueCoCo implements CD4AnalysisASTCDStereoValueCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTStereoValueCoCo#check(de.monticore.umlcd4a._ast.ASTStereoValue)
+   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDStereoValueCoCo#check(de.monticore.umlcd4a._ast.ASTCDStereoValue)
    */
   @Override
-  public void check(ASTStereoValue node) {
+  public void check(ASTCDStereoValue node) {
     if (node.isPresentValue()) {
       Log.error(String.format("0xC4A73 StereoValue %s may not have a value.", node.getName()),
           node.get_SourcePositionStart());

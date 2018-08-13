@@ -5,8 +5,6 @@
  */
 package de.monticore.umlcd4a.reporting;
 
-import java.util.List;
-
 import de.monticore.ast.ASTNode;
 import de.monticore.generating.templateengine.reporting.commons.Layouter;
 import de.monticore.literals.literals._ast.ASTIntLiteral;
@@ -15,21 +13,9 @@ import de.monticore.types.types._ast.ASTPrimitiveType;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTTypeParameters;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.*;
+
+import java.util.List;
 
 /**
  * TODO: Write me!
@@ -99,8 +85,8 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     return format(a.getName(), Layouter.nodeName(a));
   }
 
-  public String getIdent(ASTStereotype a) {
-	List<ASTStereoValue> l = a.getValueList();
+  public String getIdent(ASTCDStereotype a) {
+	List<ASTCDStereoValue> l = a.getValueList();
     String n = "-";
     if (l != null && l.size() > 0) {
       n = l.get(0).getName();
@@ -111,7 +97,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     return format(n, Layouter.nodeName(a));
   }
 
-  public String getIdent(ASTStereoValue a) {
+  public String getIdent(ASTCDStereoValue a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
 
@@ -180,11 +166,11 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     else if (a instanceof ASTSimpleReferenceType) {
       return getIdent((ASTSimpleReferenceType) a);
     }
-    else if (a instanceof ASTStereotype) {
-      return getIdent((ASTStereotype) a);
+    else if (a instanceof ASTCDStereotype) {
+      return getIdent((ASTCDStereotype) a);
     }
-    else if (a instanceof ASTStereoValue) {
-      return getIdent((ASTStereoValue) a);
+    else if (a instanceof ASTCDStereoValue) {
+      return getIdent((ASTCDStereoValue) a);
     }
     else if (a instanceof ASTModifier) {
       return getIdent((ASTModifier) a);

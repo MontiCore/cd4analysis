@@ -32,7 +32,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   public ASTCDAssociation() {
   }
 
-  protected  ASTCDAssociation (Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype> stereotype,
+  protected  ASTCDAssociation (Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype> stereotype,
       Optional<String> name,
       Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> leftModifier,
       Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> leftCardinality,

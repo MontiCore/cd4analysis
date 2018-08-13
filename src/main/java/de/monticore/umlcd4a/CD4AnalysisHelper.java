@@ -16,7 +16,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDType;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype;
 
 /**
  * TODO: Write me!
@@ -34,7 +34,7 @@ public class CD4AnalysisHelper {
         || !ast.getModifier().isPresentStereotype()) {
       return false;
     }
-    ASTStereotype stereotype = ast.getModifier().getStereotype();
+    ASTCDStereotype stereotype = ast.getModifier().getStereotype();
     return stereotype.getValueList().stream()
         .filter(v -> v.getName().equals(stereotypeName)).findAny()
         .isPresent();

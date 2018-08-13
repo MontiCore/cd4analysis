@@ -6,7 +6,7 @@
 package de.monticore.umlcd4a.cocos.mcg2ebnf;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
@@ -24,7 +24,7 @@ public class AssociationNoStereotypesCoCo implements CD4AnalysisASTCDAssociation
   @Override
   public void check(ASTCDAssociation node) {
     if (node.isPresentStereotype()) {
-      ASTStereotype stereoType = node.getStereotype();
+      ASTCDStereotype stereoType = node.getStereotype();
       if (!stereoType.getValueList().isEmpty()) {
         Log.error(
             String.format("0xC4A71 Association %s may not have stereotypes.",

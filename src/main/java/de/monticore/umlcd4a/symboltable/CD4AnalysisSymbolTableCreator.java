@@ -11,26 +11,14 @@ import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesHelper;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types.types._ast.ASTComplexReferenceType;
-import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.types.types._ast.ASTQualifiedName;
-import de.monticore.types.types._ast.ASTReferenceType;
-import de.monticore.types.types._ast.ASTReturnType;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
-import de.monticore.types.types._ast.ASTType;
-import de.monticore.types.types._ast.ASTTypeArgument;
-import de.monticore.types.types._ast.ASTWildcardType;
+import de.monticore.types.types._ast.*;
 import de.monticore.umlcd4a.cd4analysis._ast.*;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -113,7 +101,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         .orElse(CD4AnalysisMill.modifierBuilder().build());
     
     if (astModifier.isPresentStereotype()) {
-      for (ASTStereoValue stereo : astModifier.getStereotype().getValueList()) {
+      for (ASTCDStereoValue stereo : astModifier.getStereotype().getValueList()) {
         if ("externalType".equals(stereo.getName()) && stereo.isPresentValue()) {
           externals.add(stereo.getValue());
         }
@@ -163,7 +151,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       }
       
       if (astModifier.isPresentStereotype()) {
-        for (final ASTStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
+        for (final ASTCDStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
           // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
           // geschrieben)
           final Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
@@ -222,7 +210,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       }
       
       if (astModifier.isPresentStereotype()) {
-        for (final ASTStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
+        for (final ASTCDStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
           // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
           // geschrieben)
           final Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
@@ -429,9 +417,9 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     }
   }
   
-  default void addStereotypes(final CDMethodSymbol methodSymbol, final ASTStereotype astStereotype) {
+  default void addStereotypes(final CDMethodSymbol methodSymbol, final ASTCDStereotype astStereotype) {
     if (astStereotype != null) {
-      for (final ASTStereoValue val : astStereotype.getValueList()) {
+      for (final ASTCDStereoValue val : astStereotype.getValueList()) {
         // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
         // geschrieben)
         methodSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
@@ -638,11 +626,11 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
   
   default void addStereotypes(final CDAssociationSymbol associationSymbol,
-      final ASTStereotype astStereotype) {
+      final ASTCDStereotype astStereotype) {
     if (astStereotype != null) {
       // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
       // geschrieben)
-      for (final ASTStereoValue val : astStereotype.getValueList()) {
+      for (final ASTCDStereoValue val : astStereotype.getValueList()) {
         associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
       }
     }

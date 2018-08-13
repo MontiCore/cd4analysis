@@ -19,16 +19,16 @@
 
 package de.monticore.umlcd4a.cocos.ebnf;
 
-import java.util.List;
-import java.util.Optional;
-
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Checks that the cardinality of an ordered association is greater than 1.
@@ -81,8 +81,8 @@ public class AssociationOrderedCardinalityGreaterOne implements
   
   private boolean isOrdered(ASTModifier mod) {
     if (mod.isPresentStereotype()) {
-       List<ASTStereoValue> list = mod.getStereotype().getValueList();
-      for (ASTStereoValue l : list) {
+       List<ASTCDStereoValue> list = mod.getStereotype().getValueList();
+      for (ASTCDStereoValue l : list) {
         if ("ordered".equals(l.getName())) {
           return true;
         }

@@ -20,31 +20,15 @@
 
 package de.monticore.umlcd4a.prettyprint;
 
-import java.util.Iterator;
-
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDConstructor;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDMethod;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTStereotype;
+import de.monticore.umlcd4a.cd4analysis._ast.*;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.se_rwth.commons.Names;
+
+import java.util.Iterator;
 
 /**
  * This class is responsible for pretty-printing class diagrams. It is implemented using the Visitor
@@ -482,7 +466,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * @param a stereotype
    */
   @Override
-  public void handle(ASTStereotype a) {
+  public void handle(ASTCDStereotype a) {
     getPrinter().print("<<");
     printSeparator(a.getValueList().iterator(), ", ");
     getPrinter().print(">>");
@@ -494,7 +478,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    * @param a stereotype value
    */
   @Override
-  public void visit(ASTStereoValue a) {
+  public void visit(ASTCDStereoValue a) {
     getPrinter().print(a.getName());
     if (a.isPresentValue()) {
       printer.print("=\"" + a.getValue() + "\"");
