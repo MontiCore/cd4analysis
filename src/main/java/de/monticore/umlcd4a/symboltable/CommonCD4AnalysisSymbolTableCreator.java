@@ -42,4 +42,9 @@ public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreato
   public String getFullClassDiagramName() {
     return fullClassDiagramName;
   }
+
+  @Override
+  public MutableScope getEnclosingScope() {
+    return scopeStack.getFirst();
+  }
 }

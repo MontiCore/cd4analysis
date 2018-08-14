@@ -4,10 +4,7 @@ package de.monticore.umlcd4a.symboltable;/*
  * http://www.se-rwth.de/
  */
 
-import de.monticore.symboltable.ArtifactScope;
-import de.monticore.symboltable.ImportStatement;
-import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.SymbolTableCreator;
+import de.monticore.symboltable.*;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesHelper;
 import de.monticore.types.TypesPrinter;
@@ -60,7 +57,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       }
     }
     
-    final ArtifactScope scope = new ArtifactScope(Optional.empty(), getPackageName(), imports);
+    final ArtifactScope scope = new ArtifactScope(Optional.ofNullable(getEnclosingScope()), getPackageName(), imports);
+    compilationUnit.setEnclosingScope(getEnclosingScope());
     putOnStack(scope);
     scope.setAstNode(compilationUnit);
     compilationUnit.setSpannedScope(scope);
@@ -643,5 +641,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   void setFullClassDiagramName(String name);
   
   String getFullClassDiagramName();
+
+  MutableScope getEnclosingScope();
   
 }
