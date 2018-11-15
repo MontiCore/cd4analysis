@@ -39,6 +39,10 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   
   @Override
   public void check(ASTCDAssociation a) {
+    if (!a.getNameOpt().isPresent()) {
+      return;
+    }
+
     boolean error = false;
     if (a.isLeftToRight() || a.isBidirectional()) {
       error = check(a.getLeftToRightSymbol(), a.getName());

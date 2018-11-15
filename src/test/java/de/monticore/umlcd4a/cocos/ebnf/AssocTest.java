@@ -135,6 +135,8 @@ public class AssocTest extends AbstractCoCoTest {
   public void testAssocRoleConflictRole() {
     String modelName = "C4A28.cd";
     String errorCode = "0xC4A28";
+
+   testModelNoErrors(MODEL_PATH_VALID + "C4A28_2.cd"); // read-only test
     
     Collection<Finding> expectedErrors = Arrays
         .asList(
@@ -148,7 +150,17 @@ public class AssocTest extends AbstractCoCoTest {
                 .error(errorCode
                     + " The role name a of class C for association (D <-> (a) C) conflicts with the automatically introduced role name a for association (A <- B).")
         );
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+   testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+
+   Log.getFindings().clear();
+
+    expectedErrors = Arrays
+            .asList(
+                    Finding
+                            .error(errorCode
+                                    + " The role name foo of class X2 for association (X2 (foo) <- Y2) conflicts with the role name foo for association (X1 (foo) <- Y1).")
+            );
+    testModelForErrors(MODEL_PATH_INVALID + "C4A28_2.cd", expectedErrors); // overwriting inherited associations but without read-only
   }
 
   @Test

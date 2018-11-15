@@ -19,8 +19,11 @@
 
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import de.monticore.symboltable.Symbol;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
@@ -98,22 +101,37 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
           ? ""
           : AUTOMATICALLY_INTRODUCED;
       String conflictingRoleName = conflictingAssoc.get().getDerivedName();
-      
-      Log.error(
-          String
-              .format(
-                  "0xC4A28 The%s role name %s of class %s for association %s conflicts with the%s role name %s for association %s.",
-                  automaticallyIntroduced,
-                  roleName,
-                  targetType,
-                  CD4ACoCoHelper.printAssociation(assoc),
-                  conflictingRoleNameAuto,
-                  conflictingRoleName,
-                  CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflictingAssoc.get()
-                      .getAstNode().get())
-              ),
-          assoc.get_SourcePositionStart());
-      return true;
+
+      boolean isReadOnly = false;
+      List<String> superTypes = null;
+      Optional<CDTypeSymbol> targetTypeSymbol = assoc.getEnclosingScope()
+              .<CDTypeSymbol>resolve(targetType, CDTypeSymbol.KIND);
+      if (targetTypeSymbol.isPresent()) {
+        isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode().get())).isReadOnly();
+        superTypes = targetTypeSymbol.get().getSuperTypes().stream().map(type -> type.getFullName()).collect(Collectors.toList());
+      }
+      if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {
+        Log.info(String.format("Association `%s` overwrites read-only association `%s`",
+                assoc, conflictingAssoc.get()),
+                "INFO");
+      }
+      else {
+        Log.error(
+                String
+                        .format(
+                                "0xC4A28 The%s role name %s of class %s for association %s conflicts with the%s role name %s for association %s.",
+                                automaticallyIntroduced,
+                                roleName,
+                                targetType,
+                                CD4ACoCoHelper.printAssociation(assoc),
+                                conflictingRoleNameAuto,
+                                conflictingRoleName,
+                                CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflictingAssoc.get()
+                                        .getAstNode().get())
+                        ),
+                assoc.get_SourcePositionStart());
+        return true;
+      }
     }
     return false;
   }
