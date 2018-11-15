@@ -162,6 +162,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
         
 
   /** ASTCDAssociation represents an Association between Classes or Interfaces
+    @attribute readonly           True if Association is only read-only
     @attribute stereotype         Optional Stereotype
     @attribute Association        True if Association is of type "association"
     @attribute Composition        True if Association is of type "composition"
@@ -195,6 +196,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute rightModifier      Optional right side Modifier
   */
   CDAssociation = stereotype:CDStereotype?
+    readOnly:TReadOnly?
     (["association"] | ["composition"])
     ([Derived:"/"])?  Name?
     leftModifier:Modifier?
@@ -211,8 +213,9 @@ grammar CD4Analysis extends de.monticore.types.Types {
     rightReferenceName:QualifiedName
     rightCardinality:Cardinality?
     rightModifier:Modifier? ";" ;
-  
- 
+
+  token TReadOnly = 'r' 'e' 'a' 'd' '-' 'o' 'n' 'l' 'y';
+
   Modifier = stereotype:CDStereotype?
     (["abstract"]
       | ["final"]

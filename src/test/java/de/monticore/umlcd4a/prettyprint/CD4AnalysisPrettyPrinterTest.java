@@ -5,6 +5,7 @@
  */
 package de.monticore.umlcd4a.prettyprint;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -12,8 +13,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,6 +58,28 @@ public class CD4AnalysisPrettyPrinterTest {
     
     assertTrue(cdDef.get().deepEquals(printedCdDef.get()));
 
+  }
+
+  @Test
+  public void testReadOnly() throws RecognitionException, IOException {
+    // Parsing input
+    Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/ReadOnly.cd");
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
+    assertFalse(parser.hasErrors());
+    assertTrue(cdDef.isPresent());
+
+    // prettyprinting input
+    IndentPrinter i = new IndentPrinter();
+    CDPrettyPrinterConcreteVisitor prettyprinter = new CDPrettyPrinterConcreteVisitor(i);
+    String output = prettyprinter.prettyprint(cdDef.get());
+
+    // parsing output of prettyprinter
+    Optional<ASTCDCompilationUnit> printedCdDef = parser.parseCDCompilationUnit(new StringReader(output));
+    assertFalse(parser.hasErrors());
+    assertTrue(printedCdDef.isPresent());
+
+    assertTrue(cdDef.get().deepEquals(printedCdDef.get()));
   }
   
 }
