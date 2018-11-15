@@ -1,0 +1,11 @@
+classdiagram MergedCD{
+
+  interface Parameter;
+
+  interface NaturalNumber;
+
+  association dimension Parameter -> String  [1]  ;
+
+  association dimension Parameter -> NaturalNumber  [1]  ;
+
+}

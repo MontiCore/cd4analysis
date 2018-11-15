@@ -1,0 +1,39 @@
+/*
+ * ******************************************************************************
+ * MontiCore Language Workbench, www.monticore.de
+ * Copyright (c) 2017, MontiCore, All rights reserved.
+ *
+ * This project is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this project. If not, see <http://www.gnu.org/licenses/>.
+ * ******************************************************************************
+ */
+
+// should avoid the following error:
+// ERROR ROOT - C4A25_2.cd:<38,2>: 0xC4A25 Association foo conflicts with the attribute foo in X1.
+
+package de.monticore.umlcd4a.cocos.ebnf.valid;
+
+classdiagram C4A25_2 {
+  interface X1;
+  interface Y1;
+
+  class X2 implements X1;
+  class Y2 implements Y1;
+
+  // public Y1 X1::getFoo() { ... }
+  // no set method
+  read-only association foo X1 -> Y1;
+
+  // public Y2 X2::getFoo() { ... }
+  // it overwrites the X1::getFoo() method, but it is still compatible to X1::getFoo() method, because Y2 implements Y1
+  read-only association foo X2 -> Y2;
+}

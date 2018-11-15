@@ -6,7 +6,7 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>cd4analysis</artifactId>
-  <version>1.3.14-feature_read_only_assoc-SNAPSHOT</version>
+  <version>1.3.14-feature_read_only_assoc</version>
   <properties>
 
     <!-- .. Libraries ..................................................... -->

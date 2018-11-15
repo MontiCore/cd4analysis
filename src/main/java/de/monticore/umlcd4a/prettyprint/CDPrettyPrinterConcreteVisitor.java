@@ -365,7 +365,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     }
     // print read-only attribute if present
     if (a.isReadOnly()) {
-      getPrinter().println("read-only ");
+      getPrinter().print("read-only ");
     }
 
     // print type of the link

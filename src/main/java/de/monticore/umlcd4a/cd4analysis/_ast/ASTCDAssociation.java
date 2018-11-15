@@ -19,7 +19,9 @@
 
 package de.monticore.umlcd4a.cd4analysis._ast;
 
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.types._ast.ASTQualifiedName;
+import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 
 import java.util.Optional;
@@ -32,25 +34,32 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   public ASTCDAssociation() {
   }
 
+  @Override
+  public String toString() {
+    IndentPrinter ip = new IndentPrinter();
+    this.accept(new CDPrettyPrinterConcreteVisitor(ip));
+    return ip.getContent().replace("\r","").replace("\n", "");
+  }
+
   protected  ASTCDAssociation (Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype> stereotype,
-      Optional<String> name,
-      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> leftModifier,
-      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> leftCardinality,
-      de.monticore.types.types._ast.ASTQualifiedName leftReferenceName,
-      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier> leftQualifier,
-      Optional<String> leftRole,
-      Optional<String> rightRole,
-      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier> rightQualifier,
-      de.monticore.types.types._ast.ASTQualifiedName rightReferenceName,
-      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> rightCardinality,
-      Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> rightModifier,
-      boolean r__association,
-      boolean r__composition,
-      boolean r__derived,
-      boolean leftToRight,
-      boolean rightToLeft,
-      boolean bidirectional,
-      boolean unspecified)  {
+                               Optional<String> name,
+                               Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> leftModifier,
+                               Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> leftCardinality,
+                               de.monticore.types.types._ast.ASTQualifiedName leftReferenceName,
+                               Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier> leftQualifier,
+                               Optional<String> leftRole,
+                               Optional<String> rightRole,
+                               Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier> rightQualifier,
+                               de.monticore.types.types._ast.ASTQualifiedName rightReferenceName,
+                               Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality> rightCardinality,
+                               Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTModifier> rightModifier,
+                               boolean r__association,
+                               boolean r__composition,
+                               boolean r__derived,
+                               boolean leftToRight,
+                               boolean rightToLeft,
+                               boolean bidirectional,
+                               boolean unspecified)  {
     super(stereotype, Optional.empty(), name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
   }
 

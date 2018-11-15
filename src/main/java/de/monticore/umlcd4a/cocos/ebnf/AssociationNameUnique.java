@@ -23,18 +23,48 @@ import de.monticore.symboltable.resolving.ResolvedSeveralEntriesException;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
+import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Checks that association names are unique in the diagram.
  *
- * @author Robert Heim
+ * @author Michael von Wenckstern
  */
 public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (a.isPresentName()) {
+    if (check(a.getLeftToRightSymbol(), a.getName())) {
+      Log.error(
+              String.format("0xC4A26 Association %s is defined multiple times.", a.getName()),
+              a.get_SourcePositionStart());
+    }
+  }
+
+  // true for error
+  private boolean check(Optional<CDAssociationSymbol> assSymbol, String name) {
+    if (!assSymbol.isPresent()) {
+      return false;
+    }
+    boolean ret = false;
+    ret = check(assSymbol.get().getSourceType(), name, assSymbol.get());
+    ret = ret || check(assSymbol.get().getTargetType(), name, assSymbol.get());
+    return ret;
+  }
+
+  private boolean check(CDTypeSymbol type, String name, CDAssociationSymbol assSymbol) {
+    List<CDAssociationSymbol> list = type.getAllAssociations().stream().
+            filter(ass -> ass.getDerivedName().equals(name)
+            && ass.getSourceType().getFullName().equals(type.getFullName())).collect(Collectors.toList());
+    return list.size() > 1;
+  }
+
+     /*
       try {
         a.getEnclosingScope().resolve(a.getName(), CDAssociationSymbol.KIND);
       }
@@ -49,5 +79,5 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
         }
       }
     }
-  }
+  }*/
 }
