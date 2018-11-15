@@ -39,11 +39,19 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   
   @Override
   public void check(ASTCDAssociation a) {
-    if (check(a.getLeftToRightSymbol(), a.getName())) {
+    boolean error = false;
+    if (a.isLeftToRight() || a.isBidirectional()) {
+      error = check(a.getLeftToRightSymbol(), a.getName());
+    }
+    if (a.isRightToLeft() || a.isBidirectional()) {
+      error = check(a.getRightToLeftSymbol(), a.getName());
+    }
+    if (error) {
       Log.error(
               String.format("0xC4A26 Association %s is defined multiple times.", a.getName()),
               a.get_SourcePositionStart());
     }
+
   }
 
   // true for error
@@ -58,7 +66,7 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   }
 
   private boolean check(CDTypeSymbol type, String name, CDAssociationSymbol assSymbol) {
-    List<CDAssociationSymbol> list = type.getAllAssociations().stream().
+    List<CDAssociationSymbol> list = type.getAssociations().stream().
             filter(ass -> ass.getDerivedName().equals(name)
             && ass.getSourceType().getFullName().equals(type.getFullName())).collect(Collectors.toList());
     return list.size() > 1;

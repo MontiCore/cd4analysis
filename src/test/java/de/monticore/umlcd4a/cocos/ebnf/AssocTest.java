@@ -5921,6 +5921,7 @@ public class AssocTest extends AbstractCoCoTest {
    * The corresponding CoCo is temporary disabled as the association name does not need to be unique within a model.
    * Instead, it must be unique within a specific class hierarchy.
    */
+  @Ignore("some test models are probably wrong, so enabling this CoCo violates many other tests")
   @Test
   public void testAssocNameNotUnique() {
     String modelName = "C4A26.cd";

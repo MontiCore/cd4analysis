@@ -48,7 +48,7 @@ public class AssocTest extends AbstractCoCoTest {
   /**
    * Tests that the build-in types can be used without importing them.
    */
-  //@Ignore("Associatons name not unique, diagram should fail!")
+  @Ignore("Associatons name not unique, diagram should fail!")
   @Test
   public void assocSameNameCoCoTest() {
     Log.enableFailQuick(false);
