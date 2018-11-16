@@ -50,5 +50,12 @@ public class Assoc2Test extends AbstractCoCoTest {
                 Finding.error(errorCode + " The target cardinality (0 .. 1) of the inherited read-only association `CDAssociationSymbol foo/: A1() -> (foo)B1` is not a superset of the target cardinality (1 ..*) of the association `CDAssociationSymbol foo/: A2() -> (foo)B2`")
         );
         testModelForErrors(MODEL_PATH_INVALID + modelName,expectedErrors);
+
+        Log.getFindings().clear();
+
+        expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " The target cardinality (0 .. 1) of the inherited read-only association `CDAssociationSymbol foo/: A1() -> (foo)B1` is not a superset of the target cardinality (1 ..*) of the association `CDAssociationSymbol foo/: A3() -> (foo)B3`")
+                );
+        testModelForErrors(MODEL_PATH_INVALID + "C4A32_2.cd", expectedErrors);
     }
 }
