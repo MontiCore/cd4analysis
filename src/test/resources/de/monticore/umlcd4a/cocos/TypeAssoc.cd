@@ -1,23 +1,72 @@
 classdiagram TypeAssoc{
 
-  interface Value;
-  interface Type extends Value;
-  interface Quantity extends Type;
-  interface Parameter extends Value;
-
   interface PortType extends Type;
   interface PortValue extends Value;
 
-  class NumericType implements PortType;
-  class EnumType implements PortType;
-  association [1] EnumType <-> EnumItem [*];
-  class BooleanType implements PortType;
+  // slide Ch04_PortTypeSystemOverview
+  class Unit {
+    double prefix;
+  }
+  association [1] Unit (baseUnit) <-> Quantity [1];
 
+  interface Value;
+  interface Type extends Value; // cf. Ch04_Parameter1
+  interface Quantity extends Type;
+
+  read-only association Value -> (type) Type [0..1];
+  read-only association PortValue -> (type) PortType [1];
+
+  // slide Ch04_PortValue
   class Tensor implements PortValue;
   class EnumItem implements PortValue;
   class Boolean implements PortValue {
     boolean value;
   }
+  class Matrix extends Tensor;
+  class Vector extends Matrix;
+  class Number extends Vector {
+    double value;
+    boolean isPlusInf;
+    boolean isMinusInf;
+  }
+  class NaturalNumber extends Number;
+  association Tensor -> (elements) Number [*] <<ordered>>;
+  association rows Tensor -> NaturalNumber [1];
+  association cols Tensor -> NaturalNumber [1];
+  association depth Tensor -> NaturalNumber [1];
+  association Tensor -> Quantity [1];
+  association Number -> Unit [1];
+
+  // slide Ch04_PortTypeSystem
+  interface AlgebraicProperty;
+  class NumericType implements PortType;
+  association min NumericType -> Number [1];
+  association max NumericType -> Number [1];
+  association res NumericType -> Number [0..1];
+  association NumericType -> Quantity [1];
+  association NumericType -> AlgebraicProperty [*];
+  class EnumType implements PortType;
+  association [1] EnumType <-> EnumItem [*];
+  class BooleanType implements PortType;
+
+  // slide Ch04_Parameter1
+  enum ParameterKind {
+    config, generic;
+  }
+  interface Parameter extends Value {
+    String name;
+    ParameterKind kind;
+  }
+  association Parameter -> (dimension) NaturalNumber [1];
+  read-only association Parameter -> (defaultValue) Value [0..1];
+  read-only association / Parameter -> (type) Type [0..1];
+
+  interface ParameterBinding;
+  association ParameterBinding -> Range [1];
+  read-only association ParameterBinding -> Parameter [1];
+  read-only association ParameterBinding -> Value [1];
+
+  // Ch04_Struct (needs to be created)
 
   class Struct implements PortValue;
   class StructItem {
@@ -36,44 +85,78 @@ classdiagram TypeAssoc{
   association Struct -> (type) StructType [1];
   association StructItem -> (type) StructTypeItem [1];
 
-  read-only association Value -> (type) Type [0..1];
-  read-only association PortValue -> (type) PortType [1];
-  read-only association Parameter -> (defaultValue) Value [0..1];
-
+  // Ch04_Parameter2
 
   class GeneralTypeParameter implements Parameter;
   association GeneralTypeParameter -> (defaultValue) Type [0..1];
+  class GeneralParameterBinding implements ParameterBinding;
+  association GeneralParameterBinding -> (value) Type [1];
+  association GeneralParameterBinding -> (parameter) GeneralTypeParameter [1];
 
   class QuantityParameter implements Parameter;
   association QuantityParameter -> (defaultValue) Quantity [0..1];
+  class QuantityParameterBinding implements ParameterBinding;
+  association QuantityParameterBinding -> (value) Quantity [1];
+  association QuantityParameterBinding -> (parameter) QuantityParameter [1];
 
   class NumericTypeParameter extends NumericType implements Parameter;
   association NumericTypeParameter -> (type) Quantity [1];
   association NumericTypeParameter -> (defaultValue) NumericType [0..1];
+  class NumericTypeParameterBinding implements ParameterBinding;
+  association NumericTypeParameterBinding -> (value) NumericType [1];
+  association NumericTypeParameterBinding -> (parameter) NumericTypeParameter [1];
 
   class TensorParameter extends Tensor implements Parameter;
   association TensorParameter -> (type) NumericType [1];
   association TensorParameter -> (defaultValue) Tensor [0..1];
+  class TensorParameterBinding implements ParameterBinding;
+  association TensorParameterBinding -> (value) Tensor [1];
+  association TensorParameterBinding -> (parameter) TensorParameter [1];
+
+  // slide Ch04_Parameter3
 
   class EnumTypeParameter extends EnumItem implements Parameter;
   association EnumTypeParameter -> (type) EnumType [1];
   association EnumTypeParameter -> (defaultValue) EnumItem [0..1];
+  class EnumTypeParameterBinding implements ParameterBinding;
+  association EnumTypeParameterBinding -> (value) EnumItem [1];
+  association EnumTypeParameterBinding -> (parameter) EnumTypeParameter [1];
 
   class BooleanTypeParameter extends Boolean implements Parameter;
   association BooleanTypeParameter -> (type) BooleanType [1];
   association BooleanTypeParameter -> (defaultValue) Boolean [0..1];
+  class BooleanTypeParameterBinding implements ParameterBinding;
+  association BooleanTypeParameterBinding -> (value) Boolean [1];
+  association BooleanTypeParameterBinding -> (parameter) BooleanTypeParameter [1];
 
   class StructTypeParameter extends Struct implements Parameter;
   association / StructTypeParameter -> (type) StructType [1];
   association StructTypeParameter -> (defaultValue) Struct [0..1];
+  class StructTypeParameterBinding implements ParameterBinding;
+  association StructTypeParameterBinding -> (value) Struct [1];
+  association StructTypeParameterBinding -> (parameter) StructTypeParameter [1];
 
   class ComponentParameter extends ComponentInstantiation implements Parameter;
-  association ComponentParameter -> (type) ComponentInterface [1];
+  association / ComponentParameter -> (type) /* ComponentInterface */ ComponentType [1];
   association ComponentParameter -> (defaultValue) ComponentInstantiation [0..1];
+  class ComponentParameterBinding implements ParameterBinding;
+  association ComponentParameterBinding -> (value) ComponentInstantiation [1];
+  association ComponentParameterBinding -> (parameter) ComponentParameter [1];
+
+  // slide Ch04_ComponentInstantiation
 
   class ComponentInstantiation implements Value {
     String name;
   }
+  association ComponentInstantiation -> (dimension) NaturalNumber [1];
+  association ComponentInstantiation -> (values) ParameterBinding [*];
+  association ComponentInstantiation -> (type) ComponentType [1];
 
-  class ComponentInterface implements Type;
+  interface ComponentType extends Type;
+  class ComponentInterface implements ComponentType;
+  class Component implements ComponentType;
+  association Component -> (r_implements) ComponentInstantiation [*];
+
+  // slide Ch04_PortConnector
+  class Range;
 }

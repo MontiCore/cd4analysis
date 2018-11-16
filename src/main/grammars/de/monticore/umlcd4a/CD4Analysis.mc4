@@ -60,13 +60,16 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDClass astimplements ASTCDType = Modifier?  "class" Name
   ( "extends"  superclass:ReferenceType)?
-  ( "implements" interface:(ReferenceType || ",")+ )?
+  ( TImplements interface:(ReferenceType || ",")+ )?
   ( "{" 
     ( CDAttribute
     | CDConstructor
     | CDMethod )*
     "}" 
   | ";" );
+
+  // indirect token
+  TImplements = { _input.LT(1).getText().equals("implements") }? Name; // implements is often association or role name (e.g., when creating the abstract syntax of CD4A itself or for the abstract syntax of Java)
   
  
   /** ASTCDInterface represents an Interface in a Classdiagram
@@ -94,7 +97,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes    List of Attributes of this Enum
   */
   CDEnum astimplements ASTCDType = Modifier? "enum" Name
-    ( "implements" interface:(ReferenceType || ",")+ )?
+    ( TImplements interface:(ReferenceType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";" 
         ( CDConstructor | CDMethod)*
