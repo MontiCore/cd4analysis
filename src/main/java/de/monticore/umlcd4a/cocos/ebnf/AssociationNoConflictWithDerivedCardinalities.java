@@ -21,26 +21,24 @@ package de.monticore.umlcd4a.cocos.ebnf;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
-import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
- * Checks that role names do not conflict with other role names where the source
- * types has other outgoing associations (which might be inherited).
+ * Checks that derived associations have the same cardinality
  *
  * @author Michael von Wenckstern
  */
-public class AssociationNoConflictWithCardinalities implements
+public class AssociationNoConflictWithDerivedCardinalities implements
     CD4AnalysisASTCDAssociationCoCo {
 
   @Override
   public void check(ASTCDAssociation a) {
+    if (!a.isDerived())
+      return; // if it is not derived, than a role name conflict is detected by 0xCD4A33
     Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
             .resolve(a.getLeftReferenceName().toString(), CDTypeSymbol.KIND);
     Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
@@ -70,32 +68,30 @@ public class AssociationNoConflictWithCardinalities implements
     String roleName = assocSym.getDerivedName();
 
     // inherited
+    // do not check read-only, as it is checked by AssociationNoConflictWithCardinalities
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getInheritedAssociations().stream()
-            .filter(a -> a.isReadOnly() && a.getDerivedName().equals(roleName))
+            .filter(a -> !a.isReadOnly() && a.getDerivedName().equals(roleName))
             .filter(a -> a != assocSym)
-            .filter(a -> mapStarToMax(a.getTargetCardinality().getMin()) > mapStarToMax(assocSym.getTargetCardinality().getMin()) ||
-                    mapStarToMax(a.getTargetCardinality().getMax()) < mapStarToMax(assocSym.getTargetCardinality().getMax()))
+            .filter(a -> a.getTargetCardinality().getMin() != assocSym.getTargetCardinality().getMin()
+              || a.getTargetCardinality().getMin() != assocSym.getTargetCardinality().getMin())
             .findAny();
 
     if (conflictingAssoc.isPresent()) {
       Log.error(
               String
                       .format(
-                              "0xC4A32 The target cardinality (%s .. %s) of the inherited read-only association `%s` is not a superset of the target cardinality (%s ..%s) of the association `%s`",
-                              conflictingAssoc.get().getTargetCardinality().getMin(),
-                              String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
-                              conflictingAssoc.get(),
+                              "0xC4A37 The target cardinality (%s .. %s) of the derived (inherited) association `%s` does not math the target cardinality (%s .. %s) of the association `%s`",
                               assocSym.getTargetCardinality().getMin(),
                               String.valueOf(assocSym.getTargetCardinality().getMax()).replace("-1", "*"),
-                              assocSym
+                              assocSym.getAstNode().isPresent() ? assocSym.getAstNode().get() : assocSym,
+                              conflictingAssoc.get().getTargetCardinality().getMin(),
+                              String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
+                              conflictingAssoc.get().getAstNode().isPresent() ? conflictingAssoc.get().getAstNode().get() : conflictingAssoc.get()
                               ),
               assoc.get_SourcePositionStart());
       return true;
     }
     return false;
 
-  }
-  private static int mapStarToMax(int value) {
-    return value == -1 ? Integer.MAX_VALUE : value;
   }
 }

@@ -1,0 +1,31 @@
+/*
+ * ******************************************************************************
+ * MontiCore Language Workbench, www.monticore.de
+ * Copyright (c) 2017, MontiCore, All rights reserved.
+ *
+ * This project is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this project. If not, see <http://www.gnu.org/licenses/>.
+ * ******************************************************************************
+ */
+
+package de.monticore.umlcd4a.cocos.ebnf.invalid;
+
+classdiagram C4A37 {
+  interface A1;
+  interface B1;
+  association A1 -> (foo) B1 [1];
+
+  class A2 implements A1;
+  association / A2 -> (foo) B1 [0..1]; // not ok, the cardinality of the derived (inherited)
+                                       // association does not fit
+                                       // ( A1 -> B1 has 1; and A2 -> B1 has 0..1)
+}

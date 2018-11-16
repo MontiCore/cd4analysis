@@ -36,7 +36,8 @@ public class Assoc2Test extends AbstractCoCoTest {
     protected CD4AnalysisCoCoChecker getChecker() {
         return new CD4ACoCos().getCheckerForEbnfCoCos()
                 .addCoCo(new AssociationNameUnique())
-                .addCoCo(new AssociationNoConflictWithCardinalities());
+                .addCoCo(new AssociationNoConflictWithCardinalities())
+                .addCoCo(new AssociationNoConflictWithDerivedCardinalities());
     }
 
     @Test
@@ -70,5 +71,18 @@ public class Assoc2Test extends AbstractCoCoTest {
                 Finding.error(errorCode + " Association `association A2 -> (foo) B1  [1]  ;` has same target role name and source type extends source type of association `association A1 -> (foo) B1  [1]  ;`. So the \"inherited\" association `association A2 -> (foo) B1  [1]  ;` should be a derived association.")
         );
         testModelForErrors(MODEL_PATH_INVALID + modelName,expectedErrors);
+    }
+
+    @Test
+    public void testC4A37() {
+        String modelName = "C4A37.cd";
+        String errorCode = "0xC4A37";
+
+        // positive test is the same positive test as in Assoc2Test#testC4A33()
+
+        Collection<Finding> expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " The target cardinality (0 .. 1) of the derived (inherited) association `association /A2 -> (foo) B1  [0..1]  ;` does not math the target cardinality (1 .. 1) of the association `association A1 -> (foo) B1  [1]  ;`")
+        );
+        testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
     }
 }
