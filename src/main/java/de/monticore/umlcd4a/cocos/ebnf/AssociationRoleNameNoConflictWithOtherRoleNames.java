@@ -77,43 +77,30 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
     
     String roleName = assocSym.getDerivedName();
     String targetType = assocSym.getTargetType().getName();
-    
-    // automatically introduced attributes from other assocs with role names of
-    // the source type.
-    // we exclude assoc names (and do not test for normal attributes) because
-    // its an own coco
-    
-    // own
-    Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getAssociations().stream()
-        .filter(a -> a.getSourceRole().isPresent() || !a.getAssocName().isPresent())
-        .filter(a -> a.getDerivedName().equals(roleName))
-        .filter(a -> a != assocSym)
-        .findAny();
-    if (!conflictingAssoc.isPresent()) {
-      // inherited
-      conflictingAssoc = sourceType.getInheritedAssociations().stream()
-          .filter(a -> a.getSourceRole().isPresent() || !a.getAssocName().isPresent())
-          .filter(a -> a.getDerivedName().equals(roleName))
-          .findAny();
-    }
-    if (conflictingAssoc.isPresent()) {
-      String conflictingRoleNameAuto = conflictingAssoc.get().getTargetRole().isPresent()
+
+      List<CDAssociationSymbol> conflictingAssoc2 = sourceType.getAllAssociations().stream()
+              .filter(a -> a != assocSym && (a.getSourceRole().isPresent() || !a.getAssocName().isPresent()))
+              .filter(a -> a.getDerivedName().equals(roleName))
+              .collect(Collectors.toList());
+
+    for(CDAssociationSymbol conflicting : conflictingAssoc2) {
+      String conflictingRoleNameAuto = conflicting.getTargetRole().isPresent()
           ? ""
           : AUTOMATICALLY_INTRODUCED;
-      String conflictingRoleName = conflictingAssoc.get().getDerivedName();
+      String conflictingRoleName = conflicting.getDerivedName();
 
       boolean isReadOnly = false;
       List<String> superTypes = null;
       Optional<CDTypeSymbol> targetTypeSymbol = assoc.getEnclosingScope()
               .<CDTypeSymbol>resolve(targetType, CDTypeSymbol.KIND);
       if (targetTypeSymbol.isPresent()) {
-        isReadOnly = conflictingAssoc.get().isReadOnly();
+        isReadOnly = conflicting.isReadOnly();
         superTypes = targetTypeSymbol.get().getSuperTypesTransitive().stream().map(type -> type.getFullName()).collect(Collectors.toList());
       }
-      if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {
+      if (isReadOnly && superTypes.contains(conflicting.getTargetType().getFullName())) {
         Log.info(String.format("Association `%s` overwrites read-only association `%s`",
-                assoc, conflictingAssoc.get()),
-                "INFO");
+                assoc, conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting),
+                this.getClass().getSimpleName());
       }
       else {
         Log.error(
@@ -126,7 +113,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
                                 CD4ACoCoHelper.printAssociation(assoc),
                                 conflictingRoleNameAuto,
                                 conflictingRoleName,
-                                CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflictingAssoc.get()
+                                CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflicting
                                         .getAstNode().get())
                         ),
                 assoc.get_SourcePositionStart());

@@ -5,7 +5,16 @@ classdiagram TypeAssoc{
   interface Quantity extends Type;
   interface Parameter extends Value;
 
+  interface PortType extends Type;
+  interface PortValue extends Value;
+
+  class NumericType implements PortType;
+
+  class Tensor implements PortValue;
+
+
   read-only association Value -> (type) Type [0..1];
+  read-only association PortValue -> (type) PortType [1];
   read-only association Parameter -> (defaultValue) Value [0..1];
 
 
@@ -15,7 +24,11 @@ classdiagram TypeAssoc{
   class QuantityParameter implements Parameter;
   association QuantityParameter -> (defaultValue) Quantity [0..1];
 
-  class NumericTypeParameter implements Parameter;
+  class NumericTypeParameter extends NumericType implements Parameter;
   association NumericTypeParameter -> (type) Quantity [1];
+  association NumericTypeParameter -> (defaultValue) NumericType [0..1];
 
+  class TensorParameter extends Tensor implements Parameter;
+  association TensorParameter -> (type) NumericType;
+  association TensorParameter -> (defaultValue) Tensor;
 }
