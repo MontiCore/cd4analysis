@@ -77,6 +77,27 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
             .findFirst();
   }
 
+  public List<CDTypeSymbolReference> getSuperTypesTransitive() {
+    return getSuperTypesTransitive(new CDTypeSymbolReference(this.getName(), this.getEnclosingScope()));
+  }
+
+  protected List<CDTypeSymbolReference> getSuperTypesTransitive(CDTypeSymbolReference startType) {
+    List<CDTypeSymbolReference> superTypes = new ArrayList();
+    if (startType.getSuperClass().isPresent()) {
+      CDTypeSymbolReference s = startType.getSuperClass().get();
+      superTypes.add(s);
+      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(s.getName(),
+              s.getEnclosingScope())));
+    }
+
+    for (CDTypeSymbolReference i : startType.getInterfaces()) {
+      superTypes.add(i);
+      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(i.getName(),
+              i.getEnclosingScope())));
+    }
+    return superTypes;
+  }
+
   public List<CDFieldSymbol> getEnumConstants() {
     final List<CDFieldSymbol> enums = getFields().stream()
         .filter(CDFieldSymbol::isEnumConstant)

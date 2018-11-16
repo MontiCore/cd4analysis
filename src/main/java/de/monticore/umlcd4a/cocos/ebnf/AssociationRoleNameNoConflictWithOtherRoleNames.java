@@ -108,7 +108,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
               .<CDTypeSymbol>resolve(targetType, CDTypeSymbol.KIND);
       if (targetTypeSymbol.isPresent()) {
         isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode().get())).isReadOnly();
-        superTypes = targetTypeSymbol.get().getSuperTypes().stream().map(type -> type.getFullName()).collect(Collectors.toList());
+        superTypes = targetTypeSymbol.get().getSuperTypesTransitive().stream().map(type -> type.getFullName()).collect(Collectors.toList());
       }
       if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {
         Log.info(String.format("Association `%s` overwrites read-only association `%s`",

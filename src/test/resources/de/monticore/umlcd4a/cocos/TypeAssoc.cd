@@ -1,0 +1,21 @@
+classdiagram TypeAssoc{
+
+  interface Value;
+  interface Type extends Value;
+  interface Quantity extends Type;
+  interface Parameter extends Value;
+
+  read-only association Value -> (type) Type [0..1];
+  read-only association Parameter -> (defaultValue) Value [0..1];
+
+
+  class GeneralTypeParameter implements Parameter;
+  association GeneralTypeParameter -> (defaultValue) Type [0..1];
+
+  class QuantityParameter implements Parameter;
+  association QuantityParameter -> (defaultValue) Quantity [0..1];
+
+  class NumericTypeParameter implements Parameter;
+  association NumericTypeParameter -> (type) Quantity [1];
+
+}
