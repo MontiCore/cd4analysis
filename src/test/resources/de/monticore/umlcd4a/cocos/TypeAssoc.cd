@@ -24,7 +24,7 @@ classdiagram TypeAssoc{
     String name;
   }
   association Struct [[name]] -> (item) StructItem [1];
-  association StructItem -> (value) PortValue;
+  association StructItem -> (value) PortValue [1];
   class StructTypeItem {
     String name;
   }
@@ -65,4 +65,15 @@ classdiagram TypeAssoc{
 
   class StructTypeParameter extends Struct implements Parameter;
   association / StructTypeParameter -> (type) StructType [1];
+  association StructTypeParameter -> (defaultValue) Struct [0..1];
+
+  class ComponentParameter extends ComponentInstantiation implements Parameter;
+  association ComponentParameter -> (type) ComponentInterface [1];
+  association ComponentParameter -> (defaultValue) ComponentInstantiation [0..1];
+
+  class ComponentInstantiation implements Value {
+    String name;
+  }
+
+  class ComponentInterface implements Type;
 }

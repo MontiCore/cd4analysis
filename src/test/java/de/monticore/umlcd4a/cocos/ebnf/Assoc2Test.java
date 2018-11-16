@@ -3,6 +3,7 @@ package de.monticore.umlcd4a.cocos.ebnf;
 import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
+import de.monticore.umlcd4a.cocos.others.AssociationNavigationHasCardinality;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
@@ -37,7 +38,8 @@ public class Assoc2Test extends AbstractCoCoTest {
         return new CD4ACoCos().getCheckerForEbnfCoCos()
                 .addCoCo(new AssociationNameUnique())
                 .addCoCo(new AssociationNoConflictWithCardinalities())
-                .addCoCo(new AssociationNoConflictWithDerivedCardinalities());
+                .addCoCo(new AssociationNoConflictWithDerivedCardinalities())
+                .addCoCo(new AssociationNavigationHasCardinality());
     }
 
     @Test
@@ -84,5 +86,22 @@ public class Assoc2Test extends AbstractCoCoTest {
                 Finding.error(errorCode + " The target cardinality (0 .. 1) of the derived (inherited) association `association /A2 -> (foo) B1  [0..1]  ;` does not math the target cardinality (1 .. 1) of the association `association A1 -> (foo) B1  [1]  ;`")
         );
         testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+    }
+
+    @Test
+    public void testC4A38() {
+        String modelName = "C4A38.cd";
+        String errorCode = "0xC4A38";
+
+        testModelNoErrors("src/test/resources/de/monticore/umlcd4a/cocos/others/valid/" + modelName);
+
+        Collection<Finding> expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " Association `association C <- A ;` has left navigation arrow (<-), but no left cardinality."),
+                Finding.error(errorCode + " Association `association A -> D ;` has right navigation arrow (->), but no right cardinality."),
+                Finding.error(errorCode + " Association `association B <-> D ;` has left navigation arrow (<-), but no left cardinality."),
+                Finding.error(errorCode + " Association `association B <-> D ;` has right navigation arrow (->), but no right cardinality.")
+        );
+
+        testModelForErrors("src/test/resources/de/monticore/umlcd4a/cocos/others/invalid/" + modelName, expectedErrors);
     }
 }
