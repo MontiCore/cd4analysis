@@ -107,7 +107,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
       Optional<CDTypeSymbol> targetTypeSymbol = assoc.getEnclosingScope()
               .<CDTypeSymbol>resolve(targetType, CDTypeSymbol.KIND);
       if (targetTypeSymbol.isPresent()) {
-        isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode().get())).isReadOnly();
+        isReadOnly = conflictingAssoc.get().isReadOnly();
         superTypes = targetTypeSymbol.get().getSuperTypesTransitive().stream().map(type -> type.getFullName()).collect(Collectors.toList());
       }
       if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {

@@ -28,6 +28,7 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.CommonSymbol;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 
@@ -63,6 +64,12 @@ public class CDAssociationSymbol extends CommonSymbol {
     super("", KIND);
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
+  }
+
+  public boolean isReadOnly() {
+    if (!this.getAstNode().isPresent())
+      return false;
+    return ((ASTCDAssociation) (this.getAstNode().get())).isReadOnly();
   }
 
   @Override
