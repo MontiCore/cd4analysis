@@ -40,7 +40,7 @@ public class Assoc2Test extends AbstractCoCoTest {
     }
 
     @Test
-    public void testAssocNameUniqueReadOnly() {
+    public void testC4A32() {
         String modelName = "C4A32.cd";
         String errorCode = "0xC4A32";
 
@@ -57,5 +57,18 @@ public class Assoc2Test extends AbstractCoCoTest {
                 Finding.error(errorCode + " The target cardinality (0 .. 1) of the inherited read-only association `CDAssociationSymbol foo/: A1() -> (foo)B1` is not a superset of the target cardinality (1 ..*) of the association `CDAssociationSymbol foo/: A3() -> (foo)B3`")
                 );
         testModelForErrors(MODEL_PATH_INVALID + "C4A32_2.cd", expectedErrors);
+    }
+
+    @Test
+    public void testC4A33() {
+        String modelName = "C4A33.cd";
+        String errorCode = "0xC4A33";
+
+        testModelNoErrors(MODEL_PATH_VALID + modelName);
+
+        Collection<Finding> expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " Association `association A2 -> (foo) B1  [1]  ;` has same target role name and source type extends source type of association `association A1 -> (foo) B1  [1]  ;`. So the \"inherited\" association `association A2 -> (foo) B1  [1]  ;` should be a derived association.")
+        );
+        testModelForErrors(MODEL_PATH_INVALID + modelName,expectedErrors);
     }
 }

@@ -9,9 +9,32 @@ classdiagram TypeAssoc{
   interface PortValue extends Value;
 
   class NumericType implements PortType;
+  class EnumType implements PortType;
+  association [1] EnumType <-> EnumItem [*];
+  class BooleanType implements PortType;
 
   class Tensor implements PortValue;
+  class EnumItem implements PortValue;
+  class Boolean implements PortValue {
+    boolean value;
+  }
 
+  class Struct implements PortValue;
+  class StructItem {
+    String name;
+  }
+  association Struct [[name]] -> (item) StructItem [1];
+  association StructItem -> (value) PortValue;
+  class StructTypeItem {
+    String name;
+  }
+  association StructTypeItem -> (type) PortType [1];
+  class StructType implements PortType {
+    String name;
+  }
+  association StructType [[name]] -> (item) StructTypeItem [1];
+  association Struct -> (type) StructType [1];
+  association StructItem -> (type) StructTypeItem [1];
 
   read-only association Value -> (type) Type [0..1];
   read-only association PortValue -> (type) PortType [1];
@@ -29,6 +52,17 @@ classdiagram TypeAssoc{
   association NumericTypeParameter -> (defaultValue) NumericType [0..1];
 
   class TensorParameter extends Tensor implements Parameter;
-  association TensorParameter -> (type) NumericType;
-  association TensorParameter -> (defaultValue) Tensor;
+  association TensorParameter -> (type) NumericType [1];
+  association TensorParameter -> (defaultValue) Tensor [0..1];
+
+  class EnumTypeParameter extends EnumItem implements Parameter;
+  association EnumTypeParameter -> (type) EnumType [1];
+  association EnumTypeParameter -> (defaultValue) EnumItem [0..1];
+
+  class BooleanTypeParameter extends Boolean implements Parameter;
+  association BooleanTypeParameter -> (type) BooleanType [1];
+  association BooleanTypeParameter -> (defaultValue) Boolean [0..1];
+
+  class StructTypeParameter extends Struct implements Parameter;
+  association / StructTypeParameter -> (type) StructType [1];
 }

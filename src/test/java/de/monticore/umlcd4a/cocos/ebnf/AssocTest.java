@@ -140,9 +140,11 @@ public class AssocTest extends AbstractCoCoTest {
     
     Collection<Finding> expectedErrors = Arrays
         .asList(
-            Finding
+                // 0xCA33 gives a more concrete error message than 0xA28
+                Finding.error("0xC4A33 Association `association E -> A ;` has same target role name and source type extends source type of association `association A <- B ;`. So the \"inherited\" association `association E -> A ;` should be a derived association."),
+            /* Finding
                 .error(errorCode
-                    + " The automatically introduced role name a of class A for association (E -> A) conflicts with the automatically introduced role name a for association (A <- B)."),
+                    + " The automatically introduced role name a of class A for association (E -> A) conflicts with the automatically introduced role name a for association (A <- B)."), */
             Finding
                 .error(errorCode
                     + " The automatically introduced role name c of class C for association (C <- D) conflicts with the role name c for association (A (c) <-> B)."),
