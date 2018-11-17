@@ -222,8 +222,8 @@ classdiagram TypeAssoc{
   association [1] CnCInstanceStructure <-> CnCModel [*];
 
   class ConnectorInst;
-  association sourcePort ConnectorInst -> PortInst [1];
-  association targetPort ConnectorInst -> PortInst [1];
+  association ConnectorInst (startCon) -> (sourcePort) PortInst [1];
+  association ConnectorInst (endCon) -> (targetPort) PortInst [1];
   association ConnectorInst -> Connector [1];
 
   class PortInst {
@@ -235,5 +235,5 @@ classdiagram TypeAssoc{
   association PortInst -> (type) PortType [1];
 
   class EffectorInst;
- // association sourcePort EffectorInst -> PortInst [1];
+  // association EffectorInst (startCon) -> (sourcePort) PortInst [1];
 }

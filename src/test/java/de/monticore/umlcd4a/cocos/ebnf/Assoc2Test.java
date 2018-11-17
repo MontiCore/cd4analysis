@@ -39,7 +39,8 @@ public class Assoc2Test extends AbstractCoCoTest {
                 .addCoCo(new AssociationNameUnique())
                 .addCoCo(new AssociationNoConflictWithCardinalities())
                 .addCoCo(new AssociationNoConflictWithDerivedCardinalities())
-                .addCoCo(new AssociationNavigationHasCardinality());
+                .addCoCo(new AssociationNavigationHasCardinality())
+                .addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode());
     }
 
     @Test
@@ -114,14 +115,14 @@ public class Assoc2Test extends AbstractCoCoTest {
         String modelName = "C4A26.cd";
         String errorCode = "0xC4A26";
 
-//        testModelNoErrors(MODEL_PATH_VALID + modelName);
-//        testModelNoErrors(MODEL_PATH_VALID + "C4A26_2.cd"); // border-case
+        testModelNoErrors(MODEL_PATH_VALID + modelName);
+        testModelNoErrors(MODEL_PATH_VALID + "C4A26_2.cd"); // border-case
 
         Collection<Finding> expectedErrors = Arrays.asList(
                 Finding.error(errorCode + " Association namespace clash `B::foo1` of associations `association foo1 B -> C  [1]  ;` and `association foo1 B -> A  [1]  ;`."),
                 Finding.error(errorCode + " Association namespace clash `B::foo1` of associations `association foo1 B -> A  [1]  ;` and `association foo1 B -> C  [1]  ;`.")
         );
-//        testModelForErrors(MODEL_PATH_INVALID + "C4A26_2.cd", expectedErrors);
+        testModelForErrors(MODEL_PATH_INVALID + "C4A26_2.cd", expectedErrors);
 
         Log.getFindings().clear();
 
@@ -130,5 +131,19 @@ public class Assoc2Test extends AbstractCoCoTest {
                 Finding.error(errorCode + " Association namespace clash `B::foo` of associations `association foo C -> B  [1]  ;` and `association foo A -> B  [1]  ;`.")
         );
         testModelForErrors(MODEL_PATH_INVALID + "C4A26_3.cd", expectedErrors);
+    }
+
+    @Test
+    public void testC4A39() {
+        String modelName = "C4A39.cd";
+        String errorCode = "0xC4A39";
+
+        testModelNoErrors(MODEL_PATH_VALID + modelName);
+
+        Collection<Finding> expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " Role namespace clash `B1::foo` of associations `association A1 (foo) -> (bar) B1  [1]  ;` and `association A2 (foo) -> (bar2) B1  [1]  ;`."),
+                Finding.error(errorCode + " Role namespace clash `B1::foo` of associations `association A2 (foo) -> (bar2) B1  [1]  ;` and `association A1 (foo) -> (bar) B1  [1]  ;`.")
+        );
+        testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
     }
 }

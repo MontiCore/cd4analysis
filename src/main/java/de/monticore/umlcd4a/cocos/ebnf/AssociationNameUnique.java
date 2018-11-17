@@ -51,16 +51,8 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
     if (!error.isPresent()) {
       error = check(a.getRightToLeftSymbol(), a.getName());
     }
-    /*if (error.isPresent()) {
-      Log.error(
-              String.format("0xC4A26 Association name `%s` of association %s is already defined in `%s`.",
-                      a.getName(), a, error.get().getAstNode().isPresent() ? error.get().getAstNode().get() : error.get()),
-              a.get_SourcePositionStart());
-    }*/
-
   }
 
-  // true for error
   private Optional<CDAssociationSymbol> check(Optional<CDAssociationSymbol> assSymbol, String name) {
     if (!assSymbol.isPresent()) {
       return Optional.empty();
@@ -94,21 +86,4 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
 
     return error;
   }
-
-     /*
-      try {
-        a.getEnclosingScope().resolve(a.getName(), CDAssociationSymbol.KIND);
-      }
-      catch (ResolvedSeveralEntriesException e) {
-        // TODO currently there exist two symbols for bidirectional
-        // associations, see #1627
-        boolean isValid = (a.isBidirectional() || a.isUnspecified()) && e.getSymbols().size() == 2;
-        if (!isValid) {
-          Log.error(
-              String.format("0xC4A26 Association %s is defined multiple times.", a.getName()),
-              a.get_SourcePositionStart());
-        }
-      }
-    }
-  }*/
 }
