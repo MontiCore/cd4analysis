@@ -25,15 +25,15 @@ classdiagram TypeAssoc{
   class Matrix extends Tensor;
   class Vector extends Matrix;
   class Number extends Vector {
-    double value;
+    double value; // Ch03_PortTypeSystem
     boolean isPlusInf;
     boolean isMinusInf;
   }
   class NaturalNumber extends Number;
   association Tensor -> (elements) Number [*] <<ordered>>;
-  association rows Tensor -> NaturalNumber [1];
-  association cols Tensor -> NaturalNumber [1];
-  association depth Tensor -> NaturalNumber [1];
+  association Tensor (tensorOfRows) -> (rows) NaturalNumber [1];
+  association Tensor (tensorOfCols) -> (cols) NaturalNumber [1];
+  association Tensor (tensorOfDepth) -> (depth) NaturalNumber [1];
   association Tensor -> Quantity [1];
   association Number -> Unit [1];
 
@@ -176,8 +176,8 @@ classdiagram TypeAssoc{
   association PortInstantiation -> (subIndices) Range [0..1];
 
   class Connector;
-  association sourcePort Connector -> PortInstantiation [1];
-  association targetPort Connector -> PortInstantiation [1];
+  association  Connector (startCon) -> (sourcePort) PortInstantiation [1];
+  association  Connector (endCon) -> (targetPort) PortInstantiation [1];
 
   class Range;
   association start Range -> NaturalNumber [1];
@@ -188,8 +188,8 @@ classdiagram TypeAssoc{
   class Effector;
   association sourceIndex Effector -> Range [1];
   association targetIndex Effector -> Range [1];
-  association sourcePort Effector -> Port [1];
-  association targetPort Effector -> Port [1];
+  association Effector (startEff) -> (sourcePort) Port [1];
+  association Effector (endEff) -> (targetPort) Port [1];
 
   // slide Ch04_Component
   association ComponentType -> Port [*] <<ordered>>;
@@ -209,7 +209,7 @@ classdiagram TypeAssoc{
   association [0..1] CnCLibrary <-> Component [*];
 
   // slide Ch04_CnCInstanceStructure
-  class ComponentInst {
+  class ComponentInst implements ElementInst {
     String fullName;
   }
   association ComponentInst -> ComponentInstantiation [1];
@@ -221,12 +221,12 @@ classdiagram TypeAssoc{
   association CnCInstanceStructure -> (main) ComponentInst [1];
   association [1] CnCInstanceStructure <-> CnCModel [*];
 
-  class ConnectorInst;
+  class ConnectorInst implements ElementInst;
   association ConnectorInst (startCon) -> (sourcePort) PortInst [1];
   association ConnectorInst (endCon) -> (targetPort) PortInst [1];
   association ConnectorInst -> Connector [1];
 
-  class PortInst {
+  class PortInst implements ElementInst {
     String fullName;
     PortDirection direction;
   }
@@ -234,6 +234,34 @@ classdiagram TypeAssoc{
   association / PortInst -> Port [1];
   association PortInst -> (type) PortType [1];
 
-  class EffectorInst;
-  // association EffectorInst (startCon) -> (sourcePort) PortInst [1];
+  class EffectorInst implements ElementInst;
+  association EffectorInst (startEff) -> (sourcePort) PortInst [1];
+  association EffectorInst (endEff) -> (targetPort) PortInst [1];
+  association EffectorInst -> Effector [1];
+
+  // slide Ch04_InstanceChain
+  interface ElementInst;
+  class ChainInst;
+  association ChainInst -> ElementInst [*];
+  association start ChainInst -> ElementInst [1];
+  association end ChainInst -> ElementInst [1];
+
+  // slide Ch03_PortTypeSystem
+  class Acceleration implements Quantity;
+  class Angle implements Quantity;
+  class Area implements Quantity;
+  class Dimensionless implements Quantity;
+  class Duration implements Quantity;
+  class Energy implements Quantity;
+  class Force implements Quantity;
+  class Torque implements Quantity;
+  class Velocity implements Quantity;
+
+  association NumericType (numericTypeOfRows) -> (rows) NaturalNumber [1];
+  association NumericType (numericTypeOfCols) -> (cols) NaturalNumber [1];
+  association NumericType (numericTypeOfDepth) -> (depth) NaturalNumber [1];
+
+  class Diagonal implements AlgebraicProperty;
+  class Symmetric implements AlgebraicProperty;
+  class Invertible implements AlgebraicProperty;
 }
