@@ -23,7 +23,15 @@ public class PrintCD2SVGTest {
     public void testImageServer() throws IOException {
         PrintCD2PlantUML.printCD2PlantUMLServer("src/test/resources/de/monticore/umlcd4a/cocos/TypeAssoc.cd",
                 "src/test/resources/de/monticore/umlcd4a/cocos/TypeAssoc.svg", true, true, true, true,
-                true, 80, 50);
+                true, false, 80, 50);
+    }
+
+    // Use this test to generate your layout --> to see impact of other layouting options
+    @Test
+    public void testImageServer2() throws IOException {
+        PrintCD2PlantUML.printCD2PlantUMLServer("src/test/resources/de/monticore/umlcd4a/cocos/TypeAssoc.cd",
+                "src/test/resources/de/monticore/umlcd4a/cocos/TypeAssoc.svg", true, true, true, false,
+                false, true, 100, 100);
     }
 
     // copied from http://plantuml.com/api

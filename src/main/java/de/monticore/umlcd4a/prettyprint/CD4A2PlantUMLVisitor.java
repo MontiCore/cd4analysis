@@ -11,6 +11,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     protected int nodesep = -1;
     protected int ranksep = -1;
     protected Boolean ortho = false;
+    protected Boolean shortenWords = false;
 
     public CD4A2PlantUMLVisitor(IndentPrinter printer) {
         this.showAtt = false;
@@ -32,7 +33,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     }
 
     public CD4A2PlantUMLVisitor(IndentPrinter printer, Boolean showAtt, Boolean showAssoc,
-                                Boolean showRoles, Boolean showCard, boolean ortho, int nodesep, int ranksep) {
+                                Boolean showRoles, Boolean showCard, boolean ortho, boolean shortenWords, int nodesep, int ranksep) {
         this.showAtt = showAtt;
         this.showAssoc = showAssoc;
         this.showRoles = showRoles;
@@ -41,6 +42,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         this.nodesep = nodesep;
         this.ranksep = ranksep;
         this.ortho = ortho;
+        this.shortenWords = shortenWords;
         realThis = this;
     }
 
@@ -73,6 +75,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
             getPrinter().print("\nskinparam nodesep " + nodesep);
         if (ranksep != -1)
             getPrinter().print("\nskinparam ranksep " + ranksep);
+        getPrinter().println();
         node.getCDInterfaceList().forEach(i -> i.accept(getRealThis()));
         node.getCDEnumList().forEach(e -> e.accept(getRealThis()));
         node.getCDClassList().forEach(c -> c.accept(getRealThis()));
@@ -152,7 +155,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         if((showRoles && node.isPresentLeftRole()) || (showCard && node.isPresentLeftCardinality())) {
             getPrinter().print("\"");
             if(showRoles && node.isPresentLeftRole())
-                getPrinter().print("(" + node.getLeftRole() + ") ");
+                getPrinter().print("(" + s(node.getLeftRole()) + ") ");
             if(node.isPresentLeftCardinality())
                 node.getLeftCardinality().accept(getRealThis());
             getPrinter().print("\" ");
@@ -171,7 +174,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         if((showRoles && node.isPresentRightRole()) || (showCard && node.isPresentRightCardinality())) {
             getPrinter().print(" \"");
             if(showRoles && node.isPresentRightRole())
-                getPrinter().print("(" + node.getRightRole() + ") ");
+                getPrinter().print("(" + s(node.getRightRole()) + ") ");
             if(node.isPresentRightCardinality())
                 node.getRightCardinality().accept(getRealThis());
             getPrinter().print("\"");
@@ -180,7 +183,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         getPrinter().print(" " + node.getRightReferenceName().toString());
 
         if(showAssoc && node.isPresentName())
-            getPrinter().print(" : " + node.getName());
+            getPrinter().print(" : " + s(node.getName()));
 
         getPrinter().print("\n");
     }
@@ -200,6 +203,22 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         }
     }
 
+    private String s(String s) {
+        if (!shortenWords)
+            return s;
 
+        String uc = "";
+        for (int i = 1; i < s.length(); i++) {
+            char c = s.charAt(i);
+            uc += Character.isUpperCase(c) ? c : "";
+        }
+        if (!uc.isEmpty())
+            return s.charAt(0) + uc;
+
+        if (s.length() < 7)
+            return s;
+
+        return s.substring(0, 5) + "~";
+    }
 
 }

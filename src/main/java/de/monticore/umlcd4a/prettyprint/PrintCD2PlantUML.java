@@ -26,15 +26,15 @@ public class PrintCD2PlantUML {
     /** this needs internet -> it connects to the plantuml-server to render the image and downloads it */
     public static void printCD2PlantUMLServer(String pathCD, String outputPathSVG, Boolean showAtt, Boolean showAssoc,
                                               Boolean showRoles, Boolean showCard) throws IOException {
-        printCD2PlantUMLServer(pathCD, outputPathSVG, showAtt, showAssoc, showRoles, showCard, false, -1, -1);
+        printCD2PlantUMLServer(pathCD, outputPathSVG, showAtt, showAssoc, showRoles, showCard, false, false,-1, -1);
     }
 
     /** this needs internet -> it connects to the plantuml-server to render the image and downloads it */
     public static void printCD2PlantUMLServer(String pathCD, String outputPathSVG, Boolean showAtt, Boolean showAssoc,
-                                               Boolean showRoles, Boolean showCard, boolean ortho, int nodesep, int ranksep) throws IOException {
+                                               Boolean showRoles, Boolean showCard, boolean ortho, boolean shortenWords, int nodesep, int ranksep) throws IOException {
 
         final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
-        final String plantUMLString = printCD2PlantUML(cdString, showAtt, showAssoc, showRoles, showCard, ortho, nodesep, ranksep);
+        final String plantUMLString = printCD2PlantUML(cdString, showAtt, showAssoc, showRoles, showCard, ortho, shortenWords, nodesep, ranksep);
         Transcoder t = TranscoderUtil.getDefaultTranscoder();
         String url = "http://www.plantuml.com/plantuml/svg/" + t.encode(plantUMLString);
         System.out.println(url);
@@ -48,15 +48,15 @@ public class PrintCD2PlantUML {
     /** this needs GraphViz/JDOT installed on your PC */
     public static void printCD2PlantUMLLocally(String pathCD, String outputPathSVG, Boolean showAtt, Boolean showAssoc,
                                               Boolean showRoles, Boolean showCard) throws IOException {
-        printCD2PlantUMLLocally(pathCD, outputPathSVG, showAtt, showAssoc, showRoles, showCard, false, -1, -1);
+        printCD2PlantUMLLocally(pathCD, outputPathSVG, showAtt, showAssoc, showRoles, showCard, false, false, -1, -1);
     }
 
     /** this needs GraphViz/JDOT installed on your PC */
     public static void printCD2PlantUMLLocally(String pathCD, String outputPathSVG, Boolean showAtt, Boolean showAssoc,
-                                             Boolean showRoles, Boolean showCard, boolean ortho, int nodesep, int ranksep) throws IOException {
+                                             Boolean showRoles, Boolean showCard, boolean ortho, boolean shortenWords, int nodesep, int ranksep) throws IOException {
 
         final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
-        final String plantUMLString = printCD2PlantUML(cdString, showAtt, showAssoc, showRoles, showCard, ortho, nodesep, ranksep);
+        final String plantUMLString = printCD2PlantUML(cdString, showAtt, showAssoc, showRoles, showCard, ortho, shortenWords, nodesep, ranksep);
         final SourceStringReader reader = new SourceStringReader(plantUMLString);
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
         // Write the first image to "os"
@@ -72,9 +72,9 @@ public class PrintCD2PlantUML {
 
 
     protected static String printCD2PlantUML(String cdString, Boolean showAtt, Boolean showAssoc,
-                                             Boolean showRoles, Boolean showCard, boolean ortho, int nodesep, int ranksep) {
+                                             Boolean showRoles, Boolean showCard, boolean ortho, boolean shortenWords, int nodesep, int ranksep) {
         IndentPrinter printer = new IndentPrinter();
-        CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer, showAtt, showAssoc, showRoles, showCard, ortho, nodesep, ranksep);
+        CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer, showAtt, showAssoc, showRoles, showCard, ortho, shortenWords, nodesep, ranksep);
         CD4AnalysisParser parser = new CD4AnalysisParser();
         String plantUMLString = "@startuml\n@enduml";
 
