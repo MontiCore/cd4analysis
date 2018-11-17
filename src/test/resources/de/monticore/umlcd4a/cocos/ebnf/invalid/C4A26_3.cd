@@ -19,14 +19,12 @@
 
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A26_2 {
+classdiagram C4A26_3 {
 
     class A;
     class B;
     class C;
 
- //   association foo A -> B [1];
-    association foo1 B -> C [1];
-    association foo1 B -> A [1]; // error namespace B::foo1 is already used by other association
-
+    association foo A -> B [1]; // in OCL you can navigate against the arrow direction; B::foo is the inverse navigation direction returning B
+    association foo C -> B [1]; // B::foo is the reverse navigation direction returning C --> ERROR: collides with the above association
 }

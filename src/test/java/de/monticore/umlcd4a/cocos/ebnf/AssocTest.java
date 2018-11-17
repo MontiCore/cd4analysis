@@ -5930,26 +5930,6 @@ public class AssocTest extends AbstractCoCoTest {
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-
-  /**
-   * The corresponding CoCo is temporary disabled as the association name does not need to be unique within a model.
-   * Instead, it must be unique within a specific class hierarchy.
-   */
-  @Ignore("some test models are probably wrong, so enabling this CoCo violates many other tests")
-  @Test
-  public void testAssocNameNotUnique() {
-    String modelName = "C4A26.cd";
-    String errorCode = "0xC4A26";
-    
-   testModelNoErrors(MODEL_PATH_VALID + modelName);
-   testModelNoErrors(MODEL_PATH_VALID + "C4A26_2.cd"); // border-case
-    
-    Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Association foo1 is defined multiple times."),
-        Finding.error(errorCode + " Association foo1 is defined multiple times.")
-        );
-    testModelForErrors(MODEL_PATH_INVALID + "C4A26_2.cd", expectedErrors);
-  }
   
   @Test
   public void testAssocTypesExist() {

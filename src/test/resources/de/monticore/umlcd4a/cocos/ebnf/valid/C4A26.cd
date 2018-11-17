@@ -25,6 +25,6 @@ classdiagram C4A26 {
   class C;
   class D;
 
-  association assoc1 A -> B;
-  association assoc2 C <-> D;
+  association assoc2 [1] C <-> D [1];
+  association assoc1 A -> B [1];
 }

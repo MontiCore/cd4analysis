@@ -104,4 +104,31 @@ public class Assoc2Test extends AbstractCoCoTest {
 
         testModelForErrors("src/test/resources/de/monticore/umlcd4a/cocos/others/invalid/" + modelName, expectedErrors);
     }
+
+    /**
+     * The corresponding CoCo is temporary disabled as the association name does not need to be unique within a model.
+     * Instead, it must be unique within a specific class hierarchy.
+     */
+    @Test
+    public void testC4A26() {
+        String modelName = "C4A26.cd";
+        String errorCode = "0xC4A26";
+
+//        testModelNoErrors(MODEL_PATH_VALID + modelName);
+//        testModelNoErrors(MODEL_PATH_VALID + "C4A26_2.cd"); // border-case
+
+        Collection<Finding> expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " Association namespace clash `B::foo1` of associations `association foo1 B -> C  [1]  ;` and `association foo1 B -> A  [1]  ;`."),
+                Finding.error(errorCode + " Association namespace clash `B::foo1` of associations `association foo1 B -> A  [1]  ;` and `association foo1 B -> C  [1]  ;`.")
+        );
+//        testModelForErrors(MODEL_PATH_INVALID + "C4A26_2.cd", expectedErrors);
+
+        Log.getFindings().clear();
+
+        expectedErrors = Arrays.asList(
+                Finding.error(errorCode + " Association namespace clash `B::foo` of associations `association foo A -> B  [1]  ;` and `association foo C -> B  [1]  ;`."),
+                Finding.error(errorCode + " Association namespace clash `B::foo` of associations `association foo C -> B  [1]  ;` and `association foo A -> B  [1]  ;`.")
+        );
+        testModelForErrors(MODEL_PATH_INVALID + "C4A26_3.cd", expectedErrors);
+    }
 }

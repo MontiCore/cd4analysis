@@ -26,8 +26,8 @@ classdiagram C4A26_2 {
   class D;
 
   // creates namespaces: A.assoc1 and B.assoc1
-  association assoc1 A -> B;
+  association assoc1 A -> B [1];
 
   // creates namespaces C.assoc1 and D.assoc1 -> namespaces are disjunct from the first association
-  association assoc1 C <-> D;
+  association assoc1 [1] C <-> D [1];
 }

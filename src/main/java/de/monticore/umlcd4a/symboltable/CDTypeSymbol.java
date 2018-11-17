@@ -47,6 +47,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
+  private final List<CDAssociationSymbol> specAssociations = new ArrayList<>();
   
   private String stringRepresentation = "";
   
@@ -64,6 +65,14 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   
   public List<CDAssociationSymbol> getAssociations() {
     return ImmutableList.copyOf(associations);
+  }
+
+  public void addSpecAssociation(final CDAssociationSymbol assoc) {
+    specAssociations.add(assoc);
+  }
+
+  public List<CDAssociationSymbol> getSpecAssociations() {
+    return ImmutableList.copyOf(specAssociations);
   }
 
   /**

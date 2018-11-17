@@ -602,8 +602,12 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       // TODO PN use association reference instead?
       // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
       sourceType.addAssociation(associationSymbol);
+    } // the else case should be checked by a context conditions
+
+    if (targetType.existsReferencedSymbol()) {
+      targetType.addSpecAssociation(associationSymbol);
     }
-    // the else case should be checked by a context conditions
+
     
     associationSymbol.setAssocName(astAssoc.getNameOpt());
     

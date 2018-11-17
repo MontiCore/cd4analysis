@@ -51,7 +51,7 @@ classdiagram TypeAssoc{
 
   // slide Ch04_Parameter1
   enum ParameterKind {
-    config, generic;
+    CONFIG, GENERIC;
   }
   interface Parameter extends Value {
     String name;
@@ -152,11 +152,88 @@ classdiagram TypeAssoc{
   association ComponentInstantiation -> (values) ParameterBinding [*];
   association ComponentInstantiation -> (type) ComponentType [1];
 
-  interface ComponentType extends Type;
+  interface ComponentType extends Type {
+    String name; // Ch04_Component
+  }
   class ComponentInterface implements ComponentType;
   class Component implements ComponentType;
-  association Component -> (r_implements) ComponentInstantiation [*];
+  association Component -> (implements) ComponentInstantiation [*];
 
   // slide Ch04_PortConnector
+  enum PortDirection {
+    IN , OUT;
+  }
+  class Port {
+    String name;
+    PortDirection direction;
+  }
+  association Port -> (type) PortType [1];
+  association Port -> (dimension) NaturalNumber [1];
+
+  class PortInstantiation;
+  association PortInstantiation -> Port [1];
+  association PortInstantiation -> (portIndices) Range [1];
+  association PortInstantiation -> (subIndices) Range [0..1];
+
+  class Connector;
+  association sourcePort Connector -> PortInstantiation [1];
+  association targetPort Connector -> PortInstantiation [1];
+
   class Range;
+  association start Range -> NaturalNumber [1];
+  association end Range -> NaturalNumber [1];
+  association step Range -> NaturalNumber [1];
+
+  // slide Ch04_Effector
+  class Effector;
+  association sourceIndex Effector -> Range [1];
+  association targetIndex Effector -> Range [1];
+  association sourcePort Effector -> Port [1];
+  association targetPort Effector -> Port [1];
+
+  // slide Ch04_Component
+  association ComponentType -> Port [*] <<ordered>>;
+  association ComponentType -> Parameter [*] <<ordered>>;
+  association Component -> (subs) ComponentInstantiation [*];
+
+  // slide Ch04_CnCModel
+  class CnCModel;
+  association CnCModel -> (depends) CnCLibrary [*];
+  association CnCModel -> (main) ComponentInstantiation [1];
+  association / CnCModel -> Effector [*];
+  association / CnCModel -> Component [*];
+
+  class CnCLibrary;
+  association / CnCLibrary -> Effector [*];
+  association / CnCLibrary -> Connector [*];
+  association [0..1] CnCLibrary <-> Component [*];
+
+  // slide Ch04_CnCInstanceStructure
+  class ComponentInst {
+    String fullName;
+  }
+  association ComponentInst -> ComponentInstantiation [1];
+  association / ComponentInst -> Component [1];
+  association ComponentInst -> (params) TensorParameterBinding [*];
+  association [0..1] ComponentInst (parent) <-> (subs) ComponentInst [*];
+  association ComponentInst -> (ports) PortInst [*];
+  class CnCInstanceStructure;
+  association CnCInstanceStructure -> (main) ComponentInst [1];
+  association [1] CnCInstanceStructure <-> CnCModel [*];
+
+  class ConnectorInst;
+  association sourcePort ConnectorInst -> PortInst [1];
+  association targetPort ConnectorInst -> PortInst [1];
+  association ConnectorInst -> Connector [1];
+
+  class PortInst {
+    String fullName;
+    PortDirection direction;
+  }
+  association PortInst -> PortInstantiation [1];
+  association / PortInst -> Port [1];
+  association PortInst -> (type) PortType [1];
+
+  class EffectorInst;
+ // association sourcePort EffectorInst -> PortInst [1];
 }
