@@ -29,8 +29,8 @@ public class Assoc2Test extends AbstractCoCoTest {
     }
 
     @Test
-    public void testRoleNameUniqueReadOnly() {
-        testModelNoErrors("src/test/resources/de/monticore/umlcd4a/cocos/TypeAssoc.cd");
+    public void testEmbeddedMontiArc() {
+        testModelNoErrors("src/test/resources/de/monticore/umlcd4a/cocos/EmbeddedMontiArc.cd");
     }
 
     @Override

@@ -1,4 +1,4 @@
-classdiagram TypeAssoc{
+classdiagram EmbeddedMontiArc {
 
   interface PortType extends Type;
   interface PortValue extends Value;
@@ -247,15 +247,52 @@ classdiagram TypeAssoc{
   association end ChainInst -> ElementInst [1];
 
   // slide Ch03_PortTypeSystem
+  // support for units comes with the jscience library
+  // http://jscience.org/api/javax/measure/quantity/Quantity.html
   class Acceleration implements Quantity;
   class Angle implements Quantity;
+  class QuantityOfSubstance implements Quantity;
+  class AngularAcceleration implements Quantity;
+  class AngularVelocity implements Quantity;
   class Area implements Quantity;
+  class CatalyticActivity implements Quantity;
+  class DataQuantity implements Quantity;
+  class DataRate implements Quantity;
   class Dimensionless implements Quantity;
   class Duration implements Quantity;
+  class DynamicViscosity implements Quantity;
+  class ElectricCapacitance implements Quantity;
+  class ElectricCharge implements Quantity;
+  class ElectricConductance implements Quantity;
+  class ElectricCurrent implements Quantity;
+  class ElectricInductance implements Quantity;
+  class ElectricPotential implements Quantity;
+  class ElectricResistance implements Quantity;
   class Energy implements Quantity;
   class Force implements Quantity;
+  class Frequency implements Quantity;
+  class Illuminance implements Quantity;
+  class KinematicViscosity implements Quantity;
+  class Length implements Quantity;
+  class LuminousFlux implements Quantity;
+  class LuminousIntensity implements Quantity;
+  class MagneticFlux implements Quantity;
+  class MagneticFluxDensity implements Quantity;
+  class Mass implements Quantity;
+  class MassFlowRate implements Quantity;
+  class Money implements Quantity;
+  class Power implements Quantity;
+  class Pressure implements Quantity;
+  class RadiationDoseAbsorbed implements Quantity;
+  class RadiationDoseEffective implements Quantity;
+  class RadioactiveActivity implements Quantity;
+  class SolidAngle implements Quantity;
+  class Temperature implements Quantity;
   class Torque implements Quantity;
   class Velocity implements Quantity;
+  class Volume implements Quantity;
+  class VolumetricDensity implements Quantity;
+  class VolumetricFlowRate implements Quantity;
 
   association NumericType (numericTypeOfRows) -> (rows) NaturalNumber [1];
   association NumericType (numericTypeOfCols) -> (cols) NaturalNumber [1];
@@ -264,4 +301,53 @@ classdiagram TypeAssoc{
   class Diagonal implements AlgebraicProperty;
   class Symmetric implements AlgebraicProperty;
   class Invertible implements AlgebraicProperty;
+
+  ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
+  class Class;
+
+  class Object;
+  class Collection {
+    boolean containsAll(Collection c);
+    boolean contains(Collection c);
+    int size();
+    boolean isEmpty();
+    Collection addAll(Collection c);
+  }
+
+  class List extends Collection {
+      boolean nonEmpty();
+      List addAll(List c);
+      Set asSet();
+      List add(Object o);
+  }
+
+  class Set extends Collection {
+      Set addAll(Set c);
+      List asList();
+      Set add(Object o);
+  }
+
+  class Optional {
+    boolean isAbsent();
+    boolean isPresent();
+  }
+
+  class Date;
+  class Time {
+      static Time now();
+      boolean lessThan(Time that);
+  }
+
+  class Integer extends Number;
+  class Double extends Number;
+  class Float extends Number;
+  class Long extends Number;
+  class Character;
+  class String {
+    boolean contains(String s);
+    String replaceAll(String s1, String s2);
+    String replace(String s1, String s2);
+    boolean endsWith(String s);
+    int length();
+  }
 }
