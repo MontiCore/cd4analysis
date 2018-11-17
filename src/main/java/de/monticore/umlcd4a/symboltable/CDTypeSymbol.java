@@ -23,12 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -84,6 +79,13 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return this.getAssociations().stream()
             .filter(a -> a.getName().equals(name))
             .findFirst();
+  }
+
+  public boolean isSameOrSuperType(CDTypeSymbol type) {
+    if (this.getFullName().equals(type.getFullName())) {
+      return true;
+    }
+    return getSuperTypesTransitive().stream().anyMatch(t -> t.getFullName().equals(type.getFullName()));
   }
 
   public List<CDTypeSymbolReference> getSuperTypesTransitive() {
