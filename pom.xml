@@ -203,7 +203,14 @@
     </build>
 
   <dependencies>
-  
+
+      <!-- CD visualization -->
+      <dependency>
+          <groupId>net.sourceforge.plantuml</groupId>
+          <artifactId>plantuml</artifactId>
+          <version>1.2018.12</version>
+      </dependency>
+
       <!-- EMF dependencies -->
       <dependency>
         <groupId>org.mod4j.org.eclipse.emf</groupId>
