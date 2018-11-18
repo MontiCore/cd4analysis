@@ -247,6 +247,7 @@ classdiagram EmbeddedMontiArc {
   association end ChainInst -> ElementInst [1];
 
   // slide Ch03_PortTypeSystem
+
   // support for units comes with the jscience library
   // http://jscience.org/api/javax/measure/quantity/Quantity.html
   class Acceleration implements Quantity;

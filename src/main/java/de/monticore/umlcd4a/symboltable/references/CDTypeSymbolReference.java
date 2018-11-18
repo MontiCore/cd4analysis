@@ -229,7 +229,12 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReferenc
   public void addSpecAssociation(final CDAssociationSymbol assoc) {
     getReferencedSymbol().addSpecAssociation(assoc);
   }
-  
+
+  @Override
+  public List<CDAssociationSymbol> getSpecAssociations() {
+    return getReferencedSymbol().getSpecAssociations();
+  }
+
   @Override
   public List<CDAssociationSymbol> getAssociations() {
     return getReferencedSymbol().getAssociations();
