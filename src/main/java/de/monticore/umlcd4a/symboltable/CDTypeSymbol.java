@@ -70,6 +70,26 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return ImmutableList.copyOf(specAssociations);
   }
 
+  public List<CDAssociationSymbol> getInheritedSpecAssociations() {
+    final List<CDAssociationSymbol> allNames = new ArrayList<>();
+    for (CDTypeSymbol superType : getSuperTypes()) {
+      allNames.addAll(superType.getAllSpecAssociations());
+    }
+    return ImmutableList.copyOf(allNames);
+  }
+
+  /**
+   * Get all associations including inherited
+   *
+   * @return
+   */
+  public List<CDAssociationSymbol> getAllSpecAssociations() {
+    final List<CDAssociationSymbol> allNames = new ArrayList<>();
+    allNames.addAll(getInheritedSpecAssociations());
+    allNames.addAll(getSpecAssociations());
+    return ImmutableList.copyOf(allNames);
+  }
+
   /**
    * Tries to get an association by name.
    *

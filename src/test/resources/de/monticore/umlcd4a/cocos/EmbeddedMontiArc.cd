@@ -44,7 +44,7 @@ classdiagram EmbeddedMontiArc {
   association max NumericType -> Number [1];
   association res NumericType -> Number [0..1];
   association NumericType -> Quantity [1];
-  association NumericType -> AlgebraicProperty [*];
+  association NumericType -> (algebraicProperties) AlgebraicProperty [*];
   class EnumType implements PortType;
   association [1] EnumType <-> EnumItem [*];
   class BooleanType implements PortType;
@@ -53,7 +53,7 @@ classdiagram EmbeddedMontiArc {
   enum ParameterKind {
     CONFIG, GENERIC;
   }
-  interface Parameter extends Value {
+  interface Parameter extends /*Value*/ Type {
     String name;
     ParameterKind kind;
   }
@@ -172,6 +172,7 @@ classdiagram EmbeddedMontiArc {
 
   class PortInstantiation;
   association PortInstantiation -> Port [1];
+  association PortInstantiation -> (sub) ComponentInstantiation [0..1];
   association PortInstantiation -> (portIndices) Range [1];
   association PortInstantiation -> (subIndices) Range [0..1];
 
@@ -192,16 +193,17 @@ classdiagram EmbeddedMontiArc {
   association Effector (endEff) -> (targetPort) Port [1];
 
   // slide Ch04_Component
-  association ComponentType -> Port [*] <<ordered>>;
-  association ComponentType -> Parameter [*] <<ordered>>;
+  association ComponentType -> (ports) Port [*] <<ordered>>;
+  association ComponentType -> (parameters) Parameter [*] <<ordered>>;
   association Component -> (subs) ComponentInstantiation [*];
 
   // slide Ch04_CnCModel
   class CnCModel;
   association CnCModel -> (depends) CnCLibrary [*];
   association CnCModel -> (main) ComponentInstantiation [1];
-  association / CnCModel -> Effector [*];
-  association / CnCModel -> Component [*];
+  association / CnCModel -> (effectors) Effector [*];
+  association / CnCModel -> (connectors) Connector [*];
+  association / CnCModel -> (components) Component [*];
 
   class CnCLibrary;
   association / CnCLibrary -> Effector [*];
@@ -245,6 +247,14 @@ classdiagram EmbeddedMontiArc {
   association ChainInst -> ElementInst [*];
   association start ChainInst -> ElementInst [1];
   association end ChainInst -> ElementInst [1];
+
+  association / PortInst (invInfluencee) -> (influencee) PortInst [*];
+  association / PortInst (invInfluencer) -> (influencer) PortInst [*];
+  association / PortInst (invSender) -> (sender) PortInst [0..1];
+  association / PortInst (invReceiver) -> (receiver) PortInst [*];
+
+  association / ComponentInst (invSender) -> (sender) ComponentInst [*];
+  association / ComponentInst (invReceiver) -> (receiver) ComponentInst [*];
 
   // slide Ch03_PortTypeSystem
 
@@ -329,6 +339,7 @@ classdiagram EmbeddedMontiArc {
   }
 
   class Optional {
+    Set asSet(); // Optional.empty => {} and Optional.of(X) => { X }
     boolean isAbsent();
     boolean isPresent();
   }
@@ -350,5 +361,9 @@ classdiagram EmbeddedMontiArc {
     String replace(String s1, String s2);
     boolean endsWith(String s);
     int length();
+  }
+
+  class Math {
+    static double abs(double v);
   }
 }
