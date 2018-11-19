@@ -331,6 +331,27 @@ classdiagram EmbeddedMontiArc {
   association Component -> (innerComponents) Component [*];
   association / Component -> (innerElements) ComponentElement [*];
 
+
+//////////////////////////////////////////////////////////////////////////
+// EXTENSION VIA TAGGING (uses merging of class diagrams)
+/////////////////////////////////////////////////////////////////////////
+
+  // Ch06_Traceability
+  class Traceable extends Boolean;
+  association Component -> Traceable [1];
+  association ComponentInst -> Traceable [1];
+
+  // Ch06_MaxPower
+  class MaxPower extends Number <<Quantity = "Power">>;
+  association Component -> MaxPower [*];
+  association ComponentInst -> MaxPower [*];
+
+
+
+
+
+
+
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
 

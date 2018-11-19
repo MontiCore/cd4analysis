@@ -60,7 +60,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDClass astimplements ASTCDType = Modifier?  "class" Name
   ( "extends"  superclass:ReferenceType)?
-  ( TImplements interface:(ReferenceType || ",")+ )?
+  ( TImplements interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
   ( "{" 
     ( CDAttribute
     | CDConstructor
@@ -80,7 +80,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes   List of Attributes of this Interface
   */
   CDInterface astimplements ASTCDType = Modifier? "interface" Name
-    ( "extends" interface:(ReferenceType || ",")+ )? ( "{" 
+    ( "extends" interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
+    ( "{"
       ( CDAttribute
       | CDMethod )*
       "}" 

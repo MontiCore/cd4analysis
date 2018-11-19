@@ -4,6 +4,8 @@ import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cocos.AbstractCoCoTest;
 import de.monticore.umlcd4a.cocos.others.AssociationNavigationHasCardinality;
+import de.monticore.umlcd4a.cocos.others.ClassOnlyValidStereotype;
+import de.monticore.umlcd4a.cocos.others.InterfaceOnlyValidStereotype;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
@@ -36,11 +38,13 @@ public class Assoc2Test extends AbstractCoCoTest {
     @Override
     protected CD4AnalysisCoCoChecker getChecker() {
         return new CD4ACoCos().getCheckerForEbnfCoCos()
-                .addCoCo(new AssociationNameUnique())
-                .addCoCo(new AssociationNoConflictWithCardinalities())
-                .addCoCo(new AssociationNoConflictWithDerivedCardinalities())
-                .addCoCo(new AssociationNavigationHasCardinality())
-                .addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode());
+            .addCoCo(new AssociationNameUnique())
+            .addCoCo(new AssociationNoConflictWithCardinalities())
+            .addCoCo(new AssociationNoConflictWithDerivedCardinalities())
+            .addCoCo(new AssociationNavigationHasCardinality())
+            .addCoCo(new AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode())
+            .addCoCo(new ClassOnlyValidStereotype())
+            .addCoCo(new InterfaceOnlyValidStereotype());
     }
 
     @Test

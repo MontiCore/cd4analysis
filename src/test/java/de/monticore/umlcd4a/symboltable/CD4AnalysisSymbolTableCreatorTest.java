@@ -144,9 +144,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(2, personType.getStereotypes().size());
     assertEquals("S1", personType.getStereotype("S1").get().getName());
     assertEquals("S2", personType.getStereotype("S2").get().getName());
-    // TODO PN name and value are not distinguished. Is this ok?
-    assertEquals("S1", personType.getStereotype("S1").get().getValue());
-    assertEquals("S2", personType.getStereotype("S2").get().getValue());
+
+    assertEquals("", personType.getStereotype("S1").get().getValue());
+    assertEquals("", personType.getStereotype("S2").get().getValue());
     // Methods
     assertEquals(2, personType.getMethods().size());
     final CDMethodSymbol setNameMethod = personType.getMethod("setName").orElse(null);
