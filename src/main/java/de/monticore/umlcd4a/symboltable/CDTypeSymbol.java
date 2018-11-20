@@ -137,11 +137,13 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
   
   public List<Stereotype> getStereotypes() {
-    return stereotypes;
+    List<Stereotype> ret = new ArrayList<>(stereotypes);
+    getAllSuperTypes().stream().forEach(t -> ret.addAll(t.getStereotypes()));
+    return ret;
   }
   
   public Optional<Stereotype> getStereotype(String name) {
-    for (Stereotype stereotype : this.stereotypes) {
+    for (Stereotype stereotype : getStereotypes()) {
       if (stereotype.getName().equals(name)) {
         return Optional.of(stereotype);
       }
@@ -150,7 +152,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
   
   public boolean containsStereotype(String name, String value) {
-    for (Stereotype stereotype : this.stereotypes) {
+    for (Stereotype stereotype : getStereotypes()) {
       if (stereotype.compare(name, value)) {
         return true;
       }
