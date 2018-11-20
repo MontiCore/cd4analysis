@@ -178,7 +178,7 @@ classdiagram EmbeddedMontiArc {
   association Port -> (dimension) NaturalNumber [1];
 
   class PortInstantiation;
-  association PortInstantiation -> Port [1];
+  association [*] PortInstantiation (portInstantiations) -> Port [1]; // Ch06_EncryptionTargetPort
   association PortInstantiation -> (sub) ComponentInstantiation [0..1];
   association PortInstantiation -> (portIndices) Range [1];
   association PortInstantiation -> (subIndices) Range [0..1];
@@ -227,7 +227,7 @@ classdiagram EmbeddedMontiArc {
   association [0..1] ComponentInst (parent) <-> (subs) ComponentInst [*];
   association ComponentInst -> (ports) PortInst [*];
   class CnCInstanceStructure;
-  association CnCInstanceStructure -> (main) ComponentInst [1];
+  association CnCInstanceStructure (cis) -> (main) ComponentInst [1];
   association [1] CnCInstanceStructure <-> CnCModel [*];
 
   class ConnectorInst implements ElementInst;
@@ -251,7 +251,7 @@ classdiagram EmbeddedMontiArc {
   // slide Ch04_InstanceChain
   interface ElementInst;
   class ChainInst;
-  association ChainInst -> ElementInst [*];
+  association ChainInst -> (elements) ElementInst [*];
   association start ChainInst -> ElementInst [1];
   association end ChainInst -> ElementInst [1];
 
@@ -342,15 +342,50 @@ classdiagram EmbeddedMontiArc {
   association ComponentInst -> Traceable [1];
 
   // Ch06_MaxPower
-  class MaxPower extends Number <<Quantity = "Power">>;
+  class NumberPower extends Number <<Quantity = "Power">>;
+  class MaxPower extends NumberPower;
   association Component -> MaxPower [*];
   association ComponentInst -> MaxPower [*];
 
+  // Ch06_EncryptionTargetPort
+  class EncryptionCollection;
+  enum EEncryption {
+    AES, RSA, DES, DES3;
+  }
+  association Port -> (encryption) EncryptionCollection [*];
+  association EncryptionCollection -> (elements) EEncryption [*];
 
+  // Ch06_CombinedPowerX
+  class Encryption;
+  association Encryption -> (value) EEncryption [1];
+  association PortInst -> (encryption) Encryption [*];
+  association Encryption -> (decryptPower) NumberPower [1];
+  association Encryption -> (encryptPower) NumberPower [1];
 
+  // Ch06_CombinedPowerWithTable
+  class EncryptPower {
+    Encryption encryption;
+  }
+  association EncryptPower -> (encrypt) NumberPower [1];
+  association EncryptPower -> (decrypt) NumberPower [1];
+  association Component [[encryption]] -> (encryptPower) EncryptPower [*];
 
+  // Ch06_ASIL
+  enum EAsil {
+    QM, ASIL_A, ASIL_B, ASIL_C, ASIL_D;
+  }
+  class Asil;
+  association Asil -> (value) EAsil [1];
+  association Component -> (asil) Asil [*];
 
+  // Ch06_WCET_SingleCore
+  class NumberDuration extends Number <<Quantity = "Duration">>;
+  class Wcet extends NumberDuration;
+  association Component -> (wcet) Wcet [*];
 
+  // Ch06_WCET_MultiCore
+  class Threads extends NaturalNumber;
+  association ComponentInst -> (threads) Threads [*];
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
@@ -362,13 +397,17 @@ classdiagram EmbeddedMontiArc {
     int size();
     boolean isEmpty();
     Collection addAll(Collection c);
+    Collection retainAll(Collection c);
+    Set asSet();
+    Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
+    Collection listPartitions(int length); // see https://github.com/dpaukov/combinatoricslib#7-list-partitions
   }
 
   class List extends Collection {
       boolean nonEmpty();
       List addAll(List c);
-      Set asSet();
       List add(Object o);
+      int indexOf(Object o);
   }
 
   class Set extends Collection {
