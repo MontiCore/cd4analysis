@@ -135,13 +135,11 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
   }
-  
+
   public List<Stereotype> getStereotypes() {
-    List<Stereotype> ret = new ArrayList<>(stereotypes);
-    getAllSuperTypes().stream().forEach(t -> ret.addAll(t.getStereotypes()));
-    return ret;
+    return stereotypes;
   }
-  
+
   public Optional<Stereotype> getStereotype(String name) {
     for (Stereotype stereotype : getStereotypes()) {
       if (stereotype.getName().equals(name)) {
@@ -150,9 +148,41 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     }
     return Optional.empty();
   }
-  
+
   public boolean containsStereotype(String name, String value) {
     for (Stereotype stereotype : getStereotypes()) {
+      if (stereotype.compare(name, value)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected List<Stereotype> addStereoTypes(List<Stereotype> stereotypes, CDTypeSymbol type) {
+    for (Stereotype s : type.getStereotypes()) {
+      if (!stereotypes.stream().anyMatch(x -> x.getName().equals(s.getName()))) {
+        stereotypes.add(s);
+      }
+    }
+    type.getSuperTypes().stream().forEach(t -> addStereoTypes(stereotypes, t));
+    return stereotypes;
+  }
+  
+  public List<Stereotype> getAllStereotypes() {
+   return addStereoTypes(new ArrayList<>(), this);
+  }
+  
+  public Optional<Stereotype> getAllStereotype(String name) {
+    for (Stereotype stereotype : getAllStereotypes()) {
+      if (stereotype.getName().equals(name)) {
+        return Optional.of(stereotype);
+      }
+    }
+    return Optional.empty();
+  }
+  
+  public boolean containsAllStereotype(String name, String value) {
+    for (Stereotype stereotype : getAllStereotypes()) {
       if (stereotype.compare(name, value)) {
         return true;
       }

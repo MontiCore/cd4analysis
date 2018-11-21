@@ -24,7 +24,7 @@ classdiagram EmbeddedMontiArc {
   }
   class Matrix extends Tensor;
   class Vector extends Matrix;
-  class Number extends Vector {
+  class Number extends Vector <<Quantity = "Any">> {
     double value; // Ch03_PortTypeSystem
     boolean isPlusInf;
     boolean isMinusInf;

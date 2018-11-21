@@ -41,7 +41,8 @@ public class ClassOnlyValidStereotype implements CD4AnalysisASTCDClassCoCo {
 
   public static final Set<String> validStereoTypes = new HashSet<>(Arrays.asList("Quantity"));
   public static final Set<String> validQuantities = new HashSet<>(Arrays.asList(
-  "Acceleration", 
+  "Any", // to support any quantity must be explicitly provided
+  "Acceleration",
   "Angle", 
   "QuantityOfSubstance", 
   "AngularAcceleration", 
