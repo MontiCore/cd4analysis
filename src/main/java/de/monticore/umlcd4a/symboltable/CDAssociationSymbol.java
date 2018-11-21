@@ -228,7 +228,7 @@ public class CDAssociationSymbol extends CommonSymbol {
       inverseAssoc.setSourceCardinality(getTargetCardinality());
       inverseAssoc.setSourceRole(getTargetRole());
       inverseAssoc.setTargetCardinality(getSourceCardinality());
-      inverseAssoc.setTargetRole(getTargetRole());
+      inverseAssoc.setTargetRole(getSourceRole());
       inverseAssoc.setAssocName(getAssocName());
       inverseAssoc.setPackageName(getPackageName());
       inverseAssoc.setAccessModifier(getAccessModifier());

@@ -613,11 +613,6 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       sourceType.addAssociation(associationSymbol);
     } // the else case should be checked by a context conditions
 
-    if (targetType.existsReferencedSymbol()) {
-      targetType.addSpecAssociation(associationSymbol);
-    }
-
-    
     associationSymbol.setAssocName(astAssoc.getNameOpt());
     
     addStereotypes(associationSymbol, astAssoc.getStereotypeOpt().orElse(null));
@@ -632,6 +627,10 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     addToScope(associationSymbol);
     associationSymbol.setAstNode(astAssoc);
+
+    if (targetType.existsReferencedSymbol()) {
+      targetType.addSpecAssociation(associationSymbol);
+    }
     
     return associationSymbol;
   }

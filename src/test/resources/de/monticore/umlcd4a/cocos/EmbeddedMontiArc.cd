@@ -188,9 +188,9 @@ classdiagram EmbeddedMontiArc {
   association  Connector (endCon) -> (targetPort) PortInstantiation [1];
 
   class Range;
-  association start Range -> NaturalNumber [1];
-  association end Range -> NaturalNumber [1];
-  association step Range -> NaturalNumber [1];
+  association Range -> (start) NaturalNumber [1];
+  association Range -> (end) NaturalNumber [1];
+  association Range -> (step) NaturalNumber [1];
 
   // slide Ch04_Effector
   class Effector;
@@ -222,7 +222,7 @@ classdiagram EmbeddedMontiArc {
     String fullName;
   }
   association ComponentInst -> ComponentInstantiation [1];
-  association / ComponentInst -> Component [1];
+  association / ComponentInst (componentInsts) -> Component [1];
   association ComponentInst -> (params) TensorParameterBinding [*];
   association [0..1] ComponentInst (parent) <-> (subs) ComponentInst [*];
   association ComponentInst -> (ports) PortInst [*];
@@ -386,6 +386,50 @@ classdiagram EmbeddedMontiArc {
   // Ch06_WCET_MultiCore
   class Threads extends NaturalNumber;
   association ComponentInst -> (threads) Threads [*];
+
+//////////////////////////////////////////////////////////////////////////
+// Syntactic Sugar Diagram (added here in same CD,
+// so that OCL does not need different packages)
+// `Component'` in slide matches to `ComponentSugar` same is for the rest
+/////////////////////////////////////////////////////////////////////////
+
+  // Ch06_ConnectorSugarCD
+
+  // this association is only needed to express the transformations
+  association [1] Component (componentScope) <-> (definedConnectors) Connector [*];
+
+  class ComponentSugar;
+  association ComponentSugar -> (ports) PortSugar [*] <<ordered>>;
+  association [1] ComponentSugar (componentScope) <-> (definedConnectors) ConnectorSugar [*];
+
+  class PortSugar {
+    String name;
+  }
+  association PortSugar -> (direction) PortDirection [0..1];
+  association PortSugar -> (type) PortType [1];
+  association PortSugar -> (dimension) NaturalNumber [0..1];
+
+  class PortInstantiationSugar {
+    boolean indexBased;
+    boolean nameBased;
+  }
+  association PortInstantiationSugar -> (subs) ComponentInstantiationSugar [0..1];
+  association PortInstantiationSugar -> (portIndices) RangeSugar [0..1];
+  association PortInstantiationSugar -> (subIndices) RangeSugar [0..1];
+
+  class ComponentInstantiationSugar;
+  association ComponentInstantiationSugar -> (dimension) NaturalNumber [0..1];
+
+  class ConnectorSugar;
+  association ConnectorSugar -> (sourcePort) PortInstantiationSugar [1];
+  association ConnectorSugar -> (targetPort) PortInstantiationSugar [1];
+
+  class RangeSugar {
+    boolean all;
+  }
+  association RangeSugar -> (start) NaturalNumber [0..1];
+  association RangeSugar -> (end) NaturalNumber [0..1];
+  association RangeSugar -> (step) NaturalNumber [0..1];
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;

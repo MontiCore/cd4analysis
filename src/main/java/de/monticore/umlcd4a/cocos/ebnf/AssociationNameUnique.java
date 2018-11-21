@@ -68,7 +68,7 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   private Optional<CDAssociationSymbol> check(CDTypeSymbol type, String name, CDAssociationSymbol assSymbol) {
     // compare ASTNode and not symbol, because for bidirectional ASTNodes two single directional symbols are created
     List<CDAssociationSymbol> list = new ArrayList<>(type.getAssociations());
-    list.addAll(type.getSpecAssociations());
+    list.addAll(type.getSpecAssociations().stream().map(s -> s.getInverseAssociation()).collect(Collectors.toList()));
     Optional<CDAssociationSymbol> error = list.stream().
             filter(ass -> !ass.getAstNode().equals(assSymbol.getAstNode()) && ass.getDerivedName().equals(name)).findAny();
 
