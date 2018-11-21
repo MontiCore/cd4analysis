@@ -188,9 +188,9 @@ classdiagram EmbeddedMontiArc {
   association  Connector (endCon) -> (targetPort) PortInstantiation [1];
 
   class Range;
-  association Range -> (start) NaturalNumber [1];
-  association Range -> (end) NaturalNumber [1];
-  association Range -> (step) NaturalNumber [1];
+  association start Range -> NaturalNumber [1];
+  association end Range -> NaturalNumber [1];
+  association step Range -> NaturalNumber [1];
 
   // slide Ch04_Effector
   class Effector;
@@ -200,7 +200,7 @@ classdiagram EmbeddedMontiArc {
   association Effector (endEff) -> (targetPort) Port [1];
 
   // slide Ch04_Component
-  association ComponentType -> (ports) Port [*] <<ordered>>;
+  association [1] ComponentType -> (ports) Port [*] <<ordered>>;
   association ComponentType -> (parameters) Parameter [*] <<ordered>>;
   association [0..1] Component (parent) <-> (subs) ComponentInstantiation [*];
 
@@ -398,9 +398,12 @@ classdiagram EmbeddedMontiArc {
   // this association is only needed to express the transformations
   association [1] Component (componentScope) <-> (definedConnectors) Connector [*];
 
-  class ComponentSugar;
-  association ComponentSugar -> (ports) PortSugar [*] <<ordered>>;
+  interface ComponentTypeSugar;
+  association [1] ComponentTypeSugar (componentType) -> (ports) PortSugar [*] <<ordered>>;
+
+  class ComponentSugar implements ComponentTypeSugar;
   association [1] ComponentSugar (componentScope) <-> (definedConnectors) ConnectorSugar [*];
+  association [0..1] ComponentSugar (parent) <-> (subs) ComponentInstantiationSugar [*];
 
   class PortSugar {
     String name;
@@ -413,9 +416,13 @@ classdiagram EmbeddedMontiArc {
     boolean indexBased;
     boolean nameBased;
   }
-  association PortInstantiationSugar -> (subs) ComponentInstantiationSugar [0..1];
+  association PortInstantiationSugar -> (port) PortSugar [1];
+  association PortInstantiationSugar -> (sub) ComponentInstantiationSugar [0..1];
   association PortInstantiationSugar -> (portIndices) RangeSugar [0..1];
   association PortInstantiationSugar -> (subIndices) RangeSugar [0..1];
+  // one PortInstantiationSugar can have zero to two RangeSugars (cf. portIndices, subIndices),
+  // but one RangeSugar belongs to one PortInstantiationSugar
+  association RangeSugar -> (portInstantiation) PortInstantiationSugar [1];
 
   class ComponentInstantiationSugar;
   association ComponentInstantiationSugar -> (dimension) NaturalNumber [0..1];
@@ -430,6 +437,58 @@ classdiagram EmbeddedMontiArc {
   association RangeSugar -> (start) NaturalNumber [0..1];
   association RangeSugar -> (end) NaturalNumber [0..1];
   association RangeSugar -> (step) NaturalNumber [0..1];
+
+//////////////////////////////////////////////////////////////////////////
+// classes for EmbeddedMontiView language, they are all merged in this
+// class diagram, so that OCL does not need different packages)
+// classes of EmbeddedMontiView are not complete -> only the once
+// differ of EmbeddedMontiArc are listed below
+/////////////////////////////////////////////////////////////////////////
+
+  // slide Ch07_AbstractComponentType
+  class ADimension;
+  association ADimension -> (min) ANaturalNumber [1];
+  association ADimension -> (max) ANaturalNumber [1];
+
+  interface ANaturalNumber;
+  interface AParameter;
+
+  class APort {
+    PortDirection direction;
+  }
+  association APort -> (name) String [0..1];
+  association APort -> (dimension) ADimension [0..1];
+  association APort -> (type) APortType [0..1];
+
+  interface AComponentType {
+    boolean portsComplete;
+  }
+  association AComponentType -> (name) String [0..1];
+  association AComponentType -> (parameters) AParameter [*];
+
+  interface APortType;
+
+  // Ch07_AbstractComponentInstantiation
+  class AComponentInstantiation {
+    boolean direct;
+  }
+  association AComponentInstantiation -> (name) String [0..1];
+  association AComponentInstantiation -> (dimension) ADimension [0..1];
+  association AComponentInstantiation -> (value) AParameterBinding [*];
+  association AComponentInstantiation -> (type) AComponentType [0..1];
+
+  interface AParameterBinding extends ParameterBinding;
+  association AParameterBinding -> AParameter [1];
+  class AComponentInterface implements AComponentType;
+
+  class AComponent implements AComponentType {
+    boolean instComplete;
+    boolean atomic;
+  }
+  association / AComponent -> (name) String [0..1];
+  association AComponent -> (implements) AComponentInstantiation [*];
+  association AComponent (parent) -> (subs) AComponentInstantiation [*];
+
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
