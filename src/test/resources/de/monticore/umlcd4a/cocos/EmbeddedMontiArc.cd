@@ -450,8 +450,9 @@ classdiagram EmbeddedMontiArc {
   association ADimension -> (min) ANaturalNumber [1];
   association ADimension -> (max) ANaturalNumber [1];
 
-  interface ANaturalNumber;
-  interface AParameter;
+  interface AParameter {
+    boolean underspec;
+  }
 
   class APort {
     PortDirection direction;
@@ -460,16 +461,16 @@ classdiagram EmbeddedMontiArc {
   association APort -> (dimension) ADimension [0..1];
   association APort -> (type) APortType [0..1];
 
-  interface AComponentType {
+  interface AComponentType extends ATypeOrAInstantiation { // Ch07_AbstractConnector
     boolean portsComplete;
   }
   association AComponentType -> (name) String [0..1];
   association AComponentType -> (parameters) AParameter [*];
 
-  interface APortType;
+  interface APortType extends PortType; // Ch07_AbstractNumericType
 
   // Ch07_AbstractComponentInstantiation
-  class AComponentInstantiation {
+  class AComponentInstantiation implements ATypeOrAInstantiation { // Ch07_AbstractConnector
     boolean direct;
   }
   association AComponentInstantiation -> (name) String [0..1];
@@ -489,6 +490,42 @@ classdiagram EmbeddedMontiArc {
   association AComponent -> (implements) AComponentInstantiation [*];
   association AComponent (parent) -> (subs) AComponentInstantiation [*];
 
+  // Ch07_AbstractNumericType
+  class ANumericType implements APortType;
+  association ANumericType -> (quantity) Quantity [0..1];
+  association ANumericType -> (rows) ANaturalNumber [0..1];
+  association ANumericType -> (cols) ANaturalNumber [0..1];
+  association ANumericType -> (depth) ANaturalNumber [0..1];
+  class ANaturalNumber implements AParameter;
+
+  // Ch07_AbstractConnector
+  class ARange extends Range {
+    boolean all;
+    boolean notSpecified;
+  }
+
+  class AConnector;
+  association AConnector -> (sourcePort) APortInstantiation [1];
+  association AConnector -> (targetPort) APortInstantiation [1];
+
+  class APortInstantiation;
+  association APortInstantiation -> (portIndices) ARange [0..1];
+  association APortInstantiation -> (cmpNavIndices) ARange [*] <<ordered>>;
+  association APortInstantiation -> (port) APort [0..1];
+  association APortInstantiation -> (cmpNav) ATypeOrAInstantiation [*] <<ordered>>;
+  interface ATypeOrAInstantiation;
+
+  // slide Ch07_AbstractEffector
+  class AEffector;
+  association AEffector -> (sourcePort) APortInstantiation [1];
+  association AEffector -> (targetPort) APortInstantiation [1];
+
+  // Ch07_CnCView
+  class CnCView;
+  association CnCView -> AComponentType [*];
+  association CnCView -> AComponentInstantiation [*];
+  association CnCView -> AConnector [*];
+  association CnCView -> AEffector [*];
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
