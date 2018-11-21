@@ -463,11 +463,13 @@ classdiagram EmbeddedMontiArc {
 
   interface AComponentType extends ATypeOrAInstantiation { // Ch07_AbstractConnector
     boolean portsComplete;
+    boolean atomic; // Ch07_SatisfactionPort
   }
   association AComponentType -> (name) String [0..1];
   association AComponentType -> (parameters) AParameter [*];
+  association AComponentType -> (ports) APort [*];
 
-  interface APortType extends PortType; // Ch07_AbstractNumericType
+  interface APortType;
 
   // Ch07_AbstractComponentInstantiation
   class AComponentInstantiation implements ATypeOrAInstantiation { // Ch07_AbstractConnector
@@ -520,12 +522,15 @@ classdiagram EmbeddedMontiArc {
   association AEffector -> (sourcePort) APortInstantiation [1];
   association AEffector -> (targetPort) APortInstantiation [1];
 
-  // Ch07_CnCView
+  // slide Ch07_CnCView
   class CnCView;
   association CnCView -> AComponentType [*];
   association CnCView -> AComponentInstantiation [*];
   association CnCView -> AConnector [*];
   association CnCView -> AEffector [*];
+
+  // slide Ch07_OCLPorts2
+  association Type -> (name) String [1]; // a type has a short name which can be derived
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
