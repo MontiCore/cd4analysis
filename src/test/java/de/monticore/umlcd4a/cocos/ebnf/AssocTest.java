@@ -5930,7 +5930,8 @@ public class AssocTest extends AbstractCoCoTest {
     
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
-  
+
+  @Ignore
   @Test
   public void testAssocTypesExist() {
     String modelName = "C4A36.cd";

@@ -1,9 +1,14 @@
 classdiagram EmbeddedMontiArc {
 
-  interface PortType extends Type;
-  interface PortValue extends Value;
+/////////////////////////////////////////////////////////////////////////////////////////////
+//// below specific for EmbeddedMontiArc only
+////////////////////////////////////////////////////////////////////////////////////////////
 
   // slide Ch04_PortTypeSystemOverview
+  interface PortType extends Type {
+    boolean isCompatibleTo(PortType pt);
+  }
+  interface PortValue extends Value;
   class Unit {
     double prefix;
   }
@@ -205,12 +210,14 @@ classdiagram EmbeddedMontiArc {
   association [0..1] Component (parent) <-> (subs) ComponentInstantiation [*];
 
   // slide Ch04_CnCModel
-  class CnCModel;
+  class CnCModel {
+    boolean satisfies(CnCView cncv); // Ch07_MergingOfOCLConstraints2
+  }
   association CnCModel -> (depends) CnCLibrary [*];
   association CnCModel -> (main) ComponentInstantiation [1];
   association / CnCModel -> (effectors) Effector [*];
   association / CnCModel -> (connectors) Connector [*];
-  association / CnCModel -> (components) Component [*];
+  association / CnCModel -> (componentTypes) ComponentType [*];
 
   class CnCLibrary;
   association / CnCLibrary -> Effector [*];
@@ -252,8 +259,8 @@ classdiagram EmbeddedMontiArc {
   interface ElementInst;
   class ChainInst;
   association ChainInst -> (elements) ElementInst [*];
-  association start ChainInst -> ElementInst [1];
-  association end ChainInst -> ElementInst [1];
+  read-only association ChainInst (start) -> (start) ElementInst [1];
+  read-only association ChainInst (end) -> (end) ElementInst [1];
 
   association / PortInst (invInfluencee) -> (influencee) PortInst [*];
   association / PortInst (invInfluencer) -> (influencer) PortInst [*];
@@ -447,12 +454,20 @@ classdiagram EmbeddedMontiArc {
 
   // slide Ch07_AbstractComponentType
   class ADimension;
-  association ADimension -> (min) ANaturalNumber [1];
-  association ADimension -> (max) ANaturalNumber [1];
+  association ADimension -> (min) NaturalNumber [1];
+  association ADimension -> (max) NaturalNumber [1];
 
-  interface AParameter {
-    boolean underspec;
+  interface AType extends AValue { // Ch07_AbstractComponentInstantiation
+     boolean isCompatibleTo(Type t);
+     boolean isCompatibleTo(AType at);
   }
+
+  interface AParameter extends AType {
+    boolean underspec;
+    String name;
+    ParameterKind kind;
+  }
+  association / AParameter -> (type) AType [0..1];
 
   class APort {
     PortDirection direction;
@@ -469,7 +484,7 @@ classdiagram EmbeddedMontiArc {
   association AComponentType -> (parameters) AParameter [*];
   association AComponentType -> (ports) APort [*];
 
-  interface APortType;
+  interface APortType extends AType;
 
   // Ch07_AbstractComponentInstantiation
   class AComponentInstantiation implements ATypeOrAInstantiation { // Ch07_AbstractConnector
@@ -480,8 +495,14 @@ classdiagram EmbeddedMontiArc {
   association AComponentInstantiation -> (value) AParameterBinding [*];
   association AComponentInstantiation -> (type) AComponentType [0..1];
 
-  interface AParameterBinding extends ParameterBinding;
-  association AParameterBinding -> AParameter [1];
+  interface AParameterBinding;
+  association [*] AParameterBinding (bindings) -> (parameter) AParameter [1];
+  association AParameterBinding -> (range) ARange [1];
+  association AParameterBinding -> (value) AValue [1];
+
+  interface AValue;
+  read-only association AValue -> (type) AType [0..1];
+
   class AComponentInterface implements AComponentType;
 
   class AComponent implements AComponentType {
@@ -495,10 +516,12 @@ classdiagram EmbeddedMontiArc {
   // Ch07_AbstractNumericType
   class ANumericType implements APortType;
   association ANumericType -> (quantity) Quantity [0..1];
-  association ANumericType -> (rows) ANaturalNumber [0..1];
-  association ANumericType -> (cols) ANaturalNumber [0..1];
-  association ANumericType -> (depth) ANaturalNumber [0..1];
-  class ANaturalNumber implements AParameter;
+  association ANumericType -> (rows) NaturalNumber [0..1];
+  association ANumericType -> (cols) NaturalNumber [0..1];
+  association ANumericType -> (depth) NaturalNumber [0..1];
+
+  interface APortValue extends AValue;
+  read-only association APortValue -> (type) APortType [1];
 
   // Ch07_AbstractConnector
   class ARange extends Range {
@@ -524,13 +547,26 @@ classdiagram EmbeddedMontiArc {
 
   // slide Ch07_CnCView
   class CnCView;
-  association CnCView -> AComponentType [*];
-  association CnCView -> AComponentInstantiation [*];
-  association CnCView -> AConnector [*];
-  association CnCView -> AEffector [*];
+  association CnCView -> (aComponentTypes) AComponentType [*];
+  association CnCView -> (aComponentInstantiations) AComponentInstantiation [*];
+  association CnCView -> (aConnectors) AConnector [*];
+  association CnCView -> (aEffectors) AEffector [*];
 
   // slide Ch07_OCLPorts2
   association Type -> (name) String [1]; // a type has a short name which can be derived
+
+  // slide Ch07_SatisfactionOCLParameters
+  association AParameter -> (dimension) ADimension [0..1];
+
+  // Ch07_AbstractConnectorsCDExample1
+  class ConnectorChainInst extends ChainInst;
+  association / ConnectorChainInst -> (start) ConnectorInst [1];
+  association / ConnectorChainInst -> (end) ConnectorInst [1];
+  association ConnectorChainInst -> (connectors) ConnectorInst [*] <<ordered>>;
+  association / [*] ConnectorChainInst -> (startPort) PortInst [1];
+  association / [*] ConnectorChainInst -> (endPort) PortInst [1];
+  association / ComponentInstantiation -> (subs) ComponentInstantiation [*];
+  association / Component -> (allSubs) ComponentInstantiation [*];
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;

@@ -70,15 +70,19 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
    */
   private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
     CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
+
+    String targetType = assocSym.getTargetType().getName();
     String automaticallyIntroduced = role.isPresent()
             ? ""
             : AUTOMATICALLY_INTRODUCED;
 
-    String roleName = assocSym.getDerivedName();
-    String targetType = assocSym.getTargetType().getName();
+    // association sourceType (sourceRoleName) -> (targetRoleName) targetType;
+    // what needs to be unique is: targetType.sourceRoleName to navigate to sourceType from targetType and
+    //                             sourceType.targetRoleName to navigate to targetType from sourceType
+    String roleName = assocSym.getDerivedName(); // is always target role name
 
-    List<CDAssociationSymbol> conflictingAssoc2 = sourceType.getAllAssociations().stream()
-            .filter(a -> a != assocSym && (a.getSourceRole().isPresent() || !a.getAssocName().isPresent()))
+    List<CDAssociationSymbol> conflictingAssoc2 = assocSym.getSourceType().getAllAssociations().stream()
+            .filter(a -> a != assocSym && (a.getTargetRole().isPresent() || !a.getAssocName().isPresent()))
             .filter(a -> a.getDerivedName().equals(roleName))
             .collect(Collectors.toList());
 
