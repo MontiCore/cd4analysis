@@ -6,7 +6,7 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>cd4analysis</artifactId>
-  <version>1.3.14-SNAPSHOT</version>
+  <version>1.3.16-SNAPSHOT</version>
   <properties>
 
     <!-- .. Libraries ..................................................... -->
@@ -82,6 +82,15 @@
     </extensions>
 
     <plugins>
+        <!-- there is a bug in spring, https://stackoverflow.com/questions/50661648/spring-boot-fails-to-run-maven-surefire-plugin-classnotfoundexception-org-apache -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+                <useSystemClassLoader>false</useSystemClassLoader>
+            </configuration>
+        </plugin>
+        
       <!-- MontiCore Configuration -->
 
       <!-- MontiCore Generation -->
@@ -203,7 +212,14 @@
     </build>
 
   <dependencies>
-  
+
+      <!-- CD visualization -->
+      <dependency>
+          <groupId>net.sourceforge.plantuml</groupId>
+          <artifactId>plantuml</artifactId>
+          <version>1.2018.12</version>
+      </dependency>
+
       <!-- EMF dependencies -->
       <dependency>
         <groupId>org.mod4j.org.eclipse.emf</groupId>

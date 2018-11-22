@@ -23,12 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -47,6 +42,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
+  private final List<CDAssociationSymbol> specAssociations = new ArrayList<>();
   
   private String stringRepresentation = "";
   
@@ -66,6 +62,34 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return ImmutableList.copyOf(associations);
   }
 
+  public void addSpecAssociation(final CDAssociationSymbol assoc) {
+    specAssociations.add(assoc);
+  }
+
+  public List<CDAssociationSymbol> getSpecAssociations() {
+    return ImmutableList.copyOf(specAssociations);
+  }
+
+  public List<CDAssociationSymbol> getInheritedSpecAssociations() {
+    final List<CDAssociationSymbol> allNames = new ArrayList<>();
+    for (CDTypeSymbol superType : getSuperTypes()) {
+      allNames.addAll(superType.getAllSpecAssociations());
+    }
+    return ImmutableList.copyOf(allNames);
+  }
+
+  /**
+   * Get all associations including inherited
+   *
+   * @return
+   */
+  public List<CDAssociationSymbol> getAllSpecAssociations() {
+    final List<CDAssociationSymbol> allNames = new ArrayList<>();
+    allNames.addAll(getInheritedSpecAssociations());
+    allNames.addAll(getSpecAssociations());
+    return ImmutableList.copyOf(allNames);
+  }
+
   /**
    * Tries to get an association by name.
    *
@@ -77,19 +101,79 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
             .findFirst();
   }
 
+  public boolean isSameOrSuperType(CDTypeSymbol type) {
+    if (this.getFullName().equals(type.getFullName())) {
+      return true;
+    }
+    return getSuperTypesTransitive().stream().anyMatch(t -> t.getFullName().equals(type.getFullName()));
+  }
+
+  public List<CDTypeSymbolReference> getSuperTypesTransitive() {
+    return getSuperTypesTransitive(new CDTypeSymbolReference(this.getName(), this.getEnclosingScope()));
+  }
+
+  protected List<CDTypeSymbolReference> getSuperTypesTransitive(CDTypeSymbolReference startType) {
+    List<CDTypeSymbolReference> superTypes = new ArrayList();
+    if (startType.getSuperClass().isPresent()) {
+      CDTypeSymbolReference s = startType.getSuperClass().get();
+      superTypes.add(s);
+      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(s.getName(),
+              s.getEnclosingScope())));
+    }
+
+    for (CDTypeSymbolReference i : startType.getInterfaces()) {
+      superTypes.add(i);
+      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(i.getName(),
+              i.getEnclosingScope())));
+    }
+    return superTypes;
+  }
+
   public List<CDFieldSymbol> getEnumConstants() {
     final List<CDFieldSymbol> enums = getFields().stream()
         .filter(CDFieldSymbol::isEnumConstant)
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
   }
-  
+
   public List<Stereotype> getStereotypes() {
     return stereotypes;
   }
-  
+
   public Optional<Stereotype> getStereotype(String name) {
-    for (Stereotype stereotype : this.stereotypes) {
+    for (Stereotype stereotype : getStereotypes()) {
+      if (stereotype.getName().equals(name)) {
+        return Optional.of(stereotype);
+      }
+    }
+    return Optional.empty();
+  }
+
+  public boolean containsStereotype(String name, String value) {
+    for (Stereotype stereotype : getStereotypes()) {
+      if (stereotype.compare(name, value)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  protected List<Stereotype> addStereoTypes(List<Stereotype> stereotypes, CDTypeSymbol type) {
+    for (Stereotype s : type.getStereotypes()) {
+      if (!stereotypes.stream().anyMatch(x -> x.getName().equals(s.getName()))) {
+        stereotypes.add(s);
+      }
+    }
+    type.getSuperTypes().stream().forEach(t -> addStereoTypes(stereotypes, t));
+    return stereotypes;
+  }
+  
+  public List<Stereotype> getAllStereotypes() {
+   return addStereoTypes(new ArrayList<>(), this);
+  }
+  
+  public Optional<Stereotype> getAllStereotype(String name) {
+    for (Stereotype stereotype : getAllStereotypes()) {
       if (stereotype.getName().equals(name)) {
         return Optional.of(stereotype);
       }
@@ -97,8 +181,8 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
     return Optional.empty();
   }
   
-  public boolean containsStereotype(String name, String value) {
-    for (Stereotype stereotype : this.stereotypes) {
+  public boolean containsAllStereotype(String name, String value) {
+    for (Stereotype stereotype : getAllStereotypes()) {
       if (stereotype.compare(name, value)) {
         return true;
       }

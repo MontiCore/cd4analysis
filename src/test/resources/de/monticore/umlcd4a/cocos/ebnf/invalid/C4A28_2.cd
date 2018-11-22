@@ -17,25 +17,27 @@
  * ******************************************************************************
  */
 
+// should produce an error, because the associations are not read-only
+
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+classdiagram C4A28_2 {
+  interface X1;
+  interface Y1;
 
-  // auto role: a
-  association A <- B;
+  class X2 implements X1;
+  class Y2 implements Y1;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
+  // public X1 Y1::getFoo() { ... }
+  // public void Y1::setFoo(X1 x1) { ... }
+  association X1 (foo) <- Y1;
 
-  // auto role: c
-  association C <- D;
+  // public X2 Y2::getFoo() { ... }
+  // public void Y2::setFoo(X2 x2) { ... }
+  association X2 (foo) <- Y2;
 
-  association D <-> (a) C;
+  // x1 = new X1();
+  // y2.setFoo(x1); // is allowed, b/c Y2 extends Y1
+  // X2 x2 = y2.getFoo(); // Problem, b/c it returns x1 (cf. line above) and x1 is not x2 (only x2 is x1)
+  // -> the classdiagram is invalid, b/c the association `association X1 (foo) <- Y1;` is not read-only
 }

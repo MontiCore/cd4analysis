@@ -1,0 +1,628 @@
+classdiagram EmbeddedMontiArc {
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+//// below specific for EmbeddedMontiArc only
+////////////////////////////////////////////////////////////////////////////////////////////
+
+  // slide Ch04_PortTypeSystemOverview
+  interface PortType extends Type {
+    boolean isCompatibleTo(PortType pt);
+  }
+  interface PortValue extends Value;
+  class Unit {
+    double prefix;
+  }
+  association [1] Unit (baseUnit) <-> Quantity [1];
+
+  interface Value;
+  interface Type extends Value; // cf. Ch04_Parameter1
+  interface Quantity extends Type;
+
+  read-only association Value -> (type) Type [0..1];
+  read-only association PortValue -> (type) PortType [1];
+
+  // slide Ch04_PortValue
+  class Tensor implements PortValue;
+  class EnumItem implements PortValue;
+  class Boolean implements PortValue {
+    boolean value;
+  }
+  class Matrix extends Tensor;
+  class Vector extends Matrix;
+  class Number extends Vector <<Quantity = "Any">> {
+    double value; // Ch03_PortTypeSystem
+    boolean isPlusInf;
+    boolean isMinusInf;
+  }
+  class NaturalNumber extends Number;
+  association Tensor -> (elements) Number [*] <<ordered>>;
+  association Tensor (tensorOfRows) -> (rows) NaturalNumber [1];
+  association Tensor (tensorOfCols) -> (cols) NaturalNumber [1];
+  association Tensor (tensorOfDepth) -> (depth) NaturalNumber [1];
+  association Tensor -> Quantity [1];
+  association Number -> Unit [1];
+
+  // slide Ch04_PortTypeSystem
+  interface AlgebraicProperty;
+  class NumericType implements PortType;
+  association min NumericType -> Number [1];
+  association max NumericType -> Number [1];
+  association res NumericType -> Number [0..1];
+  association NumericType -> Quantity [1];
+  association NumericType -> (algebraicProperties) AlgebraicProperty [*];
+  class EnumType implements PortType;
+  association [1] EnumType <-> EnumItem [*];
+  class BooleanType implements PortType;
+
+  // slide Ch04_Parameter1
+  enum ParameterKind {
+    CONFIG, GENERIC;
+  }
+  interface Parameter extends Type, ComponentElement { // Ch06_B1
+    String name;
+    ParameterKind kind;
+  }
+  association Parameter -> (dimension) NaturalNumber [1];
+  read-only association Parameter -> (defaultValue) Value [0..1];
+  read-only association / Parameter -> (type) Type [0..1];
+
+  interface ParameterBinding;
+  association ParameterBinding -> Range [1];
+  read-only association ParameterBinding -> Parameter [1];
+  read-only association ParameterBinding -> Value [1];
+
+  // Ch04_Struct (needs to be created)
+
+  class Struct implements PortValue;
+  class StructItem {
+    String name;
+  }
+  association Struct [[name]] -> (item) StructItem [1];
+  association StructItem -> (value) PortValue [1];
+  class StructTypeItem {
+    String name;
+  }
+  association StructTypeItem -> (type) PortType [1];
+  class StructType implements PortType {
+    String name;
+  }
+  association StructType [[name]] -> (item) StructTypeItem [1];
+  association Struct -> (type) StructType [1];
+  association StructItem -> (type) StructTypeItem [1];
+
+  // Ch04_Parameter2
+
+  class GeneralTypeParameter implements Parameter;
+  association GeneralTypeParameter -> (defaultValue) Type [0..1];
+  class GeneralParameterBinding implements ParameterBinding;
+  association GeneralParameterBinding -> (value) Type [1];
+  association GeneralParameterBinding -> (parameter) GeneralTypeParameter [1];
+
+  class QuantityParameter implements Parameter;
+  association QuantityParameter -> (defaultValue) Quantity [0..1];
+  class QuantityParameterBinding implements ParameterBinding;
+  association QuantityParameterBinding -> (value) Quantity [1];
+  association QuantityParameterBinding -> (parameter) QuantityParameter [1];
+
+  class NumericTypeParameter extends NumericType implements Parameter;
+  association NumericTypeParameter -> (type) Quantity [1];
+  association NumericTypeParameter -> (defaultValue) NumericType [0..1];
+  class NumericTypeParameterBinding implements ParameterBinding;
+  association NumericTypeParameterBinding -> (value) NumericType [1];
+  association NumericTypeParameterBinding -> (parameter) NumericTypeParameter [1];
+
+  class TensorParameter extends Tensor implements Parameter;
+  association TensorParameter -> (type) NumericType [1];
+  association TensorParameter -> (defaultValue) Tensor [0..1];
+  class TensorParameterBinding implements ParameterBinding;
+  association TensorParameterBinding -> (value) Tensor [1];
+  association TensorParameterBinding -> (parameter) TensorParameter [1];
+
+  class NaturalNumberParameter extends NaturalNumber implements Parameter;
+  association NaturalNumberParameter -> (type) NumericType [1];
+  association NaturalNumberParameter -> (defaultValue) NaturalNumber [0..1];
+  class NaturalNumberParameterBinding implements ParameterBinding;
+  association NaturalNumberParameterBinding -> (value) NaturalNumber [1];
+  association NaturalNumberParameterBinding -> (parameter) NaturalNumberParameter [1];
+
+  // slide Ch04_Parameter3
+
+  class EnumTypeParameter extends EnumItem implements Parameter;
+  association EnumTypeParameter -> (type) EnumType [1];
+  association EnumTypeParameter -> (defaultValue) EnumItem [0..1];
+  class EnumTypeParameterBinding implements ParameterBinding;
+  association EnumTypeParameterBinding -> (value) EnumItem [1];
+  association EnumTypeParameterBinding -> (parameter) EnumTypeParameter [1];
+
+  class BooleanTypeParameter extends Boolean implements Parameter;
+  association BooleanTypeParameter -> (type) BooleanType [1];
+  association BooleanTypeParameter -> (defaultValue) Boolean [0..1];
+  class BooleanTypeParameterBinding implements ParameterBinding;
+  association BooleanTypeParameterBinding -> (value) Boolean [1];
+  association BooleanTypeParameterBinding -> (parameter) BooleanTypeParameter [1];
+
+  class StructTypeParameter extends Struct implements Parameter;
+  association / StructTypeParameter -> (type) StructType [1];
+  association StructTypeParameter -> (defaultValue) Struct [0..1];
+  class StructTypeParameterBinding implements ParameterBinding;
+  association StructTypeParameterBinding -> (value) Struct [1];
+  association StructTypeParameterBinding -> (parameter) StructTypeParameter [1];
+
+  class ComponentParameter extends ComponentInstantiation implements Parameter;
+  association / ComponentParameter -> (type) /* ComponentInterface */ ComponentType [1];
+  association ComponentParameter -> (defaultValue) ComponentInstantiation [0..1];
+  class ComponentParameterBinding implements ParameterBinding;
+  association ComponentParameterBinding -> (value) ComponentInstantiation [1];
+  association ComponentParameterBinding -> (parameter) ComponentParameter [1];
+
+  // slide Ch04_ComponentInstantiation
+
+  class ComponentInstantiation implements Value, ComponentElement { // Ch06_B1
+    String name;
+  }
+  association ComponentInstantiation -> (dimension) NaturalNumber [1];
+  association ComponentInstantiation -> (values) ParameterBinding [*];
+  association ComponentInstantiation -> (type) ComponentType [1];
+
+  interface ComponentType extends Type {
+    String name; // Ch04_Component
+  }
+  class ComponentInterface implements ComponentType;
+  class Component implements ComponentType, ComponentElement; // Ch06_B1
+  association Component -> (implements) ComponentInstantiation [*];
+
+  // slide Ch04_PortConnector
+  enum PortDirection {
+    IN , OUT;
+  }
+  class Port implements ComponentElement { // Ch06_B1
+    String name;
+    PortDirection direction;
+  }
+  association Port -> (type) PortType [1];
+  association Port -> (dimension) NaturalNumber [1];
+
+  class PortInstantiation;
+  association [*] PortInstantiation (portInstantiations) -> Port [1]; // Ch06_EncryptionTargetPort
+  association PortInstantiation -> (sub) ComponentInstantiation [0..1];
+  association PortInstantiation -> (portIndices) Range [1];
+  association PortInstantiation -> (subIndices) Range [0..1];
+
+  class Connector;
+  association  Connector (startCon) -> (sourcePort) PortInstantiation [1];
+  association  Connector (endCon) -> (targetPort) PortInstantiation [1];
+
+  class Range;
+  association start Range -> NaturalNumber [1];
+  association end Range -> NaturalNumber [1];
+  association step Range -> NaturalNumber [1];
+
+  // slide Ch04_Effector
+  class Effector;
+  association sourceIndex Effector -> Range [1];
+  association targetIndex Effector -> Range [1];
+  association Effector (startEff) -> (sourcePort) Port [1];
+  association Effector (endEff) -> (targetPort) Port [1];
+
+  // slide Ch04_Component
+  association [1] ComponentType -> (ports) Port [*] <<ordered>>;
+  association ComponentType -> (parameters) Parameter [*] <<ordered>>;
+  association [0..1] Component (parent) <-> (subs) ComponentInstantiation [*];
+
+  // slide Ch04_CnCModel
+  class CnCModel {
+    boolean satisfies(CnCView cncv); // Ch07_MergingOfOCLConstraints2
+  }
+  association CnCModel -> (depends) CnCLibrary [*];
+  association CnCModel -> (main) ComponentInstantiation [1];
+  association / CnCModel -> (effectors) Effector [*];
+  association / CnCModel -> (connectors) Connector [*];
+  association / CnCModel -> (componentTypes) ComponentType [*];
+
+  class CnCLibrary;
+  association / CnCLibrary -> Effector [*];
+  association / CnCLibrary -> Connector [*];
+  association [0..1] CnCLibrary <-> Component [*];
+
+  // slide Ch04_CnCInstanceStructure
+  class ComponentInst implements ElementInst {
+    String fullName;
+  }
+  association ComponentInst -> ComponentInstantiation [1];
+  association / ComponentInst (componentInsts) -> Component [1];
+  association ComponentInst -> (params) TensorParameterBinding [*];
+  association [0..1] ComponentInst (parent) <-> (subs) ComponentInst [*];
+  association ComponentInst -> (ports) PortInst [*];
+  class CnCInstanceStructure;
+  association CnCInstanceStructure (cis) -> (main) ComponentInst [1];
+  association [1] CnCInstanceStructure <-> CnCModel [*];
+
+  class ConnectorInst implements ElementInst;
+  association ConnectorInst (startCon) -> (sourcePort) PortInst [1];
+  association ConnectorInst (endCon) -> (targetPort) PortInst [1];
+  association ConnectorInst -> Connector [1];
+
+  class PortInst implements ElementInst {
+    String fullName;
+    PortDirection direction;
+  }
+  association PortInst -> PortInstantiation [1];
+  association / PortInst -> Port [1];
+  association PortInst -> (type) PortType [1];
+
+  class EffectorInst implements ElementInst;
+  association EffectorInst (startEff) -> (sourcePort) PortInst [1];
+  association EffectorInst (endEff) -> (targetPort) PortInst [1];
+  association EffectorInst -> Effector [1];
+
+  // slide Ch04_InstanceChain
+  interface ElementInst;
+  class ChainInst;
+  association ChainInst -> (elements) ElementInst [*];
+  read-only association ChainInst (start) -> (start) ElementInst [1];
+  read-only association ChainInst (end) -> (end) ElementInst [1];
+
+  association / PortInst (invInfluencee) -> (influencee) PortInst [*];
+  association / PortInst (invInfluencer) -> (influencer) PortInst [*];
+  association / PortInst (invSender) -> (sender) PortInst [0..1];
+  association / PortInst (invReceiver) -> (receiver) PortInst [*];
+
+  association / ComponentInst (invSender) -> (sender) ComponentInst [*];
+  association / ComponentInst (invReceiver) -> (receiver) ComponentInst [*];
+
+  // slide Ch03_PortTypeSystem
+
+  // support for units comes with the jscience library
+  // http://jscience.org/api/javax/measure/quantity/Quantity.html
+  class Acceleration implements Quantity;
+  class Angle implements Quantity;
+  class QuantityOfSubstance implements Quantity;
+  class AngularAcceleration implements Quantity;
+  class AngularVelocity implements Quantity;
+  class Area implements Quantity;
+  class CatalyticActivity implements Quantity;
+  class DataQuantity implements Quantity;
+  class DataRate implements Quantity;
+  class Dimensionless implements Quantity;
+  class Duration implements Quantity;
+  class DynamicViscosity implements Quantity;
+  class ElectricCapacitance implements Quantity;
+  class ElectricCharge implements Quantity;
+  class ElectricConductance implements Quantity;
+  class ElectricCurrent implements Quantity;
+  class ElectricInductance implements Quantity;
+  class ElectricPotential implements Quantity;
+  class ElectricResistance implements Quantity;
+  class Energy implements Quantity;
+  class Force implements Quantity;
+  class Frequency implements Quantity;
+  class Illuminance implements Quantity;
+  class KinematicViscosity implements Quantity;
+  class Length implements Quantity;
+  class LuminousFlux implements Quantity;
+  class LuminousIntensity implements Quantity;
+  class MagneticFlux implements Quantity;
+  class MagneticFluxDensity implements Quantity;
+  class Mass implements Quantity;
+  class MassFlowRate implements Quantity;
+  class Money implements Quantity;
+  class Power implements Quantity;
+  class Pressure implements Quantity;
+  class RadiationDoseAbsorbed implements Quantity;
+  class RadiationDoseEffective implements Quantity;
+  class RadioactiveActivity implements Quantity;
+  class SolidAngle implements Quantity;
+  class Temperature implements Quantity;
+  class Torque implements Quantity;
+  class Velocity implements Quantity;
+  class Volume implements Quantity;
+  class VolumetricDensity implements Quantity;
+  class VolumetricFlowRate implements Quantity;
+
+  association NumericType (numericTypeOfRows) -> (rows) NaturalNumber [1];
+  association NumericType (numericTypeOfCols) -> (cols) NaturalNumber [1];
+  association NumericType (numericTypeOfDepth) -> (depth) NaturalNumber [1];
+
+  class Diagonal implements AlgebraicProperty;
+  class Symmetric implements AlgebraicProperty;
+  class Invertible implements AlgebraicProperty;
+
+  // slide Ch06_R13
+  association / Component -> (subDefs) Component [*];
+
+  // slide Ch06_B1
+  interface ComponentElement {
+    String name;
+  }
+
+  association Component -> (innerComponents) Component [*];
+  association / Component -> (innerElements) ComponentElement [*];
+
+
+//////////////////////////////////////////////////////////////////////////
+// EXTENSION VIA TAGGING (uses merging of class diagrams)
+/////////////////////////////////////////////////////////////////////////
+
+  // Ch06_Traceability
+  class Traceable extends Boolean;
+  association Component -> Traceable [1];
+  association ComponentInst -> Traceable [1];
+
+  // Ch06_MaxPower
+  class NumberPower extends Number <<Quantity = "Power">>;
+  class MaxPower extends NumberPower;
+  association Component -> MaxPower [*];
+  association ComponentInst -> MaxPower [*];
+
+  // Ch06_EncryptionTargetPort
+  class EncryptionCollection;
+  enum EEncryption {
+    AES, RSA, DES, DES3;
+  }
+  association Port -> (encryption) EncryptionCollection [*];
+  association EncryptionCollection -> (elements) EEncryption [*];
+
+  // Ch06_CombinedPowerX
+  class Encryption;
+  association Encryption -> (value) EEncryption [1];
+  association PortInst -> (encryption) Encryption [*];
+  association Encryption -> (decryptPower) NumberPower [1];
+  association Encryption -> (encryptPower) NumberPower [1];
+
+  // Ch06_CombinedPowerWithTable
+  class EncryptPower {
+    Encryption encryption;
+  }
+  association EncryptPower -> (encrypt) NumberPower [1];
+  association EncryptPower -> (decrypt) NumberPower [1];
+  association Component [[encryption]] -> (encryptPower) EncryptPower [*];
+
+  // Ch06_ASIL
+  enum EAsil {
+    QM, ASIL_A, ASIL_B, ASIL_C, ASIL_D;
+  }
+  class Asil;
+  association Asil -> (value) EAsil [1];
+  association Component -> (asil) Asil [*];
+
+  // Ch06_WCET_SingleCore
+  class NumberDuration extends Number <<Quantity = "Duration">>;
+  class Wcet extends NumberDuration;
+  association Component -> (wcet) Wcet [*];
+
+  // Ch06_WCET_MultiCore
+  class Threads extends NaturalNumber;
+  association ComponentInst -> (threads) Threads [*];
+
+//////////////////////////////////////////////////////////////////////////
+// Syntactic Sugar Diagram (added here in same CD,
+// so that OCL does not need different packages)
+// `Component'` in slide matches to `ComponentSugar` same is for the rest
+/////////////////////////////////////////////////////////////////////////
+
+  // Ch06_ConnectorSugarCD
+
+  // this association is only needed to express the transformations
+  association [1] Component (componentScope) <-> (definedConnectors) Connector [*];
+
+  interface ComponentTypeSugar;
+  association [1] ComponentTypeSugar (componentType) -> (ports) PortSugar [*] <<ordered>>;
+
+  class ComponentSugar implements ComponentTypeSugar;
+  association [1] ComponentSugar (componentScope) <-> (definedConnectors) ConnectorSugar [*];
+  association [0..1] ComponentSugar (parent) <-> (subs) ComponentInstantiationSugar [*];
+
+  class PortSugar {
+    String name;
+  }
+  association PortSugar -> (direction) PortDirection [0..1];
+  association PortSugar -> (type) PortType [1];
+  association PortSugar -> (dimension) NaturalNumber [0..1];
+
+  class PortInstantiationSugar {
+    boolean indexBased;
+    boolean nameBased;
+  }
+  association PortInstantiationSugar -> (port) PortSugar [1];
+  association PortInstantiationSugar -> (sub) ComponentInstantiationSugar [0..1];
+  association PortInstantiationSugar -> (portIndices) RangeSugar [0..1];
+  association PortInstantiationSugar -> (subIndices) RangeSugar [0..1];
+  // one PortInstantiationSugar can have zero to two RangeSugars (cf. portIndices, subIndices),
+  // but one RangeSugar belongs to one PortInstantiationSugar
+  association RangeSugar -> (portInstantiation) PortInstantiationSugar [1];
+
+  class ComponentInstantiationSugar;
+  association ComponentInstantiationSugar -> (dimension) NaturalNumber [0..1];
+
+  class ConnectorSugar;
+  association ConnectorSugar -> (sourcePort) PortInstantiationSugar [1];
+  association ConnectorSugar -> (targetPort) PortInstantiationSugar [1];
+
+  class RangeSugar {
+    boolean all;
+  }
+  association RangeSugar -> (start) NaturalNumber [0..1];
+  association RangeSugar -> (end) NaturalNumber [0..1];
+  association RangeSugar -> (step) NaturalNumber [0..1];
+
+//////////////////////////////////////////////////////////////////////////
+// classes for EmbeddedMontiView language, they are all merged in this
+// class diagram, so that OCL does not need different packages)
+// classes of EmbeddedMontiView are not complete -> only the once
+// differ of EmbeddedMontiArc are listed below
+/////////////////////////////////////////////////////////////////////////
+
+  // slide Ch07_AbstractComponentType
+  class ADimension;
+  association ADimension -> (min) NaturalNumber [1];
+  association ADimension -> (max) NaturalNumber [1];
+
+  interface AType extends AValue { // Ch07_AbstractComponentInstantiation
+     boolean isCompatibleTo(Type t);
+     boolean isCompatibleTo(AType at);
+  }
+
+  interface AParameter extends AType {
+    boolean underspec;
+    String name;
+    ParameterKind kind;
+  }
+  association / AParameter -> (type) AType [0..1];
+
+  class APort {
+    PortDirection direction;
+  }
+  association APort -> (name) String [0..1];
+  association APort -> (dimension) ADimension [0..1];
+  association APort -> (type) APortType [0..1];
+
+  interface AComponentType extends ATypeOrAInstantiation { // Ch07_AbstractConnector
+    boolean portsComplete;
+    boolean atomic; // Ch07_SatisfactionPort
+  }
+  association AComponentType -> (name) String [0..1];
+  association AComponentType -> (parameters) AParameter [*];
+  association AComponentType -> (ports) APort [*];
+
+  interface APortType extends AType;
+
+  // Ch07_AbstractComponentInstantiation
+  class AComponentInstantiation implements ATypeOrAInstantiation { // Ch07_AbstractConnector
+    boolean direct;
+  }
+  association AComponentInstantiation -> (name) String [0..1];
+  association AComponentInstantiation -> (dimension) ADimension [0..1];
+  association AComponentInstantiation -> (value) AParameterBinding [*];
+  association AComponentInstantiation -> (type) AComponentType [0..1];
+
+  interface AParameterBinding;
+  association [*] AParameterBinding (bindings) -> (parameter) AParameter [1];
+  association AParameterBinding -> (range) ARange [1];
+  association AParameterBinding -> (value) AValue [1];
+
+  interface AValue;
+  read-only association AValue -> (type) AType [0..1];
+
+  class AComponentInterface implements AComponentType;
+
+  class AComponent implements AComponentType {
+    boolean instComplete;
+    boolean atomic;
+  }
+  association / AComponent -> (name) String [0..1];
+  association AComponent -> (implements) AComponentInstantiation [*];
+  association AComponent (parent) -> (subs) AComponentInstantiation [*];
+
+  // Ch07_AbstractNumericType
+  class ANumericType implements APortType;
+  association ANumericType -> (quantity) Quantity [0..1];
+  association ANumericType -> (rows) NaturalNumber [0..1];
+  association ANumericType -> (cols) NaturalNumber [0..1];
+  association ANumericType -> (depth) NaturalNumber [0..1];
+
+  interface APortValue extends AValue;
+  read-only association APortValue -> (type) APortType [1];
+
+  // Ch07_AbstractConnector
+  class ARange extends Range {
+    boolean all;
+    boolean notSpecified;
+  }
+
+  class AConnector;
+  association AConnector -> (sourcePort) APortInstantiation [1];
+  association AConnector -> (targetPort) APortInstantiation [1];
+
+  class APortInstantiation;
+  association APortInstantiation -> (portIndices) ARange [0..1];
+  association APortInstantiation -> (cmpNavIndices) ARange [*] <<ordered>>;
+  association APortInstantiation -> (port) APort [0..1];
+  association APortInstantiation -> (cmpNav) ATypeOrAInstantiation [*] <<ordered>>;
+  interface ATypeOrAInstantiation;
+
+  // slide Ch07_AbstractEffector
+  class AEffector;
+  association AEffector -> (sourcePort) APortInstantiation [1];
+  association AEffector -> (targetPort) APortInstantiation [1];
+
+  // slide Ch07_CnCView
+  class CnCView;
+  association CnCView -> (aComponentTypes) AComponentType [*];
+  association CnCView -> (aComponentInstantiations) AComponentInstantiation [*];
+  association CnCView -> (aConnectors) AConnector [*];
+  association CnCView -> (aEffectors) AEffector [*];
+
+  // slide Ch07_OCLPorts2
+  association Type -> (name) String [1]; // a type has a short name which can be derived
+
+  // slide Ch07_SatisfactionOCLParameters
+  association AParameter -> (dimension) ADimension [0..1];
+
+  // Ch07_AbstractConnectorsCDExample1
+  class ConnectorChainInst extends ChainInst;
+  association / ConnectorChainInst -> (start) ConnectorInst [1];
+  association / ConnectorChainInst -> (end) ConnectorInst [1];
+  association ConnectorChainInst -> (connectors) ConnectorInst [*] <<ordered>>;
+  association / [*] ConnectorChainInst -> (startPort) PortInst [1];
+  association / [*] ConnectorChainInst -> (endPort) PortInst [1];
+  association / ComponentInstantiation -> (subs) ComponentInstantiation [*];
+  association / Component -> (allSubs) ComponentInstantiation [*];
+
+  ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
+  class Class;
+
+  class Object;
+  class Collection {
+    boolean containsAll(Collection c);
+    boolean contains(Collection c);
+    int size();
+    boolean isEmpty();
+    Collection addAll(Collection c);
+    Collection retainAll(Collection c);
+    Set asSet();
+    Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
+    Collection listPartitions(int length); // see https://github.com/dpaukov/combinatoricslib#7-list-partitions
+  }
+
+  class List extends Collection {
+      boolean nonEmpty();
+      List addAll(List c);
+      List add(Object o);
+      int indexOf(Object o);
+  }
+
+  class Set extends Collection {
+      Set addAll(Set c);
+      List asList();
+      Set add(Object o);
+  }
+
+  class Optional {
+    Set asSet(); // Optional.empty => {} and Optional.of(X) => { X }
+    boolean isAbsent();
+    boolean isPresent();
+  }
+
+  class Date;
+  class Time {
+      static Time now();
+      boolean lessThan(Time that);
+  }
+
+  class Integer extends Number;
+  class Double extends Number;
+  class Float extends Number;
+  class Long extends Number;
+  class Character;
+  class String {
+    boolean contains(String s);
+    String replaceAll(String s1, String s2);
+    String replace(String s1, String s2);
+    boolean endsWith(String s);
+    int length();
+  }
+
+  class Math {
+    static double abs(double v);
+  }
+}

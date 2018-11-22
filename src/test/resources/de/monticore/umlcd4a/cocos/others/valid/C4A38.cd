@@ -17,25 +17,16 @@
  * ******************************************************************************
  */
 
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+package de.monticore.umlcd4a.cocos.others.valid;
 
-classdiagram C4A28 {
+classdiagram C4A38 {
   class A;
   class B;
-  class C ;
-  class D extends B;
-  class E extends B;
-
-  // auto role: a
-  association A <- B;
-
-  association A (c) <-> B;
+  class C;
+  interface D;
  
-  // auto role: a
-  association E -> A;
-
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
+  association A -- B;
+  association [*] C <- A;
+  association A -> D [0..1];
+  association [*] B <-> D [1];
 }

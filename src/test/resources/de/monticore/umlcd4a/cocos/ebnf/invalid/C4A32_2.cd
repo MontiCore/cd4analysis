@@ -19,23 +19,15 @@
 
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+classdiagram C4A32_2 {
+  interface A1;
+  interface B1;
+  read-only association A1 -> (foo) B1 [0..1];
 
-  // auto role: a
-  association A <- B;
+  class A2 implements A1;
+  class B2 implements B1;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
-
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
+  class A3 extends A2;
+  class B3 extends B2;
+  association A3 -> (foo) B3 [1..*]; // error, because 1..* is subset of 0..1
 }

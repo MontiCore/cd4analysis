@@ -17,25 +17,23 @@
  * ******************************************************************************
  */
 
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+// should avoid the following error:
+// ERROR ROOT - C4A28_2.cd:<38,2>: 0xC4A28 The role name foo of class X2 for association (X2 (foo) <- Y2) conflicts with the role name foo for association (X1 (foo) <- Y1).
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+package de.monticore.umlcd4a.cocos.ebnf.valid;
 
-  // auto role: a
-  association A <- B;
+classdiagram C4A28_2 {
+  interface X1;
+  interface Y1;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
+  class X2 implements X1;
+  class Y2 implements Y1;
 
-  // auto role: c
-  association C <- D;
+  // public X1 Y1::getFoo() { ... }
+  // no set method
+  read-only association X1 (foo) <- Y1;
 
-  association D <-> (a) C;
+  // public X2 Y2::getFoo() { ... }
+  // it overwrites the Y1::getFoo() method, but it is still compatible to Y1::getFoo() method, because X2 implements X1
+  read-only association X2 (foo) <- Y2;
 }

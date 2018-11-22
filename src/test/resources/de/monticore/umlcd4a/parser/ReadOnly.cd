@@ -17,25 +17,23 @@
  * ******************************************************************************
  */
 
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+package de.monticore.umlcd4a.parser;
 
-classdiagram C4A28 {
+classdiagram ReadOnly {
+
   class A;
+
   class B;
-  class C ;
-  class D extends B;
-  class E extends B;
 
-  // auto role: a
-  association A <- B;
+  class C;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
+  class D;
 
-  // auto role: c
-  association C <- D;
+  read-only association A -> B;
 
-  association D <-> (a) C;
+  read-only association [1] B -> C [*];
+
+  read-only association foo [1] A -> C [*];
+
+  association C -> D; // to test that it is not read-only
 }

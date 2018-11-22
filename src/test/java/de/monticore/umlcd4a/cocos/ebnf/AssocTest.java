@@ -135,12 +135,16 @@ public class AssocTest extends AbstractCoCoTest {
   public void testAssocRoleConflictRole() {
     String modelName = "C4A28.cd";
     String errorCode = "0xC4A28";
+
+   testModelNoErrors(MODEL_PATH_VALID + "C4A28_2.cd"); // read-only test
     
     Collection<Finding> expectedErrors = Arrays
         .asList(
-            Finding
+                // 0xCA33 gives a more concrete error message than 0xA28
+                Finding.error("0xC4A33 Association `association E -> A ;` has same target role name and source type extends source type of association `association A <- B ;`. So the \"inherited\" association `association E -> A ;` should be a derived association."),
+            /* Finding
                 .error(errorCode
-                    + " The automatically introduced role name a of class A for association (E -> A) conflicts with the automatically introduced role name a for association (A <- B)."),
+                    + " The automatically introduced role name a of class A for association (E -> A) conflicts with the automatically introduced role name a for association (A <- B)."), */
             Finding
                 .error(errorCode
                     + " The automatically introduced role name c of class C for association (C <- D) conflicts with the role name c for association (A (c) <-> B)."),
@@ -148,7 +152,17 @@ public class AssocTest extends AbstractCoCoTest {
                 .error(errorCode
                     + " The role name a of class C for association (D <-> (a) C) conflicts with the automatically introduced role name a for association (A <- B).")
         );
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+   testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+
+   Log.getFindings().clear();
+
+    expectedErrors = Arrays
+            .asList(
+                    Finding
+                            .error(errorCode
+                                    + " The role name foo of class X2 for association (X2 (foo) <- Y2) conflicts with the role name foo for association (X1 (foo) <- Y1).")
+            );
+    testModelForErrors(MODEL_PATH_INVALID + "C4A28_2.cd", expectedErrors); // overwriting inherited associations but without read-only
   }
 
   @Test
@@ -5917,25 +5931,7 @@ public class AssocTest extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
   }
 
-  /**
-   * The corresponding CoCo is temporary disabled as the association name does not need to be unique within a model.
-   * Instead, it must be unique within a specific class hierarchy.
-   */
   @Ignore
-  @Test
-  public void testAssocNameNotUnique() {
-    String modelName = "C4A26.cd";
-    String errorCode = "0xC4A26";
-    
-    testModelNoErrors(MODEL_PATH_VALID + modelName);
-    
-    Collection<Finding> expectedErrors = Arrays.asList(
-        Finding.error(errorCode + " Association assoc1 is defined multiple times."),
-        Finding.error(errorCode + " Association assoc1 is defined multiple times.")
-        );
-    testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
-  }
-  
   @Test
   public void testAssocTypesExist() {
     String modelName = "C4A36.cd";
@@ -5948,5 +5944,12 @@ public class AssocTest extends AbstractCoCoTest {
         Finding.error(errorCode + " Type C of association (C -- A) is unknown.")
         );
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
+  }
+
+  @Test
+  public void testAssocNameUniqueReadOnly() {
+    String modelName = "C4A25_2.cd";
+
+    testModelNoErrors(MODEL_PATH_VALID + modelName);
   }
 }

@@ -17,25 +17,17 @@
  * ******************************************************************************
  */
 
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+package de.monticore.umlcd4a.cocos.ebnf.valid;
 
-classdiagram C4A28 {
+classdiagram C4A26_2 {
   class A;
   class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+  class C;
+  class D;
 
-  // auto role: a
-  association A <- B;
+  // creates namespaces: A.assoc1 and B.assoc1
+  association assoc1 A -> B [1];
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
-
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
+  // creates namespaces C.assoc1 and D.assoc1 -> namespaces are disjunct from the first association
+  association assoc1 [1] C <-> D [1];
 }

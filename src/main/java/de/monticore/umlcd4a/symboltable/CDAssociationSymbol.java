@@ -28,6 +28,7 @@ import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 
 import de.monticore.symboltable.CommonSymbol;
+import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 
@@ -63,6 +64,12 @@ public class CDAssociationSymbol extends CommonSymbol {
     super("", KIND);
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
+  }
+
+  public boolean isReadOnly() {
+    if (!this.getAstNode().isPresent())
+      return false;
+    return ((ASTCDAssociation) (this.getAstNode().get())).isReadOnly();
   }
 
   @Override
@@ -168,6 +175,18 @@ public class CDAssociationSymbol extends CommonSymbol {
     return StringTransformations.uncapitalize(Names.getSimpleName(getTargetType().getName()))
         .intern();
   }
+
+  // needed for OCL
+  public String getDerivedNameSourceRole() {
+    if (assocName.isPresent()) {
+      return assocName.get();
+    }
+    if (getSourceRole().isPresent()) {
+      return getSourceRole().get();
+    }
+    return StringTransformations.uncapitalize(Names.getSimpleName(getSourceType().getName()))
+        .intern();
+  }
   
   public List<Stereotype> getStereotypes() {
     return ImmutableList.copyOf(stereotypes);
@@ -194,6 +213,32 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   public void addStereotype(final Stereotype stereotype) {
     this.stereotypes.add(stereotype);
+  }
+
+  private CDAssociationSymbol inverseAssoc = null;
+  // this returns the opposite association (source and target is switched); needed in OCL
+  public CDAssociationSymbol getInverseAssociation() {
+    if (inverseAssoc == null) {
+      // calculate only on demand
+      inverseAssoc = new CDAssociationSymbol(getTargetType(), getSourceType());
+      inverseAssoc.setBidirectional(isBidirectional());
+      inverseAssoc.setDerived(isDerived());
+      inverseAssoc.setQualifier(getQualifier());
+      inverseAssoc.setRelationship(getRelationship());
+      inverseAssoc.setSourceCardinality(getTargetCardinality());
+      inverseAssoc.setSourceRole(getTargetRole());
+      inverseAssoc.setTargetCardinality(getSourceCardinality());
+      inverseAssoc.setTargetRole(getSourceRole());
+      inverseAssoc.setAssocName(getAssocName());
+      inverseAssoc.setPackageName(getPackageName());
+      inverseAssoc.setAccessModifier(getAccessModifier());
+      inverseAssoc.setAstNode(getAstNode().orElse(null));
+      inverseAssoc.setEnclosingScope(getEnclosingScope().getAsMutableScope());
+      inverseAssoc.setFullName(getFullName());
+      inverseAssoc.setKind(getKind());
+      getStereotypes().forEach(inverseAssoc::addStereotype);
+    }
+    return inverseAssoc;
   }
   
 }

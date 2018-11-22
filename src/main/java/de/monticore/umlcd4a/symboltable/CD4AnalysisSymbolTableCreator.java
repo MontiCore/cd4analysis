@@ -126,12 +126,22 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
         .orElse(CD4AnalysisMill.modifierBuilder().build());
     
     setModifiersOfType(classSymbol, astModifier);
+    setStereotype(classSymbol, astClass.getStereotypeOpt());
     
     addInterfacesToType(classSymbol, astClass.getInterfaceList(), externals);
     
     addToScopeAndLinkWithNode(classSymbol, astClass);
   }
-  
+
+  default void setStereotype(CDTypeSymbol typeSymbol, Optional<ASTCDStereotype> stereotype) {
+    if (stereotype.isPresent()) {
+      for (final ASTCDStereoValue stereoValue : stereotype.get().getValueList()) {
+        final Stereotype s = new Stereotype(stereoValue.getName(), stereoValue.getValueOpt().orElse(""));
+        typeSymbol.addStereotype(s);
+      }
+    }
+  }
+
   default void setModifiersOfType(final CDTypeSymbol typeSymbol, final ASTModifier astModifier) {
     if (astModifier != null) {
       typeSymbol.setAbstract(astModifier.isAbstract());
@@ -150,9 +160,7 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       
       if (astModifier.isPresentStereotype()) {
         for (final ASTCDStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
-          // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
-          // geschrieben)
-          final Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+          final Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getValueOpt().orElse(""));
           typeSymbol.addStereotype(stereotype);
         }
       }
@@ -320,7 +328,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
     addInterfacesToType(interfaceSymbol, astInterface.getInterfaceList(), externals);
     setModifiersOfType(interfaceSymbol,
         astInterface.getModifierOpt().orElse(CD4AnalysisMill.modifierBuilder().build()));
-    
+    setStereotype(interfaceSymbol, astInterface.getStereotypeOpt());
+
     // Interfaces are always abstract
     interfaceSymbol.setAbstract(true);
     
@@ -602,9 +611,8 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       // TODO PN use association reference instead?
       // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
       sourceType.addAssociation(associationSymbol);
-    }
-    // the else case should be checked by a context conditions
-    
+    } // the else case should be checked by a context conditions
+
     associationSymbol.setAssocName(astAssoc.getNameOpt());
     
     addStereotypes(associationSymbol, astAssoc.getStereotypeOpt().orElse(null));
@@ -619,6 +627,10 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
 
     addToScope(associationSymbol);
     associationSymbol.setAstNode(astAssoc);
+
+    if (targetType.existsReferencedSymbol()) {
+      targetType.addSpecAssociation(associationSymbol);
+    }
     
     return associationSymbol;
   }

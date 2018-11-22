@@ -19,7 +19,9 @@
 
 package de.monticore.umlcd4a.cocos.ebnf;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
@@ -47,11 +49,11 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
       boolean err = false;
       // source type might be external (in this case we do nothing)
       if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
-        err = check(leftType.get(), assocName, a);
+        err = check(leftType.get(), rightType, assocName, a);
       }
       if (rightType.isPresent() && !err
           && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
-        check(rightType.get(), assocName, a);
+        check(rightType.get(), leftType, assocName, a);
       }
     }
   }
@@ -64,7 +66,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
    * @param assoc association under test
    * @return whether there was a CoCo error or not.
    */
-  private boolean check(CDTypeSymbol sourceType, String assocName, ASTCDAssociation assoc) {
+  private boolean check(CDTypeSymbol sourceType, Optional<CDTypeSymbol> targetType, String assocName, ASTCDAssociation assoc) {
     // attributes
     Optional<CDFieldSymbol> conflictingAttribute = sourceType.getAllVisibleFields().stream()
         .filter(f -> f.getName().equals(assocName))
@@ -91,10 +93,23 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
           .findAny();
     }
     if (conflictingAssoc.isPresent()) {
-      error(assocName,
-          conflictingAssoc.get().getSourceType().getName(),
-          assoc);
-      return true;
+      boolean isReadOnly = false;
+      List<String> superTypes = null;
+      if (targetType.isPresent()) {
+        isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode().get())).isReadOnly();
+        superTypes = targetType.get().getSuperTypes().stream().map(type -> type.getFullName()).collect(Collectors.toList());
+      }
+      if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {
+        Log.info(String.format("Association `%s` overwrites read-only association `%s`",
+                assoc, conflictingAssoc.get()),
+                "INFO");
+      }
+      else {
+        error(assocName,
+                conflictingAssoc.get().getSourceType().getName(),
+                assoc);
+        return true;
+      }
     }
     return false;
   }

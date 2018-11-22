@@ -139,12 +139,22 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReferenc
   public boolean containsStereotype(String name, String value) {
     return getReferencedSymbol().containsStereotype(name, value);
   }
-  
+
+  @Override
+  public Optional<Stereotype> getAllStereotype(String name) {
+    return getReferencedSymbol().getAllStereotype(name);
+  }
+
+  @Override
+  public boolean containsAllStereotype(String name, String value) {
+    return getReferencedSymbol().containsAllStereotype(name, value);
+  }
+
   @Override
   public Optional<Stereotype> getStereotype(String name) {
     return getReferencedSymbol().getStereotype(name);
   }
-  
+
   @Override
   public Optional<CDTypeSymbolReference> getSuperClass() {
     return getReferencedSymbol().getSuperClass();
@@ -224,7 +234,28 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReferenc
   public void addAssociation(CDAssociationSymbol assoc) {
     getReferencedSymbol().addAssociation(assoc);
   }
-  
+
+  @Override
+  public void addSpecAssociation(final CDAssociationSymbol assoc) {
+    getReferencedSymbol().addSpecAssociation(assoc);
+  }
+
+  @Override
+  public List<CDAssociationSymbol> getSpecAssociations() {
+    return getReferencedSymbol().getSpecAssociations();
+  }
+
+  @Override
+  public List<CDAssociationSymbol> getAllSpecAssociations() {
+    return getReferencedSymbol().getAllSpecAssociations();
+  }
+
+
+  @Override
+  public List<CDAssociationSymbol> getInheritedSpecAssociations() {
+    return getReferencedSymbol().getInheritedSpecAssociations();
+  }
+
   @Override
   public List<CDAssociationSymbol> getAssociations() {
     return getReferencedSymbol().getAssociations();
@@ -280,6 +311,11 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReferenc
     return getReferencedSymbol().isClass();
   }
   
+  @Override
+  public List<Stereotype> getAllStereotypes() {
+    return getReferencedSymbol().getAllStereotypes();
+  }
+
   @Override
   public List<Stereotype> getStereotypes() {
     return getReferencedSymbol().getStereotypes();

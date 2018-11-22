@@ -19,23 +19,12 @@
 
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+classdiagram C4A26_3 {
 
-  // auto role: a
-  association A <- B;
+    class A;
+    class B;
+    class C;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
-
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
+    association foo A -> B [1]; // in OCL you can navigate against the arrow direction; B::foo is the inverse navigation direction returning B
+    association foo C -> B [1]; // B::foo is the reverse navigation direction returning C --> ERROR: collides with the above association
 }

@@ -19,23 +19,11 @@
 
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+classdiagram C4A39 {
+  interface A1;
+  class A2;
+  interface B1;
 
-  // auto role: a
-  association A <- B;
-
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
-
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
+  association A1 (foo) -> (bar) B1 [1];
+  association A2 (foo) -> (bar2) B1 [1]; // error: namespace B1::foo clashes -> is it A1 or A2?
 }

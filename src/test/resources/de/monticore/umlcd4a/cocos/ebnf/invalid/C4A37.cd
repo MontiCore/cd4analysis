@@ -19,23 +19,13 @@
 
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+classdiagram C4A37 {
+  interface A1;
+  interface B1;
+  association A1 -> (foo) B1 [1];
 
-  // auto role: a
-  association A <- B;
-
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
-
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
+  class A2 implements A1;
+  association / A2 -> (foo) B1 [0..1]; // not ok, the cardinality of the derived (inherited)
+                                       // association does not fit
+                                       // ( A1 -> B1 has 1; and A2 -> B1 has 0..1)
 }

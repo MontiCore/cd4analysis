@@ -17,6 +17,7 @@
  * ******************************************************************************
  */
 
+// this is actually correct: assoc1 must not be unique per diagram only per namespace
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
 classdiagram C4A26 {
@@ -25,6 +26,6 @@ classdiagram C4A26 {
   class C;
   class D;
 
-  association assoc1 A -> B;
-  association assoc1 C <-> D;
+  association assoc1 A -> B [1];
+  association assoc1 [1] C <-> D [1];
 }

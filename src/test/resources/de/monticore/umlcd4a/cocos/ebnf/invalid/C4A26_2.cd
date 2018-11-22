@@ -19,23 +19,14 @@
 
 package de.monticore.umlcd4a.cocos.ebnf.invalid;
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+classdiagram C4A26_2 {
 
-  // auto role: a
-  association A <- B;
+    class A;
+    class B;
+    class C;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
+ //   association foo A -> B [1];
+    association foo1 B -> C [1];
+    association foo1 B -> A [1]; // error namespace B::foo1 is already used by other association
 
-  // auto role: c
-  association C <- D;
-
-  association D <-> (a) C;
 }

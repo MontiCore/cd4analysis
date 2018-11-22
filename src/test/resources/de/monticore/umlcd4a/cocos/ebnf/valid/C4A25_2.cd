@@ -17,25 +17,23 @@
  * ******************************************************************************
  */
 
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
+// should avoid the following error:
+// ERROR ROOT - C4A25_2.cd:<38,2>: 0xC4A25 Association foo conflicts with the attribute foo in X1.
 
-classdiagram C4A28 {
-  class A;
-  class B;
-  class C ;
-  class D extends B;
-  class E extends B;
+package de.monticore.umlcd4a.cocos.ebnf.valid;
 
-  // auto role: a
-  association A <- B;
+classdiagram C4A25_2 {
+  interface X1;
+  interface Y1;
 
-  association A (c) <-> B;
- 
-  // auto role: a
-  association E -> A;
+  class X2 implements X1;
+  class Y2 implements Y1;
 
-  // auto role: c
-  association C <- D;
+  // public Y1 X1::getFoo() { ... }
+  // no set method
+  read-only association foo X1 -> Y1;
 
-  association D <-> (a) C;
+  // public Y2 X2::getFoo() { ... }
+  // it overwrites the X1::getFoo() method, but it is still compatible to X1::getFoo() method, because Y2 implements Y1
+  read-only association foo X2 -> Y2;
 }

@@ -60,13 +60,16 @@ grammar CD4Analysis extends de.monticore.types.Types {
   */
   CDClass astimplements ASTCDType = Modifier?  "class" Name
   ( "extends"  superclass:ReferenceType)?
-  ( "implements" interface:(ReferenceType || ",")+ )?
+  ( TImplements interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
   ( "{" 
     ( CDAttribute
     | CDConstructor
     | CDMethod )*
     "}" 
   | ";" );
+
+  // indirect token
+  TImplements = { _input.LT(1).getText().equals("implements") }? Name; // implements is often association or role name (e.g., when creating the abstract syntax of CD4A itself or for the abstract syntax of Java)
   
  
   /** ASTCDInterface represents an Interface in a Classdiagram
@@ -77,7 +80,8 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes   List of Attributes of this Interface
   */
   CDInterface astimplements ASTCDType = Modifier? "interface" Name
-    ( "extends" interface:(ReferenceType || ",")+ )? ( "{" 
+    ( "extends" interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
+    ( "{"
       ( CDAttribute
       | CDMethod )*
       "}" 
@@ -94,7 +98,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDAttributes    List of Attributes of this Enum
   */
   CDEnum astimplements ASTCDType = Modifier? "enum" Name
-    ( "implements" interface:(ReferenceType || ",")+ )?
+    ( TImplements interface:(ReferenceType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";" 
         ( CDConstructor | CDMethod)*
@@ -162,6 +166,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
         
 
   /** ASTCDAssociation represents an Association between Classes or Interfaces
+    @attribute readonly           True if Association is only read-only
     @attribute stereotype         Optional Stereotype
     @attribute Association        True if Association is of type "association"
     @attribute Composition        True if Association is of type "composition"
@@ -195,6 +200,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute rightModifier      Optional right side Modifier
   */
   CDAssociation = stereotype:CDStereotype?
+    readOnly:TReadOnly?
     (["association"] | ["composition"])
     ([Derived:"/"])?  Name?
     leftModifier:Modifier?
@@ -211,8 +217,9 @@ grammar CD4Analysis extends de.monticore.types.Types {
     rightReferenceName:QualifiedName
     rightCardinality:Cardinality?
     rightModifier:Modifier? ";" ;
-  
- 
+
+  token TReadOnly = 'r' 'e' 'a' 'd' '-' 'o' 'n' 'l' 'y';
+
   Modifier = stereotype:CDStereotype?
     (["abstract"]
       | ["final"]

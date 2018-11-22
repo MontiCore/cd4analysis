@@ -323,7 +323,12 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     }
     getPrinter().println(";");
   }
-  
+
+  @Override
+  public void visit(ASTCDAssociation node) {
+
+  }
+
   /**
    * Prints a qualifier of an association in a class diagram
    * 
@@ -358,6 +363,11 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       a.getStereotype().accept(getRealThis());
       getPrinter().print(" ");
     }
+    // print read-only attribute if present
+    if (a.isReadOnly()) {
+      getPrinter().print("read-only ");
+    }
+
     // print type of the link
     if (a.isAssociation()) {
       getPrinter().print("association ");
