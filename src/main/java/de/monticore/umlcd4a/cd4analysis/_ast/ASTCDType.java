@@ -18,13 +18,15 @@ import de.monticore.types.types._ast.ASTReferenceType;
  * @author Robert Heim, Galina Volkova
  */
 public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode {
-  
+
   String getName();
-  
+
   Optional<ASTModifier> getModifierOpt();
-  
+
+  void setModifier(ASTModifier modifier);
+
   List<ASTReferenceType> getInterfaceList();
-  
+
   List<ASTCDMethod> getCDMethodList();
   
   /**
