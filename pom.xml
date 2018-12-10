@@ -6,17 +6,17 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>cd4analysis</artifactId>
-  <version>1.3.16-SNAPSHOT</version>
+  <version>1.3.16</version>
   <properties>
 
     <!-- .. Libraries ..................................................... -->
 
-    <monticore.version>5.0.2-SNAPSHOT</monticore.version>
+    <monticore.version>5.0.2</monticore.version>
 
     <findbugs.version>3.0.0</findbugs.version>
     <guava.version>18.0</guava.version>
     <junit.version>4.11</junit.version>
-    <se-commons.version>1.7.8</se-commons.version>
+    <se-commons.version>1.7.9</se-commons.version>
     <antlr.version>4.7.1</antlr.version>
     <emf.common.version>2.5.0</emf.common.version>
     <emf.ecore.version>2.5.0</emf.ecore.version>
@@ -82,17 +82,6 @@
     </extensions>
 
     <plugins>
-        <!-- there is a bug in spring, https://stackoverflow.com/questions/50661648/spring-boot-fails-to-run-maven-surefire-plugin-classnotfoundexception-org-apache -->
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-                <useSystemClassLoader>false</useSystemClassLoader>
-            </configuration>
-        </plugin>
-        
-      <!-- MontiCore Configuration -->
-
       <!-- MontiCore Generation -->
       <plugin>
         <groupId>de.monticore.mojo</groupId>
