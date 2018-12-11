@@ -82,6 +82,18 @@
     </extensions>
 
     <plugins>
+      <!-- Gitlab-Runner: there is a bug in spring,
+       https://stackoverflow.com/questions/50661648/spring-boot-fails-to-run-maven-surefire-plugin-classnotfoundexception-org-apache
+      -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M2</version>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+        </configuration>
+      </plugin>
+
       <!-- MontiCore Generation -->
       <plugin>
         <groupId>de.monticore.mojo</groupId>
