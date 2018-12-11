@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <!-- == PROJECT COORDINATES ============================================= -->
@@ -42,7 +42,7 @@
     <java.version>1.8</java.version>
     <wagon.provider.version>2.6</wagon.provider.version>
     <mc.grammars.assembly.version>0.0.6</mc.grammars.assembly.version>
-    
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -132,112 +132,112 @@
         </configuration>
       </plugin>
 
-            <plugin>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${source.plugin}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Create grammars jar -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${assembly.plugin}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>de.monticore</groupId>
-                        <artifactId>mc-assemblies</artifactId>
-                        <version>${mc.grammars.assembly.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>grammars</id>
-                        <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>grammars-assembly</descriptorRef>
-                            </descriptorRefs>
-                            <formats>
-                                <format>jar</format>
-                            </formats>
-                        </configuration>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${source.plugin}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- Create grammars jar -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${assembly.plugin}</version>
+        <dependencies>
+          <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>mc-assemblies</artifactId>
+            <version>${mc.grammars.assembly.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>grammars</id>
+            <configuration>
+              <descriptorRefs>
+                <descriptorRef>grammars-assembly</descriptorRef>
+              </descriptorRefs>
+              <formats>
+                <format>jar</format>
+              </formats>
+            </configuration>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>de.monticore.umlcd4a.CD4ACLI</mainClass>
-                                </transformer>
-                            </transformers>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>cli</shadedClassifierName>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.4.3</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>de.monticore.umlcd4a.CD4ACLI</mainClass>
+                </transformer>
+              </transformers>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>cli</shadedClassifierName>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
 
-      <!-- CD visualization -->
-      <dependency>
-          <groupId>net.sourceforge.plantuml</groupId>
-          <artifactId>plantuml</artifactId>
-          <version>1.2018.12</version>
-      </dependency>
+    <!-- CD visualization -->
+    <dependency>
+      <groupId>net.sourceforge.plantuml</groupId>
+      <artifactId>plantuml</artifactId>
+      <version>1.2018.12</version>
+    </dependency>
 
-      <!-- EMF dependencies -->
-      <dependency>
-        <groupId>org.mod4j.org.eclipse.emf</groupId>
-        <artifactId>ecore</artifactId>
-        <version>${emf.ecore.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mod4j.org.eclipse.emf.ecore</groupId>
-        <artifactId>xmi</artifactId>
-        <version>${emf.ecore.xmi.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mod4j.org.eclipse.emf</groupId>
-        <artifactId>common</artifactId>
-        <version>${emf.common.version}</version>
-      </dependency>
-      
+    <!-- EMF dependencies -->
+    <dependency>
+      <groupId>org.mod4j.org.eclipse.emf</groupId>
+      <artifactId>ecore</artifactId>
+      <version>${emf.ecore.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mod4j.org.eclipse.emf.ecore</groupId>
+      <artifactId>xmi</artifactId>
+      <version>${emf.ecore.xmi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mod4j.org.eclipse.emf</groupId>
+      <artifactId>common</artifactId>
+      <version>${emf.common.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>de.se_rwth.commons</groupId>
       <artifactId>se-commons-logging</artifactId>
@@ -273,11 +273,11 @@
       <artifactId>monticore-grammar</artifactId>
       <version>${monticore.version}</version>
     </dependency>
-    
-     <dependency>
+
+    <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-emf-runtime</artifactId>
-        <version>${monticore.version}</version>
+      <version>${monticore.version}</version>
     </dependency>
 
     <dependency>
@@ -293,19 +293,19 @@
       <version>${findbugs.version}</version>
     </dependency>
 
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.1.7</version>
-        </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.7</version>
+    </dependency>
 
-        <!-- .. Test Libraries ............................................... -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
+    <!-- .. Test Libraries ............................................... -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>de.monticore</groupId>
@@ -322,15 +322,15 @@
   <distributionManagement>
     <repository>
       <id>se-nexus</id>
-      <url>http://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/</url>
+      <url>https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/</url>
     </repository>
     <snapshotRepository>
       <id>se-nexus</id>
-      <url>http://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/</url>
+      <url>https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/</url>
     </snapshotRepository>
     <site>
       <id>se-nexus</id>
-      <url>dav:http://nexus.se.rwth-aachen.de/content/sites/se-sites/monticore/${project.version}/</url>
+      <url>dav:https://nexus.se.rwth-aachen.de/content/sites/se-sites/monticore/${project.version}/</url>
     </site>
   </distributionManagement>
 
