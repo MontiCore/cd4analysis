@@ -18,9 +18,9 @@
     <junit.version>4.11</junit.version>
     <se-commons.version>1.7.9</se-commons.version>
     <antlr.version>4.7.1</antlr.version>
-    <emf.common.version>2.5.0</emf.common.version>
-    <emf.ecore.version>2.5.0</emf.ecore.version>
-    <emf.ecore.xmi.version>2.5.0</emf.ecore.xmi.version>
+    <emf.common.version>2.15.0</emf.common.version>
+    <emf.ecore.version>2.15.0</emf.ecore.version>
+    <emf.ecore.xmi.version>2.15.0</emf.ecore.xmi.version>
 
     <!-- .. Plugins ....................................................... -->
 
@@ -223,18 +223,18 @@
 
     <!-- EMF dependencies -->
     <dependency>
-      <groupId>org.mod4j.org.eclipse.emf</groupId>
-      <artifactId>ecore</artifactId>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore</artifactId>
       <version>${emf.ecore.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mod4j.org.eclipse.emf.ecore</groupId>
-      <artifactId>xmi</artifactId>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
       <version>${emf.ecore.xmi.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.mod4j.org.eclipse.emf</groupId>
-      <artifactId>common</artifactId>
+      <groupId>org.eclipse.emf</groupId>
+      <artifactId>org.eclipse.emf.common</artifactId>
       <version>${emf.common.version}</version>
     </dependency>
 
