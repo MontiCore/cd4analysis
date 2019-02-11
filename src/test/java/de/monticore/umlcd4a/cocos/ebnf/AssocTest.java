@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -51,6 +52,7 @@ public class AssocTest extends AbstractCoCoTest {
   
   @Before
   public void setUp() {
+    LogStub.init();
     Log.getFindings().clear();
   }
   

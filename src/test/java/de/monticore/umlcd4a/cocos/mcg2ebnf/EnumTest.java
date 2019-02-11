@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,6 +48,7 @@ public class EnumTest extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
+    LogStub.init();
     Log.enableFailQuick(false);
   }
   

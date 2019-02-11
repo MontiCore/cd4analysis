@@ -8,6 +8,7 @@ package de.monticore.umlcd4a.cocos.mcg;
 import java.util.Arrays;
 import java.util.Collection;
 
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,6 +39,7 @@ public class ModifierTest extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
+    LogStub.init();
     Log.enableFailQuick(false);
   }
   

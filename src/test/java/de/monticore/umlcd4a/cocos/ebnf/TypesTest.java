@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 
+import de.se_rwth.commons.logging.LogStub;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,6 +44,7 @@ public class TypesTest extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
+    LogStub.init();
     Log.enableFailQuick(false);
   }
   

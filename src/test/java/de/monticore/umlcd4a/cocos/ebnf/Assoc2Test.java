@@ -8,6 +8,7 @@ import de.monticore.umlcd4a.cocos.others.ClassOnlyValidStereotype;
 import de.monticore.umlcd4a.cocos.others.InterfaceOnlyValidStereotype;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +23,7 @@ public class Assoc2Test extends AbstractCoCoTest {
 
     @BeforeClass
     public static void init() {
+        LogStub.init();
         Log.enableFailQuick(false);
     }
 

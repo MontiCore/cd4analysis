@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,6 +36,7 @@ public class DiagramTest extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
+    LogStub.init();
     Log.enableFailQuick(false);
   }
   
