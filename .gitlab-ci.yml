@@ -36,7 +36,7 @@ stages:
 install:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI clean install -DskipTests"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean install -DskipTests"
   artifacts:
     paths:
     - target/
@@ -45,4 +45,4 @@ install:
 test:
   stage: test
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI test"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test"
