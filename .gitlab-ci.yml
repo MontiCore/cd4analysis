@@ -29,7 +29,7 @@ cache:
   - .m2/
   key: ${CI_COMMIT_REF_SLUG}
 
-  stages:
+stages:
   - build
 
 compile:
