@@ -19,6 +19,7 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Cardinality;
 import de.monticore.umlcd4a.symboltable.Stereotype;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4ASymbolTableReporter extends SymbolTableReporter {
   
   /**

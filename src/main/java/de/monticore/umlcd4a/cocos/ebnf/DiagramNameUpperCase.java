@@ -23,6 +23,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class DiagramNameUpperCase implements CD4AnalysisASTCDDefinitionCoCo {
   
   @Override

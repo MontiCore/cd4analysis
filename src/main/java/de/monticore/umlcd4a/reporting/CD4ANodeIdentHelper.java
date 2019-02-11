@@ -23,6 +23,7 @@ import java.util.List;
  * @author (last commit) $Author$
  * @since TODO: add version number
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
 
   public String getIdent(ASTCDDefinition a) {

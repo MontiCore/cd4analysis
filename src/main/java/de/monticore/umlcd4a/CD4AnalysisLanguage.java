@@ -22,6 +22,7 @@ import de.monticore.umlcd4a.symboltable.CDSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.CommonCD4AnalysisSymbolTableCreator;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisLanguage extends CommonModelingLanguage {
   public static final String FILE_ENDING = "cd";
   

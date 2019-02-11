@@ -26,6 +26,7 @@ import de.monticore.umlcd4a.symboltable.CDAssociationSymbol;
 
 import java.util.Optional;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ASTCDAssociation extends ASTCDAssociationTOP {
 
   private CDAssociationSymbol leftToRightSymbol;

@@ -7,6 +7,7 @@ package de.monticore.umlcd4a.symboltable;
 
 import de.monticore.symboltable.SymbolKind;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDAssociationSymbolKind implements SymbolKind {
 
   private static final String NAME = "de.monticore.umlcd4a.symboltable.CDAssociationSymbolKind";

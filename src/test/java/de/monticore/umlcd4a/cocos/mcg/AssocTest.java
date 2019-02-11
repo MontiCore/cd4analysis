@@ -25,6 +25,7 @@ import de.se_rwth.commons.logging.Log;
  * @author (last commit) $Author$
  * @since TODO: add version number
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssocTest extends AbstractCoCoTest {
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
   

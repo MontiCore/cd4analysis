@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
  * -> the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
  * @author Michael von Wenckstern
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
     CD4AnalysisASTCDAssociationCoCo {
 

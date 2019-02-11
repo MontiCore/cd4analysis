@@ -13,6 +13,7 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
  *
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ClassImplementOnlyInterfaces extends ImplementOnlyInterfaces implements
     CD4AnalysisASTCDClassCoCo {
   

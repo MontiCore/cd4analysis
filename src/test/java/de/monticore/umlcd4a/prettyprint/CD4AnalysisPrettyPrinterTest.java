@@ -29,6 +29,7 @@ import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisPrettyPrinterTest {
   
   @BeforeClass

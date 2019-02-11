@@ -14,6 +14,7 @@ import de.monticore.types.types._ast.ASTType;
  *
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDQualifierSymbol extends CommonSymbol {
   public static final CDQualifierSymbolKind KIND = new CDQualifierSymbolKind();
   

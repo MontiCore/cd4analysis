@@ -26,6 +26,7 @@ import de.monticore.umlcd4a.symboltable.CDSymbol;
 /**
  * @author (last commit) Marita Breuer
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ODReportingTest {
   
   final static String CD_FQN_SocNet = "de.monticore.umlcd4a.prettyprint.SocNet";

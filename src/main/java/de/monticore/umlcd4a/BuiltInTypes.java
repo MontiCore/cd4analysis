@@ -15,6 +15,7 @@ import java.util.List;
  * 
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class BuiltInTypes {
   
   private static final List<String> builtInTypes = Arrays.asList(new String[] {

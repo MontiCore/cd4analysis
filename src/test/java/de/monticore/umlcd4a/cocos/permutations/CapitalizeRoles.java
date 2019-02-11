@@ -24,6 +24,7 @@ import java.util.function.Function;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.se_rwth.commons.StringTransformations;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CapitalizeRoles implements
     Function<Permutation<ASTCDAssociation>, Permutation<ASTCDAssociation>> {
   

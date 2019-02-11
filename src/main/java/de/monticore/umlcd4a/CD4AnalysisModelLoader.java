@@ -14,6 +14,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCompilationUnit> {
 
   public CD4AnalysisModelLoader(CD4AnalysisLanguage language) {

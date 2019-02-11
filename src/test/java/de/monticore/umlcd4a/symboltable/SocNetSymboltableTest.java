@@ -18,6 +18,7 @@ import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class SocNetSymboltableTest {
 
   final static String CD_FQN = "de.monticore.umlcd4a.symboltable.SocNet";

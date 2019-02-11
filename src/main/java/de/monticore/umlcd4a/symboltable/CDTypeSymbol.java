@@ -35,6 +35,7 @@ import de.monticore.symboltable.types.CommonJTypeSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Names;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol, CDTypeSymbolReference> {
   
   public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();

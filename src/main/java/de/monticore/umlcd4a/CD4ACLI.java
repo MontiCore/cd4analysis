@@ -37,7 +37,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4ACLI {
 
   static Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);

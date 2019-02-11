@@ -73,6 +73,7 @@ import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
  * 
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssocTestGenerator {
   
   /**

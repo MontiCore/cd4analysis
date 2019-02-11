@@ -23,6 +23,7 @@ package de.monticore.umlcd4a;
    MCG for CD 4 Analysis, Version Feb. 01st, 2016
 */
 
+@Deprecated //new grammar at cd4analysis/src/main/java/de/monticore/cd
 grammar CD4Analysis extends de.monticore.types.Types {
 
   /** ASTCDCompilationUnit represents the complete Diagram
@@ -30,6 +31,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute importStatements List of imported elements
     @attribute cDDefinition   
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDCompilationUnit =
     ("package" package:(Name& || ".")+ ";")? 
     (ImportStatement)*
@@ -43,6 +45,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDEnums        List of Enums of this Classdiagram
     @attribute cDAssociations List of Associations of this Classdiagram
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDDefinition = "classdiagram" Name "{"
   (   CDClass
     | CDInterface
@@ -58,6 +61,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDClass astimplements ASTCDType = Modifier?  "class" Name
   ( "extends"  superclass:ReferenceType)?
   ( TImplements interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
@@ -69,6 +73,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
   | ";" );
 
   // indirect token
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   TImplements = { _input.LT(1).getText().equals("implements") }? Name; // implements is often association or role name (e.g., when creating the abstract syntax of CD4A itself or for the abstract syntax of Java)
   
  
@@ -79,6 +84,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDInterface astimplements ASTCDType = Modifier? "interface" Name
     ( "extends" interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
     ( "{"
@@ -97,6 +103,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDEnum astimplements ASTCDType = Modifier? "enum" Name
     ( TImplements interface:(ReferenceType || ",")+ )?
     ( "{"
@@ -104,7 +111,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
         ( CDConstructor | CDMethod)*
       "}"
     | ";" );
-    
+
   astrule CDEnum = CDAttribute*;
  
   /** ASTCDAttribute represents an Attribute of a Class or Interface
@@ -113,6 +120,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute name     Name of this Attribute
     @attribute value    Value of this Attribute
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDAttribute = Modifier? Type Name ("=" Value)? ";"; 
    
   /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
@@ -120,12 +128,14 @@ grammar CD4Analysis extends de.monticore.types.Types {
       @attribute name             Name of this Constant
       @attribute cDEnumParameters List of optional parameters of this Constant
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDEnumConstant = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
   
  
   /** ASTCDEnumParameter represents a Parameter of an Enumeration Constant
     @attribute Value Value of this Parameter
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDEnumParameter = Value;
   
 
@@ -134,6 +144,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute cDParameters   List of Parameters of this Constructor
     @attribute exceptions     List of Exceptions thrown by this Constructor
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDConstructor =
     Modifier
      Name "(" (CDParameter || ",")* ")"
@@ -148,6 +159,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
       @attribute cDParameters   List of Parameters of this Method
       @attribute exceptions     List of Exceptions thrown by this Method
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDMethod =
     Modifier
     ReturnType
@@ -161,6 +173,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute ellipsis Optional indicator for a variable Parameter length
     @attribute name Name of this Parameter
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDParameter =
   Type (Ellipsis:["..."])? Name;
         
@@ -199,6 +212,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
                                   Association
     @attribute rightModifier      Optional right side Modifier
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDAssociation = stereotype:CDStereotype?
     readOnly:TReadOnly?
     (["association"] | ["composition"])
@@ -218,8 +232,10 @@ grammar CD4Analysis extends de.monticore.types.Types {
     rightCardinality:Cardinality?
     rightModifier:Modifier? ";" ;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   token TReadOnly = 'r' 'e' 'a' 'd' '-' 'o' 'n' 'l' 'y';
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   Modifier = stereotype:CDStereotype?
     (["abstract"]
       | ["final"]
@@ -236,6 +252,7 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute oneToMany     True if [1..*] is set as Cardinality
     @attribute optional      True if [0..1] is set as Cardinality
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   Cardinality = many:["[*]"] | one:["[1]"] | oneToMany:["[1..*]"] | optional:["[0..1]"];
    
 
@@ -243,12 +260,14 @@ grammar CD4Analysis extends de.monticore.types.Types {
     @attribute name     Abstract name of the Qualifier if not a type
     @attribute type     Type of the Qualifier if not an abstract name
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDQualifier = "[[" Name "]]" | "[" Type "]";
     
 
   /** ASTStereotype represents Stereotypes in a Classdiagram
     @attribute values List of Values of this Stereotype
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDStereotype = "<<" value:(CDStereoValue || ",")+ ">" ">"
 	// It is not possible to define ">>".
     // Parsing generic typs like "List<List<String>>" leads to problems.
@@ -258,11 +277,13 @@ grammar CD4Analysis extends de.monticore.types.Types {
   /** ASTStereoValue represents a Value of a Stereotype in a Classdiagram
       @attribute name  Name of the Stereotype-Value
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   CDStereoValue = Name ("=" value:String)?;
 
   /** ASTValue represents a Value
       @attribute literal  Value
   */
+  @Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
   Value = SignedLiteral;
     
 }

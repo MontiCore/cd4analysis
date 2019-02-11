@@ -40,6 +40,7 @@ import de.monticore.utils.ASTNodes;
 /**
  * @author Sebastian Oberhoff
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class TestGenerate {
   
   @Test

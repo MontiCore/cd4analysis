@@ -17,6 +17,7 @@ import de.monticore.types.types._ast.ASTReferenceType;
  *
  * @author Robert Heim, Galina Volkova
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode {
 
   String getName();

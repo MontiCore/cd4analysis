@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class PrintCD2PlantUML {
 
     /** this needs internet -> it connects to the plantuml-server to render the image and downloads it */

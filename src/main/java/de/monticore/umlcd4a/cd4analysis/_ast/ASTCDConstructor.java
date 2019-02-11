@@ -21,6 +21,7 @@ package de.monticore.umlcd4a.cd4analysis._ast;
 
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ASTCDConstructor extends ASTCDConstructorTOP {
   
   private AstPrinter printer = new AstPrinter();

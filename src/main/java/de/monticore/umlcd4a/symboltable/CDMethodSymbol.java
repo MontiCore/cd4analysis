@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.types.CommonJMethodSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDTypeSymbolReference, CDFieldSymbol> {
 
   public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();

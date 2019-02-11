@@ -39,6 +39,7 @@ import java.util.Iterator;
  * 
  * @author Martin Schindler
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVisitor implements CD4AnalysisVisitor {
   
   private CD4AnalysisVisitor realThis = this;

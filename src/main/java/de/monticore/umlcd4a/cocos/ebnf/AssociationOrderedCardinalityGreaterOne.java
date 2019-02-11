@@ -35,6 +35,7 @@ import java.util.Optional;
  *
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssociationOrderedCardinalityGreaterOne implements
     CD4AnalysisASTCDAssociationCoCo {
   

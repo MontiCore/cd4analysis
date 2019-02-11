@@ -33,6 +33,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class Permutation<T extends ASTNode> {
   
   private final T delegate;

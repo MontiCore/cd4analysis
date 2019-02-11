@@ -18,6 +18,7 @@ import de.monticore.symboltable.CommonScopeSpanningSymbol;
  *
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDSymbol extends CommonScopeSpanningSymbol {
   
   public static final CDSymbolKind KIND = new CDSymbolKind();

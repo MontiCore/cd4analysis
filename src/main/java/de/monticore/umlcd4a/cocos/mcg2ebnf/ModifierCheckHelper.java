@@ -12,6 +12,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
  *
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ModifierCheckHelper {
   /**
    * Checks that the modifier is empty (but might have a stereotype)

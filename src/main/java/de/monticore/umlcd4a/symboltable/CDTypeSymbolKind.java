@@ -8,6 +8,7 @@ package de.monticore.umlcd4a.symboltable;
 import de.monticore.symboltable.SymbolKind;
 import de.monticore.symboltable.types.JTypeSymbolKind;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDTypeSymbolKind extends JTypeSymbolKind {
 
   private static final String NAME = CDTypeSymbolKind.class.getName();

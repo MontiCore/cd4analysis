@@ -28,6 +28,7 @@ import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssociationSourceTypeNotGenericChecker implements
     CD4AnalysisASTCDDefinitionCoCo {
   

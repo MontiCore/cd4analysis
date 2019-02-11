@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class EnumTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";
   

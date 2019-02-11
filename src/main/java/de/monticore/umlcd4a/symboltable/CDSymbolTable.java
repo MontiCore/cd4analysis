@@ -54,6 +54,7 @@ import de.se_rwth.commons.Names;
  * @author Alexander Roth
  */
 //TODO: move this class to Cd4Analysis
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDSymbolTable {
   
   private final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();

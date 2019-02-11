@@ -12,6 +12,7 @@ import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AGlobalScopeTestFactory {
 
   public static GlobalScope create() {

@@ -11,6 +11,7 @@ import de.monticore.symboltable.CommonSymbolTableCreator;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreator implements
     CD4AnalysisSymbolTableCreator {
 

@@ -44,6 +44,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTValue;
 /******************************************************************************
  * AST specific helper to print AST nodes.
  *****************************************************************************/
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AstPrinter {
   
   public static final String EMPTY_STRING = "";

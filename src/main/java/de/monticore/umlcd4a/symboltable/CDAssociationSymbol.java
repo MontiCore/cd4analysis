@@ -32,6 +32,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDAssociationSymbol extends CommonSymbol {
   
   public static final CDAssociationSymbolKind KIND = new CDAssociationSymbolKind();

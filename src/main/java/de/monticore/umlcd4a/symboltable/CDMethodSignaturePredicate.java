@@ -14,6 +14,7 @@ import java.util.List;
 import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.SymbolPredicate;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDMethodSignaturePredicate implements SymbolPredicate {
 
   private final String expectedMethodName;

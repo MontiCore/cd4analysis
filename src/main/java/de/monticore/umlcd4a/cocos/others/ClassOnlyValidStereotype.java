@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
  *
  * @author Michael von Wenckstern
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ClassOnlyValidStereotype implements CD4AnalysisASTCDClassCoCo {
 
   public static final Set<String> validStereoTypes = new HashSet<>(Arrays.asList("Quantity"));

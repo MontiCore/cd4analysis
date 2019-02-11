@@ -47,6 +47,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisSymbolTableCreatorTest {
   
   @BeforeClass

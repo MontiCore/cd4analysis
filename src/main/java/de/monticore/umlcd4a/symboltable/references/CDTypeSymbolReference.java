@@ -21,6 +21,7 @@ import de.monticore.umlcd4a.symboltable.CDMethodSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Stereotype;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReference<CDTypeSymbol> {
   
   private final CommonJTypeReference<CDTypeSymbol> typeReference;

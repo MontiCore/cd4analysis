@@ -26,6 +26,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype;
  *
  */
 // TODO: check implementations
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisHelper {
   
   public static boolean hasStereotype(ASTCDAttribute ast,

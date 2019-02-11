@@ -32,6 +32,7 @@ import java.util.Optional;
  *
  * @author Michael von Wenckstern
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssociationNoConflictWithDerivedCardinalities implements
     CD4AnalysisASTCDAssociationCoCo {
 

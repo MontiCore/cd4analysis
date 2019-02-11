@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 @Ignore("This test is only for documentation how to create the graphical representation of your class diagram")
 public class PrintCD2SVGTest {
 

@@ -25,6 +25,7 @@ import java.util.Collections;
  *
  * @author Michael von Wenckstern
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssocTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/";
 

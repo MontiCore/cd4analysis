@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
  *
  * @author Michael von Wenckstern
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
   
   @Override

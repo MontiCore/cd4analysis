@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collection;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class Assoc2Test extends AbstractCoCoTest {
     private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
 

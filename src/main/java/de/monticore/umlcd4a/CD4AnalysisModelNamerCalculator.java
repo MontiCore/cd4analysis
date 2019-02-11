@@ -19,6 +19,7 @@ import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.Splitters;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisModelNamerCalculator extends CommonModelNameCalculator {
 
   @Override

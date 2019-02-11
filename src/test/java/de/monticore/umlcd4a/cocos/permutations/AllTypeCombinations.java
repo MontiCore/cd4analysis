@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AllTypeCombinations implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {
   

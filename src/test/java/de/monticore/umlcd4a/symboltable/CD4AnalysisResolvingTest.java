@@ -14,6 +14,7 @@ import java.util.Optional;
 import de.monticore.symboltable.GlobalScope;
 import org.junit.Test;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4AnalysisResolvingTest {
 
   @Test

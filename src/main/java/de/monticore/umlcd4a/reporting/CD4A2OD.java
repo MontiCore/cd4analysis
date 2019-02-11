@@ -13,7 +13,7 @@ import de.monticore.umlcd4a.cd4analysis._od.CD4Analysis2OD;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 
-
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4A2OD extends CD4Analysis2OD {
     
   private CD4AnalysisVisitor realThis = this;

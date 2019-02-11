@@ -27,6 +27,7 @@ import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTType;
 import de.monticore.umlcd4a.prettyprint.AstPrinter;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class ASTCDAttribute extends ASTCDAttributeTOP
     implements ASTCD4AnalysisNode {
   

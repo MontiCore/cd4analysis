@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import de.monticore.symboltable.GlobalScope;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDSymbolTest {
   
   @Test

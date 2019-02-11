@@ -14,6 +14,7 @@ import de.se_rwth.commons.logging.Log;
  *
  * @author Galina Volkova
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class EnumNoAttributesCoCo implements CD4AnalysisASTCDEnumCoCo {
   
   /**

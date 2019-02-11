@@ -13,6 +13,7 @@ import de.monticore.symboltable.MutableScope;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDTypeReferenceTest {
 
   @Test

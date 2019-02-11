@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableList;
 import de.monticore.symboltable.types.CommonJFieldSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDFieldSymbol extends CommonJFieldSymbol<CDTypeSymbolReference> {
 
   public static final CDFieldSymbolKind KIND = new CDFieldSymbolKind();

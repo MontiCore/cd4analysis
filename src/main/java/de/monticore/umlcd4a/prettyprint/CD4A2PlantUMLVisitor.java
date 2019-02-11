@@ -3,6 +3,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.*;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
 
     protected CD4A2PlantUMLVisitor realThis;

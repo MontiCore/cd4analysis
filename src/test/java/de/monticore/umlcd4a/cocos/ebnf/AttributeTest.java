@@ -26,6 +26,7 @@ import de.se_rwth.commons.logging.Log;
  * @author (last commit) $Author$
  * @since TODO: add version number
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AttributeTest extends AbstractCoCoTest {
   
   /**

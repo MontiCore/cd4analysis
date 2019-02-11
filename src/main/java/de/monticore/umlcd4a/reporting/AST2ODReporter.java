@@ -31,6 +31,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
 import de.se_rwth.commons.Names;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AST2ODReporter extends AReporter {
     
   private String modelName;

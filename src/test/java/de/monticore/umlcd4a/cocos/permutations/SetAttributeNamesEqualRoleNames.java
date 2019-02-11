@@ -27,6 +27,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.utils.ASTNodes;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class SetAttributeNamesEqualRoleNames implements
     UnaryOperator<Permutation<ASTCDAssociation>> {
   

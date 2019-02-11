@@ -22,6 +22,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * TODO Use JTypeSymbolsHelper when MC version >= 4.4.1-SNAPSHOT
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
   
   /**

@@ -29,6 +29,7 @@ import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class SetModifier implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {
   

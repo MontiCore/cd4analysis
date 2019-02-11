@@ -13,6 +13,7 @@ import java.util.Collection;
  *
  * @author (last commit) $Author$
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class CDTypes {
   
   // Wrapper types

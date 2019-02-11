@@ -80,6 +80,7 @@ import de.se_rwth.commons.StringTransformations;
  * 
  * @author Robert Heim
  */
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class AssocTestGeneratorTool {
   
   public static String printAssociations(List<ASTCDAssociation> allPossibilities) {

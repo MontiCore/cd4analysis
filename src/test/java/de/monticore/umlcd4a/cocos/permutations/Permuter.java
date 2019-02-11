@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+@Deprecated //new class at cd4analysis/src/main/java/de/monticore/cd
 public class Permuter {
   
   public static <E, V> Set<E> permute(BiFunction<E, V, E> reducer, Collection<E> elements,
