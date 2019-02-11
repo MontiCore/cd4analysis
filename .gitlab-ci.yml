@@ -31,13 +31,18 @@ cache:
 
 stages:
   - build
+  - test
 
-compile:
+install:
   stage: build
   script:
   - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI clean install"
+  artifacts:
+    paths:
+    - target/
+    - /target
 
 test:
-  stage: build
+  stage: test
   script:
   - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI test"
