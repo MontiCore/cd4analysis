@@ -36,11 +36,11 @@ stages:
 install:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI clean install"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI clean install -DskipTests"
   artifacts:
     paths:
     - target/
-    - /target
+    expire_in: 1 week
 
 test:
   stage: test
