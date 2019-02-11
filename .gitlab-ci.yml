@@ -35,9 +35,9 @@ stages:
 compile:
   stage: build
   script:
-  - mvn clean install
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI clean install"
 
 test:
   stage: build
   script:
-  - mvn test
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_CLI test"
