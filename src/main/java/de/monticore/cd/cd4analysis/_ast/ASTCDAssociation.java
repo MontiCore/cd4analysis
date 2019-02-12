@@ -22,7 +22,7 @@ package de.monticore.cd.cd4analysis._ast;
 import de.monticore.cd.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.monticore.cd.symboltable.CDAssociationSymbol;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.types._ast.ASTQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociationTOP;
 
 import java.util.Optional;
@@ -46,12 +46,12 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
                                Optional<String> name,
                                Optional<de.monticore.cd.cd4analysis._ast.ASTModifier> leftModifier,
                                Optional<de.monticore.cd.cd4analysis._ast.ASTCardinality> leftCardinality,
-                               ASTQualifiedName leftReferenceName,
+                               ASTMCQualifiedName leftReferenceName,
                                Optional<de.monticore.cd.cd4analysis._ast.ASTCDQualifier> leftQualifier,
                                Optional<String> leftRole,
                                Optional<String> rightRole,
                                Optional<de.monticore.cd.cd4analysis._ast.ASTCDQualifier> rightQualifier,
-                               ASTQualifiedName rightReferenceName,
+                               ASTMCQualifiedName rightReferenceName,
                                Optional<de.monticore.cd.cd4analysis._ast.ASTCardinality> rightCardinality,
                                Optional<de.monticore.cd.cd4analysis._ast.ASTModifier> rightModifier,
                                boolean r__association,
@@ -69,12 +69,12 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
      Optional<String> name,
      Optional<de.monticore.cd.cd4analysis._ast.ASTModifier> leftModifier,
      Optional<de.monticore.cd.cd4analysis._ast.ASTCardinality> leftCardinality,
-     ASTQualifiedName leftReferenceName,
+     ASTMCQualifiedName leftReferenceName,
      Optional<de.monticore.cd.cd4analysis._ast.ASTCDQualifier> leftQualifier,
      Optional<String> leftRole,
      Optional<String> rightRole,
      Optional<de.monticore.cd.cd4analysis._ast.ASTCDQualifier> rightQualifier,
-     ASTQualifiedName rightReferenceName,
+     ASTMCQualifiedName rightReferenceName,
      Optional<de.monticore.cd.cd4analysis._ast.ASTCardinality> rightCardinality,
      Optional<de.monticore.cd.cd4analysis._ast.ASTModifier> rightModifier,
      boolean r__association,

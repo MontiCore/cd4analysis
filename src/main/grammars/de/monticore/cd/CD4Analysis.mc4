@@ -23,16 +23,16 @@ package de.monticore.cd;
    MCG for CD 4 Analysis, Version Feb. 01st, 2016
 */
 
-grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.MCCollectionTypes, de.monticore.types.MCSimpleGenericTypes, de.monticore.types.MCFullGenericTypes {
+grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.literals.Literals {
 
   /** ASTCDCompilationUnit represents the complete Diagram
     @attribute package          The package declaration of this Classdiagram
-    @attribute importStatements List of imported elements
+    @attribute MCImportStatements List of imported elements
     @attribute cDDefinition   
   */
   CDCompilationUnit =
     ("package" package:(Name& || ".")+ ";")? 
-    (ImportStatement)*
+    (MCImportStatement)*
     CDDefinition;
 
 
@@ -59,8 +59,8 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
     @attribute cDAttributes   List of Attributes of this Class
   */
   CDClass astimplements ASTCDType = Modifier?  "class" Name
-  ( "extends"  superclass:ReferenceType)?
-  ( TImplements interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
+  ( "extends"  superclass:MCObjectType)?
+  ( TImplements interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
   ( "{" 
     ( CDAttribute
     | CDConstructor
@@ -80,7 +80,7 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
     @attribute cDAttributes   List of Attributes of this Interface
   */
   CDInterface astimplements ASTCDType = Modifier? "interface" Name
-    ( "extends" interface:(ReferenceType || ",")+ )? stereotype:CDStereotype?
+    ( "extends" interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
     ( "{"
       ( CDAttribute
       | CDMethod )*
@@ -98,7 +98,7 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
     @attribute cDAttributes    List of Attributes of this Enum
   */
   CDEnum astimplements ASTCDType = Modifier? "enum" Name
-    ( TImplements interface:(ReferenceType || ",")+ )?
+    ( TImplements interface:(MCObjectType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";" 
         ( CDConstructor | CDMethod)*
@@ -113,7 +113,7 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
     @attribute name     Name of this Attribute
     @attribute value    Value of this Attribute
   */
-  CDAttribute = Modifier? Type Name ("=" Value)? ";"; 
+  CDAttribute = Modifier? MCType Name ("=" Value)? ";";
    
   /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
       in a Classdiagram
@@ -137,7 +137,7 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
   CDConstructor =
     Modifier
      Name "(" (CDParameter || ",")* ")"
-    ("throws" exception:(QualifiedName || "," )+)?
+    ("throws" exception:(MCQualifiedName || "," )+)?
     ";";
         
  
@@ -150,19 +150,19 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
   */
   CDMethod =
     Modifier
-    ReturnType
+    MCReturnType
      Name "(" (CDParameter || ",")* ")"
-    ("throws" exception:(QualifiedName || ",")+)?
+    ("throws" exception:(MCQualifiedName || ",")+)?
     ";";
   
  
   /** ASTCDParameter represents a Parameter of a Constructor or Method
-    @attribute type Type of this Parameter
+    @attribute mctype Type of this Parameter
     @attribute ellipsis Optional indicator for a variable Parameter length
     @attribute name Name of this Parameter
   */
   CDParameter =
-  Type (Ellipsis:["..."])? Name;
+  MCType (Ellipsis:["..."])? Name;
         
 
   /** ASTCDAssociation represents an Association between Classes or Interfaces
@@ -205,7 +205,7 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
     ([Derived:"/"])?  Name?
     leftModifier:Modifier?
     leftCardinality:Cardinality?
-    leftReferenceName:QualifiedName
+    leftReferenceName:MCQualifiedName
     leftQualifier:CDQualifier?
     ("(" leftRole:Name ")")?
     (   leftToRight:["->"]
@@ -214,7 +214,7 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
       | unspecified:["--"] )
     ("(" rightRole:Name ")")?
     rightQualifier:CDQualifier?
-    rightReferenceName:QualifiedName
+    rightReferenceName:MCQualifiedName
     rightCardinality:Cardinality?
     rightModifier:Modifier? ";" ;
 
@@ -241,9 +241,9 @@ grammar CD4Analysis extends de.monticore.types.MCBasicTypes, de.monticore.types.
 
   /** ASTQualifier represents a Qualifier of an Association
     @attribute name     Abstract name of the Qualifier if not a type
-    @attribute type     Type of the Qualifier if not an abstract name
+    @attribute mctype     Type of the Qualifier if not an abstract name
   */
-  CDQualifier = "[[" Name "]]" | "[" Type "]";
+  CDQualifier = "[[" Name "]]" | "[" MCType "]";
     
 
   /** ASTStereotype represents Stereotypes in a Classdiagram
