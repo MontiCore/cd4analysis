@@ -1,0 +1,13 @@
+pluginManagement {
+  repositories {
+    mavenLocal()
+    maven {
+      credentials.username mavenUser
+      credentials.password mavenPassword
+      url repo
+    }
+    gradlePluginPortal()
+  }
+}
+
+rootProject.name = 'cd4analysis'
