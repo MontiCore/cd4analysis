@@ -9,8 +9,8 @@ import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
 import de.monticore.cd.symboltable.CDTypeSymbol;
 import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
@@ -25,7 +25,7 @@ import java.util.Set;
 public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo#check(de.monticore.umlcd4a._ast.ASTCDDefinition)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDDefinitionCoCo#check(de.monticore.cd._ast.ASTCDDefinition)
    */
   @Override
   public void check(ASTCDDefinition node) {

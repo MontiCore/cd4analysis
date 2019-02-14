@@ -24,9 +24,9 @@ import de.monticore.generating.templateengine.reporting.commons.AReporter;
 import de.monticore.generating.templateengine.reporting.commons.ReportingConstants;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
 import de.se_rwth.commons.Names;
 
 import java.io.File;

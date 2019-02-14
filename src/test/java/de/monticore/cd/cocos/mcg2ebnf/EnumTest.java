@@ -7,18 +7,18 @@ package de.monticore.cd.cocos.mcg2ebnf;
 
 import de.monticore.cd.cocos.AbstractCoCoTest;
 import de.monticore.cocos.helper.Assert;
-import de.monticore.umlcd4a.CD4ACoCos;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.cd.transformation.ASTCDRawTransformation;
+import de.monticore.cd.CD4ACoCos;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import transformation.ast.ASTCDRawTransformation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -91,7 +91,7 @@ public class EnumTest extends AbstractCoCoTest {
         Finding.error(errorCode + " Enum A may not have attributes."));
     
     enums.get(0).addCDAttribute(CD4AnalysisMill.cDAttributeBuilder().setName("attr1")
-        .setType(new ASTCDRawTransformation().createType("int")).build());
+        .setMCType(new ASTCDRawTransformation().createType("int")).build());
     CD4AnalysisCoCoChecker checker = getChecker();
     checker.checkAll(root);
     

@@ -23,12 +23,15 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
+import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.types.types._ast.*;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDParameter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTValue;
+import de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant;
+import de.monticore.cd.cd4analysis._ast.ASTCDParameter;
+import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.cd4analysis._ast.ASTValue;
 
 import java.util.Collection;
 import java.util.List;
@@ -92,14 +95,14 @@ public class AstPrinter {
    * @return a string list of all import statements
    */
   public Collection<String> printImportList(
-      List<ASTImportStatement> importStatements) {
+      List<ASTMCImportStatement> importStatements) {
     
     return Collections2.transform(importStatements,
-        new Function<ASTImportStatement, String>() {
-          
+        new Function<ASTMCImportStatement, String>() {
+
           @Override
-          public String apply(ASTImportStatement arg0) {
-            return Joiner.on(".").skipNulls().join(arg0.getImportList());
+          public String apply(ASTMCImportStatement arg0) {
+            return arg0.getQName();
           }
           
         });
@@ -136,12 +139,12 @@ public class AstPrinter {
    * @param type an ASTType
    * @return String representation of the ASTType
    */
-  public String printType(ASTType type) {
-    return TypesPrinter.printType(type);
+  public String printType(ASTMCType type) {
+    return BasicGenericsTypesPrinter.printType(type);
   }
   
-  public String printType(ASTReturnType type) {
-    return TypesPrinter.printReturnType(type);
+  public String printType(ASTMCReturnType type) {
+    return BasicTypesPrinter.printReturnType(type); //TODO BasicGenericsTypesPrinter
   }
   
   /**
@@ -160,7 +163,7 @@ public class AstPrinter {
               
               @Override
               public String apply(ASTCDParameter arg0) {
-                return printType(arg0.getType()) + " " + arg0.getName();
+                return printType(arg0.getMCType()) + " " + arg0.getName();
               }
               
             }));
@@ -172,7 +175,7 @@ public class AstPrinter {
    * @param exceptionList a list of all qualified exceptions
    * @return a string list of all exceptions
    */
-  public String printThrowsDecl(List<ASTQualifiedName> exceptionList) {
+  public String printThrowsDecl(List<ASTMCQualifiedName> exceptionList) {
     StringBuilder str = new StringBuilder();
     
     if (!exceptionList.isEmpty()) {
@@ -182,10 +185,10 @@ public class AstPrinter {
     return str.append(
         Joiner.on(",").join(
             Collections2.transform(exceptionList,
-                new Function<ASTQualifiedName, String>() {
+                new Function<ASTMCQualifiedName, String>() {
                   
                   @Override
-                  public String apply(ASTQualifiedName arg0) {
+                  public String apply(ASTMCQualifiedName arg0) {
                     return Joiner.on(".").join(arg0.getPartList());
                   }
                   
@@ -198,15 +201,15 @@ public class AstPrinter {
    * @param extendsList a list of extends declarations
    * @return a string list of all extends declarations
    */
-  public String printReferenceList(List<ASTReferenceType> extendsList) {
+  public String printReferenceList(List<ASTMCObjectType> extendsList) {
     checkNotNull(extendsList);
     
     return Joiner.on(",").join(
         Collections2.transform(extendsList,
-            new Function<ASTReferenceType, String>() {
+            new Function<ASTMCObjectType, String>() {
               
               @Override
-              public String apply(ASTReferenceType arg0) {
+              public String apply(ASTMCObjectType arg0) {
                 return printType(arg0);
               }
             }));

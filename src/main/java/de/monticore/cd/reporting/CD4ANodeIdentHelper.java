@@ -16,11 +16,11 @@ import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
 import de.monticore.generating.templateengine.reporting.commons.Layouter;
 import de.monticore.literals.literals._ast.ASTIntLiteral;
 import de.monticore.types.TypesNodeIdentHelper;
-import de.monticore.types.types._ast.ASTPrimitiveType;
-import de.monticore.types.types._ast.ASTQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
-import de.monticore.types.types._ast.ASTTypeParameters;
-import de.monticore.umlcd4a.cd4analysis._ast.*;
+import de.monticore.types.mcfullgenerictypes._ast.ASTMCTypeParameters;
+import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.List;
 
@@ -121,7 +121,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     java.util.Optional<String> n = a.getNameOpt();
     if (n.isPresent() && a.getLeftReferenceName() != null
         && a.getRightReferenceName() != null) {
-      ident = unqualName(a.getLeftReferenceName()) + "-"
+      ident = a.getLeftReferenceName().getBaseName() + "-"
           + Layouter.unqualName(a.getRightReferenceName().toString());
     }
     return format(ident, Layouter.nodeName(a));
@@ -158,14 +158,14 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     else if (a instanceof ASTCDParameter) {
       return getIdent((ASTCDParameter) a);
     }
-    else if (a instanceof ASTPrimitiveType) {
-      return getIdent((ASTPrimitiveType) a);
+    else if (a instanceof ASTMCPrimitiveType) {
+      return getIdent((ASTMCPrimitiveType) a);
     }
     else if (a instanceof ASTCardinality) {
       return getIdent((ASTCardinality) a);
     }
-    else if (a instanceof ASTQualifiedName) {
-      return getIdent((ASTQualifiedName) a);
+    else if (a instanceof ASTMCQualifiedName) {
+      return getIdent((ASTMCQualifiedName) a);
     }
     else if (a instanceof ASTCDAttribute) {
       return getIdent((ASTCDAttribute) a);
@@ -182,8 +182,8 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     else if (a instanceof ASTModifier) {
       return getIdent((ASTModifier) a);
     }
-    else if (a instanceof ASTTypeParameters) {
-      return getIdent((ASTTypeParameters) a);
+    else if (a instanceof ASTMCTypeParameters) {
+      return getIdent((ASTMCTypeParameters) a);
     }
     else if (a instanceof ASTCDClass) {
       return getIdent((ASTCDClass) a);

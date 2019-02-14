@@ -2,7 +2,7 @@ package de.monticore.cd.prettyprint;
 
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;

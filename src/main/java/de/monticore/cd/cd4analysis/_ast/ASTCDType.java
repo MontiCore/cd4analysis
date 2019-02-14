@@ -5,7 +5,7 @@
  */
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.types.types._ast.ASTReferenceType;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd.cd4analysis._ast.ASTModifier;
 
@@ -27,7 +27,7 @@ public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode 
 
   void setModifier(ASTModifier modifier);
 
-  List<ASTReferenceType> getInterfaceList();
+  List<ASTMCObjectType> getInterfaceList();
 
   List<ASTCDMethod> getCDMethodList();
   

@@ -9,10 +9,12 @@ import de.monticore.cd.BuiltInTypes;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
 import de.monticore.cd.symboltable.CDTypeSymbol;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types.types._ast.ASTType;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.cd.cd4analysis._ast.ASTCDQualifier;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -26,7 +28,7 @@ import java.util.Optional;
 public class AssociationQualifierTypeExists
     implements CD4AnalysisASTCDAssociationCoCo {
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation node) {
@@ -51,9 +53,9 @@ public class AssociationQualifierTypeExists
    */
   private boolean check(ASTCDQualifier qualifier, ASTCDAssociation node) {
     boolean hasError = false;
-    if (qualifier.isPresentType()) {
-      ASTType type = qualifier.getType();
-      String typeName = TypesPrinter.printType(type);
+    if (qualifier.isPresentMCType()) {
+      ASTMCType type = qualifier.getMCType();
+      String typeName = BasicGenericsTypesPrinter.printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {
         Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope()
             .resolve(typeName, CDTypeSymbol.KIND);

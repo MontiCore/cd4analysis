@@ -34,7 +34,7 @@ public class ASTCDConstructor extends ASTCDConstructorTOP {
       ASTModifier modifier,
       String name,
       java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDParameter> cDParameters,
-      java.util.List<de.monticore.types.types._ast.ASTQualifiedName> exceptions)
+      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName> exceptions)
   {
     super(modifier, name, cDParameters, exceptions);
   }

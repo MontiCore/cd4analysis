@@ -20,8 +20,8 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnumConstant;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Collection;

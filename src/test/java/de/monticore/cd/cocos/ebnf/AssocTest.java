@@ -7,10 +7,10 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cocos.AbstractCoCoTest;
 import de.monticore.cocos.helper.Assert;
-import de.monticore.umlcd4a.CD4ACoCos;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationQualifierOnCorrectSide;
+import de.monticore.cd.CD4ACoCos;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.cd.cocos.ebnf.AssociationQualifierOnCorrectSide;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;

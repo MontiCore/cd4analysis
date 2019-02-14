@@ -5,9 +5,9 @@
  */
 package de.monticore.cd.parser;
 
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
 import org.antlr.v4.runtime.RecognitionException;

@@ -20,8 +20,8 @@
 package de.monticore.cd.cocos.others;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTCDStereoValue;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Arrays;

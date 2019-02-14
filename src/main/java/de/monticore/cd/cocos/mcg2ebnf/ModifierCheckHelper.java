@@ -5,7 +5,7 @@
  */
 package de.monticore.cd.cocos.mcg2ebnf;
 
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.cd4analysis._ast.ASTModifier;
 
 /**
  * Helper providing common methods to check some modifier related constraints.

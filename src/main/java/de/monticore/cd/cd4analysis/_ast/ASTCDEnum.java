@@ -38,7 +38,7 @@ public class ASTCDEnum extends ASTCDEnumTOP {
       Optional<ASTModifier> modifier,
       String name,
       Optional<ASTTImplements> r__implements,
-      java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
+      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCObjectType> interfaces,
       java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant> cDEnumConstants,
       java.util.List<ASTCDConstructor> cDConstructors,
       java.util.List<ASTCDMethod> cDMethods) {

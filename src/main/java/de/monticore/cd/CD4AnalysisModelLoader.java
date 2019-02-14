@@ -11,7 +11,7 @@ import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.Scope;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 
 public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCompilationUnit> {

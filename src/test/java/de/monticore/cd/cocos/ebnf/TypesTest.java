@@ -6,11 +6,12 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cocos.AbstractCoCoTest;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
-import de.monticore.umlcd4a.CD4ACoCos;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.umlcd4a.cocos.ebnf.GenericTypeHasParameters;
+import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;//TODO: ersetze simplereferencetype
+import de.monticore.cd.CD4ACoCos;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd.cocos.ebnf.GenericTypeHasParameters;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -98,8 +99,8 @@ public class TypesTest extends AbstractCoCoTest {
     testModelForErrors(MODEL_PATH_INVALID + modelName, expectedErrors);
 
     // some further tests
-    Optional<ASTSimpleReferenceType> type = (new CD4AnalysisParser())
-        .parseSimpleReferenceType(new StringReader("a.b.C<S>"));
+    Optional<ASTMCGenericType> type = (new CD4AnalysisParser())
+        .parseMCGenericType(new StringReader("a.b.C<S>"));
     assertTrue(type.isPresent());
 
     Log.getFindings().clear();
@@ -110,7 +111,7 @@ public class TypesTest extends AbstractCoCoTest {
     assertEquals(0, Log.getFindings().size());
     
     type = (new CD4AnalysisParser())
-        .parseSimpleReferenceType(new StringReader("a.b.C<>"));
+        .parseMCGenericType(new StringReader("a.b.C<>"));
     assertTrue(type.isPresent());
     new GenericTypeHasParameters().check(type.get());
     // asert expected error

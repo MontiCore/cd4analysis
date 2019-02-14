@@ -29,10 +29,12 @@ import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
 import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
 import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.umlcd4a.cd4analysis._ast.*;
-import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.se_rwth.commons.Names;
 
 import java.util.Iterator;
@@ -46,7 +48,7 @@ import java.util.Iterator;
  * 
  * @author Martin Schindler
  */
-public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVisitor implements CD4AnalysisVisitor {
+public class CDPrettyPrinterConcreteVisitor extends MCBasicTypesPrettyPrinter implements CD4AnalysisVisitor {
   
   private CD4AnalysisVisitor realThis = this;
   
@@ -72,8 +74,8 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       printer
           .println("package " + Names.getQualifiedName(unit.getPackageList()) + ";\n");
     }
-    if (unit.getImportStatementList() != null && !unit.getImportStatementList().isEmpty()) {
-      for (ASTImportStatement s : unit.getImportStatementList()) {
+    if (unit.getMCImportStatementList() != null && !unit.getMCImportStatementList().isEmpty()) {
+      for (ASTMCImportStatement s : unit.getMCImportStatementList()) {
         getPrinter().print("import " + Names.getQualifiedName(s.getImportList()));
         if (s.isStar()) {
           getPrinter().println(".*;");
@@ -254,7 +256,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
     a.getModifier().accept(getRealThis());
     // print generics
     // print return type
-    a.getReturnType().accept(getRealThis());
+    a.getMCReturnType().accept(getRealThis());
     // print name
     getPrinter().print(" " + a.getName());
     // print parameters
@@ -300,7 +302,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
    */
   @Override
   public void handle(ASTCDParameter a) {
-    a.getType().accept(getRealThis());
+    a.getMCType().accept(getRealThis());
     if (a.isEllipsis()) {
       getPrinter().print("...");
     }
@@ -320,13 +322,13 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       a.getModifier().accept(getRealThis());
     }
     // print type
-    a.getType().accept(getRealThis());
+    a.getMCType().accept(getRealThis());
     // print name
     getPrinter().print(" " + a.getName());
     // print attribute value
     if (a.isPresentValue()) {
       getPrinter().print(" = ");
-      a.getValue().getSignedLiteral().accept(getRealThis());
+      a.getValue().getLiteral().accept(getRealThis());
     }
     getPrinter().println(";");
   }
@@ -349,9 +351,9 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
       getPrinter().print("]]");
     }
     else {
-      if (a.isPresentType()) {
+      if (a.isPresentMCType()) {
         getPrinter().print("[");
-        a.getType().accept(getRealThis());
+        a.getMCType().accept(getRealThis());
         getPrinter().print("]");
       }
     }

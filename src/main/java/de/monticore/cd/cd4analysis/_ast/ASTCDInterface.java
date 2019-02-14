@@ -38,7 +38,7 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
   
   protected ASTCDInterface(Optional<ASTModifier> modifier,
       String name,
-      java.util.List<de.monticore.types.types._ast.ASTReferenceType> interfaces,
+      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCObjectType> interfaces,
                           Optional<ASTCDStereotype> stereotype,
       java.util.List<ASTCDAttribute> cDAttributes,
       java.util.List<ASTCDMethod> cDMethods) {

@@ -23,7 +23,7 @@ package de.monticore.cd;
    MCG for CD 4 Analysis, Version Feb. 01st, 2016
 */
 
-grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.literals.Literals {
+grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.MCJavaLiterals {
 
   /** ASTCDCompilationUnit represents the complete Diagram
     @attribute package          The package declaration of this Classdiagram
@@ -263,6 +263,6 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.l
   /** ASTValue represents a Value
       @attribute literal  Value
   */
-  Value = SignedLiteral;
+  Value = Literal; //TODO: SignedLiteral
     
 }

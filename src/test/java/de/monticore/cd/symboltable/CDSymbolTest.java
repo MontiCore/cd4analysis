@@ -6,7 +6,7 @@
 package de.monticore.cd.symboltable;
 
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.umlcd4a.symboltable.CDSymbol;
+import de.monticore.cd.symboltable.CDSymbol;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

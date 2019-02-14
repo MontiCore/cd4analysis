@@ -8,7 +8,7 @@ package de.monticore.cd.symboltable;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.ResolvingConfiguration;
-import de.monticore.umlcd4a.CD4AnalysisLanguage;
+import de.monticore.cd.CD4AnalysisLanguage;
 
 import java.nio.file.Paths;
 

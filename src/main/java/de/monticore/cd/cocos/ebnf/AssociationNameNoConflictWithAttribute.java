@@ -23,7 +23,7 @@ import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.symboltable.CDAssociationSymbol;
 import de.monticore.cd.symboltable.CDFieldSymbol;
 import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;

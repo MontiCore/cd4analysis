@@ -21,9 +21,9 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.types.types._ast.ASTQualifiedName;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
@@ -37,19 +37,19 @@ public class AssociationSourceTypeNotGenericChecker implements
     for (ASTCDAssociation assoc : assocList) {
       
       if (assoc.isLeftToRight() || assoc.isBidirectional()) {
-        ASTQualifiedName leftType = assoc.getLeftReferenceName();
+        ASTMCQualifiedName leftType = assoc.getLeftReferenceName();
         
         printErrorOnGeneric(leftType, assoc);
       }
       
       if (assoc.isRightToLeft()) {
-        ASTQualifiedName rightType = assoc.getRightReferenceName();
+        ASTMCQualifiedName rightType = assoc.getRightReferenceName();
         printErrorOnGeneric(rightType, assoc);
       }
     }
   }
   
-  private void printErrorOnGeneric(ASTQualifiedName sourceType,
+  private void printErrorOnGeneric(ASTMCQualifiedName sourceType,
       ASTCDAssociation assoc) {
     
     String s = sourceType.toString();

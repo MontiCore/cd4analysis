@@ -6,8 +6,8 @@
 package de.monticore.cd.cocos.mcg;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -18,7 +18,7 @@ import de.se_rwth.commons.logging.Log;
 public class ClassInvalidModifiersCoCo implements CD4AnalysisASTCDClassCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(ASTCDClass)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDClassCoCo#check(ASTCDClass)
    */
   @Override
   public void check(ASTCDClass node) {

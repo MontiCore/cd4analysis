@@ -7,10 +7,13 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.literals.literals._ast.*;
-import de.monticore.literals.literals._visitor.LiteralsInheritanceVisitor;
+import de.monticore.literals.literals._ast.ASTSignedIntLiteral;
+import de.monticore.mcbasicliterals._ast.*;
+import de.monticore.mcbasicliterals._visitor.MCBasicLiteralsInheritanceVisitor;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -22,15 +25,15 @@ import de.se_rwth.commons.logging.Log;
 public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {
     if (node.isPresentValue()) {
       CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol();
       String className = symbol.getEnclosingScope().getName().get();
-      String typeName = TypesPrinter.printType(node.getType());
-      ASTSignedLiteral lit = node.getValue().getSignedLiteral();
+      String typeName = BasicGenericsTypesPrinter.printType(node.getMCType());
+      ASTLiteral lit = node.getValue().getLiteral();
       
       // see TypeChecker javadoc for more information
       TypeChecker tc = new TypeChecker(typeName);
@@ -57,7 +60,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    *
    * @author Robert Heim
    */
-  private static class TypeChecker implements LiteralsInheritanceVisitor {
+  private static class TypeChecker implements MCBasicLiteralsInheritanceVisitor {
     
     private String typeUnderCheck;
     
@@ -92,7 +95,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTStringLiteral)
+     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTStringLiteral)
      */
     @Override
     public void visit(ASTStringLiteral node) {
@@ -100,7 +103,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTBooleanLiteral)
+     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTBooleanLiteral)
      */
     @Override
     public void visit(ASTBooleanLiteral node) {
@@ -108,43 +111,22 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTIntLiteral)
+     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTNatLiteral)
      */
     @Override
-    public void visit(ASTSignedIntLiteral node) {
+    public void visit(ASTSignedNatLiteral node) {
       check("int", "Integer");
+      check("float", "Float");
+      check("double", "Double");
+      check("long", "Long");
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTCharLiteral)
+     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTCharLiteral)
      */
     @Override
     public void visit(ASTCharLiteral node) {
       check("char", "Character");
-    }
-    
-    /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTFloatLiteral)
-     */
-    @Override
-    public void visit(ASTSignedFloatLiteral node) {
-      check("float", "Float");
-    }
-    
-    /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTDoubleLiteral)
-     */
-    @Override
-    public void visit(ASTSignedDoubleLiteral node) {
-      check("double", "Double");
-    }
-    
-    /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTLongLiteral)
-     */
-    @Override
-    public void visit(ASTSignedLongLiteral node) {
-      check("long", "Long");
     }
     
   }

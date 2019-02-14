@@ -8,8 +8,8 @@ package de.monticore.cd.symboltable;
 import de.monticore.symboltable.CommonSymbolTableCreator;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
-
 import javax.annotation.Nullable;
+
 
 public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreator implements CD4AnalysisSymbolTableCreator {
 

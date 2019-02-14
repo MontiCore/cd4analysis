@@ -5,8 +5,8 @@ import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
 import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.*;
-import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
 
 public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
 

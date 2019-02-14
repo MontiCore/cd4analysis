@@ -9,7 +9,7 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.symboltable.CDFieldSymbol;
 import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class AttributeOverriddenTypeMatch
     implements CD4AnalysisASTCDAttributeCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {

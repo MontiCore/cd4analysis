@@ -6,9 +6,9 @@
 package de.monticore.cd.symboltable;
 
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.umlcd4a.symboltable.CDFieldSymbol;
-import de.monticore.umlcd4a.symboltable.CDSymbol;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.monticore.cd.symboltable.CDFieldSymbol;
+import de.monticore.cd.symboltable.CDSymbol;
+import de.monticore.cd.symboltable.CDTypeSymbol;
 import org.junit.Test;
 
 import java.util.Optional;

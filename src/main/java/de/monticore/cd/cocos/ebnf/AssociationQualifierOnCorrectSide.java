@@ -7,9 +7,11 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTCDQualifier;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -21,7 +23,7 @@ public class AssociationQualifierOnCorrectSide
     implements CD4AnalysisASTCDAssociationCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation node) {
@@ -51,8 +53,8 @@ public class AssociationQualifierOnCorrectSide
    */
   private void error(ASTCDQualifier qualifier, ASTCDAssociation node) {
     String qualifierName = "";
-    if (qualifier.isPresentType()) {
-      qualifierName = TypesPrinter.printType(qualifier.getType());
+    if (qualifier.isPresentMCType()) {
+      qualifierName = BasicGenericsTypesPrinter.printType(qualifier.getMCType());
     } else if (qualifier.isPresentName()) {
       qualifierName = qualifier.getName();
     }

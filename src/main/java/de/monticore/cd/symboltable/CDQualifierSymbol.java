@@ -6,7 +6,10 @@
 package de.monticore.cd.symboltable;
 
 import de.monticore.symboltable.CommonSymbol;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.types._ast.ASTType;
 
 /**
@@ -38,8 +41,8 @@ public class CDQualifierSymbol extends CommonSymbol {
    * @param type
    * @see #CDQualifierSymbol(String)
    */
-  public CDQualifierSymbol(ASTType type) {
-    super(TypesPrinter.printType(type), KIND);
+  public CDQualifierSymbol(ASTMCType type) {
+    super(BasicGenericsTypesPrinter.printType(type), KIND);
     setTypeQualifier(true);
   }
   

@@ -19,12 +19,18 @@
 
 package de.monticore.cd.cocos.ebnf;
 
+import de.monticore.types.BasicGenericsTypesPrinter;
 import de.monticore.types.TypesPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
+import de.monticore.types.mccollectiontypes._cocos.MCCollectionTypesASTMCGenericTypeCoCo;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.ASTTypeArguments;
 import de.monticore.types.types._cocos.TypesASTSimpleReferenceTypeCoCo;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,29 +39,29 @@ import java.util.Optional;
  *
  * @author Robert Heim
  */
-public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCoCo {
-  
+public class GenericParameterCountMatch implements MCCollectionTypesASTMCGenericTypeCoCo {
+
   @Override
-  public void check(ASTSimpleReferenceType type) {
+  public void check(ASTMCGenericType type) {
     // note that generics cannot be defined within C4A and only three default
     // default types use generics (Optional, List, Set) and they all have
     // exactly one type parameter.
-    Optional<ASTTypeArguments> args = type.getTypeArgumentsOpt();
-    if (args.isPresent()) {
-      String typeName = TypesPrinter.printType(type);
-      check(typeName, args.get());
+    List<ASTMCTypeArgument> args = type.getMCTypeArgumentList();
+    if (!args.isEmpty()) {
+      String typeName = BasicGenericsTypesPrinter.printType(type);
+      check(typeName, args);
     }
   }
   
-  private void check(String typeName, ASTTypeArguments typeArguments) {
+  private void check(String typeName, List<ASTMCTypeArgument> typeArguments) {
     // note that "no type arguments" is checked by coco GenericTypeHasParameters
-    if (!typeArguments.getTypeArgumentList().isEmpty()) {
+    if (!typeArguments.isEmpty()) {
       String typeWithoutGenerics = typeName;
       if (typeName.indexOf('<') > 0) {
         typeWithoutGenerics = typeName.substring(0, typeName.indexOf('<'));
       }
 
-      int actualCount = typeArguments.getTypeArgumentList().size();
+      int actualCount = typeArguments.size();
       int expectedCount = 1;
       if (typeName.startsWith("Map")) {
         expectedCount = 2;
@@ -67,7 +73,7 @@ public class GenericParameterCountMatch implements TypesASTSimpleReferenceTypeCo
             expectedCount,
             actualCount,
             typeName),
-            typeArguments.get_SourcePositionStart());
+            typeArguments.get(0).get_SourcePositionStart());
       }
     }
   }

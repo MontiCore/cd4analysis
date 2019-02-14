@@ -6,7 +6,7 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 
 /**
  * See {@link ImplementOnlyInterfaces}.

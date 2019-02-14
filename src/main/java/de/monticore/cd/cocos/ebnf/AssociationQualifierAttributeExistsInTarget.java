@@ -8,9 +8,9 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
 import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.types.types._ast.ASTQualifiedName;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDQualifier;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.cd.cd4analysis._ast.ASTCDQualifier;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -26,7 +26,7 @@ public class AssociationQualifierAttributeExistsInTarget
     implements CD4AnalysisASTCDAssociationCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation node) {
@@ -51,7 +51,7 @@ public class AssociationQualifierAttributeExistsInTarget
    * @param node the association under test
    * @return whether there was a coco error or not
    */
-  private boolean check(ASTCDQualifier qualifier, ASTQualifiedName referencedType, ASTCDAssociation node) {
+  private boolean check(ASTCDQualifier qualifier, ASTMCQualifiedName referencedType, ASTCDAssociation node) {
     boolean hasError = false;
     if (qualifier.isPresentName()) {
       String expectedAttributeName = qualifier.getName();

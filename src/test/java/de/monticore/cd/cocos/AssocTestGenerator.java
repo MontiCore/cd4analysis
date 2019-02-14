@@ -5,9 +5,9 @@
  */
 package de.monticore.cd.cocos;
 
-import de.monticore.umlcd4a.cd4analysis._ast.*;
-import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
-import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.cd.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
+import de.monticore.cd.cocos.CD4ACoCoHelper;
 
 import java.util.ArrayList;
 import java.util.List;

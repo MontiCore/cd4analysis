@@ -20,8 +20,10 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types.types._ast.ASTReferenceType;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.Optional;
@@ -38,9 +40,9 @@ public class ASTCDClass extends ASTCDClassTOP {
   protected ASTCDClass(
       Optional<ASTModifier> modifier,
       String name,
-      Optional<ASTReferenceType> superclass,
+      Optional<ASTMCObjectType> superclass,
       Optional<ASTTImplements> r__implements,
-      java.util.List<ASTReferenceType> interfaces,
+      java.util.List<ASTMCObjectType> interfaces,
       Optional<ASTCDStereotype> stereotype,
       java.util.List<ASTCDAttribute> cDAttributes,
       java.util.List<ASTCDConstructor> cDConstructors,
@@ -58,7 +60,7 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (!isPresentSuperclass()) {
       return EMPTY_STRING;
     }
-    return TypesPrinter.printType(getSuperclass());
+    return BasicGenericsTypesPrinter.printType(getSuperclass());
   }
   
   public String printModifier() {

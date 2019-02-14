@@ -1,6 +1,6 @@
 package de.monticore.cd.prettyprint;
 
-import de.monticore.umlcd4a.prettyprint.PrintCD2PlantUML;
+import de.monticore.cd.prettyprint.PrintCD2PlantUML;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;

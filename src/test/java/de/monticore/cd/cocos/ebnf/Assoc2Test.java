@@ -1,15 +1,15 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cocos.AbstractCoCoTest;
-import de.monticore.umlcd4a.CD4ACoCos;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationNameUnique;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationNoConflictWithCardinalities;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationNoConflictWithDerivedCardinalities;
-import de.monticore.umlcd4a.cocos.ebnf.AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode;
-import de.monticore.umlcd4a.cocos.others.AssociationNavigationHasCardinality;
-import de.monticore.umlcd4a.cocos.others.ClassOnlyValidStereotype;
-import de.monticore.umlcd4a.cocos.others.InterfaceOnlyValidStereotype;
+import de.monticore.cd.CD4ACoCos;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.cd.cocos.ebnf.AssociationNameUnique;
+import de.monticore.cd.cocos.ebnf.AssociationNoConflictWithCardinalities;
+import de.monticore.cd.cocos.ebnf.AssociationNoConflictWithDerivedCardinalities;
+import de.monticore.cd.cocos.ebnf.AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode;
+import de.monticore.cd.cocos.others.AssociationNavigationHasCardinality;
+import de.monticore.cd.cocos.others.ClassOnlyValidStereotype;
+import de.monticore.cd.cocos.others.InterfaceOnlyValidStereotype;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;

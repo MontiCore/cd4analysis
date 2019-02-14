@@ -6,9 +6,9 @@
 package de.monticore.cd.prettyprint;
 
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
 import org.antlr.v4.runtime.RecognitionException;

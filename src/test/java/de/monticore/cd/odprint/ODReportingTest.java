@@ -10,11 +10,11 @@ import de.monticore.cd.symboltable.CD4AGlobalScopeTestFactory;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.umlcd4a.reporting.AST2ODReporter;
-import de.monticore.umlcd4a.reporting.CD4ANodeIdentHelper;
-import de.monticore.umlcd4a.reporting.CD4ASymbolTableReporter;
-import de.monticore.umlcd4a.symboltable.CDSymbol;
+import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
+import de.monticore.cd.reporting.AST2ODReporter;
+import de.monticore.cd.reporting.CD4ANodeIdentHelper;
+import de.monticore.cd.reporting.CD4ASymbolTableReporter;
+import de.monticore.cd.symboltable.CDSymbol;
 import org.junit.Test;
 
 import java.io.IOException;

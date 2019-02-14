@@ -7,7 +7,7 @@ package de.monticore.cd.cocos;
 
 import com.google.common.base.Joiner;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
+import de.monticore.cd.cd4analysis._ast.ASTCardinality;
 
 /**
  * Helper to print associations in default formats.

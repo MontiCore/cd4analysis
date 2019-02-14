@@ -20,8 +20,10 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
-import de.monticore.types.types._ast.ASTType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.Optional;
@@ -36,7 +38,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
   
   protected ASTCDAttribute(
       Optional<ASTModifier> modifier,
-      ASTType type,
+      ASTMCType type,
       String name,
       Optional<ASTValue> value) {
     super(modifier, type, name, value);
@@ -94,7 +96,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return String representation of the ASTType
    */
   public String printType() {
-    return TypesPrinter.printType(type);
+    return BasicGenericsTypesPrinter.printType(mCType);
   }
   
   public String printAnnotation() {

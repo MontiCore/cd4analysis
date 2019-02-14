@@ -8,10 +8,10 @@ package de.monticore.cd.cocos.mcg2ebnf;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereotype;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTCDStereoValue;
+import de.monticore.cd.cd4analysis._ast.ASTCDStereotype;
+import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -23,7 +23,7 @@ import de.se_rwth.commons.logging.Log;
 public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAssociationCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation node) {

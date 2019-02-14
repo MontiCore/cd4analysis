@@ -6,10 +6,10 @@
 package de.monticore.cd.cocos;
 
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.types._ast.ASTQualifiedName;
-import de.monticore.types.types._ast.TypesNodeFactory;
-import de.monticore.umlcd4a.cd4analysis._ast.*;
-import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.MCBasicTypesNodeFactory;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.cd.prettyprint.CDPrettyPrinterConcreteVisitor;
 import de.se_rwth.commons.StringTransformations;
 
 import java.util.*;
@@ -380,9 +380,9 @@ public class AssocTestGeneratorTool {
         
         if ((valid && !invalidCase) || (!valid && invalidCase)) {
           ASTCDAssociation clone = assoc.deepClone();
-          ASTQualifiedName leftReferenceName = TypesNodeFactory.createASTQualifiedName(Arrays
+          ASTMCQualifiedName leftReferenceName = MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays
               .asList(tLeft));
-          ASTQualifiedName rightReferenceName = TypesNodeFactory.createASTQualifiedName(Arrays
+          ASTMCQualifiedName rightReferenceName = MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays
               .asList(tRight));
           clone.setLeftReferenceName(leftReferenceName);
           clone.setRightReferenceName(rightReferenceName);

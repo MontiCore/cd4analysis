@@ -11,8 +11,8 @@ import de.monticore.cd.symboltable.*;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
-
 import javax.annotation.Nullable;
+
 import java.util.Optional;
 
 public class CD4AnalysisLanguage extends CommonModelingLanguage {

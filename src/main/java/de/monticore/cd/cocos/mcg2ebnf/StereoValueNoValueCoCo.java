@@ -5,8 +5,8 @@
  */
 package de.monticore.cd.cocos.mcg2ebnf;
 
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDStereoValueCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTCDStereoValue;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDStereoValueCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
 public class StereoValueNoValueCoCo implements CD4AnalysisASTCDStereoValueCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDStereoValueCoCo#check(de.monticore.umlcd4a._ast.ASTCDStereoValue)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDStereoValueCoCo#check(de.monticore.cd._ast.ASTCDStereoValue)
    */
   @Override
   public void check(ASTCDStereoValue node) {

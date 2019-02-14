@@ -6,8 +6,8 @@
 package de.monticore.cd.cocos.mcg2ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTModifier;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
+import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -18,7 +18,7 @@ import de.se_rwth.commons.logging.Log;
 public class InterfaceNoModifierCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a._ast.ASTCDClass)
+   * @see de.monticore.cd._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.cd._ast.ASTCDClass)
    */
   @Override
   public void check(ASTCDInterface node) {

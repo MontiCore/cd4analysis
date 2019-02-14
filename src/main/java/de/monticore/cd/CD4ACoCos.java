@@ -8,7 +8,7 @@ package de.monticore.cd;
 import de.monticore.cd.cocos.ebnf.*;
 import de.monticore.cd.cocos.mcg.*;
 import de.monticore.cd.cocos.mcg2ebnf.*;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 
 /**
  * Set of CoCos for CD4A.

@@ -5,10 +5,10 @@
  */
 package de.monticore.cd.cocos;
 
-import de.monticore.types.types._ast.TypesNodeFactory;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
-import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
+import de.monticore.types.mcbasictypes._ast.MCBasicTypesNodeFactory;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.cd.cocos.CD4ACoCoHelper;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -25,9 +25,9 @@ public class CD4ACoCoHelperTest {
   public void testAssocDirections() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
     assoc.setName("expectedName");
-    assoc.setLeftReferenceName(TypesNodeFactory.createASTQualifiedName(Arrays.asList("left",
+    assoc.setLeftReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("left",
         "TypeName")));
-    assoc.setRightReferenceName(TypesNodeFactory.createASTQualifiedName(Arrays.asList("right",
+    assoc.setRightReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("right",
         "TypeName")));
 
     assoc.setLeftToRight(true);
@@ -56,10 +56,10 @@ public class CD4ACoCoHelperTest {
   public void testAssocRoles() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
     assoc.setName("expectedName");
-    assoc.setLeftReferenceName(TypesNodeFactory.createASTQualifiedName(Arrays.asList("left",
+    assoc.setLeftReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("left",
         "TypeName")));
     assoc.setBidirectional(true);
-    assoc.setRightReferenceName(TypesNodeFactory.createASTQualifiedName(Arrays.asList("right",
+    assoc.setRightReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("right",
         "TypeName")));
 
     assoc.setLeftRole("leftRole");
@@ -78,10 +78,10 @@ public class CD4ACoCoHelperTest {
   @Test
   public void testAssocName() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
-    assoc.setLeftReferenceName(TypesNodeFactory.createASTQualifiedName(Arrays.asList("left",
+    assoc.setLeftReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("left",
         "TypeName")));
     assoc.setBidirectional(true);
-    assoc.setRightReferenceName(TypesNodeFactory.createASTQualifiedName(Arrays.asList("right",
+    assoc.setRightReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("right",
         "TypeName")));
 
     assertEquals("(left.TypeName <-> right.TypeName)",
