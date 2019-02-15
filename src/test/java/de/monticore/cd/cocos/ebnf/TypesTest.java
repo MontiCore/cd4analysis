@@ -45,7 +45,7 @@ public class TypesTest extends AbstractCoCoTest {
 
   @BeforeClass
   public static void init() {
-    LogStub.init();
+    Log.init();
     Log.enableFailQuick(false);
   }
 

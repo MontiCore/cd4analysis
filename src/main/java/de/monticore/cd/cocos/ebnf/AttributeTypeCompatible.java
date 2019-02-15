@@ -10,6 +10,11 @@ import de.monticore.cd.symboltable.CDFieldSymbol;
 import de.monticore.literals.literals._ast.ASTSignedIntLiteral;
 import de.monticore.mcbasicliterals._ast.*;
 import de.monticore.mcbasicliterals._visitor.MCBasicLiteralsInheritanceVisitor;
+import de.monticore.mcjavaliterals._ast.ASTDoubleLiteral;
+import de.monticore.mcjavaliterals._ast.ASTFloatLiteral;
+import de.monticore.mcjavaliterals._ast.ASTIntLiteral;
+import de.monticore.mcjavaliterals._ast.ASTLongLiteral;
+import de.monticore.mcjavaliterals._visitor.MCJavaLiteralsVisitor;
 import de.monticore.types.BasicGenericsTypesPrinter;
 import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.TypesPrinter;
@@ -60,7 +65,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    *
    * @author Robert Heim
    */
-  private static class TypeChecker implements MCBasicLiteralsInheritanceVisitor {
+  private static class TypeChecker implements MCJavaLiteralsVisitor {
     
     private String typeUnderCheck;
     
@@ -111,13 +116,25 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTNatLiteral)
+     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcjavaliterals._ast.ASTIntLiteral)
      */
     @Override
-    public void visit(ASTSignedNatLiteral node) {
+    public void visit(ASTIntLiteral node) {
       check("int", "Integer");
-      check("float", "Float");
-      check("double", "Double");
+    }
+
+    @Override
+    public void visit(ASTFloatLiteral node){
+      check("float","Float");
+    }
+
+    @Override
+    public void visit(ASTDoubleLiteral node){
+      check("double","Double");
+    }
+
+    @Override
+    public void visit(ASTLongLiteral node){
       check("long", "Long");
     }
     
