@@ -19,7 +19,9 @@ import de.monticore.types.BasicTypesPrinter;
 import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
+import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCPrimitiveTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.se_rwth.commons.Names;
@@ -246,19 +248,34 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
       }
       List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
       for (ASTMCTypeArgument astTypeArgument : astmcGenericType.getMCTypeArgumentList()){
-        if (astTypeArgument instanceof ASTMCType) {
+        if(astTypeArgument instanceof ASTMCBasicTypeArgument){
           // Examples: Set<Integer>, Set<Set<?>>, Set<java.lang.String>
-          ASTMCType astTypeNoBound = (ASTMCType) astTypeArgument;
-          CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(
-              astTypeNoBound.getBaseName(), currentScope().get());
-          // TODO PN, GV: add dimension?
-          // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoBound)
+          ASTMCBasicTypeArgument astmcBasicTypeArgument = (ASTMCBasicTypeArgument) astTypeArgument;
+          if(astmcBasicTypeArgument.getMCQualifiedType() instanceof ASTMCType) {
+            ASTMCType astTypeNoBound = (ASTMCType) astmcBasicTypeArgument.getMCQualifiedType();
+            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getBaseName(), currentScope().get());
+            // TODO PN, GV: add dimension?
+            // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoound)
+            typeArgumentSymbolReference.setStringRepresentation(BasicGenericsTypesPrinter.printType(astTypeNoBound));
+            typeArgumentSymbolReference.setAstNode(astTypeArgument);
+            addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
+            actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
+          }else {
+            Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
+                + typeReference);
+          }
+        }
+        else if (astTypeArgument instanceof ASTMCPrimitiveTypeArgument) {
+          ASTMCPrimitiveTypeArgument astmcPrimitiveTypeArgument = (ASTMCPrimitiveTypeArgument) astTypeArgument;
+          if(astmcPrimitiveTypeArgument.getMCPrimitiveType() instanceof ASTMCType){
+            ASTMCType astTypeNoBound = astmcPrimitiveTypeArgument.getMCPrimitiveType();
+            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getBaseName(), currentScope().get());
+            typeArgumentSymbolReference.setStringRepresentation(BasicGenericsTypesPrinter.printType(astTypeNoBound));
+            typeArgumentSymbolReference.setAstNode(astTypeArgument);
+            addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
+            actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
+          }
 
-          typeArgumentSymbolReference.setStringRepresentation(BasicGenericsTypesPrinter.printType(astTypeNoBound));
-          typeArgumentSymbolReference.setAstNode(astTypeArgument);
-          addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
-
-          actualTypeArguments.add(new ActualTypeArgument(typeArgumentSymbolReference));
         }
         else {
           Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "

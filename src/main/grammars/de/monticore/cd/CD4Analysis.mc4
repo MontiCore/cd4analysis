@@ -263,6 +263,6 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
   /** ASTValue represents a Value
       @attribute literal  Value
   */
-  Value = Literal; //TODO: SignedLiteral
+  Value = Literal; //TODO: Change back to signed literal when correct
     
 }
