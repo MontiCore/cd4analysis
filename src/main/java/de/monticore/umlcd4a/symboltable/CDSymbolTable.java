@@ -80,8 +80,8 @@ public class CDSymbolTable {
   /**
    * Create a new symbol table from a given ASTCompilation unit
    *
-   * @param ast
-   * @param modelPaths
+   * @param ast the given ASTCompilationUnit
+   * @param modelPaths modelPaths for the global scope
    * @return
    */
   private GlobalScope createSymboltable(ASTCDCompilationUnit ast,
@@ -217,7 +217,7 @@ public class CDSymbolTable {
    * classes are returned.
    *
    * @param name name of a class or interface
-   * @return list of subclasses & subinterfaces
+   * @return list of subclasses and subinterfaces
    */
   public List<CDTypeSymbol> getSubclasses(String name) {
     return getSubsRecusively(name, Lists.newArrayList(), false);

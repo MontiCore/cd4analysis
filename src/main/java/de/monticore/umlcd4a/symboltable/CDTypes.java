@@ -76,7 +76,7 @@ public class CDTypes {
   /**
    * Checks is the given type an implicit type
    * 
-   * @return
+   * @return true if implicit, false if not implicit
    */
   public static boolean isWrapperType(String typeName) {
     return wrapperTypes.contains(typeName)
@@ -87,7 +87,7 @@ public class CDTypes {
   /**
    * Checks is the given type a primitive type
    * 
-   * @return
+   * @return true if primitive, false if not primitive
    */
   public static boolean isPrimitiveType(String typeName) {
     return primitiveTypes.contains(typeName);
@@ -96,7 +96,7 @@ public class CDTypes {
   /**
    * Converts the given primitive type to the wrapper type
    * 
-   * @param primitiveType
+   * @param primitiveType the string version of the primitive type
    * @return wrapper type if the given type is a primitive type else the given
    * type
    */
@@ -127,7 +127,7 @@ public class CDTypes {
    * Derives the Wrapper to a given primitive type. If the
    * parameter isn't a primitive type, the result is the given type
    * 
-   * @param primitiveType
+   * @param primitiveType the primitive type
    * @return wrapper type if the given type is a primitive type else the given
    * type
    */
@@ -169,7 +169,7 @@ public class CDTypes {
   /**
    * Converts the given wrapper type to the primitive type
    * 
-   * @param wrapperType
+   * @param wrapperType the wrapperType to be converted
    * @return primitive type if the given type is a wrapper type else the given
    * type
    */
@@ -202,7 +202,7 @@ public class CDTypes {
   /**
    * Converts the given wrapper type to the primitive type
    * 
-   * @param type
+   * @param type the wrapper type to be converted
    * @return primitive type if the given type is a wrapper type else the given
    * type converted to simple type
    */

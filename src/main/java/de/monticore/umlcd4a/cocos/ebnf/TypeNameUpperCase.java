@@ -50,7 +50,7 @@ public class TypeNameUpperCase implements CD4AnalysisASTCDDefinitionCoCo {
   /**
    * Does the actual check.
    * 
-   * @param types
+   * @param types Collection of the types
    * @param kind kind of the types (class, interface, or enum)
    */
   private void check(Collection<ASTCDType> types, String kind) {

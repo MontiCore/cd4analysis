@@ -30,7 +30,7 @@ import de.se_rwth.commons.logging.Log;
 public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {
@@ -100,7 +100,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTStringLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTStringLiteral)
      */
     @Override
     public void visit(ASTStringLiteral node) {
@@ -108,7 +108,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTBooleanLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTBooleanLiteral)
      */
     @Override
     public void visit(ASTBooleanLiteral node) {
@@ -116,7 +116,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTIntLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTIntLiteral)
      */
     @Override
     public void visit(ASTSignedIntLiteral node) {
@@ -124,7 +124,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTCharLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTCharLiteral)
      */
     @Override
     public void visit(ASTCharLiteral node) {
@@ -132,7 +132,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTFloatLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTFloatLiteral)
      */
     @Override
     public void visit(ASTSignedFloatLiteral node) {
@@ -140,7 +140,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTDoubleLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTDoubleLiteral)
      */
     @Override
     public void visit(ASTSignedDoubleLiteral node) {
@@ -148,7 +148,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.literals._visitor.LiteralsVisitor#visit(de.monticore.literals._ast.ASTLongLiteral)
+     * @see de.monticore.literals.literals._visitor.LiteralsVisitor#visit(de.monticore.literals.literals._ast.ASTLongLiteral)
      */
     @Override
     public void visit(ASTSignedLongLiteral node) {

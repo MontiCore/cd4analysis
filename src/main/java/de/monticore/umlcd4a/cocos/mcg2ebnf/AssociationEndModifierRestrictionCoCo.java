@@ -15,7 +15,7 @@ import de.monticore.umlcd4a.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * On both sides only the stereotype <<ordered>> is allowed, all other
+ * On both sides only the stereotype <pre>{@code <<ordered>>}</pre> is allowed, all other
  * modifiers/stereotypes are forbidden.
  *
  * @author Robert Heim
@@ -23,7 +23,7 @@ import de.se_rwth.commons.logging.Log;
 public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAssociationCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation node) {

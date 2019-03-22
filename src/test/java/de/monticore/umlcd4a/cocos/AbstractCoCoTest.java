@@ -53,7 +53,7 @@ public abstract class AbstractCoCoTest {
    * The {@link CD4AnalysisCoCoChecker} to use with a set of CoCos already
    * assigned.
    * 
-   * @return
+   * @return the CoCoChecker
    */
   abstract protected CD4AnalysisCoCoChecker getChecker();
   
@@ -64,7 +64,9 @@ public abstract class AbstractCoCoTest {
    * is asserted that there are not any other errors.
    * 
    * @param model full qualified model path
-   * @param expectedErrors
+   * @param expectedErrors Collection of the expected errors
+   *
+   * @return the compilation unit loaded from the model
    */
   protected ASTCDCompilationUnit testModelForErrors(String model,
       Collection<Finding> expectedErrors) {
@@ -81,8 +83,10 @@ public abstract class AbstractCoCoTest {
   /**
    * Asserts that no error occurred when the {@link CD4AnalysisCoCoChecker} run
    * on the given modelName.
-   * 
+   *
    * @param model full qualified model path
+   *
+   * @return the compilation unit loaded from the model
    */
   protected ASTCDCompilationUnit testModelNoErrors(String model) {
     CD4AnalysisCoCoChecker checker = getChecker();

@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
 public class ModifierNotMultipleVisibilitiesCoCo implements CD4AnalysisASTModifierCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTModifierCoCo#check(de.monticore.umlcd4a._ast.ASTModifier)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTModifierCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTModifier)
    */
   @Override
   public void check(ASTModifier mod) {

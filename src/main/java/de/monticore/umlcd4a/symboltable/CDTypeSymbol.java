@@ -81,7 +81,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   /**
    * Get all associations including inherited
    *
-   * @return
+   * @return all associations including inherited
    */
   public List<CDAssociationSymbol> getAllSpecAssociations() {
     final List<CDAssociationSymbol> allNames = new ArrayList<>();
@@ -344,9 +344,9 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   
   /**
    * Sets the string representation of this type reference. This can include the
-   * type parameters, e.g., <code>List&lt;E&gt;</pre></code>
+   * type parameters, e.g., <code>List&lt;E&gt;</code>
    * 
-   * @param stringRepresentation
+   * @param stringRepresentation String represantation of the type reference
    */
   public void setStringRepresentation(final String stringRepresentation) {
     this.stringRepresentation = nullToEmpty(stringRepresentation);

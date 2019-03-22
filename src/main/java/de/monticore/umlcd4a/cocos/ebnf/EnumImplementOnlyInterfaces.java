@@ -17,7 +17,7 @@ public class EnumImplementOnlyInterfaces extends ImplementOnlyInterfaces impleme
     CD4AnalysisASTCDEnumCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDEnumCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDEnum)
    */
   @Override
   public void check(ASTCDEnum node) {

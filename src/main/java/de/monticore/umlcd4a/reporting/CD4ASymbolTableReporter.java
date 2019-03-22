@@ -24,9 +24,9 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   /**
    * Constructor for de.monticore.umlcd4a.reporting.CD4ASymbolTableReporter.
    * 
-   * @param outputDir
-   * @param modelName
-   * @param repository
+   * @param outputDir the output directory for reporting
+   * @param modelName the given model name
+   * @param repository the repository to report to
    */
   public CD4ASymbolTableReporter(
       String outputDir,

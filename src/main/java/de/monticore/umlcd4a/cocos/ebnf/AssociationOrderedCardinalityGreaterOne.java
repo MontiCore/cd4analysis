@@ -39,7 +39,7 @@ public class AssociationOrderedCardinalityGreaterOne implements
     CD4AnalysisASTCDAssociationCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a._ast.ASTCDAssociation)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation assoc) {

@@ -19,12 +19,9 @@ public class CD4ACoCoHelper {
   /**
    * Builds a string of the following form, where "?" means optional and | means
    * alternative.
+   *
    * 
-   * <pre>
-   * [assocName]? ([typeA] [roleA]? [->|<-|<->|--] [roleB]? [typeB])
-   * </pre>
-   * 
-   * @param assoc
+   * @param assoc the association used to build the string
    * @return the formatted string.
    */
   // TODO RH use PrettyPrinter
@@ -66,8 +63,8 @@ public class CD4ACoCoHelper {
   /**
    * Prints the cardinality String.
    * 
-   * @param cardinality
-   * @return
+   * @param cardinality the cardinality used to build the string
+   * @return the formatted String
    */
   public static String printCardinality(ASTCardinality cardinality) {
     String cardStr = null;

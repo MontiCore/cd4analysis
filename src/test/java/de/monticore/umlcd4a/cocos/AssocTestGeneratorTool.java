@@ -55,12 +55,7 @@ import de.se_rwth.commons.StringTransformations;
  *     .collect(Collectors.toList());
  *     
  * printAssociations(allPossibilities);
- * output:
- *   assoc0 E -> A ;
- * 
- *   assoc1 E -> B ;
- * 
- *   assoc2 E -> E ;
+ * }
  * 
  * printTestCases(allPossibilities, new ErrorMessagePrinter() {
  *      {@literal @}Override
@@ -69,12 +64,12 @@ import de.se_rwth.commons.StringTransformations;
  *        return "  CoCoFinding.error(errorCode, \""
  *            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
  *      }
- *    });
+ *    };
  * 
  * output:
- *   CoCoFinding.error(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoFinding.error(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoFinding.error(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc0 is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc1 is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc2 is invalid, because an association's source may not be an Enumeration."),
  *   // ...
  * </pre>
  * 
@@ -152,10 +147,10 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param assoc
+   * @param assoc the association
    * @param valid if true only valid modifier combinations are generated, only
    * invalid combinations otherwise.
-   * @return
+   * @return a list of possible associations
    */
   public static List<ASTCDAssociation> allModifierCombinations(ASTCDAssociation assoc,
       boolean valid) {
@@ -256,7 +251,7 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param modifierObj
+   * @param assoc the association
    * @param modifiers a subset of { "abstract", "final", "static", "derived",
    * "private", "protected", "", "public"}
    */
@@ -300,8 +295,8 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param assoc
-   * @return
+   * @param assoc the association
+   * @return a list of possible associations
    */
   public static List<ASTCDAssociation> allCardinalityCombinations(ASTCDAssociation assoc) {
     List<ASTCDAssociation> re = new ArrayList<>();
@@ -330,7 +325,7 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param assoc
+   * @param assoc the associations
    * @param cardinality one of { "0..1", "1", "0..1", "*" }
    * @param side one of {"left", "right"}
    */
@@ -364,10 +359,10 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param assoc
+   * @param assoc the associations
    * @param valid if true enums will not be a source, if false only enum will be
    * sources
-   * @return
+   * @return list of all associations possible
    */
   public static List<ASTCDAssociation> allTypeCombinations(ASTCDAssociation assoc, boolean valid) {
     List<ASTCDAssociation> re = new ArrayList<>();
@@ -408,10 +403,12 @@ public class AssocTestGeneratorTool {
   /**
    * Generates possible qualifiers combinations for the given association.
    * 
-   * @param assoc
-   * @param valid if true only valid positions are generated (e.g. A <- [T] B,
-   * but not A [T] <- B or A [T] <- [T] B, false only invalid ones are generated
-   * @return
+   * @param assoc the associations
+   * @param valid if true only valid positions are generated
+   * @param leftQualifier the left qualifier of the association
+   * @param rightQualifier the right qualifier of the association
+   *
+   * @return list of the associations possible
    */
   public static List<ASTCDAssociation> allQualifierPositions(ASTCDAssociation assoc,
       boolean valid, String leftQualifier, String rightQualifier) {
@@ -480,7 +477,7 @@ public class AssocTestGeneratorTool {
   /**
    * clones the assoc and capitalizes all role names to make them invalid.
    * 
-   * @param assoc the assoc
+   * @param a the assoc
    * @return the new assoc with uppercase role names
    */
   public static ASTCDAssociation capitalizeRoles(ASTCDAssociation a) {
@@ -497,10 +494,9 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param assoc
-   * @param valid if true only valid positions are used , e.g. A -> (roleRight)
-   * B, if false only invalid ones are used, e.g. A (roleLeft) -> B.
-   * @return
+   * @param assoc the association
+   * @param valid if true only valid positions are used
+   * @return list of the associations possible
    */
   public static List<ASTCDAssociation> allRolePositions(ASTCDAssociation assoc,
       boolean valid) {

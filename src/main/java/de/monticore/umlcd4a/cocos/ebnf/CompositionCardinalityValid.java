@@ -28,7 +28,7 @@ import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that the cardinality of compositions is not larger than one. Note that
- * we expect all compositions to have navigation direction "->", "--" or "<->"
+ * we expect all compositions to have navigation direction
  * where the composit is always on the left side. So this CoCo only checks the
  * cardinality of the left side.
  *

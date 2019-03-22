@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
 public class StereoValueNoValueCoCo implements CD4AnalysisASTCDStereoValueCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDStereoValueCoCo#check(de.monticore.umlcd4a._ast.ASTCDStereoValue)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDStereoValueCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDStereoValue)
    */
   @Override
   public void check(ASTCDStereoValue node) {

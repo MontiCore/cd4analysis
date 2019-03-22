@@ -16,7 +16,7 @@ public class ModifierCheckHelper {
   /**
    * Checks that the modifier is empty (but might have a stereotype)
    * 
-   * @return
+   * @return true if modifier empty, false if modifier not empty
    */
   public static boolean isEmptyModifier(ASTModifier modifier) {
     boolean hasMod = modifier.isAbstract()
@@ -32,7 +32,7 @@ public class ModifierCheckHelper {
   /**
    * Checks that the modifier is empty (and has no stereotype)
    * 
-   * @return
+   * @return true if modifier is empty and has no stereotype
    */
   public static boolean isEmptyModifierAndNoStereo(ASTModifier modifier) {
     boolean hasModOrStereo = !isEmptyModifier(modifier);

@@ -28,7 +28,7 @@ public class CDSymbol extends CommonScopeSpanningSymbol {
   /**
    * Constructor for de.monticore.umlcd4a.symboltable.CDSymbol
    * 
-   * @param name
+   * @param name name of the symbol
    */
   public CDSymbol(String name) {
     super(name, KIND);
@@ -61,6 +61,5 @@ public class CDSymbol extends CommonScopeSpanningSymbol {
    */
   public List<String> getImports() {
     return ImmutableList.copyOf(importedCdNames);
-    
   }
 }
