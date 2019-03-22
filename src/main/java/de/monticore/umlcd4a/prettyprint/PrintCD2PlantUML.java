@@ -23,13 +23,13 @@ import java.util.Optional;
 
 public class PrintCD2PlantUML {
 
-    /** this needs internet -> it connects to the plantuml-server to render the image and downloads it */
+    /** this needs internet - it connects to the plantuml-server to render the image and downloads it */
     public static void printCD2PlantUMLServer(String pathCD, String outputPathSVG, Boolean showAtt, Boolean showAssoc,
                                               Boolean showRoles, Boolean showCard) throws IOException {
         printCD2PlantUMLServer(pathCD, outputPathSVG, showAtt, showAssoc, showRoles, showCard, false, false,-1, -1);
     }
 
-    /** this needs internet -> it connects to the plantuml-server to render the image and downloads it */
+    /** this needs internet - it connects to the plantuml-server to render the image and downloads it */
     public static void printCD2PlantUMLServer(String pathCD, String outputPathSVG, Boolean showAtt, Boolean showAssoc,
                                                Boolean showRoles, Boolean showCard, boolean ortho, boolean shortenWords, int nodesep, int ranksep) throws IOException {
 

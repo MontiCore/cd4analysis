@@ -24,7 +24,7 @@ public class CDQualifierSymbol extends CommonSymbol {
   /**
    * Constructs a name qualifier
    * 
-   * @param name
+   * @param name name of the name qualifier
    * @see #CDQualifierSymbol(ASTType)
    */
   public CDQualifierSymbol(String name) {
@@ -35,7 +35,7 @@ public class CDQualifierSymbol extends CommonSymbol {
   /**
    * Constructs a type qualifier
    * 
-   * @param type
+   * @param type type of the type qualifier
    * @see #CDQualifierSymbol(String)
    */
   public CDQualifierSymbol(ASTType type) {

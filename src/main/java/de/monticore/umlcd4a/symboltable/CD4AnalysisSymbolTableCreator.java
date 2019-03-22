@@ -20,7 +20,7 @@ import java.util.*;
 import static java.util.Objects.requireNonNull;
 
 /**
- * TODO Use JTypeSymbolsHelper when MC version >= 4.4.1-SNAPSHOT
+ * TODO Use JTypeSymbolsHelper when MC version new than 4.4.1-SNAPSHOT
  */
 public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, SymbolTableCreator {
   
@@ -229,9 +229,10 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   }
   
   /**
-   * TODO: Write me!
-   * @param typeReference
-   * @param astType
+   * adds the given type arguments to the given type symbol
+   *
+   * @param typeReference the reference to the type symbol
+   * @param astType the type arguments to be added
    */
   default void addTypeArgumentsToTypeSymbol(CDTypeSymbolReference typeReference, ASTReturnType astType) {
     if (astType instanceof ASTSimpleReferenceType) {

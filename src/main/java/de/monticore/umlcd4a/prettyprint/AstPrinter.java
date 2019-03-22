@@ -84,7 +84,7 @@ public class AstPrinter {
   }
   
   /**
-   * Same as <code>printModifier(Optional<ASTModifier> modifier)</code>
+   * Same as <pre>{@code printModifier(Optional<ASTModifier> modifier)}</pre>
    */
   public String printModifier(ASTModifier modifier) {
     return printModifier(Optional.ofNullable(modifier));

@@ -21,14 +21,14 @@ import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
 
 /**
  * Tool to generate test cases for associations. Output of
- * {@link #printAssociations(List)} is a list of associations that should be
+ * {@link AssocTestGeneratorTool#printAssociations(List)} is a list of associations that should be
  * copied into a CD model and output of
- * {@link #printTestCases(List, ErrorMessagePrinter)} is a list of
+ * {@link AssocTestGeneratorTool#printTestCases(List, ErrorMessagePrinter)} is a list of
  * expected-errors that should be copied to a junit-test case.<br>
  * <br>
- * {@link #allDirections(ASTCDAssociation)} should be applied first, because
+ * {@link AssocTestGeneratorTool#allDirections(ASTCDAssociation)} should be applied first, because
  * other methods may rely on a set direction. If you do not call {
- * {@link #allTypeCombinations(ASTCDAssociation, boolean)} you should set the
+ * {@link AssocTestGeneratorTool#allTypeCombinations(ASTCDAssociation, boolean)} you should set the
  * left and right reference type of the association before generating the
  * directions.The other functions can be applied to generate specific test
  * cases.<br>
@@ -48,12 +48,7 @@ import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
  *     .collect(Collectors.toList());
  *     
  * printAssociations(allPossibilities);
- * output:
- *   assoc0 E -> A ;
- * 
- *   assoc1 E -> B ;
- * 
- *   assoc2 E -> E ;
+ * }
  * 
  * printTestCases(allPossibilities, new ErrorMessagePrinter() {
  *      {@literal @}Override
@@ -62,12 +57,12 @@ import de.monticore.umlcd4a.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
  *        return "  CoCoFinding.error(errorCode, \""
  *            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
  *      }
- *    });
+ *    };
  * 
  * output:
- *   CoCoFinding.error(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoFinding.error(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoFinding.error(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc0 is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc1 is invalid, because an association's source may not be an Enumeration."),
+ *   CoCoFinding.error(errorCode, "Association assoc2 is invalid, because an association's source may not be an Enumeration."),
  *   // ...
  * </pre>
  * 
@@ -79,8 +74,9 @@ public class AssocTestGenerator {
    * 0xCD4A0019, 0xCD4A0020
    * 
    * @param valid whether the associations should be valid or not.
-   * @param leftQualifier
-   * @param rightQualifier
+   * @param leftQualifier left qualifier of association
+   * @param rightQualifier right qualifier of association
+   * @param errorMsgPrinter the error message printer
    */
   public static void generateQualifiedAssocTests(boolean valid, String leftQualifier,
       String rightQualifier, ErrorMessagePrinter errorMsgPrinter) {

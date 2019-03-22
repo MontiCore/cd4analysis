@@ -39,9 +39,9 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDAttribute} with the given name
    * and type and adds it to the given class
    * 
-   * @param astClass
-   * @param attrName
-   * @param attrType
+   * @param astClass given class
+   * @param attrName given name
+   * @param attrType given type
    * @return created {@link ASTCDAttribute} node
    */
   public ASTCDAttribute addCdAttribute(ASTCDClass astClass,
@@ -57,8 +57,8 @@ public class ASTCDRawTransformation {
   /**
    * Adds the given attribute to the given class
    * 
-   * @param astClass
-   * @param astAttribute
+   * @param astClass given class
+   * @param astAttribute given attribute
    */
   public void addCdAttribute(ASTCDClass astClass,
       ASTCDAttribute astAttribute) {
@@ -71,8 +71,8 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDClass} with the given name and
    * adds it to the given CD definition type definitions
    * 
-   * @param astDef
-   * @param className
+   * @param astDef given ASTCDDefinition
+   * @param className given class name
    * @return created {@link ASTCDClass} node
    */
   public ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
@@ -86,10 +86,10 @@ public class ASTCDRawTransformation {
    * super class and the list of extended interface names and adds it to the
    * given CD definition
    * 
-   * @param astDef
-   * @param className
-   * @param superClassName
-   * @param interfaceNames
+   * @param astDef given ASTCDDefinition
+   * @param className given class name
+   * @param superClassName super class name
+   * @param interfaceNames list of interface names
    * @return created {@link ASTCDClass} node
    */
   public ASTCDClass addCdClass(ASTCDDefinition astDef, String className,
@@ -111,8 +111,8 @@ public class ASTCDRawTransformation {
   /**
    * Adds the given class to the given CD definition
    * 
-   * @param astDef
-   * @param astClass
+   * @param astDef given ASTCDDefinition
+   * @param astClass given class
    */
   public void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
     astDef.getCDClassList().add(astClass);
@@ -124,8 +124,8 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDInterface} with the given name
    * and adds it to the given CD definition type definitions
    * 
-   * @param astDef
-   * @param interfaceName
+   * @param astDef given ASTCDDefinition
+   * @param interfaceName given interface name
    * @return created {@link ASTCDInterface} node
    */
   public ASTCDInterface addCdInterface(ASTCDDefinition astDef,
@@ -139,8 +139,8 @@ public class ASTCDRawTransformation {
   /**
    * Adds the given interface to the given CD definition
    * 
-   * @param astDef
-   * @param astInterface
+   * @param astDef given ASTCDDefinition
+   * @param astInterface given ASTCDInterface
    */
   public void addCdInterface(ASTCDDefinition astDef,
       ASTCDInterface astInterface) {
@@ -152,9 +152,9 @@ public class ASTCDRawTransformation {
    * and the list of extended interface names and adds it to the given CD
    * definition
    * 
-   * @param astDef
-   * @param interfaceName
-   * @param interfaceNames
+   * @param astDef given ASTCDDefinition
+   * @param interfaceName given interface name
+   * @param interfaceNames list of interface names
    * @return created {@link ASTCDInterface} node
    */
   public ASTCDInterface addCdInterface(ASTCDDefinition astDef,
@@ -179,8 +179,8 @@ public class ASTCDRawTransformation {
    * default return type and the empty parameter list and adds it to the
    * given class
    * 
-   * @param astType
-   * @param methodName
+   * @param astType default return type
+   * @param methodName method name
    * @return The created {@link ASTCDMethod} node
    */
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName) {
@@ -191,10 +191,10 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDMethod} with the given name,
    * return type and parameter types and adds it to the given class
    * 
-   * @param astType
-   * @param methodName
-   * @param returnType
-   * @param paramTypes
+   * @param astType type of method
+   * @param methodName name of method
+   * @param returnType return type of method
+   * @param paramTypes list of parameter types of method
    * @return created {@link ASTCDMethod} node
    */
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
@@ -217,9 +217,9 @@ public class ASTCDRawTransformation {
    * and parameter types and default return type (void).
    * Created node is added to the given class
    * 
-   * @param astType
-   * @param methodName
-   * @param paramTypes
+   * @param astType type of method
+   * @param methodName name of method
+   * @param paramTypes list of parameter types of method
    * @return created {@link ASTCDMethod} node
    */
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
@@ -240,20 +240,19 @@ public class ASTCDRawTransformation {
   /**
    * Adds the given method to the given class
    * 
-   * @param astType
-   * @param astMethod
+   * @param astType given class
+   * @param astMethod given method
    */
   public void addCdMethod(ASTCDType astType, ASTCDMethod astMethod) {
     astType.getCDMethodList().add(astMethod);
   }
   
   /**
-   * Creates an instance of the {@link ASTCDParameterList} using the list of
+   * Creates a list of {@link ASTCDParameter} using the list of
    * the type definitions
    * 
-   * @param paramTypes
-   * @return Optional of the created {@link ASTCDParameterList} node or
-   * Optional.absent() if one of the type definition couldn't be parsed
+   * @param paramTypes list of parameter types
+   * @return List of the created {@link ASTCDParameter} objects
    */
   public List<ASTCDParameter> createCdMethodParameters(List<String> paramTypes) {
     List<ASTCDParameter> params = Lists.newArrayList();
@@ -272,7 +271,7 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTSimpleReferenceType} for the given
    * type name
    * 
-   * @param typeName
+   * @param typeName name of the SimpleReferenceType
    * @return created {@link ASTSimpleReferenceType} node
    */
   public ASTSimpleReferenceType createType(String typeName) {

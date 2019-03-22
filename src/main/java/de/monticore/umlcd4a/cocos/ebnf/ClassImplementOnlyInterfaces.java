@@ -17,7 +17,7 @@ public class ClassImplementOnlyInterfaces extends ImplementOnlyInterfaces implem
     CD4AnalysisASTCDClassCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass)
    */
   @Override
   public void check(ASTCDClass node) {

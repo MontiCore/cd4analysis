@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 /**
  * Checks that role names do not conflict with other role names where the source
  * types has other outgoing associations; it only considers the specification mode of associations
- * -> the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
+ * the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
  * @author Michael von Wenckstern
  */
 public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements

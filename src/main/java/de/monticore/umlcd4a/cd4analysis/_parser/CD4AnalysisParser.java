@@ -21,7 +21,7 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
    * Besides parsing, this also checks that the filename equals the model name and
    * the package declaration equals the suffix of the package name of the model.
    * 
-   * @see de.monticore.umlcd4a.cd4analysis._parser.CDCompilationUnitMCParser#parse(java.lang.String)
+   * @see de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser#parse(java.lang.String)
    */
   @Override
   public Optional<de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit> parseCDCompilationUnit(String filename)

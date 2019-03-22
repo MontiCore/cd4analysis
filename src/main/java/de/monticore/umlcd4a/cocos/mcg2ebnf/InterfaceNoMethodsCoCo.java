@@ -18,7 +18,7 @@ import de.se_rwth.commons.logging.Log;
 public class InterfaceNoMethodsCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDInterface)
    */
   @Override
   public void check(ASTCDInterface node) {

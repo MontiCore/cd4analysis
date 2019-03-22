@@ -29,7 +29,6 @@ import de.se_rwth.commons.logging.Log;
  * Tests the codes and messages of CoCos regarding associations.
  *
  * @author (last commit) $Author$
- * @since TODO: add version number
  */
 public class AssocTest extends AbstractCoCoTest {
   

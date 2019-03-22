@@ -46,8 +46,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   /**
    * Constructor.
    * 
-   * @param parent the parent pretty printer, needed to give control to the embedded pretty printer
-   * when embedding is detected.
+   *
    * @param printer the printer to write to.
    */
   public CDPrettyPrinterConcreteVisitor(IndentPrinter printer) {
@@ -57,7 +56,7 @@ public class CDPrettyPrinterConcreteVisitor extends TypesPrettyPrinterConcreteVi
   /**
    * Prints the compilation unit of a class diagram (start of the pretty print)
    * 
-   * @param a CD compilation unit
+   * @param unit CD compilation unit
    */
   @Override
   public void handle(ASTCDCompilationUnit unit) {

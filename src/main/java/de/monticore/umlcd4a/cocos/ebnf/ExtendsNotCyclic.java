@@ -25,7 +25,7 @@ import de.se_rwth.commons.logging.Log;
 public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDDefinitionCoCo#check(de.monticore.umlcd4a._ast.ASTCDDefinition)
+   * @see de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDDefinition)
    */
   @Override
   public void check(ASTCDDefinition node) {
@@ -41,7 +41,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
    * Recursive method checking that a path in the inheritance (up-side-down)
    * tree does not include any name twice.
    * 
-   * @param i the current interface symbol on the inheritance path
+   * @param interf the current interface symbol on the inheritance path
    * @param currentPath the current inheritance path to i (not including i).
    * This set will be adjusted for each step, but it is ensured that
    * currentPath@Pre == currentPath@Post.
@@ -65,7 +65,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   /**
    * Checks that there are no cycles in the the class hierarchy.
    * 
-   * @param The class to check.
+   * @param node class to check.
    */
   private void checkClass(ASTCDClass node) {
     CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
