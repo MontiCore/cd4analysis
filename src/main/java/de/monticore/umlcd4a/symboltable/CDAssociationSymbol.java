@@ -233,7 +233,7 @@ public class CDAssociationSymbol extends CommonSymbol {
       inverseAssoc.setPackageName(getPackageName());
       inverseAssoc.setAccessModifier(getAccessModifier());
       inverseAssoc.setAstNode(getAstNode().orElse(null));
-      inverseAssoc.setEnclosingScope(getEnclosingScope().getAsMutableScope());
+      inverseAssoc.setEnclosingScope(getEnclosingScope());
       inverseAssoc.setFullName(getFullName());
       inverseAssoc.setKind(getKind());
       getStereotypes().forEach(inverseAssoc::addStereotype);

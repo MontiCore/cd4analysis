@@ -38,7 +38,6 @@ import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.CommonSymbol;
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.Symbol;
@@ -60,7 +59,7 @@ public class CDSymbolTable {
   
   private final ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
   
-  private MutableScope cdScope;
+  private Scope cdScope;
   
   private GlobalScope globalScope;
   

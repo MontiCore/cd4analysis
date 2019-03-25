@@ -19,21 +19,18 @@
 
 package de.monticore.umlcd4a.symboltable;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.nullToEmpty;
-import static java.util.Objects.requireNonNull;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import de.monticore.symboltable.types.CommonJTypeSymbol;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
+import de.se_rwth.commons.Names;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import de.monticore.symboltable.CommonScope;
-import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.types.CommonJTypeSymbol;
-import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
-import de.se_rwth.commons.Names;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Objects.requireNonNull;
 
 public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol, CDTypeSymbolReference> {
   

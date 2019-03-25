@@ -7,7 +7,7 @@ package de.monticore.umlcd4a;
 
 import de.monticore.modelloader.ModelingLanguageModelLoader;
 import de.monticore.symboltable.ArtifactScope;
-import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.Scope;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
@@ -22,7 +22,7 @@ public class CD4AnalysisModelLoader extends ModelingLanguageModelLoader<ASTCDCom
 
   @Override
   protected void createSymbolTableFromAST(final ASTCDCompilationUnit ast, final String modelName,
-      final MutableScope enclosingScope, final ResolvingConfiguration resolvingConfiguration) {
+      final Scope enclosingScope, final ResolvingConfiguration resolvingConfiguration) {
     final CD4AnalysisSymbolTableCreator symbolTableCreator = getModelingLanguage().getSymbolTableCreator
         (resolvingConfiguration, enclosingScope).orElse(null);
 

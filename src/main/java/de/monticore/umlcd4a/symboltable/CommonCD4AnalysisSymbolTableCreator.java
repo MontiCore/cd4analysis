@@ -5,11 +5,11 @@
  */
 package de.monticore.umlcd4a.symboltable;
 
-import javax.annotation.Nullable;
-
 import de.monticore.symboltable.CommonSymbolTableCreator;
-import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
+import de.monticore.symboltable.Scope;
+
+import javax.annotation.Nullable;
 
 public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreator implements
     CD4AnalysisSymbolTableCreator {
@@ -18,7 +18,7 @@ public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreato
   private String fullClassDiagramName = "";
 
   public CommonCD4AnalysisSymbolTableCreator(ResolvingConfiguration resolvingConfig, @Nullable
-  MutableScope enclosingScope) {
+  Scope enclosingScope) {
     super(resolvingConfig, enclosingScope);
   }
 
@@ -44,7 +44,7 @@ public class CommonCD4AnalysisSymbolTableCreator extends CommonSymbolTableCreato
   }
 
   @Override
-  public MutableScope getEnclosingScope() {
+  public Scope getEnclosingScope() {
     return scopeStack.getFirst();
   }
 }

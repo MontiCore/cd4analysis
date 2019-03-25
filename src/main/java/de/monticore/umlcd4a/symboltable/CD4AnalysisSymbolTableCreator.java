@@ -4,7 +4,10 @@ package de.monticore.umlcd4a.symboltable;/*
  * http://www.se-rwth.de/
  */
 
-import de.monticore.symboltable.*;
+import de.monticore.symboltable.ArtifactScope;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesHelper;
 import de.monticore.types.TypesPrinter;
@@ -655,6 +658,6 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   
   String getFullClassDiagramName();
 
-  MutableScope getEnclosingScope();
+  Scope getEnclosingScope();
   
 }
