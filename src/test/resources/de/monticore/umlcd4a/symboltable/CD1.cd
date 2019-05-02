@@ -32,9 +32,12 @@ classdiagram CD1 {
      protected int age;
      private String secondName;
      private List<String> address;
+     /*
+     TODO: FullGenericTypes stehen nicht zur Verfügung
      private List<? extends Printable> text;
      private List<? super Printable> photo;
      private List<List<String>> hobbies;
+     */
      String setName(String name, String prefix);
      private int getAge();
   }
