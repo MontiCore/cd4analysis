@@ -20,12 +20,15 @@
 package de.monticore.cd.cocos.permutations;
 
 import com.google.common.collect.Iterables;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.types._ast.TypesNodeFactory;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.cd.cd4analysis._ast.ASTCDClass;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -96,11 +99,11 @@ public class CreateInheritanceTree implements
     return superClass;
   }
   
-  private static ASTSimpleReferenceType createSimpleReference(ASTCDClass superClass) {
-    ASTSimpleReferenceType reference = TypesNodeFactory.createASTSimpleReferenceType();
+  private static ASTMCQualifiedType createSimpleReference(ASTCDClass superClass) {
+    ASTMCQualifiedType reference = CD4AnalysisNodeFactory.createASTMCQualifiedType();
     ArrayList<String> name = new ArrayList<String>();
     name.add(superClass.getName());
-    reference.setNameList(name);
+    reference.getMCQualifiedName().setPartList(name);
     return reference;
   }
   

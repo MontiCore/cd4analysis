@@ -20,9 +20,10 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.types._ast.ASTQualifiedName;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.utils.ASTNodes;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,8 +33,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static de.monticore.types.types._ast.TypesNodeFactory.createASTQualifiedName;
 
 /**
  * @author Sebastian Oberhoff
@@ -57,9 +56,9 @@ public class TestGenerate {
   
   private Permutation<ASTCDAssociation> createDefaultAssociation() {
     ASTCDAssociation cdAssociation = CD4AnalysisNodeFactory.createASTCDAssociation();
-    ASTQualifiedName leftReferenceName = createASTQualifiedName(Arrays.asList("LeftType"));
+    ASTMCQualifiedName leftReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList("LeftType"));
     cdAssociation.setLeftReferenceName(leftReferenceName);
-    ASTQualifiedName rightReferenceName = createASTQualifiedName(Arrays.asList("RightType"));
+    ASTMCQualifiedName rightReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList("RightType"));
     cdAssociation.setRightReferenceName(rightReferenceName);
     cdAssociation.setUnspecified(true);
     

@@ -239,11 +239,11 @@ public class ASTCDRawTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDParameterList} using the list of
+   * Creates an instance of the {@link ASTCDParameter} using the list of
    * the type definitions
    * 
    * @param paramTypes
-   * @return Optional of the created {@link ASTCDParameterList} node or
+   * @return Optional of the created {@link ASTCDParameter} node or
    * Optional.absent() if one of the type definition couldn't be parsed
    */
   public List<ASTCDParameter> createCdMethodParameters(List<String> paramTypes) {
@@ -260,11 +260,11 @@ public class ASTCDRawTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTSimpleReferenceType} for the given
+   * Creates an instance of the {@link ASTMCObjectType} for the given
    * type name
    * 
    * @param typeName
-   * @return created {@link ASTSimpleReferenceType} node
+   * @return created {@link ASTMCObjectType} node
    */
   public ASTMCObjectType createType(String typeName) {
     return MCCollectionTypesMill.mCQualifiedTypeBuilder()

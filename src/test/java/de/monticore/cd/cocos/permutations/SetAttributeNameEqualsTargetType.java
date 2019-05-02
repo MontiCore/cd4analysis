@@ -20,9 +20,9 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDClass;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.utils.ASTNodes;
 
 import java.util.Collection;

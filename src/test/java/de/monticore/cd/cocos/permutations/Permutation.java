@@ -22,8 +22,8 @@ package de.monticore.cd.cocos.permutations;
 import com.google.common.collect.Sets;
 import de.monticore.ast.ASTNode;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
+import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
+import de.monticore.cd.prettyprint.CDPrettyPrinterConcreteVisitor;
 
 import java.util.Collection;
 import java.util.Collections;

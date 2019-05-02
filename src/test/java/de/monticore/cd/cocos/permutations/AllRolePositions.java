@@ -19,7 +19,7 @@
 
 package de.monticore.cd.cocos.permutations;
 
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -19,16 +19,16 @@
 
 package de.monticore.cd.cocos.permutations;
 
-import de.monticore.types.types._ast.ASTQualifiedName;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.monticore.types.types._ast.TypesNodeFactory.createASTQualifiedName;
 
 public class AllTypeCombinations implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {
@@ -47,7 +47,7 @@ public class AllTypeCombinations implements
     // A = class, B = class, E = enum, I = interface
     for (String leftType : Arrays.asList("A", "B", "E", "I")) {
       Permutation<ASTCDAssociation> copy = assocPermutation.copy();
-      ASTQualifiedName leftReferenceName = createASTQualifiedName(Arrays.asList(leftType));
+      ASTMCQualifiedName leftReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList(leftType));
       copy.delegate().setLeftReferenceName(leftReferenceName);
       leftTypedAssocs.add(copy);
     }
@@ -60,7 +60,7 @@ public class AllTypeCombinations implements
     // A = class, B = class, E = enum, I = interface
     for (String leftType : Arrays.asList("A", "B", "E", "I")) {
       Permutation<ASTCDAssociation> copy = assocPermutation.copy();
-      ASTQualifiedName rightReferenceName = createASTQualifiedName(Arrays.asList(leftType));
+      ASTMCQualifiedName rightReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList(leftType));
       copy.delegate().setRightReferenceName(rightReferenceName);
       rightTypedAssocs.add(copy);
     }
