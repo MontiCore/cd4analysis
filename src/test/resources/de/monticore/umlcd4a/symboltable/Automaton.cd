@@ -19,6 +19,7 @@
 
 package de.monticore.umlcd4a.symboltable;
 
+//replaced java.util.List with List
 import java.util.List;
 import java.util.Set;
 import java.util.Date;
@@ -29,14 +30,14 @@ classdiagram Automaton {
 
   public class ASTAutomaton{
     protected String name;
-    protected java.util.List<Automaton.ASTState> states;
-    protected java.util.List<Automaton.ASTTransition> transitions;
+    protected List<Automaton.ASTState> states;
+    protected List<Automaton.ASTTransition> transitions;
   }
 
   public class ASTState{
     protected String name;
-    protected java.util.List<Automaton.ASTState> states;
-    protected java.util.List<Automaton.ASTTransition> transitions;
+    protected List<Automaton.ASTState> states;
+    protected List<Automaton.ASTTransition> transitions;
     protected boolean r__final;
     protected boolean initial;
   }
