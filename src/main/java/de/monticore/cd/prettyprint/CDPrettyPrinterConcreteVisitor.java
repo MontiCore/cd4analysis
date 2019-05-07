@@ -327,7 +327,7 @@ public class CDPrettyPrinterConcreteVisitor extends MCBasicTypesPrettyPrinter im
     // print attribute value
     if (a.isPresentValue()) {
       getPrinter().print(" = ");
-      a.getValue().getLiteral().accept(getRealThis());
+      a.getValue().getSignedLiteral().accept(getRealThis());
     }
     getPrinter().println(";");
   }

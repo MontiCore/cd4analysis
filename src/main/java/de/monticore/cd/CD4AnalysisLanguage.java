@@ -8,7 +8,7 @@ package de.monticore.cd;
 import de.monticore.CommonModelingLanguage;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd.symboltable.*;
-import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
 import javax.annotation.Nullable;
@@ -38,7 +38,7 @@ public class CD4AnalysisLanguage extends CommonModelingLanguage {
   
   @Override
   public Optional<CD4AnalysisSymbolTableCreator> getSymbolTableCreator(
-      ResolvingConfiguration resolvingConfiguration, @Nullable MutableScope enclosingScope) {
+      ResolvingConfiguration resolvingConfiguration, @Nullable Scope enclosingScope) {
     return Optional.of(new CommonCD4AnalysisSymbolTableCreator(resolvingConfiguration, enclosingScope));
   }
   

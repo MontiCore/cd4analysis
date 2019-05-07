@@ -20,10 +20,10 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Analysis, Version Feb. 01st, 2016
+   MCG for CD 4 Analysis, Version 07/05/2019
 */
 
-grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.MCJavaLiterals {
+grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.MCBasicLiterals {
 
   /** ASTCDCompilationUnit represents the complete Diagram
     @attribute package          The package declaration of this Classdiagram
@@ -263,6 +263,6 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
   /** ASTValue represents a Value
       @attribute literal  Value
   */
-  Value = Literal; //TODO: Change back to signed literal when correct
+  Value = SignedLiteral;
     
 }

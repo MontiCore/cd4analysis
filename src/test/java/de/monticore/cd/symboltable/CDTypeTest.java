@@ -5,14 +5,11 @@
  */
 package de.monticore.cd.symboltable;
 
+import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.MutableScope;
+import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.resolving.CommonResolvingFilter;
-import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.cd.symboltable.CDMethodSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -34,7 +31,7 @@ public class CDTypeTest {
     typeSymbol.addField(fieldSymbol2);
     typeSymbol.addField(fieldSymbol3);
 
-    MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
+    Scope typeScope = (Scope) typeSymbol.getSpannedScope();
     typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDFieldSymbol.KIND)));
 
 
@@ -70,7 +67,7 @@ public class CDTypeTest {
     typeSymbol.addMethod(methodSymbol2);
     typeSymbol.addConstructor(constructor);
 
-    MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
+    Scope typeScope = (Scope) typeSymbol.getSpannedScope();
     typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //
@@ -103,7 +100,7 @@ public class CDTypeTest {
     typeSymbol.addMethod(method);
     typeSymbol.addConstructor(constructorSymbol2);
 
-    MutableScope typeScope = (MutableScope) typeSymbol.getSpannedScope();
+    Scope typeScope = (Scope) typeSymbol.getSpannedScope();
     typeScope.setResolvingFilters(Collections.singletonList(CommonResolvingFilter.create(CDMethodSymbol.KIND)));
 
     // Test CDTypeSymbol methods //

@@ -5,11 +5,9 @@
  */
 package de.monticore.cd.symboltable;
 
-import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.MutableScope;
-import de.monticore.cd.symboltable.CDSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
 import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
+import de.monticore.symboltable.GlobalScope;
+import de.monticore.symboltable.Scope;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +33,7 @@ public class CDTypeReferenceTest {
     CDSymbol cd = new CDSymbol("CD");
     globalScope.add(cd);
 
-    MutableScope cdScope = (MutableScope) cd.getSpannedScope();
+    Scope cdScope = (Scope) cd.getSpannedScope();
     cdScope.setResolvingFilters(globalScope.getResolvingFilters());
 
     CDTypeSymbol type = new CDTypeSymbol("Person");

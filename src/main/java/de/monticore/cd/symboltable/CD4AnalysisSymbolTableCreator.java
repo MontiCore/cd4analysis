@@ -4,29 +4,26 @@ package de.monticore.cd.symboltable;/*
  * http://www.se-rwth.de/
  */
 
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
-import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
-import de.monticore.cd.cd4analysis._ast.ASTCDType;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
-import de.monticore.symboltable.*;
+import de.monticore.symboltable.ArtifactScope;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.SymbolTableCreator;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.BasicGenericsTypesPrinter;
 import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.mcbasictypes._ast.*;
-import de.monticore.cd.cd4analysis._ast.*;
-import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCPrimitiveTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import org.eclipse.emf.ecore.util.FeatureMapUtil;
 
 import java.util.*;
 
@@ -626,6 +623,6 @@ public interface CD4AnalysisSymbolTableCreator extends CD4AnalysisVisitor, Symbo
   
   String getFullClassDiagramName();
 
-  MutableScope getEnclosingScope();
+  Scope getEnclosingScope();
   
 }

@@ -22,10 +22,10 @@ package de.monticore.cd.symboltable;
 import com.google.common.collect.Lists;
 import de.monticore.cd.CD4AnalysisLanguage;
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.*;
-import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.Names;
 
 import java.io.File;
@@ -53,7 +53,7 @@ public class CDSymbolTable {
   
   private final ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
   
-  private MutableScope cdScope;
+  private Scope cdScope;
   
   private GlobalScope globalScope;
   

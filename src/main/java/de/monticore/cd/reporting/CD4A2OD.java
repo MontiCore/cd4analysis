@@ -5,14 +5,13 @@
  */
 package de.monticore.cd.reporting;
 
-import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
-import de.monticore.mcbasicliterals._od.MCBasicLiterals2OD;
-import de.monticore.mcjavaliterals._od.MCJavaLiterals2OD;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcbasictypes._od.MCBasicTypes2OD;
 import de.monticore.cd.cd4analysis._od.CD4Analysis2OD;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
+import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
+import de.monticore.mcbasicliterals._od.MCBasicLiterals2OD;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._od.MCBasicTypes2OD;
 
 
 public class CD4A2OD extends CD4Analysis2OD {
@@ -25,7 +24,7 @@ public class CD4A2OD extends CD4Analysis2OD {
     super(printer, reporting);
     visitor = new CD4AnalysisDelegatorVisitor();
     visitor.setMCBasicLiteralsVisitor(new MCBasicLiterals2OD(printer, reporting));
-    visitor.setMCJavaLiteralsVisitor(new MCJavaLiterals2OD(printer,reporting));
+    visitor.setMCBasicLiteralsVisitor(new MCBasicLiterals2OD(printer,reporting));
     visitor.setMCBasicTypesVisitor(new MCBasicTypes2OD(printer, reporting));
     visitor.setCD4AnalysisVisitor(new CD4Analysis2OD(printer, reporting));  }
 

@@ -6,19 +6,11 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.literals.literals._ast.ASTSignedIntLiteral;
-import de.monticore.mcbasicliterals._ast.*;
-import de.monticore.mcbasicliterals._visitor.MCBasicLiteralsInheritanceVisitor;
-import de.monticore.mcjavaliterals._ast.ASTDoubleLiteral;
-import de.monticore.mcjavaliterals._ast.ASTFloatLiteral;
-import de.monticore.mcjavaliterals._ast.ASTIntLiteral;
-import de.monticore.mcjavaliterals._ast.ASTLongLiteral;
-import de.monticore.mcjavaliterals._visitor.MCJavaLiteralsVisitor;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.cd.symboltable.CDFieldSymbol;
+import de.monticore.mcbasicliterals._ast.*;
+import de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor;
+import de.monticore.types.BasicGenericsTypesPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -29,16 +21,13 @@ import de.se_rwth.commons.logging.Log;
  */
 public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   
-  /**
-   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
-   */
   @Override
   public void check(ASTCDAttribute node) {
     if (node.isPresentValue()) {
       CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol();
       String className = symbol.getEnclosingScope().getName().get();
       String typeName = BasicGenericsTypesPrinter.printType(node.getMCType());
-      ASTLiteral lit = node.getValue().getLiteral();
+      ASTSignedLiteral lit = node.getValue().getSignedLiteral();
       
       // see TypeChecker javadoc for more information
       TypeChecker tc = new TypeChecker(typeName);
@@ -65,7 +54,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    *
    * @author Robert Heim
    */
-  private static class TypeChecker implements MCJavaLiteralsVisitor {
+  private static class TypeChecker implements MCBasicLiteralsVisitor {
     
     private String typeUnderCheck;
     
@@ -115,26 +104,23 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
       check("boolean", "Boolean");
     }
     
-    /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcjavaliterals._ast.ASTIntLiteral)
-     */
     @Override
-    public void visit(ASTIntLiteral node) {
+    public void visit(ASTSignedNatLiteral node) {
       check("int", "Integer");
     }
 
     @Override
-    public void visit(ASTFloatLiteral node){
+    public void visit(ASTSignedBasicFloatLiteral node){
       check("float","Float");
     }
 
     @Override
-    public void visit(ASTDoubleLiteral node){
+    public void visit(ASTSignedBasicDoubleLiteral node){
       check("double","Double");
     }
 
     @Override
-    public void visit(ASTLongLiteral node){
+    public void visit(ASTSignedBasicLongLiteral node){
       check("long", "Long");
     }
     

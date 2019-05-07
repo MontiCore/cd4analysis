@@ -6,7 +6,6 @@
 package de.monticore.cd.symboltable.references;
 
 import de.monticore.cd.symboltable.*;
-import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
@@ -77,7 +76,7 @@ public class CDTypeSymbolReference extends CDTypeSymbol implements JTypeReferenc
   }
   
   @Override
-  public void setEnclosingScope(MutableScope scope) {
+  public void setEnclosingScope(Scope scope) {
     getReferencedSymbol().setEnclosingScope(scope);
   }
   
