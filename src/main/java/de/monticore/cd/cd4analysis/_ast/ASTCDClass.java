@@ -20,20 +20,17 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
+import de.monticore.cd.prettyprint.CDPrettyPrinterDelegator;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.Optional;
 
 import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  
+
   private AstPrinter printer = new AstPrinter();
-  
+
   protected ASTCDClass() {
   }
   
@@ -60,13 +57,9 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (!isPresentSuperclass()) {
       return EMPTY_STRING;
     }
-    return BasicGenericsTypesPrinter.printType(getSuperclass());
+    return new CDPrettyPrinterDelegator().prettyprint(getSuperclass());
   }
-  
-  public String printModifier() {
-    return super.printModifier();
-  }
-  
+
   public String printAnnotation() {
     if (isPresentModifier()) {
       if (getModifier().isPresentStereotype()) {

@@ -20,21 +20,12 @@
 
 package de.monticore.cd.prettyprint;
 
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.ASTCDConstructor;
-import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
-import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.types.prettyprint.TypesPrettyPrinterConcreteVisitor;
-import de.monticore.types.types._ast.ASTImportStatement;
-import de.monticore.cd.cd4analysis._ast.*;
-import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.se_rwth.commons.Names;
 
 import java.util.Iterator;
@@ -48,7 +39,7 @@ import java.util.Iterator;
  * 
  * @author Martin Schindler
  */
-public class CDPrettyPrinterConcreteVisitor extends MCBasicTypesPrettyPrinter implements CD4AnalysisVisitor {
+public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4AnalysisVisitor {
   
   private CD4AnalysisVisitor realThis = this;
   
@@ -58,7 +49,7 @@ public class CDPrettyPrinterConcreteVisitor extends MCBasicTypesPrettyPrinter im
    *
    * @param printer the printer to write to.
    */
-  public CDPrettyPrinterConcreteVisitor(IndentPrinter printer) {
+  public CDPrettyPrinter(IndentPrinter printer) {
     super(printer);
   }
   

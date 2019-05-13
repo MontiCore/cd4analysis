@@ -5,12 +5,9 @@
  */
 package de.monticore.cd.symboltable;
 
+import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.symboltable.CommonSymbol;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.types._ast.ASTType;
 
 /**
  * Represents a cd qualifier.
@@ -28,7 +25,6 @@ public class CDQualifierSymbol extends CommonSymbol {
    * Constructs a name qualifier
    * 
    * @param name
-   * @see #CDQualifierSymbol(ASTType)
    */
   public CDQualifierSymbol(String name) {
     super(name, KIND);
@@ -42,7 +38,7 @@ public class CDQualifierSymbol extends CommonSymbol {
    * @see #CDQualifierSymbol(String)
    */
   public CDQualifierSymbol(ASTMCType type) {
-    super(BasicGenericsTypesPrinter.printType(type), KIND);
+    super(new AstPrinter().printType(type), KIND);
     setTypeQualifier(true);
   }
   

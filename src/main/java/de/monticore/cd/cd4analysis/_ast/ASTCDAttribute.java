@@ -20,9 +20,6 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.cd.cd4analysis._ast.*;
 
@@ -96,7 +93,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return String representation of the ASTType
    */
   public String printType() {
-    return BasicGenericsTypesPrinter.printType(mCType);
+    return new AstPrinter().printType(mCType);
   }
   
   public String printAnnotation() {

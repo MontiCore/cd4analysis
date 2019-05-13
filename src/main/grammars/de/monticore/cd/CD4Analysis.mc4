@@ -51,7 +51,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
 
    interface symbol scope CDType;
 
-   interface symbol scope CDField;
+   interface symbol CDField;
 
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
@@ -62,7 +62,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
-  CDClass implements CDType = Modifier?  "class" Name
+  symbol (CDType) scope CDClass implements CDType = Modifier?  "class" Name
   ( "extends"  superclass:MCObjectType)?
   ( TImplements interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
   ( "{" 
@@ -83,7 +83,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
-  CDInterface implements CDType = Modifier? "interface" Name
+   symbol (CDType) scope CDInterface implements CDType = Modifier? "interface" Name
     ( "extends" interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
     ( "{"
       ( CDAttribute
@@ -101,7 +101,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
-  CDEnum implements CDType = Modifier? "enum" Name
+   symbol (CDType) scope CDEnum implements CDType = Modifier? "enum" Name
     ( TImplements interface:(MCObjectType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";" 
@@ -117,14 +117,14 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute name     Name of this Attribute
     @attribute value    Value of this Attribute
   */
-  CDAttribute implements CDField = Modifier? MCType Name ("=" Value)? ";";
+  symbol (CDField) CDAttribute implements CDField = Modifier? MCType Name ("=" Value)? ";";
    
   /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
       in a Classdiagram
       @attribute name             Name of this Constant
       @attribute cDEnumParameters List of optional parameters of this Constant
   */
-  CDEnumConstant implements CDField = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
+  symbol (CDField) CDEnumConstant implements CDField = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
   
  
   /** ASTCDEnumParameter represents a Parameter of an Enumeration Constant
@@ -165,7 +165,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute ellipsis Optional indicator for a variable Parameter length
     @attribute name Name of this Parameter
   */
-  CDParameter implements CDField =
+  symbol (CDField) CDParameter implements CDField =
   MCType (Ellipsis:["..."])? Name;
         
 

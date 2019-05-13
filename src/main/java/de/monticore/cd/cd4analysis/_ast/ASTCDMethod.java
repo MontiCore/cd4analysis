@@ -20,12 +20,7 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethodTOP;
-import de.monticore.cd.cd4analysis._ast.ASTCDStereoValue;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
   
@@ -49,7 +44,7 @@ public class ASTCDMethod extends ASTCDMethodTOP {
    * @return String representation of the ASTreturnType
    */
   public String printReturnType() {
-    return BasicTypesPrinter.printReturnType(getMCReturnType());
+    return printer.printType(getMCReturnType());
   }
   
   public String printAnnotation() {
@@ -71,29 +66,7 @@ public class ASTCDMethod extends ASTCDMethodTOP {
    * @return a string, e.g. abstract private final
    */
   public String printModifier() {
-    ASTModifier modifier = getModifier();
-    
-    StringBuilder modifierStr = new StringBuilder();
-    if (getModifier().isAbstract()) {
-      modifierStr.append(" abstract ");
-    }
-    if (modifier.isPublic()) {
-      modifierStr.append(" public ");
-    }
-    else if (modifier.isPrivate()) {
-      modifierStr.append(" private ");
-    }
-    else if (modifier.isProtected()) {
-      modifierStr.append(" protected ");
-    }
-    if (modifier.isFinal()) {
-      modifierStr.append(" final ");
-    }
-    if (modifier.isStatic()) {
-      modifierStr.append(" static ");
-    }
-    
-    return modifierStr.toString();
+    return printer.printModifier(modifier);
   }
   
   /**

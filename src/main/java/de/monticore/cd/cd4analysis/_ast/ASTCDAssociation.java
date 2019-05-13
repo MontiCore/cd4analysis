@@ -19,11 +19,10 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.CDPrettyPrinterConcreteVisitor;
+import de.monticore.cd.prettyprint.CDPrettyPrinter;
 import de.monticore.cd.symboltable.CDAssociationSymbol;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociationTOP;
 
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   @Override
   public String toString() {
     IndentPrinter ip = new IndentPrinter();
-    this.accept(new CDPrettyPrinterConcreteVisitor(ip));
+    this.accept(new CDPrettyPrinter(ip));
     return ip.getContent().replace("\r","").replace("\n", "");
   }
 

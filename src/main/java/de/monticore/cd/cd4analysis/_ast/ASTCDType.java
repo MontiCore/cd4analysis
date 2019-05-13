@@ -5,6 +5,7 @@
  */
 package de.monticore.cd.cd4analysis._ast;
 
+import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd.cd4analysis._ast.ASTModifier;
@@ -19,7 +20,7 @@ import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
  *
  * @author Robert Heim, Galina Volkova
  */
-public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode {
+public interface ASTCDType extends ASTCDTypeTOP {
 
   String getName();
 
@@ -37,32 +38,7 @@ public interface ASTCDType extends de.monticore.ast.ASTNode, ASTCD4AnalysisNode 
    * @return a string, e.g. abstract private final 
    */
   default String printModifier() {
-    Optional<ASTModifier> modifier = getModifierOpt();
-    if (!modifier.isPresent()) {
-      return EMPTY_STRING;
-    }
-    
-    StringBuilder modifierStr = new StringBuilder();
-    if (getModifierOpt().get().isAbstract()) {
-      modifierStr.append(" abstract ");
-    }
-    if (modifier.get().isPublic()) {
-      modifierStr.append(" public ");
-    }
-    else if (modifier.get().isPrivate()) {
-      modifierStr.append(" private ");
-    }
-    else if (modifier.get().isProtected()) {
-      modifierStr.append(" protected ");
-    }
-    if (modifier.get().isFinal()) {
-      modifierStr.append(" final ");
-    }
-    if (modifier.get().isStatic()) {
-      modifierStr.append(" static ");
-    }
-    
-    return modifierStr.toString();
+    return new AstPrinter().printModifier(getModifierOpt());
   }
   
 }
