@@ -6,7 +6,7 @@
 
     <groupId>de.monticore.lang</groupId>
     <artifactId>cd4analysis</artifactId>
-    <version>1.3.18-SNAPSHOT</version>
+    <version>1.3.18NewSymTab-SNAPSHOT</version>
     <properties>
 
         <!-- .. Libraries ..................................................... -->
@@ -14,7 +14,7 @@
         <monticore.version>5.0.5.NewSymTab-SNAPSHOT</monticore.version>
 
         <findbugs.version>3.0.0</findbugs.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>23.0</guava.version>
         <junit.version>4.11</junit.version>
         <se-commons.version>1.7.9</se-commons.version>
         <antlr.version>4.7.1</antlr.version>
