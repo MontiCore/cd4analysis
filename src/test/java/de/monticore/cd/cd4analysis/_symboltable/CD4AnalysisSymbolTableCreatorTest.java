@@ -17,25 +17,18 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.ArtifactScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.cd.cd4analysis._ast.*;
-import de.monticore.cd.symboltable.CDAssociationNameAndTargetNamePredicate;
-import de.monticore.cd.symboltable.CDAssociationSymbol;
-import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.cd.symboltable.CDMethodSignaturePredicate;
-import de.monticore.cd.symboltable.CDMethodSymbol;
-import de.monticore.cd.symboltable.CDSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.cd.symboltable.Cardinality;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -56,8 +49,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
   public void testSymbolTableCreation() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
     
-    final CDSymbol cdSymbol = globalScope.<CDSymbol> resolve(
-        "de.monticore.umlcd4a.symboltable.CD1", CDSymbol.KIND).orElse(null);
+    final CDDefinitionSymbol cdSymbol = globalScope.<CDDefinitionSymbol> resolve(
+        "de.monticore.umlcd4a.symboltable.CD1", CDDefinitionSymbol.KIND).orElse(null);
     assertNotNull(cdSymbol);
 
     // Scope Hierarchy: GlobalScope -> ArtifactScope -> ClassDiagramScope ->* ...
@@ -123,7 +116,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("String", nameField.getType().getName());
     // AST
     assertTrue(nameField.getAstNode().isPresent());
-    assertTrue(nameField.getAstNode().get() instanceof ASTCDAttribute);
+    assertTrue(nameField.getAstNode().get() instanceof ASTCDField);
     assertSame(nameField, nameField.getAstNode().get().getSymbol());
     assertSame(nameField.getEnclosingScope(), nameField.getAstNode().get().getEnclosingScope());
     final CDFieldSymbol secondNameField = personType.getField("secondName").get();
@@ -184,14 +177,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(profType.getField("uni").get().isDerived());
     final CDFieldSymbol profFieldPP = profType.getField("pp").orElse(null);
     assertNotNull(profFieldPP);
-    final CDTypeSymbolReference personList = (CDTypeSymbolReference) profFieldPP.getType();
+    final de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference personList = (de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference) profFieldPP.getType();
     assertEquals("List", personList.getName());
-    assertEquals("List<Person>", personList.getStringRepresentation());
+    Assert.assertEquals("List<Person>", personList.getStringRepresentation());
     // Super class
     assertTrue(profType.getSuperClass().isPresent());
     assertEquals(personType.getName(), profType.getSuperClass().get().getName());
     // The referenced symbol is the SAME as the one in the symbol table.
-    assertSame(personType, ((CDTypeSymbolReference) profType.getSuperClass().get())
+    assertSame(personType, ((de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference) profType.getSuperClass().get())
         .getReferencedSymbol());
     // Interfaces
     assertEquals(2, profType.getInterfaces().size());
@@ -440,8 +433,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
   public void testTypeSymbolReferencesForGenerics() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    final CDSymbol cdSymbol = globalScope.<CDSymbol> resolve(
-        "de.monticore.umlcd4a.symboltable.Generics", CDSymbol.KIND).orElse(null);
+    final CDDefinitionSymbol cdSymbol = globalScope.<CDDefinitionSymbol> resolve(
+        "de.monticore.umlcd4a.symboltable.Generics", CDDefinitionSymbol.KIND).orElse(null);
     assertNotNull(cdSymbol);
 
     final CDTypeSymbol clazz = globalScope.<CDTypeSymbol> resolve(
@@ -452,9 +445,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     //Type arguments
     CDFieldSymbol attribute = clazz.getField("g1").orElse(null);
     assertNotNull(attribute);
-    CDTypeSymbolReference attributeType = (CDTypeSymbolReference) attribute.getType();
+    de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference attributeType = (de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference) attribute.getType();
     assertEquals("List", attributeType.getName());
-    assertEquals("List<String>", attributeType.getStringRepresentation());
+    Assert.assertEquals("List<String>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     ActualTypeArgument typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("String", typeArgument.getType().getName());
@@ -463,9 +456,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     
     attribute = clazz.getField("g2").orElse(null);
     assertNotNull(attribute);
-    attributeType = (CDTypeSymbolReference) attribute.getType();
+    attributeType = (de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference) attribute.getType();
     assertEquals("List", attributeType.getName());
-    assertEquals("List<B>", attributeType.getStringRepresentation());
+    Assert.assertEquals("List<B>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("B", typeArgument.getType().getName());
@@ -476,7 +469,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(attribute);
     attributeType = (CDTypeSymbolReference) attribute.getType();
     assertEquals("List", attributeType.getName());
-    assertEquals("List<C>", attributeType.getStringRepresentation());
+    Assert.assertEquals("List<C>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("C", typeArgument.getType().getName());

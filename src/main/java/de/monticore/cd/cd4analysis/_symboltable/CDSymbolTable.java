@@ -17,13 +17,11 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.Lists;
-import de.monticore.cd.CD4AnalysisLanguage;
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.*;
 import de.se_rwth.commons.Names;
@@ -53,21 +51,16 @@ public class CDSymbolTable {
   
   private final ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
   
-  private Scope cdScope;
+  private ICD4AnalysisScope cdScope;
   
-  private GlobalScope globalScope;
+  private CD4AnalysisGlobalScope globalScope;
   
-  private ArtifactScope artifactScope;
+  private CD4AnalysisArtifactScope artifactScope;
   
   public CDSymbolTable(ASTCDCompilationUnit ast, List<File> modelPaths) {
     checkNotNull(modelPaths);
-    
-    resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
-    
+
     this.globalScope = createSymboltable(ast, modelPaths);
-    this.artifactScope = (ArtifactScope) this.globalScope.getSubScopes()
-        .iterator().next();
-    this.cdScope = artifactScope.getSubScopes().iterator().next();
   }
   
   /**
@@ -77,20 +70,19 @@ public class CDSymbolTable {
    * @param modelPaths
    * @return
    */
-  private GlobalScope createSymboltable(ASTCDCompilationUnit ast,
+  private CD4AnalysisGlobalScope createSymboltable(ASTCDCompilationUnit ast,
       List<File> modelPaths) {
     
     ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())).collect(Collectors.toList()));
+
+    CD4AnalysisGlobalScope globalScope = new CD4AnalysisGlobalScope(modelPath, cd4AnalysisLang);
+
+    CD4AnalysisSymbolTableCreator stc = cd4AnalysisLang
+            .getSymbolTableCreator(globalScope);
     
-    GlobalScope globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolvingConfiguration);
-    
-    Optional<CD4AnalysisSymbolTableCreator> stc = cd4AnalysisLang
-        .getSymbolTableCreator(resolvingConfiguration, globalScope);
-    
-    if (stc.isPresent()) {
-      stc.get().createFromAST(ast);
-    }
-    
+    this.artifactScope = (CD4AnalysisArtifactScope) stc.createFromAST(ast);
+    this.cdScope = ast.getCDDefinition().getSpannedCD4AnalysisScope();
+
     return globalScope;
   }
   
@@ -103,12 +95,12 @@ public class CDSymbolTable {
    * @return a list of all visible attributes
    */
   public Optional<CDTypeSymbol> resolve(String className) {
-    return this.cdScope.<CDTypeSymbol> resolve(className, CDTypeSymbol.KIND);
+    return this.cdScope.<CDTypeSymbol> resolveCDType(className);
   }
 
   // TODO AR: I don't like this method ...
   public Optional<CDAssociationSymbol> resolveAssoc(String assocName) {
-    return this.cdScope.<CDAssociationSymbol> resolve(assocName,
+    return this.cdScope.<CDAssociationSymbol> resolvecd(assocName,
         CDAssociationSymbol.KIND);
   }
 
@@ -176,7 +168,7 @@ public class CDSymbolTable {
     Optional<CDTypeSymbol> cdType = resolve(className);
     checkArgument(cdType.isPresent());
     return getAllSuperClasses(className).stream()
-      .map(CDTypeSymbol::getInterfaces)
+      .map(CDTypeSymbol::getCdInterfaces)
       .flatMap(Collection::stream)
       .flatMap(superInterface -> getSuperInterfacesRecursively(superInterface, new ArrayList<>()).stream())
       .collect(Collectors.toList());
@@ -199,7 +191,7 @@ public class CDSymbolTable {
     checkNotNull(symbols);
 
     symbols.add(cdType);
-    cdType.getInterfaces().forEach(i -> getSuperInterfacesRecursively(i, symbols));
+    cdType.getCdInterfaces().forEach(i -> getSuperInterfacesRecursively(i, symbols));
 
     return symbols;
   }
@@ -305,7 +297,7 @@ public class CDSymbolTable {
   }
 
   public boolean isTypeDefinedInModel(String typeName) {
-    Optional<CDTypeSymbol> type = this.cdScope.resolve(typeName, CDTypeSymbol.KIND);
+    Optional<CDTypeSymbol> type = this.cdScope.resolveCDType(typeName);
     if (type.isPresent()) {
 
       return isTypeDefinedInModel(type.get());
@@ -318,9 +310,7 @@ public class CDSymbolTable {
   private List<CDTypeSymbol> getSubclassesAndInterfaces(String name) {
     List<CDTypeSymbol> cdTypes = Lists.newArrayList();
 
-    for (Symbol symbol : this.cdScope.resolveLocally(CDTypeSymbol.KIND)) {
-      CDTypeSymbol cdType = (CDTypeSymbol) symbol;
-
+    for (CDTypeSymbol cdType : this.cdScope.getLocalCDTypeSymbols()) {
       // check if the given class is a super class
       if (cdType.getSuperClass().isPresent()
           && cdType.getSuperClass().get().getName().equals(name)) {
@@ -328,8 +318,8 @@ public class CDSymbolTable {
       }
 
       // check if the given class is an interface
-      if (!cdType.getInterfaces().isEmpty()) {
-        for (CDTypeSymbol a : cdType.getInterfaces()) {
+      if (!cdType.getCdInterfaces().isEmpty()) {
+        for (CDTypeSymbol a : cdType.getCdInterfaces()) {
           if (a.getName().equals(name)) {
             cdTypes.add(cdType);
           }

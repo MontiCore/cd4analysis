@@ -22,7 +22,9 @@ package de.monticore.cd;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd.symboltable.CD4AnalysisSymbolTableCreator;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisLanguage;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.ResolvingConfiguration;
@@ -49,7 +51,7 @@ public class CD4ACLI {
 
   private String modelFile;
 
-  private ASTCDDefinition ast;
+  private ASTCDCompilationUnit ast;
 
   private CD4ACLI() {
   }
@@ -71,21 +73,17 @@ public class CD4ACLI {
   protected void createSymTab() {
     CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
-    ResolvingConfiguration resolverConfiguration = new ResolvingConfiguration();
-    resolverConfiguration.addDefaultFilters(cdLanguage.getResolvingFilters());
-
-    GlobalScope globalScope = new GlobalScope(new ModelPath(), cdLanguage,
-        resolverConfiguration);
-    Optional<CD4AnalysisSymbolTableCreator> stc = cdLanguage
-        .getSymbolTableCreator(resolverConfiguration, globalScope);
-    stc.get().createFromAST(ast);
+    CD4AnalysisGlobalScope globalScope = new CD4AnalysisGlobalScope(new ModelPath(), cdLanguage);
+    CD4AnalysisSymbolTableCreator stc = cdLanguage
+            .getSymbolTableCreator(globalScope);
+    stc.createFromAST(ast);
   }
 
   protected void parse() throws IOException {
     CD4AnalysisParser parser = new CD4AnalysisParser();
     Optional<ASTCDCompilationUnit> cu = parser
         .parseCDCompilationUnit(modelFile);
-    ast = cu.get().getCDDefinition();
+    ast = cu.get();
   }
 
   protected void checkCocos() {

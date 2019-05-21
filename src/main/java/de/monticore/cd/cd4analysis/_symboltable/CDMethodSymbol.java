@@ -17,80 +17,38 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableList;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
-import de.monticore.symboltable.types.CommonJFieldSymbol;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class CDFieldSymbol extends CommonJFieldSymbol<CDTypeSymbolReference> {
-
-  public static final CDFieldSymbolKind KIND = new CDFieldSymbolKind();
-
-  private boolean isReadOnly;
-  private boolean isDerived;
-
-  private boolean isEnumConstant;
-
-  private boolean isInitialized;
+public class CDMethodSymbol extends CDMethodSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  public CDFieldSymbol(String name, CDTypeSymbolReference type) {
-    super(name, KIND, type);
-  }
+  private CDTypeSymbol definingType;
 
+  protected CDMethodSymbol(String name) {
+    super(name);
+  }
+  
   public String getExtendedName() {
-    return "CD field " + getName();
-  }
-
-  public boolean isInitialized() {
-    return isInitialized;
-  }
-
-  public void setInitialized(boolean isInitialized) {
-    this.isInitialized = isInitialized;
-  }
-
-  public boolean isReadOnly() {
-    return isReadOnly;
-  }
-
-  public void setReadOnly(boolean isReadOnly) {
-    this.isReadOnly = isReadOnly;
-  }
-
-  public boolean isDerived() {
-    return isDerived;
-  }
-
-  public void setDerived(boolean isDerived) {
-    this.isDerived = isDerived;
-  }
-
-  public boolean isEnumConstant() {
-    return isEnumConstant;
-  }
-
-  public void setEnumConstant(boolean isEnumConstant) {
-    this.isEnumConstant = isEnumConstant;
+    return "CD method " + getName();  
   }
 
   public List<Stereotype> getStereotypes() {
     return ImmutableList.copyOf(stereotypes);
   }
-
-  public Optional<Stereotype> getStereotype(String name) {
+  
+  public Stereotype getStereotype(String name) {
     for (Stereotype stereotype: this.stereotypes) {
       if (stereotype.getName().equals(name)) {
-        return Optional.of(stereotype);
+        return stereotype;
       }
     }
-    return Optional.empty();
+    return null;
   }
 
   public boolean containsStereotype(String name, String value) {
@@ -100,17 +58,22 @@ public class CDFieldSymbol extends CommonJFieldSymbol<CDTypeSymbolReference> {
       }
     }
     return false;
-    
   }
 
   public void addStereotype(Stereotype stereotype) {
     this.stereotypes.add(stereotype);
   }
 
-
   @Override
   public String toString() {
-    return  CDFieldSymbol.class.getSimpleName() + " " + getName();
+    return CDMethodSymbol.class.getSimpleName() + " " + getName() + " of " + getDefiningType();
   }
 
+  public CDTypeSymbol getDefiningType() {
+    return definingType;
+  }
+
+  public void setDefiningType(final CDTypeSymbol definingType) {
+    this.definingType = definingType;
+  }
 }

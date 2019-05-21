@@ -20,7 +20,7 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDType;
-import de.monticore.cd.symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -38,7 +38,7 @@ abstract public class ImplementOnlyInterfaces {
    */
   public void check(String type, ASTCDType node) {
     CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
-    for (CDTypeSymbol superType : symbol.getInterfaces()) {
+    for (CDTypeSymbol superType : symbol.getCdInterfaces()) {
       if (!superType.isInterface()) {
         Log.error(String.format(
             "0xC4A10 The %s %s cannot implement %s %s. Only interfaces may be implemented.", type,

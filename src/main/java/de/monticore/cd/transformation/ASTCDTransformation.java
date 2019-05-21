@@ -40,7 +40,7 @@ public class ASTCDTransformation {
   // -------------------- Attributes --------------------
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name and
+   * Creates an instance of the {@link ASTCDField} with the given name and
    * type and adds it to the given class
    * 
    * @param astClass the given class
@@ -49,8 +49,8 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
-  public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
-      String attrType) {
+  public Optional<ASTCDField> addCdAttribute(ASTCDClass astClass, String attrName,
+                                             String attrType) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
     checkNotNull(astClass, "Attribute '" + attrName
@@ -69,7 +69,7 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name, type
+   * Creates an instance of the {@link ASTCDField} with the given name, type
    * and modifier and adds it to the given class
    * 
    * @param astClass the given class
@@ -79,8 +79,8 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
-  public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
-      String attrType, String modifier) {
+  public Optional<ASTCDField> addCdAttribute(ASTCDClass astClass, String attrName,
+                                             String attrType, String modifier) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
     checkNotNull(astClass, "Attribute '" + attrName
@@ -95,7 +95,7 @@ public class ASTCDTransformation {
       Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
       return Optional.empty();
     }
-    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName).setMCType(parsedType.get())
+    ASTCDField attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName).setMCType(parsedType.get())
         .setModifier(parsedModifier.get())
         .build();
     addCdAttribute(astClass, attribute);
@@ -103,7 +103,7 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} using given attribute
+   * Creates an instance of the {@link ASTCDField} using given attribute
    * definition {@code ( e.g. private List<A> a; )} and adds it to the given class
    * 
    * @param astClass the given class
@@ -112,7 +112,7 @@ public class ASTCDTransformation {
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
-      String attributeDefinition) {
+                                                            String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
         "Attribute can't be added to the CD class because of null or empty attribute definition");
     checkNotNull(astClass, "Attribute '" + attributeDefinition
@@ -136,7 +136,7 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} using given attribute
+   * Creates an instance of the {@link ASTCDField} using given attribute
    * definition ( e.g. {@code private List<A> a; ) }and adds it to the given interface
    * 
    * @param astInterface the given interface
@@ -145,7 +145,7 @@ public class ASTCDTransformation {
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDInterface astInterface,
-      String attributeDefinition) {
+                                                            String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
         "Attribute can't be added to the CD interface because of null or empty attribute definition");
     checkNotNull(astInterface, "Attribute '" + attributeDefinition

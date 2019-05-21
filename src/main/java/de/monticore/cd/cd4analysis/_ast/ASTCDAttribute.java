@@ -38,7 +38,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
       ASTMCType type,
       String name,
       Optional<ASTValue> value) {
-    super(modifier, type, name, value);
+    super(modifier, type, value, name);
   }
   
   /**

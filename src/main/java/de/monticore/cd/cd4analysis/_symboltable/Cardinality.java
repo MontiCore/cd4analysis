@@ -17,7 +17,7 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.cd.cd4analysis._ast.ASTCardinality;
 

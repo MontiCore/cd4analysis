@@ -3,7 +3,7 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.symboltable.CommonSymbol;
@@ -14,9 +14,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
  *
  * @author Robert Heim
  */
-public class CDQualifierSymbol extends CommonSymbol {
-  public static final CDQualifierSymbolKind KIND = new CDQualifierSymbolKind();
-  
+public class CDQualifierSymbol extends CDQualifierSymbolTOP {
+
   private boolean isTypeQualifier = false;
   
   private boolean isNameQualifier = false;
@@ -27,7 +26,7 @@ public class CDQualifierSymbol extends CommonSymbol {
    * @param name
    */
   public CDQualifierSymbol(String name) {
-    super(name, KIND);
+    super(name);
     setNameQualifier(true);
   }
   
@@ -38,7 +37,7 @@ public class CDQualifierSymbol extends CommonSymbol {
    * @see #CDQualifierSymbol(String)
    */
   public CDQualifierSymbol(ASTMCType type) {
-    super(new AstPrinter().printType(type), KIND);
+    super(new AstPrinter().printType(type));
     setTypeQualifier(true);
   }
   

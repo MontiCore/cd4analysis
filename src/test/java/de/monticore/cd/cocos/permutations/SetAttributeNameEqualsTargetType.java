@@ -21,7 +21,7 @@ package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.cd.cd4analysis._ast.ASTCDField;
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.utils.ASTNodes;
 
@@ -44,14 +44,14 @@ public class SetAttributeNameEqualsTargetType implements
     assocPermutation
         .getAstNodes()
         .stream()
-        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAttribute.class))
+        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDField.class))
         .flatMap(Collection::stream)
         .forEach(
             cdAttribute -> cdAttribute.setName(determineTypeName(cdAttribute, assocPermutation)));
   }
   
-  private String determineTypeName(ASTCDAttribute cdAttribute,
-      Permutation<ASTCDAssociation> assocPermutation) {
+  private String determineTypeName(ASTCDField cdAttribute,
+                                   Permutation<ASTCDAssociation> assocPermutation) {
     if (attributeIsOnLeftSide(cdAttribute, assocPermutation)) {
       return assocPermutation.delegate().getRightReferenceName().getPartList().get(0);
     }
@@ -60,8 +60,8 @@ public class SetAttributeNameEqualsTargetType implements
     }
   }
   
-  private boolean attributeIsOnLeftSide(ASTCDAttribute cdAttribute,
-      Permutation<ASTCDAssociation> assocPermutation) {
+  private boolean attributeIsOnLeftSide(ASTCDField cdAttribute,
+                                        Permutation<ASTCDAssociation> assocPermutation) {
     for (ASTNode astNode : assocPermutation.getAstNodes()) {
       boolean hasContainingClassOnLeft = ASTNodes.getIntermediates(astNode, cdAttribute).stream()
           .filter(ASTCDClass.class::isInstance)

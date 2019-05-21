@@ -42,8 +42,8 @@ public class ASTCDEnum extends ASTCDEnumTOP {
       java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant> cDEnumConstants,
       java.util.List<ASTCDConstructor> cDConstructors,
       java.util.List<ASTCDMethod> cDMethods) {
-    super(cDAttributes, modifier, name, r__implements, interfaces, cDEnumConstants, cDConstructors,
-        cDMethods);
+    super(cDAttributes, modifier, r__implements, interfaces, cDEnumConstants, cDConstructors,
+        cDMethods, name);
   }
   
   public String printModifier() {

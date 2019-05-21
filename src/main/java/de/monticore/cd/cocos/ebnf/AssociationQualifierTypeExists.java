@@ -9,7 +9,7 @@ import de.monticore.cd.BuiltInTypes;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
 import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.cd.symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.cd.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;

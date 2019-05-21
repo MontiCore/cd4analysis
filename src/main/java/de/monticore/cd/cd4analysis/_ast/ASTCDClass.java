@@ -44,8 +44,8 @@ public class ASTCDClass extends ASTCDClassTOP {
       java.util.List<ASTCDAttribute> cDAttributes,
       java.util.List<ASTCDConstructor> cDConstructors,
       java.util.List<ASTCDMethod> cDMethods) {
-    super(modifier, name, superclass, r__implements, interfaces, stereotype, cDAttributes,
-        cDConstructors, cDMethods);
+    super(modifier, superclass, r__implements, interfaces, stereotype, cDAttributes,
+        cDConstructors, cDMethods, name);
   }
   
   /**

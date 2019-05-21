@@ -5,7 +5,7 @@
  */
 package de.monticore.cd.reporting;
 
-import de.monticore.cd.symboltable.*;
+import de.monticore.cd.cd4analysis._symboltable.*;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
 import de.monticore.prettyprint.IndentPrinter;

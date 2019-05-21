@@ -3,10 +3,10 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.symboltable.Symbol;
-import de.monticore.symboltable.SymbolPredicate;
+import de.monticore.symboltable.ISymbol;
+import de.monticore.symboltable.ISymbolPredicate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 
-public class CDMethodSignaturePredicate implements SymbolPredicate {
+public class CDMethodSignaturePredicate implements ISymbolPredicate {
 
   private final String expectedMethodName;
   private final List<String> expectedParameterTypes = new ArrayList<>();
@@ -31,9 +31,8 @@ public class CDMethodSignaturePredicate implements SymbolPredicate {
   }
 
   @Override
-  public boolean test(final Symbol symbol) {
+  public boolean test(final ISymbol symbol) {
     if ((symbol != null) &&
-        symbol.isKindOf(CDMethodSymbol.KIND) &&
         (symbol instanceof CDMethodSymbol)) {
       final CDMethodSymbol methodSymbol = (CDMethodSymbol) symbol;
 

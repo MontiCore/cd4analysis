@@ -3,9 +3,9 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import org.junit.Test;
@@ -19,7 +19,7 @@ public class CDTypeReferenceTest {
   public void testQualifiedTypeReferenceFromWithinGlobalScope() {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    CDTypeSymbolReference ref = new CDTypeSymbolReference("de.monticore.umlcd4a.symboltable.CD2.Person", globalScope);
+    de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference ref = new de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference("de.monticore.umlcd4a.symboltable.CD2.Person", globalScope);
 
     assertTrue(ref.existsReferencedSymbol());
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", ref.getFullName());
@@ -30,7 +30,7 @@ public class CDTypeReferenceTest {
   public void testQualifiedTypeReferenceFromWithinAnCD() {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    CDSymbol cd = new CDSymbol("CD");
+    CDDefinitionSymbol cd = new CDDefinitionSymbol("CD");
     globalScope.add(cd);
 
     Scope cdScope = (Scope) cd.getSpannedScope();
@@ -39,7 +39,7 @@ public class CDTypeReferenceTest {
     CDTypeSymbol type = new CDTypeSymbol("Person");
     cdScope.add(type);
 
-    CDTypeSymbolReference ref = new CDTypeSymbolReference("de.monticore.umlcd4a.symboltable.CD2.Person", cd.getSpannedScope());
+    de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference ref = new CDTypeSymbolReference("de.monticore.umlcd4a.symboltable.CD2.Person", cd.getSpannedScope());
 
     assertTrue(ref.existsReferencedSymbol());
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", ref.getFullName());

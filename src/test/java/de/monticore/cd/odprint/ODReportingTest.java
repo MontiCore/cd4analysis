@@ -6,7 +6,7 @@
 package de.monticore.cd.odprint;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd.symboltable.CD4AGlobalScopeTestFactory;
+import de.monticore.cd.cd4analysis._symboltable.CD4AGlobalScopeTestFactory;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
 import de.monticore.symboltable.GlobalScope;
@@ -14,7 +14,7 @@ import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.cd.reporting.AST2ODReporter;
 import de.monticore.cd.reporting.CD4ANodeIdentHelper;
 import de.monticore.cd.reporting.CD4ASymbolTableReporter;
-import de.monticore.cd.symboltable.CDSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDDefinitionSymbol;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,7 +33,7 @@ public class ODReportingTest {
 
   protected void createSTAndAST(String name) {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
-    CDSymbol cdSymbol = globalScope.<CDSymbol> resolve(name, CDSymbol.KIND).orElse(null);
+    CDDefinitionSymbol cdSymbol = globalScope.<CDDefinitionSymbol> resolve(name, CDDefinitionSymbol.KIND).orElse(null);
     assertNotNull(cdSymbol);
     assertTrue(cdSymbol.getAstNode().isPresent());
     ASTNode node = cdSymbol.getAstNode().get();

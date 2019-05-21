@@ -3,12 +3,9 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.symboltable.GlobalScope;
-import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.cd.symboltable.CDSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -21,7 +18,7 @@ public class CD4AnalysisResolvingTest {
   public void testResolveCD() {
     GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    Optional<CDSymbol> cd = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2", CDSymbol.KIND);
+    Optional<CDDefinitionSymbol> cd = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2", CDDefinitionSymbol.KIND);
     assertTrue(cd.isPresent());
 
     assertEquals("de.monticore.umlcd4a.symboltable.CD2", cd.get().getFullName());
@@ -61,7 +58,7 @@ public class CD4AnalysisResolvingTest {
   public void testCDWithoutPackage() {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    final CDSymbol cdSymbol = globalScope.<CDSymbol>resolve("CDWithoutPackage", CDSymbol.KIND).orElse(null);
+    final CDDefinitionSymbol cdSymbol = globalScope.<CDDefinitionSymbol>resolve("CDWithoutPackage", CDDefinitionSymbol.KIND).orElse(null);
     assertNotNull(cdSymbol);
     assertEquals("CDWithoutPackage", cdSymbol.getName());
     assertEquals("CDWithoutPackage", cdSymbol.getFullName());

@@ -7,7 +7,7 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.cd.symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
@@ -49,8 +49,8 @@ public class AssociationSourceNotEnum
    */
   private boolean check(ASTMCQualifiedName sourceName, ASTCDAssociation node) {
     boolean hasError = false;
-    Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope()
-        .resolve(sourceName.toString(), CDTypeSymbol.KIND);
+    Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope2()
+        .resolveCDType(sourceName.toString());
     if (sourceSym.isPresent() && sourceSym.get().isEnum()) {
       hasError = true;
       Log.error(

@@ -3,18 +3,12 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
-import de.monticore.cd.symboltable.CDAssociationNameAndTargetNamePredicate;
-import de.monticore.cd.symboltable.CDAssociationSymbol;
-import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.cd.symboltable.CDSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.cd.symboltable.Cardinality;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -24,7 +18,7 @@ public class SocNetSymboltableTest {
   final static String CD_FQN = "de.monticore.umlcd4a.symboltable.SocNet";
   final static String PACKAGE = CD_FQN + ".";
 
-  private CDSymbol cdSymbol;
+  private CDDefinitionSymbol cdSymbol;
   private Scope cdScope;
 
   @Test
@@ -32,7 +26,7 @@ public class SocNetSymboltableTest {
     final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
     // Besides resolving the Profile symbol the symbol table is initialized
-    cdSymbol = globalScope.<CDSymbol>resolve(CD_FQN, CDSymbol.KIND).orElse(null);
+    cdSymbol = globalScope.<CDDefinitionSymbol>resolve(CD_FQN, CDDefinitionSymbol.KIND).orElse(null);
     assertNotNull(cdSymbol);
 
     cdScope = cdSymbol.getSpannedScope();
@@ -93,7 +87,7 @@ public class SocNetSymboltableTest {
     assertNotNull(person);
     assertEquals(PACKAGE + "Person", person.getFullName());
     assertTrue(person.getSuperClass().isPresent());
-    assertSame(profile, ((CDTypeSymbolReference) (person.getSuperClass().get()))
+    assertSame(profile, ((de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference) (person.getSuperClass().get()))
         .getReferencedSymbol());
     assertEquals(profile.getName(), person.getSuperClass().get().getName());
     assertEquals(7, person.getFields().size());

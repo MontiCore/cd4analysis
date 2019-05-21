@@ -3,7 +3,7 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import java.util.Arrays;
 import java.util.Collection;

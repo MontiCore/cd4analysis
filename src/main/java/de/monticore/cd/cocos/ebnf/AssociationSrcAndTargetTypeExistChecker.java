@@ -8,8 +8,8 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.BuiltInTypes;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.cd.symboltable.CDAssociationSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 

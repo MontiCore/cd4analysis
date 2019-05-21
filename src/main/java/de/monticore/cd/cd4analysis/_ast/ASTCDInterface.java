@@ -42,8 +42,8 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
                           Optional<ASTCDStereotype> stereotype,
       java.util.List<ASTCDAttribute> cDAttributes,
       java.util.List<ASTCDMethod> cDMethods) {
-    super(modifier, name, interfaces, stereotype, cDAttributes,
-        cDMethods);
+    super(modifier, interfaces, stereotype, cDAttributes,
+        cDMethods, name);
   }
   
   public String printModifier() {

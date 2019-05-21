@@ -3,10 +3,9 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableList;
-import de.monticore.symboltable.CommonScopeSpanningSymbol;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,9 +17,7 @@ import java.util.Optional;
  *
  * @author Robert Heim
  */
-public class CDSymbol extends CommonScopeSpanningSymbol {
-  
-  public static final CDSymbolKind KIND = new CDSymbolKind();
+public class CDDefinitionSymbol extends CDDefinitionSymbolTOP {
 
   // qualified names
   private List<String> importedCdNames = new ArrayList<>();
@@ -30,19 +27,19 @@ public class CDSymbol extends CommonScopeSpanningSymbol {
    *
    * @param name
    */
-  public CDSymbol(String name) {
-    super(name, KIND);
+  public CDDefinitionSymbol(String name) {
+    super(name);
   }
 
   /**
    * @return types
    */
   public Collection<CDTypeSymbol> getTypes() {
-    return getSpannedScope().resolveLocally(CDTypeSymbol.KIND);
+    return getSpannedScope().getLocalCDTypeSymbols();
   }
 
   public Optional<CDTypeSymbol> getType(String name) {
-    return getSpannedScope().resolveLocally(name, CDTypeSymbol.KIND);
+    return getSpannedScope().resolveCDTypeLocally(name);
   }
   
   /**

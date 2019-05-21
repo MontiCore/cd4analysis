@@ -17,21 +17,17 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._ast;
 
-public enum Relationship {
-  
-  ASSOCIATION("association"), AGGREGATE("aggregate"), COMPOSITE("composite"), PART("part");
-  
-  private final String kind;
-  
-  private Relationship(String kind) {
-    this.kind = kind;
-  }
-  
-  @Override
-  public String toString() {
-    return kind;
-  }
-  
+import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.cd.cd4analysis._ast.*;
+
+import java.util.Optional;
+
+import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
+
+public interface ASTCDField extends ASTCDFieldTOP, ASTCD4AnalysisNode {
+
+
 }

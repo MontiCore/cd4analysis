@@ -17,12 +17,10 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
-import de.monticore.symboltable.types.CommonJTypeSymbol;
 import de.se_rwth.commons.Names;
 
 import java.util.*;
@@ -32,19 +30,21 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Objects.requireNonNull;
 
-public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol, CDMethodSymbol, CDTypeSymbolReference> {
-
-  public static final CDTypeSymbolKind KIND = new CDTypeSymbolKind();
+public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
   private final List<CDAssociationSymbol> associations = new ArrayList<>();
   private final List<CDAssociationSymbol> specAssociations = new ArrayList<>();
 
+  private List<CDTypeSymbolReference> superTypes = new ArrayList<>();
+
+  private Optional<CDTypeSymbolReference> superClass = Optional.empty();
+
   private String stringRepresentation = "";
 
   public CDTypeSymbol(final String name) {
-    super(name, KIND, CDFieldSymbol.KIND, CDMethodSymbol.KIND);
+    super(name);
   }
 
   public String getExtendedName() {
@@ -118,7 +118,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
               s.getEnclosingScope())));
     }
 
-    for (CDTypeSymbolReference i : startType.getInterfaces()) {
+    for (CDTypeSymbolReference i : startType.getSuperTypes()) {
       superTypes.add(i);
       superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(i.getName(),
               i.getEnclosingScope())));
@@ -127,7 +127,7 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
   }
 
   public List<CDFieldSymbol> getEnumConstants() {
-    final List<CDFieldSymbol> enums = getFields().stream()
+    final List<CDFieldSymbol> enums = getSpannedScope().getLocalCDFieldSymbols().stream()
         .filter(CDFieldSymbol::isEnumConstant)
         .collect(Collectors.toList());
     return ImmutableList.copyOf(enums);
@@ -197,10 +197,10 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
 
   public Collection<CDFieldSymbol> getAllVisibleFieldsOfSuperTypes() {
     final Set<CDFieldSymbol> allSuperTypeFields = new LinkedHashSet<>();
-    final List<CDFieldSymbol> fields = getFields();
+    final Collection<CDFieldSymbol> fields = getSpannedScope().getLocalCDFieldSymbols();
 
     for (CDTypeSymbol superType : getSuperTypes()) {
-      for (CDFieldSymbol superField : superType.getFields()) {
+      for (CDFieldSymbol superField : superType.getSpannedScope().getLocalCDFieldSymbols()) {
         if (fields.stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(superField.getName()))) {
           allSuperTypeFields.add(superField);
         }
@@ -226,10 +226,10 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
    */
   public Collection<CDFieldSymbol> getAllVisibleFields() {
     final Set<CDFieldSymbol> allFields = new LinkedHashSet<>();
-    allFields.addAll(getFields());
+    allFields.addAll(getSpannedScope().getLocalCDFieldSymbols());
     // filter-out all fields with same name
     for (CDFieldSymbol inheritedField: getAllVisibleFieldsOfSuperTypes()) {
-      if (getFields().stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(inheritedField.getName()))) {
+      if (getSpannedScope().getLocalCDFieldSymbols().stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(inheritedField.getName()))) {
         allFields.add(inheritedField);
       }
     }
@@ -250,10 +250,10 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
 
   public Collection<CDMethodSymbol> getAllVisibleMethodsOfSuperTypes() {
     final Set<CDMethodSymbol> allSuperTypeMethods = new LinkedHashSet<>();
-    final List<CDMethodSymbol> methods = getMethods();
+    final Collection<CDMethodSymbol> methods = getSpannedScope().getLocalCDMethodSymbols();
 
     for (CDTypeSymbol superType : getSuperTypes()) {
-      for (CDMethodSymbol superMethod : superType.getMethods()) {
+      for (CDMethodSymbol superMethod : superType.getSpannedScope().getLocalCDMethodSymbols()) {
         if (methods.stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(superMethod.getName()))) {
           allSuperTypeMethods.add(superMethod);
         }
@@ -277,10 +277,10 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
    */
   public Collection<CDMethodSymbol> getAllVisibleMethods() {
     final Set<CDMethodSymbol> allMethods = new LinkedHashSet<>();
-    allMethods.addAll(getMethods());
+    allMethods.addAll(getSpannedScope().getLocalCDMethodSymbols());
     // filter-out all fields with same name
     for (CDMethodSymbol inheritedMethod: getAllVisibleMethodsOfSuperTypes()) {
-      if (getMethods().stream().noneMatch(cdMethodSymbol -> cdMethodSymbol.getName().equals(inheritedMethod.getName()))) {
+      if (getSpannedScope().getLocalCDMethodSymbols().stream().noneMatch(cdMethodSymbol -> cdMethodSymbol.getName().equals(inheritedMethod.getName()))) {
         allMethods.add(inheritedMethod);
       }
     }
@@ -366,4 +366,18 @@ public class CDTypeSymbol extends CommonJTypeSymbol<CDTypeSymbol, CDFieldSymbol,
 
     return allSuperTypes;
   }
+
+  public List<CDTypeSymbolReference> getSuperTypes() {
+    return superTypes;
+  }
+
+  public Optional<CDTypeSymbolReference> getSuperClass() {
+    return superClass;
+  }
+
+  public void setSuperClass(CDTypeSymbolReference superClass) {
+    this.superClass = Optional.of(superClass);
+  }
+
+
 }

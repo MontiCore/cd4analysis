@@ -21,7 +21,7 @@ package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
+import de.monticore.cd.cd4analysis._ast.ASTCDField;
 import de.monticore.utils.ASTNodes;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class SetAttributeNamesEqualAssociationNames implements
   
   private void setAttributeName(Collection<ASTNode> astNodes, String name) {
     astNodes.stream()
-        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAttribute.class))
+        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDField.class))
         .flatMap(Collection::stream)
         .forEach(cdAttribute -> cdAttribute.setName(name));
   }

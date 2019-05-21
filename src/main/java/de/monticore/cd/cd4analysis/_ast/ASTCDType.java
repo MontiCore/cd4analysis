@@ -5,6 +5,8 @@
  */
 package de.monticore.cd.cd4analysis._ast;
 
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
@@ -40,5 +42,12 @@ public interface ASTCDType extends ASTCDTypeTOP {
   default String printModifier() {
     return new AstPrinter().printModifier(getModifierOpt());
   }
-  
+
+  void setSymbol2(CDTypeSymbol symbol);
+
+  void setCDTypeSymbol(CDTypeSymbol symbol);
+
+  void setEnclosingScope2(ICD4AnalysisScope enclosingScope);
+
+  void setSpannedScope2(ICD4AnalysisScope spannedScope);
 }

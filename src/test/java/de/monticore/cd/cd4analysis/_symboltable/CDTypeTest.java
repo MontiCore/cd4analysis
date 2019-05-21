@@ -3,9 +3,9 @@
  *
  * http://www.se-rwth.de/
  */
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference;
 import de.monticore.symboltable.CommonScope;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.Scope;
@@ -20,7 +20,7 @@ public class CDTypeTest {
 
   @Test
   public void testGetFields() {
-    final CDTypeSymbolReference dummyTypeRef = new CDTypeSymbolReference("Dummy", new CommonScope(false));
+    final de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference dummyTypeRef = new CDTypeSymbolReference("Dummy", new CommonScope(false));
 
     CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyTypeRef);
     CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyTypeRef);

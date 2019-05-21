@@ -17,7 +17,7 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableList;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
@@ -32,9 +32,7 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends CommonSymbol {
-  
-  public static final CDAssociationSymbolKind KIND = new CDAssociationSymbolKind();
-  
+
   private final CDTypeSymbol sourceType;
   
   private final CDTypeSymbol targetType;
@@ -60,7 +58,7 @@ public class CDAssociationSymbol extends CommonSymbol {
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
   protected CDAssociationSymbol(final CDTypeSymbol sourceType, final CDTypeSymbol targetType) {
-    super("", KIND);
+    super("");
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
   }

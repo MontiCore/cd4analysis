@@ -49,9 +49,9 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     | CDEnum
     | CDAssociation)* "}";
 
-   interface symbol scope CDType;
+   interface symbol scope CDType = Name;
 
-   interface symbol CDField;
+   interface symbol CDField = Name;
 
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
@@ -247,7 +247,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute name     Abstract name of the Qualifier if not a type
     @attribute mctype     Type of the Qualifier if not an abstract name
   */
-  CDQualifier = "[[" Name "]]" | "[" MCType "]";
+  symbol CDQualifier = "[[" Name "]]" | "[" MCType "]";
     
 
   /** ASTStereotype represents Stereotypes in a Classdiagram
@@ -269,6 +269,41 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
   */
   Value = SignedLiteral;
 
-  symbolrule CDField;
+  symbolrule CDField =
+    isPrivate: boolean
+    isDerived: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isFinal: boolean
+    isStatic: boolean
+    isReadOnly: boolean
+    isInitialized: boolean
+    type: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
+  ;
+
+  symbolrule CDMethod =
+    isPrivate: boolean
+    isDerived: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isFinal: boolean
+    isStatic: boolean
+    isAbstract: boolean
+    parameters: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
+  ;
+
+  symbolrule CDType =
+    isInterface: boolean
+    isEnum: boolean
+    isClass: boolean
+    isAbstract: boolean
+    isPrivate: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isFinal: boolean
+    cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
+    fields: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
+    constructors: de.monticore.cd.cd4analysis._symboltable.CDMethodSymbolReference min=0 max=*
+  ;
 
 }

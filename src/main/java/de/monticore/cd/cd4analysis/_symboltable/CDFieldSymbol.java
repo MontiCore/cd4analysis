@@ -17,42 +17,53 @@
  * ******************************************************************************
  */
 
-package de.monticore.cd.symboltable;
+package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableList;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
-import de.monticore.symboltable.types.CommonJMethodSymbol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDTypeSymbolReference, CDFieldSymbol> {
+public class CDFieldSymbol extends CDFieldSymbolTOP {
 
-  public static final CDMethodSymbolKind KIND = new CDMethodSymbolKind();
+
+  private boolean isEnumConstant;
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  private CDTypeSymbol definingType;
-
-  protected CDMethodSymbol(String name) {
-    super(name, KIND);
+  public CDFieldSymbol(String name, CDTypeSymbolReference type) {
+    super(name);
+    setType(type);
   }
-  
+
   public String getExtendedName() {
-    return "CD method " + getName();  
+    return "CD field " + getName();
+  }
+
+  public CDFieldSymbol(String name) {
+    super(name);
+  }
+
+  public boolean isEnumConstant() {
+    return isEnumConstant;
+  }
+
+  public void setEnumConstant(boolean isEnumConstant) {
+    this.isEnumConstant = isEnumConstant;
   }
 
   public List<Stereotype> getStereotypes() {
     return ImmutableList.copyOf(stereotypes);
   }
-  
-  public Stereotype getStereotype(String name) {
+
+  public Optional<Stereotype> getStereotype(String name) {
     for (Stereotype stereotype: this.stereotypes) {
       if (stereotype.getName().equals(name)) {
-        return stereotype;
+        return Optional.of(stereotype);
       }
     }
-    return null;
+    return Optional.empty();
   }
 
   public boolean containsStereotype(String name, String value) {
@@ -62,22 +73,17 @@ public class CDMethodSymbol extends CommonJMethodSymbol<CDTypeSymbol, CDTypeSymb
       }
     }
     return false;
+    
   }
 
   public void addStereotype(Stereotype stereotype) {
     this.stereotypes.add(stereotype);
   }
 
+
   @Override
   public String toString() {
-    return CDMethodSymbol.class.getSimpleName() + " " + getName() + " of " + getDefiningType();
+    return  CDFieldSymbol.class.getSimpleName() + " " + getName();
   }
 
-  public CDTypeSymbol getDefiningType() {
-    return definingType;
-  }
-
-  public void setDefiningType(final CDTypeSymbol definingType) {
-    this.definingType = definingType;
-  }
 }

@@ -14,7 +14,7 @@ import de.monticore.cd.CD4AnalysisLanguage;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd.symboltable.CD4AnalysisSymbolTableCreator;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;

@@ -81,7 +81,7 @@ public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
     return format(cardinality, Layouter.nodeName(a));
   }
 
-  public String getIdent(ASTCDAttribute a) {
+  public String getIdent(ASTCDField a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
 
@@ -160,8 +160,8 @@ public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
     else if (a instanceof ASTMCQualifiedName) {
       return getIdent((ASTMCQualifiedName) a);
     }
-    else if (a instanceof ASTCDAttribute) {
-      return getIdent((ASTCDAttribute) a);
+    else if (a instanceof ASTCDField) {
+      return getIdent((ASTCDField) a);
     }
     else if (a instanceof ASTMCObjectType) {
       return getIdent((ASTMCObjectType) a);
