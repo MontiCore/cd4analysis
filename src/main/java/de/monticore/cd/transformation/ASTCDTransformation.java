@@ -79,7 +79,7 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
-  public Optional<ASTCDField> addCdAttribute(ASTCDClass astClass, String attrName,
+  public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
                                              String attrType, String modifier) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
@@ -95,7 +95,7 @@ public class ASTCDTransformation {
       Log.error("Attribute " + attrName + " can't be added to the CD class " + astClass.getName());
       return Optional.empty();
     }
-    ASTCDField attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName).setMCType(parsedType.get())
+    ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName).setMCType(parsedType.get())
         .setModifier(parsedModifier.get())
         .build();
     addCdAttribute(astClass, attribute);
@@ -505,10 +505,10 @@ public class ASTCDTransformation {
   // -------------------- Types --------------------
   
   /**
-   * Creates an instance of the {@link ASTReturnType} using the type definition
+   * Creates an instance of the {@link ASTMCReturnType} using the type definition
    * 
    * @param typeName the name of the return type
-   * @return Optional of the created {@link ASTReturnType} node or
+   * @return Optional of the created {@link ASTMCReturnType} node or
    * Optional.empty() if the type definition couldn't be parsed
    */
   public Optional<ASTMCReturnType> createReturnType(String typeName) {
@@ -529,10 +529,10 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTType} using the type definition
+   * Creates an instance of the {@link ASTMCType} using the type definition
    * 
    * @param typeName the name of the type
-   * @return Optional of the created {@link ASTType} node or Optional.empty()
+   * @return Optional of the created {@link ASTMCType} node or Optional.empty()
    * if the type definition couldn't be parsed
    */
   public Optional<ASTMCType> createType(String typeName) {

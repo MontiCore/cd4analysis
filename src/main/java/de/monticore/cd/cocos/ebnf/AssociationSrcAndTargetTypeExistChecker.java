@@ -39,8 +39,8 @@ public class AssociationSrcAndTargetTypeExistChecker implements
   private void checkTypeExists(CDTypeSymbol type, ASTCDAssociation assoc) {
     String typeName = type.getName();
     if (!BuiltInTypes.isBuiltInType(typeName)) {
-      Optional<CDTypeSymbol> subClassSym = assoc.getEnclosingScope()
-          .resolve(typeName, CDTypeSymbol.KIND);
+      Optional<CDTypeSymbol> subClassSym = assoc.getEnclosingScope2()
+          .resolveCDType(typeName);
       if (!subClassSym.isPresent()) {
         String assocString = CD4ACoCoHelper.printAssociation(assoc);
         Log.error(

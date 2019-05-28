@@ -30,7 +30,7 @@ public class CDMethodSymbol extends CDMethodSymbolTOP {
 
   private CDTypeSymbol definingType;
 
-  protected CDMethodSymbol(String name) {
+  public CDMethodSymbol(String name) {
     super(name);
   }
   

@@ -25,6 +25,7 @@ import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisLanguage;
 import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.ResolvingConfiguration;
@@ -74,7 +75,7 @@ public class CD4ACLI {
     CD4AnalysisLanguage cdLanguage = new CD4AnalysisLanguage();
 
     CD4AnalysisGlobalScope globalScope = new CD4AnalysisGlobalScope(new ModelPath(), cdLanguage);
-    CD4AnalysisSymbolTableCreator stc = cdLanguage
+    CD4AnalysisSymbolTableCreatorDelegator stc = cdLanguage
             .getSymbolTableCreator(globalScope);
     stc.createFromAST(ast);
   }

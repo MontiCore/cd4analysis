@@ -114,4 +114,8 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
       this.setReadOnly((String)null);
     }
   }
+
+  public String getName() {
+    return "";
+  }
 }

@@ -52,8 +52,8 @@ public class AssociationQualifierTypeExists
       ASTMCType type = qualifier.getMCType();
       String typeName = new AstPrinter().printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {
-        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope()
-            .resolve(typeName, CDTypeSymbol.KIND);
+        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope2()
+            .resolveCDType(typeName);
         if (!typeSym.isPresent()) {
           hasError = true;
           Log.error(

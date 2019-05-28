@@ -31,11 +31,11 @@ import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
-public class CDAssociationSymbol extends CommonSymbol {
+public class CDAssociationSymbol extends CDAssociationSymbolTOP {
 
-  private final CDTypeSymbol sourceType;
+  private final CDTypeSymbol sourceType = null;
   
-  private final CDTypeSymbol targetType;
+  private final CDTypeSymbol targetType = null;
   
   private Cardinality sourceCardinality;
   
@@ -57,10 +57,14 @@ public class CDAssociationSymbol extends CommonSymbol {
   
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  protected CDAssociationSymbol(final CDTypeSymbol sourceType, final CDTypeSymbol targetType) {
+  public CDAssociationSymbol(final CDTypeSymbol sourceType, final CDTypeSymbol targetType) {
     super("");
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
+  }
+
+  public CDAssociationSymbol(String name) {
+    super(name);
   }
 
   public boolean isReadOnly() {
@@ -227,12 +231,10 @@ public class CDAssociationSymbol extends CommonSymbol {
       inverseAssoc.setTargetCardinality(getSourceCardinality());
       inverseAssoc.setTargetRole(getSourceRole());
       inverseAssoc.setAssocName(getAssocName());
-      inverseAssoc.setPackageName(getPackageName());
       inverseAssoc.setAccessModifier(getAccessModifier());
       inverseAssoc.setAstNode(getAstNode().orElse(null));
       inverseAssoc.setEnclosingScope(getEnclosingScope());
       inverseAssoc.setFullName(getFullName());
-      inverseAssoc.setKind(getKind());
       getStereotypes().forEach(inverseAssoc::addStereotype);
     }
     return inverseAssoc;

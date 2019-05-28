@@ -23,8 +23,8 @@ import com.google.common.collect.Lists;
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
-import de.monticore.symboltable.*;
-import de.se_rwth.commons.Names;
+import de.monticore.symboltable.IScope;
+import de.monticore.symboltable.ResolvingConfiguration;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.monticore.symboltable.Symbols.sortSymbolsByPosition;
+import static de.monticore.symboltable.ISymbol.sortSymbolsByPosition;
 
 /**
  * This class helps in creating, editing, and managing the symboltable for the CD4Analysis language
@@ -77,7 +77,7 @@ public class CDSymbolTable {
 
     CD4AnalysisGlobalScope globalScope = new CD4AnalysisGlobalScope(modelPath, cd4AnalysisLang);
 
-    CD4AnalysisSymbolTableCreator stc = cd4AnalysisLang
+    CD4AnalysisSymbolTableCreatorDelegator stc = cd4AnalysisLang
             .getSymbolTableCreator(globalScope);
     
     this.artifactScope = (CD4AnalysisArtifactScope) stc.createFromAST(ast);
@@ -100,8 +100,7 @@ public class CDSymbolTable {
 
   // TODO AR: I don't like this method ...
   public Optional<CDAssociationSymbol> resolveAssoc(String assocName) {
-    return this.cdScope.<CDAssociationSymbol> resolvecd(assocName,
-        CDAssociationSymbol.KIND);
+    return this.cdScope.resolveCDAssociation(assocName);
   }
 
   public List<CDFieldSymbol> getVisibleAttributesInHierarchy(String className) {
@@ -277,7 +276,7 @@ public class CDSymbolTable {
     if (type instanceof CDTypeSymbolReference) {
       CDTypeSymbolReference ca = (CDTypeSymbolReference) type;
       if (ca.existsReferencedSymbol()) {
-        Optional<? extends Scope> parentScope = type.getSpannedScope()
+        Optional<? extends IScope> parentScope = type.getSpannedScope()
             .getEnclosingScope();
 
         if (parentScope.isPresent()
@@ -286,7 +285,7 @@ public class CDSymbolTable {
         }
       }
     } else {
-      Optional<? extends Scope> parentScope = type.getSpannedScope()
+      Optional<? extends IScope> parentScope = type.getSpannedScope()
           .getEnclosingScope();
       if (parentScope.isPresent()
           && currentScopeName.equals(parentScope.get().getName())) {
@@ -330,7 +329,7 @@ public class CDSymbolTable {
   }
 
   public List<CDAssociationSymbol> getAllAssociations() {
-    return sortSymbolsByPosition(this.cdScope.resolveLocally(CDAssociationSymbol.KIND));
+    return sortSymbolsByPosition(this.cdScope.getLocalCDAssociationSymbols());
   }
 
   public List<CDAssociationSymbol> getAllAssociationsForClass(String className) {
@@ -369,8 +368,10 @@ public class CDSymbolTable {
    * @param typeName - type's name
    */
   public void defineType(String typeName) {
-    CommonSymbol type = new CDTypeSymbol(Names.getSimpleName(typeName));
-    type.setPackageName(Names.getQualifier(typeName));
+    // TODO MB: Darf man einfach den vollqualifizierten Namen abspeichern?
+    //    CommonSymbol type = new CDTypeSymbol(Names.getSimpleName(typeName));
+    //    type.setPackageName(Names.getQualifier(typeName));
+    CDTypeSymbol type = new CDTypeSymbol(typeName);
     this.globalScope.add(type);
   }
 }

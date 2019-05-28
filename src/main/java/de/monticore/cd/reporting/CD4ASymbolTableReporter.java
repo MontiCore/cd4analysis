@@ -7,13 +7,14 @@ package de.monticore.cd.reporting;
 
 import de.monticore.cd.cd4analysis._symboltable.*;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
-import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter;
+import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.Symbol;
 
 import java.util.List;
 
-public class CD4ASymbolTableReporter extends SymbolTableReporter {
+// TODO Benutze den neuen Reporter
+public class CD4ASymbolTableReporter extends SymbolTableReporter2 {
   
   /**
    * Constructor for de.monticore.umlcd4a.reporting.CD4ASymbolTableReporter.
@@ -33,9 +34,8 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
    * @see SymbolTableReporter#reportAttributes(Symbol,
    * IndentPrinter)
    */
-  @Override
   protected void reportAttributes(Symbol sym, IndentPrinter printer) {
-    super.reportAttributes(sym, printer);
+   // super.reportAttributes(sym, printer);
     if (sym instanceof CDAssociationSymbol) {
       reportAttributes((CDAssociationSymbol) sym, printer);
     }
@@ -69,7 +69,7 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   }
   
   private void reportAttributes(CDFieldSymbol sym, IndentPrinter printer) {
-    reportCommonJFieldAttributes(sym, printer);
+    // reportCommonJFieldAttributes(sym, printer);
     printer.println("isDerived = " + sym.isDerived() + ";");
     printer.println("isEnumConstant = " + sym.isEnumConstant() + ";");
     printer.println("isInitialized = " + sym.isInitialized() + ";");
@@ -78,7 +78,7 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   }
   
   private void reportAttributes(CDMethodSymbol sym, IndentPrinter printer) {
-    reportCommonJMethodAttributes(sym, printer);
+    // reportCommonJMethodAttributes(sym, printer);
     reportStereotypes(sym.getStereotypes());
   }
   
@@ -88,13 +88,13 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter {
   }
   
   private void reportAttributes(CDTypeSymbol sym, IndentPrinter printer) {
-    reportCommonJTypeAttributes(sym, printer);
+    // reportCommonJTypeAttributes(sym, printer);
     if (!sym.getAssociations().isEmpty()) {
       printer.println("associations = " );
       String delim = "";
       for (CDAssociationSymbol assocSymbol: sym.getAssociations()) {
         printer.print(delim);
-        reportSymbol(assocSymbol, printer);
+        // reportSymbol(assocSymbol, printer);
         delim = ", ";
       }
       printer.println(";");
