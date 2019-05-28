@@ -33,24 +33,24 @@ public class ASTCDClass extends ASTCDClassTOP {
 
   protected ASTCDClass() {
   }
-  
+
   protected ASTCDClass(
       Optional<ASTModifier> modifier,
-      String name,
       Optional<ASTMCObjectType> superclass,
       Optional<ASTTImplements> r__implements,
       java.util.List<ASTMCObjectType> interfaces,
       Optional<ASTCDStereotype> stereotype,
       java.util.List<ASTCDAttribute> cDAttributes,
       java.util.List<ASTCDConstructor> cDConstructors,
-      java.util.List<ASTCDMethod> cDMethods) {
+      java.util.List<ASTCDMethod> cDMethods,
+      String name) {
     super(modifier, superclass, r__implements, interfaces, stereotype, cDAttributes,
         cDConstructors, cDMethods, name);
   }
-  
+
   /**
    * Prints the superclass
-   * 
+   *
    * @return String representation of the superclass
    */
   public String printSuperClass() {
@@ -64,7 +64,7 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (isPresentModifier()) {
       if (getModifier().isPresentStereotype()) {
         StringBuffer sb = new StringBuffer();
-        for (ASTCDStereoValue s: getModifier().getStereotype().values) {
+        for (ASTCDStereoValue s : getModifier().getStereotype().values) {
           sb.append(s.getName());
           sb.append("\n");
         }
@@ -73,14 +73,14 @@ public class ASTCDClass extends ASTCDClassTOP {
     }
     return "";
   }
-  
+
   /**
    * Prints the interfaces
-   * 
+   *
    * @return String representation of the interfaces
    */
   public String printInterfaces() {
     return printer.printReferenceList(getInterfaceList());
   }
-  
+
 }

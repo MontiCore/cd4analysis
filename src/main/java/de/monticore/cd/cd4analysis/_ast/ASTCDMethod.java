@@ -23,65 +23,64 @@ import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
-  
+
   private AstPrinter printer = new AstPrinter();
-  
+
   protected ASTCDMethod() {
   }
-  
+
   protected ASTCDMethod(ASTModifier modifier,
-      ASTMCReturnType returnType,
-      String name,
-      java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDParameter> cDParameters,
-      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName> exceptions)
-  {
+                        ASTMCReturnType returnType,
+                        String name,
+                        java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDParameter> cDParameters,
+                        java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName> exceptions) {
     super(modifier, returnType, name, cDParameters, exceptions);
   }
-  
+
   /**
    * Prints a return type
-   * 
+   *
    * @return String representation of the ASTreturnType
    */
   public String printReturnType() {
     return printer.printType(getMCReturnType());
   }
-  
+
   public String printAnnotation() {
     if (getModifier().isPresentStereotype()) {
       StringBuffer sb = new StringBuffer();
-      for (ASTCDStereoValue s: getModifier().getStereotype().values) {
+      for (ASTCDStereoValue s : getModifier().getStereotype().values) {
         sb.append(s.getName());
         sb.append("\n");
       }
       return sb.toString();
     }
-    
+
     return "";
   }
 
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
-   * 
+   *
    * @return a string, e.g. abstract private final
    */
   public String printModifier() {
     return printer.printModifier(modifier);
   }
-  
+
   /**
    * Prints the parameter declarations that can be used in methods and
    * constructors
-   * 
+   *
    * @return a string list of parameter declarations, e.g. type name
    */
   public String printParametersDecl() {
     return printer.printCDParametersDecl(getCDParameterList());
   }
-  
+
   /**
    * Prints the throws declaration for methods and constructors.
-   * 
+   *
    * @return a string list of all exceptions
    */
   public String printThrowsDecl() {
