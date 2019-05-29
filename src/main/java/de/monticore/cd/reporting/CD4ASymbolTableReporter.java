@@ -42,8 +42,8 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter2 {
     else if (sym instanceof CDFieldSymbol) {
       reportAttributes((CDFieldSymbol) sym, printer);
     }
-    else if (sym instanceof CDMethodSymbol) {
-      reportAttributes((CDMethodSymbol) sym, printer);
+    else if (sym instanceof CDMethOrConstrSymbol) {
+      reportAttributes((CDMethOrConstrSymbol) sym, printer);
     }
     else if (sym instanceof CDQualifierSymbol) {
       reportAttributes((CDQualifierSymbol) sym, printer);
@@ -77,7 +77,7 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter2 {
     reportStereotypes(sym.getStereotypes());
   }
   
-  private void reportAttributes(CDMethodSymbol sym, IndentPrinter printer) {
+  private void reportAttributes(CDMethOrConstrSymbol sym, IndentPrinter printer) {
     // reportCommonJMethodAttributes(sym, printer);
     reportStereotypes(sym.getStereotypes());
   }

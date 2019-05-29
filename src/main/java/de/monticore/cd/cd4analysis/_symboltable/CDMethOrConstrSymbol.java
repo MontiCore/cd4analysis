@@ -24,13 +24,15 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDMethodSymbol extends CDMethodSymbolTOP {
+public class CDMethOrConstrSymbol extends CDMethOrConstrSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
   private CDTypeSymbol definingType;
 
-  public CDMethodSymbol(String name) {
+  private java.util.List<CDFieldSymbolReference> _parameters;
+
+  public CDMethOrConstrSymbol(String name) {
     super(name);
   }
   
@@ -66,7 +68,7 @@ public class CDMethodSymbol extends CDMethodSymbolTOP {
 
   @Override
   public String toString() {
-    return CDMethodSymbol.class.getSimpleName() + " " + getName() + " of " + getDefiningType();
+    return CDMethOrConstrSymbol.class.getSimpleName() + " " + getName() + " of " + getDefiningType();
   }
 
   public CDTypeSymbol getDefiningType() {
@@ -76,4 +78,9 @@ public class CDMethodSymbol extends CDMethodSymbolTOP {
   public void setDefiningType(final CDTypeSymbol definingType) {
     this.definingType = definingType;
   }
+
+  public java.util.List<CDFieldSymbolReference> getParameters() {
+    return this._parameters;
+  }
+
 }

@@ -41,6 +41,8 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   private Optional<CDTypeSymbolReference> superClass = Optional.empty();
 
+  private java.util.List<CDTypeSymbolReference> _cdInterfaces;
+
   private String stringRepresentation = "";
 
   public CDTypeSymbol(final String name) {
@@ -248,12 +250,12 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return ImmutableList.copyOf(allNames);
   }
 
-  public Collection<CDMethodSymbol> getAllVisibleMethodsOfSuperTypes() {
-    final Set<CDMethodSymbol> allSuperTypeMethods = new LinkedHashSet<>();
-    final Collection<CDMethodSymbol> methods = getSpannedScope().getLocalCDMethodSymbols();
+  public Collection<CDMethOrConstrSymbol> getAllVisibleMethodsOfSuperTypes() {
+    final Set<CDMethOrConstrSymbol> allSuperTypeMethods = new LinkedHashSet<>();
+    final Collection<CDMethOrConstrSymbol> methods = getSpannedScope().getLocalCDMethOrConstrSymbols();
 
     for (CDTypeSymbol superType : getSuperTypes()) {
-      for (CDMethodSymbol superMethod : superType.getSpannedScope().getLocalCDMethodSymbols()) {
+      for (CDMethOrConstrSymbol superMethod : superType.getSpannedScope().getLocalCDMethOrConstrSymbols()) {
         if (methods.stream().noneMatch(cdFieldSymbol -> cdFieldSymbol.getName().equals(superMethod.getName()))) {
           allSuperTypeMethods.add(superMethod);
         }
@@ -263,7 +265,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     }
 
     // filter-out all private fields
-    final Set<CDMethodSymbol> allVisibleSuperTypeMethods = allSuperTypeMethods.stream().
+    final Set<CDMethOrConstrSymbol> allVisibleSuperTypeMethods = allSuperTypeMethods.stream().
             filter(field -> !field.isPrivate())
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -275,17 +277,17 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
    *
    * @return visible methods including inherited methods.
    */
-  public Collection<CDMethodSymbol> getAllVisibleMethods() {
-    final Set<CDMethodSymbol> allMethods = new LinkedHashSet<>();
-    allMethods.addAll(getSpannedScope().getLocalCDMethodSymbols());
+  public Collection<CDMethOrConstrSymbol> getAllVisibleMethods() {
+    final Set<CDMethOrConstrSymbol> allMethods = new LinkedHashSet<>();
+    allMethods.addAll(getSpannedScope().getLocalCDMethOrConstrSymbols());
     // filter-out all fields with same name
-    for (CDMethodSymbol inheritedMethod: getAllVisibleMethodsOfSuperTypes()) {
-      if (getSpannedScope().getLocalCDMethodSymbols().stream().noneMatch(cdMethodSymbol -> cdMethodSymbol.getName().equals(inheritedMethod.getName()))) {
+    for (CDMethOrConstrSymbol inheritedMethod: getAllVisibleMethodsOfSuperTypes()) {
+      if (getSpannedScope().getLocalCDMethOrConstrSymbols().stream().noneMatch(cdMethodSymbol -> cdMethodSymbol.getName().equals(inheritedMethod.getName()))) {
         allMethods.add(inheritedMethod);
       }
     }
     // filter-out all private fields
-    final Set<CDMethodSymbol> allVisibleMethods = allMethods.stream().
+    final Set<CDMethOrConstrSymbol> allVisibleMethods = allMethods.stream().
             filter(method -> !method.isPrivate())
             .collect(Collectors.toCollection(LinkedHashSet::new));
     return ImmutableSet.copyOf(allVisibleMethods);
@@ -379,5 +381,16 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     this.superClass = Optional.of(superClass);
   }
 
+  public java.util.List<CDTypeSymbolReference> getCdInterfaces() {
+    return this._cdInterfaces;
+  }
+
+  public java.util.Collection<CDMethOrConstrSymbol> getMethods() {
+    return getSpannedScope().getLocalCDMethOrConstrSymbols();
+  }
+
+  public java.util.Collection<CDFieldSymbol> getFields() {
+    return getSpannedScope().getLocalCDFieldSymbols();
+  }
 
 }

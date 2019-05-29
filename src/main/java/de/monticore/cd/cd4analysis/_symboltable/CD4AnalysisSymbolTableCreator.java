@@ -333,7 +333,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void visit(final ASTCDMethod astMethod) {
-    final CDMethodSymbol methodSymbol = new CDMethodSymbol(astMethod.getName());
+    final CDMethOrConstrSymbol methodSymbol = new CDMethOrConstrSymbol(astMethod.getName());
 
     setModifiersOfMethod(methodSymbol, astMethod.getModifier());
     setParametersOfMethod(methodSymbol, astMethod);
@@ -349,7 +349,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     removeCurrentCD4AnalysisScope();
   }
 
-  public void setModifiersOfMethod(final CDMethodSymbol methodSymbol, final ASTModifier astModifier) {
+  public void setModifiersOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTModifier astModifier) {
     if (astModifier != null) {
       methodSymbol.setIsAbstract(astModifier.isAbstract());
       methodSymbol.setIsStatic(astModifier.isStatic());
@@ -371,7 +371,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  public void addStereotypes(final CDMethodSymbol methodSymbol, final ASTCDStereotype astStereotype) {
+  public void addStereotypes(final CDMethOrConstrSymbol methodSymbol, final ASTCDStereotype astStereotype) {
     if (astStereotype != null) {
       for (final ASTCDStereoValue val : astStereotype.getValueList()) {
         // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
@@ -381,7 +381,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  public void setParametersOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
+  public void setParametersOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTCDMethod astMethod) {
     if (astMethod.getCDParameterList() != null) {
       CDTypeSymbolReference paramTypeSymbol;
 
@@ -410,7 +410,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  public void setReturnTypeOfMethod(final CDMethodSymbol methodSymbol, ASTCDMethod astMethod) {
+  public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol, ASTCDMethod astMethod) {
     // TODO PN use ASTTypesConverter
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
             (new AstPrinter()).printReturnType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO BasicGenericsTypesPrinter
@@ -420,7 +420,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     methodSymbol.setReturnType(returnSymbol);
   }
 
-  public void setExceptionsOfMethod(final CDMethodSymbol methodSymbol, final ASTCDMethod astMethod) {
+  public void setExceptionsOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTCDMethod astMethod) {
     if (astMethod.getExceptionList() != null) {
       for (final ASTMCQualifiedName exceptionName : astMethod.getExceptionList()) {
         final CDTypeSymbolReference exception = new CDTypeSymbolReference(exceptionName.toString(),
@@ -430,14 +430,14 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  public void setDefiningTypeOfMethod(final CDMethodSymbol methodSymbol) {
+  public void setDefiningTypeOfMethod(final CDMethOrConstrSymbol methodSymbol) {
     if (currentSymbol().isPresent()) {
       if (currentSymbol().get() instanceof CDTypeSymbol) {
         final CDTypeSymbol definingType = (CDTypeSymbol) currentSymbol().get();
         methodSymbol.setDefiningType(definingType);
 
         if (definingType.isInterface()) {
-          methodSymbol.setAbstract(true);
+          methodSymbol.setIsAbstract(true);
         }
       }
     }

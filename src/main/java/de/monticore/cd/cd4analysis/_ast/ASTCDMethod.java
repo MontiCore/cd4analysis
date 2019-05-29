@@ -20,7 +20,10 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
+
+import java.util.List;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
 
@@ -29,12 +32,8 @@ public class ASTCDMethod extends ASTCDMethodTOP {
   protected ASTCDMethod() {
   }
 
-  protected ASTCDMethod(ASTModifier modifier,
-                        ASTMCReturnType returnType,
-                        String name,
-                        java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDParameter> cDParameters,
-                        java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName> exceptions) {
-    super(modifier, returnType, name, cDParameters, exceptions);
+  public ASTCDMethod(ASTModifier modifier, ASTMCReturnType mCReturnType, List<ASTCDParameter> cDParameters, List<ASTMCQualifiedName> exceptions, String name) {
+    super(modifier, mCReturnType, cDParameters, exceptions, name);
   }
 
   /**

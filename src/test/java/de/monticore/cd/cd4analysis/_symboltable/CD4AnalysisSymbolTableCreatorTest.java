@@ -139,7 +139,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("", personType.getStereotype("S2").get().getValue());
     // Methods
     assertEquals(2, personType.getMethods().size());
-    final CDMethodSymbol setNameMethod = personType.getMethod("setName").orElse(null);
+    final CDMethOrConstrSymbol setNameMethod = personType.getMethod("setName").orElse(null);
     assertNotNull(setNameMethod);
     assertEquals("setName", setNameMethod.getName());
     assertSame(personType, setNameMethod.getDefiningType());
@@ -202,7 +202,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(printableType.isInterface());
     assertTrue(printableType.isProtected());
     // Methods
-    final CDMethodSymbol printMethod = printableType.getMethod("print").orElse(null);
+    final CDMethOrConstrSymbol printMethod = printableType.getMethod("print").orElse(null);
     assertNotNull(printMethod);
     assertEquals("print", printMethod.getName());
     assertTrue(printMethod.isProtected());
@@ -370,38 +370,38 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Resolve methods from super types //
     // public methods can be resolved
-    assertTrue(profType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND).isPresent());
-    assertSame(setNameMethod, profType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND).get());
+    assertTrue(profType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND).isPresent());
+    assertSame(setNameMethod, profType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND).get());
     assertFalse(profType.getMethod("setName").isPresent());
 
     // protected methods can be resolved
-    assertTrue(profType.getSpannedScope().resolve("print", CDMethodSymbol.KIND).isPresent());
-    assertSame(printMethod, profType.getSpannedScope().resolve("print", CDMethodSymbol.KIND).get());
+    assertTrue(profType.getSpannedScope().resolve("print", CDMethOrConstrSymbol.KIND).isPresent());
+    assertSame(printMethod, profType.getSpannedScope().resolve("print", CDMethOrConstrSymbol.KIND).get());
     assertFalse(profType.getMethod("print").isPresent());
 
     // private methods CANNOT be resolved...
-    assertFalse(profType.getSpannedScope().resolve("getAge", CDMethodSymbol.KIND).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("getAge", CDMethOrConstrSymbol.KIND).isPresent());
     // ... even if resolving with the private access modifier.
-    assertFalse(profType.getSpannedScope().resolve("getAge", CDMethodSymbol.KIND, PRIVATE).isPresent());
+    assertFalse(profType.getSpannedScope().resolve("getAge", CDMethOrConstrSymbol.KIND, PRIVATE).isPresent());
     assertFalse(profType.getMethod("getAge").isPresent());
 
 
     // resolve method by signature
-    assertTrue(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+    assertTrue(personType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "String")).isPresent());
-    assertSame(setNameMethod, personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+    assertSame(setNameMethod, personType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "String")).get());
 
-    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String")).isPresent());
 
-    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "int")).isPresent());
 
-    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("setName", "String", "String", "String")).isPresent());
 
-    assertFalse(personType.getSpannedScope().resolve("setName", CDMethodSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
+    assertFalse(personType.getSpannedScope().resolve("setName", CDMethOrConstrSymbol.KIND, BasicAccessModifier.ALL_INCLUSION,
         new CDMethodSignaturePredicate("getAge", "String", "String")).isPresent());
 
 

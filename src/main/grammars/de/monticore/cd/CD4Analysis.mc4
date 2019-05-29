@@ -53,6 +53,9 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
 
    interface symbol CDField = Name;
 
+   interface symbol scope CDMethOrConstr = Name;
+
+
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
     @attribute name           Name of this Class
@@ -138,7 +141,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDParameters   List of Parameters of this Constructor
     @attribute exceptions     List of Exceptions thrown by this Constructor
   */
-  symbol scope CDConstructor =
+  symbol(CDMethOrConstr) scope CDConstructor implements CDMethOrConstr =
     Modifier
      Name "(" (CDParameter || ",")* ")"
     ("throws" exception:(MCQualifiedName || "," )+)?
@@ -152,7 +155,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
       @attribute cDParameters   List of Parameters of this Method
       @attribute exceptions     List of Exceptions thrown by this Method
   */
-  symbol scope CDMethod =
+  symbol(CDMethOrConstr) scope CDMethod implements CDMethOrConstr =
     Modifier
     MCReturnType
      Name "(" (CDParameter || ",")* ")"
@@ -281,7 +284,8 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     type: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
   ;
 
-  symbolrule CDMethod =
+  symbolrule CDMethOrConstr =
+    isConstructor: boolean
     isPrivate: boolean
     isDerived: boolean
     isProtected: boolean
@@ -289,7 +293,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     isFinal: boolean
     isStatic: boolean
     isAbstract: boolean
-    parameters: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
+   // parameters: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
   ;
 
   symbolrule CDType =
@@ -301,9 +305,9 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     isProtected: boolean
     isPublic: boolean
     isFinal: boolean
-    cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
-    fields: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
-    constructors: de.monticore.cd.cd4analysis._symboltable.CDMethodSymbolReference min=0 max=*
+    // cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
+    // fields: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
+    // constructors: de.monticore.cd.cd4analysis._symboltable.CDMethodSymbolReference min=0 max=*
   ;
 
 }

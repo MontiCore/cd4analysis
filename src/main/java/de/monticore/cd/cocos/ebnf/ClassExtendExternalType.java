@@ -42,9 +42,9 @@ public class ClassExtendExternalType implements CD4AnalysisASTCDClassCoCo {
     if (optSuperType.isPresent()) {
       CDTypeSymbol superType = optSuperType.get();
       if (isExternal(superType)) {
-        boolean hasEmptyConstructor = superType.getConstructors()
+        boolean hasEmptyConstructor = superType.getMethods()
             .stream()
-            .filter(c -> c.getParameters().isEmpty())
+            .filter(c -> (c.isConstructor()) && c.getParameters().isEmpty())
             .count() > 0;
         if (!hasEmptyConstructor) {
           Log.error(

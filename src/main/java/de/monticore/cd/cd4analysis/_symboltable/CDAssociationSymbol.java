@@ -33,9 +33,9 @@ import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends CDAssociationSymbolTOP {
 
-  private final CDTypeSymbol sourceType = null;
+  private  CDTypeSymbol sourceType = null;
   
-  private final CDTypeSymbol targetType = null;
+  private  CDTypeSymbol targetType = null;
   
   private Cardinality sourceCardinality;
   

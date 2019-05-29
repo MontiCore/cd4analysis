@@ -33,8 +33,8 @@ public class CDMethodSignaturePredicate implements ISymbolPredicate {
   @Override
   public boolean test(final ISymbol symbol) {
     if ((symbol != null) &&
-        (symbol instanceof CDMethodSymbol)) {
-      final CDMethodSymbol methodSymbol = (CDMethodSymbol) symbol;
+        (symbol instanceof CDMethOrConstrSymbol)) {
+      final CDMethOrConstrSymbol methodSymbol = (CDMethOrConstrSymbol) symbol;
 
       if (methodSymbol.getName().equals(expectedMethodName) &&
           (methodSymbol.getParameters().size() == expectedParameterTypes.size())) {

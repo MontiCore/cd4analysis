@@ -33,13 +33,11 @@ public class ASTCDConstructor extends ASTCDConstructorTOP {
   protected ASTCDConstructor() {
   }
 
-  protected  ASTCDConstructor(ASTModifier modifier,
-                              String name,
-                              List<ASTCDParameter> cDParameters,
-                              List<ASTMCQualifiedName> exceptions) {
-  super(modifier, name, cDParameters, exceptions);
+  public ASTCDConstructor(ASTModifier modifier, List<ASTCDParameter> cDParameters, List<ASTMCQualifiedName> exceptions, String name) {
+    super(modifier, cDParameters, exceptions, name);
   }
-    /**
+
+  /**
      * Print the string of a ASTModifier type, e.g. abstract private final
      *
      * @return a string, e.g. abstract private final
