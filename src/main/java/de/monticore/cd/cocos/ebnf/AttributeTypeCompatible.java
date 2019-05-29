@@ -8,8 +8,8 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.mcbasicliterals._ast.*;
-import de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor;
+import de.monticore.mccommonliterals._ast.*;
+import de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor;
 import de.monticore.types.BasicGenericsTypesPrinter;
 import de.se_rwth.commons.logging.Log;
 
@@ -44,7 +44,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   }
   
   /**
-   * This visitor checks for an {@link ASTLiteral} if it is assignable to a
+   * This visitor checks for an {@link de.monticore.mcliteralsbasis._ast.ASTLiteral} if it is assignable to a
    * given type (see constructor). We use a visitor to avoid if (lit instanceof
    * ASTIntLiteral) ...<br/>
    * We use the inheritance visitor because we then don't need to differentiate
@@ -54,7 +54,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    *
    * @author Robert Heim
    */
-  private static class TypeChecker implements MCBasicLiteralsVisitor {
+  private static class TypeChecker implements MCCommonLiteralsVisitor {
     
     private String typeUnderCheck;
     
@@ -89,7 +89,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTStringLiteral)
+     * @see de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor#visit(de.monticore.mccommonliterals._ast.ASTStringLiteral)
      */
     @Override
     public void visit(ASTStringLiteral node) {
@@ -97,7 +97,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTBooleanLiteral)
+     * @see de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor#visit(de.monticore.mccommonliterals._ast.ASTBooleanLiteral)
      */
     @Override
     public void visit(ASTBooleanLiteral node) {
@@ -125,7 +125,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     }
     
     /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTCharLiteral)
+     * @see de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor#visit(de.monticore.mccommonliterals._ast.ASTCharLiteral)
      */
     @Override
     public void visit(ASTCharLiteral node) {
