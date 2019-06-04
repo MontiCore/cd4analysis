@@ -27,8 +27,6 @@ variables:
 cache:
   paths:
   - .m2/
-  - .gradle/wrapper
-  - .gradle/caches
   key: ${CI_COMMIT_REF_SLUG}
   
 before_script:
@@ -50,6 +48,12 @@ install:
 
 gradle_build:
   stage: build
+  cache:
+    paths:
+      - target
+      - .gradle/wrapper
+      - .gradle/caches
+    key: ${CI_COMMIT_REF_SLUG}-gradle
   script:
     - "./gradlew assemble"
 
@@ -60,5 +64,11 @@ test:
 
 gradle_test:
   stage: test
+  cache:
+    paths:
+      - target
+      - .gradle/wrapper
+      - .gradle/caches
+    key: ${CI_COMMIT_REF_SLUG}-gradle
   script:
     - "./gradlew test"
