@@ -47,28 +47,17 @@ install:
     expire_in: 1 week
 
 gradle_build:
-  stage: build
+  stage: test
   cache:
     paths:
-      - target
       - .gradle/wrapper
       - .gradle/caches
     key: ${CI_COMMIT_REF_SLUG}-gradle
   script:
     - "./gradlew assemble"
+    - "./gradlew check"
 
 test:
   stage: test
   script:
   - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test"
-
-gradle_test:
-  stage: test
-  cache:
-    paths:
-      - target
-      - .gradle/wrapper
-      - .gradle/caches
-    key: ${CI_COMMIT_REF_SLUG}-gradle
-  script:
-    - "./gradlew test"
