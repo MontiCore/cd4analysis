@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "monticore"  version "5.0.5" // MontiCore Plugin
+    id "monticore"  version "5.0.5.1" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.4"
 }
