@@ -28,6 +28,9 @@ cache:
   paths:
   - .m2/
   key: ${CI_COMMIT_REF_SLUG}
+  
+before_script:
+  - chmod +x gradlew
 
 stages:
   - build
@@ -42,7 +45,17 @@ install:
     - target/
     expire_in: 1 week
 
+gradle_build:
+  stage: build
+  script:
+    - "./gradlew assemble"
+
 test:
   stage: test
   script:
   - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test"
+
+gradle_test:
+  stage: test
+  script:
+    - "./gradlew test"
