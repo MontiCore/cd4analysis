@@ -27,10 +27,13 @@ variables:
 cache:
   paths:
   - .m2/
+  - .gradle/wrapper
+  - .gradle/caches
   key: ${CI_COMMIT_REF_SLUG}
   
 before_script:
   - chmod +x gradlew
+  - export GRADLE_USER_HOME=`pwd`/.gradle
 
 stages:
   - build
