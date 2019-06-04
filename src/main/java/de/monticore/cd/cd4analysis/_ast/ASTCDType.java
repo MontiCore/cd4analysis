@@ -45,6 +45,10 @@ public interface ASTCDType extends ASTCDTypeTOP {
 
   void setSymbol2(CDTypeSymbol symbol);
 
+  public  de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol getSymbol2 ();
+
+  public  Optional<de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol> getSymbol2Opt ();
+
   void setCDTypeSymbol(CDTypeSymbol symbol);
 
   void setEnclosingScope2(ICD4AnalysisScope enclosingScope);

@@ -5,16 +5,14 @@
  */
 package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.symboltable.ISymbol;
-import de.monticore.symboltable.ISymbolPredicate;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.google.common.base.Strings.emptyToNull;
 import static java.util.Objects.requireNonNull;
 
-public class CDMethodSignaturePredicate implements ISymbolPredicate {
+public class CDMethodSignaturePredicate implements Predicate<CDMethOrConstrSymbol> {
 
   private final String expectedMethodName;
   private final List<String> expectedParameterTypes = new ArrayList<>();
@@ -31,7 +29,7 @@ public class CDMethodSignaturePredicate implements ISymbolPredicate {
   }
 
   @Override
-  public boolean test(final ISymbol symbol) {
+  public boolean test(final CDMethOrConstrSymbol symbol) {
     if ((symbol != null) &&
         (symbol instanceof CDMethOrConstrSymbol)) {
       final CDMethOrConstrSymbol methodSymbol = (CDMethOrConstrSymbol) symbol;

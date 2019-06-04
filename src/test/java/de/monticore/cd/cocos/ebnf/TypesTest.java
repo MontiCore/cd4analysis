@@ -5,29 +5,17 @@
  */
 package de.monticore.cd.cocos.ebnf;
 
-import de.monticore.cd.cocos.AbstractCoCoTest;
-import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;//TODO: ersetze simplereferencetype
 import de.monticore.cd.CD4ACoCos;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd.cocos.ebnf.GenericTypeHasParameters;
+import de.monticore.cd.cocos.AbstractCoCoTest;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
-import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests CoCos dealing with types.

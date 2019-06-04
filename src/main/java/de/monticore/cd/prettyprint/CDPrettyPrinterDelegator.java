@@ -40,7 +40,13 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
   protected IndentPrinter printer = null;
 
   public CDPrettyPrinterDelegator() {
-    new CDPrettyPrinterDelegator(new IndentPrinter());
+    this.printer = new IndentPrinter();
+    realThis = this;
+    setCD4AnalysisVisitor(new CDPrettyPrinter(printer));
+    setMCBasicLiteralsVisitor(new MCBasicLiteralsPrettyPrinter(printer));
+    setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
+    setMCBasicsVisitor(new MCBasicsPrettyPrinter(printer));
+    setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
   }
 
   public CDPrettyPrinterDelegator(IndentPrinter printer) {

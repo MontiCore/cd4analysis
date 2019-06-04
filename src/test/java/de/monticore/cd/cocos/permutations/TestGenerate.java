@@ -20,10 +20,9 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.types._ast.ASTQualifiedName;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.utils.ASTNodes;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -79,7 +78,7 @@ public class TestGenerate {
   
   private void setReferenceNameId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
-        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTQualifiedName.class))
+        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTMCQualifiedName.class))
         .flatMap(Collection::stream)
         .forEach(qualifiedName -> {
           String oldName = qualifiedName.getPartList().get(0);

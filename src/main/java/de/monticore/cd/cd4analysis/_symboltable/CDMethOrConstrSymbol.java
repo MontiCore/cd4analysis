@@ -28,9 +28,17 @@ public class CDMethOrConstrSymbol extends CDMethOrConstrSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  private CDTypeSymbol definingType;
+  public List<CDTypeSymbolReference> getExceptions() {
+    return exceptions;
+  }
 
-  private java.util.List<CDFieldSymbolReference> _parameters;
+  public void setExceptions(List<CDTypeSymbolReference> exceptions) {
+    this.exceptions = exceptions;
+  }
+
+  private List<CDTypeSymbolReference> exceptions = new ArrayList<>();
+
+  private CDTypeSymbol definingType;
 
   public CDMethOrConstrSymbol(String name) {
     super(name);
@@ -79,8 +87,8 @@ public class CDMethOrConstrSymbol extends CDMethOrConstrSymbolTOP {
     this.definingType = definingType;
   }
 
-  public java.util.List<CDFieldSymbolReference> getParameters() {
-    return this._parameters;
+  public java.util.List<CDFieldSymbol> getParameters() {
+    return getEnclosingScope().getLocalCDFieldSymbols();
   }
 
 }

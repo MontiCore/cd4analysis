@@ -5,9 +5,9 @@
  */
 package de.monticore.cd.prettyprint;
 
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
 import org.antlr.v4.runtime.RecognitionException;
@@ -42,7 +42,7 @@ public class CD4AnalysisPrettyPrinterTest {
     
     // prettyprinting input
     IndentPrinter i = new IndentPrinter();
-    CDPrettyPrinter prettyprinter = new CDPrettyPrinter(i);
+    CDPrettyPrinterDelegator prettyprinter = new CDPrettyPrinterDelegator(i);
     String output = prettyprinter.prettyprint(cdDef.get());
 
     // parsing output of prettyprinter
@@ -65,7 +65,7 @@ public class CD4AnalysisPrettyPrinterTest {
 
     // prettyprinting input
     IndentPrinter i = new IndentPrinter();
-    CDPrettyPrinter prettyprinter = new CDPrettyPrinter(i);
+    CDPrettyPrinterDelegator prettyprinter = new CDPrettyPrinterDelegator(i);
     String output = prettyprinter.prettyprint(cdDef.get());
 
     // parsing output of prettyprinter

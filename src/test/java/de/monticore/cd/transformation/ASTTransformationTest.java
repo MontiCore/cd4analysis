@@ -5,29 +5,22 @@
  */
 package de.monticore.cd.transformation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Optional;
-
+import com.google.common.collect.Lists;
+import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.types.mcbasictypes._ast.ASTConstantsMCBasicTypes;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
-import de.monticore.types.types._ast.ASTConstantsTypes;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
+import java.util.Optional;
 
-import de.monticore.cd.cd4analysis._ast.ASTCDField;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for the utility class {@link ASTCDTransformation}
@@ -101,21 +94,21 @@ public class ASTTransformationTest {
   @Test
   public void testAddCdAttribute() {
     ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
-    Optional<ASTCDField> attr1 = astTransformation.addCdAttribute(astClass, "a", "String");
+    Optional<ASTCDAttribute> attr1 = astTransformation.addCdAttribute(astClass, "a", "String");
     assertTrue(attr1.isPresent());
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getMCType() instanceof ASTMCObjectType);
     assertEquals(((ASTMCObjectType)attr1.get().getMCType()).getNameList(), Lists.newArrayList("String"));
     assertTrue(!attr1.get().isPresentModifier());
     
-    Optional<ASTCDField> attr2 = astTransformation.addCdAttribute(astClass, "b", "a.b.C");
+    Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttribute(astClass, "b", "a.b.C");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().getMCType() instanceof ASTMCObjectType);
     assertEquals(((ASTMCObjectType)attr2.get().getMCType()).getNameList(), Lists.newArrayList("a", "b", "C"));
     assertTrue(!attr2.get().isPresentModifier());
     
-    Optional<ASTCDField> attr3 = astTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
+    Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
     assertTrue(attr3.isPresent());
     assertEquals(attr3.get().getName(), "c");
     assertTrue(attr3.get().getMCType() instanceof ASTMCGenericType);
@@ -135,13 +128,13 @@ public class ASTTransformationTest {
   @Ignore("TODO GV<-RH source position optional funktioniert hier nicht")
   public void testAddCdAttributeUsingDefinition() {
     ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
-    Optional<ASTCDField> attr1 = astTransformation.addCdAttributeUsingDefinition(astClass, "String a;");
+    Optional<ASTCDAttribute> attr1 = astTransformation.addCdAttributeUsingDefinition(astClass, "String a;");
     assertTrue(attr1.isPresent());
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getMCType() instanceof ASTMCObjectType);
     assertEquals(((ASTMCObjectType)attr1.get().getMCType()).getNameList(), Lists.newArrayList("String"));
     
-    Optional<ASTCDField> attr2 = astTransformation.addCdAttributeUsingDefinition(astClass, "protected a.b.C b;");
+    Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttributeUsingDefinition(astClass, "protected a.b.C b;");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().isPresentModifier());
@@ -149,7 +142,7 @@ public class ASTTransformationTest {
     assertTrue(attr2.get().getMCType() instanceof ASTMCObjectType);
     assertEquals(((ASTMCObjectType)attr2.get().getMCType()).getNameList(), Lists.newArrayList("a", "b", "C"));
     
-    Optional<ASTCDField> attr3 = astTransformation.addCdAttributeUsingDefinition(astClass, "+Date d;");
+    Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttributeUsingDefinition(astClass, "+Date d;");
     assertTrue(attr3.isPresent());
     assertEquals(attr3.get().getName(), "d");
     assertTrue(attr3.get().isPresentModifier());
@@ -236,7 +229,7 @@ public class ASTTransformationTest {
     assertEquals(((ASTMCObjectType)method3.get().getCDParameterList().get(0).getMCType()).getNameList(), Lists.newArrayList("String"));
     assertEquals(method3.get().getCDParameterList().get(1).getName(), "b");
     assertTrue(method3.get().getCDParameterList().get(1).getMCType() instanceof ASTMCPrimitiveType);
-    assertEquals(((ASTMCPrimitiveType)method3.get().getCDParameterList().get(1).getMCType()).getPrimitive(), ASTConstantsTypes.INT);
+    assertEquals(((ASTMCPrimitiveType)method3.get().getCDParameterList().get(1).getMCType()).getPrimitive(), ASTConstantsMCBasicTypes.INT);
   }
   
 }

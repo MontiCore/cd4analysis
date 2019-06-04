@@ -41,7 +41,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   private Optional<CDTypeSymbolReference> superClass = Optional.empty();
 
-  private java.util.List<CDTypeSymbolReference> _cdInterfaces;
+  private java.util.List<CDTypeSymbolReference> _cdInterfaces = new ArrayList<>();
 
   private String stringRepresentation = "";
 
@@ -385,11 +385,11 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return this._cdInterfaces;
   }
 
-  public java.util.Collection<CDMethOrConstrSymbol> getMethods() {
+  public java.util.List<CDMethOrConstrSymbol> getMethods() {
     return getSpannedScope().getLocalCDMethOrConstrSymbols();
   }
 
-  public java.util.Collection<CDFieldSymbol> getFields() {
+  public java.util.List<CDFieldSymbol> getFields() {
     return getSpannedScope().getLocalCDFieldSymbols();
   }
 

@@ -20,13 +20,8 @@
 package de.monticore.cd.cocos.permutations;
 
 import com.google.common.collect.Iterables;
+import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
-import de.monticore.types.types._ast.TypesNodeFactory;
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDField;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -86,7 +81,7 @@ public class CreateInheritanceTree implements
   }
   
   private static void addAttributeToTopClass(ASTCDClass topClass) {
-    ASTCDField cdAttribute = CD4AnalysisNodeFactory.createASTCDAttribute();
+    ASTCDAttribute cdAttribute = CD4AnalysisNodeFactory.createASTCDAttribute();
     topClass.getCDAttributeList().add(cdAttribute);
   }
   

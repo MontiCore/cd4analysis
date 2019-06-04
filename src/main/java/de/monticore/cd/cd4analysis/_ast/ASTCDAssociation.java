@@ -116,6 +116,6 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   }
 
   public String getName() {
-    return "";
+   return getNameOpt().orElse("");
   }
 }

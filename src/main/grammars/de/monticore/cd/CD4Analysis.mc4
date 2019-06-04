@@ -281,6 +281,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     isStatic: boolean
     isReadOnly: boolean
     isInitialized: boolean
+    isParameter: boolean
     type: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
   ;
 
@@ -293,7 +294,9 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     isFinal: boolean
     isStatic: boolean
     isAbstract: boolean
-   // parameters: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
+    isEllipsis: boolean
+    returnType: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
+    // TODO Fehler im Builder: exceptions: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
   ;
 
   symbolrule CDType =
@@ -305,9 +308,8 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     isProtected: boolean
     isPublic: boolean
     isFinal: boolean
-    // cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
-    // fields: de.monticore.cd.cd4analysis._symboltable.CDFieldSymbolReference min=0 max=*
-    // constructors: de.monticore.cd.cd4analysis._symboltable.CDMethodSymbolReference min=0 max=*
+    // TODO Fehler im Builder: cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
+    // TODO Fehler im Builder: superClass: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=1
   ;
 
 }

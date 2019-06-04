@@ -5,7 +5,6 @@
  */
 package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.symboltable.GlobalScope;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -16,9 +15,9 @@ public class CD4AnalysisResolvingTest {
 
   @Test
   public void testResolveCD() {
-    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    Optional<CDDefinitionSymbol> cd = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2", CDDefinitionSymbol.KIND);
+    Optional<CDDefinitionSymbol> cd = globalScope.resolveCDDefinition("de.monticore.umlcd4a.symboltable.CD2");
     assertTrue(cd.isPresent());
 
     assertEquals("de.monticore.umlcd4a.symboltable.CD2", cd.get().getFullName());
@@ -26,9 +25,9 @@ public class CD4AnalysisResolvingTest {
 
   @Test
   public void testResolveType() {
-    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    Optional<CDTypeSymbol> cdType = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person", CDTypeSymbol.KIND);
+    Optional<CDTypeSymbol> cdType = globalScope.resolveCDType("de.monticore.umlcd4a.symboltable.CD2.Person");
     assertTrue(cdType.isPresent());
 
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person", cdType.get().getFullName());
@@ -36,9 +35,9 @@ public class CD4AnalysisResolvingTest {
 
   @Test
   public void testResolveField() {
-    GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    Optional<CDFieldSymbol> cdField = globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.Person.name", CDFieldSymbol.KIND);
+    Optional<CDFieldSymbol> cdField = globalScope.resolveCDField("de.monticore.umlcd4a.symboltable.CD2.Person.name");
     assertTrue(cdField.isPresent());
 
     assertEquals("de.monticore.umlcd4a.symboltable.CD2.Person.name", cdField.get().getFullName());
@@ -46,24 +45,24 @@ public class CD4AnalysisResolvingTest {
 
   @Test
   public void testModelIsLoadedOnlyOnceEvenIfSymbolCannontBeResolved() {
-    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    final CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.XXX", CDTypeSymbol.KIND);
-    globalScope.resolve("de.monticore.umlcd4a.symboltable.CD2.XXX", CDTypeSymbol.KIND);
+    globalScope.resolveCDType("de.monticore.umlcd4a.symboltable.CD2.XXX");
+    globalScope.resolveCDType("de.monticore.umlcd4a.symboltable.CD2.XXX");
 
     assertEquals(1, globalScope.getSubScopes().size());
   }
 
   @Test
   public void testCDWithoutPackage() {
-    final GlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+    final CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
 
-    final CDDefinitionSymbol cdSymbol = globalScope.<CDDefinitionSymbol>resolve("CDWithoutPackage", CDDefinitionSymbol.KIND).orElse(null);
+    final CDDefinitionSymbol cdSymbol = globalScope.<CDDefinitionSymbol>resolveCDDefinition("CDWithoutPackage").orElse(null);
     assertNotNull(cdSymbol);
     assertEquals("CDWithoutPackage", cdSymbol.getName());
     assertEquals("CDWithoutPackage", cdSymbol.getFullName());
 
-    final CDTypeSymbol a = globalScope.<CDTypeSymbol>resolve("CDWithoutPackage.A", CDTypeSymbol.KIND).orElse(null);
+    final CDTypeSymbol a = globalScope.<CDTypeSymbol>resolveCDType("CDWithoutPackage.A").orElse(null);
     assertNotNull(a);
     assertEquals("A", a.getName());
     assertEquals("CDWithoutPackage.A", a.getFullName());

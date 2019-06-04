@@ -9,9 +9,11 @@ import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ISymbolPredicate;
 import de.monticore.symboltable.Symbol;
 
+import java.util.function.Predicate;
+
 import static com.google.common.base.Strings.nullToEmpty;
 
-public class CDAssociationNameAndTargetNamePredicate implements ISymbolPredicate {
+public class CDAssociationNameAndTargetNamePredicate implements Predicate<CDAssociationSymbol> {
 
   private final String assocName;
   private final String assocTargetName;
@@ -22,7 +24,7 @@ public class CDAssociationNameAndTargetNamePredicate implements ISymbolPredicate
   }
 
   @Override
-  public boolean test(final ISymbol symbol) {
+  public boolean test(final CDAssociationSymbol symbol) {
     if ((symbol != null) &&
         (symbol instanceof CDAssociationSymbol)) {
       CDAssociationSymbol assocSymbol = (CDAssociationSymbol) symbol;

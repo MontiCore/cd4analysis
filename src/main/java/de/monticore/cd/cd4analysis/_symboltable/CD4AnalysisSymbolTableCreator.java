@@ -6,7 +6,10 @@ package de.monticore.cd.cd4analysis._symboltable;/*
 
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.ScopeSpanningSymbol;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -21,6 +24,8 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
+import static java.util.Optional.empty;
+
 public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreatorTOP {
 
   public CD4AnalysisSymbolTableCreator(Deque<? extends ICD4AnalysisScope> scopeStack) {
@@ -29,6 +34,15 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   public CD4AnalysisSymbolTableCreator(final ICD4AnalysisScope scopeStack) {
     super(scopeStack);
+  }
+
+  @Override
+  public CD4AnalysisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
+    CD4AnalysisArtifactScope artifactScope = new CD4AnalysisArtifactScope(Optional.empty(),
+            Names.getQualifiedName(rootNode.getPackageList()), new ArrayList<>());
+    putOnStack(artifactScope);
+    rootNode.accept(getRealThis());
+    return artifactScope;
   }
 
   @Override
@@ -48,10 +62,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         imports.add(new ImportStatement(qualifiedImport, imp.isStar()));
       }
     }
-    
-    final CD4AnalysisArtifactScope scope = new CD4AnalysisArtifactScope(Optional.empty(), Names.getQualifiedName(compilationUnit.getPackageList()), imports);
-    putOnStack(scope);
-    scope.setAstNode(compilationUnit);
+
+    getCurrentScope().get().setAstNode(compilationUnit);
 
     // note that the cdsymbol scope is removed in the endVisit of
     // ASTCDDefinition
@@ -176,7 +188,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     ASTMCType astType = astAttribute.getMCType();
     typeReference.setStringRepresentation((new AstPrinter()).printType(astType));
 
-    addTypeArgumentsToTypeSymbol(typeReference, astType);
+    // TODO addTypeArgumentsToTypeSymbol(typeReference, astType);
 
     final CDFieldSymbol fieldSymbol = new CDFieldSymbol(astAttribute.getName(), typeReference);
 
@@ -211,11 +223,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     addToScopeAndLinkWithNode(fieldSymbol, astAttribute);
   }
 
-  /**
-   * TODO: Write me!
-   * @param typeReference
-   * @param astType
-   */
+  /* TODO
   public void addTypeArgumentsToTypeSymbol(CDTypeSymbolReference typeReference, ASTMCType astType) {
     if (astType instanceof ASTMCGenericType) {
       ASTMCGenericType astmcGenericType = (ASTMCGenericType) astType;
@@ -259,11 +267,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       }
     }
   }
-
-  @Override
-  public void endVisit(final ASTCDClass astClass) {
-    removeCurrentCD4AnalysisScope();
-  }
+*/
 
   @Override
   public void visit(final ASTCDInterface astInterface) {
@@ -289,15 +293,10 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       for (final ASTMCObjectType superInterface : astInterfaces) {
         if (!externals.contains((new AstPrinter()).printType(superInterface))) {
           final CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
-          typeSymbol.getCdInterface().add(superInterfaceSymbol);
+          typeSymbol.getCdInterfaces().add(superInterfaceSymbol);
         }
       }
     }
-  }
-
-  @Override
-  public void endVisit(final ASTCDInterface astInterface) {
-    removeCurrentCD4AnalysisScope();
   }
 
   @Override
@@ -316,7 +315,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         constantSymbol.setIsStatic(true);
         constantSymbol.setIsFinal(true);
 
-        enumSymbol.addField(constantSymbol);
+        // TODO eigene visit-Methode
+        // enumSymbol.addField(constantSymbol);
       }
     }
     Collection<String> externals = getExternals(astEnum);
@@ -326,10 +326,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     addToScopeAndLinkWithNode(enumSymbol, astEnum);
   }
 
-  @Override
-  public void endVisit(final ASTCDEnum astEnum) {
-    removeCurrentCD4AnalysisScope();
-  }
 
   @Override
   public void visit(final ASTCDMethod astMethod) {
@@ -344,10 +340,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     addToScopeAndLinkWithNode(methodSymbol, astMethod);
   }
 
-  @Override
-  public void endVisit(final ASTCDMethod astMethod) {
-    removeCurrentCD4AnalysisScope();
-  }
 
   public void setModifiersOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTModifier astModifier) {
     if (astModifier != null) {
@@ -390,10 +382,11 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         paramTypeSymbol = new CDTypeSymbolReference(
                 (new AstPrinter()).printType(astParameter.getMCType()), getCurrentScope().get());
 
-        addTypeArgumentsToTypeSymbol(paramTypeSymbol, astParameter.getMCType());
+        // TODOD
+        // addTypeArgumentsToTypeSymbol(paramTypeSymbol, astParameter.getMCType());
 
         if (astParameter.isEllipsis()) {
-          methodSymbol.setEllipsisParameterMethod(true);
+          methodSymbol.setIsEllipsis(true);
           // ellipsis parameters are (like) arrays
           // TODO: Ist das so?
           // paramTypeSymbol =
@@ -401,11 +394,12 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         }
 
         final CDFieldSymbol parameterSymbol = new CDFieldSymbol(paramName, paramTypeSymbol);
-        parameterSymbol.setParameter(true);
+        parameterSymbol.setIsParameter(true);
         // Parameters are always private
-        parameterSymbol.setPrivate();
+        parameterSymbol.setIsPrivate(true);
 
-        methodSymbol.addParameter(parameterSymbol);
+        // TODO eigene visit-Methode
+        // methodSymbol.addParameter(parameterSymbol);
       }
     }
   }
@@ -413,9 +407,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol, ASTCDMethod astMethod) {
     // TODO PN use ASTTypesConverter
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
-            (new AstPrinter()).printReturnType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO BasicGenericsTypesPrinter
+            (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO BasicGenericsTypesPrinter
     if(astMethod.getMCReturnType().isPresentMCType()) {
-      addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
+      // TODO addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
     }
     methodSymbol.setReturnType(returnSymbol);
   }
@@ -425,7 +419,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       for (final ASTMCQualifiedName exceptionName : astMethod.getExceptionList()) {
         final CDTypeSymbolReference exception = new CDTypeSymbolReference(exceptionName.toString(),
             getCurrentScope().get());
-        methodSymbol.addException(exception);
+        methodSymbol.getExceptions().add(exception);
       }
     }
   }
@@ -590,6 +584,14 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
       }
     }
+  }
+
+  public final ICD4AnalysisScope currentScope() {
+    return (this.scopeStack.peekLast());
+  }
+
+  public final Optional<? extends IScopeSpanningSymbol> currentSymbol() {
+      return currentScope().getSpanningSymbol();
   }
 
 }

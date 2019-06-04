@@ -49,7 +49,7 @@ public class ASTCDTransformation {
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
-  public Optional<ASTCDField> addCdAttribute(ASTCDClass astClass, String attrName,
+  public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
                                              String attrType) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");

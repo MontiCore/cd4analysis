@@ -32,7 +32,7 @@ public class ASTCDRawTransformation {
    * @param attrType
    * @return created {@link ASTCDField} node
    */
-  public ASTCDField addCdAttribute(ASTCDClass astClass,
+  public ASTCDAttribute addCdAttribute(ASTCDClass astClass,
                                    String attrName,
                                    String attrType) {
     ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName)
