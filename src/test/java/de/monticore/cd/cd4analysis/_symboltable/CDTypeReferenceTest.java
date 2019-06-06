@@ -30,7 +30,9 @@ public class CDTypeReferenceTest {
     CDDefinitionSymbol cd = new CDDefinitionSymbol("CD");
     globalScope.add(cd);
 
-    ICD4AnalysisScope cdScope = cd.getSpannedScope();
+    ICD4AnalysisScope cdScope = CD4AnalysisSymTabMill.cD4AnalysisScopeBuilder().build();
+    cd.setSpannedScope(cdScope);
+    cdScope.setEnclosingScope(globalScope);
 
     CDTypeSymbol type = new CDTypeSymbol("Person");
     cdScope.add(type);

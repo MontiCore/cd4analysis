@@ -29,7 +29,7 @@ public class AttributeTypeExists
    */
   @Override
   public void check(ASTCDAttribute node) {
-    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol();
+    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol2();
     String typeName = attrSym.getType().getName();
     if (!BuiltInTypes.isBuiltInType(typeName)) {
       Optional<CDTypeSymbol> subClassSym = node.getEnclosingScope2()

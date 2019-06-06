@@ -11,10 +11,7 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.ScopeSpanningSymbol;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCPrimitiveTypeArgument;
@@ -112,6 +109,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   @Override
   public void visit(final ASTCDClass astClass) {
     final CDTypeSymbol classSymbol = new CDTypeSymbol(astClass.getName());
+    classSymbol.setIsClass(true);
 
     Collection<String> externals = getExternals(astClass);
     if (astClass.isPresentSuperclass()) {
@@ -470,7 +468,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         }
 
         if (cdAssoc.isPresentRightQualifier()) {
-          handleCDQualifier(assocRight2LeftSymbol, cdAssoc.getRightQualifier());
+          handle(cdAssoc.getRightQualifier());
         }
 
         assocRight2LeftSymbol
@@ -507,7 +505,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         }
 
         if (cdAssoc.isPresentLeftQualifier()) {
-          handleCDQualifier(assocLeft2RightSymbol, cdAssoc.getLeftQualifier());
+          handle(cdAssoc.getLeftQualifier());
         }
 
         assocLeft2RightSymbol
@@ -520,23 +518,17 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     return null;
   }
 
-  /**
-   * Creates {@link CDQualifierSymbol} for the given qualifier
-   *
-   * @param assocSymbol the association symbol who's qualifier will be set
-   * @param qualifier the ast qualifier to create the symbol for
-   */
-  public void handleCDQualifier(final CDAssociationSymbol assocSymbol, final ASTCDQualifier qualifier) {
-    if (qualifier.isPresentName()) {
-      CDQualifierSymbol s = new CDQualifierSymbol(qualifier.getName());
-      setLinkBetweenSymbolAndNode(s, qualifier);
-      assocSymbol.setQualifier(Optional.of(s));
+  @Override
+  protected CDQualifierSymbol create_CDQualifier(ASTCDQualifier ast) {
+    CDQualifierSymbol s;
+    if (ast.isPresentMCType()) {
+      s = new CDQualifierSymbol(new AstPrinter().printType(ast.getMCType()));
+      s.setTypeQualifier(true);
+    } else {
+      s = new CDQualifierSymbol(ast.getName());
+      s.setNameQualifier(true);
     }
-    else if (qualifier.isPresentMCType()) {
-      CDQualifierSymbol s = new CDQualifierSymbol(qualifier.getMCType());
-      setLinkBetweenSymbolAndNode(s, qualifier);
-      assocSymbol.setQualifier(Optional.of(s));
-    }
+    return s;
   }
 
   CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc, final ASTMCQualifiedName astSourceName, final ASTMCQualifiedName astTargetName) {
@@ -551,7 +543,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     if (sourceType.existsReferencedSymbol()) {
       // TODO PN use association reference instead?
       // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
-      sourceType.addAssociation(associationSymbol);
+      sourceType.getReferencedSymbol().getSpannedScope().add(associationSymbol);
     } // the else case should be checked by a context conditions
 
     associationSymbol.setAssocName(astAssoc.getNameOpt());

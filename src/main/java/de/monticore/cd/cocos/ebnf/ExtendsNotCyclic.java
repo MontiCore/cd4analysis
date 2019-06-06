@@ -33,7 +33,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       checkClass(c);
     }
     for (ASTCDInterface i : node.getCDInterfaceList()) {
-      checkInterfacePath((CDTypeSymbol) i.getSymbol(), new HashSet<>());
+      checkInterfacePath((CDTypeSymbol) i.getSymbol2(), new HashSet<>());
     }
   }
   
@@ -68,7 +68,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
    * @param node class to check.
    */
   private void checkClass(ASTCDClass node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
+    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol2();
     Set<CDTypeSymbol> path = new HashSet<>();
     Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClass();
     while (optSuperSymb.isPresent()) {

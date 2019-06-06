@@ -69,7 +69,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
    * @return whether there was a CoCo error or not.
    */
   private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
+    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol2();
 
     String targetType = assocSym.getTargetType().getName();
     String automaticallyIntroduced = role.isPresent()

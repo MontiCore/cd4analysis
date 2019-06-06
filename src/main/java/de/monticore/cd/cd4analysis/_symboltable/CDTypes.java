@@ -8,11 +8,6 @@ package de.monticore.cd.cd4analysis._symboltable;
 import java.util.Arrays;
 import java.util.Collection;
 
-/**
- * TODO: Change me!
- *
- * @author (last commit) $Author$
- */
 public class CDTypes {
   
   // Wrapper types

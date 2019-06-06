@@ -25,10 +25,10 @@ public class AssociationSrcAndTargetTypeExistChecker implements
   
   public void check(ASTCDAssociation assoc) {
     
-    CDTypeSymbol src = ((CDAssociationSymbol) assoc.getSymbol()).getSourceType();
+    CDTypeSymbol src = ((CDAssociationSymbol) assoc.getSymbol2()).getSourceType();
     checkTypeExists(src, assoc);
     
-    CDTypeSymbol target = ((CDAssociationSymbol) assoc.getSymbol()).getTargetType();
+    CDTypeSymbol target = ((CDAssociationSymbol) assoc.getSymbol2()).getTargetType();
     checkTypeExists(target, assoc);
     
     // ASTQualifiedName leftType = assoc.getLeftReferenceName();

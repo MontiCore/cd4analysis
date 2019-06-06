@@ -34,10 +34,9 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  private final List<CDAssociationSymbol> associations = new ArrayList<>();
   private final List<CDAssociationSymbol> specAssociations = new ArrayList<>();
 
-  private List<CDTypeSymbolReference> superTypes = new ArrayList<>();
+
 
   private Optional<CDTypeSymbolReference> superClass = Optional.empty();
 
@@ -51,14 +50,6 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   public String getExtendedName() {
     return "CD type " + getName();
-  }
-
-  public void addAssociation(final CDAssociationSymbol assoc) {
-    associations.add(assoc);
-  }
-
-  public List<CDAssociationSymbol> getAssociations() {
-    return ImmutableList.copyOf(associations);
   }
 
   public void addSpecAssociation(final CDAssociationSymbol assoc) {
@@ -370,7 +361,13 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
   }
 
   public List<CDTypeSymbolReference> getSuperTypes() {
+    final List<CDTypeSymbolReference> superTypes = new ArrayList<>();
+    if (getSuperClass().isPresent()) {
+      superTypes.add(getSuperClass().get());
+    }
+    superTypes.addAll(getCdInterfaces());
     return superTypes;
+
   }
 
   public Optional<CDTypeSymbolReference> getSuperClass() {
@@ -393,4 +390,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return getSpannedScope().getLocalCDFieldSymbols();
   }
 
+  public java.util.List<CDAssociationSymbol> getAssociations() {
+    return getSpannedScope().getLocalCDAssociationSymbols();
+  }
 }

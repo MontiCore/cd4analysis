@@ -36,7 +36,7 @@ public class ClassExtendsOnlyClasses implements CD4AnalysisASTCDClassCoCo {
   
   @Override
   public void check(ASTCDClass clazz) {
-    CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol();
+    CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol2();
     Optional<CDTypeSymbolReference> optSuperType = symbol.getSuperClass();
     if (optSuperType.isPresent()) {
       CDTypeSymbol superType = optSuperType.get();
