@@ -206,7 +206,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
                                   Association
     @attribute rightModifier      Optional right side Modifier
   */
-  symbol CDAssociation = stereotype:CDStereotype?
+  symbol scope CDAssociation = stereotype:CDStereotype?
     readOnly:TReadOnly?
     (["association"] | ["composition"])
     ([Derived:"/"])?  Name?

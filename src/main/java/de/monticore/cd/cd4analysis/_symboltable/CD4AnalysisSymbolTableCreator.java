@@ -86,7 +86,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void endVisit(final ASTCDDefinition astDefinition) {
-    astDefinition.getCDAssociationList().forEach(this::handleAssociation);
+    astDefinition.getSymbol2().getAssociations().forEach(this::addAssocToTarget);
     removeCurrentCD4AnalysisScope();
   }
 
@@ -439,11 +439,18 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  public void handleAssociation(final ASTCDAssociation cdAssoc) {
+  @Override
+  public void visit (ASTCDAssociation cdAssoc) {
     CDAssociationSymbol s = handleLeftToRightAssociation(cdAssoc);
     CDAssociationSymbol s2 = handleRightToLeftAssociation(cdAssoc);
     // TODO PN <- RH remove quick fix see #1627 maybe merge symbols?
-    addToScopeAndLinkWithNode(s != null ? s : s2, cdAssoc);
+    ICD4AnalysisScope scope = createScope();
+    putOnStack(scope);
+    if (s != null) {
+      setLinkBetweenSymbolAndNode(s, cdAssoc);
+    } else {
+      setLinkBetweenSymbolAndNode(s2, cdAssoc);
+    }
   }
 
   // TODO PN discuss: We can have TWO symbols for the SAME association ast. So,
@@ -469,10 +476,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         if (cdAssoc.isPresentLeftModifier()) {
           addStereotypes(assocRight2LeftSymbol, cdAssoc.getLeftModifier().getStereotypeOpt()
                   .orElse(null));
-        }
-
-        if (cdAssoc.isPresentRightQualifier()) {
-          handle(cdAssoc.getRightQualifier());
         }
 
         assocRight2LeftSymbol
@@ -508,10 +511,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
                   .orElse(null));
         }
 
-        if (cdAssoc.isPresentLeftQualifier()) {
-          handle(cdAssoc.getLeftQualifier());
-        }
-
         assocLeft2RightSymbol
                 .setBidirectional(cdAssoc.isBidirectional() || cdAssoc.isUnspecified());
 
@@ -544,12 +543,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
     final CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
 
-    if (sourceType.existsReferencedSymbol()) {
-      // TODO PN use association reference instead?
-      // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
-      sourceType.getReferencedSymbol().getSpannedScope().add(associationSymbol);
-    } // the else case should be checked by a context conditions
-
     associationSymbol.setAssocName(astAssoc.getNameOpt());
 
     addStereotypes(associationSymbol, astAssoc.getStereotypeOpt().orElse(null));
@@ -565,10 +558,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     addToScope(associationSymbol);
     associationSymbol.setAstNode(astAssoc);
 
-    if (targetType.existsReferencedSymbol()) {
-      targetType.addSpecAssociation(associationSymbol);
-    }
-
     return associationSymbol;
   }
 
@@ -580,6 +569,18 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         associationSymbol.addStereotype(new Stereotype(val.getName(), val.getName()));
       }
     }
+  }
+
+  protected void addAssocToTarget(CDAssociationSymbol assocSymbol) {
+    if (assocSymbol.getTargetType().existsReferencedSymbol()) {
+      assocSymbol.getTargetType().addSpecAssociation(assocSymbol);
+    }
+    if (assocSymbol.getSourceType().existsReferencedSymbol()) {
+      // TODO PN use association reference instead?
+      // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
+      assocSymbol.getSourceType().getReferencedSymbol().getSpannedScope().add(assocSymbol);
+    }
+
   }
 
   public final ICD4AnalysisScope currentScope() {

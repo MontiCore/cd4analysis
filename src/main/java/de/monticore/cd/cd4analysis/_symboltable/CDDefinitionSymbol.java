@@ -31,11 +31,12 @@ public class CDDefinitionSymbol extends CDDefinitionSymbolTOP {
     super(name);
   }
 
-  /**
-   * @return types
-   */
   public Collection<CDTypeSymbol> getTypes() {
     return getSpannedScope().getLocalCDTypeSymbols();
+  }
+
+  public Collection<CDAssociationSymbol> getAssociations() {
+    return getSpannedScope().getLocalCDAssociationSymbols();
   }
 
   public Optional<CDTypeSymbol> getType(String name) {

@@ -33,9 +33,9 @@ import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends CDAssociationSymbolTOP {
 
-  private  CDTypeSymbol sourceType = null;
+  private  CDTypeSymbolReference sourceType = null;
   
-  private  CDTypeSymbol targetType = null;
+  private  CDTypeSymbolReference targetType = null;
   
   private Cardinality sourceCardinality;
   
@@ -57,7 +57,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
   
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  public CDAssociationSymbol(final CDTypeSymbol sourceType, final CDTypeSymbol targetType) {
+  public CDAssociationSymbol(final CDTypeSymbolReference sourceType, final CDTypeSymbolReference targetType) {
     super("");
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
@@ -81,7 +81,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
             + " -> " + "(" + getTargetRole().orElse("") + ")" + getTargetType().getName() ;
   }
   
-  public CDTypeSymbol getTargetType() {
+  public CDTypeSymbolReference getTargetType() {
     return targetType;
   }
   
@@ -97,7 +97,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
     this.targetCardinality = cardinality;
   }
   
-  public CDTypeSymbol getSourceType() {
+  public CDTypeSymbolReference getSourceType() {
     return sourceType;
   }
   

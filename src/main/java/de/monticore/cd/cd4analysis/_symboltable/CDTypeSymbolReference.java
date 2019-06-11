@@ -108,5 +108,11 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
     return getReferencedSymbol().getStereotypes();
   }
 
+  @Override
+  public List<CDTypeSymbolReference> getCdInterfaces() {
+    return getReferencedSymbol().getCdInterfaces();
+  }
+
+
 }
 
