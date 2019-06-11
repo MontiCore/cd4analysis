@@ -88,7 +88,7 @@ public class CDMethOrConstrSymbol extends CDMethOrConstrSymbolTOP {
   }
 
   public java.util.List<CDFieldSymbol> getParameters() {
-    return getEnclosingScope().getLocalCDFieldSymbols();
+    return getSpannedScope().getLocalCDFieldSymbols();
   }
 
 }

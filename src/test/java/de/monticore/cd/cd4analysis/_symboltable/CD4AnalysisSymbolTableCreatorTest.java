@@ -113,7 +113,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(nameField.getAstNode().isPresent());
     assertTrue(nameField.getAstNode().get() instanceof ASTCDField);
-    assertSame(nameField, nameField.getAstNode());
+    assertSame(nameField, nameField.getAstNode().get().getCDFieldSymbol());
     assertSame(nameField.getEnclosingScope(), nameField.getAstNode().get().getEnclosingScope2());
     final CDFieldSymbol secondNameField = personType.getSpannedScope().resolveCDField("secondName").get();
     assertEquals("secondName", secondNameField.getName());
@@ -156,8 +156,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(setNameMethod.getAstNode().isPresent());
     assertTrue(setNameMethod.getAstNode().get() instanceof ASTCDMethod);
-    assertSame(setNameMethod, setNameMethod.getAstNode().get().getSymbol());
-    assertSame(setNameMethod.getEnclosingScope(), setNameMethod.getAstNode().get().getEnclosingScope());
+    assertSame(setNameMethod, setNameMethod.getAstNode().get().getSymbol2());
+    assertSame(setNameMethod.getEnclosingScope(), setNameMethod.getAstNode().get().getEnclosingScope2());
 
     assertTrue(personType.getSpannedScope().resolveCDMethOrConstr("getAge").isPresent());
     assertTrue(personType.getSpannedScope().resolveCDMethOrConstr("getAge").get().isPrivate());
@@ -169,7 +169,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Prof", profType.getFullName());
     assertTrue(profType.isPrivate());
     assertEquals(2, profType.getFields().size());
-    assertEquals("uni", profType.getSpannedScope().resolveCDType("uni").get().getName());
+    assertEquals("uni", profType.getSpannedScope().resolveCDField("uni").get().getName());
     assertTrue(profType.getSpannedScope().resolveCDField("uni").get().isDerived());
     final CDFieldSymbol profFieldPP = profType.getSpannedScope().resolveCDField("pp").orElse(null);
     assertNotNull(profFieldPP);
@@ -211,8 +211,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(printableType.getAstNode().isPresent());
     assertTrue(printableType.getAstNode().get() instanceof ASTCDInterface);
-    assertSame(printableType, printableType.getAstNode().get().getSymbol());
-    assertSame(printableType.getEnclosingScope(), printableType.getAstNode().get().getEnclosingScope());
+    assertSame(printableType, printableType.getAstNode().get().getSymbol2());
+    assertSame(printableType.getEnclosingScope(), printableType.getAstNode().get().getEnclosingScope2());
     // Associations
     assertEquals(0, printableType.getAssociations().size());
 
@@ -243,8 +243,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(enumType.getAstNode().isPresent());
     assertTrue(enumType.getAstNode().get() instanceof ASTCDEnum);
-    assertSame(enumType, enumType.getAstNode().get().getSymbol());
-    assertSame(enumType.getEnclosingScope(), enumType.getAstNode().get().getEnclosingScope());
+    assertSame(enumType, enumType.getAstNode().get().getSymbol2());
+    assertSame(enumType.getEnclosingScope(), enumType.getAstNode().get().getEnclosingScope2());
 
     final ICD4AnalysisScope cdScope = cdSymbol.getSpannedScope();
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
@@ -351,7 +351,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // Resolve fields from super class //
     // public fields can be resolved
-    assertFalse(profType.getSpannedScope().resolveCDField("name").isPresent());
+    assertTrue(profType.getSpannedScope().resolveCDField("name").isPresent());
 
     // protected fields can be resolved
     assertTrue(profType.getSpannedScope().resolveCDField("age").isPresent());
