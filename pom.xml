@@ -287,12 +287,6 @@
 
         <dependency>
             <groupId>de.monticore</groupId>
-            <artifactId>monticore-generator</artifactId>
-            <version>${mc4.maven.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>de.monticore</groupId>
             <artifactId>monticore-emf-runtime</artifactId>
             <version>${monticore.version}</version>
         </dependency>
