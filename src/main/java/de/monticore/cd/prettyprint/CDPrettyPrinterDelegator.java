@@ -20,16 +20,15 @@
 
 package de.monticore.cd.prettyprint;
 
-import de.monticore.MCBasicLiteralsPrettyPrinter;
+import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
-import de.monticore.mcbasicliterals._ast.ASTMCBasicLiteralsNode;
 import de.monticore.mcbasics._ast.ASTMCBasicsNode;
+import de.monticore.mccommonliterals._ast.ASTMCCommonLiteralsNode;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mccollectiontypes._ast.ASTMCCollectionTypesNode;
-import de.monticore.types.mccollectiontypes._od.MCCollectionTypes2OD;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 
@@ -43,7 +42,7 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
     this.printer = new IndentPrinter();
     realThis = this;
     setCD4AnalysisVisitor(new CDPrettyPrinter(printer));
-    setMCBasicLiteralsVisitor(new MCBasicLiteralsPrettyPrinter(printer));
+    setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setMCBasicsVisitor(new MCBasicsPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
@@ -53,7 +52,7 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
     this.printer = printer;
     realThis = this;
     setCD4AnalysisVisitor(new CDPrettyPrinter(printer));
-    setMCBasicLiteralsVisitor(new MCBasicLiteralsPrettyPrinter(printer));
+    setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setMCBasicsVisitor(new MCBasicsPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
@@ -75,7 +74,7 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
     return getPrinter().getContent();
   }
 
-  public String prettyprint(ASTMCBasicLiteralsNode a) {
+  public String prettyprint(ASTMCCommonLiteralsNode a) {
     getPrinter().clearBuffer();
     a.accept(getRealThis());
     return getPrinter().getContent();

@@ -11,7 +11,7 @@
 
         <!-- .. Libraries ..................................................... -->
 
-        <monticore.version>5.0.6.GrammarSymTab-SNAPSHOT</monticore.version>
+        <monticore.version>5.0.6.latestGrammar-SNAPSHOT</monticore.version>
 
         <findbugs.version>3.0.0</findbugs.version>
         <guava.version>23.0</guava.version>

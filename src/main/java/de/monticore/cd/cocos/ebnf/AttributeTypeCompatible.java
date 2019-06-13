@@ -6,11 +6,11 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDField;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
-import de.monticore.mcbasicliterals._ast.*;
-import de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor;
+import de.monticore.mccommonliterals._ast.*;
+import de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor;
+import de.monticore.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.BasicGenericsTypesPrinter;
 import de.se_rwth.commons.logging.Log;
 
@@ -55,7 +55,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    *
    * @author Robert Heim
    */
-  private static class TypeChecker implements MCBasicLiteralsVisitor {
+  private static class TypeChecker implements MCCommonLiteralsVisitor {
     
     private String typeUnderCheck;
     
@@ -89,18 +89,12 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
       }
     }
     
-    /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTStringLiteral)
-     */
     @Override
     public void visit(ASTStringLiteral node) {
       check("String");
     }
     
-    /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTBooleanLiteral)
-     */
-    @Override
+     @Override
     public void visit(ASTBooleanLiteral node) {
       check("boolean", "Boolean");
     }
@@ -125,9 +119,6 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
       check("long", "Long");
     }
     
-    /**
-     * @see de.monticore.mcbasicliterals._visitor.MCBasicLiteralsVisitor#visit(de.monticore.mcbasicliterals._ast.ASTCharLiteral)
-     */
     @Override
     public void visit(ASTCharLiteral node) {
       check("char", "Character");
