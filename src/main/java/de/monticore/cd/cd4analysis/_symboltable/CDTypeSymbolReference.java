@@ -3,9 +3,14 @@
 
 package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.symboltable.types.references.ActualTypeArgument;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import static com.google.common.collect.ImmutableList.copyOf;
 
 
 /**
@@ -113,6 +118,25 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
     return getReferencedSymbol().getCdInterfaces();
   }
 
+  private List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
+
+  private int dimension = 0;
+
+  public List<ActualTypeArgument> getActualTypeArguments() {
+    return copyOf(actualTypeArguments);
+  }
+
+  public void setActualTypeArguments(List<ActualTypeArgument> actualTypeArguments) {
+    this.actualTypeArguments = new ArrayList<>(actualTypeArguments);
+  }
+
+  public int getDimension() {
+    return dimension;
+  }
+
+  public void setDimension(int arrayDimension) {
+    this.dimension = arrayDimension;
+  }
 
 }
 
