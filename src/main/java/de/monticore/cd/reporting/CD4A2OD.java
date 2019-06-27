@@ -12,6 +12,8 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingReposit
 import de.monticore.mccommonliterals._od.MCCommonLiterals2OD;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._od.MCBasicTypes2OD;
+import de.monticore.types.mccollectiontypes._od.MCCollectionTypes2OD;
+import de.monticore.types.mcsimplegenerictypes._od.MCSimpleGenericTypes2OD;
 
 
 public class CD4A2OD extends CD4Analysis2OD {
@@ -25,7 +27,10 @@ public class CD4A2OD extends CD4Analysis2OD {
     visitor = new CD4AnalysisDelegatorVisitor();
     visitor.setMCCommonLiteralsVisitor(new MCCommonLiterals2OD(printer, reporting));
     visitor.setMCBasicTypesVisitor(new MCBasicTypes2OD(printer, reporting));
-    visitor.setCD4AnalysisVisitor(new CD4Analysis2OD(printer, reporting));  }
+    visitor.setCD4AnalysisVisitor(new CD4Analysis2OD(printer, reporting));
+    visitor.setMCCollectionTypesVisitor(new MCCollectionTypes2OD(printer, reporting));
+    visitor.setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypes2OD(printer, reporting));
+  }
 
   
   /**

@@ -29,8 +29,10 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mccollectiontypes._ast.ASTMCCollectionTypesNode;
+import de.monticore.types.mcsimplegenerictypes._ast.ASTMCSimpleGenericTypesNode;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 
 public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
 
@@ -46,6 +48,7 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setMCBasicsVisitor(new MCBasicsPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
+    setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
   }
 
   public CDPrettyPrinterDelegator(IndentPrinter printer) {
@@ -56,6 +59,7 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setMCBasicsVisitor(new MCBasicsPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
+    setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
   }
 
   protected IndentPrinter getPrinter() {
@@ -81,6 +85,12 @@ public class CDPrettyPrinterDelegator extends CD4AnalysisDelegatorVisitor {
   }
 
   public String prettyprint(ASTMCCollectionTypesNode a) {
+    getPrinter().clearBuffer();
+    a.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTMCSimpleGenericTypesNode a) {
     getPrinter().clearBuffer();
     a.accept(getRealThis());
     return getPrinter().getContent();
