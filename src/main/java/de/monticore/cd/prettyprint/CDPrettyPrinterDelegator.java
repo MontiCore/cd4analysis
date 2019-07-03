@@ -24,7 +24,7 @@ import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.mcbasics._ast.ASTMCBasicsNode;
-import de.monticore.mccommonliterals._ast.ASTMCCommonLiteralsNode;
+import de.monticore.literals.mccommonliterals._ast.ASTMCCommonLiteralsNode;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;

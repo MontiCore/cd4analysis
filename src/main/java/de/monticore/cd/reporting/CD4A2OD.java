@@ -9,7 +9,7 @@ import de.monticore.cd.cd4analysis._od.CD4Analysis2OD;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.cd.cd4analysis._visitor.CD4AnalysisVisitor;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
-import de.monticore.mccommonliterals._od.MCCommonLiterals2OD;
+import de.monticore.literals.mccommonliterals._od.MCCommonLiterals2OD;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._od.MCBasicTypes2OD;
 import de.monticore.types.mccollectiontypes._od.MCCollectionTypes2OD;

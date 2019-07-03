@@ -8,9 +8,9 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
-import de.monticore.mccommonliterals._ast.*;
-import de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor;
-import de.monticore.mcliteralsbasis._ast.ASTLiteral;
+import de.monticore.literals.mccommonliterals._ast.*;
+import de.monticore.literals.mccommonliterals._visitor.MCCommonLiteralsVisitor;
+import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.BasicGenericsTypesPrinter;
 import de.se_rwth.commons.logging.Log;
 

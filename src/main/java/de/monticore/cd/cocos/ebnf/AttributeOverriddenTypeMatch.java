@@ -27,7 +27,7 @@ public class AttributeOverriddenTypeMatch
     implements CD4AnalysisASTCDAttributeCoCo {
   
   /**
-   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDField)
+   * @see de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {

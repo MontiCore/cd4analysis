@@ -8,7 +8,7 @@ package de.monticore.cd.reporting;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.generating.templateengine.reporting.commons.Layouter;
-import de.monticore.mccommonliterals._ast.ASTNatLiteral;
+import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
 import de.monticore.types.MCCollectionTypesNodeIdentHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
