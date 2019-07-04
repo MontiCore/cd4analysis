@@ -183,7 +183,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     ASTMCType astType = astAttribute.getMCType();
     typeReference.setStringRepresentation((new AstPrinter()).printType(astType));
     fieldSymbol.setType(typeReference);
-    // TODO addTypeArgumentsToTypeSymbol(typeReference, astType);
+    addTypeArgumentsToTypeSymbol(typeReference, astType);
 
     if (astAttribute.isPresentModifier()) {
       final ASTModifier astModifier = astAttribute.getModifier();
@@ -232,7 +232,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
             // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoound)
             typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
-            actualTypeArguments.add(new CDTypeSymbolReference(astType.getBaseName(), getCurrentScope().get()));
+            actualTypeArguments.add(new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get()));
           }else {
             Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
                 + typeReference);
@@ -245,7 +245,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
             CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get());
             typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
-            actualTypeArguments.add(new CDTypeSymbolReference(astType.getBaseName(), getCurrentScope().get()));
+            actualTypeArguments.add(new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get()));
           }
 
         }
@@ -372,7 +372,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
             (new AstPrinter()).printType(ast.getMCType()), getCurrentScope().get());
 
 
-//    addTypeArgumentsToTypeSymbol(paramTypeSymbol, ast.getMCType());
+    addTypeArgumentsToTypeSymbol(paramTypeSymbol, ast.getMCType());
 
     symbol.setType(paramTypeSymbol);
     symbol.setIsParameter(true);
@@ -395,7 +395,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
             (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO BasicGenericsTypesPrinter
     if (astMethod.getMCReturnType().isPresentMCType()) {
-      // TODO addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
+      addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
     }
     methodSymbol.setReturnType(returnSymbol);
   }

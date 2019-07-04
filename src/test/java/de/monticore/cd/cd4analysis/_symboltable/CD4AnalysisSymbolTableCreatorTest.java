@@ -21,6 +21,7 @@ package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
+import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.Slf4jLog;
 import org.junit.Assert;
@@ -441,30 +442,30 @@ public class CD4AnalysisSymbolTableCreatorTest {
     CDTypeSymbolReference attributeType =  attribute.getType();
     assertEquals("List", attributeType.getName());
     Assert.assertEquals("List<String>", attributeType.getStringRepresentation());
-    /* TODO
+
     assertEquals(1, attributeType.getActualTypeArguments().size());
-    ActualTypeArgument typeArgument = attributeType.getActualTypeArguments().get(0);
-    assertEquals("String", typeArgument.getType().getName());
+    CDTypeSymbolReference typeArgument = attributeType.getActualTypeArguments().get(0);
+    assertEquals("String", typeArgument.getName());
 
     
-    attribute = clazz.getField("g2").orElse(null);
+    attribute = clazz.getSpannedScope().resolveCDField("g2").orElse(null);
     assertNotNull(attribute);
-    attributeType = (de.monticore.cd.cd4analysis._symboltable.references.CDTypeSymbolReference) attribute.getType();
+    attributeType = attribute.getType();
     assertEquals("List", attributeType.getName());
     Assert.assertEquals("List<B>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
-    assertEquals("B", typeArgument.getType().getName());
+    assertEquals("B", typeArgument.getName());
 
-    attribute = clazz.getField("g3").orElse(null);
+    attribute = clazz.getSpannedScope().resolveCDField("g3").orElse(null);
     assertNotNull(attribute);
     attributeType = (CDTypeSymbolReference) attribute.getType();
     assertEquals("List", attributeType.getName());
     Assert.assertEquals("List<C>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
-    assertEquals("C", typeArgument.getType().getName());
-  */
+    assertEquals("C", typeArgument.getName());
+
     /*
     todo: delete tests or delete fullgenerictypes in examples
     attribute = clazz.getField("g4").orElse(null);
