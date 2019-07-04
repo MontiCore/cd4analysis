@@ -118,15 +118,15 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
     return getReferencedSymbol().getCdInterfaces();
   }
 
-  private List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
+  private List<CDTypeSymbolReference> actualTypeArguments = new ArrayList<>();
 
   private int dimension = 0;
 
-  public List<ActualTypeArgument> getActualTypeArguments() {
+  public List<CDTypeSymbolReference> getActualTypeArguments() {
     return copyOf(actualTypeArguments);
   }
 
-  public void setActualTypeArguments(List<ActualTypeArgument> actualTypeArguments) {
+  public void setActualTypeArguments(List<CDTypeSymbolReference> actualTypeArguments) {
     this.actualTypeArguments = new ArrayList<>(actualTypeArguments);
   }
 

@@ -445,8 +445,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, attributeType.getActualTypeArguments().size());
     ActualTypeArgument typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("String", typeArgument.getType().getName());
-    assertFalse(typeArgument.isLowerBound());
-    assertFalse(typeArgument.isUpperBound());
 
     
     attribute = clazz.getField("g2").orElse(null);
@@ -457,9 +455,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("B", typeArgument.getType().getName());
-    assertFalse(typeArgument.isLowerBound());
-    assertFalse(typeArgument.isUpperBound());
-    
+
     attribute = clazz.getField("g3").orElse(null);
     assertNotNull(attribute);
     attributeType = (CDTypeSymbolReference) attribute.getType();
@@ -468,8 +464,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("C", typeArgument.getType().getName());
-    assertFalse(typeArgument.isLowerBound());
-    assertFalse(typeArgument.isUpperBound());
   */
     /*
     todo: delete tests or delete fullgenerictypes in examples
