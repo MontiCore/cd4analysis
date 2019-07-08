@@ -51,7 +51,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
       boolean rightToLeft,
       boolean bidirectional,
       boolean unspecified)  {
-    super(stereotype, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
+    super(stereotype, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__association, r__composition, r__derived, leftToRight, rightToLeft, bidirectional, unspecified);
   }
 
   public Optional<CDAssociationSymbol> getLeftToRightSymbol() {
