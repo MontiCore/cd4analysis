@@ -36,7 +36,7 @@ public class CD4CodePrettyPrinterTest {
   @Test
   public void testScope() throws RecognitionException, IOException {
     // Parsing input
-    Path model = Paths.get("src/test/resources/de/monticore/cd4code/CD1.cd.");
+    Path model = Paths.get("src/test/resources/de/monticore/cd4code/CD1.cd");
     CD4CodeParser parser = new CD4CodeParser();
     Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
     assertFalse(parser.hasErrors());
