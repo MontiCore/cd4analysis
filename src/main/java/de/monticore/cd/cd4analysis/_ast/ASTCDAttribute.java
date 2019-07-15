@@ -19,13 +19,12 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.Optional;
 
-import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
+import static de.monticore.cd.prettyprint.CD4CodePrinter.EMPTY_STRING;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP
     implements ASTCD4AnalysisNode {
@@ -82,7 +81,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
       return EMPTY_STRING;
     }
 
-    return (new AstPrinter().printValue(value));
+    return (new CD4CodePrinter().printValue(value));
   }
 
   /**
@@ -91,7 +90,7 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
    * @return String representation of the ASTType
    */
   public String printType() {
-    return new AstPrinter().printType(mCType);
+    return new CD4CodePrinter().printType(mCType);
   }
 
   public String printAnnotation() {

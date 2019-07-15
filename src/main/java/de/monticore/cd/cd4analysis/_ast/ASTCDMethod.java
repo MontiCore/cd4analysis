@@ -19,7 +19,7 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDMethod() {
   }
