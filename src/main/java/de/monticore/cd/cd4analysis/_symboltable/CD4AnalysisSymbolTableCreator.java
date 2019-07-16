@@ -232,7 +232,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
             // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoound)
             typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
-            actualTypeArguments.add(new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get()));
+            actualTypeArguments.add(typeArgumentSymbolReference);
           }else {
             Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
                 + typeReference);
@@ -245,7 +245,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
             CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get());
             typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
-            actualTypeArguments.add(new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get()));
+            actualTypeArguments.add(typeArgumentSymbolReference);
           }
 
         }
