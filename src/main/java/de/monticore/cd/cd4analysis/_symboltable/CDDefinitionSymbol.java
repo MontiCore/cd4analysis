@@ -59,6 +59,11 @@ public class CDDefinitionSymbol extends CDDefinitionSymbolTOP {
    */
   public List<String> getImports() {
     return ImmutableList.copyOf(importedCdNames);
-    
   }
+
+  @Override
+  public String toString() {
+    return getName();
+  }
+
 }
