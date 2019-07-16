@@ -24,6 +24,9 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 
 import java.util.List;
+import java.util.Optional;
+
+import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
 
@@ -63,9 +66,37 @@ public class ASTCDMethod extends ASTCDMethodTOP {
    *
    * @return a string, e.g. abstract private final
    */
+  /**
+   * Print the string of a ASTModifier type, e.g. abstract private final
+   *
+   * @return a string, e.g. abstract private final
+   */
   public String printModifier() {
-    return printer.printModifier(modifier);
+    modifier = getModifier();
+
+    StringBuilder modifierStr = new StringBuilder();
+    if (modifier.isAbstract()) {
+      modifierStr.append(" abstract ");
+    }
+    if (modifier.isPublic()) {
+      modifierStr.append(" public ");
+    }
+    else if (modifier.isPrivate()) {
+      modifierStr.append(" private ");
+    }
+    else if (modifier.isProtected()) {
+      modifierStr.append(" protected ");
+    }
+    if (modifier.isFinal()) {
+      modifierStr.append(" final ");
+    }
+    if (modifier.isStatic()) {
+      modifierStr.append(" static ");
+    }
+
+    return modifierStr.toString();
   }
+
 
   /**
    * Prints the parameter declarations that can be used in methods and

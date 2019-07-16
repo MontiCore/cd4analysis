@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 /******************************************************************************
  * AST specific helper to print AST nodes.
@@ -56,7 +57,41 @@ public class CD4CodePrinter {
     }
     return EMPTY_STRING;
   }
-  
+
+  /**
+   * Print the string of a ASTModifier type without stereotypes, e.g. abstract private final static
+   *
+   * @param modifier the ASTModifier object
+   * @return a string, e.g. abstract private final static
+   */
+  public String printSimpleModifier(Optional<ASTModifier> modifier) {
+    if (!modifier.isPresent()) {
+      return EMPTY_STRING;
+    }
+
+    StringBuilder modifierStr = new StringBuilder();
+    if (modifier.get().isAbstract()) {
+      modifierStr.append(" abstract ");
+    }
+    if (modifier.get().isPublic()) {
+      modifierStr.append(" public ");
+    }
+    else if (modifier.get().isPrivate()) {
+      modifierStr.append(" private ");
+    }
+    else if (modifier.get().isProtected()) {
+      modifierStr.append(" protected ");
+    }
+    if (modifier.get().isFinal()) {
+      modifierStr.append(" final ");
+    }
+    if (modifier.get().isStatic()) {
+      modifierStr.append(" static ");
+    }
+
+    return modifierStr.toString();
+  }
+
   /**
    * Same as <pre>{@code printModifier(Optional<ASTModifier> modifier)}</pre>
    */
