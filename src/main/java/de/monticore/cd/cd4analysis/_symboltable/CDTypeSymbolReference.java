@@ -3,6 +3,7 @@
 
 package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.cd.cd4analysis._ast.ASTCDType;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 
 import java.util.ArrayList;
@@ -85,6 +86,11 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
   @Override
   public void addSpecAssociation(final CDAssociationSymbol assoc) {
     getReferencedSymbol().addSpecAssociation(assoc);
+  }
+
+  @Override
+  public Optional<ASTCDType> getAstNode() {
+    return Optional.ofNullable(this.astNode);
   }
 
   @Override
