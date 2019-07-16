@@ -60,7 +60,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
                                boolean rightToLeft,
                                boolean bidirectional,
                                boolean unspecified)  {
-    super(stereotype, Optional.empty(), name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
+    super(stereotype, Optional.empty(), name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__association, r__composition, r__derived, leftToRight, rightToLeft, bidirectional, unspecified);
   }
 
   protected  ASTCDAssociation (Optional<de.monticore.cd.cd4analysis._ast.ASTCDStereotype> stereotype,
@@ -83,7 +83,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
      boolean rightToLeft,
      boolean bidirectional,
      boolean unspecified)  {
-    super(stereotype, readOnly, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
+    super(stereotype, readOnly, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__association, r__composition, r__derived, leftToRight, rightToLeft, bidirectional, unspecified);
   }
 
   public Optional<CDAssociationSymbol> getLeftToRightSymbol() {
