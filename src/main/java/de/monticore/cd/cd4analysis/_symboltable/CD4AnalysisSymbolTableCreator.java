@@ -173,7 +173,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void initialize_CDAttribute(CDFieldSymbol fieldSymbol, ASTCDAttribute astAttribute){
-    final String typeName = astAttribute.getMCType().getBaseName();
+    final String typeName = astAttribute.getMCType().getName();
 
     // TODO PN type arguments are not set yet. For every argument a
     // CDTypeSymbolReference must be created.
@@ -227,7 +227,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
           ASTMCBasicTypeArgument astmcBasicTypeArgument = (ASTMCBasicTypeArgument) astTypeArgument;
           if(astmcBasicTypeArgument.getMCQualifiedType() instanceof ASTMCType) {
             ASTMCType astTypeNoBound = (ASTMCType) astmcBasicTypeArgument.getMCQualifiedType();
-            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get());
+            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getName(), getCurrentScope().get());
             // TODO PN, GV: add dimension?
             // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoound)
             typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
@@ -242,7 +242,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
           ASTMCPrimitiveTypeArgument astmcPrimitiveTypeArgument = (ASTMCPrimitiveTypeArgument) astTypeArgument;
           if(astmcPrimitiveTypeArgument.getMCPrimitiveType() instanceof ASTMCType){
             ASTMCType astTypeNoBound = astmcPrimitiveTypeArgument.getMCPrimitiveType();
-            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getBaseName(), getCurrentScope().get());
+            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.getName(), getCurrentScope().get());
             typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
             actualTypeArguments.add(typeArgumentSymbolReference);
