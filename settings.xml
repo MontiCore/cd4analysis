@@ -7,22 +7,27 @@
     <servers>
         <server>
             <id>se-nexus</id>
-            <username>${user}</username>
-            <password>${pass}</password>
+            <username>${username}</username>
+            <password>${password}</password>
         </server>
+        
+        <!-- insert any other requried servers (e.g. webdavs, application servers, etc. -->
+        
+        <!-- for example:
+        <server>
+          <id>some-webdav</id>
+          <username>username</username>
+          <password>password</password>
+        </server>
+        -->
     </servers>
     
     <mirrors>
         <mirror>
-            <id>maven-central</id>
-            <mirrorOf>central</mirrorOf>
-            <url>http://central.maven.org/maven2/</url>
-        </mirror>
-        
-        <mirror>
-            <!-- this sends everything to the specified nexus repository -->
+            <!-- this sends everything except repositories named se-nexus-p2 -->
+            <!-- to our single nexus super repository -->
             <id>se-nexus</id>
-            <mirrorOf>external:*</mirrorOf>
+            <mirrorOf>central,!se-nexus-p2</mirrorOf>
             <url>https://nexus.se.rwth-aachen.de/content/groups/public</url>
         </mirror>
     </mirrors>
@@ -36,24 +41,16 @@
                 <repository>
                     <id>central</id>
                     <url>http://central</url>
-                    <releases>
-                        <enabled/>
-                    </releases>
-                    <snapshots>
-                        <enabled/>
-                    </snapshots>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
                 </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
                     <id>central</id>
                     <url>http://central</url>
-                    <releases>
-                        <enabled/>
-                    </releases>
-                    <snapshots>
-                        <enabled/>
-                    </snapshots>
+                    <releases><enabled>true</enabled></releases>
+                    <snapshots><enabled>true</enabled></snapshots>
                 </pluginRepository>
             </pluginRepositories>
         </profile>
@@ -61,8 +58,7 @@
     
     <activeProfiles>
         <!-- make the profile active by default -->
-        <activeProfile>se-nexus</activeProfile>
+        <!-- <activeProfile>se-nexus</activeProfile>-->
     </activeProfiles>
-
 
 </settings>
