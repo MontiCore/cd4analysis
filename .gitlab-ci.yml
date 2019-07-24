@@ -28,6 +28,10 @@ cache:
   paths:
   - .m2/
   key: ${CI_COMMIT_REF_SLUG}
+  
+before_script:
+  - chmod +x gradlew
+  - export GRADLE_USER_HOME=`pwd`/.gradle
 
 stages:
   - build
@@ -41,6 +45,17 @@ install:
     paths:
     - target/
     expire_in: 1 week
+
+gradle_build:
+  stage: test
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+    key: ${CI_COMMIT_REF_SLUG}-gradle
+  script:
+    - "./gradlew assemble"
+    - "./gradlew check"
 
 test:
   stage: test

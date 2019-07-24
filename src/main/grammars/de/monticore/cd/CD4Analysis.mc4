@@ -23,7 +23,7 @@ package de.monticore.cd;
    MCG for CD 4 Analysis, Version 07/05/2019
 */
 
-grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.MCBasicLiterals {
+grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.MCCommonLiterals {
 
   /** ASTCDCompilationUnit represents the complete Diagram
     @attribute package          The package declaration of this Classdiagram
