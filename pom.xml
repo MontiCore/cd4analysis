@@ -24,7 +24,7 @@
 
         <!-- .. Plugins ....................................................... -->
 
-        <mc4.maven.version>5.0.6.NewSymTab-SNAPSHOT</mc4.maven.version>
+        <mc4.maven.version>5.0.6-SNAPSHOT</mc4.maven.version>
 
         <compiler.plugin>3.2</compiler.plugin>
         <release.plugin>2.5.1</release.plugin>
