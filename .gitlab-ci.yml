@@ -36,7 +36,7 @@ stages:
 install:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean deploy -U -DskipTests"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean deploy -Dpassword=$password -Dusername=$username -U -DskipTests"
   artifacts:
     paths:
     - target/
