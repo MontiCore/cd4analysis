@@ -55,7 +55,7 @@ deploy:
   dependencies:
     - build
   script:
-    - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS deploy -U -DskipTests $ARGS3"
+    - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS deploy -DskipTests $ARGS3"
   artifacts:
     paths:
       - target/
