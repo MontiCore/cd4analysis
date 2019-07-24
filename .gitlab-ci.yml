@@ -32,11 +32,12 @@ cache:
 stages:
   - build
   - test
+  - deploy
 
-install:
+build:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean deploy  -U -DskipTests $ARGS"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean compile -U -DskipTests $ARGS1"
   artifacts:
     paths:
     - target/
@@ -44,5 +45,18 @@ install:
 
 test:
   stage: test
+  dependencies:
+    - build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test $ARGS2"
+
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS deploy -U -DskipTests $ARGS3"
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 week
