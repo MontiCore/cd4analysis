@@ -58,7 +58,7 @@
     
     <activeProfiles>
         <!-- make the profile active by default -->
-        <!-- <activeProfile>se-nexus</activeProfile>-->
+        <activeProfile>se-nexus</activeProfile>
     </activeProfiles>
 
 </settings>
