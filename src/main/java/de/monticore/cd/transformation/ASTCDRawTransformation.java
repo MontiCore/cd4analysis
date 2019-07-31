@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.types.mccollectiontypes._ast.MCCollectionTypesMill;
-import de.monticore.types.mccollectiontypes._cocos.MCCollectionTypesASTMCGenericTypeCoCo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,17 +24,17 @@ public class ASTCDRawTransformation {
   // -------------------- Attributes --------------------
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name
+   * Creates an instance of the {@link ASTCDField} with the given name
    * and type and adds it to the given class
    * 
    * @param astClass
    * @param attrName
    * @param attrType
-   * @return created {@link ASTCDAttribute} node
+   * @return created {@link ASTCDField} node
    */
   public ASTCDAttribute addCdAttribute(ASTCDClass astClass,
-      String attrName,
-      String attrType) {
+                                   String attrName,
+                                   String attrType) {
     ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName)
         .setMCType(createType(attrType))
         .build();

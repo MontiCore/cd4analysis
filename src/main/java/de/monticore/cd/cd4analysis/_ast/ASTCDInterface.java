@@ -30,33 +30,33 @@ import de.monticore.cd.cd4analysis._ast.ASTModifier;
 import java.util.Optional;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
-  
+
   private AstPrinter printer = new AstPrinter();
-  
+
   protected ASTCDInterface() {
   }
-  
+
   protected ASTCDInterface(Optional<ASTModifier> modifier,
-      String name,
-      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCObjectType> interfaces,
-                          Optional<ASTCDStereotype> stereotype,
-      java.util.List<ASTCDAttribute> cDAttributes,
-      java.util.List<ASTCDMethod> cDMethods) {
-    super(modifier, name, interfaces, stereotype, cDAttributes,
-        cDMethods);
+                           java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCObjectType> interfaces,
+                           Optional<ASTCDStereotype> stereotype,
+                           java.util.List<ASTCDAttribute> cDAttributes,
+                           java.util.List<ASTCDMethod> cDMethods,
+                           String name) {
+    super(modifier, interfaces, stereotype, cDAttributes,
+        cDMethods, name);
   }
-  
+
   public String printModifier() {
     return super.printModifier();
   }
-  
+
   /**
    * Prints the superclass
-   * 
+   *
    * @return String representation of the superclass
    */
   public String printInterfaces() {
     return printer.printReferenceList(getInterfaceList());
   }
-  
+
 }

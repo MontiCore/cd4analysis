@@ -19,18 +19,13 @@
 
 package de.monticore.cd.cocos.ebnf;
 
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.TypesPrinter;
+import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
 import de.monticore.types.mccollectiontypes._cocos.MCCollectionTypesASTMCGenericTypeCoCo;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
-import de.monticore.types.types._ast.ASTTypeArguments;
-import de.monticore.types.types._cocos.TypesASTSimpleReferenceTypeCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Checks that references to generic types use at least one parameter.
@@ -43,7 +38,7 @@ public class GenericTypeHasParameters implements MCCollectionTypesASTMCGenericTy
   public void check(ASTMCGenericType type) {
     List<ASTMCTypeArgument> args = type.getMCTypeArgumentList();
     if (!args.isEmpty()) {
-      String typeName = BasicGenericsTypesPrinter.printType(type);
+      String typeName = new AstPrinter().printType(type);
       check(typeName, args);
     }
   }

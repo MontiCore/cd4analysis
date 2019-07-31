@@ -6,11 +6,11 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.cd.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd.cocos.CD4ACoCoHelper;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -55,8 +55,8 @@ public class AssociationQualifierAttributeExistsInTarget
     boolean hasError = false;
     if (qualifier.isPresentName()) {
       String expectedAttributeName = qualifier.getName();
-      Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope()
-          .resolve(referencedType.toString(), CDTypeSymbol.KIND);
+      Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope2()
+          .resolveCDType(referencedType.toString());
       if (!referencedTypeSymOpt.isPresent()) {
         Log.error(String.format("0xC4A80 The referenced type %s cannot be resolved.",
             referencedType.toString()));

@@ -19,62 +19,63 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethodTOP;
-import de.monticore.cd.cd4analysis._ast.ASTCDStereoValue;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
+
+import java.util.List;
+import java.util.Optional;
+
+import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
-  
-  private AstPrinter printer = new AstPrinter();
-  
+
+  private CD4CodePrinter printer = new CD4CodePrinter();
+
   protected ASTCDMethod() {
   }
-  
-  protected ASTCDMethod(ASTModifier modifier,
-      ASTMCReturnType returnType,
-      String name,
-      java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDParameter> cDParameters,
-      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName> exceptions)
-  {
-    super(modifier, returnType, name, cDParameters, exceptions);
+
+  public ASTCDMethod(ASTModifier modifier, ASTMCReturnType mCReturnType, List<ASTCDParameter> cDParameters, List<ASTMCQualifiedName> exceptions, String name) {
+    super(modifier, mCReturnType, cDParameters, exceptions, name);
   }
-  
+
   /**
    * Prints a return type
-   * 
+   *
    * @return String representation of the ASTreturnType
    */
   public String printReturnType() {
-    return BasicTypesPrinter.printReturnType(getMCReturnType());
+    return printer.printType(getMCReturnType());
   }
-  
+
   public String printAnnotation() {
     if (getModifier().isPresentStereotype()) {
       StringBuffer sb = new StringBuffer();
-      for (ASTCDStereoValue s: getModifier().getStereotype().values) {
+      for (ASTCDStereoValue s : getModifier().getStereotype().values) {
         sb.append(s.getName());
         sb.append("\n");
       }
       return sb.toString();
     }
-    
+
     return "";
   }
 
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
-   * 
+   *
+   * @return a string, e.g. abstract private final
+   */
+  /**
+   * Print the string of a ASTModifier type, e.g. abstract private final
+   *
    * @return a string, e.g. abstract private final
    */
   public String printModifier() {
-    ASTModifier modifier = getModifier();
-    
+    modifier = getModifier();
+
     StringBuilder modifierStr = new StringBuilder();
-    if (getModifier().isAbstract()) {
+    if (modifier.isAbstract()) {
       modifierStr.append(" abstract ");
     }
     if (modifier.isPublic()) {
@@ -92,23 +93,24 @@ public class ASTCDMethod extends ASTCDMethodTOP {
     if (modifier.isStatic()) {
       modifierStr.append(" static ");
     }
-    
+
     return modifierStr.toString();
   }
-  
+
+
   /**
    * Prints the parameter declarations that can be used in methods and
    * constructors
-   * 
+   *
    * @return a string list of parameter declarations, e.g. type name
    */
   public String printParametersDecl() {
     return printer.printCDParametersDecl(getCDParameterList());
   }
-  
+
   /**
    * Prints the throws declaration for methods and constructors.
-   * 
+   *
    * @return a string list of all exceptions
    */
   public String printThrowsDecl() {

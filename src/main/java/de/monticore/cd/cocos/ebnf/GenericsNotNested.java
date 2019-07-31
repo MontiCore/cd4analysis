@@ -20,10 +20,9 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
+import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
 /**

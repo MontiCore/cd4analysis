@@ -36,11 +36,12 @@ before_script:
 stages:
   - build
   - test
+  - deploy
 
-install:
+build:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean install -DskipTests"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean compile -U -DskipTests $ARGS1"
   artifacts:
     paths:
     - target/
@@ -59,5 +60,18 @@ gradle_build:
 
 test:
   stage: test
+  dependencies:
+    - build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test $ARGS2"
+
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS deploy -DskipTests $ARGS3"
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 week

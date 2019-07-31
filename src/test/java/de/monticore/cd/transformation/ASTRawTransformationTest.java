@@ -5,24 +5,14 @@
  */
 package de.monticore.cd.transformation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
+import com.google.common.collect.Lists;
+import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
-import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
+import static org.junit.Assert.*;
 
 /**
  * Test for the utility class {@link ASTCDRawTransformation}
@@ -115,7 +105,7 @@ public class ASTRawTransformationTest {
     assertEquals(((ASTMCObjectType) attr1.getMCType()).getNameList(),
         Lists.newArrayList("String"));
     assertTrue(!attr1.isPresentModifier());
-    
+
     ASTCDAttribute attr2 = astTransformation.addCdAttribute(astClass, "b",
         "a.b.C");
     assertNotNull(attr2);

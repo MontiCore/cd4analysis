@@ -22,16 +22,12 @@ package de.monticore.cd.prettyprint;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
-import de.monticore.types.mcbasictypes._ast.*;
-import de.monticore.types.types._ast.*;
 import de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant;
 import de.monticore.cd.cd4analysis._ast.ASTCDParameter;
 import de.monticore.cd.cd4analysis._ast.ASTModifier;
 import de.monticore.cd.cd4analysis._ast.ASTValue;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -53,32 +49,11 @@ public class AstPrinter {
    * @return a string, e.g. abstract private final static
    */
   public String printModifier(Optional<ASTModifier> modifier) {
-    checkNotNull(modifier);
-    
-    StringBuilder modifierStr = new StringBuilder();
-    
+    CDPrettyPrinterDelegator printer = new CDPrettyPrinterDelegator(new IndentPrinter());
     if (modifier.isPresent()) {
-      if (modifier.get().isAbstract()) {
-        modifierStr.append(" abstract ");
-      }
-      if (modifier.get().isPublic()) {
-        modifierStr.append(" public ");
-      }
-      else if (modifier.get().isPrivate()) {
-        modifierStr.append(" private ");
-      }
-      else if (modifier.get().isProtected()) {
-        modifierStr.append(" protected ");
-      }
-      if (modifier.get().isFinal()) {
-        modifierStr.append(" final ");
-      }
-      if (modifier.get().isStatic()) {
-        modifierStr.append(" static ");
-      }
+      return printer.prettyprint(modifier.get());
     }
-    
-    return modifierStr.toString();
+    return EMPTY_STRING;
   }
   
   /**
@@ -140,11 +115,11 @@ public class AstPrinter {
    * @return String representation of the ASTType
    */
   public String printType(ASTMCType type) {
-    return BasicGenericsTypesPrinter.printType(type);
+    return new CDPrettyPrinterDelegator().prettyprint(type);
   }
   
   public String printType(ASTMCReturnType type) {
-    return BasicTypesPrinter.printReturnType(type); //TODO BasicGenericsTypesPrinter
+    return new CDPrettyPrinterDelegator().prettyprint(type); //TODO BasicGenericsTypesPrinter
   }
   
   /**
@@ -225,8 +200,7 @@ public class AstPrinter {
     checkNotNull(value);
     String output = "";
     if (value.isPresent()) {
-      IndentPrinter iPrinter = new IndentPrinter();
-      CDPrettyPrinterConcreteVisitor p = new CDPrettyPrinterConcreteVisitor(iPrinter);
+      CDPrettyPrinterDelegator p = new CDPrettyPrinterDelegator();
       output = p.prettyprint(value.get()).trim().intern();
     }
     

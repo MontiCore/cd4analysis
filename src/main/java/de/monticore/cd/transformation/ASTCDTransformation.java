@@ -40,7 +40,7 @@ public class ASTCDTransformation {
   // -------------------- Attributes --------------------
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name and
+   * Creates an instance of the {@link ASTCDField} with the given name and
    * type and adds it to the given class
    * 
    * @param astClass the given class
@@ -50,7 +50,7 @@ public class ASTCDTransformation {
    * attribute type couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
-      String attrType) {
+                                             String attrType) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
     checkNotNull(astClass, "Attribute '" + attrName
@@ -69,7 +69,7 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name, type
+   * Creates an instance of the {@link ASTCDField} with the given name, type
    * and modifier and adds it to the given class
    * 
    * @param astClass the given class
@@ -80,7 +80,7 @@ public class ASTCDTransformation {
    * attribute type couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
-      String attrType, String modifier) {
+                                             String attrType, String modifier) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
     checkNotNull(astClass, "Attribute '" + attrName
@@ -103,7 +103,7 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} using given attribute
+   * Creates an instance of the {@link ASTCDField} using given attribute
    * definition {@code ( e.g. private List<A> a; )} and adds it to the given class
    * 
    * @param astClass the given class
@@ -112,7 +112,7 @@ public class ASTCDTransformation {
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
-      String attributeDefinition) {
+                                                            String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
         "Attribute can't be added to the CD class because of null or empty attribute definition");
     checkNotNull(astClass, "Attribute '" + attributeDefinition
@@ -136,7 +136,7 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} using given attribute
+   * Creates an instance of the {@link ASTCDField} using given attribute
    * definition ( e.g. {@code private List<A> a; ) }and adds it to the given interface
    * 
    * @param astInterface the given interface
@@ -145,7 +145,7 @@ public class ASTCDTransformation {
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDInterface astInterface,
-      String attributeDefinition) {
+                                                            String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
         "Attribute can't be added to the CD interface because of null or empty attribute definition");
     checkNotNull(astInterface, "Attribute '" + attributeDefinition
@@ -505,10 +505,10 @@ public class ASTCDTransformation {
   // -------------------- Types --------------------
   
   /**
-   * Creates an instance of the {@link ASTReturnType} using the type definition
+   * Creates an instance of the {@link ASTMCReturnType} using the type definition
    * 
    * @param typeName the name of the return type
-   * @return Optional of the created {@link ASTReturnType} node or
+   * @return Optional of the created {@link ASTMCReturnType} node or
    * Optional.empty() if the type definition couldn't be parsed
    */
   public Optional<ASTMCReturnType> createReturnType(String typeName) {
@@ -529,10 +529,10 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTType} using the type definition
+   * Creates an instance of the {@link ASTMCType} using the type definition
    * 
    * @param typeName the name of the type
-   * @return Optional of the created {@link ASTType} node or Optional.empty()
+   * @return Optional of the created {@link ASTMCType} node or Optional.empty()
    * if the type definition couldn't be parsed
    */
   public Optional<ASTMCType> createType(String typeName) {

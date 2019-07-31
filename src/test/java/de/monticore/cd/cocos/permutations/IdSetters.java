@@ -20,10 +20,10 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
+import de.monticore.cd.cd4analysis._ast.ASTCDField;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.utils.ASTNodes;
 
 import java.util.Collection;
@@ -52,7 +52,7 @@ class IdSetters {
   
   static void setAttributeId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
-        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAttribute.class))
+        .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDField.class))
         .flatMap(Collection::stream)
         .forEach(cdAttribute -> cdAttribute.setName(cdAttribute.getName() + id));
   }
@@ -64,8 +64,8 @@ class IdSetters {
         .map(ASTCDClass::getSuperclassOpt)
         .filter(Optional::isPresent)
         .map(Optional::get)
-        .filter(ASTSimpleReferenceType.class::isInstance)
-        .map(ASTSimpleReferenceType.class::cast)
+        .filter(ASTMCQualifiedType.class::isInstance)
+        .map(ASTMCQualifiedType.class::cast)
         .forEach(simpleReferenceType -> {
           String oldName = simpleReferenceType.getNameList().get(0);
           simpleReferenceType.getNameList().set(0, oldName + id);

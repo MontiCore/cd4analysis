@@ -7,9 +7,10 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
-import de.monticore.cd.symboltable.CDFieldSymbol;
-import de.monticore.mccommonliterals._ast.*;
-import de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor;
+import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
+import de.monticore.literals.mccommonliterals._ast.*;
+import de.monticore.literals.mccommonliterals._visitor.MCCommonLiteralsVisitor;
+import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.BasicGenericsTypesPrinter;
 import de.se_rwth.commons.logging.Log;
 
@@ -24,7 +25,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   @Override
   public void check(ASTCDAttribute node) {
     if (node.isPresentValue()) {
-      CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol();
+      CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol2();
       String className = symbol.getEnclosingScope().getName().get();
       String typeName = BasicGenericsTypesPrinter.printType(node.getMCType());
       ASTSignedLiteral lit = node.getValue().getSignedLiteral();
@@ -87,19 +88,13 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
         }
       }
     }
-    
-    /**
-     * @see de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor#visit(de.monticore.mccommonliterals._ast.ASTStringLiteral)
-     */
+
     @Override
     public void visit(ASTStringLiteral node) {
       check("String");
     }
     
-    /**
-     * @see de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor#visit(de.monticore.mccommonliterals._ast.ASTBooleanLiteral)
-     */
-    @Override
+     @Override
     public void visit(ASTBooleanLiteral node) {
       check("boolean", "Boolean");
     }
@@ -123,10 +118,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     public void visit(ASTSignedBasicLongLiteral node){
       check("long", "Long");
     }
-    
-    /**
-     * @see de.monticore.mccommonliterals._visitor.MCCommonLiteralsVisitor#visit(de.monticore.mccommonliterals._ast.ASTCharLiteral)
-     */
+
     @Override
     public void visit(ASTCharLiteral node) {
       check("char", "Character");

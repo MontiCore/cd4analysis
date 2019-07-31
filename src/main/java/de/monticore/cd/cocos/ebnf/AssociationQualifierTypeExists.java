@@ -8,10 +8,8 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.BuiltInTypes;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
+import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.cd.cd4analysis._ast.ASTCDQualifier;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
@@ -27,9 +25,6 @@ import java.util.Optional;
  */
 public class AssociationQualifierTypeExists
     implements CD4AnalysisASTCDAssociationCoCo {
-  /**
-   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
-   */
   @Override
   public void check(ASTCDAssociation node) {
     // only check other side when first side generated no error.
@@ -55,10 +50,10 @@ public class AssociationQualifierTypeExists
     boolean hasError = false;
     if (qualifier.isPresentMCType()) {
       ASTMCType type = qualifier.getMCType();
-      String typeName = BasicGenericsTypesPrinter.printType(type);
+      String typeName = new AstPrinter().printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {
-        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope()
-            .resolve(typeName, CDTypeSymbol.KIND);
+        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope2()
+            .resolveCDType(typeName);
         if (!typeSym.isPresent()) {
           hasError = true;
           Log.error(
