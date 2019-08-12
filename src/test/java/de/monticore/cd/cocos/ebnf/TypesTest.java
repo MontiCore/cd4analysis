@@ -10,6 +10,7 @@ import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd.cocos.AbstractCoCoTest;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class TypesTest extends AbstractCoCoTest {
 
   @BeforeClass
   public static void init() {
-    Log.init();
+    LogStub.init();
     Log.enableFailQuick(false);
   }
 

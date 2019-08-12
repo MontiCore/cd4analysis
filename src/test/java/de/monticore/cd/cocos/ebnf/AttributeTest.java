@@ -37,7 +37,7 @@ public class AttributeTest extends AbstractCoCoTest {
   
   @BeforeClass
   public static void init() {
-    Log.init();
+    LogStub.init();
     Log.enableFailQuick(false);
   }
   
