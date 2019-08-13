@@ -282,7 +282,7 @@
         <dependency>
             <groupId>de.monticore</groupId>
             <artifactId>monticore-grammar</artifactId>
-            <version>5.0.7-SNAPSHOT</version>
+            <version>5.1.0</version>
         </dependency>
 
         <dependency>
@@ -294,7 +294,7 @@
         <dependency>
             <groupId>de.monticore</groupId>
             <artifactId>monticore-grammar</artifactId>
-            <version>5.0.7-SNAPSHOT</version>
+            <version>5.1.0</version>
             <classifier>${grammars.classifier}</classifier>
         </dependency>
 
