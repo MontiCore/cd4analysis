@@ -4,7 +4,6 @@
 package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDType;
-import de.monticore.symboltable.types.references.ActualTypeArgument;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -21,7 +21,6 @@ package de.monticore.cd.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableList;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.symboltable.CommonSymbol;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 

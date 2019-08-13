@@ -19,6 +19,7 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
+import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
 import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
@@ -32,13 +33,6 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
   protected ASTCDAttribute() {
   }
 
-  protected ASTCDAttribute(
-      Optional<ASTModifier> modifier,
-      ASTMCType type,
-      Optional<ASTValue> value,
-      String name) {
-    super(modifier, type, value, name);
-  }
 
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final

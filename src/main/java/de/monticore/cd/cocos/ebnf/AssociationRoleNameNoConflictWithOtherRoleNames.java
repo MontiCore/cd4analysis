@@ -44,9 +44,9 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
   @Override
   public void check(ASTCDAssociation a) {
     if (!a.isPresentName()) {
-      Optional<CDTypeSymbol> leftType = a.getEnclosingScope2()
+      Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
               .resolveCDType(a.getLeftReferenceName().toString());
-      Optional<CDTypeSymbol> rightType = a.getEnclosingScope2()
+      Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
               .resolveCDType(a.getRightReferenceName().toString());
       boolean err = false;
       // source type might be external (in this case we do nothing)
@@ -69,7 +69,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
    * @return whether there was a CoCo error or not.
    */
   private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol2();
+    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
 
     String targetType = assocSym.getTargetType().getName();
     String automaticallyIntroduced = role.isPresent()
@@ -94,7 +94,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
 
       boolean isReadOnly = false;
       List<String> superTypes = null;
-      Optional<CDTypeSymbol> targetTypeSymbol = assoc.getEnclosingScope2().resolveCDType(targetType);
+      Optional<CDTypeSymbol> targetTypeSymbol = assoc.getEnclosingScope().resolveCDType(targetType);
       if (targetTypeSymbol.isPresent()) {
         isReadOnly = conflicting.isReadOnly();
         superTypes = targetTypeSymbol.get().getSuperTypesTransitive().stream().map(type -> type.getFullName()).collect(Collectors.toList());
