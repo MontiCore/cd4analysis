@@ -5,7 +5,6 @@
  */
 package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.symboltable.GlobalScope;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

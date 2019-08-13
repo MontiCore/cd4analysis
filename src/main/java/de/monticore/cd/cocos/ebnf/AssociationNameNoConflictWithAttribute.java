@@ -42,9 +42,9 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
   public void check(ASTCDAssociation a) {
     if (a.isPresentName()) {
       String assocName = a.getName();
-      Optional<CDTypeSymbol> leftType = a.getEnclosingScope2()
+      Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
           .resolveCDType(a.getLeftReferenceName().toString());
-      Optional<CDTypeSymbol> rightType = a.getEnclosingScope2()
+      Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
           .resolveCDType(a.getRightReferenceName().toString());
       boolean err = false;
       // source type might be external (in this case we do nothing)
@@ -60,7 +60,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
   
   /**
    * Does the actual check.
-   * 
+   *
    * @param sourceType source of the assoc under test
    * @param assocName the associations name
    * @param assoc association under test

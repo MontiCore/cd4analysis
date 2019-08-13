@@ -80,7 +80,7 @@ public class AssociationSourceTypeNotExternal implements
   }
   
   private boolean isExternal(ASTMCQualifiedName sourceType, ASTCDAssociation assoc) {
-    Optional<CDTypeSymbol> sourceSym = assoc.getEnclosingScope2()
+    Optional<CDTypeSymbol> sourceSym = assoc.getEnclosingScope()
         .resolveCDType(sourceType.toString());
     if (sourceSym.isPresent()) {
       return false;

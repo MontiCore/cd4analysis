@@ -29,7 +29,12 @@ import static de.monticore.cd.prettyprint.CD4CodePrinter.EMPTY_STRING;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP
     implements ASTCD4AnalysisNode {
-
+  
+  public ASTCDAttribute(Optional<ASTModifier> modifier,
+      ASTMCType mCType, Optional<ASTValue> value, String name) {
+    super(modifier, mCType, value, name);
+  }
+  
   protected ASTCDAttribute() {
   }
 

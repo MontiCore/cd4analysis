@@ -12,6 +12,7 @@
         <!-- .. Libraries ..................................................... -->
 
         <monticore.version>5.1.0</monticore.version>
+        <monticore.grammar.version>5.2.0</monticore.grammar.version>
 
         <findbugs.version>3.0.0</findbugs.version>
         <guava.version>23.0</guava.version>
@@ -23,8 +24,6 @@
         <emf.ecore.xmi.version>2.15.0</emf.ecore.xmi.version>
 
         <!-- .. Plugins ....................................................... -->
-
-        <mc4.maven.version>5.1.0</mc4.maven.version>
 
         <compiler.plugin>3.2</compiler.plugin>
         <release.plugin>2.5.1</release.plugin>
@@ -98,7 +97,7 @@
             <plugin>
                 <groupId>de.monticore.mojo</groupId>
                 <artifactId>monticore-maven-plugin</artifactId>
-                <version>${mc4.maven.version}</version>
+                <version>${monticore.version}</version>
                 <configuration>
                     <skip>false</skip>
                     <script>de/monticore/monticore_noemf.groovy</script>
@@ -282,7 +281,7 @@
         <dependency>
             <groupId>de.monticore</groupId>
             <artifactId>monticore-grammar</artifactId>
-            <version>5.2.0</version>
+            <version>${monticore.grammar.version}</version>
         </dependency>
 
         <dependency>
@@ -294,7 +293,7 @@
         <dependency>
             <groupId>de.monticore</groupId>
             <artifactId>monticore-grammar</artifactId>
-            <version>5.2.0</version>
+            <version>${monticore.grammar.version}</version>
             <classifier>${grammars.classifier}</classifier>
         </dependency>
 

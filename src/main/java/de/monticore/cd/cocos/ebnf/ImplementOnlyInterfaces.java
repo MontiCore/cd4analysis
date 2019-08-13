@@ -25,19 +25,19 @@ import de.se_rwth.commons.logging.Log;
 
 /**
  * Checks that only interfaces are implemented.
- * 
+ *
  * @author Robert Heim
  */
 abstract public class ImplementOnlyInterfaces {
   
   /**
    * Actual check that the node's interfaces are really interfaces.
-   * 
+   *
    * @param type depending on the node type that is checked: class or enum
    * @param node the node to check.
    */
   public void check(String type, ASTCDType node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol2();
+    CDTypeSymbol symbol = node.getSymbol();
     for (CDTypeSymbol superType : symbol.getCdInterfaces()) {
       if (!superType.isInterface()) {
         Log.error(String.format(

@@ -42,14 +42,14 @@ public class AssociationSourceNotEnum
   
   /**
    * Does the actual check.
-   * 
+   *
    * @param sourceName the referenced name that may not be an enum
    * @param node the association under test
    * @return whether there was a coco error or not
    */
   private boolean check(ASTMCQualifiedName sourceName, ASTCDAssociation node) {
     boolean hasError = false;
-    Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope2()
+    Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope()
         .resolveCDType(sourceName.toString());
     if (sourceSym.isPresent() && sourceSym.get().isEnum()) {
       hasError = true;
