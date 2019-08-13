@@ -20,10 +20,10 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Analysis, Version Feb. 01st, 2016
+   MCG for CD 4 Analysis, Version 07/05/2019
 */
 
-grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.MCJavaLiterals {
+grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticore.literals.MCCommonLiterals {
 
   /** ASTCDCompilationUnit represents the complete Diagram
     @attribute package          The package declaration of this Classdiagram
@@ -43,12 +43,19 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDEnums        List of Enums of this Classdiagram
     @attribute cDAssociations List of Associations of this Classdiagram
   */
-  CDDefinition = "classdiagram" Name "{"
+  symbol scope CDDefinition = "classdiagram" Name "{"
   (   CDClass
     | CDInterface
     | CDEnum
     | CDAssociation)* "}";
-  
+
+   interface symbol scope CDType = Name;
+
+   interface symbol CDField = Name;
+
+   interface symbol scope CDMethOrConstr = Name;
+
+
   /** ASTCDClass represents a Class in a Classdiagram
     @attribute modifier       Optional Modifier of this Class
     @attribute name           Name of this Class
@@ -58,7 +65,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
-  CDClass astimplements ASTCDType = Modifier?  "class" Name
+  symbol (CDType) scope CDClass implements CDType = Modifier?  "class" Name
   ( "extends"  superclass:MCObjectType)?
   ( TImplements interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
   ( "{" 
@@ -79,7 +86,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
-  CDInterface astimplements ASTCDType = Modifier? "interface" Name
+   symbol (CDType) scope CDInterface implements CDType = Modifier? "interface" Name
     ( "extends" interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
     ( "{"
       ( CDAttribute
@@ -97,7 +104,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
-  CDEnum astimplements ASTCDType = Modifier? "enum" Name
+   symbol (CDType) scope CDEnum implements CDType = Modifier? "enum" Name
     ( TImplements interface:(MCObjectType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";" 
@@ -113,14 +120,14 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute name     Name of this Attribute
     @attribute value    Value of this Attribute
   */
-  CDAttribute = Modifier? MCType Name ("=" Value)? ";";
+  symbol (CDField) CDAttribute implements CDField = Modifier? MCType Name ("=" Value)? ";";
    
   /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
       in a Classdiagram
       @attribute name             Name of this Constant
       @attribute cDEnumParameters List of optional parameters of this Constant
   */
-  CDEnumConstant = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
+  symbol (CDField) CDEnumConstant implements CDField = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
   
  
   /** ASTCDEnumParameter represents a Parameter of an Enumeration Constant
@@ -134,7 +141,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute cDParameters   List of Parameters of this Constructor
     @attribute exceptions     List of Exceptions thrown by this Constructor
   */
-  CDConstructor =
+  symbol(CDMethOrConstr) scope CDConstructor implements CDMethOrConstr =
     Modifier
      Name "(" (CDParameter || ",")* ")"
     ("throws" exception:(MCQualifiedName || "," )+)?
@@ -148,7 +155,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
       @attribute cDParameters   List of Parameters of this Method
       @attribute exceptions     List of Exceptions thrown by this Method
   */
-  CDMethod =
+  symbol(CDMethOrConstr) scope CDMethod implements CDMethOrConstr =
     Modifier
     MCReturnType
      Name "(" (CDParameter || ",")* ")"
@@ -161,7 +168,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute ellipsis Optional indicator for a variable Parameter length
     @attribute name Name of this Parameter
   */
-  CDParameter =
+  symbol (CDField) CDParameter implements CDField =
   MCType (Ellipsis:["..."])? Name;
         
 
@@ -199,7 +206,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
                                   Association
     @attribute rightModifier      Optional right side Modifier
   */
-  CDAssociation = stereotype:CDStereotype?
+  symbol scope CDAssociation = stereotype:CDStereotype?
     readOnly:TReadOnly?
     (["association"] | ["composition"])
     ([Derived:"/"])?  Name?
@@ -243,7 +250,7 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
     @attribute name     Abstract name of the Qualifier if not a type
     @attribute mctype     Type of the Qualifier if not an abstract name
   */
-  CDQualifier = "[[" Name "]]" | "[" MCType "]";
+  symbol CDQualifier = "[[" Name "]]" | "[" MCType "]";
     
 
   /** ASTStereotype represents Stereotypes in a Classdiagram
@@ -263,6 +270,46 @@ grammar CD4Analysis extends de.monticore.types.MCCollectionTypes, de.monticore.M
   /** ASTValue represents a Value
       @attribute literal  Value
   */
-  Value = Literal; //TODO: Change back to signed literal when correct
-    
+  Value = SignedLiteral;
+
+  symbolrule CDField =
+    isPrivate: boolean
+    isDerived: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isFinal: boolean
+    isStatic: boolean
+    isReadOnly: boolean
+    isInitialized: boolean
+    isParameter: boolean
+    type: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
+  ;
+
+  symbolrule CDMethOrConstr =
+    isConstructor: boolean
+    isPrivate: boolean
+    isDerived: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isFinal: boolean
+    isStatic: boolean
+    isAbstract: boolean
+    isEllipsis: boolean
+    returnType: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
+    // TODO Fehler im Builder: exceptions: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
+  ;
+
+  symbolrule CDType =
+    isInterface: boolean
+    isEnum: boolean
+    isClass: boolean
+    isAbstract: boolean
+    isPrivate: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isFinal: boolean
+    // TODO Fehler im Builder: cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
+    // TODO Fehler im Builder: superClass: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=1
+  ;
+
 }

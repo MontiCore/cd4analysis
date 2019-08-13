@@ -7,10 +7,10 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
@@ -33,7 +33,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       checkClass(c);
     }
     for (ASTCDInterface i : node.getCDInterfaceList()) {
-      checkInterfacePath((CDTypeSymbol) i.getSymbol(), new HashSet<>());
+      checkInterfacePath((CDTypeSymbol) i.getSymbol2(), new HashSet<>());
     }
   }
   
@@ -41,7 +41,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
    * Recursive method checking that a path in the inheritance (up-side-down)
    * tree does not include any name twice.
    * 
-   * @param i the current interface symbol on the inheritance path
+   * @param interf the current interface symbol on the inheritance path
    * @param currentPath the current inheritance path to i (not including i).
    * This set will be adjusted for each step, but it is ensured that
    * currentPath@Pre == currentPath@Post.
@@ -55,7 +55,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
     }
     else {
       currentPath.add(interf);
-      for (CDTypeSymbol superInterf : interf.getInterfaces()) {
+      for (CDTypeSymbol superInterf : interf.getCdInterfaces()) {
         checkInterfacePath(superInterf, currentPath);
       }
       currentPath.remove(interf);
@@ -65,10 +65,10 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   /**
    * Checks that there are no cycles in the the class hierarchy.
    * 
-   * @param The class to check.
+   * @param node class to check.
    */
   private void checkClass(ASTCDClass node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
+    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol2();
     Set<CDTypeSymbol> path = new HashSet<>();
     Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClass();
     while (optSuperSymb.isPresent()) {

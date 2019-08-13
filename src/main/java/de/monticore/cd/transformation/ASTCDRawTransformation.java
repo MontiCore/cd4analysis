@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.types.mccollectiontypes._ast.MCCollectionTypesMill;
-import de.monticore.types.mccollectiontypes._cocos.MCCollectionTypesASTMCGenericTypeCoCo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,17 +24,17 @@ public class ASTCDRawTransformation {
   // -------------------- Attributes --------------------
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name
+   * Creates an instance of the {@link ASTCDField} with the given name
    * and type and adds it to the given class
    * 
    * @param astClass
    * @param attrName
    * @param attrType
-   * @return created {@link ASTCDAttribute} node
+   * @return created {@link ASTCDField} node
    */
   public ASTCDAttribute addCdAttribute(ASTCDClass astClass,
-      String attrName,
-      String attrType) {
+                                   String attrName,
+                                   String attrType) {
     ASTCDAttribute attribute = CD4AnalysisMill.cDAttributeBuilder().setName(attrName)
         .setMCType(createType(attrType))
         .build();
@@ -239,11 +238,11 @@ public class ASTCDRawTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDParameterList} using the list of
+   * Creates an instance of the {@link ASTCDParameter} using the list of
    * the type definitions
    * 
    * @param paramTypes
-   * @return Optional of the created {@link ASTCDParameterList} node or
+   * @return Optional of the created {@link ASTCDParameter} node or
    * Optional.absent() if one of the type definition couldn't be parsed
    */
   public List<ASTCDParameter> createCdMethodParameters(List<String> paramTypes) {
@@ -260,11 +259,11 @@ public class ASTCDRawTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTSimpleReferenceType} for the given
+   * Creates an instance of the {@link ASTMCObjectType} for the given
    * type name
    * 
    * @param typeName
-   * @return created {@link ASTSimpleReferenceType} node
+   * @return created {@link ASTMCObjectType} node
    */
   public ASTMCObjectType createType(String typeName) {
     return MCCollectionTypesMill.mCQualifiedTypeBuilder()

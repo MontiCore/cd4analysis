@@ -40,17 +40,17 @@ public class ASTCDTransformation {
   // -------------------- Attributes --------------------
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name and
+   * Creates an instance of the {@link ASTCDField} with the given name and
    * type and adds it to the given class
    * 
-   * @param astClass
-   * @param attrName
-   * @param attrType
+   * @param astClass the given class
+   * @param attrName the name of the attribute
+   * @param attrType the type of the attribute
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
-      String attrType) {
+                                             String attrType) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
     checkNotNull(astClass, "Attribute '" + attrName
@@ -69,18 +69,18 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} with the given name, type
+   * Creates an instance of the {@link ASTCDField} with the given name, type
    * and modifier and adds it to the given class
    * 
-   * @param astClass
-   * @param attrName
-   * @param attrType
-   * @param modifier
+   * @param astClass the given class
+   * @param attrName the name of the attribtue
+   * @param attrType the type of the attribute
+   * @param modifier the modifier of the attribute
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute type couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttribute(ASTCDClass astClass, String attrName,
-      String attrType, String modifier) {
+                                             String attrType, String modifier) {
     checkArgument(!Strings.isNullOrEmpty(attrName),
         "Attribute can't be added to the CD class because of null or empty attribute name");
     checkNotNull(astClass, "Attribute '" + attrName
@@ -103,16 +103,16 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} using given attribute
-   * definition ( e.g. private List<A> a; ) and adds it to the given class
+   * Creates an instance of the {@link ASTCDField} using given attribute
+   * definition {@code ( e.g. private List<A> a; )} and adds it to the given class
    * 
-   * @param astClass
+   * @param astClass the given class
    * @param attributeDefinition attribute definition to parse
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDClass astClass,
-      String attributeDefinition) {
+                                                            String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
         "Attribute can't be added to the CD class because of null or empty attribute definition");
     checkNotNull(astClass, "Attribute '" + attributeDefinition
@@ -136,16 +136,16 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDAttribute} using given attribute
-   * definition ( e.g. private List<A> a; ) and adds it to the given interface
+   * Creates an instance of the {@link ASTCDField} using given attribute
+   * definition ( e.g. {@code private List<A> a; ) }and adds it to the given interface
    * 
-   * @param astInterface
+   * @param astInterface the given interface
    * @param attributeDefinition attribute definition to parse
    * @return Optional of the created ast node or Optional.empty() if the
    * attribute definition couldn't be parsed
    */
   public Optional<ASTCDAttribute> addCdAttributeUsingDefinition(ASTCDInterface astInterface,
-      String attributeDefinition) {
+                                                            String attributeDefinition) {
     checkArgument(!Strings.isNullOrEmpty(attributeDefinition),
         "Attribute can't be added to the CD interface because of null or empty attribute definition");
     checkNotNull(astInterface, "Attribute '" + attributeDefinition
@@ -171,8 +171,8 @@ public class ASTCDTransformation {
   /**
    * Adds the given attribute to the given class
    * 
-   * @param astClass
-   * @param astAttribute
+   * @param astClass the given class
+   * @param astAttribute the given attribute
    */
   public void addCdAttribute(ASTCDClass astClass, ASTCDAttribute astAttribute) {
     checkNotNull(
@@ -187,8 +187,8 @@ public class ASTCDTransformation {
   /**
    * Adds the given attribute to the given interface
    * 
-   * @param astInterface
-   * @param astAttribute
+   * @param astInterface the given interface
+   * @param astAttribute the given attribute
    */
   public void addCdAttribute(ASTCDInterface astInterface, ASTCDAttribute astAttribute) {
     checkNotNull(
@@ -206,8 +206,8 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTCDClass} with the given name and adds
    * it to the given CD definition type definitions
    * 
-   * @param astDef
-   * @param className
+   * @param astDef the given ASTCDDefinition
+   * @param className name of the class
    * @return created {@link ASTCDClass} node
    */
   public ASTCDClass addCdClass(ASTCDDefinition astDef, String className) {
@@ -225,10 +225,10 @@ public class ASTCDTransformation {
    * class and the list of extended interface names and adds it to the given CD
    * definition
    * 
-   * @param astDef
-   * @param className
-   * @param superClassName
-   * @param interfaceNames
+   * @param astDef the given ASTCDDefinition
+   * @param className the name of the class
+   * @param superClassName the name of the superclass
+   * @param interfaceNames a list of the implemented interfaces
    * @return Optional of the created {@link ASTCDClass} node or
    * Optional.empty() if the super class- or one of the interface-definitions
    * couldn't be parsed
@@ -266,7 +266,7 @@ public class ASTCDTransformation {
    * definition ( e.g. protected String getValue(Date d); ) and adds it to the
    * given class
    * 
-   * @param astCd
+   * @param astCd the ASTCDDefinition
    * @param classDefinition method definition to parse
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.empty() if the method definition couldn't be parsed
@@ -298,8 +298,8 @@ public class ASTCDTransformation {
   /**
    * Adds the given class to the given CD definition
    * 
-   * @param astDef
-   * @param astClass
+   * @param astDef the ASTCDDefinition
+   * @param astClass the given class
    */
   public void addCdClass(ASTCDDefinition astDef, ASTCDClass astClass) {
     checkNotNull(
@@ -318,8 +318,8 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTCDInterface} with the given name and
    * adds it to the given CD definition type definitions
    * 
-   * @param astDef
-   * @param interfaceName
+   * @param astDef the ASTCDDefinition
+   * @param interfaceName the name of the interface
    * @return created {@link ASTCDInterface} node
    */
   public ASTCDInterface addCdInterface(ASTCDDefinition astDef, String interfaceName) {
@@ -335,8 +335,8 @@ public class ASTCDTransformation {
   /**
    * Adds the given interface to the given CD definition
    * 
-   * @param astDef
-   * @param astInterface
+   * @param astDef the ASTCDDefinition
+   * @param astInterface the given interface
    */
   public void addCdInterface(ASTCDDefinition astDef, ASTCDInterface astInterface) {
     checkNotNull(
@@ -351,9 +351,9 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTCDInterface} with the given name and
    * the list of extended interface names and adds it to the given CD definition
    * 
-   * @param astDef
-   * @param interfaceName
-   * @param interfaceNames
+   * @param astDef the ASTCDDefinition
+   * @param interfaceName the name of the interface
+   * @param interfaceNames a list of the names of the extended interfaces
    * @return Optional of the created {@link ASTCDInterface} node or
    * Optional.empty() if one of the interface-definitions couldn't be parsed
    */
@@ -386,7 +386,7 @@ public class ASTCDTransformation {
    * definition ( e.g. protected String getValue(Date d); ) and adds it to the
    * given class
    * 
-   * @param astType
+   * @param astType the given type
    * @param methodDefinition method definition to parse
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.empty() if the method definition couldn't be parsed
@@ -419,8 +419,8 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTCDMethod} with the given name, default
    * return type and the empty parameter list and adds it to the given type
    * 
-   * @param astClass
-   * @param methodName
+   * @param astType the given type
+   * @param methodName the name of the method
    * @return The created {@link ASTCDMethod} node
    */
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName) {
@@ -432,10 +432,10 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTCDMethod} with the given name, return
    * type and parameter types and adds it to the given class
    * 
-   * @param astType
-   * @param methodName
-   * @param returnType
-   * @param paramTypes
+   * @param astType the given type
+   * @param methodName the name of the method
+   * @param returnType the return type of the method
+   * @param paramTypes a list of the parameter types of the method
    * @return Optional of the created {@link ASTCDMethod} node or
    * Optional.empty() if the method definition couldn't be parsed
    */
@@ -464,8 +464,8 @@ public class ASTCDTransformation {
   /**
    * Adds the given method to the given type
    * 
-   * @param astType
-   * @param astMethod
+   * @param astType the given type
+   * @param astMethod the given method
    */
   public void addCdMethod(ASTCDType astType, ASTCDMethod astMethod) {
     checkNotNull(
@@ -477,11 +477,11 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTCDParameterList} using the list of the
+   * Creates an instance of the {@link ASTCDParameter} using the list of the
    * type definitions
    * 
-   * @param paramTypes
-   * @return Optional of the created {@link ASTCDParameterList} node or
+   * @param paramTypes a list of the parameter types
+   * @return Optional of the created {@link ASTCDParameter} node or
    * Optional.empty() if one of the type definition couldn't be parsed
    */
   public Optional<List<ASTCDParameter>> createCdMethodParameters(List<String> paramTypes) {
@@ -505,10 +505,10 @@ public class ASTCDTransformation {
   // -------------------- Types --------------------
   
   /**
-   * Creates an instance of the {@link ASTReturnType} using the type definition
+   * Creates an instance of the {@link ASTMCReturnType} using the type definition
    * 
-   * @param typeName
-   * @return Optional of the created {@link ASTReturnType} node or
+   * @param typeName the name of the return type
+   * @return Optional of the created {@link ASTMCReturnType} node or
    * Optional.empty() if the type definition couldn't be parsed
    */
   public Optional<ASTMCReturnType> createReturnType(String typeName) {
@@ -529,10 +529,10 @@ public class ASTCDTransformation {
   }
   
   /**
-   * Creates an instance of the {@link ASTType} using the type definition
+   * Creates an instance of the {@link ASTMCType} using the type definition
    * 
-   * @param typeName
-   * @return Optional of the created {@link ASTType} node or Optional.empty()
+   * @param typeName the name of the type
+   * @return Optional of the created {@link ASTMCType} node or Optional.empty()
    * if the type definition couldn't be parsed
    */
   public Optional<ASTMCType> createType(String typeName) {
@@ -556,7 +556,7 @@ public class ASTCDTransformation {
    * Creates an instance of the {@link ASTModifier} using the modifier
    * definition
    * 
-   * @param modifier
+   * @param modifier the string definition of the modifier
    * @return Optional of the created {@link ASTModifier} node or
    * Optional.empty() if the type definition couldn't be parsed
    */

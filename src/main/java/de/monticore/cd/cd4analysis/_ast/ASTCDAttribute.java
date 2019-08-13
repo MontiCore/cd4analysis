@@ -19,52 +19,46 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.types.BasicGenericsTypesPrinter;
-import de.monticore.types.BasicTypesPrinter;
-import de.monticore.types.TypesPrinter;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.Optional;
 
-import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
+import static de.monticore.cd.prettyprint.CD4CodePrinter.EMPTY_STRING;
 
 public class ASTCDAttribute extends ASTCDAttributeTOP
     implements ASTCD4AnalysisNode {
-  
+
   protected ASTCDAttribute() {
   }
-  
+
   protected ASTCDAttribute(
       Optional<ASTModifier> modifier,
       ASTMCType type,
-      String name,
-      Optional<ASTValue> value) {
-    super(modifier, type, name, value);
+      Optional<ASTValue> value,
+      String name) {
+    super(modifier, type, value, name);
   }
-  
+
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final
-   * 
-   * @return a string, e.g. abstract private final 
+   *
+   * @return a string, e.g. abstract private final
    */
   public String printModifier() {
     if (!isPresentModifier()) {
       return EMPTY_STRING;
     }
-    
+
     StringBuilder modifierStr = new StringBuilder();
     if (modifier.get().isAbstract()) {
       modifierStr.append(" abstract ");
     }
     if (modifier.get().isPublic()) {
       modifierStr.append(" public ");
-    }
-    else if (modifier.get().isPrivate()) {
+    } else if (modifier.get().isPrivate()) {
       modifierStr.append(" private ");
-    }
-    else if (modifier.get().isProtected()) {
+    } else if (modifier.get().isProtected()) {
       modifierStr.append(" protected ");
     }
     if (modifier.get().isFinal()) {
@@ -73,37 +67,37 @@ public class ASTCDAttribute extends ASTCDAttributeTOP
     if (modifier.get().isStatic()) {
       modifierStr.append(" static ");
     }
-    
+
     return modifierStr.toString();
   }
-  
+
   /**
    * Prints a value of an attribute
-   * 
+   *
    * @return a string representing the ASTValue
    */
   public String printValue() {
     if (!isPresentValue()) {
       return EMPTY_STRING;
     }
-    
-    return (new AstPrinter().printValue(value));
+
+    return (new CD4CodePrinter().printValue(value));
   }
-  
+
   /**
    * Prints an attribute type
-   * 
+   *
    * @return String representation of the ASTType
    */
   public String printType() {
-    return BasicGenericsTypesPrinter.printType(mCType);
+    return new CD4CodePrinter().printType(mCType);
   }
-  
+
   public String printAnnotation() {
     if (isPresentModifier()) {
       if (getModifier().isPresentStereotype()) {
         StringBuffer sb = new StringBuffer();
-        for (ASTCDStereoValue s: getModifier().getStereotype().values) {
+        for (ASTCDStereoValue s : getModifier().getStereotype().values) {
           sb.append(s.getName());
           sb.append("\n");
         }

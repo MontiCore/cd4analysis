@@ -20,9 +20,9 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.symboltable.CDAssociationSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
-import de.monticore.cd.symboltable.references.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 /**
  * Checks that role names do not conflict with other role names where the source
  * types has other outgoing associations; it only considers the specification mode of associations
- * -> the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
+ * the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
  * @author Michael von Wenckstern
  */
 public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements

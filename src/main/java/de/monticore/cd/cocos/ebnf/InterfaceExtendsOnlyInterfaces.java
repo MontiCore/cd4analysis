@@ -20,7 +20,7 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDInterfaceCoCo;
 import de.se_rwth.commons.logging.Log;
 
@@ -33,8 +33,8 @@ public class InterfaceExtendsOnlyInterfaces implements CD4AnalysisASTCDInterface
   
   @Override
   public void check(ASTCDInterface iface) {
-    CDTypeSymbol symbol = (CDTypeSymbol) iface.getSymbol();
-    for (CDTypeSymbol superType : symbol.getInterfaces()) {
+    CDTypeSymbol symbol = iface.getCDTypeSymbol();
+    for (CDTypeSymbol superType : symbol.getCdInterfaces()) {
       if (!superType.isInterface()) {
         Log.error(String.format(
             "0xC4A09 Interface %s cannot extend %s %s. An interface may only extend interfaces.",

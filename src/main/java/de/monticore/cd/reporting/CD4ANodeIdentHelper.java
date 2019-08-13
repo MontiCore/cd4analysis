@@ -6,21 +6,14 @@
 package de.monticore.cd.reporting;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.ASTCDConstructor;
-import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
-import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
-import de.monticore.cd.cd4analysis._ast.ASTCDMethod;
+import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.generating.templateengine.reporting.commons.Layouter;
-import de.monticore.literals.literals._ast.ASTIntLiteral;
-import de.monticore.types.TypesNodeIdentHelper;
+import de.monticore.literals.mccommonliterals._ast.ASTNatLiteral;
+import de.monticore.types.MCCollectionTypesNodeIdentHelper;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCTypeParameters;
-import de.monticore.cd.cd4analysis._ast.*;
 
 import java.util.List;
 
@@ -30,7 +23,7 @@ import java.util.List;
  * @author (last commit) $Author$
  * @since TODO: add version number
  */
-public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
+public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
 
   public String getIdent(ASTCDDefinition a) {
     String type = Layouter.nodeName(a);
@@ -88,7 +81,7 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     return format(cardinality, Layouter.nodeName(a));
   }
 
-  public String getIdent(ASTCDAttribute a) {
+  public String getIdent(ASTCDField a) {
     return format(a.getName(), Layouter.nodeName(a));
   }
 
@@ -167,11 +160,11 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     else if (a instanceof ASTMCQualifiedName) {
       return getIdent((ASTMCQualifiedName) a);
     }
-    else if (a instanceof ASTCDAttribute) {
-      return getIdent((ASTCDAttribute) a);
+    else if (a instanceof ASTCDField) {
+      return getIdent((ASTCDField) a);
     }
-    else if (a instanceof ASTSimpleReferenceType) {
-      return getIdent((ASTSimpleReferenceType) a);
+    else if (a instanceof ASTMCObjectType) {
+      return getIdent((ASTMCObjectType) a);
     }
     else if (a instanceof ASTCDStereotype) {
       return getIdent((ASTCDStereotype) a);
@@ -197,11 +190,8 @@ public class CD4ANodeIdentHelper extends TypesNodeIdentHelper {
     else if (a instanceof ASTCDEnumConstant) {
       return getIdent((ASTCDEnumConstant) a);
     }
-    else if (a instanceof ASTIntLiteral) {
-      return getIdent((ASTIntLiteral) a);
-    }
-    else if (a instanceof ASTIntLiteral) {
-      return getIdent((ASTIntLiteral) a);
+    else if (a instanceof ASTNatLiteral) {
+      return getIdent((ASTNatLiteral) a);
     }
     else {
       String type = Layouter.className(a);

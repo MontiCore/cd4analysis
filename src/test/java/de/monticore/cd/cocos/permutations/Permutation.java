@@ -22,8 +22,8 @@ package de.monticore.cd.cocos.permutations;
 import com.google.common.collect.Sets;
 import de.monticore.ast.ASTNode;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.umlcd4a.prettyprint.CDPrettyPrinterConcreteVisitor;
+import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
+import de.monticore.cd.prettyprint.CDPrettyPrinter;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -80,7 +80,7 @@ public class Permutation<T extends ASTNode> {
   @Override
   public String toString() {
     IndentPrinter indentPrinter = new IndentPrinter();
-    CDPrettyPrinterConcreteVisitor prettyPrinter = new CDPrettyPrinterConcreteVisitor(indentPrinter);
+    CDPrettyPrinter prettyPrinter = new CDPrettyPrinter(indentPrinter);
     // TODO MB,SO Find better solution
     if (delegate instanceof ASTCD4AnalysisNode) {
       prettyPrinter.visit(delegate);

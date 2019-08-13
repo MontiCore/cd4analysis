@@ -19,9 +19,9 @@
 
 package de.monticore.cd.cocos.permutations;
 
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.umlcd4a.cd4analysis._ast.ASTCardinality;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTCardinality;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;

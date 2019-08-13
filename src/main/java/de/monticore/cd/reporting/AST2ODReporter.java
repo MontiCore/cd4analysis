@@ -67,7 +67,7 @@ public class AST2ODReporter extends AReporter {
   }
 
   /**
-   * @param ast
+   * @param ast the ASTNode used to write the object diagram
    */
   private void writeContent(ASTNode ast) {
     if (ast instanceof ASTCDCompilationUnit || ast instanceof ASTCDDefinition) {

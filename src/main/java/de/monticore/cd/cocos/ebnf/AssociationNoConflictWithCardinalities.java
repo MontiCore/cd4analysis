@@ -20,9 +20,9 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.symboltable.CDAssociationSymbol;
-import de.monticore.cd.symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -38,10 +38,10 @@ public class AssociationNoConflictWithCardinalities implements
 
   @Override
   public void check(ASTCDAssociation a) {
-    Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
-            .resolve(a.getLeftReferenceName().toString(), CDTypeSymbol.KIND);
-    Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
-            .resolve(a.getRightReferenceName().toString(), CDTypeSymbol.KIND);
+    Optional<CDTypeSymbol> leftType = a.getEnclosingScope2()
+            .resolveCDType(a.getLeftReferenceName().toString());
+    Optional<CDTypeSymbol> rightType = a.getEnclosingScope2()
+            .resolveCDType(a.getRightReferenceName().toString());
     boolean err = false;
     // source type might be external (in this case we do nothing)
     if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
@@ -62,7 +62,7 @@ public class AssociationNoConflictWithCardinalities implements
    * @return whether there was a CoCo error or not.
    */
   private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
+    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol2();
 
     String roleName = assocSym.getDerivedName();
 

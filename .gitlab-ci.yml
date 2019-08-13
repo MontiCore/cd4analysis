@@ -28,21 +28,50 @@ cache:
   paths:
   - .m2/
   key: ${CI_COMMIT_REF_SLUG}
+  
+before_script:
+  - chmod +x gradlew
+  - export GRADLE_USER_HOME=`pwd`/.gradle
 
 stages:
   - build
   - test
+  - deploy
 
-install:
+build:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean install -DskipTests"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean compile -U -DskipTests $ARGS1"
   artifacts:
     paths:
     - target/
     expire_in: 1 week
 
+gradle_build:
+  stage: test
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+    key: ${CI_COMMIT_REF_SLUG}-gradle
+  script:
+    - "./gradlew assemble"
+    - "./gradlew check"
+
 test:
   stage: test
+  dependencies:
+    - build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test"
+  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test $ARGS2"
+
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS deploy -DskipTests $ARGS3"
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 week

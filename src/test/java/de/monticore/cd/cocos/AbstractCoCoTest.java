@@ -5,16 +5,15 @@
  */
 package de.monticore.cd.cocos;
 
-import de.monticore.cocos.helper.Assert;
-import de.monticore.io.paths.ModelPath;
-import de.monticore.symboltable.GlobalScope;
-import de.monticore.symboltable.ResolvingConfiguration;
-import de.monticore.symboltable.Scope;
-import de.monticore.cd.CD4AnalysisLanguage;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd.symboltable.CD4AnalysisSymbolTableCreator;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisLanguage;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
+import de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope;
+import de.monticore.cocos.helper.Assert;
+import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.antlr.v4.runtime.RecognitionException;
@@ -38,9 +37,10 @@ public abstract class AbstractCoCoTest {
   
   private CD4AnalysisParser parser = new CD4AnalysisParser();
   
-  private GlobalScope globalScope;
+  private
+  CD4AnalysisGlobalScope globalScope;
   
-  protected Scope cdScope;
+  protected ICD4AnalysisScope cdScope;
   
   /**
    * Constructor for de.monticore.umlcd4a.cocos.AbstractCoCoTest
@@ -100,15 +100,12 @@ public abstract class AbstractCoCoTest {
       if (root.isPresent()) {
         // create Symboltable        
         ModelPath modelPath = new ModelPath(model.toAbsolutePath());
-        ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
-        resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
-        this.globalScope = new GlobalScope(modelPath, cd4AnalysisLang, resolvingConfiguration);
-        Optional<CD4AnalysisSymbolTableCreator> stc = cd4AnalysisLang
-            .getSymbolTableCreator(resolvingConfiguration, globalScope);
-        if (stc.isPresent()) {
-          stc.get().createFromAST(root.get());
-        }
-        cdScope = globalScope.getSubScopes().get(0).getSubScopes().get(0);
+        this.globalScope = new CD4AnalysisGlobalScope(modelPath, cd4AnalysisLang);
+        CD4AnalysisSymbolTableCreatorDelegator stc = cd4AnalysisLang
+                .getSymbolTableCreator(globalScope);
+        stc.createFromAST(root.get());
+
+        cdScope = globalScope.getSubScopes().get(0).getSubScopes().iterator().next();
         return root.get();
       }
     }

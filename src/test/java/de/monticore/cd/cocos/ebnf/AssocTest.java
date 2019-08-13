@@ -1707,30 +1707,7 @@ public class AssocTest extends AbstractCoCoTest {
 
   @Test
   public void testTypedQualifiedAssoc() {
-    // AssocTestGenerator.generateQualifiedAssocTests(true,
-    // "LeftTypedQualifier",
-    // "RightTypedQualifier", new ErrorMessagePrinter() {
-    // @Override
-    // public String print(ASTCDAssociation assoc) {
-    // String msg =
-    // "The type %s of the typed qualified association %s could not be found. Only external datatypes and types defined within the classdiagram may be used.";
-    // String undefinedType = null;
-    // if (assoc.getLeftQualifier().isPresent()) {
-    // undefinedType = assoc.getLeftQualifier().get().getName();
-    // }
-    // else {
-    // if (assoc.getRightQualifier().isPresent()) {
-    // undefinedType = assoc.getRightQualifier().get().getName();
-    // }
-    // }
-    // if (null == undefinedType) {
-    // throw new RuntimeException("At least one of the qualifies must be set.");
-    // }
-    // return "  Finding.error(errorCode + \""
-    // + String.format(msg, undefinedType,
-    // CD4AFinding.printAssociation(assoc)) + "\"),";
-    // }
-    // });
+
     String modelName = "C4A19.cd";
     String errorCode = "0xC4A19";
 

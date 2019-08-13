@@ -19,11 +19,10 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.CDPrettyPrinterConcreteVisitor;
-import de.monticore.cd.symboltable.CDAssociationSymbol;
+import de.monticore.cd.prettyprint.CDPrettyPrinter;
+import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociationTOP;
 
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   @Override
   public String toString() {
     IndentPrinter ip = new IndentPrinter();
-    this.accept(new CDPrettyPrinterConcreteVisitor(ip));
+    this.accept(new CDPrettyPrinter(ip));
     return ip.getContent().replace("\r","").replace("\n", "");
   }
 
@@ -61,7 +60,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
                                boolean rightToLeft,
                                boolean bidirectional,
                                boolean unspecified)  {
-    super(stereotype, Optional.empty(), name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
+    super(stereotype, Optional.empty(), name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__association, r__composition, r__derived, leftToRight, rightToLeft, bidirectional, unspecified);
   }
 
   protected  ASTCDAssociation (Optional<de.monticore.cd.cd4analysis._ast.ASTCDStereotype> stereotype,
@@ -84,7 +83,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
      boolean rightToLeft,
      boolean bidirectional,
      boolean unspecified)  {
-    super(stereotype, readOnly, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__composition, r__association, r__derived, unspecified, bidirectional, rightToLeft, leftToRight);
+    super(stereotype, readOnly, name, leftModifier, leftCardinality, leftReferenceName, leftQualifier, leftRole, rightRole, rightQualifier, rightReferenceName, rightCardinality, rightModifier, r__association, r__composition, r__derived, leftToRight, rightToLeft, bidirectional, unspecified);
   }
 
   public Optional<CDAssociationSymbol> getLeftToRightSymbol() {
@@ -114,5 +113,9 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
     else {
       this.setReadOnly((String)null);
     }
+  }
+
+  public String getName() {
+   return getNameOpt().orElse("");
   }
 }
