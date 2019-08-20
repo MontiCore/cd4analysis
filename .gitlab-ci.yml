@@ -21,7 +21,7 @@
 image: maven:3.5.4-jdk-8-alpine
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2"
+  GRADLE_OPTS: "--no-daemon"
   MAVEN_CLI_OPTS: "--settings settings.xml --batch-mode"
 
 cache:
@@ -41,7 +41,7 @@ stages:
 build:
   stage: build
   script:
-  - "./gradlew assemble --refresh-dependencies $ARGS1"
+  - "./gradlew assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
     - "."
@@ -52,11 +52,11 @@ test:
   dependencies:
     - build
   script:
-  - "./gradlew check $ARGS2"
+  - "./gradlew check $GRADLE_OPT $ARGS2"
 
 deploy:
   stage: deploy
   dependencies:
     - build
   script:
-    - "./gradle publish $ARGS3"
+    - "./gradlew publish $GRADLE_OPT $ARGS3"
