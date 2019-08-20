@@ -21,7 +21,7 @@
 image: maven:3.5.4-jdk-8-alpine
 
 variables:
-  GRADLE_OPTS: "--no-daemon"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   MAVEN_CLI_OPTS: "--settings settings.xml --batch-mode"
 
 cache:
