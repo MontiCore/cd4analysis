@@ -59,4 +59,4 @@ deploy:
   dependencies:
     - build
   script:
-    - "./gradlew publish $GRADLE_OPT $ARGS3"
+    - "./gradlew publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
