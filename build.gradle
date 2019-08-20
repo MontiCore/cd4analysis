@@ -50,7 +50,7 @@ task  generateCD4A (type: MCTask) {
     grammar = file "$projectDir/$grammarDir/de/monticore/cd/CD4Analysis.mc4"
     outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
     handcodedPath file("$projectDir/src/main/java")
-    def uptoDate = incCheck(outputDir.toString() +"/de.monticore.cd.cd4analysis/IncGenGradleCheck.txt")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cd4analysis/IncGenGradleCheck.txt")
     outputs.upToDateWhen { uptoDate }
 }
 
@@ -61,7 +61,7 @@ task  generateCD4C (type: MCTask) {
     outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
     modelPath file("$projectDir/src/main/grammars")
     handcodedPath file("$projectDir/src/main/java")
-    def uptoDate = incCheck(outputDir.toString() +"/de.monticore.cd.cd4analysis/IncGenGradleCheck.txt")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cd4analysis/IncGenGradleCheck.txt")
     outputs.upToDateWhen { uptoDate }
 }
 
@@ -74,13 +74,13 @@ tasks.withType(JavaCompile) {
 // build sources jar in addition
 task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
-    classifier = "sources"
+    archiveClassifier = "sources"
 }
 
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
     from javadoc
-    classifier =  "javadoc"
+    archiveClassifier =  "javadoc"
 }
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
@@ -89,13 +89,13 @@ shadowJar { // all in one jar
     manifest {
         attributes "Main-Class": "de.monticore.umlcd4a.CD4ACLI"
     }
-    classifier =  "cli"
+    archiveClassifier =  "cli"
 }
 
 // build grammar jar as well
 task grammarJar(type: Jar) {
     from ("$projectDir/src/main/grammars/"){ include "**/*.mc4" }
-    classifier = "grammars"
+    archiveClassifier = "grammars"
 }
 
 // configure deployment
