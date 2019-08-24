@@ -1,8 +1,4 @@
-package de.monticore.cd.cd4analysis._symboltable;/*
- * Copyright (c) 2017, MontiCore. All rights reserved.
- *
- * http://www.se-rwth.de/
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.AstPrinter;
