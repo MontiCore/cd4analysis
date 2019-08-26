@@ -1,5 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
+package de.monticore.cd.cd4analysis._symboltable;
+
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.symboltable.IScopeSpanningSymbol;
