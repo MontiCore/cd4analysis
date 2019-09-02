@@ -9,7 +9,6 @@ import de.monticore.types.MCCollectionTypesNodeIdentHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcfullgenerictypes._ast.ASTMCTypeParameters;
 
 import java.util.List;
 
@@ -170,9 +169,6 @@ public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
     }
     else if (a instanceof ASTModifier) {
       return getIdent((ASTModifier) a);
-    }
-    else if (a instanceof ASTMCTypeParameters) {
-      return getIdent((ASTMCTypeParameters) a);
     }
     else if (a instanceof ASTCDClass) {
       return getIdent((ASTCDClass) a);
