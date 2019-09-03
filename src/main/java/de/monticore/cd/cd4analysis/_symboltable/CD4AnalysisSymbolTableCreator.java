@@ -112,7 +112,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       ASTMCObjectType superC = ast.getSuperclass();
       if(!externals.contains((new AstPrinter()).printType(superC))){
         final CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(superC);
-        symbol.setSuperClass(superClassSymbol);
+        symbol.setSuperClass(Optional.of(superClassSymbol));
       }
     }
 

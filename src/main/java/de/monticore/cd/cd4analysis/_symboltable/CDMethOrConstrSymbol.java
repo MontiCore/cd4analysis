@@ -11,16 +11,6 @@ public class CDMethOrConstrSymbol extends CDMethOrConstrSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  public List<CDTypeSymbolReference> getExceptions() {
-    return exceptions;
-  }
-
-  public void setExceptions(List<CDTypeSymbolReference> exceptions) {
-    this.exceptions = exceptions;
-  }
-
-  private List<CDTypeSymbolReference> exceptions = new ArrayList<>();
-
   private CDTypeSymbol definingType;
 
   public CDMethOrConstrSymbol(String name) {

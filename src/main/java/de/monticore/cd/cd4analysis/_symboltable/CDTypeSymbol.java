@@ -19,12 +19,6 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   private final List<CDAssociationSymbol> specAssociations = new ArrayList<>();
 
-
-
-  private Optional<CDTypeSymbolReference> superClass = Optional.empty();
-
-  private java.util.List<CDTypeSymbolReference> _cdInterfaces = new ArrayList<>();
-
   private String stringRepresentation = "";
 
   public CDTypeSymbol(final String name) {
@@ -353,18 +347,6 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   }
 
-  public Optional<CDTypeSymbolReference> getSuperClass() {
-    return superClass;
-  }
-
-  public void setSuperClass(CDTypeSymbolReference superClass) {
-    this.superClass = Optional.of(superClass);
-  }
-
-  public java.util.List<CDTypeSymbolReference> getCdInterfaces() {
-    return this._cdInterfaces;
-  }
-
   public java.util.List<CDMethOrConstrSymbol> getMethods() {
     return getSpannedScope().getLocalCDMethOrConstrSymbols();
   }
@@ -376,4 +358,5 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
   public java.util.List<CDAssociationSymbol> getAssociations() {
     return getSpannedScope().getLocalCDAssociationSymbols();
   }
+
 }

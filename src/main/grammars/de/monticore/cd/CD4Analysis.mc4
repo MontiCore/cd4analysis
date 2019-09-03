@@ -279,7 +279,7 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     isAbstract: boolean
     isEllipsis: boolean
     returnType: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference
-    // TODO Fehler im Builder: exceptions: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
+    exceptions: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference*
   ;
 
   symbolrule CDType =
@@ -291,8 +291,8 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     isProtected: boolean
     isPublic: boolean
     isFinal: boolean
-    // TODO Fehler im Builder: cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=*
-    // TODO Fehler im Builder: superClass: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference min=0 max=1
+    cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference*
+    superClass: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference?
   ;
 
 }
