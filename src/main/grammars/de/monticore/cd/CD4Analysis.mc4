@@ -48,20 +48,20 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     @attribute cDMethods      List of Methods of this Class
     @attribute cDAttributes   List of Attributes of this Class
   */
-  symbol (CDType) scope CDClass implements CDType = Modifier?  "class" Name
+  CDClass implements CDType = Modifier?  "class" Name
   ( "extends"  superclass:MCObjectType)?
   ( TImplements interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
-  ( "{" 
+  ( "{"
     ( CDAttribute
     | CDConstructor
     | CDMethod )*
-    "}" 
+    "}"
   | ";" );
 
   // indirect token
   TImplements = { _input.LT(1).getText().equals("implements") }? Name; // implements is often association or role name (e.g., when creating the abstract syntax of CD4A itself or for the abstract syntax of Java)
-  
- 
+
+
   /** ASTCDInterface represents an Interface in a Classdiagram
     @attribute modifier       Optional Modifier of this Interface
     @attribute name           Name of this Interface
@@ -69,15 +69,15 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     @attribute cDMethods      List of Methods of this Interface
     @attribute cDAttributes   List of Attributes of this Interface
   */
-   symbol (CDType) scope CDInterface implements CDType = Modifier? "interface" Name
+  CDInterface implements CDType = Modifier? "interface" Name
     ( "extends" interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
     ( "{"
       ( CDAttribute
       | CDMethod )*
-      "}" 
+      "}"
     | ";" );
-    
-    
+
+
   /** ASTCDEnum represents an Enumeration (enum type) in a Classdiagram
     @attribute modifier        Optional Modifier of this Enum
     @attribute name            Name of this Enum
@@ -87,50 +87,50 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     @attribute cDMethods       List of Methods of this Enum
     @attribute cDAttributes    List of Attributes of this Enum
   */
-   symbol (CDType) scope CDEnum implements CDType = Modifier? "enum" Name
+   CDEnum implements CDType = Modifier? "enum" Name
     ( TImplements interface:(MCObjectType || ",")+ )?
     ( "{"
-        (CDEnumConstant || ",")* ";" 
+        (CDEnumConstant || ",")* ";"
         ( CDConstructor | CDMethod)*
       "}"
     | ";" );
-    
+
   astrule CDEnum = CDAttribute*;
- 
+
   /** ASTCDAttribute represents an Attribute of a Class or Interface
     @attribute modifier Modifier of this Attribute
     @attribute type     Type of this Attribute
     @attribute name     Name of this Attribute
     @attribute value    Value of this Attribute
   */
-  symbol (CDField) CDAttribute implements CDField = Modifier? MCType Name ("=" Value)? ";";
-   
+  CDAttribute implements CDField = Modifier? MCType Name ("=" Value)? ";";
+
   /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
       in a Classdiagram
       @attribute name             Name of this Constant
       @attribute cDEnumParameters List of optional parameters of this Constant
   */
-  symbol (CDField) CDEnumConstant implements CDField = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
-  
- 
+  CDEnumConstant implements CDField = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
+
+
   /** ASTCDEnumParameter represents a Parameter of an Enumeration Constant
     @attribute Value Value of this Parameter
   */
   CDEnumParameter = Value;
-  
+
 
   /** ASTCDConstructor represents a Constructor of a Class or Interface
     @attribute name           Name of this Constructor
     @attribute cDParameters   List of Parameters of this Constructor
     @attribute exceptions     List of Exceptions thrown by this Constructor
   */
-  symbol(CDMethOrConstr) scope CDConstructor implements CDMethOrConstr =
+  CDConstructor implements CDMethOrConstr =
     Modifier
      Name "(" (CDParameter || ",")* ")"
     ("throws" exception:(MCQualifiedName || "," )+)?
     ";";
-        
- 
+
+
   /** ASTCDMethod represents a Method of a Class or Interface
       @attribute modifier       Modifier of this Method
       @attribute returnType     Return-Type of the return value of this Method
@@ -138,20 +138,20 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
       @attribute cDParameters   List of Parameters of this Method
       @attribute exceptions     List of Exceptions thrown by this Method
   */
-  symbol(CDMethOrConstr) scope CDMethod implements CDMethOrConstr =
+  scope CDMethod implements CDMethOrConstr =
     Modifier
     MCReturnType
      Name "(" (CDParameter || ",")* ")"
     ("throws" exception:(MCQualifiedName || ",")+)?
     ";";
-  
- 
+
+
   /** ASTCDParameter represents a Parameter of a Constructor or Method
     @attribute mctype Type of this Parameter
     @attribute ellipsis Optional indicator for a variable Parameter length
     @attribute name Name of this Parameter
   */
-  symbol (CDField) CDParameter implements CDField =
+  CDParameter implements CDField =
   MCType (Ellipsis:["..."])? Name;
         
 
