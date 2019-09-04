@@ -7,8 +7,11 @@ package de.monticore.cd.transformation;
 
 import com.google.common.collect.Lists;
 import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.mcbasics._ast.MCBasicsMill;
 import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.types.mccollectiontypes._ast.MCCollectionTypesMill;
+import de.monticore.types.mcfullgenerictypes._ast.MCFullGenericTypesMill;
+import de.monticore.types.mcsimplegenerictypes._ast.MCSimpleGenericTypesMill;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +29,7 @@ public class ASTCDRawTransformation {
   /**
    * Creates an instance of the {@link ASTCDField} with the given name
    * and type and adds it to the given class
-   * 
+   *
    * @param astClass
    * @param attrName
    * @param attrType
@@ -44,7 +47,7 @@ public class ASTCDRawTransformation {
   
   /**
    * Adds the given attribute to the given class
-   * 
+   *
    * @param astClass
    * @param astAttribute
    */
@@ -58,7 +61,7 @@ public class ASTCDRawTransformation {
   /**
    * Creates an instance of the {@link ASTCDClass} with the given name and
    * adds it to the given CD definition type definitions
-   * 
+   *
    * @param astDef
    * @param className
    * @return created {@link ASTCDClass} node
@@ -73,7 +76,7 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDClass} with the given name,
    * super class and the list of extended interface names and adds it to the
    * given CD definition
-   * 
+   *
    * @param astDef
    * @param className
    * @param superClassName
@@ -98,7 +101,7 @@ public class ASTCDRawTransformation {
   
   /**
    * Adds the given class to the given CD definition
-   * 
+   *
    * @param astDef
    * @param astClass
    */
@@ -111,7 +114,7 @@ public class ASTCDRawTransformation {
   /**
    * Creates an instance of the {@link ASTCDInterface} with the given name
    * and adds it to the given CD definition type definitions
-   * 
+   *
    * @param astDef
    * @param interfaceName
    * @return created {@link ASTCDInterface} node
@@ -126,7 +129,7 @@ public class ASTCDRawTransformation {
   
   /**
    * Adds the given interface to the given CD definition
-   * 
+   *
    * @param astDef
    * @param astInterface
    */
@@ -139,7 +142,7 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDInterface} with the given name
    * and the list of extended interface names and adds it to the given CD
    * definition
-   * 
+   *
    * @param astDef
    * @param interfaceName
    * @param interfaceNames
@@ -166,7 +169,7 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDMethod} with the given name,
    * default return type and the empty parameter list and adds it to the
    * given class
-   * 
+   *
    * @param astType
    * @param methodName
    * @return The created {@link ASTCDMethod} node
@@ -178,7 +181,7 @@ public class ASTCDRawTransformation {
   /**
    * Creates an instance of the {@link ASTCDMethod} with the given name,
    * return type and parameter types and adds it to the given class
-   * 
+   *
    * @param astType
    * @param methodName
    * @param returnType
@@ -188,7 +191,7 @@ public class ASTCDRawTransformation {
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
       String returnType, List<String> paramTypes) {
     ASTMCType astmcType = createType(returnType);
-    ASTMCReturnType astReturnType = MCCollectionTypesMill.mCReturnTypeBuilder().setMCType(astmcType).build();
+    ASTMCReturnType astReturnType = MCBasicTypesMill.mCReturnTypeBuilder().setMCType(astmcType).build();
     List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
     ASTModifier modifier = CD4AnalysisMill.modifierBuilder().setPublic(true).build();
     ASTCDMethod cdMethod = CD4AnalysisMill.cDMethodBuilder()
@@ -205,7 +208,7 @@ public class ASTCDRawTransformation {
    * Creates an instance of the {@link ASTCDMethod} with the given name,
    * and parameter types and default return type (void).
    * Created node is added to the given class
-   * 
+   *
    * @param astType
    * @param methodName
    * @param paramTypes
@@ -214,7 +217,7 @@ public class ASTCDRawTransformation {
   public ASTCDMethod addCdMethod(ASTCDType astType, String methodName,
       List<String> paramTypes) {
     ASTMCVoidType returnType = MCCollectionTypesMill.mCVoidTypeBuilder().build();
-    ASTMCReturnType returnType1= MCCollectionTypesMill.mCReturnTypeBuilder().setMCVoidType(returnType).build();
+    ASTMCReturnType returnType1= MCBasicTypesMill.mCReturnTypeBuilder().setMCVoidType(returnType).build();
     List<ASTCDParameter> cdParameters = createCdMethodParameters(paramTypes);
     ASTModifier modifier = CD4AnalysisMill.modifierBuilder().setPublic(true).build();
     ASTCDMethod cdMethod = CD4AnalysisMill.cDMethodBuilder()
@@ -229,7 +232,7 @@ public class ASTCDRawTransformation {
   
   /**
    * Adds the given method to the given class
-   * 
+   *
    * @param astType
    * @param astMethod
    */
@@ -240,7 +243,7 @@ public class ASTCDRawTransformation {
   /**
    * Creates an instance of the {@link ASTCDParameter} using the list of
    * the type definitions
-   * 
+   *
    * @param paramTypes
    * @return Optional of the created {@link ASTCDParameter} node or
    * Optional.absent() if one of the type definition couldn't be parsed
@@ -261,14 +264,14 @@ public class ASTCDRawTransformation {
   /**
    * Creates an instance of the {@link ASTMCObjectType} for the given
    * type name
-   * 
+   *
    * @param typeName
    * @return created {@link ASTMCObjectType} node
    */
   public ASTMCObjectType createType(String typeName) {
-    return MCCollectionTypesMill.mCQualifiedTypeBuilder()
+    return MCBasicTypesMill.mCQualifiedTypeBuilder()
         .setMCQualifiedName(
-            MCCollectionTypesMill.
+            MCBasicTypesMill.
                 mCQualifiedNameBuilder().setPartList(
                 Arrays.asList(typeName.split("\\.")))
                 .build())

@@ -29,14 +29,14 @@ import java.util.Optional;
 
 /**
  * Checks that classes do only extend other classes.
- * 
+ *
  * @author Robert Heim
  */
 public class ClassExtendsOnlyClasses implements CD4AnalysisASTCDClassCoCo {
   
   @Override
   public void check(ASTCDClass clazz) {
-    CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol2();
+    CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol();
     Optional<CDTypeSymbolReference> optSuperType = symbol.getSuperClass();
     if (optSuperType.isPresent()) {
       CDTypeSymbol superType = optSuperType.get();

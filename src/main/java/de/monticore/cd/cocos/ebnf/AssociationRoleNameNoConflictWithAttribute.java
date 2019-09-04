@@ -44,9 +44,9 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
   @Override
   public void check(ASTCDAssociation a) {
     if (!a.isPresentName()) {
-      Optional<CDTypeSymbol> leftType = a.getEnclosingScope2()
+      Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
           .resolveCDType(a.getLeftReferenceName().toString());
-      Optional<CDTypeSymbol> rightType = a.getEnclosingScope2()
+      Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
           .resolveCDType(a.getRightReferenceName().toString());
       boolean err = false;
       // source type might be external (in this case we do nothing)
@@ -62,14 +62,14 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
   
   /**
    * Does the actual check.
-   * 
+   *
    * @param sourceType source of the assoc under test
    * @param role optional role name of the target type
    * @param assoc association under test
    * @return whether there was a CoCo error or not.
    */
   private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol2();
+    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
     String automaticallyIntroduced = role.isPresent()
         ? ""
         : AUTOMATICALLY_INTRODUCED;

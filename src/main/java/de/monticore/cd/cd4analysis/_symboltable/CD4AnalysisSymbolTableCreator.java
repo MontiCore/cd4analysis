@@ -8,22 +8,20 @@ import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.ScopeSpanningSymbol;
-import de.monticore.symboltable.types.references.ActualTypeArgument;
-import de.monticore.types.mcbasictypes._ast.*;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCPrimitiveTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import static de.monticore.symboltable.modifiers.BasicAccessModifier.*;
-
 
 import java.util.*;
 
-import static java.util.Optional.empty;
+import static de.monticore.symboltable.modifiers.BasicAccessModifier.*;
 
 public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreatorTOP {
 
@@ -86,7 +84,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void endVisit(final ASTCDDefinition astDefinition) {
-    astDefinition.getSymbol2().getAssociations().forEach(this::addAssocToTarget);
+    astDefinition.getSymbol().getAssociations().forEach(this::addAssocToTarget);
     removeCurrentCD4AnalysisScope();
   }
 
@@ -313,7 +311,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void endVisit(final ASTCDEnum astEnum) {
-    final CDTypeSymbol enumSymbol = astEnum.getSymbol2();
+    final CDTypeSymbol enumSymbol = astEnum.getSymbol();
 
     for (CDFieldSymbol constSymbol : enumSymbol.getEnumConstants()) {
       final CDTypeSymbolReference enumReference = new CDTypeSymbolReference(enumSymbol.getName(), enumSymbol.getSpannedScope());

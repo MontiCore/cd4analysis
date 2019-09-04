@@ -39,9 +39,9 @@ public class AssociationNoConflictWithDerivedCardinalities implements
   public void check(ASTCDAssociation a) {
     if (!a.isDerived())
       return; // if it is not derived, than a role name conflict is detected by 0xCD4A33
-    Optional<CDTypeSymbol> leftType = a.getEnclosingScope2()
+    Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
             .resolveCDType(a.getLeftReferenceName().toString());
-    Optional<CDTypeSymbol> rightType = a.getEnclosingScope2()
+    Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
             .resolveCDType(a.getRightReferenceName().toString());
     boolean err = false;
     // source type might be external (in this case we do nothing)
@@ -63,7 +63,7 @@ public class AssociationNoConflictWithDerivedCardinalities implements
    * @return whether there was a CoCo error or not.
    */
   private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol2();
+    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
 
     String roleName = assocSym.getDerivedName();
 

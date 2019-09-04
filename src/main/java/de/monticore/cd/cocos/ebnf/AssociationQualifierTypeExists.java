@@ -41,7 +41,7 @@ public class AssociationQualifierTypeExists
   
   /**
    * Does the actual check.
-   * 
+   *
    * @param qualifier qualifier under test
    * @param node the association under test
    * @return whether there was a coco error or not
@@ -52,7 +52,7 @@ public class AssociationQualifierTypeExists
       ASTMCType type = qualifier.getMCType();
       String typeName = new AstPrinter().printType(type);
       if (!BuiltInTypes.isBuiltInType(typeName)) {
-        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope2()
+        Optional<CDTypeSymbol> typeSym = qualifier.getEnclosingScope()
             .resolveCDType(typeName);
         if (!typeSym.isPresent()) {
           hasError = true;

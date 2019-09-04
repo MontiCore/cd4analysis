@@ -29,10 +29,10 @@ public class AttributeTypeExists
    */
   @Override
   public void check(ASTCDAttribute node) {
-    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol2();
+    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol();
     String typeName = attrSym.getType().getName();
     if (!BuiltInTypes.isBuiltInType(typeName)) {
-      Optional<CDTypeSymbol> subClassSym = node.getEnclosingScope2()
+      Optional<CDTypeSymbol> subClassSym = node.getEnclosingScope()
           .resolveCDType(typeName);
       if (!subClassSym.isPresent()) {
         Log.error(String.format("0xC4A14 Type %s of the attribute %s is unknown.",

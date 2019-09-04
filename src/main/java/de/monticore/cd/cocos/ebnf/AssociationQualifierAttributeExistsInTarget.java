@@ -55,7 +55,7 @@ public class AssociationQualifierAttributeExistsInTarget
     boolean hasError = false;
     if (qualifier.isPresentName()) {
       String expectedAttributeName = qualifier.getName();
-      Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope2()
+      Optional<CDTypeSymbol> referencedTypeSymOpt = node.getEnclosingScope()
           .resolveCDType(referencedType.toString());
       if (!referencedTypeSymOpt.isPresent()) {
         Log.error(String.format("0xC4A80 The referenced type %s cannot be resolved.",
