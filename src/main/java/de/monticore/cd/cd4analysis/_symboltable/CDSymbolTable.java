@@ -61,7 +61,7 @@ public class CDSymbolTable {
             .getSymbolTableCreator(globalScope);
     
     this.artifactScope = (CD4AnalysisArtifactScope) stc.createFromAST(ast);
-    this.cdScope = ast.getCDDefinition().getSpannedCD4AnalysisScope();
+    this.cdScope = ast.getCDDefinition().getSpannedScope();
 
     return globalScope;
   }

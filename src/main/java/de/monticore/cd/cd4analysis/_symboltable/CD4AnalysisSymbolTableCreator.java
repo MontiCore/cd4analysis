@@ -427,9 +427,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     ICD4AnalysisScope scope = createScope(false);
     putOnStack(scope);
     if (s != null) {
-      setLinkBetweenSymbolAndNode(s, cdAssoc);
+      addToScopeAndLinkWithNode(s, cdAssoc);
     } else {
-      setLinkBetweenSymbolAndNode(s2, cdAssoc);
+      addToScopeAndLinkWithNode(s2, cdAssoc);
     }
   }
 
