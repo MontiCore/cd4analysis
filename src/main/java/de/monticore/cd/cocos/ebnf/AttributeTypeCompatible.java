@@ -25,7 +25,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   @Override
   public void check(ASTCDAttribute node) {
     if (node.isPresentValue()) {
-      CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol2();
+      CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol();
       String className = symbol.getEnclosingScope().getName().get();
       String typeName = BasicGenericsTypesPrinter.printType(node.getMCType());
       ASTSignedLiteral lit = node.getValue().getSignedLiteral();
@@ -63,7 +63,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     
     /**
      * Constructor for de.monticore.umlcd4a.cocos.ebnf.TypeChecker
-     * 
+     *
      * @param typeUnderCheck the type for that we want to check if a literal is
      * assignable to it.
      */
@@ -78,7 +78,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     /**
      * Checks if the {@link #typeUnderCheck} does fit to any of the given
      * assignableTypes.
-     * 
+     *
      * @param assignableTypes
      */
     private void check(String... assignableTypes) {

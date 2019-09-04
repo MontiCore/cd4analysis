@@ -9,7 +9,7 @@ import de.monticore.cd.cd4analysis._symboltable.*;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter2;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.symboltable.Symbol;
+import de.monticore.symboltable.ISymbol;
 
 import java.util.List;
 
@@ -30,11 +30,7 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter2 {
     super(outputDir, modelName, repository);
   }
   
-  /**
-   * @see SymbolTableReporter#reportAttributes(Symbol,
-   * IndentPrinter)
-   */
-  protected void reportAttributes(Symbol sym, IndentPrinter printer) {
+  protected void reportAttributes(ISymbol sym, IndentPrinter printer) {
    // super.reportAttributes(sym, printer);
     if (sym instanceof CDAssociationSymbol) {
       reportAttributes((CDAssociationSymbol) sym, printer);

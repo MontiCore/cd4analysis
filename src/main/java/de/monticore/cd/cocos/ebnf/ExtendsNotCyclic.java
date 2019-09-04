@@ -33,14 +33,14 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       checkClass(c);
     }
     for (ASTCDInterface i : node.getCDInterfaceList()) {
-      checkInterfacePath((CDTypeSymbol) i.getSymbol2(), new HashSet<>());
+      checkInterfacePath((CDTypeSymbol) i.getSymbol(), new HashSet<>());
     }
   }
   
   /**
    * Recursive method checking that a path in the inheritance (up-side-down)
    * tree does not include any name twice.
-   * 
+   *
    * @param interf the current interface symbol on the inheritance path
    * @param currentPath the current inheritance path to i (not including i).
    * This set will be adjusted for each step, but it is ensured that
@@ -64,11 +64,11 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   
   /**
    * Checks that there are no cycles in the the class hierarchy.
-   * 
+   *
    * @param node class to check.
    */
   private void checkClass(ASTCDClass node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol2();
+    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
     Set<CDTypeSymbol> path = new HashSet<>();
     Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClass();
     while (optSuperSymb.isPresent()) {
@@ -88,7 +88,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   
   /**
    * Issues the coco error.
-   * 
+   *
    * @param type "interface" or "class"
    * @param symbol the symbol that produced the error
    */

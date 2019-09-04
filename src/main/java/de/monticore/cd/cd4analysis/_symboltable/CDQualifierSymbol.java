@@ -6,7 +6,6 @@
 package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.symboltable.CommonSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 /**

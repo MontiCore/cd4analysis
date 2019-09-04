@@ -24,7 +24,6 @@ import de.monticore.cd.cd4analysis._ast.ASTCDClass;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.IScope;
-import de.monticore.symboltable.ResolvingConfiguration;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -48,9 +47,7 @@ import static de.monticore.symboltable.ISymbol.sortSymbolsByPosition;
 public class CDSymbolTable {
   
   private final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
-  
-  private final ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
-  
+
   private ICD4AnalysisScope cdScope;
   
   private CD4AnalysisGlobalScope globalScope;

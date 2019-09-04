@@ -5,10 +5,6 @@
  */
 package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.symboltable.ISymbol;
-import de.monticore.symboltable.ISymbolPredicate;
-import de.monticore.symboltable.Symbol;
-
 import java.util.function.Predicate;
 
 import static com.google.common.base.Strings.nullToEmpty;

@@ -31,8 +31,8 @@ public class AttributeOverriddenTypeMatch
    */
   @Override
   public void check(ASTCDAttribute node) {
-    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol2();
-    CDTypeSymbol subClassSym = (CDTypeSymbol) node.getEnclosingScope2()
+    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol();
+    CDTypeSymbol subClassSym = (CDTypeSymbol) node.getEnclosingScope()
         .getSpanningSymbol().get();
     Collection<CDFieldSymbol> superAttrs = new ArrayList<>();
     subClassSym.getSuperTypes().stream()
