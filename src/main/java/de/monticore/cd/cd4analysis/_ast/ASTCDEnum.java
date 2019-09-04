@@ -19,16 +19,13 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.cd.cd4analysis._ast.ASTCDEnumTOP;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
-import de.monticore.cd.cd4analysis._ast.ASTTImplements;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 
 import java.util.Optional;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDEnum() {
   }

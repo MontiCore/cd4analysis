@@ -5,12 +5,7 @@
  */
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
-import de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope;
-import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
 
 import java.util.List;
 import java.util.Optional;

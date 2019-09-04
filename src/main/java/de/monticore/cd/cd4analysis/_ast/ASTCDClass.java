@@ -19,7 +19,7 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.cd.prettyprint.CDPrettyPrinterDelegator;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
@@ -29,7 +29,7 @@ import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 public class ASTCDClass extends ASTCDClassTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDClass() {
   }
