@@ -19,7 +19,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
   
   @BeforeClass
   public static void setup() {
-    Slf4jLog.init();
+    Log.init();
     Log.enableFailQuick(false);
   }
   
@@ -281,7 +281,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getName());
 
     // A -> B
-    final CDAssociationSymbol ecAssocLeft2Right = (CDAssociationSymbol) cdScope.resolveCDAssociation("ec",
+    final CDAssociationSymbol ecAssocLeft2Right = cdScope.resolveCDAssociation("ec",
         BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
     assertNotNull(ecAssocLeft2Right);
     assertEquals("ec", ecAssocLeft2Right.getName());
@@ -296,7 +296,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, ecAssocLeft2Right.getTargetCardinality().getMax());
     assertFalse(ecAssocLeft2Right.getTargetCardinality().isMultiple());
     // A <- B
-    final CDAssociationSymbol ecAssocRight2Left = (CDAssociationSymbol) cdScope.resolveCDAssociation("ec",
+    final CDAssociationSymbol ecAssocRight2Left = cdScope.resolveCDAssociation("ec",
         BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
     assertNotNull(ecAssocRight2Left);
     assertEquals("ec", ecAssocRight2Left.getName());

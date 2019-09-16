@@ -426,10 +426,14 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     // TODO PN <- RH remove quick fix see #1627 maybe merge symbols?
     ICD4AnalysisScope scope = createScope(false);
     putOnStack(scope);
+    cdAssoc.setSpannedScope(scope);
     if (s != null) {
-      addToScopeAndLinkWithNode(s, cdAssoc);
-    } else {
-      addToScopeAndLinkWithNode(s2, cdAssoc);
+      s.setSpannedScope(scope);
+      setLinkBetweenSymbolAndNode(s, cdAssoc);
+    }
+    else {
+      s2.setSpannedScope(scope);
+      setLinkBetweenSymbolAndNode(s2, cdAssoc);
     }
   }
 
