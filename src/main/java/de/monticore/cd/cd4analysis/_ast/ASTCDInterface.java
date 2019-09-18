@@ -5,16 +5,13 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.cd.cd4analysis._ast.ASTCDInterfaceTOP;
-import de.monticore.cd.cd4analysis._ast.ASTCDStereotype;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 
 import java.util.Optional;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDInterface() {
   }

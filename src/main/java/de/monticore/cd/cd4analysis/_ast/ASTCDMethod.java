@@ -7,9 +7,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 
 import java.util.List;
-import java.util.Optional;
-
-import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
 

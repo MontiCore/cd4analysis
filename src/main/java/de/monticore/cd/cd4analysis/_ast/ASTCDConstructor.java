@@ -2,16 +2,14 @@
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.cd.cd4analysis._ast.ASTCDConstructorTOP;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.List;
 
 public class ASTCDConstructor extends ASTCDConstructorTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDConstructor() {
   }

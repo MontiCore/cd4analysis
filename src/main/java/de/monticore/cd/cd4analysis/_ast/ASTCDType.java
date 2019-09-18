@@ -1,12 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
-import de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope;
-import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.cd.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +24,8 @@ public interface ASTCDType extends ASTCDTypeTOP {
   List<ASTMCObjectType> getInterfaceList();
 
   List<ASTCDMethod> getCDMethodList();
+
+  List<ASTCDAttribute> getCDAttributeList();
 
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final

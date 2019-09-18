@@ -26,7 +26,7 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     @attribute cDEnums        List of Enums of this Classdiagram
     @attribute cDAssociations List of Associations of this Classdiagram
   */
-  symbol scope CDDefinition = "classdiagram" Name "{"
+  symbol scope CDDefinition = Modifier? "classdiagram" Name "{"
   (   CDClass
     | CDInterface
     | CDEnum
