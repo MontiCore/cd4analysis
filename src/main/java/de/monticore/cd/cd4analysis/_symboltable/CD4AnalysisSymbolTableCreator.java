@@ -389,7 +389,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol, ASTCDMethod astMethod) {
 // TODO PN use ASTTypesConverter
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
-            (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO BasicGenericsTypesPrinter
+            (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO CollectionTypesPrinter
     if (astMethod.getMCReturnType().isPresentMCType()) {
       addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
     }

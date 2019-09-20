@@ -102,7 +102,7 @@ public class AstPrinter {
   }
   
   public String printType(ASTMCReturnType type) {
-    return new CDPrettyPrinterDelegator().prettyprint(type); //TODO BasicGenericsTypesPrinter
+    return new CDPrettyPrinterDelegator().prettyprint(type); //TODO CollectionTypesPrinter
   }
   
   /**

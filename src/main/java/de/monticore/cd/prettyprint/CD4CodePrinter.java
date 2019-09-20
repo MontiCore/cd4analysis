@@ -138,7 +138,7 @@ public class CD4CodePrinter {
   }
   
   public String printType(ASTMCReturnType type) {
-    return new CD4CodePrettyPrinterDelegator().prettyprint(type); //TODO BasicGenericsTypesPrinter
+    return new CD4CodePrettyPrinterDelegator().prettyprint(type); //TODO CollectionTypesPrinter
   }
   
   /**

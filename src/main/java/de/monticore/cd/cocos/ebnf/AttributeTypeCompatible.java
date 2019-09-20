@@ -6,8 +6,7 @@ import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.monticore.literals.mccommonliterals._visitor.MCCommonLiteralsVisitor;
-import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
-import de.monticore.types.BasicGenericsTypesPrinter;
+import de.monticore.types.CollectionTypesPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -23,7 +22,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
     if (node.isPresentValue()) {
       CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol();
       String className = symbol.getEnclosingScope().getName().get();
-      String typeName = BasicGenericsTypesPrinter.printType(node.getMCType());
+      String typeName = CollectionTypesPrinter.printType(node.getMCType());
       ASTSignedLiteral lit = node.getValue().getSignedLiteral();
       
       // see TypeChecker javadoc for more information
@@ -41,7 +40,7 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   }
   
   /**
-   * This visitor checks for an {@link de.monticore.mcliteralsbasis._ast.ASTLiteral} if it is assignable to a
+   * This visitor checks for an {@link de.monticore.literals.mcliteralsbasis._ast.ASTLiteral} if it is assignable to a
    * given type (see constructor). We use a visitor to avoid if (lit instanceof
    * ASTIntLiteral) ...<br/>
    * We use the inheritance visitor because we then don't need to differentiate
