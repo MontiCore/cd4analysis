@@ -138,7 +138,7 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
       @attribute cDParameters   List of Parameters of this Method
       @attribute exceptions     List of Exceptions thrown by this Method
   */
-  scope CDMethod implements CDMethOrConstr =
+  CDMethod implements CDMethOrConstr =
     Modifier
     MCReturnType
      Name "(" (CDParameter || ",")* ")"
@@ -195,6 +195,7 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticor
     ([Derived:"/"])?  Name?
     leftModifier:Modifier?
     leftCardinality:Cardinality?
+
     leftReferenceName:MCQualifiedName
     leftQualifier:CDQualifier?
     ("(" leftRole:Name ")")?
