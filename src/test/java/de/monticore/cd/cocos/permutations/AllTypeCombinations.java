@@ -4,7 +4,6 @@ package de.monticore.cd.cocos.permutations;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.Arrays;
@@ -30,7 +29,8 @@ public class AllTypeCombinations implements
     // A = class, B = class, E = enum, I = interface
     for (String leftType : Arrays.asList("A", "B", "E", "I")) {
       Permutation<ASTCDAssociation> copy = assocPermutation.copy();
-      ASTMCQualifiedName leftReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList(leftType));
+      ASTMCQualifiedName leftReferenceName =
+              CD4AnalysisMill.mCQualifiedNameBuilder().setPartList(Arrays.asList(leftType)).build();
       copy.delegate().setLeftReferenceName(leftReferenceName);
       leftTypedAssocs.add(copy);
     }
@@ -43,7 +43,8 @@ public class AllTypeCombinations implements
     // A = class, B = class, E = enum, I = interface
     for (String leftType : Arrays.asList("A", "B", "E", "I")) {
       Permutation<ASTCDAssociation> copy = assocPermutation.copy();
-      ASTMCQualifiedName rightReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList(leftType));
+      ASTMCQualifiedName rightReferenceName =
+              CD4AnalysisMill.mCQualifiedNameBuilder().setPartList(Arrays.asList(leftType)).build();
       copy.delegate().setRightReferenceName(rightReferenceName);
       rightTypedAssocs.add(copy);
     }

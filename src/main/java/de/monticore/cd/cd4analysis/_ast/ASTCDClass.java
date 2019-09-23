@@ -17,20 +17,6 @@ public class ASTCDClass extends ASTCDClassTOP {
   protected ASTCDClass() {
   }
 
-  protected ASTCDClass(
-      Optional<ASTModifier> modifier,
-      Optional<ASTMCObjectType> superclass,
-      Optional<ASTTImplements> r__implements,
-      java.util.List<ASTMCObjectType> interfaces,
-      Optional<ASTCDStereotype> stereotype,
-      java.util.List<ASTCDAttribute> cDAttributes,
-      java.util.List<ASTCDConstructor> cDConstructors,
-      java.util.List<ASTCDMethod> cDMethods,
-      String name) {
-    super(modifier, superclass, r__implements, interfaces, stereotype, cDAttributes,
-        cDConstructors, cDMethods, name);
-  }
-
   /**
    * Prints the superclass
    *

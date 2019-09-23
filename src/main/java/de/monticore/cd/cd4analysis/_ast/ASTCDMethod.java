@@ -15,10 +15,6 @@ public class ASTCDMethod extends ASTCDMethodTOP {
   protected ASTCDMethod() {
   }
 
-  public ASTCDMethod(ASTModifier modifier, ASTMCReturnType mCReturnType, List<ASTCDParameter> cDParameters, List<ASTMCQualifiedName> exceptions, String name) {
-    super(modifier, mCReturnType, cDParameters, exceptions, name);
-  }
-
   /**
    * Prints a return type
    *

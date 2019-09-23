@@ -13,19 +13,6 @@ public class ASTCDEnum extends ASTCDEnumTOP {
   protected ASTCDEnum() {
   }
 
-  protected ASTCDEnum(
-      java.util.List<ASTCDAttribute> cDAttributes,
-      Optional<ASTModifier> modifier,
-      Optional<ASTTImplements> r__implements,
-      java.util.List<de.monticore.types.mcbasictypes._ast.ASTMCObjectType> interfaces,
-      java.util.List<de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant> cDEnumConstants,
-      java.util.List<ASTCDConstructor> cDConstructors,
-      java.util.List<ASTCDMethod> cDMethods,
-      String name) {
-    super(cDAttributes, modifier, r__implements, interfaces, cDEnumConstants, cDConstructors,
-        cDMethods, name);
-  }
-
   public String printModifier() {
     return super.printModifier();
   }
