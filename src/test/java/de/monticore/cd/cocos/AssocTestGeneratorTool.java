@@ -3,6 +3,7 @@ package de.monticore.cd.cocos;
 
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.MCBasicTypesNodeFactory;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.CDPrettyPrinter;
@@ -376,10 +377,8 @@ public class AssocTestGeneratorTool {
         
         if ((valid && !invalidCase) || (!valid && invalidCase)) {
           ASTCDAssociation clone = assoc.deepClone();
-          ASTMCQualifiedName leftReferenceName = MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays
-              .asList(tLeft));
-          ASTMCQualifiedName rightReferenceName = MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays
-              .asList(tRight));
+          ASTMCQualifiedName leftReferenceName = MCBasicTypesMill.mCQualifiedNameBuilder().setPart(0,tLeft).build();
+          ASTMCQualifiedName rightReferenceName = MCBasicTypesMill.mCQualifiedNameBuilder().setPart(0,tRight).build();
           clone.setLeftReferenceName(leftReferenceName);
           clone.setRightReferenceName(rightReferenceName);
           re.add(clone);
@@ -464,7 +463,7 @@ public class AssocTestGeneratorTool {
   /**
    * clones the assoc and capitalizes all role names to make them invalid.
    * 
-   * @param assoc the assoc
+   * @param a the assoc
    * @return the new assoc with uppercase role names
    */
   public static ASTCDAssociation capitalizeRoles(ASTCDAssociation a) {

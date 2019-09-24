@@ -1,10 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cocos;
 
-import de.monticore.types.mcbasictypes._ast.MCBasicTypesNodeFactory;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
-import de.monticore.cd.cocos.CD4ACoCoHelper;
+import de.monticore.types.mcbasictypes._ast.MCBasicTypesMill;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -21,10 +20,10 @@ public class CD4ACoCoHelperTest {
   public void testAssocDirections() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
     assoc.setName("expectedName");
-    assoc.setLeftReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("left",
-        "TypeName")));
-    assoc.setRightReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("right",
-        "TypeName")));
+    assoc.setLeftReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("left",
+        "TypeName")).build());
+    assoc.setRightReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("right",
+            "TypeName")).build());
 
     assoc.setLeftToRight(true);
     assertEquals("expectedName (left.TypeName -> right.TypeName)",
@@ -52,11 +51,11 @@ public class CD4ACoCoHelperTest {
   public void testAssocRoles() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
     assoc.setName("expectedName");
-    assoc.setLeftReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("left",
-        "TypeName")));
+    assoc.setLeftReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("left",
+        "TypeName")).build());
     assoc.setBidirectional(true);
-    assoc.setRightReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("right",
-        "TypeName")));
+    assoc.setRightReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("right",
+            "TypeName")).build());
 
     assoc.setLeftRole("leftRole");
     assertEquals("expectedName (left.TypeName (leftRole) <-> right.TypeName)",
@@ -74,11 +73,11 @@ public class CD4ACoCoHelperTest {
   @Test
   public void testAssocName() {
     ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
-    assoc.setLeftReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("left",
-        "TypeName")));
+    assoc.setLeftReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList((Arrays.asList("left",
+        "TypeName"))).build());
     assoc.setBidirectional(true);
-    assoc.setRightReferenceName(MCBasicTypesNodeFactory.createASTMCQualifiedName(Arrays.asList("right",
-        "TypeName")));
+    assoc.setRightReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList((Arrays.asList("right",
+            "TypeName"))).build());
 
     assertEquals("(left.TypeName <-> right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
