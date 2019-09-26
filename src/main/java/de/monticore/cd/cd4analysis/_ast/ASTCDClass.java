@@ -1,25 +1,8 @@
-/*
- * ******************************************************************************
- * MontiCore Language Workbench, www.monticore.de
- * Copyright (c) 2017, MontiCore, All rights reserved.
- *
- * This project is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this project. If not, see <http://www.gnu.org/licenses/>.
- * ******************************************************************************
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.cd.prettyprint.CDPrettyPrinterDelegator;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
@@ -29,23 +12,9 @@ import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
 public class ASTCDClass extends ASTCDClassTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDClass() {
-  }
-
-  protected ASTCDClass(
-      Optional<ASTModifier> modifier,
-      Optional<ASTMCObjectType> superclass,
-      Optional<ASTTImplements> r__implements,
-      java.util.List<ASTMCObjectType> interfaces,
-      Optional<ASTCDStereotype> stereotype,
-      java.util.List<ASTCDAttribute> cDAttributes,
-      java.util.List<ASTCDConstructor> cDConstructors,
-      java.util.List<ASTCDMethod> cDMethods,
-      String name) {
-    super(modifier, superclass, r__implements, interfaces, stereotype, cDAttributes,
-        cDConstructors, cDMethods, name);
   }
 
   /**

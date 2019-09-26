@@ -1,21 +1,4 @@
-/*
- * ******************************************************************************
- * MontiCore Language Workbench, www.monticore.de
- * Copyright (c) 2017, MontiCore, All rights reserved.
- *
- * This project is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this project. If not, see <http://www.gnu.org/licenses/>.
- * ******************************************************************************
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 package de.monticore.cd.cd4analysis._symboltable;
 
@@ -36,7 +19,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
   
   @BeforeClass
   public static void setup() {
-    Slf4jLog.init();
+    Log.init();
     Log.enableFailQuick(false);
   }
   
@@ -298,7 +281,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getName());
 
     // A -> B
-    final CDAssociationSymbol ecAssocLeft2Right = (CDAssociationSymbol) cdScope.resolveCDAssociation("ec",
+    final CDAssociationSymbol ecAssocLeft2Right = cdScope.resolveCDAssociation("ec",
         BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
     assertNotNull(ecAssocLeft2Right);
     assertEquals("ec", ecAssocLeft2Right.getName());
@@ -313,7 +296,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(1, ecAssocLeft2Right.getTargetCardinality().getMax());
     assertFalse(ecAssocLeft2Right.getTargetCardinality().isMultiple());
     // A <- B
-    final CDAssociationSymbol ecAssocRight2Left = (CDAssociationSymbol) cdScope.resolveCDAssociation("ec",
+    final CDAssociationSymbol ecAssocRight2Left = cdScope.resolveCDAssociation("ec",
         BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
     assertNotNull(ecAssocRight2Left);
     assertEquals("ec", ecAssocRight2Left.getName());

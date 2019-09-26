@@ -1,32 +1,14 @@
-#
-# ******************************************************************************
-#  MontiCAR Modeling Family, www.se-rwth.de
-#  Copyright (c) 2017, Software Engineering Group at RWTH Aachen,
-#  All rights reserved.
-#
-#  This project is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 3.0 of the License, or (at your option) any later version.
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-#  Lesser General Public License for more details.
-#
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this project. If not, see <http://www.gnu.org/licenses/>.
-# *******************************************************************************
-#
+# (c) https://github.com/MontiCore/monticore  
 
 image: maven:3.5.4-jdk-8-alpine
 
 variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   MAVEN_CLI_OPTS: "--settings settings.xml --batch-mode"
 
 cache:
   paths:
-  - .m2/
+    - .gradle/wrapper
   key: ${CI_COMMIT_REF_SLUG}
   
 before_script:
@@ -41,37 +23,22 @@ stages:
 build:
   stage: build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS clean compile -U -DskipTests $ARGS1"
+  - "./gradlew assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
-    - target/
+    - "."
     expire_in: 1 week
-
-gradle_build:
-  stage: test
-  cache:
-    paths:
-      - .gradle/wrapper
-      - .gradle/caches
-    key: ${CI_COMMIT_REF_SLUG}-gradle
-  script:
-    - "./gradlew assemble"
-    - "./gradlew check"
 
 test:
   stage: test
   dependencies:
     - build
   script:
-  - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS test $ARGS2"
+  - "./gradlew check $GRADLE_OPT $ARGS2"
 
 deploy:
   stage: deploy
   dependencies:
     - build
   script:
-    - "mvn $MAVEN_CLI_OPTS $MAVEN_OPTS deploy -DskipTests $ARGS3"
-  artifacts:
-    paths:
-      - target/
-    expire_in: 1 week
+    - "./gradlew publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"

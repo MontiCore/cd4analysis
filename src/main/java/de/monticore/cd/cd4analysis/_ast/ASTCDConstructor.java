@@ -1,40 +1,17 @@
-/*
- * ******************************************************************************
- * MontiCore Language Workbench, www.monticore.de
- * Copyright (c) 2017, MontiCore, All rights reserved.
- *
- * This project is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this project. If not, see <http://www.gnu.org/licenses/>.
- * ******************************************************************************
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.cd.prettyprint.AstPrinter;
-import de.monticore.cd.cd4analysis._ast.ASTCDConstructorTOP;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
+import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.List;
 
 public class ASTCDConstructor extends ASTCDConstructorTOP {
 
-  private AstPrinter printer = new AstPrinter();
+  private CD4CodePrinter printer = new CD4CodePrinter();
 
   protected ASTCDConstructor() {
-  }
-
-  public ASTCDConstructor(ASTModifier modifier, List<ASTCDParameter> cDParameters, List<ASTMCQualifiedName> exceptions, String name) {
-    super(modifier, cDParameters, exceptions, name);
   }
 
   /**

@@ -1,27 +1,10 @@
-/*
- * ******************************************************************************
- * MontiCore Language Workbench, www.monticore.de
- * Copyright (c) 2017, MontiCore, All rights reserved.
- *
- * This project is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this project. If not, see <http://www.gnu.org/licenses/>.
- * ******************************************************************************
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.utils.ASTNodes;
 import org.junit.Ignore;
@@ -54,13 +37,12 @@ public class TestGenerate {
   }
   
   private Permutation<ASTCDAssociation> createDefaultAssociation() {
-    ASTCDAssociation cdAssociation = CD4AnalysisNodeFactory.createASTCDAssociation();
-    ASTMCQualifiedName leftReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList("LeftType"));
-    cdAssociation.setLeftReferenceName(leftReferenceName);
-    ASTMCQualifiedName rightReferenceName = CD4AnalysisNodeFactory.createASTMCQualifiedName(Arrays.asList("RightType"));
-    cdAssociation.setRightReferenceName(rightReferenceName);
-    cdAssociation.setUnspecified(true);
-    
+    ASTMCQualifiedName leftReferenceName = CD4AnalysisMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("LeftType")).build();
+    ASTMCQualifiedName rightReferenceName = CD4AnalysisMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("RightType")).build();
+    ASTCDAssociation cdAssociation = CD4AnalysisMill.cDAssociationBuilder().
+            setLeftReferenceName(leftReferenceName).
+            setRightReferenceName(rightReferenceName).
+            setUnspecified(true).build();
     Permutation<ASTCDAssociation> assocPermutation = new Permutation<>(cdAssociation);
     assocPermutation.addIdSetter(this::setReferenceNameId);
     return assocPermutation;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.prettyprint;
 
 import de.monticore.cd.prettyprint.PrintCD2PlantUML;

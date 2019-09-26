@@ -1,21 +1,4 @@
-/*
- * ******************************************************************************
- * MontiCore Language Workbench, www.monticore.de
- * Copyright (c) 2017, MontiCore, All rights reserved.
- *
- * This project is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this project. If not, see <http://www.gnu.org/licenses/>.
- * ******************************************************************************
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 package de.monticore.cd.cd4analysis._symboltable;
 
@@ -35,12 +18,6 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
   private final List<CDAssociationSymbol> specAssociations = new ArrayList<>();
-
-
-
-  private Optional<CDTypeSymbolReference> superClass = Optional.empty();
-
-  private java.util.List<CDTypeSymbolReference> _cdInterfaces = new ArrayList<>();
 
   private String stringRepresentation = "";
 
@@ -370,18 +347,6 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
   }
 
-  public Optional<CDTypeSymbolReference> getSuperClass() {
-    return superClass;
-  }
-
-  public void setSuperClass(CDTypeSymbolReference superClass) {
-    this.superClass = Optional.of(superClass);
-  }
-
-  public java.util.List<CDTypeSymbolReference> getCdInterfaces() {
-    return this._cdInterfaces;
-  }
-
   public java.util.List<CDMethOrConstrSymbol> getMethods() {
     return getSpannedScope().getLocalCDMethOrConstrSymbols();
   }
@@ -393,4 +358,5 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
   public java.util.List<CDAssociationSymbol> getAssociations() {
     return getSpannedScope().getLocalCDAssociationSymbols();
   }
+
 }

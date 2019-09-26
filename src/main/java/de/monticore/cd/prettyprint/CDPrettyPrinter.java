@@ -1,21 +1,4 @@
-/*
- * ******************************************************************************
- * MontiCore Language Workbench, www.monticore.de
- * Copyright (c) 2017, MontiCore, All rights reserved.
- *
- * This project is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3.0 of the License, or (at your option) any later version.
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this project. If not, see <http://www.gnu.org/licenses/>.
- * ******************************************************************************
- */
+/* (c) https://github.com/MontiCore/monticore */
 
 
 package de.monticore.cd.prettyprint;
@@ -36,7 +19,7 @@ import java.util.Iterator;
  * called when a node is traversed, the endVisit methods are called when the whole subtree of a node
  * has been traversed. The ownVisit-Methods stop the automatic traversal order and allow to
  * explictly visit subtrees by calling getVisitor().startVisit(ASTNode)
- * 
+ *
  * @author Martin Schindler
  */
 public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4AnalysisVisitor {
@@ -45,7 +28,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Constructor.
-   * 
+   *
    *
    * @param printer the printer to write to.
    */
@@ -55,7 +38,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints the compilation unit of a class diagram (start of the pretty print)
-   * 
+   *
    * @param unit CD compilation unit
    */
   @Override
@@ -66,7 +49,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
     }
     if (unit.getMCImportStatementList() != null && !unit.getMCImportStatementList().isEmpty()) {
       for (ASTMCImportStatement s : unit.getMCImportStatementList()) {
-        getPrinter().print("import " + Names.getQualifiedName(s.getImportList()));
+        getPrinter().print("import " + Names.getQualifiedName(s.getMCQualifiedName().getPartList()));
         if (s.isStar()) {
           getPrinter().println(".*;");
         }
@@ -81,7 +64,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints the class diagram definition
-   * 
+   *
    * @param a class diagram definition
    */
   @Override
@@ -102,7 +85,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints a class in a class diagram
-   * 
+   *
    * @param a class
    */
   @Override
@@ -144,7 +127,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints an interface in a class diagram
-   * 
+   *
    * @param a interface
    */
   @Override
@@ -177,7 +160,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints an enum in a class diagram
-   * 
+   *
    * @param a enum
    */
   @Override
@@ -218,7 +201,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints an enum constant in a class diagram
-   * 
+   *
    * @param a enum constant
    */
   @Override
@@ -235,7 +218,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints a method of a class in a class diagram
-   * 
+   *
    * @param a method
    */
   @Override
@@ -264,7 +247,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints a constructor of a class in a class diagram
-   * 
+   *
    * @param a constructor
    */
   @Override
@@ -287,7 +270,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints a parameter
-   * 
+   *
    * @param a parameter
    */
   @Override
@@ -299,10 +282,10 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
     getPrinter().print(" ");
     getPrinter().print(a.getName());
   }
-    
+  
   /**
    * Prints an attribute of class or interface in a class diagram
-   * 
+   *
    * @param a attribute
    */
   @Override
@@ -330,7 +313,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
 
   /**
    * Prints a qualifier of an association in a class diagram
-   * 
+   *
    * @param a qualifier
    */
   @Override
@@ -351,7 +334,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints an association, aggregation or composition in a class diagram
-   * 
+   *
    * @param a association, aggregation or composition
    */
   @Override
@@ -471,7 +454,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints the start of stereotypes
-   * 
+   *
    * @param a stereotype
    */
   @Override
@@ -483,7 +466,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints stereotype values
-   * 
+   *
    * @param a stereotype value
    */
   @Override
@@ -496,7 +479,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * Prints cardinalities
-   * 
+   *
    * @param a cardinality
    */
   @Override
@@ -518,7 +501,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
 
   /**
    * Prints a list of ASTQualifiedNames in an ownVisit method
-   * 
+   *
    * @param iter iterator for the list of ASTQualifiedNames
    * @param seperator string for seperating the ASTQualifiedNames
    */
@@ -534,7 +517,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
   
   /**
    * This method prettyprints a given node from class diagram.
-   * 
+   *
    * @param a A node from class diagram.
    * @return String representation.
    */

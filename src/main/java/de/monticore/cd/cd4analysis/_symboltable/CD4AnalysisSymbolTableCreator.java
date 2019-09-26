@@ -1,8 +1,6 @@
-package de.monticore.cd.cd4analysis._symboltable;/*
- * Copyright (c) 2017, MontiCore. All rights reserved.
- *
- * http://www.se-rwth.de/
- */
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd.cd4analysis._symboltable;
 
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.AstPrinter;
@@ -114,7 +112,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       ASTMCObjectType superC = ast.getSuperclass();
       if(!externals.contains((new AstPrinter()).printType(superC))){
         final CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(superC);
-        symbol.setSuperClass(superClassSymbol);
+        symbol.setSuperClass(Optional.of(superClassSymbol));
       }
     }
 
@@ -391,7 +389,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol, ASTCDMethod astMethod) {
 // TODO PN use ASTTypesConverter
     final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
-            (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO BasicGenericsTypesPrinter
+            (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO CollectionTypesPrinter
     if (astMethod.getMCReturnType().isPresentMCType()) {
       addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
     }
@@ -428,9 +426,13 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     // TODO PN <- RH remove quick fix see #1627 maybe merge symbols?
     ICD4AnalysisScope scope = createScope(false);
     putOnStack(scope);
+    cdAssoc.setSpannedScope(scope);
     if (s != null) {
+      s.setSpannedScope(scope);
       setLinkBetweenSymbolAndNode(s, cdAssoc);
-    } else {
+    }
+    else {
+      s2.setSpannedScope(scope);
       setLinkBetweenSymbolAndNode(s2, cdAssoc);
     }
   }

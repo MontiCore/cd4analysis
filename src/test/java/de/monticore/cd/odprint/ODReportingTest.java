@@ -1,8 +1,4 @@
-/*
- * Copyright (c) 2017, MontiCore. All rights reserved.
- *
- * http://www.se-rwth.de/ 
- */
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.odprint;
 
 import de.monticore.ast.ASTNode;
@@ -15,6 +11,8 @@ import de.monticore.cd.reporting.CD4ANodeIdentHelper;
 import de.monticore.cd.reporting.CD4ASymbolTableReporter;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.generating.templateengine.reporting.reporter.SymbolTableReporter2;
+import de.se_rwth.commons.logging.Log;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,6 +28,12 @@ public class ODReportingTest {
   final static String CD_FQN_SocNet = "de.monticore.umlcd4a.prettyprint.SocNet";
       
   final static String CD_FQN_Simple = "de.monticore.umlcd4a.prettyprint.Simple";
+
+  @BeforeClass
+  public static void setup() {
+    Log.init();
+    Log.enableFailQuick(false);
+  }
 
   protected void createSTAndAST(String name) {
     final CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();

@@ -1,73 +1,14 @@
-/*
- * Copyright (c) 2017, MontiCore. All rights reserved.
- *
- * http://www.se-rwth.de/
- */
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cocos;
 
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.cocos.AssocTestGeneratorTool.ErrorMessagePrinter;
-import de.monticore.cd.cocos.CD4ACoCoHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * Tool to generate test cases for associations. Output of
- * {@link #printAssociations(List)} is a list of associations that should be
- * copied into a CD model and output of
- * {@link #printTestCases(List, ErrorMessagePrinter)} is a list of
- * expected-errors that should be copied to a junit-test case.<br>
- * <br>
- * {@link #allDirections(ASTCDAssociation)} should be applied first, because
- * other methods may rely on a set direction. If you do not call {
- * {@link #allTypeCombinations(ASTCDAssociation, boolean)} you should set the
- * left and right reference type of the association before generating the
- * directions.The other functions can be applied to generate specific test
- * cases.<br>
- * Example:<br>
- * 
- * <pre>
- * {@code
- * boolean validModel = false;
- * ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
- * List<ASTCDAssociation> allPossibilities = allDirections(assoc)
- *     .stream()
- *       .flatMap(a -> allTypeCombinations(a, validModel).stream())
- *         //.flatMap(a -> allModifierCombinations(a, validModel).stream())
- *         //.flatMap(a -> allRolePositions(a, validModel).stream())
- *         //.flatMap(a -> allCardinalityCombinations(a).stream())
- *         //.flatMap(a -> allTypedQualifierPositions(a, validModel).stream())
- *     .collect(Collectors.toList());
- *     
- * printAssociations(allPossibilities);
- * output:
- *   assoc0 E -> A ;
- * 
- *   assoc1 E -> B ;
- * 
- *   assoc2 E -> E ;
- * 
- * printTestCases(allPossibilities, new ErrorMessagePrinter() {
- *      {@literal @}Override
- *      public String print(ASTCDAssociation assoc) {
- *        String msg = "Association %s is invalid, because an association's source may not be an Enumeration.";
- *        return "  CoCoFinding.error(errorCode, \""
- *            + String.format(msg, CD4ACoCoHelper.printAssociation(assoc)) + "\"),";
- *      }
- *    });
- * 
- * output:
- *   CoCoFinding.error(errorCode, "Association assoc0 (E -> A) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoFinding.error(errorCode, "Association assoc1 (E -> B) is invalid, because an association's source may not be an Enumeration."),
- *   CoCoFinding.error(errorCode, "Association assoc2 (E -> E) is invalid, because an association's source may not be an Enumeration."),
- *   // ...
- * </pre>
- * 
- * @author Robert Heim
- */
 public class AssocTestGenerator {
   
   /**
@@ -79,7 +20,7 @@ public class AssocTestGenerator {
    */
   public static void generateQualifiedAssocTests(boolean valid, String leftQualifier,
       String rightQualifier, ErrorMessagePrinter errorMsgPrinter) {
-    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    ASTCDAssociation assoc = CD4AnalysisMill.cDAssociationBuilder().build();
     List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool
         .allDirections(assoc)
         .stream()
@@ -103,7 +44,7 @@ public class AssocTestGenerator {
    * 0xCD4AC0017
    */
   public static void generateInvalidRoleNamesTests() {
-    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    ASTCDAssociation assoc = CD4AnalysisMill.cDAssociationBuilder().build();
     List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool
         .allDirections(assoc)
         .stream()
@@ -148,7 +89,7 @@ public class AssocTestGenerator {
    * 0xCD4AC0024
    */
   public static void generateInvalidOrderedAssocs() {
-    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    ASTCDAssociation assoc = CD4AnalysisMill.cDAssociationBuilder().build();
 
     // dirty, but we don't have time: the predicate will set the
     // ordered-stereotype as well
@@ -163,14 +104,14 @@ public class AssocTestGenerator {
 
         List<ASTCDStereoValue> stereoOrdered = new ArrayList<>();
         stereoOrdered.add(CD4AnalysisMill.cDStereoValueBuilder().setName("ordered").build());
-        ASTCDStereotype stereoType = CD4AnalysisNodeFactory.createASTCDStereotype(stereoOrdered);
+        ASTCDStereotype stereoType = CD4AnalysisMill.cDStereotypeBuilder().setValueList(stereoOrdered).build();
 
         boolean rightSideInvalid = false;
         if (assoc.isPresentRightCardinality()) {
           cardinality = assoc.getRightCardinality();
           if (cardinality.isOne() || cardinality.isOptional()) {
             if (!assoc.isPresentRightModifier()) {
-              modifier = CD4AnalysisNodeFactory.createASTModifier();
+              modifier = CD4AnalysisMill.modifierBuilder().build();
               assoc.setRightModifier(modifier);
             }
             modifier = assoc.getRightModifier();
@@ -183,7 +124,7 @@ public class AssocTestGenerator {
           cardinality = assoc.getLeftCardinality();
           if (cardinality.isOne() || cardinality.isOptional()) {
             if (!assoc.isPresentLeftModifier()) {
-              modifier = CD4AnalysisNodeFactory.createASTModifier();
+              modifier = CD4AnalysisMill.modifierBuilder().build();
               assoc.setLeftModifier(modifier);
             }
             modifier = assoc.getLeftModifier();
@@ -237,7 +178,7 @@ public class AssocTestGenerator {
    * 0xCD4AC0021
    */
   public static void generateEnumAsSource() {
-    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    ASTCDAssociation assoc = CD4AnalysisMill.cDAssociationBuilder().build();
     List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool.allDirections(assoc)
         .stream()
         .flatMap(a -> AssocTestGeneratorTool.allTypeCombinations(a, false).stream())
@@ -330,7 +271,7 @@ public class AssocTestGenerator {
         return false;
       }
     };
-    ASTCDAssociation assoc = CD4AnalysisNodeFactory.createASTCDAssociation();
+    ASTCDAssociation assoc = CD4AnalysisMill.cDAssociationBuilder().setComposition(true).build();
     assoc.setComposition(true);
     List<ASTCDAssociation> allPossibilities = AssocTestGeneratorTool.allDirections(assoc)
         .stream()
