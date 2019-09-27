@@ -21,12 +21,12 @@ abstract public class ImplementOnlyInterfaces {
    */
   public void check(String type, ASTCDType node) {
     CDTypeSymbol symbol = node.getSymbol();
-    for (CDTypeSymbol superType : symbol.getCdInterfaces()) {
-      if (!superType.isInterface()) {
+    for (CDTypeSymbol superType : symbol.getCdInterfaceList()) {
+      if (!superType.isIsInterface()) {
         Log.error(String.format(
             "0xC4A10 The %s %s cannot implement %s %s. Only interfaces may be implemented.", type,
             symbol.getName(),
-            superType.isClass()
+            superType.isIsClass()
                 ? "class"
                 : "enum", superType.getName()),
             node.get_SourcePositionStart());

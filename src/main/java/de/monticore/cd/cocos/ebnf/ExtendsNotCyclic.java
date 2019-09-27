@@ -51,7 +51,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
     }
     else {
       currentPath.add(interf);
-      for (CDTypeSymbol superInterf : interf.getCdInterfaces()) {
+      for (CDTypeSymbol superInterf : interf.getCdInterfaceList()) {
         checkInterfacePath(superInterf, currentPath);
       }
       currentPath.remove(interf);
@@ -66,7 +66,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   private void checkClass(ASTCDClass node) {
     CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
     Set<CDTypeSymbol> path = new HashSet<>();
-    Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClass();
+    Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClassOpt();
     while (optSuperSymb.isPresent()) {
       CDTypeSymbol superSymb = optSuperSymb.get();
       Optional<CDTypeSymbol> existingClassWithSameName = path.stream()
@@ -77,7 +77,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       }
       else {
         path.add(superSymb);
-        optSuperSymb = superSymb.getSuperClass();
+        optSuperSymb = superSymb.getSuperClassOpt();
       }
     }
   }

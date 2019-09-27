@@ -53,10 +53,10 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
             filter(ass -> !ass.getAstNode().equals(assSymbol.getAstNode()) && ass.getDerivedName().equals(name)).findAny();
 
     if (error.isPresent()) {
-      ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode().get();
+      ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode();
       Log.error(
               String.format("0xC4A26 Association namespace clash `%s::%s` of associations `%s` and `%s`.",
-                      type.getName(), a.getName(), a, error.get().getAstNode().isPresent() ? error.get().getAstNode().get() : error.get()),
+                      type.getName(), a.getName(), a, error.get().isPresentAstNode() ? error.get().getAstNode() : error.get()),
               a.get_SourcePositionStart());
     }
 

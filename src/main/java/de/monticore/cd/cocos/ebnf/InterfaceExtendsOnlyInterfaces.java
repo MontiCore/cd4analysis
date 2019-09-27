@@ -17,12 +17,12 @@ public class InterfaceExtendsOnlyInterfaces implements CD4AnalysisASTCDInterface
   @Override
   public void check(ASTCDInterface iface) {
     CDTypeSymbol symbol = iface.getCDTypeSymbol();
-    for (CDTypeSymbol superType : symbol.getCdInterfaces()) {
-      if (!superType.isInterface()) {
+    for (CDTypeSymbol superType : symbol.getCdInterfaceList()) {
+      if (!superType.isIsInterface()) {
         Log.error(String.format(
             "0xC4A09 Interface %s cannot extend %s %s. An interface may only extend interfaces.",
             iface.getName(),
-            superType.isClass()
+            superType.isIsClass()
                 ? "class"
                 : "enum", superType.getName()),
             iface.get_SourcePositionStart());

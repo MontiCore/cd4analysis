@@ -56,22 +56,22 @@ public class SocNetSymboltableTest {
     CDTypeSymbol profile = cdSymbol.getType("Profile").orElse(null);
     assertNotNull(profile);
     assertEquals(PACKAGE + "Profile", profile.getFullName());
-    assertTrue(profile.isAbstract());
-    assertFalse(profile.isInterface());
-    assertFalse(profile.getSuperClass().isPresent());
+    assertTrue(profile.isIsAbstract());
+    assertFalse(profile.isIsInterface());
+    assertFalse(profile.isPresentSuperClass());
     assertEquals(3, profile.getFields().size());
 
     CDFieldSymbol profileNameField = profile.getSpannedScope().resolveCDField("profileName").get();
     assertEquals("profileName", profileNameField.getName());
-    assertFalse(profileNameField.isDerived());
+    assertFalse(profileNameField.isIsDerived());
 
     CDFieldSymbol numOfPostsField = profile.getSpannedScope().resolveCDField("numOfPosts").get();
     assertEquals("numOfPosts", numOfPostsField.getName());
-    assertTrue(numOfPostsField.isDerived());
+    assertTrue(numOfPostsField.isIsDerived());
 
     CDFieldSymbol friendsField = profile.getSpannedScope().resolveCDField("friends").get();
     assertEquals("friends", friendsField.getName());
-    assertTrue(friendsField.isDerived());
+    assertTrue(friendsField.isIsDerived());
     return profile;
   }
 
@@ -79,10 +79,10 @@ public class SocNetSymboltableTest {
     CDTypeSymbol person = cdSymbol.getType("Person").orElse(null);
     assertNotNull(person);
     assertEquals(PACKAGE + "Person", person.getFullName());
-    assertTrue(person.getSuperClass().isPresent());
-    assertSame(profile, ((CDTypeSymbolReference) (person.getSuperClass().get()))
+    assertTrue(person.isPresentSuperClass());
+    assertSame(profile, ((CDTypeSymbolReference) (person.getSuperClass()))
         .getReferencedSymbol());
-    assertEquals(profile.getName(), person.getSuperClass().get().getName());
+    assertEquals(profile.getName(), person.getSuperClass().getName());
     assertEquals(7, person.getFields().size());
     assertTrue(person.getSpannedScope().resolveCDField("lastVisit").isPresent());
     assertTrue(person.getSpannedScope().resolveCDField("firstName").isPresent());
@@ -99,16 +99,16 @@ public class SocNetSymboltableTest {
     CDTypeSymbol group = cdSymbol.getType("Group").orElse(null);
     assertNotNull(group);
     assertEquals(PACKAGE + "Group", group.getFullName());
-    assertTrue(group.getSuperClass().isPresent());
-    assertSame(profile, ((CDTypeSymbolReference) (group.getSuperClass().get()))
+    assertTrue(group.isPresentSuperClass());
+    assertSame(profile, ( (group.getSuperClass()))
         .getReferencedSymbol());
-    assertEquals(profile.getName(), group.getSuperClass().get().getName());
+    assertEquals(profile.getName(), group.getSuperClass().getName());
     assertEquals(4, group.getFields().size());
     assertTrue(group.getSpannedScope().resolveCDField("isOpen").isPresent());
     assertTrue(group.getSpannedScope().resolveCDField("created").isPresent());
     assertTrue(group.getSpannedScope().resolveCDField("purpose").isPresent());
     assertTrue(group.getSpannedScope().resolveCDField("members").isPresent());
-    assertTrue(group.getSpannedScope().resolveCDField("members").get().isDerived());
+    assertTrue(group.getSpannedScope().resolveCDField("members").get().isIsDerived());
   }
 
   private void testMemberAssociation() {
@@ -183,7 +183,7 @@ public class SocNetSymboltableTest {
     CDTypeSymbol relationship = cdSymbol.getType("Relationship").orElse(null);
     assertNotNull(relationship);
     assertEquals(PACKAGE + "Relationship", relationship.getFullName());
-    assertFalse(relationship.getSuperClass().isPresent());
+    assertFalse(relationship.isPresentSuperClass());
     assertEquals(3, relationship.getFields().size());
     assertTrue(relationship.getSpannedScope().resolveCDField("isPending").isPresent());
     assertTrue(relationship.getSpannedScope().resolveCDField("requested").isPresent());
@@ -205,13 +205,13 @@ public class SocNetSymboltableTest {
     CDTypeSymbol relationship = cdSymbol.getType("RelationType").orElse(null);
     assertNotNull(relationship);
     assertEquals(PACKAGE + "RelationType", relationship.getFullName());
-    assertFalse(relationship.getSuperClass().isPresent());
-    assertTrue(relationship.isEnum());
+    assertFalse(relationship.isPresentSuperClass());
+    assertTrue(relationship.isIsEnum());
     assertEquals(5, relationship.getFields().size());
     assertEquals(5, relationship.getEnumConstants().size());
     assertTrue(relationship.getSpannedScope().resolveCDField("FRIEND").isPresent());
-    assertTrue(relationship.getSpannedScope().resolveCDField("FRIEND").get().isFinal());
-    assertTrue(relationship.getSpannedScope().resolveCDField("FRIEND").get().isStatic());
+    assertTrue(relationship.getSpannedScope().resolveCDField("FRIEND").get().isIsFinal());
+    assertTrue(relationship.getSpannedScope().resolveCDField("FRIEND").get().isIsStatic());
 
     assertTrue(relationship.getSpannedScope().resolveCDField("FAMILY").isPresent());
     assertTrue(relationship.getSpannedScope().resolveCDField("FOLLOWER").isPresent());
@@ -244,8 +244,8 @@ public class SocNetSymboltableTest {
     CDTypeSymbol post = cdSymbol.getType("Post").orElse(null);
     assertNotNull(post);
     assertEquals(PACKAGE + "Post", post.getFullName());
-    assertTrue(post.isAbstract());
-    assertTrue(post.isInterface());
+    assertTrue(post.isIsAbstract());
+    assertTrue(post.isIsInterface());
   }
 
   private void testReceivedAssociation() {
@@ -268,9 +268,9 @@ public class SocNetSymboltableTest {
     CDTypeSymbol symbol = cdSymbol.getType("InstantMessage").orElse(null);
     assertNotNull(symbol);
     assertEquals(PACKAGE + "InstantMessage", symbol.getFullName());
-    assertFalse(symbol.getSuperClass().isPresent());
-    assertEquals(1, symbol.getCdInterfaces().size());
-    assertEquals(PACKAGE + "Post", symbol.getCdInterfaces().get(0).getFullName());
+    assertFalse(symbol.isPresentSuperClass());
+    assertEquals(1, symbol.getCdInterfaceList().size());
+    assertEquals(PACKAGE + "Post", symbol.getCdInterfaceList().get(0).getFullName());
     assertEquals(2, symbol.getFields().size());
     assertTrue(symbol.getSpannedScope().resolveCDField("timestamp").isPresent());
     assertTrue(symbol.getSpannedScope().resolveCDField("content").isPresent());
@@ -280,8 +280,8 @@ public class SocNetSymboltableTest {
     CDTypeSymbol symbol = cdSymbol.getType("PhotoMessage").orElse(null);
     assertNotNull(symbol);
     assertEquals(PACKAGE + "PhotoMessage", symbol.getFullName());
-    assertTrue(symbol.getSuperClass().isPresent());
-    assertEquals(PACKAGE + "InstantMessage", symbol.getSuperClass().get().getFullName());
+    assertTrue(symbol.isPresentSuperClass());
+    assertEquals(PACKAGE + "InstantMessage", symbol.getSuperClass().getFullName());
     assertEquals(0, symbol.getFields().size());
   }
 
@@ -325,7 +325,7 @@ public class SocNetSymboltableTest {
     CDTypeSymbol photo = cdSymbol.getType("Photo").orElse(null);
     assertNotNull(photo);
     assertEquals(PACKAGE + "Photo", photo.getFullName());
-    assertFalse(photo.getSuperClass().isPresent());
+    assertFalse(photo.isPresentSuperClass());
     assertEquals(2, photo.getFields().size());
     assertTrue(photo.getSpannedScope().resolveCDField("height").isPresent());
     assertTrue(photo.getSpannedScope().resolveCDField("width").isPresent());
@@ -335,7 +335,7 @@ public class SocNetSymboltableTest {
     CDTypeSymbol photo = cdSymbol.getType("Tag").orElse(null);
     assertNotNull(photo);
     assertEquals(PACKAGE + "Tag", photo.getFullName());
-    assertFalse(photo.getSuperClass().isPresent());
+    assertFalse(photo.isPresentSuperClass());
     assertEquals(1, photo.getFields().size());
     assertTrue(photo.getSpannedScope().resolveCDField("confirmed").isPresent());
   }

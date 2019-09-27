@@ -20,14 +20,14 @@ public class ClassExtendsOnlyClasses implements CD4AnalysisASTCDClassCoCo {
   @Override
   public void check(ASTCDClass clazz) {
     CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol();
-    Optional<CDTypeSymbolReference> optSuperType = symbol.getSuperClass();
+    Optional<CDTypeSymbolReference> optSuperType = symbol.getSuperClassOpt();
     if (optSuperType.isPresent()) {
       CDTypeSymbol superType = optSuperType.get();
-      if (!superType.isClass()) {
+      if (!superType.isIsClass()) {
         Log.error(String.format(
             "0xC4A08 Class %s cannot extend %s %s. A class may only extend classes.",
             clazz.getName(),
-            superType.isInterface()
+            superType.isIsInterface()
                 ? "interface"
                 : "enum", superType.getName()),
             clazz.get_SourcePositionStart());

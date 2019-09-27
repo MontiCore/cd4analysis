@@ -67,7 +67,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void endVisit(final ASTCDCompilationUnit compilationUnit) {
-    removeCurrentCD4AnalysisScope();
+    removeCurrentScope();
 
     Log.debug("Finished build of symboltable for CD: "
                     + compilationUnit.getCDDefinition().getName(),
@@ -83,7 +83,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   @Override
   public void endVisit(final ASTCDDefinition astDefinition) {
     astDefinition.getSymbol().getAssociations().forEach(this::addAssocToTarget);
-    removeCurrentCD4AnalysisScope();
+    removeCurrentScope();
   }
 
   // TODO think about external Stereotypes...
@@ -112,7 +112,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       ASTMCObjectType superC = ast.getSuperclass();
       if(!externals.contains((new AstPrinter()).printType(superC))){
         final CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(superC);
-        symbol.setSuperClass(Optional.of(superClassSymbol));
+        symbol.setSuperClass(superClassSymbol);
       }
     }
 
@@ -277,7 +277,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       for (final ASTMCObjectType superInterface : astInterfaces) {
         if (!externals.contains((new AstPrinter()).printType(superInterface))) {
           final CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
-          typeSymbol.getCdInterfaces().add(superInterfaceSymbol);
+          typeSymbol.getCdInterfaceList().add(superInterfaceSymbol);
         }
       }
     }
@@ -315,7 +315,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       final CDTypeSymbolReference enumReference = new CDTypeSymbolReference(enumSymbol.getName(), enumSymbol.getSpannedScope());
       constSymbol.setType(enumReference);
     }
-    removeCurrentCD4AnalysisScope();
+    removeCurrentScope();
   }
 
   @Override
@@ -401,7 +401,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       for (final ASTMCQualifiedName exceptionName : astMethod.getExceptionList()) {
         final CDTypeSymbolReference exception = new CDTypeSymbolReference(exceptionName.toString(),
                 getCurrentScope().get());
-        methodSymbol.getExceptions().add(exception);
+        methodSymbol.getExceptionList().add(exception);
       }
     }
   }
@@ -412,7 +412,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         final CDTypeSymbol definingType = (CDTypeSymbol) currentSymbol().get();
         methodSymbol.setDefiningType(definingType);
 
-        if (definingType.isInterface()) {
+        if (definingType.isIsInterface()) {
           methodSymbol.setIsAbstract(true);
         }
       }
@@ -572,7 +572,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   public final Optional<? extends IScopeSpanningSymbol> currentSymbol() {
-    return currentScope().getSpanningSymbol();
+    return currentScope().getSpanningSymbolOpt();
   }
 
 }

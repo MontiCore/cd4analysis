@@ -50,9 +50,9 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
   }
 
   public boolean isReadOnly() {
-    if (!this.getAstNode().isPresent())
+    if (!this.isPresentAstNode())
       return false;
-    return ((ASTCDAssociation) (this.getAstNode().get())).isReadOnly();
+    return ((ASTCDAssociation) (this.getAstNode())).isReadOnly();
   }
 
   @Override
@@ -214,7 +214,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
       inverseAssoc.setTargetRole(getSourceRole());
       inverseAssoc.setAssocName(getAssocName());
       inverseAssoc.setAccessModifier(getAccessModifier());
-      inverseAssoc.setAstNode(getAstNode().orElse(null));
+      inverseAssoc.setAstNode(getAstNodeOpt().orElse(null));
       inverseAssoc.setEnclosingScope(getEnclosingScope());
       inverseAssoc.setFullName(getFullName());
       getStereotypes().forEach(inverseAssoc::addStereotype);

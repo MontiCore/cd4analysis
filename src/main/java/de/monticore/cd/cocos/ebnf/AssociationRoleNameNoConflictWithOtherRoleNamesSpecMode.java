@@ -62,10 +62,10 @@ public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
             .filter(ass -> ass.getTargetType().getFullName().equals(type.getFullName()) ? ass.getSourceRole().equals(optName) : ass.getTargetRole().equals(optName)).findAny();
 
     if (error.isPresent()) {
-      ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode().get();
+      ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode();
       Log.error(
               String.format("0xC4A39 Role namespace clash `%s::%s` of associations `%s` and `%s`.",
-                      type.getName(), name, a, error.get().getAstNode().isPresent() ? error.get().getAstNode().get() : error.get()),
+                      type.getName(), name, a, error.get().isPresentAstNode() ? error.get().getAstNode() : error.get()),
               a.get_SourcePositionStart());
     }
 

@@ -57,7 +57,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
     
     if (conflictingAttribute.isPresent()) {
       error(assocName, conflictingAttribute.get().getEnclosingScope()
-          .getSpanningSymbol().get().getName(), assoc);
+          .getSpanningSymbol().getName(), assoc);
       return true;
     }
     
@@ -79,7 +79,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
       boolean isReadOnly = false;
       List<String> superTypes = null;
       if (targetType.isPresent()) {
-        isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode().get())).isReadOnly();
+        isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode())).isReadOnly();
         superTypes = targetType.get().getSuperTypes().stream().map(type -> type.getFullName()).collect(Collectors.toList());
       }
       if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {

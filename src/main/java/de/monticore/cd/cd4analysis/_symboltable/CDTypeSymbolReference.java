@@ -69,8 +69,8 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
   }
 
   @Override
-  public Optional<CDTypeSymbolReference> getSuperClass() {
-    return getReferencedSymbol().getSuperClass();
+  public Optional<CDTypeSymbolReference> getSuperClassOpt() {
+    return getReferencedSymbol().getSuperClassOpt();
   }
 
   @Override
@@ -89,8 +89,8 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
   }
 
   @Override
-  public Optional<ASTCDType> getAstNode() {
-    return Optional.ofNullable(this.astNode);
+  public Optional<ASTCDType> getAstNodeOpt() {
+    return this.astNode;
   }
 
   @Override
@@ -120,8 +120,8 @@ public class CDTypeSymbolReference extends CDTypeSymbolReferenceTOP {
   }
 
   @Override
-  public List<CDTypeSymbolReference> getCdInterfaces() {
-    return getReferencedSymbol().getCdInterfaces();
+  public List<CDTypeSymbolReference> getCdInterfaceList() {
+    return getReferencedSymbol().getCdInterfaceList();
   }
 
   private List<CDTypeSymbolReference> actualTypeArguments = new ArrayList<>();

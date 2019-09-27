@@ -86,11 +86,11 @@ public class CDSymbolTable {
   public List<CDFieldSymbol> getVisibleAttributesInHierarchy(String className) {
     Optional<CDTypeSymbol> cdType = resolve(className);
     List<CDFieldSymbol> visibleAttr = cdType.get().getFields().stream().filter(field ->
-        !field.isDerived() && !field.isFinal() && !field.isStatic()).collect(Collectors.toList());
+        !field.isIsDerived() && !field.isIsFinal() && !field.isIsStatic()).collect(Collectors.toList());
 
-    if (cdType.get().getSuperClass().isPresent()) {
+    if (cdType.get().isPresentSuperClass()) {
       visibleAttr.addAll(getVisibleAttributesInHierarchy(cdType.get()
-          .getSuperClass().get().getName()));
+          .getSuperClass().getName()));
     }
 
     return visibleAttr;
@@ -101,15 +101,15 @@ public class CDSymbolTable {
     checkArgument(cdType.isPresent());
 
     return cdType.get().getFields().stream().filter(field ->
-        !field.isDerived() && !field.isFinal() && !field.isStatic()).collect(Collectors.toList());
+        !field.isIsDerived() && !field.isIsFinal() && !field.isIsStatic()).collect(Collectors.toList());
   }
 
   public List<CDFieldSymbol> getDerivedAttributesInHierarchy(CDTypeSymbol symbol) {
     List<CDFieldSymbol> visibleAttr = symbol.getFields().stream().filter(field ->
-        field.isDerived()).collect(Collectors.toList());
+        field.isIsDerived()).collect(Collectors.toList());
 
-    if (symbol.getSuperClass().isPresent()) {
-      visibleAttr.addAll(getDerivedAttributesInHierarchy(symbol.getSuperClass().get()));
+    if (symbol.isPresentSuperClass()) {
+      visibleAttr.addAll(getDerivedAttributesInHierarchy(symbol.getSuperClass()));
     }
 
     return visibleAttr;
@@ -120,12 +120,12 @@ public class CDSymbolTable {
     checkArgument(cdType.isPresent());
 
     List<CDFieldSymbol> visibleAttr = cdType.get().getFields().stream().filter(field ->
-        field.isDerived() && field.isFinal() && field.isStatic() || field.isPrivate())
+        field.isIsDerived() && field.isIsFinal() && field.isIsStatic() || field.isIsPrivate())
         .collect(Collectors.toList());
 
-    if (cdType.get().getSuperClass().isPresent()) {
+    if (cdType.get().isPresentSuperClass()) {
       visibleAttr.addAll(getNonVisibleAttributesInHierarchy(cdType.get()
-          .getSuperClass().get().getName()));
+          .getSuperClass().getName()));
     }
 
     return visibleAttr;
@@ -147,7 +147,7 @@ public class CDSymbolTable {
     Optional<CDTypeSymbol> cdType = resolve(className);
     checkArgument(cdType.isPresent());
     return getAllSuperClasses(className).stream()
-      .map(CDTypeSymbol::getCdInterfaces)
+      .map(CDTypeSymbol::getCdInterfaceList)
       .flatMap(Collection::stream)
       .flatMap(superInterface -> getSuperInterfacesRecursively(superInterface, new ArrayList<>()).stream())
       .collect(Collectors.toList());
@@ -158,8 +158,8 @@ public class CDSymbolTable {
     checkNotNull(symbols);
 
     symbols.add(cdType);
-    if (cdType.getSuperClass().isPresent()) {
-      getSuperClassesRecursively(cdType.getSuperClass().get(), symbols);
+    if (cdType.isPresentSuperClass()) {
+      getSuperClassesRecursively(cdType.getSuperClass(), symbols);
     }
 
     return symbols;
@@ -170,7 +170,7 @@ public class CDSymbolTable {
     checkNotNull(symbols);
 
     symbols.add(cdType);
-    cdType.getCdInterfaces().forEach(i -> getSuperInterfacesRecursively(i, symbols));
+    cdType.getCdInterfaceList().forEach(i -> getSuperInterfacesRecursively(i, symbols));
 
     return symbols;
   }
@@ -204,7 +204,7 @@ public class CDSymbolTable {
     for (CDTypeSymbol sym : concreteSubs) {
       // check if only the first occurrance of a concrete class is wanted
       if (implementingClassOnly) {
-        if (sym.isClass()) {
+        if (sym.isIsClass()) {
           lst.add(sym);
         }
         else {
@@ -252,23 +252,23 @@ public class CDSymbolTable {
   }
 
   public boolean isTypeDefinedInModel(CDTypeSymbol type) {
-    String currentScopeName = this.cdScope.getName().get();
+    String currentScopeName = this.cdScope.getName();
     if (type instanceof CDTypeSymbolReference) {
       CDTypeSymbolReference ca = (CDTypeSymbolReference) type;
       if (ca.existsReferencedSymbol()) {
-        Optional<? extends IScope> parentScope = type.getSpannedScope()
+        IScope parentScope = type.getSpannedScope()
             .getEnclosingScope();
 
-        if (parentScope.isPresent()
-            && currentScopeName.equals(parentScope.get().getName())) {
+        if (parentScope != null
+            && currentScopeName.equals(parentScope.getName())) {
           return true;
         }
       }
     } else {
-      Optional<? extends IScope> parentScope = type.getSpannedScope()
+       IScope parentScope = type.getSpannedScope()
           .getEnclosingScope();
-      if (parentScope.isPresent()
-          && currentScopeName.equals(parentScope.get().getName())) {
+      if (parentScope != null
+          && currentScopeName.equals(parentScope.getName())) {
         return true;
       }
     }
@@ -291,14 +291,14 @@ public class CDSymbolTable {
 
     for (CDTypeSymbol cdType : this.cdScope.getLocalCDTypeSymbols()) {
       // check if the given class is a super class
-      if (cdType.getSuperClass().isPresent()
-          && cdType.getSuperClass().get().getName().equals(name)) {
+      if (cdType.isPresentSuperClass()
+          && cdType.getSuperClass().getName().equals(name)) {
         cdTypes.add(cdType);
       }
 
       // check if the given class is an interface
-      if (!cdType.getCdInterfaces().isEmpty()) {
-        for (CDTypeSymbol a : cdType.getCdInterfaces()) {
+      if (!cdType.getCdInterfaceList().isEmpty()) {
+        for (CDTypeSymbol a : cdType.getCdInterfaceList()) {
           if (a.getName().equals(name)) {
             cdTypes.add(cdType);
           }

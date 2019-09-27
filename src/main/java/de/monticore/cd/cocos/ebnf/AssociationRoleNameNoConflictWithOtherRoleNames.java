@@ -84,7 +84,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
       }
       if (isReadOnly && superTypes.contains(conflicting.getTargetType().getFullName())) {
         Log.info(String.format("Association `%s` overwrites read-only association `%s`",
-                assoc, conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting),
+                assoc, conflicting.isPresentAstNode() ? conflicting.getAstNode() : conflicting),
                 this.getClass().getSimpleName());
       } else if (!checkTargetTypesAreSameAndSourceTypesAreSuperTypes(assocSym, assoc, conflicting)) {
         Log.error(
@@ -98,7 +98,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
                                 conflictingRoleNameAuto,
                                 conflictingRoleName,
                                 CD4ACoCoHelper.printAssociation((ASTCDAssociation) conflicting
-                                        .getAstNode().get())
+                                        .getAstNode())
                         ),
                 assoc.get_SourcePositionStart());
         return true;
@@ -113,26 +113,27 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
       if (assocSym.getSourceType().hasSuperTypeByFullName(conflicting.getSourceType().getFullName())) {
         if (assocSym.isDerived()) {
           Log.info(String.format("Derived association `%s` is inherited from association `%s` (source type `%s` extends/implements source type `%s`)",
-                  assoc, conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting,
+                  assoc, conflicting.isPresentAstNode()? conflicting.getAstNode() : conflicting,
                   assocSym.getSourceType().getName(), conflicting.getSourceType().getName()),
                   this.getClass().getSimpleName());
           return true;
         } else {
           Log.error(String.format("0xC4A33 Association `%s` has same target role name and source type extends source type of association `%s`. So the \"inherited\" association `%s` should be a derived association.",
-                  assoc, conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting, assoc),
+                  assoc, conflicting.isPresentAstNode() ? conflicting.getAstNode() : conflicting, assoc),
                   assoc.get_SourcePositionStart());
           return true;
         }
       } else if (conflicting.getSourceType().hasSuperTypeByFullName(assocSym.getSourceType().getFullName())) {
         if (conflicting.isDerived()) {
           Log.info(String.format("Derived association `%s` is inherited from association `%s` (source type `%s` extends/implements source type `%s`)",
-                  conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting, assoc,
+                  conflicting.isPresentAstNode() ? conflicting.getAstNode() : conflicting, assoc,
                   conflicting.getSourceType().getName(), assocSym.getSourceType().getName()),
                   this.getClass().getSimpleName());
           return true;
         } else {
           Log.error(String.format("0xC4A33 Association `%s` has same target role name and source type extends source type of association `%s`. So the \"inherited\" association `%s` should be a derived association.",
-                  conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting, assoc, conflicting.getAstNode().isPresent() ? conflicting.getAstNode().get() : conflicting),
+                  conflicting.isPresentAstNode() ? conflicting.getAstNode() : conflicting, assoc, conflicting.isPresentAstNode()
+                  ? conflicting.getAstNode(): conflicting),
                   assoc.get_SourcePositionStart());
           return true;
         }

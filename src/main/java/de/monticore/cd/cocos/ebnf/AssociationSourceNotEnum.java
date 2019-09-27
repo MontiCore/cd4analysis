@@ -47,7 +47,7 @@ public class AssociationSourceNotEnum
     boolean hasError = false;
     Optional<CDTypeSymbol> sourceSym = node.getEnclosingScope()
         .resolveCDType(sourceName.toString());
-    if (sourceSym.isPresent() && sourceSym.get().isEnum()) {
+    if (sourceSym.isPresent() && sourceSym.get().isIsEnum()) {
       hasError = true;
       Log.error(
           String

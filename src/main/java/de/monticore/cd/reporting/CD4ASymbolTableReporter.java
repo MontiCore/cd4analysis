@@ -62,10 +62,10 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter2 {
   
   private void reportAttributes(CDFieldSymbol sym, IndentPrinter printer) {
     // reportCommonJFieldAttributes(sym, printer);
-    printer.println("isDerived = " + sym.isDerived() + ";");
+    printer.println("isDerived = " + sym.isIsDerived() + ";");
     printer.println("isEnumConstant = " + sym.isEnumConstant() + ";");
-    printer.println("isInitialized = " + sym.isInitialized() + ";");
-    printer.println("isReadOnly = " + sym.isReadOnly() + ";");
+    printer.println("isInitialized = " + sym.isIsInitialized() + ";");
+    printer.println("isReadOnly = " + sym.isIsReadOnly() + ";");
     reportStereotypes(sym.getStereotypes());
   }
   
