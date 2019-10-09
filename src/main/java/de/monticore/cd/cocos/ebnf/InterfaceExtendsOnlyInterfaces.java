@@ -16,7 +16,7 @@ public class InterfaceExtendsOnlyInterfaces implements CD4AnalysisASTCDInterface
   
   @Override
   public void check(ASTCDInterface iface) {
-    CDTypeSymbol symbol = iface.getCDTypeSymbol();
+    CDTypeSymbol symbol = iface.getSymbol();
     for (CDTypeSymbol superType : symbol.getCdInterfaceList()) {
       if (!superType.isIsInterface()) {
         Log.error(String.format(

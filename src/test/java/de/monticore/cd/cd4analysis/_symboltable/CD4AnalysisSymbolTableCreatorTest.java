@@ -96,7 +96,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // AST
     assertTrue(nameField.isPresentAstNode());
     assertTrue(nameField.getAstNode() instanceof ASTCDField);
-    assertSame(nameField, nameField.getAstNode().getCDFieldSymbol());
+    assertSame(nameField, nameField.getAstNode().getSymbol());
     assertSame(nameField.getEnclosingScope(), nameField.getAstNode().getEnclosingScope());
     final CDFieldSymbol secondNameField = personType.getSpannedScope().resolveCDField("secondName").get();
     assertEquals("secondName", secondNameField.getName());

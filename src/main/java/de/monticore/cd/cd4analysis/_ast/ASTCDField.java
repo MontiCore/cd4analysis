@@ -8,10 +8,10 @@ import java.util.Optional;
 
 public interface ASTCDField extends ASTCDFieldTOP, ASTCD4AnalysisNode {
 
-  void setCDFieldSymbol(CDFieldSymbol symbol);
+  void setSymbol(CDFieldSymbol symbol);
 
-  CDFieldSymbol getCDFieldSymbol ();
+  CDFieldSymbol getSymbol ();
 
-  Optional<CDFieldSymbol> getCDFieldSymbolOpt ();
+  Optional<CDFieldSymbol> getSymbolOpt ();
 
 }
