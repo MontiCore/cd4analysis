@@ -8,6 +8,7 @@ import de.monticore.cd.cd4code._ast.CD4CodeMill;
 import de.monticore.cd.cd4code._parser.CD4CodeParser;
 import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcbasictypes._ast.MCBasicTypesMill;
@@ -28,12 +29,12 @@ public class CDMethodFacade {
 
   private static CDMethodFacade cdMethodFacade;
 
-  private final CDTypeFacade cdTypeFacade;
+  private final MCTypeFacade cdTypeFacade;
 
   private final CD4CodeParser parser;
 
   private CDMethodFacade() {
-    this.cdTypeFacade = CDTypeFacade.getInstance();
+    this.cdTypeFacade = MCTypeFacade.getInstance();
     this.parser = new CD4CodeParser();
   }
 

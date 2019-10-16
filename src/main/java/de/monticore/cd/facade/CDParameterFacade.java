@@ -5,6 +5,7 @@ import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.cd4analysis._ast.ASTCDParameter;
 import de.monticore.cd.cd4code._ast.CD4CodeMill;
 import de.monticore.types.MCCollectionTypesHelper;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.StringTransformations;
 
@@ -56,11 +57,11 @@ public class CDParameterFacade {
   }
 
   public ASTCDParameter createParameter(final Class<?> type, final String name) {
-    return createParameter(CDTypeFacade.getInstance().createQualifiedType(type), name);
+    return createParameter(MCTypeFacade.getInstance().createQualifiedType(type), name);
   }
 
   public ASTCDParameter createParameter(final Class<?> type) {
-    return createParameter(CDTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type.getSimpleName()));
+    return createParameter(MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type.getSimpleName()));
   }
 
   public ASTCDParameter createParameter(final ASTCDAttribute ast) {

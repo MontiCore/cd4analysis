@@ -9,6 +9,7 @@ import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.types.MCCollectionTypesHelper;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.StringTransformations;
 
@@ -72,29 +73,24 @@ public class CDAttributeFacade {
    * delegation methods for a more comfortable usage
    */
 
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final ASTMCType type, final String name,
-                                        final GlobalExtensionManagement glex) {
-    return createAttribute(modifier.build(), type, name, glex);
-  }
-
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type) {
     return createAttribute(modifier, type, StringTransformations.uncapitalize(MCCollectionTypesHelper.printType(type)));
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type, final String name) {
-    return createAttribute(modifier, CDTypeFacade.getInstance().createQualifiedType(type), name);
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), name);
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type) {
-    return createAttribute(modifier, CDTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type));
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type));
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final Class<?> type, final String name) {
-    return createAttribute(modifier, CDTypeFacade.getInstance().createQualifiedType(type), name);
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), name);
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final Class<?> type) {
-    return createAttribute(modifier, CDTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type.getSimpleName()));
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type.getSimpleName()));
   }
 
   public ASTCDAttribute createAttribute(final CDModifier modifier, final ASTMCType type, final String name) {
