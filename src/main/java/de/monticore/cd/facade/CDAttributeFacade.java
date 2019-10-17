@@ -7,7 +7,6 @@ import de.monticore.cd.cd4code._ast.CD4CodeMill;
 import de.monticore.cd.cd4code._parser.CD4CodeParser;
 import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
-import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.types.MCCollectionTypesHelper;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
