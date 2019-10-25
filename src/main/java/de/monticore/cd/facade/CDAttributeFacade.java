@@ -115,17 +115,4 @@ public class CDAttributeFacade {
   public ASTCDAttribute createAttribute(final CDModifier modifier, final Class<?> type) {
     return createAttribute(modifier.build(), type);
   }
-
-  /**
-    * @deprecated use method isList from MCCollectionTypesHelper, when it exists
-   */
-  @Deprecated
-  private boolean isListType(String type) {
-    int index = type.indexOf('<');
-    if (index != -1) {
-      type = type.substring(0, index);
-    }
-    return "List".equals(type) || "java.util.List".equals(type)
-        || "ArrayList".equals(type) || "java.util.ArrayList".equals(type);
-  }
 }

@@ -5,7 +5,7 @@ import de.monticore.cd.cd4analysis._ast.ASTModifier;
 import de.monticore.cd.cd4code._ast.CD4CodeMill;
 
 /**
- * Enum that helps with the simple creation of a modifier
+ * Enum that helps with the simple creation of a ASTModifier
  */
 
 public enum CDModifier {
