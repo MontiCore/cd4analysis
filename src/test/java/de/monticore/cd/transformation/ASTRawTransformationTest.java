@@ -16,80 +16,73 @@ import static org.junit.Assert.*;
  * @author Galina Volkova
  */
 public class ASTRawTransformationTest {
-  
+
   private ASTCDDefinition astDef;
-  
+
   private ASTCDRawTransformation astTransformation;
-  
+
   public ASTRawTransformationTest() {
     astTransformation = new ASTCDRawTransformation();
   }
-  
+
   @Before
   public void init() {
     astDef = CD4AnalysisMill.cDDefinitionBuilder().setName("ASTRawTransformationTest")
         .build();
   }
-  
+
   @Test
   public void testAddCdClass() {
     assertTrue(astDef.getCDClassList().isEmpty());
-    
+
     astTransformation.addCdClass(astDef, "A");
     assertEquals(astDef.getCDClassList().size(), 1);
     assertEquals(astDef.getCDClassList().get(0).getName(), "A");
-    
+
     ASTCDClass cdClass1 = astTransformation.addCdClass(astDef, "B",
         "superC", Lists.newArrayList("i1", "i2"));
     assertNotNull(cdClass1);
     assertEquals(cdClass1.getName(), "B");
-    
+
     assertEquals(astDef.getCDClassList().size(), 2);
     ASTCDClass astClass = astDef.getCDClassList().get(1);
     assertEquals(astClass.getName(), "B");
-    
+
     assertTrue(astClass.isPresentSuperclass());
     assertTrue(astClass.getSuperclass() instanceof ASTMCObjectType);
     ASTMCObjectType superClass = (ASTMCObjectType) astClass
         .getSuperclass();
-    assertEquals(superClass.getNameList(), Lists.newArrayList("superC"));
-    
+    assertEquals(superClass.printType(), "superC");
+
     assertEquals(astClass.getInterfaceList().size(), 2);
     assertTrue(astClass.getInterfaceList().get(0) instanceof ASTMCObjectType);
-    assertEquals(
-        ((ASTMCObjectType) astClass.getInterfaceList().get(0))
-            .getNameList(),
-        Lists.newArrayList("i1"));
+    assertEquals((astClass.getInterfaceList().get(0)).printType(), "i1");
     assertTrue(astClass.getInterfaceList().get(1) instanceof ASTMCObjectType);
-    assertEquals(
-        ((ASTMCObjectType) astClass.getInterfaceList().get(1))
-            .getNameList(),
-        Lists.newArrayList("i2"));
+    assertEquals((astClass.getInterfaceList().get(1)).printType(), "i2");
   }
-  
+
   @Test
   public void testAddCdInterface() {
     assertTrue(astDef.getCDInterfaceList().isEmpty());
-    
+
     astTransformation.addCdInterface(astDef, "I1");
     assertEquals(astDef.getCDInterfaceList().size(), 1);
     assertEquals(astDef.getCDInterfaceList().get(0).getName(), "I1");
-    
+
     astTransformation.addCdInterface(astDef, "I2",
         Lists.newArrayList("SuperI1", "SuperI2"));
     assertEquals(astDef.getCDInterfaceList().size(), 2);
     ASTCDInterface astInterface = astDef.getCDInterfaceList().get(1);
     assertEquals(astInterface.getName(), "I2");
-    
+
     assertEquals(astInterface.getInterfaceList().size(), 2);
     assertTrue(astInterface.getInterfaceList().get(0) instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) astInterface.getInterfaceList()
-        .get(0)).getNameList(), Lists.newArrayList("SuperI1"));
+    assertEquals((astInterface.getInterfaceList()
+        .get(0)).printType(), "SuperI1");
     assertTrue(astInterface.getInterfaceList().get(1) instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) astInterface.getInterfaceList()
-        .get(1)).getNameList(), Lists.newArrayList("SuperI2"));
+    assertEquals((astInterface.getInterfaceList().get(1)).printType(), "SuperI2");
   }
-  
+
   @Test
   public void testAddCdAttribute() {
     ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
@@ -98,8 +91,7 @@ public class ASTRawTransformationTest {
     assertNotNull(attr1);
     assertEquals(attr1.getName(), "a");
     assertTrue(attr1.getMCType() instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) attr1.getMCType()).getNameList(),
-        Lists.newArrayList("String"));
+    assertEquals(((ASTMCObjectType) attr1.getMCType()).printType(), "String");
     assertTrue(!attr1.isPresentModifier());
 
     ASTCDAttribute attr2 = astTransformation.addCdAttribute(astClass, "b",
@@ -107,12 +99,11 @@ public class ASTRawTransformationTest {
     assertNotNull(attr2);
     assertEquals(attr2.getName(), "b");
     assertTrue(attr2.getMCType() instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) attr2.getMCType()).getNameList(),
-        Lists.newArrayList("a", "b", "C"));
+    assertEquals((attr2.getMCType()).printType(), "a.b.C");
     assertTrue(!attr2.isPresentModifier());
-    
+
   }
-  
+
   @Test
   public void testAddCdMethod() {
     ASTCDClass astClass = astTransformation.addCdClass(astDef, "A");
@@ -120,31 +111,26 @@ public class ASTRawTransformationTest {
     assertTrue(method1 != null);
     assertEquals(method1.getName(), "test1");
     assertTrue(method1.getMCReturnType().isPresentMCVoidType());
-    
+
     ASTCDMethod method2 = astTransformation.addCdMethod(astClass, "test2",
         "Integer", Lists.newArrayList("A", "a.b.C", "String"));
     assertNotNull(method2);
     assertEquals(method2.getName(), "test2");
     assertTrue(method2.getMCReturnType().isPresentMCType());
-    assertEquals(
-        ((ASTMCType) method2.getMCReturnType().getMCType()).getNameList(),
-        Lists.newArrayList("Integer"));
+    assertEquals((method2.getMCReturnType().getMCType()).printType(), "Integer");
     assertEquals(method2.getCDParameterList().size(), 3);
     assertEquals(method2.getCDParameterList().get(0).getName(), "param0");
     assertTrue(method2.getCDParameterList().get(0).getMCType() instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) method2.getCDParameterList().get(0)
-        .getMCType()).getNameList(), Lists.newArrayList("A"));
+    assertEquals((method2.getCDParameterList().get(0).getMCType()).printType(), "A");
     assertEquals(method2.getCDParameterList().get(1).getName(), "param1");
     assertTrue(method2.getCDParameterList().get(1).getMCType() instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) method2.getCDParameterList().get(1)
-        .getMCType()).getNameList(), Lists.newArrayList("a", "b", "C"));
+    assertEquals((method2.getCDParameterList().get(1).getMCType()).printType(),"a.b.C");
     assertEquals(method2.getCDParameterList().get(2).getName(), "param2");
     assertTrue(method2.getCDParameterList().get(2).getMCType() instanceof ASTMCObjectType);
-    ASTMCObjectType param2Type = (ASTMCObjectType) method2
-        .getCDParameterList().get(2).getMCType();
-    assertEquals(param2Type.getNameList(), Lists.newArrayList("String"));
-    assertTrue(method2.getModifier() != null);
+    ASTMCObjectType param2Type = (ASTMCObjectType) method2.getCDParameterList().get(2).getMCType();
+    assertEquals(param2Type.printType(), "String");
+    assertNotNull(method2.getModifier());
     assertTrue(method2.getModifier().isPublic());
   }
-  
+
 }
