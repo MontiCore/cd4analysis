@@ -208,7 +208,7 @@ public class ASTTransformationTest {
     assertEquals((method2.get().getCDParameterList().get(1).getMCType()).printType(), "a.b.C");
     assertEquals(method2.get().getCDParameterList().get(2).getName(), "param2");
     assertTrue(method2.get().getCDParameterList().get(2).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.get().getCDParameterList().get(2).getMCType()).printBaseType(), "List");
+    assertEquals((method2.get().getCDParameterList().get(2).getMCType()).printType(), "List<String>");
 
     Optional<ASTCDMethod> method3 = astTransformation.addCdMethodUsingDefinition(astClass, "protected Date foo(String a, int b);");
     assertTrue(method3.isPresent());
