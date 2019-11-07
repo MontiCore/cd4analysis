@@ -82,7 +82,8 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
         isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode())).isReadOnly();
         superTypes = targetType.get().getSuperTypes().stream().map(type -> type.getFullName()).collect(Collectors.toList());
       }
-      if (isReadOnly && superTypes.contains(conflictingAssoc.get().getTargetType().getFullName())) {
+      if (isReadOnly && superTypes.contains(
+              conflictingAssoc.get().getTargetType().getLoadedSymbol().getFullName())) {
         Log.info(String.format("Association `%s` overwrites read-only association `%s`",
                 assoc, conflictingAssoc.get()),
                 "INFO");

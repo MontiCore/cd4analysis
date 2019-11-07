@@ -3,9 +3,9 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
-import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
       return Optional.empty();
     }
     Optional<CDAssociationSymbol> ret = Optional.empty();
-    ret = check(assSymbol.get().getSourceType(), name, assSymbol.get());
+    ret = check(assSymbol.get().getSourceType().getLoadedSymbol(), name, assSymbol.get());
     if (!ret.isPresent()) {
-      ret = check(assSymbol.get().getTargetType(), name, assSymbol.get());
+      ret = check(assSymbol.get().getTargetType().getLoadedSymbol(), name, assSymbol.get());
     }
     return ret;
   }

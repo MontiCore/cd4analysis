@@ -11,6 +11,7 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCPrimitiveTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
+import de.monticore.types.mcfullgenerictypes._ast.ASTMCArrayType;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
@@ -107,8 +108,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     Collection<String> externals = getExternals(ast);
     if (ast.isPresentSuperclass()) {
       ASTMCObjectType superC = ast.getSuperclass();
-      if (!externals.contains((new AstPrinter()).printType(superC))) {
-        final CDTypeSymbolReference superClassSymbol = createCDTypeSymbolFromReference(superC);
+      if(!externals.contains((new AstPrinter()).printType(superC))){
+        final CDTypeSymbolLoader superClassSymbol = createCDTypeSymbolFromReference(superC);
         symbol.setSuperClass(superClassSymbol);
       }
     }
@@ -157,8 +158,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  CDTypeSymbolReference createCDTypeSymbolFromReference(final ASTMCObjectType astmcObjectType) {
-    return new CDTypeSymbolReference(astmcObjectType.printType(), getCurrentScope().get());
+  CDTypeSymbolLoader createCDTypeSymbolFromReference(final ASTMCObjectType astmcObjectType) {
+    return new CDTypeSymbolLoader(astmcObjectType.printType(), getCurrentScope().get());
   }
 
   @Override
@@ -167,6 +168,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     final String typeName;
     if (astType instanceof ASTMCGenericType) {
       typeName = ((ASTMCGenericType) astType).printWithoutTypeArguments();
+    } else if (astType instanceof ASTMCArrayType) {
+      typeName = ((ASTMCArrayType) astType).printTypeWithoutBrackets();
     } else {
       typeName = astAttribute.getMCType().printType();
     }
@@ -174,8 +177,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     // TODO PN type arguments are not set yet. For every argument a
     // CDTypeSymbolReference must be created.
 
-    final CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, getCurrentScope().get());
-    typeReference.setStringRepresentation((new AstPrinter()).printType(astType));
+    final CDTypeSymbolLoader typeReference = new CDTypeSymbolLoader(typeName, getCurrentScope()
+        .get());
     fieldSymbol.setType(typeReference);
     addTypeArgumentsToTypeSymbol(typeReference, astType);
 
@@ -207,23 +210,23 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
 
-  public void addTypeArgumentsToTypeSymbol(CDTypeSymbolReference typeReference, ASTMCType astType) {
+
+  public void addTypeArgumentsToTypeSymbol(CDTypeSymbolLoader typeReference, ASTMCType astType) {
     if (astType instanceof ASTMCGenericType) {
       ASTMCGenericType astmcGenericType = (ASTMCGenericType) astType;
       if (astmcGenericType.getMCTypeArgumentList().isEmpty()) {
         return;
       }
-      List<CDTypeSymbolReference> actualTypeArguments = new ArrayList<>();
+      List<CDTypeSymbolLoader> actualTypeArguments = new ArrayList<>();
       for (ASTMCTypeArgument astTypeArgument : astmcGenericType.getMCTypeArgumentList()) {
         if (astTypeArgument instanceof ASTMCBasicTypeArgument) {
           // Examples: Set<Integer>, Set<Set<?>>, Set<java.lang.String>
           ASTMCBasicTypeArgument astmcBasicTypeArgument = (ASTMCBasicTypeArgument) astTypeArgument;
           if (astmcBasicTypeArgument.getMCQualifiedType() != null) {
             ASTMCQualifiedType astTypeNoBound = astmcBasicTypeArgument.getMCQualifiedType();
-            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.printType(), getCurrentScope().get());
+            CDTypeSymbolLoader typeArgumentSymbolReference = new CDTypeSymbolLoader(astTypeNoBound.printType(), getCurrentScope().get());
             // TODO PN, GV: add dimension?
             // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoound)
-            typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
             actualTypeArguments.add(typeArgumentSymbolReference);
           } else {
@@ -234,8 +237,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
           ASTMCPrimitiveTypeArgument astmcPrimitiveTypeArgument = (ASTMCPrimitiveTypeArgument) astTypeArgument;
           if (astmcPrimitiveTypeArgument.getMCPrimitiveType() != null) {
             ASTMCType astTypeNoBound = astmcPrimitiveTypeArgument.getMCPrimitiveType();
-            CDTypeSymbolReference typeArgumentSymbolReference = new CDTypeSymbolReference(astTypeNoBound.printType(), getCurrentScope().get());
-            typeArgumentSymbolReference.setStringRepresentation((new AstPrinter()).printType(astTypeNoBound));
+            CDTypeSymbolLoader typeArgumentSymbolReference = new CDTypeSymbolLoader(astTypeNoBound.printType(), getCurrentScope().get());
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
             actualTypeArguments.add(typeArgumentSymbolReference);
           }
@@ -271,7 +273,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     if (astInterfaces != null) {
       for (final ASTMCObjectType superInterface : astInterfaces) {
         if (!externals.contains((new AstPrinter()).printType(superInterface))) {
-          final CDTypeSymbolReference superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
+          final CDTypeSymbolLoader superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
           typeSymbol.getCdInterfaceList().add(superInterfaceSymbol);
         }
       }
@@ -284,7 +286,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
     if (astEnum.getCDEnumConstantList() != null) {
       for (final ASTCDEnumConstant astConstant : astEnum.getCDEnumConstantList()) {
-        final CDTypeSymbolReference enumReference = new CDTypeSymbolReference(enumSymbol.getName(), enumSymbol.getSpannedScope());
+        final CDTypeSymbolLoader enumReference = new CDTypeSymbolLoader(enumSymbol.getName(), enumSymbol.getSpannedScope());
 
         final CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(), enumReference);
         constantSymbol.setEnumConstant(true);
@@ -307,7 +309,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     final CDTypeSymbol enumSymbol = astEnum.getSymbol();
 
     for (CDFieldSymbol constSymbol : enumSymbol.getEnumConstants()) {
-      final CDTypeSymbolReference enumReference = new CDTypeSymbolReference(enumSymbol.getName(), enumSymbol.getSpannedScope());
+      final CDTypeSymbolLoader enumReference = new CDTypeSymbolLoader(enumSymbol.getName(), enumSymbol.getSpannedScope());
       constSymbol.setType(enumReference);
     }
     removeCurrentScope();
@@ -359,7 +361,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   protected void initialize_CDParameter(de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol symbol, de.monticore.cd.cd4analysis._ast.ASTCDParameter ast) {
-    CDTypeSymbolReference paramTypeSymbol = new CDTypeSymbolReference(
+    CDTypeSymbolLoader paramTypeSymbol = new CDTypeSymbolLoader(
         (new AstPrinter()).printType(ast.getMCType()), getCurrentScope().get());
 
 
@@ -383,7 +385,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol, ASTCDMethod astMethod) {
 // TODO PN use ASTTypesConverter
-    final CDTypeSymbolReference returnSymbol = new CDTypeSymbolReference(
+    final CDTypeSymbolLoader returnSymbol = new CDTypeSymbolLoader(
         (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO CollectionTypesPrinter
     if (astMethod.getMCReturnType().isPresentMCType()) {
       addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
@@ -394,7 +396,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   public void setExceptionsOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTCDMethod astMethod) {
     if (astMethod.getExceptionList() != null) {
       for (final ASTMCQualifiedName exceptionName : astMethod.getExceptionList()) {
-        final CDTypeSymbolReference exception = new CDTypeSymbolReference(exceptionName.toString(),
+        final CDTypeSymbolLoader exception = new CDTypeSymbolLoader(exceptionName.toString(),
             getCurrentScope().get());
         methodSymbol.getExceptionList().add(exception);
       }
@@ -513,10 +515,10 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc, final ASTMCQualifiedName astSourceName, final ASTMCQualifiedName astTargetName) {
-    final CDTypeSymbolReference sourceType = new CDTypeSymbolReference(Names.getQualifiedName(
+    final CDTypeSymbolLoader sourceType = new CDTypeSymbolLoader(Names.getQualifiedName(
         astSourceName.getPartList()), getCurrentScope().get());
 
-    final CDTypeSymbolReference targetType = new CDTypeSymbolReference(Names.getQualifiedName(
+    final CDTypeSymbolLoader targetType = new CDTypeSymbolLoader(Names.getQualifiedName(
         astTargetName.getPartList()), getCurrentScope().get());
 
     final CDAssociationSymbol associationSymbol = new CDAssociationSymbol(sourceType, targetType);
@@ -550,13 +552,13 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   protected void addAssocToTarget(CDAssociationSymbol assocSymbol) {
-    if (assocSymbol.getTargetType().existsReferencedSymbol()) {
-      assocSymbol.getTargetType().addSpecAssociation(assocSymbol);
+    if (assocSymbol.getTargetType().loadSymbol().isPresent()) {
+      assocSymbol.getTargetType().getLoadedSymbol().addSpecAssociation(assocSymbol);
     }
-    if (assocSymbol.getSourceType().existsReferencedSymbol()) {
+    if (assocSymbol.getSourceType().loadSymbol().isPresent()) {
       // TODO PN use association reference instead?
       // TODO PN should we really invoke methods of the symbol definition during the symbol table creation?
-      assocSymbol.getSourceType().getReferencedSymbol().getSpannedScope().add(assocSymbol);
+      assocSymbol.getSourceType().getLoadedSymbol().getSpannedScope().add(assocSymbol);
     }
 
   }

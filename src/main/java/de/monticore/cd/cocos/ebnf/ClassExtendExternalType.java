@@ -3,9 +3,9 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -21,9 +21,9 @@ public class ClassExtendExternalType implements CD4AnalysisASTCDClassCoCo {
   @Override
   public void check(ASTCDClass clazz) {
     CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol();
-    Optional<CDTypeSymbolReference> optSuperType = symbol.getSuperClassOpt();
+    Optional<CDTypeSymbolLoader> optSuperType = symbol.getSuperClassOpt();
     if (optSuperType.isPresent()) {
-      CDTypeSymbol superType = optSuperType.get();
+      CDTypeSymbol superType = optSuperType.get().getLoadedSymbol();
       if (isExternal(superType)) {
         boolean hasEmptyConstructor = superType.getMethods()
             .stream()

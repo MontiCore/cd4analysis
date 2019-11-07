@@ -15,7 +15,7 @@ public class CDFieldSymbol extends CDFieldSymbolTOP {
 
   private final List<Stereotype> stereotypes = new ArrayList<>();
 
-  public CDFieldSymbol(String name, CDTypeSymbolReference type) {
+  public CDFieldSymbol(String name, CDTypeSymbolLoader type) {
     super(name);
     setType(type);
   }

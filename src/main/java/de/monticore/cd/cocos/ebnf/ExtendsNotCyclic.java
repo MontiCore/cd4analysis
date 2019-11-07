@@ -6,7 +6,7 @@ import de.monticore.cd.cd4analysis._ast.ASTCDInterface;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._ast.ASTCDDefinition;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDDefinitionCoCo;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
@@ -21,7 +21,6 @@ import java.util.Set;
 public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   
   /**
-   * @see de.monticore.cd._cocos.CD4AnalysisASTCDDefinitionCoCo#check(de.monticore.cd._ast.ASTCDDefinition)
    */
   @Override
   public void check(ASTCDDefinition node) {
@@ -51,8 +50,8 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
     }
     else {
       currentPath.add(interf);
-      for (CDTypeSymbol superInterf : interf.getCdInterfaceList()) {
-        checkInterfacePath(superInterf, currentPath);
+      for (CDTypeSymbolLoader superInterf : interf.getCdInterfaceList()) {
+        checkInterfacePath(superInterf.getLoadedSymbol(), currentPath);
       }
       currentPath.remove(interf);
     }
@@ -66,9 +65,9 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
   private void checkClass(ASTCDClass node) {
     CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
     Set<CDTypeSymbol> path = new HashSet<>();
-    Optional<CDTypeSymbolReference> optSuperSymb = symbol.getSuperClassOpt();
+    Optional<CDTypeSymbolLoader> optSuperSymb = symbol.getSuperClassOpt();
     while (optSuperSymb.isPresent()) {
-      CDTypeSymbol superSymb = optSuperSymb.get();
+      CDTypeSymbol superSymb = optSuperSymb.get().getLoadedSymbol();
       Optional<CDTypeSymbol> existingClassWithSameName = path.stream()
           .filter(c -> c.getName().equals(superSymb.getName())).findAny();
       if (existingClassWithSameName.isPresent()) {

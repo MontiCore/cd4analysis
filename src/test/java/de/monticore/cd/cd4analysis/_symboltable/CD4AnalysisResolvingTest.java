@@ -62,7 +62,7 @@ public class CD4AnalysisResolvingTest {
     assertNotNull(a);
     assertEquals("A", a.getName());
     assertEquals("CDWithoutPackage.A", a.getFullName());
-    assertEquals("CDWithoutPackage.B", a.getSuperClass().getFullName());
+    assertEquals("CDWithoutPackage.B", a.getSuperClass().getLoadedSymbol().getFullName());
   }
 
 }

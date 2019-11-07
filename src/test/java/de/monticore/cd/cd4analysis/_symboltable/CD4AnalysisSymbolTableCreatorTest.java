@@ -5,8 +5,6 @@ package de.monticore.cd.cd4analysis._symboltable;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.Slf4jLog;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -156,19 +154,19 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(profType.getSpannedScope().resolveCDField("uni").get().isIsDerived());
     final CDFieldSymbol profFieldPP = profType.getSpannedScope().resolveCDField("pp").orElse(null);
     assertNotNull(profFieldPP);
-    final CDTypeSymbolReference personList = profFieldPP.getType();
+    final CDTypeSymbolLoader personList = profFieldPP.getType();
     assertEquals("List", personList.getName());
-    Assert.assertEquals("List<Person>", personList.getStringRepresentation());
     // Super class
     assertTrue(profType.isPresentSuperClass());
     assertEquals(personType.getName(), profType.getSuperClass().getName());
     // The referenced symbol is the SAME as the one in the symbol table.
-    assertSame(personType, ((CDTypeSymbolReference) profType.getSuperClass())
-        .getReferencedSymbol());
+    assertSame(personType, profType.getSuperClass().getLoadedSymbol());
     // Interfaces
     assertEquals(2, profType.getCdInterfaceList().size());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable", profType.getCdInterfaceList().get(0).getFullName());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", profType.getCdInterfaceList().get(1).getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable",
+            profType.getCdInterfaceList().get(0).getLoadedSymbol().getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable",
+            profType.getCdInterfaceList().get(1).getLoadedSymbol().getFullName());
     assertEquals(3, profType.getSuperTypes().size());
     // Associations
     assertEquals(1, profType.getAssociations().size());
@@ -206,7 +204,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(callableType.isIsInterface());
     assertTrue(callableType.isIsPublic());
     assertEquals(1, callableType.getCdInterfaceList().size());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable", callableType.getCdInterfaceList().get(0).getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable",
+            callableType.getCdInterfaceList().get(0).getLoadedSymbol().getFullName());
 
     final CDTypeSymbol enumType = cdSymbol.getType("E").orElse(null);
     assertNotNull(enumType);
@@ -222,7 +221,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals(enumType.getEnumConstants(), enumType.getFields());
     // Interfaces
     assertEquals(1, enumType.getCdInterfaceList().size());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable", enumType.getCdInterfaceList().get(0).getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Printable",
+            enumType.getCdInterfaceList().get(0).getLoadedSymbol().getFullName());
     // AST
     assertTrue(enumType.isPresentAstNode());
     assertTrue(enumType.getAstNode() instanceof ASTCDEnum);
@@ -287,8 +287,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("ec", ecAssocLeft2Right.getName());
     assertEquals("ec", ecAssocLeft2Right.getAssocName().orElse(""));
     assertTrue(ecAssocLeft2Right.isBidirectional());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getFullName());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getLoadedSymbol().getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getLoadedSymbol().getFullName());
     assertEquals(1, ecAssocLeft2Right.getSourceCardinality().getMin());
     assertEquals(Cardinality.STAR, ecAssocLeft2Right.getSourceCardinality().getMax());
     assertTrue(ecAssocLeft2Right.getSourceCardinality().isMultiple());
@@ -302,8 +302,8 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertEquals("ec", ecAssocRight2Left.getName());
     assertEquals("ec", ecAssocRight2Left.getAssocName().orElse(""));
     assertTrue(ecAssocRight2Left.isBidirectional());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getFullName());
-    assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getLoadedSymbol().getFullName());
+    assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getLoadedSymbol().getFullName());
     assertEquals(0, ecAssocRight2Left.getSourceCardinality().getMin());
     assertEquals(1, ecAssocRight2Left.getSourceCardinality().getMax());
     assertFalse(ecAssocRight2Left.getSourceCardinality().isMultiple());
@@ -421,12 +421,11 @@ public class CD4AnalysisSymbolTableCreatorTest {
     //Type arguments
     CDFieldSymbol attribute = clazz.getSpannedScope().resolveCDField("g1").orElse(null);
     assertNotNull(attribute);
-    CDTypeSymbolReference attributeType =  attribute.getType();
+    CDTypeSymbolLoader attributeType =  attribute.getType();
     assertEquals("List", attributeType.getName());
-    Assert.assertEquals("List<String>", attributeType.getStringRepresentation());
 
     assertEquals(1, attributeType.getActualTypeArguments().size());
-    CDTypeSymbolReference typeArgument = attributeType.getActualTypeArguments().get(0);
+    CDTypeSymbolLoader typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("String", typeArgument.getName());
 
     
@@ -434,16 +433,14 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertNotNull(attribute);
     attributeType = attribute.getType();
     assertEquals("List", attributeType.getName());
-    Assert.assertEquals("List<B>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("B", typeArgument.getName());
 
     attribute = clazz.getSpannedScope().resolveCDField("g3").orElse(null);
     assertNotNull(attribute);
-    attributeType = (CDTypeSymbolReference) attribute.getType();
+    attributeType = (CDTypeSymbolLoader) attribute.getType();
     assertEquals("List", attributeType.getName());
-    Assert.assertEquals("List<C>", attributeType.getStringRepresentation());
     assertEquals(1, attributeType.getActualTypeArguments().size());
     typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("C", typeArgument.getName());

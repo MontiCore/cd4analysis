@@ -9,7 +9,7 @@ public class CDTypeTest {
 
   @Test
   public void testGetFields() {
-    final CDTypeSymbolReference dummyTypeRef = new CDTypeSymbolReference("Dummy", new CD4AnalysisScope(false));
+    final CDTypeSymbolLoader dummyTypeRef = new CDTypeSymbolLoader("Dummy", new CD4AnalysisScope(false));
 
     CDFieldSymbol fieldSymbol1 = new CDFieldSymbol("field1", dummyTypeRef);
     CDFieldSymbol fieldSymbol2 = new CDFieldSymbol("field2", dummyTypeRef);

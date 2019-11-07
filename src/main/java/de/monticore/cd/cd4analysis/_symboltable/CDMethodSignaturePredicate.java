@@ -34,7 +34,8 @@ public class CDMethodSignaturePredicate implements Predicate<CDMethOrConstrSymbo
           (methodSymbol.getParameters().size() == expectedParameterTypes.size())) {
         for (int i=0; i < methodSymbol.getParameters().size(); i++) {
           final String expectedType = expectedParameterTypes.get(i);
-          final String actualType = methodSymbol.getParameters().get(i).getType().getFullName();
+          final String actualType =
+                  methodSymbol.getParameters().get(i).getType().getLoadedSymbol().getFullName();
 
           if (!actualType.equals(expectedType)) {
             return false;

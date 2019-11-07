@@ -109,7 +109,7 @@ public class CDSymbolTable {
         field.isIsDerived()).collect(Collectors.toList());
 
     if (symbol.isPresentSuperClass()) {
-      visibleAttr.addAll(getDerivedAttributesInHierarchy(symbol.getSuperClass()));
+      visibleAttr.addAll(getDerivedAttributesInHierarchy(symbol.getSuperClass().getLoadedSymbol()));
     }
 
     return visibleAttr;
@@ -149,7 +149,7 @@ public class CDSymbolTable {
     return getAllSuperClasses(className).stream()
       .map(CDTypeSymbol::getCdInterfaceList)
       .flatMap(Collection::stream)
-      .flatMap(superInterface -> getSuperInterfacesRecursively(superInterface, new ArrayList<>()).stream())
+      .flatMap(superInterface -> getSuperInterfacesRecursively(superInterface.getLoadedSymbol(), new ArrayList<>()).stream())
       .collect(Collectors.toList());
   }
 
@@ -159,7 +159,7 @@ public class CDSymbolTable {
 
     symbols.add(cdType);
     if (cdType.isPresentSuperClass()) {
-      getSuperClassesRecursively(cdType.getSuperClass(), symbols);
+      getSuperClassesRecursively(cdType.getSuperClass().getLoadedSymbol(), symbols);
     }
 
     return symbols;
@@ -170,7 +170,7 @@ public class CDSymbolTable {
     checkNotNull(symbols);
 
     symbols.add(cdType);
-    cdType.getCdInterfaceList().forEach(i -> getSuperInterfacesRecursively(i, symbols));
+    cdType.getCdInterfaceList().forEach(i -> getSuperInterfacesRecursively(i.getLoadedSymbol(), symbols));
 
     return symbols;
   }
@@ -253,24 +253,12 @@ public class CDSymbolTable {
 
   public boolean isTypeDefinedInModel(CDTypeSymbol type) {
     String currentScopeName = this.cdScope.getName();
-    if (type instanceof CDTypeSymbolReference) {
-      CDTypeSymbolReference ca = (CDTypeSymbolReference) type;
-      if (ca.existsReferencedSymbol()) {
-        IScope parentScope = type.getSpannedScope()
-            .getEnclosingScope();
 
-        if (parentScope != null
+    IScope parentScope = type.getSpannedScope()
+            .getEnclosingScope();
+    if (parentScope != null
             && currentScopeName.equals(parentScope.getName())) {
-          return true;
-        }
-      }
-    } else {
-       IScope parentScope = type.getSpannedScope()
-          .getEnclosingScope();
-      if (parentScope != null
-          && currentScopeName.equals(parentScope.getName())) {
-        return true;
-      }
+      return true;
     }
     return false;
   }
@@ -298,7 +286,7 @@ public class CDSymbolTable {
 
       // check if the given class is an interface
       if (!cdType.getCdInterfaceList().isEmpty()) {
-        for (CDTypeSymbol a : cdType.getCdInterfaceList()) {
+        for (CDTypeSymbolLoader a : cdType.getCdInterfaceList()) {
           if (a.getName().equals(name)) {
             cdTypes.add(cdType);
           }
