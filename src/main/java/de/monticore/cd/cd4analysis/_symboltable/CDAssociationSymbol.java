@@ -15,9 +15,9 @@ import static java.util.Objects.requireNonNull;
 
 public class CDAssociationSymbol extends CDAssociationSymbolTOP {
 
-  private  CDTypeSymbolReference sourceType = null;
+  private CDTypeSymbolLoader sourceType = null;
   
-  private  CDTypeSymbolReference targetType = null;
+  private CDTypeSymbolLoader targetType = null;
   
   private Cardinality sourceCardinality;
   
@@ -39,7 +39,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
   
   private final List<Stereotype> stereotypes = new ArrayList<>();
   
-  public CDAssociationSymbol(final CDTypeSymbolReference sourceType, final CDTypeSymbolReference targetType) {
+  public CDAssociationSymbol(final CDTypeSymbolLoader sourceType, final CDTypeSymbolLoader targetType) {
     super("");
     this.sourceType = requireNonNull(sourceType);
     this.targetType = requireNonNull(targetType);
@@ -50,9 +50,9 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
   }
 
   public boolean isReadOnly() {
-    if (!this.getAstNode().isPresent())
+    if (!this.isPresentAstNode())
       return false;
-    return ((ASTCDAssociation) (this.getAstNode().get())).isReadOnly();
+    return ((ASTCDAssociation) (this.getAstNode())).isReadOnly();
   }
 
   @Override
@@ -63,7 +63,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
             + " -> " + "(" + getTargetRole().orElse("") + ")" + getTargetType().getName() ;
   }
   
-  public CDTypeSymbolReference getTargetType() {
+  public CDTypeSymbolLoader getTargetType() {
     return targetType;
   }
   
@@ -79,7 +79,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
     this.targetCardinality = cardinality;
   }
   
-  public CDTypeSymbolReference getSourceType() {
+  public CDTypeSymbolLoader getSourceType() {
     return sourceType;
   }
   
@@ -214,7 +214,7 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
       inverseAssoc.setTargetRole(getSourceRole());
       inverseAssoc.setAssocName(getAssocName());
       inverseAssoc.setAccessModifier(getAccessModifier());
-      inverseAssoc.setAstNode(getAstNode().orElse(null));
+      inverseAssoc.setAstNode(getAstNodeOpt().orElse(null));
       inverseAssoc.setEnclosingScope(getEnclosingScope());
       inverseAssoc.setFullName(getFullName());
       getStereotypes().forEach(inverseAssoc::addStereotype);

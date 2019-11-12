@@ -39,8 +39,8 @@ public class ODReportingTest {
     final CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
     CDDefinitionSymbol cdSymbol = globalScope.resolveCDDefinition(name).orElse(null);
     assertNotNull(cdSymbol);
-    assertTrue(cdSymbol.getAstNode().isPresent());
-    ASTNode node = cdSymbol.getAstNode().get();
+    assertTrue(cdSymbol.isPresentAstNode());
+    ASTNode node = cdSymbol.getAstNode();
     assertTrue(node instanceof ASTCDDefinition);
     ASTCDDefinition cdDef = (ASTCDDefinition) node;    
     ReportingRepository reporting = new ReportingRepository(new CD4ANodeIdentHelper());
@@ -51,7 +51,7 @@ public class ODReportingTest {
     
     // Report ST
     SymbolTableReporter2 stReporter = new CD4ASymbolTableReporter("target", name, reporting);
-    stReporter.flush(cdSymbol.getAstNode().get());
+    stReporter.flush(cdSymbol.getAstNode());
   }
   
   @Test

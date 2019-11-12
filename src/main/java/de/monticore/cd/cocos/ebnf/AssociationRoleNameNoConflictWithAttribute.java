@@ -70,7 +70,7 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
           roleName,
           targetType,
           assoc,
-          conflictingAttribute.get().getEnclosingScope().getSpanningSymbol().get().getName());
+          conflictingAttribute.get().getEnclosingScope().getSpanningSymbol().getName());
       return true;
     }
     

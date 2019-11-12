@@ -1,12 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cocos.ebnf;
 
-import de.monticore.cd.cocos.AbstractCoCoTest;
-import de.monticore.cocos.helper.Assert;
 import de.monticore.cd.CD4ACoCos;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd.cocos.ebnf.AssociationQualifierOnCorrectSide;
+import de.monticore.cd.cocos.AbstractCoCoTest;
+import de.monticore.cocos.helper.Assert;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -28,7 +27,7 @@ import static org.junit.Assert.assertEquals;
  * @since TODO: add version number
  */
 public class AssocTest extends AbstractCoCoTest {
-  
+
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/invalid/";
   
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/ebnf/valid/";
@@ -43,12 +42,12 @@ public class AssocTest extends AbstractCoCoTest {
 
   @BeforeClass
   public static void init() {
+    LogStub.init();
     Log.enableFailQuick(false);
   }
 
   @Before
   public void setUp() {
-    LogStub.init();
     Log.getFindings().clear();
   }
 

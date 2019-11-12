@@ -3,10 +3,10 @@ package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.BuiltInTypes;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cocos.CD4ACoCoHelper;
-import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
+import de.monticore.cd.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -21,10 +21,10 @@ public class AssociationSrcAndTargetTypeExistChecker implements
   
   public void check(ASTCDAssociation assoc) {
     
-    CDTypeSymbol src = ((CDAssociationSymbol) assoc.getSymbol()).getSourceType();
+    CDTypeSymbolLoader src = assoc.getSymbol().getSourceType();
     checkTypeExists(src, assoc);
     
-    CDTypeSymbol target = ((CDAssociationSymbol) assoc.getSymbol()).getTargetType();
+    CDTypeSymbolLoader target = assoc.getSymbol().getTargetType();
     checkTypeExists(target, assoc);
     
     // ASTQualifiedName leftType = assoc.getLeftReferenceName();
@@ -32,7 +32,7 @@ public class AssociationSrcAndTargetTypeExistChecker implements
     
   }
   
-  private void checkTypeExists(CDTypeSymbol type, ASTCDAssociation assoc) {
+  private void checkTypeExists(CDTypeSymbolLoader type, ASTCDAssociation assoc) {
     String typeName = type.getName();
     if (!BuiltInTypes.isBuiltInType(typeName)) {
       Optional<CDTypeSymbol> subClassSym = assoc.getEnclosingScope()

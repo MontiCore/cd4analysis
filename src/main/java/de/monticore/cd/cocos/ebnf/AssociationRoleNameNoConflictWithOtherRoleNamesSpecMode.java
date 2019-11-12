@@ -5,7 +5,7 @@ package de.monticore.cd.cocos.ebnf;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolReference;
+import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
@@ -38,9 +38,11 @@ public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
       return Optional.empty();
     }
     Optional<CDAssociationSymbol> ret = Optional.empty();
-    ret = check(assSymbol.get().getSourceType(), assSymbol.get().getTargetRole(), assSymbol.get());
+    ret = check(assSymbol.get().getSourceType().getLoadedSymbol(),
+            assSymbol.get().getTargetRole(), assSymbol.get());
     if (!ret.isPresent()) {
-      ret = check(assSymbol.get().getTargetType(), assSymbol.get().getSourceRole(), assSymbol.get());
+      ret = check(assSymbol.get().getTargetType().getLoadedSymbol(),
+              assSymbol.get().getSourceRole(), assSymbol.get());
     }
     return ret;
   }
@@ -52,20 +54,18 @@ public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
     String name = optName.get();
     // compare ASTNode and not symbol, because for bidirectional ASTNodes two single directional symbols are created
     List<CDAssociationSymbol> list = new ArrayList<>();
-    if (type instanceof CDTypeSymbolReference) {
-      list.addAll(((CDTypeSymbolReference) type).getReferencedSymbol().getSpecAssociations().stream().map(s -> s.getInverseAssociation()).collect(Collectors.toList()));
-    } else {
-      list.addAll(type.getSpecAssociations());
-    }
+    list.addAll(type.getSpecAssociations());
+
     Optional<CDAssociationSymbol> error = list.stream().
             filter(ass -> !ass.getAstNode().equals(assSymbol.getAstNode()))
-            .filter(ass -> ass.getTargetType().getFullName().equals(type.getFullName()) ? ass.getSourceRole().equals(optName) : ass.getTargetRole().equals(optName)).findAny();
+            .filter(ass -> ass.getTargetType().getLoadedSymbol().getFullName().equals(type.getFullName()) ?
+                    ass.getSourceRole().equals(optName) : ass.getTargetRole().equals(optName)).findAny();
 
     if (error.isPresent()) {
-      ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode().get();
+      ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode();
       Log.error(
               String.format("0xC4A39 Role namespace clash `%s::%s` of associations `%s` and `%s`.",
-                      type.getName(), name, a, error.get().getAstNode().isPresent() ? error.get().getAstNode().get() : error.get()),
+                      type.getName(), name, a, error.get().isPresentAstNode() ? error.get().getAstNode() : error.get()),
               a.get_SourcePositionStart());
     }
 

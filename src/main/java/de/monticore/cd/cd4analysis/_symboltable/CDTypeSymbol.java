@@ -75,22 +75,22 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return getSuperTypesTransitive().stream().anyMatch(t -> t.getFullName().equals(type.getFullName()));
   }
 
-  public List<CDTypeSymbolReference> getSuperTypesTransitive() {
-    return getSuperTypesTransitive(new CDTypeSymbolReference(this.getName(), this.getEnclosingScope()));
+  public List<CDTypeSymbol> getSuperTypesTransitive() {
+    return getSuperTypesTransitive(new CDTypeSymbolLoader(this.getName(), this.getEnclosingScope()));
   }
 
-  protected List<CDTypeSymbolReference> getSuperTypesTransitive(CDTypeSymbolReference startType) {
-    List<CDTypeSymbolReference> superTypes = new ArrayList();
-    if (startType.getSuperClass().isPresent()) {
-      CDTypeSymbolReference s = startType.getSuperClass().get();
-      superTypes.add(s);
-      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(s.getName(),
+  protected List<CDTypeSymbol> getSuperTypesTransitive(CDTypeSymbolLoader startType) {
+    List<CDTypeSymbol> superTypes = new ArrayList();
+    if (startType.getLoadedSymbol().isPresentSuperClass()) {
+      CDTypeSymbolLoader s = startType.getLoadedSymbol().getSuperClass();
+      superTypes.add(s.getLoadedSymbol());
+      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolLoader(s.getName(),
               s.getEnclosingScope())));
     }
 
-    for (CDTypeSymbolReference i : startType.getSuperTypes()) {
+    for (CDTypeSymbol i : startType.getLoadedSymbol().getSuperTypes()) {
       superTypes.add(i);
-      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolReference(i.getName(),
+      superTypes.addAll(getSuperTypesTransitive(new CDTypeSymbolLoader(i.getName(),
               i.getEnclosingScope())));
     }
     return superTypes;
@@ -182,7 +182,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
     // filter-out all private fields
     final Set<CDFieldSymbol> allVisibleSuperTypeFields = allSuperTypeFields.stream().
-        filter(field -> !field.isPrivate())
+        filter(field -> !field.isIsPrivate())
         .collect(Collectors.toCollection(LinkedHashSet::new));
 
     return ImmutableSet.copyOf(allVisibleSuperTypeFields);
@@ -205,7 +205,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     }
     // filter-out all private fields
     final Set<CDFieldSymbol> allVisibleFields = allFields.stream().
-        filter(field -> !field.isPrivate())
+        filter(field -> !field.isIsPrivate())
         .collect(Collectors.toCollection(LinkedHashSet::new));
     return ImmutableSet.copyOf(allVisibleFields);
   }
@@ -234,7 +234,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
 
     // filter-out all private fields
     final Set<CDMethOrConstrSymbol> allVisibleSuperTypeMethods = allSuperTypeMethods.stream().
-            filter(field -> !field.isPrivate())
+            filter(field -> !field.isIsPrivate())
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
     return ImmutableSet.copyOf(allVisibleSuperTypeMethods);
@@ -256,7 +256,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     }
     // filter-out all private fields
     final Set<CDMethOrConstrSymbol> allVisibleMethods = allMethods.stream().
-            filter(method -> !method.isPrivate())
+            filter(method -> !method.isIsPrivate())
             .collect(Collectors.toCollection(LinkedHashSet::new));
     return ImmutableSet.copyOf(allVisibleMethods);
   }
@@ -330,21 +330,20 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     ArrayList allSuperTypes = new ArrayList();
     allSuperTypes.addAll(this.getSuperTypes());
 
-    if(this.getSuperClass().isPresent()) {
-      allSuperTypes.addAll(this.getSuperClass().get().getReferencedSymbol().getAllSuperTypes());
+    if(this.isPresentSuperClass()) {
+      allSuperTypes.addAll(this.getSuperClass().getLoadedSymbol().getAllSuperTypes());
     }
 
     return allSuperTypes;
   }
 
-  public List<CDTypeSymbolReference> getSuperTypes() {
-    final List<CDTypeSymbolReference> superTypes = new ArrayList<>();
-    if (getSuperClass().isPresent()) {
-      superTypes.add(getSuperClass().get());
+  public List<CDTypeSymbol> getSuperTypes() {
+    final List<CDTypeSymbol> superTypes = new ArrayList<>();
+    if (isPresentSuperClass()) {
+      superTypes.add(getSuperClass().getLoadedSymbol());
     }
-    superTypes.addAll(getCdInterfaces());
+    getCdInterfaceList().stream().forEach(i -> superTypes.add(i.getLoadedSymbol()));
     return superTypes;
-
   }
 
   public java.util.List<CDMethOrConstrSymbol> getMethods() {

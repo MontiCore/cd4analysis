@@ -66,10 +66,10 @@ public class AssociationNoConflictWithDerivedCardinalities implements
                               "0xC4A37 The target cardinality (%s .. %s) of the derived (inherited) association `%s` does not math the target cardinality (%s .. %s) of the association `%s`",
                               assocSym.getTargetCardinality().getMin(),
                               String.valueOf(assocSym.getTargetCardinality().getMax()).replace("-1", "*"),
-                              assocSym.getAstNode().isPresent() ? assocSym.getAstNode().get() : assocSym,
+                              assocSym.isPresentAstNode() ? assocSym.getAstNode() : assocSym,
                               conflictingAssoc.get().getTargetCardinality().getMin(),
                               String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
-                              conflictingAssoc.get().getAstNode().isPresent() ? conflictingAssoc.get().getAstNode().get() : conflictingAssoc.get()
+                              conflictingAssoc.get().isPresentAstNode() ? conflictingAssoc.get().getAstNode() : conflictingAssoc.get()
                               ),
               assoc.get_SourcePositionStart());
       return true;
