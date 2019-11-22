@@ -19,8 +19,9 @@ import java.util.Set;
  * @author Robert Heim
  */
 public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
-  
+
   /**
+   *
    */
   @Override
   public void check(ASTCDDefinition node) {
@@ -31,15 +32,15 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       checkInterfacePath((CDTypeSymbol) i.getSymbol(), new HashSet<>());
     }
   }
-  
+
   /**
    * Recursive method checking that a path in the inheritance (up-side-down)
    * tree does not include any name twice.
    *
-   * @param interf the current interface symbol on the inheritance path
+   * @param interf      the current interface symbol on the inheritance path
    * @param currentPath the current inheritance path to i (not including i).
-   * This set will be adjusted for each step, but it is ensured that
-   * currentPath@Pre == currentPath@Post.
+   *                    This set will be adjusted for each step, but it is ensured that
+   *                    currentPath@Pre == currentPath@Post.
    */
   private void checkInterfacePath(CDTypeSymbol interf, Set<CDTypeSymbol> currentPath) {
     Optional<CDTypeSymbol> extendingInterfaceWithSameName = currentPath.stream()
@@ -47,8 +48,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
         .findFirst();
     if (extendingInterfaceWithSameName.isPresent()) {
       error("interface", extendingInterfaceWithSameName.get());
-    }
-    else {
+    } else {
       currentPath.add(interf);
       for (CDTypeSymbolLoader superInterf : interf.getCdInterfaceList()) {
         checkInterfacePath(superInterf.getLoadedSymbol(), currentPath);
@@ -56,16 +56,19 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       currentPath.remove(interf);
     }
   }
-  
+
   /**
    * Checks that there are no cycles in the the class hierarchy.
    *
    * @param node class to check.
    */
   private void checkClass(ASTCDClass node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
+    CDTypeSymbol symbol = node.getSymbol();
     Set<CDTypeSymbol> path = new HashSet<>();
-    Optional<CDTypeSymbolLoader> optSuperSymb = symbol.getSuperClassOpt();
+    Optional<CDTypeSymbolLoader> optSuperSymb = Optional.empty();
+    if (symbol.isPresentSuperClass()) {
+      optSuperSymb = Optional.ofNullable(symbol.getSuperClass());
+    }
     while (optSuperSymb.isPresent()) {
       CDTypeSymbol superSymb = optSuperSymb.get().getLoadedSymbol();
       Optional<CDTypeSymbol> existingClassWithSameName = path.stream()
@@ -73,18 +76,21 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
       if (existingClassWithSameName.isPresent()) {
         error("class", existingClassWithSameName.get());
         optSuperSymb = Optional.empty();
-      }
-      else {
+      } else {
         path.add(superSymb);
-        optSuperSymb = superSymb.getSuperClassOpt();
+        if (superSymb.isPresentSuperClass()) {
+          optSuperSymb = Optional.ofNullable(superSymb.getSuperClass());
+        } else {
+          optSuperSymb = Optional.empty();
+        }
       }
     }
   }
-  
+
   /**
    * Issues the coco error.
    *
-   * @param type "interface" or "class"
+   * @param type   "interface" or "class"
    * @param symbol the symbol that produced the error
    */
   private void error(String type, CDTypeSymbol symbol) {

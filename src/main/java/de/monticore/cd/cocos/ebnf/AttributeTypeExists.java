@@ -2,9 +2,7 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.BuiltInTypes;
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociationTOP;
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDField;
 import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
@@ -19,13 +17,10 @@ import java.util.Optional;
  */
 public class AttributeTypeExists
     implements CD4AnalysisASTCDAttributeCoCo {
-  
-  /**
-   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAttributeCoCo#check(ASTCDAttribute)
-   */
+
   @Override
   public void check(ASTCDAttribute node) {
-    CDFieldSymbol attrSym = (CDFieldSymbol) node.getSymbol();
+    CDFieldSymbol attrSym = node.getSymbol();
     String typeName = attrSym.getType().getName();
     if (!BuiltInTypes.isBuiltInType(typeName)) {
       Optional<CDTypeSymbol> subClassSym = node.getEnclosingScope()

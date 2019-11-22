@@ -78,7 +78,7 @@ public class InterfaceOnlyValidStereotype implements CD4AnalysisASTCDInterfaceCo
 
       if (stereotypes.contains("Quantity")) {
         Optional<ASTCDStereoValue> val = c.getStereotype().getValueList().stream().filter(s -> s.getName().equals("Quantity")).findAny();
-        if (!val.get().getValueOpt().isPresent()) {
+        if (!val.get().isPresentValue()) {
           Log.error("0xC4A41 Quantity stereotype must have a valid quantity value.", c.get_SourcePositionStart());
         }
         else if (!validQuantities.contains(val.get().getValue())) {

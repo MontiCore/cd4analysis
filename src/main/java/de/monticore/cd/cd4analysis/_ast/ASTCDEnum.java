@@ -4,8 +4,6 @@ package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.CD4CodePrinter;
 
-import java.util.Optional;
-
 public class ASTCDEnum extends ASTCDEnumTOP {
 
   private CD4CodePrinter printer = new CD4CodePrinter();

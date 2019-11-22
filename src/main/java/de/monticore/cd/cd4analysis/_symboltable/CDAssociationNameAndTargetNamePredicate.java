@@ -21,10 +21,10 @@ public class CDAssociationNameAndTargetNamePredicate implements Predicate<CDAsso
         (symbol instanceof CDAssociationSymbol)) {
       CDAssociationSymbol assocSymbol = (CDAssociationSymbol) symbol;
 
-      if (!assocSymbol.getAssocName().isPresent()) {
+      if (!assocSymbol.isPresentAssocName()) {
         return false;
       }
-      return assocSymbol.getAssocName().get().equals(assocName)
+      return assocSymbol.getAssocName().equals(assocName)
           && assocSymbol.getTargetType().getName().equals(assocTargetName);
 
     }

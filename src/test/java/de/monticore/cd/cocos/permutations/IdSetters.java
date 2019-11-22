@@ -5,6 +5,7 @@ package de.monticore.cd.cocos.permutations;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.ASTCDClass;
+import de.monticore.cd.cd4analysis._ast.ASTCDClassTOP;
 import de.monticore.cd.cd4analysis._ast.ASTCDField;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.utils.ASTNodes;
@@ -44,9 +45,8 @@ class IdSetters {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDClass.class))
         .flatMap(Collection::stream)
-        .map(ASTCDClass::getSuperclassOpt)
-        .filter(Optional::isPresent)
-        .map(Optional::get)
+        .filter(ASTCDClassTOP::isPresentSuperclass)
+        .map(ASTCDClass::getSuperclass)
         .filter(ASTMCQualifiedType.class::isInstance)
         .map(ASTMCQualifiedType.class::cast)
         .forEach(simpleReferenceType -> {

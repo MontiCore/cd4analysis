@@ -1,10 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cd4analysis._ast;
 
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-
-import java.util.Optional;
-
 public class ASTCDQualifier extends ASTCDQualifierTOP {
 
   public ASTCDQualifier() {
@@ -12,6 +8,7 @@ public class ASTCDQualifier extends ASTCDQualifierTOP {
   }
 
   @Override
-  public String getName() {  return getNameOpt().orElse("");
+  public String getName() {
+    return isPresentName() ? this.name.get() : "";
   }
 }

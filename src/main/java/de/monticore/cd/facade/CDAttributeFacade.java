@@ -7,9 +7,10 @@ import de.monticore.cd.cd4code._ast.CD4CodeMill;
 import de.monticore.cd.cd4code._parser.CD4CodeParser;
 import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
-import de.monticore.types.MCCollectionTypesHelper;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.se_rwth.commons.StringTransformations;
 
 import java.io.IOException;
@@ -73,7 +74,7 @@ public class CDAttributeFacade {
    */
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type) {
-    return createAttribute(modifier, type, StringTransformations.uncapitalize(MCCollectionTypesHelper.printType(type)));
+    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))));
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type, final String name) {

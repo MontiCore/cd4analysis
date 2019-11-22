@@ -19,9 +19,6 @@ import java.util.Optional;
 public class AssociationSourceNotEnum
     implements CD4AnalysisASTCDAssociationCoCo {
   
-  /**
-   * @see de.monticore.cd._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
-   */
   @Override
   public void check(ASTCDAssociation node) {
     // only check other side when first side generated no error.

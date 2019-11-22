@@ -4,9 +4,10 @@ package de.monticore.cd.facade;
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
 import de.monticore.cd.cd4analysis._ast.ASTCDParameter;
 import de.monticore.cd.cd4code._ast.CD4CodeMill;
-import de.monticore.types.MCCollectionTypesHelper;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.se_rwth.commons.StringTransformations;
 
 import java.util.Arrays;
@@ -53,7 +54,7 @@ public class CDParameterFacade {
   }
 
   public ASTCDParameter createParameter(final ASTMCType type) {
-    return createParameter(type, StringTransformations.uncapitalize(MCCollectionTypesHelper.printType(type)));
+    return createParameter(type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))));
   }
 
   public ASTCDParameter createParameter(final Class<?> type, final String name) {

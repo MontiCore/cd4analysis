@@ -22,17 +22,17 @@ public class AssociationNoConflictWithCardinalities implements
   @Override
   public void check(ASTCDAssociation a) {
     Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
-            .resolveCDType(a.getLeftReferenceName().toString());
+        .resolveCDType(a.getLeftReferenceName().toString());
     Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
-            .resolveCDType(a.getRightReferenceName().toString());
+        .resolveCDType(a.getRightReferenceName().toString());
     boolean err = false;
     // source type might be external (in this case we do nothing)
     if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
-      err = check(leftType.get(), a.getRightRoleOpt(), a);
+      err = check(leftType.get(), a);
     }
     if (rightType.isPresent() && !err
-            && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
-      check(rightType.get(), a.getLeftRoleOpt(), a);
+        && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
+      check(rightType.get(), a);
     }
   }
 
@@ -40,41 +40,41 @@ public class AssociationNoConflictWithCardinalities implements
    * Does the actual check.
    *
    * @param sourceType source of the assoc under test
-   * @param role       optional role name of the target type
    * @param assoc      association under test
    * @return whether there was a CoCo error or not.
    */
-  private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
+  private boolean check(CDTypeSymbol sourceType, ASTCDAssociation assoc) {
+    CDAssociationSymbol assocSym = assoc.getSymbol();
 
     String roleName = assocSym.getDerivedName();
 
     // inherited
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getInheritedAssociations().stream()
-            .filter(a -> a.isReadOnly() && a.getDerivedName().equals(roleName))
-            .filter(a -> a != assocSym)
-            .filter(a -> mapStarToMax(a.getTargetCardinality().getMin()) > mapStarToMax(assocSym.getTargetCardinality().getMin()) ||
-                    mapStarToMax(a.getTargetCardinality().getMax()) < mapStarToMax(assocSym.getTargetCardinality().getMax()))
-            .findAny();
+        .filter(a -> a.isReadOnly() && a.getDerivedName().equals(roleName))
+        .filter(a -> a != assocSym)
+        .filter(a -> mapStarToMax(a.getTargetCardinality().getMin()) > mapStarToMax(assocSym.getTargetCardinality().getMin()) ||
+            mapStarToMax(a.getTargetCardinality().getMax()) < mapStarToMax(assocSym.getTargetCardinality().getMax()))
+        .findAny();
 
     if (conflictingAssoc.isPresent()) {
       Log.error(
-              String
-                      .format(
-                              "0xC4A32 The target cardinality (%s .. %s) of the inherited read-only association `%s` is not a superset of the target cardinality (%s ..%s) of the association `%s`",
-                              conflictingAssoc.get().getTargetCardinality().getMin(),
-                              String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
-                              conflictingAssoc.get(),
-                              assocSym.getTargetCardinality().getMin(),
-                              String.valueOf(assocSym.getTargetCardinality().getMax()).replace("-1", "*"),
-                              assocSym
-                              ),
-              assoc.get_SourcePositionStart());
+          String
+              .format(
+                  "0xC4A32 The target cardinality (%s .. %s) of the inherited read-only association `%s` is not a superset of the target cardinality (%s ..%s) of the association `%s`",
+                  conflictingAssoc.get().getTargetCardinality().getMin(),
+                  String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
+                  conflictingAssoc.get(),
+                  assocSym.getTargetCardinality().getMin(),
+                  String.valueOf(assocSym.getTargetCardinality().getMax()).replace("-1", "*"),
+                  assocSym
+              ),
+          assoc.get_SourcePositionStart());
       return true;
     }
     return false;
 
   }
+
   private static int mapStarToMax(int value) {
     return value == -1 ? Integer.MAX_VALUE : value;
   }

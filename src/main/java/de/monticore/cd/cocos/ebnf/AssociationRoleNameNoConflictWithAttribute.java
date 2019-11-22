@@ -34,11 +34,11 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
       boolean err = false;
       // source type might be external (in this case we do nothing)
       if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
-        err = check(leftType.get(), a.getRightRoleOpt(), a);
+        err = check(leftType.get(), a.isPresentRightRole(), a);
       }
       if (rightType.isPresent() && !err
           && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
-        check(rightType.get(), a.getLeftRoleOpt(), a);
+        check(rightType.get(), a.isPresentLeftRole(), a);
       }
     }
   }
@@ -47,13 +47,13 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
    * Does the actual check.
    *
    * @param sourceType source of the assoc under test
-   * @param role optional role name of the target type
+   * @param roleNameDefined optional role name of the target type
    * @param assoc association under test
    * @return whether there was a CoCo error or not.
    */
-  private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
+  private boolean check(CDTypeSymbol sourceType, boolean roleNameDefined, ASTCDAssociation assoc) {
     CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
-    String automaticallyIntroduced = role.isPresent()
+    String automaticallyIntroduced = roleNameDefined
         ? ""
         : AUTOMATICALLY_INTRODUCED;
     
@@ -80,14 +80,14 @@ public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisAS
     
     // own
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getAssociations().stream()
-        .filter(a -> a.getAssocName().isPresent() && !a.getTargetRole().isPresent())
+        .filter(a -> a.isPresentAssocName() && !a.isPresentTargetRole())
         .filter(a -> a.getDerivedName().equals(roleName))
         .filter(a -> a != assocSym)
         .findAny();
     if (!conflictingAssoc.isPresent()) {
       // inherited
       conflictingAssoc = sourceType.getInheritedAssociations().stream()
-          .filter(a -> a.getAssocName().isPresent() && !a.getTargetRole().isPresent())
+          .filter(a -> a.isPresentAssocName() && !a.isPresentTargetRole())
           .filter(a -> a.getDerivedName().equals(roleName))
           .findAny();
     }

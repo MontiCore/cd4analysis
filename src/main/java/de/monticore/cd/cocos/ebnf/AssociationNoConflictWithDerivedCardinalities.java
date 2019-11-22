@@ -23,17 +23,17 @@ public class AssociationNoConflictWithDerivedCardinalities implements
     if (!a.isDerived())
       return; // if it is not derived, than a role name conflict is detected by 0xCD4A33
     Optional<CDTypeSymbol> leftType = a.getEnclosingScope()
-            .resolveCDType(a.getLeftReferenceName().toString());
+        .resolveCDType(a.getLeftReferenceName().toString());
     Optional<CDTypeSymbol> rightType = a.getEnclosingScope()
-            .resolveCDType(a.getRightReferenceName().toString());
+        .resolveCDType(a.getRightReferenceName().toString());
     boolean err = false;
     // source type might be external (in this case we do nothing)
     if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
-      err = check(leftType.get(), a.getRightRoleOpt(), a);
+      err = check(leftType.get(), a);
     }
     if (rightType.isPresent() && !err
-            && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
-      check(rightType.get(), a.getLeftRoleOpt(), a);
+        && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
+      check(rightType.get(), a);
     }
   }
 
@@ -45,33 +45,33 @@ public class AssociationNoConflictWithDerivedCardinalities implements
    * @param assoc      association under test
    * @return whether there was a CoCo error or not.
    */
-  private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
+  private boolean check(CDTypeSymbol sourceType, ASTCDAssociation assoc) {
+    CDAssociationSymbol assocSym = assoc.getSymbol();
 
     String roleName = assocSym.getDerivedName();
 
     // inherited
     // do not check read-only, as it is checked by AssociationNoConflictWithCardinalities
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getInheritedAssociations().stream()
-            .filter(a -> !a.isReadOnly() && a.getDerivedName().equals(roleName))
-            .filter(a -> a != assocSym)
-            .filter(a -> a.getTargetCardinality().getMin() != assocSym.getTargetCardinality().getMin()
-              || a.getTargetCardinality().getMin() != assocSym.getTargetCardinality().getMin())
-            .findAny();
+        .filter(a -> !a.isReadOnly() && a.getDerivedName().equals(roleName))
+        .filter(a -> a != assocSym)
+        .filter(a -> a.getTargetCardinality().getMin() != assocSym.getTargetCardinality().getMin()
+            || a.getTargetCardinality().getMin() != assocSym.getTargetCardinality().getMin())
+        .findAny();
 
     if (conflictingAssoc.isPresent()) {
       Log.error(
-              String
-                      .format(
-                              "0xC4A37 The target cardinality (%s .. %s) of the derived (inherited) association `%s` does not math the target cardinality (%s .. %s) of the association `%s`",
-                              assocSym.getTargetCardinality().getMin(),
-                              String.valueOf(assocSym.getTargetCardinality().getMax()).replace("-1", "*"),
-                              assocSym.isPresentAstNode() ? assocSym.getAstNode() : assocSym,
-                              conflictingAssoc.get().getTargetCardinality().getMin(),
-                              String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
-                              conflictingAssoc.get().isPresentAstNode() ? conflictingAssoc.get().getAstNode() : conflictingAssoc.get()
-                              ),
-              assoc.get_SourcePositionStart());
+          String
+              .format(
+                  "0xC4A37 The target cardinality (%s .. %s) of the derived (inherited) association `%s` does not math the target cardinality (%s .. %s) of the association `%s`",
+                  assocSym.getTargetCardinality().getMin(),
+                  String.valueOf(assocSym.getTargetCardinality().getMax()).replace("-1", "*"),
+                  assocSym.isPresentAstNode() ? assocSym.getAstNode() : assocSym,
+                  conflictingAssoc.get().getTargetCardinality().getMin(),
+                  String.valueOf(conflictingAssoc.get().getTargetCardinality().getMax()).replace("-1", "*"),
+                  conflictingAssoc.get().isPresentAstNode() ? conflictingAssoc.get().getAstNode() : conflictingAssoc.get()
+              ),
+          assoc.get_SourcePositionStart());
       return true;
     }
     return false;

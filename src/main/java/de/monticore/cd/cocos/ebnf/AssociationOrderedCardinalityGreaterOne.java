@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 public class AssociationOrderedCardinalityGreaterOne implements
     CD4AnalysisASTCDAssociationCoCo {
-  
+
   /**
    * @see de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo#check(de.monticore.cd._ast.ASTCDAssociation)
    */
@@ -28,51 +28,48 @@ public class AssociationOrderedCardinalityGreaterOne implements
   public void check(ASTCDAssociation assoc) {
     boolean err = false;
     if (assoc.isPresentLeftModifier()
-        && isOrdered(assoc.getLeftModifier())) {
-      err = check(assoc.getLeftCardinalityOpt(), assoc);
+        && isOrdered(assoc.getLeftModifier())
+        && assoc.isPresentLeftCardinality()) {
+      err = check(assoc.getLeftCardinality(), assoc);
     }
-    
     if (!err && assoc.isPresentRightModifier()
-        && isOrdered(assoc.getRightModifier())) {
-      check(assoc.getRightCardinalityOpt(), assoc);
+        && isOrdered(assoc.getRightModifier())
+        && assoc.isPresentRightCardinality()) {
+      check(assoc.getRightCardinality(), assoc);
     }
-    
   }
-  
+
   /**
    * Does the check on the given cardinality.
-   * 
-   * @param card the cardinality under test
+   *
+   * @param card  the cardinality under test
    * @param assoc the association under test
    * @return whether ther was a coco error or not
    */
-  private boolean check(Optional<ASTCardinality> card, ASTCDAssociation assoc) {
-    if (card.isPresent()) {
-      if (card.get().isOne() || card.get().isOptional()) {
-        Log.error(
-            String
-                .format(
-                    "0xC4A24 Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
-                    CD4ACoCoHelper.printAssociation(assoc)),
-            assoc.get_SourcePositionStart());
-        return true;
-      }
+  private boolean check(ASTCardinality card, ASTCDAssociation assoc) {
+    if (card.isOne() || card.isOptional()) {
+      Log.error(
+          String
+              .format(
+                  "0xC4A24 Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
+                  CD4ACoCoHelper.printAssociation(assoc)),
+          assoc.get_SourcePositionStart());
+      return true;
     }
     return false;
-    
   }
-  
+
   private boolean isOrdered(ASTModifier mod) {
     if (mod.isPresentStereotype()) {
-       List<ASTCDStereoValue> list = mod.getStereotype().getValueList();
+      List<ASTCDStereoValue> list = mod.getStereotype().getValueList();
       for (ASTCDStereoValue l : list) {
         if ("ordered".equals(l.getName())) {
           return true;
         }
       }
     }
-    
+
     return false;
   }
-  
+
 }

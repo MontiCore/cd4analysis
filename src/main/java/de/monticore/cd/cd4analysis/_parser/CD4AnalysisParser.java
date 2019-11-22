@@ -2,7 +2,6 @@
 package de.monticore.cd.cd4analysis._parser;
 
 import com.google.common.io.Files;
-import de.monticore.cd.cd4analysis._parser.CD4AnalysisParserTOP;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
