@@ -56,13 +56,13 @@ public class ASTTransformationTest {
     assertTrue(astClass.isPresentSuperclass());
     assertTrue(astClass.getSuperclass() instanceof ASTMCObjectType);
     ASTMCObjectType superClass = (ASTMCObjectType) astClass.getSuperclass();
-    assertEquals(superClass.printType(), "superC");
+    assertEquals(superClass.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "superC");
 
     assertEquals(astClass.getInterfaceList().size(), 2);
     assertTrue(astClass.getInterfaceList().get(0) instanceof ASTMCObjectType);
-    assertEquals((astClass.getInterfaceList().get(0)).printType(), "i1");
+    assertEquals((astClass.getInterfaceList().get(0)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "i1");
     assertTrue(astClass.getInterfaceList().get(1) instanceof ASTMCObjectType);
-    assertEquals((astClass.getInterfaceList().get(1)).printType(), "i2");
+    assertEquals((astClass.getInterfaceList().get(1)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "i2");
   }
 
   @Test
@@ -80,9 +80,9 @@ public class ASTTransformationTest {
 
     assertEquals(astInterface.getInterfaceList().size(), 2);
     assertTrue(astInterface.getInterfaceList().get(0) instanceof ASTMCObjectType);
-    assertEquals((astInterface.getInterfaceList().get(0)).printType(), "SuperI1");
+    assertEquals((astInterface.getInterfaceList().get(0)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "SuperI1");
     assertTrue(astInterface.getInterfaceList().get(1) instanceof ASTMCObjectType);
-    assertEquals((astInterface.getInterfaceList().get(1)).printType(), "SuperI2");
+    assertEquals((astInterface.getInterfaceList().get(1)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "SuperI2");
   }
 
   @Test
@@ -92,14 +92,14 @@ public class ASTTransformationTest {
     assertTrue(attr1.isPresent());
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getMCType() instanceof ASTMCObjectType);
-    assertEquals((attr1.get().getMCType()).printType(), "String");
+    assertEquals((attr1.get().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "String");
     assertFalse(attr1.get().isPresentModifier());
 
     Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttribute(astClass, "b", "a.b.C");
     assertTrue(attr2.isPresent());
     assertEquals(attr2.get().getName(), "b");
     assertTrue(attr2.get().getMCType() instanceof ASTMCObjectType);
-    assertEquals((attr2.get().getMCType()).printType(), "a.b.C");
+    assertEquals((attr2.get().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "a.b.C");
     assertFalse(attr2.get().isPresentModifier());
 
     Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttribute(astClass, "c", "List<String>", "private static");
@@ -126,7 +126,7 @@ public class ASTTransformationTest {
     assertTrue(attr1.isPresent());
     assertEquals(attr1.get().getName(), "a");
     assertTrue(attr1.get().getMCType() instanceof ASTMCObjectType);
-    assertEquals((attr1.get().getMCType()).printType(), "String");
+    assertEquals((attr1.get().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "String");
 
     Optional<ASTCDAttribute> attr2 = astTransformation.addCdAttributeUsingDefinition(astClass, "protected a.b.C b;");
     assertTrue(attr2.isPresent());
@@ -134,7 +134,7 @@ public class ASTTransformationTest {
     assertTrue(attr2.get().isPresentModifier());
     assertTrue(attr2.get().getModifier().isProtected());
     assertTrue(attr2.get().getMCType() instanceof ASTMCObjectType);
-    assertEquals((attr2.get().getMCType()).printType(), "a.b.C");
+    assertEquals((attr2.get().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "a.b.C");
 
     Optional<ASTCDAttribute> attr3 = astTransformation.addCdAttributeUsingDefinition(astClass, "+Date d;");
     assertTrue(attr3.isPresent());
@@ -142,7 +142,7 @@ public class ASTTransformationTest {
     assertTrue(attr3.get().isPresentModifier());
     assertTrue(attr3.get().getModifier().isPublic());
     assertTrue(attr3.get().getMCType() instanceof ASTMCObjectType);
-    assertEquals((attr3.get().getMCType()).printType(), "Date");
+    assertEquals((attr3.get().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "Date");
   }
 
   @Test
@@ -157,14 +157,14 @@ public class ASTTransformationTest {
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getMCReturnType().isPresentMCType());
-    assertEquals((method2.get().getMCReturnType().getMCType()).printType(), "Integer");
+    assertEquals((method2.get().getMCReturnType().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "Integer");
     assertEquals(method2.get().getCDParameterList().size(), 3);
     assertEquals(method2.get().getCDParameterList().get(0).getName(), "param0");
     assertTrue(method2.get().getCDParameterList().get(0).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.get().getCDParameterList().get(0).getMCType()).printType(), "A");
+    assertEquals((method2.get().getCDParameterList().get(0).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "A");
     assertEquals(method2.get().getCDParameterList().get(1).getName(), "param1");
     assertTrue(method2.get().getCDParameterList().get(1).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.get().getCDParameterList().get(1).getMCType()).printType(), "a.b.C");
+    assertEquals((method2.get().getCDParameterList().get(1).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "a.b.C");
     assertEquals(method2.get().getCDParameterList().get(2).getName(), "param2");
     assertTrue(method2.get().getCDParameterList().get(2).getMCType() instanceof ASTMCGenericType);
     ASTMCGenericType param2Type = (ASTMCGenericType) method2.get().getCDParameterList().get(2).getMCType();
@@ -193,7 +193,7 @@ public class ASTTransformationTest {
     assertTrue(method2.isPresent());
     assertEquals(method2.get().getName(), "test2");
     assertTrue(method2.get().getMCReturnType().isPresentMCType());
-    assertEquals(method2.get().getMCReturnType().getMCType().printType(), "Integer");
+    assertEquals(method2.get().getMCReturnType().getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "Integer");
     assertNotNull(method2.get().getModifier());
     assertTrue(method2.get().getModifier().isProtected());
     assertFalse(method2.get().getModifier().isPublic());
@@ -202,25 +202,25 @@ public class ASTTransformationTest {
     assertEquals(method2.get().getCDParameterList().size(), 3);
     assertEquals(method2.get().getCDParameterList().get(0).getName(), "param0");
     assertTrue(method2.get().getCDParameterList().get(0).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.get().getCDParameterList().get(0).getMCType()).printType(), "A");
+    assertEquals((method2.get().getCDParameterList().get(0).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "A");
     assertEquals(method2.get().getCDParameterList().get(1).getName(), "param1");
     assertTrue(method2.get().getCDParameterList().get(1).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.get().getCDParameterList().get(1).getMCType()).printType(), "a.b.C");
+    assertEquals((method2.get().getCDParameterList().get(1).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "a.b.C");
     assertEquals(method2.get().getCDParameterList().get(2).getName(), "param2");
     assertTrue(method2.get().getCDParameterList().get(2).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.get().getCDParameterList().get(2).getMCType()).printType(), "List<String>");
+    assertEquals((method2.get().getCDParameterList().get(2).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "List<String>");
 
     Optional<ASTCDMethod> method3 = astTransformation.addCdMethodUsingDefinition(astClass, "protected Date foo(String a, int b);");
     assertTrue(method3.isPresent());
     assertEquals(method3.get().getName(), "foo");
     assertTrue(method3.get().getMCReturnType().isPresentMCType());
-    assertEquals(method3.get().getMCReturnType().getMCType().printType(), "Date");
+    assertEquals(method3.get().getMCReturnType().getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "Date");
     assertNotNull(method3.get().getModifier());
     assertTrue(method3.get().getModifier().isProtected());
     assertEquals(method3.get().getCDParameterList().size(), 2);
     assertEquals(method3.get().getCDParameterList().get(0).getName(), "a");
     assertTrue(method3.get().getCDParameterList().get(0).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method3.get().getCDParameterList().get(0).getMCType()).printType(), "String");
+    assertEquals((method3.get().getCDParameterList().get(0).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "String");
     assertEquals(method3.get().getCDParameterList().get(1).getName(), "b");
     assertTrue(method3.get().getCDParameterList().get(1).getMCType() instanceof ASTMCPrimitiveType);
     assertEquals(((ASTMCPrimitiveType) method3.get().getCDParameterList().get(1).getMCType()).getPrimitive(), ASTConstantsMCBasicTypes.INT);

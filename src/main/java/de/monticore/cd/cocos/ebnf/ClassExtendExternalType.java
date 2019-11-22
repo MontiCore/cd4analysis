@@ -21,9 +21,8 @@ public class ClassExtendExternalType implements CD4AnalysisASTCDClassCoCo {
   @Override
   public void check(ASTCDClass clazz) {
     CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol();
-    Optional<CDTypeSymbolLoader> optSuperType = symbol.getSuperClassOpt();
-    if (optSuperType.isPresent()) {
-      CDTypeSymbol superType = optSuperType.get().getLoadedSymbol();
+    if (symbol.isPresentSuperClass()) {
+      CDTypeSymbol superType =symbol.getSuperClass().getLoadedSymbol();
       if (isExternal(superType)) {
         boolean hasEmptyConstructor = superType.getMethods()
             .stream()

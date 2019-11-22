@@ -10,6 +10,8 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
+import java.util.Optional;
+
 /**
  * Checks that classes do only extend other classes.
  *
@@ -20,9 +22,8 @@ public class ClassExtendsOnlyClasses implements CD4AnalysisASTCDClassCoCo {
   @Override
   public void check(ASTCDClass clazz) {
     CDTypeSymbol symbol = (CDTypeSymbol) clazz.getSymbol();
-    Optional<CDTypeSymbolLoader> optSuperType = symbol.getSuperClassOpt();
-    if (optSuperType.isPresent()) {
-      CDTypeSymbol superType = optSuperType.get().getLoadedSymbol();
+    if (symbol.isPresentSuperClass()) {
+      CDTypeSymbol superType = symbol.getSuperClass().getLoadedSymbol();
       if (!superType.isIsClass()) {
         Log.error(String.format(
             "0xC4A08 Class %s cannot extend %s %s. A class may only extend classes.",

@@ -65,7 +65,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
     String roleName = assocSym.getDerivedName(); // is always target role name
 
     List<CDAssociationSymbol> conflictingAssoc2 = assocSym.getSourceType().getLoadedSymbol().getAllAssociations().stream()
-            .filter(a -> a != assocSym && (a.getTargetRole().isPresent() || !a.getAssocName().isPresent()))
+            .filter(a -> a != assocSym && (a.isPresentTargetRole() || !a.isPresentAssocName()))
             .filter(a -> a.getDerivedName().equals(roleName))
             .collect(Collectors.toList());
 

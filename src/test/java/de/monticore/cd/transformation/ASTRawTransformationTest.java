@@ -52,13 +52,13 @@ public class ASTRawTransformationTest {
     assertTrue(astClass.getSuperclass() instanceof ASTMCObjectType);
     ASTMCObjectType superClass = (ASTMCObjectType) astClass
         .getSuperclass();
-    assertEquals(superClass.printType(), "superC");
+    assertEquals(superClass.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "superC");
 
     assertEquals(astClass.getInterfaceList().size(), 2);
     assertTrue(astClass.getInterfaceList().get(0) instanceof ASTMCObjectType);
-    assertEquals((astClass.getInterfaceList().get(0)).printType(), "i1");
+    assertEquals((astClass.getInterfaceList().get(0)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "i1");
     assertTrue(astClass.getInterfaceList().get(1) instanceof ASTMCObjectType);
-    assertEquals((astClass.getInterfaceList().get(1)).printType(), "i2");
+    assertEquals((astClass.getInterfaceList().get(1)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "i2");
   }
 
   @Test
@@ -78,9 +78,9 @@ public class ASTRawTransformationTest {
     assertEquals(astInterface.getInterfaceList().size(), 2);
     assertTrue(astInterface.getInterfaceList().get(0) instanceof ASTMCObjectType);
     assertEquals((astInterface.getInterfaceList()
-        .get(0)).printType(), "SuperI1");
+        .get(0)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "SuperI1");
     assertTrue(astInterface.getInterfaceList().get(1) instanceof ASTMCObjectType);
-    assertEquals((astInterface.getInterfaceList().get(1)).printType(), "SuperI2");
+    assertEquals((astInterface.getInterfaceList().get(1)).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "SuperI2");
   }
 
   @Test
@@ -91,7 +91,7 @@ public class ASTRawTransformationTest {
     assertNotNull(attr1);
     assertEquals(attr1.getName(), "a");
     assertTrue(attr1.getMCType() instanceof ASTMCObjectType);
-    assertEquals(((ASTMCObjectType) attr1.getMCType()).printType(), "String");
+    assertEquals(((ASTMCObjectType) attr1.getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "String");
     assertTrue(!attr1.isPresentModifier());
 
     ASTCDAttribute attr2 = astTransformation.addCdAttribute(astClass, "b",
@@ -99,7 +99,7 @@ public class ASTRawTransformationTest {
     assertNotNull(attr2);
     assertEquals(attr2.getName(), "b");
     assertTrue(attr2.getMCType() instanceof ASTMCObjectType);
-    assertEquals((attr2.getMCType()).printType(), "a.b.C");
+    assertEquals((attr2.getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "a.b.C");
     assertTrue(!attr2.isPresentModifier());
 
   }
@@ -117,18 +117,18 @@ public class ASTRawTransformationTest {
     assertNotNull(method2);
     assertEquals(method2.getName(), "test2");
     assertTrue(method2.getMCReturnType().isPresentMCType());
-    assertEquals((method2.getMCReturnType().getMCType()).printType(), "Integer");
+    assertEquals((method2.getMCReturnType().getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "Integer");
     assertEquals(method2.getCDParameterList().size(), 3);
     assertEquals(method2.getCDParameterList().get(0).getName(), "param0");
     assertTrue(method2.getCDParameterList().get(0).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.getCDParameterList().get(0).getMCType()).printType(), "A");
+    assertEquals((method2.getCDParameterList().get(0).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "A");
     assertEquals(method2.getCDParameterList().get(1).getName(), "param1");
     assertTrue(method2.getCDParameterList().get(1).getMCType() instanceof ASTMCObjectType);
-    assertEquals((method2.getCDParameterList().get(1).getMCType()).printType(),"a.b.C");
+    assertEquals((method2.getCDParameterList().get(1).getMCType()).printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())),"a.b.C");
     assertEquals(method2.getCDParameterList().get(2).getName(), "param2");
     assertTrue(method2.getCDParameterList().get(2).getMCType() instanceof ASTMCObjectType);
     ASTMCObjectType param2Type = (ASTMCObjectType) method2.getCDParameterList().get(2).getMCType();
-    assertEquals(param2Type.printType(), "String");
+    assertEquals(param2Type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), "String");
     assertNotNull(method2.getModifier());
     assertTrue(method2.getModifier().isPublic());
   }

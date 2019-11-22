@@ -12,7 +12,7 @@
 
         <!-- .. Libraries ..................................................... -->
 
-        <monticore.version>5.4.0.1</monticore.version>
+        <monticore.version>6.0.0</monticore.version>
 
         <findbugs.version>3.0.0</findbugs.version>
         <guava.version>23.0</guava.version>

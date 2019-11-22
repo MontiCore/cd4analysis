@@ -55,11 +55,20 @@ public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
     // compare ASTNode and not symbol, because for bidirectional ASTNodes two single directional symbols are created
     List<CDAssociationSymbol> list = new ArrayList<>();
     list.addAll(type.getSpecAssociations());
-
-    Optional<CDAssociationSymbol> error = list.stream().
-            filter(ass -> !ass.getAstNode().equals(assSymbol.getAstNode()))
-            .filter(ass -> ass.getTargetType().getLoadedSymbol().getFullName().equals(type.getFullName()) ?
-                    ass.getSourceRole().equals(optName) : ass.getTargetRole().equals(optName)).findAny();
+    Optional<CDAssociationSymbol> error = Optional.empty();
+    for (CDAssociationSymbol ass : list) {
+      if (!ass.getAstNode().equals(assSymbol.getAstNode())) {
+        if (ass.getTargetType().getLoadedSymbol().getFullName().equals(type.getFullName())) {
+          if (ass.isPresentSourceRole() && ass.getSourceRole().equals(name)) {
+            error = Optional.of(ass);
+            break;
+          }
+        } else if (ass.isPresentTargetRole() && ass.getTargetRole().equals(name)) {
+          error = Optional.of(ass);
+          break;
+        }
+      }
+    }
 
     if (error.isPresent()) {
       ASTCDAssociation a = (ASTCDAssociation)assSymbol.getAstNode();

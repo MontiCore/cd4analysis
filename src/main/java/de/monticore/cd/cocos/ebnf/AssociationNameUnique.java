@@ -33,14 +33,11 @@ public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
     }
   }
 
-  private Optional<CDAssociationSymbol> check(Optional<CDAssociationSymbol> assSymbol, String name) {
-    if (!assSymbol.isPresent()) {
-      return Optional.empty();
-    }
+  private Optional<CDAssociationSymbol> check(CDAssociationSymbol assSymbol, String name) {
     Optional<CDAssociationSymbol> ret = Optional.empty();
-    ret = check(assSymbol.get().getSourceType().getLoadedSymbol(), name, assSymbol.get());
+    ret = check(assSymbol.getSourceType().getLoadedSymbol(), name, assSymbol);
     if (!ret.isPresent()) {
-      ret = check(assSymbol.get().getTargetType().getLoadedSymbol(), name, assSymbol.get());
+      ret = check(assSymbol.getTargetType().getLoadedSymbol(), name, assSymbol);
     }
     return ret;
   }
