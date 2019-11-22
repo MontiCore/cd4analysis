@@ -24,12 +24,12 @@ import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
  * AST specific helper to print AST nodes.
  *****************************************************************************/
 public class CD4CodePrinter {
-  
+
   public static final String EMPTY_STRING = "";
-  
+
   /**
    * Print the string of a ASTModifier type, e.g. abstract private final static
-   * 
+   *
    * @param modifier the ASTModifier object
    * @return a string, e.g. abstract private final static
    */
@@ -50,25 +50,27 @@ public class CD4CodePrinter {
   public String printSimpleModifier(Optional<ASTModifier> modifier) {
     if (!modifier.isPresent()) {
       return EMPTY_STRING;
+    } else {
+      return printSimpleModifier(modifier.get());
     }
+  }
 
+  public String printSimpleModifier(ASTModifier modifier) {
     StringBuilder modifierStr = new StringBuilder();
-    if (modifier.get().isAbstract()) {
+    if (modifier.isAbstract()) {
       modifierStr.append(" abstract ");
     }
-    if (modifier.get().isPublic()) {
+    if (modifier.isPublic()) {
       modifierStr.append(" public ");
-    }
-    else if (modifier.get().isPrivate()) {
+    } else if (modifier.isPrivate()) {
       modifierStr.append(" private ");
-    }
-    else if (modifier.get().isProtected()) {
+    } else if (modifier.isProtected()) {
       modifierStr.append(" protected ");
     }
-    if (modifier.get().isFinal()) {
+    if (modifier.isFinal()) {
       modifierStr.append(" final ");
     }
-    if (modifier.get().isStatic()) {
+    if (modifier.isStatic()) {
       modifierStr.append(" static ");
     }
 
@@ -81,16 +83,16 @@ public class CD4CodePrinter {
   public String printModifier(ASTModifier modifier) {
     return printModifier(Optional.ofNullable(modifier));
   }
-  
+
   /**
    * Converts a list of import statements to a string list.
-   * 
+   *
    * @param importStatements the list of import statements
    * @return a string list of all import statements
    */
   public Collection<String> printImportList(
       List<ASTMCImportStatement> importStatements) {
-    
+
     return Collections2.transform(importStatements,
         new Function<ASTMCImportStatement, String>() {
 
@@ -98,120 +100,120 @@ public class CD4CodePrinter {
           public String apply(ASTMCImportStatement arg0) {
             return arg0.getQName();
           }
-          
+
         });
   }
-  
+
   /**
    * Converts a list of enum constants to a string list of enum constants
-   * 
+   *
    * @param enumConstants list of enum constants
    * @return a string list of enum constants
    */
   public String printEnumConstants(List<ASTCDEnumConstant> enumConstants) {
-    
+
     checkNotNull(enumConstants);
-    
+
     return Joiner.on(",").join(
-        
+
         Collections2.transform(enumConstants,
             new Function<ASTCDEnumConstant, String>() {
-              
+
               @Override
               public String apply(ASTCDEnumConstant arg0) {
                 return arg0.getName();
               }
-              
+
             }
-            
-            ));
+
+        ));
   }
-  
+
   /**
    * Prints an ASTType
-   * 
+   *
    * @param type an ASTType
    * @return String representation of the ASTType
    */
   public String printType(ASTMCType type) {
     return new CD4CodePrettyPrinterDelegator().prettyprint(type);
   }
-  
+
   public String printType(ASTMCReturnType type) {
     return new CD4CodePrettyPrinterDelegator().prettyprint(type); //TODO CollectionTypesPrinter
   }
-  
+
   /**
    * Prints the parameter declarations that can be used in methods,
    * constructors, etc.
-   * 
+   *
    * @param parameterList a list of all parameters
    * @return a string list of parameter declarations, e.g. type name
    */
   public String printCDParametersDecl(List<ASTCDParameter> parameterList) {
     checkNotNull(parameterList);
-    
+
     return Joiner.on(",").join(
         Collections2.transform(parameterList,
             new Function<ASTCDParameter, String>() {
-              
+
               @Override
               public String apply(ASTCDParameter arg0) {
                 return printType(arg0.getMCType()) + " " + arg0.getName();
               }
-              
+
             }));
   }
-  
+
   /**
    * Prints the throws declaration for methods, constructors, etc.
-   * 
+   *
    * @param exceptionList a list of all qualified exceptions
    * @return a string list of all exceptions
    */
   public String printThrowsDecl(List<ASTMCQualifiedName> exceptionList) {
     StringBuilder str = new StringBuilder();
-    
+
     if (!exceptionList.isEmpty()) {
       str.append("throws ");
     }
-    
+
     return str.append(
         Joiner.on(",").join(
             Collections2.transform(exceptionList,
                 new Function<ASTMCQualifiedName, String>() {
-                  
+
                   @Override
                   public String apply(ASTMCQualifiedName arg0) {
                     return Joiner.on(".").join(arg0.getPartList());
                   }
-                  
+
                 }))).toString();
   }
-  
+
   /**
    * Prints a list of extends declarations.
-   * 
+   *
    * @param extendsList a list of extends declarations
    * @return a string list of all extends declarations
    */
   public String printReferenceList(List<ASTMCObjectType> extendsList) {
     checkNotNull(extendsList);
-    
+
     return Joiner.on(",").join(
         Collections2.transform(extendsList,
             new Function<ASTMCObjectType, String>() {
-              
+
               @Override
               public String apply(ASTMCObjectType arg0) {
                 return printType(arg0);
               }
             }));
   }
-  
+
   /**
    * Prints a value of an attribute
-   * 
+   *
    * @param value the ASTValue object
    * @return a string representing the ASTValue
    */
@@ -219,10 +221,15 @@ public class CD4CodePrinter {
     checkNotNull(value);
     String output = "";
     if (value.isPresent()) {
-      CD4CodePrettyPrinterDelegator p = new CD4CodePrettyPrinterDelegator();
-      output = p.prettyprint(value.get()).trim().intern();
+      output= printValue(value.get());
     }
-    
+
     return output;
+  }
+
+  public String printValue(ASTValue value) {
+    checkNotNull(value);
+    CD4CodePrettyPrinterDelegator p = new CD4CodePrettyPrinterDelegator();
+    return p.prettyprint(value).trim().intern();
   }
 }

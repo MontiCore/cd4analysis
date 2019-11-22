@@ -63,7 +63,7 @@ public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
    * @param node class to check.
    */
   private void checkClass(ASTCDClass node) {
-    CDTypeSymbol symbol = (CDTypeSymbol) node.getSymbol();
+    CDTypeSymbol symbol = node.getSymbol();
     Set<CDTypeSymbol> path = new HashSet<>();
     Optional<CDTypeSymbolLoader> optSuperSymb = Optional.empty();
     if (symbol.isPresentSuperClass()) {

@@ -106,8 +106,7 @@ public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
 
   public String getIdent(ASTCDAssociation a) {
     String ident = "";
-    java.util.Optional<String> n = a.getNameOpt();
-    if (n.isPresent() && a.getLeftReferenceName() != null
+    if (a.isPresentName() && a.getLeftReferenceName() != null
         && a.getRightReferenceName() != null) {
       ident = a.getLeftReferenceName().getBaseName() + "-"
           + Layouter.unqualName(a.getRightReferenceName().toString());

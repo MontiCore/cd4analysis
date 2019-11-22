@@ -14,18 +14,17 @@ import static de.monticore.symboltable.modifiers.BasicAccessModifier.*;
 import static org.junit.Assert.*;
 
 public class CD4AnalysisSymbolTableCreatorTest {
-  
+
   @BeforeClass
   public static void setup() {
     Log.init();
     Log.enableFailQuick(false);
   }
-  
+
   @Test
   public void testSymbolTableCreation() {
-    final
-    CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
-    
+    final CD4AnalysisGlobalScope globalScope = CD4AGlobalScopeTestFactory.create();
+
     final CDDefinitionSymbol cdSymbol = globalScope.resolveCDDefinition(
         "de.monticore.umlcd4a.symboltable.CD1").orElse(null);
     assertNotNull(cdSymbol);
@@ -43,7 +42,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     globalScope.add(new CDTypeSymbol("boolean"));
     globalScope.add(new CDTypeSymbol("String"));
     final CDTypeSymbol builtInList = new CDTypeSymbol("java.util.List");
-   // TODO Check builtInList.setPackageName("java.util");
+    // TODO Check builtInList.setPackageName("java.util");
     globalScope.add(builtInList);
 
 
@@ -233,11 +232,12 @@ public class CD4AnalysisSymbolTableCreatorTest {
     // Bidirectional association A <-> B is splitted into two associations A -> B and A <- B.
     // A -> B
     final CDAssociationSymbol memberAssocLeft2Right = (CDAssociationSymbol)
-        cdScope.resolveCDAssociationDown("member",  BasicAccessModifier.ALL_INCLUSION,
+        cdScope.resolveCDAssociationDown("member", BasicAccessModifier.ALL_INCLUSION,
             new CDAssociationNameAndTargetNamePredicate("member", "Prof")).orElse(null);
     assertNotNull(memberAssocLeft2Right);
     assertEquals("member", memberAssocLeft2Right.getName());
-    assertEquals("member", memberAssocLeft2Right.getAssocName().orElse(""));
+    assertTrue(memberAssocLeft2Right.isPresentAssocName());
+    assertEquals("member", memberAssocLeft2Right.getAssocName());
     assertTrue(memberAssocLeft2Right.isBidirectional());
     assertEquals(personType.getName(), memberAssocLeft2Right.getSourceType().getName());
     assertEquals(profType.getName(), memberAssocLeft2Right.getTargetType().getName());
@@ -249,17 +249,17 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(memberAssocLeft2Right.getTargetCardinality().isMultiple());
     // AST
     assertTrue(memberAssocLeft2Right.isPresentAstNode());
-    assertTrue(memberAssocLeft2Right.getAstNode() instanceof ASTCDAssociation);
-    ASTCDAssociation left2RightNode = (ASTCDAssociation) memberAssocLeft2Right.getAstNode();
-    assertTrue(left2RightNode.getLeftToRightSymbol().isPresent());
-    assertSame(memberAssocLeft2Right, left2RightNode.getLeftToRightSymbol().get());
+    ASTCDAssociation left2RightNode = memberAssocLeft2Right.getAstNode();
+    assertTrue(left2RightNode.isPresentLeftToRightSymbol());
+    assertSame(memberAssocLeft2Right, left2RightNode.getLeftToRightSymbol());
 
     // A <- B
     final CDAssociationSymbol memberAssocRight2Left = cdScope.resolveCDAssociation("member",
-        BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
+        BasicAccessModifier.ALL_INCLUSION, new CDAssociationNameAndTargetNamePredicate("member", "Person")).orElse(null);
     assertNotNull(memberAssocRight2Left);
     assertEquals("member", memberAssocRight2Left.getName());
-    assertEquals("member", memberAssocRight2Left.getAssocName().orElse(""));
+    assertTrue(memberAssocRight2Left.isPresentAssocName());
+    assertEquals("member", memberAssocLeft2Right.getAssocName());
     assertTrue(memberAssocRight2Left.isBidirectional());
     assertEquals(profType.getName(), memberAssocRight2Left.getSourceType().getName());
     assertEquals(personType.getName(), memberAssocRight2Left.getTargetType().getName());
@@ -271,10 +271,9 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertTrue(memberAssocRight2Left.getTargetCardinality().isMultiple());
     // AST
     assertTrue(memberAssocRight2Left.isPresentAstNode());
-    assertTrue(memberAssocRight2Left.getAstNode() instanceof ASTCDAssociation);
-    ASTCDAssociation right2LeftNode = (ASTCDAssociation) memberAssocRight2Left.getAstNode();
-    assertTrue(right2LeftNode.getLeftToRightSymbol().isPresent());
-    assertSame(memberAssocRight2Left, right2LeftNode.getRightToLeftSymbol().get());
+    ASTCDAssociation right2LeftNode = memberAssocRight2Left.getAstNode();
+    assertTrue(right2LeftNode.isPresentLeftToRightSymbol());
+    assertSame(memberAssocRight2Left, right2LeftNode.getRightToLeftSymbol());
     // Stereotype
     assertEquals(1, memberAssocRight2Left.getStereotypes().size());
     assertEquals("SA", memberAssocRight2Left.getStereotype("SA").get().getValue());
@@ -282,10 +281,11 @@ public class CD4AnalysisSymbolTableCreatorTest {
 
     // A -> B
     final CDAssociationSymbol ecAssocLeft2Right = cdScope.resolveCDAssociation("ec",
-        BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
+        BasicAccessModifier.ALL_INCLUSION, new CDAssociationNameAndTargetNamePredicate("ec", "Callable")).orElse(null);
     assertNotNull(ecAssocLeft2Right);
     assertEquals("ec", ecAssocLeft2Right.getName());
-    assertEquals("ec", ecAssocLeft2Right.getAssocName().orElse(""));
+    assertTrue(ecAssocLeft2Right.isPresentAssocName());
+    assertEquals("ec", ecAssocLeft2Right.getAssocName());
     assertTrue(ecAssocLeft2Right.isBidirectional());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocLeft2Right.getSourceType().getLoadedSymbol().getFullName());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocLeft2Right.getTargetType().getLoadedSymbol().getFullName());
@@ -297,10 +297,11 @@ public class CD4AnalysisSymbolTableCreatorTest {
     assertFalse(ecAssocLeft2Right.getTargetCardinality().isMultiple());
     // A <- B
     final CDAssociationSymbol ecAssocRight2Left = cdScope.resolveCDAssociation("ec",
-        BasicAccessModifier.ALL_INCLUSION,new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
+        BasicAccessModifier.ALL_INCLUSION, new CDAssociationNameAndTargetNamePredicate("ec", "E")).orElse(null);
     assertNotNull(ecAssocRight2Left);
     assertEquals("ec", ecAssocRight2Left.getName());
-    assertEquals("ec", ecAssocRight2Left.getAssocName().orElse(""));
+    assertTrue(ecAssocRight2Left.isPresentAssocName());
+    assertEquals("ec", ecAssocRight2Left.getAssocName() );
     assertTrue(ecAssocRight2Left.isBidirectional());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.Callable", ecAssocRight2Left.getSourceType().getLoadedSymbol().getFullName());
     assertEquals("de.monticore.umlcd4a.symboltable.CD1.E", ecAssocRight2Left.getTargetType().getLoadedSymbol().getFullName());
@@ -381,7 +382,6 @@ public class CD4AnalysisSymbolTableCreatorTest {
         new CDMethodSignaturePredicate("getAge", "String", "String")).isPresent());
 
 
-
     // getAllVisibleFieldsOfSuperTypes()
     final Collection<CDFieldSymbol> superFieldsOfProf = profType.getAllVisibleFieldsOfSuperTypes();
 
@@ -428,7 +428,7 @@ public class CD4AnalysisSymbolTableCreatorTest {
     CDTypeSymbolLoader typeArgument = attributeType.getActualTypeArguments().get(0);
     assertEquals("String", typeArgument.getName());
 
-    
+
     attribute = clazz.getSpannedScope().resolveCDField("g2").orElse(null);
     assertNotNull(attribute);
     attributeType = attribute.getType();

@@ -34,11 +34,11 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
       boolean err = false;
       // source type might be external (in this case we do nothing)
       if (leftType.isPresent() && (a.isLeftToRight() || a.isBidirectional() || a.isUnspecified())) {
-        err = check(leftType.get(), a.getRightRoleOpt(), a);
+        err = check( a.isPresentRightRole(), a);
       }
       if (rightType.isPresent() && !err
               && (a.isRightToLeft() || a.isBidirectional() || a.isUnspecified())) {
-        check(rightType.get(), a.getLeftRoleOpt(), a);
+          check(a.isPresentLeftRole(), a);
       }
     }
   }
@@ -46,16 +46,15 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
   /**
    * Does the actual check.
    *
-   * @param sourceType source of the assoc under test
-   * @param role       optional role name of the target type
+   * @param roleNameDefined defines whether the role name was automatically introduced or not
    * @param assoc      association under test
    * @return whether there was a CoCo error or not.
    */
-  private boolean check(CDTypeSymbol sourceType, Optional<String> role, ASTCDAssociation assoc) {
-    CDAssociationSymbol assocSym = (CDAssociationSymbol) assoc.getSymbol();
+  private boolean check(boolean roleNameDefined, ASTCDAssociation assoc) {
+    CDAssociationSymbol assocSym = assoc.getSymbol();
 
     String targetType = assocSym.getTargetType().getName();
-    String automaticallyIntroduced = role.isPresent()
+    String automaticallyIntroduced = roleNameDefined
             ? ""
             : AUTOMATICALLY_INTRODUCED;
 
@@ -70,7 +69,7 @@ public class AssociationRoleNameNoConflictWithOtherRoleNames implements
             .collect(Collectors.toList());
 
     for (CDAssociationSymbol conflicting : conflictingAssoc2) {
-      String conflictingRoleNameAuto = conflicting.getTargetRole().isPresent()
+      String conflictingRoleNameAuto = conflicting.isPresentTargetRole()
               ? ""
               : AUTOMATICALLY_INTRODUCED;
       String conflictingRoleName = conflicting.getDerivedName();

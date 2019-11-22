@@ -46,12 +46,12 @@ public class CD4ASymbolTableReporter extends SymbolTableReporter2 {
   }
   
   private void reportAttributes(CDAssociationSymbol sym, IndentPrinter printer) {
-    if (sym.getAssocName().isPresent()) {
-      printer.println("assocName = \"" + sym.getAssocName().get() + "\";");
+    if (sym.isPresentAssocName()) {
+      printer.println("assocName = \"" + sym.getAssocName() + "\";");
     }
     printer.println("relationShip = \"" + sym.getRelationship().name() + "\";");
-    if (sym.getSourceRole().isPresent()) {
-      printer.println("role = \"" + sym.getSourceRole().get() + "\";");
+    if (sym.isPresentSourceRole()) {
+      printer.println("role = \"" + sym.getSourceRole()+ "\";");
     }
     printer.println("sourceCard = \"" + printCardinality(sym.getSourceCardinality()) + "\";");
     printer.println("targetCard = \"" + printCardinality(sym.getTargetCardinality()) + "\";");

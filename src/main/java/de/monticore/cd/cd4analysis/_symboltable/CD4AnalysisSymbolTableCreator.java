@@ -582,7 +582,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   public final Optional<? extends IScopeSpanningSymbol> currentSymbol() {
-    return currentScope().getSpanningSymbolOpt();
+    return currentScope().isPresentSpanningSymbol() ? Optional.of(currentScope().getSpanningSymbol()) : Optional.empty();
   }
 
 }

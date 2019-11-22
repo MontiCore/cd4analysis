@@ -75,7 +75,7 @@ public class CDSymbolTable {
    * @return a list of all visible attributes
    */
   public Optional<CDTypeSymbol> resolve(String className) {
-    return this.cdScope.<CDTypeSymbol> resolveCDType(className);
+    return this.cdScope.resolveCDType(className);
   }
 
   // TODO AR: I don't like this method ...

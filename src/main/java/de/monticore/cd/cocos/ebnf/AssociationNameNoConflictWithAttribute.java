@@ -65,7 +65,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
     // that are not defined by assoc name (same assoc name would be found by
     // other coco)
     Optional<CDAssociationSymbol> conflictingAssoc = sourceType.getAssociations().stream()
-        .filter(a -> !a.getAssocName().isPresent())
+        .filter(a -> !a.isPresentAssocName())
         .filter(a -> a.getDerivedName().equals(assocName))
         .findAny();
     if (!conflictingAssoc.isPresent()) {
@@ -79,7 +79,7 @@ public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDA
       boolean isReadOnly = false;
       List<String> superTypes = null;
       if (targetType.isPresent()) {
-        isReadOnly = ((ASTCDAssociation) (conflictingAssoc.get().getAstNode())).isReadOnly();
+        isReadOnly = ( (conflictingAssoc.get().getAstNode())).isReadOnly();
         superTypes = targetType.get().getSuperTypes().stream().map(type -> type.getFullName()).collect(Collectors.toList());
       }
       if (isReadOnly && superTypes.contains(

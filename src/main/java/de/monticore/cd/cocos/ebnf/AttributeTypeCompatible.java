@@ -6,7 +6,8 @@ import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.monticore.literals.mccommonliterals._visitor.MCCommonLiteralsVisitor;
-import de.monticore.types.CollectionTypesPrinter;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -20,9 +21,9 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   @Override
   public void check(ASTCDAttribute node) {
     if (node.isPresentValue()) {
-      CDFieldSymbol symbol = (CDFieldSymbol) node.getSymbol();
+      CDFieldSymbol symbol = node.getSymbol();
       String className = symbol.getEnclosingScope().getName();
-      String typeName = CollectionTypesPrinter.printType(node.getMCType());
+      String typeName = node.getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()));
       ASTSignedLiteral lit = node.getValue().getSignedLiteral();
       
       // see TypeChecker javadoc for more information

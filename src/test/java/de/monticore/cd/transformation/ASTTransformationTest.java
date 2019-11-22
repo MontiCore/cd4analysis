@@ -3,12 +3,14 @@ package de.monticore.cd.transformation;
 
 import com.google.common.collect.Lists;
 import de.monticore.cd.cd4analysis._ast.*;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTConstantsMCBasicTypes;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCGenericType;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

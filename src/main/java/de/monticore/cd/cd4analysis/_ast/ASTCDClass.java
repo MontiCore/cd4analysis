@@ -4,9 +4,6 @@ package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.CD4CodePrinter;
 import de.monticore.cd.prettyprint.CDPrettyPrinterDelegator;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-
-import java.util.Optional;
 
 import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 
