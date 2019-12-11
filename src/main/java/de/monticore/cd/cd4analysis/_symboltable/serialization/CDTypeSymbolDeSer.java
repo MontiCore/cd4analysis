@@ -12,11 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * TODO
- *
- * @author (last commit)
- * @version , 05.12.2019
- * @since TODO
+ * Loads non-primitive attributes "cdInterfaces" and "superClass" of CDTypeSymbols.
  */
 public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
 

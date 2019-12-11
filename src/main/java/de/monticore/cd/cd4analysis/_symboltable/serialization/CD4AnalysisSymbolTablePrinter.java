@@ -19,11 +19,6 @@ public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinter
   public static final String  RETURN_TYPE =  "returnType";
   public static final String  EXCEPTIONS =  "exceptions";
 
-
-  public  CD4AnalysisSymbolTablePrinterTOP getRealThis ()  {
-    return this;
-  }
-
   @Override protected void serializeCDTypeCdInterfaces(List<CDTypeSymbolLoader> cdInterfaces) {
     printer.beginArray(CD_INTERFACES);
     for(CDTypeSymbolLoader loader : cdInterfaces){

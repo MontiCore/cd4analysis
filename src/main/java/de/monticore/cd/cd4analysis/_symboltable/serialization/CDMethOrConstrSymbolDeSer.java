@@ -12,11 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * TODO
- *
- * @author (last commit)
- * @version , 05.12.2019
- * @since TODO
+ * Loads non-primitive attributes "returnType" and "exceptions" of CDMethOrConstrSymbols.
  */
 public class CDMethOrConstrSymbolDeSer extends CDMethOrConstrSymbolDeSerTOP {
 
