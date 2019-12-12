@@ -77,7 +77,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void visit(final ASTCDDefinition astDefinition) {
-    final String cdName = astDefinition.getName();
+    // Do nothing: see visit(ASTCDCompilationUnit)
   }
 
   @Override

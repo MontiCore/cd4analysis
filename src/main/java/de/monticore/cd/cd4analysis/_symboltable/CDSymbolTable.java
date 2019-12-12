@@ -34,9 +34,8 @@ public class CDSymbolTable {
   private ICD4AnalysisScope cdScope;
   
   private CD4AnalysisGlobalScope globalScope;
-  
-  private CD4AnalysisArtifactScope artifactScope;
-  
+
+
   public CDSymbolTable(ASTCDCompilationUnit ast, List<File> modelPaths) {
     checkNotNull(modelPaths);
 
@@ -55,12 +54,12 @@ public class CDSymbolTable {
     
     ModelPath modelPath = new ModelPath(modelPaths.stream().map(mp -> Paths.get(mp.getAbsolutePath())).collect(Collectors.toList()));
 
-    CD4AnalysisGlobalScope globalScope = new CD4AnalysisGlobalScope(modelPath, cd4AnalysisLang);
+    globalScope = new CD4AnalysisGlobalScope(modelPath, cd4AnalysisLang);
 
     CD4AnalysisSymbolTableCreatorDelegator stc = cd4AnalysisLang
             .getSymbolTableCreator(globalScope);
-    
-    this.artifactScope = (CD4AnalysisArtifactScope) stc.createFromAST(ast);
+
+    stc.createFromAST(ast);
     this.cdScope = ast.getCDDefinition().getSpannedScope();
 
     return globalScope;
@@ -197,7 +196,7 @@ public class CDSymbolTable {
     // get all sub classes and interfaces
     final List<CDTypeSymbol> concreteSubs = getSubclassesAndInterfaces(name);
 
-    if (concreteSubs.size() == 0) {
+    if (concreteSubs.isEmpty()) {
       return Lists.newArrayList();
     }
 
@@ -256,11 +255,8 @@ public class CDSymbolTable {
 
     IScope parentScope = type.getSpannedScope()
             .getEnclosingScope();
-    if (parentScope != null
-            && currentScopeName.equals(parentScope.getName())) {
-      return true;
-    }
-    return false;
+    return (parentScope != null
+            && currentScopeName.equals(parentScope.getName()));
   }
 
   public boolean isTypeDefinedInModel(String typeName) {

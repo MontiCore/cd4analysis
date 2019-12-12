@@ -3,7 +3,6 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDField;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAttributeCoCo;
 import de.se_rwth.commons.logging.Log;
 

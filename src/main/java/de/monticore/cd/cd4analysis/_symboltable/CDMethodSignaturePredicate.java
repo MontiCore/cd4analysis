@@ -25,10 +25,8 @@ public class CDMethodSignaturePredicate implements Predicate<CDMethOrConstrSymbo
   }
 
   @Override
-  public boolean test(final CDMethOrConstrSymbol symbol) {
-    if ((symbol != null) &&
-        (symbol instanceof CDMethOrConstrSymbol)) {
-      final CDMethOrConstrSymbol methodSymbol = (CDMethOrConstrSymbol) symbol;
+  public boolean test(final CDMethOrConstrSymbol methodSymbol) {
+    if (methodSymbol != null) {
 
       if (methodSymbol.getName().equals(expectedMethodName) &&
           (methodSymbol.getParameters().size() == expectedParameterTypes.size())) {

@@ -52,16 +52,16 @@ public class CDTypes {
   
   public final static String Map = "java.util.Map";
   
-  public static Collection<String> wrapperTypes = Arrays.asList(Integer,
+  public final static Collection<String> wrapperTypes = Arrays.asList(Integer,
       Double, Short, Byte, Float, Long, Character, Boolean);
   
-  public static Collection<String> primitiveTypes = Arrays.asList(IntPimitive,
+  public final static Collection<String> primitiveTypes = Arrays.asList(IntPimitive,
       DoublePimitive, ShortPimitive, BytePimitive, FloatPimitive, LongPimitive,
       CharPimitive, BooleanPimitive);
   
-  public static Collection<String> dataTypes = Arrays.asList(String);
+  public final static Collection<String> dataTypes = Arrays.asList(String);
   
-  public static Collection<String> collectionTypes = Arrays.asList(Collection,
+  public final static Collection<String> collectionTypes = Arrays.asList(Collection,
       List, Map);
   
   /**
