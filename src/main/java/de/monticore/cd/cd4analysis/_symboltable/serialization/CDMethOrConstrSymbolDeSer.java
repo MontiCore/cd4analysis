@@ -2,8 +2,7 @@
 
 package de.monticore.cd.cd4analysis._symboltable.serialization;
 
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
-import de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope;
+import de.monticore.cd.cd4analysis._symboltable.*;
 import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
@@ -30,4 +29,21 @@ public class CDMethOrConstrSymbolDeSer extends CDMethOrConstrSymbolDeSerTOP {
     return result;
   }
 
+  /**
+   * create empty spanned scope
+   * @param symbolJson
+   * @param enclosingScope
+   * @return
+   */
+  @Override public CDMethOrConstrSymbol deserializeCDMethOrConstrSymbol(JsonObject symbolJson,
+      ICD4AnalysisScope enclosingScope) {
+    CDMethOrConstrSymbol symbol = super.deserializeCDMethOrConstrSymbol(symbolJson, enclosingScope);
+    CD4AnalysisScope scope = CD4AnalysisSymTabMill.cD4AnalysisScopeBuilder()
+        .setSpanningSymbol(symbol)
+        .setExportingSymbols(true)
+        .setEnclosingScope(enclosingScope)
+        .build();
+    symbol.setSpannedScope(scope);
+    return symbol;
+  }
 }
