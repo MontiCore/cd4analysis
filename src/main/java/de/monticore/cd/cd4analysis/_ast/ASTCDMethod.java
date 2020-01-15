@@ -3,10 +3,6 @@
 package de.monticore.cd.cd4analysis._ast;
 
 import de.monticore.cd.prettyprint.CD4CodePrinter;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-
-import java.util.List;
 
 public class ASTCDMethod extends ASTCDMethodTOP {
 
@@ -26,7 +22,7 @@ public class ASTCDMethod extends ASTCDMethodTOP {
 
   public String printAnnotation() {
     if (getModifier().isPresentStereotype()) {
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for (ASTCDStereoValue s : getModifier().getStereotype().values) {
         sb.append(s.getName());
         sb.append("\n");

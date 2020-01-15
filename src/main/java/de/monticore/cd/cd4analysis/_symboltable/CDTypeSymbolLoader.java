@@ -4,12 +4,8 @@
 
 package de.monticore.cd.cd4analysis._symboltable;
 
-import de.monticore.cd.cd4analysis._ast.ASTCDType;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static com.google.common.collect.ImmutableList.copyOf;
 
