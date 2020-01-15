@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore"  version "6.0.0" // MontiCore Plugin
+    id "monticore"  version "6.1.0-SNAPSHOT" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.4"
 //    id 'cz.malohlava.visteg' version '1.0.5'
@@ -13,7 +13,7 @@ description = "CD4Analysis"
 sourceCompatibility = "1.8"
 
 def emf_version = "2.15.0"
-def mc_version  = "6.0.0"
+def mc_version  = "6.1.0-SNAPSHOT"
 def commons_version = "1.7.9"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
