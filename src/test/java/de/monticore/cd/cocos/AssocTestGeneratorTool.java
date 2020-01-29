@@ -239,7 +239,6 @@ public class AssocTestGeneratorTool {
   /**
    * TODO: Write me!
    * 
-   * @param modifierObj
    * @param modifiers a subset of { "abstract", "final", "static", "derived",
    * "private", "protected", "", "public"}
    */
@@ -467,10 +466,10 @@ public class AssocTestGeneratorTool {
   public static ASTCDAssociation capitalizeRoles(ASTCDAssociation a) {
     a = a.deepClone();
     if (a.isPresentLeftRole()) {
-      a.setLeftRole(StringTransformations.capitalize(a.getLeftRole()));
+      a.getLeftRole().setName(StringTransformations.capitalize(a.getLeftRole().getName()));
     }
     if (a.isPresentRightRole()) {
-      a.setRightRole(StringTransformations.capitalize(a.getRightRole()));
+      a.getRightRole().setName(StringTransformations.capitalize(a.getRightRole().getName()));
     }
     return a;
   }
@@ -486,9 +485,9 @@ public class AssocTestGeneratorTool {
   public static List<ASTCDAssociation> allRolePositions(ASTCDAssociation assoc,
       boolean valid) {
     List<ASTCDAssociation> re = new ArrayList<>();
-    
-    String leftRole = "leftRole";
-    String rightRole = "rightRole";
+
+    ASTRole leftRole = CD4AnalysisMill.roleBuilder().setName("leftRole").build();
+    ASTRole rightRole = CD4AnalysisMill.roleBuilder().setName("rightRole").build();
     
     if (assoc.isBidirectional() || assoc.isUnspecified()) {
       if (valid) {

@@ -16,6 +16,7 @@ import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCArrayType;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.se_rwth.commons.Names;
+import de.se_rwth.commons.StringTransformations;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
@@ -130,7 +131,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   public void setStereotype(CDTypeSymbol typeSymbol, ASTCDStereotype stereotype) {
     for (final ASTCDStereoValue stereoValue : stereotype.getValueList()) {
-      final Stereotype s = new Stereotype(stereoValue.getName(), stereoValue.isPresentValue() ? stereoValue.getValue() : "");
+      final Stereotype s = new Stereotype(stereoValue.getName(),
+          stereoValue.isPresentValue() ? stereoValue.getValue() : "");
       typeSymbol.addStereotype(s);
     }
 
@@ -144,10 +146,12 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       if (astModifier.isProtected()) {
         typeSymbol.setAccessModifier(PROTECTED);
         typeSymbol.setIsProtected(true);
-      } else if (astModifier.isPrivate()) {
+      }
+      else if (astModifier.isPrivate()) {
         typeSymbol.setAccessModifier(PRIVATE);
         typeSymbol.setIsPrivate(true);
-      } else {
+      }
+      else {
         // public is default
         typeSymbol.setIsPublic(true);
         typeSymbol.setAccessModifier(PUBLIC);
@@ -155,7 +159,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
       if (astModifier.isPresentStereotype()) {
         for (final ASTCDStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
-          final Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.isPresentValue() ? stereoValue.getValue() : "");
+          final Stereotype stereotype = new Stereotype(stereoValue.getName(),
+              stereoValue.isPresentValue() ? stereoValue.getValue() : "");
           typeSymbol.addStereotype(stereotype);
         }
       }
@@ -163,7 +168,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   CDTypeSymbolLoader createCDTypeSymbolFromReference(final ASTMCObjectType astmcObjectType) {
-    return new CDTypeSymbolLoader(astmcObjectType.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), getCurrentScope().get());
+    return new CDTypeSymbolLoader(
+        astmcObjectType.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())),
+        getCurrentScope().get());
   }
 
   @Override
@@ -172,10 +179,13 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     final String typeName;
     if (astType instanceof ASTMCGenericType) {
       typeName = ((ASTMCGenericType) astType).printWithoutTypeArguments();
-    } else if (astType instanceof ASTMCArrayType) {
+    }
+    else if (astType instanceof ASTMCArrayType) {
       typeName = ((ASTMCArrayType) astType).printTypeWithoutBrackets();
-    } else {
-      typeName = astAttribute.getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()));
+    }
+    else {
+      typeName = astAttribute.getMCType()
+          .printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()));
     }
 
     // TODO PN type arguments are not set yet. For every argument a
@@ -195,9 +205,11 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
       if (astModifier.isProtected()) {
         fieldSymbol.setIsProtected(true);
-      } else if (astModifier.isPrivate()) {
+      }
+      else if (astModifier.isPrivate()) {
         fieldSymbol.setIsPrivate(true);
-      } else {
+      }
+      else {
         // public is default
         fieldSymbol.setIsPublic(true);
       }
@@ -206,13 +218,13 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         for (final ASTCDStereoValue stereoValue : astModifier.getStereotype().getValueList()) {
           // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
           // geschrieben)
-          final Stereotype stereotype = new Stereotype(stereoValue.getName(), stereoValue.getName());
+          final Stereotype stereotype = new Stereotype(stereoValue.getName(),
+              stereoValue.getName());
           fieldSymbol.addStereotype(stereotype);
         }
       }
     }
   }
-
 
   public void addTypeArgumentsToTypeSymbol(CDTypeSymbolLoader typeReference, ASTMCType astType) {
     if (astType instanceof ASTMCGenericType) {
@@ -227,25 +239,32 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
           ASTMCBasicTypeArgument astmcBasicTypeArgument = (ASTMCBasicTypeArgument) astTypeArgument;
           if (astmcBasicTypeArgument.getMCQualifiedType() != null) {
             ASTMCQualifiedType astTypeNoBound = astmcBasicTypeArgument.getMCQualifiedType();
-            CDTypeSymbolLoader typeArgumentSymbolReference = new CDTypeSymbolLoader(astTypeNoBound.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), getCurrentScope().get());
+            CDTypeSymbolLoader typeArgumentSymbolReference = new CDTypeSymbolLoader(
+                astTypeNoBound.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())),
+                getCurrentScope().get());
             // TODO PN, GV: add dimension?
             // TypesHelper.getArrayDimensionIfArrayOrZero(astTypeNoound)
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
             actualTypeArguments.add(typeArgumentSymbolReference);
-          } else {
+          }
+          else {
             Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
                 + typeReference);
           }
-        } else if (astTypeArgument instanceof ASTMCPrimitiveTypeArgument) {
+        }
+        else if (astTypeArgument instanceof ASTMCPrimitiveTypeArgument) {
           ASTMCPrimitiveTypeArgument astmcPrimitiveTypeArgument = (ASTMCPrimitiveTypeArgument) astTypeArgument;
           if (astmcPrimitiveTypeArgument.getMCPrimitiveType() != null) {
             ASTMCType astTypeNoBound = astmcPrimitiveTypeArgument.getMCPrimitiveType();
-            CDTypeSymbolLoader typeArgumentSymbolReference = new CDTypeSymbolLoader(astTypeNoBound.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())), getCurrentScope().get());
+            CDTypeSymbolLoader typeArgumentSymbolReference = new CDTypeSymbolLoader(
+                astTypeNoBound.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter())),
+                getCurrentScope().get());
             addTypeArgumentsToTypeSymbol(typeArgumentSymbolReference, astTypeNoBound);
             actualTypeArguments.add(typeArgumentSymbolReference);
           }
 
-        } else {
+        }
+        else {
           Log.error("0xU0401 Unknown type argument " + astTypeArgument + " of type "
               + typeReference);
         }
@@ -253,7 +272,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       }
     }
   }
-
 
   @Override
   public void initialize_CDInterface(CDTypeSymbol interfaceSymbol, ASTCDInterface astInterface) {
@@ -264,7 +282,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     Collection<String> externals = getExternals(astInterface);
     addInterfacesToType(interfaceSymbol, astInterface.getInterfaceList(), externals);
     setModifiersOfType(interfaceSymbol,
-        astInterface.isPresentModifier() ? astInterface.getModifier() : CD4AnalysisMill.modifierBuilder().build());
+        astInterface.isPresentModifier() ?
+            astInterface.getModifier() :
+            CD4AnalysisMill.modifierBuilder().build());
     if (astInterface.isPresentStereotype()) {
       setStereotype(interfaceSymbol, astInterface.getStereotype());
     }
@@ -273,12 +293,13 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     interfaceSymbol.setIsAbstract(true);
   }
 
-
-  public void addInterfacesToType(final CDTypeSymbol typeSymbol, final List<ASTMCObjectType> astInterfaces, Collection<String> externals) {
+  public void addInterfacesToType(final CDTypeSymbol typeSymbol,
+      final List<ASTMCObjectType> astInterfaces, Collection<String> externals) {
     if (astInterfaces != null) {
       for (final ASTMCObjectType superInterface : astInterfaces) {
         if (!externals.contains((new AstPrinter()).printType(superInterface))) {
-          final CDTypeSymbolLoader superInterfaceSymbol = createCDTypeSymbolFromReference(superInterface);
+          final CDTypeSymbolLoader superInterfaceSymbol = createCDTypeSymbolFromReference(
+              superInterface);
           typeSymbol.getCdInterfaceList().add(superInterfaceSymbol);
         }
       }
@@ -291,9 +312,11 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
     if (astEnum.getCDEnumConstantList() != null) {
       for (final ASTCDEnumConstant astConstant : astEnum.getCDEnumConstantList()) {
-        final CDTypeSymbolLoader enumReference = new CDTypeSymbolLoader(enumSymbol.getName(), enumSymbol.getSpannedScope());
+        final CDTypeSymbolLoader enumReference = new CDTypeSymbolLoader(enumSymbol.getName(),
+            enumSymbol.getSpannedScope());
 
-        final CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(), enumReference);
+        final CDFieldSymbol constantSymbol = new CDFieldSymbol(astConstant.getName(),
+            enumReference);
         constantSymbol.setEnumConstant(true);
         // enum constants are implicitly public static final (Java Langspec 3rd
         // Edition Chapter 8.9 Enums)
@@ -306,7 +329,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
     Collection<String> externals = getExternals(astEnum);
     addInterfacesToType(enumSymbol, astEnum.getInterfaceList(), externals);
-    setModifiersOfType(enumSymbol, astEnum.isPresentModifier() ? astEnum.getModifier() : CD4AnalysisMill.modifierBuilder().build());
+    setModifiersOfType(enumSymbol, astEnum.isPresentModifier() ?
+        astEnum.getModifier() :
+        CD4AnalysisMill.modifierBuilder().build());
   }
 
   @Override
@@ -314,7 +339,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     final CDTypeSymbol enumSymbol = astEnum.getSymbol();
 
     for (CDFieldSymbol constSymbol : enumSymbol.getEnumConstants()) {
-      final CDTypeSymbolLoader enumReference = new CDTypeSymbolLoader(enumSymbol.getName(), enumSymbol.getSpannedScope());
+      final CDTypeSymbolLoader enumReference = new CDTypeSymbolLoader(enumSymbol.getName(),
+          enumSymbol.getSpannedScope());
       constSymbol.setType(enumReference);
     }
     removeCurrentScope();
@@ -333,8 +359,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-
-  public void setModifiersOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTModifier astModifier) {
+  public void setModifiersOfMethod(final CDMethOrConstrSymbol methodSymbol,
+      final ASTModifier astModifier) {
     if (astModifier != null) {
       methodSymbol.setIsAbstract(astModifier.isAbstract());
       methodSymbol.setIsStatic(astModifier.isStatic());
@@ -342,9 +368,11 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
       if (astModifier.isPrivate()) {
         methodSymbol.setIsPrivate(true);
-      } else if (astModifier.isProtected()) {
+      }
+      else if (astModifier.isProtected()) {
         methodSymbol.setIsProtected(true);
-      } else {
+      }
+      else {
         methodSymbol.setIsPublic(true);
       }
 
@@ -354,7 +382,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
-  public void addStereotypes(final CDMethOrConstrSymbol methodSymbol, final ASTCDStereotype astStereotype) {
+  public void addStereotypes(final CDMethOrConstrSymbol methodSymbol,
+      final ASTCDStereotype astStereotype) {
     if (astStereotype != null) {
       for (final ASTCDStereoValue val : astStereotype.getValueList()) {
         // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
@@ -365,10 +394,11 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   @Override
-  protected void initialize_CDParameter(de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol symbol, de.monticore.cd.cd4analysis._ast.ASTCDParameter ast) {
+  protected void initialize_CDParameter(
+      de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol symbol,
+      de.monticore.cd.cd4analysis._ast.ASTCDParameter ast) {
     CDTypeSymbolLoader paramTypeSymbol = new CDTypeSymbolLoader(
         (new AstPrinter()).printType(ast.getMCType()), getCurrentScope().get());
-
 
     addTypeArgumentsToTypeSymbol(paramTypeSymbol, ast.getMCType());
 
@@ -379,7 +409,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   @Override
-  protected void initialize_CDEnumConstant(de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol symbol, de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant ast) {
+  protected void initialize_CDEnumConstant(
+      de.monticore.cd.cd4analysis._symboltable.CDFieldSymbol symbol,
+      de.monticore.cd.cd4analysis._ast.ASTCDEnumConstant ast) {
     symbol.setEnumConstant(true);
     // enum constants are implicitly public static final (Java Langspec 3rd
     // Edition Chapter 8.9 Enums)
@@ -387,18 +419,20 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     symbol.setIsFinal(true);
   }
 
-
-  public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol, ASTCDMethod astMethod) {
-// TODO PN use ASTTypesConverter
+  public void setReturnTypeOfMethod(final CDMethOrConstrSymbol methodSymbol,
+      ASTCDMethod astMethod) {
+    // TODO PN use ASTTypesConverter
     final CDTypeSymbolLoader returnSymbol = new CDTypeSymbolLoader(
-        (new AstPrinter()).printType(astMethod.getMCReturnType()), getCurrentScope().get());//TODO CollectionTypesPrinter
+        (new AstPrinter()).printType(astMethod.getMCReturnType()),
+        getCurrentScope().get());//TODO CollectionTypesPrinter
     if (astMethod.getMCReturnType().isPresentMCType()) {
       addTypeArgumentsToTypeSymbol(returnSymbol, astMethod.getMCReturnType().getMCType());
     }
     methodSymbol.setReturnType(returnSymbol);
   }
 
-  public void setExceptionsOfMethod(final CDMethOrConstrSymbol methodSymbol, final ASTCDMethod astMethod) {
+  public void setExceptionsOfMethod(final CDMethOrConstrSymbol methodSymbol,
+      final ASTCDMethod astMethod) {
     if (astMethod.getExceptionList() != null) {
       for (final ASTMCQualifiedName exceptionName : astMethod.getExceptionList()) {
         final CDTypeSymbolLoader exception = new CDTypeSymbolLoader(exceptionName.toString(),
@@ -421,6 +455,92 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     }
   }
 
+  @Override public void endVisit(ASTCDAssociation node) {
+    Optional<String> assocName = node.isPresentName() ?
+        Optional.of(node.getName()) :
+        Optional.empty();
+    if (!getCurrentScope().isPresent()) {
+      Log.error("0xTODO Current scope must not be null!");
+    }
+    CDTypeSymbol rightRef = getCurrentScope().get()
+        .resolveCDType(node.getRightReferenceName().getQName()).orElse(null);
+    if (null == rightRef) {
+      Log.error("0xTODO CDType referenced from the right side of association '" + node
+          + "' could not be found!");
+    }
+
+    CDTypeSymbol leftRef = getCurrentScope().get()
+        .resolveCDType(node.getLeftReferenceName().getQName()).orElse(null);
+    if (null == leftRef) {
+      Log.error("0xTODO CDType referenced from the left side of association '" + node
+          + "' could not be found!");
+    }
+
+    String leftRoleName = getRoleName(node.getLeftReferenceName(), assocName,
+        getRoleNameOpt(node, false));
+    boolean isLeftNavigable =
+        node.isLeftToRight() || node.isBidirectional() || node.isUnspecified();
+    CDTypeSymbolLoader rightReference = new CDTypeSymbolLoader(
+        node.getRightReferenceName().getQName(),
+        rightRef.getEnclosingScope());
+    RoleSymbol leftRoleSymbol = CD4AnalysisSymTabMill.roleSymbolBuilder().setName(leftRoleName)
+        .setNavigable(isLeftNavigable)
+        .setAssociationTarget(rightReference).build();
+    leftRef.getSpannedScope().add(leftRoleSymbol);
+
+    String rightRoleName = getRoleName(node.getRightReferenceName(), assocName,
+        getRoleNameOpt(node, true));
+    boolean isRightNavigable =
+        node.isRightToLeft() || node.isBidirectional() || node.isUnspecified();
+    CDTypeSymbolLoader leftReference = new CDTypeSymbolLoader(
+        node.getLeftReferenceName().getQName(),
+        leftRef.getEnclosingScope());
+    RoleSymbol rightRoleSymbol = CD4AnalysisSymTabMill.roleSymbolBuilder().setName(rightRoleName)
+        .setNavigable(isRightNavigable)
+        .setAssociationTarget(leftReference).build();
+    rightRef.getSpannedScope().add(rightRoleSymbol);
+  }
+
+  /**
+   * TODO
+   *
+   * @param node
+   * @param isLeftRole
+   * @return
+   */
+  protected Optional<String> getRoleNameOpt(ASTCDAssociation node, boolean isLeftRole) {
+    if (isLeftRole && node.isPresentLeftRole()) {
+      return Optional.of(node.getLeftRole().getName());
+    }
+    if (!isLeftRole && node.isPresentRightRole()) {
+      return Optional.of(node.getRightRole().getName());
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * TODO
+   *
+   * @param targetName
+   * @param associationName
+   * @param roleName
+   * @return
+   */
+  protected String getRoleName(ASTMCQualifiedName targetName, Optional<String> associationName,
+      Optional<String> roleName) {
+    if (roleName.isPresent()) {
+      return roleName.get();
+    }
+    if (associationName.isPresent()) {
+      return associationName.get();
+    }
+    else {
+      String qualifier = Names.getQualifier(targetName.getQName());
+      String name = StringTransformations.uncapitalize(Names.getSimpleName(targetName.getQName()));
+      return qualifier + "." + name;
+    }
+  }
+
   @Override
   public void visit(ASTCDAssociation cdAssoc) {
     CDAssociationSymbol s = handleLeftToRightAssociation(cdAssoc);
@@ -432,7 +552,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     if (s != null) {
       s.setSpannedScope(scope);
       setLinkBetweenSymbolAndNode(s, cdAssoc);
-    } else {
+    }
+    else {
       s2.setSpannedScope(scope);
       setLinkBetweenSymbolAndNode(s2, cdAssoc);
     }
@@ -451,15 +572,17 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         if (cdAssoc.isComposition()) {
           assocRight2LeftSymbol.setRelationship(Relationship.PART);
         }
-        assocRight2LeftSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.isPresentLeftCardinality() ? cdAssoc
-            .getLeftCardinality() : null));
-        assocRight2LeftSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.isPresentRightCardinality() ? cdAssoc
-            .getRightCardinality() : null));
+        assocRight2LeftSymbol.setTargetCardinality(
+            Cardinality.convertCardinality(cdAssoc.isPresentLeftCardinality() ? cdAssoc
+                .getLeftCardinality() : null));
+        assocRight2LeftSymbol.setSourceCardinality(
+            Cardinality.convertCardinality(cdAssoc.isPresentRightCardinality() ? cdAssoc
+                .getRightCardinality() : null));
         if (cdAssoc.isPresentLeftRole()) {
-          assocRight2LeftSymbol.setTargetRole(cdAssoc.getLeftRole());
+          assocRight2LeftSymbol.setTargetRole(cdAssoc.getLeftRole().getName());
         }
         if (cdAssoc.isPresentRightRole()) {
-          assocRight2LeftSymbol.setSourceRole(cdAssoc.getRightRole());
+          assocRight2LeftSymbol.setSourceRole(cdAssoc.getRightRole().getName());
         }
 
         if (cdAssoc.isPresentLeftModifier()) {
@@ -488,15 +611,17 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         if (cdAssoc.isComposition()) {
           assocLeft2RightSymbol.setRelationship(Relationship.COMPOSITE);
         }
-        assocLeft2RightSymbol.setTargetCardinality(Cardinality.convertCardinality(cdAssoc.isPresentRightCardinality() ? cdAssoc
-            .getRightCardinality() : null));
-        assocLeft2RightSymbol.setSourceCardinality(Cardinality.convertCardinality(cdAssoc.isPresentLeftCardinality() ? cdAssoc
-            .getLeftCardinality() : null));
+        assocLeft2RightSymbol.setTargetCardinality(
+            Cardinality.convertCardinality(cdAssoc.isPresentRightCardinality() ? cdAssoc
+                .getRightCardinality() : null));
+        assocLeft2RightSymbol.setSourceCardinality(
+            Cardinality.convertCardinality(cdAssoc.isPresentLeftCardinality() ? cdAssoc
+                .getLeftCardinality() : null));
         if (cdAssoc.isPresentLeftRole()) {
-          assocLeft2RightSymbol.setSourceRole(cdAssoc.getLeftRole());
+          assocLeft2RightSymbol.setSourceRole(cdAssoc.getLeftRole().getName());
         }
         if (cdAssoc.isPresentRightRole()) {
-          assocLeft2RightSymbol.setTargetRole(cdAssoc.getRightRole());
+          assocLeft2RightSymbol.setTargetRole(cdAssoc.getRightRole().getName());
         }
 
         if (cdAssoc.isPresentRightModifier()) {
@@ -520,14 +645,16 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     if (ast.isPresentMCType()) {
       s = new CDQualifierSymbol(new AstPrinter().printType(ast.getMCType()));
       s.setTypeQualifier(true);
-    } else {
+    }
+    else {
       s = new CDQualifierSymbol(ast.getName());
       s.setNameQualifier(true);
     }
     return s;
   }
 
-  CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc, final ASTMCQualifiedName astSourceName, final ASTMCQualifiedName astTargetName) {
+  CDAssociationSymbol createAssociationSymbol(final ASTCDAssociation astAssoc,
+      final ASTMCQualifiedName astSourceName, final ASTMCQualifiedName astTargetName) {
     final CDTypeSymbolLoader sourceType = new CDTypeSymbolLoader(Names.getQualifiedName(
         astSourceName.getPartList()), getCurrentScope().get());
 
@@ -540,7 +667,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
       associationSymbol.setAssocName(astAssoc.getName());
     }
 
-    addStereotypes(associationSymbol, astAssoc.isPresentStereotype() ? astAssoc.getStereotype() : null);
+    addStereotypes(associationSymbol,
+        astAssoc.isPresentStereotype() ? astAssoc.getStereotype() : null);
 
     if ((astSourceName.getPartList().size() > 1 && !sourceType.getName().equals(
         Names.getQualifiedName(astSourceName.getPartList())))) {
@@ -556,7 +684,8 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     return associationSymbol;
   }
 
-  public void addStereotypes(final CDAssociationSymbol associationSymbol, final ASTCDStereotype astStereotype) {
+  public void addStereotypes(final CDAssociationSymbol associationSymbol,
+      final ASTCDStereotype astStereotype) {
     if (astStereotype != null) {
       // TODO PN<-RH values fehlen (Bug muss SO beheben, habe ihm ne Mail
       // geschrieben)
@@ -583,7 +712,9 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   public final Optional<? extends IScopeSpanningSymbol> currentSymbol() {
-    return currentScope().isPresentSpanningSymbol() ? Optional.of(currentScope().getSpanningSymbol()) : Optional.empty();
+    return currentScope().isPresentSpanningSymbol() ?
+        Optional.of(currentScope().getSpanningSymbol()) :
+        Optional.empty();
   }
 
 }

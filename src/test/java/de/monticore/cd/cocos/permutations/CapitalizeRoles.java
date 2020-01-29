@@ -9,20 +9,21 @@ import java.util.function.Function;
 
 public class CapitalizeRoles implements
     Function<Permutation<ASTCDAssociation>, Permutation<ASTCDAssociation>> {
-  
+
   @Override
   public Permutation<ASTCDAssociation> apply(Permutation<ASTCDAssociation> assocPermutation) {
     Permutation<ASTCDAssociation> successorPermutation = assocPermutation.copy();
     ASTCDAssociation association = successorPermutation.delegate();
-    
+
     if (association.isPresentLeftRole()) {
-      association.setLeftRole(StringTransformations.capitalize(association.getLeftRole()));
+      association.getLeftRole()
+          .setName(StringTransformations.capitalize(association.getLeftRole().getName()));
     }
     if (association.isPresentRightRole()) {
-      association
-          .setRightRole(StringTransformations.capitalize(association.getRightRole()));
+      association.getRightRole()
+          .setName(StringTransformations.capitalize(association.getRightRole().getName()));
     }
     return successorPermutation;
   }
-  
+
 }

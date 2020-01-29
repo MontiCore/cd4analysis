@@ -156,7 +156,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         if((showRoles && node.isPresentLeftRole()) || (showCard && node.isPresentLeftCardinality())) {
             getPrinter().print("\"");
             if(showRoles && node.isPresentLeftRole())
-                getPrinter().print("(" + s(node.getLeftRole()) + ") ");
+                getPrinter().print("(" + s(node.getLeftRole().getName()) + ") ");
             if(node.isPresentLeftCardinality())
                 node.getLeftCardinality().accept(getRealThis());
             getPrinter().print("\" ");
@@ -175,7 +175,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
         if((showRoles && node.isPresentRightRole()) || (showCard && node.isPresentRightCardinality())) {
             getPrinter().print(" \"");
             if(showRoles && node.isPresentRightRole())
-                getPrinter().print("(" + s(node.getRightRole()) + ") ");
+                getPrinter().print("(" + s(node.getRightRole().getName()) + ") ");
             if(node.isPresentRightCardinality())
                 node.getRightCardinality().accept(getRealThis());
             getPrinter().print("\"");

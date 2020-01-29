@@ -35,6 +35,7 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes,
     CDDefinition;
 
 
+
   /** ASTCDDefinition represents a Classdiagram
     @attribute name           Name of this Classdiagram
     @attribute cDClasses      List of Classes of this Classdiagram
@@ -214,12 +215,12 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes,
 
     leftReferenceName:MCQualifiedName
     leftQualifier:CDQualifier?
-    ("(" leftRole:Name ")")?
+    leftRole:Role?
     (   leftToRight:["->"]
       | rightToLeft:["<-"]
       | bidirectional:["<->"]
       | unspecified:["--"] )
-    ("(" rightRole:Name ")")?
+    rightRole:Role?
     rightQualifier:CDQualifier?
     rightReferenceName:MCQualifiedName
     rightCardinality:Cardinality?
@@ -235,6 +236,11 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes,
       | ["protected"] | [protected:"#"]
       | ["public"] | [public:"+"]
       | ["derived"] | [derived:"/"] )*;
+
+  /** ASTRole represents a Role of an Association
+      @attribute name     name of the role
+   */
+  symbol Role = "(" Name ")";
     
 
   /** ASTCardinality represents a Cardinality in a Classdiagram
@@ -310,6 +316,11 @@ grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes,
     isFinal: boolean
     cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader*
     superClass: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader?
+  ;
+
+  symbolrule Role =
+    associationTarget: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader
+    navigable: boolean
   ;
 
 }

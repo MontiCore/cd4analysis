@@ -5,6 +5,8 @@ package de.monticore.cd.cocos.permutations;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.ASTCDField;
+import de.monticore.cd.cd4analysis._ast.ASTRole;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.utils.ASTNodes;
 
 import java.util.Collection;
@@ -25,12 +27,13 @@ public class SetAttributeNamesEqualRoleNames implements
   }
   
   private void setRoleName(Collection<ASTNode> astNodes, String name) {
+    ASTRole role = CD4AnalysisMill.roleBuilder().setName(name).build();
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAssociation.class))
         .flatMap(Collection::stream)
         .forEach(cdAssociation -> {
-          cdAssociation.setLeftRole(name);
-          cdAssociation.setRightRole(name);
+          cdAssociation.setLeftRole(role);
+          cdAssociation.setRightRole(role);
         });
   }
   

@@ -3,6 +3,8 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTRole;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,10 +13,10 @@ import java.util.function.Function;
 public class AllRolePositions implements
     Function<Permutation<ASTCDAssociation>, Set<Permutation<ASTCDAssociation>>> {
   
-  private static final String leftRole = "leftRole";
-  
-  private static final String rightRole = "rightRole";
-  
+  private static final ASTRole leftRole = CD4AnalysisMill.roleBuilder().setName("leftRole").build();
+
+  private static final ASTRole rightRole = CD4AnalysisMill.roleBuilder().setName("rightRole").build();
+
   @Override
   public Set<Permutation<ASTCDAssociation>> apply(Permutation<ASTCDAssociation> assocPermutation) {
     Set<Permutation<ASTCDAssociation>> successorPermutations = new LinkedHashSet<>();

@@ -3,8 +3,8 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cocos.CD4ACoCoHelper;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
+import de.monticore.cd.cocos.CD4ACoCoHelper;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -12,23 +12,23 @@ import de.se_rwth.commons.logging.Log;
  *
  */
 public class AssociationRoleNameLowerCase implements CD4AnalysisASTCDAssociationCoCo {
-  
+
   @Override
   public void check(ASTCDAssociation assoc) {
     boolean err = false;
     if (assoc.isPresentLeftRole()) {
-      err = check(assoc.getLeftRole(), assoc);
+      err = check(assoc.getLeftRole().getName(), assoc);
     }
     if (!err && assoc.isPresentRightRole()) {
-      check(assoc.getRightRole(), assoc);
+      check(assoc.getRightRole().getName(), assoc);
     }
   }
-  
+
   /**
    * Does the actual check.
-   * 
+   *
    * @param roleName name under test
-   * @param assoc association under test
+   * @param assoc    association under test
    * @return whether there was an error or not
    */
   private boolean check(String roleName, ASTCDAssociation assoc) {
@@ -43,5 +43,5 @@ public class AssociationRoleNameLowerCase implements CD4AnalysisASTCDAssociation
     }
     return false;
   }
-  
+
 }

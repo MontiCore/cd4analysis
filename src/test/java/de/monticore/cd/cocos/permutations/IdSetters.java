@@ -3,28 +3,28 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.ASTCDClass;
-import de.monticore.cd.cd4analysis._ast.ASTCDClassTOP;
-import de.monticore.cd.cd4analysis._ast.ASTCDField;
+import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.utils.ASTNodes;
 
 import java.util.Collection;
-import java.util.Optional;
 
 class IdSetters {
-  
+
   static void setRoleId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAssociation.class))
         .flatMap(Collection::stream)
         .forEach(cdAssociation -> {
-          cdAssociation.setLeftRole(cdAssociation.getLeftRole() + id);
-          cdAssociation.setRightRole(cdAssociation.getRightRole() + id);
+          cdAssociation.setLeftRole(
+              CD4AnalysisMill.roleBuilder().setName(cdAssociation.getLeftRole().getName() + id)
+                  .build());
+          cdAssociation.setRightRole(
+              CD4AnalysisMill.roleBuilder().setName(cdAssociation.getRightRole().getName() + id)
+                  .build());
         });
   }
-  
+
   static void setAssocId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDAssociation.class))
@@ -33,14 +33,14 @@ class IdSetters {
           cdAssociation.setName(cdAssociation.getName() + id);
         });
   }
-  
+
   static void setAttributeId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDField.class))
         .flatMap(Collection::stream)
         .forEach(cdAttribute -> cdAttribute.setName(cdAttribute.getName() + id));
   }
-  
+
   static void setSuperClassNameId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDClass.class))
@@ -54,7 +54,7 @@ class IdSetters {
           simpleReferenceType.getNameList().set(0, oldName + id);
         });
   }
-  
+
   static void setClassNameId(Collection<ASTNode> astNodes, String id) {
     astNodes.stream()
         .map(astNode -> ASTNodes.getSuccessors(astNode, ASTCDClass.class))

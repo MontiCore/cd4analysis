@@ -2,6 +2,8 @@
 package de.monticore.cd.cocos;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._ast.ASTRole;
+import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import org.junit.Test;
@@ -56,11 +58,13 @@ public class CD4ACoCoHelperTest {
     assoc.setRightReferenceName(MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(Arrays.asList("right",
             "TypeName")).build());
 
-    assoc.setLeftRole("leftRole");
+    ASTRole leftRole = CD4AnalysisMill.roleBuilder().setName("leftRole").build();
+    assoc.setLeftRole(leftRole);
     assertEquals("expectedName (left.TypeName (leftRole) <-> right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
 
-    assoc.setRightRole("rightRole");
+    ASTRole rightRole = CD4AnalysisMill.roleBuilder().setName("rightRole").build();
+    assoc.setRightRole(rightRole);
     assertEquals("expectedName (left.TypeName (leftRole) <-> (rightRole) right.TypeName)",
         CD4ACoCoHelper.printAssociation(assoc));
 

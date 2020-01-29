@@ -65,11 +65,11 @@ public class AssocTestGenerator {
         String msg = "Role %s of association %s must start in lower-case.";
         String invalidRoleName = null;
         if (assoc.isPresentLeftRole()) {
-          invalidRoleName = assoc.getLeftRole();
+          invalidRoleName = assoc.getLeftRole().getName();
         }
         else {
           if (assoc.isPresentRightRole()) {
-            invalidRoleName = assoc.getRightRole();
+            invalidRoleName = assoc.getRightRole().getName();
           }
         }
         if (null == invalidRoleName) {
