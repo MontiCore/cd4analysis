@@ -381,7 +381,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
     // print left role
     if (a.isPresentLeftRole()) {
       getPrinter().print("(");
-      getPrinter().print(a.getLeftRole());
+      getPrinter().print(a.getLeftRole().getName());
       getPrinter().print(") ");
     }
     // print arrow
@@ -400,7 +400,7 @@ public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4Ana
     // print right role
     if (a.isPresentRightRole()) {
       getPrinter().print(" (");
-      getPrinter().print(a.getRightRole());
+      getPrinter().print(a.getRightRole().getName());
       getPrinter().print(")");
     }
     // print right qualifier

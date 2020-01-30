@@ -460,49 +460,48 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
         Optional.of(node.getName()) :
         Optional.empty();
     if (!getCurrentScope().isPresent()) {
-      Log.error("0xTODO Current scope must not be null!");
+      Log.error("0xA1040 Current scope must not be null!");
     }
     CDTypeSymbol rightRef = getCurrentScope().get()
         .resolveCDType(node.getRightReferenceName().getQName()).orElse(null);
-    if (null == rightRef) {
-      Log.error("0xTODO CDType referenced from the right side of association '" + node
-          + "' could not be found!");
-    }
 
     CDTypeSymbol leftRef = getCurrentScope().get()
         .resolveCDType(node.getLeftReferenceName().getQName()).orElse(null);
-    if (null == leftRef) {
-      Log.error("0xTODO CDType referenced from the left side of association '" + node
-          + "' could not be found!");
+
+    // The coco 'AssociationSourceTypeNotExternal' checks whether the references exist,
+    // therefore this is not checked here
+    if (null != rightRef && null != leftRef) {
+      String leftRoleName = getRoleName(node.getLeftReferenceName(), assocName,
+          getRoleNameOpt(node, false));
+      boolean isLeftNavigable =
+          node.isLeftToRight() || node.isBidirectional() || node.isUnspecified();
+      CDTypeSymbolLoader rightReference = new CDTypeSymbolLoader(
+          node.getRightReferenceName().getQName(),
+          rightRef.getEnclosingScope());
+      RoleSymbol leftRoleSymbol = CD4AnalysisSymTabMill.roleSymbolBuilder().setName(leftRoleName)
+          .setNavigable(isLeftNavigable)
+          .setAssociationTarget(rightReference).build();
+      leftRef.getSpannedScope().add(leftRoleSymbol);
+
+      String rightRoleName = getRoleName(node.getRightReferenceName(), assocName,
+          getRoleNameOpt(node, true));
+      boolean isRightNavigable =
+          node.isRightToLeft() || node.isBidirectional() || node.isUnspecified();
+      CDTypeSymbolLoader leftReference = new CDTypeSymbolLoader(
+          node.getLeftReferenceName().getQName(),
+          leftRef.getEnclosingScope());
+      RoleSymbol rightRoleSymbol = CD4AnalysisSymTabMill.roleSymbolBuilder().setName(rightRoleName)
+          .setNavigable(isRightNavigable)
+          .setAssociationTarget(leftReference).build();
+      rightRef.getSpannedScope().add(rightRoleSymbol);
     }
 
-    String leftRoleName = getRoleName(node.getLeftReferenceName(), assocName,
-        getRoleNameOpt(node, false));
-    boolean isLeftNavigable =
-        node.isLeftToRight() || node.isBidirectional() || node.isUnspecified();
-    CDTypeSymbolLoader rightReference = new CDTypeSymbolLoader(
-        node.getRightReferenceName().getQName(),
-        rightRef.getEnclosingScope());
-    RoleSymbol leftRoleSymbol = CD4AnalysisSymTabMill.roleSymbolBuilder().setName(leftRoleName)
-        .setNavigable(isLeftNavigable)
-        .setAssociationTarget(rightReference).build();
-    leftRef.getSpannedScope().add(leftRoleSymbol);
-
-    String rightRoleName = getRoleName(node.getRightReferenceName(), assocName,
-        getRoleNameOpt(node, true));
-    boolean isRightNavigable =
-        node.isRightToLeft() || node.isBidirectional() || node.isUnspecified();
-    CDTypeSymbolLoader leftReference = new CDTypeSymbolLoader(
-        node.getLeftReferenceName().getQName(),
-        leftRef.getEnclosingScope());
-    RoleSymbol rightRoleSymbol = CD4AnalysisSymTabMill.roleSymbolBuilder().setName(rightRoleName)
-        .setNavigable(isRightNavigable)
-        .setAssociationTarget(leftReference).build();
-    rightRef.getSpannedScope().add(rightRoleSymbol);
+    removeCurrentScope();
   }
 
   /**
-   * TODO
+   * This returns an Optional of the (left or right, depending on the passed boolean)
+   * role name of the passed association as String.
    *
    * @param node
    * @param isLeftRole
@@ -519,7 +518,10 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
   }
 
   /**
-   * TODO
+   * This method carries out the calculation of a role name.
+   * If an explicit role name is set, this is used as role name.
+   * else, if association name is set, this is used as role name.
+   * else, the target name of the association with an uncapitalized first letter is set as role name.
    *
    * @param targetName
    * @param associationName
@@ -665,6 +667,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
     if (astAssoc.isPresentName()) {
       associationSymbol.setAssocName(astAssoc.getName());
+      //      associationSymbol.setName(astAssoc.getName());
     }
 
     addStereotypes(associationSymbol,

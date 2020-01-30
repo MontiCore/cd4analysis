@@ -32,7 +32,7 @@ public class CD4ACoCoHelper {
     r.append(Joiner.on(".").join(assoc.getLeftReferenceName().getPartList()));
     r.append(" ");
     if (assoc.isPresentLeftRole()) {
-      r.append("(" + assoc.getLeftRole() + ")");
+      r.append("(" + assoc.getLeftRole().getName() + ")");
       r.append(" ");
     }
     if (assoc.isLeftToRight()) {
@@ -49,7 +49,7 @@ public class CD4ACoCoHelper {
     }
     r.append(" ");
     if (assoc.isPresentRightRole()) {
-      r.append("(" + assoc.getRightRole() + ")");
+      r.append("(" + assoc.getRightRole().getName() + ")");
       r.append(" ");
     }
     r.append(Joiner.on(".").join(assoc.getRightReferenceName().getPartList()));
