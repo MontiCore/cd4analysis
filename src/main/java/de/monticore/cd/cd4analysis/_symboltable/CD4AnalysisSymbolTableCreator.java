@@ -471,6 +471,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
     // The coco 'AssociationSourceTypeNotExternal' checks whether the references exist,
     // therefore this is not checked here
     if (null != rightRef && null != leftRef) {
+      // handle left role
       String leftRoleName = getRoleName(node.getLeftReferenceName(), assocName,
           getRoleNameOpt(node, false));
       boolean isLeftNavigable =
@@ -483,6 +484,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
           .setAssociationTarget(rightReference).build();
       leftRef.getSpannedScope().add(leftRoleSymbol);
 
+      // handle right role
       String rightRoleName = getRoleName(node.getRightReferenceName(), assocName,
           getRoleNameOpt(node, true));
       boolean isRightNavigable =
@@ -667,7 +669,6 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
     if (astAssoc.isPresentName()) {
       associationSymbol.setAssocName(astAssoc.getName());
-      //      associationSymbol.setName(astAssoc.getName());
     }
 
     addStereotypes(associationSymbol,

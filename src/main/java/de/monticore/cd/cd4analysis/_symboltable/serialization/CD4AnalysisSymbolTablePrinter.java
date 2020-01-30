@@ -5,12 +5,9 @@ package de.monticore.cd.cd4analysis._symboltable.serialization;
 import de.monticore.cd.cd4analysis._symboltable.CDMethOrConstrSymbol;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
 import de.monticore.symboltable.IScopeSpanningSymbol;
-import de.monticore.symboltable.serialization.JsonPrinter;
 
 import java.util.List;
 import java.util.Optional;
-
-import static de.monticore.symboltable.serialization.JsonDeSers.*;
 
 /**
  * This class prints all non-primitive attributes of CD4A symbol classes. FOr each symbol loader,
@@ -18,6 +15,7 @@ import static de.monticore.symboltable.serialization.JsonDeSers.*;
  */
 public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinterTOP {
 
+  //constants for complex attributes, for which (de)serialization must be realized manually
   public static final String CD_INTERFACES = "cdInterfaces";
 
   public static final String SUPER_CLASS = "superClass";
@@ -28,13 +26,7 @@ public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinter
 
   public static final String EXCEPTIONS = "exceptions";
 
-  public CD4AnalysisSymbolTablePrinter(JsonPrinter printer){
-    super(printer);
-  }
-
-  public CD4AnalysisSymbolTablePrinter(){
-    super();
-  }
+  public static final String ASSOCIATION_TARGET = "associationTarget";
 
   @Override protected void serializeCDTypeCdInterfaces(List<CDTypeSymbolLoader> cdInterfaces) {
     printer.beginArray(CD_INTERFACES);
@@ -54,6 +46,10 @@ public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinter
     printer.member(TYPE, type.getName());
   }
 
+  @Override protected void serializeRoleAssociationTarget(CDTypeSymbolLoader associationTarget) {
+    printer.member(ASSOCIATION_TARGET, associationTarget.getName());
+  }
+
   @Override protected void serializeCDMethOrConstrReturnType(CDTypeSymbolLoader returnType) {
     printer.member(RETURN_TYPE, returnType.getName());
   }
@@ -66,13 +62,26 @@ public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinter
     printer.endArray();
   }
 
+  /**
+   * This method is overriden to add the completre scope spanning symbol (and not just a reference
+   * to it) in case the spanning symbol is a method or constructor. This is done to distinguish
+   * spanning symbols of methods with the same nam, but different parameters-
+   *
+   * @param spanningSymbol
+   */
   protected void addScopeSpanningSymbol(IScopeSpanningSymbol spanningSymbol) {
     if (spanningSymbol instanceof CDMethOrConstrSymbol) {
-      printer.beginObject(SCOPE_SPANNING_SYMBOL);
-      printer.member(KIND, "de.monticore.cd.cd4analysis._symboltable.CDMethOrConstrSymbol");
-      printer.member(NAME, spanningSymbol.getName());
+      printer
+          .beginObject(de.monticore.symboltable.serialization.JsonConstants.SCOPE_SPANNING_SYMBOL);
+      printer.member(de.monticore.symboltable.serialization.JsonConstants.KIND,
+          "de.monticore.cd.cd4analysis._symboltable.CDMethOrConstrSymbol");
+      printer.member(de.monticore.symboltable.serialization.JsonConstants.NAME,
+          spanningSymbol.getName());
       serializeCDMethOrConstr((CDMethOrConstrSymbol) spanningSymbol);
       printer.endObject();
+    }
+    else {
+      super.addScopeSpanningSymbol(spanningSymbol);
     }
   }
 
