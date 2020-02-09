@@ -1,12 +1,28 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd;
 
-/*
-   MCG for CD 4 Analysis, Version 07/05/2019
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
+
+/**
+ * This grammar defines UML Class diagrams
+ * in the Variant UML/P (from http://mbse.se-rwth.de/)
+ *
+ * CD4A covers classes, interfaces, inheritance, attributes with types,
+ * visibilities, and all kinds of associations and composition,
+ * including qualified and ordered associations.
+ * 
+ * It focusses data modelling and thus omits method signatures.
+ * CD4A primary use is data modelling with various applications for
+ * data structure, database and transport code generation.
+ *
+ * CD4A provides
+ * * predefined simple generic Types, such as List<.>,
+ *   but not full generic types (this needs to be done by extension)
+ * * common literals
 */
 
-grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes, de.monticore.literals.MCCommonLiterals {
+grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes,
+			    de.monticore.literals.MCCommonLiterals {
 
   /** ASTCDCompilationUnit represents the complete Diagram
     @attribute package          The package declaration of this Classdiagram
