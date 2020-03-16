@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-
-package de.monticore.umlcd4a.cocos.ebnf.invalid;
-
-classdiagram C4A06 {
-  enum E {
-    a, b, a, c;
-  }
-}

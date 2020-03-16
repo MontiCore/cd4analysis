@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-
-package de.monticore.umlcd4a.cocos.ebnf.valid;
-
-classdiagram U0447 {
-  class C1 {
-    int c = 1;
-  }  
-}

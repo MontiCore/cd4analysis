@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-
-package de.monticore.umlcd4a.cocos.ebnf.valid;
-
-classdiagram C4A08 {
-  interface I;
-  class C1 extends C2;
-  class C2 implements I;
-}

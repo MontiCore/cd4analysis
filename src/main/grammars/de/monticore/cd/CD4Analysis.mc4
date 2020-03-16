@@ -1,326 +1,213 @@
 /* (c) https://github.com/MontiCore/monticore */
+
 package de.monticore.cd;
 
-/* Beta-version: This is intended to become a MontiCore stable grammar. */
-
-/**
- * This grammar defines UML Class diagrams
- * in the Variant UML/P (from http://mbse.se-rwth.de/)
- *
- * CD4A covers classes, interfaces, inheritance, attributes with types,
- * visibilities, and all kinds of associations and composition,
- * including qualified and ordered associations.
- * 
- * It focusses data modelling and thus omits method signatures.
- * CD4A primary use is data modelling with various applications for
- * data structure, database and transport code generation.
- *
- * CD4A provides
- * * predefined simple generic Types, such as List<.>,
- *   but not full generic types (this needs to be done by extension)
- * * common literals
+/*
+   MCG for CD 4 Analysis, Version 16/03/2020
 */
 
-grammar CD4Analysis extends de.monticore.types.MCSimpleGenericTypes,
-			    de.monticore.literals.MCCommonLiterals {
+grammar CD4Analysis extends
+    de.monticore.types.MCSimpleGenericTypes,
+    de.monticore.literals.MCCommonLiterals,
+    de.monticore.expressions.ExpressionsBasis,
+    de.monticore.UMLStereotype {
 
-  /** ASTCDCompilationUnit represents the complete Diagram
-    @attribute package          The package declaration of this Classdiagram
-    @attribute MCImportStatements List of imported elements
-    @attribute cDDefinition   
-  */
+  /* ==== General ==== */
   CDCompilationUnit =
     ("package" package:(Name& || ".")+ ";")? 
     (MCImportStatement)*
     CDDefinition;
 
+  symbol scope CDDefinition = CDModifier "classdiagram" Name "{"
+    CDElement*
+  "}";
 
-
-  /** ASTCDDefinition represents a Classdiagram
-    @attribute name           Name of this Classdiagram
-    @attribute cDClasses      List of Classes of this Classdiagram
-    @attribute cDInterfaces   List of Interfaces of this Classdiagram
-    @attribute cDEnums        List of Enums of this Classdiagram
-    @attribute cDAssociations List of Associations of this Classdiagram
+  /** CDModifier is the basic modifier structure, to use in the different cd elements
+    @attribute CDDirectModifier
+                  the interface for all modifiers
+    @attribute Stereotype
+                  the MontiCore stereotype
   */
-  symbol scope CDDefinition = Modifier? "classdiagram" Name "{"
-  (   CDClass
-    | CDInterface
-    | CDEnum
-    | CDAssociation)* "}";
+  CDModifier =
+    CDDirectModifier* Stereotype?;
 
-   interface symbol scope CDType = Name;
+  /** CDDirectModifier is an interface for all possible modifiers for elements in the cd
+      we have the modifier as an interface instead of a list of (already) available options
+      to support better extensibility and adaptability.
 
-   interface symbol CDField = Name;
-
-   interface symbol scope CDMethOrConstr = Name;
-
-
-  /** ASTCDClass represents a Class in a Classdiagram
-    @attribute modifier       Optional Modifier of this Class
-    @attribute name           Name of this Class
-    @attribute superclass     Optional Superclass of this Class
-    @attribute interfaces     List of Interfaces implemented by this Class
-    @attribute cDConstructors List of Constructors of this Class
-    @attribute cDMethods      List of Methods of this Class
-    @attribute cDAttributes   List of Attributes of this Class
+      There should be a visitor which can visit all the provided alternatives and behaves
+      accordingly.
   */
-  CDClass implements CDType = Modifier?  "class" Name
-  ( "extends"  superclass:MCObjectType)?
-  ( TImplements interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
-  ( "{"
-    ( CDAttribute
-    | CDConstructor
-    | CDMethod )*
-    "}"
-  | ";" );
+  interface CDDirectModifier;
 
-  // indirect token
-  TImplements = { _input.LT(1).getText().equals("implements") }? Name; // implements is often association or role name (e.g., when creating the abstract syntax of CD4A itself or for the abstract syntax of Java)
+  /** CDAbstractModifier is a specific modifier available in CD4A to signal a element is abstract.
+      It doesn't have any attributes, because it can be simply checked on the occurrence
+      of the CDAbstractModifier in the CDDirectModifier list in the CDModifier.
 
-
-  /** ASTCDInterface represents an Interface in a Classdiagram
-    @attribute modifier       Optional Modifier of this Interface
-    @attribute name           Name of this Interface
-    @attribute interfaces     List of Interfaces extended by this Interface
-    @attribute cDMethods      List of Methods of this Interface
-    @attribute cDAttributes   List of Attributes of this Interface
+      The logic before was to add a boolean attribute `isAbstract`:
+        `CDAbstractModifier implements CDDirectModifier = ["abstract"]`
+      but with the new logic, which splits each option in a different NT this is no longer needed.
   */
-  CDInterface implements CDType = Modifier? "interface" Name
-    ( "extends" interface:(MCObjectType || ",")+ )? stereotype:CDStereotype?
+  CDAbstractModifier implements CDDirectModifier = "abstract";
+  CDFinalModifier implements CDDirectModifier = "final";
+  CDStaticModifier implements CDDirectModifier = "static";
+
+
+  /* ==== CDElement ==== */
+  /** CDElement denotes the basic elements of a class diagram.
+      Currently there are:
+        - Class
+        - Interface
+        - Enum
+        - Association
+      but it is easily extensible.
+  */
+  interface CDElement;
+
+  /** CDType are all of the elements, which can be used to describe a type for e.g. variables, method arguments, ...
+  */
+  interface symbol scope CDType extends CDElement;
+
+  // TODO have extends/implements as key
+  CDClass implements CDType = CDModifier "class" Name
+    ( key("extends")   superclass:(MCObjectType || ",")+ )?
+    ( key("implements") interface:(MCObjectType || ",")+ )?
     ( "{"
-      ( CDAttribute
-      | CDMethod )*
+        CDMember*
       "}"
     | ";" );
 
+  CDInterface implements CDType = CDModifier "interface" Name
+    ( key("extends") interface:(MCObjectType || ",")+ )?
+    ( "{"
+        CDMember*
+      "}"
+    | ";" );
 
-  /** ASTCDEnum represents an Enumeration (enum type) in a Classdiagram
-    @attribute modifier        Optional Modifier of this Enum
-    @attribute name            Name of this Enum
-    @attribute interfaces      List of Interfaces implemented by this Enum
-    @attribute cDEnumConstants List of the Enum Constants
-    @attribute cDConstructors  List of Constructors of this Enum
-    @attribute cDMethods       List of Methods of this Enum
-    @attribute cDAttributes    List of Attributes of this Enum
-  */
-   CDEnum implements CDType = Modifier? "enum" Name
-    ( TImplements interface:(MCObjectType || ",")+ )?
+  CDEnum implements CDType = CDModifier "enum" Name
+    ( ("implements") interface:(MCObjectType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";"
-        ( CDConstructor | CDMethod)*
+        CDMember*
       "}"
     | ";" );
 
-  astrule CDEnum = CDAttribute*;
-
-  /** ASTCDAttribute represents an Attribute of a Class or Interface
-    @attribute modifier Modifier of this Attribute
-    @attribute type     Type of this Attribute
-    @attribute name     Name of this Attribute
-    @attribute value    Value of this Attribute
-  */
-  CDAttribute implements CDField = Modifier? MCType Name ("=" Value)? ";";
-
-  /** ASTCDEnumConstant represents a Constant of an Enumeration (enum type)
-      in a Classdiagram
-      @attribute name             Name of this Constant
-      @attribute cDEnumParameters List of optional parameters of this Constant
-  */
-  CDEnumConstant implements CDField = Name ( "(" cDEnumParameter:(CDEnumParameter || ",")+ ")" )?;
-
-
-  /** ASTCDEnumParameter represents a Parameter of an Enumeration Constant
-    @attribute Value Value of this Parameter
-  */
-  CDEnumParameter = Value;
-
-
-  /** ASTCDConstructor represents a Constructor of a Class or Interface
-    @attribute name           Name of this Constructor
-    @attribute cDParameters   List of Parameters of this Constructor
-    @attribute exceptions     List of Exceptions thrown by this Constructor
-  */
-  CDConstructor implements CDMethOrConstr =
-    Modifier
-     Name "(" (CDParameter || ",")* ")"
-    ("throws" exception:(MCQualifiedName || "," )+)?
-    ";";
-
-
-  /** ASTCDMethod represents a Method of a Class or Interface
-      @attribute modifier       Modifier of this Method
-      @attribute returnType     Return-Type of the return value of this Method
-      @attribute name           Name of this Method
-      @attribute cDParameters   List of Parameters of this Method
-      @attribute exceptions     List of Exceptions thrown by this Method
-  */
-  CDMethod implements CDMethOrConstr =
-    Modifier
-    MCReturnType
-     Name "(" (CDParameter || ",")* ")"
-    ("throws" exception:(MCQualifiedName || ",")+)?
-    ";";
-
-
-  /** ASTCDParameter represents a Parameter of a Constructor or Method
-    @attribute mctype Type of this Parameter
-    @attribute ellipsis Optional indicator for a variable Parameter length
-    @attribute name Name of this Parameter
-  */
-  CDParameter implements CDField =
-  MCType (Ellipsis:["..."])? Name;
-        
-
-  /** ASTCDAssociation represents an Association between Classes or Interfaces
-    @attribute readonly           True if Association is only read-only
-    @attribute stereotype         Optional Stereotype
-    @attribute Association        True if Association is of type "association"
-    @attribute Composition        True if Association is of type "composition"
-    @attribute derived            True if this is a derived Association
-    @attribute name               Name of this Association
-    @attribute leftModifier       Optional left side Modifier
-    @attribute leftCardinality    Cardinality of the left side of this
-                                  Association
-    @attribute leftReferenceName  Name of the Class or Interface on the left
-                                  side of this Association
-    @attribute leftQualifier      Qualifier of the left side of this
-                                  Association
-    @attribute leftRole           Role of the Class or Interface on the left
-                                  side of this Association
-    @attribute leftToRight        True if Association is navigable from 
-                                  left to right ("->")
-    @attribute rightToLeft        True if Association is navigable from 
-                                  right to left ("<-")
-    @attribute bidirectional      True if Association is navigable in 
-                                  both directions ("<->")
-    @attribute unspecified        True if navigation of Association is 
-                                  not specified  ("--")
-    @attribute rightRole          Role of the Class or Interface on the right
-                                  side of this Association
-    @attribute rightQualifier     Qualifier of the right side of this
-                                  Association
-    @attribute rightReferenceName Name of the Class or Interface on the right
-                                  side of this Association
-    @attribute rightCardinality   Cardinality of the right side of this
-                                  Association
-    @attribute rightModifier      Optional right side Modifier
-  */
-  symbol scope CDAssociation = stereotype:CDStereotype?
-    readOnly:TReadOnly?
+  symbol scope CDAssociation implements CDElement = CDModifier
     (["association"] | ["composition"])
-    ([Derived:"/"])?  Name?
-    leftModifier:Modifier?
-    leftCardinality:Cardinality?
+    ([Derived:"/"])? Name?
 
-    leftReferenceName:MCQualifiedName
-    leftQualifier:CDQualifier?
-    leftRole:Role?
-    (   leftToRight:["->"]
-      | rightToLeft:["<-"]
-      | bidirectional:["<->"]
-      | unspecified:["--"] )
-    rightRole:Role?
-    rightQualifier:CDQualifier?
-    rightReferenceName:MCQualifiedName
-    rightCardinality:Cardinality?
-    rightModifier:Modifier? ";" ;
+    left:CDAssociationLeftSide
 
-  token TReadOnly = 'r' 'e' 'a' 'd' '-' 'o' 'n' 'l' 'y';
+    CDAssociationDirection
 
-  Modifier = stereotype:CDStereotype?
-    (["abstract"]
-      | ["final"]
-      | ["static"]
-      | ["private"] | [private:"-"]
-      | ["protected"] | [protected:"#"]
-      | ["public"] | [public:"+"]
-      | ["derived"] | [derived:"/"] )*;
+    right:CDAssociationRightSide
+    ";";
 
-  /** ASTRole represents a Role of an Association
-      @attribute name     name of the role
-   */
-  symbol Role = "(" Name ")";
-    
+  /* ==== Association ==== */
+  CDAssociationDirection =
+    ( leftToRight:["->"]
+    | rightToLeft:["<-"]
+    | bidirectional:["<->"]
+    | unspecified:["--"] );
 
-  /** ASTCardinality represents a Cardinality in a Classdiagram
-    @attribute many          True if "*" is set as Cardinality
-    @attribute one           True if [1] is set as Cardinality
-    @attribute oneToMany     True if [1..*] is set as Cardinality
-    @attribute optional      True if [0..1] is set as Cardinality
-  */
-  Cardinality = many:["[*]"] | one:["[1]"] | oneToMany:["[1..*]"] | optional:["[0..1]"];
-   
+  interface CDAssociationSide =
+    modifier:CDModifier
+    cardinality:CDCardinality?
+    referenceName:MCQualifiedName
+    qualifier:CDQualifier?
+    role:CDRole?;
 
-  /** ASTQualifier represents a Qualifier of an Association
-    @attribute name     Abstract name of the Qualifier if not a type
-    @attribute mctype     Type of the Qualifier if not an abstract name
-  */
+  CDAssociationLeftSide implements CDAssociationSide =
+    modifier:CDModifier
+    cardinality:CDCardinality?
+    referenceName:MCQualifiedName
+    qualifier:CDQualifier?
+    role:CDRole?;
+
+  CDAssociationRightSide implements CDAssociationSide =
+    role:CDRole?
+    qualifier:CDQualifier?
+    referenceName:MCQualifiedName
+    cardinality:CDCardinality?
+    modifier:CDModifier;
+
+  symbol CDRole = "(" Name ")";
+
+  interface CDCardinality;
+  CD4ACardinalityMultiple   implements CDCardinality = "[*]";
+  CD4ACardinalityExactOne   implements CDCardinality = "[1]";
+  CD4ACardinalityAtLeastOne implements CDCardinality = "[1..*]";
+  CD4ACardinalityOptional   implements CDCardinality = "[0..1]";
+
+  // TODO check if this can have a symbol
   symbol CDQualifier = "[[" Name "]]" | "[" MCType "]";
-    
 
-  /** ASTStereotype represents Stereotypes in a Classdiagram
-    @attribute values List of Values of this Stereotype
+
+  /* ==== Attributes ==== */
+  interface CDMember;
+
+  symbol CDAttribute implements CDMember = CDModifier MCType Name ("=" CDDefaultValue)? ";";
+
+  CDEnumConstant = Name ( "(" cDEnumArgument:(CDEnumArgument || ",")+ ")" )?;
+
+  CDEnumArgument = Expression;
+  CDDefaultValue = Expression;
+
+  /** Write a composition in short form:
+      class A {
+        -> (b) B [*];
+      }
+
+      is the short form for:
+      class A;
+      composition A -> (b) B [*];
   */
-  CDStereotype = "<<" value:(CDStereoValue || ",")+ ">" ">"
-	// It is not possible to define ">>".
-    // Parsing generic typs like "List<List<String>>" leads to problems.
-    {((_input.LT(-2).getLine()==_input.LT(-1).getLine()) && (_input.LT(-1).getCharPositionInLine()==_input.LT(-2).getCharPositionInLine()+1))}?;
+  CDDirectComposition implements CDMember =
+    "->" CDAssociationRightSide ";";
 
 
-  /** ASTStereoValue represents a Value of a Stereotype in a Classdiagram
-      @attribute name  Name of the Stereotype-Value
+  /* ==== Symbols ==== */
+  /** The symbol for CDAttributes contains the link to the type of the attribute
+      and the SymModifier. The SymModifier is the handwritten information of the
+      connected modifier in the symbol table, which provides the condensed information
+      of all available modifiers.
   */
-  CDStereoValue = Name ("=" value:String)?;
-
-  /** ASTValue represents a Value
-      @attribute literal  Value
-  */
-  Value = SignedLiteral;
-
-  symbolrule CDField =
-    isPrivate: boolean
-    isDerived: boolean
-    isProtected: boolean
-    isPublic: boolean
-    isFinal: boolean
-    isStatic: boolean
-    isReadOnly: boolean
-    isInitialized: boolean
-    isParameter: boolean
+  symbolrule CDAttribute =
     type: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader
+    modifier: de.monticore.cd.cd4analysis._symboltable.SymModifier
   ;
 
-  symbolrule CDMethOrConstr =
-    isConstructor: boolean
-    isPrivate: boolean
-    isDerived: boolean
-    isProtected: boolean
-    isPublic: boolean
-    isFinal: boolean
-    isStatic: boolean
-    isAbstract: boolean
-    isEllipsis: boolean
-    returnType: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader
-    exceptions: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader*
-  ;
-
+  /** The symbol for CDType has the information if what specific type it describes.
+      The symbol contains all the interfaces and superclasses of the given type.
+      The modifier is a collection of all the available CDModifier.
+  */
   symbolrule CDType =
     isInterface: boolean
     isEnum: boolean
     isClass: boolean
-    isAbstract: boolean
-    isPrivate: boolean
-    isProtected: boolean
-    isPublic: boolean
-    isFinal: boolean
+    // TODO find better solution than SymbolLoader
     cdInterfaces: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader*
-    superClass: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader?
+    superClasses: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader*
+    modifier: de.monticore.cd.cd4analysis._symboltable.SymModifier
   ;
 
-  symbolrule Role =
-    associationTarget: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader
+  /** The symbol for CDRole contains all the information of one side of an association.
+      It contains the link to the type and the SymAssociation, which contains the
+      basic information of an association.
+  */
+  symbolrule CDRole =
     navigable: boolean
+    cardinality: Optional<de.monticore.cd.cd4analysis._ast.ASTCDCardinality>
+    qualifier: Optional<de.monticore.cd.cd4analysis._symboltable.CDQualifierSymbol>
+    associationTarget: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader
+    association: de.monticore.cd.cd4analysis._symboltable.SymAssociation
+    modifier: de.monticore.cd.cd4analysis._symboltable.SymModifier
   ;
 
+  /** The symbol for CDAssociation can only exist, if there is a specific global name
+      for this specific association. The connection to the SymAssociation provides the
+      navigation to the association information and the roles.
+  */
+  symbolrule CDAssociation =
+    association: de.monticore.cd.cd4analysis._symboltable.SymAssociation;
 }
