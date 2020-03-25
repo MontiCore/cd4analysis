@@ -13,7 +13,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Test for {@link CD4ACoCoHelper}.
  *
- * @author Robert Heim
  */
 public class CD4ACoCoHelperTest {
   @Test

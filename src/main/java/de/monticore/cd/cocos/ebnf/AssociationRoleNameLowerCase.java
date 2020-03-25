@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that role names start lower-case.
  *
- * @author Robert Heim
  */
 public class AssociationRoleNameLowerCase implements CD4AnalysisASTCDAssociationCoCo {
   

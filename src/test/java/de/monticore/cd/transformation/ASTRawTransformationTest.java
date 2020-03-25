@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
 /**
  * Test for the utility class {@link ASTCDRawTransformation}
  *
- * @author Galina Volkova
  */
 public class ASTRawTransformationTest {
 

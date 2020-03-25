@@ -15,7 +15,6 @@ import java.util.Optional;
  * Checks if the source of an association is defined within the classdiagram
  * itself.
  *
- * @author Robert Heim
  */
 public class AssociationSourceTypeNotExternal implements
     CD4AnalysisASTCDAssociationCoCo {

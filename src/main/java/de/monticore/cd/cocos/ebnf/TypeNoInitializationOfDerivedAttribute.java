@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that derived attributes are not initialized.
  *
- * @author Robert Heim
  */
 public class TypeNoInitializationOfDerivedAttribute implements CD4AnalysisASTCDAttributeCoCo {
   

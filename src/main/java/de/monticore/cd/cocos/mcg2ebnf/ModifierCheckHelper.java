@@ -6,7 +6,6 @@ import de.monticore.cd.cd4analysis._ast.ASTModifier;
 /**
  * Helper providing common methods to check some modifier related constraints.
  *
- * @author Robert Heim
  */
 public class ModifierCheckHelper {
   /**

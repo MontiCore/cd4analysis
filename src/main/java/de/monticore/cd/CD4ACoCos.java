@@ -9,7 +9,6 @@ import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 /**
  * Set of CoCos for CD4A.
  *
- * @author Robert Heim
  */
 public class CD4ACoCos {
 

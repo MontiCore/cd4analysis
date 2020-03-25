@@ -18,7 +18,6 @@ import java.util.Collection;
 /**
  * Tests unique association names.
  *
- * @author Michael von Wenckstern
  */
 public class AssocTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/";

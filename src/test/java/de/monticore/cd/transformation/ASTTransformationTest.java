@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
 /**
  * Test for the utility class {@link ASTCDTransformation}
  *
- * @author Galina Volkova
  */
 public class ASTTransformationTest {
 

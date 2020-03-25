@@ -8,7 +8,6 @@ import de.monticore.cd.cd4analysis._ast.ASTCardinality;
 /**
  * Helper to print associations in default formats.
  *
- * @author Robert Heim
  */
 public class CD4ACoCoHelper {
   /**

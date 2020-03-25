@@ -7,7 +7,6 @@ import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDEnumCoCo;
 /**
  * See {@link ImplementOnlyInterfaces}.
  *
- * @author Robert Heim
  */
 public class EnumImplementOnlyInterfaces extends ImplementOnlyInterfaces implements
     CD4AnalysisASTCDEnumCoCo {

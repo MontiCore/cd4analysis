@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
  * Checks that attribute of the attribute-qualifier of an association exists in
  * the target class.
  *
- * @author Robert Heim
  */
 public class AssociationQualifierAttributeExistsInTarget
     implements CD4AnalysisASTCDAssociationCoCo {

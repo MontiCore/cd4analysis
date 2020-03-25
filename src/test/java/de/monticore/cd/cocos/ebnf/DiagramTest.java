@@ -18,7 +18,6 @@ import java.util.Collection;
 /**
  * Tests the CoCos for diagrams in general.
  *
- * @author Robert Heim
  */
 public class DiagramTest extends AbstractCoCoTest {
   /**

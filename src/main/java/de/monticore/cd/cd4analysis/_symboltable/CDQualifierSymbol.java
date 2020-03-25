@@ -7,7 +7,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 /**
  * Represents a cd qualifier.
  *
- * @author Robert Heim
  */
 public class CDQualifierSymbol extends CDQualifierSymbolTOP {
 

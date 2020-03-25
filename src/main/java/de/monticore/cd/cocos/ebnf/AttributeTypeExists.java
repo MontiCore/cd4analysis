@@ -13,7 +13,6 @@ import java.util.Optional;
 /**
  * Checks that types of attributes are resolvable.
  *
- * @author Robert Heim
  */
 public class AttributeTypeExists
     implements CD4AnalysisASTCDAttributeCoCo {

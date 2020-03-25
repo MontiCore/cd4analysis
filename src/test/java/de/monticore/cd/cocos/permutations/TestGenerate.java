@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author Sebastian Oberhoff
  */
 public class TestGenerate {
   

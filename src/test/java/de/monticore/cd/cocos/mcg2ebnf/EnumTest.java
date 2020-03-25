@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests the CoCos that restrict ASTCDEnum to match the EBNF grammar.
  *
- * @author Robert Heim
  */
 public class EnumTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 /**
  * Checks that overridden attributes are of the same kind.
  *
- * @author Robert Heim
  */
 public class AttributeOverriddenTypeMatch
     implements CD4AnalysisASTCDAttributeCoCo {

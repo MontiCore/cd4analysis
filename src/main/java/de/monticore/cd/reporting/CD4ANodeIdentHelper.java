@@ -15,8 +15,6 @@ import java.util.List;
 /**
  * TODO: Write me!
  *
- * @author (last commit) $Author$
- * @since TODO: add version number
  */
 public class CD4ANodeIdentHelper extends MCCollectionTypesNodeIdentHelper {
 

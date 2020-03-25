@@ -17,7 +17,6 @@ import java.util.Collection;
 /**
  * Tests the CoCos that deal with classes, interfaces and enums.
  *
- * @author Robert Heim
  */
 public class ClassInterfaceEnumsTest extends AbstractCoCoTest {
   /**

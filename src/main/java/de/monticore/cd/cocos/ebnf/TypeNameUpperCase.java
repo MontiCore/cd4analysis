@@ -13,7 +13,6 @@ import java.util.Collection;
 /**
  * Checks that type names start upper-case.
  *
- * @author Robert Heim
  */
 public class TypeNameUpperCase implements CD4AnalysisASTCDDefinitionCoCo {
   

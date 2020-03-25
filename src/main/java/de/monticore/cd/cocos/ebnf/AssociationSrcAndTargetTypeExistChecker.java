@@ -14,7 +14,6 @@ import java.util.Optional;
 /**
  * Checks that the types connected by associations exist.
  *
- * @author Robert Heim
  */
 public class AssociationSrcAndTargetTypeExistChecker implements
     CD4AnalysisASTCDAssociationCoCo {

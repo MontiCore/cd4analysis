@@ -8,7 +8,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Modifiers may only have none or exactly one visibility.
  *
- * @author Robert Heim
  */
 public class ModifierNotMultipleVisibilitiesCoCo implements CD4AnalysisASTModifierCoCo {
   

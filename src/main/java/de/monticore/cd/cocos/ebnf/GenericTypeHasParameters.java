@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * Checks that references to generic types use at least one parameter.
  *
- * @author Robert Heim
  */
 public class GenericTypeHasParameters implements MCCollectionTypesASTMCGenericTypeCoCo {
   

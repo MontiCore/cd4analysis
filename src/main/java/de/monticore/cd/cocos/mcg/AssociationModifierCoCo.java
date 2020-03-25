@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Ensures valid modifiers for associations.
  *
- * @author Robert Heim
  */
 public class AssociationModifierCoCo implements CD4AnalysisASTCDAssociationCoCo {
   

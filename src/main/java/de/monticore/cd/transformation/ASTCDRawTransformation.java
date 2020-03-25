@@ -16,7 +16,6 @@ import java.util.List;
 /**
  * Some raw (no parameter checks) help methods for the CD ast transformations.
  *
- * @author Galina Volkova
  */
 public class ASTCDRawTransformation {
   

@@ -17,7 +17,6 @@ import java.util.Collection;
 /**
  * Tests the CoCos that restrict ASTCDAssociation to match the EBNF grammar.
  *
- * @author Robert Heim
  */
 public class AssociationTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";

@@ -14,7 +14,6 @@ import de.se_rwth.commons.logging.Log;
  * On both sides only the stereotype <<ordered>> is allowed, all other
  * modifiers/stereotypes are forbidden.
  *
- * @author Robert Heim
  */
 public class AssociationEndModifierRestrictionCoCo implements CD4AnalysisASTCDAssociationCoCo {
   

@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * @author (last commit) Marita Breuer
  */
 public class ODReportingTest {
   

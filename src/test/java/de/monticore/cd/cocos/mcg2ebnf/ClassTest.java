@@ -17,7 +17,6 @@ import java.util.Collection;
 /**
  * Tests the CoCos that restrict ASTCDClass to match the EBNF grammar.
  *
- * @author Robert Heim
  */
 public class ClassTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";

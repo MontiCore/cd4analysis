@@ -17,7 +17,6 @@ import java.util.Optional;
  * types has other outgoing associations; it only considers the specification mode of associations
  * the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
  *
- * @author Michael von Wenckstern
  */
 public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
     CD4AnalysisASTCDAssociationCoCo {

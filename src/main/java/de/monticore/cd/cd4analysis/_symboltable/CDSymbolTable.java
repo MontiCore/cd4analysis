@@ -24,7 +24,6 @@ import static de.monticore.symboltable.ISymbol.sortSymbolsByPosition;
 /**
  * This class helps in creating, editing, and managing the symboltable for the CD4Analysis language
  *
- * @author Alexander Roth
  */
 //TODO: move this class to Cd4Analysis
 public class CDSymbolTable {

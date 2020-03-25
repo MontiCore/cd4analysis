@@ -63,7 +63,6 @@ import java.util.*;
  *   // ...
  * </pre>
  * 
- * @author Robert Heim
  */
 public class AssocTestGeneratorTool {
   

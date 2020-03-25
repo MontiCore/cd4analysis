@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Only modifier "derived" is allowed in the ebnf.
  *
- * @author Robert Heim
  */
 public class AttributeModifierOnlyDerivedCoCo implements CD4AnalysisASTCDAttributeCoCo {
   

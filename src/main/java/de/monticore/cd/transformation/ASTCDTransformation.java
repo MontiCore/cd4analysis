@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Some help methods for the CD ast transformations
  *
- * @author Galina Volkova
  */
 public class ASTCDTransformation {
   

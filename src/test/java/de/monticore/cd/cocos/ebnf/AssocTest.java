@@ -23,8 +23,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests the codes and messages of CoCos regarding associations.
  *
- * @author (last commit) $Author$
- * @since TODO: add version number
  */
 public class AssocTest extends AbstractCoCoTest {
 

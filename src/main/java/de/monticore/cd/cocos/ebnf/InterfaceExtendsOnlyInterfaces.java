@@ -11,7 +11,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that interfaces do only extend other interfaces.
  * 
- * @author Robert Heim
  */
 public class InterfaceExtendsOnlyInterfaces implements CD4AnalysisASTCDInterfaceCoCo {
   

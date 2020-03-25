@@ -9,7 +9,6 @@ import java.util.List;
  * <br/>
  * TODO we should support the built in types as real types/symbols.
  * 
- * @author Robert Heim
  */
 public class BuiltInTypes {
   

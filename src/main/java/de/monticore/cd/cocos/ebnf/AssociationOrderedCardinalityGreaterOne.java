@@ -16,7 +16,6 @@ import java.util.Optional;
 /**
  * Checks that the cardinality of an ordered association is greater than 1.
  *
- * @author Robert Heim
  */
 public class AssociationOrderedCardinalityGreaterOne implements
     CD4AnalysisASTCDAssociationCoCo {

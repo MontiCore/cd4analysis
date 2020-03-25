@@ -17,7 +17,6 @@ import java.util.Optional;
  * Checks that type of the type-qualifier of an type-qualified association
  * exists.
  *
- * @author Robert Heim
  */
 public class AssociationQualifierTypeExists
     implements CD4AnalysisASTCDAssociationCoCo {

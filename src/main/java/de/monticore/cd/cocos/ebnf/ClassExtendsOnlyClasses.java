@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that classes do only extend other classes.
  *
- * @author Robert Heim
  */
 public class ClassExtendsOnlyClasses implements CD4AnalysisASTCDClassCoCo {
 

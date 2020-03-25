@@ -11,7 +11,6 @@ import de.se_rwth.commons.logging.Log;
  * Checks that classes that extended an external class are abstract in case that
  * the external class does not provide an empty constructor.
  * 
- * @author Robert Heim
  */
 public class ClassExtendExternalType implements CD4AnalysisASTCDClassCoCo {
   

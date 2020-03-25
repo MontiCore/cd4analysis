@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Only modifier "abstract" is allowed in the ebnf.
  *
- * @author Robert Heim
  */
 public class ClassModifierOnlyAbstractCoCo implements CD4AnalysisASTCDClassCoCo {
   

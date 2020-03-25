@@ -8,7 +8,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Disables usage of attributes in enums.
  *
- * @author Galina Volkova
  */
 public class EnumNoAttributesCoCo implements CD4AnalysisASTCDEnumCoCo {
   

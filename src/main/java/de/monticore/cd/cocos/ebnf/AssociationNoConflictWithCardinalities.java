@@ -14,7 +14,6 @@ import java.util.Optional;
  * Checks that role names do not conflict with other role names where the source
  * types has other outgoing associations (which might be inherited).
  *
- * @author Michael von Wenckstern
  */
 public class AssociationNoConflictWithCardinalities implements
     CD4AnalysisASTCDAssociationCoCo {

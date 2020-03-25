@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Classes may not be derived nor static.
  *
- * @author Robert Heim
  */
 public class ClassInvalidModifiersCoCo implements CD4AnalysisASTCDClassCoCo {
   
