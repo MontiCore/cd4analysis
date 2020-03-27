@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 # UML/P CD
 The language for UML class diagrams is split up into 2 languages:
 - **CD4Analysis**: basic cd language with classes, attributes, associations 
