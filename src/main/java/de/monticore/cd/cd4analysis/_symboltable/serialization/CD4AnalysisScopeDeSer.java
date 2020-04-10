@@ -2,16 +2,17 @@
 
 package de.monticore.cd.cd4analysis._symboltable.serialization;
 
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd.cd4analysis._symboltable.*;
+import de.monticore.symboltable.serialization.json.JsonObject;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
+import static de.monticore.symboltable.serialization.JsonDeSers.*;
+
 public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
 
-  protected void deserializeCDMethOrConstrSymbol(
-      de.monticore.symboltable.serialization.json.JsonObject symbolJson,
-      de.monticore.cd.cd4analysis._symboltable.CD4AnalysisScope scope) {
+  protected void deserializeCDMethOrConstrSymbol(JsonObject symbolJson, ICD4AnalysisScope scope) {
     //The deserialization should not be performed here, it is performed in spanning symbol deserialization instead
   }
 
@@ -24,19 +25,12 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
    * @param scope
    */
   @Override
-  protected void addAndLinkSpanningSymbol(
-      de.monticore.symboltable.serialization.json.JsonObject subScopeJson,
-      de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope subScope,
-      de.monticore.cd.cd4analysis._symboltable.CD4AnalysisScope scope) {
-    if (subScopeJson
-        .hasMember(de.monticore.symboltable.serialization.JsonConstants.SCOPE_SPANNING_SYMBOL)) {
-      de.monticore.symboltable.serialization.json.JsonObject symbolRef = subScopeJson
-          .getObjectMember(
-              de.monticore.symboltable.serialization.JsonConstants.SCOPE_SPANNING_SYMBOL);
-      String spanningSymbolName = symbolRef
-          .getStringMember(de.monticore.symboltable.serialization.JsonConstants.NAME);
-      String spanningSymbolKind = symbolRef
-          .getStringMember(de.monticore.symboltable.serialization.JsonConstants.KIND);
+  protected void addAndLinkSpanningSymbol(JsonObject subScopeJson, ICD4AnalysisScope subScope,
+      ICD4AnalysisScope scope) {
+    if (subScopeJson.hasMember(SCOPE_SPANNING_SYMBOL)) {
+      JsonObject symbolRef = subScopeJson.getObjectMember(SCOPE_SPANNING_SYMBOL);
+      String spanningSymbolName = symbolRef.getStringMember(NAME);
+      String spanningSymbolKind = symbolRef.getStringMember(KIND);
       if (spanningSymbolKind.equals(cDTypeSymbolDeSer.getSerializedKind())) {
         Optional<CDTypeSymbol> spanningSymbol = scope.resolveCDTypeLocally(spanningSymbolName);
         if (spanningSymbol.isPresent()) {
@@ -48,7 +42,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
         }
       }
       else if (spanningSymbolKind.equals(cDAssociationSymbolDeSer.getSerializedKind())) {
-        Optional<de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol> spanningSymbol = scope
+        Optional<CDAssociationSymbol> spanningSymbol = scope
             .resolveCDAssociationLocally(spanningSymbolName);
         if (spanningSymbol.isPresent()) {
           spanningSymbol.get().setSpannedScope(subScope);
@@ -59,7 +53,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
         }
       }
       else if (spanningSymbolKind.equals(cDDefinitionSymbolDeSer.getSerializedKind())) {
-        Optional<de.monticore.cd.cd4analysis._symboltable.CDDefinitionSymbol> spanningSymbol = scope
+        Optional<CDDefinitionSymbol> spanningSymbol = scope
             .resolveCDDefinitionLocally(spanningSymbolName);
         if (spanningSymbol.isPresent()) {
           spanningSymbol.get().setSpannedScope(subScope);
@@ -70,8 +64,8 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
         }
       }
       else if (spanningSymbolKind.equals(cDMethOrConstrSymbolDeSer.getSerializedKind())) {
-        de.monticore.cd.cd4analysis._symboltable.CDMethOrConstrSymbol symbol = cDMethOrConstrSymbolDeSer
-            .deserialize(symbolRef, scope);
+        CDMethOrConstrSymbol symbol = cDMethOrConstrSymbolDeSer
+            .deserializeCDMethOrConstrSymbol(symbolRef, scope);
         scope.add(symbol);
         symbol.setSpannedScope(subScope);
       }
