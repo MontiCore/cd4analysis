@@ -5,6 +5,7 @@ package de.monticore.cd.cd4analysis._symboltable.serialization;
 import de.monticore.cd.cd4analysis._symboltable.CDMethOrConstrSymbol;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
 import de.monticore.symboltable.IScopeSpanningSymbol;
+import de.monticore.symboltable.serialization.JsonPrinter;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,14 @@ public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinter
   public static final String RETURN_TYPE = "returnType";
 
   public static final String EXCEPTIONS = "exceptions";
+
+  public CD4AnalysisSymbolTablePrinter(JsonPrinter printer){
+    super(printer);
+  }
+
+  public CD4AnalysisSymbolTablePrinter(){
+    super();
+  }
 
   @Override protected void serializeCDTypeCdInterfaces(List<CDTypeSymbolLoader> cdInterfaces) {
     printer.beginArray(CD_INTERFACES);
