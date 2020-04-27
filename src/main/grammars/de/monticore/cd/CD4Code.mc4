@@ -3,47 +3,16 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Code, Version 16/03/2020
+   MCG for CD 4 Code, Version 27/04/2020
 */
 
-grammar CD4Code extends de.monticore.cd.CD4Analysis, de.monticore.types.MCFullGenericTypes {
+grammar CD4Code extends
+    de.monticore.cd.CDBasis,
+    de.monticore.cd.CDCommon,
+    de.monticore.cd.CDAssociation,
+    de.monticore.cd.CD4CodeCommon,
+    de.monticore.types.MCFullGenericTypes,
+    de.monticore.literals.MCCommonLiterals {
 
   start CDCompilationUnit;
-
-  /* ==== Methods ==== */
-  interface scope symbol CDMethodType extends CDMember = Name;
-
-  CDMethod implements CDMember =
-    CDModifier
-    MCReturnType
-    Name "(" (CDParameter || ",")* ")"
-    ("throws" exception:(MCQualifiedName || ",")+)?
-    ";";
-
-  CDConstructor implements CDMethodType =
-    CDModifier
-    Name "(" (CDParameter || ",")* ")"
-    ("throws" exception:(MCQualifiedName || "," )+)?
-    ";";
-
-  CDParameter =
-    MCType (Ellipsis:["..."])? Name;
-
-
-  /* ==== Modifier ==== */
-  CD4CodePrivateModifier implements CDDirectModifier = "private" | "-";
-  CD4CodeProtectedModifier implements CDDirectModifier = "protected" | "#";
-  CD4CodePublicModifier implements CDDirectModifier = "public" | "+";
-  CD4CodeDerivedModifier implements CDDirectModifier = "derived" | "/";
-  CD4CodeReadOnlyModifier implements CDDirectModifier = "read-only";
-
-
-  /* ==== Symbols ==== */
-  symbolrule CDMethodType =
-    isConstructor: boolean
-    isEllipsis: boolean
-    returnType: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol
-    exceptions: de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol*
-    modifier: de.monticore.cd.cd4analysis._symboltable.SymModifier
-  ;
 }

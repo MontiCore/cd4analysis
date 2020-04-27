@@ -1,0 +1,54 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd;
+
+/*
+   MCG for CD 4 Code Basis, Version 27/04/2020
+*/
+
+component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
+
+  /* ==== Methods ==== */
+  interface symbol CDMethodType extends CDMember = Name;
+
+  CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
+
+  scope CDMethod implements CDMethodType =
+    CDModifier
+    MCReturnType
+    Name "(" (CDParameter || ",")* ")"
+    (CDThrowsDeclaration)?
+    ";";
+
+  scope CDConstructor implements CDMethodType =
+    CDModifier
+    Name "(" (CDParameter || ",")* ")"
+    (CDThrowsDeclaration)?
+    ";";
+
+  symbol CDParameter =
+    MCType (Ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+
+  /* ==== Modifier ==== */
+  CD4CodePrivateModifier implements CDDirectModifier = "private" | "-";
+  CD4CodeProtectedModifier implements CDDirectModifier = "protected" | "#";
+  CD4CodePublicModifier implements CDDirectModifier = "public" | "+";
+  CD4CodeDerivedModifier implements CDDirectModifier = key("derived") | "/";
+  CD4CodeReadOnlyModifier implements CDDirectModifier = key("read-only");
+
+
+  /* ==== Symbols ==== */
+  symbolrule CDMethodType =
+    isConstructor: boolean
+    hasEllipsis: boolean
+    returnType: de.monticore.cd.cdbasis._symboltable.CDTypeSymbol
+    exceptions: de.monticore.cd.cdbasis._symboltable.CDTypeSymbol*
+    modifier: de.monticore.cd.cd4codebasis._symboltable.SymModifier
+    parameter: de.monticore.cd.cdbasis._symboltable.CDMemberSymbol*
+  ;
+
+  symbolrule CDParameter =
+    type: de.monticore.cd.cdbasis._symboltable.CDTypeSymbol
+    isEllipsis: boolean
+  ;
+}

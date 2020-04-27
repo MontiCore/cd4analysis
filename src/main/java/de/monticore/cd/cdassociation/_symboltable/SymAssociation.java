@@ -1,4 +1,6 @@
-package de.monticore.cd.cd4analysis._symboltable;
+package de.monticore.cd.cdassociation._symboltable;
+
+import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
 
 import java.util.Optional;
 

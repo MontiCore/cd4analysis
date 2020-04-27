@@ -1,0 +1,105 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd;
+
+/*
+   MCG for CD 4 Basis, Version 27/04/2020
+*/
+
+component grammar CDBasis extends
+    de.monticore.types.MCBasicTypes,
+    de.monticore.literals.MCLiteralsBasis,
+    de.monticore.expressions.ExpressionsBasis,
+    de.monticore.UMLStereotype {
+
+  /* ==== General ==== */
+  CDCompilationUnit =
+    ("package" package:(Name& || ".")+ ";")?
+    (MCImportStatement)*
+    (key("targetpackage") targetpackage:(Name& || ".")+ ";")?
+    CDDefinition;
+
+  symbol scope CDDefinition = CDModifier key("classdiagram") Name "{"
+    CDElement*
+  "}";
+
+  /** CDModifier is the basic modifier structure, to use in the different cd elements
+    @attribute CDDirectModifier
+                  the interface for all modifiers
+    @attribute Stereotype
+                  the MontiCore stereotype
+  */
+  CDModifier =
+    CDDirectModifier* Stereotype?;
+
+  /** CDDirectModifier is an interface for all possible modifiers for elements in the cd
+      we have the modifier as an interface plus a list of (already) available options
+      to support better extensibility and adaptability.
+  */
+  interface CDDirectModifier;
+
+  /** CDAbstractModifier is a specific modifier available in CD4A to signal that an element is abstract.
+      It doesn't have any attributes, because it can be simply checked on the occurrence
+      of the CDAbstractModifier in the CDDirectModifier list in the CDModifier.
+  */
+  CDAbstractModifier implements CDDirectModifier = "abstract";
+  CDFinalModifier implements CDDirectModifier = "final";
+  CDStaticModifier implements CDDirectModifier = "static";
+
+
+  /* ==== CDElement ==== */
+  /** CDElement denotes the basic elements of a class diagram.
+      This includes Classes, Interfaces, Enums, Associations
+      but meant for extension if needed.
+  */
+  interface CDElement;
+
+  /** CDType are all of the CDelements, which can be used to describe a type for e.g. variables, method arguments, ...
+  */
+  interface symbol CDType extends CDElement;
+
+  CDInterfaceUsage = key("CDInterfaceUsageShouldBeOverriden");
+
+  scope CDClass implements CDType = CDModifier "class" Name
+    ( "extends"   superclass:(MCObjectType || ",")+ )?
+    CDInterfaceUsage?
+    ( "{"
+        CDMember*
+      "}"
+    | ";" );
+
+
+  /* ==== Attributes ==== */
+  interface CDMember;
+
+  symbol CDAttribute implements CDMember = CDModifier MCType Name ("=" CDDefaultValue)? ";";
+
+  CDDefaultValue = Expression;
+
+  /* ==== Symbols ==== */
+  /** The symbol for CDAttributes contains the link to the type of the attribute
+      and the SymModifier. The SymModifier is the handwritten information of the
+      connected modifier in the symbol table, which provides the condensed information
+      of all available modifiers.
+  */
+  symbolrule CDAttribute extends de.monticore.cd.cdbasis._symboltable.CDMemberSymbol =
+    type: de.monticore.cd.cdbasis._symboltable.CDTypeSymbolLoader
+    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
+  ;
+
+  /** The symbol for CDType has the information what specific type it describes.
+      The symbol contains all the interfaces and superclasses of the given type.
+      The modifier is a collection of all the available CDModifier.
+  */
+  symbolrule CDType =
+    isInterface: boolean // TODO: how can this be added later?
+    isEnum: boolean  // TODO: how can this be added later?
+    isClass: boolean
+    // TODO find better solution than SymbolLoader
+    cdInterfaces: de.monticore.cd.cdbasis._symboltable.CDTypeSymbolLoader* // TODO: how can this be added later?
+    superClasses: de.monticore.cd.cdbasis._symboltable.CDTypeSymbolLoader*
+    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
+    member: de.monticore.cd.cdbasis._ast.ASTCDMember* // TODO what to use here?, CDMember has no symbol
+    // if CDMember would have a symbol, we can't extend CDMethod separately (in CD4Code)
+  ;
+}

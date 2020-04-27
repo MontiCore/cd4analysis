@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd;
+
+/*
+   MCG for CD 4 Code Common, Version 27/04/2020
+*/
+
+component grammar CD4CodeCommon extends de.monticore.cd.CD4CodeBasis, de.monticore.cd.CDCommon {
+  CD4CodeEnumConstant extends CDEnumConstant = Name ( "(" cDEnumArgument:(CDEnumArgument || ",")+ ")" )?;
+  CDEnumArgument = Expression;
+}

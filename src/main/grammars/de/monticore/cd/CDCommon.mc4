@@ -1,0 +1,31 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd;
+
+/*
+   MCG for CD 4 Common, Version 27/00/2020
+*/
+
+component grammar CDCommon extends de.monticore.cd.CDBasis {
+
+  CDInterfaceUsage = ( "implements" interface:(MCObjectType || ",")+ );
+
+  scope CDInterface implements CDType = CDModifier "interface" Name
+    ( "extends" interface:(MCObjectType || ",")+ )?
+    ( "{"
+        CDMember*
+      "}"
+    | ";" );
+
+  scope CDEnum implements CDType = CDModifier "enum" Name
+    ( "implements" interface:(MCObjectType || ",")+ )?
+    ( "{"
+        (CDEnumConstant || ",")* ";"
+        CDMember*
+      "}"
+    | ";" );
+
+  /** Have the enum constants as separate NT, to allow extensions
+  */
+  CDEnumConstant = Name;
+}
