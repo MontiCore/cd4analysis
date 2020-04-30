@@ -9,24 +9,24 @@ package de.monticore.cd;
 component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
 
   /* ==== Methods ==== */
-  interface symbol CDMethodType extends CDMember = Name;
+  interface symbol scope CDMethodType extends CDMember, Method = Name;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
-  scope CDMethod implements CDMethodType =
+  CDMethod implements CDMethodType =
     CDModifier
     MCReturnType
     Name "(" (CDParameter || ",")* ")"
     (CDThrowsDeclaration)?
     ";";
 
-  scope CDConstructor implements CDMethodType =
+  CDConstructor implements CDMethodType =
     CDModifier
     Name "(" (CDParameter || ",")* ")"
     (CDThrowsDeclaration)?
     ";";
 
-  symbol CDParameter =
+  symbol CDParameter implements Field =
     MCType (Ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
   /* ==== Modifier ==== */
@@ -41,14 +41,12 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
   symbolrule CDMethodType =
     isConstructor: boolean
     hasEllipsis: boolean
-    returnType: de.monticore.cd.cdbasis._symboltable.CDTypeSymbol
-    exceptions: de.monticore.cd.cdbasis._symboltable.CDTypeSymbol*
+    exceptions: de.monticore.types.typesymbols._symboltable.TypeSymbol*
     modifier: de.monticore.cd.cd4codebasis._symboltable.SymModifier
-    parameter: de.monticore.cd.cdbasis._symboltable.CDMemberSymbol*
   ;
 
   symbolrule CDParameter =
-    type: de.monticore.cd.cdbasis._symboltable.CDTypeSymbol
     isEllipsis: boolean
+    defaultValue: Optional<de.monticore.types.check.SymTypeExpression>
   ;
 }

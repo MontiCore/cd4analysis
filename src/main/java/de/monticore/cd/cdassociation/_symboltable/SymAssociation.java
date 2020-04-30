@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cdassociation._symboltable;
 
 import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;

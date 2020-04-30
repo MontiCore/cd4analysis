@@ -3,7 +3,7 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Common, Version 27/00/2020
+   MCG for CD 4 Common, Version 27/04/2020
 */
 
 component grammar CDCommon extends de.monticore.cd.CDBasis {
@@ -27,5 +27,5 @@ component grammar CDCommon extends de.monticore.cd.CDBasis {
 
   /** Have the enum constants as separate NT, to allow extensions
   */
-  CDEnumConstant = Name;
+  CDEnumConstant implements Field = Name;
 }

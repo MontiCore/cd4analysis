@@ -72,7 +72,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     navigable: boolean
     cardinality: Optional<de.monticore.cd.cdassociation._ast.ASTCDCardinality>
     qualifier: Optional<de.monticore.cd.cdassociation._symboltable.CDQualifierSymbol>
-    associationTarget: de.monticore.cd.cdbasis._symboltable.CDTypeSymbolLoader
+    associationTarget: de.monticore.types.typesymbols._symboltable.TypeSymbol
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     isOrdered: boolean
@@ -86,7 +86,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation;
 
   symbolrule CDQualifier =
-    attribute: Optional<de.monticore.cd.cdbasis._symboltable.CDMemberSymbolLoader>
-    type: Optional<de.monticore.cd.cdbasis._symboltable.CDTypeSymbolLoader>
+    attribute: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
+    type: Optional<de.monticore.types.typesymbols._symboltable.TypeSymbol>
   ;
 }
