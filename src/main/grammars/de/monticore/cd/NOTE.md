@@ -40,17 +40,12 @@ And is the base for
   * `CDAbstractModifier`
   * `CDFinalModifier`
   * `CDStaticModifier`
-* interface `CDElement` denotes any element, which is a top-level member of a CD
+* interface `CDElement` denotes any element, which is a top-level member of a
+  CD
 * interface `CDType` denotes all elements, which can be used as a type, only 
   `CDClass` is defined here, but other types can be added
 * `CDClass` describes a class with
-  * its respective superclasses
-  * Symbol:
-    * contains:
-     * `isInterface` => TODO should this be in `CDCommon.mc4`?
-     * `isEnum` => TODO should this be in `CDCommon.mc4`?
-     * `isClass`
-     * `cdInterfaces` => TODO should this be in `CDCommon.mc4`?
+  * its modifiers
 * `CDMember` denotes all parts of a CD which can be used as members in
   `CDElement`s
 * `CDAttribute`
@@ -90,6 +85,7 @@ extends the `cd/CDBasis.mc4` with *Interface*s and *Enum*s
   * `Type` for `CDType` or `CDClass`
   * `Field` for `CDAttribute`
   * `Method` for `CDMethod`
+* write `CDTypeSymbol` for `CDCommon` to include interfaces
 
 ### RTE
 * add optional CoCo for restriction of multiple inheritance

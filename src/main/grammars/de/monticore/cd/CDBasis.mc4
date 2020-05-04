@@ -58,7 +58,7 @@ component grammar CDBasis extends
   */
   interface symbol CDType extends CDElement, Type;
 
-  CDInterfaceUsage = key("CDInterfaceUsageShouldBeOverriden");
+  external CDInterfaceUsage;
 
   scope CDClass implements CDType = CDModifier "class" Name
     ( "extends" superclass:(MCObjectType || ",")+ )?
@@ -91,7 +91,6 @@ component grammar CDBasis extends
       The modifier is a collection of all the available CDModifier.
   */
   symbolrule CDType =
-    cdInterfaces: de.monticore.types.check.SymTypeExpression* // TODO: how can this be added later?
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
   ;
 }
