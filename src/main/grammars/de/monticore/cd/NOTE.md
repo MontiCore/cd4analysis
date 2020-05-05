@@ -66,9 +66,9 @@ extends the `cd/CDBasis.mc4` with *Interface*s and *Enum*s
   but would be needed to, e.g. describe `[key("association")]`
 * how to add `implements` to `CDClass`?
   * override the terminal
-  * define a terminal, which does nothing, but can be overriden:
+  * define a terminal, which is external, and can be overriden:
   ```
-  CDInterfaceUsage;
+  external CDInterfaceUsage;
   
   scope CDClass implements CDType = CDModifier "class" Name
       ( "extends"   superclass:(MCObjectType || ",")+ )?
@@ -85,7 +85,8 @@ extends the `cd/CDBasis.mc4` with *Interface*s and *Enum*s
   * `Type` for `CDType` or `CDClass`
   * `Field` for `CDAttribute`
   * `Method` for `CDMethod`
-* write `CDTypeSymbol` for `CDCommon` to include interfaces
+* override `CDTypeSymbol` for `CDCommon` to include interfaces
+* allow enum to derive from other enum?
 
 ### RTE
 * add optional CoCo for restriction of multiple inheritance
