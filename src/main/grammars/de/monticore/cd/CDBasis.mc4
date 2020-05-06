@@ -3,7 +3,7 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Basis, Version 27/04/2020
+   MCG for CD 4 Basis
 */
 
 component grammar CDBasis extends
@@ -15,13 +15,14 @@ component grammar CDBasis extends
   /* ==== General ==== */
   CDCompilationUnit =
     ("package" package:(Name& || ".")+ ";")?
-    (MCImportStatement)*
+    MCImportStatement*
     (key("targetpackage") targetpackage:(Name& || ".")+ ";")?
     CDDefinition;
+    // BR TODO: "targetimport" = import für alle generierten klassen. wäre hilfreich
+    // es sei denn, "targetimport" lässt sich unter "import" fürs CD subsumieren
 
-  symbol scope CDDefinition = CDModifier key("classdiagram") Name "{"
-    CDElement*
-  "}";
+  symbol scope CDDefinition = 
+    CDModifier key("classdiagram") Name "{" CDElement* "}";
 
   /** CDModifier is the basic modifier structure, to use in the different cd elements
     @attribute CDDirectModifier
@@ -43,8 +44,8 @@ component grammar CDBasis extends
       of the CDAbstractModifier in the CDDirectModifier list in the CDModifier.
   */
   CDAbstractModifier implements CDDirectModifier = "abstract";
-  CDFinalModifier implements CDDirectModifier = "final";
-  CDStaticModifier implements CDDirectModifier = "static";
+  CDFinalModifier    implements CDDirectModifier = "final";
+  CDStaticModifier   implements CDDirectModifier = "static";
 
 
   /* ==== CDElement ==== */
@@ -54,13 +55,23 @@ component grammar CDBasis extends
   */
   interface CDElement;
 
-  /** CDType are all of the CDelements, which can be used to describe a type for e.g. variables, method arguments, ...
+  /** CDType are all of the CDElements, which can be used to describe a 
+      type for e.g. variables, method arguments, ...
   */
   interface symbol CDType extends CDElement, Type;
 
+  /** This is used for allowing to add Interface "extension" in a 
+      subgrammar.
+      (and to leave this empty, if there are no "extension"s).
+  */   
+  // BR TODO: man könnte  "external" weglassen, durch: CDInterfaceUsage = ;
+  // und in Subgrammar extenden 
   external CDInterfaceUsage;
 
-  scope CDClass implements CDType = CDModifier "class" Name
+  scope CDClass implements CDType = 
+    CDModifier "class" Name
+    // BR TODO: da ist jetzt Mehrfachvererbung eingebaut. 
+    //   Sollen wir das rausfaktorisieren (ähnlich den Interfaces?)
     ( "extends" superclass:(MCObjectType || ",")+ )?
     CDInterfaceUsage?
     ( "{"
@@ -72,8 +83,10 @@ component grammar CDBasis extends
   /* ==== Attributes ==== */
   interface CDMember;
 
-  symbol CDAttribute implements CDMember, Field = CDModifier MCType Name ("=" CDDefaultValue)? ";";
+  symbol CDAttribute implements CDMember, Field = 
+    CDModifier MCType Name ("=" CDDefaultValue)? ";";
 
+  // BR: TODO: Unfold? (also oben einbauen)
   CDDefaultValue = Expression;
 
   /* ==== Symbols ==== */

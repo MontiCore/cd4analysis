@@ -3,14 +3,20 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Common, Version 27/04/2020
+   MCG for CD 4 Common
 */
 
 component grammar CDCommon extends de.monticore.cd.CDBasis {
 
-  CDInterfaceUsage = ( "implements" interface:(MCObjectType || ",")+ );
+  /** This adds the possibility for classes to implement 
+      interfaces (by filling the external NT defined there)
+   */
+  CDInterfaceUsage = 
+    // BR TODO: fehlt fier ein "?" am Ende?
+    ( "implements" interface:(MCObjectType || ",")+ );
 
-  scope CDInterface implements CDType = CDModifier "interface" Name
+  scope CDInterface implements CDType = 
+    CDModifier "interface" Name
     ( "extends" interface:(MCObjectType || ",")+ )?
     ( "{"
         CDMember*
@@ -18,6 +24,7 @@ component grammar CDCommon extends de.monticore.cd.CDBasis {
     | ";" );
 
   scope CDEnum implements CDType = CDModifier "enum" Name
+    // BR TODO: auch hier CDInterfaceUsage einsetzen?
     ( "implements" interface:(MCObjectType || ",")+ )?
     ( "{"
         (CDEnumConstant || ",")* ";"

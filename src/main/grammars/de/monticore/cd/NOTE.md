@@ -27,9 +27,9 @@ And is the base for
 
 ## CDBasis.mc4
 * `CDCompilationUnit`
-  * `targetpackage` describes the package to use in a generator,
+  * `targetpackage` describes the package the modelled classes reside in,
     * if _existent_ the `targetpackage` should be used
-    * if _not existent_, the `package` should be used 
+    * if _not existent_, the `package` acts as default
 * `CDDefinition`
   * contains the all the elements of a classdiagram
 * `CDModifier`

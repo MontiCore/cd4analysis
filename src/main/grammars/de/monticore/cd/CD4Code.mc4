@@ -3,7 +3,7 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Code, Version 27/04/2020
+   MCG for CD 4 Code
 */
 
 grammar CD4Code extends

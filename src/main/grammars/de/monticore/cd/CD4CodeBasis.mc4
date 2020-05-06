@@ -3,7 +3,7 @@
 package de.monticore.cd;
 
 /*
-   MCG for CD 4 Code Basis, Version 27/04/2020
+   MCG for CD 4 Code Basis
 */
 
 component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
@@ -17,26 +17,29 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
     CDModifier
     MCReturnType
     Name "(" (CDParameter || ",")* ")"
-    (CDThrowsDeclaration)?
+    CDThrowsDeclaration?
     ";";
 
   CDConstructor implements CDMethodType =
     CDModifier
     Name "(" (CDParameter || ",")* ")"
-    (CDThrowsDeclaration)?
+    CDThrowsDeclaration?
     ";";
 
   symbol CDParameter implements Field =
     MCType (Ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
   /* ==== Modifier ==== */
-  CD4CodePrivateModifier implements CDDirectModifier = "private" | "-";
+  CD4CodePrivateModifier   implements CDDirectModifier = "private"   | "-";
   CD4CodeProtectedModifier implements CDDirectModifier = "protected" | "#";
-  CD4CodePublicModifier implements CDDirectModifier = "public" | "+";
-  CD4CodeDerivedModifier implements CDDirectModifier = key("derived") | "/";
-  CD4CodeReadOnlyModifier implements CDDirectModifier = key("read-only");
+  CD4CodePublicModifier    implements CDDirectModifier = "public"    | "+";
+  CD4CodeDerivedModifier   implements CDDirectModifier = key("derived")   | "/";
+  // BR TODO (For Info): ich habe hier "?" hinzugefügt und hoffe, das clasht nirgends.
+  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only") | "?";
 
 
+  // !! BR TODO "MethodType" intendiert, dass hier sowohl argument als auch Ergebnis
+  //  typisiert sind. --> Parameter fehlen.
   /* ==== Symbols ==== */
   symbolrule CDMethodType =
     isConstructor: boolean

@@ -8,7 +8,8 @@ package de.monticore.cd;
 
 component grammar CDAssociation extends de.monticore.cd.CDBasis {
 
-  symbol scope CDAssociation implements CDElement = CDModifier
+  symbol scope CDAssociation implements CDElement = 
+    CDModifier
     (["association"] | ["composition"]) // TODO set both as key(...), currently not possible
     ([derived:"/"])? Name?
 
@@ -26,6 +27,10 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     | bidirectional:["<->"]
     | unspecified:["--"] );
 
+  /** CDAssociationSide defines the properties of one side of
+      an association. This allows the same AST access on both sides,
+      even though the concrete syntax differs in their order.
+  */
   interface CDAssociationSide =
     CDModifier CDCardinality? MCQualifiedName
     CDQualifier? CDRole? ["ordered"]?; // TODO set as key(...), currently not possible
@@ -35,28 +40,39 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     MCQualifiedName CDQualifier? CDRole?;
 
   // TODO implementation could be ommited, because CDAssociationSide already has this structure
+  // (TODO) KOMMENTAR: passt schon so
   CDAssociationRightSide implements CDAssociationSide =
     CDRole? CDQualifier? MCQualifiedName
     CDCardinality? CDModifier ["ordered"]?;
 
   symbol CDRole = "(" Name ")";
 
+  /** CDCardinality captures the cardinality of an association side.
+      Associations currently allow the foru standard cardinalities, but
+      this is extensible. Visitors help to identify the correct cardinality.
+  */  
   interface CDCardinality;
+  // BR TODO: kürzerer Name zB CDCardOne
   CD4ACardinalityMultiple   implements CDCardinality = "[*]";
   CD4ACardinalityExactOne   implements CDCardinality = "[1]";
   CD4ACardinalityAtLeastOne implements CDCardinality = "[1..*]";
   CD4ACardinalityOptional   implements CDCardinality = "[0..1]";
 
+  /** CDQualifier describes the two froms of explicit qualifications:
+      either thrugh an attribute value contained in the value-object
+      or through a type (such as String) , which the value-object doesn't
+      know about.
+  */
   symbol CDQualifier = "[[" byAttributeName:Name "]]" | "[" byType:MCType "]";
 
-  /** Write a composition in short form:
+  /** Write a composition in short form inside the composite class:
       class A {
-        -> (b) B [*];
+        -> (r) B [*];
       }
 
       is the short form for:
       class A;
-      composition A -> (b) B [*];
+      composition A -> (r) B [*];
   */
   CDDirectComposition implements CDMember =
     "->" CDAssociationRightSide ";";
