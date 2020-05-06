@@ -2,8 +2,8 @@
 
 package de.monticore.cd.cocos.permutations;
 
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.Arrays;

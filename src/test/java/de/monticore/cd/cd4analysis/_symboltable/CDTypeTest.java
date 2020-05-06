@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -16,7 +17,7 @@ public class CDTypeTest {
     CDFieldSymbol fieldSymbol3 = new CDFieldSymbol("field3", dummyTypeRef);
 
     CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
-    ICD4AnalysisScope typeScope = CD4AnalysisSymTabMill.cD4AnalysisScopeBuilder().build();
+    ICD4AnalysisScope typeScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
     typeSymbol.setSpannedScope(typeScope);
 
     typeScope.add(fieldSymbol1);
@@ -38,7 +39,7 @@ public class CDTypeTest {
     CDMethOrConstrSymbol methodSymbol2 = new CDMethOrConstrSymbol("method2");
 
     CDTypeSymbol typeSymbol = new CDTypeSymbol("TypeFoo");
-    ICD4AnalysisScope typeScope = CD4AnalysisSymTabMill.cD4AnalysisScopeBuilder().build();
+    ICD4AnalysisScope typeScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
     typeSymbol.setSpannedScope(typeScope);
 
     typeScope.add(methodSymbol1);

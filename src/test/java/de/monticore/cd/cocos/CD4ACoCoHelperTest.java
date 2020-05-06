@@ -3,7 +3,7 @@ package de.monticore.cd.cocos;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.CD4AnalysisNodeFactory;
-import de.monticore.types.mcbasictypes._ast.MCBasicTypesMill;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import org.junit.Test;
 
 import java.util.Arrays;
