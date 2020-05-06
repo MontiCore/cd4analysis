@@ -28,11 +28,12 @@ public class CD4AnalysisSymbolTablePrinter extends CD4AnalysisSymbolTablePrinter
 
   public static final String EXCEPTIONS = "exceptions";
 
-  public CD4AnalysisSymbolTablePrinter() {
+  public CD4AnalysisSymbolTablePrinter(JsonPrinter printer){
+    super(printer);
   }
 
-  public CD4AnalysisSymbolTablePrinter(JsonPrinter printer) {
-    super(printer);
+  public CD4AnalysisSymbolTablePrinter(){
+    super();
   }
 
   @Override protected void serializeCDTypeCdInterfaces(List<CDTypeSymbolLoader> cdInterfaces) {
