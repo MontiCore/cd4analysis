@@ -12,7 +12,7 @@
 
         <!-- .. Libraries ..................................................... -->
 
-        <monticore.version>6.1.0-SNAPSHOT</monticore.version>
+        <monticore.version>6.1.0</monticore.version>
 
         <findbugs.version>3.0.0</findbugs.version>
         <guava.version>23.0</guava.version>
@@ -223,12 +223,6 @@
     </build>
 
     <dependencies>
-
-        <dependency>
-            <groupId>de.monticore</groupId>
-            <artifactId>monticore-generator</artifactId>
-            <version>6.1.0-SNAPSHOT</version>
-        </dependency>
 
         <!-- CD visualization -->
         <dependency>
