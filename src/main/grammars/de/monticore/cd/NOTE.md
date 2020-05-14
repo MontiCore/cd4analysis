@@ -20,7 +20,6 @@ And is the base for
      
 ## New since 20.04.2020
 - split in different grammars
-- CDType has a list of member
 - add default values to method parameter
 - add ordered flag to `CDAssociationSide`
 
@@ -64,29 +63,19 @@ extends the `cd/CDBasis.mc4` with *Interface*s and *Enum*s
 ### Grammar
 * `key`-qualifier cannot be used on anything other than StringLiterals,
   but would be needed to, e.g. describe `[key("association")]`
-* how to add `implements` to `CDClass`?
-  * override the terminal
-  * define a terminal, which is external, and can be overriden:
-  ```
-  external CDInterfaceUsage;
-  
-  scope CDClass implements CDType = CDModifier "class" Name
-      ( "extends"   superclass:(MCObjectType || ",")+ )?
-      CDInterfaceUsage
-      ( "{"
-          CDMember*
-        "}"
-      | ";" );
-  ```
 * CDTypeSymbol
  * how to add `isInterface`, `isEnum`, `cdInterfaces` later?
-* use Symbol instead of SymbolLoader in the symbols
+* use SymTypeExpression instead of SymbolLoader or TypeSymbol in the symbols
 * use TypeSymbols (can only be done when a symbol can derive multiple symbols)
   * `Type` for `CDType` or `CDClass`
   * `Field` for `CDAttribute`
   * `Method` for `CDMethod`
 * override `CDTypeSymbol` for `CDCommon` to include interfaces
 * allow enum to derive from other enum?
+* comment like grammar.mc4
+
+### CD-MERGE
+* what happens, when we combine models, which define different packages?
 
 ### RTE
 * add optional CoCo for restriction of multiple inheritance

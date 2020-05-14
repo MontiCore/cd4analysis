@@ -22,10 +22,10 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
 
   /* ==== Association ==== */
   CDAssociationDirection =
-    ( leftToRight:["->"]
-    | rightToLeft:["<-"]
+    ( leftToRight  :["->"]
+    | rightToLeft  :["<-"]
     | bidirectional:["<->"]
-    | unspecified:["--"] );
+    | unspecified  :["--"] );
 
   /** CDAssociationSide defines the properties of one side of
       an association. This allows the same AST access on both sides,
@@ -39,31 +39,28 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     ["ordered"]? CDModifier CDCardinality?
     MCQualifiedName CDQualifier? CDRole?;
 
-  // TODO implementation could be ommited, because CDAssociationSide already has this structure
-  // (TODO) KOMMENTAR: passt schon so
   CDAssociationRightSide implements CDAssociationSide =
     CDRole? CDQualifier? MCQualifiedName
     CDCardinality? CDModifier ["ordered"]?;
 
-  symbol CDRole = "(" Name ")";
+  symbol CDRole implements Field = "(" Name ")";
 
   /** CDCardinality captures the cardinality of an association side.
-      Associations currently allow the foru standard cardinalities, but
+      Associations currently allow the for standard cardinalities, but
       this is extensible. Visitors help to identify the correct cardinality.
   */  
   interface CDCardinality;
-  // BR TODO: kürzerer Name zB CDCardOne
-  CD4ACardinalityMultiple   implements CDCardinality = "[*]";
-  CD4ACardinalityExactOne   implements CDCardinality = "[1]";
-  CD4ACardinalityAtLeastOne implements CDCardinality = "[1..*]";
-  CD4ACardinalityOptional   implements CDCardinality = "[0..1]";
+  CDCardMult       implements CDCardinality = "[*]";
+  CDCardOne        implements CDCardinality = "[1]";
+  CDCardAtLeastOne implements CDCardinality = "[1..*]";
+  CDCardOpt        implements CDCardinality = "[0..1]";
 
   /** CDQualifier describes the two froms of explicit qualifications:
       either thrugh an attribute value contained in the value-object
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
-  symbol CDQualifier = "[[" byAttributeName:Name "]]" | "[" byType:MCType "]";
+  CDQualifier = "[" "[" {noSpace()} byAttributeName:Name@Field "]" "]" {noSpace()} | "[" byType:MCType "]"; // add optional coco which forbids the usage
 
   /** Write a composition in short form inside the composite class:
       class A {
@@ -85,10 +82,14 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
       basic information of an association.
   */
   symbolrule CDRole =
-    navigable: boolean
+    isNavigable: boolean
     cardinality: Optional<de.monticore.cd.cdassociation._ast.ASTCDCardinality>
-    qualifier: Optional<de.monticore.cd.cdassociation._symboltable.CDQualifierSymbol>
-    associationTarget: de.monticore.types.typesymbols._symboltable.TypeSymbol
+      // TODO: handle from CDQualifier
+      //qualifier: Optional<de.monticore.cd.cdassociation._symboltable.CDQualifierSymbol>
+      attribute: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
+      type: Optional<de.monticore.types.check.SymTypeExpression>
+
+    associationTarget: de.monticore.types.check.SymTypeExpression
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     isOrdered: boolean
@@ -100,9 +101,4 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
   */
   symbolrule CDAssociation =
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation;
-
-  symbolrule CDQualifier =
-    attribute: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
-    type: Optional<de.monticore.types.typesymbols._symboltable.TypeSymbol>
-  ;
 }

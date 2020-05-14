@@ -30,21 +30,22 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
     MCType (Ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
   /* ==== Modifier ==== */
-  CD4CodePrivateModifier   implements CDDirectModifier = "private"   | "-";
-  CD4CodeProtectedModifier implements CDDirectModifier = "protected" | "#";
-  CD4CodePublicModifier    implements CDDirectModifier = "public"    | "+";
+  CD4CodePrivateModifier   implements CDDirectModifier = "private"        | "-";
+  CD4CodeProtectedModifier implements CDDirectModifier = "protected"      | "#";
+  CD4CodePublicModifier    implements CDDirectModifier = "public"         | "+";
   CD4CodeDerivedModifier   implements CDDirectModifier = key("derived")   | "/";
-  // BR TODO (For Info): ich habe hier "?" hinzugefügt und hoffe, das clasht nirgends.
-  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only") | "?";
+  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only");
 
+  CD4CodeEnumConstant extends CDEnumConstant =
+    Name ( "(" cDEnumArgument:(Expression || ",")+ ")" )?;
 
   // !! BR TODO "MethodType" intendiert, dass hier sowohl argument als auch Ergebnis
-  //  typisiert sind. --> Parameter fehlen.
+  //  typisiert sind. --> Parameter fehlen.: Parameter stehen schon im MethodSymbol
   /* ==== Symbols ==== */
   symbolrule CDMethodType =
     isConstructor: boolean
     hasEllipsis: boolean
-    exceptions: de.monticore.types.typesymbols._symboltable.TypeSymbol*
+    exceptions: de.monticore.types.check.SymTypeExpression*
     modifier: de.monticore.cd.cd4codebasis._symboltable.SymModifier
   ;
 

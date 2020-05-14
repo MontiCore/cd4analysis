@@ -8,18 +8,20 @@ package de.monticore.cd;
 
 component grammar CDBasis extends
     de.monticore.types.MCBasicTypes,
+    de.monticore.types.TypesSymbols,
     de.monticore.literals.MCLiteralsBasis,
     de.monticore.expressions.ExpressionsBasis,
     de.monticore.UMLStereotype {
+
+  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";" ;
 
   /* ==== General ==== */
   CDCompilationUnit =
     ("package" package:(Name& || ".")+ ";")?
     MCImportStatement*
     (key("targetpackage") targetpackage:(Name& || ".")+ ";")?
+    CDTargetImportStatement*
     CDDefinition;
-    // BR TODO: "targetimport" = import für alle generierten klassen. wäre hilfreich
-    // es sei denn, "targetimport" lässt sich unter "import" fürs CD subsumieren
 
   symbol scope CDDefinition = 
     CDModifier key("classdiagram") Name "{" CDElement* "}";
@@ -63,16 +65,19 @@ component grammar CDBasis extends
   /** This is used for allowing to add Interface "extension" in a 
       subgrammar.
       (and to leave this empty, if there are no "extension"s).
-  */   
-  // BR TODO: man könnte  "external" weglassen, durch: CDInterfaceUsage = ;
-  // und in Subgrammar extenden 
-  external CDInterfaceUsage;
+  */
+  /** This adds the possibility for classes to implement
+      interfaces (by filling the external NT defined there)
+   */
+  CDInterfaceUsage =
+    ( "implements" interface:(MCObjectType || ",")+ );
+
+  CDExtendUsage =
+    ( "extends" superclass:(MCObjectType || ",")+ );
 
   scope CDClass implements CDType = 
     CDModifier "class" Name
-    // BR TODO: da ist jetzt Mehrfachvererbung eingebaut. 
-    //   Sollen wir das rausfaktorisieren (ähnlich den Interfaces?)
-    ( "extends" superclass:(MCObjectType || ",")+ )?
+    CDExtendUsage?
     CDInterfaceUsage?
     ( "{"
         CDMember*
@@ -84,10 +89,7 @@ component grammar CDBasis extends
   interface CDMember;
 
   symbol CDAttribute implements CDMember, Field = 
-    CDModifier MCType Name ("=" CDDefaultValue)? ";";
-
-  // BR: TODO: Unfold? (also oben einbauen)
-  CDDefaultValue = Expression;
+    CDModifier MCType Name ("=" Expression)? ";";
 
   /* ==== Symbols ==== */
   /** The symbol for CDAttributes contains the link to the type of the attribute
@@ -105,5 +107,6 @@ component grammar CDBasis extends
   */
   symbolrule CDType =
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
+    interfaces: de.monticore.types.check.SymTypeExpression*
   ;
 }

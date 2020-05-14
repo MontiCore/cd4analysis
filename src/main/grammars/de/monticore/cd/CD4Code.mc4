@@ -7,12 +7,9 @@ package de.monticore.cd;
 */
 
 grammar CD4Code extends
-    de.monticore.cd.CDBasis,
-    de.monticore.cd.CDCommon,
-    de.monticore.cd.CDAssociation,
-    de.monticore.cd.CD4CodeCommon,
-    de.monticore.types.MCFullGenericTypes,
-    de.monticore.literals.MCCommonLiterals {
+    de.monticore.cd.CD4Analysis,
+    de.monticore.cd.CD4CodeBasis,
+    de.monticore.types.TypesSymbols {
 
   start CDCompilationUnit;
 }
