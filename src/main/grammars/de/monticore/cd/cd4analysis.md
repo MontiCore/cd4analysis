@@ -9,6 +9,30 @@ The main pupose of this language is the modeling of data structure.
 
 The grammar file is [`de.monticore.cd.CD4Analysis`][CD4AGrammar].
 
+## Example
+```
+abstract class Person {
+  String name;
+}
+
+class Student extends Person {
+  StudentStatus status;
+}
+
+enum StudentStatus {
+  ONGOING,
+  COMPLETED;
+}
+```
+
+The example shows a section of the [CD4ALanguageTeaser.cd][LanguageTeaser]:
+- definition of two classes `Person` and `Student`
+- `Person` is an abstract class
+- `Student` extends from `Person` (like in Java)
+- both classes contain an attribute, which have a type and a name
+
+Further examples can be found in [here][ExampleModels].
+
 ## Handwritten Extensions
 ### AST
 - Additional symbols for the left and right roles are added to
@@ -85,12 +109,37 @@ CD4Code is a conservative extension of CD4Analysis and adds methods,
 
 The grammar file is
  [`de.monticore.cd.CD4Code`][CD4CodeGrammar].
+ 
+## Example
+```
+abstract class Person {
+  protected String name;
+  public Person(String name);
+  public String getName();
+}
+
+class Student extends Person {
+  public Student(String name, StudentStatus status);
+  StudentStatus status;
+}
+```
+
+The example shows a section of the [CD4CodeLanguageTeaser.cd][CD4CodeLanguageTeaser]:
+- the basic structure is the same as `CD4Analysis`
+- class `Person` contains a constructor with an argument for the name and a
+  getter
+- methods and constructor can contain any number of arguments, separated by
+  `,`
+
+Further examples can be found in [here][CD4CodeExampleModels].
 
 ## Handwritten Extensions
 - There are no handwritten extensions except the functionality for the
  [`de.monticore.cd.cd4code.CD4CodePrettyPrinterDelegator`][CD4CodePrinter]
 
 [CD4AGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/cd/CD4Analysis.mc4
+[LanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/umlcd4a/parser/CD4ALanguageTeaser.cd
+[ExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/umlcd4a
 [ASTCDAssociation]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_ast/ASTCDAssociation.java
 [ASTCDType]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_ast/ASTCDType.java
 [CD4AParser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_parser/CD4AnalysisParser.java
@@ -106,4 +155,6 @@ The grammar file is
 [reporting]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/main/java/de/monticore/cd/reporting
 [CD4ACLI]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/CD4ACLI.java
 [CD4CodeGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/cd/CD4Code.mc4
+[CD4CodeLanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/cd4code/CD4CodeLanguageTeaser.cd
+[CD4CodeExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/cd4code
 [CD4CodePrinter]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4code/CD4CodePrettyPrinterDelegator.java
