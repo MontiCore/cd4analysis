@@ -47,7 +47,7 @@ Further examples can be found in [here][ExampleModels].
 ## Available handwritten Extensions
 
 ### AST
-- [`de.monticore.cd.cd4analysis._ast.ASTCDAssociation`][ASTCDAssociation]
+- [`ASTCDAssociation`][ASTCDAssociation]
   defines several symbols, i.e. for the left and right roles.
 - [`de.monticore.cd.cd4analysis._ast.ASTCDType`][ASTCDType]
   adds methods for easy access to `CDType`s in 
