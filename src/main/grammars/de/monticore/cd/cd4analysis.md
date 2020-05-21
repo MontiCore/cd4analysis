@@ -60,11 +60,28 @@ Further examples can be found in [here][ExampleModels].
 ## Symboltable
 - De-/Serialization functionality for the symbol table 
   ([`serialization`][serialization])
-- [`de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator`][CD4ASTC]
+- [`CD4AnalysisSymbolTableCreator`][CD4ASTC]
   handles the creation and linking of the symbols
 - [`CDAssociationSymbol`][CDAssocSymbol]
   contains al relevant information of the association (including links to
   role symbols, etc.)
+
+## Symbol kinds used by CD4A (importable):
+- @SVa TODO: List of Symbol types + short explanations
+
+## Symbol kinds defined by CD4A (exported):
+- @SVa TODO: List of Symbol types + short explanations
+
+## Symbols exported by CD4A:
+- @SVa TODO: 
+- From the symbol introduced by CD4A, the following symbols are
+  also exported:
+  - XXX, ... association and composition
+- Furthermore CD4A models export symbols with kinds defined by
+  other languages (wenn dem so ist):
+  - class, interface and enum
+  - attribute (only if public or protected?)
+  - only by CD4Code: method
 
 ## Functionality: CoCos
 -  [`CD4ACoCos`][CD4ACoCos] combines all CoCo's
@@ -76,7 +93,7 @@ Further examples can be found in [here][ExampleModels].
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
 
-### Functionality: Types
+### Types
 - Currently: The BuiltinTypes can be found here [`de.monticore.cd.BuiltInTypes`][BuiltInTypes].
 - TODO, desired:
 - CD4A imports their types from foreign artifacts, respectively their
