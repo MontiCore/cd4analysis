@@ -5,68 +5,81 @@ The language for UML class diagrams is split up into 2 languages:
 - **CD4Code**: extension with methods, constructors, values
 
 # CD4Analysis
-The main pupose of this language is the modeling of data structure.
+The main pupose of this language is the modeling of data structure, which 
+typically emerges as result of requirements elicitation activities.
 
-The grammar file is [`de.monticore.cd.CD4Analysis`][CD4AGrammar].
+The main grammar file is [`de.monticore.cd.CD4Analysis`][CD4AGrammar].
 
 ## Example
 ```
-abstract class Person {
-  String name;
-}
-
-class Student extends Person {
-  StudentStatus status;
-}
-
-enum StudentStatus {
-  ONGOING,
-  COMPLETED;
+classdiagram MyLife { 
+  abstract class Person {
+    int age;
+    Date birthday;
+    List<String> nickNames;
+  }
+  class Student extends Person {
+    StudentStatus status;
+  }
+  enum StudentStatus { ENROLLED, FINISHED; }
+  
+  composition Person -> Address [*]  {ordered};
+  association [0..2] Person (parent) <-> (child) Person [*];
+  association phonebook Person [String] -> TelefoneNumber ;
 }
 ```
 
 The example shows a section of the [CD4ALanguageTeaser.cd][LanguageTeaser]:
-- definition of two classes `Person` and `Student`
+- Definition of two classes `Person` and `Student`
 - `Person` is an abstract class
-- `Student` extends from `Person` (like in Java)
-- both classes contain an attribute, which have a type and a name
+- `Student` extends from `Person` (like in Java); interfaces would also be possible.
+- Classes contain attributes, which have a type and a name
+- Available types are basic types (from Java), imported types (like `Date`),
+  and predefined forms of generic types (like `List`).
+- Associations and compositions are defined between two classes,
+  can have a name,  a navigation information (e.g. `<->`), role names on both sides,
+  multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
+  (like `{ordered}`).
+- Both, association and compositions can be qualified, for example by `[String]`.
 
 Further examples can be found in [here][ExampleModels].
 
-## Handwritten Extensions
+## Available handwritten Extensions
+
 ### AST
-- Additional symbols for the left and right roles are added to
- [`de.monticore.cd.cd4analysis._ast.ASTCDAssociation`][ASTCDAssociation]
-- Methods which provide easier access to `CDType`s in 
- [`de.monticore.cd.cd4analysis._ast.ASTCDType`][ASTCDType]
+- [`de.monticore.cd.cd4analysis._ast.ASTCDAssociation`][ASTCDAssociation]
+  defines several symbols, i.e. for the left and right roles.
+- [`de.monticore.cd.cd4analysis._ast.ASTCDType`][ASTCDType]
+  adds methods for easy access to `CDType`s in 
+
 ## Parser
-- The parser is extended to have additional checks like the classdiagram's name
- has to match the file name
- ([`de.monticore.cd.cd4analysis._parser.CD4AnalysisParser`][CD4AParser])
+- ([`de.monticore.cd.cd4analysis._parser.CD4AnalysisParser`][CD4AParser])
+  is extended to have additional checks like the classdiagram's name
+  has to match the file name
+
 ## Symboltable
 - De-/Serialization functionality for the symbol table 
-([`de.monticore.cd.cd4analysis._symboltable.serialization`][serialization])
-- The [`de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator`][CD4ASTC]
- handles the linking of the symbols and creates new ones depending on the given nodes
-- The [`de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol`][CDAssocSymbol]
- contains a lot of additional information of the association
+  ([`de.monticore.cd.cd4analysis._symboltable.serialization`][serialization])
+- [`de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator`][CD4ASTC]
+  handles the creation and linking of the symbols
+- [`de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol`][CDAssocSymbol]
+  contains al relevant information of the association (including links to
+  role symbols, etc.)
 
-## Functionality
-### CoCos
-The CoCos can be found in 
- [`de.monticore.cd.cocos`][cocos] and are combined accessible in
- [`de.monticore.cd.CD4ACoCos`][CD4ACoCos].
+## Functionality: CoCos
 
-The context conditions check different parts of the models, to ensure the
- semantic correctness, here is a list of some of the important ones:
-- Uniqueness of names of e.g. classes, attributes (in each class)
-- Cycleless extensions of classes
-- Correct counter part on `extends` and `implements` keywords
-- Correct association qualifiers
-- Coding conventions like correct cased class and attribute names
-- Check for correctness of a modifier on a given element
+-  [`de.monticore.cd.CD4ACoCos`][CD4ACoCos] combines all CoCo's
+-  the individual CoCos can be found in 
+   [`de.monticore.cd.cocos`][cocos]
+- CoCos ensure semantic correctness, here is a list of some of the important ones:
+  - Uniqueness of names of e.g. classes, attributes (in each class)
+  - Cycleless extensions of classes
+  - Correct counter part on `extends` and `implements` keywords
+  - Correct association qualifiers
+  - Coding conventions like correct cased class and attribute names
+  - Check for correctness of a modifier on a given element
 
-### Builtin/Predefined Types
+### Functionality: Builtin/Predefined Types
 The BuiltinTypes can be found here
  [`de.monticore.cd.BuiltInTypes`][BuiltInTypes].
  
