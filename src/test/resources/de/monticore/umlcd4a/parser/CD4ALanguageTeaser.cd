@@ -4,7 +4,9 @@ package de.monticore.umlcd4a.parser;
 
 classdiagram CD4ALanguageTeaser {
 
-  interface IObjectClass;
+  interface JuristicPerson { 
+     int vatNumber;
+  }
 
   public abstract class Person implements IObjectClass {
     protected String name;
