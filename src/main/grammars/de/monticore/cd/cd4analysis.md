@@ -67,7 +67,6 @@ Further examples can be found in [here][ExampleModels].
   role symbols, etc.)
 
 ## Functionality: CoCos
-
 -  [`de.monticore.cd.CD4ACoCos`][CD4ACoCos] combines all CoCo's
 -  the individual CoCos can be found in 
    [`de.monticore.cd.cocos`][cocos]
@@ -80,8 +79,7 @@ Further examples can be found in [here][ExampleModels].
   - Check for correctness of a modifier on a given element
 
 ### Functionality: Builtin/Predefined Types
-The BuiltinTypes can be found here
- [`de.monticore.cd.BuiltInTypes`][BuiltInTypes].
+- The BuiltinTypes can be found here [`de.monticore.cd.BuiltInTypes`][BuiltInTypes].
  
 CD4Analysis comes with already predefined types to be used in the class
  diagrams. These consist of the basic Java types like `String`, `int`, `double`
