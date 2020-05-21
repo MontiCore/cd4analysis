@@ -82,7 +82,7 @@ Further examples can be found in [here][ExampleModels].
 - CD4A imports their types from foreign artifacts, respectively their
   provided symbol tables.
 - However, CD4A assumes a set of predefined types to be given 
-  through grammar includion of [`MCSimpleGenericTypes`][lead-to-MCSimpleGenericTypes]: 
+  through grammar includion of [`MCSimpleGenericTypes`][XXXlink-to-MCSimpleGenericTypes]: 
   - Basics: `String`,
       `char`, `Character`,
       `int`, `Integer`,
