@@ -95,31 +95,27 @@ Further examples can be found in [here][ExampleModels].
     other artefacts.
 
 ### PrettyPrinter
-- The basic pretty printer for CD4A is [`de.monticore.cd.prettyprint.CDPrettyPrinter`][PrettyPrinter]
-- An additional [PlantUML](https://plantuml.com/en/class-diagram) printer can
- be used to upload the model to plant uml and receive a graphical representation of the class diagram.
+- [`CDPrettyPrinter`][PrettyPrinter] contains a basic pretty printer for CD4A
+- Externally available [PlantUML](https://plantuml.com/en/class-diagram) printer can
+  be used to upload the model to plant uml and receive a graphical representation of the class diagram.
 
 ### Helper
-There exist different helper classes and methods which provide easier usage of
- often used functionality:
-- The transformations in 
-[`de.monticore.cd.transformation`][transformation] provide functionality to
- easily create and add elements to specific ast nodes
-- The 
-[`de.monticore.cd.prettyprint.AstPrinter`][ASTPrinter] provides helper
- functionality for pretty printing
+There exist helper classes and methods which provide easier usage of
+ often used functionality, e.g.:
+- [`transformation`][transformation] provides functionality to
+    create and add elements to specific ast nodes
+- [`AstPrinter`][ASTPrinter] provides helper functionality for pretty printing
 
 ### Reporting
-[`de.monticore.cd.reporting`][reporting] provides an infrastructure for a
- complete reporting functionality. This is used MontiCore to provide additional
+[`reporting`][reporting] provides an infrastructure for a
+ complete reporting functionality. This is used by MontiCore to provide additional
  information what changes have been done on the AST. 
   
-### CLI Application
-[`de.monticore.cd.CD4ACLI`][CD4ACLI] contains a standalone cli application
- which:
-1. Parses the given model
-2. Creates a symbol table
-3. Checks the CoCos
+### CLI stand alone application:
+- [`CD4ACLI`][CD4ACLI] contains a standalone, but extensible cli application which:
+  1. Parses the given model
+  2. Creates a symbol table
+  3. Checks the CoCos
 
 # CD4Code
 CD4Code is a conservative extension of CD4Analysis and adds methods,
