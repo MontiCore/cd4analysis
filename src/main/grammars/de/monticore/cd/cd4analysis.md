@@ -8,7 +8,7 @@ The language for UML class diagrams is split up into 2 languages:
 The main pupose of this language is the modeling of data structure, which 
 typically emerges as result of requirements elicitation activities.
 
-The main grammar file is [`de.monticore.cd.CD4Analysis`][CD4AGrammar].
+The main grammar file is [`CD4Analysis`][CD4AGrammar].
 
 ## Example
 ```
@@ -117,40 +117,51 @@ There exist helper classes and methods which provide easier usage of
   2. Creates a symbol table
   3. Checks the CoCos
 
+
 # CD4Code
 CD4Code is a conservative extension of CD4Analysis and adds methods,
  constructors, and default values for attributes. Its main purpose is the usage
  in code generation.
+* Conservative means: 
+  * all models of CD4A also parse as CD4Code models
+  * all functionality developed for CD4A (and obeying the guidelines for extensibility)
+    also applies for CD4Code models (if needed in extended form)
 
-The grammar file is
- [`de.monticore.cd.CD4Code`][CD4CodeGrammar].
+The grammar file is [`de.monticore.cd.CD4Code`][CD4CodeGrammar].
  
-## Example
+## Example (in addition ot CD4A)
 ```
-abstract class Person {
-  protected String name;
-  public Person(String name);
-  public String getName();
-}
-
-class Student extends Person {
-  public Student(String name, StudentStatus status);
-  StudentStatus status;
-}
+classdiagram MyLife2 { 
+  abstract class Person {
+    protected String name;
+    public Person(String name);
+    Set<Person> getParents();
+  }
+  class Student extends Person {
+    abstract public change(StudentStatus status);
+    void addFriends(Person friends...);
+  }
 ```
 
 The example shows a section of the [CD4CodeLanguageTeaser.cd][CD4CodeLanguageTeaser]:
 - the basic structure is the same as `CD4Analysis`
-- class `Person` contains a constructor with an argument for the name and a
-  getter
+- class `Person` also contains methods and a constructor 
 - methods and constructor can contain any number of arguments, separated by
   `,`
+- There is no method body provided.
 
 Further examples can be found in [here][CD4CodeExampleModels].
 
 ## Handwritten Extensions
-- There are no handwritten extensions except the functionality for the
- [`de.monticore.cd.cd4code.CD4CodePrettyPrinterDelegator`][CD4CodePrinter]
+- [`CD4CodePrettyPrinterDelegator`][CD4CodePrinter]
+
+## Usage
+- CD4Code  can play its role as intermediate language (especially it's AST)
+  capturing the structural part of the classes to be generated.
+  It captures classes, and method signatures and allows to add
+  templates as hook points that contain method bodies.
+- This is on contrast to CD4A which allows us to capture data structures for 
+  example from the requirements elicitation activities.
 
 [CD4AGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/cd/CD4Analysis.mc4
 [LanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/umlcd4a/parser/CD4ALanguageTeaser.cd
