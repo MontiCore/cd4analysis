@@ -4,18 +4,31 @@ package de.monticore.cd;
 
 /*
    MCG for CD 4 Basis
+
+   This is the basis language component for CD4Analysis and CD4Code
+   
+   It contains class structures with attributes, but omits
+   interfaces, enums, modifiers, methods.
+
+   It uses 
+   * ExpressionsBasis, MCLiteralsBasis  (for the Expressions)
+   * MCBasicTypes (for the types in CS and AST) and
+   * TypesSymbols (for imported/exported TypeSymbols) 
+   as holes that shall be filled in concrete, complete languages
+   by a variety of available grammars.
 */
 
 component grammar CDBasis extends
-    de.monticore.types.MCBasicTypes,
-    de.monticore.types.TypesSymbols,
     de.monticore.literals.MCLiteralsBasis,
     de.monticore.expressions.ExpressionsBasis,
+    de.monticore.types.MCBasicTypes,
+    de.monticore.types.TypesSymbols,
     de.monticore.UMLStereotype {
 
-  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";" ;
-
   /* ==== General ==== */
+  /** The artifact header:
+      import statements, package definition
+  */
   CDCompilationUnit =
     ("package" package:(Name& || ".")+ ";")?
     MCImportStatement*
@@ -23,6 +36,8 @@ component grammar CDBasis extends
     CDTargetImportStatement*
     CDDefinition;
 
+  /** The class diagram: defines a set of elements
+  */
   symbol scope CDDefinition = 
     CDModifier key("classdiagram") Name "{" CDElement* "}";
 
@@ -62,10 +77,11 @@ component grammar CDBasis extends
   */
   interface symbol CDType extends CDElement, Type;
 
-  /** This is used for allowing to add Interface "extension" in a 
-      subgrammar.
+  /** This nonterminal construction is used for allowing to add 
+      Interface "extension" in the subgrammar CDInterfaceAndEnum.
       (and to leave this empty, if there are no "extension"s).
   */
+  
   /** This adds the possibility for classes to implement
       interfaces (by filling the external NT defined there)
    */
@@ -109,4 +125,12 @@ component grammar CDBasis extends
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     interfaces: de.monticore.types.check.SymTypeExpression*
   ;
+
+
+  /** This import statement allows to explain in the model, which
+      additional imports shall be added to the generated code
+      (beyond the imports that the generator identifies itself).
+  */
+  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";" ;
+
 }
