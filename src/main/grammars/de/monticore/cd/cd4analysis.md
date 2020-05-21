@@ -49,42 +49,50 @@ Further examples can be found in [here][ExampleModels].
 ### AST
 - [`ASTCDAssociation`][ASTCDAssociation]
   defines several symbols, i.e. for the left and right roles.
-- [`de.monticore.cd.cd4analysis._ast.ASTCDType`][ASTCDType]
+- [`ASTCDType`][ASTCDType]
   adds methods for easy access to `CDType`s in 
 
 ## Parser
-- ([`de.monticore.cd.cd4analysis._parser.CD4AnalysisParser`][CD4AParser])
+- ([`CD4AnalysisParser`][CD4AParser])
   is extended to have additional checks like the classdiagram's name
   has to match the file name
 
 ## Symboltable
 - De-/Serialization functionality for the symbol table 
-  ([`de.monticore.cd.cd4analysis._symboltable.serialization`][serialization])
+  ([`serialization`][serialization])
 - [`de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator`][CD4ASTC]
   handles the creation and linking of the symbols
-- [`de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol`][CDAssocSymbol]
+- [`CDAssociationSymbol`][CDAssocSymbol]
   contains al relevant information of the association (including links to
   role symbols, etc.)
 
 ## Functionality: CoCos
--  [`de.monticore.cd.CD4ACoCos`][CD4ACoCos] combines all CoCo's
+-  [`CD4ACoCos`][CD4ACoCos] combines all CoCo's
 -  the individual CoCos can be found in 
-   [`de.monticore.cd.cocos`][cocos]
+   [`cocos`][cocos]
 - CoCos ensure semantic correctness, here is a list of some of the important ones:
-  - Uniqueness of names of e.g. classes, attributes (in each class)
-  - Cycleless extensions of classes
+  - Uniqueness of names of e.g. classes, attributes in each class
+  - Classes hierarchy is free of cycles
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
-  - Coding conventions like correct cased class and attribute names
-  - Check for correctness of a modifier on a given element
 
-### Functionality: Builtin/Predefined Types
-- The BuiltinTypes can be found here [`de.monticore.cd.BuiltInTypes`][BuiltInTypes].
- 
-CD4Analysis comes with already predefined types to be used in the class
- diagrams. These consist of the basic Java types like `String`, `int`, `double`
- , but also contain `Date` and the "simple generic" types `List`, `Optional`,
-  `Set`, and `Map`.
+### Functionality: Types
+- Currently: The BuiltinTypes can be found here [`de.monticore.cd.BuiltInTypes`][BuiltInTypes].
+- TODO, desired:
+- CD4A imports their types from foreign artifacts, respectively their
+  provided symbol tables.
+- However, CD4A assumes a set of predefined types to be given 
+  through grammar includion of [`MCSimpleGenericTypes`][lead-to-MCSimpleGenericTypes]: 
+  - Basics: `String`,
+      `char`, `Character`,
+      `int`, `Integer`,
+      `double`, `Double`,
+      `float`, `Float`,
+      `long`, `Long`,
+      `boolean`, `Boolean`.
+  - Generics: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`
+  - Special types, such as `Date` must then be provided through import of 
+    other artefacts.
 
 ### PrettyPrinter
 - The basic pretty printer for CD4A is [`de.monticore.cd.prettyprint.CDPrettyPrinter`][PrettyPrinter]
