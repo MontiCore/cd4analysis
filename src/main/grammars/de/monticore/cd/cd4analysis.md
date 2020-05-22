@@ -24,10 +24,11 @@ classdiagram MyLife {
   }
   class Student extends Person {
     StudentStatus status;
+    -> Address [1..*] {ordered};
   }
   enum StudentStatus { ENROLLED, FINISHED; }
   
-  composition Person -> Address [*]  {ordered};
+  composition Student -> Grades [*];
   association [0..2] Person (parent) <-> (child) Person [*];
   association phonebook Person [String] -> TelefoneNumber ;
 }
