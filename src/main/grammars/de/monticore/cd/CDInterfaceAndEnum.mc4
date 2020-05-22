@@ -2,12 +2,17 @@
 
 package de.monticore.cd;
 
-/*
-   MCG for CDInterfaceAndEnum
+/**
+   This component grammar defines interfaces and enum classes 
+   for CD4Analysis and CD4Code.
+
+   This includes directions, qualifiers, multiplicities and compositions.   
 */
 
 component grammar CDInterfaceAndEnum extends de.monticore.cd.CDBasis {
 
+  /** An interface is quite similar to a class:
+   */
   scope CDInterface implements CDType = 
     CDModifier "interface" Name
     CDExtendUsage?
@@ -16,6 +21,10 @@ component grammar CDInterfaceAndEnum extends de.monticore.cd.CDBasis {
       "}"
     | ";" );
 
+  /** Enumerations allow to define a list of names that act as constants.
+      Please note that Java allows attributes for enums:
+      this possibility will be added in CD4Code, but not yet here.
+   */
   scope CDEnum implements CDType = CDModifier "enum" Name
     CDInterfaceUsage?
     ( "{"

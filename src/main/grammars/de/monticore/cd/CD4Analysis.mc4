@@ -3,8 +3,6 @@
 package de.monticore.cd;
 
 /**
-   MCG for CD 4 Analysis
-   
    CD4A is the textual representation to describe UML class diagrams
    (it uses the UML/P variant).
    CD4A covers classes, interfaces, inheritance, attributes with types,

@@ -2,10 +2,8 @@
 
 package de.monticore.cd;
 
-/*
-   MCG for CD 4 Basis
-
-   This is the basis language component for CD4Analysis and CD4Code
+/**
+   This is the basis language component for CD4Analysis and CD4Code.
    
    It contains class structures with attributes, but omits
    interfaces, enums, modifiers, methods.
@@ -50,15 +48,13 @@ component grammar CDBasis extends
   CDModifier =
     CDDirectModifier* Stereotype?;
 
-  /** CDDirectModifier is an interface for all possible modifiers for elements in the cd
-      we have the modifier as an interface plus a list of (already) available options
-      to support better extensibility and adaptability.
+  /** CDDirectModifier subsumes all possible modifiers for elements in the CD.
+      This NT is realized as interface because it is meant for extension.
+      A first list of (already) available options exists.
   */
   interface CDDirectModifier;
 
-  /** CDAbstractModifier is a specific modifier available in CD4A to signal that an element is abstract.
-      It doesn't have any attributes, because it can be simply checked on the occurrence
-      of the CDAbstractModifier in the CDDirectModifier list in the CDModifier.
+  /** The list of Modifiers available as variants of CDDirectModifier:
   */
   CDAbstractModifier implements CDDirectModifier = "abstract";
   CDFinalModifier    implements CDDirectModifier = "final";
@@ -68,7 +64,7 @@ component grammar CDBasis extends
   /* ==== CDElement ==== */
   /** CDElement denotes the basic elements of a class diagram.
       This includes Classes, Interfaces, Enums, Associations
-      but meant for extension if needed.
+      and is meant for extension if needed.
   */
   interface CDElement;
 
@@ -77,9 +73,14 @@ component grammar CDBasis extends
   */
   interface symbol CDType extends CDElement, Type;
 
-  /** This nonterminal construction is used for allowing to add 
-      Interface "extension" in the subgrammar CDInterfaceAndEnum.
-      (and to leave this empty, if there are no "extension"s).
+  /*  Remark:
+      Because people that know Java also know interface implementation,
+      we decide to put "implements" already into the grammar here 
+      and restrict the grammar to classes only through a CoCo.
+      Advantage: better explanation of the error if someone
+      actually uses "implement" with the base grammar .
+      This CoCo restriction will be switched off in the
+      CDInterfaceAndEnum extension.
   */
   
   /** This adds the possibility for classes to implement
@@ -91,6 +92,8 @@ component grammar CDBasis extends
   CDExtendUsage =
     ( "extends" superclass:(MCObjectType || ",")+ );
 
+  /** CDClass defines a class including extensions and its body.
+   */
   scope CDClass implements CDType = 
     CDModifier "class" Name
     CDExtendUsage?
@@ -104,6 +107,8 @@ component grammar CDBasis extends
   /* ==== Attributes ==== */
   interface CDMember;
 
+  /** An attribute has atype, a name and an optional initializing expression.
+   */
   symbol CDAttribute implements CDMember, Field = 
     CDModifier MCType Name ("=" Expression)? ";";
 

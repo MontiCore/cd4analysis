@@ -2,17 +2,29 @@
 
 package de.monticore.cd;
 
-/*
-   MCG for CD 4 Code Basis
+/**
+   This component grammar describes the method signatures that 
+   are used by CD4Code.
+   
+   It contains method and constructor signatures including 
+   visibility modifiers.
+
+   It uses CDBasis.mc4, which allows a rather free
+   combination with other extensions.
 */
 
 component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
 
   /* ==== Methods ==== */
+  /** Introduction of the new form of symbol: the Method
+   */
+  // TODO: Umbenennung von CDMethodType in CDMethodSignature ??
   interface symbol scope CDMethodType extends CDMember, Method = Name;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
+  /** The standard (Java) method
+   */
   CDMethod implements CDMethodType =
     CDModifier
     MCReturnType
@@ -20,35 +32,56 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
     CDThrowsDeclaration?
     ";";
 
+  /** The standard (Java) constructor (without return type)
+   */
   CDConstructor implements CDMethodType =
     CDModifier
     Name "(" (CDParameter || ",")* ")"
     CDThrowsDeclaration?
     ";";
 
+  /** Method parameter: with type, name, default value,
+      and list extension "..."
+   */
+  // TODO: Ellipsis --> ellipsis
   symbol CDParameter implements Field =
     MCType (Ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
   /* ==== Modifier ==== */
+  /** This list of modifiers extends the CD4A modifiers.
+   */
   CD4CodePrivateModifier   implements CDDirectModifier = "private"        | "-";
   CD4CodeProtectedModifier implements CDDirectModifier = "protected"      | "#";
   CD4CodePublicModifier    implements CDDirectModifier = "public"         | "+";
   CD4CodeDerivedModifier   implements CDDirectModifier = key("derived")   | "/";
   CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only");
 
+  /** Enumeration constants may now also be defined using arguments
+      (like in Java)
+   */
   CD4CodeEnumConstant extends CDEnumConstant =
     Name ( "(" cDEnumArgument:(Expression || ",")+ ")" )?;
 
   // !! BR TODO "MethodType" intendiert, dass hier sowohl argument als auch Ergebnis
   //  typisiert sind. --> Parameter fehlen.: Parameter stehen schon im MethodSymbol
+  // BR 22.5: Wenn die Parameter im MethodSymbol stehen, warum dann nicht die "hasEllipsis"
+  // Ausserdem sind Ergebnistyp und Exceptions auch stärker zu verzahnen 
+  // (denn von der Logik her gehören die auch zusammen)
   /* ==== Symbols ==== */
+  /** Method knows its signature, whether it is a constructor, 
+      visibility
+   */
   symbolrule CDMethodType =
     isConstructor: boolean
     hasEllipsis: boolean
     exceptions: de.monticore.types.check.SymTypeExpression*
     modifier: de.monticore.cd.cd4codebasis._symboltable.SymModifier
   ;
+  
+  // TODO: Symbols noch ausarbeiten
 
+  /** Parameter knows its type, default value, visibility
+   */
   symbolrule CDParameter =
     isEllipsis: boolean
     defaultValue: Optional<de.monticore.types.check.SymTypeExpression>
