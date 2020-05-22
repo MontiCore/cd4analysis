@@ -30,7 +30,7 @@ classdiagram MyLife {
   
   composition Student -> Grades [*];
   association [0..2] Person (parent) <-> (child) Person [*];
-  association phonebook Person [String] -> TelefoneNumber ;
+  association phonebook Person [String] -> PhoneNumber ;
 }
 ```
 
