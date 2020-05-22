@@ -1,10 +1,14 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
-# UML/P CD
-The language for UML class diagrams is split up into 2 languages:
-- **CD4Analysis**: basic cd language with classes, attributes, associations 
-- **CD4Code**: extension with methods, constructors, values
+
+# Class Diagrams (also: UML/P CD)
+
+We provide two versions of UML class diagrams:
+- **CD4Analysis**: is for the modelling of data structures
+   with classes, attributes, associations, enumerations 
+- **CD4Code**: is extension including methods and constructors
 
 # CD4Analysis
+
 The main pupose of this language is the modeling of data structure, which 
 typically emerges as result of requirements elicitation activities.
 
