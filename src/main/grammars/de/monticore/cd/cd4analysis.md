@@ -1,5 +1,7 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 
+<!-- Beta-version: This is intended to become a MontiCore stable explanation. -->
+
 # Class Diagrams (also: UML/P CD)
 
 We provide two versions of UML class diagrams:
