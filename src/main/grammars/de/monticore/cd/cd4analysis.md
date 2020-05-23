@@ -73,13 +73,16 @@ Further examples can be found in [here][ExampleModels].
   contains al relevant information of the association (including links to
   role symbols, etc.)
 
-## Symbol kinds used by CD4A (importable):
+## Symbol kinds used the CD4A language (importable or subclassed):
 - @SVa TODO: List of Symbol types + short explanations
 
-## Symbol kinds defined by CD4A (exported):
+## Symbol kinds defined the CD4A language (exported):
 - @SVa TODO: List of Symbol types + short explanations
 
-## Symbols exported by CD4A:
+## Symbols imported by CD4A models:
+- @SVa TODO: List of Symbol types + short explanations
+
+## Symbols exported by CD4A models:
 - @SVa TODO: 
 - From the symbol introduced by CD4A, the following symbols are
   also exported:
