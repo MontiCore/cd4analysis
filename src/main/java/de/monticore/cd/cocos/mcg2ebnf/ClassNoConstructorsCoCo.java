@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Disables usage of constructors in classes.
  *
- * @author Robert Heim
  */
 public class ClassNoConstructorsCoCo implements CD4AnalysisASTCDClassCoCo {
   

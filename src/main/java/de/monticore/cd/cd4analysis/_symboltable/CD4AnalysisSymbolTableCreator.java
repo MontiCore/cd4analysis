@@ -2,6 +2,7 @@
 
 package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.cd.prettyprint.AstPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -77,7 +78,7 @@ public class CD4AnalysisSymbolTableCreator extends CD4AnalysisSymbolTableCreator
 
   @Override
   public void visit(final ASTCDDefinition astDefinition) {
-    final String cdName = astDefinition.getName();
+    // Do nothing: see visit(ASTCDCompilationUnit)
   }
 
   @Override

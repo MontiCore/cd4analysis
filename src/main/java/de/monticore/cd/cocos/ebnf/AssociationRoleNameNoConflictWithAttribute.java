@@ -18,7 +18,6 @@ import java.util.Optional;
  * associations whose role names conflict are checked in another coco with more
  * detailed error message).
  *
- * @author Robert Heim
  */
 public class AssociationRoleNameNoConflictWithAttribute implements CD4AnalysisASTCDAssociationCoCo {
   

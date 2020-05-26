@@ -17,7 +17,6 @@ import java.util.Collection;
 /**
  * Tests the class cocos.
  *
- * @author Robert Heim
  */
 public class ClassTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";

@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Disables usage of methods in enums.
  *
- * @author Robert Heim
  */
 public class EnumNoMethodsCoCo implements CD4AnalysisASTCDEnumCoCo {
   

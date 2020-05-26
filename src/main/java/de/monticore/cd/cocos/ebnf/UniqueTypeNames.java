@@ -14,7 +14,6 @@ import java.util.HashSet;
 /**
  * Checks uniqueness among the names of classes, interfaces, and enums.
  * 
- * @author Robert Heim
  */
 public class UniqueTypeNames implements CD4AnalysisASTCDDefinitionCoCo {
   

@@ -13,7 +13,6 @@ import java.util.HashSet;
 /**
  * Checks uniqueness among the enum constants.
  * 
- * @author Robert Heim
  */
 public class EnumConstantsUnique implements CD4AnalysisASTCDEnumCoCo {
   

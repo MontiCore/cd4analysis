@@ -3,8 +3,8 @@
 package de.monticore.cd.cocos.permutations;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.utils.ASTNodes;
 import org.junit.Ignore;
@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author Sebastian Oberhoff
  */
 public class TestGenerate {
   

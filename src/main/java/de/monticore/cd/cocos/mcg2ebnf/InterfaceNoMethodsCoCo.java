@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Disables usage of methods in interfaces.
  *
- * @author Robert Heim
  */
 public class InterfaceNoMethodsCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   

@@ -17,18 +17,13 @@ public class CDAssociationNameAndTargetNamePredicate implements Predicate<CDAsso
 
   @Override
   public boolean test(final CDAssociationSymbol symbol) {
-    if ((symbol != null) &&
-        (symbol instanceof CDAssociationSymbol)) {
-      CDAssociationSymbol assocSymbol = (CDAssociationSymbol) symbol;
-
-      if (!assocSymbol.isPresentAssocName()) {
+    if (symbol != null) {
+      if (!symbol.isPresentAssocName()) {
         return false;
       }
-      return assocSymbol.getAssocName().equals(assocName)
-          && assocSymbol.getTargetType().getName().equals(assocTargetName);
-
+      return symbol.getAssocName().equals(assocName)
+          && symbol.getTargetType().getName().equals(assocTargetName);
     }
-
     return false;
   }
 }

@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that association names start lower-case.
  *
- * @author Robert Heim
  */
 public class AssociationNavigationHasCardinality implements CD4AnalysisASTCDAssociationCoCo {
   

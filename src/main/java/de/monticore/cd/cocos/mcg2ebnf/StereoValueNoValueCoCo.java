@@ -8,7 +8,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * StereoValues may only have a name but not a value.
  *
- * @author Robert Heim
  */
 public class StereoValueNoValueCoCo implements CD4AnalysisASTCDStereoValueCoCo {
   

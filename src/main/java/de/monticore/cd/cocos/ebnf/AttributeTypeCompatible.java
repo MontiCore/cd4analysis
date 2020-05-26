@@ -14,7 +14,6 @@ import de.se_rwth.commons.logging.Log;
  * Checks that an attribute assignment is compatible w.r.t. the attribute's
  * type.
  *
- * @author Robert Heim
  */
 public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
   
@@ -49,7 +48,6 @@ public class AttributeTypeCompatible implements CD4AnalysisASTCDAttributeCoCo {
    * {@link #check(String...)} method does the actual check, while the visit
    * methods define which type names are valid for the corresponding literal.
    *
-   * @author Robert Heim
    */
   private static class TypeChecker implements MCCommonLiteralsVisitor {
     

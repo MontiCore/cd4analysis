@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that attribute names start lower-case.
  *
- * @author Robert Heim
  */
 public class AttributeNameLowerCase implements CD4AnalysisASTCDAttributeCoCo {
   

@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Attributes in interfaces must be static.
  *
- * @author Robert Heim
  */
 public class InterfaceAttributesStaticCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   

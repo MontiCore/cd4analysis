@@ -2,6 +2,7 @@
 package de.monticore.cd.transformation;
 
 import com.google.common.collect.Lists;
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -15,7 +16,6 @@ import static org.junit.Assert.*;
 /**
  * Test for the utility class {@link ASTCDRawTransformation}
  *
- * @author Galina Volkova
  */
 public class ASTRawTransformationTest {
 

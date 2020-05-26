@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Interfaces may only be public (or have no modifier).
  *
- * @author Robert Heim
  */
 public class InterfaceInvalidModifiersCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   

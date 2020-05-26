@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * Checks that association names do not conflict with attributes in source
  * types.
  *
- * @author Robert Heim
  */
 public class AssociationNameNoConflictWithAttribute implements CD4AnalysisASTCDAssociationCoCo {
   

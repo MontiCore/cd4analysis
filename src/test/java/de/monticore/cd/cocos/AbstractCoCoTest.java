@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * TODO: Write me!
  *
- * @author Robert Heim
  */
 public abstract class AbstractCoCoTest {
   private final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();

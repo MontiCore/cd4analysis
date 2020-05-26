@@ -14,7 +14,6 @@ import java.util.List;
  * Checks that references to generic types uses a correct parameter count (w.r.t
  * the generics definition).
  *
- * @author Robert Heim
  */
 public class GenericParameterCountMatch implements MCCollectionTypesASTMCGenericTypeCoCo {
 

@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 /**
  * Checks that association names start lower-case.
  *
- * @author Michael von Wenckstern
  */
 public class ClassOnlyValidStereotype implements CD4AnalysisASTCDClassCoCo {
 

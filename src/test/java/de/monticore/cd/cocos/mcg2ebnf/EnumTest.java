@@ -1,13 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cocos.mcg2ebnf;
 
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cocos.AbstractCoCoTest;
 import de.monticore.cocos.helper.Assert;
 import de.monticore.cd.transformation.ASTCDRawTransformation;
 import de.monticore.cd.CD4ACoCos;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._ast.ASTCDEnum;
-import de.monticore.cd.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Tests the CoCos that restrict ASTCDEnum to match the EBNF grammar.
  *
- * @author Robert Heim
  */
 public class EnumTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg2ebnf/valid/";

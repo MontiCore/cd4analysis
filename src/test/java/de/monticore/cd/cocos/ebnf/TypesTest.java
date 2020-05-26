@@ -17,7 +17,6 @@ import java.util.Collection;
 /**
  * Tests CoCos dealing with types.
  *
- * @author Robert Heim
  */
 public class TypesTest extends AbstractCoCoTest {
   /**

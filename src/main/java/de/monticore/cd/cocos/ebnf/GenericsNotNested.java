@@ -12,7 +12,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that generics are not nested.
  *
- * @author Robert Heim
  */
 public class GenericsNotNested implements CD4AnalysisASTCDAttributeCoCo {
   

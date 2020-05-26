@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Disables usage of attributes in interfaces.
  *
- * @author Robert Heim
  */
 public class InterfaceNoAttributesCoCo implements CD4AnalysisASTCDInterfaceCoCo {
   

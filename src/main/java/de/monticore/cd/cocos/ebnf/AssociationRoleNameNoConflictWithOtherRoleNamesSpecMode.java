@@ -3,10 +3,9 @@
 package de.monticore.cd.cocos.ebnf;
 
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
+import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.monticore.cd.cd4analysis._symboltable.CDAssociationSymbol;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbolLoader;
-import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import java.util.Optional;
  * types has other outgoing associations; it only considers the specification mode of associations
  * the rest should be covered by AssociationRoleNameNoConflictWithOtherRoleNames
  *
- * @author Michael von Wenckstern
  */
 public class AssociationRoleNameNoConflictWithOtherRoleNamesSpecMode implements
     CD4AnalysisASTCDAssociationCoCo {

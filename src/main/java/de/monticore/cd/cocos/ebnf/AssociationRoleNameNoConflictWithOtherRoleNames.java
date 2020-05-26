@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * Checks that role names do not conflict with other role names where the source
  * types has other outgoing associations (which might be inherited).
  *
- * @author Robert Heim
  */
 public class AssociationRoleNameNoConflictWithOtherRoleNames implements
     CD4AnalysisASTCDAssociationCoCo {

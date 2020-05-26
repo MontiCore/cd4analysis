@@ -29,7 +29,7 @@ public class ASTCDClass extends ASTCDClassTOP {
   public String printAnnotation() {
     if (isPresentModifier()) {
       if (getModifier().isPresentStereotype()) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (ASTCDStereoValue s : getModifier().getStereotype().values) {
           sb.append(s.getName());
           sb.append("\n");

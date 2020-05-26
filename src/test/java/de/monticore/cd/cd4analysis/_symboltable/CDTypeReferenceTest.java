@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cd4analysis._symboltable;
 
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class CDTypeReferenceTest {
     CDDefinitionSymbol cd = new CDDefinitionSymbol("CD");
     globalScope.add(cd);
 
-    ICD4AnalysisScope cdScope = CD4AnalysisSymTabMill.cD4AnalysisScopeBuilder().build();
+    ICD4AnalysisScope cdScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
     cd.setSpannedScope(cdScope);
     cdScope.setEnclosingScope(globalScope);
 

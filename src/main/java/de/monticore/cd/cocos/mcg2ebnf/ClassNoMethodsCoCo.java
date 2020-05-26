@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Disables usage of methods in classes.
  *
- * @author Robert Heim
  */
 public class ClassNoMethodsCoCo implements CD4AnalysisASTCDClassCoCo {
   

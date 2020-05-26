@@ -11,7 +11,6 @@ import java.util.Optional;
 /**
  * Top level symbol for the class diagram.
  *
- * @author Robert Heim
  */
 public class CDDefinitionSymbol extends CDDefinitionSymbolTOP {
 

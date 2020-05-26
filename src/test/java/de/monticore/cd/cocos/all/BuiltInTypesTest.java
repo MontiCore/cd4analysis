@@ -13,7 +13,6 @@ import org.junit.Test;
 /**
  * Tests the built in types.
  *
- * @author Robert Heim
  */
 public class BuiltInTypesTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/all/valid/";

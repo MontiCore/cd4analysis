@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 /**
  * TODO: Write me!
  *
- * @author  (last commit) $Author$
  *          $Date$
  *
  */

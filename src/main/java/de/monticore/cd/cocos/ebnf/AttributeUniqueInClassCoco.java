@@ -11,7 +11,6 @@ import java.util.HashMap;
 /**
  * Ensures that an attribute name does not occur twice in a class.
  *
- * @author Robert Heim
  */
 public class AttributeUniqueInClassCoco implements CD4AnalysisASTCDClassCoCo {
   

@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Enums may only be public (or have no modifier).
  *
- * @author Robert Heim
  */
 public class EnumInvalidModifiersCoCo implements CD4AnalysisASTCDEnumCoCo {
   

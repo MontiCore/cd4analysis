@@ -13,7 +13,6 @@ import java.util.Optional;
 /**
  * Checks that derived associations have the same cardinality
  *
- * @author Michael von Wenckstern
  */
 public class AssociationNoConflictWithDerivedCardinalities implements
     CD4AnalysisASTCDAssociationCoCo {

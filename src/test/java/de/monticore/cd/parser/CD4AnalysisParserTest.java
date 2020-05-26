@@ -4,7 +4,9 @@ package de.monticore.cd.parser;
 import de.monticore.cd.cd4analysis._ast.ASTCDAssociation;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import de.se_rwth.commons.logging.Slf4jLog;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.BeforeClass;
@@ -84,6 +86,15 @@ public class CD4AnalysisParserTest {
     assertEquals(4, assoc.size());
     Set<ASTCDAssociation> set = assoc.stream().filter(a -> a.isReadOnly()).collect(Collectors.toSet());
     assertEquals(3, set.size());
+  }
+
+  @Test
+  public void testLanguageTeaser() throws RecognitionException, IOException {
+    Path model = Paths.get("src/test/resources/de/monticore/umlcd4a/parser/CD4ALanguageTeaser.cd");
+    CD4AnalysisParser parser = new CD4AnalysisParser();
+    Optional<ASTCDCompilationUnit> cdDef = parser.parseCDCompilationUnit(model.toString());
+    assertFalse(Log.getFindings().stream().map(Finding::buildMsg).collect(Collectors.joining()), parser.hasErrors());
+    assertTrue(cdDef.isPresent());
   }
   
 }

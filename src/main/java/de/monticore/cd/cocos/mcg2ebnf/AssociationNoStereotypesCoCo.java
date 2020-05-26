@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Stereotypes are forbidding for Associations in the ebnf.
  *
- * @author Robert Heim
  */
 public class AssociationNoStereotypesCoCo implements CD4AnalysisASTCDAssociationCoCo {
   

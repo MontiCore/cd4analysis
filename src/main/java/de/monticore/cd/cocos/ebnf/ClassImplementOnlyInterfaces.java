@@ -7,7 +7,6 @@ import de.monticore.cd.cd4analysis._cocos.CD4AnalysisASTCDClassCoCo;
 /**
  * See {@link ImplementOnlyInterfaces}.
  *
- * @author Robert Heim
  */
 public class ClassImplementOnlyInterfaces extends ImplementOnlyInterfaces implements
     CD4AnalysisASTCDClassCoCo {

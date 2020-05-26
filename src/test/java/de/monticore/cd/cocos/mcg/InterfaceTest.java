@@ -17,7 +17,6 @@ import java.util.Collection;
 /**
  * Tests the interface cocos.
  *
- * @author Robert Heim
  */
 public class InterfaceTest extends AbstractCoCoTest {
   private static String MODEL_PATH_VALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/valid/";

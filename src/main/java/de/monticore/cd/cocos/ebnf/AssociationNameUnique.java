@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 /**
  * Checks that association names are unique in the namespace.
  *
- * @author Michael von Wenckstern
  */
 public class AssociationNameUnique implements CD4AnalysisASTCDAssociationCoCo {
 

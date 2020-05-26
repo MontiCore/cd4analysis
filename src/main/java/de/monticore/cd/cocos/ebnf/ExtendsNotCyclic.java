@@ -16,7 +16,6 @@ import java.util.Set;
 /**
  * Checks that there are no inheritance cycles.
  *
- * @author Robert Heim
  */
 public class ExtendsNotCyclic implements CD4AnalysisASTCDDefinitionCoCo {
 

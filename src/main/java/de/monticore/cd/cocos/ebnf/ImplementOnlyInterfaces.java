@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that only interfaces are implemented.
  *
- * @author Robert Heim
  */
 abstract public class ImplementOnlyInterfaces {
   

@@ -9,7 +9,6 @@ import static de.monticore.cd.prettyprint.AstPrinter.EMPTY_STRING;
 /**
  * HW super type for classes, interfaces and enums
  *
- * @author Robert Heim, Galina Volkova
  */
 public interface ASTCDType extends ASTCDTypeTOP {
 

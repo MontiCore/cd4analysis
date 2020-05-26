@@ -2,12 +2,11 @@
 package de.monticore.cd.transformation;
 
 import com.google.common.collect.Lists;
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.*;
-import de.monticore.mcbasics._ast.MCBasicsMill;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.*;
-import de.monticore.types.mccollectiontypes._ast.MCCollectionTypesMill;
-import de.monticore.types.mcfullgenerictypes._ast.MCFullGenericTypesMill;
-import de.monticore.types.mcsimplegenerictypes._ast.MCSimpleGenericTypesMill;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +15,6 @@ import java.util.List;
 /**
  * Some raw (no parameter checks) help methods for the CD ast transformations.
  *
- * @author Galina Volkova
  */
 public class ASTCDRawTransformation {
   

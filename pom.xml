@@ -7,12 +7,12 @@
 
     <groupId>de.monticore.lang</groupId>
     <artifactId>cd4analysis</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <properties>
 
         <!-- .. Libraries ..................................................... -->
 
-        <monticore.version>6.0.0</monticore.version>
+        <monticore.version>6.1.0</monticore.version>
 
         <findbugs.version>3.0.0</findbugs.version>
         <guava.version>23.0</guava.version>

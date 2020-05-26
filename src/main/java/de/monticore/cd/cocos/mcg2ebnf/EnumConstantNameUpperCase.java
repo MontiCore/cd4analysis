@@ -10,7 +10,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Enums may not have modifiers.
  *
- * @author Robert Heim
  */
 public class EnumConstantNameUpperCase implements CD4AnalysisASTCDEnumCoCo {
   

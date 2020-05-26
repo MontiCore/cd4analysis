@@ -20,7 +20,6 @@ import java.util.Iterator;
  * has been traversed. The ownVisit-Methods stop the automatic traversal order and allow to
  * explictly visit subtrees by calling getVisitor().startVisit(ASTNode)
  *
- * @author Martin Schindler
  */
 public class CDPrettyPrinter extends MCBasicTypesPrettyPrinter implements CD4AnalysisVisitor {
   

@@ -11,7 +11,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that qualifier is at the correct side w.r.t. navigation direction.
  *
- * @author Robert Heim
  */
 public class AssociationQualifierOnCorrectSide
     implements CD4AnalysisASTCDAssociationCoCo {

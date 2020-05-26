@@ -9,7 +9,6 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Attributes may not be abstract all others are allowed.
  *
- * @author Robert Heim
  */
 public class AttributeNotAbstractCoCo implements CD4AnalysisASTCDAttributeCoCo {
   

@@ -17,8 +17,6 @@ import java.util.Collection;
 /**
  * Tests the codes and messages of CoCos regarding associations.
  *
- * @author (last commit) $Author$
- * @since TODO: add version number
  */
 public class AssocTest extends AbstractCoCoTest {
   private static String MODEL_PATH_INVALID = "src/test/resources/de/monticore/umlcd4a/cocos/mcg/invalid/";
