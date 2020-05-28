@@ -31,7 +31,7 @@ package de.monticore.cd;
 grammar CD4Analysis extends
     de.monticore.cd.CDInterfaceAndEnum,
     de.monticore.cd.CDAssociation,
-    de.monticore.types.TypesSymbols,
+    de.monticore.types.TypeSymbols,
     de.monticore.types.MCSimpleGenericTypes,
     de.monticore.literals.MCCommonLiterals,
     de.monticore.expressions.BitExpressions,

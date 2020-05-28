@@ -1,29 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
-package ....
-
-import
-
-
-targetpackage
-
-targetimport
-
 
 classdiagram Simple {
 
-  class a.A;
+  class A;
 
   class S;
 
   class B extends A {
     S s;
-  }
-
-  package a {
-
-    package b {
-      class B;
-    }
   }
 
 }

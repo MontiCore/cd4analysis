@@ -7,7 +7,7 @@ import de.monticore.cd.cdbasis._ast.ASTCDDirectModifier;
 import java.util.Arrays;
 import java.util.List;
 
-public class SymModifier
+public class CD4CodeSymModifier
     extends de.monticore.cd.cdbasis._symboltable.SymModifier {
 
   private boolean isPrivate;
@@ -68,33 +68,33 @@ public class SymModifier
   }
 
   @Override
-  public de.monticore.cd.cd4codebasis._symboltable.SymModifier addModifier(ASTCDDirectModifier... modifier) {
+  public CD4CodeSymModifier addModifier(ASTCDDirectModifier... modifier) {
     final List<ASTCDDirectModifier> directModifier = Arrays.asList(modifier);
     directModifier.forEach(this::addModifier);
     return this;
   }
 
-  public SymModifier addModifier(ASTCD4CodePrivateModifier modifier) {
+  public CD4CodeSymModifier addModifier(ASTCD4CodePrivateModifier modifier) {
     this.setPrivate(true);
     return this;
   }
 
-  public SymModifier addModifier(ASTCD4CodeProtectedModifier modifier) {
+  public CD4CodeSymModifier addModifier(ASTCD4CodeProtectedModifier modifier) {
     this.setProtected(true);
     return this;
   }
 
-  public SymModifier addModifier(ASTCD4CodePublicModifier modifier) {
+  public CD4CodeSymModifier addModifier(ASTCD4CodePublicModifier modifier) {
     this.setPublic(true);
     return this;
   }
 
-  public SymModifier addModifier(ASTCD4CodeDerivedModifier modifier) {
+  public CD4CodeSymModifier addModifier(ASTCD4CodeDerivedModifier modifier) {
     this.setDerived(true);
     return this;
   }
 
-  public SymModifier addModifier(ASTCD4CodeReadOnlyModifier modifier) {
+  public CD4CodeSymModifier addModifier(ASTCD4CodeReadOnlyModifier modifier) {
     this.setReadOnly(true);
     return this;
   }

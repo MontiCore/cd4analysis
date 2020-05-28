@@ -13,19 +13,20 @@ package de.monticore.cd;
    combination with other extensions.
 */
 
-component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
+component grammar CD4CodeBasis extends de.monticore.cd.CDBasis,
+    de.monticore.cd.CDInterfaceAndEnum {
 
   /* ==== Methods ==== */
   /** Introduction of the new form of symbol: the Method
    */
-  // TODO: Umbenennung von CDMethodType in CDMethodSignature ??
-  interface symbol scope CDMethodType extends CDMember, Method = Name;
+  // TODO: Umbenennung von CDMethodType in CDMethodSignature ?? -> Ok
+  interface /*symbol*/ CDMethodSignature extends CDMember, Method = Name;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
   /** The standard (Java) method
    */
-  CDMethod implements CDMethodType =
+  CDMethod implements CDMethodSignature =
     CDModifier
     MCReturnType
     Name "(" (CDParameter || ",")* ")"
@@ -34,7 +35,7 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
 
   /** The standard (Java) constructor (without return type)
    */
-  CDConstructor implements CDMethodType =
+  CDConstructor implements CDMethodSignature =
     CDModifier
     Name "(" (CDParameter || ",")* ")"
     CDThrowsDeclaration?
@@ -43,9 +44,8 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
   /** Method parameter: with type, name, default value,
       and list extension "..."
    */
-  // TODO: Ellipsis --> ellipsis
-  symbol CDParameter implements Field =
-    MCType (Ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+  /*symbol*/ CDParameter implements Field =
+    MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
   /* ==== Modifier ==== */
   /** This list of modifiers extends the CD4A modifiers.
@@ -58,6 +58,7 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
 
   /** Enumeration constants may now also be defined using arguments
       (like in Java)
+      TODO SVa sollte diese EnumVariante von CDMethodSignature ableiten?
    */
   CD4CodeEnumConstant extends CDEnumConstant =
     Name ( "(" cDEnumArgument:(Expression || ",")+ ")" )?;
@@ -71,19 +72,19 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis {
   /** Method knows its signature, whether it is a constructor, 
       visibility
    */
-  symbolrule CDMethodType =
+  /*symbolrule CDMethodType =
     isConstructor: boolean
     hasEllipsis: boolean
     exceptions: de.monticore.types.check.SymTypeExpression*
-    modifier: de.monticore.cd.cd4codebasis._symboltable.SymModifier
-  ;
+    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
+  ;*/
   
   // TODO: Symbols noch ausarbeiten
 
   /** Parameter knows its type, default value, visibility
    */
-  symbolrule CDParameter =
+  /*symbolrule CDParameter =
     isEllipsis: boolean
     defaultValue: Optional<de.monticore.types.check.SymTypeExpression>
-  ;
+  ;*/
 }

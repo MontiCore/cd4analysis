@@ -20,7 +20,7 @@ component grammar CDBasis extends
     de.monticore.literals.MCLiteralsBasis,
     de.monticore.expressions.ExpressionsBasis,
     de.monticore.types.MCBasicTypes,
-    de.monticore.types.TypesSymbols,
+    de.monticore.types.TypeSymbols,
     de.monticore.UMLStereotype {
 
   /* ==== General ==== */
@@ -36,7 +36,7 @@ component grammar CDBasis extends
 
   /** The class diagram: defines a set of elements
   */
-  symbol scope CDDefinition = 
+  /*symbol*/ scope CDDefinition =
     CDModifier key("classdiagram") Name "{" CDElement* "}";
 
   /** CDModifier is the basic modifier structure, to use in the different cd elements
@@ -45,6 +45,7 @@ component grammar CDBasis extends
     @attribute Stereotype
                   the MontiCore stereotype
   */
+  // TODO: Modifier as interface, so that the order doesn't matter?
   CDModifier =
     CDDirectModifier* Stereotype?;
 
@@ -71,7 +72,7 @@ component grammar CDBasis extends
   /** CDType are all of the CDElements, which can be used to describe a 
       type for e.g. variables, method arguments, ...
   */
-  interface symbol CDType extends CDElement, Type;
+  interface /*symbol*/ CDType extends CDElement, Type <100>;
 
   /*  Remark:
       Because people that know Java also know interface implementation,
@@ -94,7 +95,7 @@ component grammar CDBasis extends
 
   /** CDClass defines a class including extensions and its body.
    */
-  scope CDClass implements CDType = 
+  /*scope*/ CDClass implements CDType <100> =
     CDModifier "class" Name
     CDExtendUsage?
     CDInterfaceUsage?
@@ -105,11 +106,14 @@ component grammar CDBasis extends
 
 
   /* ==== Attributes ==== */
+  /** The CDMember interface is for all possible members of class.
+   *  This grammar only uses it for CDAttribute.
+   */
   interface CDMember;
 
-  /** An attribute has atype, a name and an optional initializing expression.
+  /** An attribute has a type, a name and an optional initializing expression.
    */
-  symbol CDAttribute implements CDMember, Field = 
+  /*symbol*/ CDAttribute implements CDMember, Field =
     CDModifier MCType Name ("=" Expression)? ";";
 
   /* ==== Symbols ==== */
@@ -118,18 +122,18 @@ component grammar CDBasis extends
       connected modifier in the symbol table, which provides the condensed information
       of all available modifiers.
   */
-  symbolrule CDAttribute =
+  /*symbolrule CDAttribute =
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
-  ;
+  ;/*
 
   /** The symbol for CDType has the information what specific type it describes.
       The symbol contains all the interfaces and superclasses of the given type.
       The modifier is a collection of all the available CDModifier.
   */
-  symbolrule CDType =
+  /*symbolrule CDType =
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     interfaces: de.monticore.types.check.SymTypeExpression*
-  ;
+  ;*/
 
 
   /** This import statement allows to explain in the model, which

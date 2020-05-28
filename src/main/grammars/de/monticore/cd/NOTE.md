@@ -73,6 +73,7 @@ extends the `cd/CDBasis.mc4` with *Interface*s and *Enum*s
 * override `CDTypeSymbol` for `CDCommon` to include interfaces
 * allow enum to derive from other enum?
 * comment like grammar.mc4
+* have CDModifier as an interface? order of modifier and stereotype (public <<...>> abstract) should not matter
 
 ### CD-MERGE
 * what happens, when we combine models, which define different packages?

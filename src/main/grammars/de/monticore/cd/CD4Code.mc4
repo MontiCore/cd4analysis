@@ -29,7 +29,8 @@ package de.monticore.cd;
 grammar CD4Code extends
     de.monticore.cd.CD4Analysis,
     de.monticore.cd.CD4CodeBasis,
-    de.monticore.types.TypesSymbols {
+    de.monticore.types.TypeSymbols
+  {
 
   start CDCompilationUnit;
 }

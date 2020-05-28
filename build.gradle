@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore"  version "6.1.0" // MontiCore Plugin
+    id "monticore" version "6.1.0-SNAPSHOT" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.4"
 //    id 'cz.malohlava.visteg' version '1.0.5'
@@ -13,18 +13,32 @@ description = "CD4Analysis"
 sourceCompatibility = "1.8"
 
 def emf_version = "2.15.0"
-def mc_version  = "6.1.0"
+def mc_version = "6.1.0-SNAPSHOT"
 def commons_version = "1.7.9"
 def grammar_classifier = "grammars"
 def grammarDir = "src/main/grammars"
+def testGrammarDir = "src/test/grammars"
 
 // configure non-standard source sets
 sourceSets {
-    main.java.srcDirs += [ "$projectDir/target/generated-sources/monticore/sourcecode"]
+    main {
+        java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
+    }
+    test {
+        java.srcDirs += ["$projectDir/target/generated-test-sources/monticore/sourcecode"]
+    }
+}
+subprojects {
+    apply plugin: 'idea'
+    idea {
+        module {
+            testSourceDirs += file("$projectDir/target/generated-test-sources/monticore/sourcecode")
+        }
+    }
 }
 buildDir = file("$projectDir/target")
 
-configurations {grammar}
+configurations { grammar }
 
 dependencies {
     implementation "org.eclipse.emf:org.eclipse.emf.ecore:$emf_version"
@@ -33,6 +47,8 @@ dependencies {
     implementation "de.monticore:monticore-runtime:$mc_version"
     implementation "de.monticore:monticore-emf-runtime:$mc_version"
     implementation "de.monticore:monticore-grammar:$mc_version"
+    compile "de.monticore:monticore-grammar:$mc_version"
+    compile "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
@@ -55,8 +71,52 @@ repositories {
     }
 }
 
+// one task per grammar file
+fileTree(grammarDir).matching { include '**/*.mc4' }.each {
+    def g = it
+    task "generateGrammar${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+        grammar = file g
+        outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+        handcodedPath file("$projectDir/src/main/java")
+        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def uptoDate = incCheck(grammarIncludingPackage)
+        outputs.upToDateWhen { uptoDate }
+    }
+}
+
+/*
+// execute MC
+task  generateCDBasis (type: MCTask) {
+    grammar = file "$projectDir/$grammarDir/de/monticore/cd/CDBasis.mc4"
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    handcodedPath file("$projectDir/src/main/java")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cdbasis/IncGenGradleCheck.txt")
+    outputs.upToDateWhen { uptoDate }
+}
+
+// execute MC
+task  generateCDInterfaceAndEnum (type: MCTask) {
+    dependsOn generateCDBasis
+    grammar = file "$projectDir/$grammarDir/de/monticore/cd/CDInterfaceAndEnum.mc4"
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    handcodedPath file("$projectDir/src/main/java")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cdinterfaceandenum/IncGenGradleCheck.txt")
+    outputs.upToDateWhen { uptoDate }
+}
+
+// execute MC
+task  generateCDAssociation (type: MCTask) {
+    dependsOn generateCDBasis
+    grammar = file "$projectDir/$grammarDir/de/monticore/cd/CDAssociation.mc4"
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    handcodedPath file("$projectDir/src/main/java")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cdassociation/IncGenGradleCheck.txt")
+    outputs.upToDateWhen { uptoDate }
+}
+
 // execute MC
 task  generateCD4A (type: MCTask) {
+    dependsOn(generateCDInterfaceAndEnum, generateCDAssociation)
     grammar = file "$projectDir/$grammarDir/de/monticore/cd/CD4Analysis.mc4"
     outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
     handcodedPath file("$projectDir/src/main/java")
@@ -65,17 +125,87 @@ task  generateCD4A (type: MCTask) {
 }
 
 // execute MC
+task  generateCD4CodeBasis (type: MCTask) {
+    dependsOn generateCDBasis
+    grammar = file "$projectDir/$grammarDir/de/monticore/cd/CD4CodeBasis.mc4"
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    handcodedPath file("$projectDir/src/main/java")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cd4codebasis/IncGenGradleCheck.txt")
+    outputs.upToDateWhen { uptoDate }
+}
+
+// execute MC
 task  generateCD4C (type: MCTask) {
-    dependsOn generateCD4A
+    dependsOn(generateCD4A, generateCD4CodeBasis)
     grammar = file "$projectDir/$grammarDir/de/monticore/cd/CD4Code.mc4"
     outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
     modelPath file("$projectDir/src/main/grammars")
     handcodedPath file("$projectDir/src/main/java")
-    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cd4analysis/IncGenGradleCheck.txt")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/cd4code/IncGenGradleCheck.txt")
+    outputs.upToDateWhen { uptoDate }
+}
+*/
+
+
+// one task per test grammar file
+fileTree(testGrammarDir).matching { include '**/*.mc4' }.each {
+    def g = it
+    println("g: " + g)
+    task "generateTestGrammar${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+        grammar = file g
+        outputDir = file "$buildDir/generated-test-sources/monticore/sourcecode"
+        handcodedPath file("$projectDir/src/test/java")
+        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def uptoDate = incCheck(grammarIncludingPackage)
+        outputs.upToDateWhen { uptoDate }
+    }
+}
+
+/*
+task  generateTestCDBasis (type: MCTask) {
+    dependsOn(generateCDBasis)
+    grammar = file "$projectDir/src/test/grammars/de/monticore/cd/TestCDBasis.mc4"
+    outputDir = file "$buildDir/generated-test-sources/monticore/sourcecode"
+    modelPath file("$projectDir/src/main/grammars")
+    handcodedPath file("$projectDir/src/test/java")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/testcdbasis/IncGenGradleCheck.txt")
     outputs.upToDateWhen { uptoDate }
 }
 
-compileJava.dependsOn(generateCD4A,generateCD4C)
+task  generateTestCDAssociation (type: MCTask) {
+    dependsOn(generateCDAssociation)
+    grammar = file "$projectDir/src/test/grammars/de/monticore/cd/TestCDAssociation.mc4"
+    outputDir = file "$buildDir/generated-test-sources/monticore/sourcecode"
+    modelPath file("$projectDir/src/main/grammars")
+    handcodedPath file("$projectDir/src/test/java")
+    def uptoDate = incCheck(outputDir.toString() +"/de/monticore/cd/testcdassociation/IncGenGradleCheck.txt")
+    outputs.upToDateWhen { uptoDate }
+}
+*/
+compileJava {
+    dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+}
+
+compileTestJava {
+    dependsOn project.collect { it.tasks.withType(MCTask) }
+/*
+    dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+    dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
+*/
+}
+
+test {
+    testLogging {
+        exceptionFormat = 'full'
+        showStackTraces = true
+        showStandardStreams = true
+    }
+
+    // listen to standard out and standard error of the test JVM(s)
+    onOutput { descriptor, event ->
+        logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message)
+    }
+}
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
@@ -90,7 +220,7 @@ task sourcesJar(type: Jar) {
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
     from javadoc
-    archiveClassifier =  "javadoc"
+    archiveClassifier = "javadoc"
 }
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
@@ -99,13 +229,19 @@ shadowJar { // all in one jar
     manifest {
         attributes "Main-Class": "de.monticore.umlcd4a.CD4ACLI"
     }
-    archiveClassifier =  "cli"
+    archiveClassifier = "cli"
 }
 
 // build grammar jar as well
 task grammarJar(type: Jar) {
-    from ("$projectDir/src/main/grammars/"){ include "**/*.mc4" }
+    from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
     archiveClassifier = "grammars"
+}
+
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    // Include the results from the 'test' task
+    reportOn tasks.withType(Test)
 }
 
 // configure deployment

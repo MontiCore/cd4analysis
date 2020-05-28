@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Simple {
+
+  class A {
+    String name;
+  }
+
+  class S;
+
+  class B extends A {
+    S s;
+  }
+
+  final composition Struct [[name]] -> (item) StructItem [1];
+  association A -> S;
+  association [*] A -> S [1];
+
+}
