@@ -1,12 +1,23 @@
 /* (c) https://github.com/MontiCore/monticore */
 
+package de.monticore.cd.cdbasis.parser;
+
+import whatever.other.file;
+
+targetpackage de.monticore.cdbasis;
+
+targetimport additional.imports;
+
 classdiagram Simple {
 
   class A;
+  class B;
 
   class S;
 
-  class B extends A {
+  class C extends A, B {
+    String name;
+    int x;
     S s;
   }
 

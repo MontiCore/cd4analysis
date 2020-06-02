@@ -1,0 +1,29 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Simple {
+
+  class A {
+    String name;
+  }
+
+  class B extends A;
+
+  interface I;
+  interface I2;
+
+  <<stereotype>> interface I3 extends I, I2;
+
+  class C implements I;
+
+  enum D {
+    DEE,
+    DEE_TOO;
+
+    int x;
+  }
+
+  enum E {
+    ;
+    String name;
+  }
+}

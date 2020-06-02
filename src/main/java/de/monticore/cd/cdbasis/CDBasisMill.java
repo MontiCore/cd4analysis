@@ -8,20 +8,19 @@
 
 package de.monticore.cd.cdbasis;
 
-import de.monticore.cd.cdbasis._symboltable.SymModifier;
+import de.monticore.cd.cdbasis._symboltable.SymModifierBuilder;
 
 public class CDBasisMill extends CDBasisMillTOP {
   protected static CDBasisMill millSymModifier;
 
-  public static SymModifier SymModifierBuilder() {
+  public static SymModifierBuilder symModifierBuilder() {
     if (millSymModifier == null) {
       millSymModifier = getMill();
     }
-    return millSymModifier._SymModifierBuilder();
-
+    return millSymModifier._symModifierBuilder();
   }
 
-  protected SymModifier _SymModifierBuilder() {
-    return new SymModifier();
+  protected SymModifierBuilder _symModifierBuilder() {
+    return new SymModifierBuilder();
   }
 }

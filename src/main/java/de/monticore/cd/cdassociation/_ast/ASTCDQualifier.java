@@ -7,7 +7,6 @@ public class ASTCDQualifier extends ASTCDQualifierTOP {
   public ASTCDQualifier() {
   }
 
-  //@Override
   public String getName() {
     if (isPresentByAttributeName()) {
       return getByAttributeName();

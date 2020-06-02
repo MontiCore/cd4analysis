@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd;
+
+grammar TestCD4CodeBasis extends
+            de.monticore.cd.CD4CodeBasis
+         {
+  start CDCompilationUnit;
+}

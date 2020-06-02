@@ -16,42 +16,54 @@ public class TestCDBasis extends TestBasis {
   TestCDBasisParser p = new TestCDBasisParser();
 
   @Test
-  public void parseCompilationUnit() throws IOException {
+  public void parseCDCompilationUnit() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse_StringCDCompilationUnit("package blub; classdiagram CD {}");
-    checkNullAndPresents(p, astcdCompilationUnit);
+    checkNullAndPresence(p, astcdCompilationUnit);
   }
 
   @Test
-  public void parseCompilationCDDefinition() throws IOException {
+  public void parseCDDefinition() throws IOException {
     final Optional<ASTCDDefinition> astcdDefinition = p.parse_StringCDDefinition("classdiagram CD {}");
-    checkNullAndPresents(p, astcdDefinition);
+    checkNullAndPresence(p, astcdDefinition);
   }
 
   @Test
   public void parseCDClass() throws IOException {
     final Optional<ASTCDClass> astcdClass = p.parse_StringCDClass("class A;");
-    checkNullAndPresents(p, astcdClass);
+    checkNullAndPresence(p, astcdClass);
 
     final Optional<ASTCDClass> astcdClass1 = p.parse_StringCDClass("class A {}");
-    checkNullAndPresents(p, astcdClass1);
+    checkNullAndPresence(p, astcdClass1);
   }
 
   @Test
-  public void parseModifier() throws IOException {
+  public void parseCDElement() throws IOException {
+    final Optional<ASTCDElement> astcdElement = p.parse_StringCDElement("class A;");
+    checkNullAndPresence(p, astcdElement);
+  }
+
+  @Test
+  public void parseCDModifier() throws IOException {
     final Optional<ASTCDModifier> astcdModifier = p.parse_StringCDModifier("abstract final <<blub>>");
-    checkNullAndPresents(p, astcdModifier);
+    checkNullAndPresence(p, astcdModifier);
   }
 
   @Test
   public void parseCDAttribute() throws IOException {
     final Optional<ASTCDAttribute> astcdAttribute = p.parse_StringCDAttribute("final String name = \"testName\";");
-    checkNullAndPresents(p, astcdAttribute);
+    checkNullAndPresence(p, astcdAttribute);
   }
 
   @Test
-  public void checkParser() throws IOException {
+  public void parseCDMember() throws IOException {
+    final Optional<ASTCDMember> astcdMember = p.parse_StringCDMember("int x;");
+    checkNullAndPresence(p, astcdMember);
+  }
+
+  @Test
+  public void parseCompleteModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cdbasis/parser/cdbasis.cd"));
-    checkNullAndPresents(p, astcdCompilationUnit);
+    checkNullAndPresence(p, astcdCompilationUnit);
   }
 
 }

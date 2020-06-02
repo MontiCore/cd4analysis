@@ -28,15 +28,21 @@ component grammar CDBasis extends
       import statements, package definition
   */
   CDCompilationUnit =
-    ("package" package:(Name& || ".")+ ";")?
+    ("package" package:(Name& || ".")+ ";")? // TODO: als eigenes NT?
     MCImportStatement*
-    (key("targetpackage") targetpackage:(Name& || ".")+ ";")?
+    (key("targetpackage") targetpackage:(Name& || ".")+ ";")?  // TODO: als eigenes NT?
     CDTargetImportStatement*
     CDDefinition;
 
+  /** This import statement allows to explain in the model, which
+      additional imports shall be added to the generated code
+      (beyond the imports that the generator identifies itself).
+  */
+  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";" ;
+
   /** The class diagram: defines a set of elements
   */
-  /*symbol*/ scope CDDefinition =
+  symbol scope CDDefinition =
     CDModifier key("classdiagram") Name "{" CDElement* "}";
 
   /** CDModifier is the basic modifier structure, to use in the different cd elements
@@ -45,7 +51,7 @@ component grammar CDBasis extends
     @attribute Stereotype
                   the MontiCore stereotype
   */
-  // TODO: Modifier as interface, so that the order doesn't matter?
+  // TODO: Modifier as interface, so that the order doesn't matter? -> OK + CDModifier* bei Benutzung
   CDModifier =
     CDDirectModifier* Stereotype?;
 
@@ -72,7 +78,7 @@ component grammar CDBasis extends
   /** CDType are all of the CDElements, which can be used to describe a 
       type for e.g. variables, method arguments, ...
   */
-  interface /*symbol*/ CDType extends CDElement, Type <100>;
+  interface symbol CDType extends CDElement, Type;
 
   /*  Remark:
       Because people that know Java also know interface implementation,
@@ -95,7 +101,7 @@ component grammar CDBasis extends
 
   /** CDClass defines a class including extensions and its body.
    */
-  /*scope*/ CDClass implements CDType <100> =
+  scope CDClass implements CDType =
     CDModifier "class" Name
     CDExtendUsage?
     CDInterfaceUsage?
@@ -113,8 +119,8 @@ component grammar CDBasis extends
 
   /** An attribute has a type, a name and an optional initializing expression.
    */
-  /*symbol*/ CDAttribute implements CDMember, Field =
-    CDModifier MCType Name ("=" Expression)? ";";
+  symbol CDAttribute implements CDMember, Field =
+    CDModifier MCType Name ("=" initial:Expression)? ";";
 
   /* ==== Symbols ==== */
   /** The symbol for CDAttributes contains the link to the type of the attribute
@@ -122,24 +128,17 @@ component grammar CDBasis extends
       connected modifier in the symbol table, which provides the condensed information
       of all available modifiers.
   */
-  /*symbolrule CDAttribute =
+  symbolrule CDAttribute =
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
-  ;/*
+  ;
 
   /** The symbol for CDType has the information what specific type it describes.
       The symbol contains all the interfaces and superclasses of the given type.
       The modifier is a collection of all the available CDModifier.
   */
-  /*symbolrule CDType =
+  symbolrule CDType =
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     interfaces: de.monticore.types.check.SymTypeExpression*
-  ;*/
-
-
-  /** This import statement allows to explain in the model, which
-      additional imports shall be added to the generated code
-      (beyond the imports that the generator identifies itself).
-  */
-  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";" ;
+  ;
 
 }

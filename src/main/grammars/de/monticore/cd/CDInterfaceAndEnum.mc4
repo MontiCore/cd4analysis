@@ -13,7 +13,7 @@ component grammar CDInterfaceAndEnum extends de.monticore.cd.CDBasis {
 
   /** An interface is quite similar to a class:
    */
-  /*scope*/ CDInterface implements CDType =
+  scope CDInterface implements CDType =
     CDModifier "interface" Name
     CDExtendUsage?
     ( "{"
@@ -25,7 +25,7 @@ component grammar CDInterfaceAndEnum extends de.monticore.cd.CDBasis {
       Please note that Java allows attributes for enums:
       this possibility will be added in CD4Code, but not yet here.
    */
-  /*scope*/ CDEnum implements CDType = CDModifier "enum" Name
+  scope CDEnum implements CDType = CDModifier "enum" Name
     CDInterfaceUsage?
     ( "{"
         (CDEnumConstant || ",")* ";"
@@ -35,5 +35,5 @@ component grammar CDInterfaceAndEnum extends de.monticore.cd.CDBasis {
 
   /** Have the enum constants as separate NT, to allow extensions
   */
-  CDEnumConstant implements Field = Name;
+  CDEnumConstant implements CDAttribute = Name;
 }

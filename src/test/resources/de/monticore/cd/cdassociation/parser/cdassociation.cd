@@ -9,11 +9,11 @@ classdiagram Simple {
   class S;
 
   class B extends A {
-    S s;
+    -> S;
   }
 
   final composition Struct [[name]] -> (item) StructItem [1];
   association A -> S;
-  association [*] A -> S [1];
+  association [*] A (a) -> [String] S [1];
 
 }

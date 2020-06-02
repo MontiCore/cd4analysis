@@ -10,11 +10,11 @@ import java.util.List;
 public class CD4CodeSymModifier
     extends de.monticore.cd.cdbasis._symboltable.SymModifier {
 
-  private boolean isPrivate;
-  private boolean isProtected;
-  private boolean isPublic;
-  private boolean isDerived;
-  private boolean isReadOnly;
+  protected boolean isPrivate;
+  protected boolean isProtected;
+  protected boolean isPublic;
+  protected boolean isDerived;
+  protected boolean isReadOnly;
 
   protected void resetVisibility(boolean reset) {
     if (reset) {

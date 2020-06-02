@@ -12,7 +12,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
 
   /** An associations/composition has a name, a left, right part and a direction
    */
-  /*symbol scope*/ CDAssociation implements CDElement <500> =
+  symbol scope CDAssociation implements CDElement =
     CDModifier
     (["association"] | ["composition"]) // TODO set both as key(...), currently not possible
     ([derived:"/"])? Name?
@@ -57,7 +57,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
 
   /** A role symbol is a simple name. It is embedded in the association.
    */
-  /*symbol*/ CDRole /*implements Field*/ = "(" Name ")";
+  symbol CDRole implements Field = "(" Name ")";
 
   /** CDCardinality captures the cardinality of an association side.
       Associations currently allow the for standard cardinalities, but
@@ -77,8 +77,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
   // TODO: {noSpace(2)}? ganz vorne nutzen, also zB:
   //   CDQualifier = SquareBracketOpen byAttributeName:Name@Field SquareBracketClose | "[" byType:MCType "]"; 
   //   CDSquareBracketOpen = {noSpace(2)} "[" "[" ; 
-  //   CDSquareBracketClose = {noSpace(2)} "]" "]" ; 
-
+  //   CDSquareBracketClose = {noSpace(2)} "]" "]" ;
   CDQualifier = "[" "[" {noSpace()}? byAttributeName:Name@Field "]" "]" {noSpace()}? | "[" byType:MCType "]";
 
   /** Write a composition in short form inside the composite class:
@@ -96,11 +95,9 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
       It contains the link to the type and the SymAssociation, which contains the
       basic information of an association.
   */
-  /*symbolrule CDRole =
+  symbolrule CDRole =
     isNavigable: boolean
     cardinality: Optional<de.monticore.cd.cdassociation._ast.ASTCDCardinality>
-      // TODO: handle from CDQualifier  ???
-      //qualifier: Optional<de.monticore.cd.cdassociation._symboltable.CDQualifierSymbol>
 
     // TODO: Fragen von BR:
     // a) wieso ist attribute Optional? Wenn das Role-Symbol existiert
@@ -112,17 +109,17 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     // TODO: Fragen von BR:
     // Was ist associationTarget?
     // -> ist der target type
-    associationTarget: de.monticore.types.check.SymTypeExpression
+    targetType: de.monticore.types.check.SymTypeExpression
     
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     isOrdered: boolean
-  ;*/
+  ;
 
   /** The symbol for CDAssociation is defined for named associations.
       The SymAssociation object provides all relevant 
       information obout the association and the roles.
   */
-  /*symbolrule CDAssociation =
-    association: de.monticore.cd.cdassociation._symboltable.SymAssociation;*/
+  symbolrule CDAssociation =
+    association: de.monticore.cd.cdassociation._symboltable.SymAssociation;
 }

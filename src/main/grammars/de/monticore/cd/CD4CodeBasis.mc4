@@ -13,14 +13,14 @@ package de.monticore.cd;
    combination with other extensions.
 */
 
-component grammar CD4CodeBasis extends de.monticore.cd.CDBasis,
+component grammar CD4CodeBasis extends
+    de.monticore.cd.CDBasis,
     de.monticore.cd.CDInterfaceAndEnum {
 
   /* ==== Methods ==== */
   /** Introduction of the new form of symbol: the Method
    */
-  // TODO: Umbenennung von CDMethodType in CDMethodSignature ?? -> Ok
-  interface /*symbol*/ CDMethodSignature extends CDMember, Method = Name;
+  interface symbol CDMethodSignature extends CDMember, Method = Name;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
@@ -44,8 +44,13 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis,
   /** Method parameter: with type, name, default value,
       and list extension "..."
    */
-  /*symbol*/ CDParameter implements Field =
+  CDParameter implements Field = // TODO extend CDAttribute?; Modifier?
     MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+
+//  int foo(int q1, int... q2)
+/// foo(a,1,2)
+//  int foo(int q1, int[] q2)
+// foo(a,new Array([1,2]))
 
   /* ==== Modifier ==== */
   /** This list of modifiers extends the CD4A modifiers.
@@ -54,14 +59,13 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis,
   CD4CodeProtectedModifier implements CDDirectModifier = "protected"      | "#";
   CD4CodePublicModifier    implements CDDirectModifier = "public"         | "+";
   CD4CodeDerivedModifier   implements CDDirectModifier = key("derived")   | "/";
-  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only");
+  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only"); // TODO does not work this way
 
   /** Enumeration constants may now also be defined using arguments
       (like in Java)
-      TODO SVa sollte diese EnumVariante von CDMethodSignature ableiten?
    */
   CD4CodeEnumConstant extends CDEnumConstant =
-    Name ( "(" cDEnumArgument:(Expression || ",")+ ")" )?;
+    Name ( "(" (Expression || ",")* ")" )?;
 
   // !! BR TODO "MethodType" intendiert, dass hier sowohl argument als auch Ergebnis
   //  typisiert sind. --> Parameter fehlen.: Parameter stehen schon im MethodSymbol
@@ -72,19 +76,10 @@ component grammar CD4CodeBasis extends de.monticore.cd.CDBasis,
   /** Method knows its signature, whether it is a constructor, 
       visibility
    */
-  /*symbolrule CDMethodType =
-    isConstructor: boolean
-    hasEllipsis: boolean
+  symbolrule CDMethodType =
+    //isConstructor: boolean  // bereits in neuem MethodSymbol
+    hasEllipsis: boolean // TODO auch in MethodSymbol rein bauen?
     exceptions: de.monticore.types.check.SymTypeExpression*
-    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
-  ;*/
-  
-  // TODO: Symbols noch ausarbeiten
-
-  /** Parameter knows its type, default value, visibility
-   */
-  /*symbolrule CDParameter =
-    isEllipsis: boolean
-    defaultValue: Optional<de.monticore.types.check.SymTypeExpression>
-  ;*/
+    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier*
+  ;
 }

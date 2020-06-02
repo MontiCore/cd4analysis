@@ -1,5 +1,30 @@
 # Split of the CD language in different parts
 
+# 28.05.2020
+- [ ] auf dev-mergen
+- [ ] SymModifier
+  - [ ] isAbstract/isStatic werden in neuen TypeSymbols enthalten sein, !aber nur in TypeSymbol
+    - soll das dann trotzdem in den SymModifier -> wird beim nächsten Termin ausgemacht
+  - [ ] SymModifier in Mill reinlegen: JA
+    - [ ] soll es dafür einen Builder geben: JA
+    - [ ] wie kann ich dann sauber auf das zugreifen, oder muss ich alle mills überschreiben: in die richtigen Mills schreiben!
+- [ ] language.md anpassen
+- [ ] mills für alle handgeschriebenen Sachen überschreiben
+- [ ] SymTypeArray für ellipse verwenden + setzen in MethodSymbol
+- [ ] CD Sprache Version 4.0
+- [ ] dependencies aufräumen
+
+- [ ] FieldSymbol
+  - [ ] isParameter raus (und zwei listen?)
+  - [ ] isConstant rein
+- [ ] MethodSymbol
+  - [ ] + hasEllipsis
+
+-> keine enum extends other enum: explizite Entscheidung
+-> Best practices für namen von (MCType vs type:MCType) besprechen mit DS
+-> varargs entscheidung festhalten
+
+
 This grammar is part of a hierarchy of component grammars, namely
    * cd/CDBasis.mc4
      * cd/CDCommon.mc4
@@ -17,7 +42,7 @@ And is the base for
      * cd/CDCommon.mc4
      * cd/CDAssociation.mc4
      * cd/CD4CodeCommon.mc4
-     
+
 ## New since 20.04.2020
 - split in different grammars
 - add default values to method parameter
@@ -32,7 +57,7 @@ And is the base for
 * `CDDefinition`
   * contains the all the elements of a classdiagram
 * `CDModifier`
-  * Base class for all available modifier, is split into `CDDirectModifier` 
+  * Base class for all available modifier, is split into `CDDirectModifier`
     and `Stereotype` (originates from `de.monticore.UMLStereotype`)
 * interface `CDDirectModifier` is used for all modifiers which are directly
   written to an element in the CD, the following modifiers are defined:
@@ -41,7 +66,7 @@ And is the base for
   * `CDStaticModifier`
 * interface `CDElement` denotes any element, which is a top-level member of a
   CD
-* interface `CDType` denotes all elements, which can be used as a type, only 
+* interface `CDType` denotes all elements, which can be used as a type, only
   `CDClass` is defined here, but other types can be added
 * `CDClass` describes a class with
   * its modifiers

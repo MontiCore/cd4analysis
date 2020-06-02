@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SymModifier {
-  private boolean isAbstract;
-  private boolean isFinal;
-  private boolean isStatic;
+  protected boolean isAbstract;
+  protected boolean isFinal;
+  protected boolean isStatic;
 
   protected void resetExtensibility(boolean reset) {
     if (reset) {

@@ -38,7 +38,7 @@ public class TestBasis {
     return Joiner.on("\n").join(Log.getFindings());
   }
 
-  public void checkNullAndPresents(MCConcreteParser parser, Optional<? extends ASTNode> node) {
+  public void checkNullAndPresence(MCConcreteParser parser, Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
     Log.getFindings().clear();
     final boolean hasErrors = parser.hasErrors();
