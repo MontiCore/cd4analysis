@@ -28,7 +28,7 @@ component grammar CD4CodeBasis extends
   /** The standard (Java) method
    */
   CDMethod implements CDMethodSignature =
-    CDModifier
+    CDModifier*
     MCReturnType
     Name "(" (CDParameter || ",")* ")"
     CDThrowsDeclaration?
@@ -37,7 +37,7 @@ component grammar CD4CodeBasis extends
   /** The standard (Java) constructor (without return type)
    */
   CDConstructor implements CDMethodSignature =
-    CDModifier
+    CDModifier*
     Name "(" (CDParameter || ",")* ")"
     CDThrowsDeclaration?
     ";";

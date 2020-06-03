@@ -29,17 +29,27 @@ component grammar CDBasis extends
       import statements, package definition
   */
   CDCompilationUnit =
-    ("package" package:(Name& || ".")+ ";")? // TODO: als eigenes NT?
+    CDPackageStatement?
     MCImportStatement*
-    (key("targetpackage") targetpackage:(Name& || ".")+ ";")?  // TODO: als eigenes NT?
+    CDTargetPackageStatement?
     CDTargetImportStatement*
     CDDefinition;
+
+  /** The package statement denotes the package of the model file itself
+  */
+  CDPackageStatement = "package" package:(Name& || ".")+ ";";
+
+  /** The target package is a information for the generator,
+      which should use this information as package-path for
+      the generate code
+  */
+  CDTargetPackageStatement = key("targetpackage") targetpackage:(Name& || ".")+ ";";
 
   /** This import statement allows to explain in the model, which
       additional imports shall be added to the generated code
       (beyond the imports that the generator identifies itself).
   */
-  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";" ;
+  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";";
 
   /** The class diagram: defines a set of elements
   */
@@ -53,14 +63,15 @@ component grammar CDBasis extends
                   the MontiCore stereotype
   */
   // TODO: Modifier as interface, so that the order doesn't matter? -> OK + CDModifier* bei Benutzung
-  CDModifier =
-    CDDirectModifier* Stereotype?;
+  interface CDModifier;
+
+  CDStereotype extends CDModifier = Stereotype;
 
   /** CDDirectModifier subsumes all possible modifiers for elements in the CD.
       This NT is realized as interface because it is meant for extension.
       A first list of (already) available options exists.
   */
-  interface CDDirectModifier;
+  interface CDDirectModifier extends CDDirectModifier;
 
   /** The list of Modifiers available as variants of CDDirectModifier:
   */
@@ -103,7 +114,7 @@ component grammar CDBasis extends
   /** CDClass defines a class including extensions and its body.
    */
   scope CDClass implements CDType =
-    CDModifier "class" Name
+    CDModifier* "class" Name
     CDExtendUsage?
     CDInterfaceUsage?
     ( "{"
@@ -121,7 +132,7 @@ component grammar CDBasis extends
   /** An attribute has a type, a name and an optional initializing expression.
    */
   symbol CDAttribute implements CDMember, Field =
-    CDModifier MCType Name ("=" initial:Expression)? ";";
+    CDModifier* MCType Name ("=" initial:Expression)? ";";
 
   /* ==== Symbols ==== */
   /** The symbol for CDAttributes contains the link to the type of the attribute

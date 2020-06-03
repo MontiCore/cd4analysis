@@ -14,7 +14,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
   /** An associations/composition has a name, a left, right part and a direction
    */
   symbol scope CDAssociation implements CDElement =
-    CDModifier
+    CDModifier*
     (["association"] | ["composition"]) // TODO set both as key(...), currently not possible
     ([derived:"/"])? Name?
 
@@ -45,16 +45,16 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
       even though the concrete syntax differs in their order.
   */
   interface CDAssociationSide =
-    CDModifier CDCardinality? MCQualifiedName
+    CDModifier* CDCardinality? MCQualifiedName
     CDQualifier? CDRole? ["ordered"]?; // TODO überall: set as key(...), 
 
   CDAssociationLeftSide implements CDAssociationSide =
-    ["ordered"]? CDModifier CDCardinality?
+    ["ordered"]? CDModifier* CDCardinality?
     MCQualifiedName CDQualifier? CDRole?;
 
   CDAssociationRightSide implements CDAssociationSide =
     CDRole? CDQualifier? MCQualifiedName
-    CDCardinality? CDModifier ["ordered"]?;
+    CDCardinality? CDModifier* ["ordered"]?;
 
   /** A role symbol is a simple name. It is embedded in the association.
    */
