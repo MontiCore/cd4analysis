@@ -7,11 +7,11 @@
 We provide two versions of UML class diagrams:
 - **CD4Analysis**: is for the modelling of data structures
    with classes, attributes, associations, enumerations 
-- **CD4Code**: is extension including methods and constructors
+- **CD4Code**: is an extension including methods and constructors
 
 # CD4Analysis
 
-The main pupose of this language is the modeling of data structure, which 
+The main purpose of this language is the modeling of data structure, which 
 typically emerges as result of requirements elicitation activities.
 
 The main grammar file is [`CD4Analysis`][CD4AGrammar].
@@ -32,11 +32,11 @@ classdiagram MyLife {
   
   composition Student -> Grades [*];
   association [0..2] Person (parent) <-> (child) Person [*];
-  association phonebook Person [String] -> PhoneNumber ;
+  association phonebook Person [String] -> PhoneNumber;
 }
 ```
 
-The example shows a section of the [CD4ALanguageTeaser.cd][LanguageTeaser]:
+The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
 - Definition of two classes `Person` and `Student`
 - `Person` is an abstract class
 - `Student` extends from `Person` (like in Java); interfaces would also be possible.
@@ -44,16 +44,18 @@ The example shows a section of the [CD4ALanguageTeaser.cd][LanguageTeaser]:
 - Available types are basic types (from Java), imported types (like `Date`),
   and predefined forms of generic types (like `List`).
 - Associations and compositions are defined between two classes,
-  can have a name,  a navigation information (e.g. `<->`), role names on both sides,
+  can have a name, a navigation information (e.g. `<->`), role names on both sides,
   multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
   (like `{ordered}`).
 - Both, association and compositions can be qualified, for example by `[String]`.
 
-Further examples can be found in [here][ExampleModels].
+Further examples can be found [here][ExampleModels].
 
 ## Available handwritten Extensions
 
 ### AST
+- @SVa TODO: add the list of available types
+- @SVa TODO: explain SymTypes
 - [`ASTCDAssociation`][ASTCDAssociation]
   defines several symbols, i.e. for the left and right roles.
 - [`ASTCDType`][ASTCDType]
@@ -156,7 +158,7 @@ CD4Code is a conservative extension of CD4Analysis and adds methods,
 
 The grammar file is [`de.monticore.cd.CD4Code`][CD4CodeGrammar].
  
-## Example (in addition ot CD4A)
+## Example (in addition to CD4A)
 ```
 classdiagram MyLife2 { 
   abstract class Person {
@@ -166,8 +168,9 @@ classdiagram MyLife2 {
   }
   class Student extends Person {
     abstract public change(StudentStatus status);
-    void addFriends(Person friends...);
+    void addFriends(Person... friends);
   }
+}
 ```
 
 The example shows a section of the [CD4CodeLanguageTeaser.cd][CD4CodeLanguageTeaser]:
@@ -191,8 +194,8 @@ Further examples can be found in [here][CD4CodeExampleModels].
   example from the requirements elicitation activities.
 
 [CD4AGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/cd/CD4Analysis.mc4
-[LanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/umlcd4a/parser/CD4ALanguageTeaser.cd
-[ExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/umlcd4a
+[LanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
+[ExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/cd4analysis
 [ASTCDAssociation]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_ast/ASTCDAssociation.java
 [ASTCDType]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_ast/ASTCDType.java
 [CD4AParser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_parser/CD4AnalysisParser.java
@@ -208,6 +211,6 @@ Further examples can be found in [here][CD4CodeExampleModels].
 [reporting]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/main/java/de/monticore/cd/reporting
 [CD4ACLI]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/CD4ACLI.java
 [CD4CodeGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/cd/CD4Code.mc4
-[CD4CodeLanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/cd4code/CD4CodeLanguageTeaser.cd
+[CD4CodeLanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
 [CD4CodeExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/cd4code
 [CD4CodePrinter]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4code/CD4CodePrettyPrinterDelegator.java

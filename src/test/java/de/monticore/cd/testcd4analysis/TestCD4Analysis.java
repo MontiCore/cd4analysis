@@ -24,4 +24,8 @@ public class TestCD4Analysis extends TestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/cd4a.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
+
+  public void parse(String... blub) {
+
+  }
 }
