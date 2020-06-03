@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd;
+
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
 
 /**
    CD4A is the textual representation to describe UML class diagrams

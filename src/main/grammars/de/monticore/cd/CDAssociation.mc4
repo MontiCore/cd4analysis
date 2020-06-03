@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd;
+
+/* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
 /**
    This component grammar defines associations for CD4Analysis and CD4Code.
