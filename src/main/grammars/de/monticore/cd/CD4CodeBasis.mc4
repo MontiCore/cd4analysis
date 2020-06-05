@@ -21,7 +21,7 @@ component grammar CD4CodeBasis extends
   /* ==== Methods ==== */
   /** Introduction of the new form of symbol: the Method
    */
-  interface symbol CDMethodSignature extends CDMember, Method = Name;
+  interface scope symbol CDMethodSignature extends CDMember, Method = Name;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
@@ -48,11 +48,6 @@ component grammar CD4CodeBasis extends
   CDParameter implements Field = // TODO extend CDAttribute?; Modifier?
     MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
-//  int foo(int q1, int... q2)
-/// foo(a,1,2)
-//  int foo(int q1, int[] q2)
-// foo(a,new Array([1,2]))
-
   /* ==== Modifier ==== */
   /** This list of modifiers extends the CD4A modifiers.
    */
@@ -60,13 +55,13 @@ component grammar CD4CodeBasis extends
   CD4CodeProtectedModifier implements CDDirectModifier = "protected"      | "#";
   CD4CodePublicModifier    implements CDDirectModifier = "public"         | "+";
   CD4CodeDerivedModifier   implements CDDirectModifier = key("derived")   | "/";
-  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("read-only"); // TODO does not work this way
+  CD4CodeReadOnlyModifier  implements CDDirectModifier = key("readonly");
 
   /** Enumeration constants may now also be defined using arguments
       (like in Java)
    */
   CD4CodeEnumConstant extends CDEnumConstant =
-    Name ( "(" (Expression || ",")* ")" )?;
+    Name ( "(" (Expression || ",")* ")" );
 
   // !! BR TODO "MethodType" intendiert, dass hier sowohl argument als auch Ergebnis
   //  typisiert sind. --> Parameter fehlen.: Parameter stehen schon im MethodSymbol
@@ -77,7 +72,7 @@ component grammar CD4CodeBasis extends
   /** Method knows its signature, whether it is a constructor, 
       visibility
    */
-  symbolrule CDMethodType =
+  symbolrule CDMethodSignature =
     //isConstructor: boolean  // bereits in neuem MethodSymbol
     hasEllipsis: boolean // TODO auch in MethodSymbol rein bauen?
     exceptions: de.monticore.types.check.SymTypeExpression*

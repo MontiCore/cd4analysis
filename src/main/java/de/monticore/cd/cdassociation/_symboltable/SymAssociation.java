@@ -37,7 +37,7 @@ public class SymAssociation {
 
   public void setAssociation(Optional<CDAssociationSymbol> association) {
     this.association = association;
-    this.association.setAssociation(this);
+    this.association.get().setAssociation(this);
   }
 
   public CDRoleSymbol getLeft() {

@@ -16,6 +16,8 @@ import de.monticore.cd.testcd4codebasis._parser.TestCD4CodeBasisParser;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class TestCD4CodeBasis extends TestBasis {
@@ -53,8 +55,12 @@ public class TestCD4CodeBasis extends TestBasis {
 
   @Test
   public void parseCDModifier() throws IOException {
-    final Optional<ASTCDModifier> astcdModifier = p.parse_StringCDModifier("final private public protected derived /*read-only*/ static abstract");
-    checkNullAndPresence(p, astcdModifier);
+    List<String> modifier = Arrays.asList("final", "private", "public", "protected", "derived", "readonly", "static", "abstract", "<<stereo>>");
+
+    for (String m : modifier) {
+      final Optional<ASTCDModifier> astcdModifier = p.parse_StringCDModifier(m);
+      checkNullAndPresence(p, astcdModifier);
+    }
   }
 
   @Test
@@ -68,7 +74,7 @@ public class TestCD4CodeBasis extends TestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cd4codebasis/parser/cd4codebasis.cd"));
+    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cd4codebasis/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
   }
 }

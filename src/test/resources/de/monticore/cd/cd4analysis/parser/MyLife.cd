@@ -4,8 +4,8 @@ package de.monticore.cd4analysis.parser;
 
 classdiagram MyLife {
 
-  public abstract class Person implements CorporateEntity {
-    protected String name;
+  abstract class Person implements CorporateEntity {
+    String name;
     int age;
     Date birthday;
     List<String> nickNames;
@@ -21,8 +21,11 @@ classdiagram MyLife {
     FINISHED;
   }
 
+  class Grades;
+  class PhoneNumber;
+
   composition Student -> Grades [*];
-  association [0..2] Person (parent) <-> (child) Person [*];
+  association [0..1] Person (parent) <-> (child) Person [*];
   association phonebook Person [String] -> PhoneNumber;
 
   interface CorporateEntity {

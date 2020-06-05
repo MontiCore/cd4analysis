@@ -14,7 +14,7 @@ public class CD4CodeBasisMill extends CD4CodeBasisMillTOP {
   protected static CD4CodeBasisMill millCD4CodeSymModifier;
 
   public CD4CodeBasisMill() {
-    millSymModifier = getMill();
+    millCD4CodeSymModifier = getMill();
   }
 
   public static CD4CodeSymModifierBuilder symModifierBuilder() {

@@ -45,7 +45,7 @@ public class TestCDInterfaceAndEnum extends TestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdinterfaceandenum/parser/cdinterfaceandenum.cd"));
+    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdinterfaceandenum/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
   }
 }

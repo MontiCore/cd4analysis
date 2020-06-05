@@ -6,8 +6,15 @@
 
 We provide two versions of UML class diagrams:
 - **CD4Analysis**: is for the modelling of data structures
-   with classes, attributes, associations, enumerations 
+  with classes, attributes, associations, enumerations 
 - **CD4Code**: is an extension including methods and constructors
+
+And additional componenten grammars for parts of the class diagrams:
+- **CDBasis**: base for all cd languages, contains the root compilation unit,
+  classes, and attributes
+- **CDInterfaceAndEnum**: extends CDBasis with interface and enum
+- **CDAssociation**: contains associations and roles
+- **CD4CodeBasis**: adds methods and parameters
 
 # CD4Analysis
 
@@ -31,7 +38,7 @@ classdiagram MyLife {
   enum StudentStatus { ENROLLED, FINISHED; }
   
   composition Student -> Grades [*];
-  association [0..2] Person (parent) <-> (child) Person [*];
+  association [0..1] Person (parent) <-> (child) Person [*];
   association phonebook Person [String] -> PhoneNumber;
 }
 ```

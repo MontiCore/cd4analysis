@@ -54,7 +54,7 @@ component grammar CDBasis extends
   /** The class diagram: defines a set of elements
   */
   symbol scope CDDefinition =
-    CDModifier key("classdiagram") Name "{" CDElement* "}";
+    CDModifier* key("classdiagram") Name "{" CDElement* "}";
 
   /** CDModifier is the basic modifier structure, to use in the different cd elements
     @attribute CDDirectModifier
@@ -65,13 +65,13 @@ component grammar CDBasis extends
   // TODO: Modifier as interface, so that the order doesn't matter? -> OK + CDModifier* bei Benutzung
   interface CDModifier;
 
-  CDStereotype extends CDModifier = Stereotype;
+  CDStereotype implements CDModifier = Stereotype;
 
   /** CDDirectModifier subsumes all possible modifiers for elements in the CD.
       This NT is realized as interface because it is meant for extension.
       A first list of (already) available options exists.
   */
-  interface CDDirectModifier extends CDDirectModifier;
+  interface CDDirectModifier extends CDModifier;
 
   /** The list of Modifiers available as variants of CDDirectModifier:
   */

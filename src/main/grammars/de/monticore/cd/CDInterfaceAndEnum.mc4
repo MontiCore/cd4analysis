@@ -36,6 +36,8 @@ component grammar CDInterfaceAndEnum extends de.monticore.cd.CDBasis {
     | ";" );
 
   /** Have the enum constants as separate NT, to allow extensions
+      an enum constant is a static final attribute of the enum with the type
+      of the enum
   */
-  CDEnumConstant implements CDAttribute = Name;
+  CDEnumConstant implements Field = Name;
 }

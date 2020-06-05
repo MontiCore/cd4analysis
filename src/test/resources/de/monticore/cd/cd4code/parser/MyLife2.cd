@@ -25,7 +25,7 @@ classdiagram MyLife2 {
   }
 
   composition Student -> Grades [*];
-  association [0..2] Person (parent) <-> (child) Person [*];
+  association [0..1] Person (parent) <-> (child) Person [*];
   association phonebook Person [String] -> PhoneNumber;
 
   interface CorporateEntity {

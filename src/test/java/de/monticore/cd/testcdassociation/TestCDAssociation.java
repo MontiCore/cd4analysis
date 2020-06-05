@@ -51,7 +51,7 @@ public class TestCDAssociation extends TestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdassociation/parser/cdassociation.cd"));
+    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
   }
 }

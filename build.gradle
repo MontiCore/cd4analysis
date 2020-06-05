@@ -49,6 +49,7 @@ dependencies {
     implementation "de.monticore:monticore-grammar:$mc_version"
     compile "de.monticore:monticore-grammar:$mc_version"
     compile "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
+    implementation "de.monticore:monticore-generator:$mc_version"
     grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
@@ -71,10 +72,21 @@ repositories {
     }
 }
 
+def grammarDependencies = ext {
+    CDBasis = []
+    CDInterfaceAndEnum = ["CDBasis"]
+    CDAssociation = ["CDBasis"]
+    CD4Analysis = ["CDInterfaceAndEnum", "CDAssociation"]
+    CD4CodeBasis = []
+    CD4Code = ["CD4Analysis", "CD4CodeBasis"]
+}
+
 // one task per grammar file
 fileTree(grammarDir).matching { include '**/*.mc4' }.each {
     def g = it
-    task "generateGrammar${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+    def grammarName = it.getName().substring(0, it.getName().lastIndexOf('.'))
+
+    task "generateGrammar${grammarName}"(type: MCTask) {
         grammar = file g
         outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
         handcodedPath file("$projectDir/src/main/java")
@@ -99,6 +111,15 @@ fileTree(testGrammarDir).matching { include '**/*.mc4' }.each {
 }
 
 compileJava {
+    tasks.findAll { task -> task.name.startsWith("generateGrammar") }.each {
+        def grammarName = it.getName().substring('generateGrammar'.length())
+        def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
+        it.dependsOn dependsOnGrammars
+        /*it.outputs.upToDateWhen {
+            it.outputs.upToDateWhen && !dependsOnGrammars.any { !it.outputs.upToDateWhen }
+        }*/
+    }
+
     dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 

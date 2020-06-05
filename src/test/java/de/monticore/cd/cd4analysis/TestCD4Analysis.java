@@ -6,11 +6,12 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd.testcd4analysis;
+package de.monticore.cd.cd4analysis;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd.cdbasis._ast.ASTCDCompilationUnit;
+import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,11 +22,13 @@ public class TestCD4Analysis extends TestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/cd4a.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 
-  public void parse(String... blub) {
-
+  @Test
+  public void testLanguageTeaser() throws RecognitionException, IOException {
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/MyLife.cd"));
+    checkNullAndPresence(p, astcdCompilationUnit);
   }
 }

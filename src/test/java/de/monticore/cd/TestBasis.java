@@ -24,12 +24,6 @@ public class TestBasis {
     Log.enableFailQuick(false);
   }
 
-  /*
-    @After
-    public void after() {
-      checkLogError();
-    }
-  */
   public String getFilePath(String path) {
     return Paths.get("src/test/resources/de/monticore/cd/" + path).toString();
   }

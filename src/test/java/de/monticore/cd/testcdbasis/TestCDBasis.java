@@ -10,6 +10,8 @@ import de.monticore.cd.testcdbasis._parser.TestCDBasisParser;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class TestCDBasis extends TestBasis {
@@ -44,8 +46,12 @@ public class TestCDBasis extends TestBasis {
 
   @Test
   public void parseCDModifier() throws IOException {
-    final Optional<ASTCDModifier> astcdModifier = p.parse_StringCDModifier("abstract final <<blub>>");
-    checkNullAndPresence(p, astcdModifier);
+    List<String> modifier = Arrays.asList("final", "abstract", "<<stereo>>");
+
+    for (String m : modifier) {
+      final Optional<ASTCDModifier> astcdModifier = p.parse_StringCDModifier(m);
+      checkNullAndPresence(p, astcdModifier);
+    }
   }
 
   @Test
@@ -62,7 +68,7 @@ public class TestCDBasis extends TestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cdbasis/parser/cdbasis.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cdbasis/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 

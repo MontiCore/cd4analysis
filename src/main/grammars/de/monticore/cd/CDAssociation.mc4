@@ -34,10 +34,12 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
 
   /** The list of association directions available as variants of CDAssociationDirection:
   */
-  CDLeftToRightDir implements CDAssociationDirection = "->";
-  CDRightToLeftDir implements CDAssociationDirection = "<-";
-  CDBiDir          implements CDAssociationDirection = "<->";
-  CDUnspecifiedDir implements CDAssociationDirection = "--";
+  CDLeftToRightDir implements CDAssociationDirection = {noSpace(2)}? "-" ">";
+  CDRightToLeftDir implements CDAssociationDirection = {noSpace(2)}? "<" "-";
+  CDBiDir          implements CDAssociationDirection = {noSpace(2, 3)}? "<" "-" ">";
+  CDUnspecifiedDir implements CDAssociationDirection = {noSpace(2)}? "-" "-";
+
+  CDOrdered = {noSpace(2,3)}? "{" ["ordered"] "}";
 
   /** CDAssociationSide defines the properties of one side of
       an association. This construction allows developers to access 
@@ -46,15 +48,15 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
   */
   interface CDAssociationSide =
     CDModifier* CDCardinality? MCQualifiedName
-    CDQualifier? CDRole? ["ordered"]?; // TODO überall: set as key(...), 
+    CDQualifier? CDRole? ordered:CDOrdered?; // TODO überall: set as key(...),
 
   CDAssociationLeftSide implements CDAssociationSide =
-    ["ordered"]? CDModifier* CDCardinality?
+    ordered:CDOrdered? CDModifier* CDCardinality?
     MCQualifiedName CDQualifier? CDRole?;
 
   CDAssociationRightSide implements CDAssociationSide =
     CDRole? CDQualifier? MCQualifiedName
-    CDCardinality? CDModifier* ["ordered"]?;
+    CDCardinality? CDModifier* ordered:CDOrdered?;
 
   /** A role symbol is a simple name. It is embedded in the association.
    */
@@ -79,7 +81,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
   //   CDQualifier = SquareBracketOpen byAttributeName:Name@Field SquareBracketClose | "[" byType:MCType "]"; 
   //   CDSquareBracketOpen = {noSpace(2)} "[" "[" ; 
   //   CDSquareBracketClose = {noSpace(2)} "]" "]" ;
-  CDQualifier = "[" "[" {noSpace()}? byAttributeName:Name@Field "]" "]" {noSpace()}? | "[" byType:MCType "]";
+  CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Field {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
 
   /** Write a composition in short form inside the composite class:
       class A {
@@ -87,7 +89,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
       }
   */
   CDDirectComposition implements CDMember =
-    "->" CDAssociationRightSide ";";
+    {noSpace(2)}? "-" ">" CDAssociationRightSide ";";
 
 
   /* ==== Symbols ==== */
@@ -104,13 +106,13 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     // a) wieso ist attribute Optional? Wenn das Role-Symbol existiert
     //         dann müssten typ und auch name wirklich geklärt sein?
     //    -> das sind die beiden teile von CDQualifier
-    attribute: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
-    type: Optional<de.monticore.types.check.SymTypeExpression>
+    attributeQualifier: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
+    typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
 
     // TODO: Fragen von BR:
     // Was ist associationTarget?
     // -> ist der target type
-    targetType: de.monticore.types.check.SymTypeExpression
+    //targetType: de.monticore.types.check.SymTypeExpression // ist das type in FieldSymbol?
     
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
