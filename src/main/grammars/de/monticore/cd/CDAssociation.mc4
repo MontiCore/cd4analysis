@@ -26,10 +26,6 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     ";";
 
   /* ==== Association ==== */
-  // TODO: Check, ob "->" die Parsebarkeit von Expressions der Art " 3<-2" zerstoert
-  // (das ist wahrscheinlich, dann bitte zerlegen in {noSpace(2)}? "-" ">", etc.
-  // Evtl. ist dann auch hier CDAssociationDirection zu einem Interface mit 4 
-  // SubNT zu machen ...
   interface CDAssociationDirection;
 
   /** The list of association directions available as variants of CDAssociationDirection:
@@ -48,7 +44,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
   */
   interface CDAssociationSide =
     CDModifier* CDCardinality? MCQualifiedName
-    CDQualifier? CDRole? ordered:CDOrdered?; // TODO überall: set as key(...),
+    CDQualifier? CDRole? ordered:CDOrdered?; 
 
   CDAssociationLeftSide implements CDAssociationSide =
     ordered:CDOrdered? CDModifier* CDCardinality?
@@ -77,7 +73,6 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
-  // TODO: {noSpace(2)}? ganz vorne nutzen, also zB:
   //   CDQualifier = SquareBracketOpen byAttributeName:Name@Field SquareBracketClose | "[" byType:MCType "]"; 
   //   CDSquareBracketOpen = {noSpace(2)} "[" "[" ; 
   //   CDSquareBracketClose = {noSpace(2)} "]" "]" ;
@@ -102,17 +97,17 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     isNavigable: boolean
     cardinality: Optional<de.monticore.cd.cdassociation._ast.ASTCDCardinality>
 
-    // TODO: Fragen von BR:
-    // a) wieso ist attribute Optional? Wenn das Role-Symbol existiert
-    //         dann müssten typ und auch name wirklich geklärt sein?
-    //    -> das sind die beiden teile von CDQualifier
+    // Defined exactly if a qualifier is given:
     attributeQualifier: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
     typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
 
-    // TODO: Fragen von BR:
-    // Was ist associationTarget?
-    // -> ist der target type
-    //targetType: de.monticore.types.check.SymTypeExpression // ist das type in FieldSymbol?
+    // // TODO BR: stimmt dieser Satz:
+    // the type where the role points to is available through the association
+    // wäre es möglich, dass die Rolle selbst zwar ihre assoziation kennt
+    // aber nicht ob sie "links" oder "rechts" sitzt
+    // dann wäre es wohl sinnvoll, der Rolle den targetType direkt mitzugeben
+    // (auch wenn das Redundanz einbaut)
+    // targetType: de.monticore.types.check.SymTypeExpression 
     
     association: de.monticore.cd.cdassociation._symboltable.SymAssociation
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
