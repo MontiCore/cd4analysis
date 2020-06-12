@@ -67,13 +67,6 @@ public class CD4CodeSymModifier
     isReadOnly = readOnly;
   }
 
-  @Override
-  public CD4CodeSymModifier addModifier(ASTCDDirectModifier... modifier) {
-    final List<ASTCDDirectModifier> directModifier = Arrays.asList(modifier);
-    directModifier.forEach(this::addModifier);
-    return this;
-  }
-
   public CD4CodeSymModifier addModifier(ASTCD4CodePrivateModifier modifier) {
     this.setPrivate(true);
     return this;

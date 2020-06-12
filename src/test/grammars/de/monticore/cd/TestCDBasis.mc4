@@ -2,7 +2,11 @@
 package de.monticore.cd;
 
 grammar TestCDBasis extends
-            de.monticore.cd.CDBasis
+            de.monticore.cd.CDBasis,
+            de.monticore.types.MCSimpleGenericTypes,
+            de.monticore.literals.MCCommonLiterals,
+            de.monticore.expressions.BitExpressions,
+            de.monticore.expressions.CommonExpressions
          {
   start CDCompilationUnit;
 }

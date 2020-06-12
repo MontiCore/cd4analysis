@@ -2,7 +2,11 @@
 package de.monticore.cd;
 
 grammar TestCDAssociation extends
-            de.monticore.cd.CDAssociation
+            de.monticore.cd.CDAssociation,
+            de.monticore.types.MCSimpleGenericTypes,
+            de.monticore.literals.MCCommonLiterals,
+            de.monticore.expressions.BitExpressions,
+            de.monticore.expressions.CommonExpressions
          {
   start CDCompilationUnit;
 }

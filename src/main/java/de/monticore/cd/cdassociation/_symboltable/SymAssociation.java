@@ -8,6 +8,8 @@ import de.monticore.cd.cdassociation._symboltable.CDRoleSymbol;
 public class SymAssociation {
   protected Optional<CDAssociationSymbol> association;
   protected CDRoleSymbol left, right;
+  protected boolean isAssociation, isComposition;
+  protected boolean isDerived;
 
   public SymAssociation(Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
     setAssociation(association);
@@ -56,5 +58,29 @@ public class SymAssociation {
   public void setRight(CDRoleSymbol right) {
     this.right = right;
     this.right.setAssociation(this);
+  }
+
+  public boolean isAssociation() {
+    return isAssociation;
+  }
+
+  public void setIsAssociation(boolean association) {
+    isAssociation = association;
+  }
+
+  public boolean isComposition() {
+    return isComposition;
+  }
+
+  public void setIsComposition(boolean composition) {
+    isComposition = composition;
+  }
+
+  public boolean isDerived() {
+    return isDerived;
+  }
+
+  public void setIsDerived(boolean derived) {
+    isDerived = derived;
   }
 }

@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.cd4code;
+package de.monticore.cd4code.parser;
 
 classdiagram MyLife2 {
   public abstract class Person implements CorporateEntity {

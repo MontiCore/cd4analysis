@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd.cdbasis.parser;
+
+import de.monticore.cd.cdbasis.Simple;
+
+classdiagram Import {
+
+  class D extends C;
+
+}

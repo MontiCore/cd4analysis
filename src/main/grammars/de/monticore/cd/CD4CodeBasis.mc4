@@ -16,7 +16,8 @@ package de.monticore.cd;
 
 component grammar CD4CodeBasis extends
     de.monticore.cd.CDBasis,
-    de.monticore.cd.CDInterfaceAndEnum {
+    de.monticore.cd.CDInterfaceAndEnum,
+    de.monticore.expressions.CommonExpressions {
 
   /* ==== Methods ==== */
   /** Introduction of the new form of symbol: the Method
@@ -61,7 +62,7 @@ component grammar CD4CodeBasis extends
       (like in Java)
    */
   CD4CodeEnumConstant extends CDEnumConstant =
-    Name ( "(" (Expression || ",")* ")" );
+    Name Arguments?;
 
   // !! BR TODO "MethodType" intendiert, dass hier sowohl argument als auch Ergebnis
   //  typisiert sind. --> Parameter fehlen.: Parameter stehen schon im MethodSymbol
@@ -73,9 +74,8 @@ component grammar CD4CodeBasis extends
       visibility
    */
   symbolrule CDMethodSignature =
-    //isConstructor: boolean  // bereits in neuem MethodSymbol
     hasEllipsis: boolean // TODO auch in MethodSymbol rein bauen?
     exceptions: de.monticore.types.check.SymTypeExpression*
-    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier*
+    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
   ;
 }

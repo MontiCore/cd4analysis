@@ -2,8 +2,6 @@
 
 package de.monticore.cd.cdbasis.parser;
 
-import whatever.other.file;
-
 targetpackage de.monticore.cdbasis;
 
 targetimport additional.imports;

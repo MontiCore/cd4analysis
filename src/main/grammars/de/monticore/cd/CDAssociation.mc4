@@ -98,7 +98,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     cardinality: Optional<de.monticore.cd.cdassociation._ast.ASTCDCardinality>
 
     // Defined exactly if a qualifier is given:
-    attributeQualifier: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
+    attributeQualifier: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol> // TODO SVa: should this be just String?, because its the name of the attribute?
     typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
 
     // // TODO BR: stimmt dieser Satz:
@@ -109,7 +109,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     // (auch wenn das Redundanz einbaut)
     // targetType: de.monticore.types.check.SymTypeExpression 
     
-    association: de.monticore.cd.cdassociation._symboltable.SymAssociation
+    association: Optional<de.monticore.cd.cdassociation._symboltable.SymAssociation> // TODO SVa: should this always be present, even in the DirectComposition?
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
     isOrdered: boolean
   ;

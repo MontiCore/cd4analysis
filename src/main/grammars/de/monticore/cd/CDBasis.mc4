@@ -90,7 +90,7 @@ component grammar CDBasis extends
   /** CDType are all of the CDElements, which can be used to describe a 
       type for e.g. variables, method arguments, ...
   */
-  interface symbol CDType extends CDElement, Type;
+  interface symbol CDType extends CDElement, OOType;
 
   /*  Remark:
       Because people that know Java also know interface implementation,
@@ -106,10 +106,10 @@ component grammar CDBasis extends
       interfaces (by filling the external NT defined there)
    */
   CDInterfaceUsage =
-    ( "implements" interface:(MCObjectType || ",")+ );
+    "implements" interface:(MCObjectType || ",")+;
 
   CDExtendUsage =
-    ( "extends" superclass:(MCObjectType || ",")+ );
+    "extends" superclass:(MCObjectType || ",")+;
 
   /** CDClass defines a class including extensions and its body.
    */
@@ -135,6 +135,14 @@ component grammar CDBasis extends
     CDModifier* MCType Name ("=" initial:Expression)? ";";
 
   /* ==== Symbols ==== */
+  /** The symbol for CDDefinition contains the SymModifier. The SymModifier is the
+      handwritten information of the connected modifier in the symbol table,
+      which provides the condensed information of all available modifiers.
+  */
+  symbolrule CDDefinition =
+    modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
+  ;
+
   /** The symbol for CDAttributes contains the link to the type of the attribute
       and the SymModifier. The SymModifier is the handwritten information of the
       connected modifier in the symbol table, which provides the condensed information
@@ -142,6 +150,7 @@ component grammar CDBasis extends
   */
   symbolrule CDAttribute =
     modifier: de.monticore.cd.cdbasis._symboltable.SymModifier
+    initial: Optional<de.monticore.types.check.SymTypeExpression> // TODO SVa: sollte das überhaupt gespeichert werden?
   ;
 
   /** The symbol for CDType has the information what specific type it describes.
