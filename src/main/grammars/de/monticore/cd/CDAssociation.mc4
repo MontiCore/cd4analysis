@@ -102,7 +102,7 @@ component grammar CDAssociation extends de.monticore.cd.CDBasis {
     typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
 
     // // TODO BR: stimmt dieser Satz:
-    // the type where the role points to is  available through the association
+    // the type where the role points to is available through the association
     // wäre es möglich, dass die Rolle selbst zwar ihre assoziation kennt
     // aber nicht ob sie "links" oder "rechts" sitzt
     // dann wäre es wohl sinnvoll, der Rolle den targetType direkt mitzugeben
