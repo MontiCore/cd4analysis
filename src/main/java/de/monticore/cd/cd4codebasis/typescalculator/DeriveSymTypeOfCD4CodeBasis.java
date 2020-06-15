@@ -4,9 +4,10 @@
 
 package de.monticore.cd.cd4codebasis.typescalculator;
 
-import de.monticore.cd.cd4code._visitor.CD4CodeDelegatorVisitor;
+import de.monticore.cd.cd4codebasis._visitor.CD4CodeBasisDelegatorVisitor;
 import de.monticore.cd.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
@@ -14,13 +15,14 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
-public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeDelegatorVisitor
+public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
     implements ITypesCalculator {
 
   private TypeCheckResult typeCheckResult;
+  private CD4CodeBasisDelegatorVisitor realThis;
 
   public DeriveSymTypeOfCD4CodeBasis() {
-    setRealThis(this);
+    this.realThis = this;
     init();
   }
 
@@ -36,6 +38,12 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeDelegatorVisitor
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
+    lit.accept(getRealThis());
+    return Optional.of(getTypeCheckResult().getLast());
+  }
+
+  @Override
+  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
     lit.accept(getRealThis());
     return Optional.of(getTypeCheckResult().getLast());
   }
@@ -56,7 +64,7 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeDelegatorVisitor
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setRealThis(getRealThis());
-    deriveSymTypeOfLiterals.setResult(getTypeCheckResult());
+    deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
 
     final DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();

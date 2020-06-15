@@ -6,6 +6,7 @@ package de.monticore.cd.cdbasis.typescalculator;
 
 import de.monticore.cd.cdbasis._visitor.CDBasisDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
@@ -44,6 +45,12 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
     return Optional.of(getTypeCheckResult().getLast());
   }
 
+  @Override
+  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
+    lit.accept(getRealThis());
+    return Optional.of(getTypeCheckResult().getLast());
+  }
+
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     type.accept(getRealThis());
     return Optional.of(getTypeCheckResult().getLast());
@@ -58,7 +65,7 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
   public void init() {
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setRealThis(getRealThis());
-    deriveSymTypeOfLiterals.setResult(getTypeCheckResult());
+    deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
 
     final DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
