@@ -1,0 +1,116 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
+
+/**
+   This component grammar defines associations for CD4Analysis and CD4Code.
+
+   This includes directions, qualifiers, multiplicities and compositions.   
+*/
+
+component grammar CDAssociation extends de.monticore.CDBasis {
+
+  /** An associations/composition has a name, a left, right part and a direction
+   */
+  symbol scope CDAssociation implements CDElement =
+    Modifier
+    (["association"] | ["composition"]) // TODO set both as key(...), currently (12.6.) not possible
+    ([derived:"/"])? Name?
+
+    left:CDAssociationLeftSide
+
+    CDAssociationDirection
+
+    right:CDAssociationRightSide
+    ";";
+
+  /* ==== Association ==== */
+  interface CDAssociationDirection;
+
+  /** The list of association directions available as variants of CDAssociationDirection:
+  */
+  CDLeftToRightDir implements CDAssociationDirection = {noSpace(2)}? "-" ">";
+  CDRightToLeftDir implements CDAssociationDirection = {noSpace(2)}? "<" "-";
+  CDBiDir          implements CDAssociationDirection = {noSpace(2, 3)}? "<" "-" ">";
+  CDUnspecifiedDir implements CDAssociationDirection = {noSpace(2)}? "-" "-";
+
+  CDOrdered = {noSpace(2,3)}? "{" ["ordered"] "}"; // TODO SVa: use key when available, KeyConstant doesn't support ConstantGroup currently (12.06.)
+
+  /** CDAssociationSide defines the properties of one side of
+      an association. This construction allows developers to access 
+      both sides of the associations using the same interface,
+      even though the concrete syntax differs in their order.
+  */
+  interface CDAssociationSide =
+    Modifier CDCardinality? MCQualifiedName
+    CDQualifier? CDRole? CDOrdered?;
+
+  CDAssociationLeftSide implements CDAssociationSide =
+    CDOrdered? Modifier CDCardinality?
+    MCQualifiedName CDQualifier? CDRole?;
+
+  CDAssociationRightSide implements CDAssociationSide =
+    CDRole? CDQualifier? MCQualifiedName
+    CDCardinality? Modifier CDOrdered?;
+
+  /** A role symbol is a simple name. It is embedded in the association.
+   */
+  symbol CDRole implements Field = "(" Name ")";
+
+  /** CDCardinality captures the cardinality of an association side.
+      Associations currently allow the for standard cardinalities, but
+      this is extensible. Visitors help to identify the correct cardinality.
+  */  
+  interface CDCardinality; // TODO SVa, BR: hier einfach Cardinality nutzen? (ist schon flexibel auf min und max) -> Nein erstmal die simple variante
+  CDCardMult       implements CDCardinality = "[*]";
+  CDCardOne        implements CDCardinality = "[1]";
+  CDCardAtLeastOne implements CDCardinality = "[1..*]";
+  CDCardOpt        implements CDCardinality = "[0..1]";
+
+  /** CDQualifier describes the two froms of explicit qualifications:
+      either thrugh an attribute value contained in the value-object
+      or through a type (such as String) , which the value-object doesn't
+      know about.
+  */
+  // TODO SVa
+  //CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Field {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
+  CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Variable {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
+
+  /** Write a composition in short form inside the composite class:
+      class A {
+        -> (r) B [*];
+      }
+
+        transforms to:
+      composition [1] A -> (r) B [*];
+  */
+  CDDirectComposition implements CDMember =
+    CDLeftToRightDir CDAssociationRightSide ";";
+
+
+  /* ==== Symbols ==== */
+
+  /** The symbol for CDRole contains all the information of one side of an association.
+      It contains the link to the type and the SymAssociation, which contains the
+      basic information of an association.
+  */
+  symbolrule CDRole =
+    isDefinitiveNavigable: boolean
+    cardinality: Optional<de.monticore.cdassociation._ast.ASTCDCardinality>
+
+    // Defined exactly if a qualifier is given:
+    attributeQualifier: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
+    typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
+
+    association: de.monticore.cdassociation._symboltable.SymAssociation
+    isOrdered: boolean
+  ;
+
+  /** The symbol for CDAssociation is defined for named associations.
+      The SymAssociation object provides all relevant 
+      information obout the association and the roles.
+  */
+  symbolrule CDAssociation =
+    association: de.monticore.cdassociation._symboltable.SymAssociation;
+}

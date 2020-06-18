@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+grammar TestCD4CodeBasis extends
+            de.monticore.CD4CodeBasis,
+            de.monticore.types.MCSimpleGenericTypes,
+            de.monticore.literals.MCCommonLiterals,
+            de.monticore.expressions.BitExpressions,
+            de.monticore.expressions.CommonExpressions
+         {
+  start CDCompilationUnit;
+}

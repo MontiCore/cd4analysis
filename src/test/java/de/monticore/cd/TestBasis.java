@@ -25,7 +25,7 @@ public class TestBasis {
   }
 
   public String getFilePath(String path) {
-    return Paths.get("src/test/resources/de/monticore/cd/" + path).toString();
+    return Paths.get("src/test/resources/de/monticore/" + path).toString();
   }
 
   protected String getJoinedErrors() {

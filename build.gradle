@@ -72,54 +72,89 @@ repositories {
     }
 }
 
-def grammarDependencies = ext {
-    CDBasis = []
-    CDInterfaceAndEnum = ["CDBasis"]
-    CDAssociation = ["CDBasis"]
-    CD4Analysis = ["CDInterfaceAndEnum", "CDAssociation"]
-    CD4CodeBasis = []
-    CD4Code = ["CD4Analysis", "CD4CodeBasis"]
+def grammarDependencies = [
+    CDBasis: [],
+    CDInterfaceAndEnum: ["CDBasis"],
+    CDAssociation: ["CDBasis"],
+    CD4Analysis: ["CDInterfaceAndEnum", "CDAssociation"],
+    CD4CodeBasis: ["CDBasis", "CDInterfaceAndEnum"],
+    CD4Code: ["CD4Analysis", "CD4CodeBasis"],
+];
+
+def testGrammarDependencies = [
+    TestCDBasis: ["CDBasis"],
+    TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+    TestCDAssociation: ["CDAssociation"],
+    TestCD4CodeBasis: ["CD4CodeBasis"],
+]
+
+ext.createGrammarName = { String name ->
+    "${grammarDir}/de/monticore/${name}.mc4"
+}
+
+ext.createTestGrammarName = { String name ->
+    "${testGrammarDir}/de/monticore/${name}.mc4"
 }
 
 // one task per grammar file
-fileTree(grammarDir).matching { include '**/*.mc4' }.each {
-    def g = it
-    def grammarName = it.getName().substring(0, it.getName().lastIndexOf('.'))
+grammarDependencies.each {
+    def g = createGrammarName(it.key)
+    def grammarName = it.key
+    def dependencies = it.value
 
     task "generateGrammar${grammarName}"(type: MCTask) {
-        grammar = file g
+        def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
+        dependsOn dependsOnGrammars
+
+        def grammarFile = file g
+        grammar = grammarFile
         outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
         handcodedPath file("$projectDir/src/main/java")
-        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
+
         def uptoDate = incCheck(grammarIncludingPackage)
+
+        def uptoDateTransitive = dependencies.collect {
+            def grammar = file createGrammarName(it)
+            def grammarPackage = file(grammarDir).toURI().relativize(grammar.toURI()).toString()
+            return incCheck(grammarPackage)
+        }
+
+        uptoDate = uptoDateTransitive.inject(uptoDate) { a, b -> a && b }
         outputs.upToDateWhen { uptoDate }
     }
 }
 
 // one task per test grammar file
-fileTree(testGrammarDir).matching { include '**/*.mc4' }.each {
-    def g = it
-    println("g: " + g)
-    task "generateTestGrammar${it.getName().substring(0, it.getName().lastIndexOf('.'))}"(type: MCTask) {
+testGrammarDependencies.each {
+    def g = createTestGrammarName(it.key)
+    def grammarName = it.key
+    def dependencies = it.value
+
+    task "generateTestGrammar${grammarName}"(type: MCTask) {
+        def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
+        dependsOn dependsOnGrammars
+
+        def grammarFile = file g
         grammar = file g
         outputDir = file "$buildDir/generated-test-sources/monticore/sourcecode"
         handcodedPath file("$projectDir/src/test/java")
-        def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+        def grammarIncludingPackage = file(testGrammarDir).toURI().relativize(grammarFile.toURI()).toString()
         def uptoDate = incCheck(grammarIncludingPackage)
+
+        def uptoDateTransitive = dependencies.collect {
+            def grammar = file createGrammarName(it)
+            def grammarPackage = file(grammarDir).toURI().relativize(grammar.toURI()).toString()
+            println "grammarPackage: $grammarPackage"
+            return incCheck(grammarPackage)
+        }
+
+        uptoDate = uptoDateTransitive.inject(uptoDate) { a, b -> a && b }
         outputs.upToDateWhen { uptoDate }
     }
 }
 
 compileJava {
-    tasks.findAll { task -> task.name.startsWith("generateGrammar") }.each {
-        def grammarName = it.getName().substring('generateGrammar'.length())
-        def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
-        it.dependsOn dependsOnGrammars
-        /*it.outputs.upToDateWhen {
-            it.outputs.upToDateWhen && !dependsOnGrammars.any { !it.outputs.upToDateWhen }
-        }*/
-    }
-
     dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
@@ -186,7 +221,7 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact shadowJar
+            //artifact shadowJar
             artifact grammarJar
         }
     }

@@ -1,0 +1,139 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
+
+/**
+   This is the basis language component for CD4Analysis and CD4Code.
+   
+   It contains class structures with attributes, but omits
+   interfaces, enums, modifiers, methods.
+
+   It uses 
+   * ExpressionsBasis, MCLiteralsBasis  (for the Expressions)
+   * MCBasicTypes (for the types in CS and AST) and
+   * TypesSymbols (for imported/exported TypeSymbols) 
+   as holes that shall be filled in concrete, complete languages
+   by a variety of available grammars.
+*/
+
+component grammar CDBasis extends
+    de.monticore.literals.MCLiteralsBasis,
+    de.monticore.expressions.ExpressionsBasis,
+    de.monticore.types.MCBasicTypes,
+    de.monticore.types.TypeSymbols,
+    de.monticore.UMLStereotype,
+    de.monticore.UMLModifier {
+
+  /* ==== General ==== */
+  /** The artifact header:
+      import statements, package definition
+  */
+  CDCompilationUnit =
+    CDPackageStatement?
+    MCImportStatement*
+    CDTargetPackageStatement?
+    CDTargetImportStatement*
+    CDDefinition;
+
+  /** The package statement denotes the package of the model file itself
+  */
+  CDPackageStatement = "package" package:(Name& || ".")+ ";";
+
+  /** The target package is a information for the generator,
+      which should use this information as package-path for
+      the generate code
+  */
+  CDTargetPackageStatement = key("targetpackage") targetpackage:(Name& || ".")+ ";";
+
+  /** This import statement allows to explain in the model, which
+      additional imports shall be added to the generated code
+      (beyond the imports that the generator identifies itself).
+  */
+  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";";
+
+  /** The class diagram: defines a set of elements
+  */
+  scope CDDefinition =
+    Modifier key("classdiagram") Name "{" CDElement* "}"; // TODO SVa: what modifiers are allowed here?
+
+  /** CDModifier is the basic modifier structure, to use in the different cd elements
+    @attribute CDDirectModifier
+                  the interface for all modifiers
+    @attribute Stereotype
+                  the MontiCore stereotype
+  */
+  //interface CDModifier; // -> UMLModifier
+
+  //CDStereotype implements CDModifier = Stereotype;
+
+  /** CDDirectModifier subsumes all possible modifiers for elements in the CD.
+      This NT is realized as interface because it is meant for extension.
+      A first list of (already) available options exists.
+  */
+  //CDDirectModifier implements CDModifier = UMLModifier;
+
+  /* ==== CDElement ==== */
+  /** CDElement denotes the basic elements of a class diagram.
+      This includes Classes, Interfaces, Enums, Associations
+      and is meant for extension if needed.
+  */
+  interface CDElement;
+
+  /** CDType are all of the CDElements, which can be used to describe a 
+      type for e.g. variables, method arguments, ...
+  */
+  interface symbol CDType extends CDElement, OOType;
+
+  /*  Remark:
+      Because people that know Java also know interface implementation,
+      we decide to put "implements" already into the grammar here 
+      and restrict the grammar to classes only through a CoCo.
+      Advantage: better explanation of the error if someone
+      actually uses "implement" with the base grammar .
+      This CoCo restriction will be switched off in the
+      CDInterfaceAndEnum extension.
+  */
+  
+  /** This adds the possibility for classes to implement
+      interfaces (by filling the external NT defined there)
+   */
+  CDInterfaceUsage =
+    "implements" interface:(MCObjectType || ",")+;
+
+  CDExtendUsage =
+    "extends" superclass:(MCObjectType || ",")+;
+
+  /** CDClass defines a class including extensions and its body.
+   */
+  scope CDClass implements CDType =
+    Modifier "class" Name
+    CDExtendUsage?
+    CDInterfaceUsage?
+    ( "{"
+        CDMember*
+      "}"
+    | ";" );
+
+
+  /* ==== Attributes ==== */
+  /** The CDMember interface is for all possible members of class.
+   *  This grammar only uses it for CDAttribute.
+   */
+  interface CDMember;
+
+  /** An attribute has a type, a name and an optional initializing expression.
+   */
+  CDAttribute implements CDMember, Field =
+    Modifier MCType Name ("=" initial:Expression)? ";";
+
+  /* ==== Symbols ==== */
+  /** The symbol for CDType has the information what specific type it describes.
+      The symbol contains all the interfaces and superclasses of the given type.
+      The modifier is a collection of all the available CDModifier.
+  */
+  symbolrule CDType =
+    interfaces: de.monticore.types.check.SymTypeExpression*
+  ;
+
+}

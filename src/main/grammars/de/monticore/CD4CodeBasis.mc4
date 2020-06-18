@@ -1,0 +1,66 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
+
+/**
+   This component grammar describes the method signatures that 
+   are used by CD4Code.
+   
+   It contains method and constructor signatures including 
+   visibility modifiers.
+
+   It uses CDBasis.mc4, which allows a rather free
+   combination with other extensions.
+*/
+
+component grammar CD4CodeBasis extends
+    de.monticore.CDBasis,
+    de.monticore.CDInterfaceAndEnum,
+    de.monticore.expressions.CommonExpressions {
+
+  /* ==== Methods ==== */
+  /** Introduction of the new form of symbol: the Method
+   */
+  interface scope symbol CDMethodSignature extends CDMember, Method = Name;
+
+  CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
+
+  /** The standard (Java) method
+   */
+  CDMethod implements CDMethodSignature =
+    Modifier
+    MCReturnType
+    Name "(" (CDParameter || ",")* ")"
+    CDThrowsDeclaration?
+    ";";
+
+  /** The standard (Java) constructor (without return type)
+   */
+  CDConstructor implements CDMethodSignature =
+    Modifier
+    Name "(" (CDParameter || ",")* ")"
+    CDThrowsDeclaration?
+    ";";
+
+  /** Method parameter: with type, name, default value,
+      and list extension "..."
+   */
+  CDParameter implements Field = // TODO SVa: besser Variable? -> wenn in TypeSymbols umgestellt ist, dann in extra parameter scope
+    MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+
+  /** Enumeration constants may now also be defined using arguments
+      (like in Java)
+   */
+  CD4CodeEnumConstant extends CDEnumConstant =
+    Name Arguments?;
+
+  /* ==== Symbols ==== */
+  /** Method knows its signature, whether it is a constructor, 
+      visibility
+   */
+  symbolrule CDMethodSignature =
+    hasEllipsis: boolean // TODO auch in MethodSymbol rein bauen! -> ist noch nicht drin (Stand 12.06.)
+    exceptions: de.monticore.types.check.SymTypeExpression*
+  ;
+}
