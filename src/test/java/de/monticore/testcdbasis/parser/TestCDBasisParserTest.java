@@ -2,7 +2,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.testcdbasis;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.testcdbasis.parser;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.*;
@@ -12,7 +16,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDBasis extends TestBasis {
+public class TestCDBasisParserTest extends TestBasis {
   TestCDBasisParser p = new TestCDBasisParser();
 
   @Test

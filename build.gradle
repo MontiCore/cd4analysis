@@ -145,13 +145,16 @@ testGrammarDependencies.each {
         def uptoDateTransitive = dependencies.collect {
             def grammar = file createGrammarName(it)
             def grammarPackage = file(grammarDir).toURI().relativize(grammar.toURI()).toString()
-            println "grammarPackage: $grammarPackage"
             return incCheck(grammarPackage)
         }
 
         uptoDate = uptoDateTransitive.inject(uptoDate) { a, b -> a && b }
         outputs.upToDateWhen { uptoDate }
     }
+}
+
+task generate {
+    dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
 compileJava {

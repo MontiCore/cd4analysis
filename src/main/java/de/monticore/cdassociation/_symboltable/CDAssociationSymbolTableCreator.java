@@ -6,6 +6,7 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
 import de.monticore.cdbasis.modifier.ModifierHandler;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
@@ -22,6 +23,7 @@ public class CDAssociationSymbolTableCreator
   protected DeriveSymTypeOfCDBasis typeCheck;
   protected ModifierHandler modifierHandler;
   protected CDAssociationNavigableVisitor navigableVisitor;
+  protected CDAssocTypeForSymAssociationVisitor assocTypeVisitor;
 
   public CDAssociationSymbolTableCreator(ICDAssociationScope enclosingScope) {
     super(enclosingScope);
@@ -37,6 +39,7 @@ public class CDAssociationSymbolTableCreator
     typeCheck = new DeriveSymTypeOfCDBasis();
     modifierHandler = new ModifierHandler();
     navigableVisitor = CDAssociationMill.associationNavigableVisitor();
+    assocTypeVisitor = new CDAssocTypeForSymAssociationVisitor();
   }
 
   public DeriveSymTypeOfCDBasis getTypeCheck() {
@@ -61,6 +64,11 @@ public class CDAssociationSymbolTableCreator
 
   public void setNavigableVisitor(CDAssociationNavigableVisitor navigableVisitor) {
     this.navigableVisitor = navigableVisitor;
+  }
+
+  public CDAssocTypeForSymAssociationVisitor getAssocTypeVisitor(SymAssociationBuilder symAssociation) {
+    assocTypeVisitor.setSymAssociation(symAssociation);
+    return assocTypeVisitor;
   }
 
   @Override
@@ -101,8 +109,7 @@ public class CDAssociationSymbolTableCreator
       symAssociation.setRightRole(symbol);
       addToScopeAndLinkWithNode(symbol, leftRole);
     }
-    symAssociation.setIsAssociation(node.isAssociation());
-    symAssociation.setIsAssociation(node.isComposition());
+    node.getCDAssocType().accept(getAssocTypeVisitor(symAssociation));
     symAssociation.setIsDerived(node.isDerived());
   }
 

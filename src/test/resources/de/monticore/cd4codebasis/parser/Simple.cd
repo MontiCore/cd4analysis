@@ -24,11 +24,14 @@ classdiagram Simple {
 
   enum D {
     DEE,
-    DEE_TOO(3, 5),
+    DEE_TWO(3, 5),
     DEE_THREE();
 
     int x;
     int y;
+
+    D(int x, int y);
+    D();
   }
 
   enum E {

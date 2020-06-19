@@ -2,7 +2,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.testcd4codebasis;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.testcd4codebasis.parser;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
@@ -17,7 +21,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCD4CodeBasis extends TestBasis {
+public class TestCD4CodeBasisParserTest extends TestBasis {
   TestCD4CodeBasisParser p = new TestCD4CodeBasisParser();
 
   @Test

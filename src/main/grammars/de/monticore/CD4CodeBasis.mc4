@@ -60,7 +60,7 @@ component grammar CD4CodeBasis extends
       visibility
    */
   symbolrule CDMethodSignature =
-    hasEllipsis: boolean // TODO auch in MethodSymbol rein bauen! -> ist noch nicht drin (Stand 12.06.)
+    hasEllipsis: boolean // TODO SVa: hier raus, wenn in MethodSymbol vorhanden
     exceptions: de.monticore.types.check.SymTypeExpression*
   ;
 }

@@ -2,7 +2,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.testcdassociation;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.testcdassociation.parser;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -16,7 +20,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDAssociation extends TestBasis {
+public class TestCDAssociationParserTest extends TestBasis {
   TestCDAssociationParser p = new TestCDAssociationParser();
 
   @Test

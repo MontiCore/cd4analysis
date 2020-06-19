@@ -1,5 +1,9 @@
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code;
+package de.monticore.cd4code.parser;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4code._parser.CD4CodeParser;

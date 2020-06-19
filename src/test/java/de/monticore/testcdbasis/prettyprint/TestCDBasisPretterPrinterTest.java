@@ -12,7 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDBasisPretterPrinter extends TestBasis {
+public class TestCDBasisPretterPrinterTest extends TestBasis {
   TestCDBasisParser p = new TestCDBasisParser();
   TestCDBasisPrettyPrinterDelegator printer = new TestCDBasisPrettyPrinterDelegator();
 

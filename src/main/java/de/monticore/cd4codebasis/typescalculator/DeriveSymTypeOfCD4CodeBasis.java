@@ -63,27 +63,22 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
     this.typeCheckResult = new TypeCheckResult();
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
-    deriveSymTypeOfLiterals.setRealThis(getRealThis());
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
 
     final DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
-    deriveSymTypeOfExpression.setRealThis(getRealThis());
     deriveSymTypeOfExpression.setTypeCheckResult(getTypeCheckResult());
     setExpressionsBasisVisitor(deriveSymTypeOfExpression);
 
     final DeriveSymTypeOfCommonExpressions deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
-    deriveSymTypeOfCommonExpressions.setRealThis(getRealThis());
     deriveSymTypeOfCommonExpressions.setTypeCheckResult(getTypeCheckResult());
     setCommonExpressionsVisitor(deriveSymTypeOfCommonExpressions);
 
     final SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
-    synthesizeSymTypeFromMCBasicTypes.setRealThis(getRealThis());
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(getTypeCheckResult());
     setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
 
     final DeriveSymTypeOfCDBasis deriveSymTypeOfCDBasis = new DeriveSymTypeOfCDBasis();
-    deriveSymTypeOfCDBasis.setRealThis(getRealThis());
     deriveSymTypeOfCDBasis.setTypeCheckResult(getTypeCheckResult());
     setCDBasisVisitor(deriveSymTypeOfCDBasis);
   }

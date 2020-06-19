@@ -9,7 +9,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
 import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
+import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.prettyprint.UMLModifierPrettyPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.testcdbasis._visitor.TestCDBasisDelegatorVisitor;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
@@ -27,10 +29,13 @@ public class TestCDBasisPrettyPrinterDelegator
     this.printer = printer;
     setRealThis(this);
     setCDBasisVisitor(new CDBasisPrettyPrinter(printer));
+
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
+    setUMLModifierVisitor(new UMLModifierPrettyPrinter(printer));
     setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
+    setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setBitExpressionsVisitor(new BitExpressionsPrettyPrinter(printer));
     setCommonExpressionsVisitor(new CommonExpressionsPrettyPrinter(printer));
   }

@@ -55,23 +55,7 @@ component grammar CDBasis extends
   /** The class diagram: defines a set of elements
   */
   scope CDDefinition =
-    Modifier key("classdiagram") Name "{" CDElement* "}"; // TODO SVa: what modifiers are allowed here?
-
-  /** CDModifier is the basic modifier structure, to use in the different cd elements
-    @attribute CDDirectModifier
-                  the interface for all modifiers
-    @attribute Stereotype
-                  the MontiCore stereotype
-  */
-  //interface CDModifier; // -> UMLModifier
-
-  //CDStereotype implements CDModifier = Stereotype;
-
-  /** CDDirectModifier subsumes all possible modifiers for elements in the CD.
-      This NT is realized as interface because it is meant for extension.
-      A first list of (already) available options exists.
-  */
-  //CDDirectModifier implements CDModifier = UMLModifier;
+    Modifier key("classdiagram") Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */
   /** CDElement denotes the basic elements of a class diagram.
@@ -101,6 +85,10 @@ component grammar CDBasis extends
   CDInterfaceUsage =
     "implements" interface:(MCObjectType || ",")+;
 
+  /** This adds the possibility for classes to extend
+      other classes or interfaces extend other interfaces
+      (by filling the external NT defined there)
+   */
   CDExtendUsage =
     "extends" superclass:(MCObjectType || ",")+;
 
@@ -114,7 +102,6 @@ component grammar CDBasis extends
         CDMember*
       "}"
     | ";" );
-
 
   /* ==== Attributes ==== */
   /** The CDMember interface is for all possible members of class.
@@ -130,7 +117,6 @@ component grammar CDBasis extends
   /* ==== Symbols ==== */
   /** The symbol for CDType has the information what specific type it describes.
       The symbol contains all the interfaces and superclasses of the given type.
-      The modifier is a collection of all the available CDModifier.
   */
   symbolrule CDType =
     interfaces: de.monticore.types.check.SymTypeExpression*

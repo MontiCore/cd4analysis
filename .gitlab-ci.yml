@@ -38,6 +38,9 @@ test:
 
 deploy:
   stage: deploy
+  only:
+    - develop
+    - master
   dependencies:
     - build
   script:

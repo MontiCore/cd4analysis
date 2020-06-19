@@ -2,7 +2,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.testcdinterfaceandenum;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.testcdinterfaceandenum.parser;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,7 +20,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDInterfaceAndEnum extends TestBasis {
+public class TestCDInterfaceAndEnumParserTest extends TestBasis {
   TestCDInterfaceAndEnumParser p = new TestCDInterfaceAndEnumParser();
 
   @Test

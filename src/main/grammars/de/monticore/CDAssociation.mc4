@@ -11,12 +11,21 @@ package de.monticore;
 
 component grammar CDAssociation extends de.monticore.CDBasis {
 
-  /** An associations/composition has a name, a left, right part and a direction
+  /** The AssociationType is a separate NT to allow for extension later
+   */
+  interface CDAssocType;
+
+  /** The list of association types available as variants of CDAssocType:
+  */
+  CDAssocTypeAssoc implements CDAssocType = key("association");
+  CDAssocTypeComp  implements CDAssocType = key("composition");
+
+  /** An association has a name, a left, right part and a direction
    */
   symbol scope CDAssociation implements CDElement =
     Modifier
-    (["association"] | ["composition"]) // TODO set both as key(...), currently (12.6.) not possible
-    ([derived:"/"])? Name?
+    CDAssocType
+    ([derived:"/"])? Name?    // TODO BR: brauchen wir derived hier?, weil die assoc sides haben ja jeweils auch Modifier
 
     left:CDAssociationLeftSide
 
@@ -59,10 +68,12 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   symbol CDRole implements Field = "(" Name ")";
 
   /** CDCardinality captures the cardinality of an association side.
-      Associations currently allow the for standard cardinalities, but
+      Associations currently allow for standard cardinalities, but
       this is extensible. Visitors help to identify the correct cardinality.
+      Cardinality from de.monticore.Cardinality is not used, because we only
+      want the simple variants here
   */  
-  interface CDCardinality; // TODO SVa, BR: hier einfach Cardinality nutzen? (ist schon flexibel auf min und max) -> Nein erstmal die simple variante
+  interface CDCardinality;
   CDCardMult       implements CDCardinality = "[*]";
   CDCardOne        implements CDCardinality = "[1]";
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
@@ -73,7 +84,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
-  // TODO SVa
+  // TODO SVa: umstellen sobald das in MC geht
   //CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Field {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
   CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Variable {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
 

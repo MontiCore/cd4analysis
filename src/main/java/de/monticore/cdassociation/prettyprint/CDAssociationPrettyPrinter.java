@@ -7,11 +7,11 @@ package de.monticore.cdassociation.prettyprint;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
+import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class CDAssociationPrettyPrinter extends PrettyPrintUtil
     implements CDAssociationVisitor {
-  protected IndentPrinter printer;
   protected CDAssociationVisitor realThis;
 
   public CDAssociationPrettyPrinter() {
@@ -19,16 +19,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   }
 
   public CDAssociationPrettyPrinter(IndentPrinter printer) {
-    this.printer = printer;
-  }
-
-  @Override
-  public IndentPrinter getPrinter() {
-    return printer;
-  }
-
-  public void setPrinter(IndentPrinter printer) {
-    this.printer = printer;
+    super(printer);
   }
 
   @Override
@@ -41,79 +32,84 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   }
 
   @Override
+  public void visit(ASTCDAssocTypeAssoc node) {
+    print("association");
+  }
+
+  @Override
+  public void visit(ASTCDAssocTypeComp node) {
+    print("composition");
+  }
+
+  @Override
   public void visit(ASTCDAssociation node) {
-    printPreComments(node.iterator_PreComments());
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
 
     node.getModifier().accept(getRealThis());
 
-    if (node.isAssociation()) {
-      getPrinter().print("association");
-    }
-    else if (node.isComposition()) {
-      getPrinter().print("composition");
-    }
-    getPrinter().print(" ");
+    node.getCDAssocType().accept(getRealThis());
+    print(" ");
 
     if (node.isDerived()) {
-      getPrinter().print("/");
+      print("/");
     }
     if (node.isPresentName()) {
-      getPrinter().print(node.getName());
+      print(node.getName());
     }
-    getPrinter().print(" ");
+    print(" ");
   }
 
   @Override
   public void traverse(ASTCDAssociation node) {
     node.getLeft().accept(getRealThis());
-    getPrinter().print(" ");
+    print(" ");
     node.getCDAssociationDirection().accept(getRealThis());
-    getPrinter().print(" ");
+    print(" ");
     node.getRight().accept(getRealThis());
   }
 
   @Override
   public void endVisit(ASTCDAssociation node) {
-    getPrinter().print(";");
-    printPostComments(node.get_PostCommentList().iterator());
+    print(";");
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 
   @Override
   public void visit(ASTCDLeftToRightDir node) {
-    getPrinter().print("->");
+    print("->");
   }
 
   @Override
   public void visit(ASTCDRightToLeftDir node) {
-    getPrinter().print("<-");
+    print("<-");
   }
 
   @Override
   public void visit(ASTCDBiDir node) {
-    getPrinter().print("<->");
+    print("<->");
   }
 
   @Override
   public void visit(ASTCDUnspecifiedDir node) {
-    getPrinter().print("--");
+    print("--");
   }
 
   @Override
   public void handle(ASTCDAssociationLeftSide node) {
     if (node.isPresentCDOrdered()) {
       node.getCDOrdered().accept(getRealThis());
-      getPrinter().print(" ");
+      print(" ");
     }
 
     node.getModifier().accept(getRealThis());
 
     if (node.isPresentCDCardinality()) {
       node.getCDCardinality().accept(getRealThis());
-      getPrinter().print(" ");
+      print(" ");
     }
 
     node.getMCQualifiedName().accept(getRealThis());
-    getPrinter().print(" ");
+    print(" ");
 
     if (node.isPresentCDQualifier()) {
 

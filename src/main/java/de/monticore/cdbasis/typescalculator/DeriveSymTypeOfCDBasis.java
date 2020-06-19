@@ -64,17 +64,14 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
   @Override
   public void init() {
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
-    deriveSymTypeOfLiterals.setRealThis(getRealThis());
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
 
     final DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
-    deriveSymTypeOfExpression.setRealThis(getRealThis());
     deriveSymTypeOfExpression.setTypeCheckResult(getTypeCheckResult());
     setExpressionsBasisVisitor(deriveSymTypeOfExpression);
 
     final SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
-    synthesizeSymTypeFromMCBasicTypes.setRealThis(getRealThis());
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(getTypeCheckResult());
     setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
   }

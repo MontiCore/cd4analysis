@@ -10,9 +10,19 @@ public class CDAssociationNavigableVisitor implements CDAssociationVisitor {
   protected boolean isDefinitiveNavigableLeft;
   protected boolean isDefinitiveNavigableRight;
 
+  private CDAssociationNavigableVisitor realThis;
+
+  public CDAssociationNavigableVisitor() {
+    setRealThis(this);
+  }
+
   @Override
   public CDAssociationNavigableVisitor getRealThis() {
-    return this;
+    return realThis;
+  }
+
+  public void setRealThis(CDAssociationNavigableVisitor realThis) {
+    this.realThis = realThis;
   }
 
   public boolean isDefinitiveNavigableLeft() {

@@ -6,7 +6,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd4analysis;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.cd4analysis.parser;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
@@ -17,7 +21,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCD4Analysis extends TestBasis {
+public class TestCD4AnalysisParserTest extends TestBasis {
   CD4AnalysisParser p = new CD4AnalysisParser();
 
   @Test

@@ -12,8 +12,12 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
 import de.monticore.cdbasis.modifier.ModifierHandler;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
+import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill;
+import de.monticore.types.mcfullgenerictypes._ast.ASTMCArrayType;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
@@ -141,7 +145,14 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setIsParameter(true);
 
-    final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(ast.getMCType());
+    ASTMCType type;
+    if (ast.isEllipsis()) {
+      type = MCFullGenericTypesMill.mCArrayTypeBuilder().setMCType(ast.getMCType()).setDimensions(1).build();
+    } else {
+      type = ast.getMCType();
+    }
+
+    final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(type);
     if (!typeResult.isPresent()) {
       Log.error(String.format("0xA0000: The type (%s) of the attribute (%s) could not be calculated", ast.getMCType().getClass().getSimpleName(), ast.getName()));
     }

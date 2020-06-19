@@ -12,7 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDInterfaceAndEnumPretterPrinter extends TestBasis {
+public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {
   TestCDInterfaceAndEnumParser p = new TestCDInterfaceAndEnumParser();
   TestCDInterfaceAndEnumPrettyPrinterDelegator printer = new TestCDInterfaceAndEnumPrettyPrinterDelegator();
 
