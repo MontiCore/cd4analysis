@@ -84,9 +84,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
-  // TODO SVa: umstellen sobald das in MC geht
-  //CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Field {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
-  CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Variable {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
+  CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Field {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
 
   /** Write a composition in short form inside the composite class:
       class A {
