@@ -26,11 +26,9 @@ component grammar CDAssociation extends de.monticore.CDBasis {
     Modifier
     CDAssocType
     ([derived:"/"])? Name?    // TODO BR: brauchen wir derived hier?, weil die assoc sides haben ja jeweils auch Modifier
-
+    // TODO SV: ich denke ja, denn in den Modifiern dort ist "/" nicht enthalten, und eine Assoziation is in Gänze(!) derived oder realisiert, halbheiten halte ich nicht fuer sinnvoll 
     left:CDAssociationLeftSide
-
     CDAssociationDirection
-
     right:CDAssociationRightSide
     ";";
 
