@@ -25,7 +25,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   symbol scope CDAssociation implements CDElement =
     Modifier
     CDAssocType
-    ([derived:"/"])? Name?    // TODO: rausnehmen
+    ([derived:"/"])? Name?    // TODO: derived rausnehmen
     left:CDAssociationLeftSide
     CDAssociationDirection
     right:CDAssociationRightSide
