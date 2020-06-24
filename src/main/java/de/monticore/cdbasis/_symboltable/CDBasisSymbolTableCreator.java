@@ -4,7 +4,6 @@
 
 package de.monticore.cdbasis._symboltable;
 
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -47,20 +46,20 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     return prettyPrinter;
   }
 
-  public DeriveSymTypeOfCDBasis getTypeChecker() {
-    return typeChecker;
-  }
-
-  public ModifierHandler getModifierHandler() {
-    return this.modifierHandler;
-  }
-
   public void setPrettyPrinter(CDBasisPrettyPrinterDelegator prettyPrinter) {
     this.prettyPrinter = prettyPrinter;
   }
 
+  public DeriveSymTypeOfCDBasis getTypeChecker() {
+    return typeChecker;
+  }
+
   public void setTypeChecker(DeriveSymTypeOfCDBasis typeChecker) {
     this.typeChecker = typeChecker;
+  }
+
+  public ModifierHandler getModifierHandler() {
+    return this.modifierHandler;
   }
 
   public void setModifierHandler(ModifierHandler modifierHandler) {
@@ -78,7 +77,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   @Override
   public void visit(ASTCDCompilationUnit node) {
     Log.debug("Building Symboltable for CD: " + node.getCDDefinition().getName(),
-        CD4AnalysisSymbolTableCreator.class.getSimpleName());
+        getClass().getSimpleName());
 
     super.visit(node);
   }
@@ -90,21 +89,31 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     getModifierHandler().handle(ast.getModifier(), symbol);
 
-    symbol.setSuperTypeList(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
-      final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
-      if (!result.isPresent()) {
-        Log.error(String.format("0xA0000: The type of the extended classes (%s) could not be calculated", s.getClass().getSimpleName()));
-      }
-      return result;
-    }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    if (ast.isPresentCDExtendUsage()) {
+      symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
+        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA00: The type of the extended classes (%s) could not be calculated",
+              s.getClass().getSimpleName()),
+              s.get_SourcePositionStart());
+        }
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
 
-    symbol.setInterfaceList(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
-      final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
-      if (!result.isPresent()) {
-        Log.error(String.format("0xA0000: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()));
-      }
-      return result;
-    }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    if (ast.isPresentCDInterfaceUsage()) {
+      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
+        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA01: The type of the interface (%s) could not be calculated",
+              s.getClass().getSimpleName()),
+              s.get_SourcePositionStart());
+        }
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
   }
 
   @Override
@@ -116,7 +125,11 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(ast.getMCType());
     if (!typeResult.isPresent()) {
-      Log.error(String.format("0xA0000: The type (%s) of the attribute (%s) could not be calculated", getPrettyPrinter().prettyprint(ast.getMCType()), ast.getName()));
+      Log.error(String.format(
+          "0xCDA02: The type (%s) of the attribute (%s) could not be calculated",
+          getPrettyPrinter().prettyprint(ast.getMCType()),
+          ast.getName()),
+          ast.getMCType().get_SourcePositionStart());
     }
     else {
       symbol.setType(typeResult.get());

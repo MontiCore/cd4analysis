@@ -12,12 +12,10 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
 import de.monticore.cdbasis.modifier.ModifierHandler;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
-import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfObject;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill;
-import de.monticore.types.mcfullgenerictypes._ast.ASTMCArrayType;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
@@ -35,11 +33,13 @@ public class CD4CodeBasisSymbolTableCreator
 
   public CD4CodeBasisSymbolTableCreator(ICD4CodeBasisScope enclosingScope) {
     super(enclosingScope);
+    setRealThis(this);
     init();
   }
 
   public CD4CodeBasisSymbolTableCreator(Deque<? extends ICD4CodeBasisScope> scopeStack) {
     super(scopeStack);
+    setRealThis(this);
     init();
   }
 
@@ -100,7 +100,10 @@ public class CD4CodeBasisSymbolTableCreator
 
     final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(ast.getMCReturnType());
     if (!typeResult.isPresent()) {
-      Log.error(String.format("0xA0000: The type of the return type (%s) could not be calculated", ast.getMCReturnType().getClass().getSimpleName()));
+      Log.error(String.format(
+          "0xCDA90: The type of the return type (%s) could not be calculated",
+          ast.getMCReturnType().getClass().getSimpleName()),
+          ast.getMCReturnType().get_SourcePositionStart());
     }
     else {
       symbol.setReturnType(typeResult.get());
@@ -108,13 +111,18 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setHasEllipsis(ast.getCDParameterList().stream().anyMatch(ASTCDParameter::isEllipsis));
 
-    symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
-      final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
-      if (!result.isPresent()) {
-        Log.error(String.format("0xA0000: The type of the exception classes (%s) could not be calculated", s.getClass().getSimpleName()));
-      }
-      return result;
-    }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    if (ast.isPresentCDThrowsDeclaration()) {
+      symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
+        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA91: The type of the exception classes (%s) could not be calculated",
+              s.getClass().getSimpleName()),
+              s.get_SourcePositionStart());
+        }
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
 
     getModifierHandler().handle(ast.getModifier(), symbol);
   }
@@ -128,13 +136,18 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setReturnType(new SymTypeOfObject(new CDTypeSymbolLoader(classStack.peek(), ast.getEnclosingScope())));
 
-    symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
-      final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
-      if (!result.isPresent()) {
-        Log.error(String.format("0xA0000: The type of the exception classes (%s) could not be calculated", s.getClass().getSimpleName()));
-      }
-      return result;
-    }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    if (ast.isPresentCDThrowsDeclaration()) {
+      symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
+        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA92: The type of the exception classes (%s) could not be calculated",
+              s.getClass().getSimpleName()),
+              s.get_SourcePositionStart());
+        }
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
 
     getModifierHandler().handle(ast.getModifier(), symbol);
   }
@@ -148,13 +161,18 @@ public class CD4CodeBasisSymbolTableCreator
     ASTMCType type;
     if (ast.isEllipsis()) {
       type = MCFullGenericTypesMill.mCArrayTypeBuilder().setMCType(ast.getMCType()).setDimensions(1).build();
-    } else {
+    }
+    else {
       type = ast.getMCType();
     }
 
     final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(type);
     if (!typeResult.isPresent()) {
-      Log.error(String.format("0xA0000: The type (%s) of the attribute (%s) could not be calculated", ast.getMCType().getClass().getSimpleName(), ast.getName()));
+      Log.error(String.format(
+          "0xCDA93: The type (%s) of the attribute (%s) could not be calculated",
+          ast.getMCType().getClass().getSimpleName(),
+          ast.getName()),
+          ast.getMCType().get_SourcePositionStart());
     }
     else {
       symbol.setType(typeResult.get());

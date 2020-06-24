@@ -22,7 +22,7 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
   private CD4CodeBasisDelegatorVisitor realThis;
 
   public DeriveSymTypeOfCD4CodeBasis() {
-    this.realThis = this;
+    setRealThis(this);
     init();
   }
 
@@ -65,6 +65,10 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
+
+    final DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
+    deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(getTypeCheckResult());
+    setMCCommonLiteralsVisitor(deriveSymTypeOfMCCommonLiterals);
 
     final DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
     deriveSymTypeOfExpression.setTypeCheckResult(getTypeCheckResult());

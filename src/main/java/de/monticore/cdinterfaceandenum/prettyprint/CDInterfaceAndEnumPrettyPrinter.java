@@ -24,6 +24,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
   public CDInterfaceAndEnumPrettyPrinter(IndentPrinter printer) {
     super(printer);
+    setRealThis(this);
   }
 
   @Override
@@ -81,7 +82,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
       node.getCDInterfaceUsage().accept(getRealThis());
     }
 
-    if (!node.isEmptyCDMembers()) {
+    if (!node.isEmptyCDMembers() || !node.isEmptyCDEnumConstants()) {
       print(" {");
       CommentPrettyPrinter.printPostComments(node, getPrinter());
       println();
@@ -114,7 +115,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void endVisit(ASTCDEnum node) {
-    if (!node.isEmptyCDMembers()) {
+    if (!node.isEmptyCDMembers() || !node.isEmptyCDEnumConstants()) {
       unindent();
       println("}");
     }

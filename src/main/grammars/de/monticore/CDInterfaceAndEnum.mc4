@@ -41,5 +41,4 @@ component grammar CDInterfaceAndEnum extends de.monticore.CDBasis {
       of the enum
   */
   CDEnumConstant implements Field = Name;
-
 }

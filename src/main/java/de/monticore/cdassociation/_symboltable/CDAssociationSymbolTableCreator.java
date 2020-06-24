@@ -27,11 +27,13 @@ public class CDAssociationSymbolTableCreator
 
   public CDAssociationSymbolTableCreator(ICDAssociationScope enclosingScope) {
     super(enclosingScope);
+    setRealThis(this);
     init();
   }
 
   public CDAssociationSymbolTableCreator(Deque<? extends ICDAssociationScope> scopeStack) {
     super(scopeStack);
+    setRealThis(this);
     init();
   }
 
@@ -46,20 +48,20 @@ public class CDAssociationSymbolTableCreator
     return typeCheck;
   }
 
-  public ModifierHandler getModifierHandler() {
-    return this.modifierHandler;
-  }
-
-  public CDAssociationNavigableVisitor getNavigableVisitor() {
-    return navigableVisitor;
-  }
-
   public void setTypeCheck(DeriveSymTypeOfCDBasis typeCheck) {
     this.typeCheck = typeCheck;
   }
 
+  public ModifierHandler getModifierHandler() {
+    return this.modifierHandler;
+  }
+
   public void setModifierHandler(ModifierHandler modifierHandler) {
     this.modifierHandler = modifierHandler;
+  }
+
+  public CDAssociationNavigableVisitor getNavigableVisitor() {
+    return navigableVisitor;
   }
 
   public void setNavigableVisitor(CDAssociationNavigableVisitor navigableVisitor) {
@@ -94,20 +96,38 @@ public class CDAssociationSymbolTableCreator
 
   private void initialize_SymAssociation(SymAssociationBuilder symAssociation, ASTCDAssociation node) {
     { // left
-      final ASTCDRole leftRole = node.getLeft().getCDRole();
+      if (!node.getLeft().isPresentCDRole()) {
+        Log.error(String.format(
+            "0xCDA60: The left role of the association (%s) is not set",
+            node.getPrintableName()),
+            node.get_SourcePositionStart());
+      }
+      else {
+        final ASTCDRole leftRole = node.getLeft().getCDRole();
 
-      CDRoleSymbol symbol = create_CDRole(leftRole);
-      initialize_CDRole(symbol, node, true);
-      symAssociation.setLeftRole(symbol);
-      addToScopeAndLinkWithNode(symbol, leftRole);
+        CDRoleSymbol symbol = create_CDRole(leftRole);
+        initialize_CDRole(symbol, node, true);
+        symAssociation.setLeftRole(symbol);
+
+        symbol.getType().getTypeInfo().addFieldSymbol(symbol);
+      }
     }
-    { // left
-      final ASTCDRole leftRole = node.getLeft().getCDRole();
+    { // right
+      if (!node.getRight().isPresentCDRole()) {
+        Log.error(String.format(
+            "0xCDA61: The right role of the association (%s) is not set",
+            node.getPrintableName()),
+            node.get_SourcePositionStart());
+      }
+      else {
+        final ASTCDRole rightRole = node.getLeft().getCDRole();
 
-      CDRoleSymbol symbol = create_CDRole(leftRole);
-      initialize_CDRole(symbol, node, false);
-      symAssociation.setRightRole(symbol);
-      addToScopeAndLinkWithNode(symbol, leftRole);
+        CDRoleSymbol symbol = create_CDRole(rightRole);
+        initialize_CDRole(symbol, node, false);
+        symAssociation.setRightRole(symbol);
+
+        symbol.getType().getTypeInfo().addFieldSymbol(symbol);
+      }
     }
     node.getCDAssocType().accept(getAssocTypeVisitor(symAssociation));
     symAssociation.setIsDerived(node.isDerived());
@@ -129,27 +149,33 @@ public class CDAssociationSymbolTableCreator
   }
 
   protected void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
-    final ASTCDAssociationSide side = isLeft ? ast.getLeft() : ast.getRight();
+    final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
     ASTCDRole role = side.getCDRole();
 
     super.initialize_CDRole(symbol, role);
 
     getModifierHandler().handle(ast.getModifier(), symbol);
-    getNavigableVisitor().visit(ast.getCDAssociationDirection());
 
+    getNavigableVisitor().visit(ast.getCDAssocDir());
     symbol.setIsDefinitiveNavigable(isLeft ? getNavigableVisitor().isDefinitiveNavigableLeft() : getNavigableVisitor().isDefinitiveNavigableRight());
-    symbol.setCardinality(side.getCDCardinality());
+
+    if (side.isPresentCDCardinality()) {
+      symbol.setCardinality(side.getCDCardinality());
+    }
 
     handleQualifier(symbol, side);
     symbol.setIsOrdered(side.isPresentCDOrdered());
   }
 
-  protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssociationSide side) {
+  protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
         final Optional<SymTypeExpression> result = getTypeCheck().calculateType(side.getCDQualifier().getByType());
         if (!result.isPresent()) {
-          Log.error(String.format("0xA0000: The type of the interface (%s) could not be calculated", side.getCDQualifier().getByType().getClass().getSimpleName()));
+          Log.error(String.format(
+              "0xCDA62: The type of the interface (%s) could not be calculated",
+              side.getCDQualifier().getByType().getClass().getSimpleName()),
+              side.getCDQualifier().get_SourcePositionStart());
         }
         else {
           symbol.setTypeQualifier(result.get());
@@ -159,7 +185,11 @@ public class CDAssociationSymbolTableCreator
         final SymTypeExpression type = symbol.getAssociation().getOtherRole(symbol).getType();
         final List<FieldSymbol> fieldList = type.getFieldList(side.getCDQualifier().getByAttributeName());
         if (fieldList.size() != 1) {
-          Log.error(String.format("0xA0000: The attribute (%s) of the class (%s) could not be found, but is needed by the qualifier", side.getCDQualifier().getByAttributeName(), type.print()));
+          Log.error(String.format(
+              "0xCDA63: The attribute (%s) of the class (%s) could not be found, but is needed by the qualifier",
+              side.getCDQualifier().getByAttributeName(),
+              type.print()),
+              side.getCDQualifier().get_SourcePositionStart());
         }
 
         symbol.setAttributeQualifier(fieldList.get(0));
@@ -171,9 +201,9 @@ public class CDAssociationSymbolTableCreator
   public void visit(ASTCDDirectComposition node) {
     super.visit(node);
 
-    // TODO SVa: should this create a SymAssociation? yes - transform to association, then this is ignorable
+    // TODO SVa: transform to association, then this is ignorable
 
-    final ASTCDAssociationRightSide side = node.getCDAssociationRightSide();
+    final ASTCDAssocRightSide side = node.getCDAssocRightSide();
 
     CDRoleSymbol symbol = create_CDRole(side.getCDRole());
     symbol.setIsVariable(true);

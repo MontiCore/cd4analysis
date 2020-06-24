@@ -1,14 +1,27 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
+import de.se_rwth.commons.logging.Log;
+
+import java.util.Optional;
+
 public class SymAssociation {
-  protected CDAssociationSymbol association;
+  protected Optional<CDAssociationSymbol> association;
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
   protected boolean isDerived;
 
+  public SymAssociation(Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
+    this(left, right);
+    association.ifPresent(this::setAssociation);
+  }
+
   public SymAssociation(CDAssociationSymbol association, CDRoleSymbol left, CDRoleSymbol right) {
+    this(left, right);
     setAssociation(association);
+  }
+
+  public SymAssociation(CDRoleSymbol left, CDRoleSymbol right) {
     setLeft(left);
     setRight(right);
   }
@@ -25,13 +38,17 @@ public class SymAssociation {
     }
   }
 
-  public CDAssociationSymbol getAssociation() {
-    return association;
+  public boolean isPresentAssociation() {
+    return association.isPresent();
   }
 
-  public void setAssociation(CDAssociationSymbol association) {
-    this.association = association;
-    this.association.setAssociation(this);
+  public CDAssociationSymbol getAssociation() {
+    if (isPresentAssociation()) {
+      return this.association.get();
+    }
+    Log.error("0xCD000: Association can't return a value. It is empty.");
+    // Normally this statement is not reachable
+    throw new IllegalStateException();
   }
 
   public CDRoleSymbol getLeft() {
@@ -54,6 +71,11 @@ public class SymAssociation {
 
   public boolean isAssociation() {
     return isAssociation;
+  }
+
+  public void setAssociation(CDAssociationSymbol association) {
+    this.association = Optional.ofNullable(association);
+    this.association.ifPresent(a -> a.setAssociation(this));
   }
 
   public void setIsAssociation(boolean association) {

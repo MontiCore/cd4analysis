@@ -4,10 +4,12 @@
 
 package de.monticore.cd.prettyprint;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
+import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor;
@@ -25,12 +27,12 @@ public abstract class PrettyPrintUtil {
     this.printer = printer;
   }
 
-  public void setPrinter(IndentPrinter printer) {
-    this.printer = printer;
-  }
-
   public IndentPrinter getPrinter() {
     return printer;
+  }
+
+  public void setPrinter(IndentPrinter printer) {
+    this.printer = printer;
   }
 
   public void println() {
@@ -55,6 +57,14 @@ public abstract class PrettyPrintUtil {
 
   public void unindent() {
     this.printer.unindent();
+  }
+
+  public void printPreComments(ASTNode node) {
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+  }
+
+  public void printPostComments(ASTNode node) {
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 
   /**

@@ -4,7 +4,10 @@
 
 package de.monticore.cdassociation._visitor;
 
-import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._ast.ASTCDBiDir;
+import de.monticore.cdassociation._ast.ASTCDLeftToRightDir;
+import de.monticore.cdassociation._ast.ASTCDRightToLeftDir;
+import de.monticore.cdassociation._ast.ASTCDUnspecifiedDir;
 
 public class CDAssociationNavigableVisitor implements CDAssociationVisitor {
   protected boolean isDefinitiveNavigableLeft;

@@ -9,8 +9,9 @@
 package de.monticore.testcdassociation.parser;
 
 import de.monticore.cd.TestBasis;
+import de.monticore.cdassociation._ast.ASTCDAssocDir;
+import de.monticore.cdassociation._ast.ASTCDAssocType;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDAssociationDirection;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDMember;
@@ -43,14 +44,22 @@ public class TestCDAssociationParserTest extends TestBasis {
 
   @Test
   public void parseCDAssociationDirection() throws IOException {
-    final Optional<ASTCDAssociationDirection> leftToRightDir = p.parse_StringCDAssociationDirection("->");
+    final Optional<ASTCDAssocDir> leftToRightDir = p.parse_StringCDAssocDir("->");
     checkNullAndPresence(p, leftToRightDir);
-    final Optional<ASTCDAssociationDirection> rightToLeftDir = p.parse_StringCDAssociationDirection("<-");
+    final Optional<ASTCDAssocDir> rightToLeftDir = p.parse_StringCDAssocDir("<-");
     checkNullAndPresence(p, rightToLeftDir);
-    final Optional<ASTCDAssociationDirection> biDir = p.parse_StringCDAssociationDirection("<->");
+    final Optional<ASTCDAssocDir> biDir = p.parse_StringCDAssocDir("<->");
     checkNullAndPresence(p, biDir);
-    final Optional<ASTCDAssociationDirection> unspecifiedDir = p.parse_StringCDAssociationDirection("--");
+    final Optional<ASTCDAssocDir> unspecifiedDir = p.parse_StringCDAssocDir("--");
     checkNullAndPresence(p, unspecifiedDir);
+  }
+
+  @Test
+  public void parseCDAssocType() throws IOException {
+    final Optional<ASTCDAssocType> association = p.parse_StringCDAssocType("association");
+    checkNullAndPresence(p, association);
+    final Optional<ASTCDAssocType> composition = p.parse_StringCDAssocType("composition");
+    checkNullAndPresence(p, composition);
   }
 
   @Test

@@ -5,20 +5,22 @@ plugins {
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.4"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
-//    id 'cz.malohlava.visteg' version '1.0.5'
 }
 
 group = "de.monticore.lang"
 version = "4.0.0-SNAPSHOT"
 description = "CD4Analysis"
 sourceCompatibility = "1.8"
+buildDir = file("$projectDir/target")
 
-def emf_version = "2.15.0"
-def mc_version = "6.2.0-SNAPSHOT"
-def commons_version = "1.7.9"
-def grammar_classifier = "grammars"
-def grammarDir = "src/main/grammars"
-def testGrammarDir = "src/test/grammars"
+ext.emf_version = "2.15.0"
+ext.mc_version = "6.2.0-SNAPSHOT"
+ext.commons_version = "1.7.9"
+ext.grammar_classifier = "grammars"
+ext.grammarDir = "src/main/grammars"
+ext.grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
+ext.testGrammarDir = "src/test/grammars"
+ext.testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
 
 // configure non-standard source sets
 sourceSets {
@@ -37,27 +39,20 @@ subprojects {
         }
     }
 }
-buildDir = file("$projectDir/target")
 
 configurations { grammar }
 
 dependencies {
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore:$emf_version"
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore.xmi:$emf_version"
-    implementation "org.eclipse.emf:org.eclipse.emf.common:$emf_version"
     implementation "de.monticore:monticore-runtime:$mc_version"
-    implementation "de.monticore:monticore-emf-runtime:$mc_version"
     implementation "de.monticore:monticore-grammar:$mc_version"
     compile "de.monticore:monticore-grammar:$mc_version"
     compile "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
-    implementation "de.monticore:monticore-generator:$mc_version"
     grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation "com.google.guava:guava:23.0"
     implementation "org.antlr:antlr4-runtime:4.7.1"
     implementation "net.sourceforge.plantuml:plantuml:1.2018.12"
-    implementation "com.google.code.findbugs:jsr305:3.0.0"
     implementation "ch.qos.logback:logback-classic:1.1.7"
     testImplementation "junit:junit:4.11"
     testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
@@ -74,26 +69,26 @@ repositories {
 }
 
 def grammarDependencies = [
-    CDBasis: [],
-    CDInterfaceAndEnum: ["CDBasis"],
-    CDAssociation: ["CDBasis"],
-    CD4Analysis: ["CDInterfaceAndEnum", "CDAssociation"],
-    CD4CodeBasis: ["CDBasis", "CDInterfaceAndEnum"],
-    CD4Code: ["CD4Analysis", "CD4CodeBasis"],
+        CDBasis           : [],
+        CDInterfaceAndEnum: ["CDBasis"],
+        CDAssociation     : ["CDBasis"],
+        CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
+        CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
+        CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
 ];
 
 def testGrammarDependencies = [
-    TestCDBasis: ["CDBasis"],
-    TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
-    TestCDAssociation: ["CDAssociation"],
-    TestCD4CodeBasis: ["CD4CodeBasis"],
+        TestCDBasis           : ["CDBasis"],
+        TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+        TestCDAssociation     : ["CDAssociation"],
+        TestCD4CodeBasis      : ["CD4CodeBasis"],
 ]
 
-ext.createGrammarName = { String name ->
+String createGrammarName(String name) {
     "${grammarDir}/de/monticore/${name}.mc4"
 }
 
-ext.createTestGrammarName = { String name ->
+String createTestGrammarName(String name) {
     "${testGrammarDir}/de/monticore/${name}.mc4"
 }
 
@@ -109,19 +104,18 @@ grammarDependencies.each {
 
         def grammarFile = file g
         grammar = grammarFile
-        outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+        outputDir = file grammarOutDir
         handcodedPath file("$projectDir/src/main/java")
         def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
 
         def uptoDate = incCheck(grammarIncludingPackage)
 
-        def uptoDateTransitive = dependencies.collect {
+        def superGrammarsList = dependencies.collect {
             def grammar = file createGrammarName(it)
-            def grammarPackage = file(grammarDir).toURI().relativize(grammar.toURI()).toString()
-            return incCheck(grammarPackage)
+            return grammar.toURI()
         }
+        superGrammars.from(superGrammarsList)
 
-        uptoDate = uptoDateTransitive.inject(uptoDate) { a, b -> a && b }
         outputs.upToDateWhen { uptoDate }
     }
 }
@@ -138,18 +132,17 @@ testGrammarDependencies.each {
 
         def grammarFile = file g
         grammar = file g
-        outputDir = file "$buildDir/generated-test-sources/monticore/sourcecode"
+        outputDir = file testGrammarOutDir
         handcodedPath file("$projectDir/src/test/java")
         def grammarIncludingPackage = file(testGrammarDir).toURI().relativize(grammarFile.toURI()).toString()
         def uptoDate = incCheck(grammarIncludingPackage)
 
-        def uptoDateTransitive = dependencies.collect {
+        def superGrammarsList = dependencies.collect {
             def grammar = file createGrammarName(it)
-            def grammarPackage = file(grammarDir).toURI().relativize(grammar.toURI()).toString()
-            return incCheck(grammarPackage)
+            return grammar.toURI()
         }
+        superGrammars.from(superGrammarsList)
 
-        uptoDate = uptoDateTransitive.inject(uptoDate) { a, b -> a && b }
         outputs.upToDateWhen { uptoDate }
     }
 }
@@ -158,12 +151,27 @@ task generate {
     dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
+task generateTest {
+    dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
+}
+
 compileJava {
     dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
 compileTestJava {
     dependsOn project.collect { it.tasks.withType(MCTask) }
+}
+
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
+
+tasks.withType(JavaCompile) {
+    options.fork = true
+}
+
+tasks.withType(Test) {
+    maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
 test {
@@ -239,6 +247,3 @@ publishing {
         url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
     }
 }
-
-// Fixes issue with java plugin in projects without resources
-compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }

@@ -26,6 +26,9 @@ component grammar CDBasis extends
     de.monticore.UMLStereotype,
     de.monticore.UMLModifier {
 
+  // TODO SVa: activate when #2546 is solved
+  //  nokeyword "targetpackage", "targetimport", "classdiagram";
+
   /* ==== General ==== */
   /** The artifact header:
       import statements, package definition
@@ -116,11 +119,7 @@ component grammar CDBasis extends
     Modifier MCType Name ("=" initial:Expression)? ";";
 
   /* ==== Symbols ==== */
-  /** The symbol for CDType has the information what specific type it describes.
-      The symbol contains all the interfaces and superclasses of the given type.
-  */
-  symbolrule CDType =
-    interfaces: de.monticore.types.check.SymTypeExpression*
-  ;
-
+  /** CDBasis defines no additional symbols, instead it uses the TypeSymbols
+   *  and uses their attributes
+   */
 }

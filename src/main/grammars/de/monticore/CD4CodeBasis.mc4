@@ -46,7 +46,7 @@ component grammar CD4CodeBasis extends
   /** Method parameter: with type, name, default value,
       and list extension "..."
    */
-  CDParameter implements Field = //  TODO SVa: besser Variable? -> wenn in TypeSymbols umgestellt ist, dann in extra parameter scope
+  CDParameter implements Field =
     MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
 
   /** Enumeration constants may now also be defined using arguments

@@ -49,12 +49,12 @@ public class CDInterfaceAndEnumSymbolTableCreator
     return this.typeCheck;
   }
 
-  public ModifierHandler getModifierHandler() {
-    return this.modifierHandler;
-  }
-
   public void setTypeCheck(DeriveSymTypeOfCDBasis typeCheck) {
     this.typeCheck = typeCheck;
+  }
+
+  public ModifierHandler getModifierHandler() {
+    return this.modifierHandler;
   }
 
   public void setModifierHandler(ModifierHandler modifierHandler) {
@@ -87,13 +87,18 @@ public class CDInterfaceAndEnumSymbolTableCreator
 
     getModifierHandler().handle(ast.getModifier(), symbol);
 
-    symbol.setSuperTypeList(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
-      final Optional<SymTypeExpression> result = getTypeCheck().calculateType(s);
-      if (!result.isPresent()) {
-        Log.error(String.format("0xA0000: The type of the extended interfaces (%s) could not be calculated", s.getClass().getSimpleName()));
-      }
-      return result;
-    }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    if (ast.isPresentCDExtendUsage()) {
+      symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
+        final Optional<SymTypeExpression> result = getTypeCheck().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
+              s.getClass().getSimpleName()),
+              s.get_SourcePositionStart());
+        }
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
   }
 
   @Override
@@ -103,13 +108,18 @@ public class CDInterfaceAndEnumSymbolTableCreator
 
     getModifierHandler().handle(ast.getModifier(), symbol);
 
-    symbol.setInterfaceList(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
-      final Optional<SymTypeExpression> result = getTypeCheck().calculateType(s);
-      if (!result.isPresent()) {
-        Log.error(String.format("0xA0000: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()));
-      }
-      return result;
-    }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    if (ast.isPresentCDInterfaceUsage()) {
+      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
+        final Optional<SymTypeExpression> result = getTypeCheck().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA31: The type of the interface (%s) could not be calculated",
+              s.getClass().getSimpleName()),
+              s.get_SourcePositionStart());
+        }
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
   }
 
   @Override

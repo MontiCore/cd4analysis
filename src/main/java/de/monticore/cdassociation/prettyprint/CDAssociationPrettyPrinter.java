@@ -20,6 +20,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   public CDAssociationPrettyPrinter(IndentPrinter printer) {
     super(printer);
+    setRealThis(this);
   }
 
   @Override
@@ -63,7 +64,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   public void traverse(ASTCDAssociation node) {
     node.getLeft().accept(getRealThis());
     print(" ");
-    node.getCDAssociationDirection().accept(getRealThis());
+    node.getCDAssocDir().accept(getRealThis());
     print(" ");
     node.getRight().accept(getRealThis());
   }
@@ -72,6 +73,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   public void endVisit(ASTCDAssociation node) {
     print(";");
     CommentPrettyPrinter.printPostComments(node, getPrinter());
+    println();
   }
 
   @Override
@@ -95,7 +97,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   }
 
   @Override
-  public void handle(ASTCDAssociationLeftSide node) {
+  public void handle(ASTCDAssocLeftSide node) {
     if (node.isPresentCDOrdered()) {
       node.getCDOrdered().accept(getRealThis());
       print(" ");
@@ -112,7 +114,93 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
     print(" ");
 
     if (node.isPresentCDQualifier()) {
-
+      node.getCDQualifier().accept(getRealThis());
     }
+
+    if (node.isPresentCDRole()) {
+      print(" ");
+      node.getCDRole().accept(getRealThis());
+    }
+  }
+
+  @Override
+  public void handle(ASTCDAssocRightSide node) {
+    if (node.isPresentCDRole()) {
+      node.getCDRole().accept(getRealThis());
+      print(" ");
+    }
+
+    if (node.isPresentCDQualifier()) {
+      node.getCDQualifier().accept(getRealThis());
+      print(" ");
+    }
+
+    node.getMCQualifiedName().accept(getRealThis());
+    print(" ");
+
+    if (node.isPresentCDCardinality()) {
+      node.getCDCardinality().accept(getRealThis());
+      print(" ");
+    }
+
+    node.getModifier().accept(getRealThis());
+
+    if (node.isPresentCDOrdered()) {
+      node.getCDOrdered().accept(getRealThis());
+    }
+  }
+
+  @Override
+  public void visit(ASTCDRole node) {
+    print("(" + node.getName() + ")");
+  }
+
+  @Override
+  public void visit(ASTCDCardMult node) {
+    print("[*]");
+  }
+
+  @Override
+  public void visit(ASTCDCardOne node) {
+    print("[1]");
+  }
+
+  @Override
+  public void visit(ASTCDCardAtLeastOne node) {
+    print("[1..*]");
+  }
+
+  @Override
+  public void visit(ASTCDCardOpt node) {
+    print("[0..1]");
+  }
+
+  @Override
+  public void visit(ASTCDQualifier node) {
+    if (node.isPresentByAttributeName()) {
+      print("[[" + node.getByAttributeName() + "]]");
+    }
+
+    if (node.isPresentByType()) {
+      print("[");
+      node.getByType().accept(getRealThis());
+      print("]");
+    }
+  }
+
+  @Override
+  public void handle(ASTCDDirectComposition node) {
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    node.getCDLeftToRightDir().accept(getRealThis());
+    node.getCDAssocRightSide().accept(getRealThis());
+    print(";");
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    println();
+  }
+
+  public String prettyprint(ASTCDAssociation node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
   }
 }

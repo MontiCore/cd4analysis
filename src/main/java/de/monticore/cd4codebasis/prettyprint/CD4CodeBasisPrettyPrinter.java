@@ -16,6 +16,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
 
   public CD4CodeBasisPrettyPrinter() {
     this(new IndentPrinter());
+    setRealThis(this);
   }
 
   public CD4CodeBasisPrettyPrinter(IndentPrinter printer) {

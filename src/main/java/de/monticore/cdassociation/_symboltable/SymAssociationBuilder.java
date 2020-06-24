@@ -4,14 +4,16 @@
 
 package de.monticore.cdassociation._symboltable;
 
+import java.util.Optional;
+
 public class SymAssociationBuilder {
-  protected CDAssociationSymbol association;
+  protected Optional<CDAssociationSymbol> association;
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
   protected boolean isDerived;
 
   public SymAssociationBuilder setAssociationSymbol(CDAssociationSymbol associationSymbol) {
-    this.association = associationSymbol;
+    this.association = Optional.ofNullable(associationSymbol);
     return this;
   }
 
@@ -45,6 +47,7 @@ public class SymAssociationBuilder {
 
   public SymAssociation build() {
     final SymAssociation symAssociation = new SymAssociation(this.association, this.left, this.right);
+
     symAssociation.setIsAssociation(this.isAssociation);
     symAssociation.setIsComposition(this.isComposition);
     symAssociation.setIsDerived(this.isDerived);

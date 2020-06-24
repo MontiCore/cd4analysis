@@ -18,15 +18,15 @@ public class CDAssociationMill extends CDAssociationMillTOP {
     return millSymAssocation._symAssociationBuilder();
   }
 
-  protected SymAssociationBuilder _symAssociationBuilder() {
-    return new SymAssociationBuilder();
-  }
-
   public static CDAssociationNavigableVisitor associationNavigableVisitor() {
     if (millCDAssociationNavigableVisitor == null) {
       millCDAssociationNavigableVisitor = getMill();
     }
     return millCDAssociationNavigableVisitor._associationNavigableVisitor();
+  }
+
+  protected SymAssociationBuilder _symAssociationBuilder() {
+    return new SymAssociationBuilder();
   }
 
   protected CDAssociationNavigableVisitor _associationNavigableVisitor() {

@@ -18,6 +18,8 @@ import static org.junit.Assert.*;
 
 public class TestBasis {
 
+  final static String PATH = "src/test/resources/de/monticore/";
+
   @BeforeClass
   public static void setup() {
     Slf4jLog.init();
@@ -25,7 +27,7 @@ public class TestBasis {
   }
 
   public String getFilePath(String path) {
-    return Paths.get("src/test/resources/de/monticore/" + path).toString();
+    return Paths.get(PATH + path).toString();
   }
 
   protected String getJoinedErrors() {

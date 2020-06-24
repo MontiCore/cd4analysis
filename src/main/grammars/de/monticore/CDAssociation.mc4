@@ -25,46 +25,46 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   symbol scope CDAssociation implements CDElement =
     Modifier
     CDAssocType
-    ([derived:"/"])? Name?    // TODO: derived rausnehmen
-    left:CDAssociationLeftSide
-    CDAssociationDirection
-    right:CDAssociationRightSide
+    ([derived:"/"])? Name?    // TODO: derived rausnehmen?
+    left:CDAssocLeftSide
+    CDAssocDir
+    right:CDAssocRightSide
     ";";
 
   /* ==== Association ==== */
-  interface CDAssociationDirection;
+  interface CDAssocDir;
 
   /** The list of association directions available as variants of CDAssociationDirection:
   */
-  CDLeftToRightDir implements CDAssociationDirection =  "->";
-  CDRightToLeftDir implements CDAssociationDirection = "<-";
-  CDBiDir          implements CDAssociationDirection =  "<->";
-  CDUnspecifiedDir implements CDAssociationDirection = "--";
+  CDLeftToRightDir implements CDAssocDir = "->";
+  CDRightToLeftDir implements CDAssocDir = "<-";
+  CDBiDir          implements CDAssocDir = "<->";
+  CDUnspecifiedDir implements CDAssocDir = "--";
 
   splittoken "->", "<-", "<->", "--";
 
-  CDOrdered = {noSpace(2,3)}? "{" ["ordered"] "}"; // TODO SVa: use key when available, KeyConstant doesn't support ConstantGroup currently (12.06.)
+  CDOrdered = {noSpace(2,3)}? "{" "ordered" "}";
 
   /** CDAssociationSide defines the properties of one side of
       an association. This construction allows developers to access
       both sides of the associations using the same interface,
       even though the concrete syntax differs in their order.
   */
-  interface CDAssociationSide =
+  interface CDAssocSide =
     Modifier CDCardinality? MCQualifiedName
     CDQualifier? CDRole? CDOrdered?;
 
-  CDAssociationLeftSide implements CDAssociationSide =
+  CDAssocLeftSide  implements CDAssocSide =
     CDOrdered? Modifier CDCardinality?
     MCQualifiedName CDQualifier? CDRole?;
 
-  CDAssociationRightSide implements CDAssociationSide =
+  CDAssocRightSide implements CDAssocSide =
     CDRole? CDQualifier? MCQualifiedName
     CDCardinality? Modifier CDOrdered?;
 
   /** A role symbol is a simple name. It is embedded in the association.
    */
-  symbol CDRole implements Field = "(" Name ")";
+  symbol CDRole implements CDMember, Field = "(" Name ")";
 
   /** CDCardinality captures the cardinality of an association side.
       Associations currently allow for standard cardinalities, but
@@ -78,10 +78,10 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
   CDCardOpt        implements CDCardinality = "[0..1]";
 
-  // TODO BR: auch bei [1] splittoken einsetzen oder per noSpace zerlegen? (bei den anderen wohl nicht notwendig)
+  // TODO SVa: auch bei [1] splittoken einsetzen oder per noSpace zerlegen? (bei den anderen wohl nicht notwendig)
   
   /** CDQualifier describes the two froms of explicit qualifications:
-      either thrugh an attribute value contained in the value-object
+      either through an attribute value contained in the value-object
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
@@ -96,7 +96,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       composition [1] A -> (r) B [*];
   */
   CDDirectComposition implements CDMember =
-    CDLeftToRightDir CDAssociationRightSide ";";
+    CDLeftToRightDir CDAssocRightSide ";";
 
 
   /* ==== Symbols ==== */

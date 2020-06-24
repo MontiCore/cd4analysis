@@ -22,6 +22,9 @@ import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
 import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
+/**
+ * this class can be used to print the underlying elements used in the CDs
+ */
 public class CDBasisPrettyPrinterDelegator extends CDBasisDelegatorVisitor {
   protected IndentPrinter printer;
 
@@ -32,8 +35,7 @@ public class CDBasisPrettyPrinterDelegator extends CDBasisDelegatorVisitor {
   public CDBasisPrettyPrinterDelegator(IndentPrinter printer) {
     this.printer = printer;
     setRealThis(this);
-    setCDBasisVisitor(new CDBasisPrettyPrinter(printer));
-    setMCLiteralsBasisVisitor(new MCCommonLiteralsPrettyPrinter(printer));
+    setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));

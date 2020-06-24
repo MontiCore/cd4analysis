@@ -30,6 +30,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   public CDBasisPrettyPrinter(IndentPrinter printer) {
     super(printer);
+    setRealThis(this);
   }
 
   @Override

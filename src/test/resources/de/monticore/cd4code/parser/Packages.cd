@@ -1,0 +1,71 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+/*
+- CDRole in CDType reinlegen? wie werden die dann Unterschieden?
+- Interfaces in OOType auch in superTypes
+- Packages
+ - NOTE: packages agieren als scopes mit namen, wie soll das im AST stehen
+*/
+
+// NOTE: immer vollständige/absolute Namen
+
+package de.monticore.cd4code.parser;
+
+targetPackage de.monticore.code; // NOTE: ist das das ausschlaggebende "Rootpackage"?
+// -> kann evtl raus,
+
+// NOTE: wie lautet das Rootpackage eines importierten Modells?
+
+classdiagram Packages { // NOTE: spielt der name ins package mit ein?
+  package { // nur scope ohne name (muss nicht explizit hin geschrieben werden)
+
+  }
+
+  package a {
+    class A;
+  }
+  // <=> class a.A;
+
+  package a {
+    class B; // NOTE: A und B liegen in a
+  }
+
+  package a.b.c { // -> packages flach, nur gleicher Name = gleiches Package
+    class C;
+  }
+  /*
+  </=> das hier machen wir nicht, "a.b.c" ist genau ein spezifisches package
+  package a {
+    package b {
+      package c {
+        class C;
+      }
+    }
+  }
+  <=> class a.b.c.C; das hier ist ok, aber machen wir nicht
+  */
+
+  package d {
+    class D extends <?>A; // Note wie darf A hier referenziert werden?
+
+    association d.D -> a.A;
+
+    // Option 1:
+    class D extends a.A; // sobald mehr als ein A zur Verfügung steht (Coco)
+    class D extends A; // steht zur Verfügung, solange eindeutig (coco)
+
+    // Option 2:
+    class D extends /.a.A; // alle packages sind automatisch immer aus root
+
+    // Option 3:
+    class D extends super.a.A; // keine relativen angaben
+  }
+
+  package h {
+    class H {
+      String name; // NOTE: was ist mit "standard" Klassen
+      java.util.String; // NOTE: müsste das immer so aussehen?, nein, wie oben
+    }
+  }
+
+}
