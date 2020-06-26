@@ -4,6 +4,7 @@ plugins {
     id "monticore" version "6.2.0-SNAPSHOT" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "4.0.4"
+    id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
 //    id 'cz.malohlava.visteg' version '1.0.5'
 }
 
@@ -180,6 +181,8 @@ test {
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+    options.deprecation false
+    options.warnings = false
 }
 
 // build sources jar in addition
@@ -236,3 +239,6 @@ publishing {
         url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
     }
 }
+
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
