@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-/* Beta-version: This is intended to become a MontiCore stable grammar. */
+/* This is a MontiCore stable grammar.
+ * Adaptations -- if any -- are conservative. */
 
 /**
    This is the basis language component for CD4Analysis and CD4Code.
@@ -121,8 +122,5 @@ component grammar CDBasis extends
   symbolrule CDType =
     interfaces: de.monticore.types.check.SymTypeExpression*
   ;
-
-// TODO activate when #2546 is solved
-//  nokeyword "targetpackage", "targetimport", "classdiagram"  ;
 
 }

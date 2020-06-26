@@ -20,9 +20,6 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   CDAssocTypeAssoc implements CDAssocType = "association";
   CDAssocTypeComp  implements CDAssocType = "composition";
 
-// TODO activate when #2546 is solved
-//  nokeyword "association", "composition";
-
   /** An association has a name, a left, right part and a direction
    */
   symbol scope CDAssociation implements CDElement =
@@ -81,6 +78,8 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
   CDCardOpt        implements CDCardinality = "[0..1]";
 
+  // TODO BR: auch hier splittoken einsetzen oder per noSpace zerlegen?
+  
   /** CDQualifier describes the two froms of explicit qualifications:
       either thrugh an attribute value contained in the value-object
       or through a type (such as String) , which the value-object doesn't

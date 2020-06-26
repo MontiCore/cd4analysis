@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-/* Beta-version: This is intended to become a MontiCore stable grammar. */
+/* This is a MontiCore stable grammar.
+ * Adaptations -- if any -- are conservative. */
 
 /**
    CD4A is the textual representation to describe UML class diagrams
@@ -39,4 +40,11 @@ grammar CD4Analysis extends
     de.monticore.expressions.CommonExpressions {
 
   start CDCompilationUnit;
+  
+  // Certain keywords of the used grammars shall not become
+  // restricted words in other context:
+//// TODO activate when #2546 is solved
+////  nokeyword "association", "composition";
+////  nokeyword "targetpackage", "targetimport", "classdiagram"  ;
+
 }

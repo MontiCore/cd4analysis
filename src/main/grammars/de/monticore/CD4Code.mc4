@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-/* Beta-version: This is intended to become a MontiCore stable grammar. */
+/* This is a MontiCore stable grammar.
+ * Adaptations -- if any -- are conservative. */
 
 /*
    MCG for CD4Code
@@ -21,7 +22,6 @@ package de.monticore;
        for method signatures (and an enum extension)
 
    Like CD4A it builds on MCSimpleGenericTypes, which allow. e.g. List<int>
-   
    and it includes MCCommonLiterals, CommonExpressions, BitExpressions
    to allow a rich set of expressions
    (e.g. to initialize attributes and enum values.) 
@@ -29,9 +29,7 @@ package de.monticore;
 
 grammar CD4Code extends
     de.monticore.CD4Analysis,
-    de.monticore.CD4CodeBasis,
-    de.monticore.types.TypeSymbols
-  {
+    de.monticore.CD4CodeBasis {
 
   start CDCompilationUnit;
 }
