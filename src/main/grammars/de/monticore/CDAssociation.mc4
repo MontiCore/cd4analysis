@@ -6,7 +6,7 @@ package de.monticore;
 /**
    This component grammar defines associations for CD4Analysis and CD4Code.
 
-   This includes directions, qualifiers, multiplicities and compositions.   
+   This includes directions, qualifiers, multiplicities and compositions.
 */
 
 component grammar CDAssociation extends de.monticore.CDBasis {
@@ -17,8 +17,11 @@ component grammar CDAssociation extends de.monticore.CDBasis {
 
   /** The list of association types available as variants of CDAssocType:
   */
-  CDAssocTypeAssoc implements CDAssocType = key("association");
-  CDAssocTypeComp  implements CDAssocType = key("composition");
+  CDAssocTypeAssoc implements CDAssocType = "association";
+  CDAssocTypeComp  implements CDAssocType = "composition";
+
+// TODO activate when #2546 is solved
+//  nokeyword "association", "composition";
 
   /** An association has a name, a left, right part and a direction
    */
@@ -36,15 +39,17 @@ component grammar CDAssociation extends de.monticore.CDBasis {
 
   /** The list of association directions available as variants of CDAssociationDirection:
   */
-  CDLeftToRightDir implements CDAssociationDirection = {noSpace(2)}? "-" ">";
-  CDRightToLeftDir implements CDAssociationDirection = {noSpace(2)}? "<" "-";
-  CDBiDir          implements CDAssociationDirection = {noSpace(2, 3)}? "<" "-" ">";
-  CDUnspecifiedDir implements CDAssociationDirection = {noSpace(2)}? "-" "-";
+  CDLeftToRightDir implements CDAssociationDirection =  "->";
+  CDRightToLeftDir implements CDAssociationDirection = "<-";
+  CDBiDir          implements CDAssociationDirection =  "<->";
+  CDUnspecifiedDir implements CDAssociationDirection = "--";
+
+  splittoken "->", "<-", "<->", "--";
 
   CDOrdered = {noSpace(2,3)}? "{" ["ordered"] "}"; // TODO SVa: use key when available, KeyConstant doesn't support ConstantGroup currently (12.06.)
 
   /** CDAssociationSide defines the properties of one side of
-      an association. This construction allows developers to access 
+      an association. This construction allows developers to access
       both sides of the associations using the same interface,
       even though the concrete syntax differs in their order.
   */
@@ -69,7 +74,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       this is extensible. Visitors help to identify the correct cardinality.
       Cardinality from de.monticore.Cardinality is not used, because we only
       want the simple variants here
-  */  
+  */
   interface CDCardinality;
   CDCardMult       implements CDCardinality = "[*]";
   CDCardOne        implements CDCardinality = "[1]";
@@ -114,7 +119,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   ;
 
   /** The symbol for CDAssociation is defined for named associations.
-      The SymAssociation object provides all relevant 
+      The SymAssociation object provides all relevant
       information obout the association and the roles.
   */
   symbolrule CDAssociation =

@@ -5,14 +5,14 @@ package de.monticore;
 
 /**
    This is the basis language component for CD4Analysis and CD4Code.
-   
+
    It contains class structures with attributes, but omits
    interfaces, enums, modifiers, methods.
 
-   It uses 
+   It uses
    * ExpressionsBasis, MCLiteralsBasis  (for the Expressions)
    * MCBasicTypes (for the types in CS and AST) and
-   * TypesSymbols (for imported/exported TypeSymbols) 
+   * TypesSymbols (for imported/exported TypeSymbols)
    as holes that shall be filled in concrete, complete languages
    by a variety of available grammars.
 */
@@ -44,18 +44,18 @@ component grammar CDBasis extends
       which should use this information as package-path for
       the generate code
   */
-  CDTargetPackageStatement = key("targetpackage") targetpackage:(Name& || ".")+ ";";
+  CDTargetPackageStatement = "targetpackage" targetpackage:(Name& || ".")+ ";";
 
   /** This import statement allows to explain in the model, which
       additional imports shall be added to the generated code
       (beyond the imports that the generator identifies itself).
   */
-  CDTargetImportStatement = key("targetimport") MCQualifiedName ("." Star:["*"])? ";";
+  CDTargetImportStatement = "targetimport" MCQualifiedName ("." Star:["*"])? ";";
 
   /** The class diagram: defines a set of elements
   */
   scope CDDefinition =
-    Modifier key("classdiagram") Name "{" CDElement* "}";
+    Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */
   /** CDElement denotes the basic elements of a class diagram.
@@ -64,21 +64,21 @@ component grammar CDBasis extends
   */
   interface CDElement;
 
-  /** CDType are all of the CDElements, which can be used to describe a 
+  /** CDType are all of the CDElements, which can be used to describe a
       type for e.g. variables, method arguments, ...
   */
   interface symbol CDType extends CDElement, OOType;
 
   /*  Remark:
       Because people that know Java also know interface implementation,
-      we decide to put "implements" already into the grammar here 
+      we decide to put "implements" already into the grammar here
       and restrict the grammar to classes only through a CoCo.
       Advantage: better explanation of the error if someone
       actually uses "implement" with the base grammar .
       This CoCo restriction will be switched off in the
       CDInterfaceAndEnum extension.
   */
-  
+
   /** This adds the possibility for classes to implement
       interfaces (by filling the external NT defined there)
    */
@@ -121,5 +121,8 @@ component grammar CDBasis extends
   symbolrule CDType =
     interfaces: de.monticore.types.check.SymTypeExpression*
   ;
+
+// TODO activate when #2546 is solved
+//  nokeyword "targetpackage", "targetimport", "classdiagram"  ;
 
 }
