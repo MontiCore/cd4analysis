@@ -78,7 +78,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
   CDCardOpt        implements CDCardinality = "[0..1]";
 
-  // TODO BR: auch hier splittoken einsetzen oder per noSpace zerlegen?
+  // TODO BR: auch bei [1] splittoken einsetzen oder per noSpace zerlegen? (bei den anderen wohl nicht notwendig)
   
   /** CDQualifier describes the two froms of explicit qualifications:
       either thrugh an attribute value contained in the value-object
