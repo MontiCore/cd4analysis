@@ -26,7 +26,7 @@ component grammar CDBasis extends
     de.monticore.UMLStereotype,
     de.monticore.UMLModifier {
 
-  // TODO SVa: activate when #2546 is solved
+  // TODO SVa: activate when #2546 is solved (+ check for other keywords)
   //  nokeyword "targetpackage", "targetimport", "classdiagram";
 
   /* ==== General ==== */
