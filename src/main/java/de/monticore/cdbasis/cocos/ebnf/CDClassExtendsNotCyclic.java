@@ -51,7 +51,4 @@ public class CDClassExtendsNotCyclic implements CDBasisASTCDClassCoCo {
       nextSymbol.getSuperClassesOnly().forEach(s -> typesToVisit.push(s.getTypeInfo()));
     }
   }
-
-  private void check2(CDTypeSymbol symbol) {
-  }
 }

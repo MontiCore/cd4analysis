@@ -4,12 +4,10 @@
 
 package de.monticore.cdbasis._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.modifier.ModifierHandler;
-import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
-import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.Names;
@@ -20,9 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
-  protected CDBasisPrettyPrinterDelegator prettyPrinter;
-  protected DeriveSymTypeOfCDBasis typeChecker;
-  protected ModifierHandler modifierHandler;
+  protected CDSymbolTableHelper symbolTableHelper;
 
   public CDBasisSymbolTableCreator(ICDBasisScope enclosingScope) {
     super(enclosingScope);
@@ -36,34 +32,12 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     init();
   }
 
-  private void init() {
-    prettyPrinter = new CDBasisPrettyPrinterDelegator();
-    typeChecker = new DeriveSymTypeOfCDBasis();
-    modifierHandler = new ModifierHandler();
+  protected void init() {
+    symbolTableHelper = new CDSymbolTableHelper();
   }
 
-  public CDBasisPrettyPrinterDelegator getPrettyPrinter() {
-    return prettyPrinter;
-  }
-
-  public void setPrettyPrinter(CDBasisPrettyPrinterDelegator prettyPrinter) {
-    this.prettyPrinter = prettyPrinter;
-  }
-
-  public DeriveSymTypeOfCDBasis getTypeChecker() {
-    return typeChecker;
-  }
-
-  public void setTypeChecker(DeriveSymTypeOfCDBasis typeChecker) {
-    this.typeChecker = typeChecker;
-  }
-
-  public ModifierHandler getModifierHandler() {
-    return this.modifierHandler;
-  }
-
-  public void setModifierHandler(ModifierHandler modifierHandler) {
-    this.modifierHandler = modifierHandler;
+  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
+    this.symbolTableHelper = cdSymbolTableHelper;
   }
 
   @Override
@@ -83,15 +57,28 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   }
 
   @Override
+  public void visit(ASTCDClass node) {
+    symbolTableHelper.addToClassStack(node.getName());
+    super.visit(node);
+  }
+
+  @Override
+  public void endVisit(ASTCDClass node) {
+    super.endVisit(node);
+    symbolTableHelper.removeFromClassStack();
+  }
+
+  @Override
   protected void initialize_CDClass(CDTypeSymbol symbol, ASTCDClass ast) {
     super.initialize_CDClass(symbol, ast);
     symbol.setIsClass(true);
 
-    getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
-        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA00: The type of the extended classes (%s) could not be calculated",
@@ -104,7 +91,8 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
-        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA01: The type of the interface (%s) could not be calculated",
@@ -121,13 +109,14 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     super.initialize_CDAttribute(symbol, ast);
     symbol.setIsVariable(true);
 
-    getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
-    final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(ast.getMCType());
+    ast.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCType());
     if (!typeResult.isPresent()) {
       Log.error(String.format(
           "0xCDA02: The type (%s) of the attribute (%s) could not be calculated",
-          getPrettyPrinter().prettyprint(ast.getMCType()),
+          symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()),
           ast.getName()),
           ast.getMCType().get_SourcePositionStart());
     }

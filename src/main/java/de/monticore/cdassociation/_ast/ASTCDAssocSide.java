@@ -4,6 +4,8 @@
 
 package de.monticore.cdassociation._ast;
 
+import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
+
 public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
   default String getName() {
     if (this.isPresentCDRole()) {
@@ -12,6 +14,6 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
 
     // read name from association
 
-    return this.getMCQualifiedName().getBaseName();
+    return new CDBasisPrettyPrinterDelegator().prettyprint(this.getMCQualifiedType());
   }
 }

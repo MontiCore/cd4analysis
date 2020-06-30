@@ -50,6 +50,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     if (!node.isEmptyCDMembers()) {
       print(" {");
       CommentPrettyPrinter.printPostComments(node, getPrinter());
+      println();
       indent();
     }
   }

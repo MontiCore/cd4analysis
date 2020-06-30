@@ -9,7 +9,6 @@ public class SymAssociation {
   protected Optional<CDAssociationSymbol> association;
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
-  protected boolean isDerived;
 
   public SymAssociation(Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
     this(left, right);
@@ -88,13 +87,5 @@ public class SymAssociation {
 
   public void setIsComposition(boolean composition) {
     isComposition = composition;
-  }
-
-  public boolean isDerived() {
-    return isDerived;
-  }
-
-  public void setIsDerived(boolean derived) {
-    isDerived = derived;
   }
 }

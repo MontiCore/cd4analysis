@@ -4,40 +4,24 @@
 
 package de.monticore.cdbasis.cocos;
 
+import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.*;
 
-public class CDBasisCoCos {
-  public CDBasisCoCoChecker getCheckerForAllCoCos() {
-    CDBasisCoCoChecker checker = new CDBasisCoCoChecker();
-    addCheckerForAllCoCos(checker);
-    return checker;
+public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
+  @Override
+  public CDBasisCoCoChecker createNewChecker() {
+    return new CDBasisCoCoChecker();
   }
 
-  public CDBasisCoCoChecker getCheckerForEbnfCoCos() {
-    CDBasisCoCoChecker checker = new CDBasisCoCoChecker();
-    addEbnfCoCos(checker);
-    return checker;
-  }
-
-  public CDBasisCoCoChecker getCheckerForMcgCoCos() {
-    CDBasisCoCoChecker checker = new CDBasisCoCoChecker();
-    addMcgCoCos(checker);
-    return checker;
-  }
-
-  public CDBasisCoCoChecker getCheckerForMcg2EbnfCoCos() {
-    CDBasisCoCoChecker checker = new CDBasisCoCoChecker();
-    addMcg2EbnfCoCos(checker);
-    return checker;
-  }
-
+  @Override
   protected void addCheckerForAllCoCos(CDBasisCoCoChecker checker) {
-    checker.addChecker(getCheckerForEbnfCoCos());
-    checker.addChecker(getCheckerForMcgCoCos());
-    checker.addChecker(getCheckerForMcg2EbnfCoCos());
+    checker.addChecker(getCheckerForEbnfCoCos(checker));
+    checker.addChecker(getCheckerForMcgCoCos(checker));
+    checker.addChecker(getCheckerForMcg2EbnfCoCos(checker));
   }
 
+  @Override
   protected void addEbnfCoCos(CDBasisCoCoChecker checker) {
     // CDAttribute
     checker.addCoCo(new CDAttributeTypeExists());
@@ -56,13 +40,7 @@ public class CDBasisCoCos {
     checker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());
     checker.addCoCo(new UniqueCDTypeNames());
 
-    // CDDefintion
+    // CDDefinition
     checker.addCoCo(new CDDefinitionNameUpperCase());
-  }
-
-  protected void addMcgCoCos(CDBasisCoCoChecker checker) {
-  }
-
-  protected void addMcg2EbnfCoCos(CDBasisCoCoChecker checker) {
   }
 }

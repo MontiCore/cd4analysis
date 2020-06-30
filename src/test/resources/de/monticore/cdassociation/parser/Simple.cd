@@ -18,5 +18,5 @@ classdiagram Simple {
   final composition Struct [[name]] -> (item) StructItem [1];
   association A -> S;
   association [*] A (a) -> [String] S [1];
-  private composition /comp protected [0..1] A [[id]] (s) <-> (a) [String] S [1..*] public {ordered};
+  private composition comp protected / [0..1] A [[id]] (s) <-> (a) [String] S [1..*] public derived {ordered};
 }

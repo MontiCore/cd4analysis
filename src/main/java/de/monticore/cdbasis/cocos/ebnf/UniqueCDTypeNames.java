@@ -35,6 +35,8 @@ public class UniqueCDTypeNames implements CDBasisASTCDDefinitionCoCo {
         .filter(e -> e instanceof ASTCDType)
         .map(e -> ((ASTCDType) e).getSymbol()).collect(Collectors.toList());
 
+    // TODO SVa: check only same package
+
     CoCoHelper.findDuplicates(types).forEach(e ->
         Log.error(
             String

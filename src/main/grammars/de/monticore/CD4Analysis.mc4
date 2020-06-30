@@ -23,7 +23,7 @@ package de.monticore;
    * CDAssociation.mc4
        for associations
 
-   It builds on MCSimpleGenericTypes, which allow. e.g. List<int>
+   It builds on MCCollectionTypes, which allow. e.g. List<int>
    
    And it includes MCCommonLiterals, CommonExpressions, BitExpressions
    to allow a rich set of expressions
@@ -33,7 +33,7 @@ package de.monticore;
 grammar CD4Analysis extends
     de.monticore.CDInterfaceAndEnum,
     de.monticore.CDAssociation,
-    de.monticore.types.MCSimpleGenericTypes,
+    de.monticore.types.MCCollectionTypes,
     de.monticore.literals.MCCommonLiterals,
     de.monticore.expressions.BitExpressions,
     de.monticore.expressions.CommonExpressions {
@@ -42,8 +42,8 @@ grammar CD4Analysis extends
   
   // Certain keywords of the used grammars shall not become
   // restricted words in other context:
-//// TODO SVa: activate when #2546 is solved
-////  nokeyword "association", "composition", ordered"  ;
+//// TODO SVa: activate when #2546 is solved (+ check for other keywords)
 ////  nokeyword "targetpackage", "targetimport", "classdiagram"  ;
+////  nokeyword "association", "composition", ordered"  ;
 
 }

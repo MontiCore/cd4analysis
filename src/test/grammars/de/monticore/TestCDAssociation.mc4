@@ -3,7 +3,7 @@ package de.monticore;
 
 grammar TestCDAssociation extends
             de.monticore.CDAssociation,
-            de.monticore.types.MCSimpleGenericTypes,
+            de.monticore.types.MCCollectionTypes,
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.BitExpressions,
             de.monticore.expressions.CommonExpressions

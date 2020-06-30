@@ -13,7 +13,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 public class CD4AnalysisDeSerTest extends TestBasis {
@@ -26,18 +25,17 @@ public class CD4AnalysisDeSerTest extends TestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/STTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
 
-    final CD4AnalysisGlobalScope globalScope =
-        CD4AnalysisMill
-            .cD4AnalysisGlobalScopeBuilder()
-            .setModelPath(new ModelPath(Paths.get("src/test/resources")))
-            .setCD4AnalysisLanguage(new CD4AnalysisLanguage())
-            .build();
-    final CD4AnalysisSymbolTableCreatorDelegator stCreator =
-        CD4AnalysisMill
-            .cD4AnalysisSymbolTableCreatorDelegatorBuilder()
-            .setGlobalScope(globalScope)
-            .build();
-    final CD4AnalysisArtifactScope scope = stCreator.createFromAST(astcdCompilationUnit.get());
+    CD4AnalysisGlobalScope globalScope = CD4AnalysisMill
+        .cD4AnalysisGlobalScopeBuilder()
+        .setModelPath(new ModelPath())
+        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .build();
+    final CD4AnalysisSymbolTableCreator symbolTableCreator = CD4AnalysisMill
+        .cD4AnalysisSymbolTableCreatorBuilder()
+        .addToScopeStack(globalScope)
+        .build();
+
+    final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(astcdCompilationUnit.get());
     System.out.println(deSer.serialize(scope));
   }
 }

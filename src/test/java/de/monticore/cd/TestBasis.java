@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 public class TestBasis {
 
-  final static String PATH = "src/test/resources/de/monticore/";
+  public final static String PATH = "src/test/resources/de/monticore/";
 
   @BeforeClass
   public static void setup() {

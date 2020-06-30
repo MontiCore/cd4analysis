@@ -3,7 +3,7 @@ package de.monticore;
 
 grammar TestCDBasis extends
             de.monticore.CDBasis,
-            de.monticore.types.MCSimpleGenericTypes,
+            de.monticore.types.MCCollectionTypes,
             de.monticore.literals.MCCommonLiterals,
             de.monticore.expressions.BitExpressions,
             de.monticore.expressions.CommonExpressions

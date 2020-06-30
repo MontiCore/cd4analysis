@@ -21,7 +21,7 @@ package de.monticore;
    * CD4CodeBasis.mc4
        for method signatures (and an enum extension)
 
-   Like CD4A it builds on MCSimpleGenericTypes, which allow. e.g. List<int>
+   Like CD4A it builds on MCCollectionTypes, which allow. e.g. List<int>
    and it includes MCCommonLiterals, CommonExpressions, BitExpressions
    to allow a rich set of expressions
    (e.g. to initialize attributes and enum values.) 

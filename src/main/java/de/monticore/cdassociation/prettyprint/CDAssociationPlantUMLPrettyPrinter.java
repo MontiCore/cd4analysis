@@ -15,7 +15,6 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CDAssociationVisitor {
   protected CDAssociationVisitor realThis;
   protected Stack<Boolean> stackIsAssociation;
-  protected Stack<Boolean> stackIsDerived;
 
   public CDAssociationPlantUMLPrettyPrinter() {
     this(new IndentPrinter());
@@ -59,7 +58,6 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void visit(ASTCDAssociation node) {
     printComment(node);
     node.getCDAssocType().accept(getRealThis());
-    stackIsDerived.push(node.isDerived());
   }
 
   @Override
@@ -77,25 +75,17 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print(" : " + shorten(node.getName()));
     }
     println();
-    stackIsDerived.pop();
   }
 
   @Override
   public void visit(ASTCDLeftToRightDir node) {
-    if (!stackIsDerived.isEmpty() && stackIsDerived.peek()) {
-      print("..");
-    }
-    else {
-      print("--");
-    }
+    print("--");
     if (!stackIsAssociation.isEmpty() && stackIsAssociation.peek()) {
       print("o");
     }
     else {
       print("*");
     }
-
-    stackIsDerived.pop();
   }
 
   @Override
@@ -106,12 +96,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     else {
       print("*");
     }
-    if (!stackIsDerived.isEmpty() && stackIsDerived.peek()) {
-      print("..");
-    }
-    else {
-      print("--");
-    }
+    print("--");
   }
 
   @Override
@@ -122,12 +107,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     else {
       print("*");
     }
-    if (!stackIsDerived.isEmpty() && stackIsDerived.peek()) {
-      print("..");
-    }
-    else {
-      print("--");
-    }
+    print("--");
     if (!stackIsAssociation.isEmpty() && stackIsAssociation.peek()) {
       print("o");
     }
@@ -138,12 +118,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void visit(ASTCDUnspecifiedDir node) {
-    if (!stackIsDerived.isEmpty() && stackIsDerived.peek()) {
-      print("..");
-    }
-    else {
-      print("--");
-    }
+    print("--");
   }
 
   @Override
@@ -153,7 +128,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print(" ");
     }
 
-    node.getMCQualifiedName().accept(getRealThis());
+    node.getMCQualifiedType().accept(getRealThis());
     print(" \"");
 
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
@@ -179,7 +154,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       node.getCDRole().accept(getRealThis());
     }
     print("\" ");
-    node.getMCQualifiedName().accept(getRealThis());
+    node.getMCQualifiedType().accept(getRealThis());
 
     if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
       print(" ");

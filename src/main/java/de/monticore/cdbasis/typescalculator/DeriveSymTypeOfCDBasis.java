@@ -4,6 +4,7 @@
 
 package de.monticore.cdbasis.typescalculator;
 
+import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis._visitor.CDBasisDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
@@ -15,7 +16,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.Optional;
 
 public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
-    implements ITypesCalculator {
+    implements ITypesCalculator, CDTypesCalculator {
 
   private TypeCheckResult typeCheckResult;
 
@@ -35,30 +36,43 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
+    reset();
     ex.accept(getRealThis());
-    return Optional.of(getTypeCheckResult().getCurrentResult());
+    return getResult();
   }
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
+    reset();
     lit.accept(getRealThis());
-    return Optional.of(getTypeCheckResult().getCurrentResult());
+    return getResult();
   }
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
+    reset();
     lit.accept(getRealThis());
-    return Optional.of(getTypeCheckResult().getCurrentResult());
+    return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
+    reset();
     type.accept(getRealThis());
-    return Optional.of(getTypeCheckResult().getCurrentResult());
+    return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
+    reset();
     node.accept(getRealThis());
-    return Optional.of(getTypeCheckResult().getCurrentResult());
+    return getResult();
+  }
+
+  public void reset() {
+    getTypeCheckResult().setCurrentResultAbsent();
+  }
+
+  public Optional<SymTypeExpression> getResult() {
+    return getTypeCheckResult().isPresentCurrentResult() ? Optional.of(getTypeCheckResult().getCurrentResult()) : Optional.empty();
   }
 
   @Override

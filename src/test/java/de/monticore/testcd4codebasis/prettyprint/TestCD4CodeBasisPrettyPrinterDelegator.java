@@ -18,6 +18,7 @@ import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisDelegatorVisitor;
 import de.monticore.testcdbasis._visitor.TestCDBasisDelegatorVisitor;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 
 public class TestCD4CodeBasisPrettyPrinterDelegator
@@ -38,7 +39,7 @@ public class TestCD4CodeBasisPrettyPrinterDelegator
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
     setUMLModifierVisitor(new UMLModifierPrettyPrinter(printer));
-    setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
+    setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setBitExpressionsVisitor(new BitExpressionsPrettyPrinter(printer));

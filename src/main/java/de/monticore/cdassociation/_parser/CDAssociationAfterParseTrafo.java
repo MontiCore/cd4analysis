@@ -10,8 +10,9 @@ import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier.UMLModifierMill;
+import de.se_rwth.commons.StringTransformations;
 
 import java.util.Collections;
 
@@ -71,13 +72,18 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
   public void visit(ASTCDDirectComposition node) {
     // transform a direct composition to a "normal" association
 
-    final ASTMCQualifiedName leftSideQualifiedName = MCBasicTypesMill.mCQualifiedNameBuilder()
-        .setPartList(Collections.singletonList(typeStack.peek().getName())).build();
+    final ASTMCQualifiedType leftSideQualifiedType = MCBasicTypesMill
+        .mCQualifiedTypeBuilder()
+        .setMCQualifiedName(MCBasicTypesMill
+            .mCQualifiedNameBuilder()
+            .setPartList(Collections.singletonList(typeStack.peek().getName()))
+            .build())
+        .build();
     ASTCDAssocLeftSide leftSide = CDAssociationMill
         .cDAssocLeftSideBuilder()
         .setModifier(UMLModifierMill.modifierBuilder().build())
         .setCDCardinality(CDAssociationMill.cDCardOneBuilder().build())
-        .setMCQualifiedName(leftSideQualifiedName) // TODO SVa: have the correct package path
+        .setMCQualifiedType(leftSideQualifiedType) // TODO SVa: have the correct package path
         .build();
 
     final ASTCDAssociation assoc = CDAssociationMill
@@ -91,10 +97,11 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
 
     createASTCDRoleIfAbsent(assoc);
 
-    // TODO SVa: write visitor to remove the node from the CDType
-    //typeStack.peek().get
+    // remove the CDDirectComposition from the type
+    removedDirectCompositions.add(node);
 
-    packageStack.peek().addCDElement(assoc);
+    // add the newly created association
+    createdAssociations.add(assoc);
   }
 
   public void createASTCDRoleIfAbsent(ASTCDAssociation assoc) {
@@ -119,6 +126,6 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
         return assoc.getName();
       }
     }
-    return side.getName();
+    return StringTransformations.uncapitalize(side.getName());
   }
 }

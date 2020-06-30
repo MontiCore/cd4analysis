@@ -2,10 +2,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd4codebasis.typescalculator;
+package de.monticore.cd4code.typescalculator;
 
+import de.monticore.cd._symboltable.TypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisDelegatorVisitor;
+import de.monticore.cd4code._visitor.CD4CodeDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
@@ -15,22 +16,19 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
-public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
+public class DeriveSymTypeOfCD4Code extends CD4CodeDelegatorVisitor
     implements ITypesCalculator, CDTypesCalculator {
 
   private TypeCheckResult typeCheckResult;
+  private TypesScopeHelper typesScopeHelper;
 
-  public DeriveSymTypeOfCD4CodeBasis() {
+  public DeriveSymTypeOfCD4Code() {
     setRealThis(this);
     init();
   }
 
   public TypeCheckResult getTypeCheckResult() {
     return typeCheckResult;
-  }
-
-  public void setTypeCheckResult(TypeCheckResult typeCheckResult) {
-    this.typeCheckResult = typeCheckResult;
   }
 
   @Override
@@ -56,12 +54,14 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
+    type.accept(typesScopeHelper);
     type.accept(getRealThis());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
+    node.accept(typesScopeHelper);
     node.accept(getRealThis());
     return getResult();
   }
@@ -77,6 +77,7 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
   @Override
   public void init() {
     this.typeCheckResult = new TypeCheckResult();
+    this.typesScopeHelper = new TypesScopeHelper();
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
@@ -97,5 +98,13 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
     final SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(getTypeCheckResult());
     setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
+
+    final SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes = new SynthesizeSymTypeFromMCCollectionTypes();
+    synthesizeSymTypeFromMCCollectionTypes.setTypeCheckResult(getTypeCheckResult());
+    setMCCollectionTypesVisitor(synthesizeSymTypeFromMCCollectionTypes);
+
+    final DeriveSymTypeOfBitExpressions deriveSymTypeOfBitExpressions = new DeriveSymTypeOfBitExpressions();
+    deriveSymTypeOfBitExpressions.setTypeCheckResult(getTypeCheckResult());
+    setBitExpressionsVisitor(deriveSymTypeOfBitExpressions);
   }
 }

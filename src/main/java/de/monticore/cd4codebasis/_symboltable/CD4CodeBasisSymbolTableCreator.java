@@ -4,32 +4,30 @@
 
 package de.monticore.cd4codebasis._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
-import de.monticore.cdbasis.modifier.ModifierHandler;
-import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill;
+import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
+import de.monticore.types.typesymbols.TypeSymbolsMill;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CD4CodeBasisSymbolTableCreator
     extends CD4CodeBasisSymbolTableCreatorTOP {
-  protected DeriveSymTypeOfCDBasis typeChecker;
-  protected ModifierHandler modifierHandler;
-  protected Stack<String> classStack;
-  protected Stack<String> enumStack;
+  protected CDSymbolTableHelper symbolTableHelper;
 
   public CD4CodeBasisSymbolTableCreator(ICD4CodeBasisScope enclosingScope) {
     super(enclosingScope);
@@ -44,52 +42,23 @@ public class CD4CodeBasisSymbolTableCreator
   }
 
   protected void init() {
-    typeChecker = new DeriveSymTypeOfCDBasis();
-    modifierHandler = new ModifierHandler();
+    symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4CodeBasis());
   }
 
-  public DeriveSymTypeOfCDBasis getTypeChecker() {
-    return typeChecker;
-  }
-
-  public void setTypeChecker(DeriveSymTypeOfCDBasis typeChecker) {
-    this.typeChecker = typeChecker;
-  }
-
-  public ModifierHandler getModifierHandler() {
-    return modifierHandler;
-  }
-
-  public void setModifierHandler(ModifierHandler modifierHandler) {
-    this.modifierHandler = modifierHandler;
-  }
-
-  public Stack<String> getClassStack() {
-    return classStack;
-  }
-
-  public void setClassStack(Stack<String> classStack) {
-    this.classStack = classStack;
-  }
-
-  public Stack<String> getEnumStack() {
-    return enumStack;
-  }
-
-  public void setEnumStack(Stack<String> enumStack) {
-    this.enumStack = enumStack;
+  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
+    this.symbolTableHelper = cdSymbolTableHelper;
   }
 
   @Override
   public void visit(ASTCDClass node) {
+    symbolTableHelper.addToClassStack(node.getName());
     super.visit(node);
-    classStack.push(node.getName());
   }
 
   @Override
   public void endVisit(ASTCDClass node) {
-    classStack.pop();
     super.endVisit(node);
+    symbolTableHelper.removeFromClassStack();
   }
 
   @Override
@@ -98,7 +67,8 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setIsMethod(true);
 
-    final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(ast.getMCReturnType());
+    ast.getMCReturnType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCReturnType());
     if (!typeResult.isPresent()) {
       Log.error(String.format(
           "0xCDA90: The type of the return type (%s) could not be calculated",
@@ -113,7 +83,8 @@ public class CD4CodeBasisSymbolTableCreator
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
-        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA91: The type of the exception classes (%s) could not be calculated",
@@ -124,7 +95,7 @@ public class CD4CodeBasisSymbolTableCreator
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
 
-    getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
   }
 
   @Override
@@ -134,11 +105,12 @@ public class CD4CodeBasisSymbolTableCreator
     symbol.setIsConstructor(true);
     symbol.setHasEllipsis(ast.getCDParameterList().stream().anyMatch(ASTCDParameter::isEllipsis));
 
-    symbol.setReturnType(new SymTypeOfObject(new CDTypeSymbolLoader(classStack.peek(), ast.getEnclosingScope())));
+    symbol.setReturnType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getCurrentClassOnStack(), ast.getEnclosingScope())));
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
-        final Optional<SymTypeExpression> result = getTypeChecker().calculateType(s);
+        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA92: The type of the exception classes (%s) could not be calculated",
@@ -149,7 +121,7 @@ public class CD4CodeBasisSymbolTableCreator
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
 
-    getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
   }
 
   @Override
@@ -158,15 +130,9 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setIsParameter(true);
 
-    ASTMCType type;
-    if (ast.isEllipsis()) {
-      type = MCFullGenericTypesMill.mCArrayTypeBuilder().setMCType(ast.getMCType()).setDimensions(1).build();
-    }
-    else {
-      type = ast.getMCType();
-    }
+    ast.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCType());
 
-    final Optional<SymTypeExpression> typeResult = getTypeChecker().calculateType(type);
     if (!typeResult.isPresent()) {
       Log.error(String.format(
           "0xCDA93: The type (%s) of the attribute (%s) could not be calculated",
@@ -175,7 +141,21 @@ public class CD4CodeBasisSymbolTableCreator
           ast.getMCType().get_SourcePositionStart());
     }
     else {
-      symbol.setType(typeResult.get());
+      final SymTypeExpression finalTypeResult;
+      if (ast.isEllipsis()) {
+        finalTypeResult = new SymTypeArray(
+            TypeSymbolsMill
+                .oOTypeSymbolLoaderBuilder()
+                .setName(ast.getMCType().printType(new MCBasicTypesPrettyPrinter(new IndentPrinter())))
+                .setEnclosingScope(ast.getEnclosingScope())
+                .build(),
+            1, typeResult.get());
+      }
+      else {
+        finalTypeResult = typeResult.get();
+      }
+
+      symbol.setType(finalTypeResult);
     }
   }
 
@@ -188,7 +168,7 @@ public class CD4CodeBasisSymbolTableCreator
     // symbol.setIsReadOnly(true); // TODO SVa
     symbol.setIsPublic(true);
 
-    final String enumName = getEnumStack().peek();
+    final String enumName = symbolTableHelper.getCurrentEnumOnStack();
     symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(enumName, ast.getEnclosingScope())));
 
     // Don't store the arguments in the ST

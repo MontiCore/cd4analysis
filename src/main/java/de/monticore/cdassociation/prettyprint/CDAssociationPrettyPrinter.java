@@ -51,9 +51,6 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
     node.getCDAssocType().accept(getRealThis());
     print(" ");
 
-    if (node.isDerived()) {
-      print("/");
-    }
     if (node.isPresentName()) {
       print(node.getName());
     }
@@ -110,7 +107,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
       print(" ");
     }
 
-    node.getMCQualifiedName().accept(getRealThis());
+    node.getMCQualifiedType().accept(getRealThis());
     print(" ");
 
     if (node.isPresentCDQualifier()) {
@@ -135,7 +132,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
       print(" ");
     }
 
-    node.getMCQualifiedName().accept(getRealThis());
+    node.getMCQualifiedType().accept(getRealThis());
     print(" ");
 
     if (node.isPresentCDCardinality()) {
@@ -176,7 +173,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   }
 
   @Override
-  public void visit(ASTCDQualifier node) {
+  public void handle(ASTCDQualifier node) {
     if (node.isPresentByAttributeName()) {
       print("[[" + node.getByAttributeName() + "]]");
     }
@@ -189,9 +186,15 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   }
 
   @Override
+  public void visit(ASTCDOrdered node) {
+    print("{ordered}");
+  }
+
+  @Override
   public void handle(ASTCDDirectComposition node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     node.getCDLeftToRightDir().accept(getRealThis());
+    print(" ");
     node.getCDAssocRightSide().accept(getRealThis());
     print(";");
     CommentPrettyPrinter.printPostComments(node, getPrinter());

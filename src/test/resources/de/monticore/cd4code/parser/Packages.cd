@@ -21,13 +21,18 @@ classdiagram Packages { // NOTE: spielt der name ins package mit ein?
 
   }
 
-  package a {
+  package a { // scope
     class A;
   }
   // <=> class a.A;
 
   package a {
-    class B; // NOTE: A und B liegen in a
+    class B; // NOTE: A und B liegen in a {
+      a.A _a;
+    }
+
+    a.B._a
+    "".B._a
   }
 
   package a.b.c { // -> packages flach, nur gleicher Name = gleiches Package

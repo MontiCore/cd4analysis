@@ -4,10 +4,9 @@
 
 package de.monticore.cdinterfaceandenum._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
-import de.monticore.cdbasis.modifier.ModifierHandler;
-import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -18,14 +17,11 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCreator
     extends CDInterfaceAndEnumSymbolTableCreatorTOP {
-  protected DeriveSymTypeOfCDBasis typeCheck;
-  protected ModifierHandler modifierHandler;
-  protected Stack<String> enumStack;
+  protected CDSymbolTableHelper symbolTableHelper;
 
   public CDInterfaceAndEnumSymbolTableCreator(ICDInterfaceAndEnumScope enclosingScope) {
     super(enclosingScope);
@@ -39,45 +35,24 @@ public class CDInterfaceAndEnumSymbolTableCreator
     init();
   }
 
-  private void init() {
-    typeCheck = new DeriveSymTypeOfCDBasis();
-    modifierHandler = new ModifierHandler();
-    enumStack = new Stack<>();
+  protected void init() {
+    symbolTableHelper = new CDSymbolTableHelper();
   }
 
-  public DeriveSymTypeOfCDBasis getTypeCheck() {
-    return this.typeCheck;
-  }
-
-  public void setTypeCheck(DeriveSymTypeOfCDBasis typeCheck) {
-    this.typeCheck = typeCheck;
-  }
-
-  public ModifierHandler getModifierHandler() {
-    return this.modifierHandler;
-  }
-
-  public void setModifierHandler(ModifierHandler modifierHandler) {
-    this.modifierHandler = modifierHandler;
-  }
-
-  public Stack<String> getEnumStack() {
-    return this.enumStack;
-  }
-
-  public void setEnumStack(Stack<String> enumStack) {
-    this.enumStack = enumStack;
+  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
+    this.symbolTableHelper = cdSymbolTableHelper;
   }
 
   @Override
   public void visit(ASTCDEnum node) {
     super.visit(node);
-    getEnumStack().add(node.getName());
+    symbolTableHelper.addToEnumStack(node.getName());
   }
 
   @Override
   public void endVisit(ASTCDEnum node) {
-    getEnumStack().pop();
+    super.endVisit(node);
+    symbolTableHelper.removeFromEnumStack();
   }
 
   @Override
@@ -85,11 +60,12 @@ public class CDInterfaceAndEnumSymbolTableCreator
     super.initialize_CDInterface(symbol, ast);
     symbol.setIsInterface(true);
 
-    getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
-        final Optional<SymTypeExpression> result = getTypeCheck().calculateType(s);
+        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
@@ -106,11 +82,12 @@ public class CDInterfaceAndEnumSymbolTableCreator
     super.initialize_CDEnum(symbol, ast);
     symbol.setIsEnum(true);
 
-    getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
-        final Optional<SymTypeExpression> result = getTypeCheck().calculateType(s);
+        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA31: The type of the interface (%s) could not be calculated",
@@ -130,6 +107,6 @@ public class CDInterfaceAndEnumSymbolTableCreator
     // symbol.setIsReadOnly(true); // TODO SVa
     symbol.setIsPublic(true);
 
-    symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(getEnumStack().peek(), ast.getEnclosingScope())));
+    symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getEnumStack().peek(), ast.getEnclosingScope())));
   }
 }

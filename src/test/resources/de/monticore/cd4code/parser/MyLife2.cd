@@ -3,6 +3,10 @@
 package de.monticore.cd4code.parser;
 
 classdiagram MyLife2 {
+  interface CorporateEntity {
+     int vatNumber;
+  }
+
   public abstract class Person implements CorporateEntity {
     protected String name;
     int age;
@@ -24,12 +28,12 @@ classdiagram MyLife2 {
     FINISHED;
   }
 
+  class Grades;
+  class PhoneNumber;
+  class Address;
+
   composition Student -> Grades [*];
   association [0..1] Person (parent) <-> (child) Person [*];
   association phonebook Person [String] -> PhoneNumber;
-
-  interface CorporateEntity {
-     int vatNumber;
-  }
 
 }

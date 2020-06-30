@@ -2,10 +2,10 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd4codebasis.typescalculator;
+package de.monticore.cd4analysis.typescalculator;
 
 import de.monticore.cd.typescalculator.CDTypesCalculator;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisDelegatorVisitor;
+import de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
@@ -15,22 +15,18 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
-public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
+public class DeriveSymTypeOfCD4Analysis extends CD4AnalysisDelegatorVisitor
     implements ITypesCalculator, CDTypesCalculator {
 
   private TypeCheckResult typeCheckResult;
 
-  public DeriveSymTypeOfCD4CodeBasis() {
+  public DeriveSymTypeOfCD4Analysis() {
     setRealThis(this);
     init();
   }
 
   public TypeCheckResult getTypeCheckResult() {
     return typeCheckResult;
-  }
-
-  public void setTypeCheckResult(TypeCheckResult typeCheckResult) {
-    this.typeCheckResult = typeCheckResult;
   }
 
   @Override
@@ -97,5 +93,13 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
     final SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(getTypeCheckResult());
     setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
+
+    final SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes = new SynthesizeSymTypeFromMCCollectionTypes();
+    synthesizeSymTypeFromMCCollectionTypes.setTypeCheckResult(getTypeCheckResult());
+    setMCCollectionTypesVisitor(synthesizeSymTypeFromMCCollectionTypes);
+
+    final DeriveSymTypeOfBitExpressions deriveSymTypeOfBitExpressions = new DeriveSymTypeOfBitExpressions();
+    deriveSymTypeOfBitExpressions.setTypeCheckResult(getTypeCheckResult());
+    setBitExpressionsVisitor(deriveSymTypeOfBitExpressions);
   }
 }

@@ -37,7 +37,7 @@ public class CDAssociationNameUnique implements CDBasisASTCDDefinitionCoCo {
         .filter(ASTCDAssociationTOP::isPresentName).collect(Collectors.toList());
 
     CoCoHelper.findDuplicates(astcdAssociation).forEach(e ->
-        Log.error(String.format("0xCDC63: Association name (%s) conflicts with other association (%s).",
+        Log.error(String.format("0xCDC64: Association name (%s) conflicts with other association (%s).",
             e.getName(), astcdAssociation.stream().filter(oa -> oa.getName().equals(e.getName())).findFirst().get()),
             e.get_SourcePositionStart())
     );

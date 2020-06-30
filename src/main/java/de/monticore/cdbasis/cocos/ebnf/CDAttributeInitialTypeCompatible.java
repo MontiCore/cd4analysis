@@ -20,7 +20,7 @@ import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
@@ -39,7 +39,7 @@ public class CDAttributeInitialTypeCompatible
       FieldSymbol symbol = node.getSymbol();
       String className = symbol.getEnclosingScope().getName();
 
-      String typeName = node.getMCType().printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter()));
+      String typeName = node.getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()));
       final CD4CodePrettyPrinter initialPrinter = new CD4CodePrettyPrinter();
       node.getInitial().accept(initialPrinter);
 

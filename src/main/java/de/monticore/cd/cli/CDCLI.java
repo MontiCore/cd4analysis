@@ -6,12 +6,12 @@ package de.monticore.cd.cli;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeLanguage;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
@@ -54,11 +54,17 @@ public class CDCLI {
   }
 
   protected void createSymTab() {
-    CD4CodeLanguage cdLanguage = new CD4CodeLanguage();
-    CD4CodeGlobalScope globalScope = CD4CodeMill.cD4CodeGlobalScopeBuilder().setModelPath(new ModelPath()).setCD4CodeLanguage(cdLanguage).build();
-    CD4CodeSymbolTableCreatorDelegator stc = cdLanguage
-        .getSymbolTableCreator(globalScope);
-    stc.createFromAST(ast);
+    CD4CodeGlobalScope globalScope = CD4CodeMill
+        .cD4CodeGlobalScopeBuilder()
+        .setModelPath(new ModelPath())
+        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .build();
+    final CD4CodeSymbolTableCreator symbolTableCreator = CD4CodeMill
+        .cD4CodeSymbolTableCreatorBuilder()
+        .addToScopeStack(globalScope)
+        .build();
+
+    symbolTableCreator.createFromAST(ast);
   }
 
   protected void parse() throws IOException {
