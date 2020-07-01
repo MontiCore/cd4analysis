@@ -7,8 +7,6 @@ package de.monticore.testcd4codebasis.prettyprint;
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.testcd4codebasis._parser.TestCD4CodeBasisParser;
-import de.monticore.testcdbasis._parser.TestCDBasisParser;
-import de.monticore.testcdbasis.prettyprint.TestCDBasisPrettyPrinterDelegator;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -21,6 +19,11 @@ public class TestCD4CodeBasisPretterPrinterTest extends TestBasis {
   @Test
   public void completeModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4codebasis/parser/Simple.cd"));
-    System.out.println(printer.prettyprint(astcdCompilationUnit.get()));
+    checkNullAndPresence(p, astcdCompilationUnit);
+
+    String output = printer.prettyprint(astcdCompilationUnit.get());
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p.parse_StringCDCompilationUnit(output);
+    checkNullAndPresence(p, astcdCompilationUnitReParsed);
   }
 }

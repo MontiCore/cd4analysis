@@ -55,7 +55,7 @@ component grammar CDBasis extends
 
   /** The class diagram: defines a set of elements
   */
-  scope CDDefinition =
+  CDDefinition =
     Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */
@@ -64,6 +64,15 @@ component grammar CDBasis extends
       and is meant for extension if needed.
   */
   interface CDElement;
+
+  /** CDPackage span a scope which can contain any CDElement.
+      The name of the package is a flat name and can not create
+      a hierarchical package structure.
+  */
+  scope CDPackage implements CDElement =
+    "package" MCQualifiedName "{"
+      CDElement*
+    "}";
 
   /** CDType are all of the CDElements, which can be used to describe a
       type for e.g. variables, method arguments, ...

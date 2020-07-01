@@ -19,7 +19,7 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Checks that only interfaces are implemented.
  */
-abstract public class ImplementOnlyInterfaces {
+abstract public class ImplementOnlyInterfaces { // TODO SVa: move to CDInterfaceAndEnum cocos
 
   /**
    * Actual check that the enums interfaces are really interfaces.

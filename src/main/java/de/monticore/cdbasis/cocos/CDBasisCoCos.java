@@ -7,6 +7,7 @@ package de.monticore.cdbasis.cocos;
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.*;
+import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
   @Override
@@ -42,5 +43,14 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
 
     // CDDefinition
     checker.addCoCo(new CDDefinitionNameUpperCase());
+
+    // CDPackage
+    checker.addCoCo(new CDPackageNameUnique());
+  }
+
+  @Override
+  protected void addMcg2EbnfCoCos(CDBasisCoCoChecker checker) {
+    // CDPackage
+    checker.addCoCo(new CDPackageNotContainingCDPackage());
   }
 }

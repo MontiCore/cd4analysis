@@ -1,75 +1,46 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-/*
-- CDRole in CDType reinlegen? wie werden die dann Unterschieden?
-- Interfaces in OOType auch in superTypes
-- Packages
- - NOTE: packages agieren als scopes mit namen, wie soll das im AST stehen
-*/
+package de.monticore.cdbasis.parser;
 
-// NOTE: immer vollständige/absolute Namen
+targetpackage de.monticore.code;
 
-package de.monticore.cd4code.parser;
-
-targetPackage de.monticore.code; // NOTE: ist das das ausschlaggebende "Rootpackage"?
-// -> kann evtl raus,
-
-// NOTE: wie lautet das Rootpackage eines importierten Modells?
-
-classdiagram Packages { // NOTE: spielt der name ins package mit ein?
-  package { // nur scope ohne name (muss nicht explizit hin geschrieben werden)
-
-  }
-
-  package a { // scope
+classdiagram Packages {
+  package a {
     class A;
   }
-  // <=> class a.A;
 
-  package a {
-    class B; // NOTE: A und B liegen in a {
-      a.A _a;
-    }
-
-    a.B._a
-    "".B._a
+  package a2 {
+    class A2 extends A;
+    class A;
   }
 
-  package a.b.c { // -> packages flach, nur gleicher Name = gleiches Package
+  package a {
+    class B { // NOTE: A and B are in same package a
+      a2.A2 a1;
+      A2 a2;
+    }
+  }
+
+  package a.b {
+    class B;
+  }
+
+  package a.b.c { // NOTE: this is no subpackage of a
     class C;
   }
-  /*
-  </=> das hier machen wir nicht, "a.b.c" ist genau ein spezifisches package
-  package a {
-    package b {
-      package c {
-        class C;
-      }
-    }
+
+  class F {
+    a.b.B b;
   }
-  <=> class a.b.c.C; das hier ist ok, aber machen wir nicht
-  */
 
   package d {
-    class D extends <?>A; // Note wie darf A hier referenziert werden?
-
-    association d.D -> a.A;
-
-    // Option 1:
-    class D extends a.A; // sobald mehr als ein A zur Verfügung steht (Coco)
-    class D extends A; // steht zur Verfügung, solange eindeutig (coco)
-
-    // Option 2:
-    class D extends /.a.A; // alle packages sind automatisch immer aus root
-
-    // Option 3:
-    class D extends super.a.A; // keine relativen angaben
+    class D extends a.A, a.B, a.b.c.C; // Note wie darf A hier referenziert werden?
   }
 
   package h {
     class H {
-      String name; // NOTE: was ist mit "standard" Klassen
-      java.util.String; // NOTE: müsste das immer so aussehen?, nein, wie oben
+      String name;
+      java.lang.String name2;
     }
   }
 

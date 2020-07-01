@@ -2,39 +2,33 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd4code.prettyprint;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-public class CD4CodePrettyPrinterTest extends TestBasis {
+public class CD4CodePackageResolveTest extends TestBasis {
   CD4CodeParser p = new CD4CodeParser();
-  CD4CodePrettyPrinter printer = new CD4CodePrettyPrinter();
 
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/MyLife2.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/Packages.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
-
-    String output = printer.prettyprint(astcdCompilationUnit.get());
-
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p.parse_StringCDCompilationUnit(output);
-    checkNullAndPresence(p, astcdCompilationUnitReParsed);
-
-    final ASTCDCompilationUnit node = astcdCompilationUnitReParsed.get();
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     CD4CodeGlobalScope globalScope = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()

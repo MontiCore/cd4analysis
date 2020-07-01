@@ -5,9 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.Names;
@@ -54,6 +52,21 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
         getClass().getSimpleName());
 
     super.visit(node);
+  }
+
+  @Override
+  public void visit(ASTCDDefinition node) {
+    final ICDBasisScope artifactScope = scopeStack.peekLast();
+    assert artifactScope != null;
+    artifactScope.setName(node.getName());
+    super.visit(node);
+  }
+
+  @Override
+  public void visit(ASTCDPackage node) {
+    super.visit(node);
+    assert scopeStack.peekLast() != null;
+    scopeStack.peekLast().setName(node.getMCQualifiedName().getQName());
   }
 
   @Override

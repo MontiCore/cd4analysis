@@ -2,7 +2,11 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cdbasis._symboltable;
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
+
+package de.monticore.cd._symboltable;
 
 import com.google.common.collect.ImmutableSet;
 import de.monticore.types.check.SymTypeExpression;
@@ -13,7 +17,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class CDTypeHelper {
+public class OOTypeHelper {
   public static Collection<FieldSymbol> getAllFieldsOfSuperTypes(OOTypeSymbol symbol) {
     final Set<FieldSymbol> allSuperTypeFields = new LinkedHashSet<>();
     final Collection<FieldSymbol> fields = symbol.getSpannedScope().getLocalFieldSymbols();

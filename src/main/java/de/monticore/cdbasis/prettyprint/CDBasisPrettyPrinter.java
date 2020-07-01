@@ -1,10 +1,3 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
-/*
- * (c) https://github.com/MontiCore/monticore
- */
 
 /*
  * (c) https://github.com/MontiCore/monticore
@@ -124,6 +117,26 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void endVisit(ASTCDDefinition node) {
+    unindent();
+    println("}");
+  }
+
+  @Override
+  public void visit(ASTCDPackage node) {
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    print("package " + node.getMCQualifiedName().getQName() + " {");
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    println();
+    indent();
+  }
+
+  @Override
+  public void traverse(ASTCDPackage node) {
+    node.getCDElementList().forEach(e -> e.accept(getRealThis()));
+  }
+
+  @Override
+  public void endVisit(ASTCDPackage node) {
     unindent();
     println("}");
   }

@@ -15,7 +15,7 @@ package de.monticore.cdbasis.cocos.ebnf;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
-import de.monticore.cdbasis._symboltable.CDTypeHelper;
+import de.monticore.cd._symboltable.OOTypeHelper;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
@@ -45,7 +45,7 @@ public class CDAttributeOverriddenTypeMatch
         // Add all attributes of the super types and all inherited attributes of the super types
         .forEach(sT -> {
           superAttrs.addAll(sT.getTypeInfo().getFieldList());
-          superAttrs.addAll(CDTypeHelper.getAllFieldsOfSuperTypes(sT.getTypeInfo()));
+          superAttrs.addAll(OOTypeHelper.getAllFieldsOfSuperTypes(sT.getTypeInfo()));
         });
     List<FieldSymbol> overriddenSymbols = superAttrs.stream()
         // same name

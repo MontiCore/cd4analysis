@@ -7,7 +7,7 @@ package de.monticore.cdassociation.cocos;
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdassociation._cocos.CDAssociationCoCoChecker;
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameLowerCase;
-import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameNoConflictWithAttribute;
+import de.monticore.cdassociation.cocos.ebnf.CDAssociationHasSymbol;
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameUnique;
 
 public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
@@ -27,7 +27,7 @@ public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
   protected void addEbnfCoCos(CDAssociationCoCoChecker checker) {
     // CDAssociation
     checker.addCoCo(new CDAssociationNameLowerCase());
-    checker.addCoCo(new CDAssociationNameNoConflictWithAttribute());
+    checker.addCoCo(new CDAssociationHasSymbol());
     checker.addCoCo(new CDAssociationNameUnique());
   }
 }

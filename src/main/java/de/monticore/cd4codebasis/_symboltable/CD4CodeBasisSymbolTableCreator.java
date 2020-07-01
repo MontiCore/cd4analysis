@@ -12,11 +12,9 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.typesymbols.TypeSymbolsMill;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
@@ -136,7 +134,7 @@ public class CD4CodeBasisSymbolTableCreator
     if (!typeResult.isPresent()) {
       Log.error(String.format(
           "0xCDA93: The type (%s) of the attribute (%s) could not be calculated",
-          ast.getMCType().getClass().getSimpleName(),
+          symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()),
           ast.getName()),
           ast.getMCType().get_SourcePositionStart());
     }
@@ -146,7 +144,7 @@ public class CD4CodeBasisSymbolTableCreator
         finalTypeResult = new SymTypeArray(
             TypeSymbolsMill
                 .oOTypeSymbolLoaderBuilder()
-                .setName(ast.getMCType().printType(new MCBasicTypesPrettyPrinter(new IndentPrinter())))
+                .setName(symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()))
                 .setEnclosingScope(ast.getEnclosingScope())
                 .build(),
             1, typeResult.get());

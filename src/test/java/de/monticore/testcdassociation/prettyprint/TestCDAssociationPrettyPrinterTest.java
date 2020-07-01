@@ -19,6 +19,11 @@ public class TestCDAssociationPrettyPrinterTest extends TestBasis {
   @Test
   public void completeModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
-    System.out.println(printer.prettyprint(astcdCompilationUnit.get()));
+    checkNullAndPresence(p, astcdCompilationUnit);
+
+    String output = printer.prettyprint(astcdCompilationUnit.get());
+
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p.parse_StringCDCompilationUnit(output);
+    checkNullAndPresence(p, astcdCompilationUnitReParsed);
   }
 }

@@ -4,10 +4,7 @@
 
 package de.monticore.cd.cocos;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CoCoHelper {
@@ -15,5 +12,21 @@ public class CoCoHelper {
     Set<T> uniques = new HashSet<>();
 
     return list.stream().filter(e -> !uniques.add(e)).collect(Collectors.toList());
+  }
+
+  public static <T, Inner> List<T> findDuplicatesBy(Collection<T> list, java.util.function.Function<T, Inner> function) {
+    Set<Inner> existingElements = new HashSet<>();
+    List<T> duplicates = new ArrayList<>();
+
+    for (T elem : list) {
+      if (existingElements.contains(function.apply(elem))) {
+        duplicates.add(elem);
+      }
+      else {
+        existingElements.add(function.apply(elem));
+      }
+    }
+
+    return duplicates;
   }
 }

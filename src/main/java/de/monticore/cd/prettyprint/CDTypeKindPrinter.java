@@ -18,6 +18,7 @@ import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 
 public class CDTypeKindPrinter extends PrettyPrintUtil
     implements CDInterfaceAndEnumVisitor {
+  protected CDInterfaceAndEnumVisitor realThis;
   protected IndentPrinter printer;
 
   public CDTypeKindPrinter() {
@@ -30,8 +31,13 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
   }
 
   @Override
-  public CDTypeKindPrinter getRealThis() {
-    return this;
+  public CDInterfaceAndEnumVisitor getRealThis() {
+    return realThis;
+  }
+
+  @Override
+  public void setRealThis(CDInterfaceAndEnumVisitor realThis) {
+    this.realThis = realThis;
   }
 
   @Override
@@ -51,7 +57,7 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
 
   public String print(ASTCDType type) {
     type.accept(getRealThis());
-    return getRealThis().getPrinter().getContent();
+    return getPrinter().getContent();
   }
 
   public String print(OOTypeSymbol type) {
@@ -65,6 +71,6 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
       print("enum");
     }
 
-    return getRealThis().getPrinter().getContent();
+    return getPrinter().getContent();
   }
 }
