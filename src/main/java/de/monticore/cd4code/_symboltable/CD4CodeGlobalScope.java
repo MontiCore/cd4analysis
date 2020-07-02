@@ -23,6 +23,11 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     super(modelPath, modelFileExtension);
   }
 
+  @Override
+  public CD4CodeGlobalScope getRealThis() {
+    return this;
+  }
+
   public void addBuiltInTypes() {
     final CD4CodeArtifactScope artifactScope = CD4CodeMill
         .cD4CodeArtifactScopeBuilder()
@@ -88,11 +93,6 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
                 .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
                 .setIsClass(true)
                 .build()));
-  }
-
-  @Override
-  public CD4CodeGlobalScope getRealThis() {
-    return this;
   }
 
   @Override

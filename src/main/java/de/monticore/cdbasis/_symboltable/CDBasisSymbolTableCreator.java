@@ -89,13 +89,13 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
-      symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclassList().stream().map(s -> {
+      symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclasList().stream().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
               "0xCDA00: The type of the extended classes (%s) could not be calculated",
-              s.getClass().getSimpleName()),
+              symbolTableHelper.getPrettyPrinter().prettyprint(s)),
               s.get_SourcePositionStart());
         }
         return result;

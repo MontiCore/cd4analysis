@@ -5,7 +5,10 @@
 package de.monticore.cd4analysis._symboltable;
 
 import com.google.common.collect.ImmutableSet;
+import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.io.paths.ModelPath;
+import de.monticore.types.typesymbols.TypeSymbolsMill;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.Splitters;
@@ -28,6 +31,73 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   @Override
   public CD4AnalysisGlobalScope getRealThis() {
     return this;
+  }
+
+  public void addBuiltInTypes() {
+    final CD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
+        .cD4AnalysisArtifactScopeBuilder()
+        .setPackageName("")
+        .setEnclosingScope(this)
+        .build();
+    artifactScope.setName("BuiltInTypes");
+
+    addBuiltInPrimitiveTypes(artifactScope);
+    addBuiltInObjectTypes(artifactScope);
+    addBuiltInUtilTypes(artifactScope);
+  }
+
+  public void addBuiltInPrimitiveTypes(CD4AnalysisArtifactScope artifactScope) {
+    final CD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
+        .cD4AnalysisScopeBuilder()
+        .setNameAbsent()
+        .setEnclosingScope(artifactScope)
+        .build();
+    BuiltInTypes.PRIMITIVE_TYPES
+        .forEach(t -> primitiveTypesScope.add(
+            TypeSymbolsMill
+                .oOTypeSymbolBuilder()
+                .setName(t)
+                .setEnclosingScope(primitiveTypesScope)
+                .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
+                .build()));
+  }
+
+  public void addBuiltInObjectTypes(CD4AnalysisArtifactScope artifactScope) {
+    final String scopeName = "java.lang";
+
+    final CD4AnalysisScope objectTypesScope = CD4AnalysisMill
+        .cD4AnalysisScopeBuilder()
+        .setName(scopeName)
+        .setEnclosingScope(artifactScope)
+        .build();
+    BuiltInTypes.OBJECT_TYPES
+        .forEach(t -> objectTypesScope.add(
+            TypeSymbolsMill
+                .oOTypeSymbolBuilder()
+                .setName(t)
+                .setEnclosingScope(objectTypesScope)
+                .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
+                .setIsClass(true)
+                .build()));
+  }
+
+  public void addBuiltInUtilTypes(CD4AnalysisArtifactScope artifactScope) {
+    final String scopeName = "java.util";
+
+    final CD4AnalysisScope utilTypesScope = CD4AnalysisMill
+        .cD4AnalysisScopeBuilder()
+        .setName(scopeName)
+        .setEnclosingScope(artifactScope)
+        .build();
+    BuiltInTypes.UTIL_TYPES
+        .forEach(t -> utilTypesScope.add(
+            TypeSymbolsMill
+                .oOTypeSymbolBuilder()
+                .setName(t)
+                .setEnclosingScope(utilTypesScope)
+                .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
+                .setIsClass(true)
+                .build()));
   }
 
   public static Set<String> calculateModelNamesSimple(String name) {

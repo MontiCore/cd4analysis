@@ -73,12 +73,9 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   */
   interface CDCardinality;
   CDCardMult       implements CDCardinality = "[*]";
-  CDCardOne        implements CDCardinality = "[1]"; // TODO SVa: try #2548: {noSpace(2,3) && token(2).equals("1")}? "[" Number "]";
+  CDCardOne        implements CDCardinality = "[1]"; // #2548 {noSpace(2,3) && _input.LT(2).getText().equals("1") }? "[" Digits "]"; // matches "[1]"
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
   CDCardOpt        implements CDCardinality = "[0..1]";
-
-  // TODO SVa: auch bei [1] splittoken einsetzen oder per noSpace zerlegen? (bei den anderen wohl nicht notwendig)
-  //           kann erst gemacht werden, wenn #2548 gelöst
 
   /** CDQualifier describes the two forms of explicit qualifications:
       either through an attribute value contained in the value-object

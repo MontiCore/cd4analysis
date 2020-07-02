@@ -158,7 +158,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDExtendUsage node) {
-    printList(getRealThis(), node.getSuperclassList().iterator(), ", ");
+    printList(getRealThis(), node.getSuperclasList().iterator(), ", ");
   }
 
   @Override

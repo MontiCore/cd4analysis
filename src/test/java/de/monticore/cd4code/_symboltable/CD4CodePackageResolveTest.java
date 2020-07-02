@@ -9,7 +9,6 @@
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd.TestBasis;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
@@ -33,7 +32,7 @@ public class CD4CodePackageResolveTest extends TestBasis {
     CD4CodeGlobalScope globalScope = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()
         .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .setModelFileExtension(CD4CodeGlobalScope.EXTENSION)
         .build();
     final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
         .cD4CodeSymbolTableCreatorDelegatorBuilder()
