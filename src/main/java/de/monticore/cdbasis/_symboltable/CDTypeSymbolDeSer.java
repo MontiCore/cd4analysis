@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
   @Override
-  protected List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson, ICDBasisScope enclosingScope) {
+  public List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson, ICDBasisScope enclosingScope) {
     return symbolJson.getMember("superTypes").getAsJsonArray().getValues()
         .stream().map(i -> SymTypeExpressionDeSer.getInstance().deserialize(i, enclosingScope))
         .collect(Collectors.toList());

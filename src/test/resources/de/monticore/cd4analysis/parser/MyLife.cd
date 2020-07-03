@@ -1,9 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.cd4analysis.parser;
+package de.monticore.life;
 
 classdiagram MyLife {
-
   abstract class Person implements CorporateEntity {
     String name;
     int age;
@@ -11,22 +10,26 @@ classdiagram MyLife {
     List<String> nickNames;
   }
 
-  class Student extends Person {
-    StudentStatus status;
-    -> Address [1..*] {ordered};
-  }
-
-  enum StudentStatus {
-    ENROLLED,
-    FINISHED;
-  }
-
-  class Grades;
+  class Address;
   class PhoneNumber;
 
-  composition Student -> Grades [*];
-  association [0..1] Person (parent) <-> (child) Person [*];
-  association phonebook Person [String] -> PhoneNumber;
+  package uni {
+    class Student extends Person {
+      StudentStatus status;
+      -> Address [1..*] {ordered};
+    }
+
+    enum StudentStatus {
+      ENROLLED,
+      FINISHED;
+    }
+
+    class Grades;
+
+    composition Student -> Grades [*];
+    association phonebook uni.Student [String] -> PhoneNumber;
+  }
+  association [0..1] Person (parent) <-> (child) de.monticore.life.Person [*];
 
   interface CorporateEntity {
      int vatNumber;

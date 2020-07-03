@@ -2,8 +2,6 @@
 
 package de.monticore.cdbasis.parser;
 
-targetpackage de.monticore.cdbasis;
-
 targetimport additional.imports;
 
 classdiagram Simple {

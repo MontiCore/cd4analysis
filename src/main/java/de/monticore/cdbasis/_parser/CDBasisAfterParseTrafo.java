@@ -7,14 +7,12 @@ package de.monticore.cdbasis._parser;
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cdbasis.CDBasisMill;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDElement;
-import de.monticore.cdbasis._ast.ASTCDPackage;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.se_rwth.commons.Joiners;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +20,7 @@ import java.util.stream.Collectors;
 public class CDBasisAfterParseTrafo extends CDAfterParseHelper
     implements CDBasisVisitor {
   protected CDBasisVisitor realThis;
+  protected List<String> packageNameList = new ArrayList<>(); //default, if the model has no package
 
   public CDBasisAfterParseTrafo() {
     this(new CDAfterParseHelper());
@@ -43,11 +42,19 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
   }
 
   @Override
+  public void visit(ASTCDCompilationUnit node) {
+    if (node.isPresentCDPackageStatement()) {
+      packageNameList = node.getCDPackageStatement().getPackageList();
+    }
+  }
+
+  @Override
   public void visit(ASTCDDefinition node) {
     combinePackagesWithSameName(node);
 
-    // move all elements (except packages) which are in CDDefinition to the anonymous package
-    // moveElementsToAnonymousPackage(node);
+    // move all elements (except packages) which are in CDDefinition
+    // to the package with the package name of the model
+    moveElementsToDefaultPackage(node);
   }
 
   protected void combinePackagesWithSameName(ASTCDDefinition node) {
@@ -66,29 +73,33 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
             .ifPresent(pa -> pa.addAllCDElements(e.getCDElementList())));
   }
 
-  protected void moveElementsToAnonymousPackage(ASTCDDefinition node) {
+  protected void moveElementsToDefaultPackage(ASTCDDefinition node) {
     final List<ASTCDElement> elementsInCDDefinition = node
         .getCDElementList().stream()
         .filter(e -> !(e instanceof ASTCDPackage))
         .collect(Collectors.toList());
 
-    // find the anonymous (name = "") package
-    Optional<ASTCDPackage> anonymousPackage = node
+    // find the package with the package of the model
+    Optional<ASTCDPackage> defaultPackage = node
         .getCDElementList().stream()
         .filter(e -> e instanceof ASTCDPackage)
         .map(e -> (ASTCDPackage) e)
-        .filter(e -> e.getMCQualifiedName().getQName().equals(""))
+        .filter(e -> e
+            .getMCQualifiedName()
+            .getQName()
+            .equals(Joiners.DOT.join(packageNameList)))
         .findFirst();
 
-    if (!anonymousPackage.isPresent()) {
-      anonymousPackage = Optional.of(CDBasisMill.cDPackageBuilder()
+    if (!defaultPackage.isPresent()) {
+      defaultPackage = Optional.of(CDBasisMill.cDPackageBuilder()
           .setMCQualifiedName(MCBasicTypesMill.mCQualifiedNameBuilder()
-              .setPartList(Collections.singletonList(""))
+              .setPartList(packageNameList)
               .build())
           .build());
+      node.addCDElement(0, defaultPackage.get()); // add the default package as first package
     }
 
-    anonymousPackage.get().addAllCDElements(elementsInCDDefinition);
+    defaultPackage.get().addAllCDElements(elementsInCDDefinition);
     node.removeAllCDElements(elementsInCDDefinition);
   }
 

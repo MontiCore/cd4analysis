@@ -33,19 +33,12 @@ component grammar CDBasis extends
   CDCompilationUnit =
     CDPackageStatement?
     MCImportStatement*
-    CDTargetPackageStatement?
     CDTargetImportStatement*
     CDDefinition;
 
   /** The package statement denotes the package of the model file itself
   */
   CDPackageStatement = "package" package:(Name& || ".")+ ";";
-
-  /** The target package is a information for the generator,
-      which should use this information as package-path for
-      the generate code
-  */
-  CDTargetPackageStatement = "targetpackage" targetpackage:(Name& || ".")+ ";";
 
   /** This import statement allows to explain in the model, which
       additional imports shall be added to the generated code

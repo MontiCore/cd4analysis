@@ -25,21 +25,24 @@ The main grammar file is [`CD4Analysis`][CD4AGrammar].
 
 ## Example
 ```
+package de.monticore.life;
+
 classdiagram MyLife { 
   abstract class Person {
     int age;
     Date birthday;
     List<String> nickNames;
   }
-  class Student extends Person {
-    StudentStatus status;
-    -> Address [1..*] {ordered};
+  package uni {
+    class Student extends Person {
+      StudentStatus status;
+      -> Address [1..*] {ordered};
+    }
+    enum StudentStatus { ENROLLED, FINISHED; }
+    composition Student -> Grades [*];
+    association phonebook uni.Student [String] -> PhoneNumber;
   }
-  enum StudentStatus { ENROLLED, FINISHED; }
-  
-  composition Student -> Grades [*];
-  association [0..1] Person (parent) <-> (child) Person [*];
-  association phonebook Person [String] -> PhoneNumber;
+  association [0..1] Person (parent) <-> (child) de.monticore.life.Person [*];
 }
 ```
 

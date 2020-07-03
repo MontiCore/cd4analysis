@@ -6,12 +6,10 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
 
 import java.util.Collections;
 import java.util.Deque;
-import java.util.stream.Collectors;
 
 public class CD4AnalysisSymbolTableCreator
     extends CD4AnalysisSymbolTableCreatorTOP {
@@ -31,7 +29,6 @@ public class CD4AnalysisSymbolTableCreator
     CD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
         .cD4AnalysisArtifactScopeBuilder()
         .setPackageName(Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
-        .setImportList(rootNode.getMCImportStatementList().stream().map(ASTMCImportStatement::getImportStatement).collect(Collectors.toList()))
         .build();
     artifactScope.setName(rootNode.getCDDefinition().getName());
 

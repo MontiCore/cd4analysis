@@ -94,8 +94,8 @@ public class CDAssociationSymbolTableCreator
     symAssociation.setRightRole(rightRoleSymbol);
 
     // the symbol is a field of the type of the other side
-    rightRoleSymbol.getType().getTypeInfo().addFieldSymbol(leftRoleSymbol);
     leftRoleSymbol.getType().getTypeInfo().addFieldSymbol(rightRoleSymbol);
+    rightRoleSymbol.getType().getTypeInfo().addFieldSymbol(leftRoleSymbol);
 
     node.getCDAssocType().accept(symbolTableHelper.getAssocTypeVisitor(symAssociation));
   }

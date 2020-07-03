@@ -4,7 +4,6 @@ package de.monticore.cdbasis.parser;
 
 import de.monticore.cdbasis.parser.Simple;
 
-targetpackage de.monticore.cdbasis;
 targetimport additional.imports;
 
 classdiagram Complete {

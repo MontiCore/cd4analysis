@@ -47,12 +47,6 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
       i.accept(getRealThis());
       println();
     }
-    if (node.isPresentCDTargetPackageStatement()) {
-      if (!node.isEmptyMCImportStatements()) {
-        println();
-      }
-      node.getCDTargetPackageStatement().accept(getRealThis());
-    }
 
     node.getCDTargetImportStatementList().forEach(i -> i.accept(getRealThis()));
     if (!node.isEmptyCDTargetImportStatements()) {
@@ -70,14 +64,6 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   public void visit(ASTCDPackageStatement node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     print("package " + Names.getQualifiedName(node.getPackageList()) + ";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
-    println();
-  }
-
-  @Override
-  public void visit(ASTCDTargetPackageStatement node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-    print("targetpackage " + Names.getQualifiedName(node.getTargetpackageList()) + ";");
     CommentPrettyPrinter.printPostComments(node, getPrinter());
     println();
   }

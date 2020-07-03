@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   @Override
-  protected Optional<ASTCDCardinality> deserializeCardinality(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<ASTCDCardinality> deserializeCardinality(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
     // TODO SVa: how to read strings (with parser? -> not existing for component grammars)
     if (symbolJson.hasMember("cardinality")) {
       //symbolJson.getMember("cardinality").

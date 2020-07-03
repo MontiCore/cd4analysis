@@ -4,13 +4,11 @@ package de.monticore.cd4code.parser;
 
 classdiagram MyLife2 {
 
-  package a {
-    interface CorporateEntity {
-       int vatNumber;
-    }
+  interface CorporateEntity {
+     int vatNumber;
   }
 
-  public abstract class Person implements a.CorporateEntity {
+  public abstract class Person implements CorporateEntity {
     protected String name;
     int age;
     Date birthday;

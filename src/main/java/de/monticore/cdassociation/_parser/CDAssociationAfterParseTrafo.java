@@ -83,7 +83,7 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
         .cDAssocLeftSideBuilder()
         .setModifier(UMLModifierMill.modifierBuilder().build())
         .setCDCardinality(CDAssociationMill.cDCardOneBuilder().build())
-        .setMCQualifiedType(leftSideQualifiedType) // TODO SVa: have the correct package path
+        .setMCQualifiedType(leftSideQualifiedType)
         .build();
 
     final ASTCDAssociation assoc = CDAssociationMill
