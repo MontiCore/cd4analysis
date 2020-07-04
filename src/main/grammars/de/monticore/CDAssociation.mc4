@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-/* Beta-version: This is intended to become a MontiCore stable grammar. */
+/* This is a MontiCore stable grammar.
+ * Adaptations -- if any -- are conservative. */
 
 /**
    This component grammar defines associations for CD4Analysis and CD4Code.
@@ -73,27 +74,37 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   */
   interface CDCardinality;
   CDCardMult       implements CDCardinality = "[*]";
-  CDCardOne        implements CDCardinality = "[1]"; // #2548 {noSpace(2,3) && _input.LT(2).getText().equals("1") }? "[" Digits "]"; // matches "[1]"
+  CDCardOne        implements CDCardinality = "[1]"; // TODO #2548 {noSpace(2,3) && _input.LT(2).getText().equals("1") }? "[" Digits "]"; // matches "[1]"
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
   CDCardOpt        implements CDCardinality = "[0..1]";
+  
+  // TODO: #2548 wenn wir schon mal dabei sind könnten wir auch die anderen analog behandeln?
+  // // matches "[1..*]"
+  // {noSpace(2,3,4,5) && token(2).equals("1") }? "[" Digits "." "." "*" "]"; 
+  // // matches "[0..1]"
+  // {noSpace(2,3,4,5) && token(2).equals("0") && token(5).equals("1") }? 
+  //                "[" Digits "." "." Digits "]"; 
 
+  splittoken "[*]";
+  
   /** CDQualifier describes the two forms of explicit qualifications:
       either through an attribute value contained in the value-object
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
-  CDQualifier = {noSpace(2)}? "[" "[" byAttributeName:Name@Field {noSpace(2)}? "]" "]" | "[" byType:MCType "]";
+  CDQualifier = 
+      "[[" byAttributeName:Name@Field "]]" 
+    | "["  byType:MCType "]";
+
+  splittoken "[[", "]]";
 
   /** Write a composition in short form inside the composite class:
-      class A {
-        -> (r) B [*];
-      }
-
+      class A {  -> (r) B [*];  }
         transforms to:
       composition [1] A -> (r) B [*];
   */
   CDDirectComposition implements CDMember =
-    CDLeftToRightDir CDAssocRightSide ";";
+    "->" CDAssocRightSide ";";
 
 
   /* ==== Symbols ==== */
