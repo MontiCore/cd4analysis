@@ -11,6 +11,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
 import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
@@ -171,5 +172,4 @@ public class CD4CodeBasisSymbolTableCreator
 
     // Don't store the arguments in the ST
   }
-
 }

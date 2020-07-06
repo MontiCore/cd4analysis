@@ -16,7 +16,10 @@ classdiagram STTest {
     DEE;
   }
 
-  association Struct (struct) -> (item) StructItem [1];
+  class Struct;
+  class StructItem;
+
+  association assoc Struct (struct) -> (item) StructItem [1];
   association A (s) -> (a) S;
   association [*] A (s2) -> (a2) S [1];
 

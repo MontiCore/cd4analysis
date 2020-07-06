@@ -139,4 +139,13 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     // don't store the initial value in the ST
   }
+
+  @Override
+  public void endVisit(ASTCDCompilationUnit node) {
+    symbolTableHelper.getHandledAssociations().forEach(a -> {
+      // the symbol is a field of the type of the other side
+      a.getLeft().getType().getTypeInfo().addFieldSymbol(a.getRight());
+      a.getRight().getType().getTypeInfo().addFieldSymbol(a.getLeft());
+    });
+  }
 }

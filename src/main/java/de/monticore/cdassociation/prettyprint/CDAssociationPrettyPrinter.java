@@ -193,8 +193,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   @Override
   public void handle(ASTCDDirectComposition node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    node.getCDLeftToRightDir().accept(getRealThis());
-    print(" ");
+    print("-> ");
     node.getCDAssocRightSide().accept(getRealThis());
     print(";");
     CommentPrettyPrinter.printPostComments(node, getPrinter());

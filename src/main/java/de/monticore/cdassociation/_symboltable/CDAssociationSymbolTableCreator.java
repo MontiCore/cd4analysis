@@ -7,6 +7,7 @@ package de.monticore.cdassociation._symboltable;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
@@ -49,6 +50,7 @@ public class CDAssociationSymbolTableCreator
 
     SymAssociationBuilder symAssociation = create_SymAssociation(symbol);
     initialize_SymAssociation(symAssociation, node);
+    symbolTableHelper.addToHandledAssociations(symAssociation.build());
   }
 
   protected SymAssociationBuilder create_SymAssociation(CDAssociationSymbol symbol) {
@@ -92,10 +94,6 @@ public class CDAssociationSymbolTableCreator
     node.getRight().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     initialize_CDRole(rightRoleSymbol, node, false);
     symAssociation.setRightRole(rightRoleSymbol);
-
-    // the symbol is a field of the type of the other side
-    leftRoleSymbol.getType().getTypeInfo().addFieldSymbol(rightRoleSymbol);
-    rightRoleSymbol.getType().getTypeInfo().addFieldSymbol(leftRoleSymbol);
 
     node.getCDAssocType().accept(symbolTableHelper.getAssocTypeVisitor(symAssociation));
   }

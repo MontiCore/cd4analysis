@@ -74,7 +74,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   */
   interface CDCardinality;
   CDCardMult       implements CDCardinality = "[*]";
-  CDCardOne        implements CDCardinality = "[1]"; // TODO #2548 {noSpace(2,3) && _input.LT(2).getText().equals("1") }? "[" Digits "]"; // matches "[1]"
+  CDCardOne        implements CDCardinality = "[1]"; // TODO SVa: #2548 {noSpace(2,3) && _input.LT(2).getText().equals("1") }? "[" Digits "]"; // matches "[1]"
   CDCardAtLeastOne implements CDCardinality = "[1..*]";
   CDCardOpt        implements CDCardinality = "[0..1]";
   

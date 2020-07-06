@@ -4,67 +4,115 @@
 
 package de.monticore.cdassociation._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
+import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.typesymbols._symboltable.TypeSymbolsSymbolTablePrinter;
 
 import java.util.Optional;
 
 public class CDAssociationSymbolTablePrinter
     extends CDAssociationSymbolTablePrinterTOP {
+  protected TypeSymbolsSymbolTablePrinter typeSymbolsSymbolTablePrinterDelegate;
+  protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
+
   public CDAssociationSymbolTablePrinter() {
+    init();
   }
 
   public CDAssociationSymbolTablePrinter(JsonPrinter printer) {
     super(printer);
+    init();
   }
 
-  public void serializeSymAssociation(SymAssociation association) {
+  protected void init() {
+    this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
+    this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
+  }
+
+  public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
+    this.symbolTablePrinterHelper = symbolTablePrinterHelper;
+  }
+
+  public int handleSymAssociation(SymAssociation association) {
+    // don't serialize the SymAssociation, just add it to the list and generate an identifier
+    this.symbolTablePrinterHelper.addSymAssociation(association);
+    return association.hashCode();
+  }
+
+  @Override
+  public void serializeCDAssociationAssociation(SymAssociation association) {
+    printer.member("association", handleSymAssociation(association));
+  }
+
+  @Override
+  public void serializeCDRoleCardinality(Optional<ASTCDCardinality> cardinality) {
+    if (cardinality.isPresent()) {
+      final CDAssociationPrettyPrinter cdAssociationPrettyPrinter = new CDAssociationPrettyPrinter(new IndentPrinter());
+      cardinality.get().accept(cdAssociationPrettyPrinter);
+      printer.member("cardinality", cdAssociationPrettyPrinter.getPrinter().getContent());
+    }
+  }
+
+  @Override
+  public void serializeCDRoleAttributeQualifier(Optional<FieldSymbol> attributeQualifier) {
+    if (attributeQualifier.isPresent()) {
+      printer.member("attributeQualifier", attributeQualifier.get().getName());
+    }
+  }
+
+  @Override
+  public void serializeCDRoleTypeQualifier(Optional<SymTypeExpression> typeQualifier) {
+    if (typeQualifier.isPresent()) {
+      printer.member("typeQualifier", typeQualifier.get().getTypeInfo().getName());
+    }
+  }
+
+  @Override
+  public void visit(CDRoleSymbol node) {
+    super.visit(node);
+    printer.member("isLeft", node.isLeft());
+  }
+
+  @Override
+  public void serializeCDRoleAssociation(SymAssociation association) {
+    printer.member("association", handleSymAssociation(association));
+  }
+
+  @Override
+  public void serializeCDRoleType(SymTypeExpression type) {
+    this.typeSymbolsSymbolTablePrinterDelegate.serializeFieldType(type);
+  }
+
+  @Override
+  public void endVisit(CDAssociationArtifactScope node) {
+    serializeSymAssociations();
+    super.endVisit(node);
+  }
+
+  public void serializeSymAssociations() {
+    if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
+      printer.beginArray("SymAssociations");
+      symbolTablePrinterHelper.getSymAssociations().forEach(this::serializeSymAssociation);
+      printer.endArray();
+    }
+  }
+
+  public void serializeSymAssociation(SymAssociation symAssociation) {
     printer.beginObject();
     printer.member(JsonDeSers.KIND, "de.monticore.cdassociation._symboltable.SymAssociation");
-    printer.member(de.monticore.symboltable.serialization.JsonDeSers.EXPORTS_SYMBOLS, true);
 
-    // TODO SVa: print member name
-    if (association.isPresentAssociation()) {
-      serializeCDAssociation(association.getAssociation());
-    }
-
-    // TODO SVa: print member name
-    serializeCDRole(association.getLeft());
-
-    // TODO SVa: print member name
-    serializeCDRole(association.getRight());
+    // TODO SVa: print members
   }
 
   @Override
-  protected void serializeCDAssociationAssociation(SymAssociation association) {
-    super.serializeCDAssociationAssociation(association);
-  }
-
-  @Override
-  protected void serializeCDRoleCardinality(Optional<ASTCDCardinality> cardinality) {
-    super.serializeCDRoleCardinality(cardinality);
-  }
-
-  @Override
-  protected void serializeCDRoleAttributeQualifier(Optional<FieldSymbol> attributeQualifier) {
-    super.serializeCDRoleAttributeQualifier(attributeQualifier);
-  }
-
-  @Override
-  protected void serializeCDRoleTypeQualifier(Optional<SymTypeExpression> typeQualifier) {
-    super.serializeCDRoleTypeQualifier(typeQualifier);
-  }
-
-  @Override
-  protected void serializeCDRoleAssociation(SymAssociation association) {
-    super.serializeCDRoleAssociation(association);
-  }
-
-  @Override
-  protected void serializeCDRoleType(SymTypeExpression type) {
-    super.serializeCDRoleType(type);
+  public void handle(OOTypeSymbol node) {
+    this.cDBasisSymbolTablePrinterDelegate.handle(node);
   }
 }

@@ -6,6 +6,7 @@ package de.monticore.cd._symboltable;
 
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._symboltable.SymAssociation;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
@@ -13,6 +14,8 @@ import de.monticore.cdbasis.modifier.ModifierHandler;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Stack;
 
 public class CDSymbolTableHelper {
@@ -25,20 +28,21 @@ public class CDSymbolTableHelper {
 
   protected Stack<String> classStack;
   protected Stack<String> enumStack;
+  protected Set<SymAssociation> handledAssociations;
 
   public CDSymbolTableHelper() {
     this(new CDBasisPrettyPrinterDelegator(), new DeriveSymTypeOfCDBasis(),
         new ModifierHandler(), CDAssociationMill.associationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(),
-        new Stack<>(), new Stack<>());
+        new Stack<>(), new Stack<>(), new HashSet<>());
   }
 
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
     this(new CDBasisPrettyPrinterDelegator(), typeChecker,
         new ModifierHandler(), CDAssociationMill.associationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(),
-        new Stack<>(), new Stack<>());
+        new Stack<>(), new Stack<>(), new HashSet<>());
   }
 
-  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> classStack, Stack<String> enumStack) {
+  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> classStack, Stack<String> enumStack, Set<SymAssociation> handledAssociations) {
     this.prettyPrinter = prettyPrinter;
     this.typeChecker = typeChecker;
     this.modifierHandler = modifierHandler;
@@ -46,6 +50,7 @@ public class CDSymbolTableHelper {
     this.assocTypeVisitor = assocTypeVisitor;
     this.classStack = classStack;
     this.enumStack = enumStack;
+    this.handledAssociations = handledAssociations;
   }
 
   public CDBasisPrettyPrinterDelegator getPrettyPrinter() {
@@ -127,5 +132,21 @@ public class CDSymbolTableHelper {
 
   public String removeFromEnumStack() {
     return this.enumStack.pop();
+  }
+
+  public Set<SymAssociation> getHandledAssociations() {
+    return handledAssociations;
+  }
+
+  public void setHandledAssociations(Set<SymAssociation> handledAssociations) {
+    this.handledAssociations = handledAssociations;
+  }
+
+  public boolean addToHandledAssociations(SymAssociation handledAssociation) {
+    return this.handledAssociations.add(handledAssociation);
+  }
+
+  public boolean removeFromHandledAssociations(SymAssociation handledAssociation) {
+    return this.handledAssociations.remove(handledAssociation);
   }
 }

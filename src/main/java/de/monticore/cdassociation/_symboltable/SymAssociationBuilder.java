@@ -7,7 +7,7 @@ package de.monticore.cdassociation._symboltable;
 import java.util.Optional;
 
 public class SymAssociationBuilder {
-  protected Optional<CDAssociationSymbol> association;
+  protected Optional<CDAssociationSymbol> association = Optional.empty();
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
 
