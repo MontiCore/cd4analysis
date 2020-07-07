@@ -11,7 +11,6 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
 import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
@@ -50,14 +49,14 @@ public class CD4CodeBasisSymbolTableCreator
 
   @Override
   public void visit(ASTCDClass node) {
-    symbolTableHelper.addToClassStack(node.getName());
+    symbolTableHelper.addToCDTypeStack(node.getName());
     super.visit(node);
   }
 
   @Override
   public void endVisit(ASTCDClass node) {
     super.endVisit(node);
-    symbolTableHelper.removeFromClassStack();
+    symbolTableHelper.removeFromCDTypeStack();
   }
 
   @Override
@@ -78,10 +77,11 @@ public class CD4CodeBasisSymbolTableCreator
       symbol.setReturnType(typeResult.get());
     }
 
-    symbol.setHasEllipsis(ast.getCDParameterList().stream().anyMatch(ASTCDParameter::isEllipsis));
+    symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
 
-    if (ast.isPresentCDThrowsDeclaration()) {
-      symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
+    // the exception don't have to be resolved
+    /*if (ast.isPresentCDThrowsDeclaration()) {
+      symbol.setExceptionList(ast.getCDThrowsDeclaration().streamException().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
@@ -92,7 +92,7 @@ public class CD4CodeBasisSymbolTableCreator
         }
         return result;
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
-    }
+    }*/
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
   }
@@ -102,12 +102,12 @@ public class CD4CodeBasisSymbolTableCreator
     super.initialize_CDConstructor(symbol, ast);
 
     symbol.setIsConstructor(true);
-    symbol.setHasEllipsis(ast.getCDParameterList().stream().anyMatch(ASTCDParameter::isEllipsis));
+    symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
 
-    symbol.setReturnType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getCurrentClassOnStack(), ast.getEnclosingScope())));
+    symbol.setReturnType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getCurrentCDTypeOnStack(), ast.getEnclosingScope())));
 
     if (ast.isPresentCDThrowsDeclaration()) {
-      symbol.setExceptionList(ast.getCDThrowsDeclaration().getExceptionList().stream().map(s -> {
+      symbol.setExceptionList(ast.getCDThrowsDeclaration().streamException().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
@@ -126,8 +126,6 @@ public class CD4CodeBasisSymbolTableCreator
   @Override
   protected void initialize_CDParameter(FieldSymbol symbol, ASTCDParameter ast) {
     super.initialize_CDParameter(symbol, ast);
-
-    symbol.setIsParameter(true);
 
     ast.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCType());
@@ -162,12 +160,12 @@ public class CD4CodeBasisSymbolTableCreator
   protected void initialize_CD4CodeEnumConstant(FieldSymbol symbol, ASTCD4CodeEnumConstant ast) {
     super.initialize_CD4CodeEnumConstant(symbol, ast);
 
-    symbol.setIsVariable(true);
     symbol.setIsStatic(true);
-    // symbol.setIsReadOnly(true); // TODO SVa
+    symbol.setIsReadOnly(true);
+    symbol.setIsFinal(true);
     symbol.setIsPublic(true);
 
-    final String enumName = symbolTableHelper.getCurrentEnumOnStack();
+    final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
     symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(enumName, ast.getEnclosingScope())));
 
     // Don't store the arguments in the ST

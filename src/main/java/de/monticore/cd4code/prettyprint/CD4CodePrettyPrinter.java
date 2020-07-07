@@ -10,6 +10,7 @@ package de.monticore.cd4code.prettyprint;
 
 import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.cd4code._visitor.CD4CodeDelegatorVisitor;
+import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPrettyPrinter;
 import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -61,6 +62,12 @@ public class CD4CodePrettyPrinter extends CD4CodeDelegatorVisitor
   }
 
   public String prettyprint(ASTCDCompilationUnit node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTCDParameter node) {
     getPrinter().clearBuffer();
     node.accept(getRealThis());
     return getPrinter().getContent();

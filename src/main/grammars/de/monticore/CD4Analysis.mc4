@@ -42,8 +42,7 @@ grammar CD4Analysis extends
   
   // Certain keywords of the used grammars shall not become
   // restricted words in other context:
-//// TODO SVa: activate when #2546 is solved (+ check for other keywords)
-////  nokeyword "targetpackage", "targetimport", "classdiagram"  ;
-////  nokeyword "association", "composition", "ordered"  ;
+  nokeyword "targetpackage", "targetimport", "classdiagram";
+  nokeyword "association", "composition", "ordered";
 
 }

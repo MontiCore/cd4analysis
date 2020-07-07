@@ -26,30 +26,26 @@ public class CDSymbolTableHelper {
   protected CDAssociationNavigableVisitor navigableVisitor;
   protected CDAssocTypeForSymAssociationVisitor assocTypeVisitor;
 
-  protected Stack<String> classStack;
-  protected Stack<String> enumStack;
+  protected Stack<String> cdTypeStack;
   protected Set<SymAssociation> handledAssociations;
 
   public CDSymbolTableHelper() {
-    this(new CDBasisPrettyPrinterDelegator(), new DeriveSymTypeOfCDBasis(),
-        new ModifierHandler(), CDAssociationMill.associationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(),
-        new Stack<>(), new Stack<>(), new HashSet<>());
+    this(new DeriveSymTypeOfCDBasis());
   }
 
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
     this(new CDBasisPrettyPrinterDelegator(), typeChecker,
         new ModifierHandler(), CDAssociationMill.associationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(),
-        new Stack<>(), new Stack<>(), new HashSet<>());
+        new Stack<>(), new HashSet<>());
   }
 
-  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> classStack, Stack<String> enumStack, Set<SymAssociation> handledAssociations) {
+  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Set<SymAssociation> handledAssociations) {
     this.prettyPrinter = prettyPrinter;
     this.typeChecker = typeChecker;
     this.modifierHandler = modifierHandler;
     this.navigableVisitor = navigableVisitor;
     this.assocTypeVisitor = assocTypeVisitor;
-    this.classStack = classStack;
-    this.enumStack = enumStack;
+    this.cdTypeStack = cdTypeStack;
     this.handledAssociations = handledAssociations;
   }
 
@@ -94,44 +90,24 @@ public class CDSymbolTableHelper {
     this.assocTypeVisitor = assocTypeVisitor;
   }
 
-  public Stack<String> getClassStack() {
-    return classStack;
+  public Stack<String> getCdTypeStack() {
+    return cdTypeStack;
   }
 
-  public void setClassStack(Stack<String> classStack) {
-    this.classStack = classStack;
+  public void setCdTypeStack(Stack<String> cdTypeStack) {
+    this.cdTypeStack = cdTypeStack;
   }
 
-  public void addToClassStack(String className) {
-    this.classStack.push(className);
+  public void addToCDTypeStack(String className) {
+    this.cdTypeStack.push(className);
   }
 
-  public String getCurrentClassOnStack() {
-    return this.classStack.peek();
+  public String getCurrentCDTypeOnStack() {
+    return this.cdTypeStack.peek();
   }
 
-  public String removeFromClassStack() {
-    return this.classStack.pop();
-  }
-
-  public Stack<String> getEnumStack() {
-    return enumStack;
-  }
-
-  public void setEnumStack(Stack<String> enumStack) {
-    this.enumStack = enumStack;
-  }
-
-  public void addToEnumStack(String enumName) {
-    this.enumStack.push(enumName);
-  }
-
-  public String getCurrentEnumOnStack() {
-    return this.enumStack.peek();
-  }
-
-  public String removeFromEnumStack() {
-    return this.enumStack.pop();
+  public String removeFromCDTypeStack() {
+    return this.cdTypeStack.pop();
   }
 
   public Set<SymAssociation> getHandledAssociations() {

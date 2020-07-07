@@ -23,6 +23,7 @@ public class ModifierHandler {
     fieldSymbol.setIsPrivate(modifier.isPrivate());
     fieldSymbol.setIsProtected(modifier.isProtected());
     fieldSymbol.setIsStatic(modifier.isStatic());
+    fieldSymbol.setIsFinal(modifier.isFinal());
   }
 
   public void handle(ASTModifier modifier, MethodSymbol fieldSymbol) {

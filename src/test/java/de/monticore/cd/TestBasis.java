@@ -36,19 +36,19 @@ public class TestBasis {
 
   public void checkNullAndPresence(MCConcreteParser parser, Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
-    Log.getFindings().clear();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);
     assertFalse(joinedErrors, hasErrors);
     assertNotNull("The node should not be null", node);
     assertTrue(node.isPresent());
+    checkLogError();
   }
 
   public void checkNullAndError(MCConcreteParser parser, Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
-    Log.getFindings().clear();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);
+    Log.getFindings().clear();
     assertFalse(joinedErrors, hasErrors);
     assertNotNull("The node should not be null", node);
     assertTrue(node.isPresent());
@@ -56,7 +56,8 @@ public class TestBasis {
 
   public void checkLogError() {
     final String joinedErrors = getJoinedErrors();
+    final long errorCount = Log.getErrorCount();
     Log.getFindings().clear();
-    assertEquals(joinedErrors, 0, Log.getErrorCount());
+    assertEquals(joinedErrors, 0, errorCount);
   }
 }

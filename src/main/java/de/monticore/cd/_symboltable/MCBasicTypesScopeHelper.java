@@ -8,8 +8,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor;
 
-// TODO SVa: find better solution
-
 /**
  * This visitor sets the enclosing scope of the inner types,
  * so that the typechecks can be used

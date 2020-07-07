@@ -12,6 +12,7 @@ import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._visitor.CDBasisDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpressionsBasisNode;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.literals.mcliteralsbasis._ast.ASTMCLiteralsBasisNode;
 import de.monticore.prettyprint.IndentPrinter;
@@ -59,6 +60,12 @@ public class CDBasisPrettyPrinterDelegator extends CDBasisDelegatorVisitor {
   }
 
   public String prettyprint(ASTExpression node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTExpressionsBasisNode node) {
     getPrinter().clearBuffer();
     node.accept(getRealThis());
     return getPrinter().getContent();

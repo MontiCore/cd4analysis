@@ -22,8 +22,7 @@ public class CDPackageNotContainingCDPackage
   @Override
   public void check(ASTCDPackage node) {
     List<ASTCDPackage> subPackages = node
-        .getCDElementList()
-        .stream()
+        .streamCDElements()
         .filter(e -> e instanceof ASTCDPackage)
         .map(e -> (ASTCDPackage) e)
         .collect(Collectors.toList());
@@ -33,7 +32,8 @@ public class CDPackageNotContainingCDPackage
           String
               .format(
                   "0xCDC20: The package \"%s\" has subpackages (%s). Packages can not have subpackages.",
-                  node.getMCQualifiedName().getQName(), Joiners.COMMA.join(subPackages)),
+                  node.getMCQualifiedName().getQName(),
+                  subPackages.stream().map(p -> p.getMCQualifiedName().getQName()).collect(Collectors.joining(","))),
           node.get_SourcePositionStart());
     }
   }

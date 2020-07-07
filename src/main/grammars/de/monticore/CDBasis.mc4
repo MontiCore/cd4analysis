@@ -118,7 +118,7 @@ component grammar CDBasis extends
     Modifier MCType Name ("=" initial:Expression)? ";";
 
   /* ==== Symbols ==== */
-  /** CDBasis defines no additional symbols, instead it uses the TypeSymbols
+  /** CDBasis defines no additional symbol attributes, instead it uses the TypeSymbols
    *  and uses their attributes
    */
 }

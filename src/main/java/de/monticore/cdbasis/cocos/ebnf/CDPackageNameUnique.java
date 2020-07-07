@@ -18,8 +18,7 @@ public class CDPackageNameUnique
   @Override
   public void check(ASTCDDefinition node) {
     final List<ASTCDPackage> packages = node
-        .getCDElementList()
-        .stream()
+        .streamCDElements()
         .filter(e -> e instanceof ASTCDPackage)
         .map(e -> (ASTCDPackage) e)
         .collect(Collectors.toList());

@@ -45,6 +45,7 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
   public void visit(ASTCDCompilationUnit node) {
     if (node.isPresentCDPackageStatement()) {
       packageNameList = node.getCDPackageStatement().getPackageList();
+      node.getCDDefinition().setDefaultPackageName(Joiners.DOT.join(packageNameList));
     }
   }
 
@@ -59,7 +60,7 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
 
   protected void combinePackagesWithSameName(ASTCDDefinition node) {
     final List<ASTCDPackage> packages = node
-        .getCDElementList().stream()
+        .streamCDElements()
         .filter(e -> e instanceof ASTCDPackage)
         .map(e -> (ASTCDPackage) e)
         .collect(Collectors.toList());
@@ -75,13 +76,13 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
 
   protected void moveElementsToDefaultPackage(ASTCDDefinition node) {
     final List<ASTCDElement> elementsInCDDefinition = node
-        .getCDElementList().stream()
+        .streamCDElements()
         .filter(e -> !(e instanceof ASTCDPackage))
         .collect(Collectors.toList());
 
     // find the package with the package of the model
     Optional<ASTCDPackage> defaultPackage = node
-        .getCDElementList().stream()
+        .streamCDElements()
         .filter(e -> e instanceof ASTCDPackage)
         .map(e -> (ASTCDPackage) e)
         .filter(e -> e
@@ -96,7 +97,7 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
               .setPartList(packageNameList)
               .build())
           .build());
-      node.addCDElement(0, defaultPackage.get()); // add the default package as first package
+      node.addCDPackage(0, defaultPackage.get()); // add the default package as first package
     }
 
     defaultPackage.get().addAllCDElements(elementsInCDDefinition);

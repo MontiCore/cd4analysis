@@ -44,15 +44,27 @@ public class CDInterfaceAndEnumSymbolTableCreator
   }
 
   @Override
+  public void visit(ASTCDInterface node) {
+    super.visit(node);
+    symbolTableHelper.addToCDTypeStack(node.getName());
+  }
+
+  @Override
+  public void endVisit(ASTCDInterface node) {
+    super.endVisit(node);
+    symbolTableHelper.removeFromCDTypeStack();
+  }
+
+  @Override
   public void visit(ASTCDEnum node) {
     super.visit(node);
-    symbolTableHelper.addToEnumStack(node.getName());
+    symbolTableHelper.addToCDTypeStack(node.getName());
   }
 
   @Override
   public void endVisit(ASTCDEnum node) {
     super.endVisit(node);
-    symbolTableHelper.removeFromEnumStack();
+    symbolTableHelper.removeFromCDTypeStack();
   }
 
   @Override
@@ -63,7 +75,7 @@ public class CDInterfaceAndEnumSymbolTableCreator
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
-      symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclasList().stream().map(s -> {
+      symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
@@ -85,7 +97,7 @@ public class CDInterfaceAndEnumSymbolTableCreator
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDInterfaceUsage()) {
-      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
+      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
@@ -102,11 +114,11 @@ public class CDInterfaceAndEnumSymbolTableCreator
   @Override
   protected void initialize_CDEnumConstant(FieldSymbol symbol, ASTCDEnumConstant ast) {
     super.initialize_CDEnumConstant(symbol, ast);
-    symbol.setIsVariable(true);
     symbol.setIsStatic(true);
-    // symbol.setIsReadOnly(true); // TODO SVa
+    symbol.setIsReadOnly(true);
+    symbol.setIsStatic(true);
     symbol.setIsPublic(true);
 
-    symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getEnumStack().peek(), ast.getEnclosingScope())));
+    symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getCurrentCDTypeOnStack(), ast.getEnclosingScope())));
   }
 }
