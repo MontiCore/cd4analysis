@@ -19,6 +19,7 @@ stages:
   - build
   - test
   - deploy
+  - trigger
 
 build:
   stage: build
@@ -37,7 +38,7 @@ test:
   - "./gradlew check $GRADLE_OPT $ARGS2"
 
 trigger-langexp:
-  stage: test
+  stage: trigger
   trigger:
     project: monticore/langexperiments
     branch: dev
