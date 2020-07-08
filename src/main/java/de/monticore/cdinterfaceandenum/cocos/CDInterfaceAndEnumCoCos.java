@@ -8,38 +8,22 @@
 
 package de.monticore.cdinterfaceandenum.cocos;
 
+import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumCoCoChecker;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
+import de.monticore.cdinterfaceandenum.cocos.mcg.CD4CodeEnumConstantParameterMatchConstructorArguments;
 
-public class CDInterfaceAndEnumCoCos {
-  public CDInterfaceAndEnumCoCoChecker getCheckerForAllCoCos() {
-    CDInterfaceAndEnumCoCoChecker checker = new CDInterfaceAndEnumCoCoChecker();
-    addCheckerForAllCoCos(checker);
-    return checker;
-  }
-
-  public CDInterfaceAndEnumCoCoChecker getCheckerForEbnfCoCos() {
-    CDInterfaceAndEnumCoCoChecker checker = new CDInterfaceAndEnumCoCoChecker();
-    addEbnfCoCos(checker);
-    return checker;
-  }
-
-  public CDInterfaceAndEnumCoCoChecker getCheckerForMcgCoCos() {
-    CDInterfaceAndEnumCoCoChecker checker = new CDInterfaceAndEnumCoCoChecker();
-    addMcgCoCos(checker);
-    return checker;
-  }
-
-  public CDInterfaceAndEnumCoCoChecker getCheckerForMcg2EbnfCoCos() {
-    CDInterfaceAndEnumCoCoChecker checker = new CDInterfaceAndEnumCoCoChecker();
-    addMcg2EbnfCoCos(checker);
-    return checker;
+public class CDInterfaceAndEnumCoCos
+    extends CoCoParent<CDInterfaceAndEnumCoCoChecker> {
+  @Override
+  public CDInterfaceAndEnumCoCoChecker createNewChecker() {
+    return new CDInterfaceAndEnumCoCoChecker();
   }
 
   protected void addCheckerForAllCoCos(CDInterfaceAndEnumCoCoChecker checker) {
-    checker.addChecker(getCheckerForEbnfCoCos());
-    checker.addChecker(getCheckerForMcgCoCos());
-    checker.addChecker(getCheckerForMcg2EbnfCoCos());
+    addCheckerForEbnfCoCos();
+    addCheckerForMcgCoCos();
+    addCheckerForMcg2EbnfCoCos();
   }
 
   protected void addEbnfCoCos(CDInterfaceAndEnumCoCoChecker checker) {
@@ -56,8 +40,7 @@ public class CDInterfaceAndEnumCoCos {
   }
 
   protected void addMcgCoCos(CDInterfaceAndEnumCoCoChecker checker) {
-  }
-
-  protected void addMcg2EbnfCoCos(CDInterfaceAndEnumCoCoChecker checker) {
+    // CD4CodeEnumConstant
+    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
   }
 }

@@ -6,8 +6,6 @@ package de.monticore.cd.cli;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
-import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
@@ -15,6 +13,8 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
+import de.se_rwth.commons.cli.CLIArguments;
+import de.se_rwth.commons.logging.Log;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
@@ -34,6 +34,10 @@ public class CDCLI {
 
   private String modelFile;
 
+  private boolean useBuiltInTypes;
+
+  private boolean failQuick;
+
   private ASTCDCompilationUnit ast;
 
   private CDCLI() {
@@ -44,6 +48,7 @@ public class CDCLI {
     root.setLevel(Level.WARN);
 
     CDCLI cli = new CDCLI();
+    Log.enableFailQuick(cli.failQuick);
 
     if (cli.handleArgs(args)) {
       cli.parse();
@@ -53,11 +58,18 @@ public class CDCLI {
     }
   }
 
+  protected void parse() throws IOException {
+    CD4CodeParser parser = new CD4CodeParser();
+    Optional<ASTCDCompilationUnit> cu = parser
+        .parseCDCompilationUnit(modelFile);
+    ast = cu.get();
+  }
+
   protected void createSymTab() {
     CD4CodeGlobalScope globalScope = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()
         .setModelPath(new ModelPath())
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .addBuiltInTypes(useBuiltInTypes)
         .build();
     final CD4CodeSymbolTableCreator symbolTableCreator = CD4CodeMill
         .cD4CodeSymbolTableCreatorBuilder()
@@ -67,28 +79,28 @@ public class CDCLI {
     symbolTableCreator.createFromAST(ast);
   }
 
-  protected void parse() throws IOException {
-    CD4CodeParser parser = new CD4CodeParser();
-    Optional<ASTCDCompilationUnit> cu = parser
-        .parseCDCompilationUnit(modelFile);
-    ast = cu.get();
-  }
-
   protected void checkCocos() {
-    new CD4AnalysisCoCos().getCheckerForAllCoCos().checkAll(ast);
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
-  protected boolean handleArgs(String[] args) throws NoSuchFileException {
-    if (args.length != 1 || "-h".equals(args[0])) {
-      printUsage();
+  protected boolean handleArgs(String[] args)
+      throws NoSuchFileException {
+    final CLIArguments arguments = CLIArguments.forArguments(args);
+    final CDCLIConfiguration configuration = CDCLIConfiguration.fromArguments(arguments);
+
+    if (configuration.isSetHelp() || !configuration.isPresentModelFile()) {
+      printHelp();
       return false;
     }
 
-    modelFile = args[0];
+    modelFile = configuration.getModelFile().get();
     if (!modelFileExists()) {
       throw new NoSuchFileException(modelFile);
     }
+
+    useBuiltInTypes = configuration.useBuiltInTypes();
+    failQuick = configuration.isSetFailQuick();
+
     return true;
   }
 
@@ -97,7 +109,7 @@ public class CDCLI {
     return Files.exists(filePath);
   }
 
-  private void printUsage() {
+  private void printHelp() {
     System.out.println("Usage: " + JAR_NAME + " <CD_MODEL_FILE>");
   }
 }

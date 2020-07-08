@@ -4,6 +4,7 @@
 
 package de.monticore.cd4codebasis.typescalculator;
 
+import de.monticore.cd._symboltable.TypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -19,6 +20,7 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
     implements ITypesCalculator, CDTypesCalculator {
 
   private TypeCheckResult typeCheckResult;
+  private TypesScopeHelper typesScopeHelper;
 
   public DeriveSymTypeOfCD4CodeBasis() {
     setRealThis(this);
@@ -56,12 +58,14 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
+    type.accept(typesScopeHelper);
     type.accept(getRealThis());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
+    node.accept(typesScopeHelper);
     node.accept(getRealThis());
     return getResult();
   }
@@ -77,6 +81,7 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
   @Override
   public void init() {
     this.typeCheckResult = new TypeCheckResult();
+    this.typesScopeHelper = new TypesScopeHelper();
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

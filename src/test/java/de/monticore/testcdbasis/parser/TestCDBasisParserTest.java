@@ -8,16 +8,14 @@
 
 package de.monticore.testcdbasis.parser;
 
-import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.testcdbasis._parser.TestCDBasisParser;
+import de.monticore.testcdbasis.CDBasisTestBasis;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDBasisParserTest extends TestBasis {
-  TestCDBasisParser p = new TestCDBasisParser();
+public class TestCDBasisParserTest extends CDBasisTestBasis {
 
   @Test
   public void parseCDCompilationUnit() throws IOException {

@@ -71,14 +71,14 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   @Override
   public void visit(ASTCDClass node) {
-    symbolTableHelper.addToClassStack(node.getName());
+    symbolTableHelper.addToCDTypeStack(node.getName());
     super.visit(node);
   }
 
   @Override
   public void endVisit(ASTCDClass node) {
     super.endVisit(node);
-    symbolTableHelper.removeFromClassStack();
+    symbolTableHelper.removeFromCDTypeStack();
   }
 
   @Override
@@ -89,7 +89,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
-      symbol.addAllSuperTypes(ast.getCDExtendUsage().getSuperclasList().stream().map(s -> {
+      symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
@@ -103,7 +103,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     }
 
     if (ast.isPresentCDInterfaceUsage()) {
-      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().getInterfaceList().stream().map(s -> {
+      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
@@ -120,7 +120,6 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   @Override
   protected void initialize_CDAttribute(FieldSymbol symbol, ASTCDAttribute ast) {
     super.initialize_CDAttribute(symbol, ast);
-    symbol.setIsVariable(true);
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 

@@ -1,0 +1,41 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Simple {
+
+  class A {
+    protected String name;
+    public String getName() throws Exception;
+  }
+
+  class B extends A {
+    readonly int x;
+    /String other;
+
+    B(String name, int x = 5);
+    int getX(String a, String... bs);
+  }
+
+  interface I;
+  interface I2;
+
+  <<stereotype>> interface I3 extends I, I2;
+
+  class C implements I;
+
+  enum D {
+    DEE,
+    DEE_TWO(3, 5),
+    DEE_THREE();
+
+    int x;
+    int y;
+
+    D(int x, int y);
+    D();
+  }
+
+  enum E {
+    ;
+    String name;
+  }
+}

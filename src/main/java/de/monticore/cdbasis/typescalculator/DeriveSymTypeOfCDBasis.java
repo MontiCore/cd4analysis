@@ -4,6 +4,7 @@
 
 package de.monticore.cdbasis.typescalculator;
 
+import de.monticore.cd._symboltable.TypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis._visitor.CDBasisDelegatorVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -19,10 +20,10 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
     implements ITypesCalculator, CDTypesCalculator {
 
   private TypeCheckResult typeCheckResult;
+  private TypesScopeHelper typesScopeHelper;
 
   public DeriveSymTypeOfCDBasis() {
     setRealThis(this);
-    this.typeCheckResult = new TypeCheckResult();
     init();
   }
 
@@ -57,12 +58,14 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
+    type.accept(typesScopeHelper);
     type.accept(getRealThis());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
+    node.accept(typesScopeHelper);
     node.accept(getRealThis());
     return getResult();
   }
@@ -77,6 +80,9 @@ public class DeriveSymTypeOfCDBasis extends CDBasisDelegatorVisitor
 
   @Override
   public void init() {
+    this.typeCheckResult = new TypeCheckResult();
+    this.typesScopeHelper = new TypesScopeHelper();
+
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);

@@ -31,7 +31,7 @@ public class CDAssociationNameUnique implements CDBasisASTCDDefinitionCoCo {
 
   @Override
   public void check(ASTCDDefinition a) {
-    final List<ASTCDAssociation> astcdAssociation = a.getCDElementList().stream()
+    final List<ASTCDAssociation> astcdAssociation = a.streamCDElements()
         .filter(e -> e instanceof ASTCDAssociation)
         .map(e -> (ASTCDAssociation) e)
         .filter(ASTCDAssociationTOP::isPresentName).collect(Collectors.toList());

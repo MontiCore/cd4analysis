@@ -177,19 +177,6 @@ public class CDAssociationSymbolTableCreator
 
   @Override
   public void visit(ASTCDDirectComposition node) {
-    super.visit(node);
-
-    // TODO SVa: transform to association, then this is ignorable
-
-    final ASTCDAssocRightSide side = node.getCDAssocRightSide();
-
-    CDRoleSymbol symbol = create_CDRole(side.getCDRole());
-    symbol.setIsVariable(true);
-    symbolTableHelper.getModifierHandler().handle(side.getModifier(), symbol);
-    symbol.setIsDefinitiveNavigable(true);
-    symbol.setCardinality(side.getCDCardinality());
-    handleQualifier(symbol, side);
-    symbol.setIsOrdered(side.isPresentCDOrdered());
-    addToScope(symbol);
+    throw new IllegalStateException("0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation.");
   }
 }

@@ -17,9 +17,9 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
 
   @Override
   protected void addCheckerForAllCoCos(CDBasisCoCoChecker checker) {
-    checker.addChecker(getCheckerForEbnfCoCos(checker));
-    checker.addChecker(getCheckerForMcgCoCos(checker));
-    checker.addChecker(getCheckerForMcg2EbnfCoCos(checker));
+    addCheckerForEbnfCoCos(checker);
+    addCheckerForMcgCoCos(checker);
+    addCheckerForMcg2EbnfCoCos(checker);
   }
 
   @Override
@@ -34,18 +34,20 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     // CDClass
     checker.addCoCo(new CDClassExtendsNotCyclic());
     checker.addCoCo(new CDClassExtendsOnlyClasses());
+    checker.addCoCo(new CDClassImplementsOnlyInterfaces());
     checker.addCoCo(new CDClassImplementsNotCyclic());
     checker.addCoCo(new CDClassNameUpperCase());
 
     // CDType
     checker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());
-    checker.addCoCo(new UniqueCDTypeNames());
 
     // CDDefinition
     checker.addCoCo(new CDDefinitionNameUpperCase());
+    checker.addCoCo(new CDDefinitionUniqueCDTypeNames());
 
     // CDPackage
     checker.addCoCo(new CDPackageNameUnique());
+    checker.addCoCo(new CDPackageUniqueCDTypeNames());
   }
 
   @Override

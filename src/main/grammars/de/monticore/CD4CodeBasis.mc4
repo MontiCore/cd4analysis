@@ -23,7 +23,7 @@ component grammar CD4CodeBasis extends
   /* ==== Methods ==== */
   /** Introduction of the new form of symbol: the Method
    */
-  interface scope symbol CDMethodSignature extends CDMember, Method = Name;
+  interface scope symbol CDMethodSignature extends CDMember, Method = Name CDParameter*;
 
   CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
 
@@ -61,7 +61,6 @@ component grammar CD4CodeBasis extends
       visibility
    */
   symbolrule CDMethodSignature =
-    hasEllipsis: boolean //  TODO SVa: hier raus, wenn in MethodSymbol vorhanden
     exceptions: de.monticore.types.check.SymTypeExpression*
   ;
 }

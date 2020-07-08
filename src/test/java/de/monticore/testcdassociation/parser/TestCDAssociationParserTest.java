@@ -8,21 +8,19 @@
 
 package de.monticore.testcdassociation.parser;
 
-import de.monticore.cd.TestBasis;
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssocType;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDMember;
-import de.monticore.testcdassociation._parser.TestCDAssociationParser;
+import de.monticore.testcdassociation.CDAssociationTestBasis;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDAssociationParserTest extends TestBasis {
-  TestCDAssociationParser p = new TestCDAssociationParser();
+public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 
   @Test
   public void parseCDAssociation() throws IOException {

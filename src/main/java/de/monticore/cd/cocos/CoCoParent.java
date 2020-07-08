@@ -16,29 +16,29 @@ public abstract class CoCoParent<Checker> {
     return checker;
   }
 
-  public Checker getCheckerForEbnfCoCos() {
-    return getCheckerForEbnfCoCos(createNewChecker());
+  public Checker addCheckerForEbnfCoCos() {
+    return addCheckerForEbnfCoCos(createNewChecker());
   }
 
-  public Checker getCheckerForEbnfCoCos(Checker checker) {
+  public Checker addCheckerForEbnfCoCos(Checker checker) {
     addEbnfCoCos(checker);
     return checker;
   }
 
-  public Checker getCheckerForMcgCoCos() {
-    return getCheckerForMcgCoCos(createNewChecker());
+  public Checker addCheckerForMcgCoCos() {
+    return addCheckerForMcgCoCos(createNewChecker());
   }
 
-  public Checker getCheckerForMcgCoCos(Checker checker) {
+  public Checker addCheckerForMcgCoCos(Checker checker) {
     addMcgCoCos(checker);
     return checker;
   }
 
-  public Checker getCheckerForMcg2EbnfCoCos() {
-    return getCheckerForMcg2EbnfCoCos(createNewChecker());
+  public Checker addCheckerForMcg2EbnfCoCos() {
+    return addCheckerForMcg2EbnfCoCos(createNewChecker());
   }
 
-  public Checker getCheckerForMcg2EbnfCoCos(Checker checker) {
+  public Checker addCheckerForMcg2EbnfCoCos(Checker checker) {
     addMcg2EbnfCoCos(checker);
     return checker;
   }

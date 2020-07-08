@@ -4,11 +4,9 @@
 
 package de.monticore.cd._symboltable;
 
-import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor;
 import de.monticore.types.mccollectiontypes._ast.*;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor;
 
-// TODO SVa: find better solution
 /**
  * This visitor sets the enclosing scope of the inner types,
  * so that the typechecks can be used
@@ -16,6 +14,7 @@ import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor;
 public class MCCollectionTypesScopeHelper
     implements MCCollectionTypesVisitor {
   protected MCCollectionTypesVisitor realThis;
+
   public MCCollectionTypesScopeHelper() {
     setRealThis(this);
   }

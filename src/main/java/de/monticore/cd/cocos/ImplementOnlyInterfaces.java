@@ -11,15 +11,50 @@
 package de.monticore.cd.cocos;
 
 import de.monticore.cd.prettyprint.CDTypeKindPrinter;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Checks that only interfaces are implemented.
  */
-abstract public class ImplementOnlyInterfaces { // TODO SVa: move to CDInterfaceAndEnum cocos
+abstract public class ImplementOnlyInterfaces {
+
+  /**
+   * Actual check that the class's interfaces are really interfaces.
+   *
+   * @param node the node to check.
+   */
+  public void check(ASTCDClass node) {
+    OOTypeSymbol symbol = node.getSymbol();
+
+    if (!node.isPresentCDInterfaceUsage()) {
+      return;
+    }
+    final List<ASTMCObjectType> interfaceList = node.getCDInterfaceUsage().getInterfaceList();
+    interfaceList.stream().map(s ->
+        symbol.getEnclosingScope()
+            .resolveOOType(s.printType(new MCBasicTypesPrettyPrinter(new IndentPrinter()))))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(e -> !e.isIsInterface())
+        .forEach(e ->
+            Log.error(String.format(
+                "0xCDCF4: Class %s cannot extend %s %s. A class may only extend classes.",
+                node.getName(),
+                new CDTypeKindPrinter().print(e),
+                e.getName()),
+                node.get_SourcePositionStart())
+        );
+  }
 
   /**
    * Actual check that the enums interfaces are really interfaces.
@@ -31,7 +66,7 @@ abstract public class ImplementOnlyInterfaces { // TODO SVa: move to CDInterface
     if (!node.isPresentCDInterfaceUsage()) {
       return;
     }
-    symbol.getSuperTypeList().stream().filter(i -> i.getTypeInfo().isIsInterface()).forEach(e ->
+    symbol.streamSuperTypes().filter(i -> !i.getTypeInfo().isIsInterface()).forEach(e ->
         Log.error(String.format(
             "0xCDCF5: The %s %s cannot implement %s %s. Only interfaces may be implemented.",
             new CDTypeKindPrinter().print(node),
@@ -52,9 +87,9 @@ abstract public class ImplementOnlyInterfaces { // TODO SVa: move to CDInterface
     if (!node.isPresentCDExtendUsage()) {
       return;
     }
-    symbol.getSuperTypeList().stream().filter(i -> i.getTypeInfo().isIsInterface()).forEach(e ->
+    symbol.streamSuperTypes().filter(i -> !i.getTypeInfo().isIsInterface()).forEach(e ->
         Log.error(String.format(
-            "0xC4A10: The %s %s cannot extend %s %s. Only interfaces may be extended.",
+            "0xCDCF6: The %s %s cannot extend %s %s. Only interfaces may be extended.",
             new CDTypeKindPrinter().print(node),
             symbol.getName(),
             new CDTypeKindPrinter().print(e.getTypeInfo()),

@@ -8,21 +8,19 @@
 
 package de.monticore.testcd4codebasis.parser;
 
-import de.monticore.cd.TestBasis;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
-import de.monticore.testcd4codebasis._parser.TestCD4CodeBasisParser;
+import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCD4CodeBasisParserTest extends TestBasis {
-  TestCD4CodeBasisParser p = new TestCD4CodeBasisParser();
+public class TestCD4CodeBasisParserTest extends CD4CodeBasisTestBasis {
 
   @Test
   public void parseCDThrowsDeclaration() throws IOException {

@@ -209,7 +209,7 @@ javadoc.failOnError(false)
 
 shadowJar { // all in one jar
     manifest {
-        attributes "Main-Class": "de.monticore.umlcd4a.CD4ACLI"
+        attributes "Main-Class": "de.monticore.cd.CDCLI"
     }
     archiveClassifier = "cli"
 }
