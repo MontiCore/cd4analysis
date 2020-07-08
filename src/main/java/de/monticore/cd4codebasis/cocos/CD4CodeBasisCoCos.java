@@ -15,8 +15,8 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
 
   @Override
   protected void addCheckerForAllCoCos(CD4CodeBasisCoCoChecker checker) {
-    checker.addChecker(getCheckerForEbnfCoCos(checker));
-    checker.addChecker(getCheckerForMcgCoCos(checker));
-    checker.addChecker(getCheckerForMcg2EbnfCoCos(checker));
+    addCheckerForEbnfCoCos(checker);
+    addCheckerForMcgCoCos(checker);
+    addCheckerForMcg2EbnfCoCos(checker);
   }
 }

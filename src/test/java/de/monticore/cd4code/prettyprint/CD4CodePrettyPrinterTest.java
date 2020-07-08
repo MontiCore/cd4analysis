@@ -7,6 +7,7 @@ package de.monticore.cd4code.prettyprint;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
@@ -20,9 +21,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-public class CD4CodePrettyPrinterTest extends TestBasis {
-  CD4CodeParser p = new CD4CodeParser();
-  CD4CodePrettyPrinter printer = new CD4CodePrettyPrinter();
+public class CD4CodePrettyPrinterTest extends CD4CodeTestBasis {
 
   @Test
   public void completeModel() throws IOException {
@@ -35,18 +34,6 @@ public class CD4CodePrettyPrinterTest extends TestBasis {
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
 
     final ASTCDCompilationUnit node = astcdCompilationUnitReParsed.get();
-
-    CD4CodeGlobalScope globalScope = CD4CodeMill
-        .cD4CodeGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .build();
-    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-        .cD4CodeSymbolTableCreatorDelegatorBuilder()
-        .setGlobalScope(globalScope)
-        .build();
-
-    globalScope.addBuiltInTypes();
 
     symbolTableCreator.createFromAST(node);
     checkLogError();

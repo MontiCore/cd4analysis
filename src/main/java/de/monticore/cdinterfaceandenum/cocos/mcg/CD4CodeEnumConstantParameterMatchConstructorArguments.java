@@ -47,16 +47,27 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     node.accept(cdMemberVisitor);
     final List<ASTCDMethodSignature> availableConstructors = cdMemberVisitor
         .getElements();
+
     final List<List<ASTCDParameter>> constructorParameters = availableConstructors.stream()
         .filter(s -> s.getSymbol().isIsConstructor())
         .map(ASTCDMethodSignature::getCDParameterList)
         .collect(Collectors.toList());
 
+    // if there is no constructor present, a default constructor with no arguments is available
+    if (constructorParameters.isEmpty()) {
+      constructorParameters.add(Collections.emptyList());
+    }
+
     final List<List<SymTypeExpression>> constructors = calculateConstructorParameterTypes(node, constructorParameters);
-    final List<Optional<SymTypeExpression>> ellipticTypes = IntStream.range(0, constructors.size()).mapToObj(i -> {
+    final List<Optional<SymTypeExpression>> ellipticTypes = IntStream.range(0, availableConstructors.size()).mapToObj(i -> {
       boolean constructorIsElliptic = availableConstructors.get(i).getSymbol().isIsElliptic();
       return constructorIsElliptic ? Optional.of(constructors.get(i).get(constructors.get(i).size() - 1)) : Optional.<SymTypeExpression>empty();
     }).collect(Collectors.toList());
+
+    // if there is no constructor present, a default constructor with no arguments is available
+    if (ellipticTypes.isEmpty()) {
+      ellipticTypes.add(Optional.empty());
+    }
 
     // iterate over all enum constants
     IntStream.range(0, enumConstants.size())

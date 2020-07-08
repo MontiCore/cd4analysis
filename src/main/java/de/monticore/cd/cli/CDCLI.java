@@ -6,7 +6,6 @@ package de.monticore.cd.cli;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
@@ -70,16 +69,12 @@ public class CDCLI {
     CD4CodeGlobalScope globalScope = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()
         .setModelPath(new ModelPath())
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .addBuiltInTypes(useBuiltInTypes)
         .build();
     final CD4CodeSymbolTableCreator symbolTableCreator = CD4CodeMill
         .cD4CodeSymbolTableCreatorBuilder()
         .addToScopeStack(globalScope)
         .build();
-
-    if (useBuiltInTypes) {
-      globalScope.addBuiltInTypes();
-    }
 
     symbolTableCreator.createFromAST(ast);
   }

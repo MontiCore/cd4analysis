@@ -20,32 +20,32 @@ public class CD4AnalysisCoCosDelegator
 
   @Override
   protected void addCheckerForAllCoCos(CD4AnalysisCoCoChecker checker) {
-    checker.addChecker(getCheckerForEbnfCoCos(checker));
-    checker.addChecker(getCheckerForMcgCoCos(checker));
-    checker.addChecker(getCheckerForMcg2EbnfCoCos(checker));
+    addCheckerForEbnfCoCos(checker);
+    addCheckerForMcgCoCos(checker);
+    addCheckerForMcg2EbnfCoCos(checker);
   }
 
   @Override
   protected void addEbnfCoCos(CD4AnalysisCoCoChecker checker) {
-    checker.addChecker(new CDBasisCoCos().getCheckerForEbnfCoCos());
-    checker.addChecker(new CDInterfaceAndEnumCoCos().getCheckerForEbnfCoCos());
-    checker.addChecker(new CDAssociationCoCos().getCheckerForEbnfCoCos());
-    checker.addChecker(new CD4AnalysisCoCos().getCheckerForEbnfCoCos());
+    checker.addChecker(new CDBasisCoCos().addCheckerForEbnfCoCos());
+    checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForEbnfCoCos());
+    checker.addChecker(new CDAssociationCoCos().addCheckerForEbnfCoCos());
+    checker.addChecker(new CD4AnalysisCoCos().addCheckerForEbnfCoCos());
   }
 
   @Override
   protected void addMcgCoCos(CD4AnalysisCoCoChecker checker) {
-    checker.addChecker(new CDBasisCoCos().getCheckerForMcgCoCos());
-    checker.addChecker(new CDInterfaceAndEnumCoCos().getCheckerForMcgCoCos());
-    checker.addChecker(new CDAssociationCoCos().getCheckerForMcgCoCos());
-    checker.addChecker(new CD4AnalysisCoCos().getCheckerForMcgCoCos());
+    checker.addChecker(new CDBasisCoCos().addCheckerForMcgCoCos());
+    checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForMcgCoCos());
+    checker.addChecker(new CDAssociationCoCos().addCheckerForMcgCoCos());
+    checker.addChecker(new CD4AnalysisCoCos().addCheckerForMcgCoCos());
   }
 
   @Override
   protected void addMcg2EbnfCoCos(CD4AnalysisCoCoChecker checker) {
-    checker.addChecker(new CDBasisCoCos().getCheckerForMcg2EbnfCoCos());
-    checker.addChecker(new CDInterfaceAndEnumCoCos().getCheckerForMcg2EbnfCoCos());
-    checker.addChecker(new CDAssociationCoCos().getCheckerForMcg2EbnfCoCos());
-    checker.addChecker(new CD4AnalysisCoCos().getCheckerForMcg2EbnfCoCos());
+    checker.addChecker(new CDBasisCoCos().addCheckerForMcg2EbnfCoCos());
+    checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForMcg2EbnfCoCos());
+    checker.addChecker(new CDAssociationCoCos().addCheckerForMcg2EbnfCoCos());
+    checker.addChecker(new CD4AnalysisCoCos().addCheckerForMcg2EbnfCoCos());
   }
 }

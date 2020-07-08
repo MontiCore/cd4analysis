@@ -12,8 +12,7 @@
 
 package de.monticore.cd4analysis.parser;
 
-import de.monticore.cd.TestBasis;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Test;
@@ -21,8 +20,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCD4AnalysisParserTest extends TestBasis {
-  CD4AnalysisParser p = new CD4AnalysisParser();
+public class TestCD4AnalysisParserTest extends CD4AnalysisTestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {

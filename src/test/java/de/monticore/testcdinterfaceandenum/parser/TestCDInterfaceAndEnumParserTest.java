@@ -8,20 +8,19 @@
 
 package de.monticore.testcdinterfaceandenum.parser;
 
-import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
+import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class TestCDInterfaceAndEnumParserTest extends TestBasis {
-  TestCDInterfaceAndEnumParser p = new TestCDInterfaceAndEnumParser();
+public class TestCDInterfaceAndEnumParserTest
+    extends CDInterfaceAndEnumTestBasis {
 
   @Test
   public void parseCDInterface() throws IOException {
