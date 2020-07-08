@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.life;
+package de.monticore.cd4analysis.parser;
 
 classdiagram MyLife {
   abstract class Person implements CorporateEntity {
@@ -29,7 +29,7 @@ classdiagram MyLife {
     composition Student -> Grades [*];
     association phonebook uni.Student [String] -> PhoneNumber;
   }
-  association [0..1] Person (parent) <-> (child) de.monticore.life.Person [*];
+  association [0..1] Person (parent) <-> (child) de.monticore.cd4analysis.parser.Person [*];
 
   interface CorporateEntity {
      int vatNumber;

@@ -4,6 +4,7 @@
 
 package de.monticore.cd4code._parser;
 
+import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
 import java.io.IOException;
@@ -18,6 +19,7 @@ public class CD4CodeParser extends CD4CodeParserTOP {
       throws IOException {
     final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
     parse.ifPresent(p -> p.accept(afterParseTrafo));
+    parse.ifPresent(p -> CD4AnalysisParser.checkFileAndPackageName(fileName, p));
     return parse;
   }
 

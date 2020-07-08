@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.cdbasis.parser;
+package de.monticore.cd4code.parser;
 
 classdiagram Packages {
   package a {
