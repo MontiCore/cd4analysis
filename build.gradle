@@ -30,6 +30,12 @@ sourceSets {
     test {
         java.srcDirs += ["$projectDir/target/generated-test-sources/monticore/sourcecode"]
     }
+  grammars {
+    resources {
+      srcDirs(grammarDir)
+      include "**/*.mc4"
+    }
+  }
 }
 subprojects {
     apply plugin: 'idea'
@@ -193,11 +199,6 @@ tasks.withType(JavaCompile) {
     options.warnings = false
 }
 
-// build sources jar in addition
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier = "sources"
-}
 
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
@@ -214,29 +215,30 @@ shadowJar { // all in one jar
     archiveClassifier = "cli"
 }
 
-// build grammar jar as well
-task grammarJar(type: Jar) {
-    from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
-    archiveClassifier = "grammars"
-}
 
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
     // Include the results from the 'test' task
     reportOn tasks.withType(Test)
 }
+java {
+//  withJavadocJar()
+  withSourcesJar()
+  registerFeature('grammars') {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+jar.dependsOn grammarsJar
 
 // configure deployment
 publishing {
     // configure what artifacts to publish
     publications {
         mavenJava(MavenPublication) {
-            artifactId = "$project.name"
             from components.java
-            artifact sourcesJar
             //artifact javadocJar
             //artifact shadowJar
-            artifact grammarJar
         }
     }
     repositories.maven {
