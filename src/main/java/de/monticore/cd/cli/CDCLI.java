@@ -10,6 +10,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreator;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
@@ -71,9 +72,9 @@ public class CDCLI {
         .setModelPath(new ModelPath())
         .addBuiltInTypes(useBuiltInTypes)
         .build();
-    final CD4CodeSymbolTableCreator symbolTableCreator = CD4CodeMill
-        .cD4CodeSymbolTableCreatorBuilder()
-        .addToScopeStack(globalScope)
+    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
+        .cD4CodeSymbolTableCreatorDelegatorBuilder()
+        .setGlobalScope(globalScope)
         .build();
 
     symbolTableCreator.createFromAST(ast);
