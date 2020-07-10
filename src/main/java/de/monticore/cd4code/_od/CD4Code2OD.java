@@ -22,9 +22,8 @@ import de.monticore.umlmodifier._od.UMLModifier2OD;
 import de.monticore.umlstereotype._od.UMLStereotype2OD;
 
 public class CD4Code2OD extends CD4Code2ODTOP {
-  protected CD4CodeVisitor realThis;
-
   public final CD4CodeDelegatorVisitor visitor;
+  protected CD4CodeVisitor realThis;
 
   public CD4Code2OD(IndentPrinter printer, ReportingRepository reporting) {
     super(printer, reporting);

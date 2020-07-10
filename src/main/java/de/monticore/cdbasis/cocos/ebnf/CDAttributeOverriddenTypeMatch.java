@@ -13,9 +13,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.cocos.ebnf;
 
+import de.monticore.cd._symboltable.OOTypeHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
-import de.monticore.cd._symboltable.OOTypeHelper;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;

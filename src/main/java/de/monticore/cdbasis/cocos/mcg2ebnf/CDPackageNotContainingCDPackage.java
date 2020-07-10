@@ -4,7 +4,6 @@ package de.monticore.cdbasis.cocos.mcg2ebnf;
 
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._cocos.CDBasisASTCDPackageCoCo;
-import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;

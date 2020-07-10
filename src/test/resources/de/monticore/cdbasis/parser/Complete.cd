@@ -2,7 +2,7 @@
 
 package de.monticore.cdbasis.parser;
 
-import de.monticore.cdbasis.parser.Simple;
+import de.monticore.cdbasis.parser.Simple.*;
 
 targetimport additional.imports;
 
@@ -11,7 +11,7 @@ classdiagram Complete {
   abstract class H;
   class H2;
 
-  class I extends H, H2;
+  class I extends H, A;
 
   class J {
   }

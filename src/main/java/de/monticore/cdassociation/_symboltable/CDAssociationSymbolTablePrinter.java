@@ -12,7 +12,6 @@ import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.typesymbols._symboltable.TypeSymbolsSymbolTablePrinter;
 
 import java.util.Optional;
@@ -92,27 +91,22 @@ public class CDAssociationSymbolTablePrinter
 
   @Override
   public void endVisit(CDAssociationArtifactScope node) {
-    serializeSymAssociations();
+    serializeSymAssociations(printer, symbolTablePrinterHelper);
     super.endVisit(node);
   }
 
-  public void serializeSymAssociations() {
+  public static void serializeSymAssociations(JsonPrinter printer, CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
       printer.beginArray("SymAssociations");
-      symbolTablePrinterHelper.getSymAssociations().forEach(this::serializeSymAssociation);
+      symbolTablePrinterHelper.getSymAssociations().forEach(a -> CDAssociationSymbolTablePrinter.serializeSymAssociation(printer, a));
       printer.endArray();
     }
   }
 
-  public void serializeSymAssociation(SymAssociation symAssociation) {
+  public static void serializeSymAssociation(JsonPrinter printer, SymAssociation symAssociation) {
     printer.beginObject();
     printer.member(JsonDeSers.KIND, "de.monticore.cdassociation._symboltable.SymAssociation");
 
     // TODO SVa: print members
-  }
-
-  @Override
-  public void handle(OOTypeSymbol node) {
-    this.cDBasisSymbolTablePrinterDelegate.handle(node);
   }
 }

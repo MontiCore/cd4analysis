@@ -17,7 +17,6 @@ import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.testcdassociation._visitor.TestCDAssociationDelegatorVisitor;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 
 public class TestCDAssociationPrettyPrinterDelegator
     extends TestCDAssociationDelegatorVisitor {

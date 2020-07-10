@@ -4,8 +4,8 @@
 
 package de.monticore.cdbasis._ast;
 
-import de.monticore.cd.visitor.CDElementVisitor;
 import de.monticore.cd._ast.MCQualifiedNameFacade;
+import de.monticore.cd.visitor.CDElementVisitor;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 
@@ -16,16 +16,16 @@ import java.util.Optional;
 public class ASTCDDefinition extends ASTCDDefinitionTOP {
   protected String defaultPackageName = "";
 
-  public void setDefaultPackageName(String defaultPackageName) {
-    this.defaultPackageName = defaultPackageName;
-  }
-
   public List<String> getDefaultPackageNameList() {
     return MCQualifiedNameFacade.createPartList(this.defaultPackageName);
   }
 
   public String getDefaultPackageName() {
     return this.defaultPackageName;
+  }
+
+  public void setDefaultPackageName(String defaultPackageName) {
+    this.defaultPackageName = defaultPackageName;
   }
 
   public Optional<ASTCDPackage> getPackageWithName(String packageName) {

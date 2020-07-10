@@ -8,7 +8,6 @@ import de.monticore.cd4code._visitor.CD4CodeVisitor;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDPackage;
-import de.monticore.cdbasis._visitor.CDBasisVisitor;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
@@ -20,18 +19,9 @@ import java.util.stream.Collectors;
  */
 public class CDElementVisitor
     implements CD4CodeVisitor {
-  public enum Options {
-    PACKAGES,
-    CLASSES,
-    INTERFACES,
-    ENUMS;
-  }
-
   protected CD4CodeVisitor realThis;
-
   protected Set<Options> options;
   protected List<ASTCDElement> elements;
-
   public CDElementVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
     this.elements = new ArrayList<>();
@@ -81,6 +71,13 @@ public class CDElementVisitor
   }
 
   public <T extends ASTCDElement> List<T> getElements() {
-    return elements.stream().map(e -> (T)e).collect(Collectors.toList());
+    return elements.stream().map(e -> (T) e).collect(Collectors.toList());
+  }
+
+  public enum Options {
+    PACKAGES,
+    CLASSES,
+    INTERFACES,
+    ENUMS
   }
 }

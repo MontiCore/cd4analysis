@@ -11,12 +11,11 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
-import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.types.typesymbols.TypeSymbolsMill;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
+import de.monticore.types.typesymbols._symboltable.OOTypeSymbolSurrogate;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -79,7 +78,7 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
 
-    // the exception don't have to be resolved
+    // the exception types don't have to be resolved
     /*if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionList(ast.getCDThrowsDeclaration().streamException().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
@@ -104,7 +103,10 @@ public class CD4CodeBasisSymbolTableCreator
     symbol.setIsConstructor(true);
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
 
-    symbol.setReturnType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getCurrentCDTypeOnStack(), ast.getEnclosingScope())));
+    symbol.setReturnType(SymTypeExpressionFactory.createTypeObject(
+        symbolTableHelper.getCurrentCDTypeOnStack(),
+        scopeStack.peekLast()
+    ));
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionList(ast.getCDThrowsDeclaration().streamException().map(s -> {
@@ -140,13 +142,11 @@ public class CD4CodeBasisSymbolTableCreator
     else {
       final SymTypeExpression finalTypeResult;
       if (ast.isEllipsis()) {
-        finalTypeResult = new SymTypeArray(
-            TypeSymbolsMill
-                .oOTypeSymbolLoaderBuilder()
-                .setName(symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()))
-                .setEnclosingScope(ast.getEnclosingScope())
-                .build(),
-            1, typeResult.get());
+        finalTypeResult = SymTypeExpressionFactory.createTypeArray(
+            symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()),
+            scopeStack.peekLast(),
+            1,
+            typeResult.get());
       }
       else {
         finalTypeResult = typeResult.get();
@@ -166,7 +166,7 @@ public class CD4CodeBasisSymbolTableCreator
     symbol.setIsPublic(true);
 
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(enumName, ast.getEnclosingScope())));
+    symbol.setType(new SymTypeOfObject(new OOTypeSymbolSurrogate(enumName)));
 
     // Don't store the arguments in the ST
   }

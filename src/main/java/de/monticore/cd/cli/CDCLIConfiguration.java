@@ -15,26 +15,19 @@ import java.util.Optional;
 
 public final class CDCLIConfiguration implements Configuration {
 
-  public enum Options {
+  protected Configuration configuration;
 
-    HELP("help"), HELP_SHORT("h"),
-    NO_BUILTIN_TYPES("no-builtin-types"), NO_BUILTIN_TYPES_SHORT("t"),
-    MODEL_FILE("model"), MODEL_FILE_SHORT("m"),
-    NO_FAIL_QUICK("no-fail-quick"), NO_FAIL_QUICK_SHORT("q");
-
-    String name;
-
-    Options(String name) {
-      this.name = name;
-    }
-
-    @Override
-    public String toString() {
-      return this.name;
-    }
+  private CDCLIConfiguration(CLIArguments arguments) {
+    init(ConfigurationPropertiesMapContributor.fromSplitMap(arguments.asMap()));
   }
 
-  protected Configuration configuration;
+  private CDCLIConfiguration(Multimap<String, String> arguments) {
+    init(ConfigurationPropertiesMapContributor.fromSplitMap(arguments));
+  }
+
+  private CDCLIConfiguration(Map<String, Iterable<String>> arguments) {
+    init(ConfigurationPropertiesMapContributor.fromSplitMap(arguments));
+  }
 
   public static CDCLIConfiguration fromArguments(CLIArguments arguments) {
     return new CDCLIConfiguration(arguments);
@@ -48,16 +41,13 @@ public final class CDCLIConfiguration implements Configuration {
     return new CDCLIConfiguration(arguments);
   }
 
-  private CDCLIConfiguration(CLIArguments arguments) {
-    init(ConfigurationPropertiesMapContributor.fromSplitMap(arguments.asMap()));
-  }
-
-  private CDCLIConfiguration(Multimap<String, String> arguments) {
-    init(ConfigurationPropertiesMapContributor.fromSplitMap(arguments));
-  }
-
-  private CDCLIConfiguration(Map<String, Iterable<String>> arguments) {
-    init(ConfigurationPropertiesMapContributor.fromSplitMap(arguments));
+  public static <T> Optional<T> optionalAlternative(Optional<T> orig, Optional<T> alt) {
+    if (orig.isPresent()) {
+      return orig;
+    }
+    else {
+      return alt;
+    }
   }
 
   protected void init(Configuration internal) {
@@ -96,15 +86,6 @@ public final class CDCLIConfiguration implements Configuration {
 
   public Optional<String> getModelFile() {
     return optionalAlternative(getAsString(Options.MODEL_FILE.toString()), getAsString(Options.MODEL_FILE_SHORT.toString()));
-  }
-
-  public static <T> Optional<T> optionalAlternative(Optional<T> orig, Optional<T> alt) {
-    if (orig.isPresent()) {
-      return orig;
-    }
-    else {
-      return alt;
-    }
   }
 
   public boolean isSetFailQuick() {
@@ -228,6 +209,25 @@ public final class CDCLIConfiguration implements Configuration {
    */
   Configuration getInternal() {
     return this.configuration;
+  }
+
+  public enum Options {
+
+    HELP("help"), HELP_SHORT("h"),
+    NO_BUILTIN_TYPES("no-builtin-types"), NO_BUILTIN_TYPES_SHORT("t"),
+    MODEL_FILE("model"), MODEL_FILE_SHORT("m"),
+    NO_FAIL_QUICK("no-fail-quick"), NO_FAIL_QUICK_SHORT("q");
+
+    String name;
+
+    Options(String name) {
+      this.name = name;
+    }
+
+    @Override
+    public String toString() {
+      return this.name;
+    }
   }
 
 }

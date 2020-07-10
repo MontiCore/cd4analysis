@@ -6,8 +6,10 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._ast.*;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDDirectComposition;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
@@ -51,6 +53,10 @@ public class CDAssociationSymbolTableCreator
     SymAssociationBuilder symAssociation = create_SymAssociation(symbol);
     initialize_SymAssociation(symAssociation, node);
     symbolTableHelper.addToHandledAssociations(symAssociation.build());
+
+    if (symbol != null) {
+      removeCurrentScope();
+    }
   }
 
   protected SymAssociationBuilder create_SymAssociation(CDAssociationSymbol symbol) {

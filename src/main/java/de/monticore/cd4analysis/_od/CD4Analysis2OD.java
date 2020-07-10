@@ -21,9 +21,8 @@ import de.monticore.umlmodifier._od.UMLModifier2OD;
 import de.monticore.umlstereotype._od.UMLStereotype2OD;
 
 public class CD4Analysis2OD extends CD4Analysis2ODTOP {
-  protected CD4AnalysisVisitor realThis;
-
   public final CD4AnalysisDelegatorVisitor visitor;
+  protected CD4AnalysisVisitor realThis;
 
   public CD4Analysis2OD(IndentPrinter printer, ReportingRepository reporting) {
     super(printer, reporting);

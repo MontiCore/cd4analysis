@@ -9,7 +9,6 @@ import ch.qos.logback.classic.Logger;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreator;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -27,12 +26,9 @@ import java.util.Optional;
 
 public class CDCLI {
 
-  static Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-
   private static final String JAR_NAME = "cd-<Version>-cli.jar";
-
   private static final String SUCCESSFUL = "Parsing and CoCo check Successful!";
-
+  static Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
   private String modelFile;
 
   private boolean useBuiltInTypes;

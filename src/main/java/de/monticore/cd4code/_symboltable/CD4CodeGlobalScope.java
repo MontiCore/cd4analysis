@@ -9,6 +9,8 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.types.typesymbols.TypeSymbolsMill;
+import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.typesymbols._symboltable.TypeSymbolsScope;
 
 import java.util.Set;
 
@@ -48,13 +50,23 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
     BuiltInTypes.PRIMITIVE_TYPES
-        .forEach(t -> primitiveTypesScope.add(
-            TypeSymbolsMill
-                .oOTypeSymbolBuilder()
-                .setName(t)
-                .setEnclosingScope(primitiveTypesScope)
-                .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
-                .build()));
+        .forEach(t -> {
+          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
+          final OOTypeSymbol symbol = TypeSymbolsMill
+              .oOTypeSymbolBuilder()
+              .setName(t)
+              .setEnclosingScope(primitiveTypesScope)
+              .setSpannedScope(scope)
+              .setIsPublic(true)
+              .build();
+
+          // TODO SVa: remove when Builder of symbols are fixed
+          symbol.setIsPublic(true);
+          symbol.setSpannedScope(scope);
+
+          primitiveTypesScope.add(
+              symbol);
+        });
   }
 
   public void addBuiltInObjectTypes(CD4CodeArtifactScope artifactScope) {
@@ -66,14 +78,24 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
     BuiltInTypes.OBJECT_TYPES
-        .forEach(t -> objectTypesScope.add(
-            TypeSymbolsMill
-                .oOTypeSymbolBuilder()
-                .setName(t)
-                .setEnclosingScope(objectTypesScope)
-                .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
-                .setIsClass(true)
-                .build()));
+        .forEach(t -> {
+          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
+          final OOTypeSymbol symbol = TypeSymbolsMill
+              .oOTypeSymbolBuilder()
+              .setName(t)
+              .setEnclosingScope(objectTypesScope)
+              .setSpannedScope(scope)
+              .setIsPublic(true)
+              .build();
+
+          // TODO SVa: remove when Builder of symbols are fixed
+          symbol.setIsPublic(true);
+          symbol.setIsClass(true);
+          symbol.setSpannedScope(scope);
+
+          objectTypesScope.add(
+              symbol);
+        });
   }
 
   public void addBuiltInUtilTypes(CD4CodeArtifactScope artifactScope) {
@@ -85,14 +107,24 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
     BuiltInTypes.UTIL_TYPES
-        .forEach(t -> utilTypesScope.add(
-            TypeSymbolsMill
-                .oOTypeSymbolBuilder()
-                .setName(t)
-                .setEnclosingScope(utilTypesScope)
-                .setSpannedScope(TypeSymbolsMill.typeSymbolsScopeBuilder().build())
-                .setIsClass(true)
-                .build()));
+        .forEach(t -> {
+          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
+          final OOTypeSymbol symbol = TypeSymbolsMill
+              .oOTypeSymbolBuilder()
+              .setName(t)
+              .setEnclosingScope(utilTypesScope)
+              .setSpannedScope(scope)
+              .setIsPublic(true)
+              .build();
+
+          // TODO SVa: remove when Builder of symbols are fixed
+          symbol.setIsPublic(true);
+          symbol.setIsClass(true);
+          symbol.setSpannedScope(scope);
+
+          utilTypesScope.add(
+              symbol);
+        });
   }
 
   @Override
@@ -112,7 +144,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   @Override
   public Set<String> calculateModelNamesForField(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesParts(name);
+    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
   }
 
   @Override
@@ -122,7 +154,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   @Override
   public Set<String> calculateModelNamesForCDMethodSignature(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesParts(name);
+    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
   }
 
   @Override

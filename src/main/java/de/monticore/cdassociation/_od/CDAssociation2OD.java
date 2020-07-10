@@ -9,9 +9,6 @@ import de.monticore.cdassociation._visitor.CDAssociationDelegatorVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
 import de.monticore.cdbasis._od.CDBasis2OD;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
-import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
-import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumDelegatorVisitor;
-import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
 import de.monticore.expressions.expressionsbasis._od.ExpressionsBasis2OD;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.literals.mcliteralsbasis._od.MCLiteralsBasis2OD;
@@ -22,9 +19,8 @@ import de.monticore.umlmodifier._od.UMLModifier2OD;
 import de.monticore.umlstereotype._od.UMLStereotype2OD;
 
 public class CDAssociation2OD extends CDAssociation2ODTOP {
-  protected CDAssociationVisitor realThis;
-
   public final CDAssociationDelegatorVisitor visitor;
+  protected CDAssociationVisitor realThis;
 
   public CDAssociation2OD(IndentPrinter printer, ReportingRepository reporting) {
     super(printer, reporting);

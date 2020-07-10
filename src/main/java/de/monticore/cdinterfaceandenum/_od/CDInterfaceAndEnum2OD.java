@@ -19,9 +19,8 @@ import de.monticore.umlmodifier._od.UMLModifier2OD;
 import de.monticore.umlstereotype._od.UMLStereotype2OD;
 
 public class CDInterfaceAndEnum2OD extends CDInterfaceAndEnum2ODTOP {
-  protected CDInterfaceAndEnumVisitor realThis;
-
   public final CDInterfaceAndEnumDelegatorVisitor visitor;
+  protected CDInterfaceAndEnumVisitor realThis;
 
   public CDInterfaceAndEnum2OD(IndentPrinter printer, ReportingRepository reporting) {
     super(printer, reporting);

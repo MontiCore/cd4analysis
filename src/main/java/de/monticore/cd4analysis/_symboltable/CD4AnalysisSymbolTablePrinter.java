@@ -5,8 +5,8 @@
 package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
 import de.monticore.symboltable.serialization.JsonPrinter;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 
 public class CD4AnalysisSymbolTablePrinter
     extends CD4AnalysisSymbolTablePrinterTOP {
@@ -27,22 +27,15 @@ public class CD4AnalysisSymbolTablePrinter
 
   public void init() {
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
-
-    this.cDAssociationSymbolTablePrinterDelegate.setSymbolTablePrinterHelper(this.symbolTablePrinterHelper);
   }
 
   public void serializeSymAssociations() {
-    this.cDAssociationSymbolTablePrinterDelegate.serializeSymAssociations();
+    CDAssociationSymbolTablePrinter.serializeSymAssociations(printer, symbolTablePrinterHelper);
   }
 
   @Override
   public void endVisit(CD4AnalysisArtifactScope node) {
     serializeSymAssociations();
     super.endVisit(node);
-  }
-
-  @Override
-  public void handle(OOTypeSymbol node) {
-    this.cDAssociationSymbolTablePrinterDelegate.handle(node);
   }
 }

@@ -23,7 +23,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
 
   /** An association has a name, a left, right part and a direction
    */
-  symbol scope CDAssociation implements CDElement =
+  scope symbol CDAssociation implements CDElement =
     Modifier
     CDAssocType Name?
     left:CDAssocLeftSide

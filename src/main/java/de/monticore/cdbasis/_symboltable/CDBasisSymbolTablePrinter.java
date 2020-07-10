@@ -7,7 +7,7 @@ package de.monticore.cdbasis._symboltable;
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.check.SymTypeExpressionDeSer;
 
 import java.util.List;
 
@@ -27,11 +27,6 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
 
   @Override
   public void serializeCDTypeSuperTypes(List<SymTypeExpression> superTypes) {
-    this.typeSymbolsSymbolTablePrinterDelegate.serializeOOTypeSuperTypes(superTypes);
-  }
-
-  @Override
-  public void handle(OOTypeSymbol node) {
-    this.typeSymbolsSymbolTablePrinterDelegate.handle(node);
+    SymTypeExpressionDeSer.serializeMember(printer, "superTypes", superTypes);
   }
 }

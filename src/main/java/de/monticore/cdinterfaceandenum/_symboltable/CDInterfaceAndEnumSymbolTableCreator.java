@@ -6,12 +6,11 @@ package de.monticore.cdinterfaceandenum._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.CDTypeSymbolLoader;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
@@ -119,6 +118,9 @@ public class CDInterfaceAndEnumSymbolTableCreator
     symbol.setIsStatic(true);
     symbol.setIsPublic(true);
 
-    symbol.setType(new SymTypeOfObject(new CDTypeSymbolLoader(symbolTableHelper.getCurrentCDTypeOnStack(), ast.getEnclosingScope())));
+    symbol.setType(SymTypeExpressionFactory.createTypeObject(
+        symbolTableHelper.getCurrentCDTypeOnStack(),
+        scopeStack.peekLast()
+    ));
   }
 }

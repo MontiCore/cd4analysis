@@ -41,15 +41,15 @@ public class TestBasis {
     checkLogError();
   }
 
-  public String getFilePath(String path) {
+  public static String getFilePath(String path) {
     return Paths.get(PATH + path).toString();
   }
 
-  protected String getJoinedErrors() {
+  public static String getJoinedErrors() {
     return Joiner.on("\n").join(Log.getFindings());
   }
 
-  public void checkNullAndPresence(MCConcreteParser parser, Optional<? extends ASTNode> node) {
+  public static void checkNullAndPresence(MCConcreteParser parser, Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);
@@ -59,7 +59,7 @@ public class TestBasis {
     checkLogError();
   }
 
-  public void checkNullAndError(MCConcreteParser parser, Optional<? extends ASTNode> node) {
+  public static void checkNullAndError(MCConcreteParser parser, Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);
@@ -69,7 +69,7 @@ public class TestBasis {
     assertTrue(node.isPresent());
   }
 
-  public void checkLogError() {
+  public static void checkLogError() {
     if (Log.getErrorCount() > 0) {
       final String joinedErrors = getJoinedErrors();
       Log.getFindings().clear();
@@ -77,11 +77,12 @@ public class TestBasis {
     }
   }
 
-  public void expectErrorCount(int i, List<String> listOfErrors) {
+  public static void expectErrorCount(int i, List<String> listOfErrors) {
     if (Log.getErrorCount() == 0) {
       if (i == 0) {
         return;
-      } else {
+      }
+      else {
         fail("exptected " + i + " errors, but none were present");
       }
     }

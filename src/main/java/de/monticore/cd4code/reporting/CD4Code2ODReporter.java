@@ -18,8 +18,8 @@ import de.se_rwth.commons.Names;
 import java.io.File;
 
 public class CD4Code2ODReporter extends AReporter {
-  private String modelName;
-  private ReportingRepository reporting;
+  private final String modelName;
+  private final ReportingRepository reporting;
 
   public CD4Code2ODReporter(String outputDir, String modelName, ReportingRepository reporting) {
     super(outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator

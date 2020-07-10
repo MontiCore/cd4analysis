@@ -19,18 +19,9 @@ import java.util.stream.Collectors;
  */
 public class CDMemberVisitor
     implements CD4CodeVisitor {
-  public enum Options {
-    ATTRIBUTE,
-    METHOD_SIGNATURE,
-    CONSTRUCTOR,
-    METHOD;
-  }
-
   protected CD4CodeVisitor realThis;
-
   protected Set<Options> options;
   protected List<ASTCDMember> elements;
-
   public CDMemberVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
     this.elements = new ArrayList<>();
@@ -81,5 +72,12 @@ public class CDMemberVisitor
 
   public <T extends ASTCDMember> List<T> getElements() {
     return elements.stream().map(e -> (T) e).collect(Collectors.toList());
+  }
+
+  public enum Options {
+    ATTRIBUTE,
+    METHOD_SIGNATURE,
+    CONSTRUCTOR,
+    METHOD
   }
 }

@@ -17,15 +17,6 @@ import java.util.Optional;
 public class CD4AnalysisParser extends CD4AnalysisParserTOP {
   CD4AnalysisAfterParseDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
 
-  @Override
-  public Optional<ASTCDCompilationUnit> parse(String fileName)
-      throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
-    parse.ifPresent(p -> p.accept(afterParseTrafo));
-    parse.ifPresent(p -> checkFileAndPackageName(fileName, p));
-    return parse;
-  }
-
   public static void checkFileAndPackageName(String fileName, ASTCDCompilationUnit ast) {
     String pathName = Paths.get(fileName).toString();
     String simpleFileName = Files.getNameWithoutExtension(pathName);
@@ -40,15 +31,29 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
     }
 
     if (!modelName.equals(simpleFileName)) {
-      Log.error("0xCD100 The name of the diagram " + modelName
-          + " is not identical to the name of the file " + fileName
-          + " (without its fileextension).");
+      Log.error(String.format(
+          "0xCD100: The name of the diagram %s"
+              + " is not identical to the name of the file %s"
+              + " (without its fileextension).",
+          modelName, fileName),
+          ast.getCDDefinition().get_SourcePositionStart());
     }
     if (!packageName.endsWith(packageDeclaration)) {
-      Log.error("0xCD100 The package declaration " + packageDeclaration
-          + " of the diagram (" + fileName + ") must not differ from the "
-          + "package of the diagram file.");
+      Log.error(String.format("0xCD101: The package declaration %s"
+              + " of the diagram (%s) must not differ from the "
+              + "package of the diagram file.",
+          packageDeclaration, fileName),
+          ast.isPresentCDPackageStatement() ? ast.getCDPackageStatement().get_SourcePositionStart() : ast.get_SourcePositionStart());
     }
+  }
+
+  @Override
+  public Optional<ASTCDCompilationUnit> parse(String fileName)
+      throws IOException {
+    final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
+    parse.ifPresent(p -> p.accept(afterParseTrafo));
+    parse.ifPresent(p -> checkFileAndPackageName(fileName, p));
+    return parse;
   }
 
   @Override

@@ -51,6 +51,8 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     Log.debug("Building Symboltable for CD: " + node.getCDDefinition().getName(),
         getClass().getSimpleName());
 
+    symbolTableHelper.setImports(node.getMCImportStatementList());
+
     super.visit(node);
   }
 
@@ -67,6 +69,11 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     super.visit(node);
     assert scopeStack.peekLast() != null;
     scopeStack.peekLast().setName(node.getMCQualifiedName().getQName());
+  }
+
+  @Override
+  public void endVisit(ASTCDPackage node) {
+    super.endVisit(node);
   }
 
   @Override
@@ -91,6 +98,14 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+
+        /*
+        Set<String> qualifiedNames = symbolTableHelper.calculateQualifiedNames(s.getName()); // move to symbolTableHelper.resolveCDType
+        // "A" -> ["A", "de.monticore.cdbasis.parser.Simple.A", ...] // qualified name muss die info von allen imports haben
+
+        final Optional<SymTypeExpression> result = symbolTableHelper.resolveCDType(qualifiedNames); // resolve nach allen potentiellen namen
+        */
+
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(

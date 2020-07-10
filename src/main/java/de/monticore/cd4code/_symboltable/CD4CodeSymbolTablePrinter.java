@@ -5,6 +5,7 @@
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
 import de.monticore.symboltable.serialization.JsonPrinter;
 
 public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
@@ -19,15 +20,17 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
     init();
   }
 
+  public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
+    this.symbolTablePrinterHelper = symbolTablePrinterHelper;
+  }
+
   public void init() {
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
-
-    this.cD4AnalysisSymbolTablePrinterDelegate.setSymbolTablePrinterHelper(this.symbolTablePrinterHelper);
   }
 
   @Override
   public void endVisit(CD4CodeArtifactScope node) {
-    this.cD4AnalysisSymbolTablePrinterDelegate.serializeSymAssociations();
+    CDAssociationSymbolTablePrinter.serializeSymAssociations(printer, symbolTablePrinterHelper);
     super.endVisit(node);
   }
 }

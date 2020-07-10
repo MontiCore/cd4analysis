@@ -17,9 +17,8 @@ import de.monticore.umlmodifier._od.UMLModifier2OD;
 import de.monticore.umlstereotype._od.UMLStereotype2OD;
 
 public class CDBasis2OD extends CDBasis2ODTOP {
-  protected CDBasisVisitor realThis;
-
   public final CDBasisDelegatorVisitor visitor;
+  protected CDBasisVisitor realThis;
 
   public CDBasis2OD(IndentPrinter printer, ReportingRepository reporting) {
     super(printer, reporting);
