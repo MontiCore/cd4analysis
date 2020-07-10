@@ -55,7 +55,7 @@ dependencies {
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation "com.google.guava:guava:$guava_version"
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
-//    implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
+    implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "de.monticore:monticore-runtime:$mc_version:tests"

@@ -14,8 +14,13 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public UMLModiferPlantUMLPrettyPrinter() {
   }
 
-  public UMLModiferPlantUMLPrettyPrinter(IndentPrinter printer) {
-    super(printer);
+  public UMLModiferPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+    super(printer, config);
+  }
+
+  @Override
+  public void setRealThis(UMLModifierVisitor realThis) {
+    // do nothing
   }
 
   @Override
@@ -29,5 +34,14 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     if (node.isPublic()) {
       print("+");
     }
+
+    if (node.isStatic()) {
+      print("{static} ");
+    }
+    if (node.isAbstract()) {
+      print("{abstract} ");
+    }
   }
+
+
 }

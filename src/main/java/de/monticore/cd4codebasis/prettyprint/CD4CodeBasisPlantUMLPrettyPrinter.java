@@ -4,6 +4,7 @@
 
 package de.monticore.cd4codebasis.prettyprint;
 
+import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -16,11 +17,11 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   protected CD4CodeBasisVisitor realThis;
 
   public CD4CodeBasisPlantUMLPrettyPrinter() {
-    this(new IndentPrinter());
+    this(new IndentPrinter(), new PlantUMLConfig());
   }
 
-  public CD4CodeBasisPlantUMLPrettyPrinter(IndentPrinter printer) {
-    super(printer);
+  public CD4CodeBasisPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+    super(printer, config);
     setRealThis(this);
   }
 
@@ -36,31 +37,43 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDMethod node) {
-    node.getModifier().accept(getRealThis());
+    if (plantUMLConfig.getShowAtt()) {
+      print("{method} "); // be sure that this is handled as a field
 
-    node.getMCReturnType().accept(getRealThis());
-    print(" " + node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
-    print(")");
-    if (node.isPresentCDThrowsDeclaration()) {
-      print(" ");
-      node.getCDThrowsDeclaration().accept(getRealThis());
+      if (plantUMLConfig.getShowModifier()) {
+        node.getModifier().accept(getRealThis());
+      }
+
+      node.getMCReturnType().accept(getRealThis());
+      print(" " + node.getName() + "(");
+      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+      print(")");
+      if (node.isPresentCDThrowsDeclaration()) {
+        print(" ");
+        node.getCDThrowsDeclaration().accept(getRealThis());
+      }
+      println();
     }
-    println();
   }
 
   @Override
   public void traverse(ASTCDConstructor node) {
-    node.getModifier().accept(getRealThis());
+    if (plantUMLConfig.getShowAtt()) {
+      print("{method} "); // be sure that this is handled as a field
 
-    print(node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
-    print(")");
-    if (node.isPresentCDThrowsDeclaration()) {
-      print(" ");
-      node.getCDThrowsDeclaration().accept(getRealThis());
+      if (plantUMLConfig.getShowModifier()) {
+        node.getModifier().accept(getRealThis());
+      }
+
+      print(node.getName() + "(");
+      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+      print(")");
+      if (node.isPresentCDThrowsDeclaration()) {
+        print(" ");
+        node.getCDThrowsDeclaration().accept(getRealThis());
+      }
+      println();
     }
-    println();
   }
 
   @Override

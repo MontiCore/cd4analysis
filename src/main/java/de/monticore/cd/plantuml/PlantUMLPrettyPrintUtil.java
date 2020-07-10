@@ -10,22 +10,29 @@ package de.monticore.cd.plantuml;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.prettyprint.IndentPrinter;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.Stack;
 
 public abstract class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
   protected PlantUMLConfig plantUMLConfig;
   protected Stack<String> nameStack;
+  protected boolean immediatelyPrintAssociations = false;
+  protected Set<ASTCDAssociation> associations;
 
   public PlantUMLPrettyPrintUtil() {
-    this(new IndentPrinter());
+    this(new IndentPrinter(), new PlantUMLConfig());
   }
 
-  public PlantUMLPrettyPrintUtil(IndentPrinter printer) {
+  public PlantUMLPrettyPrintUtil(IndentPrinter printer, PlantUMLConfig config) {
     super(printer);
-    nameStack = new Stack<>();
+    this.nameStack = new Stack<>();
+    this.plantUMLConfig = config;
+    this.associations = new HashSet<>();
   }
 
   public PlantUMLConfig getPlantUMLConfig() {
@@ -45,13 +52,17 @@ public abstract class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
   }
 
   public void printComment(ASTNode node) {
-    PlantUMLCommentPrinter.printCommentToNote(node, getPlantUMLConfig(), getPrinter());
+    if (plantUMLConfig.getShowComments()) {
+      PlantUMLCommentPrinter.printCommentToNote(node, getPlantUMLConfig(), getPrinter());
+    }
   }
 
   public void printComment(ASTNode node, String connectTo) {
-    // TODO SVa: check if namestack contains something -> use it for connectsTo
+    if (plantUMLConfig.getShowComments()) {
+      // TODO SVa: check if namestack contains something -> use it for connectsTo
 
-    PlantUMLCommentPrinter.printCommentToNote(node, Optional.of(connectTo), getPlantUMLConfig(), getPrinter());
+      PlantUMLCommentPrinter.printCommentToNote(node, Optional.of(connectTo), getPlantUMLConfig(), getPrinter());
+    }
   }
 
   public String shorten(String text) {

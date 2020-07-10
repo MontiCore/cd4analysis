@@ -26,21 +26,22 @@ public class CD4AnalysisPlantUMLPrettyPrinter
   protected PlantUMLConfig plantUMLConfig;
 
   public CD4AnalysisPlantUMLPrettyPrinter() {
-    this(new IndentPrinter());
+    this(new IndentPrinter(), new PlantUMLConfig());
   }
 
-  public CD4AnalysisPlantUMLPrettyPrinter(IndentPrinter printer) {
+  public CD4AnalysisPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
     this.printer = printer;
+    this.plantUMLConfig = config;
     setRealThis(this);
 
-    setCDBasisVisitor(new CDBasisPlantUMLPrettyPrinter(printer));
-    setCDInterfaceAndEnumVisitor(new CDInterfaceAndEnumPlantUMLPrettyPrinter(printer));
-    setCDAssociationVisitor(new CDAssociationPlantUMLPrettyPrinter(printer));
+    setCDBasisVisitor(new CDBasisPlantUMLPrettyPrinter(printer, plantUMLConfig));
+    setCDInterfaceAndEnumVisitor(new CDInterfaceAndEnumPlantUMLPrettyPrinter(printer, plantUMLConfig));
+    setCDAssociationVisitor(new CDAssociationPlantUMLPrettyPrinter(printer, plantUMLConfig));
     setCD4AnalysisVisitor(this);
 
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
-    setUMLModifierVisitor(new UMLModiferPlantUMLPrettyPrinter(printer));
+    setUMLModifierVisitor(new UMLModiferPlantUMLPrettyPrinter(printer, plantUMLConfig));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));

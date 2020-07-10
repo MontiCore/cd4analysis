@@ -4,6 +4,7 @@
 
 package de.monticore.cdinterfaceandenum.prettyprint;
 
+import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -17,11 +18,11 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
   protected CDInterfaceAndEnumVisitor realThis;
 
   public CDInterfaceAndEnumPlantUMLPrettyPrinter() {
-    this(new IndentPrinter());
+    this(new IndentPrinter(), new PlantUMLConfig());
   }
 
-  public CDInterfaceAndEnumPlantUMLPrettyPrinter(IndentPrinter printer) {
-    super(printer);
+  public CDInterfaceAndEnumPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+    super(printer, config);
     setRealThis(this);
   }
 
@@ -87,9 +88,21 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
   @Override
   public void traverse(ASTCDEnum node) {
-    for (ASTCDEnumConstant astcdEnumConstant : node.getCDEnumConstantList()) {
-      astcdEnumConstant.accept(getRealThis());
+    if (!node.getCDEnumConstantList().isEmpty()) {
+      println("__ Enum Constants __");
+    }
+    node.streamCDEnumConstants().forEach(c -> {
+      c.accept(getRealThis());
       println();
+    });
+
+    if (plantUMLConfig.getShowAtt() && !node.getCDMemberList().isEmpty()) {
+      println("__ Attributes __");
+
+      node.streamCDMembers().forEach(m -> {
+        m.accept(getRealThis());
+        println();
+      });
     }
   }
 
