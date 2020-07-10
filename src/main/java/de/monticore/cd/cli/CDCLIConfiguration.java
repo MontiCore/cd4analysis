@@ -204,8 +204,6 @@ public final class CDCLIConfiguration implements Configuration {
 
   /**
    * Provides access to the internally used Configuration.
-   *
-   * @return
    */
   Configuration getInternal() {
     return this.configuration;
@@ -218,7 +216,7 @@ public final class CDCLIConfiguration implements Configuration {
     MODEL_FILE("model"), MODEL_FILE_SHORT("m"),
     NO_FAIL_QUICK("no-fail-quick"), NO_FAIL_QUICK_SHORT("q");
 
-    String name;
+    final String name;
 
     Options(String name) {
       this.name = name;

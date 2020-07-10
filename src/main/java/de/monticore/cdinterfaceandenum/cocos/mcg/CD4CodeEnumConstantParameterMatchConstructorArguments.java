@@ -84,7 +84,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
                   // there are more arguments than the constructor has parameter,
                   // check for the elliptic type
                   else {
-                    return TypeCheck.isSubtypeOf(enumConstantsTypes.get(e).get(j), ellipticTypes.get(i).get());
+                    return ellipticTypes.get(i).isPresent() && TypeCheck.isSubtypeOf(enumConstantsTypes.get(e).get(j), ellipticTypes.get(i).get());
                   }
                 });
               }

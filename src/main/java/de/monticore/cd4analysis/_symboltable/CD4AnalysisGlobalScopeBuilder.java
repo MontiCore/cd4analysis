@@ -6,7 +6,7 @@ package de.monticore.cd4analysis._symboltable;
 
 public class CD4AnalysisGlobalScopeBuilder
     extends CD4AnalysisGlobalScopeBuilderTOP {
-  protected boolean addBuiltInTypes = false;
+  protected boolean addBuiltInTypes;
 
   public CD4AnalysisGlobalScopeBuilder() {
     addBuiltInTypes = false;

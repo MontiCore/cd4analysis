@@ -65,8 +65,6 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
    * }}</pre>
    * transforms to:
    * <pre>{@code composition [1] A -> (r) B [*];}</pre>
-   *
-   * @param node
    */
   @Override
   public void visit(ASTCDDirectComposition node) {

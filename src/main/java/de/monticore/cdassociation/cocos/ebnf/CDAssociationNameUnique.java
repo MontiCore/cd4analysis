@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  */
 public class CDAssociationNameUnique implements CDBasisASTCDDefinitionCoCo {
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   @Override
   public void check(ASTCDDefinition a) {
     final List<ASTCDAssociation> astcdAssociation = a.streamCDElements()

@@ -12,7 +12,7 @@ import java.io.Reader;
 import java.util.Optional;
 
 public class CD4CodeParser extends CD4CodeParserTOP {
-  CD4CodeAfterParseDelegatorVisitor afterParseTrafo = new CD4CodeAfterParseDelegatorVisitor();
+  final CD4CodeAfterParseDelegatorVisitor afterParseTrafo = new CD4CodeAfterParseDelegatorVisitor();
 
   @Override
   public Optional<ASTCDCompilationUnit> parse(String fileName)

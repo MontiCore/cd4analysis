@@ -12,9 +12,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDAssociationPrettyPrinterTest extends TestBasis {
-  TestCDAssociationParser p = new TestCDAssociationParser();
-  TestCDAssociationPrettyPrinterDelegator printer = new TestCDAssociationPrettyPrinterDelegator();
+  final TestCDAssociationParser p = new TestCDAssociationParser();
+  final TestCDAssociationPrettyPrinterDelegator printer = new TestCDAssociationPrettyPrinterDelegator();
 
   @Test
   public void completeModel() throws IOException {

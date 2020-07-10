@@ -13,7 +13,7 @@ import java.io.Reader;
 import java.util.Optional;
 
 public class TestCDBasisParser extends TestCDBasisParserTOP {
-  CDBasisAfterParseTrafo afterParseTrafo = new CDBasisAfterParseTrafo();
+  final CDBasisAfterParseTrafo afterParseTrafo = new CDBasisAfterParseTrafo();
 
   @Override
   public Optional<ASTCDCompilationUnit> parse(String fileName)

@@ -31,16 +31,6 @@ public class TestBasis {
     Log.enableFailQuick(false);
   }
 
-  @Before
-  public void before() {
-    Log.getFindings().clear();
-  }
-
-  @After
-  public void after() {
-    checkLogError();
-  }
-
   public static String getFilePath(String path) {
     return Paths.get(PATH + path).toString();
   }
@@ -57,16 +47,6 @@ public class TestBasis {
     assertNotNull("The node should not be null", node);
     assertTrue(node.isPresent());
     checkLogError();
-  }
-
-  public static void checkNullAndError(MCConcreteParser parser, Optional<? extends ASTNode> node) {
-    final String joinedErrors = getJoinedErrors();
-    final boolean hasErrors = parser.hasErrors();
-    parser.setError(false);
-    Log.getFindings().clear();
-    assertFalse(joinedErrors, hasErrors);
-    assertNotNull("The node should not be null", node);
-    assertTrue(node.isPresent());
   }
 
   public static void checkLogError() {
@@ -89,9 +69,17 @@ public class TestBasis {
 
     assertEquals("exptected to get exaclty " + i + " errors, the errors where:\n" + getJoinedErrors(), Log.getErrorCount(), i);
     final List<Finding> findings = Log.getFindings();
-    IntStream.range(0, i).forEach(c -> {
-      assertEquals(listOfErrors.get(c), findings.get(c).toString());
-    });
+    IntStream.range(0, i).forEach(c -> assertEquals(listOfErrors.get(c), findings.get(c).toString()));
     Log.getFindings().clear();
+  }
+
+  @Before
+  public void before() {
+    Log.getFindings().clear();
+  }
+
+  @After
+  public void after() {
+    checkLogError();
   }
 }

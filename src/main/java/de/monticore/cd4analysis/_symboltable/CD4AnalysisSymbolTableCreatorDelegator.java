@@ -25,6 +25,7 @@ public class CD4AnalysisSymbolTableCreatorDelegator
     return symbolTableHelper;
   }
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
     this.symbolTableHelper = symbolTableHelper;
 

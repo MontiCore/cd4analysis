@@ -18,8 +18,8 @@ import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 
 public class CDTypeKindPrinter extends PrettyPrintUtil
     implements CDInterfaceAndEnumVisitor {
+  protected final IndentPrinter printer;
   protected CDInterfaceAndEnumVisitor realThis;
-  protected IndentPrinter printer;
 
   public CDTypeKindPrinter() {
     this(new IndentPrinter());

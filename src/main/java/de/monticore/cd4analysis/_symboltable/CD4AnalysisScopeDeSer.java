@@ -16,15 +16,16 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
   }
 
-  public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
-    this.symbolTablePrinterHelper = symbolTablePrinterHelper;
-    ((CDBasisSymbolTablePrinter)this.symbolTablePrinter.getCDBasisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
-    ((CDInterfaceAndEnumSymbolTablePrinter)this.symbolTablePrinter.getCDInterfaceAndEnumVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
-    ((CDAssociationSymbolTablePrinter)this.symbolTablePrinter.getCDAssociationVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
-    ((CD4AnalysisSymbolTablePrinter)this.symbolTablePrinter.getCD4AnalysisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
-  }
-
   public CDSymbolTablePrinterHelper getSymbolTablePrinterHelper() {
     return symbolTablePrinterHelper;
+  }
+
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
+  public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
+    this.symbolTablePrinterHelper = symbolTablePrinterHelper;
+    ((CDBasisSymbolTablePrinter) this.symbolTablePrinter.getCDBasisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
+    ((CDInterfaceAndEnumSymbolTablePrinter) this.symbolTablePrinter.getCDInterfaceAndEnumVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
+    ((CDAssociationSymbolTablePrinter) this.symbolTablePrinter.getCDAssociationVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
+    ((CD4AnalysisSymbolTablePrinter) this.symbolTablePrinter.getCD4AnalysisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
   }
 }

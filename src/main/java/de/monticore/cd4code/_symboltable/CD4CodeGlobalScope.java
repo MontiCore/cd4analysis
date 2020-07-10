@@ -8,9 +8,6 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.paths.ModelPath;
-import de.monticore.types.typesymbols.TypeSymbolsMill;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
-import de.monticore.types.typesymbols._symboltable.TypeSymbolsScope;
 
 import java.util.Set;
 
@@ -49,24 +46,8 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setNameAbsent()
         .setEnclosingScope(artifactScope)
         .build();
-    BuiltInTypes.PRIMITIVE_TYPES
-        .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(primitiveTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .build();
 
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setSpannedScope(scope);
-
-          primitiveTypesScope.add(
-              symbol);
-        });
+    BuiltInTypes.addBuiltInUtilTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
   }
 
   public void addBuiltInObjectTypes(CD4CodeArtifactScope artifactScope) {
@@ -77,25 +58,8 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
-    BuiltInTypes.OBJECT_TYPES
-        .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(objectTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .build();
 
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setIsClass(true);
-          symbol.setSpannedScope(scope);
-
-          objectTypesScope.add(
-              symbol);
-        });
+    BuiltInTypes.addBuiltInUtilTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
   public void addBuiltInUtilTypes(CD4CodeArtifactScope artifactScope) {
@@ -106,25 +70,8 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
-    BuiltInTypes.UTIL_TYPES
-        .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(utilTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .build();
 
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setIsClass(true);
-          symbol.setSpannedScope(scope);
-
-          utilTypesScope.add(
-              symbol);
-        });
+    BuiltInTypes.addBuiltInUtilTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }
 
   @Override

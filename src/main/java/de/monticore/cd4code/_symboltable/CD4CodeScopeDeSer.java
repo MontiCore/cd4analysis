@@ -18,6 +18,11 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
   }
 
+  public CDSymbolTablePrinterHelper getSymbolTablePrinterHelper() {
+    return symbolTablePrinterHelper;
+  }
+
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
     ((CDBasisSymbolTablePrinter) this.symbolTablePrinter.getCDBasisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
@@ -26,9 +31,5 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     ((CD4AnalysisSymbolTablePrinter) this.symbolTablePrinter.getCD4AnalysisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
     ((CD4CodeBasisSymbolTablePrinter) this.symbolTablePrinter.getCD4CodeBasisVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
     ((CD4CodeSymbolTablePrinter) this.symbolTablePrinter.getCD4CodeVisitor().get()).setSymbolTablePrinterHelper(symbolTablePrinterHelper);
-  }
-
-  public CDSymbolTablePrinterHelper getSymbolTablePrinterHelper() {
-    return symbolTablePrinterHelper;
   }
 }

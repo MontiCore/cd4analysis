@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
   @Ignore

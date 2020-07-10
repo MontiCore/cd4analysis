@@ -41,9 +41,10 @@ public class SymAssociation {
     return association.isPresent();
   }
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public CDAssociationSymbol getAssociation() {
     if (isPresentAssociation()) {
-      return this.association.get();
+      return this.getAssociation();
     }
     Log.error("0xCD000: Association can't return a value. It is empty.");
     // Normally this statement is not reachable

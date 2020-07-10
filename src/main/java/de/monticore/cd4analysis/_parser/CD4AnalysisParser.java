@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class CD4AnalysisParser extends CD4AnalysisParserTOP {
-  CD4AnalysisAfterParseDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
+  final CD4AnalysisAfterParseDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
 
   public static void checkFileAndPackageName(String fileName, ASTCDCompilationUnit ast) {
     String pathName = Paths.get(fileName).toString();

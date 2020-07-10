@@ -26,9 +26,9 @@ import java.util.Optional;
 
 public class CDCLI {
 
+  static final Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
   private static final String JAR_NAME = "cd-<Version>-cli.jar";
   private static final String SUCCESSFUL = "Parsing and CoCo check Successful!";
-  static Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
   private String modelFile;
 
   private boolean useBuiltInTypes;
@@ -55,6 +55,7 @@ public class CDCLI {
     }
   }
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   protected void parse() throws IOException {
     CD4CodeParser parser = new CD4CodeParser();
     Optional<ASTCDCompilationUnit> cu = parser
@@ -80,6 +81,7 @@ public class CDCLI {
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   protected boolean handleArgs(String[] args)
       throws NoSuchFileException {
     final CLIArguments arguments = CLIArguments.forArguments(args);

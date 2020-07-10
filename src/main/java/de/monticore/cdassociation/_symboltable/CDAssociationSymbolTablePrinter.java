@@ -30,6 +30,21 @@ public class CDAssociationSymbolTablePrinter
     init();
   }
 
+  public static void serializeSymAssociations(JsonPrinter printer, CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
+    if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
+      printer.beginArray("SymAssociations");
+      symbolTablePrinterHelper.getSymAssociations().forEach(a -> CDAssociationSymbolTablePrinter.serializeSymAssociation(printer, a));
+      printer.endArray();
+    }
+  }
+
+  public static void serializeSymAssociation(JsonPrinter printer, SymAssociation symAssociation) {
+    printer.beginObject();
+    printer.member(JsonDeSers.KIND, "de.monticore.cdassociation._symboltable.SymAssociation");
+
+    // TODO SVa: print members
+  }
+
   protected void init() {
     this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
@@ -61,16 +76,12 @@ public class CDAssociationSymbolTablePrinter
 
   @Override
   public void serializeCDRoleAttributeQualifier(Optional<FieldSymbol> attributeQualifier) {
-    if (attributeQualifier.isPresent()) {
-      printer.member("attributeQualifier", attributeQualifier.get().getName());
-    }
+    attributeQualifier.ifPresent(fieldSymbol -> printer.member("attributeQualifier", fieldSymbol.getName()));
   }
 
   @Override
   public void serializeCDRoleTypeQualifier(Optional<SymTypeExpression> typeQualifier) {
-    if (typeQualifier.isPresent()) {
-      printer.member("typeQualifier", typeQualifier.get().getTypeInfo().getName());
-    }
+    typeQualifier.ifPresent(symTypeExpression -> printer.member("typeQualifier", symTypeExpression.getTypeInfo().getName()));
   }
 
   @Override
@@ -93,20 +104,5 @@ public class CDAssociationSymbolTablePrinter
   public void endVisit(CDAssociationArtifactScope node) {
     serializeSymAssociations(printer, symbolTablePrinterHelper);
     super.endVisit(node);
-  }
-
-  public static void serializeSymAssociations(JsonPrinter printer, CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
-    if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
-      printer.beginArray("SymAssociations");
-      symbolTablePrinterHelper.getSymAssociations().forEach(a -> CDAssociationSymbolTablePrinter.serializeSymAssociation(printer, a));
-      printer.endArray();
-    }
-  }
-
-  public static void serializeSymAssociation(JsonPrinter printer, SymAssociation symAssociation) {
-    printer.beginObject();
-    printer.member(JsonDeSers.KIND, "de.monticore.cdassociation._symboltable.SymAssociation");
-
-    // TODO SVa: print members
   }
 }

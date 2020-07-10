@@ -30,6 +30,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisResolvingTest extends TestBasis {
   protected static final CDBasisGlobalScope globalScope = CDBasisMill
       .cDBasisGlobalScopeBuilder()

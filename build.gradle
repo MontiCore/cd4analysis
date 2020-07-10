@@ -30,12 +30,12 @@ sourceSets {
     test {
         java.srcDirs += ["$projectDir/target/generated-test-sources/monticore/sourcecode"]
     }
-  grammars {
-    resources {
-      srcDirs(grammarDir)
-      include "**/*.mc4"
+    grammars {
+        resources {
+            srcDirs(grammarDir)
+            include "**/*.mc4"
+        }
     }
-  }
 }
 subprojects {
     apply plugin: 'idea'
@@ -223,10 +223,10 @@ task testReport(type: TestReport) {
 }
 java {
 //  withJavadocJar()
-  withSourcesJar()
-  registerFeature('grammars') {
-    usingSourceSet(sourceSets.grammars)
-  }
+    withSourcesJar()
+    registerFeature('grammars') {
+        usingSourceSet(sourceSets.grammars)
+    }
 }
 
 jar.dependsOn grammarsJar

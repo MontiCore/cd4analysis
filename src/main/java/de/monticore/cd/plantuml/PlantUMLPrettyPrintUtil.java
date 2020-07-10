@@ -59,13 +59,13 @@ public abstract class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
       return text;
     }
 
-    String uc = "";
+    StringBuilder uc = new StringBuilder();
     for (int i = 1; i < text.length(); i++) {
       char c = text.charAt(i);
-      uc += Character.isUpperCase(c) ? c : "";
+      uc.append(Character.isUpperCase(c) ? c : "");
     }
-    if (!uc.isEmpty()) {
-      return text.charAt(0) + uc;
+    if (uc.length() > 0) {
+      return text.charAt(0) + uc.toString();
     }
 
     if (text.length() < 7) {

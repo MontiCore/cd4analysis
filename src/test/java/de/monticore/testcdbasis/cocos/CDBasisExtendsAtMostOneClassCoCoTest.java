@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 
+@SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
   @Test
   public void completeModel() throws IOException {

@@ -19,9 +19,10 @@ import java.util.stream.Collectors;
  */
 public class CDElementVisitor
     implements CD4CodeVisitor {
+  protected final Set<Options> options;
+  protected final List<ASTCDElement> elements;
   protected CD4CodeVisitor realThis;
-  protected Set<Options> options;
-  protected List<ASTCDElement> elements;
+
   public CDElementVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
     this.elements = new ArrayList<>();
@@ -70,6 +71,7 @@ public class CDElementVisitor
     }
   }
 
+  @SuppressWarnings("unchecked")
   public <T extends ASTCDElement> List<T> getElements() {
     return elements.stream().map(e -> (T) e).collect(Collectors.toList());
   }

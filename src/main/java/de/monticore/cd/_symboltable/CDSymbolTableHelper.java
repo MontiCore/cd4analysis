@@ -149,11 +149,7 @@ public class CDSymbolTableHelper {
   }
 
   /**
-   * copy from {@link de.monticore.symboltable.IArtifactScope#calculateQualifiedNames(String, String, List<ASTMCImportStatement>)}
-   *
-   * @param name
-   * @param packageName
-   * @return
+   * copy from {@link de.monticore.symboltable.IArtifactScope#calculateQualifiedNames(String, String, List)}
    */
   public Set<String> calculateQualifiedNames(String name, String packageName) {
     final Set<String> potentialSymbolNames = new LinkedHashSet<>();

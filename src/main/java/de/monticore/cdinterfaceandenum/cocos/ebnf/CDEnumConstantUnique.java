@@ -33,7 +33,7 @@ public class CDEnumConstantUnique implements CDInterfaceAndEnumASTCDEnumCoCo {
 
   @Override
   public void check(ASTCDEnum node) {
-    Collection<String> usedNames = new HashSet<String>();
+    Collection<String> usedNames = new HashSet<>();
     for (ASTCDEnumConstant constant : node.getCDEnumConstantList()) {
       String name = constant.getName();
       if (usedNames.contains(name)) {

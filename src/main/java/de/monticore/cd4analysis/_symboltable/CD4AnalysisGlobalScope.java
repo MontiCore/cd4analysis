@@ -7,9 +7,6 @@ package de.monticore.cd4analysis._symboltable;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.io.paths.ModelPath;
-import de.monticore.types.typesymbols.TypeSymbolsMill;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
-import de.monticore.types.typesymbols._symboltable.TypeSymbolsScope;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
@@ -31,6 +28,8 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   }
 
   /**
+   * Splits a qualified name in a potential model name part
+   * (cutting the potential name of the symbol)
    * <pre>
    * name has to have at least 2 parts,
    * where at least the first one is the model name
@@ -48,18 +47,18 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
    * at least the last element is the name of the symbol
    * </pre>
    *
-   * @param name
-   * @return
+   * @param qName a qualified name, to be splitted for the model name
+   * @return a List of potential model names
    */
-  public static Set<String> calculateModelNamesSimple(String name) {
-    if (Names.getQualifier(name).isEmpty()) {
+  public static Set<String> calculateModelNamesSimple(String qName) {
+    if (Names.getQualifier(qName).isEmpty()) {
       Log.error(String.format(
           "0xCD200: to calculate a model name, the name has to have at least two parts. But got \"%s\".",
-          name));
+          qName));
       return null;
     }
 
-    final List<String> nameParts = Splitters.DOT.splitToList(name);
+    final List<String> nameParts = Splitters.DOT.splitToList(qName);
     return IntStream.range(1, nameParts.size() - 1) // always begin with the first element, and stop at the second to last
         .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining(".")))
         .collect(Collectors.toSet());
@@ -89,24 +88,8 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
         .setNameAbsent()
         .setEnclosingScope(artifactScope)
         .build();
-    BuiltInTypes.PRIMITIVE_TYPES
-        .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(primitiveTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .build();
 
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setSpannedScope(scope);
-
-          primitiveTypesScope.add(
-              symbol);
-        });
+    BuiltInTypes.addBuiltInUtilTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
   }
 
   public void addBuiltInObjectTypes(CD4AnalysisArtifactScope artifactScope) {
@@ -118,25 +101,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.OBJECT_TYPES
-        .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(objectTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .build();
-
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setIsClass(true);
-          symbol.setSpannedScope(scope);
-
-          objectTypesScope.add(
-              symbol);
-        });
+    BuiltInTypes.addBuiltInUtilTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
   public void addBuiltInUtilTypes(CD4AnalysisArtifactScope artifactScope) {
@@ -147,25 +112,8 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
-    BuiltInTypes.UTIL_TYPES
-        .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(utilTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .build();
 
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setIsClass(true);
-          symbol.setSpannedScope(scope);
-
-          utilTypesScope.add(
-              symbol);
-        });
+    BuiltInTypes.addBuiltInUtilTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }
 
   @Override
