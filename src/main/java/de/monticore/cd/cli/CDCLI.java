@@ -22,6 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class CDCLI {
@@ -59,7 +62,7 @@ public class CDCLI {
   protected void parse() throws IOException {
     CD4CodeParser parser = new CD4CodeParser();
     Optional<ASTCDCompilationUnit> cu = parser
-        .parseCDCompilationUnit(modelFile);
+        .parse(modelFile);
     ast = cu.get();
   }
 
@@ -84,7 +87,11 @@ public class CDCLI {
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   protected boolean handleArgs(String[] args)
       throws NoSuchFileException {
-    final CLIArguments arguments = CLIArguments.forArguments(args);
+    List<String> argsList = new ArrayList<>(Arrays.asList(args));
+    if (args.length > 0 && Arrays.stream(args).noneMatch(a -> a.contains("-m") || a.contains("-model"))) {
+      argsList.add(0, "-m");
+    }
+    final CLIArguments arguments = CLIArguments.forArguments(argsList.toArray(new String[0]));
     final CDCLIConfiguration configuration = CDCLIConfiguration.fromArguments(arguments);
 
     if (configuration.isSetHelp() || !configuration.isPresentModelFile()) {
@@ -109,6 +116,10 @@ public class CDCLI {
   }
 
   private void printHelp() {
-    System.out.println("Usage: " + JAR_NAME + " <CD_MODEL_FILE>");
+    System.out.println("Usage: " + JAR_NAME + " <CD_MODEL_FILE>\n" +
+        "Options:\n" +
+        "\t-m, -model            : model file to check\n" +
+        "\t-t, -no-builtin-types : don't use the built in types\n" +
+        "\t-q, -no-fail-quick    : disable failquick");
   }
 }
