@@ -5,9 +5,9 @@
 # Class Diagrams (also: UML/P CD)
 
 We provide two versions of UML class diagrams:
-- [**CD4Analysis**][CD4AGrammar]: for the modelling of data structures
-  with classes, attributes, associations, enumerations 
-- [**CD4Code**][CD4CGrammar]: is an extension of CD4Analysis including methods and constructors
+- [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data structures
+  with classes, attributes, associations, enumerations.
+- [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods and constructors.
 
 And additional componenten grammars for parts of the class diagrams:
 - [**CDBasis**][CDBasisGrammar]: base for all cd languages, contains the root compilation unit,
