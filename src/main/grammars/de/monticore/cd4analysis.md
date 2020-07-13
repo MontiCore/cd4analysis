@@ -93,7 +93,7 @@ Further examples can be found [here][ExampleModels].
   and to the two sides of the association which are stored in
   [`CDRoleSymbol`][CDRoleSymbol].
 
-## Symbol kinds used the CD4A language (importable or subclassed):
+## Symbol kinds used by the CD4A language (importable or subclassed):
 - CD4A uses [`TypeSymbols`][TypeSymbols] as the basis for the definition of
   its type-defining symbols.
 - `OOTypeSymbol`s are used for all type-defining Symbols which implement
