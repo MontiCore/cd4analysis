@@ -9,12 +9,12 @@ We provide two versions of UML class diagrams:
   with classes, attributes, associations, enumerations.
 - [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods and constructors.
 
-And additional componenten grammars for parts of the class diagrams:
-- [**CDBasis**][CDBasisGrammar]: base for all cd languages, contains the root compilation unit,
-  classes, and attributes
-- [**CDInterfaceAndEnum**][CDIAEGrammar]: extends CDBasis with interface and enum
-- [**CDAssociation**][CDAssocGrammar]: contains associations and roles
-- [**CD4CodeBasis**][CD4CBasisGrammar]: adds methods and parameters
+We additionally provide componenten grammars for parts of the CDs:
+- [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It contains the root compilation unit,
+  classes, and attributes.
+- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and enums.
+- [**CDAssociation**][CDAssocGrammar] defines associations and roles.
+- [**CD4CodeBasis**][CD4CBasisGrammar] defines methods and parameters.
 
 # CD4Analysis
 
