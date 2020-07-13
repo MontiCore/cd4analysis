@@ -155,7 +155,7 @@ Further examples can be found [here][ExampleModels].
   - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`
   - Special types, such as `Date` must then be provided through the imports of 
     other artifacts.
-- The BuiltInTypes are not added automaticall. They have to be added to the
+- The BuiltInTypes are not added automatically. They have to be added to the
   `GlobalScope`, by calling `addBuiltInTypes`. This enables more detailed
   control concerning the types that should be available.
 
@@ -172,7 +172,7 @@ used functionality, e.g.:
 ### Reporting
 - [`reporting`][reporting] provides an infrastructure for a complete reporting 
   functionality. This is used by MontiCore to provide additional information 
-  what changes have been done on the AST. 
+  concerning changes that have been applied to an AST. 
   
 ### CLI stand alone application:
 - [`CDCLI`][CDCLI] contains a standalone, but extensible cli application which:
@@ -185,8 +185,8 @@ CD4Code is a conservative extension of CD4Analysis and adds methods,
  constructors. Its main purpose is the usage in code generation.
 * Conservative means: 
   * all models of CD4A also parse as CD4Code models
-  * all functionality developed for CD4A (and obeying the guidelines for
-    extensibility) also applies for CD4Code models (if needed in extended form)
+  * all functionalities developed for CD4A (and obeying the guidelines for
+    extensibility) also apply for CD4Code models (if needed in extended form)
 
 The grammar file is [`de.monticore.CD4Code`][CD4CGrammar].
  
