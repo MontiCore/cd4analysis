@@ -107,7 +107,7 @@ Further examples can be found [here][ExampleModels].
 - CD4A defines these symbols: `CDTypeSymbol`, `CDAssociationSymbol`, and
   `CDRoleSymbol`
 - The other types either implement `CDTypeSymbol` or one of the `TypeSymbol`s
-  and have no additional logic or attributes
+  and have no additional functionality or attributes
 
 ## Symbols imported by CD4A models:
 - CD4A imports only Symbols of class diagrams
