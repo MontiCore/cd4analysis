@@ -147,17 +147,17 @@ Further examples can be found [here][ExampleModels].
 - Currently: The BuiltinTypes can be found here [`BuiltInTypes`][BuiltInTypes].
 - CD4A imports their types from foreign artifacts, respectively their
   provided symbol tables.
-- However, CD4A provides a set of predefined types to be given 
+- CD4A provides a set of predefined types to be given 
   through grammar inclusion of [`MCCollectionTypes`][MCCollectionTypes]:
   - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`
   - ObjectTypes: `Character`, `Integer`, `Double`, `Float`, `Long`, `Boolean`,
     `String`
   - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`
-  - Special types, such as `Date` must then be provided through import of 
-    other artefacts.
-- The BuiltInTypes are not added automaticall, one has to add them to the
-  `GlobalScope`, by calling `addBuiltInTypes`. This allows for more detailed
-  control over what types should be available.
+  - Special types, such as `Date` must then be provided through the imports of 
+    other artifacts.
+- The BuiltInTypes are not added automaticall. They have to be added to the
+  `GlobalScope`, by calling `addBuiltInTypes`. This enables more detailed
+  control concerning the types that should be available.
 
 ### PrettyPrinter
 - [`CD4AnalysisPrettyPrinter`][PrettyPrinter] contains a basic pretty printer for CD4A
