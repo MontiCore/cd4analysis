@@ -136,9 +136,11 @@ Further examples can be found [here][ExampleModels].
   - `ebnf`, handles cases which should not be handled by the grammar itself,
     e.g., the name of an attribute is lowercase
   - `mcg`, contains CoCos that check semantics of the models, e.g., the list
-    of valid modifiers on an object
-- CoCos ensure semantic correctness, here is a list of some of the important ones:
-  - Uniqueness of names of e.g. classes in each package, attributes in each class
+    of valid `UMLModifier`s on an object
+- CoCos ensure semantic correctness, here is a list of some of the important
+  ones:
+  - Uniqueness of names of e.g. classes in each package, attributes in each
+    class
   - Classes hierarchy is free of cycles
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
@@ -160,9 +162,11 @@ Further examples can be found [here][ExampleModels].
   control concerning the types that should be available.
 
 ### PrettyPrinter
-- [`CD4AnalysisPrettyPrinter`][PrettyPrinter] contains a basic pretty printer for CD4A
-- Externally available [PlantUML](https://plantuml.com/en/class-diagram) printer can
-  be used to upload the model to plant uml and receive a graphical representation of the class diagram.
+- [`CD4AnalysisPrettyPrinter`][PrettyPrinter] contains a basic pretty printer
+  for CD4A
+- Externally available [PlantUML](https://plantuml.com/en/class-diagram)
+  printer can be used to upload the model to plant uml and receive a graphical
+  representation of the class diagram.
 
 ### Helper
 There exist helper classes and methods which provide easier usage of often 
@@ -229,7 +233,14 @@ Further examples can be found [here][CD4CExampleModels].
 - CD4Code  can play its role as intermediate language (especially it's AST)
   capturing the structural part of the classes to be generated.
   It captures classes, and method signatures and allows to add
-  templates as hook points that contain method bodies.
+  templates as hook points that contain method bodies. Examples are:  
+  * [MontiCoreCLI](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java): 
+    Grammar -> 
+    [Grammar AST encoded in CD4Code](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/MontiCoreScript.java#L411) ->
+    [Decoration for custom behavior](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java) -> 
+    [Java code](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java)
+  * Statechart -> State pattern encoded in CD4Code 
+  -> Decoration by monitoring methods -> Java code.
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
 
