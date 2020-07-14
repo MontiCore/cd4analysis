@@ -92,6 +92,7 @@ public class CDAssociationSymbolTableCreator
     // have a CDAssociationSymbol and therefore no current scope
     node.getLeft().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     initialize_CDRole(leftRoleSymbol, node, true);
+    node.getLeft().getCDRole().setSymbol(leftRoleSymbol);
     symAssociation.setLeftRole(leftRoleSymbol);
 
     // right
@@ -99,6 +100,7 @@ public class CDAssociationSymbolTableCreator
     CDRoleSymbol rightRoleSymbol = create_CDRole(rightRole);
     node.getRight().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     initialize_CDRole(rightRoleSymbol, node, false);
+    node.getRight().getCDRole().setSymbol(rightRoleSymbol);
     symAssociation.setRightRole(rightRoleSymbol);
 
     node.getCDAssocType().accept(symbolTableHelper.getAssocTypeVisitor(symAssociation));

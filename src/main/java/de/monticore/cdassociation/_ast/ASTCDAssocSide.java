@@ -4,6 +4,7 @@
 
 package de.monticore.cdassociation._ast;
 
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
 
 public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
@@ -15,5 +16,9 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
     // read name from association
 
     return new CDBasisPrettyPrinterDelegator().prettyprint(this.getMCQualifiedType());
+  }
+
+  default CDRoleSymbol getSymbol() {
+    return getCDRole().getSymbol();
   }
 }

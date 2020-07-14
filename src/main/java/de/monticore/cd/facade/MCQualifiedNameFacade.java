@@ -2,7 +2,7 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd._ast;
+package de.monticore.cd.facade;
 
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;

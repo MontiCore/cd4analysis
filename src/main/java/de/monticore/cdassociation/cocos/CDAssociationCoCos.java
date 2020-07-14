@@ -6,9 +6,7 @@ package de.monticore.cdassociation.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdassociation._cocos.CDAssociationCoCoChecker;
-import de.monticore.cdassociation.cocos.ebnf.CDAssociationHasSymbol;
-import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameLowerCase;
-import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameUnique;
+import de.monticore.cdassociation.cocos.ebnf.*;
 
 public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
   @Override
@@ -29,5 +27,9 @@ public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
     checker.addCoCo(new CDAssociationNameLowerCase());
     checker.addCoCo(new CDAssociationHasSymbol());
     checker.addCoCo(new CDAssociationNameUnique());
+    checker.addCoCo(new CDAssociationOrderedCardinalityGreaterOne());
+    checker.addCoCo(new CDAssociationRoleNameLowerCase());
+    // checker.addCoCo(new AssociationSourceNotEnum()); // should this be possible?
+    checker.addCoCo(new CDAssociationSrcAndTargetTypeExistChecker());
   }
 }
