@@ -39,7 +39,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void visit(ASTCDInterface node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
 
     node.getModifier().accept(getRealThis());
     print("interface " + node.getName());
@@ -49,7 +49,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
     if (!node.isEmptyCDMembers()) {
       print(" {");
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
       indent();
     }
@@ -68,14 +68,14 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     }
     else {
       print(";");
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
     }
   }
 
   @Override
   public void visit(ASTCDEnum node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
 
     node.getModifier().accept(getRealThis());
     print("enum " + node.getName());
@@ -85,7 +85,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
     if (!node.isEmptyCDMembers() || !node.isEmptyCDEnumConstants()) {
       print(" {");
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
       indent();
     }
@@ -99,7 +99,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
       println(";");
     }
     while (iterator.hasNext()) {
-      CommentPrettyPrinter.printPreComments(node, getPrinter());
+      printPreComments(node);
       iterator.next().accept(getRealThis());
       if (iterator.hasNext()) {
         print(",");
@@ -107,7 +107,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
       else {
         print(";");
       }
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
     }
 
@@ -122,7 +122,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     }
     else {
       print(";");
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
     }
   }

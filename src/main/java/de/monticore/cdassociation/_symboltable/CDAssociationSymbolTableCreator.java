@@ -165,7 +165,8 @@ public class CDAssociationSymbolTableCreator
           symbol.setTypeQualifier(result.get());
         }
       }
-      else if (side.getCDQualifier().isPresentByAttributeName()) {
+      // TODO SVa: move to cocos
+      /*else if (side.getCDQualifier().isPresentByAttributeName()) {
         final SymTypeExpression type = symbol.getAssociation().getOtherRole(symbol).getType();
         final List<FieldSymbol> fieldList = type.getFieldList(side.getCDQualifier().getByAttributeName());
         if (fieldList.size() != 1) {
@@ -177,7 +178,7 @@ public class CDAssociationSymbolTableCreator
         }
 
         symbol.setAttributeQualifier(fieldList.get(0));
-      }
+      }*/
     }
   }
 

@@ -15,10 +15,19 @@ import java.util.Optional;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
-  @Ignore
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/STTest.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/STTest.cd"));
+    checkNullAndPresence(p, astcdCompilationUnit);
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+
+    final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
+    System.out.println(deSer.serialize(scope));
+  }
+
+  @Test
+  public void simple() throws IOException {
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/SimpleSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 

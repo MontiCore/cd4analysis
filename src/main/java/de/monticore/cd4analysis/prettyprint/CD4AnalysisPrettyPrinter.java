@@ -5,10 +5,14 @@
 package de.monticore.cd4analysis.prettyprint;
 
 import de.monticore.MCCommonLiteralsPrettyPrinter;
+import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
+import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPrettyPrinter;
 import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
@@ -21,6 +25,7 @@ import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 
 public class CD4AnalysisPrettyPrinter extends CD4AnalysisDelegatorVisitor {
   protected IndentPrinter printer;
+  protected boolean printComments = true;
 
   public CD4AnalysisPrettyPrinter() {
     this(new IndentPrinter());
@@ -52,7 +57,42 @@ public class CD4AnalysisPrettyPrinter extends CD4AnalysisDelegatorVisitor {
     this.printer = printer;
   }
 
+  public boolean isPrintComments() {
+    return printComments;
+  }
+
+  public void setPrintComments(boolean printComments) {
+    this.printComments = printComments;
+    getCDBasisVisitor().ifPresent(v -> ((CDBasisPrettyPrinter) v).setPrintComments(printComments));
+    getCDInterfaceAndEnumVisitor().ifPresent(v -> ((CDInterfaceAndEnumPrettyPrinter) v).setPrintComments(printComments));
+    getCDAssociationVisitor().ifPresent(v -> ((CDAssociationPrettyPrinter) v).setPrintComments(printComments));
+  }
+
   public String prettyprint(ASTCDCompilationUnit node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTCDBasisNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTCDAssociationNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTCDInterfaceAndEnumNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTCD4AnalysisNode node) {
     getPrinter().clearBuffer();
     node.accept(getRealThis());
     return getPrinter().getContent();

@@ -26,7 +26,7 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
   protected void addEbnfCoCos(CDBasisCoCoChecker checker) {
     // CDAttribute
     checker.addCoCo(new CDAttributeTypeExists());
-    checker.addCoCo(new CDAttributeNameLowerCase());
+    checker.addCoCo(new CDAttributeNameLowerCaseIfNotStatic());
     checker.addCoCo(new CDAttributeOverriddenTypeMatch());
     checker.addCoCo(new CDAttributeInitialTypeCompatible());
     checker.addCoCo(new CDAttributeUniqueInClassCoco());

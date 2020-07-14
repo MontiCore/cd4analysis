@@ -43,6 +43,8 @@ public class CDAssociationSymbolTablePrinter
     printer.member(JsonDeSers.KIND, "de.monticore.cdassociation._symboltable.SymAssociation");
 
     // TODO SVa: print members
+
+    printer.endObject();
   }
 
   protected void init() {
@@ -87,6 +89,7 @@ public class CDAssociationSymbolTablePrinter
   @Override
   public void visit(CDRoleSymbol node) {
     super.visit(node);
+    printer.member("association", handleSymAssociation(node.getAssociation()));
     printer.member("isLeft", node.isLeft());
   }
 

@@ -41,7 +41,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDMethod node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     node.getModifier().accept(getRealThis());
     node.getMCReturnType().accept(getRealThis());
     print(" " + node.getName() + "(");
@@ -52,12 +52,12 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
       node.getCDThrowsDeclaration().accept(getRealThis());
     }
     println(";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
   }
 
   @Override
   public void traverse(ASTCDConstructor node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     node.getModifier().accept(getRealThis());
     print(node.getName() + "(");
     printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
@@ -67,7 +67,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
       node.getCDThrowsDeclaration().accept(getRealThis());
     }
     println(";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
   }
 
   @Override

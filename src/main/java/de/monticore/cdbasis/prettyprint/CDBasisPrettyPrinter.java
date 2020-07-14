@@ -38,10 +38,10 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDCompilationUnit node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     if (node.isPresentCDPackageStatement()) {
       node.getCDPackageStatement().accept(getRealThis());
-      CommentPrettyPrinter.printPreComments(node, getPrinter());
+      printPreComments(node);
     }
     for (ASTMCImportStatement i : node.getMCImportStatementList()) {
       i.accept(getRealThis());
@@ -57,36 +57,36 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
     if (null != node.getCDDefinition()) {
       node.getCDDefinition().accept(getRealThis());
     }
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
   }
 
   @Override
   public void visit(ASTCDPackageStatement node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     print("package " + Names.getQualifiedName(node.getPackageList()) + ";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
     println();
   }
 
   @Override
   public void visit(ASTCDTargetImportStatement node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     print("targetimport ");
   }
 
   @Override
   public void endVisit(ASTCDTargetImportStatement node) {
     print((node.isStar() ? ".*" : "") + ";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
     println();
   }
 
   @Override
   public void visit(ASTCDDefinition node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     node.getModifier().accept(getRealThis());
     print("classdiagram " + node.getName() + " {");
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     println();
     indent();
   }
@@ -94,9 +94,9 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void traverse(ASTCDDefinition node) {
     for (ASTCDElement element : node.getCDElementList()) {
-      CommentPrettyPrinter.printPreComments(node, getPrinter());
+      printPreComments(node);
       element.accept(getRealThis());
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
     }
   }
@@ -109,9 +109,9 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void visit(ASTCDPackage node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     print("package " + node.getMCQualifiedName().getQName() + " {");
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     println();
     indent();
   }
@@ -149,7 +149,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void visit(ASTCDClass node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
 
     node.getModifier().accept(getRealThis());
     print("class " + node.getName());
@@ -162,7 +162,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
     if (!node.isEmptyCDMembers()) {
       print(" {");
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
       indent();
     }
@@ -182,14 +182,14 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
     }
     else {
       print(";");
-      CommentPrettyPrinter.printPostComments(node, getPrinter());
+      printPostComments(node);
       println();
     }
   }
 
   @Override
   public void visit(ASTCDAttribute node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     node.getModifier().accept(getRealThis());
     node.getMCType().accept(getRealThis());
     print(" " + node.getName());
@@ -206,7 +206,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void endVisit(ASTCDAttribute node) {
     print(";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
     println();
   }
 

@@ -6,15 +6,68 @@ package de.monticore.cdbasis._ast;
 
 import de.monticore.cd._ast.MCQualifiedNameFacade;
 import de.monticore.cd.visitor.CDElementVisitor;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ASTCDDefinition extends ASTCDDefinitionTOP {
   protected String defaultPackageName = "";
+
+  public <T extends ASTCDElement> List<T> getCDElementList(CDElementVisitor.Options... options) {
+    final CDElementVisitor cdElementVisitor = new CDElementVisitor(options);
+    this.accept(cdElementVisitor);
+    return cdElementVisitor.getElements();
+  }
+
+  public <T extends ASTCDElement> Iterator<T> iterateCDElements(CDElementVisitor.Options... options) {
+    return this.<T>getCDElementList(options).iterator();
+  }
+
+  public <T extends ASTCDElement> Stream<T> streamCDElements(CDElementVisitor.Options... options) {
+    return this.<T>getCDElementList(options).stream();
+  }
+
+  public int sizeCDElements(CDElementVisitor.Options... options) {
+    return getCDElementList(options).size();
+  }
+
+  public List<ASTCDPackage> getCDPackageList() {
+    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.PACKAGES);
+    this.accept(cdElementVisitor);
+    return cdElementVisitor.getElements();
+  }
+
+  public List<ASTCDClass> getCDClassList() {
+    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.CLASSES);
+    this.accept(cdElementVisitor);
+    return cdElementVisitor.getElements();
+  }
+
+  public List<ASTCDInterface> getCDInterfaceList() {
+    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.INTERFACES);
+    this.accept(cdElementVisitor);
+    return cdElementVisitor.getElements();
+  }
+
+  public List<ASTCDEnum> getCDEnumList() {
+    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.ENUMS);
+    this.accept(cdElementVisitor);
+    return cdElementVisitor.getElements();
+  }
+
+  public List<ASTCDAssociation> getCDAssociationList() {
+    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
+    this.accept(cdElementVisitor);
+    return cdElementVisitor.getElements();
+  }
 
   public List<String> getDefaultPackageNameList() {
     return MCQualifiedNameFacade.createPartList(this.defaultPackageName);
@@ -32,7 +85,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     return getPackageWithName(getCDPackageList(), packageName);
   }
 
-  public Optional<ASTCDPackage> getPackageWithName(List<ASTCDPackage> packages, String packageName) {
+  public static Optional<ASTCDPackage> getPackageWithName(List<ASTCDPackage> packages, String packageName) {
     return packages
         .stream()
         .filter(p -> p.getMCQualifiedName().getQName().equals(packageName))
@@ -66,12 +119,6 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     super.addCDElement(createdDefaultPackage);
     createdDefaultPackage.setEnclosingScope(this.getEnclosingScope());
     return createdDefaultPackage;
-  }
-
-  public List<ASTCDPackage> getCDPackageList() {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.PACKAGES);
-    this.accept(cdElementVisitor);
-    return cdElementVisitor.getElements();
   }
 
   public boolean addCDElementToPackageWithName(ASTCDElement element) {

@@ -8,6 +8,7 @@ import de.monticore.cd4code._visitor.CD4CodeVisitor;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDMember;
 
@@ -45,28 +46,35 @@ public class CDMemberVisitor
 
   @Override
   public void visit(ASTCDAttribute node) {
-    if (options.contains(Options.ATTRIBUTE)) {
+    if (options.contains(Options.ALL) || options.contains(Options.FIELDS) || options.contains(Options.ATTRIBUTES)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDMethodSignature node) {
-    if (options.contains(Options.METHOD_SIGNATURE)) {
+    if (options.contains(Options.ALL) || options.contains(Options.METHOD_SIGNATURES)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDMethod node) {
-    if (options.contains(Options.METHOD_SIGNATURE) || options.contains(Options.METHOD)) {
+    if (options.contains(Options.ALL) || options.contains(Options.METHOD_SIGNATURES) || options.contains(Options.METHODS)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDConstructor node) {
-    if (options.contains(Options.METHOD_SIGNATURE) || options.contains(Options.CONSTRUCTOR)) {
+    if (options.contains(Options.ALL) || options.contains(Options.METHOD_SIGNATURES) || options.contains(Options.CONSTRUCTORS)) {
+      elements.add(node);
+    }
+  }
+
+  @Override
+  public void visit(ASTCDRole node) {
+    if (options.contains(Options.ALL) || options.contains(Options.FIELDS) || options.contains(Options.ROLES)) {
       elements.add(node);
     }
   }
@@ -77,9 +85,12 @@ public class CDMemberVisitor
   }
 
   public enum Options {
-    ATTRIBUTE,
-    METHOD_SIGNATURE,
-    CONSTRUCTOR,
-    METHOD
+    ALL,
+    FIELDS,
+    ATTRIBUTES,
+    ROLES,
+    METHOD_SIGNATURES,
+    CONSTRUCTORS,
+    METHODS,
   }
 }

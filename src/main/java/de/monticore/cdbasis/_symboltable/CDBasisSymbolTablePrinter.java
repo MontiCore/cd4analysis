@@ -29,16 +29,4 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
   public void serializeCDTypeSuperTypes(List<SymTypeExpression> superTypes) {
     SymTypeExpressionDeSer.serializeMember(printer, "superTypes", superTypes);
   }
-
-  /*
-  {"kind":"de.monticore.cd4analysis._symboltable.CD4AnalysisArtifactScope","name":"STTest","cDTypeSymbols":[{"kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol","name":"A","isClass":true,"isInterface":false,"isEnum":false,"isAbstract":false,"isPrivate":false,"isProtected":false,"isPublic":false,"isStatic":false,{"kind":"de.monticore.cd4analysis._symboltable.CD4AnalysisScope","name":"A","isShadowingScope":false
-    */
-  @Override
-  public void traverse(CDTypeSymbol node) {
-    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
-      isSpannedScope = true;
-
-      node.getSpannedScope().accept(getRealThis());
-    }
-  }
 }

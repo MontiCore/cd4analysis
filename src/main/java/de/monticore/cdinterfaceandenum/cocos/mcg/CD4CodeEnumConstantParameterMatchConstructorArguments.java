@@ -43,7 +43,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     final List<ASTCDEnumConstant> enumConstants = node.getCDEnumConstantList();
     final List<List<SymTypeExpression>> enumConstantsTypes = calculateEnumArgumentTypes(node);
 
-    final CDMemberVisitor cdMemberVisitor = new CDMemberVisitor(CDMemberVisitor.Options.METHOD_SIGNATURE);
+    final CDMemberVisitor cdMemberVisitor = new CDMemberVisitor(CDMemberVisitor.Options.METHOD_SIGNATURES);
     node.accept(cdMemberVisitor);
     final List<ASTCDMethodSignature> availableConstructors = cdMemberVisitor
         .getElements();

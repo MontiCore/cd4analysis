@@ -19,6 +19,10 @@ import java.util.Iterator;
 public abstract class PrettyPrintUtil {
   protected IndentPrinter printer;
 
+  protected boolean printComments = true;
+
+  public static final String EMPTY_STRING = "";
+
   public PrettyPrintUtil() {
     this(new IndentPrinter());
   }
@@ -33,6 +37,14 @@ public abstract class PrettyPrintUtil {
 
   public void setPrinter(IndentPrinter printer) {
     this.printer = printer;
+  }
+
+  public boolean isPrintComments() {
+    return printComments;
+  }
+
+  public void setPrintComments(boolean printComments) {
+    this.printComments = printComments;
   }
 
   public void println() {
@@ -60,11 +72,15 @@ public abstract class PrettyPrintUtil {
   }
 
   public void printPreComments(ASTNode node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    if (printComments) {
+      CommentPrettyPrinter.printPreComments(node, getPrinter());
+    }
   }
 
   public void printPostComments(ASTNode node) {
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    if (printComments) {
+      CommentPrettyPrinter.printPostComments(node, getPrinter());
+    }
   }
 
   /**
@@ -73,7 +89,7 @@ public abstract class PrettyPrintUtil {
    * @param iter      iterator for the list of {@link ASTCDBasisNode}s
    * @param seperator string for seperating the ASTCDBasisNodes
    */
-  protected void printSeparatorCDBasis(CDBasisVisitor visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
+  public void printSeparatorCDBasis(CDBasisVisitor visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -89,7 +105,7 @@ public abstract class PrettyPrintUtil {
    * @param iter      iterator for the list of {@link ASTCD4CodeBasisNode}s
    * @param seperator string for seperating the ASTCD4CodeBasisNodes
    */
-  protected void printSeparatorCD4CodeBasis(CD4CodeBasisVisitor visitor, Iterator<? extends ASTCD4CodeBasisNode> iter, String seperator) {
+  public void printSeparatorCD4CodeBasis(CD4CodeBasisVisitor visitor, Iterator<? extends ASTCD4CodeBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -105,7 +121,7 @@ public abstract class PrettyPrintUtil {
    * @param iter      iterator for the list
    * @param separator string for separating list
    */
-  protected void printList(MCBasicTypesVisitor visitor, Iterator<? extends ASTMCBasicTypesNode> iter, String separator) {
+  public void printList(MCBasicTypesVisitor visitor, Iterator<? extends ASTMCBasicTypesNode> iter, String separator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {

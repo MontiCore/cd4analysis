@@ -44,7 +44,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void visit(ASTCDAssociation node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
 
     node.getModifier().accept(getRealThis());
 
@@ -69,7 +69,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   @Override
   public void endVisit(ASTCDAssociation node) {
     print(";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
     println();
   }
 
@@ -192,11 +192,11 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void handle(ASTCDDirectComposition node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    printPreComments(node);
     print("-> ");
     node.getCDAssocRightSide().accept(getRealThis());
     print(";");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
+    printPostComments(node);
     println();
   }
 

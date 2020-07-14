@@ -21,7 +21,7 @@ import java.util.Optional;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
   @Test
-  public void completeModel() throws IOException {
+  public void extendsAtMostOneClass() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cdbasis/parser/ExtendsAtMostOneClass.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();

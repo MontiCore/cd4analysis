@@ -38,4 +38,16 @@ public class CD4AnalysisSymbolTablePrinter
     serializeSymAssociations();
     super.endVisit(node);
   }
+
+  @Override
+  public void traverse(CD4AnalysisArtifactScope node) {
+    super.traverse(node);
+    // elements of subscopes should be flat in the artifact scope with qualified name
+    printer.beginArray("subscopes");
+    node.getSubScopes().forEach(s -> {
+      printer.beginObject();
+      s.accept(getRealThis());
+    });
+    printer.endArray();
+  }
 }

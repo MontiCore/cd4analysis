@@ -5,6 +5,7 @@
 package de.monticore.cd.visitor;
 
 import de.monticore.cd4code._visitor.CD4CodeVisitor;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDPackage;
@@ -45,28 +46,35 @@ public class CDElementVisitor
 
   @Override
   public void visit(ASTCDPackage node) {
-    if (options.contains(Options.PACKAGES)) {
+    if (options.contains(Options.ALL) || options.contains(Options.PACKAGES)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDClass node) {
-    if (options.contains(Options.CLASSES)) {
+    if (options.contains(Options.ALL) || options.contains(Options.CLASSES)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDInterface node) {
-    if (options.contains(Options.INTERFACES)) {
+    if (options.contains(Options.ALL) || options.contains(Options.INTERFACES)) {
       elements.add(node);
     }
   }
 
   @Override
   public void visit(ASTCDEnum node) {
-    if (options.contains(Options.ENUMS)) {
+    if (options.contains(Options.ALL) || options.contains(Options.ENUMS)) {
+      elements.add(node);
+    }
+  }
+
+  @Override
+  public void visit(ASTCDAssociation node) {
+    if (options.contains(Options.ALL) || options.contains(Options.ASSOCIATIONS)) {
       elements.add(node);
     }
   }
@@ -77,9 +85,11 @@ public class CDElementVisitor
   }
 
   public enum Options {
+    ALL,
     PACKAGES,
     CLASSES,
     INTERFACES,
-    ENUMS
+    ENUMS,
+    ASSOCIATIONS,
   }
 }

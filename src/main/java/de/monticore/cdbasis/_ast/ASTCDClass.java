@@ -2,46 +2,47 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdinterfaceandenum._ast;
+package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
-import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import de.monticore.types.typesymbols._symboltable.ITypeSymbolsScope;
 
 import java.util.Collections;
 import java.util.List;
 
-public class ASTCDInterface extends ASTCDInterfaceTOP {
+public class ASTCDClass extends ASTCDClassTOP {
   private CD4CodePrettyPrinter printer = new CD4CodePrettyPrinter();
 
   @Override
-  public void setSpannedScope(ICDBasisScope spannedScope) {
-    super.setSpannedScope((ITypeSymbolsScope) spannedScope);
-  }
-
-  @Override
   public List<ASTMCObjectType> getSuperclassList() {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public String printSuperclasses() {
-    return "";
-  }
-
-  @Override
-  public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDExtendUsage()) {
       return Collections.emptyList();
     }
     return getCDExtendUsage().getSuperclasList();
+  }
+
+  /**
+   * Prints the superclass
+   *
+   * @return String representation of the superclasses
+   */
+  @Override
+  public String printSuperclasses() {
+    if (!isPresentCDExtendUsage()) {
+      return PrettyPrintUtil.EMPTY_STRING;
+    }
+    printer.getPrinter().clearBuffer();
+    printer.traverse(getCDExtendUsage());
+    return printer.getPrinter().getContent();
+  }
+
+  @Override
+  public List<ASTMCObjectType> getInterfaceList() {
+    if (!isPresentCDInterfaceUsage()) {
+      return Collections.emptyList();
+    }
+    return getCDInterfaceUsage().getInterfaceList();
   }
 
   /**
@@ -51,11 +52,11 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
    */
   @Override
   public String printInterfaces() {
-    if (!isPresentCDExtendUsage()) {
+    if (!isPresentCDInterfaceUsage()) {
       return PrettyPrintUtil.EMPTY_STRING;
     }
     printer.getPrinter().clearBuffer();
-    printer.traverse(getCDExtendUsage());
+    printer.traverse(getCDInterfaceUsage());
     return printer.getPrinter().getContent();
   }
 }
