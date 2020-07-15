@@ -4,7 +4,7 @@
 
 package de.monticore.cd4code;
 
-import de.monticore.cd.plantuml.PlantUMLConfig;
+import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLPrettyPrinter;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
@@ -22,11 +22,11 @@ public class CD4CodeMill extends CD4CodeMillTOP {
     return millCD4CodePlantUMLPrettyPrinter._cD4CodePlantUMLPrettyPrinter();
   }
 
-  public static CD4CodePlantUMLPrettyPrinter cD4CodePlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+  public static CD4CodePlantUMLPrettyPrinter cD4CodePlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
     if (millCD4CodePlantUMLPrettyPrinter == null) {
       millCD4CodePlantUMLPrettyPrinter = getMill();
     }
-    return millCD4CodePlantUMLPrettyPrinter._cD4CodePlantUMLPrettyPrinter(printer, config);
+    return millCD4CodePlantUMLPrettyPrinter._cD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public static CD4CodePrettyPrinter cD4CodePrettyPrinter() {
@@ -54,8 +54,8 @@ public class CD4CodeMill extends CD4CodeMillTOP {
     return new CD4CodePlantUMLPrettyPrinter();
   }
 
-  public CD4CodePlantUMLPrettyPrinter _cD4CodePlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    return new CD4CodePlantUMLPrettyPrinter(printer, config);
+  public CD4CodePlantUMLPrettyPrinter _cD4CodePlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
+    return new CD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public CD4CodePrettyPrinter _cD4CodePrettyPrinter() {

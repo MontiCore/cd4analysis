@@ -4,22 +4,22 @@
 
 package de.monticore.cdbasis.prettyprint;
 
-import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
-import de.monticore.prettyprint.IndentPrinter;
+
+import java.util.stream.Collectors;
 
 public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CDBasisVisitor {
   protected CDBasisVisitor realThis;
 
   public CDBasisPlantUMLPrettyPrinter() {
-    this(new IndentPrinter(), new PlantUMLConfig());
+    this(new PlantUMLPrettyPrintUtil());
   }
 
-  public CDBasisPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    super(printer, config);
+  public CDBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
+    super(util);
     setRealThis(this);
   }
 
@@ -71,7 +71,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void endVisit(ASTCDDefinition node) {
     // associations can not be printed in a package
-    immediatelyPrintAssociations = true;
+    immediatelyPrintAssociations.set(true);
     associations.forEach(a -> a.accept(getRealThis()));
 
     unindent();
@@ -80,10 +80,9 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void visit(ASTCDPackage node) {
-    // TODO SVa: maybe that should be namespaces, so that we can have same class names
-    print("package \"");
+    print("namespace ");
     print(node.getMCQualifiedName().getQName());
-    println(" <<Frame>> \" {");
+    println(" {");
     indent();
   }
 
@@ -105,8 +104,6 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDInterfaceUsage node) {
-    // TODO SVa: the name should be the model-relative-name,
-    //  so that the packages work correctly in any order
     printList(getRealThis(), node.getInterfaceList().iterator(), ", ");
   }
 
@@ -117,8 +114,6 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDExtendUsage node) {
-    // TODO SVa: the name should be the model-relative-name,
-    //  so that the packages work correctly in any order
     printList(getRealThis(), node.getSuperclasList().iterator(), ", ");
   }
 
@@ -134,10 +129,12 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     print("class " + node.getName());
     if (node.isPresentCDExtendUsage()) {
-      node.getCDExtendUsage().accept(getRealThis());
+      print(" extends ");
+      print(node.getSymbol().getSuperClassesOnly().stream().map(s -> s.getTypeInfo().getFullName()).collect(Collectors.joining(", ")));
     }
     if (node.isPresentCDInterfaceUsage()) {
-      node.getCDInterfaceUsage().accept(getRealThis());
+      print(" implements ");
+      print(node.getSymbol().getInterfaceList().stream().map(s -> s.getTypeInfo().getFullName()).collect(Collectors.joining(", ")));
     }
 
     if (plantUMLConfig.getShowAtt() && !node.isEmptyCDMembers()) {

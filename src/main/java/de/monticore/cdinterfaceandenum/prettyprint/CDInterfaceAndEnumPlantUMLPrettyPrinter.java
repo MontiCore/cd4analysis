@@ -4,13 +4,11 @@
 
 package de.monticore.cdinterfaceandenum.prettyprint;
 
-import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
-import de.monticore.prettyprint.IndentPrinter;
 
 public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     extends PlantUMLPrettyPrintUtil
@@ -18,11 +16,11 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
   protected CDInterfaceAndEnumVisitor realThis;
 
   public CDInterfaceAndEnumPlantUMLPrettyPrinter() {
-    this(new IndentPrinter(), new PlantUMLConfig());
+    this(new PlantUMLPrettyPrintUtil());
   }
 
-  public CDInterfaceAndEnumPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    super(printer, config);
+  public CDInterfaceAndEnumPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
+    super(util);
     setRealThis(this);
   }
 

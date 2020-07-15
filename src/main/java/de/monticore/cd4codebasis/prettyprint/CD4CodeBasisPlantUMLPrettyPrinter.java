@@ -4,24 +4,23 @@
 
 package de.monticore.cd4codebasis.prettyprint;
 
-import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
+import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
-import de.monticore.prettyprint.IndentPrinter;
 
 public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CD4CodeBasisVisitor {
   protected CD4CodeBasisVisitor realThis;
 
   public CD4CodeBasisPlantUMLPrettyPrinter() {
-    this(new IndentPrinter(), new PlantUMLConfig());
+    this(new PlantUMLPrettyPrintUtil());
   }
 
-  public CD4CodeBasisPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    super(printer, config);
+  public CD4CodeBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
+    super(util);
     setRealThis(this);
   }
 
@@ -83,5 +82,10 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print("...");
     }
     print(" " + node.getName());
+  }
+
+  @Override
+  public void visit(ASTCD4CodeEnumConstant node) {
+    print(node.getName());
   }
 }

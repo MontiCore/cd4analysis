@@ -4,9 +4,14 @@
 
 package de.monticore.cd.plantuml;
 
+import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.io.paths.ModelPath;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import net.sourceforge.plantuml.FileFormat;
@@ -81,16 +86,28 @@ public class PlantUMLUtil {
   }
 
   protected static String printCD2PlantUML(String cdString, PlantUMLConfig config) {
-    IndentPrinter printer = new IndentPrinter();
-    CD4CodePlantUMLPrettyPrinter cdVisitor = new CD4CodePlantUMLPrettyPrinter(printer, config);
+    final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
+    CD4CodePlantUMLPrettyPrinter cdVisitor = new CD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
     CD4CodeParser parser = new CD4CodeParser();
     String plantUMLString = "@startuml\n@enduml";
 
     try {
       Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
       if (astCD.isPresent()) {
+        final CD4CodeGlobalScope globalScope = CD4CodeMill
+            .cD4CodeGlobalScopeBuilder()
+            .setModelPath(new ModelPath(Paths.get("")))
+            .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+            .addBuiltInTypes()
+            .build();
+        final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
+            .cD4CodeSymbolTableCreatorDelegatorBuilder()
+            .setGlobalScope(globalScope)
+            .build();
+        symbolTableCreator.createFromAST(astCD.get());
+
         cdVisitor.prettyprint(astCD.get());
-        plantUMLString = printer.getContent();
+        plantUMLString = plantUMLPrettyPrintUtil.getPrinter().getContent();
       }
     }
     catch (IOException e) {

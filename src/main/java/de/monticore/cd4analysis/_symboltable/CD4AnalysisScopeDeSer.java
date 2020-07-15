@@ -54,7 +54,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
 
   public void deserializeSubScopes(JsonObject scopeJson) {
     if (scopeJson.hasArrayMember("subscopes")) {
-      scopeJson.getArrayMember("subscopes").forEach(s -> deserializeCD4AnalysisScope(s.getAsJsonObject()));
+      scopeJson.getArrayMember("subscopes").forEach(s -> deserializeCD4AnalysisScope((JsonObject)s));
     }
   }
 

@@ -17,11 +17,12 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
+public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
   protected PlantUMLConfig plantUMLConfig;
   protected Stack<String> nameStack;
-  protected boolean immediatelyPrintAssociations = false;
+  protected AtomicBoolean immediatelyPrintAssociations = new AtomicBoolean(false);
   protected Set<ASTCDAssociation> associations;
 
   public PlantUMLPrettyPrintUtil() {
@@ -33,6 +34,14 @@ public abstract class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
     this.nameStack = new Stack<>();
     this.plantUMLConfig = config;
     this.associations = new HashSet<>();
+  }
+
+  public PlantUMLPrettyPrintUtil(PlantUMLPrettyPrintUtil other) {
+    super(other.printer);
+    this.plantUMLConfig = other.getPlantUMLConfig();
+    this.nameStack = other.nameStack;
+    this.immediatelyPrintAssociations = other.immediatelyPrintAssociations;
+    this.associations = other.associations;
   }
 
   public PlantUMLConfig getPlantUMLConfig() {

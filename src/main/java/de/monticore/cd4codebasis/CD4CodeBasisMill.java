@@ -5,7 +5,7 @@
 package de.monticore.cd4codebasis;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cd.plantuml.PlantUMLConfig;
+import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4codebasis._parser.CD4CodeBasisAfterParseTrafo;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPlantUMLPrettyPrinter;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPrettyPrinter;
@@ -39,11 +39,11 @@ public class CD4CodeBasisMill extends CD4CodeBasisMillTOP {
     return millCD4CodeBasisPlantUMLPrettyPrinter._cD4CodeBasisPlantUMLPrettyPrinter();
   }
 
-  public static CD4CodeBasisPlantUMLPrettyPrinter cD4CodeBasisPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+  public static CD4CodeBasisPlantUMLPrettyPrinter cD4CodeBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
     if (millCD4CodeBasisPlantUMLPrettyPrinter == null) {
       millCD4CodeBasisPlantUMLPrettyPrinter = getMill();
     }
-    return millCD4CodeBasisPlantUMLPrettyPrinter._cD4CodeBasisPlantUMLPrettyPrinter(printer, config);
+    return millCD4CodeBasisPlantUMLPrettyPrinter._cD4CodeBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public static CD4CodeBasisPrettyPrinter cD4CodeBasisPrettyPrinter() {
@@ -79,8 +79,8 @@ public class CD4CodeBasisMill extends CD4CodeBasisMillTOP {
     return new CD4CodeBasisPlantUMLPrettyPrinter();
   }
 
-  public CD4CodeBasisPlantUMLPrettyPrinter _cD4CodeBasisPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    return new CD4CodeBasisPlantUMLPrettyPrinter(printer, config);
+  public CD4CodeBasisPlantUMLPrettyPrinter _cD4CodeBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
+    return new CD4CodeBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public CD4CodeBasisPrettyPrinter _cD4CodeBasisPrettyPrinter() {

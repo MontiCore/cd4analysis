@@ -5,7 +5,7 @@
 package de.monticore.cdinterfaceandenum;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cd.plantuml.PlantUMLConfig;
+import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdinterfaceandenum._parser.CDInterfaceAndEnumAfterParseTrafo;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPlantUMLPrettyPrinter;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPrettyPrinter;
@@ -38,11 +38,11 @@ public class CDInterfaceAndEnumMill extends CDInterfaceAndEnumMillTOP {
     return millCDInterfaceAndEnumPlantUMLPrettyPrinter._cDInterfaceAndEnumPlantUMLPrettyPrinter();
   }
 
-  public static CDInterfaceAndEnumPlantUMLPrettyPrinter cDInterfaceAndEnumPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+  public static CDInterfaceAndEnumPlantUMLPrettyPrinter cDInterfaceAndEnumPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
     if (millCDInterfaceAndEnumPlantUMLPrettyPrinter == null) {
       millCDInterfaceAndEnumPlantUMLPrettyPrinter = getMill();
     }
-    return millCDInterfaceAndEnumPlantUMLPrettyPrinter._cDInterfaceAndEnumPlantUMLPrettyPrinter(printer, config);
+    return millCDInterfaceAndEnumPlantUMLPrettyPrinter._cDInterfaceAndEnumPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public static CDInterfaceAndEnumPrettyPrinter cDInterfaceAndEnumPrettyPrinter() {
@@ -71,8 +71,8 @@ public class CDInterfaceAndEnumMill extends CDInterfaceAndEnumMillTOP {
     return new CDInterfaceAndEnumPlantUMLPrettyPrinter();
   }
 
-  public CDInterfaceAndEnumPlantUMLPrettyPrinter _cDInterfaceAndEnumPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    return new CDInterfaceAndEnumPlantUMLPrettyPrinter(printer, config);
+  public CDInterfaceAndEnumPlantUMLPrettyPrinter _cDInterfaceAndEnumPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
+    return new CDInterfaceAndEnumPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public CDInterfaceAndEnumPrettyPrinter _cDInterfaceAndEnumPrettyPrinter() {

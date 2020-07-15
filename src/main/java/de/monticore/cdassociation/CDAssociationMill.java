@@ -5,7 +5,7 @@
 package de.monticore.cdassociation;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cd.plantuml.PlantUMLConfig;
+import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdassociation._parser.CDAssociationAfterParseTrafo;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
@@ -73,11 +73,11 @@ public class CDAssociationMill extends CDAssociationMillTOP {
     return millCDAssociationPlantUMLPrettyPrinter._cDAssociationPlantUMLPrettyPrinter();
   }
 
-  public static CDAssociationPlantUMLPrettyPrinter cDAssociationPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
+  public static CDAssociationPlantUMLPrettyPrinter cDAssociationPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
     if (millCDAssociationPlantUMLPrettyPrinter == null) {
       millCDAssociationPlantUMLPrettyPrinter = getMill();
     }
-    return millCDAssociationPlantUMLPrettyPrinter._cDAssociationPlantUMLPrettyPrinter(printer, config);
+    return millCDAssociationPlantUMLPrettyPrinter._cDAssociationPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public static CDAssociationPrettyPrinter cDAssociationPrettyPrinter() {
@@ -122,8 +122,8 @@ public class CDAssociationMill extends CDAssociationMillTOP {
     return new CDAssociationPlantUMLPrettyPrinter();
   }
 
-  public CDAssociationPlantUMLPrettyPrinter _cDAssociationPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    return new CDAssociationPlantUMLPrettyPrinter(printer, config);
+  public CDAssociationPlantUMLPrettyPrinter _cDAssociationPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
+    return new CDAssociationPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
   }
 
   public CDAssociationPrettyPrinter _cDAssociationPrettyPrinter() {

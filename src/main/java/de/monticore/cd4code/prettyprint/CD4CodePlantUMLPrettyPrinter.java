@@ -10,8 +10,8 @@ package de.monticore.cd4code.prettyprint;
 
 import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.cd.plantuml.PlantUMLConfig;
+import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd.plantuml.UMLModiferPlantUMLPrettyPrinter;
-import de.monticore.cd4analysis.prettyprint.CD4AnalysisPlantUMLPrettyPrinter;
 import de.monticore.cd4code._visitor.CD4CodeDelegatorVisitor;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPlantUMLPrettyPrinter;
 import de.monticore.cdassociation.prettyprint.CDAssociationPlantUMLPrettyPrinter;
@@ -29,26 +29,26 @@ import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 
 public class CD4CodePlantUMLPrettyPrinter extends CD4CodeDelegatorVisitor
     implements ExpressionsBasisVisitor {
-  protected IndentPrinter printer;
-  protected PlantUMLConfig plantUMLConfig;
+  protected PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
 
   public CD4CodePlantUMLPrettyPrinter() {
-    this(new IndentPrinter(), new PlantUMLConfig());
+    this(new PlantUMLPrettyPrintUtil());
   }
 
-  public CD4CodePlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    this.printer = printer;
-    this.plantUMLConfig = config;
+  public CD4CodePlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil) {
+    this.plantUMLPrettyPrintUtil = plantUMLPrettyPrintUtil;
+    final IndentPrinter printer = this.plantUMLPrettyPrintUtil.getPrinter();
+
     setRealThis(this);
-    setCDBasisVisitor(new CDBasisPlantUMLPrettyPrinter(printer, plantUMLConfig));
-    setCDInterfaceAndEnumVisitor(new CDInterfaceAndEnumPlantUMLPrettyPrinter(printer, plantUMLConfig));
-    setCDAssociationVisitor(new CDAssociationPlantUMLPrettyPrinter(printer, plantUMLConfig));
-    setCD4CodeBasisVisitor(new CD4CodeBasisPlantUMLPrettyPrinter(printer, plantUMLConfig));
+    setCDBasisVisitor(new CDBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil));
+    setCDInterfaceAndEnumVisitor(new CDInterfaceAndEnumPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil));
+    setCDAssociationVisitor(new CDAssociationPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil));
+    setCD4CodeBasisVisitor(new CD4CodeBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil));
     setCD4CodeVisitor(this);
 
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
-    setUMLModifierVisitor(new UMLModiferPlantUMLPrettyPrinter(printer, plantUMLConfig));
+    setUMLModifierVisitor(new UMLModiferPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
@@ -57,19 +57,19 @@ public class CD4CodePlantUMLPrettyPrinter extends CD4CodeDelegatorVisitor
   }
 
   public IndentPrinter getPrinter() {
-    return printer;
+    return this.plantUMLPrettyPrintUtil.getPrinter();
   }
 
   public void setPrinter(IndentPrinter printer) {
-    this.printer = printer;
+    this.plantUMLPrettyPrintUtil.setPrinter(printer);
   }
 
   public PlantUMLConfig getPlantUMLConfig() {
-    return plantUMLConfig;
+    return this.plantUMLPrettyPrintUtil.getPlantUMLConfig();
   }
 
   public void setPlantUMLConfig(PlantUMLConfig plantUMLConfig) {
-    this.plantUMLConfig = plantUMLConfig;
+    this.plantUMLPrettyPrintUtil.setPlantUMLConfig(plantUMLConfig);
   }
 
   public String prettyprint(ASTCDCompilationUnit node) {

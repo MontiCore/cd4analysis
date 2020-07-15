@@ -4,7 +4,6 @@
 
 package de.monticore.cd.plantuml;
 
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._visitor.UMLModifierVisitor;
 
@@ -14,8 +13,8 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public UMLModiferPlantUMLPrettyPrinter() {
   }
 
-  public UMLModiferPlantUMLPrettyPrinter(IndentPrinter printer, PlantUMLConfig config) {
-    super(printer, config);
+  public UMLModiferPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
+    super(util);
   }
 
   @Override
@@ -42,6 +41,5 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print("{abstract} ");
     }
   }
-
 
 }
