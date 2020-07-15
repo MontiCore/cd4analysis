@@ -22,7 +22,7 @@ ext {
 
     mc_version = "6.2.0-SNAPSHOT"
     commons_version = "1.7.10-SNAPSHOT"
-    guava_version = "19.0-jre"
+    guava_version = "29.0-jre"
     antlr_version = "4.7-1"
     plantuml_version = "1.2020.15"
     logback_version = "1.2.3"
