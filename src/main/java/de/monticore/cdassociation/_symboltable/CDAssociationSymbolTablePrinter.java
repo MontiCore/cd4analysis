@@ -11,14 +11,15 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionDeSer;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
-import de.monticore.types.typesymbols._symboltable.TypeSymbolsSymbolTablePrinter;
 
 import java.util.Optional;
 
+import static de.monticore.cdassociation._symboltable.CDAssociationScopeDeSer.SYM_ASSOCIATION_TYPE;
+
 public class CDAssociationSymbolTablePrinter
     extends CDAssociationSymbolTablePrinterTOP {
-  protected TypeSymbolsSymbolTablePrinter typeSymbolsSymbolTablePrinterDelegate;
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
 
   public CDAssociationSymbolTablePrinter() {
@@ -40,15 +41,16 @@ public class CDAssociationSymbolTablePrinter
 
   public static void serializeSymAssociation(JsonPrinter printer, SymAssociation symAssociation) {
     printer.beginObject();
-    printer.member(JsonDeSers.KIND, "de.monticore.cdassociation._symboltable.SymAssociation");
+    printer.member(JsonDeSers.KIND, SYM_ASSOCIATION_TYPE);
 
-    // TODO SVa: print members
+    printer.member(JsonDeSers.NAME, symAssociation.hashCode());
+    printer.member("isAssociation", symAssociation.isAssociation());
+    printer.member("isComposition", symAssociation.isComposition());
 
     printer.endObject();
   }
 
   protected void init() {
-    this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
   }
 
@@ -83,7 +85,7 @@ public class CDAssociationSymbolTablePrinter
 
   @Override
   public void serializeCDRoleTypeQualifier(Optional<SymTypeExpression> typeQualifier) {
-    typeQualifier.ifPresent(symTypeExpression -> printer.member("typeQualifier", symTypeExpression.getTypeInfo().getName()));
+    typeQualifier.ifPresent(symTypeExpression -> SymTypeExpressionDeSer.serializeMember(printer, "typeQualifier", symTypeExpression));
   }
 
   @Override
@@ -100,7 +102,7 @@ public class CDAssociationSymbolTablePrinter
 
   @Override
   public void serializeCDRoleType(SymTypeExpression type) {
-    this.typeSymbolsSymbolTablePrinterDelegate.serializeFieldType(type);
+    SymTypeExpressionDeSer.serializeMember(printer, "type", type);
   }
 
   @Override

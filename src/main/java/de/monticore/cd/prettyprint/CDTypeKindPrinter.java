@@ -14,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 
 public class CDTypeKindPrinter extends PrettyPrintUtil
@@ -72,5 +73,9 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
     }
 
     return getPrinter().getContent();
+  }
+
+  public String print(SymTypeExpression expression) {
+    return print(expression.getTypeInfo());
   }
 }

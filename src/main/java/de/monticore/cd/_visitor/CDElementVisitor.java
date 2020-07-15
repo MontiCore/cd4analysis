@@ -2,7 +2,7 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd.visitor;
+package de.monticore.cd._visitor;
 
 import de.monticore.cd4code._visitor.CD4CodeVisitor;
 import de.monticore.cdassociation._ast.ASTCDAssociation;

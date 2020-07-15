@@ -9,7 +9,7 @@
 package de.monticore.cdinterfaceandenum.cocos.mcg;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cd.visitor.CDMemberVisitor;
+import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;

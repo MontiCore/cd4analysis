@@ -4,8 +4,6 @@
 
 package de.monticore.cdassociation._symboltable;
 
-import de.monticore.cdassociation._visitor.CDAssociationVisitor;
-
 public class CDRoleSymbol extends CDRoleSymbolTOP {
 
   public CDRoleSymbol(String name) {
@@ -16,8 +14,7 @@ public class CDRoleSymbol extends CDRoleSymbolTOP {
     return this.association.getLeft() == this;
   }
 
-  @Override
-  public void accept(CDAssociationVisitor visitor) {
-    visitor.handle(this);
+  public CDRoleSymbol getOtherSide() {
+    return getAssociation().getOtherRole(this);
   }
 }

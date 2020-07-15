@@ -10,6 +10,9 @@ public class SymAssociation {
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
 
+  public SymAssociation() {
+  }
+
   public SymAssociation(Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
     this(left, right);
     association.ifPresent(this::setAssociation);
@@ -33,7 +36,7 @@ public class SymAssociation {
       return this.left;
     }
     else {
-      throw new RuntimeException("unknown role, the passed role is not part of the association"); // TODO Error code
+      throw new RuntimeException("0xCD000: unknown role, the passed role is not part of the association");
     }
   }
 
@@ -46,7 +49,7 @@ public class SymAssociation {
     if (isPresentAssociation()) {
       return this.getAssociation();
     }
-    Log.error("0xCD000: Association can't return a value. It is empty.");
+    Log.error("0xCD001: Association can't return a value. It is empty.");
     // Normally this statement is not reachable
     throw new IllegalStateException();
   }

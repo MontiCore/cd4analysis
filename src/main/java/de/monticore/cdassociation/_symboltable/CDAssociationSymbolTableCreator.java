@@ -11,11 +11,10 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.typesymbols._symboltable.FieldSymbol;
+import de.monticore.types.typesymbols.TypeSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
-import java.util.List;
 import java.util.Optional;
 
 public class CDAssociationSymbolTableCreator
@@ -148,11 +147,11 @@ public class CDAssociationSymbolTableCreator
       symbol.setCardinality(side.getCDCardinality());
     }
 
-    handleQualifier(symbol, side);
+    handleQualifier(symbol, side, typeResult.get());
     symbol.setIsOrdered(side.isPresentCDOrdered());
   }
 
-  protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
+  protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side, SymTypeExpression type) {
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
         side.getCDQualifier().getByType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
@@ -167,8 +166,17 @@ public class CDAssociationSymbolTableCreator
           symbol.setTypeQualifier(result.get());
         }
       }
-      // TODO SVa: move to cocos
-      /*else if (side.getCDQualifier().isPresentByAttributeName()) {
+      else if (side.getCDQualifier().isPresentByAttributeName()) {
+        // TODO SVa: don't create a new FieldSymbol, use existing one
+        symbol.setAttributeQualifier(TypeSymbolsMill
+            .fieldSymbolSurrogateBuilder()
+            .setName(side.getCDQualifier().getByAttributeName())
+            .setEnclosingScope(scopeStack.peekLast())
+            .setType(type)
+            .build());
+
+        // TODO SVa: use this code, but only works in "LinkingPhase"
+        /*
         final SymTypeExpression type = symbol.getAssociation().getOtherRole(symbol).getType();
         final List<FieldSymbol> fieldList = type.getFieldList(side.getCDQualifier().getByAttributeName());
         if (fieldList.size() != 1) {
@@ -180,7 +188,8 @@ public class CDAssociationSymbolTableCreator
         }
 
         symbol.setAttributeQualifier(fieldList.get(0));
-      }*/
+        */
+      }
     }
   }
 

@@ -5,6 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
@@ -158,8 +159,9 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   public void endVisit(ASTCDCompilationUnit node) {
     symbolTableHelper.getHandledAssociations().forEach(a -> {
       // the symbol is a field of the type of the other side
-      a.getLeft().getType().getTypeInfo().addFieldSymbol(a.getRight());
-      a.getRight().getType().getTypeInfo().addFieldSymbol(a.getLeft());
+      // as there are handled associations, we at least have a CDAssociationScope
+      ((ICDAssociationScope)a.getLeft().getType().getTypeInfo().getSpannedScope()).add(a.getRight());
+      ((ICDAssociationScope)a.getRight().getType().getTypeInfo().getSpannedScope()).add(a.getLeft());
     });
   }
 }

@@ -11,7 +11,7 @@ import de.se_rwth.commons.logging.Log;
  * Checks that type of the type-qualifier of an type-qualified association
  * exists.
  */
-public class AssociationSourceNotEnum
+public class CDAssociationSourceNotEnum
     implements CDAssociationASTCDAssociationCoCo {
 
   protected CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();

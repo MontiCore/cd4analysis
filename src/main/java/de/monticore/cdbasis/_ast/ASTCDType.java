@@ -4,7 +4,7 @@
 
 package de.monticore.cdbasis._ast;
 
-import de.monticore.cd.visitor.CDMemberVisitor;
+import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
 import java.util.Iterator;

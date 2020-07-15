@@ -9,13 +9,10 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
   @Override
   public List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson, ICDBasisScope enclosingScope) {
-    return symbolJson.getMember("superTypes").getAsJsonArray().getValues()
-        .stream().map(i -> SymTypeExpressionDeSer.getInstance().deserialize(i, enclosingScope))
-        .collect(Collectors.toList());
+    return SymTypeExpressionDeSer.deserializeListMember("superTypes", symbolJson, enclosingScope);
   }
 }

@@ -5,7 +5,7 @@
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cd.visitor.CDElementVisitor;
+import de.monticore.cd._visitor.CDElementVisitor;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
