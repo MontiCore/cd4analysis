@@ -80,7 +80,7 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
     ASTCDAssocLeftSide leftSide = CDAssociationMill
         .cDAssocLeftSideBuilder()
         .setModifier(UMLModifierMill.modifierBuilder().build())
-        .setCDCardinality(CDAssociationMill.cDCardOneBuilder().setDigits("1").build())
+        .setCDCardinality(CDAssociationMill.cDCardOneBuilder().build())
         .setMCQualifiedType(leftSideQualifiedType)
         .build();
 
