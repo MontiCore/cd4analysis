@@ -10,6 +10,7 @@
 package de.monticore.cdinterfaceandenum._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -19,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
-  private CD4CodePrettyPrinter printer = new CD4CodePrettyPrinter();
+  private CD4CodePrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {

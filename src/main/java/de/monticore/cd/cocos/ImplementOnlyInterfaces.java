@@ -10,6 +10,7 @@
 
 package de.monticore.cd.cocos;
 
+import de.monticore.cd.CDMill;
 import de.monticore.cd.prettyprint.CDTypeKindPrinter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -50,7 +51,7 @@ abstract public class ImplementOnlyInterfaces {
             Log.error(String.format(
                 "0xCDCF4: Class %s cannot extend %s %s. A class may only extend classes.",
                 node.getName(),
-                new CDTypeKindPrinter().print(e),
+                CDMill.cDTypeKindPrinter().print(e),
                 e.getName()),
                 node.get_SourcePositionStart())
         );
@@ -69,9 +70,9 @@ abstract public class ImplementOnlyInterfaces {
     symbol.streamSuperTypes().filter(i -> !i.getTypeInfo().isIsInterface()).forEach(e ->
         Log.error(String.format(
             "0xCDCF5: The %s %s cannot implement %s %s. Only interfaces may be implemented.",
-            new CDTypeKindPrinter().print(node),
+            CDMill.cDTypeKindPrinter().print(node),
             symbol.getName(),
-            new CDTypeKindPrinter().print(e.getTypeInfo()),
+            CDMill.cDTypeKindPrinter().print(e.getTypeInfo()),
             e.getTypeInfo().getName()),
             node.get_SourcePositionStart())
     );
@@ -90,9 +91,9 @@ abstract public class ImplementOnlyInterfaces {
     symbol.streamSuperTypes().filter(i -> !i.getTypeInfo().isIsInterface()).forEach(e ->
         Log.error(String.format(
             "0xCDCF6: The %s %s cannot extend %s %s. Only interfaces may be extended.",
-            new CDTypeKindPrinter().print(node),
+            CDMill.cDTypeKindPrinter().print(node),
             symbol.getName(),
-            new CDTypeKindPrinter().print(e.getTypeInfo()),
+            CDMill.cDTypeKindPrinter().print(e.getTypeInfo()),
             e.getTypeInfo().getName()),
             node.get_SourcePositionStart())
     );

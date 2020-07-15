@@ -4,13 +4,13 @@
 
 package de.monticore.cd._symboltable;
 
+import de.monticore.cd.CDMill;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._symboltable.SymAssociation;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
-import de.monticore.cdbasis.modifier.ModifierHandler;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
@@ -40,7 +40,7 @@ public class CDSymbolTableHelper {
 
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
     this(new CDBasisPrettyPrinterDelegator(), typeChecker,
-        new ModifierHandler(), CDAssociationMill.associationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(),
+        CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(),
         new Stack<>(), new HashSet<>(), new ArrayList<>());
   }
 

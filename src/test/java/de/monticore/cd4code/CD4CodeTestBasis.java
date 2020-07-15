@@ -28,5 +28,5 @@ public class CD4CodeTestBasis extends TestBasis {
       .setGlobalScope(globalScope)
       .build();
   protected final CD4CodeCoCos cd4CodeCoCos = new CD4CodeCoCos();
-  protected final CD4CodePrettyPrinter printer = new CD4CodePrettyPrinter();
+  protected final CD4CodePrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
 }

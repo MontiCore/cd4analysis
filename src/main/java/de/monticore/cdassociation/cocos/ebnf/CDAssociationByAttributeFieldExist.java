@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
-import de.monticore.cd.prettyprint.CDTypeKindPrinter;
+import de.monticore.cd.CDMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
@@ -33,7 +33,7 @@ public class CDAssociationByAttributeFieldExist implements
                 .format(
                     "0xCDC6B The attribute %s does not exists in %s %s.",
                     attributeName,
-                    new CDTypeKindPrinter().print(type),
+                    CDMill.cDTypeKindPrinter().print(type),
                     type.print()),
             assoc.get_SourcePositionStart());
       }

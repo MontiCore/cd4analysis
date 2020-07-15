@@ -4,7 +4,7 @@
 
 package de.monticore.cdassociation._ast;
 
-import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
       return getName();
     }
 
-    return new CDAssociationPrettyPrinter().prettyprint(this);
+    return CDAssociationMill.cDAssociationPrettyPrinter().prettyprint(this);
   }
 
   public ASTMCQualifiedName getLeftQualifiedName() {

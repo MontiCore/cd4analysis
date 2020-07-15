@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.cocos.ebnf;
 
-import de.monticore.cd.prettyprint.CDTypeKindPrinter;
+import de.monticore.cd.CDMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._cocos.CDBasisASTCDClassCoCo;
 import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
@@ -30,7 +30,7 @@ public class CDClassExtendsNotCyclic implements CDBasisASTCDClassCoCo {
       final OOTypeSymbol nextSymbol = typesToVisit.pop();
       if (visitedTypes.contains(nextSymbol.getName())) {
         Log.error(String.format(
-            "0xCDC07: The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", new CDTypeKindPrinter().print(nextSymbol),
+            "0xCDC07: The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", CDMill.cDTypeKindPrinter().print(nextSymbol),
             nextSymbol.getName()));
         return;
       }

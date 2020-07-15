@@ -28,6 +28,6 @@ public class CD4AnalysisTestBasis extends TestBasis {
       .setGlobalScope(globalScope)
       .build();
   protected final CD4AnalysisCoCos cd4AnalyisCoCos = new CD4AnalysisCoCos();
-  protected final CD4AnalysisPrettyPrinter printer = new CD4AnalysisPrettyPrinter();
+  protected final CD4AnalysisPrettyPrinter printer = CD4AnalysisMill.cD4AnalysisPrettyPrinter();
   protected final CD4AnalysisScopeDeSer deSer = new CD4AnalysisScopeDeSer();
 }

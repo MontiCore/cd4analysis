@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.cocos.ebnf;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
@@ -28,7 +29,7 @@ public class CDAttributeInitialTypeCompatible
       String className = symbol.getEnclosingScope().getName();
 
       String typeName = node.getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()));
-      final CD4CodePrettyPrinter initialPrinter = new CD4CodePrettyPrinter();
+      final CD4CodePrettyPrinter initialPrinter = CD4CodeMill.cD4CodePrettyPrinter();
       node.getInitial().accept(initialPrinter);
 
       final DeriveSymTypeOfCDBasis deriveSymTypeOfCDBasis = new DeriveSymTypeOfCDBasis();

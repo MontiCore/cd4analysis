@@ -5,11 +5,11 @@
 package de.monticore.cd4codebasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
-import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -39,7 +39,7 @@ public class CD4CodeBasisSymbolTableCreator
   }
 
   protected void init() {
-    symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4CodeBasis());
+    symbolTableHelper = new CDSymbolTableHelper(CD4CodeBasisMill.deriveSymTypeOfCD4CodeBasis());
   }
 
   public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {

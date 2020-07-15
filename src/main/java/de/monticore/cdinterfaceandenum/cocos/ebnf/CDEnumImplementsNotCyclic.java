@@ -17,7 +17,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum.cocos.ebnf;
 
-import de.monticore.cd.prettyprint.CDTypeKindPrinter;
+import de.monticore.cd.CDMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
@@ -47,7 +47,7 @@ public class CDEnumImplementsNotCyclic
       final OOTypeSymbol symbol = typesToVisit.pop();
       if (visitedTypes.contains(symbol.getName())) {
         Log.error(String.format(
-            "0xCDC31: The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", new CDTypeKindPrinter().print(symbol),
+            "0xCDC31: The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", CDMill.cDTypeKindPrinter().print(symbol),
             symbol.getName()));
         return;
       }

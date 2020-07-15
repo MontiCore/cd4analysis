@@ -2,7 +2,7 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cdbasis.modifier;
+package de.monticore.cd._symboltable;
 
 import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.monticore.types.typesymbols._symboltable.MethodSymbol;

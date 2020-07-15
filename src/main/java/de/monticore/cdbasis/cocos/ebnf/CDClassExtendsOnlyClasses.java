@@ -2,7 +2,7 @@
 
 package de.monticore.cdbasis.cocos.ebnf;
 
-import de.monticore.cd.prettyprint.CDTypeKindPrinter;
+import de.monticore.cd.CDMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._cocos.CDBasisASTCDClassCoCo;
 import de.monticore.prettyprint.IndentPrinter;
@@ -40,7 +40,7 @@ public class CDClassExtendsOnlyClasses implements CDBasisASTCDClassCoCo {
             Log.error(String.format(
                 "0xCDC08: Class %s cannot extend %s %s. A class may only extend classes.",
                 clazz.getName(),
-                new CDTypeKindPrinter().print(e),
+                CDMill.cDTypeKindPrinter().print(e),
                 e.getName()),
                 clazz.get_SourcePositionStart())
         );

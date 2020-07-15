@@ -20,7 +20,7 @@ public class BuiltInTypes {
   public static final List<String> OBJECT_TYPES = Arrays.asList("Character", "Integer", "Double", "Float", "Long", "Boolean", "String");
   public static final List<String> UTIL_TYPES = Arrays.asList("Date", "List", "Optional", "Set", "Map");
 
-  public static void addBuiltInUtilTypes(ITypeSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
+  public static void addBuiltInTypes(ITypeSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
     utilTypes
         .forEach(t -> {
           final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();

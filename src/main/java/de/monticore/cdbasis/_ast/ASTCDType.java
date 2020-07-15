@@ -4,6 +4,7 @@
 
 package de.monticore.cdbasis._ast;
 
+import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
@@ -41,7 +42,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
    */
   default <T extends
       ASTCDMember> List<T> getCDMemberList(CDMemberVisitor.Options... options) {
-    final CDMemberVisitor cdMemberVisitor = new CDMemberVisitor(options);
+    final CDMemberVisitor cdMemberVisitor = CDMill.cDMemberVisitor(options);
     this.accept(cdMemberVisitor);
     return cdMemberVisitor.getElements();
   }

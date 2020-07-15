@@ -4,8 +4,9 @@
 
 package de.monticore.cdbasis._ast;
 
-import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDElementVisitor;
+import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -22,7 +23,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   protected String defaultPackageName = "";
 
   public <T extends ASTCDElement> List<T> getCDElementList(CDElementVisitor.Options... options) {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(options);
+    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(options);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
@@ -40,31 +41,31 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public List<ASTCDPackage> getCDPackageList() {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.PACKAGES);
+    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.PACKAGES);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDClass> getCDClassList() {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.CLASSES);
+    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.CLASSES);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDInterface> getCDInterfaceList() {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.INTERFACES);
+    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.INTERFACES);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDEnum> getCDEnumList() {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.ENUMS);
+    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ENUMS);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDAssociation> getCDAssociationList() {
-    final CDElementVisitor cdElementVisitor = new CDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
+    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
