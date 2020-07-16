@@ -42,7 +42,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   @Override
   public CDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     final CDBasisArtifactScope artifactScope = super.createFromAST(rootNode);
-    artifactScope.setPackageName(Names.getQualifiedName(rootNode.getCDPackageStatement().getPackageList()));
+    artifactScope.setPackageName(Names.constructQualifiedName(rootNode.getCDPackageStatement().getPackageList()));
 
     return artifactScope;
   }

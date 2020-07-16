@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
+@Ignore
 public class CD4CodePlantUMLPrinterTest {
   @Test
   public void testLocally() throws IOException {

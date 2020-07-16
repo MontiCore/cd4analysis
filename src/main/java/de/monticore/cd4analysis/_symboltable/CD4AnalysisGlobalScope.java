@@ -5,19 +5,15 @@
 package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.io.paths.ModelPath;
-import de.se_rwth.commons.Names;
-import de.se_rwth.commons.Splitters;
-import de.se_rwth.commons.logging.Log;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   public static final String EXTENSION = "cd";
+  protected CDSymbolTableHelper symbolTableHelper;
 
   public CD4AnalysisGlobalScope(ModelPath modelPath) {
     super(modelPath, EXTENSION);
@@ -27,46 +23,17 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     super(modelPath, modelFileExtension);
   }
 
-  /**
-   * Splits a qualified name in a potential model name part
-   * (cutting the potential name of the symbol)
-   * <pre>
-   * name has to have at least 2 parts,
-   * where at least the first one is the model name
-   * and at least the last one is the symbol name
-   * Example:
-   * input {@code "de.monticore.cdbasis.parser.Simple.A"} would return
-   * {@code
-   *        [
-   *          "de",
-   *          "de.monticore",
-   *          "de.monticore.cdbasis",
-   *          "de.monticore.cdbasis.parser",
-   *          "de.monticore.cdbasis.parser.Simple"
-   *        ]}
-   * at least the last element is the name of the symbol
-   * </pre>
-   *
-   * @param qName a qualified name, to be splitted for the model name
-   * @return a List of potential model names
-   */
-  public static Set<String> calculateModelNamesSimple(String qName) {
-    if (Names.getQualifier(qName).isEmpty()) {
-      Log.error(String.format(
-          "0xCD200: to calculate a model name, the name has to have at least two parts. But got \"%s\".",
-          qName));
-      return null;
-    }
-
-    final List<String> nameParts = Splitters.DOT.splitToList(qName);
-    return IntStream.range(1, nameParts.size() - 1) // always begin with the first element, and stop at the second to last
-        .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining(".")))
-        .collect(Collectors.toSet());
-  }
-
   @Override
   public CD4AnalysisGlobalScope getRealThis() {
     return this;
+  }
+
+  public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
+    this.symbolTableHelper = symbolTableHelper;
+  }
+
+  public Set<String> calculateModelNamesSimple(String qName) {
+    return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
   public void addBuiltInTypes() {

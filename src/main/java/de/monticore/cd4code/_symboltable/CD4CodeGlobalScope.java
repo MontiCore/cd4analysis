@@ -5,7 +5,7 @@
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.paths.ModelPath;
 
@@ -13,6 +13,7 @@ import java.util.Set;
 
 public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
   public static final String EXTENSION = "cd";
+  protected CDSymbolTableHelper symbolTableHelper;
 
   public CD4CodeGlobalScope(ModelPath modelPath) {
     super(modelPath, EXTENSION);
@@ -25,6 +26,14 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
   @Override
   public CD4CodeGlobalScope getRealThis() {
     return this;
+  }
+
+  public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
+    this.symbolTableHelper = symbolTableHelper;
+  }
+
+  public Set<String> calculateModelNamesSimple(String qName) {
+    return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
   public void addBuiltInTypes() {
@@ -76,7 +85,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   @Override
   public Set<String> calculateModelNamesForCDType(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
+    return calculateModelNamesSimple(name);
   }
 
   @Override
@@ -91,7 +100,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   @Override
   public Set<String> calculateModelNamesForField(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
+    return calculateModelNamesSimple(name);
   }
 
   @Override
@@ -101,7 +110,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   @Override
   public Set<String> calculateModelNamesForCDMethodSignature(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
+    return calculateModelNamesSimple(name);
   }
 
   @Override
@@ -116,11 +125,11 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   @Override
   public Set<String> calculateModelNamesForCDAssociation(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
+    return calculateModelNamesSimple(name);
   }
 
   @Override
   public Set<String> calculateModelNamesForCDRole(String name) {
-    return CD4AnalysisGlobalScope.calculateModelNamesSimple(name);
+    return calculateModelNamesSimple(name);
   }
 }

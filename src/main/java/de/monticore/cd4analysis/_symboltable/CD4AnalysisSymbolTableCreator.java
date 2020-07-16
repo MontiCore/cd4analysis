@@ -28,7 +28,7 @@ public class CD4AnalysisSymbolTableCreator
   public CD4AnalysisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     CD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
         .cD4AnalysisArtifactScopeBuilder()
-        .setPackageName(Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
+        .setPackageName(Names.constructQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
         .build();
     artifactScope.setName(rootNode.getCDDefinition().getName());
 

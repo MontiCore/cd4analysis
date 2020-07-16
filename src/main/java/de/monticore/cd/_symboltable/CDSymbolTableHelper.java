@@ -14,8 +14,12 @@ import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.se_rwth.commons.Names;
+import de.se_rwth.commons.Splitters;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static de.se_rwth.commons.Names.getQualifier;
 import static de.se_rwth.commons.Names.getSimpleName;
@@ -177,5 +181,44 @@ public class CDSymbolTableHelper {
         "IArtifactScope");
 
     return potentialSymbolNames;
+  }
+
+  /**
+   * Splits a qualified name in a potential model name part
+   * (cutting the potential name of the symbol)
+   * <pre>
+   * name has to have at least 2 parts,
+   * where at least the first one is the model name
+   * and at least the last one is the symbol name
+   * Example:
+   * input {@code "de.monticore.cdbasis.parser.Simple.A"} would return
+   * {@code
+   *        [
+   *          "de",
+   *          "de.monticore",
+   *          "de.monticore.cdbasis",
+   *          "de.monticore.cdbasis.parser",
+   *          "de.monticore.cdbasis.parser.Simple"
+   *        ]}
+   * at least the last element is the name of the symbol
+   * </pre>
+   *
+   * @param qName a qualified name, to be splitted for the model name
+   * @return a List of potential model names
+   */
+  public static Set<String> calculateModelNamesSimple(String qName, CDSymbolTableHelper symbolTableHelper) {
+    final List<String> potentialModelNames = new ArrayList<>();
+
+    if (!Names.getQualifier(qName).isEmpty()) {
+      potentialModelNames.add(qName);
+    }
+    symbolTableHelper.getImports().forEach(i -> potentialModelNames.add(i + qName));
+
+    return potentialModelNames.stream().map(p -> {
+      final List<String> nameParts = Splitters.DOT.splitToList(qName);
+      return IntStream.range(1, nameParts.size() - 1) // always begin with the first element, and stop at the second to last
+          .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining(".")))
+          .collect(Collectors.toSet());
+    }).flatMap(Collection::stream).collect(Collectors.toSet());
   }
 }

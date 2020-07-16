@@ -24,7 +24,7 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
     String packageName = Names.getPackageFromPath(Names.getPathFromFilename(pathName));
     String packageDeclaration;
     if (ast.isPresentCDPackageStatement()) {
-      packageDeclaration = Names.getQualifiedName(ast.getCDPackageStatement().getPackageList());
+      packageDeclaration = Names.constructQualifiedName(ast.getCDPackageStatement().getPackageList());
     }
     else {
       packageDeclaration = "";

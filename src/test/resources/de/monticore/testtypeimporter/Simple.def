@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import testtypeimporter.CD.*;
+
+def {
+  a : String;
+  b : int;
+}

@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+grammar TestTypeImporter extends
+    de.monticore.types.MCBasicTypes,
+    de.monticore.types.TypeSymbols {
+
+  CompilationUnit =
+    MCImportStatement*
+    Definition;
+
+  Definition =
+    "def" "{" Element* "}";
+
+  Element implements Field = Name ":" MCType ";";
+
+}

@@ -87,6 +87,7 @@ def testGrammarDependencies = [
         TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
         TestCDAssociation     : ["CDAssociation"],
         TestCD4CodeBasis      : ["CD4CodeBasis"],
+        TestTypeImporter      : ["CD4Code"],
 ]
 
 String createGrammarName(String name) {
