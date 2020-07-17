@@ -95,7 +95,7 @@ public class CDAssociationSymbolTableCreator
     symAssociation.setLeftRole(leftRoleSymbol);
 
     // right
-    final ASTCDRole rightRole = node.getLeft().getCDRole();
+    final ASTCDRole rightRole = node.getRight().getCDRole();
     CDRoleSymbol rightRoleSymbol = create_CDRole(rightRole);
     node.getRight().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     initialize_CDRole(rightRoleSymbol, node, false);
@@ -140,7 +140,7 @@ public class CDAssociationSymbolTableCreator
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
-    symbolTableHelper.getNavigableVisitor().visit(ast.getCDAssocDir());
+    ast.getCDAssocDir().accept(symbolTableHelper.getNavigableVisitor());
     symbol.setIsDefinitiveNavigable(isLeft ? symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableLeft() : symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableRight());
 
     if (side.isPresentCDCardinality()) {

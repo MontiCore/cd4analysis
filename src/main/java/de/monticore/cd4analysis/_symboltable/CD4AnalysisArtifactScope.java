@@ -37,4 +37,8 @@ public class CD4AnalysisArtifactScope extends CD4AnalysisArtifactScopeTOP {
   public String getPackageName() {
     return "";
   }
+
+  public String getRealPackageName() {
+    return super.getPackageName();
+  }
 }

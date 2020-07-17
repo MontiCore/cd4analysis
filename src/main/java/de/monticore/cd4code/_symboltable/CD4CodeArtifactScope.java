@@ -37,4 +37,8 @@ public class CD4CodeArtifactScope extends CD4CodeArtifactScopeTOP {
   public String getPackageName() {
     return "";
   }
+
+  public String getRealPackageName() {
+    return super.getPackageName();
+  }
 }

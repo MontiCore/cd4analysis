@@ -110,4 +110,38 @@ public class CDAssociationSymbolTablePrinter
     serializeSymAssociations(printer, symbolTablePrinterHelper);
     super.endVisit(node);
   }
+
+  @Override
+  public void handle(CDAssociationScope node) {
+    // don't call visit, because we don't want the scope information
+    super.traverse(node);
+  }
+
+  @Override
+  public void traverse(CDAssociationSymbol node) {
+    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
+      printer.beginArray("symbols");
+      node.getSpannedScope().accept(getRealThis());
+      printer.endArray();
+    }
+  }
+
+  @Override
+  public void traverse(ICDAssociationScope node) {
+    if (!node.getLocalCDAssociationSymbols().isEmpty()) {
+      node.getLocalCDAssociationSymbols().forEach(s -> {
+        if (symbolTablePrinterHelper.visit(s.getFullName())) {
+          s.accept(getRealThis());
+        }
+      });
+    }
+    if (!node.getLocalCDRoleSymbols().isEmpty()) {
+      node.getLocalCDRoleSymbols().forEach(s -> {
+        if (symbolTablePrinterHelper.visit(s.getFullName())) {
+          s.accept(getRealThis());
+        }
+      });
+    }
+    getRealThis().traverse((de.monticore.cdbasis._symboltable.ICDBasisScope) node);
+  }
 }

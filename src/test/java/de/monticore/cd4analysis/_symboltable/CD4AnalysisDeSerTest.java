@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
@@ -41,7 +42,6 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     assertFalse(deSer.serialize(scope).isEmpty());
   }
 
-  @Ignore
   @Test
   public void minimal() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
@@ -51,6 +51,8 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
+
+    System.out.println(serializedST);
 
     final CD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
     final Optional<CDTypeSymbol> a = deserialize.resolveCDType("A");

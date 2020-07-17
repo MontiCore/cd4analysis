@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class CDSymbolTablePrinterHelper {
   protected Set<SymAssociation> symAssociations;
+  protected Set<String> visitedSymbols;
 
   public CDSymbolTablePrinterHelper() {
     this(new HashSet<>());
@@ -18,6 +19,7 @@ public class CDSymbolTablePrinterHelper {
 
   public CDSymbolTablePrinterHelper(Set<SymAssociation> symAssociations) {
     this.symAssociations = symAssociations;
+    this.visitedSymbols = new HashSet<>();
   }
 
   public Set<SymAssociation> getSymAssociations() {
@@ -30,5 +32,9 @@ public class CDSymbolTablePrinterHelper {
 
   public boolean addSymAssociation(SymAssociation symAssociation) {
     return this.symAssociations.add(symAssociation);
+  }
+
+  public boolean visit(String name) {
+    return visitedSymbols.add(name);
   }
 }

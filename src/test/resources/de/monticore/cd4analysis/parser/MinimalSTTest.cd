@@ -6,6 +6,6 @@ classdiagram MinimalSTTest {
 
   class A;
 
-  association A -> A [0..1];
+  association atoa A (lower) -> (upper) A [0..1];
 
 }
