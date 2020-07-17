@@ -40,7 +40,7 @@ public class TestTypeImporterTest extends TestBasis {
         .addBuiltInTypes()
         .build();
 
-    final CD4CodeResolvingDelegate cd4CodeResolvingDelegate = new CD4CodeResolvingDelegate(cdGlobalScope);
+    final CD4CodeResolvingDelegate cd4CodeResolvingDelegate = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolvingDelegate(cd4CodeResolvingDelegate);
     globalScope.addAdaptedTypeSymbolResolvingDelegate(cd4CodeResolvingDelegate);
     globalScope.addAdaptedFieldSymbolResolvingDelegate(cd4CodeResolvingDelegate);

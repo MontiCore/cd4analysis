@@ -5,8 +5,10 @@
 package de.monticore.cd4code;
 
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLPrettyPrinter;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cd4code.resolver.CD4CodeResolvingDelegate;
 import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -14,6 +16,7 @@ public class CD4CodeMill extends CD4CodeMillTOP {
   protected static CD4CodeMill millCD4CodePlantUMLPrettyPrinter;
   protected static CD4CodeMill millCD4CodePrettyPrinter;
   protected static CD4CodeMill millDeriveSymTypeOfCD4Code;
+  protected static CD4CodeMill millCD4CodeResolvingDelegate;
 
   public static CD4CodePlantUMLPrettyPrinter cD4CodePlantUMLPrettyPrinter() {
     if (millCD4CodePlantUMLPrettyPrinter == null) {
@@ -50,6 +53,13 @@ public class CD4CodeMill extends CD4CodeMillTOP {
     return millDeriveSymTypeOfCD4Code._deriveSymTypeOfCD4Code();
   }
 
+  public static CD4CodeResolvingDelegate cD4CodeResolvingDelegate(CD4CodeGlobalScope cdGlobalScope) {
+    if (millCD4CodeResolvingDelegate == null) {
+      millCD4CodeResolvingDelegate = getMill();
+    }
+    return millCD4CodeResolvingDelegate._cD4CodeResolvingDelegate(cdGlobalScope);
+  }
+
   public CD4CodePlantUMLPrettyPrinter _cD4CodePlantUMLPrettyPrinter() {
     return new CD4CodePlantUMLPrettyPrinter();
   }
@@ -68,5 +78,9 @@ public class CD4CodeMill extends CD4CodeMillTOP {
 
   public DeriveSymTypeOfCD4Code _deriveSymTypeOfCD4Code() {
     return new DeriveSymTypeOfCD4Code();
+  }
+
+  public CD4CodeResolvingDelegate _cD4CodeResolvingDelegate(CD4CodeGlobalScope cdGlobalScope) {
+    return new CD4CodeResolvingDelegate(cdGlobalScope);
   }
 }
