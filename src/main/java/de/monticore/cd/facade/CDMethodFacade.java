@@ -75,7 +75,7 @@ public class CDMethodFacade {
         .setModifier(modifier)
         .setMCReturnType(returnType)
         .setName(name)
-        .setCDParameterList(parameters.stream().map(ASTCDParameter::deepClone).collect(Collectors.toList()))
+        .setCDParametersList(parameters.stream().map(ASTCDParameter::deepClone).collect(Collectors.toList()))
         .build();
   }
 

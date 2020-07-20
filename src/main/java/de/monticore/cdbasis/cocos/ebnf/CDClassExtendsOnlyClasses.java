@@ -29,7 +29,7 @@ public class CDClassExtendsOnlyClasses implements CDBasisASTCDClassCoCo {
     if (!clazz.isPresentCDExtendUsage()) {
       return;
     }
-    final List<ASTMCObjectType> superclassList = clazz.getCDExtendUsage().getSuperclasList();
+    final List<ASTMCObjectType> superclassList = clazz.getCDExtendUsage().getSuperclassList();
     superclassList.stream().map(s ->
         symbol.getEnclosingScope()
             .resolveOOType(s.printType(new MCBasicTypesPrettyPrinter(new IndentPrinter()))))

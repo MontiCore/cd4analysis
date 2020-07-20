@@ -20,7 +20,7 @@ public class ASTCDClass extends ASTCDClassTOP {
     if (!isPresentCDExtendUsage()) {
       return Collections.emptyList();
     }
-    return getCDExtendUsage().getSuperclasList();
+    return getCDExtendUsage().getSuperclassList();
   }
 
   /**

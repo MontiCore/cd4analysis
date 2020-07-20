@@ -92,7 +92,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDEnum node) {
-    final Iterator<ASTCDEnumConstant> iterator = node.getCDEnumConstantList().iterator();
+    final Iterator<ASTCDEnumConstant> iterator = node.getCDEnumConstantsList().iterator();
 
     if (!iterator.hasNext()) {
       println(";");

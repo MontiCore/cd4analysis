@@ -74,7 +74,7 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
         .mCQualifiedTypeBuilder()
         .setMCQualifiedName(MCBasicTypesMill
             .mCQualifiedNameBuilder()
-            .setPartList(Collections.singletonList(typeStack.peek().getName()))
+            .setPartsList(Collections.singletonList(typeStack.peek().getName()))
             .build())
         .build();
     ASTCDAssocLeftSide leftSide = CDAssociationMill

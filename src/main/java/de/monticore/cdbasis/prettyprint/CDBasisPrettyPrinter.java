@@ -8,7 +8,6 @@ package de.monticore.cdbasis.prettyprint;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
-import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
@@ -43,12 +42,12 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
       node.getCDPackageStatement().accept(getRealThis());
       printPreComments(node);
     }
-    for (ASTMCImportStatement i : node.getMCImportStatementList()) {
+    for (ASTMCImportStatement i : node.getMCImportStatementsList()) {
       i.accept(getRealThis());
       println();
     }
 
-    node.getCDTargetImportStatementList().forEach(i -> i.accept(getRealThis()));
+    node.getCDTargetImportStatementsList().forEach(i -> i.accept(getRealThis()));
     if (!node.isEmptyCDTargetImportStatements()) {
       println();
     }
@@ -93,7 +92,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDDefinition node) {
-    for (ASTCDElement element : node.getCDElementList()) {
+    for (ASTCDElement element : node.getCDElementsList()) {
       printPreComments(node);
       element.accept(getRealThis());
       printPostComments(node);
@@ -118,7 +117,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDPackage node) {
-    node.getCDElementList().forEach(e -> e.accept(getRealThis()));
+    node.getCDElementsList().forEach(e -> e.accept(getRealThis()));
   }
 
   @Override
@@ -144,7 +143,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDExtendUsage node) {
-    printList(getRealThis(), node.getSuperclasList().iterator(), ", ");
+    printList(getRealThis(), node.getSuperclassList().iterator(), ", ");
   }
 
   @Override

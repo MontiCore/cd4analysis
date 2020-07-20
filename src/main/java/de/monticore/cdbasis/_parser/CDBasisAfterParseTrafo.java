@@ -66,12 +66,12 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
         .collect(Collectors.toList());
 
     final List<ASTCDPackage> duplicates = CoCoHelper.findDuplicatesBy(packages, (e) -> e.getMCQualifiedName().getQName());
-    node.getCDElementList().removeAll(duplicates);
+    node.getCDElementsList().removeAll(duplicates);
     duplicates.forEach(e ->
         packages.stream()
             .filter(p -> p.getMCQualifiedName().getQName().equals(e.getMCQualifiedName().getQName()))
             .findFirst()
-            .ifPresent(pa -> pa.addAllCDElements(e.getCDElementList())));
+            .ifPresent(pa -> pa.addAllCDElements(e.getCDElementsList())));
   }
 
   protected void moveElementsToDefaultPackage(ASTCDDefinition node) {
@@ -94,7 +94,7 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
     if (!defaultPackage.isPresent()) {
       defaultPackage = Optional.of(CDBasisMill.cDPackageBuilder()
           .setMCQualifiedName(MCBasicTypesMill.mCQualifiedNameBuilder()
-              .setPartList(packageNameList)
+              .setPartsList(packageNameList)
               .build())
           .build());
       node.addCDPackage(0, defaultPackage.get()); // add the default package as first package

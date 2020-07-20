@@ -14,7 +14,7 @@ public class MCQualifiedNameFacade {
   private static final String PACKAGE_SEPARATOR = "\\.";
 
   public static ASTMCQualifiedName createQualifiedName(String qName) {
-    return MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(MCQualifiedNameFacade.createPartList(qName)).build();
+    return MCBasicTypesMill.mCQualifiedNameBuilder().setPartsList(MCQualifiedNameFacade.createPartList(qName)).build();
   }
 
   public static List<String> createPartList(String qName) {

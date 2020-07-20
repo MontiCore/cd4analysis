@@ -61,7 +61,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDDefinition node) {
-    for (ASTCDElement element : node.getCDElementList()) {
+    for (ASTCDElement element : node.getCDElementsList()) {
       printComment(node);
       element.accept(getRealThis());
       println();
@@ -114,7 +114,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDExtendUsage node) {
-    printList(getRealThis(), node.getSuperclasList().iterator(), ", ");
+    printList(getRealThis(), node.getSuperclassList().iterator(), ", ");
   }
 
   @Override

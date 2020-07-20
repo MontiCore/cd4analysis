@@ -7,7 +7,6 @@ package de.monticore.cd4codebasis.prettyprint;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cd4codebasis._ast.*;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
-import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
@@ -45,7 +44,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
     node.getModifier().accept(getRealThis());
     node.getMCReturnType().accept(getRealThis());
     print(" " + node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParametersList().iterator(), ", ");
     print(")");
     if (node.isPresentCDThrowsDeclaration()) {
       print(" ");
@@ -60,7 +59,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
     printPreComments(node);
     node.getModifier().accept(getRealThis());
     print(node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParametersList().iterator(), ", ");
     print(")");
     if (node.isPresentCDThrowsDeclaration()) {
       print(" ");

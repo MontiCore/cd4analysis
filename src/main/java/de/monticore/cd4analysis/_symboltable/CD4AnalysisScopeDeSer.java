@@ -171,7 +171,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   }
 
   public static String getBaseName(String name) {
-    final List<String> partList = MCQualifiedNameFacade.createQualifiedName(name).getPartList();
+    final List<String> partList = MCQualifiedNameFacade.createQualifiedName(name).getPartsList();
     return partList.stream().limit(partList.size() - 1).collect(Collectors.joining("."));
   }
 

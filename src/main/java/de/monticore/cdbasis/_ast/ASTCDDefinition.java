@@ -22,49 +22,49 @@ import java.util.stream.Stream;
 public class ASTCDDefinition extends ASTCDDefinitionTOP {
   protected String defaultPackageName = "";
 
-  public <T extends ASTCDElement> List<T> getCDElementList(CDElementVisitor.Options... options) {
+  public <T extends ASTCDElement> List<T> getCDElementsList(CDElementVisitor.Options... options) {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(options);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
   public <T extends ASTCDElement> Iterator<T> iterateCDElements(CDElementVisitor.Options... options) {
-    return this.<T>getCDElementList(options).iterator();
+    return this.<T>getCDElementsList(options).iterator();
   }
 
   public <T extends ASTCDElement> Stream<T> streamCDElements(CDElementVisitor.Options... options) {
-    return this.<T>getCDElementList(options).stream();
+    return this.<T>getCDElementsList(options).stream();
   }
 
   public int sizeCDElements(CDElementVisitor.Options... options) {
-    return getCDElementList(options).size();
+    return getCDElementsList(options).size();
   }
 
-  public List<ASTCDPackage> getCDPackageList() {
+  public List<ASTCDPackage> getCDPackagesList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.PACKAGES);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
-  public List<ASTCDClass> getCDClassList() {
+  public List<ASTCDClass> getCDClassesList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.CLASSES);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
-  public List<ASTCDInterface> getCDInterfaceList() {
+  public List<ASTCDInterface> getCDInterfacesList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.INTERFACES);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
-  public List<ASTCDEnum> getCDEnumList() {
+  public List<ASTCDEnum> getCDEnumsList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ENUMS);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
-  public List<ASTCDAssociation> getCDAssociationList() {
+  public List<ASTCDAssociation> getCDAssociationsList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
@@ -83,7 +83,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public Optional<ASTCDPackage> getPackageWithName(String packageName) {
-    return getPackageWithName(getCDPackageList(), packageName);
+    return getPackageWithName(getCDPackagesList(), packageName);
   }
 
   public static Optional<ASTCDPackage> getPackageWithName(List<ASTCDPackage> packages, String packageName) {
@@ -94,7 +94,7 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public Optional<ASTCDPackage> getDefaultPackage() {
-    return getDefaultPackage(getCDPackageList());
+    return getDefaultPackage(getCDPackagesList());
   }
 
   public Optional<ASTCDPackage> getDefaultPackage(List<ASTCDPackage> packages) {
@@ -114,10 +114,10 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
         .cDPackageBuilder()
         .setMCQualifiedName(MCBasicTypesMill
             .mCQualifiedNameBuilder()
-            .setPartList(MCQualifiedNameFacade.createPartList(packageName))
+            .setPartsList(MCQualifiedNameFacade.createPartList(packageName))
             .build())
         .build();
-    super.addCDElement(createdDefaultPackage);
+    super.addCDElements(createdDefaultPackage);
     createdDefaultPackage.setEnclosingScope(this.getEnclosingScope());
     return createdDefaultPackage;
   }
@@ -138,16 +138,16 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     // should be added to the package
     final ASTCDPackage specificPackage = getOrCreatePackage(packageName);
     if (index < 0) {
-      return specificPackage.addCDElement(element);
+      return specificPackage.addCDElements(element);
     }
     else {
-      specificPackage.addCDElement(index, element);
+      specificPackage.addCDElements(index, element);
       return true;
     }
   }
 
   @Override
-  public boolean addCDElement(ASTCDElement element) {
+  public boolean addCDElements(ASTCDElement element) {
     return addCDElementToPackageWithName(element);
   }
 
@@ -167,11 +167,11 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public void addCDPackage(int index, ASTCDPackage p) {
-    super.addCDElement(index, p);
+    super.addCDElements(index, p);
   }
 
   @Override
-  public void addCDElement(int index, ASTCDElement element) {
+  public void addCDElements(int index, ASTCDElement element) {
     addCDElementToPackageWithName(index, element);
   }
 

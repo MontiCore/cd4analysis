@@ -52,7 +52,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     Log.debug("Building Symboltable for CD: " + node.getCDDefinition().getName(),
         getClass().getSimpleName());
 
-    symbolTableHelper.setImports(node.getMCImportStatementList());
+    symbolTableHelper.setImports(node.getMCImportStatementsList());
 
     super.visit(node);
   }

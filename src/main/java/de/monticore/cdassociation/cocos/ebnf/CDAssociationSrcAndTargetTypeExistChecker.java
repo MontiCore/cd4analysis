@@ -34,7 +34,7 @@ public class CDAssociationSrcAndTargetTypeExistChecker implements
           String
               .format(
                   "0xCDC6A Type %s of %s is unknown. (%s)",
-                  MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(side.getMCQualifiedType().getNameList()).build().getQName(), prettyPrinter.prettyprint(assoc),
+                  MCBasicTypesMill.mCQualifiedNameBuilder().setPartsList(side.getMCQualifiedType().getNameList()).build().getQName(), prettyPrinter.prettyprint(assoc),
                   Joiner.on("\n").join(e.getStackTrace())),
           assoc.get_SourcePositionStart());
     }

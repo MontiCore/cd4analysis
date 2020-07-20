@@ -31,27 +31,27 @@ public class MCCollectionTypesScopeHelper
 
   @Override
   public void visit(ASTMCGenericType node) {
-    node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
+    node.getMCTypeArgumentsList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
   }
 
   @Override
   public void visit(ASTMCListType node) {
-    node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
+    node.getMCTypeArgumentsList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
   }
 
   @Override
   public void visit(ASTMCOptionalType node) {
-    node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
+    node.getMCTypeArgumentsList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
   }
 
   @Override
   public void visit(ASTMCMapType node) {
-    node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
+    node.getMCTypeArgumentsList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
   }
 
   @Override
   public void visit(ASTMCSetType node) {
-    node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
+    node.getMCTypeArgumentsList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
   }
 
   @Override

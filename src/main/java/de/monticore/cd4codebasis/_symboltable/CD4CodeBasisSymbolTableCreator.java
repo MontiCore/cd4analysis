@@ -109,7 +109,7 @@ public class CD4CodeBasisSymbolTableCreator
     ));
 
     if (ast.isPresentCDThrowsDeclaration()) {
-      symbol.setExceptionList(ast.getCDThrowsDeclaration().streamException().map(s -> {
+      symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
         s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {

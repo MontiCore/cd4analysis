@@ -6,7 +6,7 @@ package de.monticore.cdassociation._ast;
 
 public class ASTCDCardOptBuilder extends ASTCDCardOptBuilderTOP {
   public ASTCDCardOptBuilder() {
-    addDigits("0");
-    addDigits("1");
+    addDigitss("0");
+    addDigitss("1");
   }
 }
