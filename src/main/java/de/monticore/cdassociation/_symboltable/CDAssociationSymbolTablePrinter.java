@@ -135,6 +135,7 @@ public class CDAssociationSymbolTablePrinter
         }
       });
     }
+    // don't serialize the cdrolesymbols here, because we can reconstruct them by their symassociation
     if (!node.getLocalCDRoleSymbols().isEmpty()) {
       node.getLocalCDRoleSymbols().forEach(s -> {
         if (symbolTablePrinterHelper.visit(s.getFullName())) {

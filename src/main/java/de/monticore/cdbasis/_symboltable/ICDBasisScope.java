@@ -7,7 +7,6 @@ package de.monticore.cdbasis._symboltable;
 import com.google.common.collect.FluentIterable;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
     }
     else if (deduplicatedResolved.size() > 1) {
       throw new ResolvedSeveralEntriesForSymbolException("0xA4095 Found " + deduplicatedResolved.size()
-          + " symbols: " + deduplicatedResolved.iterator().next().getFullName(),
+          + " symbols: {" + deduplicatedResolved.stream().map(r -> r.getFullName() + (r.isPresentAstNode() ? " (" + r.getAstNode().get_SourcePositionStart() + ")" : "")).collect(Collectors.joining(", ")) + "}",
           resolved);
     }
 
@@ -32,6 +31,10 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
 
   default String getPackageName() {
     return this.isPresentName() ? this.getName() : "";
+  }
+
+  default String getRealPackageName() {
+    return this.getPackageName();
   }
 
   default String getRemainingNameForResolveDown(String symbolName) {
@@ -51,6 +54,8 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
 
   default boolean checkIfContinueAsSubScope(String symbolName) {
     if (this.isExportingSymbols()) {
+      return true;
+      /*
       final FluentIterable<String> nameParts = getNameParts(symbolName);
       final FluentIterable<String> packageNameParts = getNameParts(getPackageName());
 
@@ -64,12 +69,12 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
         if (nameParts.size() >= packageNameParts.size()) {
           final String firstNNameParts = nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
           // A scope that exports symbols usually has a name.
-          return firstNNameParts.equals(getPackageName());
+          return firstNNameParts.equals(getRealPackageName());
         }
       }
       else {
         return true;
-      }
+      }*/
     }
 
     return false;

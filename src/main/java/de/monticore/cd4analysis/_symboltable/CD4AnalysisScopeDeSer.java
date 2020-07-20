@@ -4,7 +4,6 @@
 
 package de.monticore.cd4analysis._symboltable;
 
-import com.google.common.base.Functions;
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -17,8 +16,13 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.json.JsonObject;
+import de.se_rwth.commons.logging.Log;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
@@ -61,11 +65,19 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   public void deserializeSymbols(JsonObject scopeJson, ICD4AnalysisScope scope) {
     if (scopeJson.hasArrayMember("symbols")) {
       // use dummy scope, to collect all symbols, and then split them up in their respective scope
-      final CD4AnalysisScope dummyPackageScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
-      scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDTypeSymbol((JsonObject) s, dummyPackageScope));
-      scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDAssociationSymbol((JsonObject) s, dummyPackageScope));
 
-      splitIntoScopesByFullName(dummyPackageScope).forEach(s -> scope.addSubScope(dummyPackageScope));
+      Map<String, ICD4AnalysisScope> scopes = scopeJson
+          .getArrayMember("symbols")
+          .stream().map(s -> s.getAsJsonObject().getStringMemberOpt("name"))
+          .filter(Optional::isPresent)
+          .map(s -> CD4AnalysisScopeDeSer.getBaseName(s.get()))
+          .distinct()
+          .collect(Collectors.toMap(Function.identity(), s -> CD4AnalysisMill.cD4AnalysisScopeBuilder().setName(s).build()));
+
+      scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDTypeSymbol((JsonObject) s, scopes));
+      scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDAssociationSymbol((JsonObject) s, scopes));
+
+      scopes.values().forEach(scope::addSubScope);
     }
   }
 
@@ -82,9 +94,21 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     // deserialize all the symbols
     deserializeSymbols(scopeJson, cd4AnalysisArtifactScope);
 
-    // TODO SVa: link elements in the scopes (Association, Role, SymAssociation)
-    // move subscopes to the package scope
+    // TODO: move subscopes to the package scope
     return cd4AnalysisArtifactScope;
+  }
+
+  protected void deserializeCDTypeSymbol(JsonObject symbolJson, Map<String, ICD4AnalysisScope> scopes) {
+    ICD4AnalysisScope scope = scopes.get(getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
+    if (scope == null) {
+      Log.error(String.format(
+          "0xCD005: the scope for package %s is not created",
+          symbolJson.getStringMember(JsonDeSers.NAME)
+      ));
+      return;
+    }
+
+    deserializeCDTypeSymbol(symbolJson, scope);
   }
 
   @Override
@@ -97,7 +121,13 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {
           if (m.isJsonObject()) {
-            deserializeCDRoleSymbol((JsonObject) m, spannedScope);
+            JsonObject o = (JsonObject) m;
+            if (o.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDRoleSymbolDeSer.getSerializedKind()))).orElse(false)) {
+              spannedScope.add(cDRoleSymbolDeSer.deserializeCDRoleSymbol(o, spannedScope));
+            }
+            else if (o.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(fieldSymbolDeSer.getSerializedKind()))).orElse(false)) {
+              spannedScope.add(fieldSymbolDeSer.deserializeFieldSymbol(o, spannedScope));
+            }
           }
         });
       }
@@ -105,6 +135,19 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
       symbol.setSpannedScope(spannedScope);
       scope.addSubScope(spannedScope);
     }
+  }
+
+  protected void deserializeCDAssociationSymbol(JsonObject symbolJson, Map<String, ICD4AnalysisScope> scopes) {
+    ICD4AnalysisScope scope = scopes.get(getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
+    if (scope == null) {
+      Log.error(String.format(
+          "0xCD005: the scope for package %s is not created",
+          symbolJson.getStringMember(JsonDeSers.NAME)
+      ));
+      return;
+    }
+
+    deserializeCDAssociationSymbol(symbolJson, scope);
   }
 
   @Override
@@ -127,33 +170,12 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     }
   }
 
-  public static String getBaseName(ISymbol symbol) {
-    final List<String> partList = MCQualifiedNameFacade.createQualifiedName(symbol.getFullName()).getPartList();
+  public static String getBaseName(String name) {
+    final List<String> partList = MCQualifiedNameFacade.createQualifiedName(name).getPartList();
     return partList.stream().limit(partList.size() - 1).collect(Collectors.joining("."));
   }
 
-  public static Collection<CD4AnalysisScope> splitIntoScopesByFullName(CD4AnalysisScope dummyPackageScope) {
-    final Set<String> packageScopeNames = dummyPackageScope.getCDAssociationSymbols().values().stream().map(CD4AnalysisScopeDeSer::getBaseName).collect(Collectors.toSet());
-    packageScopeNames.addAll(dummyPackageScope.getCDTypeSymbols().values().stream().map(CD4AnalysisScopeDeSer::getBaseName).collect(Collectors.toSet()));
-    packageScopeNames.addAll(dummyPackageScope.getCDRoleSymbols().values().stream().map(CD4AnalysisScopeDeSer::getBaseName).collect(Collectors.toSet()));
-
-    Map<String, CD4AnalysisScope> packageScopes = packageScopeNames.stream().collect(Collectors.toMap(Functions.identity(), p -> CD4AnalysisMill.cD4AnalysisScopeBuilder().setName(p).build()));
-
-    dummyPackageScope.getCDAssociationSymbols().values().forEach(s -> {
-      final CD4AnalysisScope cd4AnalysisScope = packageScopes.get(getBaseName(s));
-      cd4AnalysisScope.add(s);
-      cd4AnalysisScope.addSubScope(s.getSpannedScope());
-    });
-    dummyPackageScope.getCDTypeSymbols().values().forEach(s -> {
-      final CD4AnalysisScope cd4AnalysisScope = packageScopes.get(getBaseName(s));
-      cd4AnalysisScope.add(s);
-      cd4AnalysisScope.addSubScope(s.getSpannedScope());
-    });
-    dummyPackageScope.getCDRoleSymbols().values().forEach(s -> {
-      final CD4AnalysisScope cd4AnalysisScope = packageScopes.get(getBaseName(s));
-      cd4AnalysisScope.add(s);
-    });
-
-    return packageScopes.values();
+  public static String getBaseName(ISymbol symbol) {
+    return getBaseName(symbol.getFullName());
   }
 }

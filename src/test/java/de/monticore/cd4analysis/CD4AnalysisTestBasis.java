@@ -12,22 +12,33 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelega
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisPrettyPrinter;
 import de.monticore.io.paths.ModelPath;
+import org.junit.Before;
 
 import java.nio.file.Paths;
 
 public class CD4AnalysisTestBasis extends TestBasis {
-  protected final CD4AnalysisParser p = new CD4AnalysisParser();
-  protected final CD4AnalysisGlobalScope globalScope = CD4AnalysisMill
-      .cD4AnalysisGlobalScopeBuilder()
-      .setModelPath(new ModelPath(Paths.get(PATH)))
-      .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-      .addBuiltInTypes()
-      .build();
-  protected final CD4AnalysisSymbolTableCreatorDelegator symbolTableCreator = CD4AnalysisMill
-      .cD4AnalysisSymbolTableCreatorDelegatorBuilder()
-      .setGlobalScope(globalScope)
-      .build();
-  protected final CD4AnalysisCoCos cd4AnalyisCoCos = new CD4AnalysisCoCos();
-  protected final CD4AnalysisPrettyPrinter printer = CD4AnalysisMill.cD4AnalysisPrettyPrinter();
-  protected final CD4AnalysisScopeDeSer deSer = new CD4AnalysisScopeDeSer();
+  protected CD4AnalysisParser p;
+  protected CD4AnalysisGlobalScope globalScope;
+  protected CD4AnalysisSymbolTableCreatorDelegator symbolTableCreator;
+  protected CD4AnalysisCoCos cd4AnalyisCoCos;
+  protected CD4AnalysisPrettyPrinter printer;
+  protected CD4AnalysisScopeDeSer deSer;
+
+  @Before
+  public void initObjects() {
+    p = new CD4AnalysisParser();
+    globalScope = CD4AnalysisMill
+        .cD4AnalysisGlobalScopeBuilder()
+        .setModelPath(new ModelPath(Paths.get(PATH)))
+        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .addBuiltInTypes()
+        .build();
+    symbolTableCreator = CD4AnalysisMill
+        .cD4AnalysisSymbolTableCreatorDelegatorBuilder()
+        .setGlobalScope(globalScope)
+        .build();
+    cd4AnalyisCoCos = new CD4AnalysisCoCos();
+    printer = CD4AnalysisMill.cD4AnalysisPrettyPrinter();
+    deSer = new CD4AnalysisScopeDeSer();
+  }
 }

@@ -12,19 +12,28 @@ import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreatorDe
 import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
+import org.junit.Before;
 
 import java.nio.file.Paths;
 
 public class CDAssociationTestBasis extends TestBasis {
-  protected final TestCDAssociationParser p = new TestCDAssociationParser();
-  protected final CDAssociationGlobalScope globalScope = CDAssociationMill
-      .cDAssociationGlobalScopeBuilder()
-      .setModelPath(new ModelPath(Paths.get(PATH)))
-      .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-      .build();
-  protected final CDAssociationSymbolTableCreatorDelegator symbolTableCreator = CDAssociationMill
-      .cDAssociationSymbolTableCreatorDelegatorBuilder()
-      .setGlobalScope(globalScope)
-      .build();
-  protected final CDAssociationCoCos cdAssociationCoCos = new CDAssociationCoCos();
+  protected TestCDAssociationParser p;
+  protected CDAssociationGlobalScope globalScope;
+  protected CDAssociationSymbolTableCreatorDelegator symbolTableCreator;
+  protected CDAssociationCoCos cdAssociationCoCos;
+
+  @Before
+  public void initObjects() {
+    p = new TestCDAssociationParser();
+    globalScope = CDAssociationMill
+        .cDAssociationGlobalScopeBuilder()
+        .setModelPath(new ModelPath(Paths.get(PATH)))
+        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .build();
+    symbolTableCreator = CDAssociationMill
+        .cDAssociationSymbolTableCreatorDelegatorBuilder()
+        .setGlobalScope(globalScope)
+        .build();
+    cdAssociationCoCos = new CDAssociationCoCos();
+  }
 }

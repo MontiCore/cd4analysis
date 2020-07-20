@@ -12,19 +12,28 @@ import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTabl
 import de.monticore.cdinterfaceandenum.cocos.CDInterfaceAndEnumCoCos;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
+import org.junit.Before;
 
 import java.nio.file.Paths;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {
-  protected final TestCDInterfaceAndEnumParser p = new TestCDInterfaceAndEnumParser();
-  protected final CDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill
-      .cDInterfaceAndEnumGlobalScopeBuilder()
-      .setModelPath(new ModelPath(Paths.get(PATH)))
-      .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-      .build();
-  protected final CDInterfaceAndEnumSymbolTableCreatorDelegator symbolTableCreator = CDInterfaceAndEnumMill
-      .cDInterfaceAndEnumSymbolTableCreatorDelegatorBuilder()
-      .setGlobalScope(globalScope)
-      .build();
-  protected final CDInterfaceAndEnumCoCos cdInterfaceAndEnumCoCos = new CDInterfaceAndEnumCoCos();
+  protected TestCDInterfaceAndEnumParser p;
+  protected CDInterfaceAndEnumGlobalScope globalScope;
+  protected CDInterfaceAndEnumSymbolTableCreatorDelegator symbolTableCreator;
+  protected CDInterfaceAndEnumCoCos cdInterfaceAndEnumCoCos;
+
+  @Before
+  public void initObjects() {
+    p = new TestCDInterfaceAndEnumParser();
+    globalScope = CDInterfaceAndEnumMill
+        .cDInterfaceAndEnumGlobalScopeBuilder()
+        .setModelPath(new ModelPath(Paths.get(PATH)))
+        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .build();
+    symbolTableCreator = CDInterfaceAndEnumMill
+        .cDInterfaceAndEnumSymbolTableCreatorDelegatorBuilder()
+        .setGlobalScope(globalScope)
+        .build();
+    cdInterfaceAndEnumCoCos = new CDInterfaceAndEnumCoCos();
+  }
 }

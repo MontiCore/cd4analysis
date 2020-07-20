@@ -12,21 +12,31 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.io.paths.ModelPath;
+import org.junit.Before;
 
 import java.nio.file.Paths;
 
 public class CD4CodeTestBasis extends TestBasis {
-  protected final CD4CodeParser p = new CD4CodeParser();
-  protected final CD4CodeGlobalScope globalScope = CD4CodeMill
-      .cD4CodeGlobalScopeBuilder()
-      .setModelPath(new ModelPath(Paths.get(PATH)))
-      .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-      .addBuiltInTypes()
-      .build();
-  protected final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-      .cD4CodeSymbolTableCreatorDelegatorBuilder()
-      .setGlobalScope(globalScope)
-      .build();
-  protected final CD4CodeCoCos cd4CodeCoCos = new CD4CodeCoCos();
-  protected final CD4CodePrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
+  protected CD4CodeParser p;
+  protected CD4CodeGlobalScope globalScope;
+  protected CD4CodeSymbolTableCreatorDelegator symbolTableCreator;
+  protected CD4CodeCoCos cd4CodeCoCos;
+  protected CD4CodePrettyPrinter printer;
+
+  @Before
+  public void initObjects() {
+    p = new CD4CodeParser();
+    globalScope = CD4CodeMill
+        .cD4CodeGlobalScopeBuilder()
+        .setModelPath(new ModelPath(Paths.get(PATH)))
+        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+        .addBuiltInTypes()
+        .build();
+    symbolTableCreator = CD4CodeMill
+        .cD4CodeSymbolTableCreatorDelegatorBuilder()
+        .setGlobalScope(globalScope)
+        .build();
+    cd4CodeCoCos = new CD4CodeCoCos();
+    printer = CD4CodeMill.cD4CodePrettyPrinter();
+  }
 }

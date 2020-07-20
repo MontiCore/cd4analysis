@@ -18,4 +18,17 @@ public class CDRoleSymbolBuilder extends CDRoleSymbolBuilderTOP {
     }
     return symbol;
   }
+
+  public CDRoleSymbol build(boolean isLeft) {
+    final CDRoleSymbol symbol = super.build();
+    if (symbol.getAssociation() != null) {
+      if (isLeft) {
+        symbol.getAssociation().setLeft(symbol);
+      }
+      else {
+        symbol.getAssociation().setRight(symbol);
+      }
+    }
+    return symbol;
+  }
 }
