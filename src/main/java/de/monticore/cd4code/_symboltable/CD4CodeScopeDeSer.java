@@ -9,6 +9,7 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTablePrinter;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTablePrinter;
+import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdassociation._symboltable.CDAssociationScopeDeSer;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
@@ -102,7 +103,6 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     // deserialize all the symbols
     deserializeSymbols(scopeJson, cd4CodeArtifactScope);
 
-    // TODO: move subscopes to the package scope
     return cd4CodeArtifactScope;
   }
 
@@ -136,6 +136,9 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
             else if (o.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(fieldSymbolDeSer.getSerializedKind()))).orElse(false)) {
               spannedScope.add(fieldSymbolDeSer.deserializeFieldSymbol(o, spannedScope));
             }
+            else if (o.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDMethodSignatureSymbolDeSer.getSerializedKind()))).orElse(false)) {
+              deserializeCDMethodSignatureSymbol(o, spannedScope);
+            }
           }
         });
       }
@@ -149,7 +152,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     ICD4CodeScope scope = scopes.get(CD4AnalysisScopeDeSer.getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
     if (scope == null) {
       Log.error(String.format(
-          "0xCD005: the scope for package %s is not created",
+          "0xCD006: the scope for package %s is not created",
           symbolJson.getStringMember(JsonDeSers.NAME)
       ));
       return;
@@ -169,6 +172,39 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
         symbolJson.getArrayMember("symbols").forEach(m -> {
           if (m.isJsonObject()) {
             deserializeCDRoleSymbol((JsonObject) m, spannedScope);
+          }
+        });
+      }
+
+      symbol.setSpannedScope(spannedScope);
+      scope.addSubScope(spannedScope);
+    }
+  }
+
+  protected void deserializeCDMethodSignatureSymbol(JsonObject symbolJson, Map<String, ICD4CodeScope> scopes) {
+    ICD4CodeScope scope = scopes.get(CD4AnalysisScopeDeSer.getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
+    if (scope == null) {
+      Log.error(String.format(
+          "0xCD007: the scope for package %s is not created",
+          symbolJson.getStringMember(JsonDeSers.NAME)
+      ));
+      return;
+    }
+
+    deserializeCDMethodSignatureSymbol(symbolJson, scope);
+  }
+
+  @Override
+  protected void deserializeCDMethodSignatureSymbol(JsonObject symbolJson, ICD4CodeScope scope) {
+    if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDMethodSignatureSymbolDeSer.getSerializedKind()))).orElse(false)) {
+      CDMethodSignatureSymbol symbol = cDMethodSignatureSymbolDeSer.deserializeCDMethodSignatureSymbol(symbolJson, scope);
+      scope.add(symbol);
+      CD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
+
+      if (symbolJson.hasArrayMember("symbols")) {
+        symbolJson.getArrayMember("symbols").forEach(m -> {
+          if (m.isJsonObject()) {
+            deserializeFieldSymbol((JsonObject) m, spannedScope);
           }
         });
       }

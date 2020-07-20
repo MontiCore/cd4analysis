@@ -47,13 +47,14 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
         }
       });
     }
+    /*
     if (!node.getLocalMethodSymbols().isEmpty()) {
       node.getLocalMethodSymbols().forEach(s -> {
         if (symbolTablePrinterHelper.visit(s.getFullName())) {
           s.accept(getRealThis());
         }
       });
-    }
+    }*/
     traverse((de.monticore.types.basictypesymbols._symboltable.IBasicTypeSymbolsScope) node);
   }
 
@@ -79,13 +80,13 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
         }
       });
     }
-    if (!node.getLocalFunctionSymbols().isEmpty()) {
+    /*if (!node.getLocalFunctionSymbols().isEmpty()) {
       node.getLocalFunctionSymbols().forEach(s -> {
         if (symbolTablePrinterHelper.visit(s.getFullName())) {
           s.accept(getRealThis());
         }
       });
-    }
+    }*/
     getRealThis().traverse((de.monticore.mcbasics._symboltable.IMCBasicsScope) node);
   }
 

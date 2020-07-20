@@ -11,23 +11,30 @@ import de.monticore.types.check.SymTypeExpressionDeSer;
 import de.monticore.types.typesymbols._symboltable.TypeSymbolsSymbolTablePrinter;
 
 import java.util.List;
+import java.util.Stack;
 
 public class CD4CodeBasisSymbolTablePrinter
     extends CD4CodeBasisSymbolTablePrinterTOP {
   protected TypeSymbolsSymbolTablePrinter typeSymbolsSymbolTablePrinterDelegate;
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
+  protected Stack<CD4CodeBasisScope> scopeStack;
 
   public CD4CodeBasisSymbolTablePrinter() {
-    this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
+    init();
   }
 
   public CD4CodeBasisSymbolTablePrinter(JsonPrinter printer) {
     super(printer);
-    this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
+    init();
   }
 
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
+  }
+
+  public void init() {
+    this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
+    this.scopeStack = new Stack<>();
   }
 
   @Override
@@ -38,5 +45,37 @@ public class CD4CodeBasisSymbolTablePrinter
   @Override
   public void serializeCDMethodSignatureReturnType(SymTypeExpression returnType) {
     this.typeSymbolsSymbolTablePrinterDelegate.serializeMethodReturnType(returnType);
+  }
+
+  public void traverse(ICD4CodeBasisScope node) {
+    if (!node.getLocalCDMethodSignatureSymbols().isEmpty()) {
+      node.getLocalCDMethodSignatureSymbols().forEach(s -> {
+        if (symbolTablePrinterHelper.visit(s.getFullName())) {
+          s.accept(getRealThis());
+        }
+      });
+    }
+    getRealThis().traverse((de.monticore.cdbasis._symboltable.ICDBasisScope) node);
+    getRealThis().traverse((de.monticore.cdinterfaceandenum._symboltable.ICDInterfaceAndEnumScope) node);
+    getRealThis().traverse((de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope) node);
+  }
+
+  @Override
+  public void traverse(CDMethodSignatureSymbol node) {
+    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
+      printer.beginArray("symbols");
+      node.getSpannedScope().accept(getRealThis());
+      printer.endArray();
+    }
+  }
+
+  @Override
+  public void handle(CD4CodeBasisScope node) {
+    scopeStack.push(node);
+
+    // don't call visit, because we don't want the scope information
+    super.traverse(node);
+
+    scopeStack.pop();
   }
 }
