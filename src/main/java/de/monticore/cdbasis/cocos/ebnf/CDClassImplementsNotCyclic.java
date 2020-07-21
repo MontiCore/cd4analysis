@@ -16,7 +16,7 @@ package de.monticore.cdbasis.cocos.ebnf;
 import de.monticore.cd.CDMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._cocos.CDBasisASTCDClassCoCo;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;

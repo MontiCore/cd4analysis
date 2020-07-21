@@ -6,11 +6,11 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
+import de.monticore.symbols.oosymbols.OOSymbolsMill;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-import de.monticore.types.typesymbols.TypeSymbolsMill;
-import de.monticore.types.typesymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashMap;
@@ -41,7 +41,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
     if (symbolJson.hasMember("attributeQualifier")) {
       final String fieldName = symbolJson.getStringMember("attributeQualifier");
       final SymTypeExpression type = SymTypeExpressionDeSer.deserializeMember("type", symbolJson, enclosingScope);
-      return Optional.of(TypeSymbolsMill
+      return Optional.of(OOSymbolsMill
           .fieldSymbolSurrogateBuilder()
           .setName(fieldName)
           .setEnclosingScope(enclosingScope)

@@ -8,7 +8,7 @@ import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.typesymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 

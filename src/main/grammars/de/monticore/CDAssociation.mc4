@@ -113,7 +113,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
     cardinality: Optional<de.monticore.cdassociation._ast.ASTCDCardinality>
 
     // Defined exactly if a qualifier is given:
-    attributeQualifier: Optional<de.monticore.types.typesymbols._symboltable.FieldSymbol>
+    attributeQualifier: Optional<de.monticore.symbols.oosymbols._symboltable.FieldSymbol>
     typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
 
     association: de.monticore.cdassociation._symboltable.SymAssociation

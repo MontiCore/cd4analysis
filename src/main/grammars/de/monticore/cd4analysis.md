@@ -94,7 +94,7 @@ Further examples can be found [here][ExampleModels].
   [`CDRoleSymbol`][CDRoleSymbol].
 
 ## Symbol kinds used by the CD4A language (importable or subclassed):
-- CD4A uses [`TypeSymbols`][TypeSymbols] as the basis for the definition of
+- CD4A uses [`OOSymbols`][OOSymbols] as the basis for the definition of
   its type-defining symbols.
 - `OOTypeSymbol`s are used for all type-defining Symbols which implement
   `CDType` (`CDClass`, `CDInterface`, `CDEnum`)
@@ -279,5 +279,5 @@ Further examples can be found [here][CD4CExampleModels].
 [CD4CExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/cd4code
 [CD4CodePrinter]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd4code/prettyprint/CD4CodePrettyPrinterDelegator.java
 
-[TypeSymbols]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/TypeSymbols.mc4
+[OOSymbols]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
 [MCCollectionTypes]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4

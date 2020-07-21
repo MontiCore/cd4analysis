@@ -9,7 +9,7 @@ import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cd4codebasis._symboltable.ICD4CodeBasisScope;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
-import de.monticore.types.typesymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 
 import java.util.List;
 

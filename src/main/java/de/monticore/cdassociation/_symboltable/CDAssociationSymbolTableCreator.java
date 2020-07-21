@@ -10,8 +10,8 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.typesymbols.TypeSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -168,7 +168,7 @@ public class CDAssociationSymbolTableCreator
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
         // TODO SVa: don't create a new FieldSymbol, use existing one
-        symbol.setAttributeQualifier(TypeSymbolsMill
+        symbol.setAttributeQualifier(OOSymbolsMill
             .fieldSymbolSurrogateBuilder()
             .setName(side.getCDQualifier().getByAttributeName())
             .setEnclosingScope(scopeStack.peekLast())

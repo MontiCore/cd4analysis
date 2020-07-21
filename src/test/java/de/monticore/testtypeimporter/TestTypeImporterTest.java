@@ -10,14 +10,14 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code.resolver.CD4CodeResolvingDelegate;
 import de.monticore.io.paths.ModelPath;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testtypeimporter._ast.ASTCompilationUnit;
 import de.monticore.testtypeimporter._parser.TestTypeImporterParser;
 import de.monticore.testtypeimporter._symboltable.TestTypeImporterArtifactScope;
 import de.monticore.testtypeimporter._symboltable.TestTypeImporterGlobalScope;
 import de.monticore.testtypeimporter._symboltable.TestTypeImporterSymbolTableCreatorDelegator;
-import de.monticore.types.basictypesymbols._symboltable.TypeSymbol;
-import de.monticore.types.typesymbols._symboltable.FieldSymbol;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
 import org.junit.Test;
 
 import java.io.IOException;

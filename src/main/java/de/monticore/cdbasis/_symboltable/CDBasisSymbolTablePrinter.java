@@ -5,11 +5,11 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
+import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.serialization.JsonPrinter;
-import de.monticore.types.basictypesymbols._symboltable.IBasicTypeSymbolsScope;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-import de.monticore.types.typesymbols._symboltable.ITypeSymbolsScope;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
     SymTypeExpressionDeSer.serializeMember(printer, "superTypes", superTypes);
   }
 
-  public void traverse(ITypeSymbolsScope node) {
+  public void traverse(IOOSymbolsScope node) {
     if (!node.getLocalOOTypeSymbols().isEmpty()) {
       node.getLocalOOTypeSymbols().forEach(s -> {
         if (symbolTablePrinterHelper.visit(s.getFullName())) {
@@ -55,10 +55,10 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
         }
       });
     }*/
-    traverse((de.monticore.types.basictypesymbols._symboltable.IBasicTypeSymbolsScope) node);
+    traverse((IBasicSymbolsScope) node);
   }
 
-  public void traverse(IBasicTypeSymbolsScope node) {
+  public void traverse(IBasicSymbolsScope node) {
     if (!node.getLocalTypeSymbols().isEmpty()) {
       node.getLocalTypeSymbols().forEach(s -> {
         if (symbolTablePrinterHelper.visit(s.getFullName())) {
@@ -102,14 +102,14 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
     getRealThis().traverse((de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope) node);
     getRealThis().traverse((de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope) node);
     getRealThis().traverse((de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope) node);
-    traverse((de.monticore.types.typesymbols._symboltable.ITypeSymbolsScope) node);
+    traverse((de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope) node);
     getRealThis().traverse((de.monticore.umlstereotype._symboltable.IUMLStereotypeScope) node);
     getRealThis().traverse((de.monticore.umlmodifier._symboltable.IUMLModifierScope) node);
   }
 
   @Override
   public void traverse(CDTypeSymbol node) {
-    if(node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
+    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
       printer.beginArray("symbols");
       node.getSpannedScope().accept(getRealThis());
       printer.endArray();

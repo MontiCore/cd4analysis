@@ -12,9 +12,9 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.ICDRoleSymbolResolvingDelegate;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDTypeSymbolResolvingDelegate;
+import de.monticore.symbols.basicsymbols._symboltable.*;
+import de.monticore.symbols.oosymbols._symboltable.*;
 import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.types.basictypesymbols._symboltable.*;
-import de.monticore.types.typesymbols._symboltable.*;
 
 import java.util.ArrayList;
 import java.util.List;

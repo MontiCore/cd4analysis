@@ -3,7 +3,7 @@ package de.monticore;
 
 grammar TestTypeImporter extends
     de.monticore.types.MCBasicTypes,
-    de.monticore.types.TypeSymbols {
+    de.monticore.symbols.OOSymbols {
 
   CompilationUnit =
     MCImportStatement*

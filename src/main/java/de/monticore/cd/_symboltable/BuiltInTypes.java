@@ -4,10 +4,10 @@
 
 package de.monticore.cd._symboltable;
 
-import de.monticore.types.typesymbols.TypeSymbolsMill;
-import de.monticore.types.typesymbols._symboltable.ITypeSymbolsScope;
-import de.monticore.types.typesymbols._symboltable.OOTypeSymbol;
-import de.monticore.types.typesymbols._symboltable.TypeSymbolsScope;
+import de.monticore.symbols.oosymbols.OOSymbolsMill;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,11 +20,11 @@ public class BuiltInTypes {
   public static final List<String> OBJECT_TYPES = Arrays.asList("Character", "Integer", "Double", "Float", "Long", "Boolean", "String");
   public static final List<String> UTIL_TYPES = Arrays.asList("Date", "List", "Optional", "Set", "Map");
 
-  public static void addBuiltInTypes(ITypeSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
+  public static void addBuiltInTypes(IOOSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
     utilTypes
         .forEach(t -> {
-          final TypeSymbolsScope scope = TypeSymbolsMill.typeSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = TypeSymbolsMill
+          final OOSymbolsScope scope = OOSymbolsMill.oOSymbolsScopeBuilder().build();
+          final OOTypeSymbol symbol = OOSymbolsMill
               .oOTypeSymbolBuilder()
               .setName(t)
               .setEnclosingScope(utilTypesScope)

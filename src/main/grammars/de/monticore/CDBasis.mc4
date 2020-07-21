@@ -22,7 +22,7 @@ component grammar CDBasis extends
     de.monticore.literals.MCLiteralsBasis,
     de.monticore.expressions.ExpressionsBasis,
     de.monticore.types.MCBasicTypes,
-    de.monticore.types.TypeSymbols,
+    de.monticore.symbols.OOSymbols,
     de.monticore.UMLStereotype,
     de.monticore.UMLModifier {
 

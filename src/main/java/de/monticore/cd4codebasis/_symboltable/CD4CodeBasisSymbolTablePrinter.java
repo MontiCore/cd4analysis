@@ -5,17 +5,17 @@
 package de.monticore.cd4codebasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
+import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbolTablePrinter;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-import de.monticore.types.typesymbols._symboltable.TypeSymbolsSymbolTablePrinter;
 
 import java.util.List;
 import java.util.Stack;
 
 public class CD4CodeBasisSymbolTablePrinter
     extends CD4CodeBasisSymbolTablePrinterTOP {
-  protected TypeSymbolsSymbolTablePrinter typeSymbolsSymbolTablePrinterDelegate;
+  protected OOSymbolsSymbolTablePrinter typeSymbolsSymbolTablePrinterDelegate;
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
   protected Stack<CD4CodeBasisScope> scopeStack;
 
@@ -33,7 +33,7 @@ public class CD4CodeBasisSymbolTablePrinter
   }
 
   public void init() {
-    this.typeSymbolsSymbolTablePrinterDelegate = new TypeSymbolsSymbolTablePrinter(printer);
+    this.typeSymbolsSymbolTablePrinterDelegate = new OOSymbolsSymbolTablePrinter(printer);
     this.scopeStack = new Stack<>();
   }
 
