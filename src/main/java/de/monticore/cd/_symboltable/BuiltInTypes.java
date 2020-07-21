@@ -7,7 +7,6 @@ package de.monticore.cd._symboltable;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,22 +23,14 @@ public class BuiltInTypes {
     utilTypes
         .forEach(t -> {
           final OOSymbolsScope scope = OOSymbolsMill.oOSymbolsScopeBuilder().build();
-          final OOTypeSymbol symbol = OOSymbolsMill
+          utilTypesScope.add(OOSymbolsMill
               .oOTypeSymbolBuilder()
               .setName(t)
               .setEnclosingScope(utilTypesScope)
               .setSpannedScope(scope)
               .setIsPublic(true)
               .setIsClass(isClass)
-              .build();
-
-          // TODO SVa: remove when Builder of symbols are fixed
-          symbol.setIsPublic(true);
-          symbol.setIsClass(isClass);
-          symbol.setSpannedScope(scope);
-
-          utilTypesScope.add(
-              symbol);
+              .build());
         });
   }
 }
