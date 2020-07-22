@@ -1,4 +1,6 @@
-/* (c) https://github.com/MontiCore/monticore */
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
 package de.monticore.cdbasis.cocos.ebnf;
 
 import de.monticore.cd4code.CD4CodeMill;

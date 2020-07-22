@@ -2,10 +2,6 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
 package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;

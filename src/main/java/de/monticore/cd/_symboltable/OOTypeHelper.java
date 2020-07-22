@@ -2,16 +2,12 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
 package de.monticore.cd._symboltable;
 
 import com.google.common.collect.ImmutableSet;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.check.SymTypeExpression;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

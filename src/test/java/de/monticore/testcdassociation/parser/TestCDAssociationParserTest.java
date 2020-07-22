@@ -2,10 +2,6 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
 package de.monticore.testcdassociation.parser;
 
 import de.monticore.cdassociation._ast.ASTCDAssocDir;

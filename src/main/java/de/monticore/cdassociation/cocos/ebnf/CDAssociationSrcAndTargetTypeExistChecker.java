@@ -1,4 +1,6 @@
-/* (c) https://github.com/MontiCore/monticore */
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
 package de.monticore.cdassociation.cocos.ebnf;
 
 import com.google.common.base.Joiner;

@@ -2,12 +2,6 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
-/* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd.cocos;
 
 import de.monticore.cd.CDMill;
