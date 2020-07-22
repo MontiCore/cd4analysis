@@ -56,8 +56,6 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final String serializedST = deSer.serialize(scope);
     final CD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
 
-    System.out.println(serializedST);
-
     final CD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
         .cD4AnalysisGlobalScopeBuilder()
         .setModelPath(new ModelPath(Paths.get(PATH)))

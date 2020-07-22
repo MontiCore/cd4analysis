@@ -29,7 +29,6 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     final CD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
-    System.out.println(serializedST);
     final CD4CodeArtifactScope deserialize = deSer.deserialize(serializedST);
 
     final CD4CodeGlobalScope globalScopeForDeserialization = CD4CodeMill
