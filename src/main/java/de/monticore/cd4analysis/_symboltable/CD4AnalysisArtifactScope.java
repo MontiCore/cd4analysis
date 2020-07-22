@@ -32,13 +32,4 @@ public class CD4AnalysisArtifactScope extends CD4AnalysisArtifactScopeTOP {
          search in all subscopes, for any defined type with this name
      */
   }
-
-  @Override
-  public String getPackageName() {
-    return "";
-  }
-
-  public String getRealPackageName() {
-    return super.getPackageName();
-  }
 }

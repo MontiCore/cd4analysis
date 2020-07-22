@@ -34,21 +34,6 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
   }
 
   @Override
-  public void visit(CD4CodeArtifactScope node) {
-    if (!printer.isInObject()) {
-      printer.beginObject();
-    }
-    printer.member(JsonDeSers.KIND, "de.monticore.cd4code._symboltable.CD4CodeArtifactScope");
-    if (node.isPresentName()) {
-      printer.member(JsonDeSers.NAME, node.getName());
-    }
-    if (!node.getRealPackageName().isEmpty()) {
-      printer.member(JsonDeSers.PACKAGE, node.getRealPackageName());
-    }
-    serializeAdditionalArtifactScopeAttributes(node);
-  }
-
-  @Override
   public void endVisit(CD4CodeArtifactScope node) {
     serializeSymAssociations();
     super.endVisit(node);

@@ -33,10 +33,6 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
     return this.isPresentName() ? this.getName() : "";
   }
 
-  default String getRealPackageName() {
-    return this.getPackageName();
-  }
-
   default String getRemainingNameForResolveDown(String symbolName) {
     final FluentIterable<String> nameParts = getNameParts(symbolName);
     final FluentIterable<String> packageNameParts = getNameParts(getPackageName());
@@ -53,30 +49,8 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
   }
 
   default boolean checkIfContinueAsSubScope(String symbolName) {
-    if (this.isExportingSymbols()) {
-      return true;
-      /*
-      final FluentIterable<String> nameParts = getNameParts(symbolName);
-      final FluentIterable<String> packageNameParts = getNameParts(getPackageName());
-
-      if (nameParts.size() > 1) {
-        // resolve further, as to find the type without package information
-        // example "A" should resolve all classes A, no matter the package
-        if (!MCBasicTypesMill.mCQualifiedNameBuilder().setPartList(nameParts.toList()).build().isQualified()) {
-          return true;
-        }
-
-        if (nameParts.size() >= packageNameParts.size()) {
-          final String firstNNameParts = nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
-          // A scope that exports symbols usually has a name.
-          return firstNNameParts.equals(getRealPackageName());
-        }
-      }
-      else {
-        return true;
-      }*/
-    }
-
-    return false;
+    // always try to continue, because the subscope could contain the packages
+    // the packageName in the artifact scope is not considered in any way
+    return this.isExportingSymbols();
   }
 }
