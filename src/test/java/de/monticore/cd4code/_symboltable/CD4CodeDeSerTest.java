@@ -9,10 +9,10 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
+import de.se_rwth.commons.Names;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -50,15 +50,16 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
   public void storeModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
+
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-
     final CD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final Optional<CDMethodSignatureSymbol> getXMethodSymbol = scope.resolveCDMethodSignature("B.getX");
+    assertTrue(getXMethodSymbol.isPresent());
+    assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());
+
     final String path = folder.getRoot().getAbsolutePath();
-
     deSer.store(scope, Paths.get(path));
-
-
-    final CD4CodeArtifactScope deserialize = deSer.load(Paths.get(path, "de", "monticore", "cd4code", "parser", "Complete.cdsym").toUri().toURL());
+    final CD4CodeArtifactScope deserialize = deSer.load(Paths.get(path, Names.getPathFromPackage(scope.getRealPackageName()), scope.getName() + ".cdsym").toUri().toURL());
 
     final CD4CodeGlobalScope globalScopeForDeserialization = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()
@@ -72,5 +73,8 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     assertTrue(cdMethodSignatureSymbol.isPresent());
     assertFalse(cdMethodSignatureSymbol.get().isIsConstructor());
     assertEquals("bs", cdMethodSignatureSymbol.get().getParameterList().get(1).getName());
+
+    assertEquals(scope.getRealPackageName(), deserialize.getRealPackageName());
+    assertEquals(getXMethodSymbol.get().getFullName(), cdMethodSignatureSymbol.get().getFullName());
   }
 }
