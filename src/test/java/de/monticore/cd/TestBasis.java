@@ -13,6 +13,8 @@ import de.se_rwth.commons.logging.Slf4jLog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -24,6 +26,9 @@ import static org.junit.Assert.*;
 public class TestBasis {
 
   public final static String PATH = "src/test/resources/de/monticore/";
+
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
 
   @BeforeClass
   public static void setup() {

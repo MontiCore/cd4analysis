@@ -41,5 +41,6 @@ public class CD4CodeTestBasis extends TestBasis {
     cd4CodeCoCos = new CD4CodeCoCos();
     printer = CD4CodeMill.cD4CodePrettyPrinter();
     deSer = new CD4CodeScopeDeSer();
+    deSer.setSymbolFileExtension("cdsym");
   }
 }

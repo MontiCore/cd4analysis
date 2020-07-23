@@ -40,5 +40,6 @@ public class CD4AnalysisTestBasis extends TestBasis {
     cd4AnalyisCoCos = new CD4AnalysisCoCos();
     printer = CD4AnalysisMill.cD4AnalysisPrettyPrinter();
     deSer = new CD4AnalysisScopeDeSer();
+    deSer.setSymbolFileExtension("cdsym");
   }
 }

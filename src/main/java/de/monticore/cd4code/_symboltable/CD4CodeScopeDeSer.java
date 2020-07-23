@@ -20,6 +20,7 @@ import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.se_rwth.commons.logging.Log;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -69,6 +70,32 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
         .getCD4CodeVisitor()
         .flatMap(v -> Optional.of((CD4CodeSymbolTablePrinter) v))
         .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
+  }
+
+  @Override
+  public void store(CD4CodeArtifactScope toSerialize, Path symbolPath) {
+    // 1. Throw errors and abort storing in case of missing required information:
+    if (!toSerialize.isPresentName()) {
+      Log.error("0xA7015x1737824214 CD4CodeScopeDeSer cannot store an artifact scope that has no name!");
+      return;
+    }
+    if (null == getSymbolFileExtension()) {
+      Log.error("0xA7016x1737823252 File extension for stored symbol tables has not been set in CD4CodeScopeDeSer!");
+      return;
+    }
+
+    //2. calculate absolute location for the file to create, including the package if it is non-empty
+    java.nio.file.Path path = symbolPath; //starting with symbol path
+    if (null != toSerialize.getRealPackageName() && toSerialize.getRealPackageName().length() > 0) {
+      path = path.resolve(de.se_rwth.commons.Names.getPathFromPackage(toSerialize.getRealPackageName()));
+    }
+    path = path.resolve(toSerialize.getName() + "." + getSymbolFileExtension());
+
+    //3. serialize artifact scope, which will become the file content
+    String serialized = serialize(toSerialize);
+
+    //4. store serialized artifact scope to calculated location
+    de.monticore.io.FileReaderWriter.storeInFile(path, serialized);
   }
 
   public void deserializeSymbols(JsonObject scopeJson, ICD4CodeScope scope) {

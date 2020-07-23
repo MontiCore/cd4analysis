@@ -18,6 +18,7 @@ import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.se_rwth.commons.logging.Log;
 
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,15 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   public CD4AnalysisScopeDeSer() {
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
     setSymAssociations(new HashMap<>());
+  }
+
+  public static String getBaseName(String name) {
+    final List<String> partList = MCQualifiedNameFacade.createQualifiedName(name).getPartsList();
+    return partList.stream().limit(partList.size() - 1).collect(Collectors.joining("."));
+  }
+
+  public static String getBaseName(ISymbol symbol) {
+    return getBaseName(symbol.getFullName());
   }
 
   public void setSymAssociations(Map<Integer, SymAssociation> symAssociations) {
@@ -60,6 +70,32 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
         .getCD4AnalysisVisitor()
         .flatMap(v -> Optional.of((CD4AnalysisSymbolTablePrinter) v))
         .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
+  }
+
+  @Override
+  public void store(CD4AnalysisArtifactScope toSerialize, Path symbolPath) {
+    // 1. Throw errors and abort storing in case of missing required information:
+    if (!toSerialize.isPresentName()) {
+      Log.error("0xA7015x1436847926 CD4AnalysisScopeDeSer cannot store an artifact scope that has no name!");
+      return;
+    }
+    if (null == getSymbolFileExtension()) {
+      Log.error("0xA7016x1436848888 File extension for stored symbol tables has not been set in CD4AnalysisScopeDeSer!");
+      return;
+    }
+
+    //2. calculate absolute location for the file to create, including the package if it is non-empty
+    java.nio.file.Path path = symbolPath; //starting with symbol path
+    if (null != toSerialize.getRealPackageName() && toSerialize.getRealPackageName().length() > 0) {
+      path = path.resolve(de.se_rwth.commons.Names.getPathFromPackage(toSerialize.getRealPackageName()));
+    }
+    path = path.resolve(toSerialize.getName() + "." + getSymbolFileExtension());
+
+    //3. serialize artifact scope, which will become the file content
+    String serialized = serialize(toSerialize);
+
+    //4. store serialized artifact scope to calculated location
+    de.monticore.io.FileReaderWriter.storeInFile(path, serialized);
   }
 
   public void deserializeSymbols(JsonObject scopeJson, ICD4AnalysisScope scope) {
@@ -168,14 +204,5 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
       symbol.setSpannedScope(spannedScope);
       scope.addSubScope(spannedScope);
     }
-  }
-
-  public static String getBaseName(String name) {
-    final List<String> partList = MCQualifiedNameFacade.createQualifiedName(name).getPartsList();
-    return partList.stream().limit(partList.size() - 1).collect(Collectors.joining("."));
-  }
-
-  public static String getBaseName(ISymbol symbol) {
-    return getBaseName(symbol.getFullName());
   }
 }

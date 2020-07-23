@@ -33,6 +33,10 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
     return this.isPresentName() ? this.getName() : "";
   }
 
+  default String getRealPackageName() {
+    return this.getPackageName();
+  }
+
   default String getRemainingNameForResolveDown(String symbolName) {
     final FluentIterable<String> nameParts = getNameParts(symbolName);
     final FluentIterable<String> packageNameParts = getNameParts(getPackageName());
