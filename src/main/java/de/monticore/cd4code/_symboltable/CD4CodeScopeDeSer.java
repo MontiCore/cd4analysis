@@ -112,6 +112,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
 
       scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDTypeSymbol((JsonObject) s, scopes));
       scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDAssociationSymbol((JsonObject) s, scopes));
+      scopeJson.getArrayMember("symbols").forEach(s -> deserializeCDMethodSignatureSymbol((JsonObject) s, scopes));
 
       scopes.values().forEach(scope::addSubScope);
     }
@@ -153,6 +154,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
       scope.add(symbol);
       final CD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
 
+      deserializeSymbols(symbolJson, spannedScope);
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {
           if (m.isJsonObject()) {
@@ -162,9 +164,6 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
             }
             else if (o.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(fieldSymbolDeSer.getSerializedKind()))).orElse(false)) {
               spannedScope.add(fieldSymbolDeSer.deserializeFieldSymbol(o, spannedScope));
-            }
-            else if (o.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDMethodSignatureSymbolDeSer.getSerializedKind()))).orElse(false)) {
-              deserializeCDMethodSignatureSymbol(o, spannedScope);
             }
           }
         });

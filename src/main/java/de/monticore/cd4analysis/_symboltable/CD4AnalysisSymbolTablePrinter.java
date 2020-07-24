@@ -9,12 +9,9 @@ import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 
-import java.util.Stack;
-
 public class CD4AnalysisSymbolTablePrinter
     extends CD4AnalysisSymbolTablePrinterTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
-  protected Stack<CD4AnalysisScope> scopeStack;
 
   public CD4AnalysisSymbolTablePrinter() {
     init();
@@ -31,7 +28,6 @@ public class CD4AnalysisSymbolTablePrinter
 
   public void init() {
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
-    this.scopeStack = new Stack<>();
   }
 
   public void serializeSymAssociations() {
@@ -70,14 +66,7 @@ public class CD4AnalysisSymbolTablePrinter
 
   @Override
   public void handle(CD4AnalysisScope node) {
-    scopeStack.push(node);
-
     // don't call visit, because we don't want the scope information
     super.traverse(node);
-
-    if (scopeStack.size() == 3) {
-      super.endVisit(node);
-    }
-    scopeStack.pop();
   }
 }

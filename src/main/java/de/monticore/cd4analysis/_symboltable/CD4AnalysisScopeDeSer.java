@@ -154,6 +154,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
       scope.add(symbol);
       final CD4AnalysisScope spannedScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
 
+      deserializeSymbols(symbolJson, spannedScope);
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {
           if (m.isJsonObject()) {
