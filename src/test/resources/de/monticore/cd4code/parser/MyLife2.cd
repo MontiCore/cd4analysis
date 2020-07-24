@@ -1,0 +1,43 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4code.parser;
+
+classdiagram MyLife2 {
+
+  package entity {
+    interface CorporateEntity {
+      int vatNumber;
+    }
+  }
+
+  public abstract class Person implements CorporateEntity {
+    protected String name;
+    int age;
+    Date birthday;
+    List<String> nickNames;
+    public Person(String name);
+    Set<Person> getParents();
+  }
+
+  package uni {
+    class Student extends Person {
+      StudentStatus status;
+      -> Address [1..*] {ordered};
+      abstract public change(StudentStatus status);
+      void addFriends(Person... friends);
+    }
+
+    enum StudentStatus {
+      ENROLLED,
+      FINISHED;
+    }
+  }
+
+  class Grades;
+  class PhoneNumber;
+  class Address;
+
+  composition Student -> Grades [*];
+  association [0..1] Person (parent) <-> (child) Person [*];
+  association phonebook Person [String] -> PhoneNumber;
+}

@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4analysis.parser;
+
+classdiagram SimpleSTTest {
+
+  class A {
+    String name;
+  }
+
+  class B extends A;
+
+  association B [[name]] -> (item) A [1];
+  association A -> B;
+
+  package blub {
+    class S;
+  }
+
+}

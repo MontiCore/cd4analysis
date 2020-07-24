@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram STTest {
+
+  class A {
+    String name;
+  }
+
+  class S;
+
+  class B extends A {
+    S s;
+  }
+
+  enum D {
+    DEE;
+  }
+
+  class Struct;
+  class StructItem;
+
+  association assoc Struct (struct) -> (item) StructItem [1];
+  association A (s) -> (a) S;
+  association [*] A (s2) -> (a2) S [1];
+
+}

@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4analysis.parser;
+
+classdiagram MinimalSTTest {
+
+  class A;
+
+  association atoa A (lower) -> (upper) A [0..1];
+
+}

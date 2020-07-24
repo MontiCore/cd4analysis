@@ -1,4 +1,4 @@
-# (c) https://github.com/MontiCore/monticore  
+# (c) https://github.com/MontiCore/monticore
 
 image: maven:3.5.4-jdk-8-alpine
 
@@ -19,6 +19,7 @@ stages:
   - build
   - test
   - deploy
+  - trigger
 
 build:
   stage: build
@@ -36,8 +37,19 @@ test:
   script:
   - "./gradlew check $GRADLE_OPT $ARGS2"
 
+trigger-langexp:
+  stage: trigger
+  trigger:
+    project: monticore/langexperiments
+    branch: dev
+  only:
+    - develop
+
 deploy:
   stage: deploy
+  only:
+    - develop
+    - master
   dependencies:
     - build
   script:

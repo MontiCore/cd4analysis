@@ -1,0 +1,66 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore;
+
+/* This is a MontiCore stable grammar.
+ * Adaptations -- if any -- are conservative. */
+
+/**
+   This component grammar describes the method signatures that 
+   are used by CD4Code.
+   
+   It contains method and constructor signatures including 
+   visibility modifiers.
+
+   It uses CDBasis.mc4, which allows a rather free
+   combination with other extensions.
+*/
+
+component grammar CD4CodeBasis extends
+    de.monticore.CDBasis,
+    de.monticore.CDInterfaceAndEnum,
+    de.monticore.expressions.CommonExpressions {
+
+  /* ==== Methods ==== */
+  /** Introduction of the new form of symbol: the Method
+   */
+  interface scope symbol CDMethodSignature extends CDMember, Method = Name CDParameter*;
+
+  CDThrowsDeclaration = "throws" exception:(MCQualifiedName || ",")+;
+
+  /** The standard (Java) method
+   */
+  CDMethod implements CDMethodSignature =
+    Modifier
+    MCReturnType
+    Name "(" (CDParameter || ",")* ")"
+    CDThrowsDeclaration?
+    ";";
+
+  /** The standard (Java) constructor (without return type)
+   */
+  CDConstructor implements CDMethodSignature =
+    Modifier
+    Name "(" (CDParameter || ",")* ")"
+    CDThrowsDeclaration?
+    ";";
+
+  /** Method parameter: with type, name, default value,
+      and list extension "..."
+   */
+  CDParameter implements Field =
+    MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+
+  /** Enumeration constants may now also be defined using arguments
+      (like in Java)
+   */
+  CD4CodeEnumConstant extends CDEnumConstant =
+    Name Arguments?;
+
+  /* ==== Symbols ==== */
+  /** Method knows its signature, whether it is a constructor, 
+      visibility
+   */
+  symbolrule CDMethodSignature =
+    exceptions: de.monticore.types.check.SymTypeExpression*
+  ;
+}

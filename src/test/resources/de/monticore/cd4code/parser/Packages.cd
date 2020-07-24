@@ -1,0 +1,45 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4code.parser;
+
+classdiagram Packages {
+  package a {
+    class A;
+  }
+
+  package a2 {
+    class A2 extends A;
+    class A;
+  }
+
+  package a {
+    class B { // NOTE: A and B are in same package a
+      a2.A2 a1;
+      A2 a2;
+    }
+  }
+
+  package a.b {
+    class B;
+  }
+
+  package a.b.c { // NOTE: this is no subpackage of a
+    class C;
+  }
+
+  class F {
+    a.b.B b;
+  }
+
+  package d {
+    class D extends a.A, a.B, a.b.c.C; // Note wie darf A hier referenziert werden?
+  }
+
+  package h {
+    class H {
+      String name;
+      java.lang.String name2;
+    }
+  }
+
+}

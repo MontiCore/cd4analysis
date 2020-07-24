@@ -1,22 +1,24 @@
-/* (c) https://github.com/MontiCore/monticore */
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
 package de.monticore.cd.facade;
 
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTModifier;
-import de.monticore.cd.cd4code.CD4CodeMill;
-import de.monticore.cd.cd4code._parser.CD4CodeParser;
 import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.StringTransformations;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Optional;
-
 
 /**
  * Class that helps with the creation of ASTCDAttributes
@@ -48,7 +50,8 @@ public class CDAttributeFacade {
     Optional<ASTCDAttribute> attribute;
     try {
       attribute = parser.parseCDAttribute(new StringReader(signature));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_ATTRIBUTE, signature, e);
     }
     if (!attribute.isPresent()) {
@@ -62,10 +65,23 @@ public class CDAttributeFacade {
    */
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type, final String name) {
-    return CD4CodeMill.cDAttributeBuilder()
+    return CD4CodeBasisMill.cDAttributeBuilder()
         .setModifier(modifier)
         .setMCType(type.deepClone())
         .setName(name)
+        .build();
+  }
+
+  /**
+   * base method for creation of a attribute via builder
+   */
+
+  public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type, final String name, final ASTExpression initial) {
+    return CD4CodeBasisMill.cDAttributeBuilder()
+        .setModifier(modifier)
+        .setMCType(type.deepClone())
+        .setName(name)
+        .setInitial(initial)
         .build();
   }
 
@@ -77,43 +93,39 @@ public class CDAttributeFacade {
     return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))));
   }
 
+  public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type, final ASTExpression initial) {
+    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))), initial);
+  }
+
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type, final String name) {
     return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), name);
+  }
+
+  public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type, final String name, final ASTExpression initial) {
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), name, initial);
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type) {
     return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type));
   }
 
+  public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type, final ASTExpression initial) {
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type), initial);
+  }
+
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final Class<?> type, final String name) {
     return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), name);
+  }
+
+  public ASTCDAttribute createAttribute(final ASTModifier modifier, final Class<?> type, final String name, final ASTExpression initial) {
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), name, initial);
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final Class<?> type) {
     return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type.getSimpleName()));
   }
 
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final ASTMCType type, final String name) {
-    return createAttribute(modifier.build(), type, name);
-  }
-
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final ASTMCType type) {
-    return createAttribute(modifier.build(), type);
-  }
-
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final String type, final String name) {
-    return createAttribute(modifier.build(), type, name);
-  }
-
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final String type) {
-    return createAttribute(modifier.build(), type);
-  }
-
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final Class<?> type, final String name) {
-    return createAttribute(modifier.build(), type, name);
-  }
-
-  public ASTCDAttribute createAttribute(final CDModifier modifier, final Class<?> type) {
-    return createAttribute(modifier.build(), type);
+  public ASTCDAttribute createAttribute(final ASTModifier modifier, final Class<?> type, final ASTExpression initial) {
+    return createAttribute(modifier, MCTypeFacade.getInstance().createQualifiedType(type), StringTransformations.uncapitalize(type.getSimpleName()), initial);
   }
 }

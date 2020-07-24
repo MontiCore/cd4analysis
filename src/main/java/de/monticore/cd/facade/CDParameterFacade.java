@@ -1,9 +1,11 @@
-/* (c) https://github.com/MontiCore/monticore */
+/*
+ * (c) https://github.com/MontiCore/monticore
+ */
 package de.monticore.cd.facade;
 
-import de.monticore.cd.cd4analysis._ast.ASTCDAttribute;
-import de.monticore.cd.cd4analysis._ast.ASTCDParameter;
-import de.monticore.cd.cd4code.CD4CodeMill;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
+import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -37,7 +39,7 @@ public class CDParameterFacade {
    */
 
   public ASTCDParameter createParameter(final ASTMCType type, final String name) {
-    return CD4CodeMill.cDParameterBuilder()
+    return CD4CodeBasisMill.cDParameterBuilder()
         .setMCType(type)
         .setName(name)
         .build();

@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd4code.parser;
+
+classdiagram MinimalST {
+
+  class A {
+    int getX(String x, String... as);
+  }
+}
