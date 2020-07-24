@@ -36,7 +36,7 @@ public class CDAssociationRoleNameLowerCase
       return false;
     }
     if (!Character.isLowerCase(side.getCDRole().getName().charAt(0))) {
-      Log.error(String.format("0xCDC66 Role %s of association %s must start in lower-case.",
+      Log.error(String.format("0xCDC66: Role %s of association %s must start in lower-case.",
           side.getCDRole().getName(), prettyPrinter.prettyprint(assoc)),
           assoc.get_SourcePositionStart());
       return true;

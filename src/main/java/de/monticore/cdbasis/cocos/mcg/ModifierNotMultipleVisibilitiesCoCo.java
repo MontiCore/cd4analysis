@@ -30,7 +30,7 @@ public class ModifierNotMultipleVisibilitiesCoCo
     }
     if (visibilityCount > 1) {
       Log.error(
-          "0xCDC10 Only none or one visibility is supported, but multiple visibilities were found.",
+          "0xCDC10:Only none or one visibility is supported, but multiple visibilities were found.",
           mod.get_SourcePositionStart());
     }
   }

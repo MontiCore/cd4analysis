@@ -21,7 +21,7 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
       return Optional.of(deduplicatedResolved.iterator().next());
     }
     else if (deduplicatedResolved.size() > 1) {
-      throw new ResolvedSeveralEntriesForSymbolException("0xA4095 Found " + deduplicatedResolved.size()
+      throw new ResolvedSeveralEntriesForSymbolException("0xA4095:Found " + deduplicatedResolved.size()
           + " symbols: {" + deduplicatedResolved.stream().map(r -> r.getFullName() + (r.isPresentAstNode() ? " (" + r.getAstNode().get_SourcePositionStart() + ")" : "")).collect(Collectors.joining(", ")) + "}",
           resolved);
     }

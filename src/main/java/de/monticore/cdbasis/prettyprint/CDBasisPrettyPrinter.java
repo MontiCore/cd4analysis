@@ -62,7 +62,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void visit(ASTCDPackageStatement node) {
     printPreComments(node);
-    print("package " + Names.constructQualifiedName(node.getPackageList()) + ";");
+    print("package " + Names.getQualifiedName(node.getPackageList()) + ";");
     printPostComments(node);
     println();
   }

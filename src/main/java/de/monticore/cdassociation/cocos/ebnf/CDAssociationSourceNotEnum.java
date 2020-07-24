@@ -36,7 +36,7 @@ public class CDAssociationSourceNotEnum
       Log.error(
           String
               .format(
-                  "0xCDC67 Association %s is invalid, because an association's source may not be an Enumeration.",
+                  "0xCDC67: Association %s is invalid, because an association's source may not be an Enumeration.",
                   prettyPrinter.prettyprint(node)),
           node.get_SourcePositionStart());
       return false;

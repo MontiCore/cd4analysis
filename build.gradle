@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore" version "6.2.0-SNAPSHOT" // MontiCore Plugin
+    id "monticore" version "6.2.0" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
 }
 
 group = "de.monticore.lang"
-version = "4.0.0-SNAPSHOT"
+version = "4.0.0"
 description = "CD4Analysis"
 sourceCompatibility = JavaVersion.VERSION_1_8
 buildDir = file("$projectDir/target")
@@ -20,9 +20,9 @@ ext {
     testGrammarDir = "src/test/grammars"
     testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
 
-    mc_version = "6.2.0-SNAPSHOT"
-    commons_version = "1.7.10-SNAPSHOT"
-    guava_version = "29.0-jre"
+    mc_version = "6.2.0"
+    commons_version = "1.7.9"
+    guava_version = "25.1-jre"
     antlr_version = "4.7-1"
     plantuml_version = "1.2020.15"
     logback_version = "1.2.3"

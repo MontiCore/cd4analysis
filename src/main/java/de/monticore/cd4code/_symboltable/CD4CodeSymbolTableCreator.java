@@ -27,7 +27,7 @@ public class CD4CodeSymbolTableCreator extends CD4CodeSymbolTableCreatorTOP {
     CD4CodeArtifactScope artifactScope = CD4CodeMill
         .cD4CodeArtifactScopeBuilder()
         .setPackageName(
-            Names.constructQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
+            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
         .build();
     putOnStack(artifactScope);
     rootNode.accept(getRealThis());

@@ -76,11 +76,11 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   public void store(CD4AnalysisArtifactScope toSerialize, Path symbolPath) {
     // 1. Throw errors and abort storing in case of missing required information:
     if (!toSerialize.isPresentName()) {
-      Log.error("0xA7015x1436847926 CD4AnalysisScopeDeSer cannot store an artifact scope that has no name!");
+      Log.error("0xCD007:CD4AnalysisScopeDeSer cannot store an artifact scope that has no name!");
       return;
     }
     if (null == getSymbolFileExtension()) {
-      Log.error("0xA7016x1436848888 File extension for stored symbol tables has not been set in CD4AnalysisScopeDeSer!");
+      Log.error("0xCD008:File extension for stored symbol tables has not been set in CD4AnalysisScopeDeSer!");
       return;
     }
 
@@ -130,7 +130,6 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     // deserialize all the symbols
     deserializeSymbols(scopeJson, cd4AnalysisArtifactScope);
 
-    // TODO: move subscopes to the package scope
     return cd4AnalysisArtifactScope;
   }
 
@@ -178,7 +177,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     ICD4AnalysisScope scope = scopes.get(getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
     if (scope == null) {
       Log.error(String.format(
-          "0xCD005: the scope for package %s is not created",
+          "0xCD006: the scope for package %s is not created",
           symbolJson.getStringMember(JsonDeSers.NAME)
       ));
       return;

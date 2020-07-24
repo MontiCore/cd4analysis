@@ -33,7 +33,7 @@ public class CDAssociationByAttributeFieldExist implements
         Log.error(
             String
                 .format(
-                    "0xCDC6B The attribute %s does not exists in %s %s.",
+                    "0xCDC6B: The attribute %s does not exists in %s %s.",
                     attributeName,
                     CDMill.cDTypeKindPrinter().print(type),
                     type.print()),

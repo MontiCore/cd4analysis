@@ -76,11 +76,11 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   public void store(CD4CodeArtifactScope toSerialize, Path symbolPath) {
     // 1. Throw errors and abort storing in case of missing required information:
     if (!toSerialize.isPresentName()) {
-      Log.error("0xA7015x1737824214 CD4CodeScopeDeSer cannot store an artifact scope that has no name!");
+      Log.error("0xCD00C:CD4CodeScopeDeSer cannot store an artifact scope that has no name!");
       return;
     }
     if (null == getSymbolFileExtension()) {
-      Log.error("0xA7016x1737823252 File extension for stored symbol tables has not been set in CD4CodeScopeDeSer!");
+      Log.error("0xCD00E:File extension for stored symbol tables has not been set in CD4CodeScopeDeSer!");
       return;
     }
 
@@ -138,7 +138,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     ICD4CodeScope scope = scopes.get(CD4AnalysisScopeDeSer.getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
     if (scope == null) {
       Log.error(String.format(
-          "0xCD005: the scope for package %s is not created",
+          "0xCD009: the scope for package %s is not created",
           symbolJson.getStringMember(JsonDeSers.NAME)
       ));
       return;
@@ -178,7 +178,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     ICD4CodeScope scope = scopes.get(CD4AnalysisScopeDeSer.getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
     if (scope == null) {
       Log.error(String.format(
-          "0xCD006: the scope for package %s is not created",
+          "0xCD00A: the scope for package %s is not created",
           symbolJson.getStringMember(JsonDeSers.NAME)
       ));
       return;
@@ -211,7 +211,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     ICD4CodeScope scope = scopes.get(CD4AnalysisScopeDeSer.getBaseName(symbolJson.getStringMember(JsonDeSers.NAME)));
     if (scope == null) {
       Log.error(String.format(
-          "0xCD007: the scope for package %s is not created",
+          "0xCD00B: the scope for package %s is not created",
           symbolJson.getStringMember(JsonDeSers.NAME)
       ));
       return;
