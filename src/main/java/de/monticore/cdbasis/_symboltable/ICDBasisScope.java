@@ -45,7 +45,7 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
       final String firstNNameParts = nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
       // A scope that exports symbols usually has a name.
       if (firstNNameParts.equals(getPackageName())) {
-        return nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining());
+        return nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining("."));
       }
     }
 
