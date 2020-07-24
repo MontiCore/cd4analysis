@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "de.monticore.lang"
-version = "4.0.0"
+version = "4.1.0-SNAPSHOT"
 description = "CD4Analysis"
 sourceCompatibility = JavaVersion.VERSION_1_8
 buildDir = file("$projectDir/target")
