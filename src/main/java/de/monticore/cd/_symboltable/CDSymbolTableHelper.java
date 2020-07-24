@@ -216,7 +216,7 @@ public class CDSymbolTableHelper {
 
     return potentialModelNames.stream().map(p -> {
       final List<String> nameParts = Splitters.DOT.splitToList(qName);
-      return IntStream.range(1, nameParts.size() - 1) // always begin with the first element, and stop at the second to last
+      return IntStream.range(1, nameParts.size()) // always begin with the first element, and stop at the second to last
           .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining(".")))
           .collect(Collectors.toSet());
     }).flatMap(Collection::stream).collect(Collectors.toSet());
