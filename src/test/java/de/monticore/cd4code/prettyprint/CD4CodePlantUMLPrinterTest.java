@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class CD4CodePlantUMLPrinterTest extends TestBasis {
   @Test
   public void testLocally() throws IOException {

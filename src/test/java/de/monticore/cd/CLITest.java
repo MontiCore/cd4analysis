@@ -6,6 +6,7 @@ package de.monticore.cd;
 
 import de.monticore.cd.cli.CDCLI;
 import org.apache.commons.cli.ParseException;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class CLITest extends OutTestBasis {
   @SuppressWarnings("deprecation")
   @Rule
