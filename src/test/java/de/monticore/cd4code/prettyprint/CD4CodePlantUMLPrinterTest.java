@@ -4,6 +4,7 @@
 
 package de.monticore.cd4code.prettyprint;
 
+import de.monticore.cd.TestBasis;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import org.junit.Ignore;
@@ -12,24 +13,29 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-@Ignore
-public class CD4CodePlantUMLPrinterTest {
+import static org.junit.Assert.assertTrue;
+
+public class CD4CodePlantUMLPrinterTest extends TestBasis {
   @Test
   public void testLocally() throws IOException {
-    final String fileName = new File("src/test/resources/de/monticore/cd4code/parser/MyLife2.cd").toString();
-    PlantUMLUtil.printCD2PlantUMLLocally(fileName, "MyLife2.svg", new PlantUMLConfig());
+    final String fileName = new File(getFilePath("cd4code/parser/MyLife2.cd")).toString();
+    PlantUMLUtil.printCD2PlantUMLLocally(fileName, getTmpFilePath("MyLife2.svg"), new PlantUMLConfig());
+    assertTrue(modelFileExists(getTmpFilePath("MyLife2.svg")));
   }
 
   @Test
   public void testModelFileLocally() throws IOException {
-    final String fileName = new File("src/test/resources/de/monticore/cd4code/parser/MyLife2.cd").toString();
+    final String fileName = new File(getFilePath("cd4code/parser/MyLife2.cd")).toString();
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig(true, true, true, true, false, -1, -1, false, true, false);
-    PlantUMLUtil.printCD2PlantUMLModelFileLocally(fileName, "MyLife2.puml", plantUMLConfig);
+    PlantUMLUtil.printCD2PlantUMLModelFileLocally(fileName, getTmpFilePath("MyLife2.puml"), plantUMLConfig);
+    assertTrue(modelFileExists(getTmpFilePath("MyLife2.puml")));
   }
 
+  @Ignore
   @Test
   public void testServer() throws IOException {
-    final String fileName = new File("src/test/resources/de/monticore/cd4code/parser/MyLife2.cd").toString();
-    PlantUMLUtil.printCD2PlantUMLServer(fileName, "MyLife2.svg", new PlantUMLConfig());
+    final String fileName = new File(getFilePath("cd4code/parser/MyLife2.cd")).toString();
+    PlantUMLUtil.printCD2PlantUMLServer(fileName, getTmpFilePath("MyLife2.svg"), new PlantUMLConfig());
+    assertTrue(modelFileExists(getTmpFilePath("MyLife2.svg")));
   }
 }

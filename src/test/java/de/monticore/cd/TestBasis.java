@@ -16,6 +16,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +37,19 @@ public class TestBasis {
   public static void setup() {
     Slf4jLog.init();
     Log.enableFailQuick(false);
+  }
+
+  public String getTmpAbsolutePath() {
+    return folder.getRoot().getAbsolutePath();
+  }
+
+  public String getTmpFilePath(String fileName) {
+    return getTmpAbsolutePath() + File.separator + fileName;
+  }
+
+  protected boolean modelFileExists(String fileName) {
+    Path filePath = Paths.get(fileName);
+    return Files.exists(filePath);
   }
 
   public static String getFilePath(String path) {

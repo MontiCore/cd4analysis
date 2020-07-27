@@ -32,6 +32,8 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class PlantUMLUtil {
+  public static String PLANTUML_EMPTY = "@startuml\n@enduml";
+
   /**
    * this needs internet - it connects to the plantuml-server to render the image and downloads it
    */
@@ -49,6 +51,27 @@ public class PlantUMLUtil {
     try (PrintWriter out = new PrintWriter(outputPathSVG)) {
       out.println(svg);
     }
+  }
+
+  /**
+   * this needs GraphViz/JDOT installed on your PC
+   */
+  public static void printCD2PlantUMLLocally(Optional<ASTCDCompilationUnit> astCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
+      throws IOException {
+
+    final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
+    final SourceStringReader reader = new SourceStringReader(plantUMLString);
+    final ByteArrayOutputStream os = new ByteArrayOutputStream();
+    // Write the first image to "os"
+    reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
+    os.close();
+
+    // The XML is stored into svg
+    final String svg = new String(os.toByteArray(), StandardCharsets.UTF_8);
+    try (PrintWriter out = new PrintWriter(outputPathSVG)) {
+      out.println(svg);
+    }
+
   }
 
   /**
@@ -73,9 +96,17 @@ public class PlantUMLUtil {
     }
   }
 
+  public static void printCD2PlantUMLModelFileLocally(Optional<ASTCDCompilationUnit> astCD, String outputPath, PlantUMLConfig plantUMLConfig)
+      throws IOException {
+    final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
+
+    try (PrintWriter out = new PrintWriter(outputPath)) {
+      out.println(plantUMLString);
+    }
+  }
+
   public static void printCD2PlantUMLModelFileLocally(String pathCD, String outputPath, PlantUMLConfig plantUMLConfig)
       throws IOException {
-
     final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
 
     final String plantUMLString = printCD2PlantUML(cdString, plantUMLConfig);
@@ -85,35 +116,41 @@ public class PlantUMLUtil {
     }
   }
 
-  protected static String printCD2PlantUML(String cdString, PlantUMLConfig config) {
+  protected static String printCD2PlantUML(Optional<ASTCDCompilationUnit> astCD, PlantUMLConfig config) {
     final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
     CD4CodePlantUMLPrettyPrinter cdVisitor = new CD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
+    if (astCD.isPresent()) {
+      final CD4CodeGlobalScope globalScope = CD4CodeMill
+          .cD4CodeGlobalScopeBuilder()
+          .setModelPath(new ModelPath(Paths.get("")))
+          .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
+          .addBuiltInTypes()
+          .build();
+      final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
+          .cD4CodeSymbolTableCreatorDelegatorBuilder()
+          .setGlobalScope(globalScope)
+          .build();
+      symbolTableCreator.createFromAST(astCD.get());
+
+      cdVisitor.prettyprint(astCD.get());
+      return plantUMLPrettyPrintUtil.getPrinter().getContent();
+    }
+
+    return PLANTUML_EMPTY;
+  }
+
+  protected static String printCD2PlantUML(String cdString, PlantUMLConfig
+      config) {
     CD4CodeParser parser = new CD4CodeParser();
-    String plantUMLString = "@startuml\n@enduml";
 
     try {
       Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
-      if (astCD.isPresent()) {
-        final CD4CodeGlobalScope globalScope = CD4CodeMill
-            .cD4CodeGlobalScopeBuilder()
-            .setModelPath(new ModelPath(Paths.get("")))
-            .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-            .addBuiltInTypes()
-            .build();
-        final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-            .cD4CodeSymbolTableCreatorDelegatorBuilder()
-            .setGlobalScope(globalScope)
-            .build();
-        symbolTableCreator.createFromAST(astCD.get());
-
-        cdVisitor.prettyprint(astCD.get());
-        plantUMLString = plantUMLPrettyPrintUtil.getPrinter().getContent();
-      }
+      return printCD2PlantUML(astCD, config);
     }
     catch (IOException e) {
       Log.error("Cannot display CD since it contains errors!");
     }
 
-    return plantUMLString;
+    return PLANTUML_EMPTY;
   }
 }

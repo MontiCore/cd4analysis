@@ -123,10 +123,6 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     printComment(node);
 
-    if (plantUMLConfig.getShowModifier()) {
-      node.getModifier().accept(getRealThis());
-    }
-
     print("class " + node.getName());
     if (node.isPresentCDExtendUsage()) {
       print(" extends ");

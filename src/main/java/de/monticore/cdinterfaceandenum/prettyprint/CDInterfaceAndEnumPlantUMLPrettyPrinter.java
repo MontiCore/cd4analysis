@@ -78,7 +78,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
     println("enum " + node.getName());
 
-    if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDEnumConstants()) {
+    if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
       println(" {");
       indent();
     }
@@ -106,7 +106,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
   @Override
   public void endVisit(ASTCDEnum node) {
-    if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDEnumConstants()) {
+    if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
       unindent();
       println("}");
     }

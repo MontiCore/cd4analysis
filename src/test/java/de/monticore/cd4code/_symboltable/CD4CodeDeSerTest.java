@@ -57,7 +57,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     assertTrue(getXMethodSymbol.isPresent());
     assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());
 
-    final String path = folder.getRoot().getAbsolutePath();
+    final String path = getTmpAbsolutePath();
     deSer.store(scope, Paths.get(path));
     final CD4CodeArtifactScope deserialize = deSer.load(Paths.get(path, Names.getPathFromPackage(scope.getRealPackageName()), scope.getName() + ".cdsym").toUri().toURL());
 
