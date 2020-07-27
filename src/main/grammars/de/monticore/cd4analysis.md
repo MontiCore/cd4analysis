@@ -151,9 +151,9 @@ Further examples can be found [here][ExampleModels].
   provided symbol tables.
 - CD4A provides a set of predefined types to be given 
   through grammar inclusion of [`MCCollectionTypes`][MCCollectionTypes]:
-  - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`
+  - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`, `short`, `byte`, `void`
   - ObjectTypes: `Character`, `Integer`, `Double`, `Float`, `Long`, `Boolean`,
-    `String`
+    `Short`, `Byte`, `Void`, `Number`, `String`
   - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`
   - Special types, such as `Date` must then be provided through the imports of 
     other artifacts.
