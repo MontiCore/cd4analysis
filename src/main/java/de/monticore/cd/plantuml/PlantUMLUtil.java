@@ -56,7 +56,7 @@ public class PlantUMLUtil {
   /**
    * this needs GraphViz/JDOT installed on your PC
    */
-  public static void printCD2PlantUMLLocally(Optional<ASTCDCompilationUnit> astCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
+  public static String printCD2PlantUMLLocally(Optional<ASTCDCompilationUnit> astCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
       throws IOException {
 
     final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
@@ -72,6 +72,7 @@ public class PlantUMLUtil {
       out.println(svg);
     }
 
+    return outputPathSVG;
   }
 
   /**
@@ -96,13 +97,15 @@ public class PlantUMLUtil {
     }
   }
 
-  public static void printCD2PlantUMLModelFileLocally(Optional<ASTCDCompilationUnit> astCD, String outputPath, PlantUMLConfig plantUMLConfig)
+  public static String printCD2PlantUMLModelFileLocally(Optional<ASTCDCompilationUnit> astCD, String outputPath, PlantUMLConfig plantUMLConfig)
       throws IOException {
     final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
 
     try (PrintWriter out = new PrintWriter(outputPath)) {
       out.println(plantUMLString);
     }
+
+    return outputPath;
   }
 
   public static void printCD2PlantUMLModelFileLocally(String pathCD, String outputPath, PlantUMLConfig plantUMLConfig)

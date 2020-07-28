@@ -35,13 +35,11 @@ public class CDCLIOptions {
     final DefaultParser parser = new DefaultParser();
     final CommandLine cmd = parser.parse(this.options, args, true);
 
-    final String[] params = Arrays.stream(args).skip(1).toArray(String[]::new);
-
     if (cmd.hasOption("c")) {
-      return new ImmutablePair<>(SubCommand.CHECK, parser.parse(subCommands.get(SubCommand.CHECK), params));
+      return new ImmutablePair<>(SubCommand.CHECK, parser.parse(subCommands.get(SubCommand.CHECK), cmd.getArgs()));
     }
     else if (cmd.hasOption("p")) {
-      return new ImmutablePair<>(SubCommand.PLANTUML, parser.parse(subCommands.get(SubCommand.PLANTUML), params));
+      return new ImmutablePair<>(SubCommand.PLANTUML, parser.parse(subCommands.get(SubCommand.PLANTUML), cmd.getArgs()));
     }
 
     return new ImmutablePair<>(SubCommand.HELP, null);
@@ -83,6 +81,13 @@ public class CDCLIOptions {
         .build());
 
     checkOptions.addOption(Option
+        .builder().longOpt("log")
+        .hasArg().type(String.class)
+        .argName("logLevel")
+        .desc("activate loglevel debug")
+        .build());
+
+    checkOptions.addOption(Option
         .builder("q").longOpt("no-fail-quick")
         .desc("disables fail-quick for the coco checks; default [false]")
         .build());
@@ -115,6 +120,13 @@ public class CDCLIOptions {
         .build());
 
     plantUMLOptions.addOption(Option
+        .builder().longOpt("log")
+        .hasArg().type(String.class)
+        .argName("logLevel")
+        .desc("activate loglevel debug")
+        .build());
+
+    plantUMLOptions.addOption(Option
         .builder("q").longOpt("no-fail-quick")
         .desc("disables fail-quick for the parser, st-creation and cocos; default [false]")
         .build());
@@ -124,6 +136,11 @@ public class CDCLIOptions {
         .hasArg().type(String.class)
         .argName("outputFileName")
         .required()
+        .build());
+
+    plantUMLOptions.addOption(Option
+        .builder().longOpt("puml")
+        .desc("output as plantUML model")
         .build());
 
     plantUMLOptions.addOption(Option

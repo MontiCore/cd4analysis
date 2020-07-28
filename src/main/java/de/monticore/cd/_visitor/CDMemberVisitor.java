@@ -26,6 +26,10 @@ public class CDMemberVisitor
 
   public CDMemberVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
+    if (this.options.isEmpty()) {
+      this.options.add(Options.ALL);
+    }
+
     this.elements = new ArrayList<>();
     setRealThis(this);
   }

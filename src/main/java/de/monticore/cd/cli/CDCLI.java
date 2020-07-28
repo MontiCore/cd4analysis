@@ -15,11 +15,9 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
+import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +32,9 @@ public class CDCLI {
 
   static final Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
   protected static final String JAR_NAME = "cd-<Version>-cli.jar";
-  protected static final String SUCCESSFUL = "Parsing and CoCo check Successful!";
+  protected static final String CHECK_SUCCESSFUL = "Parsing and CoCo check successful!";
+  protected static final String PLANTUML_SUCCESSFUL = "Creation of file %s successful!\n";
+  protected static final Level DEFAULT_LOG_LEVEL = Level.WARN;
 
   protected String modelFile;
   protected boolean failQuick;
@@ -48,12 +48,26 @@ public class CDCLI {
 
   public static void main(String[] args) throws IOException, ParseException {
 
-    root.setLevel(Level.WARN);
+    root.setLevel(DEFAULT_LOG_LEVEL);
 
     CDCLI cli = new CDCLI();
-    if (cli.handleArgs(args)) {
-      Log.enableFailQuick(cli.failQuick);
-      cli.run();
+    try {
+      if (cli.handleArgs(args)) {
+        Log.enableFailQuick(cli.failQuick);
+        cli.run();
+      }
+    }
+    catch (AmbiguousOptionException e) {
+      Log.error(String.format("0xCD010: option '%s' can't match any valid option", e.getOption()));
+    }
+    catch (UnrecognizedOptionException e) {
+      Log.error(String.format("0xCD011: unrecognized option '%s'", e.getOption()));
+    }
+    catch (MissingOptionException e) {
+      Log.error(String.format("0xCD012: options [%s] is missing, but is required", Joiners.COMMA.join(e.getMissingOptions())));
+    }
+    catch (MissingArgumentException e) {
+      Log.error(String.format("0xCD013: option '%s' is missing an argument", e.getOption()));
     }
   }
 
@@ -83,7 +97,7 @@ public class CDCLI {
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
-  protected void createPlantUML() throws IOException {
+  protected String createPlantUML() throws IOException {
     final String outputPath = cmd.getOptionValue("o");
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
@@ -119,7 +133,12 @@ public class CDCLI {
       plantUMLConfig.setShowComments(true);
     }
 
-    PlantUMLUtil.printCD2PlantUMLLocally(Optional.ofNullable(ast), outputPath, plantUMLConfig);
+    if (cmd.hasOption("puml")) {
+      return PlantUMLUtil.printCD2PlantUMLModelFileLocally(Optional.ofNullable(ast), outputPath, plantUMLConfig);
+    }
+    else {
+      return PlantUMLUtil.printCD2PlantUMLLocally(Optional.ofNullable(ast), outputPath, plantUMLConfig);
+    }
   }
 
   protected boolean handleArgs(String[] args)
@@ -129,7 +148,7 @@ public class CDCLI {
     this.cmd = c.getRight();
     this.subCommand = c.getLeft();
 
-    if (cmd == null || (!cmd.hasOption("m") && cmd.getArgList().isEmpty())) {
+    if (cmd == null || cmd.hasOption("h") || (!cmd.hasOption("m") && cmd.getArgList().isEmpty())) {
       printHelp();
       return false;
     }
@@ -142,6 +161,10 @@ public class CDCLI {
       }
       if (!modelFileExists()) {
         throw new NoSuchFileException(modelFile);
+      }
+
+      if (cmd.hasOption("log")) {
+        root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
       }
       return true;
     }
@@ -160,13 +183,13 @@ public class CDCLI {
         parse();
         createSymTab(useBuiltInTypes);
         checkCocos();
-        System.out.println(SUCCESSFUL);
+        System.out.println(CHECK_SUCCESSFUL);
         break;
       }
       case PLANTUML: {
         parse();
-        createPlantUML();
-        System.out.println(SUCCESSFUL);
+        final String path = createPlantUML();
+        System.out.printf(PLANTUML_SUCCESSFUL, path);
         break;
       }
     }

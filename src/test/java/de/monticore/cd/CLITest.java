@@ -17,7 +17,6 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@Ignore
 public class CLITest extends OutTestBasis {
   @SuppressWarnings("deprecation")
   @Rule
@@ -67,5 +66,17 @@ public class CLITest extends OutTestBasis {
     CDCLI.main(new String[] { "-p", "-m", fileName, "--out", getTmpFilePath("out.svg") });
 
     assertTrue(modelFileExists(getTmpFilePath("out.svg")));
+  }
+
+  @Test
+  public void testCLIPlantUML2() throws IOException, ParseException {
+    final File file = new File(getFilePath("cd4code/parser/Complete.cd"));
+    assertTrue(file.exists());
+    final String fileName = file.toString();
+
+    // for now check for the NullPointerException
+    CDCLI.main(new String[] { "-p", "-m", fileName, "--out", getTmpFilePath("Complete.svg"), "-a" });
+
+    assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }
 }

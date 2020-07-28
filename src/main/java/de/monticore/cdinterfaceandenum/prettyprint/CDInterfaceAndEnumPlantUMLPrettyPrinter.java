@@ -40,7 +40,11 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
     printComment(node, node.getName());
 
-    println("interface " + node.getName());
+    print("interface " + node.getName());
+
+    if (node.isPresentCDExtendUsage()) {
+      node.getCDExtendUsage().accept(getRealThis());
+    }
 
     if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDMembers()) {
       println(" {");
@@ -63,10 +67,6 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
       println();
     }
 
-    if (node.isPresentCDExtendUsage()) {
-      node.getCDExtendUsage().accept(getRealThis());
-    }
-
     nameStack.pop();
   }
 
@@ -76,7 +76,11 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
     printComment(node, node.getName());
 
-    println("enum " + node.getName());
+    print("enum " + node.getName());
+
+    if (node.isPresentCDInterfaceUsage()) {
+      node.getCDInterfaceUsage().accept(getRealThis());
+    }
 
     if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
       println(" {");
@@ -112,10 +116,6 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     }
     else {
       println();
-    }
-
-    if (node.isPresentCDInterfaceUsage()) {
-      node.getCDInterfaceUsage().accept(getRealThis());
     }
 
     nameStack.pop();
