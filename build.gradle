@@ -5,6 +5,7 @@ plugins {
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
+    id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
 group = "de.monticore.lang"
@@ -177,19 +178,16 @@ compileTestJava {
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
 tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.deprecation false
+    options.warnings = false
     options.fork = true
+    options.headerOutputDirectory.convention(null)
 }
 
 tasks.withType(Test) {
     maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
-
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    options.deprecation false
-    options.warnings = false
-}
-
 
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
@@ -207,6 +205,23 @@ shadowJar { // all in one jar
     minimize()
 }
 
+testSets {
+    integrationTest {
+        dirName = 'it'
+    }
+}
+
+//check.dependsOn integrationTest
+integrationTest.mustRunAfter test
+
+/*
+integrationTest {
+    testLogging {
+        showStandardStreams = true
+    }
+    outputs.upToDateWhen { false }
+    options.useJunit()
+}*/
 
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")

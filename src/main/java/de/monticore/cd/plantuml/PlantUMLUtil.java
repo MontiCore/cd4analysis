@@ -17,15 +17,10 @@ import de.se_rwth.commons.logging.Log;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
-import net.sourceforge.plantuml.code.Transcoder;
-import net.sourceforge.plantuml.code.TranscoderUtil;
-import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,6 +32,7 @@ public class PlantUMLUtil {
   /**
    * this needs internet - it connects to the plantuml-server to render the image and downloads it
    */
+  /*
   public static void printCD2PlantUMLServer(String pathCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
       throws IOException {
 
@@ -51,7 +47,7 @@ public class PlantUMLUtil {
     try (PrintWriter out = new PrintWriter(outputPathSVG)) {
       out.println(svg);
     }
-  }
+  }*/
 
   /**
    * this needs GraphViz/JDOT installed on your PC
@@ -87,7 +83,7 @@ public class PlantUMLUtil {
     final SourceStringReader reader = new SourceStringReader(plantUMLString);
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
     // Write the first image to "os"
-    reader.generateImage(os, new FileFormatOption(FileFormat.SVG));
+    reader.outputImage(os, new FileFormatOption(FileFormat.SVG));
     os.close();
 
     // The XML is stored into svg

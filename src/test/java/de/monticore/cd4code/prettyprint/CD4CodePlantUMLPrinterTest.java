@@ -31,12 +31,4 @@ public class CD4CodePlantUMLPrinterTest extends TestBasis {
     PlantUMLUtil.printCD2PlantUMLModelFileLocally(fileName, getTmpFilePath("MyLife2.puml"), plantUMLConfig);
     assertTrue(modelFileExists(getTmpFilePath("MyLife2.puml")));
   }
-
-  @Ignore
-  @Test
-  public void testServer() throws IOException {
-    final String fileName = new File(getFilePath("cd4code/parser/MyLife2.cd")).toString();
-    PlantUMLUtil.printCD2PlantUMLServer(fileName, getTmpFilePath("MyLife2.svg"), new PlantUMLConfig());
-    assertTrue(modelFileExists(getTmpFilePath("MyLife2.svg")));
-  }
 }

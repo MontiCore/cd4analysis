@@ -6,7 +6,6 @@ package de.monticore.cd;
 
 import de.monticore.cd.cli.CDCLI;
 import org.apache.commons.cli.ParseException;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,21 +23,21 @@ public class CLITest extends OutTestBasis {
 
   @Test
   public void testCLI() throws IOException, ParseException {
-    final File file = new File(getFilePath("cd4code/parser/MyLife2.cd"));
+    final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-c", "-m", fileName });
+    CDCLI.main(new String[] { "-i", fileName, "-f" });
 
-    assertEquals("Parsing and CoCo check Successful!\r\n", getOut());
+    assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   @Test
   public void testHelp() throws IOException, ParseException {
-    final File file = new File(getFilePath("cd4code/parser/MyLife2.cd"));
+    final File file = new File(getFilePath("ccd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-c", "-m", fileName, "-h" });
+    CDCLI.main(new String[] { "-i", fileName, "-h", "-f" });
 
     assertTrue(getOut(), getOut().startsWith("usage: cd-"));
     assertTrue(getErr(), getErr().isEmpty());
@@ -46,36 +45,48 @@ public class CLITest extends OutTestBasis {
 
   @Test
   public void testCLINoBuiltInTypes() throws IOException, ParseException {
-    final File file = new File(getFilePath("cd4code/parser/MyLife2.cd"));
+    final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CDCLI.main(new String[] { "-c", "-m", fileName, "-t" });
+    CDCLI.main(new String[] { "-i", fileName, "-t", "false", "-f" });
 
-    assertEquals("Parsing and CoCo check Successful!\r\n", getOut());
+    assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertTrue(getErr(), getErr().isEmpty());
+  }
+
+  @Test
+  public void testModelPath() throws IOException, ParseException {
+    final File file = new File(getFilePath("cd/Complete.cd"));
+    assertTrue(file.exists());
+    final String fileName = file.toString();
+
+    CDCLI.main(new String[] { "-i", fileName, "-f" });
+
+    assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   @Test
   public void testCLIPlantUML() throws IOException, ParseException {
-    final File file = new File(getFilePath("cd4code/parser/MyLife2.cd"));
+    final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
 
     // for now check for the NullPointerException
-    CDCLI.main(new String[] { "-p", "-m", fileName, "--out", getTmpFilePath("out.svg") });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "--pp", getTmpFilePath("Complete.puml"), "--puml" });
 
-    assertTrue(modelFileExists(getTmpFilePath("out.svg")));
+    assertTrue(modelFileExists(getTmpFilePath("Complete.puml")));
   }
 
   @Test
   public void testCLIPlantUML2() throws IOException, ParseException {
-    final File file = new File(getFilePath("cd4code/parser/Complete.cd"));
+    final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
 
     // for now check for the NullPointerException
-    CDCLI.main(new String[] { "-p", "-m", fileName, "--out", getTmpFilePath("Complete.svg"), "-a" });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "--pp", getTmpFilePath("Complete.svg"), "--puml", "--svg", "--showAttr" });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }

@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-# (c) https://github.com/MontiCore/monticore  
 
 #
 # Copyright 2015 the original author or authors.

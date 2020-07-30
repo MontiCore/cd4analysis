@@ -77,7 +77,6 @@ public class TestCDBasisResolvingTest extends TestBasis {
     checkLogError();
   }
 
-  @Ignore
   @Test
   public void resolveField() {
     final Optional<FieldSymbol> b = globalScope.resolveField("B.a1");

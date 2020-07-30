@@ -1,20 +1,21 @@
 package de.monticore.cd.cli;
 
 import org.apache.commons.cli.*;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CDCLIOptions {
-  final Options options = new Options();
-  final Map<SubCommand, Options> subCommands = new HashMap<>();
+  final protected Options options = new Options();
+  final protected Map<SubCommand, Options> subCommands = new HashMap<>();
+  final protected DefaultParser parser = new DefaultParser();
+  protected CommandLine cmd;
+
+  public CommandLine parse(SubCommand subCommand) throws ParseException {
+    return parser.parse(subCommands.get(subCommand), cmd.getArgs());
+  }
 
   public enum SubCommand {
-    HELP,
-    CHECK,
     PLANTUML,
   }
 
@@ -30,121 +31,98 @@ public class CDCLIOptions {
     return subCommands.get(subCommand);
   }
 
-  public Pair<SubCommand, CommandLine> handleArgs(String[] args)
+  public CommandLine handleArgs(String[] args)
       throws ParseException {
-    final DefaultParser parser = new DefaultParser();
-    final CommandLine cmd = parser.parse(this.options, args, true);
-
-    if (cmd.hasOption("c")) {
-      return new ImmutablePair<>(SubCommand.CHECK, parser.parse(subCommands.get(SubCommand.CHECK), cmd.getArgs()));
-    }
-    else if (cmd.hasOption("p")) {
-      return new ImmutablePair<>(SubCommand.PLANTUML, parser.parse(subCommands.get(SubCommand.PLANTUML), cmd.getArgs()));
-    }
-
-    return new ImmutablePair<>(SubCommand.HELP, null);
+    this.cmd = parser.parse(this.options, args, true);
+    return this.cmd;
   }
 
   protected void init() {
-    final OptionGroup optionGroup = new OptionGroup();
-    optionGroup.addOption(Option
+    options.addOption(Option
         .builder("h").longOpt("help")
+        .desc("print this help")
         .build());
-    optionGroup.addOption(Option
-        .builder("c").longOpt("check")
-        .desc("check the provided cd")
+
+    options.addOption(Option
+        .builder().longOpt("log")
+        .hasArg().type(String.class)
+        .argName("logLevel")
+        .desc("activate specific loglevel, valid values are [trace, debug, info, warn, error]")
         .build());
-    optionGroup.addOption(Option
-        .builder("p").longOpt("plantUML")
-        .desc("transform provided cd to PlantUML")
+
+    options.addOption(Option
+        .builder("f").longOpt("no-fail-quick")
+        .desc("disables fail-quick; default [false] (enabled fail-quick)")
         .build());
-    options.addOptionGroup(optionGroup);
 
     initCheck();
+    initPrettyPrinter();
     initPlantUML();
   }
 
   protected void initCheck() {
-    final Options checkOptions = new Options();
-
-    checkOptions.addOption(Option
-        .builder("h").longOpt("help")
-        .build());
-
     // either have the model file provided by this option,
     // or use the first in getArgList
-    checkOptions.addOption(Option
-        .builder("m").longOpt("model")
+    options.addOption(Option
+        .builder("i").longOpt("input")
         .hasArg().type(String.class)
         .argName("fileName")
-        .desc("the model file to check")
+        .desc("the model file to process")
         .build());
 
-    checkOptions.addOption(Option
-        .builder().longOpt("log")
+    options.addOption(Option
+        .builder("p").longOpt("modelPath")
         .hasArg().type(String.class)
-        .argName("logLevel")
-        .desc("activate loglevel debug")
+        .argName("modelPath")
+        .desc("path in which additional models are searched for; default [\".\"]")
         .build());
 
-    checkOptions.addOption(Option
-        .builder("q").longOpt("no-fail-quick")
-        .desc("disables fail-quick for the coco checks; default [false]")
-        .build());
-
-    checkOptions.addOption(Option
-        .builder("t").longOpt("no-builtin-types")
+    options.addOption(Option
+        .builder("t").longOpt("use-builtin-types")
         .hasArg().type(Boolean.class)
-        .optionalArg(true)
         .argName("useBuiltinTypes")
-        .desc("don't use built-in-types; default [false]")
+        .desc("use built-in-types; default [true]")
         .build());
 
-    subCommands.put(SubCommand.CHECK, checkOptions);
+    options.addOption(Option
+        .builder("s").longOpt("symtab")
+        .hasArg().type(String.class)
+        .argName("symTabName")
+        .desc("name of the symbol table export; default [\"<INPUT>.cdsym\"]")
+        .build());
+
+    options.addOption(Option
+        .builder("r").longOpt("report")
+        .hasArg().type(String.class)
+        .argName("reportDir")
+        .desc("report directory; default [\".\"]")
+        .build());
+  }
+
+  protected void initPrettyPrinter() {
+    options.addOption(Option
+        .builder().longOpt("pp")
+        .hasArg().type(String.class)
+        .argName("prettyPrintOutput")
+        .build());
+
+    // dependend on pp
+    options.addOption(Option
+        .builder().longOpt("puml")
+        .desc("output as plantUML model")
+        .build());
   }
 
   protected void initPlantUML() {
     final Options plantUMLOptions = new Options();
 
     plantUMLOptions.addOption(Option
-        .builder("h").longOpt("help")
-        .build());
-
-    // either have the model file provided by this option,
-    // or use the first in getArgList
-    plantUMLOptions.addOption(Option
-        .builder("m").longOpt("model")
-        .hasArg().type(String.class)
-        .argName("fileName")
-        .desc("the model file to print")
+        .builder().longOpt("svg")
+        .desc("print as plantUML svg")
         .build());
 
     plantUMLOptions.addOption(Option
-        .builder().longOpt("log")
-        .hasArg().type(String.class)
-        .argName("logLevel")
-        .desc("activate loglevel debug")
-        .build());
-
-    plantUMLOptions.addOption(Option
-        .builder("q").longOpt("no-fail-quick")
-        .desc("disables fail-quick for the parser, st-creation and cocos; default [false]")
-        .build());
-
-    plantUMLOptions.addOption(Option
-        .builder("o").longOpt("out")
-        .hasArg().type(String.class)
-        .argName("outputFileName")
-        .required()
-        .build());
-
-    plantUMLOptions.addOption(Option
-        .builder().longOpt("puml")
-        .desc("output as plantUML model")
-        .build());
-
-    plantUMLOptions.addOption(Option
-        .builder("a").longOpt("showAtt")
+        .builder().longOpt("showAtt")
         .desc("show attributes; default [false]")
         .build());
     plantUMLOptions.addOption(Option
@@ -152,11 +130,11 @@ public class CDCLIOptions {
         .desc("show associations; default [false]")
         .build());
     plantUMLOptions.addOption(Option
-        .builder("r").longOpt("showRoles")
+        .builder().longOpt("showRoles")
         .desc("show roles; default [false]")
         .build());
     plantUMLOptions.addOption(Option
-        .builder("c").longOpt("showCard")
+        .builder().longOpt("showCard")
         .desc("show cardinalities; default [false]")
         .build());
     plantUMLOptions.addOption(Option
@@ -165,12 +143,14 @@ public class CDCLIOptions {
         .build());
     plantUMLOptions.addOption(Option
         .builder().longOpt("nodesep")
-        .hasArg().type(Number.class).argName("nodesep")
+        .hasArg().type(Number.class)
+        .argName("nodesep")
         .desc("set the node separator; default [-1]")
         .build());
     plantUMLOptions.addOption(Option
         .builder().longOpt("ranksep")
-        .hasArg().type(Number.class).argName("ranksep")
+        .hasArg().type(Number.class)
+        .argName("ranksep")
         .desc("set the rank separator; default [-1]")
         .build());
     plantUMLOptions.addOption(Option
@@ -178,7 +158,7 @@ public class CDCLIOptions {
         .desc("show lines only orthogonal; default [false]")
         .build());
     plantUMLOptions.addOption(Option
-        .builder("s").longOpt("shortenWords")
+        .builder().longOpt("shortenWords")
         .desc("shorten displayed words; default [false]")
         .build());
     plantUMLOptions.addOption(Option
