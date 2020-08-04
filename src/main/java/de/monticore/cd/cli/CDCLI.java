@@ -106,19 +106,19 @@ public class CDCLI {
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
 
-    if (plantUMLCmd.hasOption("a")) {
+    if (plantUMLCmd.hasOption("showAtt")) {
       plantUMLConfig.setShowAtt(true);
     }
     if (plantUMLCmd.hasOption("showAssoc")) {
       plantUMLConfig.setShowAssoc(true);
     }
-    if (plantUMLCmd.hasOption("r")) {
+    if (plantUMLCmd.hasOption("showRoles")) {
       plantUMLConfig.setShowRoles(true);
     }
-    if (plantUMLCmd.hasOption("c")) {
+    if (plantUMLCmd.hasOption("showCard")) {
       plantUMLConfig.setShowCard(true);
     }
-    if (plantUMLCmd.hasOption("m")) {
+    if (plantUMLCmd.hasOption("showModifier")) {
       plantUMLConfig.setShowModifier(true);
     }
     if (plantUMLCmd.hasOption("nodesep")) {
@@ -130,7 +130,7 @@ public class CDCLI {
     if (plantUMLCmd.hasOption("ortho")) {
       plantUMLConfig.setOrtho(true);
     }
-    if (plantUMLCmd.hasOption("s")) {
+    if (plantUMLCmd.hasOption("shortenWords")) {
       plantUMLConfig.setShortenWords(true);
     }
     if (plantUMLCmd.hasOption("showComments")) {

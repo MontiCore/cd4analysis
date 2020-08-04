@@ -154,8 +154,8 @@ Further examples can be found [here][ExampleModels].
   - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`, `short`, `byte`, `void`
   - ObjectTypes: `Character`, `Integer`, `Double`, `Float`, `Long`, `Boolean`,
     `Short`, `Byte`, `Void`, `Number`, `String`
-  - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`
-  - Special types, such as `Date` must then be provided through the imports of 
+  - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`, `Date`
+  - Special types, such as `Queue` must then be provided through the imports of 
     other artifacts.
 - The BuiltInTypes are not added automatically. They have to be added to the
   `GlobalScope`, by calling `addBuiltInTypes`. This enables more detailed

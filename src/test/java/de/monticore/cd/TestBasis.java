@@ -26,10 +26,16 @@ import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
+/**
+ * The base class for the tests, to provide common functionality
+ */
 public class TestBasis {
 
   public final static String PATH = "src/test/resources/de/monticore/";
 
+  /**
+   * have a temporary folder for the tests
+   */
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 

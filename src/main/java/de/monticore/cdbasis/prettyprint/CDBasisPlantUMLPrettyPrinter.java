@@ -45,22 +45,36 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void visit(ASTCDDefinition node) {
     printComment(node, node.getName());
-    print("@startuml");
+    println("@startuml");
+    indent();
     if (getPlantUMLConfig().getOrtho()) {
-      getPrinter().print("\nskinparam linetype ortho");
+      println("skinparam linetype ortho");
     }
     if (getPlantUMLConfig().getNodesep() != -1) {
-      getPrinter().print("\nskinparam nodesep " + getPlantUMLConfig().getNodesep());
+      println("skinparam nodesep " + getPlantUMLConfig().getNodesep());
     }
     if (getPlantUMLConfig().getRanksep() != -1) {
-      getPrinter().print("\nskinparam ranksep " + getPlantUMLConfig().getRanksep());
+      println("skinparam ranksep " + getPlantUMLConfig().getRanksep());
     }
-    println();
+
+    println("skinparam classAttributeIconSize 0");
+
+    println("skinparam legend {");
     indent();
+    println("BorderColor black");
+    println("BackGroundColor white");
+    unindent();
+    println("}");
   }
 
   @Override
   public void traverse(ASTCDDefinition node) {
+    println("legend top right");
+    indent();
+    println(node.getDefaultPackageName() + "." + node.getName() + " CD");
+    unindent();
+    println("end legend");
+
     for (ASTCDElement element : node.getCDElementsList()) {
       printComment(node);
       element.accept(getRealThis());
@@ -73,6 +87,8 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     // associations can not be printed in a package
     immediatelyPrintAssociations.set(true);
     associations.forEach(a -> a.accept(getRealThis()));
+
+    println("center footer generated with MontiCore using PlantUML");
 
     unindent();
     println("@enduml");

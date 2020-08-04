@@ -47,6 +47,7 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
         }
       });
     }
+    // FIXME SVa: method symbols can't be printed at the moment
     /*
     if (!node.getLocalMethodSymbols().isEmpty()) {
       node.getLocalMethodSymbols().forEach(s -> {
@@ -80,6 +81,7 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
         }
       });
     }
+    // FIXME SVa: method symbols can't be printed at the moment
     /*if (!node.getLocalFunctionSymbols().isEmpty()) {
       node.getLocalFunctionSymbols().forEach(s -> {
         if (symbolTablePrinterHelper.visit(s.getFullName())) {
@@ -102,6 +104,7 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
     getRealThis().traverse((de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope) node);
     getRealThis().traverse((de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope) node);
     getRealThis().traverse((de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope) node);
+    // use local method, to use a logic without separate lists for symbols
     traverse((de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope) node);
     getRealThis().traverse((de.monticore.umlstereotype._symboltable.IUMLStereotypeScope) node);
     getRealThis().traverse((de.monticore.umlmodifier._symboltable.IUMLModifierScope) node);

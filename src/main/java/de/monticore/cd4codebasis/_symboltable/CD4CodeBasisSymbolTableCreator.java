@@ -11,11 +11,10 @@ import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbolSurrogate;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -165,8 +164,10 @@ public class CD4CodeBasisSymbolTableCreator
     symbol.setIsFinal(true);
     symbol.setIsPublic(true);
 
+    // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    symbol.setType(new SymTypeOfObject(new OOTypeSymbolSurrogate(enumName)));
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.getLast());
+    symbol.setType(typeObject);
 
     // Don't store the arguments in the ST
   }

@@ -1,0 +1,65 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4analysis.parser;
+
+classdiagram FeatureModel {
+
+  public interface ASTFeatureGroup;
+
+  public interface ASTFeatureModelNode;
+
+  public class ASTFMCompilationUnit{
+    protected List<String> r__package;
+    protected List<de.monticore.types.Types.ASTImportStatement> importStatements;
+    protected de.monticore.lang.featuremodel.FeatureModel.ASTFeatureModel featureModel;
+  }
+
+  public class ASTConstraint{
+    protected de.monticore.java.JavaDSL.ASTExpression expression;
+  }
+
+  public class ASTFeatureModel{
+    protected Optional<de.monticore.common.Common.ASTStereotype> stereotype;
+    protected String name;
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeatureDef> featureDefs;
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeatureConstraint> featureConstraints;
+  }
+
+  public class ASTFeatureConstraint{
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTConstraint> constraints;
+  }
+
+  public class ASTFeatureDef{
+    protected Optional<de.monticore.common.Common.ASTStereotype> stereotype;
+    protected String name;
+    protected Optional<de.monticore.lang.featuremodel.FeatureModel.ASTFeatureGroup> featureGroup;
+    protected boolean root;
+  }
+
+  public class ASTCompositeFeature implements de.monticore.lang.featuremodel.FeatureModel.ASTFeatureGroup{
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeature> features;
+  }
+
+  public class ASTXorFeature implements de.monticore.lang.featuremodel.FeatureModel.ASTFeatureGroup{
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeature> features;
+  }
+
+  public class ASTOrFeature implements de.monticore.lang.featuremodel.FeatureModel.ASTFeatureGroup{
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeature> features;
+  }
+
+  public class ASTCardinalizedFeature implements de.monticore.lang.featuremodel.FeatureModel.ASTFeatureGroup{
+    protected de.monticore.common.Common.ASTCardinality cardinality;
+    protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeature> features;
+  }
+
+  public class ASTFeature{
+    protected String name;
+    protected boolean optional;
+  }
+
+  enum FeatureModelLiterals{
+    QUESTION;
+  }
+
+}

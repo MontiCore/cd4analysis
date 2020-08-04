@@ -49,6 +49,7 @@ public class CDAssociationSymbolTableCreator
       addToScopeAndLinkWithNode(symbol, node);
     }
 
+    // create the SymAssociation connected to the CDAssociationSymbol
     SymAssociationBuilder symAssociation = create_SymAssociation(symbol);
     initialize_SymAssociation(symAssociation, node);
     symbolTableHelper.addToHandledAssociations(symAssociation.build());

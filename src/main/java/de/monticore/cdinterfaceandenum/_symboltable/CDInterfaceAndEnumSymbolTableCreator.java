@@ -9,9 +9,10 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.types.check.SymTypeOfObject;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -115,12 +116,14 @@ public class CDInterfaceAndEnumSymbolTableCreator
     super.initialize_CDEnumConstant(symbol, ast);
     symbol.setIsStatic(true);
     symbol.setIsReadOnly(true);
-    symbol.setIsStatic(true);
+    symbol.setIsFinal(true);
     symbol.setIsPublic(true);
 
-    symbol.setType(SymTypeExpressionFactory.createTypeObject(
-        symbolTableHelper.getCurrentCDTypeOnStack(),
-        scopeStack.peekLast()
-    ));
+    // create a SymType for the enum, because the type of the enum constant is the enum itself
+    final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.getLast());
+    symbol.setType(typeObject);
+
+    // Don't store the arguments in the ST
   }
 }

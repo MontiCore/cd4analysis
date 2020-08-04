@@ -154,6 +154,7 @@ public class CDSymbolTableHelper {
 
   /**
    * copy from {@link de.monticore.symboltable.IArtifactScope#calculateQualifiedNames(String, String, List)}
+   * to use, when needed
    */
   public Set<String> calculateQualifiedNames(String name, String packageName) {
     final Set<String> potentialSymbolNames = new LinkedHashSet<>();

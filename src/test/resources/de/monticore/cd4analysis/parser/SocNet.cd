@@ -1,0 +1,93 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4analysis.parser;
+
+import java.util.Formatter;
+
+classdiagram SocNet {
+
+  // elements can have modifier such as abstract, public, ...
+  abstract class Profile {
+    // attribute can be of any available type
+    Formatter t;
+    String profileName;
+    derived int numOfPosts;
+    derived int friends;
+  }
+
+  class Person extends Profile {
+    Date lastVisit;
+    String firstName;
+    String secondName;
+    Date dateOfBirth;
+    int zip;
+    String city;
+    String country;
+  }
+
+  class Group extends Profile {
+    boolean isOpen;
+    Date created;
+    String purpose;
+    derived int members;
+  }
+
+  class Relationship {
+    boolean isPending;
+    Date requested;
+    Date accepted;
+    // short version of composition from Relationship to RelationType
+    -> RelationType [1];
+  }
+
+  enum RelationType {
+    FRIEND,
+    FAMILY,
+    FOLLOWER,
+    COLLEAGUE,
+    OTHER;
+  }
+
+  // packages can separate the types in multiple groups
+  package post {
+    interface Post;
+
+    class InstantMessage implements Post {
+      Date timestamp;
+      String content;
+    }
+
+    class PhotoMessage extends InstantMessage;
+
+    class Photo {
+      double height;
+      double width;
+    }
+
+    class Tag {
+      boolean confirmed;
+    }
+  }
+
+  association member [*] Person <-> Group [*];
+
+  association [1] Person (organizer) <-> (organized) [profileName] Group [*];
+
+  association invited [*] Relationship <-> Profile [1];
+
+  association initiated [*] Relationship <-> Profile [1];
+
+  association received [*] Profile <-> Post [*] {ordered};
+
+  // class Post can be also referenced with its package name
+  association sent [1] Profile <-> post.Post [*] {ordered};
+
+  association [*] InstantMessage <-> (replyTo) InstantMessage [1];
+
+  association [*] Photo (picture) <-> PhotoMessage;
+
+  association [1] Person (tagged) <-> Tag [*];
+
+  association [*] Tag <-> Photo [1];
+
+}
