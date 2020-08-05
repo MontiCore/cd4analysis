@@ -30,6 +30,11 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
     this.symbolTableHelper = symbolTableHelper;
+    this.modelLoader.get().symbolTableCreator.setSymbolTableHelper(symbolTableHelper);
+  }
+
+  public CDSymbolTableHelper getSymbolTableHelper() {
+    return symbolTableHelper;
   }
 
   public Set<String> calculateModelNamesSimple(String qName) {

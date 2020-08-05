@@ -5,7 +5,6 @@
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCreator;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreator;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCreator;
@@ -19,7 +18,7 @@ public class CD4CodeSymbolTableCreatorDelegator
     super(globalScope);
     setRealThis(this);
 
-    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code()));
+    setSymbolTableHelper(((CD4CodeGlobalScope) globalScope).getSymbolTableHelper());
   }
 
   public CDSymbolTableHelper getSymbolTableHelper() {

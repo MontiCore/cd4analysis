@@ -7,6 +7,7 @@ package de.monticore.cd4analysis.prettyprint;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
 
 import java.io.IOException;

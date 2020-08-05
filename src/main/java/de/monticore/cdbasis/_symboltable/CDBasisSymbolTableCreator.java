@@ -7,8 +7,8 @@ package de.monticore.cdbasis._symboltable;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
@@ -21,17 +21,16 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   public CDBasisSymbolTableCreator(ICDBasisScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
   public CDBasisSymbolTableCreator(Deque<? extends ICDBasisScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
     init();
   }
 
   protected void init() {
+    setRealThis(this);
     symbolTableHelper = new CDSymbolTableHelper();
   }
 
@@ -70,11 +69,6 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     super.visit(node);
     assert scopeStack.peekLast() != null;
     scopeStack.peekLast().setName(node.getMCQualifiedName().getQName());
-  }
-
-  @Override
-  public void endVisit(ASTCDPackage node) {
-    super.endVisit(node);
   }
 
   @Override

@@ -32,7 +32,7 @@ public class CDClassExtendsNotCyclic implements CDBasisASTCDClassCoCo {
       final OOTypeSymbol nextSymbol = typesToVisit.pop();
       if (visitedTypes.contains(nextSymbol.getName())) {
         Log.error(String.format(
-            "0xCDC07: The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", CDMill.cDTypeKindPrinter().print(nextSymbol),
+            "0xCDC07: The %s %s introduces an inheritance cycle. Inheritance must not be cyclic.", CDMill.cDTypeKindPrinter().print(nextSymbol),
             nextSymbol.getName()));
         return;
       }

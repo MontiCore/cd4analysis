@@ -7,6 +7,7 @@ package de.monticore.cd4code._symboltable;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScopeBuilder;
+import de.monticore.cd4code.CD4CodeMill;
 
 public class CD4CodeGlobalScopeBuilder extends CD4CodeGlobalScopeBuilderTOP {
   protected boolean addBuiltInTypes;
@@ -15,7 +16,7 @@ public class CD4CodeGlobalScopeBuilder extends CD4CodeGlobalScopeBuilderTOP {
   public CD4CodeGlobalScopeBuilder() {
     addBuiltInTypes = false;
     modelFileExtension = CD4AnalysisGlobalScope.EXTENSION;
-    symbolTableHelper = new CDSymbolTableHelper();
+    symbolTableHelper = new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code());
   }
 
   public CD4CodeGlobalScopeBuilder addBuiltInTypes(boolean add) {

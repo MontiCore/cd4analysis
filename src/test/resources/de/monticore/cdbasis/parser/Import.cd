@@ -2,7 +2,7 @@
 
 package de.monticore.cdbasis.parser;
 
-import de.monticore.cdbasis.Simple;
+import de.monticore.cdbasis.parser.Simple;
 
 classdiagram Import {
 

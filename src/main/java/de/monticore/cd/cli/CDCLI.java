@@ -186,7 +186,7 @@ public class CDCLI {
     boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
     String modelPath = cmd.getOptionValue("p", ".");
     createSymTab(useBuiltInTypes, new ModelPath(Paths.get(modelPath)));
-    //checkCocos();
+    checkCocos();
     System.out.println(CHECK_SUCCESSFUL);
 
     if (cmd.hasOption("pp")) { // pretty print
