@@ -54,6 +54,3 @@ deploy:
     - build
   script:
     - "./gradlew publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
-  artifacts:
-    paths:
-      - "target/libs/*-cli.jar"
