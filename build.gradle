@@ -63,7 +63,6 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
-    testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
     testImplementation "de.monticore:monticore-runtime:$mc_version"
 }
 
@@ -197,6 +196,12 @@ task javadocJar(type: Jar) {
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
+// build test sources jar in addition
+task testSourcesJar(type: Jar) {
+    from sourceSets.test.output + sourceSets.test.allSource
+    archiveClassifier = "testSources"
+}
+
 shadowJar { // all in one jar
     manifest {
         attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
@@ -244,6 +249,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact testSourcesJar
         }
     }
     repositories.maven {
