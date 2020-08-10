@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
   protected Map<Integer, SymAssociation> symAssociations;
+  public static String FURTHER_OBJECTS_MAP = "furtherObjects";
 
   public CD4AnalysisScopeDeSer() {
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
@@ -120,7 +121,14 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   @Override
   protected void deserializeAdditionalArtifactScopeAttributes(CD4AnalysisArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAdditionalArtifactScopeAttributes(scope, scopeJson);
-    CDAssociationScopeDeSer.deserializeSymAssociations(symAssociations, scopeJson);
+    deserializeFurtherObjects(symAssociations, scopeJson);
+  }
+
+  public static void deserializeFurtherObjects(Map<Integer, SymAssociation> symAssociations, JsonObject scopeJson) {
+    if (scopeJson.hasObjectMember(FURTHER_OBJECTS_MAP)) {
+      final JsonObject objectJson = scopeJson.getObjectMember(FURTHER_OBJECTS_MAP);
+      objectJson.getMembers().entrySet().forEach(m -> CDAssociationScopeDeSer.deserializeSymAssociations(symAssociations, m));
+    }
   }
 
   @Override

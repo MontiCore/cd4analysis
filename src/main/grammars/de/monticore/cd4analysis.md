@@ -5,14 +5,16 @@
 # Class Diagrams (also: UML/P CD)
 
 We provide two versions of UML class diagrams:
-- [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data structures
-  with classes, attributes, associations, enumerations.
-- [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods and constructors.
+- [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data
+  structures with classes, attributes, associations, enumerations.
+- [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods
+  and constructors.
 
 These are composed of several component grammars for parts of the CDs:
-- [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It contains the root compilation unit,
-  classes, and attributes.
-- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and enums.
+- [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It
+  contains the root compilation unit, classes, and attributes.
+- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and
+  enums.
 - [**CDAssociation**][CDAssocGrammar] defines associations and roles.
 - [**CD4CodeBasis**][CD4CBasisGrammar] defines methods and parameters.
 
@@ -54,10 +56,11 @@ The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
 - Available types are basic types (from Java), imported types (like `Date`),
   and predefined forms of generic types (like `List`).
 - Associations and compositions are defined between two classes,
-  can have a name, a navigation information (e.g. `<->`), role names on both sides,
-  multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
+  can have a name, a navigation information (e.g. `<->`), role names on both
+  sides, multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
   (like `{ordered}`).
-- Both, association and compositions can be qualified, for example by `[String]`.
+- Both, association and compositions can be qualified, for example by `[String]`
+  .
 
 Further examples can be found [here][ExampleModels].
 
@@ -94,43 +97,45 @@ Further examples can be found [here][ExampleModels].
   [`CDRoleSymbol`][CDRoleSymbol].
 
 ## Symbol kinds used by the CD4A language (importable or subclassed):
-- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] 
-  as the basis for the definition of its type-defining symbols.
+- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] as the basis
+  for the definition of its type-defining symbols.
   - `OOTypeSymbol`s are used for all type-defining Symbols. These are 
     sub-nonterminals of `CDType`, namely `CDClass`, `CDInterface`, and `CDEnum`.
   - `FieldSymbol`s are used for `CDAttribute`, `CDEnumConstant`, and
-    `CDRole`, additionally grammar `CD4Code` uses `FieldSymbol`
+    `CDRole`, additionally, grammar `CD4Code` uses `FieldSymbol`
     for`CDParameter`
   - `MethodSymbol`s are not used in CD4A, because it doesn't include methods.
-     But the are defined in CD4Code: `CDMethodSignature`
+     But they are defined in CD4Code: `CDMethodSignature`
 - All these symbols are not used directly, but extended in symbol-subclasses,
-  which also means that symbol-import only works for symbol kinds 
-  introduced below.   
+  which also means that symbol-import only works for symbol kinds introduced
+  below.   
 
 
-## Symbol kinds defined the CD4A language (exported):
+## Symbol kinds defined by the CD4A language (exported):
 
-- CD4A defines three kinds of symbols: `CDTypeSymbol`, `CDAssociationSymbol`, and
-  `CDRoleSymbol`
-- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s
-  and have no additional functionality or attributes
+- CD4A defines three kinds of symbols: `CDTypeSymbol`, `CDAssociationSymbol`,
+  and `CDRoleSymbol`
+- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s and have
+  no additional functionality or attributes
 
 ### `CDTypeSymbol`
 
 - `CDTypeSymbol` exactly reflects the symbols that are provided by
-  `OOType` and does not need additional attributes. 
+  `OOSymbols` and does not need additional attributes. 
 
 ### Attributes 
 - are stored as `FieldSymbol`s. 
 
 ### `CDAssociationSymbol`
 
-- `CDAssociationSymbol` reflects the externally accessible part of an association.
-- An association may introduce several symbols, namely the association symbol itself
-  and up to two role symbols (`CDRoleSymbol`). Furthermore, the association symbol 
-  may be missing, but role symbols can be given.
+- `CDAssociationSymbol` reflects the externally accessible part of an 
+  association.
+- An association may introduce several symbols, namely the association symbol
+  itself and up to two role symbols (`CDRoleSymbol`). Furthermore, the
+  association symbol may be missing if the association has no name, but role
+  symbols can be given.
 - Class `SymAssociation` stores the information about an association:
-``` 
+```java
   public class SymAssociation {
     protected Optional<CDAssociationSymbol> association;
     protected CDRoleSymbol left, right;
@@ -140,20 +145,20 @@ Further examples can be found [here][ExampleModels].
 
 ### `CDRoleSymbol`
 
-- `CDRoleSymbol` is defined in an association and connected with the class
-  it belongs to. In the concrete model, roles can be omitted, but are then
+- `CDRoleSymbol` is defined in an association and connected with the class it 
+  belongs to. In the concrete model, roles can be omitted, but are then
   calculated by suitable defaults.
-- `CDRoleSymbol` is subclass of `FiledSymbol` with following additional attributes
+- `CDRoleSymbol` is a subclass of `FieldSymbol` with the following additional
+  attributes
 ```
-    symbolrule CDRole =
-      isDefinitiveNavigable: boolean
-      cardinality: Optional<ASTCDCardinality>
-      attributeQualifier: Optional<FieldSymbol>
-      typeQualifier: Optional<SymTypeExpression>
-      association: SymAssociation
-      isOrdered: boolean
-
-```   
+  symbolrule CDRole =
+    isDefinitiveNavigable: boolean
+    cardinality: Optional<ASTCDCardinality>
+    attributeQualifier: Optional<FieldSymbol>
+    typeQualifier: Optional<SymTypeExpression>
+    association: SymAssociation
+    isOrdered: boolean
+```
 - `attributeQualifier` is defined exactly, if a qualifier is given using 
     an attribute of the opposite class (i.e. the opposite class knows
     its qualifier, like in a public phone book)
@@ -162,10 +167,12 @@ Further examples can be found [here][ExampleModels].
 
 
 ## Symbols imported by CD4A models:
-- currently CD4A imports only class, interface and enum 
-  symbols from other class diagrams.
-- Extensions to include e.g. implemented Java-classes are planned.
-- Other kinds and forms of symbols need to be mapped to CD-like symbols to be usable. 
+- currently CD4A imports only class, interface and enum symbols from other class
+  diagrams.
+- Extensions to include e.g. implemented Java-classes or other type-definining
+  languages are planned.
+- Other kinds and forms of symbols need to be mapped to CD-like symbols to be
+  usable. 
 
 
 ## Symbols exported by CD4A models:
@@ -185,88 +192,90 @@ Further examples can be found [here][ExampleModels].
 ### `CDTypeSymbol`
 
 - An example for a stored `CDTypeSymbol` (json format):
-```
-        {
-            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-            "name": "de.monticore.life.Person",
-            "isClass": true,
-            "isInterface": false,
-            "isEnum": false,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "symbols": [ 
-               // contained attributes and roles 
-            ]
-        }
+```json
+  {
+    "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+    "name": "de.monticore.life.Person",
+    "isClass": true,
+    "isInterface": false,
+    "isEnum": false,
+    "isAbstract": false,
+    "isPrivate": false,
+    "isProtected": false,
+    "isPublic": false,
+    "isStatic": false,
+    "symbols": [ 
+       // ... contained attributes and roles 
+    ]
+  }
 ```
 
 ### Attributes 
 - are stored as `FieldSymbol`s. An example:
-```
-TODO:   use a field from the above example
-              {
-                    "kind": "de.monticore.types.typesymbols._symboltable.FieldSymbol",
-                    "name": "de.monticore.cd4analysis.parser.A.name",
-                    "isPrivate": false,
-                    "isProtected": false,
-                    "isPublic": false,
-                    "isStatic": false,
-                    "isFinal": false,
-                    "type": {
-                        "kind": "de.monticore.types.check.SymTypeOfObject",
-                        "objName": "B"
-                    },
-                    "isReadOnly": false
-                }
+```json
+  {
+    "kind": "de.monticore.types.typesymbols._symboltable.FieldSymbol",
+    "name": "de.monticore.life.Person.name",
+    "isPrivate": false,
+    "isProtected": false,
+    "isPublic": false,
+    "isStatic": false,
+    "isFinal": false,
+    "type": {
+        "kind": "de.monticore.types.check.SymTypeOfObject",
+        "objName": "String"
+    },
+    "isReadOnly": false
+  }
 ```
 
 ### `CDAssociationSymbol`
 
 - Additional class `SymAssociation` stores the information about an association.
-  It is stored as follows, with a name ID that allows to be refered to by 
+  It is stored as follows, with a name ID that allows to be referred to by 
   the associated symbols (json format):
-```
-        {
-            "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-            "name": 1438937863,
-            "isAssociation": true,
-            "isComposition": false
-        }
+```json
+  {
+    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+    "name": 556488341,
+    "isAssociation": true,
+    "isComposition": false
+  }
 ```
 
 - An example for a stored `CDAssociationSymbol` (json format):
-```
-TODO: Show an Assoc symbol here 
+```json
+{
+  "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+  "name": "uni.phonebook",
+  "association": 1237825806
+} 
 ```
 
 ### `CDRoleSymbol`
 
 - An example for a stored `CDRoleSymbol` (json format):
+```json
+  {
+    "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+    "name": "de.monticore.life.Person.child",
+    "isDefinitiveNavigable": true,
+    "cardinality": "[*]",
+    "association": 556488341,
+    "isOrdered": false,
+    "type": {
+      "kind": "de.monticore.types.check.SymTypeOfObject",
+      "objName": "de.monticore.life.Person"
+    },
+    "isReadOnly": false,
+    "isPrivate": false,
+    "isProtected": false,
+    "isPublic": false,
+    "isStatic": false,
+    "isFinal": false,
+    "isLeft": false
+  }
 ```
-TODO: Show a Role symbol here from the example above
-                {
-                    "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-                    "name": "de.monticore.cd4analysis.parser.B.a",
-                    "isDefinitiveNavigable": false,
-                    "association": 737094241,
-                    "isOrdered": false,
-                    "type": {
-                        "kind": "de.monticore.types.check.SymTypeOfObject",
-                        "objName": "A"
-                    },
-                    "isReadOnly": false,
-                    "isPrivate": false,
-                    "isProtected": false,
-                    "isPublic": false,
-                    "isStatic": false,
-                    "isFinal": false,
-                    "isLeft": true
-                }
-```
-
 
 
 ## Functionality: CoCos
@@ -292,7 +301,8 @@ TODO: Show a Role symbol here from the example above
   provided symbol tables.
 - CD4A provides a set of predefined types to be given 
   through grammar inclusion of [`MCCollectionTypes`][MCCollectionTypes]:
-  - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`, `short`, `byte`, `void`
+  - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`, `short`, 
+    `byte`, `void`
   - ObjectTypes: `Character`, `Integer`, `Double`, `Float`, `Long`, `Boolean`,
     `Short`, `Byte`, `Void`, `Number`, `String`
   - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`, `Date`
@@ -354,7 +364,8 @@ classdiagram MyLife2 {
 }
 ```
 
-The example shows a section of the [CD4CodeLanguageTeaser.cd][CD4CLanguageTeaser]:
+The example shows a section of the 
+  [CD4CodeLanguageTeaser.cd][CD4CLanguageTeaser]:
 - the basic structure is the same as `CD4Analysis`
 - class `Person` also contains methods and a constructor 
 - methods and constructor can contain any number of arguments, separated by

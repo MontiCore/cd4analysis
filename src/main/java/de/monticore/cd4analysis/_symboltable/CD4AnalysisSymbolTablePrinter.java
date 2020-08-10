@@ -30,8 +30,10 @@ public class CD4AnalysisSymbolTablePrinter
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
   }
 
-  public void serializeSymAssociations() {
+  public void serializeFurtherObjects() {
+    printer.beginObject("furtherObjects");
     CDAssociationSymbolTablePrinter.serializeSymAssociations(printer, symbolTablePrinterHelper);
+    printer.endObject();
   }
 
   @Override
@@ -51,7 +53,7 @@ public class CD4AnalysisSymbolTablePrinter
 
   @Override
   public void endVisit(CD4AnalysisArtifactScope node) {
-    serializeSymAssociations();
+    serializeFurtherObjects();
     super.endVisit(node);
   }
 

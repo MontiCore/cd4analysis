@@ -9,6 +9,8 @@ import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 
+import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.FURTHER_OBJECTS_MAP;
+
 public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
 
@@ -29,8 +31,10 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
     this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
   }
 
-  public void serializeSymAssociations() {
+  public void serializeFurtherObjects() {
+    printer.beginObject(FURTHER_OBJECTS_MAP);
     CDAssociationSymbolTablePrinter.serializeSymAssociations(printer, symbolTablePrinterHelper);
+    printer.endObject();
   }
 
   @Override
@@ -50,7 +54,7 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
 
   @Override
   public void endVisit(CD4CodeArtifactScope node) {
-    serializeSymAssociations();
+    serializeFurtherObjects();
     super.endVisit(node);
   }
 

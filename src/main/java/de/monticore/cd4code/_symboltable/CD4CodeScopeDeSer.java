@@ -27,6 +27,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.FURTHER_OBJECTS_MAP;
+import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.deserializeFurtherObjects;
+
 public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
   protected Map<Integer, SymAssociation> symAssociations;
@@ -121,7 +124,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   @Override
   protected void deserializeAdditionalArtifactScopeAttributes(CD4CodeArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAdditionalArtifactScopeAttributes(scope, scopeJson);
-    CDAssociationScopeDeSer.deserializeSymAssociations(symAssociations, scopeJson);
+    deserializeFurtherObjects(symAssociations, scopeJson);
   }
 
   @Override
