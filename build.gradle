@@ -21,6 +21,7 @@ ext {
     testGrammarDir = "src/test/grammars"
     testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
 
+    findbugs_version = '3.0.2'
     mc_version = "6.2.0"
     commons_version = "1.7.9"
     guava_version = "25.1-jre"
@@ -35,10 +36,10 @@ ext {
 // configure non-standard source sets
 sourceSets {
     main {
-        java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
+        java.srcDirs += ["$buildDir/generated-sources/monticore/sourcecode"]
     }
     test {
-        java.srcDirs += ["$projectDir/target/generated-test-sources/monticore/sourcecode"]
+        java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
     }
     grammars {
         resources {
@@ -48,12 +49,16 @@ sourceSets {
     }
 }
 
-configurations { grammar }
+configurations {
+    grammar
+}
 
 dependencies {
-    implementation "de.monticore:monticore-grammar:$mc_version"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
     grammar "de.monticore:monticore-grammar:$mc_version"
     grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
+    implementation "de.monticore:monticore-grammar:$mc_version"
+    implementation "de.monticore:monticore-generator:$mc_version"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation "com.google.guava:guava:$guava_version"
@@ -73,6 +78,7 @@ repositories {
         credentials.password mavenPassword
         url repo
     }
+    mavenCentral()
 }
 
 // list of all grammars, needed to have a fix order
