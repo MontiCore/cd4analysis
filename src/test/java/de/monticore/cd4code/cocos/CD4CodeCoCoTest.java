@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CD4CodeCoCoTest extends CD4CodeTestBasis {
@@ -28,7 +29,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final CD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
     checkLogError();
 
-    scope.resolveCDType("C");
+    assertNotNull(scope.resolveCDType("C"));
 
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);
   }
@@ -38,7 +39,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File file = new File(getFilePath("cdbasis/parser/Import.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-i", fileName, "-f", "--modelPath", "src/test/resources" });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "false", "-p", "src/test/resources" });
     checkLogError();
   }
 

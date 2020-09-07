@@ -106,20 +106,20 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public ASTCDPackage getOrCreatePackage(String packageName) {
-    final Optional<ASTCDPackage> defaultPackage = getPackageWithName(getDefaultPackageName());
-    if (defaultPackage.isPresent()) {
-      return defaultPackage.get();
+    final Optional<ASTCDPackage> pkg = getPackageWithName(packageName);
+    if (pkg.isPresent()) {
+      return pkg.get();
     }
-    final ASTCDPackage createdDefaultPackage = CDBasisMill
+    final ASTCDPackage createdPkg = CDBasisMill
         .cDPackageBuilder()
         .setMCQualifiedName(MCBasicTypesMill
             .mCQualifiedNameBuilder()
             .setPartsList(MCQualifiedNameFacade.createPartList(packageName))
             .build())
         .build();
-    super.addCDElements(createdDefaultPackage);
-    createdDefaultPackage.setEnclosingScope(this.getEnclosingScope());
-    return createdDefaultPackage;
+    super.addCDElements(createdPkg);
+    createdPkg.setEnclosingScope(this.getEnclosingScope());
+    return createdPkg;
   }
 
   public boolean addCDElementToPackageWithName(ASTCDElement element) {

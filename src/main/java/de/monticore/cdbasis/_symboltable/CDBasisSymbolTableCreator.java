@@ -6,12 +6,15 @@ package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,9 +43,14 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   @Override
   public CDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
-    final CDBasisArtifactScope artifactScope = super.createFromAST(rootNode);
-    artifactScope.setPackageName(Names.getQualifiedName(rootNode.getCDPackageStatement().getPackageList()));
-
+    CDBasisArtifactScope artifactScope = CDBasisMill
+        .cDBasisArtifactScopeBuilder()
+        .setPackageName(
+            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
+        .setImportsList(rootNode.getMCImportStatementsList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
+        .build();
+    putOnStack(artifactScope);
+    rootNode.accept(getRealThis());
     return artifactScope;
   }
 
@@ -151,11 +159,13 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   @Override
   public void endVisit(ASTCDCompilationUnit node) {
+    final ICDBasisScope artifactScope = scopeStack.peekLast();
+
     symbolTableHelper.getHandledAssociations().forEach(a -> {
       // the symbol is a field of the type of the other side
       // as there are handled associations, we at least have a CDAssociationScope
-      ((ICDAssociationScope)a.getLeft().getType().getTypeInfo().getSpannedScope()).add(a.getRight());
-      ((ICDAssociationScope)a.getRight().getType().getTypeInfo().getSpannedScope()).add(a.getLeft());
+      ((ICDAssociationScope) a.getLeft().getType().getTypeInfo().getSpannedScope()).add(a.getRight());
+      ((ICDAssociationScope) a.getRight().getType().getTypeInfo().getSpannedScope()).add(a.getLeft());
     });
   }
 }

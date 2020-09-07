@@ -48,7 +48,7 @@ component grammar CDBasis extends
 
   /** The class diagram: defines a set of elements
   */
-  CDDefinition =
+  CDDefinition = // TODO extends Diagram, when Diagram has no scope
     Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */

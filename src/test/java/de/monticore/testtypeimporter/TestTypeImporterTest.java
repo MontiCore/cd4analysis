@@ -40,13 +40,13 @@ public class TestTypeImporterTest extends TestBasis {
         .addBuiltInTypes()
         .build();
 
-    final CD4CodeResolvingDelegate cd4CodeResolvingDelegate = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
-    globalScope.addAdaptedOOTypeSymbolResolvingDelegate(cd4CodeResolvingDelegate);
-    globalScope.addAdaptedTypeSymbolResolvingDelegate(cd4CodeResolvingDelegate);
-    globalScope.addAdaptedFieldSymbolResolvingDelegate(cd4CodeResolvingDelegate);
-    globalScope.addAdaptedVariableSymbolResolvingDelegate(cd4CodeResolvingDelegate);
-    globalScope.addAdaptedMethodSymbolResolvingDelegate(cd4CodeResolvingDelegate);
-    globalScope.addAdaptedFunctionSymbolResolvingDelegate(cd4CodeResolvingDelegate);
+    final CD4CodeResolvingDelegate c = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
+    globalScope.addAdaptedOOTypeSymbolResolvingDelegate(c);
+    globalScope.addAdaptedTypeSymbolResolvingDelegate(c);
+    globalScope.addAdaptedFieldSymbolResolvingDelegate(c);
+    globalScope.addAdaptedVariableSymbolResolvingDelegate(c);
+    globalScope.addAdaptedMethodSymbolResolvingDelegate(c);
+    globalScope.addAdaptedFunctionSymbolResolvingDelegate(c);
 
     final TestTypeImporterSymbolTableCreatorDelegator symbolTableCreator = TestTypeImporterMill
         .testTypeImporterSymbolTableCreatorDelegatorBuilder()

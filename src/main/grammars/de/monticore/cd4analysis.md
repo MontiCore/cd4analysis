@@ -334,6 +334,7 @@ used functionality, e.g.:
   1. Parses the given model
   2. Creates a symbol table
   3. Checks the CoCos
+- the cli is designed with [`the best practices`][CLIBestPractices] in mind 
 
 # CD4Code
 CD4Code is a conservative extension of CD4Analysis and adds methods,
@@ -433,6 +434,8 @@ Further examples can be found [here][CD4CExampleModels].
 
 [OOSymbols]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
 [MCCollectionTypes]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4
+
+[CLIBestPractices]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/docs/BestPractices-CLI.md
 
 ## Further Information
 

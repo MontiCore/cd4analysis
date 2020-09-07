@@ -12,36 +12,50 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CDCLI {
 
   static final Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
   protected static final String JAR_NAME = "cd-<Version>-cli.jar";
   protected static final String CHECK_SUCCESSFUL = "Parsing and CoCo check successful!";
+  protected static final String CHECK_ERROR = "Error in Parsing or CoCo check.";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful!\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful!\n";
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol table %s successful!\n";
-  protected static final Level DEFAULT_LOG_LEVEL = Level.WARN;
+  protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written!\n";
+  protected static final Level DEFAULT_LOG_LEVEL = Level.WARN; // names of the reports:
 
+  public static final String REPORT_ALL_ELEMENTS = "allElements.txt";
+
+  protected String modelName;
   protected String modelFile;
+  protected Reader modelReader;
   protected boolean failQuick;
+  protected String outputPath;
   protected ASTCDCompilationUnit ast;
   protected CD4CodeArtifactScope artifactScope;
   protected final CDCLIOptions cdcliOptions = new CDCLIOptions();
@@ -75,12 +89,116 @@ public class CDCLI {
     }
   }
 
+  protected boolean handleArgs(String[] args)
+      throws IOException, ParseException {
+    cmd = cdcliOptions.handleArgs(args);
+
+    if (cmd.hasOption("log")) {
+      root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
+    }
+
+    failQuick = Boolean.parseBoolean(cmd.getOptionValue("f", "true"));
+
+    outputPath = cmd.getOptionValue("o", ".");
+
+    if (cmd.hasOption("h")) {
+      if (cmd.hasOption("pp")) {
+        printHelp(CDCLIOptions.SubCommand.PLANTUML);
+      }
+      else {
+        printHelp(null);
+      }
+      return false;
+    }
+    else {
+      if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
+        Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
+        printHelp(null);
+        return false;
+      }
+
+      if (cmd.hasOption("i")) {
+        modelFile = cmd.getOptionValue("i");
+
+        if (!modelFileExists()) {
+          throw new NoSuchFileException(modelFile);
+        }
+      }
+      else {
+        modelReader = new BufferedReader(new InputStreamReader(System.in));
+      }
+
+      return true;
+    }
+  }
+
+  protected void run() throws IOException, ParseException {
+    parse();
+
+    System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
+
+    boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
+
+    // create a symbol table with provided model paths
+    String[] modelPath = cmd.getOptionValue("p", ".").split(":");
+    createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
+
+    // check all the cocos
+    checkCocos();
+    if (Log.getErrorCount() == 0) {
+      System.out.println(CHECK_SUCCESSFUL);
+    }
+    else {
+      System.out.println(CHECK_ERROR);
+      return;
+    }
+
+    if (cmd.hasOption("pp")) { // pretty print
+      final File file = Paths.get(outputPath,
+          cmd.getOptionValue("pp", ast.getCDDefinition().getName() + "." + CD4CodeGlobalScope.EXTENSION)
+      ).toFile();
+
+      // print model
+      final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
+      ast.accept(cd4CodePrettyPrinter);
+      try (PrintWriter out = new PrintWriter(file)) {
+        out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+        System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+      }
+
+      // if option puml is given, then enable the plantuml options
+      if (cmd.hasOption("puml")) { // plantUML
+        final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
+        final String path = createPlantUML(plantUMLCmd, outputPath);
+        System.out.printf(PLANTUML_SUCCESSFUL, path);
+      }
+    }
+
+    if (cmd.hasOption("s")) { // symbol table export
+      final Path symbolPath = Paths.get(outputPath, cmd.getOptionValue("s", ""));
+      final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSerBuilder().build();
+      deser.store(artifactScope, symbolPath);
+      System.out.printf(STEXPORT_SUCCESSFUL, deser.getPath(artifactScope, symbolPath));
+    }
+
+    // report
+    if (cmd.hasOption("r")) {
+      report(ast, cmd.getOptionValue("r", outputPath));
+    }
+  }
+
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   protected void parse() throws IOException {
-    CD4CodeParser parser = new CD4CodeParser();
-    Optional<ASTCDCompilationUnit> cu = parser
-        .parse(modelFile);
+    final CD4CodeParser parser = new CD4CodeParser();
+    final Optional<ASTCDCompilationUnit> cu;
+    if (modelFile != null) {
+      cu = parser.parse(modelFile);
+    }
+    else {
+      cu = parser.parse(modelReader);
+    }
     ast = cu.get();
+    modelName = ast.getCDDefinition().getName();
   }
 
   protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
@@ -101,11 +219,13 @@ public class CDCLI {
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
-  protected String createPlantUML(CommandLine plantUMLCmd) throws IOException {
-    final String outputPath = cmd.getOptionValue("pp");
+  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath)
+      throws IOException {
+    final String output = Paths.get(outputPath, cmd.getOptionValue("pp", ast.getCDDefinition().getName())).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
 
+    // the following options are set, when they are provided
     if (plantUMLCmd.hasOption("showAtt")) {
       plantUMLConfig.setShowAtt(true);
     }
@@ -121,12 +241,6 @@ public class CDCLI {
     if (plantUMLCmd.hasOption("showModifier")) {
       plantUMLConfig.setShowModifier(true);
     }
-    if (plantUMLCmd.hasOption("nodesep")) {
-      plantUMLConfig.setNodesep(Integer.parseInt(plantUMLCmd.getOptionValue("nodesep")));
-    }
-    if (plantUMLCmd.hasOption("ranksep")) {
-      plantUMLConfig.setRanksep(Integer.parseInt(plantUMLCmd.getOptionValue("ranksep")));
-    }
     if (plantUMLCmd.hasOption("ortho")) {
       plantUMLConfig.setOrtho(true);
     }
@@ -137,80 +251,18 @@ public class CDCLI {
       plantUMLConfig.setShowComments(true);
     }
 
+    if (plantUMLCmd.hasOption("nodesep")) {
+      plantUMLConfig.setNodesep(Integer.parseInt(plantUMLCmd.getOptionValue("nodesep", "-1")));
+    }
+    if (plantUMLCmd.hasOption("ranksep")) {
+      plantUMLConfig.setRanksep(Integer.parseInt(plantUMLCmd.getOptionValue("ranksep", "-1")));
+    }
+
     if (plantUMLCmd.hasOption("svg")) {
-      return PlantUMLUtil.printCD2PlantUMLLocally(Optional.ofNullable(ast), outputPath, plantUMLConfig);
+      return PlantUMLUtil.printCD2PlantUMLLocally(Optional.ofNullable(ast), output.endsWith(".svg") ? output : output + ".svg", plantUMLConfig);
     }
     else {
-      return PlantUMLUtil.printCD2PlantUMLModelFileLocally(Optional.ofNullable(ast), outputPath, plantUMLConfig);
-    }
-  }
-
-  protected boolean handleArgs(String[] args)
-      throws IOException, ParseException {
-    cmd = cdcliOptions.handleArgs(args);
-
-    if (cmd.hasOption("h")) {
-      if (cmd.hasOption("pp")) {
-        printHelp(CDCLIOptions.SubCommand.PLANTUML);
-      }
-      else {
-        printHelp(null);
-      }
-      return false;
-    }
-    else {
-      if (!cmd.hasOption("i")) {
-        Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "i"));
-        printHelp(null);
-        return false;
-      }
-
-      modelFile = cmd.getOptionValue("i");
-
-      if (!modelFileExists()) {
-        throw new NoSuchFileException(modelFile);
-      }
-
-      if (cmd.hasOption("log")) {
-        root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
-      }
-
-      failQuick = !cmd.hasOption("f");
-
-      return true;
-    }
-  }
-
-  protected void run() throws IOException, ParseException {
-    parse();
-    boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
-    String modelPath = cmd.getOptionValue("p", ".");
-    createSymTab(useBuiltInTypes, new ModelPath(Paths.get(modelPath)));
-    checkCocos();
-    System.out.println(CHECK_SUCCESSFUL);
-
-    if (cmd.hasOption("pp")) { // pretty print
-      final String fileName = cmd.getOptionValue("pp");
-
-      if (cmd.hasOption("puml")) { // plantUML
-        final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
-        final String path = createPlantUML(plantUMLCmd);
-        System.out.printf(PLANTUML_SUCCESSFUL, path);
-      }
-      else { // print model
-        final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-        ast.accept(cd4CodePrettyPrinter);
-
-        try (PrintWriter out = new PrintWriter(fileName)) {
-          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-          System.out.printf(PRETTYPRINT_SUCCESSFUL, fileName);
-        }
-      }
-    }
-
-    if (cmd.hasOption("s")) { // symbol table export
-      CD4CodeMill.cD4CodeScopeDeSerBuilder().build().store(artifactScope, Paths.get(cmd.getOptionValue("s")));
-      System.out.printf(STEXPORT_SUCCESSFUL, cmd.getOptionValue("s"));
+      return PlantUMLUtil.printCD2PlantUMLModelFileLocally(Optional.ofNullable(ast), output.endsWith(".puml") ? output : output + ".puml", plantUMLConfig);
     }
   }
 
@@ -221,10 +273,69 @@ public class CDCLI {
 
   protected void printHelp(CDCLIOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp(JAR_NAME, cdcliOptions.getOptions());
+    formatter.setWidth(80);
+    formatter.printHelp(JAR_NAME + "\n" +
+            "Examples: " +
+            "\tJAR_NAME -i Person.cd -p target:src/models -o target/out -t true -s " +
+            "\tJAR_NAME -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles"
+        , cdcliOptions.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdcliOptions.getOptions(subCommand));
     }
+  }
+
+  protected void report(ASTCDCompilationUnit ast, String path) {
+    StringBuilder sb = new StringBuilder();
+
+    if (modelFile != null) {
+      sb.append("File ").append(modelFile).append(" parsed:\n");
+    }
+    else {
+      sb.append("Model ").append(modelName).append(" parsed:\n");
+    }
+
+    final List<String> cdPackageList = ast.getCDPackageList();
+    sb.append("\nPackages (").append(cdPackageList.size()).append("): [")
+        .append(Joiners.COMMA.join(cdPackageList));
+
+    final List<ASTCDClass> cdClassesList = ast.getCDDefinition().getCDClassesList();
+    sb.append("\nClasses (").append(cdClassesList.size()).append("): [")
+        .append(Joiners.COMMA.join(cdClassesList.stream().map(ASTCDClass::getName).collect(Collectors.toList())))
+        .append("]");
+
+    final List<ASTCDInterface> cdInterfacesList = ast.getCDDefinition().getCDInterfacesList();
+    sb.append("\nInterface (").append(cdInterfacesList.size()).append("): [")
+        .append(Joiners.COMMA.join(cdInterfacesList.stream().map(ASTCDInterface::getName).collect(Collectors.toList())))
+        .append("]");
+
+    final List<ASTCDEnum> cdEnumsList = ast.getCDDefinition().getCDEnumsList();
+    sb.append("\nEnum (").append(cdEnumsList.size()).append("): [")
+        .append(Joiners.COMMA.join(cdEnumsList.stream().map(ASTCDEnum::getName).collect(Collectors.toList())))
+        .append("]");
+
+    final List<ASTCDAssociation> cdAssociationsList = ast.getCDDefinition().getCDAssociationsList();
+    sb.append("\nAssociations (").append(cdAssociationsList.size()).append("): [")
+        .append(Joiners.COMMA.join(cdAssociationsList.stream().map(a -> {
+          final String name;
+          if (a.isPresentName()) {
+            name = a.getName();
+          }
+          else {
+            name = a.getPrintableName();
+          }
+          return name;
+        }).collect(Collectors.toList())))
+        .append("]");
+
+    final Path allElementsPath = Paths.get(path, REPORT_ALL_ELEMENTS);
+    try (PrintWriter out = new PrintWriter(allElementsPath.toFile())) {
+      out.println(sb.toString());
+    }
+    catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Arrays.asList(allElementsPath.toString())));
   }
 }

@@ -4,8 +4,8 @@
 
 package de.monticore.testcdassociation.prettyprint;
 
-import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.testcdassociation.CDAssociationTestBasis;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class TestCDAssociationPrettyPrinterTest extends TestBasis {
+public class TestCDAssociationPrettyPrinterTest extends CDAssociationTestBasis {
   final TestCDAssociationParser p = new TestCDAssociationParser();
   final TestCDAssociationPrettyPrinterDelegator printer = new TestCDAssociationPrettyPrinterDelegator();
 

@@ -10,7 +10,6 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTablePrinter;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTablePrinter;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
-import de.monticore.cdassociation._symboltable.CDAssociationScopeDeSer;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
 import de.monticore.cdassociation._symboltable.SymAssociation;
@@ -27,7 +26,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.FURTHER_OBJECTS_MAP;
 import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.deserializeFurtherObjects;
 
 public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
@@ -88,17 +86,22 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     }
 
     //2. calculate absolute location for the file to create, including the package if it is non-empty
-    java.nio.file.Path path = symbolPath; //starting with symbol path
-    if (null != toSerialize.getRealPackageName() && toSerialize.getRealPackageName().length() > 0) {
-      path = path.resolve(de.se_rwth.commons.Names.getPathFromPackage(toSerialize.getRealPackageName()));
-    }
-    path = path.resolve(toSerialize.getName() + "." + getSymbolFileExtension());
+    java.nio.file.Path path = getPath(toSerialize, symbolPath);
 
     //3. serialize artifact scope, which will become the file content
     String serialized = serialize(toSerialize);
 
     //4. store serialized artifact scope to calculated location
     de.monticore.io.FileReaderWriter.storeInFile(path, serialized);
+  }
+
+  public Path getPath(CD4CodeArtifactScope toSerialize, Path symbolPath) {
+    java.nio.file.Path path = symbolPath; //starting with symbol path
+    if (null != toSerialize.getRealPackageName() && toSerialize.getRealPackageName().length() > 0) {
+      path = path.resolve(de.se_rwth.commons.Names.getPathFromPackage(toSerialize.getRealPackageName()));
+    }
+    path = path.resolve(toSerialize.getName() + "." + getSymbolFileExtension());
+    return path;
   }
 
   public void deserializeSymbols(JsonObject scopeJson, ICD4CodeScope scope) {

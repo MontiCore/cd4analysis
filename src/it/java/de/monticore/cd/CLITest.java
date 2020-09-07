@@ -26,7 +26,7 @@ public class CLITest extends OutTestBasis {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-i", fileName, "-f" });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "false" });
 
     assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
@@ -34,10 +34,10 @@ public class CLITest extends OutTestBasis {
 
   @Test
   public void testHelp() throws IOException, ParseException {
-    final File file = new File(getFilePath("ccd/Complete.cd"));
+    final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-i", fileName, "-h", "-f" });
+    CDCLI.main(new String[] { "-i", fileName, "-h", "-f", "false" });
 
     assertTrue(getOut(), getOut().startsWith("usage: cd-"));
     assertTrue(getErr(), getErr().isEmpty());
@@ -49,7 +49,7 @@ public class CLITest extends OutTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CDCLI.main(new String[] { "-i", fileName, "-t", "false", "-f" });
+    CDCLI.main(new String[] { "-i", fileName, "-t", "false", "-f", "false" });
 
     assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
@@ -61,7 +61,7 @@ public class CLITest extends OutTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CDCLI.main(new String[] { "-i", fileName, "-f" });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "false" });
 
     assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
@@ -74,7 +74,7 @@ public class CLITest extends OutTestBasis {
     final String fileName = file.toString();
 
     // for now check for the NullPointerException
-    CDCLI.main(new String[] { "-i", fileName, "-f", "--pp", getTmpFilePath("Complete.puml"), "--puml" });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "false", "-pp", getTmpFilePath("Complete.puml"), "-puml" });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.puml")));
   }

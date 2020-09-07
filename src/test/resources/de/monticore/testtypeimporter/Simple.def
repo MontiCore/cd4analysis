@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-import testtypeimporter.CD.*;
+import testtypeimporter.CD;
 
 def {
   a : String;
