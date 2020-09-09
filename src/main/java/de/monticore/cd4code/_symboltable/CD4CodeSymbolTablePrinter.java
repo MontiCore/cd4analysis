@@ -38,7 +38,7 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
   }
 
   @Override
-  public void visit(CD4CodeArtifactScope node) {
+  public void visit(ICD4CodeArtifactScope node) {
     if (!printer.isInObject()) {
       printer.beginObject();
     }
@@ -53,13 +53,13 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
   }
 
   @Override
-  public void endVisit(CD4CodeArtifactScope node) {
+  public void endVisit(ICD4CodeArtifactScope node) {
     serializeFurtherObjects();
     super.endVisit(node);
   }
 
   @Override
-  public void traverse(CD4CodeArtifactScope node) {
+  public void traverse(ICD4CodeArtifactScope node) {
     super.traverse(node);
     // elements of subscopes should be flat in the artifact scope with qualified name
     printer.beginArray("symbols");
@@ -68,7 +68,7 @@ public class CD4CodeSymbolTablePrinter extends CD4CodeSymbolTablePrinterTOP {
   }
 
   @Override
-  public void handle(CD4CodeScope node) {
+  public void handle(ICD4CodeScope node) {
     // don't call visit and endVisit, because we don't want the scope information
     super.traverse(node);
   }

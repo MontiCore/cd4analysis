@@ -26,7 +26,7 @@ import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 
 public class CD4CodePlantUMLPrettyPrinter extends CD4CodeDelegatorVisitor
     implements ExpressionsBasisVisitor {
-  protected PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
+  protected final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
 
   public CD4CodePlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());

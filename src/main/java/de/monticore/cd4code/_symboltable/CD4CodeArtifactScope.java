@@ -14,7 +14,7 @@ public class CD4CodeArtifactScope extends CD4CodeArtifactScopeTOP {
     super(packageName, imports);
   }
 
-  public CD4CodeArtifactScope(Optional<ICD4CodeScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public CD4CodeArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ICD4CodeScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 

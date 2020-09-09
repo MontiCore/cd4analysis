@@ -38,7 +38,7 @@ component grammar CDBasis extends
 
   /** The package statement denotes the package of the model file itself
   */
-  CDPackageStatement = "package" package:(Name& || ".")+ ";";
+  CDPackageStatement = "package" package:(Name& || ".")+ ";"; // TODO SVa change to use MCPackageDeclaration
 
   /** This import statement allows to explain in the model, which
       additional imports shall be added to the generated code
@@ -48,7 +48,7 @@ component grammar CDBasis extends
 
   /** The class diagram: defines a set of elements
   */
-  CDDefinition = // TODO extends Diagram, when Diagram has no scope
+  CDDefinition = // TODO SVa: implements Diagram =
     Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */

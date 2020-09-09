@@ -8,6 +8,7 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.resolver.CD4CodeResolvingDelegate;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -15,9 +16,7 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testtypeimporter._ast.ASTCompilationUnit;
 import de.monticore.testtypeimporter._parser.TestTypeImporterParser;
-import de.monticore.testtypeimporter._symboltable.TestTypeImporterArtifactScope;
-import de.monticore.testtypeimporter._symboltable.TestTypeImporterGlobalScope;
-import de.monticore.testtypeimporter._symboltable.TestTypeImporterSymbolTableCreatorDelegator;
+import de.monticore.testtypeimporter._symboltable.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,12 +28,12 @@ import static org.junit.Assert.*;
 public class TestTypeImporterTest extends TestBasis {
   @Test
   public void createST() throws IOException {
-    final TestTypeImporterGlobalScope globalScope = TestTypeImporterMill.testTypeImporterGlobalScopeBuilder()
+    final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.testTypeImporterGlobalScopeBuilder()
         .setModelPath(new ModelPath(Paths.get(PATH)))
         .setModelFileExtension("def")
         .build();
 
-    final CD4CodeGlobalScope cdGlobalScope = CD4CodeMill.cD4CodeGlobalScopeBuilder()
+    final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.cD4CodeGlobalScopeBuilder()
         .setModelPath(new ModelPath(Paths.get(PATH)))
         .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
         .addBuiltInTypes()
@@ -58,7 +57,7 @@ public class TestTypeImporterTest extends TestBasis {
     assertTrue(cu.isPresent());
 
     final ASTCompilationUnit compilationUnit = cu.get();
-    final TestTypeImporterArtifactScope symbolTable = symbolTableCreator.createFromAST(compilationUnit);
+    final ITestTypeImporterArtifactScope symbolTable = symbolTableCreator.createFromAST(compilationUnit);
 
     final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("String");
     assertTrue(stringOOType.isPresent());

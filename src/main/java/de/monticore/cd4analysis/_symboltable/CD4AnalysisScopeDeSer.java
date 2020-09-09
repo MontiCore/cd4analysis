@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
   protected Map<Integer, SymAssociation> symAssociations;
-  public static String FURTHER_OBJECTS_MAP = "furtherObjects";
+  public static final String FURTHER_OBJECTS_MAP = "furtherObjects";
 
   public CD4AnalysisScopeDeSer() {
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
@@ -55,7 +55,6 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     return symbolTablePrinterHelper;
   }
 
-  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
 
@@ -74,7 +73,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   }
 
   @Override
-  public void store(CD4AnalysisArtifactScope toSerialize, Path symbolPath) {
+  public void store(ICD4AnalysisArtifactScope toSerialize, Path symbolPath) {
     // 1. Throw errors and abort storing in case of missing required information:
     if (!toSerialize.isPresentName()) {
       Log.error("0xCD007:CD4AnalysisScopeDeSer cannot store an artifact scope that has no name!");
@@ -119,7 +118,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   }
 
   @Override
-  protected void deserializeAdditionalArtifactScopeAttributes(CD4AnalysisArtifactScope scope, JsonObject scopeJson) {
+  protected void deserializeAdditionalArtifactScopeAttributes(ICD4AnalysisArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAdditionalArtifactScopeAttributes(scope, scopeJson);
     deserializeFurtherObjects(symAssociations, scopeJson);
   }
@@ -132,8 +131,8 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   }
 
   @Override
-  protected CD4AnalysisArtifactScope deserializeCD4AnalysisArtifactScope(JsonObject scopeJson) {
-    final CD4AnalysisArtifactScope cd4AnalysisArtifactScope = super.deserializeCD4AnalysisArtifactScope(scopeJson);
+  protected ICD4AnalysisArtifactScope deserializeCD4AnalysisArtifactScope(JsonObject scopeJson) {
+    final ICD4AnalysisArtifactScope cd4AnalysisArtifactScope = super.deserializeCD4AnalysisArtifactScope(scopeJson);
 
     // deserialize all the symbols
     deserializeSymbols(scopeJson, cd4AnalysisArtifactScope);
@@ -159,7 +158,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDTypeSymbolDeSer.getSerializedKind()))).orElse(false)) {
       final CDTypeSymbol symbol = cDTypeSymbolDeSer.deserializeCDTypeSymbol(symbolJson, scope);
       scope.add(symbol);
-      final CD4AnalysisScope spannedScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
+      final ICD4AnalysisScope spannedScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
 
       deserializeSymbols(symbolJson, spannedScope);
       if (symbolJson.hasArrayMember("symbols")) {
@@ -199,7 +198,7 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
     if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDAssociationSymbolDeSer.getSerializedKind()))).orElse(false)) {
       final CDAssociationSymbol symbol = cDAssociationSymbolDeSer.deserializeCDAssociationSymbol(symbolJson, scope);
       scope.add(symbol);
-      final CD4AnalysisScope spannedScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
+      final ICD4AnalysisScope spannedScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
 
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {

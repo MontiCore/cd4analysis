@@ -23,7 +23,7 @@ import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 
 public class CD4AnalysisPlantUMLPrettyPrinter
     extends CD4AnalysisDelegatorVisitor {
-  protected PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
+  protected final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
 
   public CD4AnalysisPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());

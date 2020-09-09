@@ -8,7 +8,7 @@ plugins {
     id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
-def mc_version = "6.2.0"
+def mc_version = "6.3.0-SNAPSHOT"
 
 group = "de.monticore.lang"
 version = mc_version
@@ -23,6 +23,7 @@ ext {
     testGrammarDir = "src/test/grammars"
     testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
     findbugs_version = '3.0.2'
+    mc_version = "6.3.0-SNAPSHOT"
     commons_version = "1.7.9"
     guava_version = "25.1-jre"
     antlr_version = "4.7-1"

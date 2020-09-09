@@ -47,7 +47,6 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     return symbolTablePrinterHelper;
   }
 
-  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
 
@@ -74,7 +73,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   }
 
   @Override
-  public void store(CD4CodeArtifactScope toSerialize, Path symbolPath) {
+  public void store(ICD4CodeArtifactScope toSerialize, Path symbolPath) {
     // 1. Throw errors and abort storing in case of missing required information:
     if (!toSerialize.isPresentName()) {
       Log.error("0xCD00C:CD4CodeScopeDeSer cannot store an artifact scope that has no name!");
@@ -95,7 +94,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     de.monticore.io.FileReaderWriter.storeInFile(path, serialized);
   }
 
-  public Path getPath(CD4CodeArtifactScope toSerialize, Path symbolPath) {
+  public Path getPath(ICD4CodeArtifactScope toSerialize, Path symbolPath) {
     java.nio.file.Path path = symbolPath; //starting with symbol path
     if (null != toSerialize.getRealPackageName() && toSerialize.getRealPackageName().length() > 0) {
       path = path.resolve(de.se_rwth.commons.Names.getPathFromPackage(toSerialize.getRealPackageName()));
@@ -125,14 +124,14 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   }
 
   @Override
-  protected void deserializeAdditionalArtifactScopeAttributes(CD4CodeArtifactScope scope, JsonObject scopeJson) {
+  protected void deserializeAdditionalArtifactScopeAttributes(ICD4CodeArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAdditionalArtifactScopeAttributes(scope, scopeJson);
     deserializeFurtherObjects(symAssociations, scopeJson);
   }
 
   @Override
-  protected CD4CodeArtifactScope deserializeCD4CodeArtifactScope(JsonObject scopeJson) {
-    final CD4CodeArtifactScope cd4CodeArtifactScope = super.deserializeCD4CodeArtifactScope(scopeJson);
+  protected ICD4CodeArtifactScope deserializeCD4CodeArtifactScope(JsonObject scopeJson) {
+    final ICD4CodeArtifactScope cd4CodeArtifactScope = super.deserializeCD4CodeArtifactScope(scopeJson);
 
     // deserialize all the symbols
     deserializeSymbols(scopeJson, cd4CodeArtifactScope);
@@ -158,7 +157,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDTypeSymbolDeSer.getSerializedKind()))).orElse(false)) {
       final CDTypeSymbol symbol = cDTypeSymbolDeSer.deserializeCDTypeSymbol(symbolJson, scope);
       scope.add(symbol);
-      final CD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
+      final ICD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
 
       deserializeSymbols(symbolJson, spannedScope);
       if (symbolJson.hasArrayMember("symbols")) {
@@ -198,7 +197,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDAssociationSymbolDeSer.getSerializedKind()))).orElse(false)) {
       final CDAssociationSymbol symbol = cDAssociationSymbolDeSer.deserializeCDAssociationSymbol(symbolJson, scope);
       scope.add(symbol);
-      final CD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
+      final ICD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
 
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {
@@ -231,7 +230,7 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
     if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDMethodSignatureSymbolDeSer.getSerializedKind()))).orElse(false)) {
       CDMethodSignatureSymbol symbol = cDMethodSignatureSymbolDeSer.deserializeCDMethodSignatureSymbol(symbolJson, scope);
       scope.add(symbol);
-      CD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
+      ICD4CodeScope spannedScope = CD4CodeMill.cD4CodeScopeBuilder().build();
 
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {

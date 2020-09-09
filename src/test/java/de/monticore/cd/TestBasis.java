@@ -66,7 +66,7 @@ public class TestBasis {
     return Joiner.on("\n").join(Log.getFindings());
   }
 
-  public static void checkNullAndPresence(MCConcreteParser parser, Optional<? extends ASTNode> node) {
+  public static void checkNullAndPresence(MCConcreteParser parser, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);

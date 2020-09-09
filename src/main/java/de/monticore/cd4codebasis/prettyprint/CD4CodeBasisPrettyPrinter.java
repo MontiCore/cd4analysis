@@ -44,7 +44,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
     node.getModifier().accept(getRealThis());
     node.getMCReturnType().accept(getRealThis());
     print(" " + node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParametersList().iterator(), ", ");
+    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
     print(")");
     if (node.isPresentCDThrowsDeclaration()) {
       print(" ");
@@ -59,7 +59,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
     printPreComments(node);
     node.getModifier().accept(getRealThis());
     print(node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParametersList().iterator(), ", ");
+    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
     print(")");
     if (node.isPresentCDThrowsDeclaration()) {
       print(" ");

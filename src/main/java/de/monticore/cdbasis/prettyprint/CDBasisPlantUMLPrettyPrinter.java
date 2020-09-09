@@ -75,7 +75,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     unindent();
     println("end legend");
 
-    for (ASTCDElement element : node.getCDElementsList()) {
+    for (ASTCDElement element : node.getCDElementList()) {
       printComment(node);
       element.accept(getRealThis());
       println();

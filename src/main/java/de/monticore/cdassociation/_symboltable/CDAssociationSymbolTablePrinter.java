@@ -102,7 +102,7 @@ public class CDAssociationSymbolTablePrinter
   }
 
   @Override
-  public void endVisit(CDAssociationArtifactScope node) {
+  public void endVisit(ICDAssociationArtifactScope node) {
     if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
       printer.beginObject(FURTHER_OBJECTS_MAP);
       serializeSymAssociations(printer, symbolTablePrinterHelper);
@@ -113,7 +113,7 @@ public class CDAssociationSymbolTablePrinter
   }
 
   @Override
-  public void handle(CDAssociationScope node) {
+  public void handle(ICDAssociationScope node) {
     // don't call visit, because we don't want the scope information
     super.traverse(node);
   }

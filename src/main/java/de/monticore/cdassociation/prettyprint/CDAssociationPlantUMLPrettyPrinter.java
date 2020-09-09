@@ -13,7 +13,7 @@ import java.util.Stack;
 public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CDAssociationVisitor {
   protected CDAssociationVisitor realThis;
-  protected Stack<Boolean> stackIsAssociation;
+  protected final Stack<Boolean> stackIsAssociation;
 
   public CDAssociationPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());

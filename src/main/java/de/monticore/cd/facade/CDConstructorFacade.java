@@ -46,14 +46,9 @@ public class CDConstructorFacade {
     return createConstructor(modifier, cdClass.getName(), Collections.emptyList());
   }
 
-  public ASTCDConstructor createDefaultConstructor(final ASTModifier modifier, final String name) {
-    return createConstructor(modifier, name, Collections.emptyList());
-  }
-
   /**
    * base method for creation of a constructor via builder
    */
-
   public ASTCDConstructor createConstructor(final ASTModifier modifier, final String name, final List<ASTCDParameter> parameters) {
     return CD4CodeBasisMill.cDConstructorBuilder()
         .setModifier(modifier)
@@ -65,7 +60,6 @@ public class CDConstructorFacade {
   /**
    * delegation methods for a more comfortable usage
    */
-
   public ASTCDConstructor createConstructor(final ASTModifier modifier, final String name, final ASTCDParameter... parameters) {
     return createConstructor(modifier, name, Arrays.asList(parameters));
   }

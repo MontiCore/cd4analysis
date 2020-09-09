@@ -14,7 +14,7 @@ public class CDAssociationArtifactScope extends CDAssociationArtifactScopeTOP {
     super(packageName, imports);
   }
 
-  public CDAssociationArtifactScope(Optional<ICDAssociationScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public CDAssociationArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ICDAssociationScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 

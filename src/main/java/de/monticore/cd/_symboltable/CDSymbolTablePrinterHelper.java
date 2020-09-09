@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class CDSymbolTablePrinterHelper {
   protected Set<SymAssociation> symAssociations;
-  protected Set<String> visitedSymbols;
+  protected final Set<String> visitedSymbols;
 
   public CDSymbolTablePrinterHelper() {
     this(new HashSet<>());

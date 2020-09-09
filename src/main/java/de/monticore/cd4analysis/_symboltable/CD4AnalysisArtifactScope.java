@@ -14,7 +14,7 @@ public class CD4AnalysisArtifactScope extends CD4AnalysisArtifactScopeTOP {
     super(packageName, imports);
   }
 
-  public CD4AnalysisArtifactScope(Optional<ICD4AnalysisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public CD4AnalysisArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ICD4AnalysisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 
@@ -35,7 +35,6 @@ public class CD4AnalysisArtifactScope extends CD4AnalysisArtifactScopeTOP {
 
   @Override
   public String getPackageName() {
-    super.getPackageName();
     return "";
   }
 

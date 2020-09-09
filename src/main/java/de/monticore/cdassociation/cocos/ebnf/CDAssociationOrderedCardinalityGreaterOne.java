@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
 public class CDAssociationOrderedCardinalityGreaterOne
     implements CDAssociationASTCDAssociationCoCo {
 
-  CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
+  final CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
 
   /**
    * @see de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo#check(de.monticore.cdassociation._ast.ASTCDAssociation)
@@ -36,9 +36,8 @@ public class CDAssociationOrderedCardinalityGreaterOne
    *
    * @param card  the cardinality under test
    * @param assoc the association under test
-   * @return whether ther was a coco error or not
    */
-  private boolean check(ASTCDCardinality card, ASTCDAssociation assoc) {
+  private void check(ASTCDCardinality card, ASTCDAssociation assoc) {
     if (card.getUpperBound() <= 1 && !card.toCardinality().isNoUpperLimit()) {
       Log.error(
           String
@@ -46,9 +45,7 @@ public class CDAssociationOrderedCardinalityGreaterOne
                   "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
                   prettyPrinter.prettyprint(assoc)),
           assoc.get_SourcePositionStart());
-      return true;
     }
-    return false;
   }
 
 }

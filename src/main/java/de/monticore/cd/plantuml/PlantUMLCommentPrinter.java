@@ -14,7 +14,7 @@ public class PlantUMLCommentPrinter {
     printCommentToNote(a, Optional.empty(), config, printer);
   }
 
-  public static void printCommentToNote(ASTNode a, Optional<String> connectTo, PlantUMLConfig config, IndentPrinter printer) {
+  public static void printCommentToNote(ASTNode a, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<String> connectTo, PlantUMLConfig config, IndentPrinter printer) {
     if (!config.getShowComments()) {
       return;
     }

@@ -17,7 +17,7 @@ public class CD4CodeBasisSymbolTablePrinter
     extends CD4CodeBasisSymbolTablePrinterTOP {
   protected OOSymbolsSymbolTablePrinter typeSymbolsSymbolTablePrinterDelegate;
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
-  protected Stack<CD4CodeBasisScope> scopeStack;
+  protected Stack<ICD4CodeBasisScope> scopeStack;
 
   public CD4CodeBasisSymbolTablePrinter() {
     init();
@@ -70,7 +70,7 @@ public class CD4CodeBasisSymbolTablePrinter
   }
 
   @Override
-  public void handle(CD4CodeBasisScope node) {
+  public void handle(ICD4CodeBasisScope node) {
     scopeStack.push(node);
 
     // don't call visit, because we don't want the scope information

@@ -69,41 +69,40 @@ public class CDAssociationSymbolTableCreator
   }
 
   private void initialize_SymAssociation(SymAssociationBuilder symAssociation, ASTCDAssociation node) {
-    if (!node.getLeft().isPresentCDRole()) {
-      Log.error(String.format(
-          "0xCDA60: The left role of the association (%s) is not set",
-          node.getPrintableName()),
-          node.get_SourcePositionStart());
-      return;
-    }
-    if (!node.getRight().isPresentCDRole()) {
-      Log.error(String.format(
-          "0xCDA61: The right role of the association (%s) is not set",
-          node.getPrintableName()),
-          node.get_SourcePositionStart());
-      return;
-    }
-
     // left
-    final ASTCDRole leftRole = node.getLeft().getCDRole();
-    CDRoleSymbol leftRoleSymbol = create_CDRole(leftRole);
+    final CDRoleSymbol leftRoleSymbol;
+    if (node.getLeft().isPresentCDRole()) {
+      leftRoleSymbol = create_CDRole(node.getLeft().getCDRole().getName());
+      node.getLeft().getCDRole().setSymbol(leftRoleSymbol);
+    } else {
+      // create a CDRoleSymbol, even if there is no role name set
+      leftRoleSymbol = create_CDRole(node.getLeft().getName(node));
+    }
     // the enclosing scope for the type has to be set manually,
     // because we need to resolve the type, even when we don't
     // have a CDAssociationSymbol and therefore no current scope
     node.getLeft().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     initialize_CDRole(leftRoleSymbol, node, true);
-    node.getLeft().getCDRole().setSymbol(leftRoleSymbol);
     symAssociation.setLeftRole(leftRoleSymbol);
 
     // right
-    final ASTCDRole rightRole = node.getRight().getCDRole();
-    CDRoleSymbol rightRoleSymbol = create_CDRole(rightRole);
+    final CDRoleSymbol rightRoleSymbol;
+    if (node.getLeft().isPresentCDRole()) {
+      rightRoleSymbol = create_CDRole(node.getRight().getCDRole().getName());
+      node.getRight().getCDRole().setSymbol(rightRoleSymbol);
+    } else {
+      // create a CDRoleSymbol, even if there is no role name set
+      rightRoleSymbol = create_CDRole(node.getRight().getName(node));
+    }
     node.getRight().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     initialize_CDRole(rightRoleSymbol, node, false);
-    node.getRight().getCDRole().setSymbol(rightRoleSymbol);
     symAssociation.setRightRole(rightRoleSymbol);
 
     node.getCDAssocType().accept(symbolTableHelper.getAssocTypeVisitor(symAssociation));
+  }
+
+  protected CDRoleSymbol create_CDRole(String name) {
+    return CDAssociationMill.cDRoleSymbolBuilder().setName(name).build();
   }
 
   @Override
@@ -123,9 +122,11 @@ public class CDAssociationSymbolTableCreator
 
   protected void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
-    ASTCDRole role = side.getCDRole();
 
-    initialize_CDRole(symbol, role);
+    if (side.isPresentCDRole()) {
+      ASTCDRole role = side.getCDRole();
+      initialize_CDRole(symbol, role);
+    }
 
     side.getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(side.getMCQualifiedType());
@@ -133,7 +134,7 @@ public class CDAssociationSymbolTableCreator
       Log.error(String.format(
           "0xCDA62: The type %s of the role (%s) could not be calculated",
           symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
-          side.getName()),
+          side.getName(ast)),
           side.getMCQualifiedType().get_SourcePositionStart());
       return;
     }

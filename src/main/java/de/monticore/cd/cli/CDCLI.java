@@ -10,10 +10,7 @@ import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -33,6 +30,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,7 +55,7 @@ public class CDCLI {
   protected boolean failQuick;
   protected String outputPath;
   protected ASTCDCompilationUnit ast;
-  protected CD4CodeArtifactScope artifactScope;
+  protected ICD4CodeArtifactScope artifactScope;
   protected final CDCLIOptions cdcliOptions = new CDCLIOptions();
   protected CommandLine cmd;
 
@@ -202,7 +200,7 @@ public class CDCLI {
   }
 
   protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
-    CD4CodeGlobalScope globalScope = CD4CodeMill
+    ICD4CodeGlobalScope globalScope = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()
         .setModelPath(modelPath)
         .addBuiltInTypes(useBuiltInTypes)
@@ -336,6 +334,6 @@ public class CDCLI {
       e.printStackTrace();
     }
 
-    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Arrays.asList(allElementsPath.toString())));
+    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Collections.singletonList(allElementsPath.toString())));
   }
 }

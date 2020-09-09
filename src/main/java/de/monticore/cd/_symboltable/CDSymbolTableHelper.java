@@ -216,7 +216,7 @@ public class CDSymbolTableHelper {
     symbolTableHelper.getImports().forEach(i -> potentialModelNames.add(i.getQName() + "." + qName));
 
     return potentialModelNames.stream().map(p -> {
-      final List<String> nameParts = Splitters.DOT.splitToList(p);
+      @SuppressWarnings("UnstableApiUsage") final List<String> nameParts = Splitters.DOT.splitToList(p);
       return IntStream.range(1, nameParts.size()) // always begin with the first element, and stop at the second to last
           .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining(".")))
           .collect(Collectors.toSet());

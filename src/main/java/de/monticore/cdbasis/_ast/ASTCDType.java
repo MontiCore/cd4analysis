@@ -36,7 +36,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
    * {@code List<ASTCDMember> methodsAndAttributes = c.getCDMemberList(CDMemberVisitor.Options.METHODS, CDMemberVisitor.Options.ATTRIBUTES); }
    * </div>
    *
-   * @param options a list of options, what {@link ASTCDMember} should be retreived
+   * @param options a list of options, what {@link ASTCDMember} should be retrieved
    * @param <T>     the type of the list to return
    * @return the list of collected CDMembers
    */

@@ -8,6 +8,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.paths.ModelPath;
+import jline.internal.Log;
 
 import java.util.Set;
 
@@ -30,6 +31,13 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
     this.symbolTableHelper = symbolTableHelper;
+    if (!this.modelLoader.isPresent()) {
+      final String err = "0xCDAF0: The modelLoader has to be set";
+      Log.error(
+          err
+      );
+      throw new RuntimeException(err);
+    }
     this.modelLoader.get().symbolTableCreator.setSymbolTableHelper(symbolTableHelper);
   }
 
@@ -42,7 +50,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
   }
 
   public void addBuiltInTypes() {
-    final CD4CodeArtifactScope artifactScope = CD4CodeMill
+    final ICD4CodeArtifactScope artifactScope = CD4CodeMill
         .cD4CodeArtifactScopeBuilder()
         .setPackageName("")
         .setEnclosingScope(this)
@@ -54,8 +62,8 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     addBuiltInUtilTypes(artifactScope);
   }
 
-  public void addBuiltInPrimitiveTypes(CD4CodeArtifactScope artifactScope) {
-    final CD4CodeScope primitiveTypesScope = CD4CodeMill
+  public void addBuiltInPrimitiveTypes(ICD4CodeArtifactScope artifactScope) {
+    final ICD4CodeScope primitiveTypesScope = CD4CodeMill
         .cD4CodeScopeBuilder()
         .setNameAbsent()
         .setEnclosingScope(artifactScope)
@@ -64,10 +72,10 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
   }
 
-  public void addBuiltInObjectTypes(CD4CodeArtifactScope artifactScope) {
+  public void addBuiltInObjectTypes(ICD4CodeArtifactScope artifactScope) {
     final String scopeName = "java.lang";
 
-    final CD4CodeScope objectTypesScope = CD4CodeMill
+    final ICD4CodeScope objectTypesScope = CD4CodeMill
         .cD4CodeScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
@@ -76,10 +84,10 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     BuiltInTypes.addBuiltInTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
-  public void addBuiltInUtilTypes(CD4CodeArtifactScope artifactScope) {
+  public void addBuiltInUtilTypes(ICD4CodeArtifactScope artifactScope) {
     final String scopeName = "java.util";
 
-    final CD4CodeScope utilTypesScope = CD4CodeMill
+    final ICD4CodeScope utilTypesScope = CD4CodeMill
         .cD4CodeScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)

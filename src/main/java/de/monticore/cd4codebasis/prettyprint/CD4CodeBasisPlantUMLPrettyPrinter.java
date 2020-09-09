@@ -45,7 +45,7 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
       node.getMCReturnType().accept(getRealThis());
       print(" " + node.getName() + "(");
-      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParametersList().iterator(), ", ");
+      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
       print(")");
       if (node.isPresentCDThrowsDeclaration()) {
         print(" ");
@@ -65,7 +65,7 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       }
 
       print(node.getName() + "(");
-      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParametersList().iterator(), ", ");
+      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
       print(")");
       if (node.isPresentCDThrowsDeclaration()) {
         print(" ");

@@ -8,15 +8,14 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._symboltable.CDBasisGlobalScope;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCreatorDelegator;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
 import de.monticore.io.paths.ModelPath;
-import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,7 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisResolvingTest extends TestBasis {
-  protected static final CDBasisGlobalScope globalScope = CDBasisMill
+  protected static final ICDBasisGlobalScope globalScope = CDBasisMill
       .cDBasisGlobalScopeBuilder()
       .setModelPath(new ModelPath(Paths.get(PATH)))
       .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
@@ -57,12 +56,12 @@ public class TestCDBasisResolvingTest extends TestBasis {
     checkLogError();
 
     final Optional<CDTypeSymbol> a2 = globalScope.resolveCDType("a.A");
-    assertTrue("CDType a.A could not be resolved:\n" + getJoinedErrors(), a.isPresent());
+    assertTrue("CDType a.A could not be resolved:\n" + getJoinedErrors(), a2.isPresent());
     checkLogError();
     assertEquals(a, a2);
 
-    globalScope.resolveCDType("a.b.c.C");
-    assertTrue("CDType a.b.c.C could not be resolved:\n" + getJoinedErrors(), a.isPresent());
+    final Optional<CDTypeSymbol> a3 = globalScope.resolveCDType("a.b.c.C");
+    assertTrue("CDType a.b.c.C could not be resolved:\n" + getJoinedErrors(), a3.isPresent());
     checkLogError();
   }
 
@@ -70,10 +69,6 @@ public class TestCDBasisResolvingTest extends TestBasis {
   public void resolveOOType() {
     final Optional<OOTypeSymbol> a = globalScope.resolveOOType("A");
     assertTrue("OOTypeSymbol A could not be resolved:\n" + getJoinedErrors(), a.isPresent());
-    checkLogError();
-
-    final Optional<OOTypeSymbol> str = globalScope.resolveOOType("java.lang.String");
-    assertTrue("OOTypeSymbol java.lang.String could not be resolved:\n" + getJoinedErrors(), a.isPresent());
     checkLogError();
   }
 

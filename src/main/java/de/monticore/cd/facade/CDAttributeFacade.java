@@ -3,9 +3,6 @@
  */
 package de.monticore.cd.facade;
 
-import de.monticore.cd.facade.exception.CDFactoryErrorCode;
-import de.monticore.cd.facade.exception.CDFactoryException;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -16,10 +13,6 @@ import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.StringTransformations;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Optional;
-
 /**
  * Class that helps with the creation of ASTCDAttributes
  */
@@ -28,10 +21,7 @@ public class CDAttributeFacade {
 
   private static CDAttributeFacade cdAttributeFacade;
 
-  private final CD4CodeParser parser;
-
   private CDAttributeFacade() {
-    this.parser = new CD4CodeParser();
   }
 
   public static CDAttributeFacade getInstance() {
@@ -42,28 +32,8 @@ public class CDAttributeFacade {
   }
 
   /**
-   * creates a attribute by a string definition with the help of the parser
-   * only use this method if no of the other methods fit your context !
-   */
-
-  public ASTCDAttribute createAttributeByDefinition(final String signature) {
-    Optional<ASTCDAttribute> attribute;
-    try {
-      attribute = parser.parseCDAttribute(new StringReader(signature));
-    }
-    catch (IOException e) {
-      throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_ATTRIBUTE, signature, e);
-    }
-    if (!attribute.isPresent()) {
-      throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_ATTRIBUTE, signature);
-    }
-    return attribute.get();
-  }
-
-  /**
    * base method for creation of a attribute via builder
    */
-
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type, final String name) {
     return CD4CodeBasisMill.cDAttributeBuilder()
         .setModifier(modifier)
@@ -75,7 +45,6 @@ public class CDAttributeFacade {
   /**
    * base method for creation of a attribute via builder
    */
-
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type, final String name, final ASTExpression initial) {
     return CD4CodeBasisMill.cDAttributeBuilder()
         .setModifier(modifier)

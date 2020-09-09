@@ -39,8 +39,8 @@ public class CD4AnalysisGlobalScopeBuilder
   }
 
   @Override
-  public CD4AnalysisGlobalScope build() {
-    final CD4AnalysisGlobalScope globalScope = super.build();
+  public ICD4AnalysisGlobalScope build() {
+    final CD4AnalysisGlobalScope globalScope = (CD4AnalysisGlobalScope) super.build();
     if (addBuiltInTypes) {
       globalScope.addBuiltInTypes();
     }

@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 public class CD4AnalysisResolvingDelegate
     implements ICDTypeSymbolResolvingDelegate, IOOTypeSymbolResolvingDelegate, ITypeSymbolResolvingDelegate,
     ICDRoleSymbolResolvingDelegate, IFieldSymbolResolvingDelegate, IVariableSymbolResolvingDelegate {
-  protected CD4AnalysisGlobalScope cdGlobalScope;
+  protected final CD4AnalysisGlobalScope cdGlobalScope;
 
   public CD4AnalysisResolvingDelegate(CD4AnalysisGlobalScope cdGlobalScope) {
     this.cdGlobalScope = cdGlobalScope;

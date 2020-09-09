@@ -7,8 +7,8 @@ package de.monticore.cd.plantuml;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
@@ -27,8 +27,9 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class PlantUMLUtil {
-  public static String PLANTUML_EMPTY = "@startuml\n@enduml";
+  public static final String PLANTUML_EMPTY = "@startuml\n@enduml";
 
+  /*
   /**
    * this needs internet - it connects to the plantuml-server to render the image and downloads it
    */
@@ -52,7 +53,7 @@ public class PlantUMLUtil {
   /**
    * this needs GraphViz/JDOT installed on your PC
    */
-  public static String printCD2PlantUMLLocally(Optional<ASTCDCompilationUnit> astCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
+  public static String printCD2PlantUMLLocally(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
       throws IOException {
 
     final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
@@ -93,7 +94,7 @@ public class PlantUMLUtil {
     }
   }
 
-  public static String printCD2PlantUMLModelFileLocally(Optional<ASTCDCompilationUnit> astCD, String outputPath, PlantUMLConfig plantUMLConfig)
+  public static String printCD2PlantUMLModelFileLocally(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, String outputPath, PlantUMLConfig plantUMLConfig)
       throws IOException {
     final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
 
@@ -115,11 +116,11 @@ public class PlantUMLUtil {
     }
   }
 
-  protected static String printCD2PlantUML(Optional<ASTCDCompilationUnit> astCD, PlantUMLConfig config) {
+  protected static String printCD2PlantUML(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, PlantUMLConfig config) {
     final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
     CD4CodePlantUMLPrettyPrinter cdVisitor = new CD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
     if (astCD.isPresent()) {
-      final CD4CodeGlobalScope globalScope = CD4CodeMill
+      final ICD4CodeGlobalScope globalScope = CD4CodeMill
           .cD4CodeGlobalScopeBuilder()
           .setModelPath(new ModelPath(Paths.get("")))
           .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
@@ -131,7 +132,7 @@ public class PlantUMLUtil {
           .build();
       symbolTableCreator.createFromAST(astCD.get());
 
-      cdVisitor.prettyprint(astCD.get());
+      plantUMLPrettyPrintUtil.getPrinter().print(cdVisitor.prettyprint(astCD.get()));
       return plantUMLPrettyPrintUtil.getPrinter().getContent();
     }
 

@@ -8,6 +8,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.io.paths.ModelPath;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Set;
 
@@ -30,6 +31,13 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
 
   public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
     this.symbolTableHelper = symbolTableHelper;
+    if (!this.modelLoader.isPresent()) {
+      final String err = "0xCDAD0: The modelLoader has to be set";
+      Log.error(
+          err
+      );
+      throw new RuntimeException(err);
+    }
     this.modelLoader.get().symbolTableCreator.setSymbolTableHelper(symbolTableHelper);
   }
 
@@ -42,7 +50,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   }
 
   public void addBuiltInTypes() {
-    final CD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
+    final ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
         .cD4AnalysisArtifactScopeBuilder()
         .setPackageName("")
         .setEnclosingScope(this)
@@ -54,8 +62,8 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     addBuiltInUtilTypes(artifactScope);
   }
 
-  public void addBuiltInPrimitiveTypes(CD4AnalysisArtifactScope artifactScope) {
-    final CD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
+  public void addBuiltInPrimitiveTypes(ICD4AnalysisArtifactScope artifactScope) {
+    final ICD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
         .cD4AnalysisScopeBuilder()
         .setNameAbsent()
         .setEnclosingScope(artifactScope)
@@ -64,10 +72,10 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
   }
 
-  public void addBuiltInObjectTypes(CD4AnalysisArtifactScope artifactScope) {
+  public void addBuiltInObjectTypes(ICD4AnalysisArtifactScope artifactScope) {
     final String scopeName = "java.lang";
 
-    final CD4AnalysisScope objectTypesScope = CD4AnalysisMill
+    final ICD4AnalysisScope objectTypesScope = CD4AnalysisMill
         .cD4AnalysisScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
@@ -76,10 +84,10 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     BuiltInTypes.addBuiltInTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
-  public void addBuiltInUtilTypes(CD4AnalysisArtifactScope artifactScope) {
+  public void addBuiltInUtilTypes(ICD4AnalysisArtifactScope artifactScope) {
     final String scopeName = "java.util";
 
-    final CD4AnalysisScope utilTypesScope = CD4AnalysisMill
+    final ICD4AnalysisScope utilTypesScope = CD4AnalysisMill
         .cD4AnalysisScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)

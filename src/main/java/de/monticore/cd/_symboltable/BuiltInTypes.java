@@ -6,7 +6,6 @@ package de.monticore.cd._symboltable;
 
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
-import de.monticore.symbols.oosymbols._symboltable.OOSymbolsScope;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +21,7 @@ public class BuiltInTypes {
   public static void addBuiltInTypes(IOOSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
     utilTypes
         .forEach(t -> {
-          final OOSymbolsScope scope = OOSymbolsMill.oOSymbolsScopeBuilder().build();
+          final IOOSymbolsScope scope = OOSymbolsMill.oOSymbolsScopeBuilder().build();
           utilTypesScope.add(OOSymbolsMill
               .oOTypeSymbolBuilder()
               .setName(t)

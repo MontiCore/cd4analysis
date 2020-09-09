@@ -6,7 +6,6 @@ package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScopeBuilder;
 import de.monticore.cd4code.CD4CodeMill;
 
 public class CD4CodeGlobalScopeBuilder extends CD4CodeGlobalScopeBuilderTOP {
@@ -40,8 +39,8 @@ public class CD4CodeGlobalScopeBuilder extends CD4CodeGlobalScopeBuilderTOP {
   }
 
   @Override
-  public CD4CodeGlobalScope build() {
-    final CD4CodeGlobalScope globalScope = super.build();
+  public ICD4CodeGlobalScope build() {
+    final CD4CodeGlobalScope globalScope = (CD4CodeGlobalScope)super.build();
     if (addBuiltInTypes) {
       globalScope.addBuiltInTypes();
     }

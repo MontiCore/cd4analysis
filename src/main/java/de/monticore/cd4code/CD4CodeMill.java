@@ -6,6 +6,7 @@ package de.monticore.cd4code;
 
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLPrettyPrinter;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cd4code.resolver.CD4CodeResolvingDelegate;
@@ -53,7 +54,7 @@ public class CD4CodeMill extends CD4CodeMillTOP {
     return millDeriveSymTypeOfCD4Code._deriveSymTypeOfCD4Code();
   }
 
-  public static CD4CodeResolvingDelegate cD4CodeResolvingDelegate(CD4CodeGlobalScope cdGlobalScope) {
+  public static CD4CodeResolvingDelegate cD4CodeResolvingDelegate(ICD4CodeGlobalScope cdGlobalScope) {
     if (millCD4CodeResolvingDelegate == null) {
       millCD4CodeResolvingDelegate = getMill();
     }
@@ -80,7 +81,7 @@ public class CD4CodeMill extends CD4CodeMillTOP {
     return new DeriveSymTypeOfCD4Code();
   }
 
-  public CD4CodeResolvingDelegate _cD4CodeResolvingDelegate(CD4CodeGlobalScope cdGlobalScope) {
+  public CD4CodeResolvingDelegate _cD4CodeResolvingDelegate(ICD4CodeGlobalScope cdGlobalScope) {
     return new CD4CodeResolvingDelegate(cdGlobalScope);
   }
 }

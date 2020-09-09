@@ -15,6 +15,9 @@ classdiagram Simple {
     -> (s2) [[id]] S [1..*] public {ordered};
   }
 
+  class Struct;
+  class StructItem;
+
   final composition Struct [[name]] -> (item) StructItem [1];
   association A -> S;
   association [*] A (a) -> [String] S [1];

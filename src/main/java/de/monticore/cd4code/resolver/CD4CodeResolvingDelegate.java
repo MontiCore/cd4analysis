@@ -5,7 +5,7 @@
 package de.monticore.cd4code.resolver;
 
 import com.google.common.collect.Lists;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cd4codebasis._symboltable.ICDMethodSignatureSymbolResolvingDelegate;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
@@ -24,9 +24,9 @@ public class CD4CodeResolvingDelegate
     implements ICDTypeSymbolResolvingDelegate, IOOTypeSymbolResolvingDelegate, ITypeSymbolResolvingDelegate,
     ICDRoleSymbolResolvingDelegate, IFieldSymbolResolvingDelegate, IVariableSymbolResolvingDelegate,
     ICDMethodSignatureSymbolResolvingDelegate, IMethodSymbolResolvingDelegate, IFunctionSymbolResolvingDelegate {
-  protected CD4CodeGlobalScope cdGlobalScope;
+  protected final ICD4CodeGlobalScope cdGlobalScope;
 
-  public CD4CodeResolvingDelegate(CD4CodeGlobalScope cdGlobalScope) {
+  public CD4CodeResolvingDelegate(ICD4CodeGlobalScope cdGlobalScope) {
     this.cdGlobalScope = cdGlobalScope;
   }
 

@@ -36,7 +36,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
 
   @Override
   public void check(ASTCDEnum node) {
-    final List<ASTCDEnumConstant> enumConstants = node.getCDEnumConstantsList();
+    final List<ASTCDEnumConstant> enumConstants = node.getCDEnumConstantList();
     final List<List<SymTypeExpression>> enumConstantsTypes = calculateEnumArgumentTypes(node);
 
     final List<ASTCDMethodSignature> availableConstructors = node
@@ -44,7 +44,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
 
     final List<List<ASTCDParameter>> constructorParameters = availableConstructors.stream()
         .filter(s -> s.getSymbol().isIsConstructor())
-        .map(ASTCDMethodSignature::getCDParametersList)
+        .map(ASTCDMethodSignature::getCDParameterList)
         .collect(Collectors.toList());
 
     // if there is no constructor present, a default constructor with no arguments is available
@@ -128,9 +128,9 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
               String
                   .format(
                       "0xCDCD0: The type of the argument %s (index %d) can not be calculated.",
-                      helper.getPrettyPrinter().prettyprint(arguments.getExpressions(i)),
+                      helper.getPrettyPrinter().prettyprint(arguments.getExpression(i)),
                       i),
-              arguments.getExpressions(i).get_SourcePositionStart())
+              arguments.getExpression(i).get_SourcePositionStart())
       );
 
       return argumentTypes.stream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());

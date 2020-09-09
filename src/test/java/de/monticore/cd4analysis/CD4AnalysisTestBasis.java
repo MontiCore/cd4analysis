@@ -9,6 +9,7 @@ import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisPrettyPrinter;
 import de.monticore.io.paths.ModelPath;
@@ -18,7 +19,7 @@ import java.nio.file.Paths;
 
 public class CD4AnalysisTestBasis extends TestBasis {
   protected CD4AnalysisParser p;
-  protected CD4AnalysisGlobalScope globalScope;
+  protected ICD4AnalysisGlobalScope globalScope;
   protected CD4AnalysisSymbolTableCreatorDelegator symbolTableCreator;
   protected CD4AnalysisCoCos cd4AnalyisCoCos;
   protected CD4AnalysisPrettyPrinter printer;

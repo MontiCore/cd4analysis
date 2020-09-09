@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  private CD4CodePrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
+  private final CD4CodePrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {

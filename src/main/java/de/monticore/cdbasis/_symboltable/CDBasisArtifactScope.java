@@ -14,7 +14,7 @@ public class CDBasisArtifactScope extends CDBasisArtifactScopeTOP {
     super(packageName, imports);
   }
 
-  public CDBasisArtifactScope(Optional<ICDBasisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public CDBasisArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ICDBasisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 

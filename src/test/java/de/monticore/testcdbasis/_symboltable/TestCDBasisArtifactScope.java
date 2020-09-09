@@ -14,10 +14,11 @@ public class TestCDBasisArtifactScope extends TestCDBasisArtifactScopeTOP {
     super(packageName, imports);
   }
 
-  public TestCDBasisArtifactScope(Optional<ITestCDBasisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public TestCDBasisArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ITestCDBasisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 
+  @SuppressWarnings("SameReturnValue")
   @Override
   public boolean checkIfContinueAsSubScope(String symbolName) {
     return true;

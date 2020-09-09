@@ -42,12 +42,12 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
       node.getCDPackageStatement().accept(getRealThis());
       printPreComments(node);
     }
-    for (ASTMCImportStatement i : node.getMCImportStatementsList()) {
+    for (ASTMCImportStatement i : node.getMCImportStatementList()) {
       i.accept(getRealThis());
       println();
     }
 
-    node.getCDTargetImportStatementsList().forEach(i -> i.accept(getRealThis()));
+    node.getCDTargetImportStatementList().forEach(i -> i.accept(getRealThis()));
     if (!node.isEmptyCDTargetImportStatements()) {
       println();
     }
@@ -92,7 +92,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDDefinition node) {
-    for (ASTCDElement element : node.getCDElementsList()) {
+    for (ASTCDElement element : node.getCDElementList()) {
       printPreComments(node);
       element.accept(getRealThis());
       printPostComments(node);
@@ -117,7 +117,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDPackage node) {
-    node.getCDElementsList().forEach(e -> e.accept(getRealThis()));
+    node.getCDElementList().forEach(e -> e.accept(getRealThis()));
   }
 
   @Override

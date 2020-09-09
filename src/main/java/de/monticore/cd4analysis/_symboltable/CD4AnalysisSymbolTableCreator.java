@@ -27,11 +27,11 @@ public class CD4AnalysisSymbolTableCreator
   }
 
   @Override
-  public CD4AnalysisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
-    CD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
+  public ICD4AnalysisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
+    ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
         .cD4AnalysisArtifactScopeBuilder()
         .setPackageName(Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
-        .setImportsList(rootNode.getMCImportStatementsList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
+        .setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
         .build();
     artifactScope.setName(rootNode.getCDDefinition().getName());
 

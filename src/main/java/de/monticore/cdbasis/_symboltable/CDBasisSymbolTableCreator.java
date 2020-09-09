@@ -42,12 +42,12 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   }
 
   @Override
-  public CDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
-    CDBasisArtifactScope artifactScope = CDBasisMill
+  public ICDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
+    ICDBasisArtifactScope artifactScope = CDBasisMill
         .cDBasisArtifactScopeBuilder()
         .setPackageName(
             Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
-        .setImportsList(rootNode.getMCImportStatementsList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
+        .setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
         .build();
     putOnStack(artifactScope);
     rootNode.accept(getRealThis());
@@ -59,7 +59,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     Log.debug("Building Symboltable for CD: " + node.getCDDefinition().getName(),
         getClass().getSimpleName());
 
-    symbolTableHelper.setImports(node.getMCImportStatementsList());
+    symbolTableHelper.setImports(node.getMCImportStatementList());
 
     super.visit(node);
   }
@@ -159,8 +159,6 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   @Override
   public void endVisit(ASTCDCompilationUnit node) {
-    final ICDBasisScope artifactScope = scopeStack.peekLast();
-
     symbolTableHelper.getHandledAssociations().forEach(a -> {
       // the symbol is a field of the type of the other side
       // as there are handled associations, we at least have a CDAssociationScope

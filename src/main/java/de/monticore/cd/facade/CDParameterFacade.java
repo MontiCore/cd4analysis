@@ -59,6 +59,10 @@ public class CDParameterFacade {
     return createParameter(type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))));
   }
 
+  public ASTCDParameter createParameter(final String type, final String name) {
+    return createParameter(MCTypeFacade.getInstance().createQualifiedType(type), name);
+  }
+
   public ASTCDParameter createParameter(final Class<?> type, final String name) {
     return createParameter(MCTypeFacade.getInstance().createQualifiedType(type), name);
   }
