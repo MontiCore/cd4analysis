@@ -8,7 +8,7 @@ plugins {
     id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
-def mc_version = "6.3.0-SNAPSHOT"
+def mc_version = "6.2.0"
 
 group = "de.monticore.lang"
 version = mc_version
