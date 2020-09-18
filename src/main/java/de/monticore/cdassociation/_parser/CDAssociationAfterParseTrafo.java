@@ -39,26 +39,6 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
     this.realThis = realThis;
   }
 
-  @Override
-  public void visit(ASTCDAssociation node) {
-    assocStack.push(node);
-  }
-
-  @Override
-  public void endVisit(ASTCDAssociation node) {
-    assocStack.pop();
-  }
-
-  @Override
-  public void visit(ASTCDAssocLeftSide node) {
-    createASTCDRoleIfAbsent(node);
-  }
-
-  @Override
-  public void visit(ASTCDAssocRightSide node) {
-    createASTCDRoleIfAbsent(node);
-  }
-
   /**
    * <pre>{@code class A {
    *   -> (r) B [*];
@@ -102,27 +82,24 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
     createdAssociations.add(assoc);
   }
 
-  public void createASTCDRoleIfAbsent(ASTCDAssociation assoc) {
-    createASTCDRoleIfAbsent(assoc.getLeft());
-    createASTCDRoleIfAbsent(assoc.getRight());
+  public static void createASTCDRoleIfAbsent(ASTCDAssociation assoc) {
+    createASTCDRoleIfAbsent(assoc, assoc.getLeft());
+    createASTCDRoleIfAbsent(assoc, assoc.getRight());
   }
 
-  public void createASTCDRoleIfAbsent(ASTCDAssocSide side) {
+  public static void createASTCDRoleIfAbsent(ASTCDAssociation assoc, ASTCDAssocSide side) {
     if (!side.isPresentCDRole()) {
       ASTCDRole role = CD4AnalysisMill
           .cDRoleBuilder()
-          .setName(getRoleName(side))
+          .setName(getRoleName(assoc, side))
           .build();
       side.setCDRole(role);
     }
   }
 
-  public String getRoleName(ASTCDAssocSide side) {
-    if (!assocStack.isEmpty()) {
-      final ASTCDAssociation assoc = assocStack.peek();
-      if (assoc.isPresentName()) {
-        return assoc.getName();
-      }
+  public static String getRoleName(ASTCDAssociation assoc, ASTCDAssocSide side) {
+    if (assoc != null && assoc.isPresentName()) {
+      return assoc.getName();
     }
     return StringTransformations.uncapitalize(side.getName());
   }

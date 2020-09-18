@@ -42,6 +42,10 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
     return new CDBasisPrettyPrinterDelegator().prettyprint(this.getMCQualifiedType());
   }
 
+  default boolean isPresentSymbol() {
+    return isPresentCDRole() && getCDRole().isPresentSymbol();
+  }
+
   default CDRoleSymbol getSymbol() {
     return getCDRole().getSymbol();
   }

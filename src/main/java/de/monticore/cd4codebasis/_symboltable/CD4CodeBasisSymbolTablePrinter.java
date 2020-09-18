@@ -47,35 +47,10 @@ public class CD4CodeBasisSymbolTablePrinter
     this.typeSymbolsSymbolTablePrinterDelegate.serializeMethodReturnType(returnType);
   }
 
-  public void traverse(ICD4CodeBasisScope node) {
-    if (!node.getLocalCDMethodSignatureSymbols().isEmpty()) {
-      node.getLocalCDMethodSignatureSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    getRealThis().traverse((de.monticore.cdbasis._symboltable.ICDBasisScope) node);
-    getRealThis().traverse((de.monticore.cdinterfaceandenum._symboltable.ICDInterfaceAndEnumScope) node);
-    getRealThis().traverse((de.monticore.expressions.commonexpressions._symboltable.ICommonExpressionsScope) node);
-  }
-
   @Override
-  public void traverse(CDMethodSignatureSymbol node) {
-    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
-      printer.beginArray("symbols");
-      node.getSpannedScope().accept(getRealThis());
-      printer.endArray();
+  public void handle(CDMethodSignatureSymbol node) {
+    if (symbolTablePrinterHelper.visit(node.getFullName())) {
+      super.handle(node);
     }
-  }
-
-  @Override
-  public void handle(ICD4CodeBasisScope node) {
-    scopeStack.push(node);
-
-    // don't call visit, because we don't want the scope information
-    super.traverse(node);
-
-    scopeStack.pop();
   }
 }

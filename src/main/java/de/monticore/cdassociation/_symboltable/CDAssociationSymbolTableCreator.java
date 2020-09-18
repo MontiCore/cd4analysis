@@ -10,7 +10,6 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 
@@ -49,60 +48,79 @@ public class CDAssociationSymbolTableCreator
       addToScopeAndLinkWithNode(symbol, node);
     }
 
-    // create the SymAssociation connected to the CDAssociationSymbol
-    SymAssociationBuilder symAssociation = create_SymAssociation(symbol);
-    initialize_SymAssociation(symAssociation, node);
-    symbolTableHelper.addToHandledAssociations(symAssociation.build());
+    if (node.getLeft().isPresentCDRole()) {
+      if (buildCDRole(node, true)) {
+        return;
+      }
+    }
+    if (node.getRight().isPresentCDRole()) {
+      if (buildCDRole(node, false)) {
+        return;
+      }
+    }
+
+    createAndInit_SymAssociation(node);
 
     if (symbol != null) {
       removeCurrentScope();
     }
   }
 
-  protected SymAssociationBuilder create_SymAssociation(CDAssociationSymbol symbol) {
-    final SymAssociationBuilder symAssociationBuilder = CDAssociationMill.symAssocationBuilder();
-    if (symbol != null) {
-      symAssociationBuilder.setAssociationSymbol(symbol);
-    }
+  public boolean buildCDRole(ASTCDAssociation node, boolean isLeft) {
+    final ASTCDAssocSide side = isLeft ? node.getLeft() : node.getRight();
+    final ASTCDRole cdRole = side.getCDRole();
+    final CDRoleSymbol cdRoleSymbol = create_CDRole(cdRole);
+    addToScopeAndLinkWithNode(cdRoleSymbol, cdRole);
+    initialize_CDRole(cdRoleSymbol, node, isLeft);
 
-    return symAssociationBuilder;
+    final Optional<SymTypeExpression> typeResult = getSymTypeExpression(node, isLeft ? node.getRight() : node.getLeft());
+    if (!typeResult.isPresent()) {
+      return true;
+    }
+    symbolTableHelper.addToHandledRoles(cdRoleSymbol, typeResult.get());
+    return false;
   }
 
-  private void initialize_SymAssociation(SymAssociationBuilder symAssociation, ASTCDAssociation node) {
-    // left
-    final CDRoleSymbol leftRoleSymbol;
-    if (node.getLeft().isPresentCDRole()) {
-      leftRoleSymbol = create_CDRole(node.getLeft().getCDRole().getName());
-      node.getLeft().getCDRole().setSymbol(leftRoleSymbol);
-    } else {
-      // create a CDRoleSymbol, even if there is no role name set
-      leftRoleSymbol = create_CDRole(node.getLeft().getName(node));
+  public void createAndInit_SymAssociation(ASTCDAssociation node) {
+    // create the SymAssociation connected to the CDAssociationSymbol
+    // only if both role names are set
+    Optional<SymAssociationBuilder> symAssociation = create_SymAssociation(node);
+    if (symAssociation.isPresent()) {
+      initialize_SymAssociation(symAssociation.get(), node);
+      if (node.isPresentSymbol()) {
+        // only link the association symbol to the symAssociation when
+        // the symAssociation is created
+        symAssociation.get().setAssociationSymbol(node.getSymbol());
+      }
+      symAssociation.get()
+          .setLeftRole(node.getLeft().getSymbol())
+          .setRightRole(node.getRight().getSymbol())
+          .build();
     }
-    // the enclosing scope for the type has to be set manually,
-    // because we need to resolve the type, even when we don't
-    // have a CDAssociationSymbol and therefore no current scope
-    node.getLeft().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
-    initialize_CDRole(leftRoleSymbol, node, true);
-    symAssociation.setLeftRole(leftRoleSymbol);
+  }
 
-    // right
-    final CDRoleSymbol rightRoleSymbol;
-    if (node.getLeft().isPresentCDRole()) {
-      rightRoleSymbol = create_CDRole(node.getRight().getCDRole().getName());
-      node.getRight().getCDRole().setSymbol(rightRoleSymbol);
-    } else {
-      // create a CDRoleSymbol, even if there is no role name set
-      rightRoleSymbol = create_CDRole(node.getRight().getName(node));
+  protected Optional<SymAssociationBuilder> create_SymAssociation(ASTCDAssociation node) {
+    if (!node.getLeft().isPresentCDRole() || !node.getRight().isPresentCDRole()) {
+      // cant create the symbol structure when the role has no name
+      // and therefore the symbol
+      return Optional.empty();
     }
-    node.getRight().getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
-    initialize_CDRole(rightRoleSymbol, node, false);
-    symAssociation.setRightRole(rightRoleSymbol);
+    return Optional.of(CDAssociationMill
+        .symAssocationBuilder()
+    );
+  }
 
+  /**
+   * this method can only be used, when both sides have a CDRole
+   *
+   * @param symAssociation
+   * @param node
+   * @return
+   */
+  protected boolean initialize_SymAssociation(SymAssociationBuilder symAssociation, ASTCDAssociation node) {
     node.getCDAssocType().accept(symbolTableHelper.getAssocTypeVisitor(symAssociation));
-  }
 
-  protected CDRoleSymbol create_CDRole(String name) {
-    return CDAssociationMill.cDRoleSymbolBuilder().setName(name).build();
+    return true;
   }
 
   @Override
@@ -116,7 +134,7 @@ public class CDAssociationSymbolTableCreator
   }
 
   @Override
-  public void visit(ASTCDRole node) {
+  public void handle(ASTCDRole node) {
     // do nothing
   }
 
@@ -128,19 +146,13 @@ public class CDAssociationSymbolTableCreator
       initialize_CDRole(symbol, role);
     }
 
-    side.getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
-    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(side.getMCQualifiedType());
+    final Optional<SymTypeExpression> typeResult = getSymTypeExpression(ast, side);
     if (!typeResult.isPresent()) {
-      Log.error(String.format(
-          "0xCDA62: The type %s of the role (%s) could not be calculated",
-          symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
-          side.getName(ast)),
-          side.getMCQualifiedType().get_SourcePositionStart());
       return;
     }
     symbol.setType(typeResult.get());
 
-    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+    symbolTableHelper.getModifierHandler().handle(side.getModifier(), symbol);
 
     ast.getCDAssocDir().accept(symbolTableHelper.getNavigableVisitor());
     symbol.setIsDefinitiveNavigable(isLeft ? symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableLeft() : symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableRight());
@@ -151,6 +163,20 @@ public class CDAssociationSymbolTableCreator
 
     handleQualifier(symbol, side, typeResult.get());
     symbol.setIsOrdered(side.isPresentCDOrdered());
+    symbol.setIsLeft(isLeft);
+  }
+
+  protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast, ASTCDAssocSide side) {
+    side.getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(side.getMCQualifiedType());
+    if (!typeResult.isPresent()) {
+      Log.error(String.format(
+          "0xCDA62: The type %s of the role (%s) could not be calculated",
+          symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
+          side.getName(ast)),
+          side.getMCQualifiedType().get_SourcePositionStart());
+    }
+    return typeResult;
   }
 
   protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side, SymTypeExpression type) {
@@ -170,12 +196,19 @@ public class CDAssociationSymbolTableCreator
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
         // TODO SVa: don't create a new FieldSymbol, use existing one
+        /*final FieldSymbolSurrogate attributeQualifier = new FieldSymbolSurrogate(side.getCDQualifier().getByAttributeName());
+        attributeQualifier.setEnclosingScope(side.getEnclosingScope());
+        attributeQualifier.setType(type);
+        symbol.setAttributeQualifier(attributeQualifier);*/
+
+        /*
         symbol.setAttributeQualifier(OOSymbolsMill
             .fieldSymbolSurrogateBuilder()
             .setName(side.getCDQualifier().getByAttributeName())
-            .setEnclosingScope(scopeStack.peekLast())
+            .setEnclosingScope(side.getEnclosingScope())
             .setType(type)
             .build());
+        */
 
         // TODO SVa: use this code, but only works in "LinkingPhase"
         /*

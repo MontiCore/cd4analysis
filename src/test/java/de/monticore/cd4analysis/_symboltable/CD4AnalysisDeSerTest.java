@@ -6,6 +6,7 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4DefaultsDelegator;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis.CDBasisMill;
@@ -48,6 +49,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     final ICD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
+    node.accept(new CD4AnalysisTrafo4DefaultsDelegator(globalScope));
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -62,6 +64,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     final ICD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
+
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 

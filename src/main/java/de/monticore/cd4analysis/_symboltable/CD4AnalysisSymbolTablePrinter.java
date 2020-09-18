@@ -6,8 +6,9 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
-import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
+
+import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.FURTHER_OBJECTS_MAP;
 
 public class CD4AnalysisSymbolTablePrinter
     extends CD4AnalysisSymbolTablePrinterTOP {
@@ -31,44 +32,82 @@ public class CD4AnalysisSymbolTablePrinter
   }
 
   public void serializeFurtherObjects() {
-    printer.beginObject("furtherObjects");
-    CDAssociationSymbolTablePrinter.serializeSymAssociations(printer, symbolTablePrinterHelper);
-    printer.endObject();
-  }
-
-  @Override
-  public void visit(ICD4AnalysisArtifactScope node) {
-    if (!printer.isInObject()) {
-      printer.beginObject();
+    if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
+      printer.beginObject(FURTHER_OBJECTS_MAP);
+      CDAssociationSymbolTablePrinter.serializeSymAssociations(printer, symbolTablePrinterHelper);
+      printer.endObject();
     }
-    printer.member(JsonDeSers.KIND, "de.monticore.cd4analysis._symboltable.CD4AnalysisArtifactScope");
-    if (node.isPresentName()) {
-      printer.member(JsonDeSers.NAME, node.getName());
-    }
-    if (!node.getRealPackageName().isEmpty()) {
-      printer.member(JsonDeSers.PACKAGE, node.getRealPackageName());
-    }
-    serializeAdditionalArtifactScopeAttributes(node);
   }
 
   @Override
   public void endVisit(ICD4AnalysisArtifactScope node) {
-    serializeFurtherObjects();
-    super.endVisit(node);
-  }
-
-  @Override
-  public void traverse(ICD4AnalysisArtifactScope node) {
-    super.traverse(node);
-    // elements of subscopes should be flat in the artifact scope with qualified name
-    printer.beginArray("symbols");
-    node.getSubScopes().forEach(s -> s.accept(getRealThis()));
     printer.endArray();
+    serializeFurtherObjects();
+    printer.endObject();
   }
 
+  /**
+   * copy of {@link de.monticore.cd4analysis._visitor.CD4AnalysisVisitor#traverse(ICD4AnalysisScope)}
+   * but with an adapted order
+   *
+   * @param node
+   */
   @Override
-  public void handle(ICD4AnalysisScope node) {
-    // don't call visit, because we don't want the scope information
-    super.traverse(node);
+  public void traverse(ICD4AnalysisScope node) {
+    // traverse symbols within the scope
+    for (de.monticore.cdbasis._symboltable.CDTypeSymbol s : node.getLocalCDTypeSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.cdbasis._symboltable.CDPackageSymbol s : node.getLocalCDPackageSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.cdassociation._symboltable.CDAssociationSymbol s : node.getLocalCDAssociationSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.cdassociation._symboltable.CDRoleSymbol s : node.getLocalCDRoleSymbols()) {
+      s.accept(getRealThis());
+    }
+
+    for (de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol s : node.getLocalOOTypeSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.symbols.oosymbols._symboltable.MethodSymbol s : node.getLocalMethodSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.symbols.oosymbols._symboltable.FieldSymbol s : node.getLocalFieldSymbols()) {
+      s.accept(getRealThis());
+    }
+
+    for (de.monticore.symbols.basicsymbols._symboltable.TypeSymbol s : node.getLocalTypeSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol s : node.getLocalFunctionSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.symbols.basicsymbols._symboltable.VariableSymbol s : node.getLocalVariableSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol s : node.getLocalDiagramSymbols()) {
+      s.accept(getRealThis());
+    }
+    for (de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol s : node.getLocalTypeVarSymbols()) {
+      s.accept(getRealThis());
+    }
+  }
+
+  // TODO SVa: remove, when calculateQualifiedNames is removed and getPackageName returns the correct package
+  @Override
+  public void visit(ICD4AnalysisArtifactScope node) {
+    printer.beginObject();
+    if (node.isPresentName()) {
+      printer.member(de.monticore.symboltable.serialization.JsonDeSers.NAME, node.getName());
+    }
+    // use RealPackageName here
+    if (!node.getRealPackageName().isEmpty()) {
+      printer.member(de.monticore.symboltable.serialization.JsonDeSers.PACKAGE, node.getRealPackageName());
+    }
+    printKindHierarchy();
+    serializeAdditionalArtifactScopeAttributes(node);
+    printer.beginArray(de.monticore.symboltable.serialization.JsonDeSers.SYMBOLS);
   }
 }

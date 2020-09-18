@@ -7,7 +7,10 @@ package de.monticore.cdbasis._symboltable;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis.CDBasisMill;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
@@ -70,13 +73,6 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     assert artifactScope != null;
     artifactScope.setName(node.getName());
     super.visit(node);
-  }
-
-  @Override
-  public void visit(ASTCDPackage node) {
-    super.visit(node);
-    assert scopeStack.peekLast() != null;
-    scopeStack.peekLast().setName(node.getMCQualifiedName().getQName());
   }
 
   @Override
@@ -159,11 +155,10 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   @Override
   public void endVisit(ASTCDCompilationUnit node) {
-    symbolTableHelper.getHandledAssociations().forEach(a -> {
-      // the symbol is a field of the type of the other side
-      // as there are handled associations, we at least have a CDAssociationScope
-      ((ICDAssociationScope) a.getLeft().getType().getTypeInfo().getSpannedScope()).add(a.getRight());
-      ((ICDAssociationScope) a.getRight().getType().getTypeInfo().getSpannedScope()).add(a.getLeft());
-    });
+    // the symbol is a field of the type of the other side
+    // as there are handled associations, we at least have a CDAssociationScope
+    symbolTableHelper.getHandledRoles().forEach((r, t) ->
+        ((ICDAssociationScope) t.getTypeInfo().getSpannedScope()).add(r)
+    );
   }
 }

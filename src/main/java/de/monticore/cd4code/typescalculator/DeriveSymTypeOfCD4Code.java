@@ -107,6 +107,10 @@ public class DeriveSymTypeOfCD4Code extends CD4CodeDelegatorVisitor
     synthesizeSymTypeFromMCSimpleGenericTypes.setTypeCheckResult(getTypeCheckResult());
     setMCSimpleGenericTypesVisitor(synthesizeSymTypeFromMCSimpleGenericTypes);
 
+    final SynthesizeSymTypeFromMCFullGenericTypes synthesizeSymTypeFromMCFullGenericTypes = new SynthesizeSymTypeFromMCFullGenericTypes();
+    synthesizeSymTypeFromMCFullGenericTypes.setTypeCheckResult(getTypeCheckResult());
+    setMCFullGenericTypesVisitor(synthesizeSymTypeFromMCFullGenericTypes);
+
     final DeriveSymTypeOfBitExpressions deriveSymTypeOfBitExpressions = new DeriveSymTypeOfBitExpressions();
     deriveSymTypeOfBitExpressions.setTypeCheckResult(getTypeCheckResult());
     setBitExpressionsVisitor(deriveSymTypeOfBitExpressions);

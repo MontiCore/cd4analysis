@@ -28,6 +28,11 @@ public class CDAssociationSrcAndTargetTypeExistChecker implements
   }
 
   private void checkTypeExists(ASTCDAssocSide side, ASTCDAssociation assoc) {
+    if (!side.isPresentSymbol()) {
+      // no symbol present
+      return;
+    }
+
     try {
       //noinspection ResultOfMethodCallIgnored
       side.getSymbol().getType().getTypeInfo();

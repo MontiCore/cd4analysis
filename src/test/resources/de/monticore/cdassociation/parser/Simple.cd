@@ -21,11 +21,11 @@ classdiagram Simple {
   final composition Struct [[name]] -> (item) StructItem [1];
   association A -> S;
   association [*] A (a) -> [String] S [1];
-  private composition comp protected / [0..1] A [[id]] (s) <-> (a) [String] S [1..*] public derived {ordered};
+  private composition comp protected / [0..1] A [[id]] (a) <-> (s) [String] S [1..*] public derived {ordered};
 
   class C1;
   class C2;
   association C1 -> C2;
   association one_to_two C1 -> C2;
-  association one_to_two_2 C2 -> (c2_custom) C2;
+  association one_to_two_2 C1 -> (c2_custom) C2;
 }

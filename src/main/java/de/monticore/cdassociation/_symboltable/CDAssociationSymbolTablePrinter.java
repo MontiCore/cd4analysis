@@ -61,8 +61,10 @@ public class CDAssociationSymbolTablePrinter
   }
 
   @Override
-  public void serializeCDAssociationAssociation(SymAssociation association) {
-    printer.member("association", handleSymAssociation(association));
+  public void serializeCDAssociationAssociation(Optional<SymAssociation> association) {
+    if (association.isPresent()) {
+      printer.member("association", handleSymAssociation(association.get()));
+    }
   }
 
   @Override
@@ -87,18 +89,27 @@ public class CDAssociationSymbolTablePrinter
   @Override
   public void visit(CDRoleSymbol node) {
     super.visit(node);
-    printer.member("association", handleSymAssociation(node.getAssociation()));
-    printer.member("isLeft", node.isLeft());
+    if (node.isPresentAssociation()) {
+      printer.member("association", handleSymAssociation(node.getAssociation()));
+    }
+    printer.member("isLeft", node.isIsLeft());
   }
 
   @Override
-  public void serializeCDRoleAssociation(SymAssociation association) {
-    printer.member("association", handleSymAssociation(association));
+  public void serializeCDRoleAssociation(Optional<SymAssociation> association) {
+    if (association != null && association.isPresent()) {
+      printer.member("association", handleSymAssociation(association.get()));
+    }
   }
 
   @Override
   public void serializeCDRoleType(SymTypeExpression type) {
     SymTypeExpressionDeSer.serializeMember(printer, "type", type);
+  }
+
+  @Override
+  public void traverse(CDAssociationSymbol node) {
+    // don't handle the role symbols here, because they are already serialized as CDRoleSymbol in the CDType
   }
 
   @Override
@@ -113,37 +124,16 @@ public class CDAssociationSymbolTablePrinter
   }
 
   @Override
-  public void handle(ICDAssociationScope node) {
-    // don't call visit, because we don't want the scope information
-    super.traverse(node);
-  }
-
-  @Override
-  public void traverse(CDAssociationSymbol node) {
-    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
-      printer.beginArray("symbols");
-      node.getSpannedScope().accept(getRealThis());
-      printer.endArray();
+  public void handle(CDAssociationSymbol node) {
+    if (symbolTablePrinterHelper.visit(node.getFullName())) {
+      super.handle(node);
     }
   }
 
   @Override
-  public void traverse(ICDAssociationScope node) {
-    if (!node.getLocalCDAssociationSymbols().isEmpty()) {
-      node.getLocalCDAssociationSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
+  public void handle(CDRoleSymbol node) {
+    if (symbolTablePrinterHelper.visit(node.getFullName())) {
+      super.handle(node);
     }
-    // don't serialize the cdrolesymbols here, because we can reconstruct them by their symassociation
-    if (!node.getLocalCDRoleSymbols().isEmpty()) {
-      node.getLocalCDRoleSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    getRealThis().traverse((de.monticore.cdbasis._symboltable.ICDBasisScope) node);
   }
 }

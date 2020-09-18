@@ -116,8 +116,10 @@ component grammar CDAssociation extends de.monticore.CDBasis {
     attributeQualifier: Optional<de.monticore.symbols.oosymbols._symboltable.FieldSymbol>
     typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
 
-    association: de.monticore.cdassociation._symboltable.SymAssociation
+    // the CDRole symbol only links to a SymAssociation if the other role also has a Symbol
+    association: Optional<de.monticore.cdassociation._symboltable.SymAssociation>
     isOrdered: boolean
+    isLeft: boolean
   ;
 
   /** The symbol for CDAssociation is defined for named associations.
@@ -125,5 +127,5 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       information obout the association and the roles.
   */
   symbolrule CDAssociation =
-    association: de.monticore.cdassociation._symboltable.SymAssociation;
+    association: Optional<de.monticore.cdassociation._symboltable.SymAssociation>;
 }

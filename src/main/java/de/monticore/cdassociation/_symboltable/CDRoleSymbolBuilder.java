@@ -8,8 +8,8 @@ public class CDRoleSymbolBuilder extends CDRoleSymbolBuilderTOP {
   @Override
   public CDRoleSymbol build() {
     final CDRoleSymbol symbol = super.build();
-    if (symbol.getAssociation() != null) {
-      if (symbol.isLeft()) {
+    if (symbol.isPresentAssociation()) {
+      if (symbol.isIsLeft()) {
         symbol.getAssociation().setLeft(symbol);
       }
       else {
@@ -21,7 +21,7 @@ public class CDRoleSymbolBuilder extends CDRoleSymbolBuilderTOP {
 
   public CDRoleSymbol build(boolean isLeft) {
     final CDRoleSymbol symbol = super.build();
-    if (symbol.getAssociation() != null) {
+    if (symbol.isPresentAssociation()) {
       if (isLeft) {
         symbol.getAssociation().setLeft(symbol);
       }

@@ -11,7 +11,6 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,14 +60,9 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public SymAssociation deserializeAssociation(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
-    final int association = symbolJson.getIntegerMember("association");
-    if (!symAssociations.containsKey(association)) {
-      Log.error(String.format(
-          "0xCD003: SymAssociation %d is not loaded",
-          association));
-    }
-    return symAssociations.get(association);
+  public Optional<SymAssociation> deserializeAssociation(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+    return symbolJson.getIntegerMemberOpt("association")
+        .flatMap(a -> Optional.ofNullable(symAssociations.get(a)));
   }
 
   @Override
@@ -102,7 +96,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
     else {
       builder.setTypeQualifierAbsent();
     }
-    builder.setAssociation(deserializeAssociation(symbolJson, enclosingScope));
+    deserializeAssociation(symbolJson, enclosingScope).ifPresent(builder::setAssociation);
     builder.setIsOrdered(deserializeIsOrdered(symbolJson, enclosingScope));
     builder.setIsPrivate(deserializeIsPrivate(symbolJson, enclosingScope));
     builder.setIsProtected(deserializeIsProtected(symbolJson, enclosingScope));

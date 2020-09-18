@@ -4,8 +4,10 @@
 
 package de.monticore.cd4code._symboltable;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
+import de.monticore.cd4code.trafo.CD4CodeTrafo4DefaultsDelegator;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
@@ -41,13 +43,15 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     final ICD4CodeArtifactScope artifactScope = symbolTableCreator.createFromAST(node);
     checkLogError();
 
-    final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("c2");
+    node.accept(new CD4CodeTrafo4DefaultsDelegator(globalScope));
+
+    final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());
 
-    final List<CDRoleSymbol> c2_1 = artifactScope.resolveCDRoleMany("one_to_two");
-    assertEquals(2, c2_1.size());
+    final List<CDRoleSymbol> c2_1 = artifactScope.resolveCDRoleMany("C1.one_to_two");
+    assertEquals(1, c2_1.size());
 
-    final Optional<CDRoleSymbol> c2_2 = artifactScope.resolveCDRole("c2_custom");
+    final Optional<CDRoleSymbol> c2_2 = artifactScope.resolveCDRole("C1.c2_custom");
     assertTrue(c2_2.isPresent());
   }
 }

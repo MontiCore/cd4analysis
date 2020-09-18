@@ -7,7 +7,6 @@ package de.monticore.testtypeimporter;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.resolver.CD4CodeResolvingDelegate;
 import de.monticore.io.paths.ModelPath;
@@ -16,7 +15,9 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testtypeimporter._ast.ASTCompilationUnit;
 import de.monticore.testtypeimporter._parser.TestTypeImporterParser;
-import de.monticore.testtypeimporter._symboltable.*;
+import de.monticore.testtypeimporter._symboltable.ITestTypeImporterArtifactScope;
+import de.monticore.testtypeimporter._symboltable.ITestTypeImporterGlobalScope;
+import de.monticore.testtypeimporter._symboltable.TestTypeImporterSymbolTableCreatorDelegator;
 import org.junit.Test;
 
 import java.io.IOException;

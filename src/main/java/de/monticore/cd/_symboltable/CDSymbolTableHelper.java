@@ -7,12 +7,14 @@ package de.monticore.cd._symboltable;
 import de.monticore.cd.CDMill;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._symboltable.SymAssociation;
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.Splitters;
@@ -34,7 +36,7 @@ public class CDSymbolTableHelper {
   protected CDAssocTypeForSymAssociationVisitor assocTypeVisitor;
 
   protected Stack<String> cdTypeStack;
-  protected Set<SymAssociation> handledAssociations;
+  protected Map<CDRoleSymbol, SymTypeExpression> handledRoles;
 
   protected List<ASTMCImportStatement> imports;
 
@@ -45,17 +47,17 @@ public class CDSymbolTableHelper {
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
     this(new CDBasisPrettyPrinterDelegator(), typeChecker,
         CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(),
-        new Stack<>(), new HashSet<>(), new ArrayList<>());
+        new Stack<>(), new HashMap<>(), new ArrayList<>());
   }
 
-  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Set<SymAssociation> handledAssociations, List<ASTMCImportStatement> imports) {
+  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, SymTypeExpression> handledRoles, List<ASTMCImportStatement> imports) {
     this.prettyPrinter = prettyPrinter;
     this.typeChecker = typeChecker;
     this.modifierHandler = modifierHandler;
     this.navigableVisitor = navigableVisitor;
     this.assocTypeVisitor = assocTypeVisitor;
     this.cdTypeStack = cdTypeStack;
-    this.handledAssociations = handledAssociations;
+    this.handledRoles = handledRoles;
     this.imports = imports;
   }
 
@@ -120,20 +122,20 @@ public class CDSymbolTableHelper {
     return this.cdTypeStack.pop();
   }
 
-  public Set<SymAssociation> getHandledAssociations() {
-    return handledAssociations;
+  public Map<CDRoleSymbol, SymTypeExpression> getHandledRoles() {
+    return handledRoles;
   }
 
-  public void setHandledAssociations(Set<SymAssociation> handledAssociations) {
-    this.handledAssociations = handledAssociations;
+  public void setHandledRoles(Map<CDRoleSymbol, SymTypeExpression> handledRoles) {
+    this.handledRoles = handledRoles;
   }
 
-  public boolean addToHandledAssociations(SymAssociation handledAssociation) {
-    return this.handledAssociations.add(handledAssociation);
+  public SymTypeExpression addToHandledRoles(CDRoleSymbol symbol, SymTypeExpression type) {
+    return this.handledRoles.put(symbol, type);
   }
 
-  public boolean removeFromHandledAssociations(SymAssociation handledAssociation) {
-    return this.handledAssociations.remove(handledAssociation);
+  public SymTypeExpression removeFromHandledAssociations(CDRoleSymbol symbol) {
+    return this.handledRoles.remove(symbol);
   }
 
   public List<ASTMCImportStatement> getImports() {

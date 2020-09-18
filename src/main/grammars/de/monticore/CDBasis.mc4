@@ -62,7 +62,7 @@ component grammar CDBasis extends
       The name of the package is a flat name and can not create
       a hierarchical package structure.
   */
-  scope CDPackage implements CDElement =
+  scope symbol CDPackage implements CDElement =
     "package" MCQualifiedName "{"
       CDElement*
     "}";
