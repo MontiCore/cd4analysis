@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore" version "6.3.0-SNAPSHOT" // MontiCore Plugin
+    id "monticore" version "6.3.0" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
     id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
-def mc_version = "6.3.0-SNAPSHOT"
+def mc_version = "6.3.0"
 
 group = "de.monticore.lang"
 version = mc_version
