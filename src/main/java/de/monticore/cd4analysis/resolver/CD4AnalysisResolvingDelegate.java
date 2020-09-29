@@ -4,7 +4,7 @@
 
 package de.monticore.cd4analysis.resolver;
 
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.ICDRoleSymbolResolvingDelegate;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -25,9 +25,9 @@ import java.util.function.Predicate;
 public class CD4AnalysisResolvingDelegate
     implements ICDTypeSymbolResolvingDelegate, IOOTypeSymbolResolvingDelegate, ITypeSymbolResolvingDelegate,
     ICDRoleSymbolResolvingDelegate, IFieldSymbolResolvingDelegate, IVariableSymbolResolvingDelegate {
-  protected final CD4AnalysisGlobalScope cdGlobalScope;
+  protected final ICD4AnalysisGlobalScope cdGlobalScope;
 
-  public CD4AnalysisResolvingDelegate(CD4AnalysisGlobalScope cdGlobalScope) {
+  public CD4AnalysisResolvingDelegate(ICD4AnalysisGlobalScope cdGlobalScope) {
     this.cdGlobalScope = cdGlobalScope;
   }
 

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class CD4CodeSymbolTableCreatorTest extends CD4CodeTestBasis {
+public class CD4CodeSymbolTableCreatorDelegatorTest extends CD4CodeTestBasis {
 
   @Test
   public void completeModel() throws IOException {

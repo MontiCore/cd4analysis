@@ -44,6 +44,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     this.symbolTableHelper = cdSymbolTableHelper;
   }
 
+  // TODO SVa: remove because std-behavior?
   @Override
   public ICDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     ICDBasisArtifactScope artifactScope = CDBasisMill

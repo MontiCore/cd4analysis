@@ -31,7 +31,7 @@ classdiagram Packages {
   }
 
   package d {
-    class D extends a.A, a.B, a.b.c.C; // Note wie darf A hier referenziert werden?
+    class D extends a.A, a.B, a.b.c.C;
   }
 
   package h {

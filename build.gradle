@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore" version "6.3.0" // MontiCore Plugin
+    id "monticore" version "6.4.0-SNAPSHOT" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
     id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
-def mc_version = "6.3.0"
+def mc_version = "6.4.0-SNAPSHOT"
 
 group = "de.monticore.lang"
 version = mc_version
@@ -22,8 +22,7 @@ ext {
     grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
     testGrammarDir = "src/test/grammars"
     testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
-    findbugs_version = '3.0.2'
-    mc_version = "6.3.0-SNAPSHOT"
+    findbugs_version = "3.0.2"
     commons_version = "1.7.9"
     guava_version = "25.1-jre"
     antlr_version = "4.7-1"
