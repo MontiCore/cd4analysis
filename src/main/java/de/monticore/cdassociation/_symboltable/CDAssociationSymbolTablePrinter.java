@@ -8,7 +8,7 @@ import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
@@ -77,7 +77,7 @@ public class CDAssociationSymbolTablePrinter
   }
 
   @Override
-  public void serializeCDRoleAttributeQualifier(Optional<FieldSymbol> attributeQualifier) {
+  public void serializeCDRoleAttributeQualifier(Optional<VariableSymbol> attributeQualifier) {
     attributeQualifier.ifPresent(fieldSymbol -> printer.member("attributeQualifier", fieldSymbol.getName()));
   }
 

@@ -6,8 +6,8 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
@@ -36,7 +36,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public Optional<FieldSymbol> deserializeAttributeQualifier(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<VariableSymbol> deserializeAttributeQualifier(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
     if (symbolJson.hasMember("attributeQualifier")) {
       final String fieldName = symbolJson.getStringMember("attributeQualifier");
       final SymTypeExpression type = SymTypeExpressionDeSer.deserializeMember("type", symbolJson, enclosingScope);

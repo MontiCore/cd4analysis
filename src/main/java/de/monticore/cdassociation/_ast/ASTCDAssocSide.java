@@ -49,4 +49,6 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
   default CDRoleSymbol getSymbol() {
     return getCDRole().getSymbol();
   }
+
+  boolean isLeft();
 }

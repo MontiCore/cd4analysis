@@ -7,6 +7,7 @@ package de.monticore.cd._symboltable;
 import de.monticore.cd.CDMill;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
@@ -27,6 +28,7 @@ import static de.se_rwth.commons.Names.getQualifier;
 import static de.se_rwth.commons.Names.getSimpleName;
 import static de.se_rwth.commons.logging.Log.trace;
 
+// TODO SVa: check if all attributes needed, or split for STCompleteTypes
 public class CDSymbolTableHelper {
   protected CDBasisPrettyPrinterDelegator prettyPrinter;
   protected CDTypesCalculator typeChecker;

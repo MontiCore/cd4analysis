@@ -18,12 +18,21 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
     implements CDInterfaceAndEnumVisitor {
   protected final IndentPrinter printer;
   protected CDInterfaceAndEnumVisitor realThis;
+  protected boolean followingSpace;
 
   public CDTypeKindPrinter() {
+    this(false);
+  }
+
+  public CDTypeKindPrinter(boolean followingSpace) {
     this(new IndentPrinter());
   }
 
   public CDTypeKindPrinter(IndentPrinter printer) {
+    this(printer, false);
+  }
+
+  public CDTypeKindPrinter(IndentPrinter printer, boolean followingSpace) {
     this.printer = printer;
     setRealThis(this);
   }
@@ -41,16 +50,25 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
   @Override
   public void visit(ASTCDClass node) {
     print("class");
+    if (followingSpace) {
+      print(" ");
+    }
   }
 
   @Override
   public void visit(ASTCDInterface node) {
     print("interface");
+    if (followingSpace) {
+      print(" ");
+    }
   }
 
   @Override
   public void visit(ASTCDEnum node) {
     print("enum");
+    if (followingSpace) {
+      print(" ");
+    }
   }
 
   public String print(ASTCDType type) {
@@ -61,12 +79,21 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
   public String print(OOTypeSymbol type) {
     if (type.isIsClass()) {
       print("class");
+      if (followingSpace) {
+        print(" ");
+      }
     }
     if (type.isIsInterface()) {
       print("interface");
+      if (followingSpace) {
+        print(" ");
+      }
     }
     if (type.isIsEnum()) {
       print("enum");
+      if (followingSpace) {
+        print(" ");
+      }
     }
 
     return getPrinter().getContent();
