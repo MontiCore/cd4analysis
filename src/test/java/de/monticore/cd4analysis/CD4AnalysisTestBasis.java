@@ -27,6 +27,7 @@ public class CD4AnalysisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CD4AnalysisMill.init();
     p = new CD4AnalysisParser();
     globalScope = CD4AnalysisMill
         .cD4AnalysisGlobalScopeBuilder()
@@ -41,6 +42,5 @@ public class CD4AnalysisTestBasis extends TestBasis {
     cd4AnalyisCoCos = new CD4AnalysisCoCos();
     printer = CD4AnalysisMill.cD4AnalysisPrettyPrinter();
     deSer = new CD4AnalysisScopeDeSer();
-    deSer.setSymbolFileExtension("cdsym");
   }
 }

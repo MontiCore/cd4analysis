@@ -131,6 +131,8 @@ public class CDCLI {
   }
 
   protected void run() throws IOException, ParseException {
+    CD4CodeMill.init();
+
     parse();
 
     System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
@@ -175,8 +177,8 @@ public class CDCLI {
     if (cmd.hasOption("s")) { // symbol table export
       final Path symbolPath = Paths.get(outputPath, cmd.getOptionValue("s", ""));
       final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSerBuilder().build();
-      deser.store(artifactScope, symbolPath);
-      System.out.printf(STEXPORT_SUCCESSFUL, deser.getPath(artifactScope, symbolPath));
+      final String path = deser.store(artifactScope, symbolPath.toString());
+      System.out.printf(STEXPORT_SUCCESSFUL, path);
     }
 
     // report

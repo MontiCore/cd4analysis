@@ -24,6 +24,7 @@ public class CD4CodeBasisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CD4CodeBasisMill.init();
     p = new TestCD4CodeBasisParser();
     globalScope = CD4CodeBasisMill
         .cD4CodeBasisGlobalScopeBuilder()

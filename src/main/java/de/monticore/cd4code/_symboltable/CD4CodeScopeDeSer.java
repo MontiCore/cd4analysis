@@ -78,37 +78,6 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   }
 
   @Override
-  public void store(ICD4CodeArtifactScope toSerialize, Path symbolPath) {
-    // 1. Throw errors and abort storing in case of missing required information:
-    if (!toSerialize.isPresentName()) {
-      Log.error("0xCD00C:CD4CodeScopeDeSer cannot store an artifact scope that has no name!");
-      return;
-    }
-    if (null == getSymbolFileExtension()) {
-      Log.error("0xCD00E:File extension for stored symbol tables has not been set in CD4CodeScopeDeSer!");
-      return;
-    }
-
-    //2. calculate absolute location for the file to create, including the package if it is non-empty
-    java.nio.file.Path path = getPath(toSerialize, symbolPath);
-
-    //3. serialize artifact scope, which will become the file content
-    String serialized = serialize(toSerialize);
-
-    //4. store serialized artifact scope to calculated location
-    de.monticore.io.FileReaderWriter.storeInFile(path, serialized);
-  }
-
-  public Path getPath(ICD4CodeArtifactScope toSerialize, Path symbolPath) {
-    java.nio.file.Path path = symbolPath; //starting with symbol path
-    if (null != toSerialize.getRealPackageName() && toSerialize.getRealPackageName().length() > 0) {
-      path = path.resolve(de.se_rwth.commons.Names.getPathFromPackage(toSerialize.getRealPackageName()));
-    }
-    path = path.resolve(toSerialize.getName() + "." + getSymbolFileExtension());
-    return path;
-  }
-
-  @Override
   protected void deserializeAdditionalArtifactScopeAttributes(ICD4CodeArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAdditionalArtifactScopeAttributes(scope, scopeJson);
     deserializeFurtherObjects(symAssociations, scopeJson);

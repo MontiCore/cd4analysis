@@ -24,6 +24,7 @@ public class CDAssociationTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CDAssociationMill.init();
     p = new TestCDAssociationParser();
     globalScope = CDAssociationMill
         .cDAssociationGlobalScopeBuilder()

@@ -27,6 +27,7 @@ public class CD4CodeTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CD4CodeMill.init();
     p = new CD4CodeParser();
     globalScope = CD4CodeMill
         .cD4CodeGlobalScopeBuilder()
@@ -41,6 +42,5 @@ public class CD4CodeTestBasis extends TestBasis {
     cd4CodeCoCos = new CD4CodeCoCos();
     printer = CD4CodeMill.cD4CodePrettyPrinter();
     deSer = new CD4CodeScopeDeSer();
-    deSer.setSymbolFileExtension("cdsym");
   }
 }

@@ -24,6 +24,7 @@ public class CDBasisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CDBasisMill.init();
     p = new TestCDBasisParser();
     globalScope = CDBasisMill
         .cDBasisGlobalScopeBuilder()

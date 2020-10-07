@@ -24,6 +24,7 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CDInterfaceAndEnumMill.init();
     p = new TestCDInterfaceAndEnumParser();
     globalScope = CDInterfaceAndEnumMill
         .cDInterfaceAndEnumGlobalScopeBuilder()
