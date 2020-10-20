@@ -8,8 +8,6 @@ plugins {
     id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
-def mc_version = "6.4.0-SNAPSHOT"
-
 group = "de.monticore.lang"
 version = mc_version
 description = "CD4Analysis"
@@ -55,10 +53,10 @@ configurations {
 
 dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-    grammar "de.monticore:monticore-grammar:$mc_version"
-    grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
-    implementation "de.monticore:monticore-grammar:$mc_version"
-    implementation "de.monticore:monticore-generator:$mc_version"
+    grammar "de.monticore:monticore-grammar:${project.properties['mc_version']}"
+    grammar "de.monticore:monticore-grammar:${project.properties['mc_version']}:$grammar_classifier"
+    implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
+    implementation "de.monticore:monticore-generator:${project.properties['mc_version']}"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation "com.google.guava:guava:$guava_version"
@@ -68,7 +66,7 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
-    testImplementation "de.monticore:monticore-runtime:$mc_version"
+    testImplementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
 }
 
 repositories {
