@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore" version "6.4.0-SNAPSHOT" // MontiCore Plugin
+    id "monticore" version "$mc_version" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
@@ -9,7 +9,6 @@ plugins {
 }
 
 group = "de.monticore.lang"
-version = mc_version
 description = "CD4Analysis"
 sourceCompatibility = JavaVersion.VERSION_1_8
 buildDir = file("$projectDir/target")
