@@ -63,7 +63,7 @@ checkMDLinks:
   script:
     - chmod +x check/mdlinkcheck.sh
     - "url=https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/grammars/de/monticore/cd4analysis.md"
-    - "./check/mdlinkcheck.sh -url $url -t $secibuildtoken -p"
+    - "./check/mdlinkcheck.sh -url $url -t $secibuildtoken"
   only:
     - develop
 
