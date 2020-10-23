@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CD4CodeArtifactScope extends CD4CodeArtifactScopeTOP {
+  public CD4CodeArtifactScope() {
+  }
+
   public CD4CodeArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }

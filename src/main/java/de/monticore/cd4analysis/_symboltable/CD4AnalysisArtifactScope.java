@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CD4AnalysisArtifactScope extends CD4AnalysisArtifactScopeTOP {
+  public CD4AnalysisArtifactScope() {
+  }
+
   public CD4AnalysisArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }

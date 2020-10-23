@@ -35,10 +35,7 @@ public class CD4CodeTestBasis extends TestBasis {
         .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
         .addBuiltInTypes()
         .build();
-    symbolTableCreator = CD4CodeMill
-        .cD4CodeSymbolTableCreatorDelegatorBuilder()
-        .setGlobalScope(globalScope)
-        .build();
+    symbolTableCreator = new CD4CodeSymbolTableCreatorDelegator(globalScope);
     cd4CodeCoCos = new CD4CodeCoCos();
     printer = CD4CodeMill.cD4CodePrettyPrinter();
     deSer = new CD4CodeScopeDeSer();

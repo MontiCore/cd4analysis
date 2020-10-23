@@ -166,7 +166,7 @@ public class CD4CodeBasisSymbolTableCreator
 
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.getLast());
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.peekLast());
     symbol.setType(typeObject);
 
     // Don't store the arguments in the ST

@@ -34,9 +34,7 @@ public class ModifierHandler {
   /**
    * @param modifier
    * @param typeSymbol
-   * @deprecated, use version with builder
    */
-  @Deprecated
   public void handle(ASTModifier modifier, OOTypeSymbol typeSymbol) {
     typeSymbol.setIsPublic(modifier.isPublic());
     typeSymbol.setIsPrivate(modifier.isPrivate());
@@ -48,9 +46,7 @@ public class ModifierHandler {
   /**
    * @param modifier
    * @param fieldSymbol
-   * @deprecated, use version with builder
    */
-  @Deprecated
   public void handle(ASTModifier modifier, FieldSymbol fieldSymbol) {
     fieldSymbol.setIsPublic(modifier.isPublic());
     fieldSymbol.setIsPrivate(modifier.isPrivate());
@@ -62,9 +58,7 @@ public class ModifierHandler {
   /**
    * @param modifier
    * @param methodSymbol
-   * @deprecated, use version with builder
    */
-  @Deprecated
   public void handle(ASTModifier modifier, MethodSymbol methodSymbol) {
     methodSymbol.setIsPublic(modifier.isPublic());
     methodSymbol.setIsPrivate(modifier.isPrivate());

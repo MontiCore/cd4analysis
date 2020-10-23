@@ -10,6 +10,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCFullGenericTypesPrettyPrinter;
 import de.se_rwth.commons.StringTransformations;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class CDParameterFacade {
   }
 
   public ASTCDParameter createParameter(final ASTMCType type) {
-    return createParameter(type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))));
+    return createParameter(type, StringTransformations.uncapitalize(type.printType(new MCFullGenericTypesPrettyPrinter(new IndentPrinter()))));
   }
 
   public ASTCDParameter createParameter(final String type, final String name) {

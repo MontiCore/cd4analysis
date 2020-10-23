@@ -8,7 +8,7 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
-import de.monticore.cd4code.resolver.CD4CodeResolvingDelegate;
+import de.monticore.cd4code.resolver.CD4CodeResolver;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -40,13 +40,13 @@ public class TestTypeImporterTest extends TestBasis {
         .addBuiltInTypes()
         .build();
 
-    final CD4CodeResolvingDelegate c = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
-    globalScope.addAdaptedOOTypeSymbolResolvingDelegate(c);
-    globalScope.addAdaptedTypeSymbolResolvingDelegate(c);
-    globalScope.addAdaptedFieldSymbolResolvingDelegate(c);
-    globalScope.addAdaptedVariableSymbolResolvingDelegate(c);
-    globalScope.addAdaptedMethodSymbolResolvingDelegate(c);
-    globalScope.addAdaptedFunctionSymbolResolvingDelegate(c);
+    final CD4CodeResolver c = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
+    globalScope.addAdaptedOOTypeSymbolResolver(c);
+    globalScope.addAdaptedTypeSymbolResolver(c);
+    globalScope.addAdaptedFieldSymbolResolver(c);
+    globalScope.addAdaptedVariableSymbolResolver(c);
+    globalScope.addAdaptedMethodSymbolResolver(c);
+    globalScope.addAdaptedFunctionSymbolResolver(c);
 
     final TestTypeImporterSymbolTableCreatorDelegator symbolTableCreator = TestTypeImporterMill
         .testTypeImporterSymbolTableCreatorDelegatorBuilder()

@@ -28,6 +28,7 @@ ext {
     junit_version = "4.13"
     commons_cli_version = "1.4"
     commons_lang_version = "3.11"
+    jupiter_version = "5.6.0"
 }
 
 // configure non-standard source sets
@@ -66,6 +67,8 @@ dependencies {
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
 repositories {
@@ -189,6 +192,10 @@ tasks.withType(JavaCompile) {
 
 tasks.withType(Test) {
     maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
+
+test {
+  useJUnitPlatform()
 }
 
 // build javadoc jar in addition

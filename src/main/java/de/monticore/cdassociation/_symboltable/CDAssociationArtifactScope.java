@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CDAssociationArtifactScope extends CDAssociationArtifactScopeTOP {
+  public CDAssociationArtifactScope() {
+  }
+
   public CDAssociationArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }

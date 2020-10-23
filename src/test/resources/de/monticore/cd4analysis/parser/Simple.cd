@@ -16,6 +16,9 @@ classdiagram Simple {
     DEE;
   }
 
+  class Struct;
+  class StructItem;
+
   association Struct [[name]] -> (item) StructItem [1];
   association A -> S;
   association [*] A -> S [1];

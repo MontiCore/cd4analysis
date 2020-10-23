@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class CDBasisArtifactScope extends CDBasisArtifactScopeTOP {
+  public CDBasisArtifactScope() {
+  }
+
   public CDBasisArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }

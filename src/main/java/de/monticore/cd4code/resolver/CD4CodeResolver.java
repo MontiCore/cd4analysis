@@ -2,32 +2,29 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cd4analysis.resolver;
+package de.monticore.cd4code.resolver;
 
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
+import de.monticore.cd4codebasis._symboltable.ICDMethodSignatureSymbolResolver;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdassociation._symboltable.ICDRoleSymbolResolvingDelegate;
+import de.monticore.cdassociation._symboltable.ICDRoleSymbolResolver;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.ICDTypeSymbolResolvingDelegate;
-import de.monticore.symbols.basicsymbols._symboltable.ITypeSymbolResolvingDelegate;
-import de.monticore.symbols.basicsymbols._symboltable.IVariableSymbolResolvingDelegate;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.IFieldSymbolResolvingDelegate;
-import de.monticore.symbols.oosymbols._symboltable.IOOTypeSymbolResolvingDelegate;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDTypeSymbolResolver;
+import de.monticore.symbols.basicsymbols._symboltable.*;
+import de.monticore.symbols.oosymbols._symboltable.*;
 import de.monticore.symboltable.modifiers.AccessModifier;
 
 import java.util.List;
 import java.util.function.Predicate;
 
-public class CD4AnalysisResolvingDelegate
-    implements ICDTypeSymbolResolvingDelegate, IOOTypeSymbolResolvingDelegate, ITypeSymbolResolvingDelegate,
-    ICDRoleSymbolResolvingDelegate, IFieldSymbolResolvingDelegate, IVariableSymbolResolvingDelegate {
-  protected final ICD4AnalysisGlobalScope cdGlobalScope;
+public class CD4CodeResolver
+    implements ICDTypeSymbolResolver, IOOTypeSymbolResolver, ITypeSymbolResolver,
+    ICDRoleSymbolResolver, IFieldSymbolResolver, IVariableSymbolResolver,
+    ICDMethodSignatureSymbolResolver, IMethodSymbolResolver, IFunctionSymbolResolver {
+  protected final ICD4CodeGlobalScope cdGlobalScope;
 
-  public CD4AnalysisResolvingDelegate(ICD4AnalysisGlobalScope cdGlobalScope) {
+  public CD4CodeResolver(ICD4CodeGlobalScope cdGlobalScope) {
     this.cdGlobalScope = cdGlobalScope;
   }
 
@@ -59,5 +56,20 @@ public class CD4AnalysisResolvingDelegate
   @Override
   public List<VariableSymbol> resolveAdaptedVariableSymbol(boolean foundSymbols, String name, AccessModifier modifier, Predicate<VariableSymbol> predicate) {
     return cdGlobalScope.resolveVariableMany(foundSymbols, name, modifier, predicate);
+  }
+
+  @Override
+  public List<CDMethodSignatureSymbol> resolveAdaptedCDMethodSignatureSymbol(boolean foundSymbols, String name, AccessModifier modifier, Predicate<CDMethodSignatureSymbol> predicate) {
+    return cdGlobalScope.resolveCDMethodSignatureMany(foundSymbols, name, modifier, predicate);
+  }
+
+  @Override
+  public List<MethodSymbol> resolveAdaptedMethodSymbol(boolean foundSymbols, String name, AccessModifier modifier, Predicate<MethodSymbol> predicate) {
+    return cdGlobalScope.resolveMethodMany(foundSymbols, name, modifier, predicate);
+  }
+
+  @Override
+  public List<FunctionSymbol> resolveAdaptedFunctionSymbol(boolean foundSymbols, String name, AccessModifier modifier, Predicate<FunctionSymbol> predicate) {
+    return cdGlobalScope.resolveFunctionMany(foundSymbols, name, modifier, predicate);
   }
 }
