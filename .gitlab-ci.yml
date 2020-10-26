@@ -13,6 +13,7 @@ cache:
   
 before_script:
   - chmod +x gradlew
+  - chmod +x check/downloadlinkchecker.sh
   - chmod +x check/mdlinkcheck.sh
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
@@ -62,8 +63,8 @@ checkMDLinks:
   dependencies:
     - deploy
   script:
+    - "./check/downloadlinkchecker.sh $secibuildtoken"
     - "url=https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/grammars/de/monticore/cd4analysis.md"
-    - "echo [MDLinkCheck]: Checking $url"
     - "./check/mdlinkcheck.sh -url $url -t $secibuildtoken"
   only:
     - develop
