@@ -13,8 +13,6 @@ cache:
   
 before_script:
   - chmod +x gradlew
-  - chmod +x check/downloadlinkchecker.sh
-  - chmod +x check/mdlinkcheck.sh
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
 stages:
