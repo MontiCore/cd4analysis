@@ -5,7 +5,6 @@
 package de.monticore.cd.cli;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4code.CD4CodeMill;
@@ -22,6 +21,7 @@ import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class CDCLI {
 
-  static final Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+  static final Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
   protected static final String JAR_NAME = "cd-<Version>-cli.jar";
   protected static final String CHECK_SUCCESSFUL = "Parsing and CoCo check successful!";
   protected static final String CHECK_ERROR = "Error in Parsing or CoCo check.";
@@ -64,7 +64,7 @@ public class CDCLI {
 
   public static void main(String[] args) throws IOException, ParseException {
 
-    root.setLevel(DEFAULT_LOG_LEVEL);
+    //root.setLevel(DEFAULT_LOG_LEVEL);
 
     CDCLI cli = new CDCLI();
     try {
@@ -91,9 +91,9 @@ public class CDCLI {
       throws IOException, ParseException {
     cmd = cdcliOptions.handleArgs(args);
 
-    if (cmd.hasOption("log")) {
+    /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
-    }
+    }*/
 
     failQuick = Boolean.parseBoolean(cmd.getOptionValue("f", "true"));
 
@@ -175,10 +175,11 @@ public class CDCLI {
     }
 
     if (cmd.hasOption("s")) { // symbol table export
-      final Path symbolPath = Paths.get(outputPath, cmd.getOptionValue("s", ""));
+      final Path symbolPath = Paths.get(outputPath,
+          artifactScope.getPackageName(), cmd.getOptionValue("s", ""));
       final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSerBuilder().build();
       final String path = deser.store(artifactScope, symbolPath.toString());
-      System.out.printf(STEXPORT_SUCCESSFUL, path);
+      System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString());
     }
 
     // report
@@ -297,7 +298,8 @@ public class CDCLI {
 
     final List<String> cdPackageList = ast.getCDPackageList();
     sb.append("\nPackages (").append(cdPackageList.size()).append("): [")
-        .append(Joiners.COMMA.join(cdPackageList));
+        .append(Joiners.COMMA.join(cdPackageList))
+        .append("]");
 
     final List<ASTCDClass> cdClassesList = ast.getCDDefinition().getCDClassesList();
     sb.append("\nClasses (").append(cdClassesList.size()).append("): [")
@@ -329,11 +331,21 @@ public class CDCLI {
         .append("]");
 
     final Path allElementsPath = Paths.get(path, REPORT_ALL_ELEMENTS);
+    if (Files.notExists(allElementsPath.getParent())) {
+      try {
+        Files.createDirectories(allElementsPath.getParent());
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+        return;
+      }
+    }
     try (PrintWriter out = new PrintWriter(allElementsPath.toFile())) {
       out.println(sb.toString());
     }
     catch (FileNotFoundException e) {
       e.printStackTrace();
+      return;
     }
 
     System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Collections.singletonList(allElementsPath.toString())));

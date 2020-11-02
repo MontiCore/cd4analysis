@@ -49,6 +49,7 @@ sourceSets {
 
 configurations {
     grammar
+    cli
 }
 
 dependencies {
@@ -212,11 +213,19 @@ task testSourcesJar(type: Jar) {
     archiveClassifier = "testSources"
 }
 
+jar {
+  into("META-INF/maven/$project.group/$project.name") {
+    from { generatePomFileForMavenJavaPublication }
+    rename ".*", "pom.xml"
+  }
+}
+
 shadowJar { // all in one jar
     manifest {
         attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
     }
     archiveClassifier = "cli"
+
     minimize()
 }
 

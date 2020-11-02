@@ -334,7 +334,28 @@ used functionality, e.g.:
   1. Parses the given model
   2. Creates a symbol table
   3. Checks the CoCos
-- the cli is designed with [`the best practices`][CLIBestPractices] in mind 
+- the cli is designed with [`the best practices`][CLIBestPractices] in mind
+- example usage of the cli
+```shell
+cd4analysis-cli -i SocNet.cd -r ./reports
+cd4analysis-cli -pp Complete.puml -puml -svg --showAttr
+cd4analysis-cli -script adapted.groovy
+```
+- option '-h' or '--help' can be used to get information of allowed parameters
+
+### Gradle Plugin
+- the gradle plugin provides the functionality of the cli for gradle builds
+- the plugin can be used to check given class diagrams or generate symbol tables
+- example usage of the gradle plugin
+```gradle
+task checkCD(type: CDTask) {
+  inputFile = file "src/main/resources/de/monticore/cd/Test.cd"
+  outputDir = file buildDir
+  modelPaths = files(buildDir, "src/main/resources")
+  reportDir = file "$buildDir/reports"
+  scriptFile = file "src/main/resources/adapted.groovy"
+}
+```
 
 # CD4Code
 CD4Code is a conservative extension of CD4Analysis and adds methods,

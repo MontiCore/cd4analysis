@@ -40,13 +40,21 @@ public class CDMethodFacade {
   /**
    * base method for creation of a methods via builder
    */
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, final List<ASTCDParameter> parameters) {
+    return createMethodInternal(modifier, returnType, name, true, parameters);
+  }
 
   public ASTCDMethod createMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, final List<ASTCDParameter> parameters) {
+    return createMethodInternal(modifier, returnType, name, false, parameters);
+  }
+
+  public ASTCDMethod createMethodInternal(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, boolean isDefault, final List<ASTCDParameter> parameters) {
     return CD4CodeBasisMill.cDMethodBuilder()
         .setModifier(modifier)
         .setMCReturnType(returnType)
         .setName(name)
         .setCDParametersList(parameters.stream().map(ASTCDParameter::deepClone).collect(Collectors.toList()))
+        .setIsDefault(isDefault)
         .build();
   }
 
@@ -56,6 +64,11 @@ public class CDMethodFacade {
   public ASTCDMethod createMethod(final ASTModifier modifier, final String name, final ASTCDParameter... parameters) {
     ASTMCReturnType returnType = MCBasicTypesMill.mCReturnTypeBuilder().setMCVoidType(mcTypeFacade.createVoidType()).build();
     return createMethod(modifier, returnType, name, parameters);
+  }
+
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final String name, final ASTCDParameter... parameters) {
+    ASTMCReturnType returnType = MCBasicTypesMill.mCReturnTypeBuilder().setMCVoidType(mcTypeFacade.createVoidType()).build();
+    return createDefaultMethod(modifier, returnType, name, parameters);
   }
 
   public ASTCDMethod createMethod(final ASTModifier modifier, final String name, final List<ASTCDParameter> parameters) {
@@ -71,8 +84,18 @@ public class CDMethodFacade {
     return createMethod(modifier, returnType, name, Arrays.asList(parameters));
   }
 
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, final ASTCDParameter... parameters) {
+    return createDefaultMethod(modifier, returnType, name, Arrays.asList(parameters));
+  }
+
   public ASTCDMethod createMethod(final ASTModifier modifier, final String returnType, final String name, final ASTCDParameter... parameters) {
     return createMethod(modifier,
+        mcTypeFacade.createQualifiedType(returnType),
+        name, Arrays.asList(parameters));
+  }
+
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final String returnType, final String name, final ASTCDParameter... parameters) {
+    return createDefaultMethod(modifier,
         mcTypeFacade.createQualifiedType(returnType),
         name, Arrays.asList(parameters));
   }
@@ -81,8 +104,17 @@ public class CDMethodFacade {
     return createMethod(modifier, returnType.getSimpleName(), name, parameters);
   }
 
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final Class<?> returnType, final String name, final ASTCDParameter... parameters) {
+    return createDefaultMethod(modifier, returnType.getSimpleName(), name, parameters);
+  }
+
   public ASTCDMethod createMethod(final ASTModifier modifier, final ASTMCType astmcType, final String name, final List<ASTCDParameter> parameters) {
     ASTMCReturnType returnType = MCBasicTypesMill.mCReturnTypeBuilder().setMCType(astmcType).build();
     return createMethod(modifier, returnType, name, parameters);
+  }
+
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final ASTMCType astmcType, final String name, final List<ASTCDParameter> parameters) {
+    ASTMCReturnType returnType = MCBasicTypesMill.mCReturnTypeBuilder().setMCType(astmcType).build();
+    return createDefaultMethod(modifier, returnType, name, parameters);
   }
 }
