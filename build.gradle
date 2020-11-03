@@ -29,6 +29,7 @@ ext {
     commons_cli_version = "1.4"
     commons_lang_version = "3.11"
     jupiter_version = "5.6.0"
+    antlr_version = '4.7.1'
 }
 
 // configure non-standard source sets
@@ -61,6 +62,7 @@ dependencies {
     implementation "de.monticore:monticore-generator:${project.properties['mc_version']}"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
+    implementation group:'org.antlr', name:'antlr4-runtime', version:antlr_version
     implementation "com.google.guava:guava:$guava_version"
     implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
