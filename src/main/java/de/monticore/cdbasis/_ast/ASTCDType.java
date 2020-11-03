@@ -8,6 +8,8 @@ import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -41,25 +43,28 @@ public interface ASTCDType extends ASTCDTypeTOP {
    * @return the list of collected CDMembers
    */
   default <T extends
-      ASTCDMember> List<T> getCDMemberList(CDMemberVisitor.Options... options) {
-    final CDMemberVisitor cdMemberVisitor = CDMill.cDMemberVisitor(options);
+      ASTCDMember> List<T> getCDMemberList(CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
+    final ArrayList<CDMemberVisitor.Options> list = new ArrayList<>(Arrays.asList(options));
+    list.add(0, option);
+
+    final CDMemberVisitor cdMemberVisitor = CDMill.cDMemberVisitor(list.toArray(new CDMemberVisitor.Options[0]));
     this.accept(cdMemberVisitor);
     return cdMemberVisitor.getElements();
   }
 
   default <T extends
-      ASTCDMember> Iterator<T> iterateCDMembers(CDMemberVisitor.Options...
+      ASTCDMember> Iterator<T> iterateCDMembers(CDMemberVisitor.Options option, CDMemberVisitor.Options...
       options) {
-    return this.<T>getCDMemberList(options).iterator();
+    return this.<T>getCDMemberList(option, options).iterator();
   }
 
   default <T extends
-      ASTCDMember> Stream<T> streamCDMembers(CDMemberVisitor.Options... options) {
-    return this.<T>getCDMemberList(options).stream();
+      ASTCDMember> Stream<T> streamCDMembers(CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
+    return this.<T>getCDMemberList(option, options).stream();
   }
 
-  default int sizeCDMembers(CDMemberVisitor.Options... options) {
-    return getCDMemberList(options).size();
+  default int sizeCDMembers(CDMemberVisitor.Options option, CDMemberVisitor.Options... options) {
+    return getCDMemberList(option, options).size();
   }
 
   default List<ASTCDAttribute> getCDAttributeList() {

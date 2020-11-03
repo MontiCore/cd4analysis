@@ -8,7 +8,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.paths.ModelPath;
-import jline.internal.Log;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Set;
 
