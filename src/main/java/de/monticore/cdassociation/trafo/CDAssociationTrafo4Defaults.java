@@ -10,11 +10,7 @@ import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreator;
-import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
-import java.util.Deque;
 
 import static de.monticore.cdassociation._parser.CDAssociationAfterParseTrafo.createASTCDRoleIfAbsent;
 
@@ -23,9 +19,9 @@ public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
   protected CDAssociationVisitor realThis;
   protected CDAssociationVisitor symbolTableCreator;
 
-  public CDAssociationTrafo4Defaults(Deque<ICDAssociationScope> scopeStack) {
+  public CDAssociationTrafo4Defaults() {
     this(new CDAfterParseHelper(),
-        CDAssociationMill.cDAssociationSymbolTableCreatorBuilder().setScopeStack(scopeStack).build());
+        CDAssociationMill.cDAssociationSymbolTableCreator());
   }
 
   public CDAssociationTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDAssociationVisitor symbolTableCreator) {

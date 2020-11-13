@@ -25,19 +25,23 @@ public class CD4CodeBasisSymbolTableCreator
     extends CD4CodeBasisSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CD4CodeBasisSymbolTableCreator() {
+    super();
+    init();
+  }
+
   public CD4CodeBasisSymbolTableCreator(ICD4CodeBasisScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
   public CD4CodeBasisSymbolTableCreator(Deque<? extends ICD4CodeBasisScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
     init();
   }
 
   protected void init() {
+    setRealThis(this);
     symbolTableHelper = new CDSymbolTableHelper(CD4CodeBasisMill.deriveSymTypeOfCD4CodeBasis());
   }
 

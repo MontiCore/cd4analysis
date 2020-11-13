@@ -28,7 +28,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    symbolTableCreator.createFromAST(node);
+    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(node);
@@ -40,10 +40,10 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    final ICD4CodeArtifactScope artifactScope = symbolTableCreator.createFromAST(node);
+    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
-    node.accept(new CD4CodeTrafo4DefaultsDelegator(globalScope));
+    node.accept(new CD4CodeTrafo4DefaultsDelegator());
 
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());

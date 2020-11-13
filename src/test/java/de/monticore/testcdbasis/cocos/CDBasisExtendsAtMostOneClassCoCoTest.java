@@ -4,6 +4,7 @@
 
 package de.monticore.testcdbasis.cocos;
 
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.optional.CDClassExtendsAtMostOneClass;
@@ -22,7 +23,7 @@ public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    symbolTableCreator.createFromAST(node);
+    CDBasisMill.cDBasisSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     final CDBasisCoCoChecker checkerForAllCoCos = cdBasisCoCos.getCheckerForAllCoCos();

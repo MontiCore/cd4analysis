@@ -4,7 +4,6 @@
 
 package de.monticore.cd.plantuml;
 
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
@@ -121,15 +120,12 @@ public class PlantUMLUtil {
     CD4CodePlantUMLPrettyPrinter cdVisitor = new CD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
     if (astCD.isPresent()) {
       final ICD4CodeGlobalScope globalScope = CD4CodeMill
-          .cD4CodeGlobalScopeBuilder()
-          .setModelPath(new ModelPath(Paths.get("")))
-          .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-          .addBuiltInTypes()
-          .build();
+          .cD4CodeGlobalScope();
+      globalScope.setModelPath(new ModelPath(Paths.get("")));
+      globalScope.addBuiltInTypes();
+
       final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-          .cD4CodeSymbolTableCreatorDelegatorBuilder()
-          .setGlobalScope(globalScope)
-          .build();
+          .cD4CodeSymbolTableCreatorDelegator();
       symbolTableCreator.createFromAST(astCD.get());
 
       plantUMLPrettyPrintUtil.getPrinter().print(cdVisitor.prettyprint(astCD.get()));

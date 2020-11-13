@@ -3,6 +3,7 @@ package de.monticore.cdassociation._symboltable.phased;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;

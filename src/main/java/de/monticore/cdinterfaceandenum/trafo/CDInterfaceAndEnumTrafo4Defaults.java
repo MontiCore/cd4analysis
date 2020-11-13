@@ -6,19 +6,16 @@ package de.monticore.cdinterfaceandenum.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
-import de.monticore.cdinterfaceandenum._symboltable.ICDInterfaceAndEnumScope;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
-
-import java.util.Deque;
 
 public class CDInterfaceAndEnumTrafo4Defaults extends CDAfterParseHelper
     implements CDInterfaceAndEnumVisitor {
   protected CDInterfaceAndEnumVisitor realThis;
   protected CDInterfaceAndEnumVisitor symbolTableCreator;
 
-  public CDInterfaceAndEnumTrafo4Defaults(Deque<ICDInterfaceAndEnumScope> scopeStack) {
+  public CDInterfaceAndEnumTrafo4Defaults() {
     this(new CDAfterParseHelper(),
-        CDInterfaceAndEnumMill.cDInterfaceAndEnumSymbolTableCreatorBuilder().setScopeStack(scopeStack).build());
+        CDInterfaceAndEnumMill.cDInterfaceAndEnumSymbolTableCreator());
   }
 
   public CDInterfaceAndEnumTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDInterfaceAndEnumVisitor symbolTableCreator) {

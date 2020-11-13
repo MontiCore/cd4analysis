@@ -40,6 +40,16 @@ public class CDInterfaceAndEnumSTCompleteTypes
   }
 
   @Override
+  public void visit(CDTypeSymbol node) {
+    node.getAstNode().accept(getRealThis());
+  }
+
+  @Override
+  public void visit(FieldSymbol node) {
+    node.getAstNode().accept(getRealThis());
+  }
+
+  @Override
   public void visit(ASTCDInterface ast) {
     CDInterfaceAndEnumVisitor.super.visit(ast);
     final CDTypeSymbol symbol = ast.getSymbol();
@@ -92,6 +102,15 @@ public class CDInterfaceAndEnumSTCompleteTypes
         return result;
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
+
+    // add enum to stack, to later set it as the type of the EnumConstants
+    symbolTableHelper.addToCDTypeStack(ast.getName());
+  }
+
+  @Override
+  public void endVisit(ASTCDEnum node) {
+    CDInterfaceAndEnumVisitor.super.endVisit(node);
+    symbolTableHelper.removeFromCDTypeStack();
   }
 
   @Override

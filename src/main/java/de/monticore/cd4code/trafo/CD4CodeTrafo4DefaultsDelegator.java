@@ -20,9 +20,9 @@ public class CD4CodeTrafo4DefaultsDelegator
   protected final CDAfterParseHelper cdAfterParseHelper;
   protected final CD4CodeDelegatorVisitor symbolTableCreator;
 
-  public CD4CodeTrafo4DefaultsDelegator(ICD4CodeGlobalScope globalScope) {
+  public CD4CodeTrafo4DefaultsDelegator() {
     this(new CDAfterParseHelper(),
-        CD4CodeMill.cD4CodeSymbolTableCreatorDelegatorBuilder().setGlobalScope(globalScope).build());
+        CD4CodeMill.cD4CodeSymbolTableCreatorDelegator());
   }
 
   public CD4CodeTrafo4DefaultsDelegator(CD4CodeDelegatorVisitor symbolTableCreator) {

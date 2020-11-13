@@ -6,19 +6,16 @@ package de.monticore.cd4analysis.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisVisitor;
-
-import java.util.Deque;
 
 public class CD4AnalysisTrafo4Defaults extends CDAfterParseHelper
     implements CD4AnalysisVisitor {
   protected CD4AnalysisVisitor realThis;
   protected CD4AnalysisVisitor symbolTableCreator;
 
-  public CD4AnalysisTrafo4Defaults(Deque<ICD4AnalysisScope> scopeStack) {
+  public CD4AnalysisTrafo4Defaults() {
     this(new CDAfterParseHelper(),
-        CD4AnalysisMill.cD4AnalysisSymbolTableCreatorBuilder().setScopeStack(scopeStack).build());
+        CD4AnalysisMill.cD4AnalysisSymbolTableCreator());
   }
 
   public CD4AnalysisTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisVisitor symbolTableCreator) {

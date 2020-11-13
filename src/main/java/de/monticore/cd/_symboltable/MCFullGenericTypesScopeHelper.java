@@ -4,7 +4,6 @@
 
 package de.monticore.cd._symboltable;
 
-import de.monticore.types.mcarraytypes._ast.ASTMCArrayType;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCInnerType;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCMultipleGenericType;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCWildcardTypeArgument;
@@ -51,10 +50,5 @@ public class MCFullGenericTypesScopeHelper
   @Override
   public void visit(ASTMCInnerType node) {
     node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
-  }
-
-  @Override
-  public void visit(ASTMCArrayType node) {
-    node.getMCType().setEnclosingScope(node.getEnclosingScope());
   }
 }

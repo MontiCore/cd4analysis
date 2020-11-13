@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 public class CD4AnalysisSymbolTableCreator
     extends CD4AnalysisSymbolTableCreatorTOP {
 
+  public CD4AnalysisSymbolTableCreator() {
+    setRealThis(this);
+  }
+
   public CD4AnalysisSymbolTableCreator(ICD4AnalysisScope enclosingScope) {
     super(enclosingScope);
     setRealThis(this);

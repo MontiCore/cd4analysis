@@ -23,19 +23,23 @@ public class CDInterfaceAndEnumSymbolTableCreator
     extends CDInterfaceAndEnumSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CDInterfaceAndEnumSymbolTableCreator() {
+    super();
+    init();
+  }
+
   public CDInterfaceAndEnumSymbolTableCreator(ICDInterfaceAndEnumScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
   public CDInterfaceAndEnumSymbolTableCreator(Deque<? extends ICDInterfaceAndEnumScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
     init();
   }
 
   protected void init() {
+    setRealThis(this);
     symbolTableHelper = new CDSymbolTableHelper();
   }
 

@@ -25,6 +25,11 @@ import java.util.stream.Collectors;
 public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CDBasisSymbolTableCreator() {
+    super();
+    init();
+  }
+
   public CDBasisSymbolTableCreator(ICDBasisScope enclosingScope) {
     super(enclosingScope);
     init();

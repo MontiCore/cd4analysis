@@ -31,14 +31,6 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   public void setSymbolTableHelper(CDSymbolTableHelper symbolTableHelper) {
     this.symbolTableHelper = symbolTableHelper;
-    if (!this.modelLoader.isPresent()) {
-      final String err = "0xCDAF0: The modelLoader has to be set";
-      Log.error(
-          err
-      );
-      throw new RuntimeException(err);
-    }
-    this.modelLoader.get().symbolTableCreator.setSymbolTableHelper(symbolTableHelper);
   }
 
   public CDSymbolTableHelper getSymbolTableHelper() {
@@ -49,17 +41,20 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
+  @Override
   public void addBuiltInTypes() {
-    final ICD4CodeArtifactScope artifactScope = CD4CodeMill
-        .cD4CodeArtifactScopeBuilder()
-        .setPackageName("")
-        .setEnclosingScope(this)
-        .build();
-    artifactScope.setName("BuiltInTypes");
+    if (getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
+      final ICD4CodeArtifactScope artifactScope = CD4CodeMill
+          .cD4CodeArtifactScopeBuilder()
+          .setPackageName("")
+          .setEnclosingScope(this)
+          .build();
+      artifactScope.setName(BuiltInTypes.SCOPE_NAME);
 
-    addBuiltInPrimitiveTypes(artifactScope);
-    addBuiltInObjectTypes(artifactScope);
-    addBuiltInUtilTypes(artifactScope);
+      addBuiltInPrimitiveTypes(artifactScope);
+      addBuiltInObjectTypes(artifactScope);
+      addBuiltInUtilTypes(artifactScope);
+    }
   }
 
   public void addBuiltInPrimitiveTypes(ICD4CodeArtifactScope artifactScope) {

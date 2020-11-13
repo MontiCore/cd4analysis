@@ -4,6 +4,7 @@
 
 package de.monticore.cd4code.prettyprint;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -27,7 +28,7 @@ public class CD4CodePrettyPrinterTest extends CD4CodeTestBasis {
 
     final ASTCDCompilationUnit node = astcdCompilationUnitReParsed.get();
 
-    symbolTableCreator.createFromAST(node);
+    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(node);

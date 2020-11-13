@@ -13,6 +13,13 @@ public class CD4AnalysisSymbolTableCreatorDelegator
     extends CD4AnalysisSymbolTableCreatorDelegatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CD4AnalysisSymbolTableCreatorDelegator() {
+    super();
+    setRealThis(this);
+    
+    setSymbolTableHelper(((CD4AnalysisGlobalScope) globalScope).getSymbolTableHelper());
+  }
+
   public CD4AnalysisSymbolTableCreatorDelegator(ICD4AnalysisGlobalScope globalScope) {
     super(globalScope);
     setRealThis(this);

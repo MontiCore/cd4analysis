@@ -18,9 +18,9 @@ public class CD4AnalysisTrafo4DefaultsDelegator
   protected final CDAfterParseHelper cdAfterParseHelper;
   protected final CD4AnalysisDelegatorVisitor symbolTableCreator;
 
-  public CD4AnalysisTrafo4DefaultsDelegator(ICD4AnalysisGlobalScope globalScope) {
+  public CD4AnalysisTrafo4DefaultsDelegator() {
     this(new CDAfterParseHelper(),
-        CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegatorBuilder().setGlobalScope(globalScope).build());
+        CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator());
   }
 
   public CD4AnalysisTrafo4DefaultsDelegator(CD4AnalysisDelegatorVisitor symbolTableCreator) {

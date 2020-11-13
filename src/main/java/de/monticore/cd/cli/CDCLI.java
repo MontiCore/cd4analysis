@@ -177,7 +177,7 @@ public class CDCLI {
     if (cmd.hasOption("s")) { // symbol table export
       final Path symbolPath = Paths.get(outputPath,
           artifactScope.getPackageName(), cmd.getOptionValue("s", ""));
-      final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSerBuilder().build();
+      final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
       final String path = deser.store(artifactScope, symbolPath.toString());
       System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString());
     }
@@ -203,15 +203,14 @@ public class CDCLI {
   }
 
   protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
-    ICD4CodeGlobalScope globalScope = CD4CodeMill
-        .cD4CodeGlobalScopeBuilder()
-        .setModelPath(modelPath)
-        .addBuiltInTypes(useBuiltInTypes)
-        .build();
+    final ICD4CodeGlobalScope globalScope = CD4CodeMill.cD4CodeGlobalScope();
+    globalScope.setModelPath(modelPath);
+    if (useBuiltInTypes) {
+      globalScope.addBuiltInTypes();
+    }
+
     final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-        .cD4CodeSymbolTableCreatorDelegatorBuilder()
-        .setGlobalScope(globalScope)
-        .build();
+        .cD4CodeSymbolTableCreatorDelegator();
 
     artifactScope = symbolTableCreator.createFromAST(ast);
   }

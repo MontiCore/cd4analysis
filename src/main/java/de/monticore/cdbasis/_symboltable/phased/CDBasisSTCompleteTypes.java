@@ -71,7 +71,6 @@ public class CDBasisSTCompleteTypes
 
   @Override
   public void visit(ASTCDClass ast) {
-    CDBasisVisitor.super.visit(ast);
     final CDTypeSymbol symbol = ast.getSymbol();
 
     symbol.setIsClass(true);

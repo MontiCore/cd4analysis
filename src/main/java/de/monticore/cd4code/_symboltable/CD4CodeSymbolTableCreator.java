@@ -14,6 +14,11 @@ import java.util.Deque;
 import java.util.stream.Collectors;
 
 public class CD4CodeSymbolTableCreator extends CD4CodeSymbolTableCreatorTOP {
+  public CD4CodeSymbolTableCreator() {
+    super();
+    setRealThis(this);
+  }
+
   public CD4CodeSymbolTableCreator(ICD4CodeScope enclosingScope) {
     super(enclosingScope);
     setRealThis(this);

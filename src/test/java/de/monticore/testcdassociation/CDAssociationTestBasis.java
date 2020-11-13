@@ -7,7 +7,6 @@ package de.monticore.testcdassociation;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreatorDelegator;
 import de.monticore.cdassociation._symboltable.ICDAssociationGlobalScope;
 import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.io.paths.ModelPath;
@@ -18,23 +17,18 @@ import java.nio.file.Paths;
 
 public class CDAssociationTestBasis extends TestBasis {
   protected TestCDAssociationParser p;
-  protected ICDAssociationGlobalScope globalScope;
-  protected CDAssociationSymbolTableCreatorDelegator symbolTableCreator;
   protected CDAssociationCoCos cdAssociationCoCos;
 
   @Before
   public void initObjects() {
     CDAssociationMill.init();
     p = new TestCDAssociationParser();
-    globalScope = CDAssociationMill
-        .cDAssociationGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .build();
-    symbolTableCreator = CDAssociationMill
-        .cDAssociationSymbolTableCreatorDelegatorBuilder()
-        .setGlobalScope(globalScope)
-        .build();
+
+    final ICDAssociationGlobalScope globalScope = CDAssociationMill
+        .cDAssociationGlobalScope();
+    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+
     cdAssociationCoCos = new CDAssociationCoCos();
   }
 }

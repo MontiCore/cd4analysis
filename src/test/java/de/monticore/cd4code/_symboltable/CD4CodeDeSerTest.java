@@ -9,7 +9,6 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
-import de.se_rwth.commons.Names;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final ICD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
     final ICD4CodeArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -43,7 +42,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    final ICD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     final Optional<CDMethodSignatureSymbol> getXMethodSymbol = scope.resolveCDMethodSignature("B.getX");
     assertTrue(getXMethodSymbol.isPresent());
     assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());

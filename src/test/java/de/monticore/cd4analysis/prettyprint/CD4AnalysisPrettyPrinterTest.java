@@ -4,6 +4,7 @@
 
 package de.monticore.cd4analysis.prettyprint;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -32,7 +33,7 @@ public class CD4AnalysisPrettyPrinterTest extends CD4AnalysisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    symbolTableCreator.createFromAST(node);
+    CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos().checkAll(node);

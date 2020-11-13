@@ -130,8 +130,7 @@ public class CD4CodeBasisSTCompleteTypes implements CD4CodeBasisVisitor {
             typeResult.get());
       }
       else {
-
-        assert (typeResult.get().getTypeInfo() != null);
+        assert(typeResult.get().getTypeInfo() != null);
         finalTypeResult = typeResult.get();
       }
 

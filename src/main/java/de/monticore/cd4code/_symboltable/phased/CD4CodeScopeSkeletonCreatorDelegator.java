@@ -33,6 +33,9 @@ public class CD4CodeScopeSkeletonCreatorDelegator
     CommonExpressionsSTCForCD4Code commonExpressionsSymbolTableCreator = new CommonExpressionsSTCForCD4Code(scopeStack);
     setCommonExpressionsVisitor(commonExpressionsSymbolTableCreator);
 
+    final MCArrayTypesSTCForCD4Code mcArrayTypesSTCForCD4Code = new MCArrayTypesSTCForCD4Code(scopeStack);
+    setMCArrayTypesVisitor(mcArrayTypesSTCForCD4Code);
+
     MCFullGenericTypesSTCForCD4Code mCFullGenericTypesSymbolTableCreator = new MCFullGenericTypesSTCForCD4Code(scopeStack);
     setMCFullGenericTypesVisitor(mCFullGenericTypesSymbolTableCreator);
 

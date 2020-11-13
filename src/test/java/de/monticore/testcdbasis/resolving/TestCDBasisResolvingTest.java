@@ -8,7 +8,6 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCreatorDelegator;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
 import de.monticore.io.paths.ModelPath;
@@ -41,11 +40,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
 
     final ASTCDCompilationUnit compilationUnit = astcdCompilationUnit.get();
 
-    final CDBasisSymbolTableCreatorDelegator symbolTableCreator = CDBasisMill
-        .cDBasisSymbolTableCreatorDelegatorBuilder()
-        .setGlobalScope(globalScope)
-        .build();
-    symbolTableCreator.createFromAST(compilationUnit);
+    CDBasisMill.cDBasisSymbolTableCreatorDelegator().createFromAST(compilationUnit);
     checkLogError();
   }
 

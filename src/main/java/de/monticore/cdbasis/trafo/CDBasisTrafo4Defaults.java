@@ -7,11 +7,9 @@ package de.monticore.cdbasis.trafo;
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
 public class CDBasisTrafo4Defaults extends CDAfterParseHelper
@@ -20,9 +18,9 @@ public class CDBasisTrafo4Defaults extends CDAfterParseHelper
   protected CDBasisVisitor symbolTableCreator;
   protected List<String> packageNameList = new ArrayList<>(); //default, if the model has no package
 
-  public CDBasisTrafo4Defaults(Deque<ICDBasisScope> scopeStack) {
+  public CDBasisTrafo4Defaults() {
     this(new CDAfterParseHelper(),
-        CDBasisMill.cDBasisSymbolTableCreatorBuilder().setScopeStack(scopeStack).build());
+        CDBasisMill.cDBasisSymbolTableCreator());
   }
 
   public CDBasisTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDBasisVisitor symbolTableCreator) {

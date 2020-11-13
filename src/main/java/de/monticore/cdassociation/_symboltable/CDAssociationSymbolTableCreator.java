@@ -20,6 +20,12 @@ public class CDAssociationSymbolTableCreator
     extends CDAssociationSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CDAssociationSymbolTableCreator() {
+    super();
+    setRealThis(this);
+    init();
+  }
+
   public CDAssociationSymbolTableCreator(ICDAssociationScope enclosingScope) {
     super(enclosingScope);
     setRealThis(this);

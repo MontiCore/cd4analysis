@@ -17,7 +17,6 @@ import de.monticore.testtypeimporter._ast.ASTCompilationUnit;
 import de.monticore.testtypeimporter._parser.TestTypeImporterParser;
 import de.monticore.testtypeimporter._symboltable.ITestTypeImporterArtifactScope;
 import de.monticore.testtypeimporter._symboltable.ITestTypeImporterGlobalScope;
-import de.monticore.testtypeimporter._symboltable.TestTypeImporterSymbolTableCreatorDelegator;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -48,17 +47,12 @@ public class TestTypeImporterTest extends TestBasis {
     globalScope.addAdaptedMethodSymbolResolver(c);
     globalScope.addAdaptedFunctionSymbolResolver(c);
 
-    final TestTypeImporterSymbolTableCreatorDelegator symbolTableCreator = TestTypeImporterMill
-        .testTypeImporterSymbolTableCreatorDelegatorBuilder()
-        .setGlobalScope(globalScope)
-        .build();
-
     final TestTypeImporterParser parser = new TestTypeImporterParser();
     final Optional<ASTCompilationUnit> cu = parser.parse(getFilePath("testtypeimporter/Simple.def"));
     assertTrue(cu.isPresent());
 
     final ASTCompilationUnit compilationUnit = cu.get();
-    final ITestTypeImporterArtifactScope symbolTable = symbolTableCreator.createFromAST(compilationUnit);
+    final ITestTypeImporterArtifactScope symbolTable = TestTypeImporterMill.testTypeImporterSymbolTableCreatorDelegator().createFromAST(compilationUnit);
 
     final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("String");
     assertTrue(stringOOType.isPresent());

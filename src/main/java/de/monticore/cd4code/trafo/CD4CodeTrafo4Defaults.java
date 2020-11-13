@@ -8,7 +8,6 @@ import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cd4code._visitor.CD4CodeVisitor;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
 import java.util.Deque;
 
@@ -17,9 +16,9 @@ public class CD4CodeTrafo4Defaults extends CDAfterParseHelper
   protected CD4CodeVisitor realThis;
   protected CD4CodeVisitor symbolTableCreator;
 
-  public CD4CodeTrafo4Defaults(Deque<ICD4CodeScope> scopeStack) {
+  public CD4CodeTrafo4Defaults() {
     this(new CDAfterParseHelper(),
-        CD4CodeMill.cD4CodeSymbolTableCreatorBuilder().setScopeStack(scopeStack).build());
+        CD4CodeMill.cD4CodeSymbolTableCreator());
   }
 
   public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4CodeVisitor symbolTableCreator) {

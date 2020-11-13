@@ -5,6 +5,7 @@
 package de.monticore.cd4code.cocos;
 
 import de.monticore.cd.cli.CDCLI;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -27,7 +28,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final ICD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     assertNotNull(scope.resolveCDType("C"));
@@ -50,7 +51,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    symbolTableCreator.createFromAST(node);
+    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);

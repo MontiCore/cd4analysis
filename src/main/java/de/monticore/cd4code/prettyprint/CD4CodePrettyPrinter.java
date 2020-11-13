@@ -29,10 +29,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.UMLModifierPrettyPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCFullGenericTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
+import de.monticore.types.prettyprint.*;
 import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
 import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
@@ -58,6 +55,7 @@ public class CD4CodePrettyPrinter extends CD4CodeDelegatorVisitor
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
     setUMLModifierVisitor(new UMLModifierPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
+    setMCArrayTypesVisitor(new MCArrayTypesPrettyPrinter(printer));
     setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
     setMCFullGenericTypesVisitor(new MCFullGenericTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));

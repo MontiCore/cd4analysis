@@ -14,6 +14,13 @@ public class CD4CodeSymbolTableCreatorDelegator
     extends CD4CodeSymbolTableCreatorDelegatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CD4CodeSymbolTableCreatorDelegator() {
+    super();
+    setRealThis(this);
+
+    setSymbolTableHelper(((CD4CodeGlobalScope) globalScope).getSymbolTableHelper());
+  }
+
   public CD4CodeSymbolTableCreatorDelegator(ICD4CodeGlobalScope globalScope) {
     super(globalScope);
     setRealThis(this);

@@ -1,8 +1,8 @@
 package de.monticore.cd4code._symboltable.staged;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.phased.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,8 +48,7 @@ public class CD4CodePhasedSTTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = new CD4CodeSymbolTableCreatorDelegator(globalScope);
-    final ICD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
 /*
     final Optional<CDTypeSymbol> cdTypeSymbol = scope.resolveCDType("a2.A2");
     assertTrue(cdTypeSymbol.isPresent());
