@@ -56,7 +56,7 @@ public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
 
   @Override
   public void visit(ASTCDAssocLeftSide node) {
-    if (!node.isPresentSymbol()) {
+    if (node.isPresentCDRole() && !node.isPresentSymbol()) {
       if (symbolTableCreator instanceof CDAssociationSymbolTableCreator) {
         ((CDAssociationSymbolTableCreator) symbolTableCreator).buildCDRole(assocStack.peek(), true);
       }
@@ -65,7 +65,7 @@ public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
 
   @Override
   public void visit(ASTCDAssocRightSide node) {
-    if (!node.isPresentSymbol()) {
+    if (node.isPresentCDRole() && !node.isPresentSymbol()) {
       if (symbolTableCreator instanceof CDAssociationSymbolTableCreator) {
         ((CDAssociationSymbolTableCreator) symbolTableCreator).buildCDRole(assocStack.peek(), false);
       }

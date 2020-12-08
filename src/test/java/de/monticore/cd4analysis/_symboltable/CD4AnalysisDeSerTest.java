@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -39,7 +40,9 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    assertTrue(deserialize.resolveField("D.DEE").isPresent());
+    final Optional<CDTypeSymbol> d = deserialize.resolveCDType("D");
+    assertTrue(d.isPresent());
+    assertEquals(1, d.get().getFieldList("DEE").size());
   }
 
   @Test
@@ -49,12 +52,14 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
-    node.accept(new CD4AnalysisTrafo4DefaultsDelegator());
+    node.accept(new CD4AnalysisTrafo4DefaultsDelegator(CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator()));
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    assertTrue(deserialize.resolveCDRole("B.item").isPresent());
+    final Optional<CDTypeSymbol> b = deserialize.resolveCDType("B");
+    assertTrue(b.isPresent());
+    assertEquals(1, b.get().getCDRoleList("item").size());
   }
 
   @Test
@@ -100,16 +105,22 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final Optional<CDTypeSymbol> a = deserialize.resolveCDType("Inner");
+    final Optional<CDTypeSymbol> innerType = deserialize.resolveCDTypeMany("Inner").stream().distinct().findAny();
+    assertTrue(innerType.isPresent());
+
+    final Optional<CDTypeSymbol> a = deserialize.resolveCDType("A");
     assertTrue(a.isPresent());
 
-    final Optional<CDTypeSymbol> a2 = deserialize.resolveCDType("A.Inner");
-    assertTrue(a2.isPresent());
+    final Optional<CDTypeSymbol> aInnerType = a.get().getSpannedScope().resolveCDTypeLocally("Inner");
+    assertTrue(aInnerType.isPresent());
+    assertEquals(innerType, aInnerType);
 
-    assertEquals(a, a2);
-
-    final Optional<FieldSymbol> fieldSymbol = a.get().getEnclosingScope().resolveField("A.Inner.field");
+    final Optional<FieldSymbol> fieldSymbol = aInnerType.get().getSpannedScope().resolveFieldLocally("field");
     assertTrue(fieldSymbol.isPresent());
+  }
+
+  private List<CDTypeSymbol> uniqueList(List<CDTypeSymbol> inner) {
+    return inner.stream().distinct().collect(Collectors.toList());
   }
 
   public ICD4AnalysisArtifactScope getGlobalScopeForDeserialization(String serializedST) {

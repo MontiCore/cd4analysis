@@ -83,7 +83,7 @@ public class CDCLIOptions {
         .builder("p").longOpt("path")
         .hasArg().type(String.class)
         .argName("dirlist").numberOfArgs(1)
-        .desc("Sets the artifact path for imported symbols separated by ':'. "
+        .desc("Sets the artifact path for imported symbols separated by ';'. "
             + "{default \".\"}")
         .build());
 

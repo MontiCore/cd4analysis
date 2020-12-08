@@ -61,6 +61,7 @@ The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
   (like `{ordered}`).
 - Both, association and compositions can be qualified, for example by `[String]`
   .
+- Packages can be used to structure the model
 
 Further examples can be found [here][ExampleModels].
 
@@ -277,6 +278,19 @@ Further examples can be found [here][ExampleModels].
   }
 ```
 
+## Packages
+- Packages are used to structure the model file
+- They are either 
+  1. defined explicitly (`package foo {...}`)
+  2. implicitly via the package name of the model
+    ```cd
+    package de.example;
+  
+    classdiagram Example {
+      class A;
+    }
+    ```
+  3. via a default (`de.monticore`) if none of the above options are the case
 
 ## Functionality: CoCos
 - [`CD4ACoCosDelegator`][CD4ACoCos] combines all CoCos for all its sublanguages
@@ -294,6 +308,20 @@ Further examples can be found [here][ExampleModels].
   - Classes hierarchy is free of cycles
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
+    
+## Transformations
+- two transformations are provided to simplify the parsing and ST creation
+
+### AfterParseTrafo
+- the `AfterParseTrafo`s is executed directly after the parsing of models, currently there are 2 important transformations:
+  - [`CDBasisAfterParseTrafo`][CDBasisAfterParseTrafo]
+    - moves elements in a default package, if they are not already in a package
+    - the default package is either the package of the model file, or if that doesn't exists, `de.monticore` is used
+  - ['CDAssociationAfterParseTrafo`][CDAssociationAfterParseTrafo]
+    - `ASTCDDirectComposition` (short form of composition), are transformed to (normal) `composition`s
+- `Trafo4Defaults` provide additional transformations, that are optional defaults, which can be used after a SymbolTable is created:
+  - [`CDAssociationTrafo4Default`][CDAssociationTrafo4Default] adds Roles and `CDRoleSymbol`s to `AssociationSide`, if there is not already a `CDRole`. That's the case when the side has no name
+  - the name of the new role is either the name of the association, or the (lowercase) name of the type
 
 ### Types
 - Currently: The BuiltinTypes can be found here [`BuiltInTypes`][BuiltInTypes].

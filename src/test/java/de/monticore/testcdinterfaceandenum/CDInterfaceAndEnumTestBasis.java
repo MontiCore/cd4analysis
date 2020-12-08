@@ -24,11 +24,13 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CDInterfaceAndEnumMill.reset();
     CDInterfaceAndEnumMill.init();
     p = new TestCDInterfaceAndEnumParser();
 
     final ICDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill
         .cDInterfaceAndEnumGlobalScope();
+    globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
 

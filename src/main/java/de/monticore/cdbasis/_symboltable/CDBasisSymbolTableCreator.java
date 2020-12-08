@@ -102,7 +102,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
 
         /*
         Set<String> qualifiedNames = symbolTableHelper.calculateQualifiedNames(s.getName()); // move to symbolTableHelper.resolveCDType
@@ -124,7 +124,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
@@ -143,7 +143,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
-    ast.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    ast.getMCType().setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
     final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCType());
     if (!typeResult.isPresent()) {
       Log.error(String.format(
@@ -164,7 +164,12 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     // the symbol is a field of the type of the other side
     // as there are handled associations, we at least have a CDAssociationScope
     symbolTableHelper.getHandledRoles().forEach((r, t) ->
-        ((ICDAssociationScope) t.getTypeInfo().getSpannedScope()).add(r)
+        {
+          final ICDAssociationScope spannedScope = (ICDAssociationScope) t.getTypeInfo().getSpannedScope();
+          if (!spannedScope.getCDRoleSymbols().containsKey(r.getName())) {
+            spannedScope.add(r);
+          }
+        }
     );
   }
 }

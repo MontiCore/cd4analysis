@@ -4,18 +4,14 @@
 
 package de.monticore.cd4code._symboltable;
 
-import de.monticore.cd._symboltable.BasicSymbolsSymbolTablePrinterWithDuplicateCheck;
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
-import de.monticore.cd._symboltable.OOSymbolsSymbolTablePrinterWithDuplicateCheck;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTablePrinter;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTablePrinter;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
 import de.monticore.cdassociation._symboltable.SymAssociation;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTablePrinter;
 import de.monticore.symboltable.serialization.json.JsonObject;
-import de.se_rwth.commons.logging.Log;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,9 +23,6 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   protected Map<Integer, SymAssociation> symAssociations;
 
   public CD4CodeScopeDeSer() {
-    this.symbolTablePrinter.setBasicSymbolsVisitor(new BasicSymbolsSymbolTablePrinterWithDuplicateCheck(printer));
-    this.symbolTablePrinter.setOOSymbolsVisitor(new OOSymbolsSymbolTablePrinterWithDuplicateCheck(printer));
-
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
     setSymAssociations(new HashMap<>());
   }
@@ -47,14 +40,6 @@ public class CD4CodeScopeDeSer extends CD4CodeScopeDeSerTOP {
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
 
-    this.symbolTablePrinter
-        .getBasicSymbolsVisitor()
-        .flatMap(v -> Optional.of((BasicSymbolsSymbolTablePrinterWithDuplicateCheck) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
-    this.symbolTablePrinter
-        .getOOSymbolsVisitor()
-        .flatMap(v -> Optional.of((OOSymbolsSymbolTablePrinterWithDuplicateCheck) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
     this.symbolTablePrinter
         .getCDBasisVisitor()
         .flatMap(v -> Optional.of((CDBasisSymbolTablePrinter) v))

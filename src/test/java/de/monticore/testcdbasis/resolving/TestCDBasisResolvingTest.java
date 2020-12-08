@@ -26,11 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisResolvingTest extends TestBasis {
-  protected static final ICDBasisGlobalScope globalScope = CDBasisMill
-      .cDBasisGlobalScopeBuilder()
-      .setModelPath(new ModelPath(Paths.get(PATH)))
-      .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-      .build();
+  protected static ICDBasisGlobalScope globalScope;
 
   @BeforeClass
   public static void parseCompleteModel() throws IOException {
@@ -39,6 +35,13 @@ public class TestCDBasisResolvingTest extends TestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit compilationUnit = astcdCompilationUnit.get();
+
+    CDBasisMill.reset();
+    CDBasisMill.init();
+
+    globalScope = CDBasisMill.cDBasisGlobalScope();
+    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
 
     CDBasisMill.cDBasisSymbolTableCreatorDelegator().createFromAST(compilationUnit);
     checkLogError();

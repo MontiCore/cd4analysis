@@ -21,11 +21,13 @@ public class CDAssociationTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CDAssociationMill.reset();
     CDAssociationMill.init();
     p = new TestCDAssociationParser();
 
     final ICDAssociationGlobalScope globalScope = CDAssociationMill
         .cDAssociationGlobalScope();
+    globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
 

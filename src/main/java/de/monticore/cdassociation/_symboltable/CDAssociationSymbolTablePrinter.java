@@ -122,18 +122,4 @@ public class CDAssociationSymbolTablePrinter
 
     super.endVisit(node);
   }
-
-  @Override
-  public void handle(CDAssociationSymbol node) {
-    if (symbolTablePrinterHelper.visit(node.getFullName())) {
-      super.handle(node);
-    }
-  }
-
-  @Override
-  public void handle(CDRoleSymbol node) {
-    if (symbolTablePrinterHelper.visit(node.getFullName())) {
-      super.handle(node);
-    }
-  }
 }

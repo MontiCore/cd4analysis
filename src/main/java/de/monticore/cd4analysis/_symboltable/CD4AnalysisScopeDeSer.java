@@ -4,9 +4,7 @@
 
 package de.monticore.cd4analysis._symboltable;
 
-import de.monticore.cd._symboltable.BasicSymbolsSymbolTablePrinterWithDuplicateCheck;
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
-import de.monticore.cd._symboltable.OOSymbolsSymbolTablePrinterWithDuplicateCheck;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._symboltable.CDAssociationScopeDeSer;
@@ -30,9 +28,6 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   public static final String FURTHER_OBJECTS_MAP = "furtherObjects";
 
   public CD4AnalysisScopeDeSer() {
-    this.symbolTablePrinter.setBasicSymbolsVisitor(new BasicSymbolsSymbolTablePrinterWithDuplicateCheck(printer));
-    this.symbolTablePrinter.setOOSymbolsVisitor(new OOSymbolsSymbolTablePrinterWithDuplicateCheck(printer));
-
     setSymbolTablePrinterHelper(new CDSymbolTablePrinterHelper());
     setSymAssociations(new HashMap<>());
   }
@@ -59,14 +54,6 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
 
-    this.symbolTablePrinter
-        .getBasicSymbolsVisitor()
-        .flatMap(v -> Optional.of((BasicSymbolsSymbolTablePrinterWithDuplicateCheck) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
-    this.symbolTablePrinter
-        .getOOSymbolsVisitor()
-        .flatMap(v -> Optional.of((OOSymbolsSymbolTablePrinterWithDuplicateCheck) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
     this.symbolTablePrinter
         .getCDBasisVisitor()
         .flatMap(v -> Optional.of((CDBasisSymbolTablePrinter) v))

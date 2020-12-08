@@ -36,7 +36,7 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
       Log.error(String.format(
           "0xCD100: The name of the diagram %s"
               + " is not identical to the name of the file %s"
-              + " (without its fileextension).",
+              + " (without its file extension).",
           modelName, fileName),
           ast.getCDDefinition().get_SourcePositionStart());
     }

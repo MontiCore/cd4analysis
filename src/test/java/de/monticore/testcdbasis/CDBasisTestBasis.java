@@ -21,11 +21,13 @@ public class CDBasisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CDBasisMill.reset();
     CDBasisMill.init();
     p = new TestCDBasisParser();
 
     final ICDBasisGlobalScope globalScope = CDBasisMill
         .cDBasisGlobalScope();
+    globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
 

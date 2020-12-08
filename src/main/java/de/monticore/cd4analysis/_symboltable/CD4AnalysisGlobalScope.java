@@ -63,7 +63,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
+    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
   }
 
   public void addBuiltInObjectTypes(ICD4AnalysisArtifactScope artifactScope) {
@@ -75,7 +75,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
   public void addBuiltInUtilTypes(ICD4AnalysisArtifactScope artifactScope) {
@@ -87,7 +87,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }
 
   @Override

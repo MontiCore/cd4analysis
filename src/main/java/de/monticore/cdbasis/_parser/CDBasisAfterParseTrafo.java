@@ -13,6 +13,7 @@ import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.Joiners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,8 +46,11 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
   public void visit(ASTCDCompilationUnit node) {
     if (node.isPresentCDPackageStatement()) {
       packageNameList = node.getCDPackageStatement().getPackageList();
-      node.getCDDefinition().setDefaultPackageName(Joiners.DOT.join(packageNameList));
     }
+    else {
+      packageNameList = Arrays.asList("de", "monticore");
+    }
+    node.getCDDefinition().setDefaultPackageName(Joiners.DOT.join(packageNameList));
   }
 
   @Override

@@ -24,11 +24,12 @@ public class CD4AnalysisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
     p = new CD4AnalysisParser();
-
     final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill
         .cD4AnalysisGlobalScope();
+    globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.addBuiltInTypes();
     globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);

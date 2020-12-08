@@ -8,6 +8,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.ModelPath;
 import org.junit.Test;
 
@@ -30,7 +31,10 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     final String serializedST = deSer.serialize(scope);
     final ICD4CodeArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = deserialize.resolveCDMethodSignature("B.getX");
+    final Optional<CDTypeSymbol> b = deserialize.resolveCDType("B");
+    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = b.get()
+        .getMethodSignatureList("getX").stream().distinct().findAny();
+
     assertTrue(cdMethodSignatureSymbol.isPresent());
     assertFalse(cdMethodSignatureSymbol.get().isIsConstructor());
     assertEquals("bs", cdMethodSignatureSymbol.get().getParameterList().get(1).getName());
@@ -43,7 +47,11 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
-    final Optional<CDMethodSignatureSymbol> getXMethodSymbol = scope.resolveCDMethodSignature("B.getX");
+
+    final Optional<CDTypeSymbol> b = scope.resolveCDType("B");
+    final Optional<CDMethodSignatureSymbol> getXMethodSymbol = b.get()
+        .getMethodSignatureList("getX").stream().distinct().findAny();
+
     assertTrue(getXMethodSymbol.isPresent());
     assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());
 
@@ -52,7 +60,10 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     final ICD4CodeArtifactScope deserialize = deSer.load(Paths.get(path).toUri().toURL());
     addGlobalScopeForDeserialization(deserialize);
 
-    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = deserialize.resolveCDMethodSignature("B.getX");
+    final Optional<CDTypeSymbol> deserializedB = deserialize.resolveCDType("B");
+    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = deserializedB.get()
+        .getMethodSignatureList("getX").stream().distinct().findAny();
+
     assertTrue(cdMethodSignatureSymbol.isPresent());
     assertFalse(cdMethodSignatureSymbol.get().isIsConstructor());
     assertEquals("bs", cdMethodSignatureSymbol.get().getParameterList().get(1).getName());

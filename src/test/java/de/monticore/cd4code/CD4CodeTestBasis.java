@@ -24,11 +24,13 @@ public class CD4CodeTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    CD4CodeMill.reset();
     CD4CodeMill.init();
     p = new CD4CodeParser();
 
     final ICD4AnalysisGlobalScope globalScope = CD4CodeMill
         .cD4CodeGlobalScope();
+    globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.addBuiltInTypes();
     globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);

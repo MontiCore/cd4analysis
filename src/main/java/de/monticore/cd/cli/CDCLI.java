@@ -19,6 +19,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.Joiners;
+import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -29,10 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CDCLI {
@@ -131,6 +129,7 @@ public class CDCLI {
   }
 
   protected void run() throws IOException, ParseException {
+    CD4CodeMill.reset();
     CD4CodeMill.init();
 
     parse();
@@ -140,7 +139,7 @@ public class CDCLI {
     boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
 
     // create a symbol table with provided model paths
-    String[] modelPath = cmd.getOptionValue("p", ".").split(":");
+    String[] modelPath = cmd.getOptionValue("p", ".").split(";");
     createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
 
     // check all the cocos
@@ -175,8 +174,9 @@ public class CDCLI {
     }
 
     if (cmd.hasOption("s")) { // symbol table export
-      final Path symbolPath = Paths.get(outputPath,
-          artifactScope.getPackageName(), cmd.getOptionValue("s", ""));
+      @SuppressWarnings("UnstableApiUsage") final List<String> artifactPackage = new ArrayList<>(Splitters.DOT.splitToList(artifactScope.getRealPackageName()));
+      artifactPackage.add(cmd.getOptionValue("s", ""));
+      final Path symbolPath = Paths.get(outputPath, artifactPackage.toArray(new String[0]));
       final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
       final String path = deser.store(artifactScope, symbolPath.toString());
       System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString());
@@ -204,6 +204,7 @@ public class CDCLI {
 
   protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
     final ICD4CodeGlobalScope globalScope = CD4CodeMill.cD4CodeGlobalScope();
+    globalScope.clear();
     globalScope.setModelPath(modelPath);
     if (useBuiltInTypes) {
       globalScope.addBuiltInTypes();

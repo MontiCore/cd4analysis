@@ -38,10 +38,15 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
 
   @Test
   public void useCLI() throws IOException, ParseException {
+    final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
+    assertTrue(otherFile.exists());
+    final String otherFileName = otherFile.toString();
+    CDCLI.main(new String[] { "-i", otherFileName, "-f", "false", "-p", "src/test/resources", "-o", getTmpAbsolutePath(), "-s", "Simple.cdsym" });
+
     final File file = new File(getFilePath("cdbasis/parser/Import.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-i", fileName, "-f", "false", "-p", "src/test/resources" });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "false", "-p", getTmpAbsolutePath() });
     checkLogError();
   }
 

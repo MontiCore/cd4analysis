@@ -56,8 +56,8 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
   /**
    * search in the scope for roles with a specific name
    */
-  public List<CDRoleSymbol> getCDRoleList(String methodname) {
-    return ((ICDAssociationScope) getSpannedScope()).resolveCDRoleMany(methodname);
+  public List<CDRoleSymbol> getCDRoleList(String rolename) {
+    return ((ICDAssociationScope) getSpannedScope()).resolveCDRoleLocallyMany(false, rolename, de.monticore.symboltable.modifiers.AccessModifier.ALL_INCLUSION, x -> true);
   }
 
   /**

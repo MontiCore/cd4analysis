@@ -28,16 +28,14 @@ import static org.junit.Assert.*;
 public class TestTypeImporterTest extends TestBasis {
   @Test
   public void createST() throws IOException {
-    final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.testTypeImporterGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension("def")
-        .build();
+    final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.testTypeImporterGlobalScope();
+    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setModelFileExtension("def");
 
-    final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.cD4CodeGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
+    final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.cD4CodeGlobalScope();
+    cdGlobalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    cdGlobalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+    cdGlobalScope.addBuiltInTypes();
 
     final CD4CodeResolver c = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolver(c);

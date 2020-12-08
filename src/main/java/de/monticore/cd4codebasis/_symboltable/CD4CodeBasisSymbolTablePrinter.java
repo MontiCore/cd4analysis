@@ -46,11 +46,4 @@ public class CD4CodeBasisSymbolTablePrinter
   public void serializeCDMethodSignatureReturnType(SymTypeExpression returnType) {
     this.typeSymbolsSymbolTablePrinterDelegate.serializeMethodReturnType(returnType);
   }
-
-  @Override
-  public void handle(CDMethodSignatureSymbol node) {
-    if (symbolTablePrinterHelper.visit(node.getFullName())) {
-      super.handle(node);
-    }
-  }
 }

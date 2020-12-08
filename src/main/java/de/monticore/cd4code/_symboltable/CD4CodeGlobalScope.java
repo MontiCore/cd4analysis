@@ -8,7 +8,6 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.paths.ModelPath;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.Set;
 
@@ -64,7 +63,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
+    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
   }
 
   public void addBuiltInObjectTypes(ICD4CodeArtifactScope artifactScope) {
@@ -76,7 +75,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
   public void addBuiltInUtilTypes(ICD4CodeArtifactScope artifactScope) {
@@ -88,7 +87,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }
 
   @Override
