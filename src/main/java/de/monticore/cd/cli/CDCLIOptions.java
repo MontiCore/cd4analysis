@@ -43,12 +43,12 @@ public class CDCLIOptions {
         .desc("Print this help")
         .build());
 
-    options.addOption(Option
+    /*options.addOption(Option
         .builder("log")//.longOpt("log")
         .hasArg().type(String.class)
         .argName("logLevel")
         .desc("Activate specific loglevel, valid values are [trace, debug, info, warn, error]")
-        .build());
+        .build());*/
 
     options.addOption(Option
         .builder("f").longOpt("failquick")
@@ -106,7 +106,7 @@ public class CDCLIOptions {
     options.addOption(Option
         .builder("r").longOpt("report")
         .hasArg().type(String.class)
-        .argName("dir").numberOfArgs(1)
+        .argName("dir").optionalArg(true).numberOfArgs(1)
         .desc("Prints reports of the parsed artifact to the specified directory (optional). "
             + "Available reports are language-specific. "
             + "{default \"_output_path_\"}")
@@ -123,22 +123,22 @@ public class CDCLIOptions {
 
   protected void initPrettyPrinter() {
     options.addOption(Option
-        .builder("pp").longOpt("prettyprint")
+        .builder().longOpt("prettyprint")
         .hasArg().type(String.class)
-        .numberOfArgs(1)
+        .argName("dir").optionalArg(true).numberOfArgs(1)
         .argName("prettyPrintOutput")
-        .desc("Pretty prints the input cd ")
+        .desc("Pretty prints the input cd. {default \"_input_file_name_.EXTENSION\"}")
         .build());
 
     // dependent on pp
     options.addOption(Option
-        .builder("puml").longOpt("plantUML")
+        .builder().longOpt("plantUML")
         .desc("output as plantUML model")
         .build());
   }
 
   /**
-   * these options are only available, when "--puml" is used
+   * these options are only available, when "-puml" is used
    */
   protected void initPlantUML() {
     final Options plantUMLOptions = new Options();

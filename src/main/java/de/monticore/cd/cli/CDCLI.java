@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 public class CDCLI {
 
   static final Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-  protected static final String JAR_NAME = "cd-<Version>-cli.jar";
+  protected static final String JAR_NAME = "cd4analysis-<Version>-cli.jar";
   protected static final String CHECK_SUCCESSFUL = "Parsing and CoCo check successful!";
   protected static final String CHECK_ERROR = "Error in Parsing or CoCo check.";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful!\n";
@@ -98,7 +98,7 @@ public class CDCLI {
     outputPath = cmd.getOptionValue("o", ".");
 
     if (cmd.hasOption("h")) {
-      if (cmd.hasOption("pp")) {
+      if (cmd.hasOption("prettyprint")) {
         printHelp(CDCLIOptions.SubCommand.PLANTUML);
       }
       else {
@@ -152,30 +152,34 @@ public class CDCLI {
       return;
     }
 
-    if (cmd.hasOption("pp")) { // pretty print
-      final File file = Paths.get(outputPath,
-          cmd.getOptionValue("pp", ast.getCDDefinition().getName() + "." + CD4CodeGlobalScope.EXTENSION)
-      ).toFile();
+    if (cmd.hasOption("prettyprint")) { // pretty print
+      final Path outputPath = Paths.get(this.outputPath,
+          cmd.getOptionValue("prettyprint", ast.getCDDefinition().getName() + "." + CD4CodeGlobalScope.EXTENSION)
+      );
+      final File file = outputPath.toFile();
+      file.getParentFile().mkdirs();
 
-      // print model
-      final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-      ast.accept(cd4CodePrettyPrinter);
-      try (PrintWriter out = new PrintWriter(file)) {
-        out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-        System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+      if (!cmd.hasOption("plantUML")) {
+        // print model
+        final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
+        ast.accept(cd4CodePrettyPrinter);
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
+          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+          System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+        }
       }
-
-      // if option puml is given, then enable the plantuml options
-      if (cmd.hasOption("puml")) { // plantUML
+      else { // if option puml is given, then enable the plantuml options
         final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
-        final String path = createPlantUML(plantUMLCmd, outputPath);
+        final String path = createPlantUML(plantUMLCmd, this.outputPath);
         System.out.printf(PLANTUML_SUCCESSFUL, path);
       }
     }
 
     if (cmd.hasOption("s")) { // symbol table export
       @SuppressWarnings("UnstableApiUsage") final List<String> artifactPackage = new ArrayList<>(Splitters.DOT.splitToList(artifactScope.getRealPackageName()));
-      artifactPackage.add(cmd.getOptionValue("s", ""));
+
+      System.out.println("modelName:" + modelName);
+      artifactPackage.add(cmd.getOptionValue("s", modelName + ".cdsym"));
       final Path symbolPath = Paths.get(outputPath, artifactPackage.toArray(new String[0]));
       final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
       final String path = deser.store(artifactScope, symbolPath.toString());
@@ -222,7 +226,7 @@ public class CDCLI {
 
   protected String createPlantUML(CommandLine plantUMLCmd, String outputPath)
       throws IOException {
-    final String output = Paths.get(outputPath, cmd.getOptionValue("pp", ast.getCDDefinition().getName())).toUri().getPath();
+    final String output = Paths.get(outputPath, cmd.getOptionValue("prettyprint", ast.getCDDefinition().getName())).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
 
@@ -277,8 +281,8 @@ public class CDCLI {
     formatter.setWidth(80);
     formatter.printHelp(JAR_NAME + "\n" +
             "Examples: " +
-            "\tJAR_NAME -i Person.cd -p target:src/models -o target/out -t true -s " +
-            "\tJAR_NAME -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles"
+            JAR_NAME + " -i Person.cd -p target:src/models -o target/out -t true -s \n" +
+            JAR_NAME + " -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles"
         , cdcliOptions.getOptions());
 
     if (subCommand != null) {
