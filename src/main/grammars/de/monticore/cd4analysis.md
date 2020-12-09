@@ -445,6 +445,26 @@ Further examples can be found [here][CD4CExampleModels].
   -> Decoration by monitoring methods -> Java code.
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
+  
+## Additional info
+### Error codes
+`X` stands for any valid character
+
+#### Languages
+- `0xCDX0X`-`0xCDX2X`: CDBasis
+- `0xCDX3X`-`0xCDX5X`: CDInterfaceAndEnum
+- `0xCDX6X`-`0xCDX8X`: CDAssociation
+- `0xCDX9X`-`0xCDXBX`: CD4CodeBasis
+- `0xCDXCX`-`0xCDXDX`: CD4A
+- `0xCDXEX`-`0xCDXFX`: CD4Code
+
+#### CoCos (`0xCDCXX`)
+- `0xCDC0X`: CDBasisEbnf (`0xCDC3X` for CDInterfaceAndEnumEbnf...)
+- `0xCDC1X`: CDBasisMCG
+- `0xCDC2X`: CDBasisMCG2Ebnf
+  
+#### Symboltable (`0xCDAXX`)
+#### Other Errors (`0xCD0XX`)
 
 [CD4AGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CD4Analysis.mc4
 [CD4CGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CD4Code.mc4
