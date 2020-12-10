@@ -230,7 +230,7 @@ your working directory should contain the CLI Jar `CDCLI.jar`.
 
 Execute the following command for processing the file `MyLife.cd`:
 ```
-java -jar CDCLI.jar -i monticore/MyLife.sd
+java -jar CDCLI.jar -i monticore/MyLife.cd
 ```
 
 After executing the command, you may notice that the CLI tool produces some output.
