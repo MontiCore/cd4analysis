@@ -4,12 +4,14 @@
 
 package de.monticore.cd.cli;
 
-import ch.qos.logback.classic.Level;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -36,21 +38,19 @@ import java.util.stream.Collectors;
 public class CDCLI {
 
   static final Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-  protected static final String JAR_NAME = "cd4analysis-<Version>-cli.jar";
-  protected static final String CHECK_SUCCESSFUL = "Parsing and CoCo check successful!";
-  protected static final String CHECK_ERROR = "Error in Parsing or CoCo check.";
-  protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful!\n";
-  protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful!\n";
-  protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol table %s successful!\n";
-  protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written!\n";
-  protected static final Level DEFAULT_LOG_LEVEL = Level.WARN; // names of the reports:
+  protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for ";
+  protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
+  protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
+  protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
+  protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol table %s successful\n";
+  protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written\n";
 
   public static final String REPORT_ALL_ELEMENTS = "allElements.txt";
 
   protected String modelName;
   protected String modelFile;
   protected Reader modelReader;
-  protected boolean failQuick;
+  protected boolean failQuick = false;
   protected String outputPath;
   protected ASTCDCompilationUnit ast;
   protected ICD4CodeArtifactScope artifactScope;
@@ -62,7 +62,8 @@ public class CDCLI {
 
   public static void main(String[] args) throws IOException, ParseException {
 
-    //root.setLevel(DEFAULT_LOG_LEVEL);
+    // disable debug messages
+    Log.initWARN();
 
     CDCLI cli = new CDCLI();
     try {
@@ -85,15 +86,14 @@ public class CDCLI {
     }
   }
 
-  protected boolean handleArgs(String[] args)
-      throws IOException, ParseException {
+  protected boolean handleArgs(String[] args) throws IOException, ParseException {
     cmd = cdcliOptions.handleArgs(args);
 
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
     }*/
 
-    failQuick = Boolean.parseBoolean(cmd.getOptionValue("f", "true"));
+    failQuick = Boolean.parseBoolean(cmd.getOptionValue("f", "false"));
 
     outputPath = cmd.getOptionValue("o", ".");
 
@@ -145,7 +145,7 @@ public class CDCLI {
     // check all the cocos
     checkCocos();
     if (Log.getErrorCount() == 0) {
-      System.out.println(CHECK_SUCCESSFUL);
+      System.out.println(CHECK_SUCCESSFUL + ast.getCDDefinition().getName());
     }
     else {
       System.out.println(CHECK_ERROR);
@@ -153,19 +153,26 @@ public class CDCLI {
     }
 
     if (cmd.hasOption("prettyprint")) { // pretty print
-      final Path outputPath = Paths.get(this.outputPath,
-          cmd.getOptionValue("prettyprint", ast.getCDDefinition().getName() + "." + CD4CodeGlobalScope.EXTENSION)
-      );
-      final File file = outputPath.toFile();
-      file.getParentFile().mkdirs();
+      String ppOptionVal = cmd.getOptionValue("prettyprint");
 
       if (!cmd.hasOption("plantUML")) {
         // print model
+
         final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
         ast.accept(cd4CodePrettyPrinter);
-        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-          System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+
+        if (ppOptionVal == null) {
+          System.out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+        }
+        else {
+          final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
+          final File file = outputPath.toFile();
+          file.getParentFile().mkdirs();
+
+          try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
+            out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+            System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+          }
         }
       }
       else { // if option puml is given, then enable the plantuml options
@@ -179,8 +186,16 @@ public class CDCLI {
       @SuppressWarnings("UnstableApiUsage") final List<String> artifactPackage = new ArrayList<>(Splitters.DOT.splitToList(artifactScope.getRealPackageName()));
 
       System.out.println("modelName:" + modelName);
-      artifactPackage.add(cmd.getOptionValue("s", modelName + ".cdsym"));
-      final Path symbolPath = Paths.get(outputPath, artifactPackage.toArray(new String[0]));
+
+      String targetFile = cmd.getOptionValue("s");
+
+      Path symbolPath;
+      if (targetFile == null) {
+        symbolPath = Paths.get(outputPath, artifactPackage.toArray(new String[0]));
+      }
+      else {
+        symbolPath = Paths.get(targetFile);
+      }
       final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
       final String path = deser.store(artifactScope, symbolPath.toString());
       System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString());
@@ -214,8 +229,7 @@ public class CDCLI {
       globalScope.addBuiltInTypes();
     }
 
-    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-        .cD4CodeSymbolTableCreatorDelegator();
+    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator();
 
     artifactScope = symbolTableCreator.createFromAST(ast);
   }
@@ -224,8 +238,7 @@ public class CDCLI {
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
-  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath)
-      throws IOException {
+  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
     final String output = Paths.get(outputPath, cmd.getOptionValue("prettyprint", ast.getCDDefinition().getName())).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
@@ -278,12 +291,8 @@ public class CDCLI {
 
   protected void printHelp(CDCLIOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
-    formatter.setWidth(80);
-    formatter.printHelp(JAR_NAME + "\n" +
-            "Examples: " +
-            JAR_NAME + " -i Person.cd -p target:src/models -o target/out -t true -s \n" +
-            JAR_NAME + " -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles"
-        , cdcliOptions.getOptions());
+    formatter.setWidth(110);
+    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CD4CLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles", cdcliOptions.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdcliOptions.getOptions(subCommand));
@@ -301,38 +310,28 @@ public class CDCLI {
     }
 
     final List<String> cdPackageList = ast.getCDPackageList();
-    sb.append("\nPackages (").append(cdPackageList.size()).append("): [")
-        .append(Joiners.COMMA.join(cdPackageList))
-        .append("]");
+    sb.append("\nPackages (").append(cdPackageList.size()).append("): [").append(Joiners.COMMA.join(cdPackageList)).append("]");
 
     final List<ASTCDClass> cdClassesList = ast.getCDDefinition().getCDClassesList();
-    sb.append("\nClasses (").append(cdClassesList.size()).append("): [")
-        .append(Joiners.COMMA.join(cdClassesList.stream().map(ASTCDClass::getName).collect(Collectors.toList())))
-        .append("]");
+    sb.append("\nClasses (").append(cdClassesList.size()).append("): [").append(Joiners.COMMA.join(cdClassesList.stream().map(ASTCDClass::getName).collect(Collectors.toList()))).append("]");
 
     final List<ASTCDInterface> cdInterfacesList = ast.getCDDefinition().getCDInterfacesList();
-    sb.append("\nInterface (").append(cdInterfacesList.size()).append("): [")
-        .append(Joiners.COMMA.join(cdInterfacesList.stream().map(ASTCDInterface::getName).collect(Collectors.toList())))
-        .append("]");
+    sb.append("\nInterface (").append(cdInterfacesList.size()).append("): [").append(Joiners.COMMA.join(cdInterfacesList.stream().map(ASTCDInterface::getName).collect(Collectors.toList()))).append("]");
 
     final List<ASTCDEnum> cdEnumsList = ast.getCDDefinition().getCDEnumsList();
-    sb.append("\nEnum (").append(cdEnumsList.size()).append("): [")
-        .append(Joiners.COMMA.join(cdEnumsList.stream().map(ASTCDEnum::getName).collect(Collectors.toList())))
-        .append("]");
+    sb.append("\nEnum (").append(cdEnumsList.size()).append("): [").append(Joiners.COMMA.join(cdEnumsList.stream().map(ASTCDEnum::getName).collect(Collectors.toList()))).append("]");
 
     final List<ASTCDAssociation> cdAssociationsList = ast.getCDDefinition().getCDAssociationsList();
-    sb.append("\nAssociations (").append(cdAssociationsList.size()).append("): [")
-        .append(Joiners.COMMA.join(cdAssociationsList.stream().map(a -> {
-          final String name;
-          if (a.isPresentName()) {
-            name = a.getName();
-          }
-          else {
-            name = a.getPrintableName();
-          }
-          return name;
-        }).collect(Collectors.toList())))
-        .append("]");
+    sb.append("\nAssociations (").append(cdAssociationsList.size()).append("): [").append(Joiners.COMMA.join(cdAssociationsList.stream().map(a -> {
+      final String name;
+      if (a.isPresentName()) {
+        name = a.getName();
+      }
+      else {
+        name = a.getPrintableName();
+      }
+      return name;
+    }).collect(Collectors.toList()))).append("]");
 
     final Path allElementsPath = Paths.get(path, REPORT_ALL_ELEMENTS);
     if (Files.notExists(allElementsPath.getParent())) {

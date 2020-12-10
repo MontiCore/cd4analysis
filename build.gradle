@@ -226,7 +226,7 @@ jar {
 }
 
 shadowJar { // all in one jar
-    archiveFileName = 'CD4AnalysisCLI.jar'
+    archiveFileName = 'CDCLI.jar'
     manifest {
         attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
     }

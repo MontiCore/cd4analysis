@@ -40,23 +40,16 @@ public class CDCLIOptions {
   protected void init() {
     options.addOption(Option
         .builder("h").longOpt("help")
-        .desc("Print this help")
+        .desc("Prints this help dialogue.")
         .build());
-
-    /*options.addOption(Option
-        .builder("log")//.longOpt("log")
-        .hasArg().type(String.class)
-        .argName("logLevel")
-        .desc("Activate specific loglevel, valid values are [trace, debug, info, warn, error]")
-        .build());*/
 
     options.addOption(Option
         .builder("f").longOpt("failquick")
         .hasArg().type(Boolean.class)
         .argName("value").numberOfArgs(1)
         .optionalArg(false)
-        .desc("Sets if the application should quickfail on errors [true/false]. "
-            + "{default [true] (enabled fail-quick)}")
+        .desc("Configures if the application should quickfail on errors [true/false]. "
+            + "The default value is \"false\".")
         .build());
 
     initCheck();
@@ -69,14 +62,12 @@ public class CDCLIOptions {
         .builder("i").longOpt("input")
         .hasArg().type(String.class)
         .argName("file").numberOfArgs(1)
-        .desc("Reads the source file resp. the contents of the model. Has to be a class diagram. "
-            + "{no default}")
+        .desc("Reads the input CD artifact given as argument.")
         .build());
 
     options.addOption(Option
-        .builder().longOpt("stdin")
-        .desc("Reads the source from stdin. Has to be a class diagram. "
-            + "{no default}")
+        .builder("stdin").longOpt("stdin")
+        .desc("Reads the path to the input CD artifact from stdin.")
         .build());
 
     options.addOption(Option
@@ -84,7 +75,7 @@ public class CDCLIOptions {
         .hasArg().type(String.class)
         .argName("dirlist").numberOfArgs(1)
         .desc("Sets the artifact path for imported symbols separated by ';'. "
-            + "{default \".\"}")
+            + "The default value is \".\".")
         .build());
 
     options.addOption(Option
@@ -92,7 +83,7 @@ public class CDCLIOptions {
         .hasArg().type(String.class)
         .argName("file").optionalArg(true).numberOfArgs(1)
         .desc("Serializes and prints the symbol table to stdout or the specified output file (optional). "
-            + "{default \"_input_file_name_.cdsym\"}")
+            + "The default value is \"{inputArtifactName}.cdsym\".")
         .build());
 
     options.addOption(Option
@@ -100,7 +91,7 @@ public class CDCLIOptions {
         .hasArg().type(String.class)
         .argName("dir").optionalArg(true).numberOfArgs(1)
         .desc("Path of generated files (optional). "
-            + "{default \".\"}")
+            + "The default value is \".\".")
         .build());
 
     options.addOption(Option
@@ -109,31 +100,31 @@ public class CDCLIOptions {
         .argName("dir").optionalArg(true).numberOfArgs(1)
         .desc("Prints reports of the parsed artifact to the specified directory (optional). "
             + "Available reports are language-specific. "
-            + "{default \"_output_path_\"}")
+            + "The default value is \"_output_path_\".")
         .build());
 
     options.addOption(Option
         .builder("t").longOpt("usebuiltintypes")
         .hasArg().type(Boolean.class)
         .argName("useBuiltinTypes").numberOfArgs(1)
-        .desc("Uses built-in-types [true/false]."
-            + " {default \"true\"}")
+        .desc("Configures if built-in-types should be considered [true/false]. "
+            + "The default value is \"true\".")
         .build());
   }
 
   protected void initPrettyPrinter() {
     options.addOption(Option
-        .builder().longOpt("prettyprint")
+        .builder("pp").longOpt("prettyprint")
         .hasArg().type(String.class)
-        .argName("dir").optionalArg(true).numberOfArgs(1)
-        .argName("prettyPrintOutput")
-        .desc("Pretty prints the input cd. {default \"_input_file_name_.EXTENSION\"}")
+        .argName("file").optionalArg(true).numberOfArgs(1)
+        .argName("prettyprint")
+        .desc("Prints the input SDs to stdout or to the specified file (optional).")
         .build());
 
     // dependent on pp
     options.addOption(Option
-        .builder().longOpt("plantUML")
-        .desc("output as plantUML model")
+        .builder("puml").longOpt("plantUML")
+        .desc("Transform the input model to a PlantUML model.")
         .build());
   }
 
