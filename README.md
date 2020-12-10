@@ -77,7 +77,7 @@ Alternatively, you can download the CLI tool using `wget`.
 The following command downloads the latest version of the CLI tool and saves it under the name `CDCLI.jar` 
 in your working directory:
 ```
-wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli" -O CD4CLI.jar
+wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli" -O CDCLI.jar
 ``` 
 
 ## Building the CLI Tool from the Sources
@@ -101,14 +101,14 @@ To this effect, execute the following two commands:
 ./gradlew.bat clean build
 ./gradlew.bat shadowJar
 ```
-Congratulations! You can now find the executable JAR file `CD4CLI.jar` in
+Congratulations! You can now find the executable JAR file `CDCLI.jar` in
  the directory `target/libs` (accessible via `cd target/libs`).
 
 ## Tutorial: Getting Started Using the CD CLI Tool
 The previous sections describe how to obtain an executable JAR file
 (CD CLI tool). This section provides a tutorial for
 using the CD CLI tool. The following examples assume
-that you locally named the CLI tool `CD4CLI.jar`.
+that you locally named the CLI tool `CDCLI.jar`.
 If you built the CLI tool from the sources or used the `wget`
 command above, then you are fine. If you manually downloaded 
 the CLI tool, then you should consider renaming the downloaded JAR. 
@@ -125,7 +125,7 @@ Executing the Jar file without any options prints usage information of the CLI t
 $ java -jar CDCLI.jar
 usage: Examples in case the CLI file is called CDCLI.jar:
 java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s
-java -jar CD4CLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
+java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
  -f,--failquick <value>                   Configures if the application should quickfail on errors
                                           [true/false]. The default value is "false".
  -h,--help                                Print this help dialogue.
@@ -147,7 +147,7 @@ java -jar CD4CLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
 ```
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`, which takes the file path 
-of exactly one file containing CD models and input.
+of exactly one file containing CD models as input.
 If no further options are specified, the CLI tool parses the model, builds its symbol table, and then checks
 whether the model satisfies all context conditions.
 
@@ -234,7 +234,7 @@ java -jar CDCLI.jar -i monticore/MyLife.sd
 ```
 
 After executing the command, you may notice that the CLI tool produces some output.
-The output states the reasons why a a context conditions is not satisfied by the model.
+The output states the reason why a context condition is not satisfied by the model.
 The output contains the following error message: 
 ```
 [ERROR] 0xA1038 TypeSymbolSurrogate Could not load full information of 'Address' 
@@ -323,9 +323,9 @@ Great!
 The previous section describes how to load symbols from an existing symbol file.
 Now, we will use the CLI tool to store a symbol file for our `MyLife.cd` model.
 The stored symbol file will contain information about the types and associations defined in the CD.
-It can be imported by other models for using the symbols introduced by these object definitions,
+It can be imported by other models for using the introduced symbols,
 similar to how we changed the file `MyLife.cd` for importing the symbols contained in the
-symbol file `AuctionTypes.cdsym`.
+symbol file `AddressType.cdsym`.
 
 Using the `-s,--symboltable <file>` option builds the symbol table of the input model and stores it in the file path given as argument.
 Providing the file path is optional.

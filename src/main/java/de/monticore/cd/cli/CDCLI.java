@@ -292,7 +292,10 @@ public class CDCLI {
   protected void printHelp(CDCLIOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CD4CLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles", cdcliOptions.getOptions());
+    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() +
+      "java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s" + System.lineSeparator() +
+      "java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles",
+      cdcliOptions.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdcliOptions.getOptions(subCommand));
