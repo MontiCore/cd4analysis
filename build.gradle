@@ -226,12 +226,11 @@ jar {
 }
 
 shadowJar { // all in one jar
+    archiveFileName = 'CD4analysisCLI.jar'
     manifest {
         attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
     }
     archiveClassifier = "cli"
-
-    minimize()
 }
 
 testSets {
