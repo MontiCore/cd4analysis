@@ -21,6 +21,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.Joiners;
+import de.se_rwth.commons.Names;
 import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
@@ -42,7 +43,7 @@ public class CDCLI {
   protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
-  protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol table %s successful\n";
+  protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
   protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written\n";
 
   public static final String REPORT_ALL_ELEMENTS = "allElements.txt";
@@ -185,20 +186,18 @@ public class CDCLI {
     if (cmd.hasOption("s")) { // symbol table export
       @SuppressWarnings("UnstableApiUsage") final List<String> artifactPackage = new ArrayList<>(Splitters.DOT.splitToList(artifactScope.getRealPackageName()));
 
-      System.out.println("modelName:" + modelName);
-
       String targetFile = cmd.getOptionValue("s");
 
       Path symbolPath;
       if (targetFile == null) {
-        symbolPath = Paths.get(outputPath, artifactPackage.toArray(new String[0]));
+        symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
       }
       else {
         symbolPath = Paths.get(targetFile);
       }
       final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
       final String path = deser.store(artifactScope, symbolPath.toString());
-      System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString());
+      System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString().replace("\\","/"));
     }
 
     // report
@@ -292,10 +291,7 @@ public class CDCLI {
   protected void printHelp(CDCLIOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() +
-      "java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s" + System.lineSeparator() +
-      "java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles",
-      cdcliOptions.getOptions());
+    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles", cdcliOptions.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdcliOptions.getOptions(subCommand));
