@@ -7,8 +7,11 @@ pluginManagement {
       credentials.password mavenPassword
       url repo
     }
+    mavenCentral()
     gradlePluginPortal()
   }
 }
 
 rootProject.name = 'cd4analysis'
+
+include(':gradle-plugin')

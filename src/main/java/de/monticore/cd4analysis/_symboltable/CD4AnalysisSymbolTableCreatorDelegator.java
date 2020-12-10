@@ -5,7 +5,6 @@
 package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreator;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCreator;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCreator;
@@ -14,11 +13,18 @@ public class CD4AnalysisSymbolTableCreatorDelegator
     extends CD4AnalysisSymbolTableCreatorDelegatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CD4AnalysisSymbolTableCreatorDelegator() {
+    super();
+    setRealThis(this);
+    
+    setSymbolTableHelper(((CD4AnalysisGlobalScope) globalScope).getSymbolTableHelper());
+  }
+
   public CD4AnalysisSymbolTableCreatorDelegator(ICD4AnalysisGlobalScope globalScope) {
     super(globalScope);
     setRealThis(this);
 
-    setSymbolTableHelper(new CDSymbolTableHelper(CD4AnalysisMill.deriveSymTypeOfCD4Analysis()));
+    setSymbolTableHelper(((CD4AnalysisGlobalScope) globalScope).getSymbolTableHelper());
   }
 
   public CDSymbolTableHelper getSymbolTableHelper() {

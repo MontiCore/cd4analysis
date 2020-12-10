@@ -13,7 +13,7 @@ import java.util.Stack;
 public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CDAssociationVisitor {
   protected CDAssociationVisitor realThis;
-  protected Stack<Boolean> stackIsAssociation;
+  protected final Stack<Boolean> stackIsAssociation;
 
   public CDAssociationPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -148,11 +148,13 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
       node.getCDRole().accept(getRealThis());
     }
+    /*
     if (node.isPresentCDOrdered()) {
       print(" <<");
       node.getCDOrdered().accept(getRealThis());
       print(">>");
     }
+     */
 
     if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print("\"");
@@ -165,11 +167,13 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print("\"");
     }
 
+    /*
     if (node.isPresentCDOrdered()) {
       print(" <<");
       node.getCDOrdered().accept(getRealThis());
       print(">>");
     }
+     */
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
       node.getCDRole().accept(getRealThis());
     }

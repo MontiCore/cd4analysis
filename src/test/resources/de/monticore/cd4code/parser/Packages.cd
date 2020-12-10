@@ -8,7 +8,7 @@ classdiagram Packages {
   }
 
   package a2 {
-    class A2 extends A;
+    class A2 extends a2.A;
     class A;
   }
 

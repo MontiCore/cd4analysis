@@ -26,6 +26,6 @@ public interface ASTCDAssocDir extends ASTCDAssocDirTOP {
   default boolean isDefinitiveNavigableRight() {
     final CDAssociationNavigableVisitor navigableVisitor = getNavigableVisitor();
     this.accept(navigableVisitor);
-    return navigableVisitor.isDefinitiveNavigableLeft();
+    return navigableVisitor.isDefinitiveNavigableRight();
   }
 }

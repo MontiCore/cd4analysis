@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class CD4CodeArtifactScope extends CD4CodeArtifactScopeTOP {
+  public CD4CodeArtifactScope() {
+  }
+
   public CD4CodeArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }
 
-  public CD4CodeArtifactScope(Optional<ICD4CodeScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public CD4CodeArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ICD4CodeScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 

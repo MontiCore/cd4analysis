@@ -3,7 +3,7 @@
  */
 package de.monticore.cdassociation._ast;
 
-import de.monticore.cdassociation.MCBasicTypesMillForCDAssociation;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 
 public class ASTCDQualifier extends ASTCDQualifierTOP {
   public ASTCDQualifier() {
@@ -14,7 +14,7 @@ public class ASTCDQualifier extends ASTCDQualifierTOP {
       return getByAttributeName();
     }
     else if (isPresentByType()) {
-      return getByType().printType(MCBasicTypesMillForCDAssociation.mcBasicTypesPrettyPrinter());
+      return getByType().printType(MCBasicTypesMill.mcBasicTypesPrettyPrinter());
     }
 
     return null;

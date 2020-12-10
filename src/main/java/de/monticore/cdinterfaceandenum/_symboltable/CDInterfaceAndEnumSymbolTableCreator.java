@@ -9,9 +9,10 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.types.check.SymTypeOfObject;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -22,19 +23,23 @@ public class CDInterfaceAndEnumSymbolTableCreator
     extends CDInterfaceAndEnumSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CDInterfaceAndEnumSymbolTableCreator() {
+    super();
+    init();
+  }
+
   public CDInterfaceAndEnumSymbolTableCreator(ICDInterfaceAndEnumScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
   public CDInterfaceAndEnumSymbolTableCreator(Deque<? extends ICDInterfaceAndEnumScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
     init();
   }
 
   protected void init() {
+    setRealThis(this);
     symbolTableHelper = new CDSymbolTableHelper();
   }
 
@@ -75,7 +80,7 @@ public class CDInterfaceAndEnumSymbolTableCreator
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
@@ -97,7 +102,7 @@ public class CDInterfaceAndEnumSymbolTableCreator
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
@@ -115,12 +120,14 @@ public class CDInterfaceAndEnumSymbolTableCreator
     super.initialize_CDEnumConstant(symbol, ast);
     symbol.setIsStatic(true);
     symbol.setIsReadOnly(true);
-    symbol.setIsStatic(true);
+    symbol.setIsFinal(true);
     symbol.setIsPublic(true);
 
-    symbol.setType(SymTypeExpressionFactory.createTypeObject(
-        symbolTableHelper.getCurrentCDTypeOnStack(),
-        scopeStack.peekLast()
-    ));
+    // create a SymType for the enum, because the type of the enum constant is the enum itself
+    final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.peekLast().getEnclosingScope());
+    symbol.setType(typeObject);
+
+    // Don't store the arguments in the ST
   }
 }

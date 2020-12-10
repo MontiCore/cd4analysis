@@ -6,12 +6,11 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,10 +36,11 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public Optional<FieldSymbol> deserializeAttributeQualifier(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<VariableSymbol> deserializeAttributeQualifier(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
     if (symbolJson.hasMember("attributeQualifier")) {
       final String fieldName = symbolJson.getStringMember("attributeQualifier");
       final SymTypeExpression type = SymTypeExpressionDeSer.deserializeMember("type", symbolJson, enclosingScope);
+      // crate a surrogate to link to the existing variable
       return Optional.of(OOSymbolsMill
           .fieldSymbolSurrogateBuilder()
           .setName(fieldName)
@@ -60,14 +60,9 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public SymAssociation deserializeAssociation(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
-    final int association = symbolJson.getIntegerMember("association");
-    if (!symAssociations.containsKey(association)) {
-      Log.error(String.format(
-          "0xCD003: SymAssociation %d is not loaded",
-          association));
-    }
-    return symAssociations.get(association);
+  public Optional<SymAssociation> deserializeAssociation(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+    return symbolJson.getIntegerMemberOpt("association")
+        .flatMap(a -> Optional.ofNullable(symAssociations.get(a)));
   }
 
   @Override
@@ -101,7 +96,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
     else {
       builder.setTypeQualifierAbsent();
     }
-    builder.setAssociation(deserializeAssociation(symbolJson, enclosingScope));
+    deserializeAssociation(symbolJson, enclosingScope).ifPresent(builder::setAssociation);
     builder.setIsOrdered(deserializeIsOrdered(symbolJson, enclosingScope));
     builder.setIsPrivate(deserializeIsPrivate(symbolJson, enclosingScope));
     builder.setIsProtected(deserializeIsProtected(symbolJson, enclosingScope));

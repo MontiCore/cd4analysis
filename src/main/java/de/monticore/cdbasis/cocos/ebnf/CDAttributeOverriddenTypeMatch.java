@@ -6,6 +6,7 @@ package de.monticore.cdbasis.cocos.ebnf;
 import de.monticore.cd._symboltable.OOTypeHelper;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.TypeCheck;
@@ -30,14 +31,14 @@ public class CDAttributeOverriddenTypeMatch
     FieldSymbol attrSym = node.getSymbol();
     OOTypeSymbol subClassSym = (OOTypeSymbol) node.getEnclosingScope()
         .getSpanningSymbol();
-    Collection<FieldSymbol> superAttrs = new ArrayList<>();
+    Collection<VariableSymbol> superAttrs = new ArrayList<>();
     subClassSym.getSuperClassesOnly()
         // Add all attributes of the super types and all inherited attributes of the super types
         .forEach(sT -> {
-          superAttrs.addAll(sT.getTypeInfo().getFieldList());
-          superAttrs.addAll(OOTypeHelper.getAllFieldsOfSuperTypes(sT.getTypeInfo()));
+          superAttrs.addAll(sT.getTypeInfo().getVariableList());
+          superAttrs.addAll(OOTypeHelper.getAllVariablesOfSuperTypes(sT.getTypeInfo()));
         });
-    List<FieldSymbol> overriddenSymbols = superAttrs.stream()
+    List<VariableSymbol> overriddenSymbols = superAttrs.stream()
         // same name
         .filter(sA -> sA.getName().equals(attrSym.getName()))
         // different type
@@ -47,7 +48,7 @@ public class CDAttributeOverriddenTypeMatch
         .collect(Collectors.toList());
 
     if (!overriddenSymbols.isEmpty()) {
-      FieldSymbol anOverriddenSym = overriddenSymbols.get(0);
+      VariableSymbol anOverriddenSym = overriddenSymbols.get(0);
       Log.error(
           String
               .format(

@@ -11,11 +11,10 @@ import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfObject;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbolSurrogate;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -26,19 +25,23 @@ public class CD4CodeBasisSymbolTableCreator
     extends CD4CodeBasisSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CD4CodeBasisSymbolTableCreator() {
+    super();
+    init();
+  }
+
   public CD4CodeBasisSymbolTableCreator(ICD4CodeBasisScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
   public CD4CodeBasisSymbolTableCreator(Deque<? extends ICD4CodeBasisScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
     init();
   }
 
   protected void init() {
+    setRealThis(this);
     symbolTableHelper = new CDSymbolTableHelper(CD4CodeBasisMill.deriveSymTypeOfCD4CodeBasis());
   }
 
@@ -64,7 +67,7 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setIsMethod(true);
 
-    ast.getMCReturnType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    ast.getMCReturnType().setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
     final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCReturnType());
     if (!typeResult.isPresent()) {
       Log.error(String.format(
@@ -105,12 +108,12 @@ public class CD4CodeBasisSymbolTableCreator
 
     symbol.setReturnType(SymTypeExpressionFactory.createTypeObject(
         symbolTableHelper.getCurrentCDTypeOnStack(),
-        scopeStack.peekLast()
+        scopeStack.peekLast().getEnclosingScope()
     ));
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
@@ -129,7 +132,7 @@ public class CD4CodeBasisSymbolTableCreator
   protected void initialize_CDParameter(FieldSymbol symbol, ASTCDParameter ast) {
     super.initialize_CDParameter(symbol, ast);
 
-    ast.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    ast.getMCType().setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
     Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCType());
 
     if (!typeResult.isPresent()) {
@@ -165,8 +168,10 @@ public class CD4CodeBasisSymbolTableCreator
     symbol.setIsFinal(true);
     symbol.setIsPublic(true);
 
+    // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    symbol.setType(new SymTypeOfObject(new OOTypeSymbolSurrogate(enumName)));
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.peekLast().getEnclosingScope());
+    symbol.setType(typeObject);
 
     // Don't store the arguments in the ST
   }

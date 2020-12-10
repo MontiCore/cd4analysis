@@ -17,6 +17,9 @@ import java.util.Optional;
 public class TestTypeImporterSymbolTableCreator
     extends TestTypeImporterSymbolTableCreatorTOP {
 
+  public TestTypeImporterSymbolTableCreator() {
+  }
+
   public TestTypeImporterSymbolTableCreator(ITestTypeImporterScope enclosingScope) {
     super(enclosingScope);
   }

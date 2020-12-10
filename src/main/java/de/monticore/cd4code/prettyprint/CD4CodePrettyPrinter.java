@@ -18,16 +18,20 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPrettyPrinter;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpressionsBasisNode;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor;
 import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
+import de.monticore.literals.mcliteralsbasis._ast.ASTMCLiteralsBasisNode;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.UMLModifierPrettyPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
+import de.monticore.types.prettyprint.*;
+import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
+import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
 public class CD4CodePrettyPrinter extends CD4CodeDelegatorVisitor
     implements ExpressionsBasisVisitor {
@@ -51,7 +55,9 @@ public class CD4CodePrettyPrinter extends CD4CodeDelegatorVisitor
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
     setUMLModifierVisitor(new UMLModifierPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
+    setMCArrayTypesVisitor(new MCArrayTypesPrettyPrinter(printer));
     setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
+    setMCFullGenericTypesVisitor(new MCFullGenericTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setBitExpressionsVisitor(new BitExpressionsPrettyPrinter(printer));
@@ -121,6 +127,42 @@ public class CD4CodePrettyPrinter extends CD4CodeDelegatorVisitor
   }
 
   public String prettyprint(ASTCD4CodeNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTMCLiteralsBasisNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTExpression node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTExpressionsBasisNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTMCBasicTypesNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTUMLStereotypeNode node) {
+    getPrinter().clearBuffer();
+    node.accept(getRealThis());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTUMLModifierNode node) {
     getPrinter().clearBuffer();
     node.accept(getRealThis());
     return getPrinter().getContent();

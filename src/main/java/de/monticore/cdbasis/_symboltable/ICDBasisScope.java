@@ -5,30 +5,21 @@
 package de.monticore.cdbasis._symboltable;
 
 import com.google.common.collect.FluentIterable;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.ISymbol;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface ICDBasisScope extends ICDBasisScopeTOP {
-  default <T extends ISymbol> Optional<T> getResolvedOrThrowException(final Collection<T> resolved) {
-    // remove duplicates (same object)
-    final Collection<T> deduplicatedResolved = new HashSet<>(resolved);
-    if (deduplicatedResolved.size() == 1) {
-      return Optional.of(deduplicatedResolved.iterator().next());
-    }
-    else if (deduplicatedResolved.size() > 1) {
-      throw new ResolvedSeveralEntriesForSymbolException("0xA4095:Found " + deduplicatedResolved.size()
-          + " symbols: {" + deduplicatedResolved.stream().map(r -> r.getFullName() + (r.isPresentAstNode() ? " (" + r.getAstNode().get_SourcePositionStart() + ")" : "")).collect(Collectors.joining(", ")) + "}",
-          resolved);
-    }
-
-    return Optional.empty();
-  }
-
   default String getPackageName() {
     return this.isPresentName() ? this.getName() : "";
   }

@@ -13,7 +13,7 @@ import de.monticore.cdinterfaceandenum._parser.CDInterfaceAndEnumAfterParseTrafo
 
 public class CD4AnalysisAfterParseDelegatorVisitor
     extends CD4AnalysisDelegatorVisitor {
-  protected CDAfterParseHelper cdAfterParseHelper;
+  protected final CDAfterParseHelper cdAfterParseHelper;
 
   public CD4AnalysisAfterParseDelegatorVisitor() {
     this(new CDAfterParseHelper());

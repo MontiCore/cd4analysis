@@ -7,7 +7,6 @@ package de.monticore.cdassociation.prettyprint;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
-import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class CDAssociationPrettyPrinter extends PrettyPrintUtil

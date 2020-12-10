@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 public class CDAssociationSrcAndTargetTypeExistChecker implements
     CDAssociationASTCDAssociationCoCo {
 
-  protected CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
+  protected final CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
 
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -28,7 +28,13 @@ public class CDAssociationSrcAndTargetTypeExistChecker implements
   }
 
   private void checkTypeExists(ASTCDAssocSide side, ASTCDAssociation assoc) {
+    if (!side.isPresentSymbol()) {
+      // no symbol present
+      return;
+    }
+
     try {
+      //noinspection ResultOfMethodCallIgnored
       side.getSymbol().getType().getTypeInfo();
     }
     catch (NoSuchElementException | IllegalStateException e) {

@@ -8,6 +8,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
 public class SymAssociation {
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   protected Optional<CDAssociationSymbol> association;
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
@@ -15,7 +16,7 @@ public class SymAssociation {
   public SymAssociation() {
   }
 
-  public SymAssociation(Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
+  public SymAssociation(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
     this(left, right);
     association.ifPresent(this::setAssociation);
   }
@@ -46,7 +47,6 @@ public class SymAssociation {
     return association.isPresent();
   }
 
-  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public CDAssociationSymbol getAssociation() {
     if (isPresentAssociation()) {
       return this.getAssociation();

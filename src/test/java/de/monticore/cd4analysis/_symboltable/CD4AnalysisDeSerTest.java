@@ -6,6 +6,7 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4DefaultsDelegator;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis.CDBasisMill;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -33,20 +35,14 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
-    final CD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
+    final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final CD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
-        .cD4AnalysisGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
-    globalScopeForDeserialization.addSubScope(deserialize);
-
-    assertTrue(deserialize.resolveField("D.DEE").isPresent());
+    final Optional<CDTypeSymbol> d = deserialize.resolveCDType("D");
+    assertTrue(d.isPresent());
+    assertEquals(1, d.get().getFieldList("DEE").size());
   }
 
   @Test
@@ -55,20 +51,15 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    node.accept(new CD4AnalysisTrafo4DefaultsDelegator(CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator()));
 
     final String serializedST = deSer.serialize(scope);
-    final CD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
+    final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final CD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
-        .cD4AnalysisGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
-    globalScopeForDeserialization.addSubScope(deserialize);
-
-    assertTrue(deserialize.resolveCDRole("B.item").isPresent());
+    final Optional<CDTypeSymbol> b = deserialize.resolveCDType("B");
+    assertTrue(b.isPresent());
+    assertEquals(1, b.get().getCDRoleList("item").size());
   }
 
   @Test
@@ -77,17 +68,10 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
-    final String serializedST = deSer.serialize(scope);
-    final CD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
 
-    final CD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
-        .cD4AnalysisGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
-    globalScopeForDeserialization.addSubScope(deserialize);
+    final String serializedST = deSer.serialize(scope);
+    final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
     final Optional<CDTypeSymbol> a = deserialize.resolveCDType("A");
     assertTrue(a.isPresent());
@@ -110,34 +94,45 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final CD4AnalysisArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");
-    final CD4AnalysisScope innerSpanningScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope()).build();
+    final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope()).build();
     innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(SymTypeExpressionFactory.createTypeObject("A", innerSpanningScope)).build());
     final CDTypeSymbol inner = CDBasisMill.cDTypeSymbolBuilder().setName("Inner").setIsClass(true).setIsStatic(true).setSpannedScope(innerSpanningScope).build();
     c.get().getSpannedScope().add(inner);
     innerSpanningScope.setSpanningSymbol(inner);
 
     final String serializedST = deSer.serialize(scope);
-    final CD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
+    final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final CD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
+    final Optional<CDTypeSymbol> innerType = deserialize.resolveCDTypeMany("Inner").stream().distinct().findAny();
+    assertTrue(innerType.isPresent());
+
+    final Optional<CDTypeSymbol> a = deserialize.resolveCDType("A");
+    assertTrue(a.isPresent());
+
+    final Optional<CDTypeSymbol> aInnerType = a.get().getSpannedScope().resolveCDTypeLocally("Inner");
+    assertTrue(aInnerType.isPresent());
+    assertEquals(innerType, aInnerType);
+
+    final Optional<FieldSymbol> fieldSymbol = aInnerType.get().getSpannedScope().resolveFieldLocally("field");
+    assertTrue(fieldSymbol.isPresent());
+  }
+
+  private List<CDTypeSymbol> uniqueList(List<CDTypeSymbol> inner) {
+    return inner.stream().distinct().collect(Collectors.toList());
+  }
+
+  public ICD4AnalysisArtifactScope getGlobalScopeForDeserialization(String serializedST) {
+    final ICD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
+
+    final ICD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
         .cD4AnalysisGlobalScopeBuilder()
         .setModelPath(new ModelPath(Paths.get(PATH)))
         .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
         .addBuiltInTypes()
         .build();
     globalScopeForDeserialization.addSubScope(deserialize);
-
-    final Optional<CDTypeSymbol> a = deserialize.resolveCDType("Inner");
-    assertTrue(a.isPresent());
-
-    final Optional<CDTypeSymbol> a2 = deserialize.resolveCDType("A.Inner");
-    assertTrue(a2.isPresent());
-
-    assertEquals(a, a2);
-
-    final Optional<FieldSymbol> fieldSymbol = a.get().getEnclosingScope().resolveField("A.Inner.field");
-    assertTrue(fieldSymbol.isPresent());
+    return deserialize;
   }
 }

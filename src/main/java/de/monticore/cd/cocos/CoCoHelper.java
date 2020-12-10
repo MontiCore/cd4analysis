@@ -4,9 +4,13 @@
 
 package de.monticore.cd.cocos;
 
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class CoCoHelper {
   public static <T> List<T> findDuplicates(Collection<T> list) {
     Set<T> uniques = new HashSet<>();
@@ -28,5 +32,29 @@ public class CoCoHelper {
     }
 
     return duplicates;
+  }
+
+  public static boolean isClass(TypeSymbol typeSymbol) {
+    if (typeSymbol instanceof OOTypeSymbol) {
+      return ((OOTypeSymbol) typeSymbol).isIsClass();
+    }
+
+    return false;
+  }
+
+  public static boolean isInterface(TypeSymbol typeSymbol) {
+    if (typeSymbol instanceof OOTypeSymbol) {
+      return ((OOTypeSymbol) typeSymbol).isIsInterface();
+    }
+
+    return false;
+  }
+
+  public static boolean isEnum(TypeSymbol typeSymbol) {
+    if (typeSymbol instanceof OOTypeSymbol) {
+      return ((OOTypeSymbol) typeSymbol).isIsEnum();
+    }
+
+    return false;
   }
 }

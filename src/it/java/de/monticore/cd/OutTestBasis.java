@@ -10,7 +10,10 @@ import org.junit.BeforeClass;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public class OutTestBasis {
+/**
+ * a base class for tests to use stdout and stderr
+ */
+public class OutTestBasis extends ITTestBasis {
   protected static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   protected static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 

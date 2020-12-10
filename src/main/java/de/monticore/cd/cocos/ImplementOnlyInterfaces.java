@@ -5,14 +5,13 @@
 package de.monticore.cd.cocos;
 
 import de.monticore.cd.CDMill;
-import de.monticore.cd.prettyprint.CDTypeKindPrinter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
@@ -61,7 +60,7 @@ abstract public class ImplementOnlyInterfaces {
     if (!node.isPresentCDInterfaceUsage()) {
       return;
     }
-    symbol.streamSuperTypes().filter(i -> !i.getTypeInfo().isIsInterface()).forEach(e ->
+    symbol.streamSuperTypes().filter(i -> !CoCoHelper.isInterface(i.getTypeInfo())).forEach(e ->
         Log.error(String.format(
             "0xCDCF5: The %s %s cannot implement %s %s. Only interfaces may be implemented.",
             CDMill.cDTypeKindPrinter().print(node),
@@ -82,7 +81,7 @@ abstract public class ImplementOnlyInterfaces {
     if (!node.isPresentCDExtendUsage()) {
       return;
     }
-    symbol.streamSuperTypes().filter(i -> !i.getTypeInfo().isIsInterface()).forEach(e ->
+    symbol.streamSuperTypes().filter(i -> !CoCoHelper.isInterface(i.getTypeInfo())).forEach(e ->
         Log.error(String.format(
             "0xCDCF6: The %s %s cannot extend %s %s. Only interfaces may be extended.",
             CDMill.cDTypeKindPrinter().print(node),

@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Collection;
@@ -26,13 +27,8 @@ public class CDDefinitionUniqueCDTypeNames
         .filter(e -> e instanceof ASTCDType)
         .map(e -> ((ASTCDType) e).getSymbol()).collect(Collectors.toList());
 
-    CoCoHelper.findDuplicates(types).forEach(e ->
-        Log.error(
-            String
-                .format(
-                    "0xCDC0D: The name %s is used several times. Classes, interfaces and enumerations may not use the same names.",
-                    e.getName()),
-            e.getAstNode().get_SourcePositionStart())
-    );
+    CoCoHelper.findDuplicatesBy(types, TypeSymbol::getFullName).forEach(e -> Log.error(String.format(
+        "0xCDC0D: The name %s is used several times. Classes, interfaces and enumerations may not use the same names.",
+        e.getName()), e.getAstNode().get_SourcePositionStart()));
   }
 }

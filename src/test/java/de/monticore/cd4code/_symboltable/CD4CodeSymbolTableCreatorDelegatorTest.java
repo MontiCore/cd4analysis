@@ -4,6 +4,7 @@
 
 package de.monticore.cd4code._symboltable;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class CD4CodeSymbolTableCreatorTest extends CD4CodeTestBasis {
+public class CD4CodeSymbolTableCreatorDelegatorTest extends CD4CodeTestBasis {
 
   @Test
   public void completeModel() throws IOException {
@@ -20,7 +21,7 @@ public class CD4CodeSymbolTableCreatorTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    symbolTableCreator.createFromAST(node);
+    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);

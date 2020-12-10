@@ -32,7 +32,7 @@ public class MCSimpleGenericTypesScopeHelper
 
   @Override
   public void visit(ASTMCBasicGenericType node) {
-    node.getMCTypeArgumentsList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
+    node.getMCTypeArgumentList().forEach(a -> a.setEnclosingScope(node.getEnclosingScope()));
   }
 
   @Override

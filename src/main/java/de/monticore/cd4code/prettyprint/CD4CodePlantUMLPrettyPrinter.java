@@ -20,13 +20,11 @@ import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
+import de.monticore.types.prettyprint.*;
 
 public class CD4CodePlantUMLPrettyPrinter extends CD4CodeDelegatorVisitor
     implements ExpressionsBasisVisitor {
-  protected PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
+  protected final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil;
 
   public CD4CodePlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -47,7 +45,9 @@ public class CD4CodePlantUMLPrettyPrinter extends CD4CodeDelegatorVisitor
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
     setUMLModifierVisitor(new UMLModiferPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
+    setMCArrayTypesVisitor(new MCArrayTypesPrettyPrinter(printer));
     setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
+    setMCFullGenericTypesVisitor(new MCFullGenericTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setBitExpressionsVisitor(new BitExpressionsPrettyPrinter(printer));

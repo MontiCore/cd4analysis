@@ -8,8 +8,8 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.ModelPath;
-import de.se_rwth.commons.Names;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -20,27 +20,21 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeDeSerTest extends CD4CodeTestBasis {
-
   @Test
   public void completeModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final CD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
-    final CD4CodeArtifactScope deserialize = deSer.deserialize(serializedST);
+    final ICD4CodeArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final CD4CodeGlobalScope globalScopeForDeserialization = CD4CodeMill
-        .cD4CodeGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4CodeGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
-    globalScopeForDeserialization.addSubScope(deserialize);
+    final Optional<CDTypeSymbol> b = deserialize.resolveCDType("B");
+    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = b.get()
+        .getMethodSignatureList("getX").stream().distinct().findAny();
 
-    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = deserialize.resolveCDMethodSignature("B.getX");
     assertTrue(cdMethodSignatureSymbol.isPresent());
     assertFalse(cdMethodSignatureSymbol.get().isIsConstructor());
     assertEquals("bs", cdMethodSignatureSymbol.get().getParameterList().get(1).getName());
@@ -52,29 +46,46 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    final CD4CodeArtifactScope scope = symbolTableCreator.createFromAST(node);
-    final Optional<CDMethodSignatureSymbol> getXMethodSymbol = scope.resolveCDMethodSignature("B.getX");
+    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+
+    final Optional<CDTypeSymbol> b = scope.resolveCDType("B");
+    final Optional<CDMethodSignatureSymbol> getXMethodSymbol = b.get()
+        .getMethodSignatureList("getX").stream().distinct().findAny();
+
     assertTrue(getXMethodSymbol.isPresent());
     assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());
 
-    final String path = folder.getRoot().getAbsolutePath();
-    deSer.store(scope, Paths.get(path));
-    final CD4CodeArtifactScope deserialize = deSer.load(Paths.get(path, Names.getPathFromPackage(scope.getRealPackageName()), scope.getName() + ".cdsym").toUri().toURL());
+    final String path = getTmpFilePath(scope.getName() + ".cdsym");
+    deSer.store(scope, path);
+    final ICD4CodeArtifactScope deserialize = deSer.load(Paths.get(path).toUri().toURL());
+    addGlobalScopeForDeserialization(deserialize);
 
-    final CD4CodeGlobalScope globalScopeForDeserialization = CD4CodeMill
-        .cD4CodeGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4CodeGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
-    globalScopeForDeserialization.addSubScope(deserialize);
+    final Optional<CDTypeSymbol> deserializedB = deserialize.resolveCDType("B");
+    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = deserializedB.get()
+        .getMethodSignatureList("getX").stream().distinct().findAny();
 
-    final Optional<CDMethodSignatureSymbol> cdMethodSignatureSymbol = deserialize.resolveCDMethodSignature("B.getX");
     assertTrue(cdMethodSignatureSymbol.isPresent());
     assertFalse(cdMethodSignatureSymbol.get().isIsConstructor());
     assertEquals("bs", cdMethodSignatureSymbol.get().getParameterList().get(1).getName());
 
     assertEquals(scope.getRealPackageName(), deserialize.getRealPackageName());
     assertEquals(getXMethodSymbol.get().getFullName(), cdMethodSignatureSymbol.get().getFullName());
+  }
+
+  public ICD4CodeArtifactScope getGlobalScopeForDeserialization(String serializedST) {
+    final ICD4CodeArtifactScope deserialize = deSer.deserialize(serializedST);
+    addGlobalScopeForDeserialization(deserialize);
+    return deserialize;
+  }
+
+  public ICD4CodeArtifactScope addGlobalScopeForDeserialization(ICD4CodeArtifactScope deserialize) {
+    final ICD4CodeGlobalScope globalScopeForDeserialization = CD4CodeMill
+        .cD4CodeGlobalScopeBuilder()
+        .setModelPath(new ModelPath(Paths.get(PATH)))
+        .setModelFileExtension(CD4CodeGlobalScope.EXTENSION)
+        .addBuiltInTypes()
+        .build();
+    globalScopeForDeserialization.addSubScope(deserialize);
+    return deserialize;
   }
 }

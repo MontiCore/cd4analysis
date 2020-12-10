@@ -11,11 +11,14 @@ import java.util.Optional;
 
 public class CDInterfaceAndEnumArtifactScope
     extends CDInterfaceAndEnumArtifactScopeTOP {
+  public CDInterfaceAndEnumArtifactScope() {
+  }
+
   public CDInterfaceAndEnumArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }
 
-  public CDInterfaceAndEnumArtifactScope(Optional<ICDInterfaceAndEnumScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public CDInterfaceAndEnumArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ICDInterfaceAndEnumScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 

@@ -119,4 +119,20 @@ public class PlantUMLConfig {
   public void setShowComments(Boolean showComments) {
     this.showComments = showComments;
   }
+
+  @Override
+  public String toString() {
+    return "PlantUMLConfig{" +
+        "showAtt=" + showAtt +
+        ", showAssoc=" + showAssoc +
+        ", showRoles=" + showRoles +
+        ", showCard=" + showCard +
+        ", showModifier=" + showModifier +
+        ", nodesep=" + nodesep +
+        ", ranksep=" + ranksep +
+        ", ortho=" + ortho +
+        ", shortenWords=" + shortenWords +
+        ", showComments=" + showComments +
+        '}';
+  }
 }

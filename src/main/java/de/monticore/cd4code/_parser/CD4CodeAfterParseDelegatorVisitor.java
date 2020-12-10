@@ -15,7 +15,7 @@ import de.monticore.cdinterfaceandenum._parser.CDInterfaceAndEnumAfterParseTrafo
 
 public class CD4CodeAfterParseDelegatorVisitor
     extends CD4CodeDelegatorVisitor {
-  protected CDAfterParseHelper cdAfterParseHelper;
+  protected final CDAfterParseHelper cdAfterParseHelper;
 
   public CD4CodeAfterParseDelegatorVisitor() {
     this(new CDAfterParseHelper());

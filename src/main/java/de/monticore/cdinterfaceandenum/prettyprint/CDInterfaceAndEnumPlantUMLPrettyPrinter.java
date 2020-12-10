@@ -40,7 +40,11 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
     printComment(node, node.getName());
 
-    println("interface " + node.getName());
+    print("interface " + node.getName());
+
+    if (node.isPresentCDExtendUsage()) {
+      node.getCDExtendUsage().accept(getRealThis());
+    }
 
     if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDMembers()) {
       println(" {");
@@ -63,10 +67,6 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
       println();
     }
 
-    if (node.isPresentCDExtendUsage()) {
-      node.getCDExtendUsage().accept(getRealThis());
-    }
-
     nameStack.pop();
   }
 
@@ -76,9 +76,13 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
     printComment(node, node.getName());
 
-    println("enum " + node.getName());
+    print("enum " + node.getName());
 
-    if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDEnumConstants()) {
+    if (node.isPresentCDInterfaceUsage()) {
+      node.getCDInterfaceUsage().accept(getRealThis());
+    }
+
+    if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
       println(" {");
       indent();
     }
@@ -86,7 +90,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
   @Override
   public void traverse(ASTCDEnum node) {
-    if (!node.getCDEnumConstantsList().isEmpty()) {
+    if (!node.getCDEnumConstantList().isEmpty()) {
       println("__ Enum Constants __");
     }
     node.streamCDEnumConstants().forEach(c -> {
@@ -106,16 +110,12 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
   @Override
   public void endVisit(ASTCDEnum node) {
-    if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDEnumConstants()) {
+    if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
       unindent();
       println("}");
     }
     else {
       println();
-    }
-
-    if (node.isPresentCDInterfaceUsage()) {
-      node.getCDInterfaceUsage().accept(getRealThis());
     }
 
     nameStack.pop();

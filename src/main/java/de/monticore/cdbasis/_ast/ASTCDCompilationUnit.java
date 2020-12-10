@@ -12,6 +12,7 @@ public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
     return this.getCDPackageList().size();
   }
 
+  @SuppressWarnings("OptionalGetWithoutIsPresent")
   public List<String> getCDPackageList() {
     if (isPresentCDPackageStatement()) {
       return this.cDPackageStatement.get().getPackageList();

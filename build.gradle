@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id "java"
-    id "monticore" version "6.2.0" // MontiCore Plugin
+    id "monticore" version "$mc_version" // MontiCore Plugin
     id "maven-publish"
     id "com.github.johnrengelman.shadow" version "6.0.0"
     id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
+    id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
 group = "de.monticore.lang"
-version = "4.0.0"
 description = "CD4Analysis"
 sourceCompatibility = JavaVersion.VERSION_1_8
 buildDir = file("$projectDir/target")
@@ -19,23 +19,26 @@ ext {
     grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
     testGrammarDir = "src/test/grammars"
     testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
-
-    mc_version = "6.2.0"
+    findbugs_version = "3.0.2"
     commons_version = "1.7.9"
     guava_version = "25.1-jre"
     antlr_version = "4.7-1"
     plantuml_version = "1.2020.15"
     logback_version = "1.2.3"
     junit_version = "4.13"
+    commons_cli_version = "1.4"
+    commons_lang_version = "3.11"
+    jupiter_version = "5.6.0"
+    antlr_version = '4.7.1'
 }
 
 // configure non-standard source sets
 sourceSets {
     main {
-        java.srcDirs += ["$projectDir/target/generated-sources/monticore/sourcecode"]
+        java.srcDirs += ["$buildDir/generated-sources/monticore/sourcecode"]
     }
     test {
-        java.srcDirs += ["$projectDir/target/generated-test-sources/monticore/sourcecode"]
+        java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
     }
     grammars {
         resources {
@@ -45,21 +48,33 @@ sourceSets {
     }
 }
 
-configurations { grammar }
+println(sourceSets.test.java.srcDirs)
+
+configurations {
+    grammar
+    cli
+}
 
 dependencies {
-    implementation "de.monticore:monticore-grammar:$mc_version"
-    grammar "de.monticore:monticore-grammar:$mc_version"
-    grammar "de.monticore:monticore-grammar:$mc_version:$grammar_classifier"
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
+    grammar "de.monticore:monticore-grammar:${project.properties['mc_version']}"
+    grammar "de.monticore:monticore-grammar:${project.properties['mc_version']}:$grammar_classifier"
+    implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
+    implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+    implementation "de.monticore:monticore-generator:${project.properties['mc_version']}"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
+    implementation group:'org.antlr', name:'antlr4-runtime', version:antlr_version
     implementation "com.google.guava:guava:$guava_version"
-    testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
+    implementation "commons-cli:commons-cli:$commons_cli_version"
+    implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+    testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
-    testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
-    testImplementation "de.monticore:monticore-runtime:$mc_version"
+    testImplementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
 repositories {
@@ -69,6 +84,7 @@ repositories {
         credentials.password mavenPassword
         url repo
     }
+    mavenCentral()
 }
 
 // list of all grammars, needed to have a fix order
@@ -111,7 +127,7 @@ grammarDependencies.each {
         def grammarFile = file g
         grammar = grammarFile
         outputDir = file grammarOutDir
-        handcodedPath file("$projectDir/src/main/java")
+        handcodedPath "$projectDir/src/main/java"
         def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
 
         def uptoDate = incCheck(grammarIncludingPackage)
@@ -139,7 +155,7 @@ testGrammarDependencies.each {
         def grammarFile = file g
         grammar = file g
         outputDir = file testGrammarOutDir
-        handcodedPath file("$projectDir/src/test/java")
+        handcodedPath "$projectDir/src/test/java"
         def grammarIncludingPackage = file(testGrammarDir).toURI().relativize(grammarFile.toURI()).toString()
         def uptoDate = incCheck(grammarIncludingPackage)
 
@@ -173,19 +189,20 @@ compileTestJava {
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
 tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.deprecation false
+    options.warnings = false
     options.fork = true
+    options.headerOutputDirectory.convention(null)
 }
 
 tasks.withType(Test) {
     maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-    options.deprecation false
-    options.warnings = false
+test {
+  useJUnitPlatform()
 }
-
 
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
@@ -195,14 +212,44 @@ task javadocJar(type: Jar) {
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
+// build test sources jar in addition
+task testSourcesJar(type: Jar) {
+    from sourceSets.test.output + sourceSets.test.allSource
+    archiveClassifier = "testSources"
+}
+
+jar {
+  into("META-INF/maven/$project.group/$project.name") {
+    from { generatePomFileForMavenJavaPublication }
+    rename ".*", "pom.xml"
+  }
+}
+
 shadowJar { // all in one jar
+    archiveFileName = 'CDCLI.jar'
     manifest {
         attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
     }
     archiveClassifier = "cli"
-    minimize()
 }
 
+testSets {
+    integrationTest {
+        dirName = 'it'
+    }
+}
+
+//check.dependsOn integrationTest
+integrationTest.mustRunAfter test
+
+/*
+integrationTest {
+    testLogging {
+        showStandardStreams = true
+    }
+    outputs.upToDateWhen { false }
+    options.useJunit()
+}*/
 
 task testReport(type: TestReport) {
     destinationDir = file("$buildDir/reports/allTests")
@@ -225,6 +272,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            artifact testSourcesJar
         }
     }
     repositories.maven {

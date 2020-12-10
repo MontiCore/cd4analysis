@@ -32,55 +32,62 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     this.symbolTableHelper = symbolTableHelper;
   }
 
+  public CDSymbolTableHelper getSymbolTableHelper() {
+    return symbolTableHelper;
+  }
+
   public Set<String> calculateModelNamesSimple(String qName) {
     return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
+  @Override
   public void addBuiltInTypes() {
-    final CD4CodeArtifactScope artifactScope = CD4CodeMill
-        .cD4CodeArtifactScopeBuilder()
-        .setPackageName("")
-        .setEnclosingScope(this)
-        .build();
-    artifactScope.setName("BuiltInTypes");
+    if (getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
+      final ICD4CodeArtifactScope artifactScope = CD4CodeMill
+          .cD4CodeArtifactScopeBuilder()
+          .setPackageName("")
+          .setEnclosingScope(this)
+          .build();
+      artifactScope.setName(BuiltInTypes.SCOPE_NAME);
 
-    addBuiltInPrimitiveTypes(artifactScope);
-    addBuiltInObjectTypes(artifactScope);
-    addBuiltInUtilTypes(artifactScope);
+      addBuiltInPrimitiveTypes(artifactScope);
+      addBuiltInObjectTypes(artifactScope);
+      addBuiltInUtilTypes(artifactScope);
+    }
   }
 
-  public void addBuiltInPrimitiveTypes(CD4CodeArtifactScope artifactScope) {
-    final CD4CodeScope primitiveTypesScope = CD4CodeMill
+  public void addBuiltInPrimitiveTypes(ICD4CodeArtifactScope artifactScope) {
+    final ICD4CodeScope primitiveTypesScope = CD4CodeMill
         .cD4CodeScopeBuilder()
         .setNameAbsent()
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
+    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
   }
 
-  public void addBuiltInObjectTypes(CD4CodeArtifactScope artifactScope) {
+  public void addBuiltInObjectTypes(ICD4CodeArtifactScope artifactScope) {
     final String scopeName = "java.lang";
 
-    final CD4CodeScope objectTypesScope = CD4CodeMill
+    final ICD4CodeScope objectTypesScope = CD4CodeMill
         .cD4CodeScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
-  public void addBuiltInUtilTypes(CD4CodeArtifactScope artifactScope) {
+  public void addBuiltInUtilTypes(ICD4CodeArtifactScope artifactScope) {
     final String scopeName = "java.util";
 
-    final CD4CodeScope utilTypesScope = CD4CodeMill
+    final ICD4CodeScope utilTypesScope = CD4CodeMill
         .cD4CodeScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }
 
   @Override

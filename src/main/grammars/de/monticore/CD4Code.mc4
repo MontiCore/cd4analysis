@@ -30,7 +30,7 @@ package de.monticore;
 grammar CD4Code extends
     de.monticore.CD4Analysis,
     de.monticore.CD4CodeBasis,
-    de.monticore.types.MCSimpleGenericTypes {
+    de.monticore.types.MCFullGenericTypes {
 
   start CDCompilationUnit;
 }

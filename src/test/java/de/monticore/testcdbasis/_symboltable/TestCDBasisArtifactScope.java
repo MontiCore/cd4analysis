@@ -10,14 +10,18 @@ import java.util.List;
 import java.util.Optional;
 
 public class TestCDBasisArtifactScope extends TestCDBasisArtifactScopeTOP {
+  public TestCDBasisArtifactScope() {
+  }
+
   public TestCDBasisArtifactScope(String packageName, List<ImportStatement> imports) {
     super(packageName, imports);
   }
 
-  public TestCDBasisArtifactScope(Optional<ITestCDBasisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
+  public TestCDBasisArtifactScope(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ITestCDBasisScope> enclosingScope, String packageName, List<ImportStatement> imports) {
     super(enclosingScope, packageName, imports);
   }
 
+  @SuppressWarnings("SameReturnValue")
   @Override
   public boolean checkIfContinueAsSubScope(String symbolName) {
     return true;

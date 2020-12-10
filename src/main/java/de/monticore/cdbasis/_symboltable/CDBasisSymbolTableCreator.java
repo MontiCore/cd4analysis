@@ -6,12 +6,18 @@ package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
-import de.monticore.cdbasis._ast.*;
-import de.monticore.types.check.SymTypeExpression;
+import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symboltable.ImportStatement;
+import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,19 +25,23 @@ import java.util.stream.Collectors;
 public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CDBasisSymbolTableCreator() {
+    super();
+    init();
+  }
+
   public CDBasisSymbolTableCreator(ICDBasisScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
   public CDBasisSymbolTableCreator(Deque<? extends ICDBasisScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
     init();
   }
 
   protected void init() {
+    setRealThis(this);
     symbolTableHelper = new CDSymbolTableHelper();
   }
 
@@ -39,11 +49,17 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     this.symbolTableHelper = cdSymbolTableHelper;
   }
 
+  // TODO SVa: remove because std-behavior?
   @Override
-  public CDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
-    final CDBasisArtifactScope artifactScope = super.createFromAST(rootNode);
-    artifactScope.setPackageName(Names.getQualifiedName(rootNode.getCDPackageStatement().getPackageList()));
-
+  public ICDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
+    ICDBasisArtifactScope artifactScope = CDBasisMill
+        .cDBasisArtifactScopeBuilder()
+        .setPackageName(
+            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
+        .setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
+        .build();
+    putOnStack(artifactScope);
+    rootNode.accept(getRealThis());
     return artifactScope;
   }
 
@@ -52,7 +68,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     Log.debug("Building Symboltable for CD: " + node.getCDDefinition().getName(),
         getClass().getSimpleName());
 
-    symbolTableHelper.setImports(node.getMCImportStatementsList());
+    symbolTableHelper.setImports(node.getMCImportStatementList());
 
     super.visit(node);
   }
@@ -63,18 +79,6 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
     assert artifactScope != null;
     artifactScope.setName(node.getName());
     super.visit(node);
-  }
-
-  @Override
-  public void visit(ASTCDPackage node) {
-    super.visit(node);
-    assert scopeStack.peekLast() != null;
-    scopeStack.peekLast().setName(node.getMCQualifiedName().getQName());
-  }
-
-  @Override
-  public void endVisit(ASTCDPackage node) {
-    super.endVisit(node);
   }
 
   @Override
@@ -98,7 +102,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
 
         /*
         Set<String> qualifiedNames = symbolTableHelper.calculateQualifiedNames(s.getName()); // move to symbolTableHelper.resolveCDType
@@ -120,7 +124,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        s.setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+        s.setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
         final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
         if (!result.isPresent()) {
           Log.error(String.format(
@@ -139,7 +143,7 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
-    ast.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
+    ast.getMCType().setEnclosingScope(scopeStack.peekLast().getEnclosingScope()); // TODO SVa: remove when #2549 is fixed
     final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(ast.getMCType());
     if (!typeResult.isPresent()) {
       Log.error(String.format(
@@ -157,11 +161,15 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
 
   @Override
   public void endVisit(ASTCDCompilationUnit node) {
-    symbolTableHelper.getHandledAssociations().forEach(a -> {
-      // the symbol is a field of the type of the other side
-      // as there are handled associations, we at least have a CDAssociationScope
-      ((ICDAssociationScope)a.getLeft().getType().getTypeInfo().getSpannedScope()).add(a.getRight());
-      ((ICDAssociationScope)a.getRight().getType().getTypeInfo().getSpannedScope()).add(a.getLeft());
-    });
+    // the symbol is a field of the type of the other side
+    // as there are handled associations, we at least have a CDAssociationScope
+    symbolTableHelper.getHandledRoles().forEach((r, t) ->
+        {
+          final ICDAssociationScope spannedScope = (ICDAssociationScope) t.getTypeInfo().getSpannedScope();
+          if (!spannedScope.getCDRoleSymbols().containsKey(r.getName())) {
+            spannedScope.add(r);
+          }
+        }
+    );
   }
 }

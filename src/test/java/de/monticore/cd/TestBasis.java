@@ -16,6 +16,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +26,16 @@ import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
+/**
+ * The base class for the tests, to provide common functionality
+ */
 public class TestBasis {
 
   public final static String PATH = "src/test/resources/de/monticore/";
 
+  /**
+   * have a temporary folder for the tests
+   */
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
@@ -34,6 +43,19 @@ public class TestBasis {
   public static void setup() {
     Slf4jLog.init();
     Log.enableFailQuick(false);
+  }
+
+  public String getTmpAbsolutePath() {
+    return folder.getRoot().getAbsolutePath();
+  }
+
+  public String getTmpFilePath(String fileName) {
+    return getTmpAbsolutePath() + File.separator + fileName;
+  }
+
+  protected boolean modelFileExists(String fileName) {
+    Path filePath = Paths.get(fileName);
+    return Files.exists(filePath);
   }
 
   public static String getFilePath(String path) {
@@ -44,7 +66,7 @@ public class TestBasis {
     return Joiner.on("\n").join(Log.getFindings());
   }
 
-  public static void checkNullAndPresence(MCConcreteParser parser, Optional<? extends ASTNode> node) {
+  public static void checkNullAndPresence(MCConcreteParser parser, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);

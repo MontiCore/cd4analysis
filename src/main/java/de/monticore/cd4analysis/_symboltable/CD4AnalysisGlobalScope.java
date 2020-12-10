@@ -32,55 +32,62 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     this.symbolTableHelper = symbolTableHelper;
   }
 
+  public CDSymbolTableHelper getSymbolTableHelper() {
+    return symbolTableHelper;
+  }
+
   public Set<String> calculateModelNamesSimple(String qName) {
     return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
+  @Override
   public void addBuiltInTypes() {
-    final CD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
-        .cD4AnalysisArtifactScopeBuilder()
-        .setPackageName("")
-        .setEnclosingScope(this)
-        .build();
-    artifactScope.setName("BuiltInTypes");
+    if (!getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
+      final ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
+          .cD4AnalysisArtifactScopeBuilder()
+          .setPackageName("")
+          .setEnclosingScope(this)
+          .build();
+      artifactScope.setName(BuiltInTypes.SCOPE_NAME);
 
-    addBuiltInPrimitiveTypes(artifactScope);
-    addBuiltInObjectTypes(artifactScope);
-    addBuiltInUtilTypes(artifactScope);
+      addBuiltInPrimitiveTypes(artifactScope);
+      addBuiltInObjectTypes(artifactScope);
+      addBuiltInUtilTypes(artifactScope);
+    }
   }
 
-  public void addBuiltInPrimitiveTypes(CD4AnalysisArtifactScope artifactScope) {
-    final CD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
+  public void addBuiltInPrimitiveTypes(ICD4AnalysisArtifactScope artifactScope) {
+    final ICD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
         .cD4AnalysisScopeBuilder()
         .setNameAbsent()
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES, false);
+    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
   }
 
-  public void addBuiltInObjectTypes(CD4AnalysisArtifactScope artifactScope) {
+  public void addBuiltInObjectTypes(ICD4AnalysisArtifactScope artifactScope) {
     final String scopeName = "java.lang";
 
-    final CD4AnalysisScope objectTypesScope = CD4AnalysisMill
+    final ICD4AnalysisScope objectTypesScope = CD4AnalysisMill
         .cD4AnalysisScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
 
-  public void addBuiltInUtilTypes(CD4AnalysisArtifactScope artifactScope) {
+  public void addBuiltInUtilTypes(ICD4AnalysisArtifactScope artifactScope) {
     final String scopeName = "java.util";
 
-    final CD4AnalysisScope utilTypesScope = CD4AnalysisMill
+    final ICD4AnalysisScope utilTypesScope = CD4AnalysisMill
         .cD4AnalysisScopeBuilder()
         .setName(scopeName)
         .setEnclosingScope(artifactScope)
         .build();
 
-    BuiltInTypes.addBuiltInTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
+    BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }
 
   @Override

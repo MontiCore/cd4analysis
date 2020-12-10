@@ -14,8 +14,10 @@ public class CDAttributeTypeExists
 
   @Override
   public void check(ASTCDAttribute node) {
+    //noinspection ResultOfMethodCallIgnored
     node.getSymbol().getType().getTypeInfo();
     // the type is automatically resolved
+    // TODO SVa: check if needed
     /*
     if (!node.getEnclosingScope().resolveType(typeName).isPresent()) {
       Log.error(String.format("0xCDC05: Type %s of the attribute %s is unknown.",

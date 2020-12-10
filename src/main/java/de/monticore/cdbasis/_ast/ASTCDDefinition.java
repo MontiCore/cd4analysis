@@ -22,22 +22,22 @@ import java.util.stream.Stream;
 public class ASTCDDefinition extends ASTCDDefinitionTOP {
   protected String defaultPackageName = "";
 
-  public <T extends ASTCDElement> List<T> getCDElementsList(CDElementVisitor.Options... options) {
+  public <T extends ASTCDElement> List<T> getCDElementListBy(CDElementVisitor.Options... options) {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(options);
     this.accept(cdElementVisitor);
     return cdElementVisitor.getElements();
   }
 
-  public <T extends ASTCDElement> Iterator<T> iterateCDElements(CDElementVisitor.Options... options) {
-    return this.<T>getCDElementsList(options).iterator();
+  public <T extends ASTCDElement> Iterator<T> iterateCDElementsBy(CDElementVisitor.Options... options) {
+    return this.<T>getCDElementListBy(options).iterator();
   }
 
-  public <T extends ASTCDElement> Stream<T> streamCDElements(CDElementVisitor.Options... options) {
-    return this.<T>getCDElementsList(options).stream();
+  public <T extends ASTCDElement> Stream<T> streamCDElementsBy(CDElementVisitor.Options... options) {
+    return this.<T>getCDElementListBy(options).stream();
   }
 
-  public int sizeCDElements(CDElementVisitor.Options... options) {
-    return getCDElementsList(options).size();
+  public int sizeCDElementsBy(CDElementVisitor.Options... options) {
+    return getCDElementListBy(options).size();
   }
 
   public List<ASTCDPackage> getCDPackagesList() {
@@ -106,20 +106,20 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public ASTCDPackage getOrCreatePackage(String packageName) {
-    final Optional<ASTCDPackage> defaultPackage = getPackageWithName(getDefaultPackageName());
-    if (defaultPackage.isPresent()) {
-      return defaultPackage.get();
+    final Optional<ASTCDPackage> pkg = getPackageWithName(packageName);
+    if (pkg.isPresent()) {
+      return pkg.get();
     }
-    final ASTCDPackage createdDefaultPackage = CDBasisMill
+    final ASTCDPackage createdPkg = CDBasisMill
         .cDPackageBuilder()
         .setMCQualifiedName(MCBasicTypesMill
             .mCQualifiedNameBuilder()
             .setPartsList(MCQualifiedNameFacade.createPartList(packageName))
             .build())
         .build();
-    super.addCDElements(createdDefaultPackage);
-    createdDefaultPackage.setEnclosingScope(this.getEnclosingScope());
-    return createdDefaultPackage;
+    super.addCDElement(createdPkg);
+    createdPkg.setEnclosingScope(this.getEnclosingScope());
+    return createdPkg;
   }
 
   public boolean addCDElementToPackageWithName(ASTCDElement element) {
@@ -138,16 +138,16 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     // should be added to the package
     final ASTCDPackage specificPackage = getOrCreatePackage(packageName);
     if (index < 0) {
-      return specificPackage.addCDElements(element);
+      return specificPackage.addCDElement(element);
     }
     else {
-      specificPackage.addCDElements(index, element);
+      specificPackage.addCDElement(index, element);
       return true;
     }
   }
 
   @Override
-  public boolean addCDElements(ASTCDElement element) {
+  public boolean addCDElement(ASTCDElement element) {
     return addCDElementToPackageWithName(element);
   }
 
@@ -162,16 +162,16 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public boolean addCDElementToPackage(Collection<? extends ASTCDElement> collection, String packageName) {
-    collection.forEach(e -> addCDElementToPackageWithName(e, packageName));
-    return true;
+    // returns the result, if all elements have been added
+    return collection.stream().map(e -> addCDElementToPackageWithName(e, packageName)).anyMatch(e -> !e);
   }
 
   public void addCDPackage(int index, ASTCDPackage p) {
-    super.addCDElements(index, p);
+    super.addCDElement(index, p);
   }
 
   @Override
-  public void addCDElements(int index, ASTCDElement element) {
+  public void addCDElement(int index, ASTCDElement element) {
     addCDElementToPackageWithName(index, element);
   }
 
@@ -189,7 +189,9 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     // therefore the latest element would be at place index
     int i = index;
     for (ASTCDElement element : collection) {
-      addCDElementToPackageWithName(i, element, packageName);
+      if (!addCDElementToPackageWithName(i, element, packageName)) {
+        return false;
+      }
       ++i;
     }
     return true;

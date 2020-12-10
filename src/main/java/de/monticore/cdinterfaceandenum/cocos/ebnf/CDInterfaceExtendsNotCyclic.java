@@ -6,7 +6,7 @@ package de.monticore.cdinterfaceandenum.cocos.ebnf;
 import de.monticore.cd.CDMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDInterfaceCoCo;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
@@ -25,12 +25,12 @@ public class CDInterfaceExtendsNotCyclic
   @Override
   public void check(ASTCDInterface node) {
     Set<String> visitedTypes = new HashSet<>();
-    Stack<OOTypeSymbol> typesToVisit = new Stack<>();
+    Stack<TypeSymbol> typesToVisit = new Stack<>();
 
     typesToVisit.push(node.getSymbol());
 
     while (!typesToVisit.isEmpty()) {
-      final OOTypeSymbol symbol = typesToVisit.pop();
+      final TypeSymbol symbol = typesToVisit.pop();
       if (visitedTypes.contains(symbol.getName())) {
         Log.error(String.format(
             "0xCDC32: The %s %s introduces an inheritance cycle. Inheritance may not be cyclic.", CDMill.cDTypeKindPrinter().print(symbol),

@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd4code.parser;
+
+classdiagram MinimalPackages {
+  class A;
+  package b {
+    class B;
+  }
+  package c {
+    class C extends A, B {
+      b.B bValue;
+      String name;
+      java.lang.String value;
+      void do(int x);
+    }
+  }
+}

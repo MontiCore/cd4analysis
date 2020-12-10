@@ -5,6 +5,7 @@
 package de.monticore.cd4analysis._parser;
 
 import com.google.common.io.Files;
+import de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -15,11 +16,12 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class CD4AnalysisParser extends CD4AnalysisParserTOP {
-  final CD4AnalysisAfterParseDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
+  final CD4AnalysisDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
 
   public static void checkFileAndPackageName(String fileName, ASTCDCompilationUnit ast) {
     String pathName = Paths.get(fileName).toString();
-    String simpleFileName = Files.getNameWithoutExtension(pathName);
+
+    @SuppressWarnings("UnstableApiUsage") String simpleFileName = Files.getNameWithoutExtension(pathName);
     String modelName = ast.getCDDefinition().getName();
     String packageName = Names.getPackageFromPath(Names.getPathFromFilename(pathName));
     String packageDeclaration;
@@ -34,14 +36,14 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
       Log.error(String.format(
           "0xCD100: The name of the diagram %s"
               + " is not identical to the name of the file %s"
-              + " (without its fileextension).",
+              + " (without its file extension).",
           modelName, fileName),
           ast.getCDDefinition().get_SourcePositionStart());
     }
     if (!packageName.endsWith(packageDeclaration)) {
       Log.error(String.format("0xCD101: The package declaration %s"
-              + " of the diagram (%s) must not differ from the "
-              + "package of the diagram file.",
+              + " of the diagram (%s) must not differ from the"
+              + " package of the diagram file.",
           packageDeclaration, fileName),
           ast.isPresentCDPackageStatement() ? ast.getCDPackageStatement().get_SourcePositionStart() : ast.get_SourcePositionStart());
     }

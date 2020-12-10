@@ -10,10 +10,6 @@ public class CDRoleSymbol extends CDRoleSymbolTOP {
     super(name);
   }
 
-  public boolean isLeft() {
-    return this.association.getLeft() == this;
-  }
-
   public CDRoleSymbol getOtherSide() {
     return getAssociation().getOtherRole(this);
   }

@@ -13,5 +13,7 @@ public class TypesScopeHelper extends CD4CodeDelegatorVisitor {
     setMCBasicTypesVisitor(new MCBasicTypesScopeHelper());
     setMCCollectionTypesVisitor(new MCCollectionTypesScopeHelper());
     setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesScopeHelper());
+    setMCArrayTypesVisitor(new MCArrayTypesScopeHelper());
+    setMCFullGenericTypesVisitor(new MCFullGenericTypesScopeHelper());
   }
 }

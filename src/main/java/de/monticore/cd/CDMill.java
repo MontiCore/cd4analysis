@@ -46,10 +46,14 @@ public class CDMill {
   }
 
   public static CDTypeKindPrinter cDTypeKindPrinter() {
+    return cDTypeKindPrinter(false);
+  }
+
+  public static CDTypeKindPrinter cDTypeKindPrinter(boolean followingSpace) {
     if (millCDTypeKindPrinter == null) {
       millCDTypeKindPrinter = getMill();
     }
-    return millCDTypeKindPrinter._cDTypeKindPrinter();
+    return millCDTypeKindPrinter._cDTypeKindPrinter(followingSpace);
   }
 
   public static ModifierHandler modifierHandler() {
@@ -95,8 +99,8 @@ public class CDMill {
     return new CDMemberVisitor(options);
   }
 
-  public CDTypeKindPrinter _cDTypeKindPrinter() {
-    return new CDTypeKindPrinter();
+  public CDTypeKindPrinter _cDTypeKindPrinter(boolean followingSpace) {
+    return new CDTypeKindPrinter(followingSpace);
   }
 
   public ModifierHandler _modifierHandler() {

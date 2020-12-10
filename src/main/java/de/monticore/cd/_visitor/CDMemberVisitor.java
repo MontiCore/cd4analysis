@@ -5,11 +5,13 @@
 package de.monticore.cd._visitor;
 
 import de.monticore.cd4code._visitor.CD4CodeVisitor;
+import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDMember;
 
 import java.util.*;
@@ -26,6 +28,10 @@ public class CDMemberVisitor
 
   public CDMemberVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
+    if (this.options.isEmpty()) {
+      this.options.add(Options.ALL);
+    }
+
     this.elements = new ArrayList<>();
     setRealThis(this);
   }

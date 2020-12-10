@@ -56,6 +56,11 @@ component grammar CD4CodeBasis extends
   CD4CodeEnumConstant extends CDEnumConstant =
     Name Arguments?;
 
+  /* ==== AST extensions ==== */
+  astrule CDMethod =
+    isDefault: boolean
+  ;
+
   /* ==== Symbols ==== */
   /** Method knows its signature, whether it is a constructor, 
       visibility

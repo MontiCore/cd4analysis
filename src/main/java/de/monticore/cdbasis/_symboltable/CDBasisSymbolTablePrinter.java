@@ -5,8 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
-import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
@@ -30,89 +29,32 @@ public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
   @Override
   public void serializeCDTypeSuperTypes(List<SymTypeExpression> superTypes) {
     SymTypeExpressionDeSer.serializeMember(printer, "superTypes", superTypes);
+
+    /*printer.array("superTypes", superTypes, e -> {
+        JsonPrinter jp = new JsonPrinter();
+        jp.beginObject();
+        // Care: the following String needs to be adapted if the package was renamed
+        jp.member(JsonDeSers.KIND, "de.monticore.types.check.SymTypeOfObject");
+        jp.member("objName", e.getObjName());
+        jp.endObject();
+        return jp.getContent();
+    });*/
   }
 
-  public void traverse(IOOSymbolsScope node) {
-    if (!node.getLocalOOTypeSymbols().isEmpty()) {
-      node.getLocalOOTypeSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    if (!node.getLocalFieldSymbols().isEmpty()) {
-      node.getLocalFieldSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    /*
-    if (!node.getLocalMethodSymbols().isEmpty()) {
-      node.getLocalMethodSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }*/
-    traverse((IBasicSymbolsScope) node);
-  }
-
-  public void traverse(IBasicSymbolsScope node) {
-    if (!node.getLocalTypeSymbols().isEmpty()) {
-      node.getLocalTypeSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    if (!node.getLocalTypeVarSymbols().isEmpty()) {
-      node.getLocalTypeVarSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    if (!node.getLocalVariableSymbols().isEmpty()) {
-      node.getLocalVariableSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }
-    /*if (!node.getLocalFunctionSymbols().isEmpty()) {
-      node.getLocalFunctionSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
-    }*/
-    getRealThis().traverse((de.monticore.mcbasics._symboltable.IMCBasicsScope) node);
-  }
-
+  // TODO SVa: remove, when calculateQualifiedNames is removed and getPackageName returns the correct package
   @Override
-  public void traverse(ICDBasisScope node) {
-    if (!node.getLocalCDTypeSymbols().isEmpty()) {
-      node.getLocalCDTypeSymbols().forEach(s -> {
-        if (symbolTablePrinterHelper.visit(s.getFullName())) {
-          s.accept(getRealThis());
-        }
-      });
+  public void visit(ICDBasisArtifactScope node) {
+    printer.beginObject();
+    printer.member("generated-using","www.MontiCore.de technology");
+    if (node.isPresentName()) {
+      printer.member(de.monticore.symboltable.serialization.JsonDeSers.NAME, node.getName());
     }
-    getRealThis().traverse((de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope) node);
-    getRealThis().traverse((de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope) node);
-    getRealThis().traverse((de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope) node);
-    traverse((de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope) node);
-    getRealThis().traverse((de.monticore.umlstereotype._symboltable.IUMLStereotypeScope) node);
-    getRealThis().traverse((de.monticore.umlmodifier._symboltable.IUMLModifierScope) node);
-  }
-
-  @Override
-  public void traverse(CDTypeSymbol node) {
-    if (node.getSpannedScope().isExportingSymbols() && node.getSpannedScope().getSymbolsSize() > 0) {
-      printer.beginArray("symbols");
-      node.getSpannedScope().accept(getRealThis());
-      printer.endArray();
+    // use RealPackageName here
+    if (!node.getRealPackageName().isEmpty()) {
+      printer.member(de.monticore.symboltable.serialization.JsonDeSers.PACKAGE, node.getRealPackageName());
     }
+    printKindHierarchy();
+    serializeAdditionalArtifactScopeAttributes(node);
+    printer.beginArray(de.monticore.symboltable.serialization.JsonDeSers.SYMBOLS);
   }
 }

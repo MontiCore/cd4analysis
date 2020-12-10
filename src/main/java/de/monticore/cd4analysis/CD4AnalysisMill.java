@@ -5,10 +5,10 @@
 package de.monticore.cd4analysis;
 
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisPlantUMLPrettyPrinter;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisPrettyPrinter;
-import de.monticore.cd4analysis.resolver.CD4AnalysisResolvingDelegate;
+import de.monticore.cd4analysis.resolver.CD4AnalysisResolver;
 import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -53,7 +53,7 @@ public class CD4AnalysisMill extends CD4AnalysisMillTOP {
     return millDeriveSymTypeOfCD4Analysis._deriveSymTypeOfCD4Analysis();
   }
 
-  public static CD4AnalysisResolvingDelegate cD4AnalysisResolvingDelegate(CD4AnalysisGlobalScope cdGlobalScope) {
+  public static CD4AnalysisResolver cD4AnalysisResolvingDelegate(ICD4AnalysisGlobalScope cdGlobalScope) {
     if (millCD4AnalysisResolvingDelegate == null) {
       millCD4AnalysisResolvingDelegate = getMill();
     }
@@ -80,7 +80,7 @@ public class CD4AnalysisMill extends CD4AnalysisMillTOP {
     return new DeriveSymTypeOfCD4Analysis();
   }
 
-  public CD4AnalysisResolvingDelegate _cD4AnalysisResolvingDelegate(CD4AnalysisGlobalScope cdGlobalScope) {
-    return new CD4AnalysisResolvingDelegate(cdGlobalScope);
+  public CD4AnalysisResolver _cD4AnalysisResolvingDelegate(ICD4AnalysisGlobalScope cdGlobalScope) {
+    return new CD4AnalysisResolver(cdGlobalScope);
   }
 }

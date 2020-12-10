@@ -26,6 +26,9 @@ public class CDElementVisitor
 
   public CDElementVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
+    if (this.options.isEmpty()) {
+      this.options.add(CDElementVisitor.Options.ALL);
+    }
     this.elements = new ArrayList<>();
     setRealThis(this);
   }

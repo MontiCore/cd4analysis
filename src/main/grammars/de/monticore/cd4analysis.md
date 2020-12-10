@@ -5,14 +5,16 @@
 # Class Diagrams (also: UML/P CD)
 
 We provide two versions of UML class diagrams:
-- [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data structures
-  with classes, attributes, associations, enumerations.
-- [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods and constructors.
+- [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data
+  structures with classes, attributes, associations, enumerations.
+- [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods
+  and constructors.
 
-We additionally provide componenten grammars for parts of the CDs:
-- [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It contains the root compilation unit,
-  classes, and attributes.
-- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and enums.
+These are composed of several component grammars for parts of the CDs:
+- [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It
+  contains the root compilation unit, classes, and attributes.
+- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and
+  enums.
 - [**CDAssociation**][CDAssocGrammar] defines associations and roles.
 - [**CD4CodeBasis**][CD4CBasisGrammar] defines methods and parameters.
 
@@ -23,7 +25,7 @@ typically emerges as result of requirements elicitation activities.
 
 The main grammar file is [`CD4Analysis`][CD4AGrammar].
 
-## Example
+## Example for CD4Analysis
 ```
 package de.monticore.life;
 
@@ -54,29 +56,31 @@ The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
 - Available types are basic types (from Java), imported types (like `Date`),
   and predefined forms of generic types (like `List`).
 - Associations and compositions are defined between two classes,
-  can have a name, a navigation information (e.g. `<->`), role names on both sides,
-  multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
+  can have a name, a navigation information (e.g. `<->`), role names on both
+  sides, multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
   (like `{ordered}`).
-- Both, association and compositions can be qualified, for example by `[String]`.
+- Both, association and compositions can be qualified, for example by `[String]`
+  .
+- Packages can be used to structure the model
 
 Further examples can be found [here][ExampleModels].
 
 ## Available handwritten Extensions
 
-### AST
+### AST 
 - [`ASTCDDefinition`][ASTCDDefinition]
   adds methods for easy access to `CDType`s in
 - [`ASTCDAssociation`][ASTCDAssociation]
   adds a method to retreive the name of the association
 
-## Parser
+## Parser for CD4Analysis
 - ([`CD4AnalysisParser`][CD4AParser])
   is extended to have additional transformations after parsing.
 - The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] and 
   [`CD4AnalysisAfterParseDelegatorVisitor`][CD4AAfterParseDelegatorVisitor]
   handle the transformation which need to be done after parsing.
 
-## Symboltable
+## Symboltable for CD4Analysis
 - [`CD4AnalysisSymbolTableCreatorDelegator`][CD4ASTCD]
   handles the creation and linking of the symbols of all the elements in CD4A
   and its sublanguages.
@@ -94,39 +98,199 @@ Further examples can be found [here][ExampleModels].
   [`CDRoleSymbol`][CDRoleSymbol].
 
 ## Symbol kinds used by the CD4A language (importable or subclassed):
-- CD4A uses [`OOSymbols`][OOSymbols] as the basis for the definition of
-  its type-defining symbols.
-- `OOTypeSymbol`s are used for all type-defining Symbols which implement
-  `CDType` (`CDClass`, `CDInterface`, `CDEnum`)
-- `FieldSymbol`s are implemented for `CDAttribute`, `CDEnumConstant`, and
-  `CDRole`, defined in CD4Code: `CDParameter`
-- `MethodSymbol`s are not used, because CD4A doesn't include methods, those
-  are defined in CD4Code: `CDMethodSignature`
+- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] as the basis
+  for the definition of its type-defining symbols.
+  - `OOTypeSymbol`s are used for all type-defining Symbols. These are 
+    sub-nonterminals of `CDType`, namely `CDClass`, `CDInterface`, and `CDEnum`.
+  - `FieldSymbol`s are used for `CDAttribute`, `CDEnumConstant`, and
+    `CDRole`, additionally, grammar `CD4Code` uses `FieldSymbol`
+    for`CDParameter`
+  - `MethodSymbol`s are not used in CD4A, because it doesn't include methods.
+     But they are defined in CD4Code: `CDMethodSignature`
+- All these symbols are not used directly, but extended in symbol-subclasses,
+  which also means that symbol-import only works for symbol kinds introduced
+  below.   
 
-## Symbol kinds defined the CD4A language (exported):
-- CD4A defines these symbols: `CDTypeSymbol`, `CDAssociationSymbol`, and
-  `CDRoleSymbol`
-- The other types either implement `CDTypeSymbol` or one of the `TypeSymbol`s
-  and have no additional functionality or attributes
+
+## Symbol kinds defined by the CD4A language (exported):
+
+- CD4A defines three kinds of symbols: `CDTypeSymbol`, `CDAssociationSymbol`,
+  and `CDRoleSymbol`
+- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s and have
+  no additional functionality or attributes
+
+### `CDTypeSymbol`
+
+- `CDTypeSymbol` exactly reflects the symbols that are provided by
+  `OOSymbols` and does not need additional attributes. 
+
+### Attributes 
+- are stored as `FieldSymbol`s. 
+
+### `CDAssociationSymbol`
+
+- `CDAssociationSymbol` reflects the externally accessible part of an 
+  association.
+- An association may introduce several symbols, namely the association symbol
+  itself and up to two role symbols (`CDRoleSymbol`). Furthermore, the
+  association symbol may be missing if the association has no name, but role
+  symbols can be given.
+- Class `SymAssociation` stores the information about an association:
+```java
+  public class SymAssociation {
+    protected Optional<CDAssociationSymbol> association;
+    protected CDRoleSymbol left, right;
+    protected boolean isAssociation, isComposition;
+  }
+```
+
+### `CDRoleSymbol`
+
+- `CDRoleSymbol` is defined in an association and connected with the class it 
+  belongs to. In the concrete model, roles can be omitted, but are then
+  calculated by suitable defaults.
+- `CDRoleSymbol` is a subclass of `FieldSymbol` with the following additional
+  attributes
+```
+  symbolrule CDRole =
+    isDefinitiveNavigable: boolean
+    cardinality: Optional<ASTCDCardinality>
+    attributeQualifier: Optional<FieldSymbol>
+    typeQualifier: Optional<SymTypeExpression>
+    association: SymAssociation
+    isOrdered: boolean
+```
+- `attributeQualifier` is defined exactly, if a qualifier is given using 
+    an attribute of the opposite class (i.e. the opposite class knows
+    its qualifier, like in a public phone book)
+- `typeQualifier` is defined, if the qualifier is independent of the
+  qualified object (i.e. like in the private phone book of a smart phone)  
+
 
 ## Symbols imported by CD4A models:
-- CD4A imports only Symbols of class diagrams
+- currently CD4A imports only class, interface and enum symbols from other class
+  diagrams.
+- Extensions to include e.g. implemented Java-classes or other type-definining
+  languages are planned.
+- Other kinds and forms of symbols need to be mapped to CD-like symbols to be
+  usable. 
+
 
 ## Symbols exported by CD4A models:
-- From the symbol introduced by CD4A, the following symbols are
+- From the symbol used by CD4A, the following symbols are
   also exported:
   - `CDType`, the interface for all type definitions in the CD languages
+  - `Field`, for attributes
   - `CDAssociation`, containing information about association and composition
-  - `CDRole`, containing a side of an association
+  - `CDRole`, containing one end of an association
   - `CDMethodSignature`, containing the MethodSymbol attributes and a list of
     exceptions
-- Furthermore CD4A models export symbols with kinds defined by
-  other languages:
-  - OOType, Field, Method
-- CD4A has additional information in the SymbolTable:
+- CD4A has additional informations (objects) in the SymbolTable:
   - `SymAssociation`, containing all general information of an association,
     because, when the association has no name, then there is no 
     `CDAssociationSymbol`
+
+### `CDTypeSymbol`
+
+- An example for a stored `CDTypeSymbol` (json format):
+```json
+  {
+    "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+    "name": "de.monticore.life.Person",
+    "isClass": true,
+    "isInterface": false,
+    "isEnum": false,
+    "isAbstract": false,
+    "isPrivate": false,
+    "isProtected": false,
+    "isPublic": false,
+    "isStatic": false,
+    "symbols": [ 
+       // ... contained attributes and roles 
+    ]
+  }
+```
+
+### Attributes 
+- are stored as `FieldSymbol`s. An example:
+```json
+  {
+    "kind": "de.monticore.types.typesymbols._symboltable.FieldSymbol",
+    "name": "de.monticore.life.Person.name",
+    "isPrivate": false,
+    "isProtected": false,
+    "isPublic": false,
+    "isStatic": false,
+    "isFinal": false,
+    "type": {
+        "kind": "de.monticore.types.check.SymTypeOfObject",
+        "objName": "String"
+    },
+    "isReadOnly": false
+  }
+```
+
+### `CDAssociationSymbol`
+
+- Additional class `SymAssociation` stores the information about an association.
+  It is stored as follows, with a name ID that allows to be referred to by 
+  the associated symbols (json format):
+```json
+  {
+    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+    "name": 556488341,
+    "isAssociation": true,
+    "isComposition": false
+  }
+```
+
+- An example for a stored `CDAssociationSymbol` (json format):
+```json
+{
+  "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+  "name": "uni.phonebook",
+  "association": 1237825806
+} 
+```
+
+### `CDRoleSymbol`
+
+- An example for a stored `CDRoleSymbol` (json format):
+```json
+  {
+    "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+    "name": "de.monticore.life.Person.child",
+    "isDefinitiveNavigable": true,
+    "cardinality": "[*]",
+    "association": 556488341,
+    "isOrdered": false,
+    "type": {
+      "kind": "de.monticore.types.check.SymTypeOfObject",
+      "objName": "de.monticore.life.Person"
+    },
+    "isReadOnly": false,
+    "isPrivate": false,
+    "isProtected": false,
+    "isPublic": false,
+    "isStatic": false,
+    "isFinal": false,
+    "isLeft": false
+  }
+```
+
+## Packages
+- Packages are used to structure the model file
+- They are either 
+  1. defined explicitly (`package foo {...}`)
+  2. implicitly via the package name of the model
+    ```cd
+    package de.example;
+  
+    classdiagram Example {
+      class A;
+    }
+    ```
+  3. via a default (`de.monticore`) if none of the above options are the case
 
 ## Functionality: CoCos
 - [`CD4ACoCosDelegator`][CD4ACoCos] combines all CoCos for all its sublanguages
@@ -144,6 +308,20 @@ Further examples can be found [here][ExampleModels].
   - Classes hierarchy is free of cycles
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
+    
+## Transformations
+- two transformations are provided to simplify the parsing and ST creation
+
+### AfterParseTrafo
+- the `AfterParseTrafo`s is executed directly after the parsing of models, currently there are 2 important transformations:
+  - [`CDBasisAfterParseTrafo`][CDBasisAfterParseTrafo]
+    - moves elements in a default package, if they are not already in a package
+    - the default package is either the package of the model file, or if that doesn't exists, `de.monticore` is used
+  - ['CDAssociationAfterParseTrafo`][CDAssociationAfterParseTrafo]
+    - `ASTCDDirectComposition` (short form of composition), are transformed to (normal) `composition`s
+- `Trafo4Defaults` provide additional transformations, that are optional defaults, which can be used after a SymbolTable is created:
+  - [`CDAssociationTrafo4Default`][CDAssociationTrafo4Default] adds Roles and `CDRoleSymbol`s to `AssociationSide`, if there is not already a `CDRole`. That's the case when the side has no name
+  - the name of the new role is either the name of the association, or the (lowercase) name of the type
 
 ### Types
 - Currently: The BuiltinTypes can be found here [`BuiltInTypes`][BuiltInTypes].
@@ -151,11 +329,12 @@ Further examples can be found [here][ExampleModels].
   provided symbol tables.
 - CD4A provides a set of predefined types to be given 
   through grammar inclusion of [`MCCollectionTypes`][MCCollectionTypes]:
-  - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`
+  - Primitives:  `char`, `int`, `double`, `float`, `long`, `boolean`, `short`, 
+    `byte`, `void`
   - ObjectTypes: `Character`, `Integer`, `Double`, `Float`, `Long`, `Boolean`,
-    `String`
-  - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`
-  - Special types, such as `Date` must then be provided through the imports of 
+    `Short`, `Byte`, `Void`, `Number`, `String`
+  - UtilTypes: `List<T>`, `Optional<T>`, `Set<T>`, `Map<T1,T2>`, `Date`
+  - Special types, such as `Queue` must then be provided through the imports of 
     other artifacts.
 - The BuiltInTypes are not added automatically. They have to be added to the
   `GlobalScope`, by calling `addBuiltInTypes`. This enables more detailed
@@ -183,6 +362,28 @@ used functionality, e.g.:
   1. Parses the given model
   2. Creates a symbol table
   3. Checks the CoCos
+- the cli is designed with [`the best practices`][CLIBestPractices] in mind
+- example usage of the cli
+```shell
+cd4analysis-cli -i SocNet.cd -r ./reports
+cd4analysis-cli -pp Complete.puml -puml -svg --showAttr
+cd4analysis-cli -script adapted.groovy
+```
+- option '-h' or '--help' can be used to get information of allowed parameters
+
+### Gradle Plugin
+- the gradle plugin provides the functionality of the cli for gradle builds
+- the plugin can be used to check given class diagrams or generate symbol tables
+- example usage of the gradle plugin
+```gradle
+task checkCD(type: CDTask) {
+  inputFile = file "src/main/resources/de/monticore/cd/Test.cd"
+  outputDir = file buildDir
+  modelPaths = files(buildDir, "src/main/resources")
+  reportDir = file "$buildDir/reports"
+  scriptFile = file "src/main/resources/adapted.groovy"
+}
+```
 
 # CD4Code
 CD4Code is a conservative extension of CD4Analysis and adds methods,
@@ -213,7 +414,8 @@ classdiagram MyLife2 {
 }
 ```
 
-The example shows a section of the [CD4CodeLanguageTeaser.cd][CD4CLanguageTeaser]:
+The example shows a section of the 
+  [CD4CodeLanguageTeaser.cd][CD4CLanguageTeaser]:
 - the basic structure is the same as `CD4Analysis`
 - class `Person` also contains methods and a constructor 
 - methods and constructor can contain any number of arguments, separated by
@@ -234,50 +436,83 @@ Further examples can be found [here][CD4CExampleModels].
   capturing the structural part of the classes to be generated.
   It captures classes, and method signatures and allows to add
   templates as hook points that contain method bodies. Examples are:  
-  * [MontiCoreCLI](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java): 
+  * [MontiCoreCLI](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java): 
     Grammar -> 
-    [Grammar AST encoded in CD4Code](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/MontiCoreScript.java#L411) ->
-    [Decoration for custom behavior](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java) -> 
-    [Java code](https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java)
+    [Grammar AST encoded in CD4Code](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/MontiCoreScript.java#L411) ->
+    [Decoration for custom behavior](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java) -> 
+    [Java code](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java)
   * Statechart -> State pattern encoded in CD4Code 
   -> Decoration by monitoring methods -> Java code.
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
+  
+## Additional info
+### Error codes
+`X` stands for any valid character
 
-[CD4AGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CD4Analysis.mc4
-[CD4CGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CD4Code.mc4
-[CDBasisGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CDBasis.mc4
-[CDIAEGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CDInterfaceAndEnum.mc4
-[CDAssocGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CDAssociation.mc4
-[CD4CBasisGrammar]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/grammars/de/monticore/CD4CodeBasis.mc4
+#### Languages
+- `0xCDX0X`-`0xCDX2X`: CDBasis
+- `0xCDX3X`-`0xCDX5X`: CDInterfaceAndEnum
+- `0xCDX6X`-`0xCDX8X`: CDAssociation
+- `0xCDX9X`-`0xCDXBX`: CD4CodeBasis
+- `0xCDXCX`-`0xCDXDX`: CD4A
+- `0xCDXEX`-`0xCDXFX`: CD4Code
 
-[ASTCDDefinition]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cdbasis/_ast/ASTCDDefinition.java
-[CD4AAfterParseTrafo]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseTrafo.java
-[CD4AAfterParseDelegatorVisitor]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseDelegatorVisitor.java
-[CD4ASD]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisScopeDeSer.java
-[CD4ASTP]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTablePrinter.java
-[CD4ATC]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/typescalculator/DeriveSymTypeOfCD4Analysis.java
-[CD4ASTCD]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreatorDelegator.java
-[SymTypeExpression]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
-[SymAssociation]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
-[CDRoleSymbol]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
-[STHelper]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd/_symboltable/CDSymbolTableHelper.java
-[reporting]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/main/java/de/monticore/cd4analysis/reporting
-[CDCLI]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd/cli/CDCLI.java
-[LanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
-[ExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/cd4analysis
-[ASTCDAssociation]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/cd4analysis/_ast/ASTCDAssociation.java
-[PrettyPrinter]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisPrettyPrinter.java
-[ASTCDType]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd4analysis/_ast/ASTCDType.java
-[CD4ASTC]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreator.java
-[BuiltInTypes]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd/BuiltInTypes.java
+#### CoCos (`0xCDCXX`)
+- `0xCDC0X`: CDBasisEbnf (`0xCDC3X` for CDInterfaceAndEnumEbnf...)
+- `0xCDC1X`: CDBasisMCG
+- `0xCDC2X`: CDBasisMCG2Ebnf
+  
+#### Symboltable (`0xCDAXX`)
+#### Other Errors (`0xCD0XX`)
 
-[CD4ACoCos]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/main/java/de/monticore/cd4analysis/cocos/CD4AnalysisCoCosDelegator.java
-[CD4AParser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisParser.java
-[CD4CodeSTC]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd4code/_symboltable/CD4CodeSymbolTableCreator.java
-[CD4CLanguageTeaser]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/blob/develop/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
-[CD4CExampleModels]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/-/tree/develop/src/test/resources/de/monticore/cd4code
-[CD4CodePrinter]: https://git.rwth-aachen.de/monticore/cd4analysis/cd4analysis/blob/develop/src/main/java/de/monticore/cd4code/prettyprint/CD4CodePrettyPrinterDelegator.java
+[CD4AGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CD4Analysis.mc4
+[CD4CGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CD4Code.mc4
+[CDBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CDBasis.mc4
+[CDIAEGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CDInterfaceAndEnum.mc4
+[CDAssocGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CDAssociation.mc4
+[CD4CBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CD4CodeBasis.mc4
 
-[OOSymbols]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
-[MCCollectionTypes]: https://git.rwth-aachen.de/monticore/monticore/-/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4
+[ASTCDDefinition]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/_ast/ASTCDDefinition.java
+[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseTrafo.java
+[CD4AAfterParseDelegatorVisitor]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseDelegatorVisitor.java
+[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisScopeDeSer.java
+[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTablePrinter.java
+[CD4ATC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/typescalculator/DeriveSymTypeOfCD4Analysis.java
+[CD4ASTCD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreatorDelegator.java
+[SymTypeExpression]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
+[SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
+[CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
+[STHelper]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/CDSymbolTableHelper.java
+[reporting]: https://github.com/MontiCore/cd4analysis/tree/master/src/main/java/de/monticore/cd4analysis/reporting
+[CDCLI]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/cli/CDCLI.java
+[LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
+[ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/master/src/test/resources/de/monticore/cd4analysis/
+[ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
+[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisPrettyPrinter.java
+[ASTCDType]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/_ast/ASTCDType.java
+[CD4ASTC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreator.java
+[BuiltInTypes]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/BuiltInTypes.java
+
+[CD4ACoCos]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/cocos/CD4AnalysisCoCosDelegator.java
+[CD4AParser]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisParser.java
+[CD4CodeSTC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/_symboltable/CD4CodeSymbolTableCreator.java
+[CD4CLanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
+[CD4CExampleModels]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/
+[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/prettyprint/CD4CodePrettyPrinter.java
+
+[OOSymbols]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
+[MCCollectionTypes]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4
+
+[CLIBestPractices]: https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md
+
+## Further Information
+
+* [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
+* [MontiCore documentation](http://www.monticore.de/)
+* [**List of languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
+* [**MontiCore Core Grammar Library**](https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/Grammars.md)
+* [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
+* [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
+* [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
+

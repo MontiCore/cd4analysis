@@ -19,7 +19,7 @@ public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
   protected PlantUMLConfig plantUMLConfig;
   protected Stack<String> nameStack;
   protected AtomicBoolean immediatelyPrintAssociations = new AtomicBoolean(false);
-  protected Set<ASTCDAssociation> associations;
+  protected final Set<ASTCDAssociation> associations;
 
   public PlantUMLPrettyPrintUtil() {
     this(new IndentPrinter(), new PlantUMLConfig());
