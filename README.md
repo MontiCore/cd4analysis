@@ -72,10 +72,10 @@ You can use [**this download link**](https://nexus.se.rwth-aachen.de/service/res
 for downloading the CLI tool. 
 
 Alternatively, you can download the CLI tool using `wget`.
-The following command downloads the latest version of the CLI tool and saves it under the name `CD4analysisCLI.jar` 
+The following command downloads the latest version of the CLI tool and saves it under the name `CD4AnalysisCLI.jar` 
 in your working directory:
 ```
-wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli" -O CD4analysisCLI.jar
+wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli" -O CD4AnalysisCLI.jar
 ``` 
 
 ## Building the CLI Tool from the Sources
@@ -93,11 +93,13 @@ Change the directory to the root directory of the cloned sources:
 ```
 cd cd4analysis
 ```
-Afterwards, build the source files with gradle (if `./gradlew.bat` is not recognized as a command in your shell, then use `./gradlew`):
+Afterwards, build the source files with gradle (if `./gradlew.bat` is not recognized as a command in your shell, then use `./gradlew`).
+To this effect, execute the following two commands:
 ```
-./gradlew.bat build
+./gradlew.bat clean build
+./gradlew.bat shadowJar
 ```
-Congratulations! You can now find the executable JAR file `SD4DevelopmentCLI.jar` in
+Congratulations! You can now find the executable JAR file `CD4AnalysisCLI.jar` in
  the directory `target/libs` (accessible via `cd target/libs`).
 
 

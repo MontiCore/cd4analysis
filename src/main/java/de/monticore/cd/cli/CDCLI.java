@@ -108,8 +108,8 @@ public class CDCLI {
     }
     else {
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
-        Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
         printHelp(null);
+        Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
         return false;
       }
 
