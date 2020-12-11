@@ -124,6 +124,9 @@ public class CDCLIOptions {
     // dependent on pp
     options.addOption(Option
         .builder("puml").longOpt("plantUML")
+        .hasArg().type(String.class)
+        .argName("file").optionalArg(true).numberOfArgs(1)
+        .argName("puml")
         .desc("Transform the input model to a PlantUML model.")
         .build());
   }
@@ -140,58 +143,58 @@ public class CDCLIOptions {
         .build());
 
     plantUMLOptions.addOption(Option
-        .builder().longOpt("showAtt")
+        .builder("attr").longOpt("showAttributes")
         .desc("show attributes [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("showAssoc")
+        .builder("assoc").longOpt("showAssociations")
         .desc("show associations [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("showRoles")
+        .builder("roles").longOpt("showRoles")
         .desc("show roles [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("showCard")
+        .builder("card").longOpt("showCardinality")
         .desc("show cardinalities [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("showModifier")
+        .builder("mod").longOpt("showModifier")
         .desc("show modifier [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("nodesep")
+        .builder("nodesep").longOpt("nodeSeparator")
         .hasArg().type(Number.class)
         .argName("nodesep")
         .desc("set the node separator [number]. "
-            + "{default \"-1\"}")
+            + "The default value is \"-1\"")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("ranksep")
+        .builder("ranksep").longOpt("rankSeparator")
         .hasArg().type(Number.class)
         .argName("ranksep")
         .desc("set the rank separator [number]. "
-            + "{default \"-1\"})]")
+            + "The default value is \"-1\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("ortho")
+        .builder().longOpt("orthogonal")
         .desc("show lines only orthogonal [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("shortenWords")
+        .builder("short").longOpt("shortenWords")
         .desc("shorten displayed words [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder().longOpt("showComments")
+        .builder("comment").longOpt("showComments")
         .desc("show comments [true] when used. "
-            + "{default \"false\"}")
+            + "The default value is \"false\".")
         .build());
 
     subCommands.put(SubCommand.PLANTUML, plantUMLOptions);
