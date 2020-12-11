@@ -153,7 +153,7 @@ public class CDCLIOptions {
             + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder("roles").longOpt("showRoles")
+        .builder().longOpt("showRoles")
         .desc("show roles [true] when used. "
             + "The default value is \"false\".")
         .build());
@@ -175,7 +175,7 @@ public class CDCLIOptions {
             + "The default value is \"-1\"")
         .build());
     plantUMLOptions.addOption(Option
-        .builder("ranksep").longOpt("rankSeparator")
+        .builder().longOpt("rankSeparator")
         .hasArg().type(Number.class)
         .argName("ranksep")
         .desc("set the rank separator [number]. "
@@ -187,7 +187,7 @@ public class CDCLIOptions {
             + "The default value is \"false\".")
         .build());
     plantUMLOptions.addOption(Option
-        .builder("short").longOpt("shortenWords")
+        .builder().longOpt("shortenWords")
         .desc("shorten displayed words [true] when used. "
             + "The default value is \"false\".")
         .build());

@@ -391,7 +391,7 @@ java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml
 If there is no given output name, then the name of the model is used.
 
 Additionally to the used cli parameter, CDCLI can be configured for PlantUML
-using futher options specifically for PlantUML output: TODO SVa: use new output
+using futher options specifically for PlantUML output:
 ```shell
 $ java -jar CDCLI.jar -h -puml
 ...
@@ -401,12 +401,12 @@ usage: PLANTUML
  -card,--showCardinality              show cardinalities [true] when used. The default value is "false".
  -comment,--showComments              show comments [true] when used. The default value is "false".
  -mod,--showModifier                  show modifier [true] when used. The default value is "false".
- -nodesep,--nodeSeparator <nodesep>   set the node separator [number]. The default value is "-1".
+    --nodeSeparator <nodesep>   set the node separator [number]. The default value is "-1".
     --orthogonal                      show lines only orthogonal [true] when used. The default value is
                                       "false".
- -ranksep,--rankSeparator <ranksep>   set the rank separator [number]. The default value is "-1".
- -roles,--showRoles                   show roles [true] when used. The default value is "false".
- -short,--shortenWords                shorten displayed words [true] when used. The default value is "false".
+    --rankSeparator <ranksep>   set the rank separator [number]. The default value is "-1".
+    --showRoles                   show roles [true] when used. The default value is "false".
+    --shortenWords                shorten displayed words [true] when used. The default value is "false".
     --svg                             print as plantUML svg
 ```
 
@@ -415,7 +415,7 @@ The svg ![MyLife.svg](doc/MyLife.svg "MyLife")
 
 is created by the command:
 ```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml MyLife --orthogonal -attr -assoc -roles --svg
+java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml MyLife --orthogonal -attr -assoc --showRoles --svg
 ```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
