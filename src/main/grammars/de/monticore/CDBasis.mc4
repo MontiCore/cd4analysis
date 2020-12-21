@@ -38,17 +38,18 @@ component grammar CDBasis extends
 
   /** The package statement denotes the package of the model file itself
   */
-  CDPackageStatement = "package" package:(Name& || ".")+ ";"; // TODO SVa change to use MCPackageDeclaration
+  CDPackageStatement = "package" package:(Name& || ".")+ ";"; // TODO SVa change to use MCPackageDeclaration!!!
 
   /** This import statement allows to explain in the model, which
-      additional imports shall be added to the generated code
+      additional imports are relevant for the target, this includes
+      e.g. includes generated code.
       (beyond the imports that the generator identifies itself).
   */
   CDTargetImportStatement = "targetimport" MCQualifiedName ("." Star:["*"])? ";";
 
   /** The class diagram: defines a set of elements
   */
-  CDDefinition = // TODO SVa: implements Diagram =
+  CDDefinition = // TODO SVa: implements Diagram!!! =
     Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */
@@ -74,7 +75,7 @@ component grammar CDBasis extends
 
   /*  Remark:
       Because people that know Java also know interface implementation,
-      we decide to put "implements" already into the grammar here
+      we decide to add "implements" already here
       and restrict the grammar to classes only through a CoCo.
       Advantage: better explanation of the error if someone
       actually uses "implement" with the base grammar .
