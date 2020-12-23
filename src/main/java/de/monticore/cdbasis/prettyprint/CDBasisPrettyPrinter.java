@@ -7,14 +7,18 @@ package de.monticore.cdbasis.prettyprint;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._visitor.CDBasisHandler;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
 
 public class CDBasisPrettyPrinter extends PrettyPrintUtil
-    implements CDBasisVisitor {
-  protected CDBasisVisitor realThis;
+    implements CDBasisVisitor2, CDBasisHandler {
+
+  protected CDBasisTraverser traverser;
 
   public CDBasisPrettyPrinter() {
     this(new IndentPrinter());
@@ -22,39 +26,37 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   public CDBasisPrettyPrinter(IndentPrinter printer) {
     super(printer);
-    setRealThis(this);
   }
 
   @Override
-  public CDBasisVisitor getRealThis() {
-    return realThis;
+  public CDBasisTraverser getTraverser() {
+    return traverser;
   }
 
-  @Override
-  public void setRealThis(CDBasisVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDBasisTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
   public void traverse(ASTCDCompilationUnit node) {
     printPreComments(node);
     if (node.isPresentCDPackageStatement()) {
-      node.getCDPackageStatement().accept(getRealThis());
+      node.getCDPackageStatement().accept(getTraverser());
       printPreComments(node);
     }
     for (ASTMCImportStatement i : node.getMCImportStatementList()) {
-      i.accept(getRealThis());
+      i.accept(getTraverser());
       println();
     }
 
-    node.getCDTargetImportStatementList().forEach(i -> i.accept(getRealThis()));
+    node.getCDTargetImportStatementList().forEach(i -> i.accept(getTraverser()));
     if (!node.isEmptyCDTargetImportStatements()) {
       println();
     }
     println();
 
     if (null != node.getCDDefinition()) {
-      node.getCDDefinition().accept(getRealThis());
+      node.getCDDefinition().accept(getTraverser());
     }
     printPostComments(node);
   }
@@ -83,7 +85,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void visit(ASTCDDefinition node) {
     printPreComments(node);
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
     print("classdiagram " + node.getName() + " {");
     printPreComments(node);
     println();
@@ -94,7 +96,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   public void traverse(ASTCDDefinition node) {
     for (ASTCDElement element : node.getCDElementList()) {
       printPreComments(node);
-      element.accept(getRealThis());
+      element.accept(getTraverser());
       printPostComments(node);
       println();
     }
@@ -117,7 +119,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDPackage node) {
-    node.getCDElementList().forEach(e -> e.accept(getRealThis()));
+    node.getCDElementList().forEach(e -> e.accept(getTraverser()));
   }
 
   @Override
@@ -133,7 +135,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDInterfaceUsage node) {
-    printList(getRealThis(), node.getInterfaceList().iterator(), ", ");
+    printList(getTraverser(), node.getInterfaceList().iterator(), ", ");
   }
 
   @Override
@@ -143,20 +145,20 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDExtendUsage node) {
-    printList(getRealThis(), node.getSuperclassList().iterator(), ", ");
+    printList(getTraverser(), node.getSuperclassList().iterator(), ", ");
   }
 
   @Override
   public void visit(ASTCDClass node) {
     printPreComments(node);
 
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
     print("class " + node.getName());
     if (node.isPresentCDExtendUsage()) {
-      node.getCDExtendUsage().accept(getRealThis());
+      node.getCDExtendUsage().accept(getTraverser());
     }
     if (node.isPresentCDInterfaceUsage()) {
-      node.getCDInterfaceUsage().accept(getRealThis());
+      node.getCDInterfaceUsage().accept(getTraverser());
     }
 
     if (!node.isEmptyCDMembers()) {
@@ -170,7 +172,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDClass node) {
-    node.getCDMemberList().forEach(m -> m.accept(getRealThis()));
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
   }
 
   @Override
@@ -189,8 +191,8 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void visit(ASTCDAttribute node) {
     printPreComments(node);
-    node.getModifier().accept(getRealThis());
-    node.getMCType().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
+    node.getMCType().accept(getTraverser());
     print(" " + node.getName());
   }
 
@@ -198,7 +200,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   public void traverse(ASTCDAttribute node) {
     if (node.isPresentInitial()) {
       print(" = ");
-      node.getInitial().accept(getRealThis());
+      node.getInitial().accept(getTraverser());
     }
   }
 

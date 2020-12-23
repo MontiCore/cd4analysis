@@ -16,7 +16,7 @@ public class CDInterfaceAndEnumScopeSkeletonsCreatorForCD4Code extends CDInterfa
 
   @Override
   public ICDInterfaceAndEnumScope createScope(boolean shadowing) {
-    de.monticore.cd4code._symboltable.ICD4CodeScope scope = de.monticore.cd4code.CD4CodeMill.cD4CodeScopeBuilder().build();
+    de.monticore.cd4code._symboltable.ICD4CodeScope scope = de.monticore.cd4code.CD4CodeMill.scope();
     scope.setShadowing(shadowing);
     return scope;
   }

@@ -6,6 +6,7 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
+import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -19,21 +20,21 @@ import java.util.Optional;
 import static de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer.FURTHER_OBJECTS_MAP;
 import static de.monticore.cdassociation._symboltable.CDAssociationScopeDeSer.SYM_ASSOCIATION_TYPE;
 
-public class CDAssociationSymbolTablePrinter
-    extends CDAssociationSymbolTablePrinterTOP {
+public class CDAssociationSymbols2Json
+    extends CDAssociationSymbols2JsonTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
 
-  public CDAssociationSymbolTablePrinter() {
+  public CDAssociationSymbols2Json() {
     init();
   }
 
-  public CDAssociationSymbolTablePrinter(JsonPrinter printer) {
+  public CDAssociationSymbols2Json(JsonPrinter printer) {
     super(printer);
     init();
   }
 
   public static void serializeSymAssociations(JsonPrinter printer, CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
-      symbolTablePrinterHelper.getSymAssociations().forEach(a -> CDAssociationSymbolTablePrinter.serializeSymAssociation(printer, a));
+      symbolTablePrinterHelper.getSymAssociations().forEach(a -> CDAssociationSymbols2Json.serializeSymAssociation(printer, a));
   }
 
   public static void serializeSymAssociation(JsonPrinter printer, SymAssociation symAssociation) {
@@ -61,7 +62,7 @@ public class CDAssociationSymbolTablePrinter
   }
 
   @Override
-  public void serializeCDAssociationAssociation(Optional<SymAssociation> association) {
+  public void serializeCDAssociationAssoc(Optional<SymAssociation> association) {
     if (association.isPresent()) {
       printer.member("association", handleSymAssociation(association.get()));
     }
@@ -70,8 +71,8 @@ public class CDAssociationSymbolTablePrinter
   @Override
   public void serializeCDRoleCardinality(Optional<ASTCDCardinality> cardinality) {
     if (cardinality.isPresent()) {
-      final CDAssociationPrettyPrinter cdAssociationPrettyPrinter = new CDAssociationPrettyPrinter(new IndentPrinter());
-      cardinality.get().accept(cdAssociationPrettyPrinter);
+      final CDAssociationFullPrettyPrinter cdAssociationPrettyPrinter = new CDAssociationFullPrettyPrinter(new IndentPrinter());
+      cardinality.get().accept(cdAssociationPrettyPrinter.getTraverser());
       printer.member("cardinality", cdAssociationPrettyPrinter.getPrinter().getContent());
     }
   }
@@ -89,14 +90,14 @@ public class CDAssociationSymbolTablePrinter
   @Override
   public void visit(CDRoleSymbol node) {
     super.visit(node);
-    if (node.isPresentAssociation()) {
-      printer.member("association", handleSymAssociation(node.getAssociation()));
+    if (node.isPresentAssoc()) {
+      printer.member("association", handleSymAssociation(node.getAssoc()));
     }
     printer.member("isLeft", node.isIsLeft());
   }
 
   @Override
-  public void serializeCDRoleAssociation(Optional<SymAssociation> association) {
+  public void serializeCDRoleAssoc(Optional<SymAssociation> association) {
     if (association != null && association.isPresent()) {
       printer.member("association", handleSymAssociation(association.get()));
     }

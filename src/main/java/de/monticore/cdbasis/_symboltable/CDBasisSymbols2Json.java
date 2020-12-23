@@ -12,13 +12,13 @@ import de.monticore.types.check.SymTypeExpressionDeSer;
 
 import java.util.List;
 
-public class CDBasisSymbolTablePrinter extends CDBasisSymbolTablePrinterTOP {
+public class CDBasisSymbols2Json extends CDBasisSymbols2JsonTOP {
   protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
 
-  public CDBasisSymbolTablePrinter() {
+  public CDBasisSymbols2Json() {
   }
 
-  public CDBasisSymbolTablePrinter(JsonPrinter printer) {
+  public CDBasisSymbols2Json(JsonPrinter printer) {
     super(printer);
   }
 

@@ -6,7 +6,9 @@ package de.monticore.cd4codebasis.typescalculator;
 
 import de.monticore.cd._symboltable.TypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisDelegatorVisitor;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
@@ -16,15 +18,24 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
-public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
+public class DeriveSymTypeOfCD4CodeBasis
     implements ITypesCalculator, CDTypesCalculator {
 
+  protected CD4CodeBasisTraverser traverser;
   private TypeCheckResult typeCheckResult;
   private TypesScopeHelper typesScopeHelper;
 
   public DeriveSymTypeOfCD4CodeBasis() {
-    setRealThis(this);
     init();
+  }
+
+  @Override
+  public CD4CodeBasisTraverser getTraverser() {
+    return traverser;
+  }
+
+  public void setTraverser(CD4CodeBasisTraverser traverser) {
+    this.traverser = traverser;
   }
 
   public TypeCheckResult getTypeCheckResult() {
@@ -38,35 +49,35 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
   @Override
   public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
     reset();
-    ex.accept(getRealThis());
+    ex.accept(getTraverser());
     return getResult();
   }
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
     reset();
-    lit.accept(getRealThis());
+    lit.accept(getTraverser());
     return getResult();
   }
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
     reset();
-    lit.accept(getRealThis());
+    lit.accept(getTraverser());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
     type.accept(typesScopeHelper);
-    type.accept(getRealThis());
+    type.accept(getTraverser());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
     node.accept(typesScopeHelper);
-    node.accept(getRealThis());
+    node.accept(getTraverser());
     return getResult();
   }
 
@@ -80,27 +91,31 @@ public class DeriveSymTypeOfCD4CodeBasis extends CD4CodeBasisDelegatorVisitor
 
   @Override
   public void init() {
+    this.traverser = CD4CodeBasisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
     this.typesScopeHelper = new TypesScopeHelper();
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
-    setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
+    traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);
 
     final DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
     deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(getTypeCheckResult());
-    setMCCommonLiteralsVisitor(deriveSymTypeOfMCCommonLiterals);
+    traverser.add4MCCommonLiterals(deriveSymTypeOfMCCommonLiterals);
 
     final DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
     deriveSymTypeOfExpression.setTypeCheckResult(getTypeCheckResult());
-    setExpressionsBasisVisitor(deriveSymTypeOfExpression);
+    traverser.add4ExpressionsBasis(deriveSymTypeOfExpression);
+    traverser.setExpressionsBasisHandler(deriveSymTypeOfExpression);
 
     final DeriveSymTypeOfCommonExpressions deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
     deriveSymTypeOfCommonExpressions.setTypeCheckResult(getTypeCheckResult());
-    setCommonExpressionsVisitor(deriveSymTypeOfCommonExpressions);
+    traverser.add4CommonExpressions(deriveSymTypeOfCommonExpressions);
+    traverser.setCommonExpressionsHandler(deriveSymTypeOfCommonExpressions);
 
     final SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(getTypeCheckResult());
-    setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
+    traverser.add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
+    traverser.setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
   }
 }

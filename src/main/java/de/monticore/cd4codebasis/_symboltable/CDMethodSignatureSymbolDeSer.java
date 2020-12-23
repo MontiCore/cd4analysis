@@ -13,12 +13,12 @@ import java.util.List;
 public class CDMethodSignatureSymbolDeSer
     extends CDMethodSignatureSymbolDeSerTOP {
   @Override
-  public List<SymTypeExpression> deserializeExceptions(JsonObject symbolJson, ICD4CodeBasisScope enclosingScope) {
-    return SymTypeExpressionDeSer.deserializeListMember("exceptions", symbolJson, enclosingScope);
+  public List<SymTypeExpression> deserializeExceptions(JsonObject symbolJson) {
+    return SymTypeExpressionDeSer.deserializeListMember("exceptions", symbolJson, null);
   }
 
   @Override
-  public SymTypeExpression deserializeReturnType(JsonObject symbolJson, ICD4CodeBasisScope enclosingScope) {
-    return SymTypeExpressionDeSer.deserializeMember("returnType", symbolJson, enclosingScope);
+  public SymTypeExpression deserializeReturnType(JsonObject symbolJson) {
+    return SymTypeExpressionDeSer.deserializeMember("returnType", symbolJson, null);
   }
 }

@@ -8,6 +8,7 @@ import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testtypeimporter._ast.ASTElement;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
@@ -37,7 +38,7 @@ public class TestTypeImporterSymbolTableCreator
     if (!typeResult.isPresent()) {
       Log.error(String.format(
           "0xCDE00: The type (%s) of the element (%s) could not be calculated",
-          node.getMCType().printType(new MCBasicTypesPrettyPrinter(new IndentPrinter())),
+          node.getMCType().printType(MCBasicTypesMill.mcBasicTypesPrettyPrinter()),
           node.getName()),
           node.getMCType().get_SourcePositionStart());
     }

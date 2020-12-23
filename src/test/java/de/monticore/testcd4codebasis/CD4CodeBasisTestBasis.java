@@ -29,10 +29,10 @@ public class CD4CodeBasisTestBasis extends TestBasis {
     p = new TestCD4CodeBasisParser();
 
     final ICD4CodeBasisGlobalScope globalScope = CD4CodeBasisMill
-        .cD4CodeBasisGlobalScope();
+        .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos();
   }

@@ -8,12 +8,15 @@ import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     extends PlantUMLPrettyPrintUtil
-    implements CDInterfaceAndEnumVisitor {
-  protected CDInterfaceAndEnumVisitor realThis;
+    implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
+  protected CDInterfaceAndEnumTraverser traverser;
 
   public CDInterfaceAndEnumPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -21,17 +24,15 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
   public CDInterfaceAndEnumPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
-    setRealThis(this);
   }
 
   @Override
-  public CDInterfaceAndEnumVisitor getRealThis() {
-    return realThis;
+  public CDInterfaceAndEnumTraverser getTraverser() {
+    return traverser;
   }
 
-  @Override
-  public void setRealThis(CDInterfaceAndEnumVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDInterfaceAndEnumTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
@@ -43,7 +44,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     print("interface " + node.getName());
 
     if (node.isPresentCDExtendUsage()) {
-      node.getCDExtendUsage().accept(getRealThis());
+      node.getCDExtendUsage().accept(getTraverser());
     }
 
     if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDMembers()) {
@@ -54,7 +55,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
 
   @Override
   public void traverse(ASTCDInterface node) {
-    node.getCDMemberList().forEach(m -> m.accept(getRealThis()));
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
   }
 
   @Override
@@ -79,7 +80,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     print("enum " + node.getName());
 
     if (node.isPresentCDInterfaceUsage()) {
-      node.getCDInterfaceUsage().accept(getRealThis());
+      node.getCDInterfaceUsage().accept(getTraverser());
     }
 
     if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
@@ -94,7 +95,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
       println("__ Enum Constants __");
     }
     node.streamCDEnumConstants().forEach(c -> {
-      c.accept(getRealThis());
+      c.accept(getTraverser());
       println();
     });
 
@@ -102,7 +103,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
       println("__ Attributes __");
 
       node.streamCDMembers().forEach(m -> {
-        m.accept(getRealThis());
+        m.accept(getTraverser());
         println();
       });
     }

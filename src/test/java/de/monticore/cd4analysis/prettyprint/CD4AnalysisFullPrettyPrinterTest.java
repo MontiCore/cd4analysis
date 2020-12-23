@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
-public class CD4AnalysisPrettyPrinterTest extends CD4AnalysisTestBasis {
+public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
 
   @Test
   public void completeModel() throws IOException {

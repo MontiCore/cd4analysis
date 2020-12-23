@@ -171,7 +171,7 @@ public class CDAssociationSTCompleteTypes implements CDAssociationVisitor {
         }
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
-        final SymTypeExpression type = symbol.getAssociation().getOtherRole(symbol).getType();
+        final SymTypeExpression type = symbol.getAssoc().getOtherRole(symbol).getType();
         final List<VariableSymbol> variableList = type.getFieldList(side.getCDQualifier().getByAttributeName());
         if (variableList.size() == 0) {
           Log.error(String.format(

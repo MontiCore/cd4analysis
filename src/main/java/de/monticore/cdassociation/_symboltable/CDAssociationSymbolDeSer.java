@@ -22,7 +22,7 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
   }
 
   @Override
-  public Optional<SymAssociation> deserializeAssociation(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
     return symbolJson.getIntegerMemberOpt("association")
         .flatMap(a -> Optional.ofNullable(symAssociations.get(a)));
   }

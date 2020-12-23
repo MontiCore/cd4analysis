@@ -7,13 +7,11 @@ package de.monticore.cd._symboltable;
 import de.monticore.cd.CDMill;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
+import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
@@ -30,7 +28,7 @@ import static de.se_rwth.commons.logging.Log.trace;
 
 // TODO SVa: check if all attributes needed, or split for STCompleteTypes
 public class CDSymbolTableHelper {
-  protected CDBasisPrettyPrinterDelegator prettyPrinter;
+  protected CDBasisFullPrettyPrinter prettyPrinter;
   protected CDTypesCalculator typeChecker;
 
   protected ModifierHandler modifierHandler;
@@ -47,12 +45,12 @@ public class CDSymbolTableHelper {
   }
 
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
-    this(new CDBasisPrettyPrinterDelegator(), typeChecker,
+    this(new CDBasisFullPrettyPrinter(), typeChecker,
         CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(),
         new Stack<>(), new HashMap<>(), new ArrayList<>());
   }
 
-  public CDSymbolTableHelper(CDBasisPrettyPrinterDelegator prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, SymTypeExpression> handledRoles, List<ASTMCImportStatement> imports) {
+  public CDSymbolTableHelper(CDBasisFullPrettyPrinter prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, SymTypeExpression> handledRoles, List<ASTMCImportStatement> imports) {
     this.prettyPrinter = prettyPrinter;
     this.typeChecker = typeChecker;
     this.modifierHandler = modifierHandler;
@@ -63,11 +61,11 @@ public class CDSymbolTableHelper {
     this.imports = imports;
   }
 
-  public CDBasisPrettyPrinterDelegator getPrettyPrinter() {
+  public CDBasisFullPrettyPrinter getPrettyPrinter() {
     return prettyPrinter;
   }
 
-  public void setPrettyPrinter(CDBasisPrettyPrinterDelegator prettyPrinter) {
+  public void setPrettyPrinter(CDBasisFullPrettyPrinter prettyPrinter) {
     this.prettyPrinter = prettyPrinter;
   }
 

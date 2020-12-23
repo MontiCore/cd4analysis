@@ -8,7 +8,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
-import de.monticore.cd4code.prettyprint.CD4CodePlantUMLPrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodePlantUMLFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.prettyprint.IndentPrinter;
@@ -117,10 +117,10 @@ public class PlantUMLUtil {
 
   protected static String printCD2PlantUML(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, PlantUMLConfig config) {
     final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
-    CD4CodePlantUMLPrettyPrinter cdVisitor = new CD4CodePlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
+    CD4CodePlantUMLFullPrettyPrinter cdVisitor = new CD4CodePlantUMLFullPrettyPrinter(plantUMLPrettyPrintUtil);
     if (astCD.isPresent()) {
       final ICD4CodeGlobalScope globalScope = CD4CodeMill
-          .cD4CodeGlobalScope();
+          .globalScope();
       globalScope.setModelPath(new ModelPath(Paths.get("")));
       globalScope.addBuiltInTypes();
 

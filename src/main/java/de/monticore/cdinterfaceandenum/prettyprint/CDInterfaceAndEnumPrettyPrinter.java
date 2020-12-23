@@ -8,14 +8,17 @@ import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
 import java.util.Iterator;
 
 public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
-    implements CDInterfaceAndEnumVisitor {
-  protected CDInterfaceAndEnumVisitor realThis;
+    implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
+  protected CDInterfaceAndEnumTraverser traverser;
 
   public CDInterfaceAndEnumPrettyPrinter() {
     this(new IndentPrinter());
@@ -23,27 +26,25 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
   public CDInterfaceAndEnumPrettyPrinter(IndentPrinter printer) {
     super(printer);
-    setRealThis(this);
   }
 
   @Override
-  public CDInterfaceAndEnumVisitor getRealThis() {
-    return realThis;
+  public CDInterfaceAndEnumTraverser getTraverser() {
+    return traverser;
   }
 
-  @Override
-  public void setRealThis(CDInterfaceAndEnumVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDInterfaceAndEnumTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
   public void visit(ASTCDInterface node) {
     printPreComments(node);
 
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
     print("interface " + node.getName());
     if (node.isPresentCDExtendUsage()) {
-      node.getCDExtendUsage().accept(getRealThis());
+      node.getCDExtendUsage().accept(getTraverser());
     }
 
     if (!node.isEmptyCDMembers()) {
@@ -56,7 +57,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDInterface node) {
-    node.getCDMemberList().forEach(m -> m.accept(getRealThis()));
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
   }
 
   @Override
@@ -76,10 +77,10 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
   public void visit(ASTCDEnum node) {
     printPreComments(node);
 
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
     print("enum " + node.getName());
     if (node.isPresentCDInterfaceUsage()) {
-      node.getCDInterfaceUsage().accept(getRealThis());
+      node.getCDInterfaceUsage().accept(getTraverser());
     }
 
     if (!node.isEmptyCDMembers() || !node.isEmptyCDEnumConstants()) {
@@ -99,7 +100,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     }
     while (iterator.hasNext()) {
       printPreComments(node);
-      iterator.next().accept(getRealThis());
+      iterator.next().accept(getTraverser());
       if (iterator.hasNext()) {
         print(",");
       }
@@ -110,7 +111,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
       println();
     }
 
-    node.getCDMemberList().forEach(m -> m.accept(getRealThis()));
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
   }
 
   @Override

@@ -9,7 +9,7 @@ import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdbasis._parser.CDBasisAfterParseTrafo;
 import de.monticore.cdbasis.prettyprint.CDBasisPlantUMLPrettyPrinter;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
-import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
+import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.prettyprint.IndentPrinter;
 
@@ -63,14 +63,14 @@ public class CDBasisMill extends CDBasisMillTOP {
     return millCDBasisPrettyPrinter._cDBasisPrettyPrinter(printer);
   }
 
-  public static CDBasisPrettyPrinterDelegator cDBasisPrettyPrinterDelegator() {
+  public static CDBasisFullPrettyPrinter cDBasisPrettyPrinterDelegator() {
     if (millCDBasisPrettyPrinterDelegator == null) {
       millCDBasisPrettyPrinterDelegator = getMill();
     }
     return millCDBasisPrettyPrinterDelegator._cDBasisPrettyPrinterDelegator();
   }
 
-  public static CDBasisPrettyPrinterDelegator cDBasisPrettyPrinterDelegator(IndentPrinter printer) {
+  public static CDBasisFullPrettyPrinter cDBasisPrettyPrinterDelegator(IndentPrinter printer) {
     if (millCDBasisPrettyPrinterDelegator == null) {
       millCDBasisPrettyPrinterDelegator = getMill();
     }
@@ -108,12 +108,12 @@ public class CDBasisMill extends CDBasisMillTOP {
     return new CDBasisPrettyPrinter(printer);
   }
 
-  public CDBasisPrettyPrinterDelegator _cDBasisPrettyPrinterDelegator() {
-    return new CDBasisPrettyPrinterDelegator();
+  public CDBasisFullPrettyPrinter _cDBasisPrettyPrinterDelegator() {
+    return new CDBasisFullPrettyPrinter();
   }
 
-  public CDBasisPrettyPrinterDelegator _cDBasisPrettyPrinterDelegator(IndentPrinter printer) {
-    return new CDBasisPrettyPrinterDelegator(printer);
+  public CDBasisFullPrettyPrinter _cDBasisPrettyPrinterDelegator(IndentPrinter printer) {
+    return new CDBasisFullPrettyPrinter(printer);
   }
 
   public DeriveSymTypeOfCDBasis _deriveSymTypeOfCDBasis() {

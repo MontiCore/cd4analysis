@@ -6,12 +6,14 @@ package de.monticore.cd.prettyprint;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._visitor.CDBasisVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
+import de.monticore.types.mcbasictypes._visitor.MCBasicTypesTraverser;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor;
 
 import java.util.Iterator;
@@ -105,12 +107,12 @@ public abstract class PrettyPrintUtil {
    * @param iter      iterator for the list of {@link ASTCD4CodeBasisNode}s
    * @param seperator string for seperating the ASTCD4CodeBasisNodes
    */
-  public void printSeparatorCD4CodeBasis(CD4CodeBasisVisitor visitor, Iterator<? extends ASTCD4CodeBasisNode> iter, String seperator) {
+  public void printSeparatorCD4CodeBasis(CD4CodeBasisTraverser traverser, Iterator<? extends ASTCD4CodeBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
       print(sep);
-      iter.next().accept(visitor);
+      iter.next().accept(traverser);
       sep = seperator;
     }
   }
@@ -121,12 +123,12 @@ public abstract class PrettyPrintUtil {
    * @param iter      iterator for the list
    * @param separator string for separating list
    */
-  public void printList(MCBasicTypesVisitor visitor, Iterator<? extends ASTMCBasicTypesNode> iter, String separator) {
+  public void printList(MCBasicTypesTraverser traverser, Iterator<? extends ASTMCBasicTypesNode> iter, String separator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
       print(sep);
-      iter.next().accept(visitor);
+      iter.next().accept(traverser);
       sep = separator;
     }
   }

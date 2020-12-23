@@ -50,11 +50,10 @@ public class CDBasisScopeSkeletonsCreator
   @Override
   public ICDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     ICDBasisArtifactScope artifactScope = CDBasisMill
-        .cDBasisArtifactScopeBuilder()
-        .setPackageName(
-            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
-        .setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
-        .build();
+        .artifactScope();
+    artifactScope.setPackageName(
+            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()));
+    artifactScope.setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
     putOnStack(artifactScope);
     rootNode.accept(getRealThis());
     return artifactScope;

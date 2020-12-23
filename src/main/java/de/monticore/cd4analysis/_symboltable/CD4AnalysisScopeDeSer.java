@@ -9,9 +9,9 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._symboltable.CDAssociationScopeDeSer;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
-import de.monticore.cdassociation._symboltable.CDAssociationSymbolTablePrinter;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbols2Json;
 import de.monticore.cdassociation._symboltable.SymAssociation;
-import de.monticore.cdbasis._symboltable.CDBasisSymbolTablePrinter;
+import de.monticore.cdbasis._symboltable.CDBasisSymbols2Json;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.json.JsonObject;
@@ -56,21 +56,21 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
 
     this.symbolTablePrinter
         .getCDBasisVisitor()
-        .flatMap(v -> Optional.of((CDBasisSymbolTablePrinter) v))
+        .flatMap(v -> Optional.of((CDBasisSymbols2Json) v))
         .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
     this.symbolTablePrinter
         .getCDAssociationVisitor()
-        .flatMap(v -> Optional.of((CDAssociationSymbolTablePrinter) v))
+        .flatMap(v -> Optional.of((CDAssociationSymbols2Json) v))
         .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
     this.symbolTablePrinter
         .getCD4AnalysisVisitor()
-        .flatMap(v -> Optional.of((CD4AnalysisSymbolTablePrinter) v))
+        .flatMap(v -> Optional.of((CD4AnalysisSymbols2Json) v))
         .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
   }
 
   @Override
-  protected void deserializeAdditionalArtifactScopeAttributes(ICD4AnalysisArtifactScope scope, JsonObject scopeJson) {
-    super.deserializeAdditionalArtifactScopeAttributes(scope, scopeJson);
+  protected void deserializeAddons(ICD4AnalysisArtifactScope scope, JsonObject scopeJson) {
+    super.deserializeAddons(scope, scopeJson);
     deserializeFurtherObjects(symAssociations, scopeJson);
   }
 
@@ -84,9 +84,9 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
   @Override
   protected void deserializeCDAssociationSymbol(JsonObject symbolJson, ICD4AnalysisScope scope) {
     if (symbolJson.getStringMemberOpt(JsonDeSers.KIND).flatMap(k -> Optional.of(k.equals(cDAssociationSymbolDeSer.getSerializedKind()))).orElse(false)) {
-      final CDAssociationSymbol symbol = cDAssociationSymbolDeSer.deserializeCDAssociationSymbol(symbolJson, scope);
+      final CDAssociationSymbol symbol = cDAssociationSymbolDeSer.deserializeCDAssociationSymbol(symbolJson);
       scope.add(symbol);
-      final ICD4AnalysisScope spannedScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().build();
+      final ICD4AnalysisScope spannedScope = CD4AnalysisMill.scope();
 
       if (symbolJson.hasArrayMember("symbols")) {
         symbolJson.getArrayMember("symbols").forEach(m -> {

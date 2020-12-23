@@ -15,6 +15,10 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   public static final String EXTENSION = "cd";
   protected CDSymbolTableHelper symbolTableHelper;
 
+  public CD4AnalysisGlobalScope(){
+    super();
+  }
+
   public CD4AnalysisGlobalScope(ModelPath modelPath) {
     super(modelPath, EXTENSION);
   }
@@ -44,10 +48,9 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   public void addBuiltInTypes() {
     if (!getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
       final ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
-          .cD4AnalysisArtifactScopeBuilder()
-          .setPackageName("")
-          .setEnclosingScope(this)
-          .build();
+          .artifactScope();
+      artifactScope.setPackageName("");
+      artifactScope.setEnclosingScope(this);
       artifactScope.setName(BuiltInTypes.SCOPE_NAME);
 
       addBuiltInPrimitiveTypes(artifactScope);
@@ -58,10 +61,9 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
 
   public void addBuiltInPrimitiveTypes(ICD4AnalysisArtifactScope artifactScope) {
     final ICD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
-        .cD4AnalysisScopeBuilder()
-        .setNameAbsent()
-        .setEnclosingScope(artifactScope)
-        .build();
+        .scope();
+    primitiveTypesScope.setNameAbsent();
+    primitiveTypesScope.setEnclosingScope(artifactScope);
 
     BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
   }
@@ -70,10 +72,9 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     final String scopeName = "java.lang";
 
     final ICD4AnalysisScope objectTypesScope = CD4AnalysisMill
-        .cD4AnalysisScopeBuilder()
-        .setName(scopeName)
-        .setEnclosingScope(artifactScope)
-        .build();
+        .scope();
+    objectTypesScope.setName(scopeName);
+    objectTypesScope.setEnclosingScope(artifactScope);
 
     BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
   }
@@ -82,10 +83,9 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     final String scopeName = "java.util";
 
     final ICD4AnalysisScope utilTypesScope = CD4AnalysisMill
-        .cD4AnalysisScopeBuilder()
-        .setName(scopeName)
-        .setEnclosingScope(artifactScope)
-        .build();
+        .scope();
+    utilTypesScope.setName(scopeName);
+    utilTypesScope.setEnclosingScope(artifactScope);
 
     BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
   }

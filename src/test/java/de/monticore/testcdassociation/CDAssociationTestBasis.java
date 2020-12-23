@@ -26,10 +26,10 @@ public class CDAssociationTestBasis extends TestBasis {
     p = new TestCDAssociationParser();
 
     final ICDAssociationGlobalScope globalScope = CDAssociationMill
-        .cDAssociationGlobalScope();
+        .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cdAssociationCoCos = new CDAssociationCoCos();
   }

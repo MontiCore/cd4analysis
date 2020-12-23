@@ -5,6 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -28,7 +29,7 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
     return this.getPackageName();
   }
 
-  default String getRemainingNameForResolveDown(String symbolName) {
+  default List<String> getRemainingNameForResolveDown(String symbolName) {
     final FluentIterable<String> nameParts = getNameParts(symbolName);
     final FluentIterable<String> packageNameParts = getNameParts(getPackageName());
 
@@ -36,11 +37,11 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
       final String firstNNameParts = nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
       // A scope that exports symbols usually has a name.
       if (firstNNameParts.equals(getPackageName())) {
-        return nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining("."));
+        return Lists.newArrayList(nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining(".")));
       }
     }
 
-    return symbolName;
+    return Lists.newArrayList(symbolName);
   }
 
   default boolean checkIfContinueAsSubScope(String symbolName) {

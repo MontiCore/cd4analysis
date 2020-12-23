@@ -9,6 +9,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.StringTransformations;
@@ -59,11 +60,11 @@ public class CDAttributeFacade {
    */
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type) {
-    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))));
+    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(MCCollectionTypesMill.mcCollectionTypesPrettyPrinter())));
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final ASTMCType type, final ASTExpression initial) {
-    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()))), initial);
+    return createAttribute(modifier, type, StringTransformations.uncapitalize(type.printType(MCCollectionTypesMill.mcCollectionTypesPrettyPrinter())), initial);
   }
 
   public ASTCDAttribute createAttribute(final ASTModifier modifier, final String type, final String name) {

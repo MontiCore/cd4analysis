@@ -96,7 +96,8 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");
-    final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.cD4AnalysisScopeBuilder().setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope()).build();
+    final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.scope();
+    innerSpanningScope.setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope());
     innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(SymTypeExpressionFactory.createTypeObject("A", innerSpanningScope)).build());
     final CDTypeSymbol inner = CDBasisMill.cDTypeSymbolBuilder().setName("Inner").setIsClass(true).setIsStatic(true).setSpannedScope(innerSpanningScope).build();
     c.get().getSpannedScope().add(inner);
@@ -127,11 +128,10 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ICD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
 
     final ICD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
-        .cD4AnalysisGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
+        .globalScope();
+    globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScopeForDeserialization.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
+    globalScopeForDeserialization.addBuiltInTypes();
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;
   }

@@ -6,12 +6,15 @@ package de.monticore.cdassociation.prettyprint;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._visitor.CDAssociationHandler;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class CDAssociationPrettyPrinter extends PrettyPrintUtil
-    implements CDAssociationVisitor {
-  protected CDAssociationVisitor realThis;
+    implements CDAssociationVisitor2, CDAssociationHandler {
+  protected CDAssociationTraverser traverser;
 
   public CDAssociationPrettyPrinter() {
     this(new IndentPrinter());
@@ -19,16 +22,15 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   public CDAssociationPrettyPrinter(IndentPrinter printer) {
     super(printer);
-    setRealThis(this);
   }
 
   @Override
-  public CDAssociationVisitor getRealThis() {
-    return realThis;
+  public CDAssociationTraverser getTraverser() {
+    return traverser;
   }
 
-  public void setRealThis(CDAssociationVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDAssociationTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
@@ -45,9 +47,9 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   public void visit(ASTCDAssociation node) {
     printPreComments(node);
 
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
 
-    node.getCDAssocType().accept(getRealThis());
+    node.getCDAssocType().accept(getTraverser());
     print(" ");
 
     if (node.isPresentName()) {
@@ -58,11 +60,11 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDAssociation node) {
-    node.getLeft().accept(getRealThis());
+    node.getLeft().accept(getTraverser());
     print(" ");
-    node.getCDAssocDir().accept(getRealThis());
+    node.getCDAssocDir().accept(getTraverser());
     print(" ");
-    node.getRight().accept(getRealThis());
+    node.getRight().accept(getTraverser());
   }
 
   @Override
@@ -95,54 +97,54 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   @Override
   public void handle(ASTCDAssocLeftSide node) {
     if (node.isPresentCDOrdered()) {
-      node.getCDOrdered().accept(getRealThis());
+      node.getCDOrdered().accept(getTraverser());
       print(" ");
     }
 
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
 
     if (node.isPresentCDCardinality()) {
-      node.getCDCardinality().accept(getRealThis());
+      node.getCDCardinality().accept(getTraverser());
       print(" ");
     }
 
-    node.getMCQualifiedType().accept(getRealThis());
+    node.getMCQualifiedType().accept(getTraverser());
     print(" ");
 
     if (node.isPresentCDQualifier()) {
-      node.getCDQualifier().accept(getRealThis());
+      node.getCDQualifier().accept(getTraverser());
     }
 
     if (node.isPresentCDRole()) {
       print(" ");
-      node.getCDRole().accept(getRealThis());
+      node.getCDRole().accept(getTraverser());
     }
   }
 
   @Override
   public void handle(ASTCDAssocRightSide node) {
     if (node.isPresentCDRole()) {
-      node.getCDRole().accept(getRealThis());
+      node.getCDRole().accept(getTraverser());
       print(" ");
     }
 
     if (node.isPresentCDQualifier()) {
-      node.getCDQualifier().accept(getRealThis());
+      node.getCDQualifier().accept(getTraverser());
       print(" ");
     }
 
-    node.getMCQualifiedType().accept(getRealThis());
+    node.getMCQualifiedType().accept(getTraverser());
     print(" ");
 
     if (node.isPresentCDCardinality()) {
-      node.getCDCardinality().accept(getRealThis());
+      node.getCDCardinality().accept(getTraverser());
       print(" ");
     }
 
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
 
     if (node.isPresentCDOrdered()) {
-      node.getCDOrdered().accept(getRealThis());
+      node.getCDOrdered().accept(getTraverser());
     }
   }
 
@@ -179,7 +181,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
     if (node.isPresentByType()) {
       print("[");
-      node.getByType().accept(getRealThis());
+      node.getByType().accept(getTraverser());
       print("]");
     }
   }
@@ -193,7 +195,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
   public void handle(ASTCDDirectComposition node) {
     printPreComments(node);
     print("-> ");
-    node.getCDAssocRightSide().accept(getRealThis());
+    node.getCDAssocRightSide().accept(getTraverser());
     print(";");
     printPostComments(node);
     println();
@@ -201,7 +203,7 @@ public class CDAssociationPrettyPrinter extends PrettyPrintUtil
 
   public String prettyprint(ASTCDAssociation node) {
     getPrinter().clearBuffer();
-    node.accept(getRealThis());
+    node.accept(getTraverser());
     return getPrinter().getContent();
   }
 }

@@ -8,6 +8,7 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
@@ -28,7 +29,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public Optional<ASTCDCardinality> deserializeCardinality(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<ASTCDCardinality> deserializeCardinality(JsonObject symbolJson) {
     if (symbolJson.hasMember("cardinality")) {
       return Optional.ofNullable(CDCardinalityDeSer.fromString(symbolJson.getStringMember("cardinality")));
     }
@@ -36,15 +37,15 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public Optional<VariableSymbol> deserializeAttributeQualifier(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<VariableSymbol> deserializeAttributeQualifier(JsonObject symbolJson) {
     if (symbolJson.hasMember("attributeQualifier")) {
       final String fieldName = symbolJson.getStringMember("attributeQualifier");
-      final SymTypeExpression type = SymTypeExpressionDeSer.deserializeMember("type", symbolJson, enclosingScope);
+      final SymTypeExpression type = SymTypeExpressionDeSer.deserializeMember("type", symbolJson, null);
       // crate a surrogate to link to the existing variable
       return Optional.of(OOSymbolsMill
           .fieldSymbolSurrogateBuilder()
           .setName(fieldName)
-          .setEnclosingScope(enclosingScope)
+          .setEnclosingScope((IOOSymbolsScope) type.getTypeInfo().getEnclosingScope())
           .setType(type)
           .build());
     }
@@ -52,62 +53,64 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   }
 
   @Override
-  public Optional<SymTypeExpression> deserializeTypeQualifier(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<SymTypeExpression> deserializeTypeQualifier(JsonObject symbolJson) {
     if (symbolJson.hasMember("typeQualifier")) {
-      return Optional.of(SymTypeExpressionDeSer.deserializeMember("typeQualifier", symbolJson, enclosingScope));
+      return Optional.of(SymTypeExpressionDeSer.deserializeMember("typeQualifier", symbolJson, null));
     }
     return Optional.empty();
   }
 
   @Override
-  public Optional<SymAssociation> deserializeAssociation(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
     return symbolJson.getIntegerMemberOpt("association")
         .flatMap(a -> Optional.ofNullable(symAssociations.get(a)));
   }
 
   @Override
-  public SymTypeExpression deserializeType(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
-    return SymTypeExpressionDeSer.deserializeMember("type", symbolJson, enclosingScope);
+  public SymTypeExpression deserializeType(JsonObject symbolJson) {
+    //third parameter enclosingScope will be removed in 6.7.0-SNAPSHOT, not used in this version anymore
+    //thus the third parameter is null
+    return SymTypeExpressionDeSer.deserializeMember("type", symbolJson, null);
   }
 
   @Override
-  public CDRoleSymbol deserializeCDRoleSymbol(JsonObject symbolJson, ICDAssociationScope enclosingScope) {
+  public CDRoleSymbol deserializeCDRoleSymbol(JsonObject symbolJson) {
     // copy from super.deserializeCDRoleSymbol
     de.monticore.symboltable.serialization.JsonDeSers.checkCorrectDeSerForKind(getSerializedKind(), symbolJson);
     de.monticore.cdassociation._symboltable.CDRoleSymbolBuilder builder = de.monticore.cdassociation.CDAssociationMill.cDRoleSymbolBuilder();
     builder.setFullName(symbolJson.getStringMember(de.monticore.symboltable.serialization.JsonDeSers.NAME));
     builder.setName(de.monticore.utils.Names.getSimpleName(builder.getFullName()));
-    builder.setIsDefinitiveNavigable(deserializeIsDefinitiveNavigable(symbolJson, enclosingScope));
-    if (deserializeCardinality(symbolJson, enclosingScope).isPresent()) {
-      builder.setCardinality(deserializeCardinality(symbolJson, enclosingScope).get());
+    builder.setIsDefinitiveNavigable(deserializeIsDefinitiveNavigable(symbolJson));
+    if (deserializeCardinality(symbolJson).isPresent()) {
+      builder.setCardinality(deserializeCardinality(symbolJson).get());
     }
     else {
       builder.setCardinalityAbsent();
     }
-    if (deserializeAttributeQualifier(symbolJson, enclosingScope).isPresent()) {
-      builder.setAttributeQualifier(deserializeAttributeQualifier(symbolJson, enclosingScope).get());
+    if (deserializeAttributeQualifier(symbolJson).isPresent()) {
+      builder.setAttributeQualifier(deserializeAttributeQualifier(symbolJson).get());
     }
     else {
       builder.setAttributeQualifierAbsent();
     }
-    if (deserializeTypeQualifier(symbolJson, enclosingScope).isPresent()) {
-      builder.setTypeQualifier(deserializeTypeQualifier(symbolJson, enclosingScope).get());
+    if (deserializeTypeQualifier(symbolJson).isPresent()) {
+      builder.setTypeQualifier(deserializeTypeQualifier(symbolJson).get());
     }
     else {
       builder.setTypeQualifierAbsent();
     }
-    deserializeAssociation(symbolJson, enclosingScope).ifPresent(builder::setAssociation);
-    builder.setIsOrdered(deserializeIsOrdered(symbolJson, enclosingScope));
-    builder.setIsPrivate(deserializeIsPrivate(symbolJson, enclosingScope));
-    builder.setIsProtected(deserializeIsProtected(symbolJson, enclosingScope));
-    builder.setIsPublic(deserializeIsPublic(symbolJson, enclosingScope));
-    builder.setIsStatic(deserializeIsStatic(symbolJson, enclosingScope));
-    builder.setIsFinal(deserializeIsFinal(symbolJson, enclosingScope));
-    builder.setType(deserializeType(symbolJson, enclosingScope));
-    builder.setIsReadOnly(deserializeIsReadOnly(symbolJson, enclosingScope));
+    deserializeAssoc(symbolJson).ifPresent(builder::setAssoc);
+    builder.setIsOrdered(deserializeIsOrdered(symbolJson));
+    builder.setIsPrivate(deserializeIsPrivate(symbolJson));
+    builder.setIsProtected(deserializeIsProtected(symbolJson));
+    builder.setIsPublic(deserializeIsPublic(symbolJson));
+    builder.setIsStatic(deserializeIsStatic(symbolJson));
+    builder.setIsFinal(deserializeIsFinal(symbolJson));
+    builder.setType(deserializeType(symbolJson));
+    builder.setIsReadOnly(deserializeIsReadOnly(symbolJson));
     // this is the only change
     de.monticore.cdassociation._symboltable.CDRoleSymbol symbol = builder.build(symbolJson.getBooleanMemberOpt("isLeft").orElse(false));
-    deserializeAdditionalCDRoleSymbolAttributes(symbol, symbolJson, enclosingScope);
+    deserializeAddons(symbol, symbolJson);
     return symbol;
   }
 }

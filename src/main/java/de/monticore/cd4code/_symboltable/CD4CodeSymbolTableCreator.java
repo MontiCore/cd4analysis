@@ -32,11 +32,10 @@ public class CD4CodeSymbolTableCreator extends CD4CodeSymbolTableCreatorTOP {
   @Override
   public ICD4CodeArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     ICD4CodeArtifactScope artifactScope = CD4CodeMill
-        .cD4CodeArtifactScopeBuilder()
-        .setPackageName(
-            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()))
-        .setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()))
-        .build();
+        .artifactScope();
+    artifactScope.setPackageName(
+            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()));
+    artifactScope.setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
     putOnStack(artifactScope);
     rootNode.accept(getRealThis());
     return artifactScope;

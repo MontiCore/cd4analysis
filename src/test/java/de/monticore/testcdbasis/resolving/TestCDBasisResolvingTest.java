@@ -39,9 +39,9 @@ public class TestCDBasisResolvingTest extends TestBasis {
     CDBasisMill.reset();
     CDBasisMill.init();
 
-    globalScope = CDBasisMill.cDBasisGlobalScope();
+    globalScope = CDBasisMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     CDBasisMill.cDBasisSymbolTableCreatorDelegator().createFromAST(compilationUnit);
     checkLogError();

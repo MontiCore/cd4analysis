@@ -8,12 +8,9 @@ import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -22,7 +19,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
-import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -158,11 +154,11 @@ public class CDCLI {
 
       // print model
 
-      final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-      ast.accept(cd4CodePrettyPrinter);
+      final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
+      ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
 
       if (ppOptionVal == null) {
-        System.out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+        System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
       }
       else {
         final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
@@ -170,7 +166,7 @@ public class CDCLI {
         file.getParentFile().mkdirs();
 
         try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+          out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
           System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
         }
       }
@@ -191,8 +187,8 @@ public class CDCLI {
       else {
         symbolPath = Paths.get(targetFile);
       }
-      final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
-      final String path = deser.store(artifactScope, symbolPath.toString());
+      final CD4CodeSymbols2Json symbols2Json = new CD4CodeSymbols2Json();
+      final String path = symbols2Json.store(artifactScope, symbolPath.toString());
       System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString().replace("\\","/"));
     }
 
@@ -223,7 +219,7 @@ public class CDCLI {
   }
 
   protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
-    final ICD4CodeGlobalScope globalScope = CD4CodeMill.cD4CodeGlobalScope();
+    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
     globalScope.setModelPath(modelPath);
     if (useBuiltInTypes) {

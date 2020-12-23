@@ -26,7 +26,7 @@ public class BuiltInTypes {
   public static void addBuiltInOOTypes(IOOSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
     utilTypes
         .forEach(t -> {
-          final IOOSymbolsScope scope = OOSymbolsMill.oOSymbolsScopeBuilder().build();
+          final IOOSymbolsScope scope = OOSymbolsMill.scope();
           final OOTypeSymbol typeSymbol = OOSymbolsMill
               .oOTypeSymbolBuilder()
               .setName(t)
@@ -43,7 +43,7 @@ public class BuiltInTypes {
   public static void addBuiltInTypes(IOOSymbolsScope utilTypesScope, List<String> utilTypes) {
     utilTypes
         .forEach(t -> {
-          final IBasicSymbolsScope scope = BasicSymbolsMill.basicSymbolsScopeBuilder().build();
+          final IBasicSymbolsScope scope = BasicSymbolsMill.scope();
           utilTypesScope.add(OOSymbolsMill
               .typeSymbolBuilder()
               .setName(t)

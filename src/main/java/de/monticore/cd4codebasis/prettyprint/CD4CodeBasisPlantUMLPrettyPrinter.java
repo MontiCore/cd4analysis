@@ -9,11 +9,15 @@ import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisHandler;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 
 public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-    implements CD4CodeBasisVisitor {
-  protected CD4CodeBasisVisitor realThis;
+    implements CD4CodeBasisVisitor2, CD4CodeBasisHandler {
+
+  protected CD4CodeBasisTraverser traverser;
 
   public CD4CodeBasisPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -21,17 +25,15 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   public CD4CodeBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
-    setRealThis(this);
   }
 
   @Override
-  public CD4CodeBasisVisitor getRealThis() {
-    return realThis;
+  public CD4CodeBasisTraverser getTraverser() {
+    return traverser;
   }
 
-  @Override
-  public void setRealThis(CD4CodeBasisVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CD4CodeBasisTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
@@ -40,16 +42,16 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print("{method} "); // be sure that this is handled as a field
 
       if (plantUMLConfig.getShowModifier()) {
-        node.getModifier().accept(getRealThis());
+        node.getModifier().accept(getTraverser());
       }
 
-      node.getMCReturnType().accept(getRealThis());
+      node.getMCReturnType().accept(getTraverser());
       print(" " + node.getName() + "(");
-      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+      printSeparatorCD4CodeBasis(getTraverser(), node.getCDParameterList().iterator(), ", ");
       print(")");
       if (node.isPresentCDThrowsDeclaration()) {
         print(" ");
-        node.getCDThrowsDeclaration().accept(getRealThis());
+        node.getCDThrowsDeclaration().accept(getTraverser());
       }
       println();
     }
@@ -61,15 +63,15 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       print("{method} "); // be sure that this is handled as a field
 
       if (plantUMLConfig.getShowModifier()) {
-        node.getModifier().accept(getRealThis());
+        node.getModifier().accept(getTraverser());
       }
 
       print(node.getName() + "(");
-      printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+      printSeparatorCD4CodeBasis(getTraverser(), node.getCDParameterList().iterator(), ", ");
       print(")");
       if (node.isPresentCDThrowsDeclaration()) {
         print(" ");
-        node.getCDThrowsDeclaration().accept(getRealThis());
+        node.getCDThrowsDeclaration().accept(getTraverser());
       }
       println();
     }
@@ -77,7 +79,7 @@ public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDParameter node) {
-    node.getMCType().accept(getRealThis());
+    node.getMCType().accept(getTraverser());
     if (node.isEllipsis()) {
       print("...");
     }

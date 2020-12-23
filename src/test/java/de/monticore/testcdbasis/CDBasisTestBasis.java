@@ -26,10 +26,10 @@ public class CDBasisTestBasis extends TestBasis {
     p = new TestCDBasisParser();
 
     final ICDBasisGlobalScope globalScope = CDBasisMill
-        .cDBasisGlobalScope();
+        .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cdBasisCoCos = new CDBasisCoCos();
   }

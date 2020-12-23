@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
   @Override
-  public List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson, ICDBasisScope enclosingScope) {
-    return SymTypeExpressionDeSer.deserializeListMember("superTypes", symbolJson, enclosingScope);
+  public List<SymTypeExpression> deserializeSuperTypes(JsonObject symbolJson) {
+    return SymTypeExpressionDeSer.deserializeListMember("superTypes", symbolJson, null);
   }
 }

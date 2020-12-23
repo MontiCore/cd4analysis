@@ -56,8 +56,8 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     assertEquals("de.monticore.cd4code.parser.B.getX", getXMethodSymbol.get().getFullName());
 
     final String path = getTmpFilePath(scope.getName() + ".cdsym");
-    deSer.store(scope, path);
-    final ICD4CodeArtifactScope deserialize = deSer.load(Paths.get(path).toUri().toURL());
+    symbols2Json.store(scope, path);
+    final ICD4CodeArtifactScope deserialize = symbols2Json.load(Paths.get(path).toUri().toURL());
     addGlobalScopeForDeserialization(deserialize);
 
     final Optional<CDTypeSymbol> deserializedB = deserialize.resolveCDType("B");
@@ -80,11 +80,10 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
 
   public ICD4CodeArtifactScope addGlobalScopeForDeserialization(ICD4CodeArtifactScope deserialize) {
     final ICD4CodeGlobalScope globalScopeForDeserialization = CD4CodeMill
-        .cD4CodeGlobalScopeBuilder()
-        .setModelPath(new ModelPath(Paths.get(PATH)))
-        .setModelFileExtension(CD4CodeGlobalScope.EXTENSION)
-        .addBuiltInTypes()
-        .build();
+        .globalScope();
+    globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScopeForDeserialization.setFileExt(CD4CodeGlobalScope.EXTENSION);
+    globalScopeForDeserialization.addBuiltInTypes();
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;
   }
