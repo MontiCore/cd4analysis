@@ -99,7 +99,7 @@ public class CDCLI {
     outputPath = cmd.getOptionValue("o", ".");
 
     if (cmd.hasOption("h")) {
-      if (cmd.hasOption("prettyprint")) {
+      if (cmd.hasOption("puml")) {
         printHelp(CDCLIOptions.SubCommand.PLANTUML);
       }
       else {
@@ -153,44 +153,40 @@ public class CDCLI {
       return;
     }
 
-    if (cmd.hasOption("prettyprint")) { // pretty print
-      String ppOptionVal = cmd.getOptionValue("prettyprint");
+    if (cmd.hasOption("pp")) { // pretty print
+      String ppOptionVal = cmd.getOptionValue("pp");
 
-      if (!cmd.hasOption("plantUML")) {
-        // print model
+      // print model
 
-        final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-        ast.accept(cd4CodePrettyPrinter);
+      final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
+      ast.accept(cd4CodePrettyPrinter);
 
-        if (ppOptionVal == null) {
-          System.out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-        }
-        else {
-          final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
-          final File file = outputPath.toFile();
-          file.getParentFile().mkdirs();
-
-          try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-            out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-            System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
-          }
-        }
+      if (ppOptionVal == null) {
+        System.out.println(cd4CodePrettyPrinter.getPrinter().getContent());
       }
-      else { // if option puml is given, then enable the plantuml options
-        final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
-        final String path = createPlantUML(plantUMLCmd, this.outputPath);
-        System.out.printf(PLANTUML_SUCCESSFUL, path);
+      else {
+        final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
+        final File file = outputPath.toFile();
+        file.getParentFile().mkdirs();
+
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
+          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+          System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+        }
       }
     }
 
     if (cmd.hasOption("s")) { // symbol table export
-      @SuppressWarnings("UnstableApiUsage") final List<String> artifactPackage = new ArrayList<>(Splitters.DOT.splitToList(artifactScope.getRealPackageName()));
-
       String targetFile = cmd.getOptionValue("s");
 
       Path symbolPath;
       if (targetFile == null) {
-        symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
+        if (modelFile != null) {
+          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
+        }
+        else {
+          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".cdsym");
+        }
       }
       else {
         symbolPath = Paths.get(targetFile);
@@ -203,6 +199,12 @@ public class CDCLI {
     // report
     if (cmd.hasOption("r")) {
       report(ast, cmd.getOptionValue("r", outputPath));
+    }
+
+    if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
+      final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
+      final String path = createPlantUML(plantUMLCmd, this.outputPath);
+      System.out.printf(PLANTUML_SUCCESSFUL, path);
     }
   }
 
@@ -238,27 +240,27 @@ public class CDCLI {
   }
 
   protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
-    final String output = Paths.get(outputPath, cmd.getOptionValue("prettyprint", ast.getCDDefinition().getName())).toUri().getPath();
+    final String output = Paths.get(outputPath, cmd.getOptionValue("puml", ast.getCDDefinition().getName())).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
 
     // the following options are set, when they are provided
-    if (plantUMLCmd.hasOption("showAtt")) {
+    if (plantUMLCmd.hasOption("showAttributes")) {
       plantUMLConfig.setShowAtt(true);
     }
-    if (plantUMLCmd.hasOption("showAssoc")) {
+    if (plantUMLCmd.hasOption("showAssociations")) {
       plantUMLConfig.setShowAssoc(true);
     }
     if (plantUMLCmd.hasOption("showRoles")) {
       plantUMLConfig.setShowRoles(true);
     }
-    if (plantUMLCmd.hasOption("showCard")) {
+    if (plantUMLCmd.hasOption("showCardinality")) {
       plantUMLConfig.setShowCard(true);
     }
     if (plantUMLCmd.hasOption("showModifier")) {
       plantUMLConfig.setShowModifier(true);
     }
-    if (plantUMLCmd.hasOption("ortho")) {
+    if (plantUMLCmd.hasOption("orthogonal")) {
       plantUMLConfig.setOrtho(true);
     }
     if (plantUMLCmd.hasOption("shortenWords")) {
@@ -268,10 +270,10 @@ public class CDCLI {
       plantUMLConfig.setShowComments(true);
     }
 
-    if (plantUMLCmd.hasOption("nodesep")) {
+    if (plantUMLCmd.hasOption("nodeSeparator")) {
       plantUMLConfig.setNodesep(Integer.parseInt(plantUMLCmd.getOptionValue("nodesep", "-1")));
     }
-    if (plantUMLCmd.hasOption("ranksep")) {
+    if (plantUMLCmd.hasOption("rankSeparator")) {
       plantUMLConfig.setRanksep(Integer.parseInt(plantUMLCmd.getOptionValue("ranksep", "-1")));
     }
 
