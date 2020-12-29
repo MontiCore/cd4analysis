@@ -73,8 +73,6 @@ dependencies {
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$jupiter_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
 repositories {
@@ -201,7 +199,7 @@ tasks.withType(Test) {
 }
 
 test {
-  useJUnitPlatform()
+  useJUnit()
 }
 
 // build javadoc jar in addition
