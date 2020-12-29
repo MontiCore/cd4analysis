@@ -53,19 +53,6 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
 
   public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
     this.symbolTablePrinterHelper = symbolTablePrinterHelper;
-
-    this.symbolTablePrinter
-        .getCDBasisVisitor()
-        .flatMap(v -> Optional.of((CDBasisSymbols2Json) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
-    this.symbolTablePrinter
-        .getCDAssociationVisitor()
-        .flatMap(v -> Optional.of((CDAssociationSymbols2Json) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
-    this.symbolTablePrinter
-        .getCD4AnalysisVisitor()
-        .flatMap(v -> Optional.of((CD4AnalysisSymbols2Json) v))
-        .ifPresent(v -> v.setSymbolTablePrinterHelper(symbolTablePrinterHelper));
   }
 
   @Override
@@ -99,5 +86,42 @@ public class CD4AnalysisScopeDeSer extends CD4AnalysisScopeDeSerTOP {
       symbol.setSpannedScope(spannedScope);
       scope.addSubScope(spannedScope);
     }
+  }
+  
+  @Override
+  public String serialize(de.monticore.cd4analysis._symboltable.ICD4AnalysisScope toSerialize) {
+    de.monticore.symboltable.serialization.JsonPrinter printer = new de.monticore.symboltable.serialization.JsonPrinter();
+    de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor symbolTablePrinter = new de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor();
+    
+    CD4AnalysisSymbols2Json cd4as2j = new de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json(printer);
+    cd4as2j.setSymbolTablePrinterHelper(symbolTablePrinterHelper);
+    symbolTablePrinter.setCD4AnalysisVisitor(cd4as2j);
+    
+    symbolTablePrinter.setBitExpressionsVisitor(new de.monticore.expressions.bitexpressions._symboltable.BitExpressionsSymbols2Json(printer));
+    symbolTablePrinter.setCommonExpressionsVisitor(new de.monticore.expressions.commonexpressions._symboltable.CommonExpressionsSymbols2Json(printer));
+    symbolTablePrinter.setMCLiteralsBasisVisitor(new de.monticore.literals.mcliteralsbasis._symboltable.MCLiteralsBasisSymbols2Json(printer));
+    symbolTablePrinter.setMCBasicTypesVisitor(new de.monticore.types.mcbasictypes._symboltable.MCBasicTypesSymbols2Json(printer));
+    symbolTablePrinter.setCDInterfaceAndEnumVisitor(new de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbols2Json(printer));
+    
+    CDBasisSymbols2Json cdbs2j = new de.monticore.cdbasis._symboltable.CDBasisSymbols2Json(printer);
+    cdbs2j.setSymbolTablePrinterHelper(symbolTablePrinterHelper);
+    symbolTablePrinter.setCDBasisVisitor(cdbs2j);
+    
+    symbolTablePrinter.setBasicSymbolsVisitor(new de.monticore.symbols.basicsymbols._symboltable.BasicSymbolsSymbols2Json(printer));
+    symbolTablePrinter.setExpressionsBasisVisitor(new de.monticore.expressions.expressionsbasis._symboltable.ExpressionsBasisSymbols2Json(printer));
+    symbolTablePrinter.setUMLModifierVisitor(new de.monticore.umlmodifier._symboltable.UMLModifierSymbols2Json(printer));
+    symbolTablePrinter.setMCArrayTypesVisitor(new de.monticore.types.mcarraytypes._symboltable.MCArrayTypesSymbols2Json(printer));
+    symbolTablePrinter.setMCCommonLiteralsVisitor(new de.monticore.literals.mccommonliterals._symboltable.MCCommonLiteralsSymbols2Json(printer));
+    
+    CDAssociationSymbols2Json cdas2j = new de.monticore.cdassociation._symboltable.CDAssociationSymbols2Json(printer);
+    cdas2j.setSymbolTablePrinterHelper(symbolTablePrinterHelper);
+    symbolTablePrinter.setCDAssociationVisitor(cdas2j);
+    
+    symbolTablePrinter.setMCCollectionTypesVisitor(new de.monticore.types.mccollectiontypes._symboltable.MCCollectionTypesSymbols2Json(printer));
+    symbolTablePrinter.setOOSymbolsVisitor(new de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json(printer));
+    symbolTablePrinter.setMCBasicsVisitor(new de.monticore.mcbasics._symboltable.MCBasicsSymbols2Json(printer));
+    symbolTablePrinter.setUMLStereotypeVisitor(new de.monticore.umlstereotype._symboltable.UMLStereotypeSymbols2Json(printer));
+    toSerialize.accept(symbolTablePrinter);
+    return printer.getContent();
   }
 }

@@ -127,8 +127,8 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
   public ICD4AnalysisArtifactScope getGlobalScopeForDeserialization(String serializedST) {
     final ICD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
 
-    final ICD4AnalysisGlobalScope globalScopeForDeserialization = CD4AnalysisMill
-        .globalScope();
+    // explicitly not using the mill for initializing a global scope
+    final ICD4AnalysisGlobalScope globalScopeForDeserialization = new de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope();
     globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScopeForDeserialization.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
     globalScopeForDeserialization.addBuiltInTypes();

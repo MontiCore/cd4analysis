@@ -6,6 +6,7 @@ package de.monticore.cd4analysis.typescalculator;
 
 import de.monticore.cd._symboltable.TypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -86,6 +87,7 @@ public class DeriveSymTypeOfCD4Analysis
 
   @Override
   public void init() {
+    this.traverser = CD4AnalysisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
     this.typesScopeHelper = new TypesScopeHelper();
 
