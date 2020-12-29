@@ -31,6 +31,10 @@ public class CD4CodeBasisFullPrettyPrinter {
     this.traverser = CD4CodeBasisMill.traverser();
     this.printer = printer;
 
+    CD4CodeBasisPrettyPrinter cd4aCode = new CD4CodeBasisPrettyPrinter(printer);
+    traverser.add4CD4CodeBasis(cd4aCode);
+    traverser.setCD4CodeBasisHandler(cd4aCode);
+    
     MCCommonLiteralsPrettyPrinter commonLiterals = new MCCommonLiteralsPrettyPrinter(printer);
     traverser.add4MCCommonLiterals(commonLiterals);
     traverser.setMCCommonLiteralsHandler(commonLiterals);
