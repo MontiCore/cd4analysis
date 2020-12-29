@@ -46,7 +46,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File file = new File(getFilePath("cdbasis/parser/Import.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CDCLI.main(new String[] { "-i", fileName, "-f", "false", "-p", getTmpAbsolutePath() });
+    CDCLI.main(new String[] { "-i", fileName, "-f", "false", "-p", "src/test/resources" });
     checkLogError();
   }
 

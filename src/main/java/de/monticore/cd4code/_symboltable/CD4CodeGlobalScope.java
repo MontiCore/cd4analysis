@@ -17,14 +17,17 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   public CD4CodeGlobalScope(){
     super();
+    setSymbolTableHelper(new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code()));
   }
 
   public CD4CodeGlobalScope(ModelPath modelPath) {
     super(modelPath, EXTENSION);
+    setSymbolTableHelper(new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code()));
   }
 
   public CD4CodeGlobalScope(ModelPath modelPath, String modelFileExtension) {
     super(modelPath, modelFileExtension);
+    setSymbolTableHelper(new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code()));
   }
 
   @Override
