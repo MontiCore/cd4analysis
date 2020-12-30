@@ -1,11 +1,22 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 
-This documentation is intended for  **modelers** who use the class diagram (CD)
-languages. A detailed documentation for **language engineers** using or
-extending the CD languages is located
-**[here](src/main/grammars/de/monticore/cd4analysis.md)**.
-We recommend that **language engineers** read this documentation before reading
-the detailed documentation.
+This introduction is 
+intended for  *modelers* who use the class diagram (CD)
+languages. We also provide a 
+[detailed documentation of CD languages](src/main/grammars/de/monticore/cd4analysis.md). 
+for *language engineers* using or
+extending one of the CD languages.
+
+The CD languages are mainly intended for  
+1. Analysis modelling (i.e. structures of the system context 
+   as well as data structures of the system)
+1. Code modelling (implementation) oriented
+1. Generating of code, data tables, transport functions and more
+1. It is also possible, to use CDs only as intermediate structure
+   to map from one or more other DSLs into an object-oriented 
+   target language, such as Java or C++. 
+   (E.g. the MontiCore generator maps grammars to CDs before generating code
+   from there).
 
 # An Example Model
 
