@@ -9,14 +9,16 @@ extending one of the CD languages.
 
 The CD languages are mainly intended for  
 1. Analysis modelling (i.e. structures of the system context 
-   as well as data structures of the system)
-1. Code modelling (implementation) oriented
-1. Generating of code, data tables, transport functions and more
-1. It is also possible, to use CDs only as intermediate structure
+   as well as data structures of the system),
+1. Code modelling (implementation) oriented, including method signatures,
+1. Generating code, data tables, transport functions and more.
+1. It is also possible to use CDs only as intermediate structure
    to map from one or more other DSLs into an object-oriented 
    target language, such as Java or C++. 
    (E.g. the MontiCore generator maps grammars to CDs before generating code
    from there).
+1. Finally CDs can also be used as reported results from any other 
+   generation or analysis process.
 
 # An Example Model
 
@@ -75,7 +77,7 @@ for
 * loading symbols from symbol files, and 
 * transforming CDs into the svg format and textual PlantUML models. 
 
-The requirements for building and using the SD CLI tool are that Java 8, Git, 
+The requirements for building and using the CD CLI tool are that Java 8, Git, 
 and Gradle are installed and available for use in Bash. 
 
 The following subsection describes how to download the CLI tool.
@@ -150,7 +152,7 @@ java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
  -o,--output <dir>                        Path of generated files (optional). The default value is ".".
  -p,--path <dirlist>                      Sets the artifact path for imported symbols separated by ';'. The
                                           default value is ".".
- -pp,--prettyprint <prettyprint>          Prints the input SDs to stdout or to the specified file (optional).
+ -pp,--prettyprint <prettyprint>          Prints the input CDs to stdout or to the specified file (optional).
  -puml,--plantUML                         Transform the input model to a PlantUML model.
  -r,--report <dir>                        Prints reports of the parsed artifact to the specified directory
                                           (optional). Available reports are language-specific. The default
@@ -169,7 +171,7 @@ If no further options are specified, the CLI tool parses the model, builds its
 symbol table, and then checks whether the model satisfies all context 
 conditions.
 
-For trying this out, copy the `SD4DevelopmentCLI.jar` into a directory of your 
+For trying this out, copy the `CD4DevelopmentCLI.jar` into a directory of your 
 choice. Afterwards, create a text file containing the following simple CD:
 ```
 classdiagram Example {
