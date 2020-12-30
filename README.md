@@ -63,42 +63,41 @@ The example CD shows
 
 Further examples can be found [here][ExampleModels].
 
-# Command Line Interface
+The CD language infrastructure can be used as CLI tool from shell as well 
+as within gradle or just as framework with dirct Java API access.
 
+# Command Line Interface
+ 
 This section describes the CLI tool of the CD language. 
 The CLI tool provides typical functionality used when
-processing models. To this effect, it provides funcionality
+processing models. It provides funcionality
 for 
-* parsing, 
-* coco-checking, 
+* parsing including coco-checking and creating symbol tables, 
 * pretty-printing, 
-* creating symbol tables, 
 * storing symbols in symbol files, 
 * loading symbols from symbol files, and 
 * transforming CDs into the svg format and textual PlantUML models. 
 
 The requirements for building and using the CD CLI tool are that Java 8, Git, 
-and Gradle are installed and available for use in Bash. 
-
-The following subsection describes how to download the CLI tool.
-Then, this document describes how to build the CLI tool from the source files.
-Afterwards, this document contains a tutorial for using the CLI tool.  
+and Gradle are installed and available for use e.g. in Bash. 
 
 ## Downloading the Latest Version of the CLI Tool
+
 A ready to use version of the CLI tool can be downloaded in the form of an
 executable JAR file.
 You can use [**this download link**][CLIDownload] for downloading the CLI tool. 
 
-Alternatively, you can download the CLI tool using `wget`.
-The following command downloads the latest version of the CLI tool and saves it
+Or you can use `wget`. This
+command downloads the latest version of the CLI tool 
 under the name `CDCLI.jar` in your working directory:
 ```shell
 wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli" -O CDCLI.jar
 ``` 
 
-## Building the CLI Tool from the Sources
+## Building the CLI Tool from the Sources (if desired)
  
-It is possible to build an executable JAR of the CLI tool from the source files
+As alternative to a download, 
+it is possible to build an executable JAR of the CLI tool from the source files
 located in GitHub. The following describes the process for building the CLI tool
 from the source files using Bash. For building an executable Jar of the CLI with
 Bash from the source files available in GitHub, execute the following commands.
@@ -111,7 +110,7 @@ Change the directory to the root directory of the cloned sources:
 ```shell
 cd cd4analysis
 ```
-Afterwards, build the source files with gradle (if `./gradlew.bat` is not 
+Then build the source files with gradle (if `./gradlew.bat` is not 
 recognized as a command in your shell, then use `./gradlew`).
 To this effect, execute the following two commands:
 ```shell
@@ -119,26 +118,22 @@ To this effect, execute the following two commands:
 ./gradlew.bat shadowJar
 ```
 Congratulations! You can now find the executable JAR file `CDCLI.jar` in
- the directory `target/libs` (accessible via `cd target/libs`).
+the directory `target/libs`.
 
 ## Tutorial: Getting Started Using the CD CLI Tool
-The previous sections describe how to obtain an executable JAR file
-(CD CLI tool). This section provides a tutorial for
-using the CD CLI tool. The following examples assume
-that you locally named the CLI tool `CDCLI.jar`.
-If you built the CLI tool from the sources or used the `wget`
-command above, then you are fine. If you manually downloaded 
-the CLI tool, then you should consider renaming the downloaded JAR. 
+
+The following small tutorial should help to get an idea 
+of how to use the CD CLI tool given in `CDCLI.jar`.
 
 ### First Steps
-Open a command line shell and change your working directory to the directory 
-containing the CLI tool. For executing the CLI tool, execute the following 
-command:
+
+Let us execute the CLI tool with the following 
+command and no parameters:
 ```shell
 java -jar CDCLI.jar
 ```
 
-Executing the Jar file without any options prints usage information of the CLI 
+This prints usage information of the CLI 
 tool to the console:
 ```shell
 $ java -jar CDCLI.jar
@@ -166,15 +161,25 @@ java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
 ```
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
-which takes the file path of exactly one file containing CD models as input.
-If no further options are specified, the CLI tool parses the model, builds its 
+which takes file containing CD models as input.
+If no further options are specified, the CLI tool processes the model,
+but does not produce any further output.
+That means it parses the model, builds its 
 symbol table, and then checks whether the model satisfies all context 
-conditions.
+conditions. Only errors or success are printed.
+
 
 For trying this out, copy the `CD4DevelopmentCLI.jar` into a directory of your 
-choice. Afterwards, create a text file containing the following simple CD:
+choice. Afterwards, create a text file `Example.cd` 
+containing the following simple CD 
+(please note that like in Java, filename and modelname in the file are
+ equal):
 ```
 classdiagram Example {
+  class Person {
+    int age;
+    String surename;
+  }
 }
 ```
 
@@ -191,9 +196,6 @@ You may notice that the CLI tool prints the following text to the console:
 Successfully parsed Example
 Successfully checked the CoCos for Example
 ```
-Thus, the tool successfully parsed the artifact and successfully checked the 
-conditions for the CDs contained in the artifact. The tool further
-constructed the symbol tables of the CDs contained in the parsed artifact.
 
 The contents of the input CD artifact can also be piped to the CLI tool.
 For trying this out, execute the following command:
@@ -204,84 +206,90 @@ cat Example.cd | java -jar CDCLI.jar --stdin
 The output is the same as for the previous command.
 
 ### Step 2: Pretty-Printing
+
 The CLI tool provides a pretty-printer for the CD language.
 A pretty-printer can be used, e.g., to fix the formatting of files containing 
-CDs.
+CDs, but has its main application to print internally constructed 
+or transformed CDs.
+
 To execute the pretty-printer, the `-pp,--prettyprint` option can be used.
 Using the option without any arguments pretty-prints the models contained in the
-input files to the console.
+input files to the console:
 
-Execute the following command for trying this out:
 ```shell
 java -jar CDCLI.jar -i Example.cd -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
 ```
-Successfully parsed Example
-Successfully checked the CoCos for Example
-
 classdiagram Example {
   package de.monticore {
+    class Person {
+      int age;
+      String surename;
+    }
   }
 }
 ```
+
 The pretty-printed CD contains the package `de.monticore` as the artifact
 contains no package and `de.monticore` is the default package.
 
 It is possible to pretty-print the models contained in the input file to an 
-output file. For this task, it is possible to provide the name of the output 
-file as an argument to the `-pp,--prettyprint <prettyPrintOutput>` option.
+output file (here: `PPExample.cd`):
 
-Execute the following command for trying this out:
 ```shell
 java -jar CDCLI.jar -i Example.cd -pp PPExample.cd
 ```
-The command prints the pretty-printed model contained in the input file into the
-file `PPExample.cd`.
+
 
 ### Step 3: Importing Symbol Files Using a Path
-In this section, we import a symbol file defining type symbols that are used by 
+
+MontiCore is designed for modularity (both on the model and the language level).
+The CD languages are participating in the symbol exchange infrastructure.
+We import a symbol file defining type symbols that are used by 
 a CD. 
 
-Let us now consider an example that is more complex than `Example.cd`.
-Recall the CD `MyLife` from the `An Example Model` section above.
-For continuing, copy the textual representation of the CD `MyLife` and save it 
-in a file `MyLife.cd` contained in the directory `monticore`, which is again 
-contained in the directory where the file `CDCLI.jar` is located. Thus, relative
-to your working directory, the file `MyLife.cd` is contained in the directory 
-`monticore` and your working directory should contain the CLI Jar `CDCLI.jar`.   
+Let us now consider the example `MyLife` from above.
+Please, copy the content of `MyLife` and save it 
+in a file `monticore/MyLife.cd`. The directory `monticore` is needed 
+because of the package definition in line 1.
 
 Execute the following command for processing the file `MyLife.cd`:
 ```shell
 java -jar CDCLI.jar -i monticore/MyLife.cd
 ```
 
-After executing the command, you may notice that the CLI tool produces some 
-output. The output states the reason why a context condition is not satisfied by
-the model. The output contains the following error message: 
+After executing the command, 
+the output states that a context condition is not satisfied by
+the model: 
 ```
-[ERROR] 0xA1038 TypeSymbolSurrogate Could not load full information of 'Address' 
+[ERROR] 0xA1038 TypeSymbolSurrogate Could not load full information of 'Address' ...
 ```
-The error message indicates that there seems to be a problem with the used type 
-`Address`. Indeed, the tool tries to load some type information about the 
-`Address` type. However, we never defined this type at any place, and therefore 
-the tool is not able to find any information of the `Address` type.
 
-There must be another model defining the type `Address`. 
-The model must provide the information about the definition of this type to its 
-environment via storing this information in its symbol file (its symbol table 
-stored in the file system).
+To define the missing the type `Address, e.g. 
+another model is needed.
+Respectively its symbol table is available in the file system.
 
-The symbol file of this model has to be imported by the CD model for accessing 
-the type. The type can be defined in an arbitrary model of an arbitrary language
-, as long as the information about the definition of the type is stored in the 
-symbol file of the model and the CD imports this symbol file. 
-This may sound complicated at this point, but conceptually it is actually quite 
-simple. This has even a huge advantage because it allows us to use the CD 
-language with any other language that defines types. You could even use 
-languages that are not defined with MontiCore, as long as suitable symbol files 
-are generated from the models of these languages.
+The symbol file of this model has to be imported by the CD model. 
+The type can be defined in an arbitrary model of an arbitrary language, 
+this other model only needs to be processed and its symbols stored beforehand.
+This approach has a number of advantages:
+* it allows us to use the CD language with any other language that defines types,
+* the tools themselves remain decoupled, 
+* the build process can be organized in an incremental effective way
+    (when using e.g. `gradle` or make, but not mvn). 
+* even symbols from languages that not defined with MontiCore can be
+  integrated (e.g. we do that with handwritten code from programming languages).
+
+# TODO Start
+
+(From BR): Vorschlag wie wäre es, wenn wir nicht ein sym file sondern ein 
+anderes CD zur Verfügung stellen? -- und dann übersetzen lassen.
+* dazu ist dann der Text ab hier anzupassen.
+* Und dabei bitte auch auf Füllsätze verzichten, sowie nur konkrete Beispiele bringen.
+* Wahrscheinlich muss das Tutorial dazu umgestellt werden: erst Symbols
+    speichern & und dann laden
 
 The following describes how to fix the error in the example model `MyLife.sd` 
 by importing a symbol file defining the (yet undefined) type. 
@@ -352,6 +360,8 @@ This means that it processed
 the model successfully without any context condition violations.
 Great! 
 
+
+
 ### Step 4: Storing Symbols
 The previous section describes how to load symbols from an existing symbol file.
 Now, we will use the CLI tool to store a symbol file for our `MyLife.cd` model.
@@ -393,7 +403,11 @@ java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym
 
 Congratulations, you have just finished the tutorial about saving CD symbol files!
 
-### Using PlantUML to create graphical representations of cd files
+# TODO ENDE.
+
+
+### Using PlantUML to create graphical representations of CD files
+
 The CDCLI provides the option to create plantUML and svg files.
 PlantUML can be configured further to add additional details.
 Using the previously used model files, a plantUML model can be created with:
