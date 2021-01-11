@@ -14,8 +14,8 @@ public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
 
   @SuppressWarnings("OptionalGetWithoutIsPresent")
   public List<String> getCDPackageList() {
-    if (isPresentCDPackageStatement()) {
-      return this.cDPackageStatement.get().getPackageList();
+    if (isPresentMCPackageDeclaration()) {
+      return this.mCPackageDeclaration.get().getMCQualifiedName().getPartsList();
     }
     else {
       return Collections.emptyList();

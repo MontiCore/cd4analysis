@@ -14,10 +14,8 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
-import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Collections;
 import java.util.Deque;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,9 +52,9 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   public ICDBasisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     ICDBasisArtifactScope artifactScope = CDBasisMill
         .artifactScope();
-        artifactScope.setPackageName(
-            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()));
-        artifactScope.setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
+    artifactScope.setPackageName(
+        rootNode.isPresentMCPackageDeclaration() ? rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName() : "");
+    artifactScope.setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
     putOnStack(artifactScope);
     rootNode.accept(getRealThis());
     return artifactScope;

@@ -52,7 +52,7 @@ public class CDBasisScopeSkeletonsCreator
     ICDBasisArtifactScope artifactScope = CDBasisMill
         .artifactScope();
     artifactScope.setPackageName(
-            Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()));
+            rootNode.isPresentMCPackageDeclaration() ? rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName() : "");
     artifactScope.setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
     putOnStack(artifactScope);
     rootNode.accept(getRealThis());

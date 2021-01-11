@@ -44,8 +44,8 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
 
   @Override
   public void visit(ASTCDCompilationUnit node) {
-    if (node.isPresentCDPackageStatement()) {
-      packageNameList = node.getCDPackageStatement().getPackageList();
+    if (node.isPresentMCPackageDeclaration()) {
+      packageNameList = node.getMCPackageDeclaration().getMCQualifiedName().getPartsList();
     }
     else {
       packageNameList = Arrays.asList("de", "monticore");

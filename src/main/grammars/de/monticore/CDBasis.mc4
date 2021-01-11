@@ -31,14 +31,10 @@ component grammar CDBasis extends
       import statements, package definition
   */
   CDCompilationUnit =
-    CDPackageStatement?
+    MCPackageDeclaration?
     MCImportStatement*
     CDTargetImportStatement*
     CDDefinition;
-
-  /** The package statement denotes the package of the model file itself
-  */
-  CDPackageStatement = "package" package:(Name& || ".")+ ";"; // TODO SVa change to use MCPackageDeclaration!!!
 
   /** This import statement allows to explain in the model, which
       additional imports are relevant for the target, this includes
@@ -49,7 +45,7 @@ component grammar CDBasis extends
 
   /** The class diagram: defines a set of elements
   */
-  CDDefinition = // TODO SVa: implements Diagram!!! =
+  CDDefinition implements Diagram =
     Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */

@@ -3,6 +3,7 @@ package de.monticore.cd4code._symboltable.staged;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code.trafo.CD4CodeTrafo4DefaultsDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 @RunWith(Parameterized.class)
-public class CD4CodePhasedSTTest extends CD4CodeTestBasis {
+public class CD4CodeCheckAllModelsTest extends CD4CodeTestBasis {
 
   protected String modelName;
 
@@ -38,7 +39,7 @@ public class CD4CodePhasedSTTest extends CD4CodeTestBasis {
         .collect(Collectors.toList());
   }
 
-  public CD4CodePhasedSTTest(String modelName) {
+  public CD4CodeCheckAllModelsTest(String modelName) {
     this.modelName = modelName;
   }
 
@@ -48,18 +49,9 @@ public class CD4CodePhasedSTTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
-/*
-    final Optional<CDTypeSymbol> cdTypeSymbol = scope.resolveCDType("a2.A2");
-    assertTrue(cdTypeSymbol.isPresent());
+    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+    node.accept(new CD4CodeTrafo4DefaultsDelegator());
 
-    assertEquals("A", cdTypeSymbol.get().getSuperClassesOnly().get(0).getTypeInfo().getName());
-    checkLogError();
-
-    final Optional<FieldSymbol> fieldSymbol = scope.resolveField("a.B.a1");
-    assertTrue(fieldSymbol.isPresent());
-    assertEquals("a2.A2", fieldSymbol.get().getType().print());
-*/
     cd4CodeCoCos.createNewChecker().checkAll(node);
   }
 }

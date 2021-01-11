@@ -34,7 +34,7 @@ public class CD4AnalysisSymbolTableCreator
   public ICD4AnalysisArtifactScope createFromAST(ASTCDCompilationUnit rootNode) {
     ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
         .artifactScope();
-    artifactScope.setPackageName(Names.getQualifiedName(rootNode.isPresentCDPackageStatement() ? rootNode.getCDPackageStatement().getPackageList() : Collections.emptyList()));
+    artifactScope.setPackageName(rootNode.isPresentMCPackageDeclaration() ? rootNode.getMCPackageDeclaration().getMCQualifiedName().getQName() : "");
     artifactScope.setImportsList(rootNode.getMCImportStatementList().stream().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
     artifactScope.setName(rootNode.getCDDefinition().getName());
 

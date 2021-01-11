@@ -13,6 +13,7 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCPackageDeclaration;
 import de.se_rwth.commons.Names;
 
 public class CDBasisPrettyPrinter extends PrettyPrintUtil
@@ -40,8 +41,10 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void traverse(ASTCDCompilationUnit node) {
     printPreComments(node);
-    if (node.isPresentCDPackageStatement()) {
-      node.getCDPackageStatement().accept(getTraverser());
+    if (node.isPresentMCPackageDeclaration()) {
+      // TODO SVa: remove when implemented in MC (MCBasicTypesPrettyPrinter.java) (#2687)
+      visit(node.getMCPackageDeclaration());
+      // node.getMCPackageDeclaration().accept(getTraverser());
       printPreComments(node);
     }
     for (ASTMCImportStatement i : node.getMCImportStatementList()) {
@@ -61,10 +64,12 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
     printPostComments(node);
   }
 
-  @Override
-  public void visit(ASTCDPackageStatement node) {
+  // TODO SVa: remove when implemented in MC (MCBasicTypesPrettyPrinter.java) (#2687)
+  public void visit(ASTMCPackageDeclaration node) {
     printPreComments(node);
-    print("package " + Names.getQualifiedName(node.getPackageList()) + ";");
+    print("package ");
+    node.accept(getTraverser());
+    print(";");
     printPostComments(node);
     println();
   }

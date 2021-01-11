@@ -25,8 +25,8 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
     String modelName = ast.getCDDefinition().getName();
     String packageName = Names.getPackageFromPath(Names.getPathFromFilename(pathName));
     String packageDeclaration;
-    if (ast.isPresentCDPackageStatement()) {
-      packageDeclaration = Names.getQualifiedName(ast.getCDPackageStatement().getPackageList());
+    if (ast.isPresentMCPackageDeclaration()) {
+      packageDeclaration = ast.getMCPackageDeclaration().getMCQualifiedName().getQName();
     }
     else {
       packageDeclaration = "";
@@ -45,7 +45,7 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
               + " of the diagram (%s) must not differ from the"
               + " package of the diagram file.",
           packageDeclaration, fileName),
-          ast.isPresentCDPackageStatement() ? ast.getCDPackageStatement().get_SourcePositionStart() : ast.get_SourcePositionStart());
+          ast.isPresentMCPackageDeclaration() ? ast.getMCPackageDeclaration().get_SourcePositionStart() : ast.get_SourcePositionStart());
     }
   }
 
