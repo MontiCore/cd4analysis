@@ -19,13 +19,18 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class CD4CodeResolver
-    implements ICDTypeSymbolResolver, IOOTypeSymbolResolver, ITypeSymbolResolver,
+    implements IDiagramSymbolResolver, ICDTypeSymbolResolver, IOOTypeSymbolResolver, ITypeSymbolResolver,
     ICDRoleSymbolResolver, IFieldSymbolResolver, IVariableSymbolResolver,
     ICDMethodSignatureSymbolResolver, IMethodSymbolResolver, IFunctionSymbolResolver {
   protected final ICD4CodeGlobalScope cdGlobalScope;
 
   public CD4CodeResolver(ICD4CodeGlobalScope cdGlobalScope) {
     this.cdGlobalScope = cdGlobalScope;
+  }
+
+  @Override
+  public List<DiagramSymbol> resolveAdaptedDiagramSymbol(boolean foundSymbols, String name, AccessModifier modifier, Predicate<DiagramSymbol> predicate) {
+    return cdGlobalScope.resolveDiagramMany(foundSymbols, name, modifier, predicate);
   }
 
   @Override
