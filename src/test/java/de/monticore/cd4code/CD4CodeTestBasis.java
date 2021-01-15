@@ -8,6 +8,7 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code.cocos.CD4CodeCoCos;
@@ -34,7 +35,9 @@ public class CD4CodeTestBasis extends TestBasis {
         .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.addBuiltInTypes();
+    if (globalScope instanceof CD4CodeGlobalScope) {
+      ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
+    }
     globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cd4CodeCoCos = new CD4CodeCoCos();

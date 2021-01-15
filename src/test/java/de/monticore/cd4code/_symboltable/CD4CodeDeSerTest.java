@@ -80,7 +80,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
 
   public ICD4CodeArtifactScope addGlobalScopeForDeserialization(ICD4CodeArtifactScope deserialize) {
     // explicitly not using the mill for initializing a global scope
-    final ICD4CodeGlobalScope globalScopeForDeserialization = new CD4CodeGlobalScope();
+    final CD4CodeGlobalScope globalScopeForDeserialization = new CD4CodeGlobalScope();
     globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScopeForDeserialization.setFileExt(CD4CodeGlobalScope.EXTENSION);
     globalScopeForDeserialization.addBuiltInTypes();

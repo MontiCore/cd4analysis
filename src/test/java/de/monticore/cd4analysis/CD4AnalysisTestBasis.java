@@ -11,6 +11,7 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.io.paths.ModelPath;
 import org.junit.Before;
 
@@ -31,7 +32,9 @@ public class CD4AnalysisTestBasis extends TestBasis {
         .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.addBuiltInTypes();
+    if (globalScope instanceof CD4AnalysisGlobalScope) {
+      ((CD4AnalysisGlobalScope) globalScope).addBuiltInTypes();
+    }
     globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cd4AnalyisCoCos = new CD4AnalysisCoCos();

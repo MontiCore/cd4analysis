@@ -128,7 +128,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ICD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
 
     // explicitly not using the mill for initializing a global scope
-    final ICD4AnalysisGlobalScope globalScopeForDeserialization = new CD4AnalysisGlobalScope();
+    final CD4AnalysisGlobalScope globalScopeForDeserialization = new CD4AnalysisGlobalScope();
     globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScopeForDeserialization.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
     globalScopeForDeserialization.addBuiltInTypes();

@@ -47,7 +47,6 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
     return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
-  @Override
   public void addBuiltInTypes() {
     if (getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
       final ICD4CodeArtifactScope artifactScope = CD4CodeMill

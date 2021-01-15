@@ -7,6 +7,7 @@ package de.monticore.testtypeimporter;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.resolver.CD4CodeResolver;
 import de.monticore.io.paths.ModelPath;
@@ -35,7 +36,9 @@ public class TestTypeImporterTest extends TestBasis {
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     cdGlobalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
-    cdGlobalScope.addBuiltInTypes();
+    if (globalScope instanceof CD4CodeGlobalScope) {
+      ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
+    }
 
     final CD4CodeResolver c = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolver(c);

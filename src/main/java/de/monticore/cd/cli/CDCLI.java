@@ -222,8 +222,8 @@ public class CDCLI {
     final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
     globalScope.setModelPath(modelPath);
-    if (useBuiltInTypes) {
-      globalScope.addBuiltInTypes();
+    if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
+      ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
     }
 
     final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator();

@@ -47,7 +47,6 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
-  @Override
   public void addBuiltInTypes() {
     if (!getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
       final ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
