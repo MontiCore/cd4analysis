@@ -17,6 +17,14 @@ import java.util.Optional;
 
 public class CD4AnalysisParser extends CD4AnalysisParserTOP {
   final CD4AnalysisDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
+  boolean _checkFileAndPackageName = false;
+
+  public CD4AnalysisParser() {
+  }
+
+  public CD4AnalysisParser(boolean checkFileAndPackageName) {
+    this._checkFileAndPackageName = checkFileAndPackageName;
+  }
 
   public static void checkFileAndPackageName(String fileName, ASTCDCompilationUnit ast) {
     String pathName = Paths.get(fileName).toString();
@@ -54,7 +62,9 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
       throws IOException {
     final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
     parse.ifPresent(p -> p.accept(afterParseTrafo));
-    parse.ifPresent(p -> checkFileAndPackageName(fileName, p));
+    if (_checkFileAndPackageName) {
+      parse.ifPresent(p -> checkFileAndPackageName(fileName, p));
+    }
     return parse;
   }
 

@@ -13,13 +13,16 @@ import java.util.Optional;
 
 public class CD4CodeParser extends CD4CodeParserTOP {
   final CD4CodeAfterParseDelegatorVisitor afterParseTrafo = new CD4CodeAfterParseDelegatorVisitor();
+  boolean _checkFileAndPackageName = false;
 
   @Override
   public Optional<ASTCDCompilationUnit> parse(String fileName)
       throws IOException {
     final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
     parse.ifPresent(p -> p.accept(afterParseTrafo));
-    parse.ifPresent(p -> CD4AnalysisParser.checkFileAndPackageName(fileName, p));
+    if (_checkFileAndPackageName) {
+      parse.ifPresent(p -> CD4AnalysisParser.checkFileAndPackageName(fileName, p));
+    }
     return parse;
   }
 
