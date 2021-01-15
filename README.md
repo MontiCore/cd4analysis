@@ -91,7 +91,7 @@ Or you can use `wget`. This
 command downloads the latest version of the CLI tool 
 under the name `CDCLI.jar` in your working directory:
 ```shell
-wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli" -O CDCLI.jar
+wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
 ## Building the CLI Tool from the Sources (if desired)
@@ -446,7 +446,7 @@ java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml MyLife --orthogonal 
 ```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
-[CLIDownload]: https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=cd4analysis&maven.extension=jar&maven.classifier=cli
+[CLIDownload]: http://monticore.de/download/CDCLI.jar
 
 ## Further Information
 
