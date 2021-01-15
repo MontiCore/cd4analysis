@@ -8,6 +8,7 @@ import de.monticore.cd.cli.CDCLI;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseDelegatorVisitor;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.apache.commons.cli.ParseException;
 import org.junit.Ignore;
@@ -28,6 +29,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cdbasis/parser/Import.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4CodeAfterParseDelegatorVisitor().transform(node);
 
     final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
@@ -43,7 +45,8 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());
     final String otherFileName = otherFile.toString();
-    CDCLI.main(new String[] { "-i", otherFileName, "-f", "false", "-p", "src/test/resources", "-o", getTmpAbsolutePath(), "-s", "Simple.cdsym" });
+    CDCLI.main(new String[] { "-i", otherFileName, "-f", "false", "-p", "src/test/resources", "-o", getTmpAbsolutePath(), "-s",
+        getTmpFilePath("Simple.cdsym") });
 
     final File file = new File(getFilePath("cdbasis/parser/Import.cd"));
     assertTrue(file.exists());

@@ -6,7 +6,7 @@ package de.monticore.cdinterfaceandenum;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cdinterfaceandenum._parser.CDInterfaceAndEnumAfterParseTrafo;
+import de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumAfterParseTrafo;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPlantUMLPrettyPrinter;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;

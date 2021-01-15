@@ -6,7 +6,7 @@ package de.monticore.cdbasis;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cdbasis._parser.CDBasisAfterParseTrafo;
+import de.monticore.cdbasis.trafo.CDBasisAfterParseTrafo;
 import de.monticore.cdbasis.prettyprint.CDBasisPlantUMLPrettyPrinter;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
 import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;

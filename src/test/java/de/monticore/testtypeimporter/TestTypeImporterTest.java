@@ -29,11 +29,16 @@ import static org.junit.Assert.*;
 public class TestTypeImporterTest extends TestBasis {
   @Test
   public void createST() throws IOException {
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    TestTypeImporterMill.reset();
+    TestTypeImporterMill.init();
     final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.setFileExt("def");
 
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
+    cdGlobalScope.clear();
     cdGlobalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     cdGlobalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
     if (cdGlobalScope instanceof CD4CodeGlobalScope) {

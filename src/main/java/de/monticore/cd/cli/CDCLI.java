@@ -11,6 +11,7 @@ import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseDelegatorVisitor;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -215,6 +216,8 @@ public class CDCLI {
       cu = parser.parse(modelReader);
     }
     ast = cu.get();
+
+    new CD4CodeAfterParseDelegatorVisitor().transform(ast);
     modelName = ast.getCDDefinition().getName();
   }
 

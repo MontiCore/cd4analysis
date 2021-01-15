@@ -2,13 +2,15 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cdassociation._parser;
+package de.monticore.cdassociation.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
-import de.monticore.cdassociation._visitor.CDAssociationVisitor;
+import de.monticore.cdassociation._visitor.CDAssociationHandler;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier.UMLModifierMill;
@@ -17,8 +19,8 @@ import de.se_rwth.commons.StringTransformations;
 import java.util.Collections;
 
 public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
-    implements CDAssociationVisitor {
-  protected CDAssociationVisitor realThis;
+    implements CDAssociationVisitor2, CDAssociationHandler {
+  protected CDAssociationTraverser traverser;
 
   public CDAssociationAfterParseTrafo() {
     this(new CDAfterParseHelper());
@@ -26,17 +28,16 @@ public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
 
   public CDAssociationAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
-    setRealThis(this);
   }
 
   @Override
-  public CDAssociationVisitor getRealThis() {
-    return realThis;
+  public CDAssociationTraverser getTraverser() {
+    return traverser;
   }
 
   @Override
-  public void setRealThis(CDAssociationVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDAssociationTraverser traverser) {
+    this.traverser = traverser;
   }
 
   /**

@@ -6,6 +6,7 @@ package de.monticore.cd4analysis._parser;
 
 import com.google.common.io.Files;
 import de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseDelegatorVisitor;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -16,7 +17,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class CD4AnalysisParser extends CD4AnalysisParserTOP {
-  final CD4AnalysisDelegatorVisitor afterParseTrafo = new CD4AnalysisAfterParseDelegatorVisitor();
   boolean _checkFileAndPackageName = false;
 
   public CD4AnalysisParser() {
@@ -61,26 +61,9 @@ public class CD4AnalysisParser extends CD4AnalysisParserTOP {
   public Optional<ASTCDCompilationUnit> parse(String fileName)
       throws IOException {
     final Optional<ASTCDCompilationUnit> parse = super.parse(fileName);
-    parse.ifPresent(p -> p.accept(afterParseTrafo));
     if (_checkFileAndPackageName) {
       parse.ifPresent(p -> checkFileAndPackageName(fileName, p));
     }
-    return parse;
-  }
-
-  @Override
-  public Optional<ASTCDCompilationUnit> parse(Reader reader)
-      throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = super.parse(reader);
-    parse.ifPresent(p -> p.accept(afterParseTrafo));
-    return parse;
-  }
-
-  @Override
-  public Optional<ASTCDCompilationUnit> parse_String(String str)
-      throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = super.parse_String(str);
-    parse.ifPresent(p -> p.accept(afterParseTrafo));
     return parse;
   }
 }

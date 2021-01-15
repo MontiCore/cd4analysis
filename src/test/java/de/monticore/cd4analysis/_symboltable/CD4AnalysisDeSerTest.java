@@ -6,6 +6,7 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseDelegatorVisitor;
 import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4DefaultsDelegator;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
@@ -34,6 +35,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/STTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4AnalysisAfterParseDelegatorVisitor().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
 
@@ -50,9 +52,10 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/SimpleSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4AnalysisAfterParseDelegatorVisitor().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
-    node.accept(new CD4AnalysisTrafo4DefaultsDelegator(CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator()));
+    new CD4AnalysisTrafo4DefaultsDelegator(CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator()).transform(node);
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -67,6 +70,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4AnalysisAfterParseDelegatorVisitor().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
 
@@ -93,6 +97,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4AnalysisAfterParseDelegatorVisitor().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");

@@ -5,25 +5,20 @@
 package de.monticore.cd4code.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeHandler;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code._visitor.CD4CodeVisitor;
 import de.monticore.cd4code._visitor.CD4CodeVisitor2;
 
-public class CD4CodeTrafo4Defaults extends CDAfterParseHelper
+public class CD4CodeAfterParseTrafo extends CDAfterParseHelper
     implements CD4CodeVisitor2, CD4CodeHandler {
   protected CD4CodeTraverser traverser;
-  protected CD4CodeVisitor symbolTableCreator;
 
-  public CD4CodeTrafo4Defaults() {
-    this(new CDAfterParseHelper(),
-        CD4CodeMill.cD4CodeSymbolTableCreator());
+  public CD4CodeAfterParseTrafo() {
+    this(new CDAfterParseHelper());
   }
 
-  public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4CodeVisitor symbolTableCreator) {
+  public CD4CodeAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
-    this.symbolTableCreator = symbolTableCreator;
   }
 
   @Override

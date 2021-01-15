@@ -10,13 +10,16 @@ import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreator;
+import de.monticore.cdassociation._visitor.CDAssociationHandler;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 
-import static de.monticore.cdassociation._parser.CDAssociationAfterParseTrafo.createASTCDRoleIfAbsent;
+import static de.monticore.cdassociation.trafo.CDAssociationAfterParseTrafo.createASTCDRoleIfAbsent;
 
 public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
-    implements CDAssociationVisitor {
-  protected CDAssociationVisitor realThis;
+    implements CDAssociationVisitor2, CDAssociationHandler {
+  protected CDAssociationTraverser traverser;
   protected CDAssociationVisitor symbolTableCreator;
 
   public CDAssociationTrafo4Defaults() {
@@ -26,18 +29,17 @@ public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
 
   public CDAssociationTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDAssociationVisitor symbolTableCreator) {
     super(cdAfterParseHelper);
-    setRealThis(this);
     this.symbolTableCreator = symbolTableCreator;
   }
 
   @Override
-  public CDAssociationVisitor getRealThis() {
-    return realThis;
+  public CDAssociationTraverser getTraverser() {
+    return traverser;
   }
 
   @Override
-  public void setRealThis(CDAssociationVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDAssociationTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override

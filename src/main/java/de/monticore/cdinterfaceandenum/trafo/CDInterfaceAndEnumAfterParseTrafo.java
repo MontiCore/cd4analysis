@@ -2,16 +2,18 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cdinterfaceandenum._parser;
+package de.monticore.cdinterfaceandenum.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 public class CDInterfaceAndEnumAfterParseTrafo extends CDAfterParseHelper
-    implements CDInterfaceAndEnumVisitor {
-  protected CDInterfaceAndEnumVisitor realThis;
+    implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
+  protected CDInterfaceAndEnumTraverser traverser;
 
   public CDInterfaceAndEnumAfterParseTrafo() {
     this(new CDAfterParseHelper());
@@ -19,17 +21,16 @@ public class CDInterfaceAndEnumAfterParseTrafo extends CDAfterParseHelper
 
   public CDInterfaceAndEnumAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
-    setRealThis(this);
   }
 
   @Override
-  public CDInterfaceAndEnumVisitor getRealThis() {
-    return realThis;
+  public CDInterfaceAndEnumTraverser getTraverser() {
+    return traverser;
   }
 
   @Override
-  public void setRealThis(CDInterfaceAndEnumVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDInterfaceAndEnumTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override

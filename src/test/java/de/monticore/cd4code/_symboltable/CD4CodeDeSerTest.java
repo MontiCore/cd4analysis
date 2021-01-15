@@ -6,6 +6,7 @@ package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseDelegatorVisitor;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -25,6 +26,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4CodeAfterParseDelegatorVisitor().transform(node);
 
     final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
 
@@ -46,6 +48,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4CodeAfterParseDelegatorVisitor().transform(node);
     final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
 
     final Optional<CDTypeSymbol> b = scope.resolveCDType("B");

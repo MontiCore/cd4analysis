@@ -2,13 +2,15 @@
  * (c) https://github.com/MontiCore/monticore
  */
 
-package de.monticore.cdbasis._parser;
+package de.monticore.cdbasis.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdbasis._visitor.CDBasisVisitor;
+import de.monticore.cdbasis._visitor.CDBasisHandler;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.Joiners;
 
@@ -19,8 +21,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDBasisAfterParseTrafo extends CDAfterParseHelper
-    implements CDBasisVisitor {
-  protected CDBasisVisitor realThis;
+    implements CDBasisVisitor2, CDBasisHandler {
+  protected CDBasisTraverser traverser;
   protected List<String> packageNameList = new ArrayList<>(); //default, if the model has no package
 
   public CDBasisAfterParseTrafo() {
@@ -29,17 +31,16 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
 
   public CDBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
-    setRealThis(this);
   }
 
   @Override
-  public CDBasisVisitor getRealThis() {
-    return realThis;
+  public CDBasisTraverser getTraverser() {
+    return traverser;
   }
 
   @Override
-  public void setRealThis(CDBasisVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDBasisTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override

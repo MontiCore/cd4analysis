@@ -6,11 +6,14 @@ package de.monticore.cdinterfaceandenum.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 public class CDInterfaceAndEnumTrafo4Defaults extends CDAfterParseHelper
-    implements CDInterfaceAndEnumVisitor {
-  protected CDInterfaceAndEnumVisitor realThis;
+    implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
+  protected CDInterfaceAndEnumTraverser traverser;
   protected CDInterfaceAndEnumVisitor symbolTableCreator;
 
   public CDInterfaceAndEnumTrafo4Defaults() {
@@ -20,17 +23,16 @@ public class CDInterfaceAndEnumTrafo4Defaults extends CDAfterParseHelper
 
   public CDInterfaceAndEnumTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDInterfaceAndEnumVisitor symbolTableCreator) {
     super(cdAfterParseHelper);
-    setRealThis(this);
     this.symbolTableCreator = symbolTableCreator;
   }
 
   @Override
-  public CDInterfaceAndEnumVisitor getRealThis() {
-    return realThis;
+  public CDInterfaceAndEnumTraverser getTraverser() {
+    return traverser;
   }
 
   @Override
-  public void setRealThis(CDInterfaceAndEnumVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDInterfaceAndEnumTraverser traverser) {
+    this.traverser = traverser;
   }
 }

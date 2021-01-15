@@ -6,7 +6,7 @@ package de.monticore.cdassociation;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cdassociation._parser.CDAssociationAfterParseTrafo;
+import de.monticore.cdassociation.trafo.CDAssociationAfterParseTrafo;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;

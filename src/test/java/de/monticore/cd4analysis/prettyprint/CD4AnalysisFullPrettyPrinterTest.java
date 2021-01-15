@@ -7,6 +7,7 @@ package de.monticore.cd4analysis.prettyprint;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseDelegatorVisitor;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
 
@@ -21,7 +22,9 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/Simple.cd"));
 
     checkNullAndPresence(p, astcdCompilationUnit);
-    String output = printer.prettyprint(astcdCompilationUnit.get());
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4AnalysisAfterParseDelegatorVisitor().transform(node);
+    String output = printer.prettyprint(node);
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p.parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
@@ -32,6 +35,7 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MyLife.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4AnalysisAfterParseDelegatorVisitor().transform(node);
 
     CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();

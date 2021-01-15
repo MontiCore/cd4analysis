@@ -6,7 +6,7 @@ package de.monticore.cd4codebasis;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cd4codebasis._parser.CD4CodeBasisAfterParseTrafo;
+import de.monticore.cd4codebasis.trafo.CD4CodeBasisAfterParseTrafo;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPlantUMLPrettyPrinter;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPrettyPrinter;
 import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
