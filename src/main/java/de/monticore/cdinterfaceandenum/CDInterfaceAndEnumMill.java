@@ -6,7 +6,7 @@ package de.monticore.cdinterfaceandenum;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumAfterParseTrafo;
+import de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumDirectCompositionTrafo;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPlantUMLPrettyPrinter;
 import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
@@ -17,14 +17,14 @@ public class CDInterfaceAndEnumMill extends CDInterfaceAndEnumMillTOP {
   protected static CDInterfaceAndEnumMill millCDInterfaceAndEnumPlantUMLPrettyPrinter;
   protected static CDInterfaceAndEnumMill millCDInterfaceAndEnumPrettyPrinter;
 
-  public static CDInterfaceAndEnumAfterParseTrafo cDInterfaceAndEnumAfterParseTrafo() {
+  public static CDInterfaceAndEnumDirectCompositionTrafo cDInterfaceAndEnumAfterParseTrafo() {
     if (millCDInterfaceAndEnumAfterParseTrafo == null) {
       millCDInterfaceAndEnumAfterParseTrafo = getMill();
     }
     return millCDInterfaceAndEnumAfterParseTrafo._cDInterfaceAndEnumAfterParseTrafo();
   }
 
-  public static CDInterfaceAndEnumAfterParseTrafo cDInterfaceAndEnumAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+  public static CDInterfaceAndEnumDirectCompositionTrafo cDInterfaceAndEnumAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     if (millCDInterfaceAndEnumAfterParseTrafo == null) {
       millCDInterfaceAndEnumAfterParseTrafo = getMill();
     }
@@ -59,12 +59,12 @@ public class CDInterfaceAndEnumMill extends CDInterfaceAndEnumMillTOP {
     return millCDInterfaceAndEnumPrettyPrinter._cDInterfaceAndEnumPrettyPrinter(printer);
   }
 
-  public CDInterfaceAndEnumAfterParseTrafo _cDInterfaceAndEnumAfterParseTrafo() {
-    return new CDInterfaceAndEnumAfterParseTrafo();
+  public CDInterfaceAndEnumDirectCompositionTrafo _cDInterfaceAndEnumAfterParseTrafo() {
+    return new CDInterfaceAndEnumDirectCompositionTrafo();
   }
 
-  public CDInterfaceAndEnumAfterParseTrafo _cDInterfaceAndEnumAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    return new CDInterfaceAndEnumAfterParseTrafo(cdAfterParseHelper);
+  public CDInterfaceAndEnumDirectCompositionTrafo _cDInterfaceAndEnumAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+    return new CDInterfaceAndEnumDirectCompositionTrafo(cdAfterParseHelper);
   }
 
   public CDInterfaceAndEnumPlantUMLPrettyPrinter _cDInterfaceAndEnumPlantUMLPrettyPrinter() {

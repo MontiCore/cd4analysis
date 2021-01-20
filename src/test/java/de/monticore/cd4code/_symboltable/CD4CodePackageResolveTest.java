@@ -7,8 +7,8 @@ package de.monticore.cd4code._symboltable;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cd4code.trafo.CD4CodeAfterParseDelegatorVisitor;
-import de.monticore.cd4code.trafo.CD4CodeTrafo4DefaultsDelegator;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
+import de.monticore.cd4code.trafo.CD4CodeTrafo4Defaults;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
@@ -28,7 +28,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/Packages.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    new CD4CodeAfterParseDelegatorVisitor().transform(node);
+    new CD4CodeAfterParseTrafo().transform(node);
 
     CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
@@ -42,11 +42,11 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    new CD4CodeAfterParseDelegatorVisitor().transform(node);
+    new CD4CodeAfterParseTrafo().transform(node);
     final ICD4CodeArtifactScope artifactScope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
-    new CD4CodeTrafo4DefaultsDelegator().transform(node);
+    new CD4CodeTrafo4Defaults().transform(node);
 
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());

@@ -7,7 +7,7 @@ package de.monticore.cd4code.prettyprint;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cd4code.trafo.CD4CodeAfterParseDelegatorVisitor;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/MyLife2.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    new CD4CodeAfterParseDelegatorVisitor().transform(node);
+    new CD4CodeAfterParseTrafo().transform(node);
 
     String output = printer.prettyprint(astcdCompilationUnit.get());
 
@@ -31,7 +31,7 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
 
     final ASTCDCompilationUnit nodeReparsed = astcdCompilationUnitReParsed.get();
 
-    new CD4CodeAfterParseDelegatorVisitor().transform(nodeReparsed);
+    new CD4CodeAfterParseTrafo().transform(nodeReparsed);
     CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(nodeReparsed);
     checkLogError();
 

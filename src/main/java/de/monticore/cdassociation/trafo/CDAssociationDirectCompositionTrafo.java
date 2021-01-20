@@ -11,6 +11,7 @@ import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier.UMLModifierMill;
@@ -18,15 +19,21 @@ import de.se_rwth.commons.StringTransformations;
 
 import java.util.Collections;
 
-public class CDAssociationAfterParseTrafo extends CDAfterParseHelper
+/**
+ * transforms any CDDirectComposition to a CDAssociation
+ * only works, when {@link de.monticore.cdbasis.trafo.CDBasisDirectCompositionTrafo} and {@link de.monticore.cdinterfaceandenum.trafo.CDInterfaceAndEnumDirectCompositionTrafo} are also used.
+ *
+ * use {@link de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo} or {@link de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo}
+ */
+public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
     implements CDAssociationVisitor2, CDAssociationHandler {
   protected CDAssociationTraverser traverser;
 
-  public CDAssociationAfterParseTrafo() {
+  public CDAssociationDirectCompositionTrafo() {
     this(new CDAfterParseHelper());
   }
 
-  public CDAssociationAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+  public CDAssociationDirectCompositionTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
   }
 

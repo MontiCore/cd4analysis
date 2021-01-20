@@ -14,20 +14,22 @@ import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.se_rwth.commons.logging.Log;
 
-import static de.monticore.cdassociation.trafo.CDAssociationAfterParseTrafo.createASTCDRoleIfAbsent;
+import static de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo.createASTCDRoleIfAbsent;
 
-public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
+public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     implements CDAssociationVisitor2, CDAssociationHandler {
   protected CDAssociationTraverser traverser;
   protected CDAssociationVisitor symbolTableCreator;
 
-  public CDAssociationTrafo4Defaults() {
+  public CDAssociationRoleNameTrafo() {
     this(new CDAfterParseHelper(),
         CDAssociationMill.cDAssociationSymbolTableCreator());
   }
 
-  public CDAssociationTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDAssociationVisitor symbolTableCreator) {
+  public CDAssociationRoleNameTrafo(CDAfterParseHelper cdAfterParseHelper, CDAssociationVisitor symbolTableCreator) {
     super(cdAfterParseHelper);
     this.symbolTableCreator = symbolTableCreator;
   }
@@ -72,5 +74,16 @@ public class CDAssociationTrafo4Defaults extends CDAfterParseHelper
         ((CDAssociationSymbolTableCreator) symbolTableCreator).buildCDRole(assocStack.peek(), false);
       }
     }
+  }
+
+  public void transform(ASTCDCompilationUnit compilationUnit) throws RuntimeException {
+    if (!compilationUnit.getCDDefinition().isPresentSymbol()) {
+      final String msg = "0xCD0B1: can't start the transformation, the symbol table is missing";
+      Log.error(msg);
+      throw new RuntimeException(msg);
+    }
+
+    compilationUnit.accept(getTraverser());
+    symbolTableCreator.endVisit(compilationUnit);
   }
 }

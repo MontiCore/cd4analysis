@@ -11,15 +11,15 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
-public class CDInterfaceAndEnumAfterParseTrafo extends CDAfterParseHelper
+public class CDInterfaceAndEnumDirectCompositionTrafo extends CDAfterParseHelper
     implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
   protected CDInterfaceAndEnumTraverser traverser;
 
-  public CDInterfaceAndEnumAfterParseTrafo() {
+  public CDInterfaceAndEnumDirectCompositionTrafo() {
     this(new CDAfterParseHelper());
   }
 
-  public CDInterfaceAndEnumAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+  public CDInterfaceAndEnumDirectCompositionTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
   }
 

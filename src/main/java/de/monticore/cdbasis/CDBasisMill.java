@@ -6,7 +6,7 @@ package de.monticore.cdbasis;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cdbasis.trafo.CDBasisAfterParseTrafo;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdbasis.prettyprint.CDBasisPlantUMLPrettyPrinter;
 import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
 import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
@@ -21,14 +21,14 @@ public class CDBasisMill extends CDBasisMillTOP {
   protected static CDBasisMill millCDBasisPrettyPrinterDelegator;
   protected static CDBasisMill millDeriveSymTypeOfCDBasis;
 
-  public static CDBasisAfterParseTrafo cDBasisAfterParseTrafo() {
+  public static CDBasisDefaultPackageTrafo cDBasisAfterParseTrafo() {
     if (millCDBasisAfterParseTrafo == null) {
       millCDBasisAfterParseTrafo = getMill();
     }
     return millCDBasisAfterParseTrafo._cDBasisAfterParseTrafo();
   }
 
-  public static CDBasisAfterParseTrafo cDBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+  public static CDBasisDefaultPackageTrafo cDBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     if (millCDBasisAfterParseTrafo == null) {
       millCDBasisAfterParseTrafo = getMill();
     }
@@ -84,12 +84,12 @@ public class CDBasisMill extends CDBasisMillTOP {
     return millDeriveSymTypeOfCDBasis._deriveSymTypeOfCDBasis();
   }
 
-  public CDBasisAfterParseTrafo _cDBasisAfterParseTrafo() {
-    return new CDBasisAfterParseTrafo();
+  public CDBasisDefaultPackageTrafo _cDBasisAfterParseTrafo() {
+    return new CDBasisDefaultPackageTrafo();
   }
 
-  public CDBasisAfterParseTrafo _cDBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    return new CDBasisAfterParseTrafo(cdAfterParseHelper);
+  public CDBasisDefaultPackageTrafo _cDBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+    return new CDBasisDefaultPackageTrafo(cdAfterParseHelper);
   }
 
   public CDBasisPlantUMLPrettyPrinter _cDBasisPlantUMLPrettyPrinter() {

@@ -4,9 +4,7 @@
 
 package de.monticore.cd4codebasis;
 
-import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cd4codebasis.trafo.CD4CodeBasisAfterParseTrafo;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPlantUMLPrettyPrinter;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPrettyPrinter;
 import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
@@ -17,20 +15,6 @@ public class CD4CodeBasisMill extends CD4CodeBasisMillTOP {
   protected static CD4CodeBasisMill millCD4CodeBasisPlantUMLPrettyPrinter;
   protected static CD4CodeBasisMill millCD4CodeBasisPrettyPrinter;
   protected static CD4CodeBasisMill millDeriveSymTypeOfCD4CodeBasis;
-
-  public static CD4CodeBasisAfterParseTrafo cD4CodeBasisAfterParseTrafo() {
-    if (millCD4CodeBasisAfterParseTrafo == null) {
-      millCD4CodeBasisAfterParseTrafo = getMill();
-    }
-    return millCD4CodeBasisAfterParseTrafo._cD4CodeBasisAfterParseTrafo();
-  }
-
-  public static CD4CodeBasisAfterParseTrafo cD4CodeBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    if (millCD4CodeBasisAfterParseTrafo == null) {
-      millCD4CodeBasisAfterParseTrafo = getMill();
-    }
-    return millCD4CodeBasisAfterParseTrafo._cD4CodeBasisAfterParseTrafo(cdAfterParseHelper);
-  }
 
   public static CD4CodeBasisPlantUMLPrettyPrinter cD4CodeBasisPlantUMLPrettyPrinter() {
     if (millCD4CodeBasisPlantUMLPrettyPrinter == null) {
@@ -65,14 +49,6 @@ public class CD4CodeBasisMill extends CD4CodeBasisMillTOP {
       millDeriveSymTypeOfCD4CodeBasis = getMill();
     }
     return millDeriveSymTypeOfCD4CodeBasis._deriveSymTypeOfCD4CodeBasis();
-  }
-
-  public CD4CodeBasisAfterParseTrafo _cD4CodeBasisAfterParseTrafo() {
-    return new CD4CodeBasisAfterParseTrafo();
-  }
-
-  public CD4CodeBasisAfterParseTrafo _cD4CodeBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    return new CD4CodeBasisAfterParseTrafo(cdAfterParseHelper);
   }
 
   public CD4CodeBasisPlantUMLPrettyPrinter _cD4CodeBasisPlantUMLPrettyPrinter() {

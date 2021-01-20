@@ -5,14 +5,11 @@
 package de.monticore.cd4analysis._parser;
 
 import com.google.common.io.Files;
-import de.monticore.cd4analysis._visitor.CD4AnalysisDelegatorVisitor;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseDelegatorVisitor;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Paths;
 import java.util.Optional;
 

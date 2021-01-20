@@ -6,7 +6,7 @@ package de.monticore.cdassociation;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
-import de.monticore.cdassociation.trafo.CDAssociationAfterParseTrafo;
+import de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
@@ -38,14 +38,14 @@ public class CDAssociationMill extends CDAssociationMillTOP {
     return millCDAssociationNavigableVisitor._associationNavigableVisitor();
   }
 
-  public static CDAssociationAfterParseTrafo cDAssociationAfterParseTrafo() {
+  public static CDAssociationDirectCompositionTrafo cDAssociationAfterParseTrafo() {
     if (millCDAssociationAfterParseTrafo == null) {
       millCDAssociationAfterParseTrafo = getMill();
     }
     return millCDAssociationAfterParseTrafo._cDAssociationAfterParseTrafo();
   }
 
-  public static CDAssociationAfterParseTrafo cDAssociationAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+  public static CDAssociationDirectCompositionTrafo cDAssociationAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
     if (millCDAssociationAfterParseTrafo == null) {
       millCDAssociationAfterParseTrafo = getMill();
     }
@@ -102,12 +102,12 @@ public class CDAssociationMill extends CDAssociationMillTOP {
     return new CDAssociationNavigableVisitor();
   }
 
-  public CDAssociationAfterParseTrafo _cDAssociationAfterParseTrafo() {
-    return new CDAssociationAfterParseTrafo();
+  public CDAssociationDirectCompositionTrafo _cDAssociationAfterParseTrafo() {
+    return new CDAssociationDirectCompositionTrafo();
   }
 
-  public CDAssociationAfterParseTrafo _cDAssociationAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    return new CDAssociationAfterParseTrafo(cdAfterParseHelper);
+  public CDAssociationDirectCompositionTrafo _cDAssociationAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+    return new CDAssociationDirectCompositionTrafo(cdAfterParseHelper);
   }
 
   public CDCardinalityDeSer _cDCardinalityDeSer() {

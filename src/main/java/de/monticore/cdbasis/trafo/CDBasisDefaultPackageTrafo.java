@@ -7,7 +7,10 @@ package de.monticore.cdbasis.trafo;
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cdbasis.CDBasisMill;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.ASTCDElement;
+import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
@@ -20,17 +23,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CDBasisAfterParseTrafo extends CDAfterParseHelper
+public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
     implements CDBasisVisitor2, CDBasisHandler {
   protected CDBasisTraverser traverser;
-  protected List<String> packageNameList = new ArrayList<>(); //default, if the model has no package
+  protected List<String> packageNameList = new ArrayList<>();
+  protected List<String> defaultPackageList = Arrays.asList("de", "monticore"); //default, if the model has no package
 
-  public CDBasisAfterParseTrafo() {
+  public CDBasisDefaultPackageTrafo() {
     this(new CDAfterParseHelper());
   }
 
-  public CDBasisAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
+  public CDBasisDefaultPackageTrafo(List<String> defaultPackageList) {
+    this(defaultPackageList, new CDAfterParseHelper());
+  }
+
+  public CDBasisDefaultPackageTrafo(CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
+  }
+
+  public CDBasisDefaultPackageTrafo(List<String> defaultPackageList, CDAfterParseHelper cdAfterParseHelper) {
+    super(cdAfterParseHelper);
+    this.defaultPackageList = defaultPackageList;
   }
 
   @Override
@@ -49,7 +62,7 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
       packageNameList = node.getMCPackageDeclaration().getMCQualifiedName().getPartsList();
     }
     else {
-      packageNameList = Arrays.asList("de", "monticore");
+      packageNameList = defaultPackageList;
     }
     node.getCDDefinition().setDefaultPackageName(Joiners.DOT.join(packageNameList));
   }
@@ -109,25 +122,7 @@ public class CDBasisAfterParseTrafo extends CDAfterParseHelper
     node.removeAllCDElements(elementsInCDDefinition);
   }
 
-  @Override
-  public void visit(ASTCDClass node) {
-    typeStack.push(node);
-    removedDirectCompositions.clear();
-  }
-
-  @Override
-  public void endVisit(ASTCDClass node) {
-    node.removeAllCDMembers(removedDirectCompositions);
-    typeStack.pop();
-  }
-
-  @Override
-  public void visit(ASTCDPackage node) {
-    createdAssociations.clear();
-  }
-
-  @Override
-  public void endVisit(ASTCDPackage node) {
-    node.addAllCDElements(createdAssociations);
+  public void transform(ASTCDCompilationUnit compilationUnit) {
+    compilationUnit.accept(getTraverser());
   }
 }

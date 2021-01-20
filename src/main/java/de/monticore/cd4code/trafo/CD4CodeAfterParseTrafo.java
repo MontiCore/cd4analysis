@@ -5,29 +5,44 @@
 package de.monticore.cd4code.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
-import de.monticore.cd4code._visitor.CD4CodeHandler;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code._visitor.CD4CodeVisitor2;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 
-public class CD4CodeAfterParseTrafo extends CDAfterParseHelper
-    implements CD4CodeVisitor2, CD4CodeHandler {
+public class CD4CodeAfterParseTrafo {
   protected CD4CodeTraverser traverser;
+  protected final CDAfterParseHelper cdAfterParseHelper;
 
   public CD4CodeAfterParseTrafo() {
     this(new CDAfterParseHelper());
   }
 
   public CD4CodeAfterParseTrafo(CDAfterParseHelper cdAfterParseHelper) {
-    super(cdAfterParseHelper);
+    this.cdAfterParseHelper = cdAfterParseHelper;
+    this.traverser = CD4CodeMill.traverser();
+
+    init(cdAfterParseHelper, traverser);
   }
 
-  @Override
+  public static void init(CDAfterParseHelper cdAfterParseHelper, CD4CodeTraverser traverser) {
+    final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo(cdAfterParseHelper);
+    traverser.add4CDBasis(cdBasis);
+    traverser.setCDBasisHandler(cdBasis);
+    cdBasis.setTraverser(traverser);
+
+    CD4CodeDirectCompositionTrafo.init(cdAfterParseHelper, traverser);
+  }
+
   public CD4CodeTraverser getTraverser() {
     return traverser;
   }
 
-  @Override
   public void setTraverser(CD4CodeTraverser traverser) {
     this.traverser = traverser;
+  }
+
+  public void transform(ASTCDCompilationUnit compilationUnit) {
+    compilationUnit.accept(getTraverser());
   }
 }

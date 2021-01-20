@@ -9,6 +9,7 @@ import de.monticore.antlr4.MCConcreteParser;
 import de.monticore.ast.ASTNode;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import de.se_rwth.commons.logging.Slf4jLog;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +42,7 @@ public class TestBasis {
 
   @BeforeClass
   public static void setup() {
-    Slf4jLog.init();
+    LogStub.init();
     Log.enableFailQuick(false);
   }
 

@@ -8,7 +8,7 @@ import de.monticore.cd.cli.CDCLI;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code.trafo.CD4CodeAfterParseDelegatorVisitor;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.apache.commons.cli.ParseException;
 import org.junit.Ignore;
@@ -29,7 +29,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cdbasis/parser/Import.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
-    new CD4CodeAfterParseDelegatorVisitor().transform(node);
+    new CD4CodeAfterParseTrafo().transform(node);
 
     final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
