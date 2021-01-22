@@ -12,12 +12,12 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
-import de.monticore.cdbasis._symboltable.CDBasisScope;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Names;
@@ -27,10 +27,6 @@ import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static de.se_rwth.commons.Names.getQualifier;
-import static de.se_rwth.commons.Names.getSimpleName;
-import static de.se_rwth.commons.logging.Log.trace;
 
 // TODO SVa: check if all attributes needed, or split for STCompleteTypes
 public class CDSymbolTableHelper {
@@ -204,14 +200,43 @@ public class CDSymbolTableHelper {
    * via qualifying the simple name with the imports or the packageDeclaration.
    * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
    */
-  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleTypeName, CDBasisScope scope) {
+  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleTypeName, ICDBasisScope scope) {
     // store all found type symbols here
     Set<TypeSymbol> typeSymbols = new HashSet<>();
     // for each potential full< qualified name defining the type..
     for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, simpleTypeName)) {
+      // ========================================================================
+      // THE FOLLOWING CODE MUST BE CHANGED AFTER THE DOUBLE RESOLVE BUG IS FIXED
+      // Currently, the code removes duplicated findings.
+      // As soon as bug is fixed, there cannot be duplicates anymore.
+      // ========================================================================
+
+      List<TypeSymbol> curTypeSyms = scope.resolveTypeMany(fqNameCandidate);
+      List<OOTypeSymbol> curOOTypeSyms = scope.resolveOOTypeMany(fqNameCandidate);
+
+      List<TypeSymbol> symbolsToAdd = new ArrayList<>();
+
+      // if OOTypeSymbol with same name as TypeSymbol already exists, then do not add the TypeSymbol
+      for (int i = 0; i < curTypeSyms.size(); i++) {
+        TypeSymbol curTypeSyms_i = curTypeSyms.get(i);
+        boolean foundDuplicate = false;
+        for(TypeSymbol sym : curOOTypeSyms) {
+          if (curTypeSyms_i.getName().equals(sym.getName())) {
+            foundDuplicate = true;
+          }
+        }
+        if(!foundDuplicate) {
+          symbolsToAdd.add(curTypeSyms_i);
+        }
+      }
+      symbolsToAdd.addAll(curOOTypeSyms);
+
       // try to resolve the type with the fully qualified name and add it to the list
-      typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
-      typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
+      typeSymbols.addAll(symbolsToAdd);
+
+      // ========================================================================
+      // END OF CODE THAT MUST BE CHANGED AFTER THE DOUBLE RESOLVE BUG IS FIXED
+      // ========================================================================
     }
 
     if (typeSymbols.isEmpty()) {
@@ -239,14 +264,11 @@ public class CDSymbolTableHelper {
   public static List<String> calcFQNameCandidates(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleName) {
     List<String> fqNameCandidates = new ArrayList<>();
     for (ASTMCImportStatement anImport : imports) {
-      if (anImport.isStar()) {
-        // star import imports everything one level below the qualified model element
-        fqNameCandidates.add(anImport.getQName() + "." + simpleName);
-      }
-      else if (de.monticore.utils.Names.getSimpleName(anImport.getQName()).equals(simpleName)) {
+      if (de.monticore.utils.Names.getSimpleName(anImport.getQName()).equals(simpleName)) {
         // top level symbol that has the same name as the node, e.g. diagram symbol
         fqNameCandidates.add(anImport.getQName());
       }
+      fqNameCandidates.add(anImport.getQName() + "." + simpleName);
     }
     // The searched symbol might be located in the same package as the artifact
     if (!packageDeclaration.getQName().isEmpty()) {
@@ -258,7 +280,5 @@ public class CDSymbolTableHelper {
 
     return fqNameCandidates;
   }
-
-
 
 }

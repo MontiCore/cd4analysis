@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cdbasis.symboltable;
+
+import de.monticore.cdbasis.symtabs.MyTypesSerialized;
+
+classdiagram CorrectTypeUsages {
+  class C;
+  class D {
+    C c;
+    SomeImportedType x; // type is imported
+  }
+}

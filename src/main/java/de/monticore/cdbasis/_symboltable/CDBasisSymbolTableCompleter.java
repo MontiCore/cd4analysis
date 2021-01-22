@@ -4,8 +4,6 @@
 
 package de.monticore.cdbasis._symboltable;
 
-import de.monticore.cdbasis._visitor.CDBasisHandler;
-import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -21,40 +19,14 @@ import java.util.Optional;
 
 import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueTypeSymbol;
 
-public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2, CDBasisHandler {
+public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
 
   private final List<ASTMCImportStatement> imports;
   private final ASTMCQualifiedName packageDeclaration;
-  private CDBasisTraverser traverser;
 
   public CDBasisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
     this.imports = imports;
     this.packageDeclaration = packageDeclaration;
-  }
-
-  @Override
-  public CDBasisTraverser getTraverser() {
-    return traverser;
-  }
-
-  @Override
-  public void setTraverser(CDBasisTraverser traverser) {
-    this.traverser = traverser;
-  }
-
-  @Override
-  public void traverse(ICDBasisScope node) {
-    /*
-    this traverse causes that exactly all symbols and the scope structure are visited.
-    Instances of AST classes are not visited
-     */
-
-    // visit the symbols
-    CDBasisHandler.super.traverse(node);
-    for (ICDBasisScope subscope : node.getSubScopes()) {
-      // Traverse the complete scope structure
-      subscope.accept(this.getTraverser());
-    }
   }
 
   @Override
@@ -65,7 +37,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     String typeName = field.getType().getTypeInfo().getName();
 
     // store all found type symbols here
-    Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (CDBasisScope) field.getEnclosingScope());
+    Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) field.getEnclosingScope());
 
     // replace the !preliminary! SymTypeExpression stored in the field with the !final! one
     typeSymbol.ifPresent(symbol -> field.setType(SymTypeExpressionFactory.createTypeExpression(symbol)));
