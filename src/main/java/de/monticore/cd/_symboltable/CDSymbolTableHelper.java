@@ -4,6 +4,7 @@
 
 package de.monticore.cd._symboltable;
 
+import com.google.common.collect.Iterables;
 import de.monticore.cd.CDMill;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdassociation.CDAssociationMill;
@@ -11,12 +12,17 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
+import de.monticore.cdbasis._symboltable.CDBasisScope;
 import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.Splitters;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,14 +46,15 @@ public class CDSymbolTableHelper {
 
   protected List<ASTMCImportStatement> imports;
 
+  private static final String USED_BUT_UNDEFINED = "0xCDA80: Type '%s' is used but not defined.";
+  private static final String DEFINED_MUTLIPLE_TIMES = "0xCDA81: Type '%s' is defined more than once.";
+
   public CDSymbolTableHelper() {
     this(new DeriveSymTypeOfCDBasis());
   }
 
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
-    this(new CDBasisFullPrettyPrinter(), typeChecker,
-        CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(),
-        new Stack<>(), new HashMap<>(), new ArrayList<>());
+    this(new CDBasisFullPrettyPrinter(), typeChecker, CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(), new Stack<>(), new HashMap<>(), new ArrayList<>());
   }
 
   public CDSymbolTableHelper(CDBasisFullPrettyPrinter prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, SymTypeExpression> handledRoles, List<ASTMCImportStatement> imports) {
@@ -155,38 +162,6 @@ public class CDSymbolTableHelper {
   }
 
   /**
-   * copy from {@link de.monticore.symboltable.IArtifactScope#calculateQualifiedNames(String, String, List)}
-   * to use, when needed
-   */
-  public Set<String> calculateQualifiedNames(String name, String packageName) {
-    final Set<String> potentialSymbolNames = new LinkedHashSet<>();
-
-    // the simple name (in default package)
-    potentialSymbolNames.add(name);
-
-    // if name is already qualified, no further (potential) names exist.
-    if (getQualifier(name).isEmpty()) {
-      // maybe the model belongs to the same package
-      if (!packageName.isEmpty()) {
-        potentialSymbolNames.add(packageName + "." + name);
-      }
-
-      for (ASTMCImportStatement importStatement : imports) {
-        if (importStatement.isStar()) {
-          potentialSymbolNames.add(importStatement.getQName() + "." + name);
-        }
-        else if (getSimpleName(importStatement.getQName()).equals(name)) {
-          potentialSymbolNames.add(importStatement.getQName());
-        }
-      }
-    }
-    trace("Potential qualified names for \"" + name + "\": " + potentialSymbolNames.toString(),
-        "IArtifactScope");
-
-    return potentialSymbolNames;
-  }
-
-  /**
    * Splits a qualified name in a potential model name part
    * (cutting the potential name of the symbol)
    * <pre>
@@ -220,8 +195,70 @@ public class CDSymbolTableHelper {
     return potentialModelNames.stream().map(p -> {
       @SuppressWarnings("UnstableApiUsage") final List<String> nameParts = Splitters.DOT.splitToList(p);
       return IntStream.range(1, nameParts.size()) // always begin with the first element, and stop at the second to last
-          .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining(".")))
-          .collect(Collectors.toSet());
+        .mapToObj(i -> nameParts.stream().limit(i).collect(Collectors.joining("."))).collect(Collectors.toSet());
     }).flatMap(Collection::stream).collect(Collectors.toSet());
   }
+
+  /*
+   * Computes the unique type symbol with the simple name simpleTypeName that can be resolved in the CDBasisScope scope
+   * via qualifying the simple name with the imports or the packageDeclaration.
+   * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
+   */
+  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleTypeName, CDBasisScope scope) {
+    // store all found type symbols here
+    Set<TypeSymbol> typeSymbols = new HashSet<>();
+    // for each potential full< qualified name defining the type..
+    for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, simpleTypeName)) {
+      // try to resolve the type with the fully qualified name and add it to the list
+      typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
+      typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
+    }
+
+    if (typeSymbols.isEmpty()) {
+      // no symbol found => Error, type does not exist
+      Log.error(String.format(USED_BUT_UNDEFINED, simpleTypeName));
+      return Optional.empty();
+    }
+    else if (typeSymbols.size() > 1) {
+      // symbol found multiple times => Error, type name ambiguous
+      Log.error(String.format(DEFINED_MUTLIPLE_TIMES, simpleTypeName));
+      return Optional.empty();
+    }
+    else {
+      // nice, we found exactly one type
+      return Optional.ofNullable(Iterables.getFirst(typeSymbols, null));
+    }
+  }
+
+  /*
+   * computes possible full-qualified name candidates for the symbol named simpleName.
+   * The symbol may be imported,
+   * be located in the same package,
+   * or be defined inside the model itself.
+   */
+  public static List<String> calcFQNameCandidates(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleName) {
+    List<String> fqNameCandidates = new ArrayList<>();
+    for (ASTMCImportStatement anImport : imports) {
+      if (anImport.isStar()) {
+        // star import imports everything one level below the qualified model element
+        fqNameCandidates.add(anImport.getQName() + "." + simpleName);
+      }
+      else if (de.monticore.utils.Names.getSimpleName(anImport.getQName()).equals(simpleName)) {
+        // top level symbol that has the same name as the node, e.g. diagram symbol
+        fqNameCandidates.add(anImport.getQName());
+      }
+    }
+    // The searched symbol might be located in the same package as the artifact
+    if (!packageDeclaration.getQName().isEmpty()) {
+      fqNameCandidates.add(packageDeclaration + "." + simpleName);
+    }
+
+    // Symbol might be defined in the model itself
+    fqNameCandidates.add(simpleName);
+
+    return fqNameCandidates;
+  }
+
+
+
 }
