@@ -11,10 +11,12 @@ import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
@@ -132,24 +134,6 @@ public class CDCLI {
 
     parse();
 
-    System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
-
-    boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
-
-    // create a symbol table with provided model paths
-    String[] modelPath = cmd.getOptionValue("p", ".").split(";");
-    createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
-
-    // check all the cocos
-    checkCocos();
-    if (Log.getErrorCount() == 0) {
-      System.out.println(CHECK_SUCCESSFUL + ast.getCDDefinition().getName());
-    }
-    else {
-      System.out.println(CHECK_ERROR);
-      return;
-    }
-
     if (cmd.hasOption("pp")) { // pretty print
       String ppOptionVal = cmd.getOptionValue("pp");
 
@@ -171,6 +155,40 @@ public class CDCLI {
           System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
         }
       }
+    }
+
+    // transformations which are necessary to do after parsing
+    {
+      new CD4CodeDirectCompositionTrafo().transform(ast);
+    }
+
+    boolean defaultTrafo = !cmd.hasOption("defaulttrafo") || Boolean.parseBoolean(cmd.getOptionValue("defaulttrafo", "false"));
+    if (defaultTrafo) {
+      new CDBasisDefaultPackageTrafo().transform(ast);
+    }
+
+    System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
+
+    boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
+
+    // create a symbol table with provided model paths
+    String[] modelPath = cmd.getOptionValue("p", ".").split(";");
+    createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
+
+    // transformations that need an already created symbol table
+    {
+      new CDAssociationRoleNameTrafo().transform(ast);
+    }
+
+    boolean noTypeCheck = !cmd.hasOption("notypecheck");
+    // check all the cocos
+    checkCocos(noTypeCheck);
+    if (Log.getErrorCount() == 0) {
+      System.out.println(CHECK_SUCCESSFUL + ast.getCDDefinition().getName());
+    }
+    else {
+      System.out.println(CHECK_ERROR);
+      return;
     }
 
     if (cmd.hasOption("s")) { // symbol table export
@@ -217,7 +235,6 @@ public class CDCLI {
     }
     ast = cu.get();
 
-    new CD4CodeAfterParseTrafo().transform(ast);
     modelName = ast.getCDDefinition().getName();
   }
 
@@ -234,8 +251,13 @@ public class CDCLI {
     artifactScope = symbolTableCreator.createFromAST(ast);
   }
 
-  protected void checkCocos() {
-    new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
+  protected void checkCocos(boolean noTypeCheck) {
+    if (noTypeCheck) {
+      new CD4CodeCoCosDelegator().getCheckerForAllCoCosNoTypeCheck().checkAll(ast);
+    }
+    else {
+      new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
+    }
   }
 
   protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {

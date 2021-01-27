@@ -62,12 +62,12 @@ public class CDCLIOptions {
         .builder("i").longOpt("input")
         .hasArg().type(String.class)
         .argName("file").numberOfArgs(1)
-        .desc("Reads the input CD artifact given as argument.")
+        .desc("Reads the input CD artifact path given as argument.")
         .build());
 
     options.addOption(Option
         .builder("stdin").longOpt("stdin")
-        .desc("Reads the path to the input CD artifact from stdin.")
+        .desc("Reads the input CD artifact from stdin.")
         .build());
 
     options.addOption(Option
@@ -109,6 +109,19 @@ public class CDCLIOptions {
         .argName("useBuiltinTypes").numberOfArgs(1)
         .desc("Configures if built-in-types should be considered [true/false]. "
             + "The default value is \"true\".")
+        .build());
+
+    options.addOption(Option
+        .builder("d").longOpt("defaulttrafo")
+        .hasArg().type(Boolean.class)
+        .argName("defaulttrafo").numberOfArgs(1)
+        .desc("Configures if default trafos should be executed [true/false]. "
+            + "The default value is \"false\".")
+        .build());
+
+    options.addOption(Option
+        .builder("nt").longOpt("notypecheck")
+        .desc("Configures that types should not be checked. ")
         .build());
   }
 
