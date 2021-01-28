@@ -12,6 +12,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.se_rwth.commons.SourcePosition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,11 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     // Fetch the preliminary type
     String typeName = field.getType().getTypeInfo().getName();
 
+    SourcePosition sourcePositionStart = field.getAstNode().get_SourcePositionStart();
+    SourcePosition sourcePositionEnd = field.getAstNode().get_SourcePositionEnd();
+
     // store all found type symbols here
-    Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) field.getEnclosingScope());
+    Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) field.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
 
     // replace the !preliminary! SymTypeExpression stored in the field with the !final! one
     typeSymbol.ifPresent(symbol -> field.setType(SymTypeExpressionFactory.createTypeExpression(symbol)));
@@ -51,8 +55,12 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     for (SymTypeExpression superType : cdType.getSuperTypesList()) {
       // Fetch the preliminary type
       String typeName = superType.getTypeInfo().getName();
+
+      SourcePosition sourcePositionStart = cdType.getAstNode().get_SourcePositionStart();
+      SourcePosition sourcePositionEnd = cdType.getAstNode().get_SourcePositionEnd();
+
       // store all found type symbols here
-      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (CDBasisScope) cdType.getAstNode());
+      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) cdType.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
       typeSymbol.ifPresent(symbol -> correctedExtendsExpressions.add(SymTypeExpressionFactory.createTypeExpression(symbol)));
     }
     cdType.setSuperTypesList(correctedExtendsExpressions);

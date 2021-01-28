@@ -40,6 +40,7 @@ public class CDBasisSTCompleterTest {
     // reset the GlobalScope
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
+    CD4AnalysisMill.globalScope().clear();
     CD4AnalysisMill.globalScope().setModelPath(new ModelPath(Paths.get(MODEL_PATH)));
 
     // reset the logger

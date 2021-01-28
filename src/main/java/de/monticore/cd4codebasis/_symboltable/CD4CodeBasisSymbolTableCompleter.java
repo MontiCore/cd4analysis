@@ -5,16 +5,15 @@
 package de.monticore.cd4codebasis._symboltable;
 
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
-import de.monticore.cdbasis._symboltable.CDBasisScope;
-import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.se_rwth.commons.SourcePosition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,9 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       // Fetch the preliminary type
       String typeName = exceptionType.getTypeInfo().getName();
       // store all found type symbols here
-      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (CDBasisScope) methodSignature.getAstNode());
+      SourcePosition sourcePositionStart = methodSignature.getAstNode().get_SourcePositionStart();
+      SourcePosition sourcePositionEnd = methodSignature.getAstNode().get_SourcePositionEnd();
+      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) methodSignature.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
       typeSymbol.ifPresent(symbol -> correctedExceptionExpressions.add(SymTypeExpressionFactory.createTypeExpression(symbol)));
     }
     methodSignature.setExceptionsList(correctedExceptionExpressions);
@@ -50,7 +51,10 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     if (!returnType.isVoidType()) {
       // Fetch the preliminary type
       String typeName = returnType.getTypeInfo().getName();
-      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (CDBasisScope) methodSignature.getAstNode());
+      SourcePosition sourcePositionStart = methodSignature.getAstNode().get_SourcePositionStart();
+      SourcePosition sourcePositionEnd = methodSignature.getAstNode().get_SourcePositionEnd();
+
+      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) methodSignature.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
       typeSymbol.ifPresent(symbol -> methodSignature.setReturnType(SymTypeExpressionFactory.createTypeExpression(symbol)));
     }
   }

@@ -21,6 +21,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Names;
+import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
 
@@ -200,7 +201,7 @@ public class CDSymbolTableHelper {
    * via qualifying the simple name with the imports or the packageDeclaration.
    * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
    */
-  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleTypeName, ICDBasisScope scope) {
+  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleTypeName, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
     // store all found type symbols here
     Set<TypeSymbol> typeSymbols = new HashSet<>();
     // for each potential full< qualified name defining the type..
@@ -241,12 +242,12 @@ public class CDSymbolTableHelper {
 
     if (typeSymbols.isEmpty()) {
       // no symbol found => Error, type does not exist
-      Log.error(String.format(USED_BUT_UNDEFINED, simpleTypeName));
+      Log.error(String.format(USED_BUT_UNDEFINED, simpleTypeName), sourcePositionStart, sourcePositionEnd);
       return Optional.empty();
     }
     else if (typeSymbols.size() > 1) {
       // symbol found multiple times => Error, type name ambiguous
-      Log.error(String.format(DEFINED_MUTLIPLE_TIMES, simpleTypeName));
+      Log.error(String.format(DEFINED_MUTLIPLE_TIMES, simpleTypeName), sourcePositionStart, sourcePositionEnd);
       return Optional.empty();
     }
     else {
