@@ -62,11 +62,13 @@ public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
   public void endVisit(ASTCDClass node) {
     super.endVisit(node);
     assert node.getSymbol() != null;
-    initialize_CDClass(node.getSymbol(), node);
+    initialize_CDClass(node);
     symbolTableHelper.removeFromCDTypeStack();
   }
 
-  protected void initialize_CDClass(CDTypeSymbol symbol, ASTCDClass ast) {
+  protected void initialize_CDClass(ASTCDClass ast) {
+    CDTypeSymbol symbol = ast.getSymbol();
+
     symbol.setIsClass(true);
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
@@ -99,10 +101,12 @@ public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
   public void endVisit(ASTCDAttribute node) {
     super.endVisit(node);
     assert node.getSymbol() != null;
-    initialize_CDAttribute(node.getSymbol(), node);
+    initialize_CDAttribute(node);
   }
 
-  protected void initialize_CDAttribute(FieldSymbol symbol, ASTCDAttribute ast) {
+  protected void initialize_CDAttribute(ASTCDAttribute ast) {
+    FieldSymbol symbol = ast.getSymbol();
+
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     // calculate !preliminary! type of the field and set it accordingly
