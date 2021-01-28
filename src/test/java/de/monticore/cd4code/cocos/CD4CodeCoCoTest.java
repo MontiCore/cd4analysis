@@ -10,6 +10,7 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.apache.commons.cli.ParseException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
   }
 
   @Test
+  @Ignore("Re-add Test once CLI uses genitors and ST completers")
   public void useCLI() throws IOException, ParseException {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());

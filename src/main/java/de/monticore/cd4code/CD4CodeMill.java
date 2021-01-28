@@ -83,4 +83,36 @@ public class CD4CodeMill extends CD4CodeMillTOP {
   public CD4CodeResolver _cD4CodeResolvingDelegate(ICD4CodeGlobalScope cdGlobalScope) {
     return new CD4CodeResolver(cdGlobalScope);
   }
+
+  public static void reset() {
+    mill = null;
+    millCD4CodeDelegatorVisitorBuilder = null;
+    millCD4CodePhasedSymbolTableCreatorDelegator = null;
+    millCD4CodeSymbolTableCreatorDelegator = null;
+    millCD4CodeSymbolTableCreator = null;
+    millCD4CodeTraverserImplementation = null;
+    millCD4CodeScope = null;
+    millCD4CodeArtifactScope = null;
+    millCD4CodeGlobalScope = null;
+    de.monticore.cd4analysis.CD4AnalysisMill.reset();
+    de.monticore.cd4codebasis.CD4CodeBasisMill.reset();
+    de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill.reset();
+    de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill.reset();
+    de.monticore.cdassociation.CDAssociationMill.reset();
+    de.monticore.types.mccollectiontypes.MCCollectionTypesMill.reset();
+    de.monticore.types.mcarraytypes.MCArrayTypesMill.reset();
+    de.monticore.literals.mccommonliterals.MCCommonLiteralsMill.reset();
+    de.monticore.expressions.bitexpressions.BitExpressionsMill.reset();
+    de.monticore.expressions.commonexpressions.CommonExpressionsMill.reset();
+    de.monticore.cdbasis.CDBasisMill.reset();
+    de.monticore.literals.mcliteralsbasis.MCLiteralsBasisMill.reset();
+    de.monticore.expressions.expressionsbasis.ExpressionsBasisMill.reset();
+    de.monticore.types.mcbasictypes.MCBasicTypesMill.reset();
+    de.monticore.symbols.oosymbols.OOSymbolsMill.reset();
+    de.monticore.umlstereotype.UMLStereotypeMill.reset();
+    de.monticore.umlmodifier.UMLModifierMill.reset();
+    de.monticore.mcbasics.MCBasicsMill.reset();
+    de.monticore.symbols.basicsymbols.BasicSymbolsMill.reset();
+    de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill.reset();
+  }
 }
