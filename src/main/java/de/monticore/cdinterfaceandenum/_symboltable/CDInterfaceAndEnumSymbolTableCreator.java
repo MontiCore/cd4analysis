@@ -5,6 +5,7 @@
 package de.monticore.cdinterfaceandenum._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitor;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -19,6 +20,10 @@ import java.util.Deque;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated use {@link CDInterfaceAndEnumScopesGenitor} instead
+ */
+@Deprecated
 public class CDInterfaceAndEnumSymbolTableCreator
     extends CDInterfaceAndEnumSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;

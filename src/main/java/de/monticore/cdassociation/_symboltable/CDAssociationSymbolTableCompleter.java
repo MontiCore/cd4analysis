@@ -4,16 +4,13 @@ import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import net.sourceforge.plantuml.Log;
 
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +94,9 @@ public class CDAssociationSymbolTableCompleter
     symbol.getEnclosingScope().remove(symbol);
     symbol.getEnclosingScope().remove((FieldSymbol) symbol);
     symbol.getEnclosingScope().remove((VariableSymbol) symbol);
+
+    // TODO SVa:
+    // change the type to be compatible with with FieldSymbol
 
     if (!spannedScope.getCDRoleSymbols().containsKey(symbol.getName())) {
       // add the symbol to the type; add to all relevant lists

@@ -4,6 +4,7 @@
 
 package de.monticore.cd4code._symboltable;
 
+import de.monticore.cd4analysis._symboltable.CD4AnalysisScopesGenitor;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
@@ -11,6 +12,10 @@ import de.monticore.symboltable.ImportStatement;
 import java.util.Deque;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated use {@link CD4CodeScopesGenitor} instead
+ */
+@Deprecated
 public class CD4CodeSymbolTableCreator extends CD4CodeSymbolTableCreatorTOP {
   public CD4CodeSymbolTableCreator() {
     super();

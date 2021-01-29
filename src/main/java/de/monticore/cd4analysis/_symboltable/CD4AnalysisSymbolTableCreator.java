@@ -7,12 +7,14 @@ package de.monticore.cd4analysis._symboltable;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
-import de.se_rwth.commons.Names;
 
-import java.util.Collections;
 import java.util.Deque;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated use {@link CD4AnalysisScopesGenitor} instead
+ */
+@Deprecated
 public class CD4AnalysisSymbolTableCreator
     extends CD4AnalysisSymbolTableCreatorTOP {
 

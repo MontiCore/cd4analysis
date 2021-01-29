@@ -9,6 +9,10 @@ import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCreator;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCreator;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCreator;
 
+/**
+ * @deprecated use {@link CD4AnalysisScopesGenitorDelegator} instead
+ */
+@Deprecated
 public class CD4AnalysisSymbolTableCreatorDelegator
     extends CD4AnalysisSymbolTableCreatorDelegatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;

@@ -5,6 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitor;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis.CDBasisMill;
@@ -21,6 +22,10 @@ import java.util.Deque;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * @deprecated use {@link CDBasisScopesGenitor} instead
+ */
+@Deprecated
 public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
