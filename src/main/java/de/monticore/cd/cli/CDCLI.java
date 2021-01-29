@@ -4,15 +4,20 @@
 
 package de.monticore.cd.cli;
 
+import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -20,6 +25,7 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -164,7 +170,13 @@ public class CDCLI {
 
     boolean defaultTrafo = !cmd.hasOption("defaulttrafo") || Boolean.parseBoolean(cmd.getOptionValue("defaulttrafo", "false"));
     if (defaultTrafo) {
-      new CDBasisDefaultPackageTrafo().transform(ast);
+      final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+      final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
+      traverser.add4CDBasis(cdBasis);
+      traverser.setCDBasisHandler(cdBasis);
+      cdBasis.setTraverser(traverser);
+
+      ast.accept(traverser);
     }
 
     System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
@@ -177,7 +189,11 @@ public class CDCLI {
 
     // transformations that need an already created symbol table
     {
-      new CDAssociationRoleNameTrafo().transform(ast);
+      final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
+      final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+      traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
+      traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
+      cdAssociationRoleNameTrafo.transform(ast);
     }
 
     boolean noTypeCheck = !cmd.hasOption("notypecheck");
@@ -253,7 +269,8 @@ public class CDCLI {
 
   protected void checkCocos(boolean noTypeCheck) {
     if (noTypeCheck) {
-      new CD4CodeCoCosDelegator().getCheckerForAllCoCosNoTypeCheck().checkAll(ast);
+      // TODO SVa: new CD4CodeCoCosDelegator().getCheckerForAllCoCosNoTypeCheck().checkAll(ast);
+      new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
     }
     else {
       new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);

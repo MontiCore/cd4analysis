@@ -55,6 +55,8 @@ public class CD4AnalysisTrafo4Defaults {
       throw new RuntimeException(msg);
     }
 
+    ((CDAssociationRoleNameTrafo)traverser.getCDAssociationHandler().get()).init(compilationUnit);
+
     compilationUnit.accept(getTraverser());
   }
 }

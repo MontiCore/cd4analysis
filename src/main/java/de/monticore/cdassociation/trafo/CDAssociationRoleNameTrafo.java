@@ -101,6 +101,12 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
       throw new RuntimeException(msg);
     }
 
+    init(compilationUnit);
+
+    compilationUnit.accept(getTraverser());
+  }
+
+  public void init(ASTCDCompilationUnit compilationUnit) {
     final List<ASTMCImportStatement> imports = compilationUnit.getMCImportStatementList();
     final ASTMCQualifiedName packageDeclaration = MCQualifiedNameFacade.createQualifiedName("");
     symbolTableCompleter =
@@ -108,7 +114,5 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
             imports,
             packageDeclaration
         );
-
-    compilationUnit.accept(getTraverser());
   }
 }

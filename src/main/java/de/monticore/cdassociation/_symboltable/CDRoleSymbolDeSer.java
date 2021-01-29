@@ -4,6 +4,7 @@
 
 package de.monticore.cdassociation._symboltable;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -45,7 +46,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
       return Optional.of(OOSymbolsMill
           .fieldSymbolSurrogateBuilder()
           .setName(fieldName)
-          .setEnclosingScope((IOOSymbolsScope) type.getTypeInfo().getEnclosingScope())
+          .setEnclosingScope(CDAssociationMill.globalScope())
           .setType(type)
           .build());
     }

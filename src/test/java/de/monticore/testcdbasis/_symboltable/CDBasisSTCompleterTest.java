@@ -7,6 +7,7 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -57,6 +58,7 @@ public class CDBasisSTCompleterTest {
 
     String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
+    new CD4AnalysisAfterParseTrafo().transform(ast);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
     assertEquals(1, artifactScope.getSubScopes().size());
     ICD4AnalysisScope diagramScope = artifactScope.getSubScopes().get(0);

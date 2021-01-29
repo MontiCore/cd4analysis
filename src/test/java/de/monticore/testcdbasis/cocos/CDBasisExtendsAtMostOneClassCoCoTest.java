@@ -4,9 +4,9 @@
 
 package de.monticore.testcdbasis.cocos;
 
-import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.optional.CDClassExtendsAtMostOneClass;
 import de.monticore.testcdbasis.CDBasisTestBasis;
 import org.junit.Test;
@@ -23,12 +23,11 @@ public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    CDBasisMill.cDBasisSymbolTableCreatorDelegator().createFromAST(node);
+    CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
     checkLogError();
 
-    final CDBasisCoCoChecker checkerForAllCoCos = cdBasisCoCos.getCheckerForAllCoCos();
-    checkerForAllCoCos.addCoCo(new CDClassExtendsAtMostOneClass());
-    checkerForAllCoCos.checkAll(node);
+    coCoChecker.addCoCo(new CDClassExtendsAtMostOneClass());
+    coCoChecker.checkAll(node);
 
     expectErrorCount(1, Collections.singletonList("ExtendsAtMostOneClass.cd:<14,2>: 0xCDC2F: Class C cannot extend multiple classes, but extends (A, B). A class may only extend one class."));
   }

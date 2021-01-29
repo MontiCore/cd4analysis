@@ -5,6 +5,7 @@
 package de.monticore.testcdbasis.resolving;
 
 import de.monticore.cd.TestBasis;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -36,14 +37,14 @@ public class TestCDBasisResolvingTest extends TestBasis {
 
     final ASTCDCompilationUnit compilationUnit = astcdCompilationUnit.get();
 
-    CDBasisMill.reset();
-    CDBasisMill.init();
+    CD4AnalysisMill.reset();
+    CD4AnalysisMill.init();
 
     globalScope = CDBasisMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
     globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
-    CDBasisMill.cDBasisSymbolTableCreatorDelegator().createFromAST(compilationUnit);
+    CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(compilationUnit);
     checkLogError();
   }
 

@@ -48,6 +48,8 @@ public class CDAssociationSymbolTableCreator
 
   @Override
   public void handle(ASTCDAssociation node) {
+    node.setEnclosingScope(this.scopeStack.peekLast());
+
     CDAssociationSymbol symbol = create_CDAssociation(node);
     if (symbol != null) {
       initialize_CDAssociation(symbol, node);
