@@ -118,16 +118,4 @@ public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
       symbol.setType(typeResult.get());
     }
   }
-
-  @Override
-  public void endVisit(ASTCDCompilationUnit node) {
-    // the symbol is a field of the type of the other side
-    // as there are handled associations, we at least have a CDAssociationScope
-    symbolTableHelper.getHandledRoles().forEach((r, t) -> {
-      final ICDAssociationScope spannedScope = (ICDAssociationScope) t.getTypeInfo().getSpannedScope();
-      if (!spannedScope.getCDRoleSymbols().containsKey(r.getName())) {
-        spannedScope.add(r);
-      }
-    });
-  }
 }

@@ -1,6 +1,7 @@
 package de.monticore.cdbasis._symboltable.phased;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -56,8 +57,8 @@ public class CDBasisSTCompleteTypes
   public void endVisit(ASTCDCompilationUnit node) {
     // the symbol is a field of the type of the other side
     // as there are handled associations, we at least have a CDAssociationScope
-    symbolTableHelper.getHandledRoles().forEach((r, t) ->
-        ((ICDAssociationScope) t.getTypeInfo().getSpannedScope()).add(r)
+    symbolTableHelper.getHandledRoles().forEach(
+        CDAssociationSymbolTableCompleter::addRoleToTheirType
     );
   }
 

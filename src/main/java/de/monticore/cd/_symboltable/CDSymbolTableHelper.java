@@ -39,7 +39,7 @@ public class CDSymbolTableHelper {
   protected CDAssocTypeForSymAssociationVisitor assocTypeVisitor;
 
   protected Stack<String> cdTypeStack;
-  protected Map<CDRoleSymbol, SymTypeExpression> handledRoles;
+  protected Map<CDRoleSymbol, TypeSymbol> handledRoles;
 
   protected List<ASTMCImportStatement> imports;
 
@@ -54,7 +54,7 @@ public class CDSymbolTableHelper {
     this(new CDBasisFullPrettyPrinter(), typeChecker, CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(), new Stack<>(), new HashMap<>(), new ArrayList<>());
   }
 
-  public CDSymbolTableHelper(CDBasisFullPrettyPrinter prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, SymTypeExpression> handledRoles, List<ASTMCImportStatement> imports) {
+  public CDSymbolTableHelper(CDBasisFullPrettyPrinter prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, TypeSymbol> handledRoles, List<ASTMCImportStatement> imports) {
     this.prettyPrinter = prettyPrinter;
     this.typeChecker = typeChecker;
     this.modifierHandler = modifierHandler;
@@ -126,19 +126,19 @@ public class CDSymbolTableHelper {
     return this.cdTypeStack.pop();
   }
 
-  public Map<CDRoleSymbol, SymTypeExpression> getHandledRoles() {
+  public Map<CDRoleSymbol, TypeSymbol> getHandledRoles() {
     return handledRoles;
   }
 
-  public void setHandledRoles(Map<CDRoleSymbol, SymTypeExpression> handledRoles) {
+  public void setHandledRoles(Map<CDRoleSymbol, TypeSymbol> handledRoles) {
     this.handledRoles = handledRoles;
   }
 
-  public SymTypeExpression addToHandledRoles(CDRoleSymbol symbol, SymTypeExpression type) {
+  public TypeSymbol addToHandledRoles(CDRoleSymbol symbol, TypeSymbol type) {
     return this.handledRoles.put(symbol, type);
   }
 
-  public SymTypeExpression removeFromHandledAssociations(CDRoleSymbol symbol) {
+  public TypeSymbol removeFromHandledAssociations(CDRoleSymbol symbol) {
     return this.handledRoles.remove(symbol);
   }
 

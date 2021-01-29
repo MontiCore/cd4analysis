@@ -12,7 +12,7 @@ classdiagram Simple {
 
   class B extends A {
     -> S;
-    -> (s2) [[id]] S [1..*] public {ordered};
+     -> (s2) [[id]] S [1..*] public {ordered};
   }
 
   class Struct;

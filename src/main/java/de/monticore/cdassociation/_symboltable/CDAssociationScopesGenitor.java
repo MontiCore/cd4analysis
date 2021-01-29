@@ -1,7 +1,3 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
 package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
@@ -10,31 +6,28 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbolSurrogate;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
 import java.util.Optional;
 
-public class CDAssociationSymbolTableCreator
-    extends CDAssociationSymbolTableCreatorTOP {
+public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
   protected CDSymbolTableHelper symbolTableHelper;
 
-  public CDAssociationSymbolTableCreator() {
-    super();
-    setRealThis(this);
-    init();
-  }
-
-  public CDAssociationSymbolTableCreator(ICDAssociationScope enclosingScope) {
+  public CDAssociationScopesGenitor(ICDAssociationScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
     init();
   }
 
-  public CDAssociationSymbolTableCreator(Deque<? extends ICDAssociationScope> scopeStack) {
+  public CDAssociationScopesGenitor(Deque<? extends ICDAssociationScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
+    init();
+  }
+
+  public CDAssociationScopesGenitor() {
+    super();
     init();
   }
 
@@ -46,12 +39,17 @@ public class CDAssociationSymbolTableCreator
     this.symbolTableHelper = cdSymbolTableHelper;
   }
 
+  public CDSymbolTableHelper getSymbolTableHelper() {
+    return symbolTableHelper;
+  }
+
   @Override
   public void handle(ASTCDAssociation node) {
-    CDAssociationSymbol symbol = create_CDAssociation(node);
+    node.setEnclosingScope(getCurrentScope().get());
+
+    CDAssociationSymbolBuilder symbol = create_CDAssociation(node);
     if (symbol != null) {
-      initialize_CDAssociation(symbol, node);
-      addToScopeAndLinkWithNode(symbol, node);
+      addToScopeAndLinkWithNode(symbol.build(), node);
     }
 
     if (node.getLeft().isPresentCDRole()) {
@@ -75,15 +73,11 @@ public class CDAssociationSymbolTableCreator
   public boolean buildCDRole(ASTCDAssociation node, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? node.getLeft() : node.getRight();
     final ASTCDRole cdRole = side.getCDRole();
-    final CDRoleSymbol cdRoleSymbol = create_CDRole(cdRole);
+
+    final CDRoleSymbol cdRoleSymbol = create_CDRole(cdRole).build();
     addToScopeAndLinkWithNode(cdRoleSymbol, cdRole);
     initialize_CDRole(cdRoleSymbol, node, isLeft);
 
-    final Optional<SymTypeExpression> typeResult = getSymTypeExpression(node, isLeft ? node.getRight() : node.getLeft());
-    if (!typeResult.isPresent()) {
-      return true;
-    }
-    symbolTableHelper.addToHandledRoles(cdRoleSymbol, typeResult.get().getTypeInfo());
     return false;
   }
 
@@ -130,7 +124,7 @@ public class CDAssociationSymbolTableCreator
   }
 
   @Override
-  protected CDAssociationSymbol create_CDAssociation(ASTCDAssociation ast) {
+  protected CDAssociationSymbolBuilder create_CDAssociation(ASTCDAssociation ast) {
     if (ast.isPresentName()) {
       return super.create_CDAssociation(ast);
     }
@@ -146,11 +140,6 @@ public class CDAssociationSymbolTableCreator
 
   protected void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
-
-    if (side.isPresentCDRole()) {
-      ASTCDRole role = side.getCDRole();
-      initialize_CDRole(symbol, role);
-    }
 
     final Optional<SymTypeExpression> typeResult = getSymTypeExpression(ast, side);
     if (!typeResult.isPresent()) {
@@ -201,35 +190,12 @@ public class CDAssociationSymbolTableCreator
         }
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
-        // TODO SVa: don't create a new FieldSymbol, use existing one
-        /*final FieldSymbolSurrogate attributeQualifier = new FieldSymbolSurrogate(side.getCDQualifier().getByAttributeName());
+        // create a surrogate, which is resolved later in the SymbolTableCompleter
+        final FieldSymbolSurrogate attributeQualifier = new FieldSymbolSurrogate(
+            side.getCDQualifier().getByAttributeName()
+        );
         attributeQualifier.setEnclosingScope(side.getEnclosingScope());
-        attributeQualifier.setType(type);
-        symbol.setAttributeQualifier(attributeQualifier);*/
-
-        /*
-        symbol.setAttributeQualifier(OOSymbolsMill
-            .fieldSymbolSurrogateBuilder()
-            .setName(side.getCDQualifier().getByAttributeName())
-            .setEnclosingScope(side.getEnclosingScope())
-            .setType(type)
-            .build());
-        */
-
-        // TODO SVa: use this code, but only works in "LinkingPhase"
-        /*
-        final SymTypeExpression type = symbol.getAssociation().getOtherRole(symbol).getType();
-        final List<FieldSymbol> fieldList = type.getFieldList(side.getCDQualifier().getByAttributeName());
-        if (fieldList.size() != 1) {
-          Log.error(String.format(
-              "0xCDA64: The attribute (%s) of the class (%s) could not be found, but is needed by the qualifier",
-              side.getCDQualifier().getByAttributeName(),
-              type.print()),
-              side.getCDQualifier().get_SourcePositionStart());
-        }
-
-        symbol.setAttributeQualifier(fieldList.get(0));
-        */
+        symbol.setAttributeQualifier(attributeQualifier);
       }
     }
   }

@@ -5,6 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -160,13 +161,8 @@ public class CDBasisSymbolTableCreator extends CDBasisSymbolTableCreatorTOP {
   public void endVisit(ASTCDCompilationUnit node) {
     // the symbol is a field of the type of the other side
     // as there are handled associations, we at least have a CDAssociationScope
-    symbolTableHelper.getHandledRoles().forEach((r, t) ->
-        {
-          final ICDAssociationScope spannedScope = (ICDAssociationScope) t.getTypeInfo().getSpannedScope();
-          if (!spannedScope.getCDRoleSymbols().containsKey(r.getName())) {
-            spannedScope.add(r);
-          }
-        }
+    symbolTableHelper.getHandledRoles().forEach(
+        CDAssociationSymbolTableCompleter::addRoleToTheirType
     );
   }
 }

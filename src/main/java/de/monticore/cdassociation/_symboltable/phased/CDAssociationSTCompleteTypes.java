@@ -83,7 +83,7 @@ public class CDAssociationSTCompleteTypes implements CDAssociationVisitor {
     if (!oppositeTypeResult.isPresent()) {
       return;
     }
-    symbolTableHelper.addToHandledRoles(symbol, oppositeTypeResult.get());
+    symbolTableHelper.addToHandledRoles(symbol, oppositeTypeResult.get().getTypeInfo());
   }
 
   @Override

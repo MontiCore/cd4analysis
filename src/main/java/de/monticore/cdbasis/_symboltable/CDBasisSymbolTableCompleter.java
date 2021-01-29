@@ -4,6 +4,9 @@
 
 package de.monticore.cdbasis._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdassociation._symboltable.ICDAssociationScope;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
