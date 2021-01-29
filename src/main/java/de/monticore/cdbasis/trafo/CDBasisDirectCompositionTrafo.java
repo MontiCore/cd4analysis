@@ -60,5 +60,17 @@ public class CDBasisDirectCompositionTrafo extends CDAfterParseHelper
   @Override
   public void endVisit(ASTCDPackage node) {
     node.addAllCDElements(createdAssociations);
+    createdAssociations.clear();
+  }
+
+  @Override
+  public void visit(ASTCDDefinition node) {
+    createdAssociations.clear();
+  }
+
+  @Override
+  public void endVisit(ASTCDDefinition node) {
+    node.addAllCDElements(createdAssociations);
+    createdAssociations.clear();
   }
 }
