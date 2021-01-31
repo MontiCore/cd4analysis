@@ -41,18 +41,18 @@ public class CDAssociationSymbolTableCompleter
       String typeName = symbol.getType().getTypeInfo().getName();
 
       // store all found type symbols here
-      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, symbol.getEnclosingScope());
+      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd());
 
       // replace the !preliminary! SymTypeExpression stored in the field with the !final! one
       typeSymbol.map(SymTypeExpressionFactory::createTypeExpression).ifPresent(symbol::setType);
     }
 
     if (symbol.isPresentTypeQualifier()) {
-      resolveSymTypeExpression(imports, packageDeclaration, symbol.getTypeQualifier(), symbol.getEnclosingScope()).ifPresent(symbol::setTypeQualifier);
+      resolveSymTypeExpression(imports, packageDeclaration, symbol.getTypeQualifier(), symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd()).ifPresent(symbol::setTypeQualifier);
     }
     else if (symbol.isPresentAttributeQualifier()) {
       final VariableSymbol variableSymbol = symbol.getAttributeQualifier();
-      resolveUniqueVariableSymbol(imports, packageDeclaration, symbol.getType().getTypeInfo().getName(), variableSymbol.getName(), symbol.getEnclosingScope())
+      resolveUniqueVariableSymbol(imports, packageDeclaration, symbol.getType().getTypeInfo().getName(), variableSymbol.getName(), symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd())
           .ifPresent(symbol::setAttributeQualifier);
     }
   }
@@ -67,7 +67,7 @@ public class CDAssociationSymbolTableCompleter
       leftType = leftSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      leftType = resolveUniqueTypeSymbol(imports, packageDeclaration, leftSide.getMCQualifiedType().getMCQualifiedName().getQName(), node.getEnclosingScope()).get();
+      leftType = resolveUniqueTypeSymbol(imports, packageDeclaration, leftSide.getMCQualifiedType().getMCQualifiedName().getQName(), node.getEnclosingScope(), leftSide.getMCQualifiedType().get_SourcePositionStart(), leftSide.getMCQualifiedType().get_SourcePositionEnd()).get();
     }
 
     final TypeSymbol rightType;
@@ -75,7 +75,7 @@ public class CDAssociationSymbolTableCompleter
       rightType = rightSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      rightType = resolveUniqueTypeSymbol(imports, packageDeclaration, rightSide.getMCQualifiedType().getMCQualifiedName().getQName(), node.getEnclosingScope()).get();
+      rightType = resolveUniqueTypeSymbol(imports, packageDeclaration, rightSide.getMCQualifiedType().getMCQualifiedName().getQName(), node.getEnclosingScope(), rightSide.getMCQualifiedType().get_SourcePositionStart(), rightSide.getMCQualifiedType().get_SourcePositionEnd()).get();
     }
 
     if (leftSide.isPresentSymbol()) {

@@ -48,7 +48,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   }
 
   public void addBuiltInTypes() {
-    if (!getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
+    if (getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
       final ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
           .artifactScope();
       artifactScope.setPackageName("");

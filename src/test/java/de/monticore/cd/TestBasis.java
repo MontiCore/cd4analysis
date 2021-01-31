@@ -7,10 +7,12 @@ package de.monticore.cd;
 import com.google.common.base.Joiner;
 import de.monticore.antlr4.MCConcreteParser;
 import de.monticore.ast.ASTNode;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import de.se_rwth.commons.logging.Slf4jLog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -109,5 +111,11 @@ public class TestBasis {
   @After
   public void after() {
     checkLogError();
+  }
+
+  protected ICD4AnalysisArtifactScope createST(ASTCDCompilationUnit astcdCompilationUnit) {
+    final ICD4AnalysisArtifactScope st = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    checkLogError();
+    return st;
   }
 }

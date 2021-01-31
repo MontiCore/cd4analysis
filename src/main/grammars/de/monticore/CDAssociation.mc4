@@ -88,7 +88,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
       know about.
   */
   CDQualifier = 
-      "[[" byAttributeName:Name@Field "]]" 
+      "[[" byAttributeName:Name@Variable "]]"
     | "["  byType:MCType "]";
 
   splittoken "[[", "]]";

@@ -4,7 +4,6 @@
 
 package de.monticore.cd.cli;
 
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -16,7 +15,6 @@ import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -25,7 +23,6 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -38,7 +35,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDCLI {
@@ -262,9 +262,9 @@ public class CDCLI {
       ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
     }
 
-    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator();
-
-    artifactScope = symbolTableCreator.createFromAST(ast);
+    final CD4CodeScopesGenitorDelegator cd4CodeScopesGenitorDelegator = CD4CodeMill.scopesGenitorDelegator();
+    artifactScope = cd4CodeScopesGenitorDelegator.createFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
 
   protected void checkCocos(boolean noTypeCheck) {

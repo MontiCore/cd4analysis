@@ -120,4 +120,14 @@ public class CDBasisMill extends CDBasisMillTOP {
     return new DeriveSymTypeOfCDBasis();
   }
 
+  /**
+   * @deprecated use, until the scope is also reset
+   */
+  @Deprecated
+  public static void resetScope() {
+    millCDBasisScope = null;
+    millCDBasisScopesGenitor = null;
+    millCDBasisScopesGenitorDelegator = null;
+  }
+
 }

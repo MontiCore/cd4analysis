@@ -1,20 +1,16 @@
 package de.monticore.testcdassociation.symboltable;
 
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
-import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import org.junit.Test;
 
 import java.util.List;
@@ -32,18 +28,7 @@ public class CDAssociationSTCompleterTest extends CDAssociationTestBasis {
     final ICD4AnalysisArtifactScope artifactScope = createST(astcdCompilationUnit);
 
     {
-      final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
-      final List<ASTMCImportStatement> imports = astcdCompilationUnit.getMCImportStatementList();
-      final ASTMCQualifiedName packageDecl = astcdCompilationUnit.isPresentMCPackageDeclaration() ?
-          astcdCompilationUnit.getMCPackageDeclaration().getMCQualifiedName() :
-          MCQualifiedNameFacade.createQualifiedName("");
-
-      final CDAssociationSymbolTableCompleter cDAssociationVisitor = new CDAssociationSymbolTableCompleter(imports, packageDecl);
-      traverser.add4CDAssociation(cDAssociationVisitor);
-      final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(imports, packageDecl);
-      traverser.add4CDBasis(cDBasisVisitor);
-      traverser.add4OOSymbols(cDBasisVisitor);
-
+      final CD4AnalysisTraverser traverser = new CD4AnalysisSymbolTableCompleter(astcdCompilationUnit).getTraverser();
       astcdCompilationUnit.accept(traverser);
 
       checkLogError();

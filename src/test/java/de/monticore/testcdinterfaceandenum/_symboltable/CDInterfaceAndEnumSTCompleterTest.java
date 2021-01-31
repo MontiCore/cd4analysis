@@ -7,7 +7,9 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -38,6 +40,7 @@ public class CDInterfaceAndEnumSTCompleterTest {
 
   @Before
   public void setup() {
+    CDBasisMill.resetScope();
     // reset the GlobalScope
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
@@ -58,6 +61,8 @@ public class CDInterfaceAndEnumSTCompleterTest {
 
     String artifact = MODEL_PATH + "de/monticore/cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
+    new CD4AnalysisAfterParseTrafo().transform(ast);
+
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
     assertEquals(1, artifactScope.getSubScopes().size());
     ICD4AnalysisScope diagramScope = artifactScope.getSubScopes().get(0);

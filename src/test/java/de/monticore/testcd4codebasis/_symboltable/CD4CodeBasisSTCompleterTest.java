@@ -14,6 +14,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -45,6 +46,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   @Before
   public void setup() {
+    CDBasisMill.resetScope();
     // reset the GlobalScope
     CD4CodeMill.reset();
     CD4CodeMill.init();
@@ -65,10 +67,8 @@ public class CD4CodeBasisSTCompleterTest {
     String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    assertEquals(1, artifactScope.getSubScopes().size());
-    ICD4AnalysisScope diagramScope = artifactScope.getSubScopes().get(0);
 
-    LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = diagramScope.getCDTypeSymbols();
+    LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = artifactScope.getCDTypeSymbols();
     assertEquals(1, cdTypeSymbols.size());
     assertTrue(cdTypeSymbols.containsKey("C"));
 

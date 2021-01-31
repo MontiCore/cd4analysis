@@ -16,8 +16,10 @@ import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Names;
@@ -45,6 +47,7 @@ public class CDSymbolTableHelper {
 
   private static final String USED_BUT_UNDEFINED = "0xCDA80: Type '%s' is used but not defined.";
   private static final String DEFINED_MUTLIPLE_TIMES = "0xCDA81: Type '%s' is defined more than once.";
+  private static final String USED_BUT_UNDEFINED_VARIABLE = "0xCDA82: Type '%s' has no Variable '%s'.";
 
   public CDSymbolTableHelper() {
     this(new DeriveSymTypeOfCDBasis());
@@ -254,6 +257,38 @@ public class CDSymbolTableHelper {
       // nice, we found exactly one type
       return Optional.ofNullable(Iterables.getFirst(typeSymbols, null));
     }
+  }
+
+  /*
+   * Computes the unique variable symbol with the qualified name varName that can be resolved in the CDBasisScope scope
+   * via qualifying the name with the imports or the packageDeclaration.
+   * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
+   */
+  public static Optional<VariableSymbol> resolveUniqueVariableSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String typeName, String varName, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+    final Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, scope, sourcePositionStart, sourcePositionEnd);
+    if (typeSymbol.isPresent()) {
+      final List<VariableSymbol> variableList = typeSymbol.get().getVariableList(varName)
+          .stream().distinct().collect(Collectors.toList());
+      if (variableList.size() > 1) {
+        // symbol found multiple times => Error, type name ambiguous
+        Log.error(String.format(DEFINED_MUTLIPLE_TIMES, varName));
+        return Optional.empty();
+      }
+      else if (variableList.size() == 0) {
+        // no field symbol found => Error, variable does not exist
+        Log.error(String.format(USED_BUT_UNDEFINED_VARIABLE, typeName, varName));
+        return Optional.empty();
+      }
+
+      return Optional.ofNullable(variableList.get(0));
+    }
+
+    return Optional.empty();
+  }
+
+  public static Optional<SymTypeExpression> resolveSymTypeExpression(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, SymTypeExpression symTypeExpression, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+    return resolveUniqueTypeSymbol(imports, packageDeclaration, symTypeExpression.getTypeInfo().getName(), scope, sourcePositionStart, sourcePositionEnd)
+        .map(SymTypeExpressionFactory::createTypeExpression);
   }
 
   /*

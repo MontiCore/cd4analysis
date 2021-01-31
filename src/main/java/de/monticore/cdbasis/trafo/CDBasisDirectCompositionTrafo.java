@@ -6,6 +6,7 @@ package de.monticore.cdbasis.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;

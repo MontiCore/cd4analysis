@@ -8,6 +8,7 @@ import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -38,6 +39,7 @@ public class CDBasisSTCompleterTest {
 
   @Before
   public void setup() {
+    CDBasisMill.resetScope();
     // reset the GlobalScope
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
