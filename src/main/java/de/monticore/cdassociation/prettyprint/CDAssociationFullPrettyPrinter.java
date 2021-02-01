@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.prettyprint;
 
-import de.monticore.ast.ASTNode;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;

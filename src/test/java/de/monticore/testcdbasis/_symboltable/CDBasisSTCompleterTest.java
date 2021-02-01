@@ -3,7 +3,7 @@ package de.monticore.testcdbasis._symboltable;
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisDeSer;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
@@ -35,11 +35,10 @@ public class CDBasisSTCompleterTest {
 
   private static final String MODEL_PATH = "src/test/resources/";
   CD4AnalysisParser parser;
-  CD4AnalysisScopeDeSer scopeDeser;
+  CD4AnalysisDeSer scopeDeser;
 
   @Before
   public void setup() {
-    CDBasisMill.resetScope();
     // reset the GlobalScope
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
@@ -51,7 +50,7 @@ public class CDBasisSTCompleterTest {
     Log.enableFailQuick(false);
 
     this.parser = CD4AnalysisMill.parser();
-    scopeDeser = new CD4AnalysisScopeDeSer();
+    scopeDeser = new CD4AnalysisDeSer();
   }
 
   @Test

@@ -9,7 +9,7 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 
 public class CDCardinalityDeSer {
   public static ASTCDCardinality fromString(String cardinality) {
-    return CDAssociationMill.cDCardinalityDeSer().createFromString(cardinality);
+    return new CDCardinalityDeSer().createFromString(cardinality);
   }
 
   public ASTCDCardinality createFromString(String cardinality) {

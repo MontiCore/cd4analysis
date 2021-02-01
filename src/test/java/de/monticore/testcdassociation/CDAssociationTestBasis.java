@@ -10,7 +10,6 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._symboltable.ICDAssociationGlobalScope;
 import de.monticore.cdassociation.cocos.CDAssociationCoCos;
-import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
@@ -30,7 +29,6 @@ public class CDAssociationTestBasis extends TestBasis {
   public void initObjects() {
     CD4CodeMill.reset();
     CD4AnalysisMill.reset();
-    CDBasisMill.resetScope();
     CD4AnalysisMill.init();
     p = new TestCDAssociationParser();
 

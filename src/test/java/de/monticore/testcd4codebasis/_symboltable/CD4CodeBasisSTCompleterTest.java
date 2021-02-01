@@ -1,30 +1,20 @@
 package de.monticore.testcd4codebasis._symboltable;
 
 import com.google.common.collect.LinkedListMultimap;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisScopeDeSer;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
-import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
+import de.monticore.cd4code._symboltable.CD4CodeDeSer;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
-import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
@@ -42,11 +32,10 @@ public class CD4CodeBasisSTCompleterTest {
 
   private static final String MODEL_PATH = "src/test/resources/";
   CD4CodeParser parser;
-  CD4CodeScopeDeSer scopeDeser;
+  CD4CodeDeSer scopeDeser;
 
   @Before
   public void setup() {
-    CDBasisMill.resetScope();
     // reset the GlobalScope
     CD4CodeMill.reset();
     CD4CodeMill.init();
@@ -59,7 +48,7 @@ public class CD4CodeBasisSTCompleterTest {
     Log.enableFailQuick(false);
 
     this.parser = CD4CodeMill.parser();
-    scopeDeser = new CD4CodeScopeDeSer();
+    scopeDeser = new CD4CodeDeSer();
   }
 
   @Test

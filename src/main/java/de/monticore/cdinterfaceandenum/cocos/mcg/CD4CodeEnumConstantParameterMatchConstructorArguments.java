@@ -7,10 +7,12 @@ package de.monticore.cdinterfaceandenum.cocos.mcg;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
@@ -31,7 +33,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
   final CDSymbolTableHelper helper;
 
   public CD4CodeEnumConstantParameterMatchConstructorArguments() {
-    helper = new CDSymbolTableHelper(CD4CodeBasisMill.deriveSymTypeOfCD4CodeBasis());
+    helper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4CodeBasis());
   }
 
   @Override
@@ -168,7 +170,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     return constructorParameters.stream()
         .map(c -> node.getName() + "(" +
             c.stream()
-                .map(p -> CD4CodeMill.cD4CodePrettyPrinter().prettyprint(p))
+                .map(p -> new CD4CodeFullPrettyPrinter().prettyprint(p))
                 .collect(Collectors.joining(", ")) + ")")
         .collect(Collectors.joining("; "));
   }

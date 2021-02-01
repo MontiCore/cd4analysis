@@ -144,8 +144,7 @@ public class CDCLI {
       String ppOptionVal = cmd.getOptionValue("pp");
 
       // print model
-
-      final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
+      final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
       ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
 
       if (ppOptionVal == null) {

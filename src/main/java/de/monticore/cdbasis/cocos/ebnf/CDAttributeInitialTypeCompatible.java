@@ -30,7 +30,7 @@ public class CDAttributeInitialTypeCompatible
       String className = symbol.getEnclosingScope().getName();
 
       String typeName = node.getMCType().printType(MCCollectionTypesMill.mcCollectionTypesPrettyPrinter());
-      final CD4CodeFullPrettyPrinter initialPrinter = CD4CodeMill.cD4CodePrettyPrinter();
+      final CD4CodeFullPrettyPrinter initialPrinter = new CD4CodeFullPrettyPrinter();
       node.getInitial().accept(initialPrinter.getTraverser());
 
       final DeriveSymTypeOfCDBasis deriveSymTypeOfCDBasis = new DeriveSymTypeOfCDBasis();

@@ -7,6 +7,7 @@ package de.monticore.cd4code._symboltable;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.io.paths.ModelPath;
 
 import java.util.Set;
@@ -17,17 +18,17 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
 
   public CD4CodeGlobalScope(){
     super();
-    setSymbolTableHelper(new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code()));
+    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code()));
   }
 
   public CD4CodeGlobalScope(ModelPath modelPath) {
     super(modelPath, EXTENSION);
-    setSymbolTableHelper(new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code()));
+    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code()));
   }
 
   public CD4CodeGlobalScope(ModelPath modelPath, String modelFileExtension) {
     super(modelPath, modelFileExtension);
-    setSymbolTableHelper(new CDSymbolTableHelper(CD4CodeMill.deriveSymTypeOfCD4Code()));
+    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code()));
   }
 
   @Override

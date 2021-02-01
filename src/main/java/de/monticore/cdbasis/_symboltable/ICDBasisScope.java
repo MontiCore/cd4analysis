@@ -6,37 +6,23 @@ package de.monticore.cdbasis._symboltable;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
-import de.monticore.symboltable.ISymbol;
-import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface ICDBasisScope extends ICDBasisScopeTOP {
-  default String getPackageName() {
-    return this.isPresentName() ? this.getName() : "";
-  }
-
   default String getRealPackageName() {
-    return this.getPackageName();
+    return this.isPresentName() ? this.getName() : "";
   }
 
   default List<String> getRemainingNameForResolveDown(String symbolName) {
     final FluentIterable<String> nameParts = getNameParts(symbolName);
-    final FluentIterable<String> packageNameParts = getNameParts(getPackageName());
+    final FluentIterable<String> packageNameParts = getNameParts(getRealPackageName());
 
     if (nameParts.size() >= packageNameParts.size()) {
       final String firstNNameParts = nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
       // A scope that exports symbols usually has a name.
-      if (firstNNameParts.equals(getPackageName())) {
+      if (firstNNameParts.equals(getRealPackageName())) {
         return Lists.newArrayList(nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining(".")));
       }
     }

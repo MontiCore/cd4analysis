@@ -5,7 +5,6 @@
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
@@ -13,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  private final CD4CodeFullPrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
+  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter();
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {

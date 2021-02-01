@@ -54,7 +54,7 @@ public class CDSymbolTableHelper {
   }
 
   public CDSymbolTableHelper(CDTypesCalculator typeChecker) {
-    this(new CDBasisFullPrettyPrinter(), typeChecker, CDMill.modifierHandler(), CDAssociationMill.associationNavigableVisitor(), CDAssociationMill.cDAssocTypeForSymAssociationVisitor(), new Stack<>(), new HashMap<>(), new ArrayList<>());
+    this(new CDBasisFullPrettyPrinter(), typeChecker, CDMill.modifierHandler(), new CDAssociationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(), new Stack<>(), new HashMap<>(), new ArrayList<>());
   }
 
   public CDSymbolTableHelper(CDBasisFullPrettyPrinter prettyPrinter, CDTypesCalculator typeChecker, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, TypeSymbol> handledRoles, List<ASTMCImportStatement> imports) {

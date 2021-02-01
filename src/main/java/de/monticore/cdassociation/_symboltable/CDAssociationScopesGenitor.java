@@ -1,7 +1,6 @@
 package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
@@ -105,9 +104,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
       // and therefore the symbol
       return Optional.empty();
     }
-    return Optional.of(CDAssociationMill
-        .symAssocationBuilder()
-    );
+    return Optional.of(new SymAssociationBuilder());
   }
 
   /**

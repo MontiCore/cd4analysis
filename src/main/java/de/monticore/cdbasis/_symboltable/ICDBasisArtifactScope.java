@@ -1,13 +1,25 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
-import java.util.*;
-
 import com.google.common.collect.Lists;
 
+import java.util.List;
+
 public interface ICDBasisArtifactScope extends ICDBasisArtifactScopeTOP {
-  
-  default public List<String> getRemainingNameForResolveDown(String symbolName) {
+
+  /**
+   * This method returns the package name of the current artifact scope.
+   * If the package is empty or a language does not support packages,
+   * the method implementation returns an empty String.
+   *
+   * @return
+   */
+  @Override
+  default String getPackageName() {
+    return this.isPresentName() ? this.getName() : "";
+  }
+
+  default List<String> getRemainingNameForResolveDown(String symbolName) {
     final String packageAS = this.getPackageName();
     final com.google.common.collect.FluentIterable<String> packageASNameParts = com.google.common.collect.FluentIterable
         .from(de.se_rwth.commons.Splitters.DOT.omitEmptyStrings().split(packageAS));
@@ -22,5 +34,4 @@ public interface ICDBasisArtifactScope extends ICDBasisArtifactScopeTOP {
     
     return Lists.newArrayList(remainingSymbolName);
   }
-  
 }

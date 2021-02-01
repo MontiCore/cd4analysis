@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
-  private final CD4CodeFullPrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
+  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter();
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {

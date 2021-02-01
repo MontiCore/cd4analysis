@@ -45,7 +45,7 @@ public class TestTypeImporterTest extends TestBasis {
       ((CD4CodeGlobalScope) cdGlobalScope).addBuiltInTypes();
     }
 
-    final CD4CodeResolver c = CD4CodeMill.cD4CodeResolvingDelegate(cdGlobalScope);
+    final CD4CodeResolver c = new CD4CodeResolver(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolver(c);
     globalScope.addAdaptedTypeSymbolResolver(c);
     globalScope.addAdaptedFieldSymbolResolver(c);

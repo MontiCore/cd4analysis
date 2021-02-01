@@ -4,7 +4,6 @@
 package de.monticore.cdinterfaceandenum._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
@@ -14,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ASTCDEnum extends ASTCDEnumTOP {
-  private final CD4CodeFullPrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
+  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter();
 
   @Override
   public void setSpannedScope(ICDBasisScope spannedScope) {
