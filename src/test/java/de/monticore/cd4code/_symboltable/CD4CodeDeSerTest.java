@@ -11,6 +11,7 @@ import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.ModelPath;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
+@Ignore("ignored until deserialization fixed in MC6.8")
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeDeSerTest extends CD4CodeTestBasis {
   @Test

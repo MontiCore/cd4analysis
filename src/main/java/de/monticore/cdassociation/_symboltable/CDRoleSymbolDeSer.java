@@ -1,6 +1,6 @@
 package de.monticore.cdassociation._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
+import de.monticore.cd._symboltable.CDDeSerHelper;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
@@ -19,26 +19,6 @@ import java.util.Optional;
 import static de.monticore.cdassociation._symboltable.CDAssociationDeSer.handleSymAssociation;
 
 public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
-  protected Map<Integer, SymAssociation> symAssociations;
-  protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
-
-  public CDRoleSymbolDeSer() {
-    setSymAssociations(new HashMap<>());
-    init();
-  }
-
-  protected void init() {
-    this.symbolTablePrinterHelper = new CDSymbolTablePrinterHelper();
-  }
-
-  public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
-    this.symbolTablePrinterHelper = symbolTablePrinterHelper;
-  }
-
-  public void setSymAssociations(Map<Integer, SymAssociation> symAssociations) {
-    this.symAssociations = symAssociations;
-  }
-
   @Override
   protected void serializeCardinality(Optional<ASTCDCardinality> cardinality, CDAssociationSymbols2Json s2j) {
     if (cardinality.isPresent()) {
@@ -61,7 +41,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   @Override
   protected void serializeAssoc(Optional<SymAssociation> assoc, CDAssociationSymbols2Json s2j) {
     if (assoc != null && assoc.isPresent()) {
-      s2j.printer.member("association", handleSymAssociation(symbolTablePrinterHelper, assoc.get()));
+      s2j.printer.member("association", handleSymAssociation(assoc.get()));
     }
   }
 
@@ -105,7 +85,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   @Override
   protected Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
     return symbolJson.getIntegerMemberOpt("association")
-        .flatMap(a -> Optional.ofNullable(symAssociations.get(a)));
+        .flatMap(a -> Optional.ofNullable(CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
   }
 
   @Override

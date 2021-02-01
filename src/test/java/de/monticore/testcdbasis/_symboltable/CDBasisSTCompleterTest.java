@@ -20,6 +20,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -179,6 +180,7 @@ public class CDBasisSTCompleterTest {
     }
   }
 
+  @Ignore("ignored until deserialization fixed in MC6.8")
   @Test
   public void symbolTableCompleterNoErrorTest() {
     String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
@@ -218,6 +220,7 @@ public class CDBasisSTCompleterTest {
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDA80"));
   }
 
+  @Ignore("ignored until deserialization fixed in MC6.8")
   @Test
   public void symbolTableCompleterTypeAmbiguousTest() {
     String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeAmbiguous.cd";

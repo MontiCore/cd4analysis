@@ -1,8 +1,9 @@
 package de.monticore.cdassociation._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTablePrinterHelper;
+import de.monticore.cd._symboltable.CDDeSerHelper;
 import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
+import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonObject;
 
 import java.util.Map;
@@ -11,60 +12,50 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
   public static final String FURTHER_OBJECTS_MAP = "furtherObjects";
   public static final String SYM_ASSOCIATION_TYPE = "de.monticore.cdassociation._symboltable.SymAssociation";
 
-  protected CDSymbolTablePrinterHelper symbolTablePrinterHelper;
-  protected Map<Integer, SymAssociation> symAssociations;
-
-  public void setSymbolTablePrinterHelper(CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
-    this.symbolTablePrinterHelper = symbolTablePrinterHelper;
-  }
-
-  public void setSymAssociations(Map<Integer, SymAssociation> symAssociations) {
-    this.symAssociations = symAssociations;
-  }
 
   @Override
   protected void serializeAddons(ICDAssociationScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
-    serializeFurtherObjects(symbolTablePrinterHelper, s2j.printer);
+    serializeFurtherObjects(s2j.printer);
   }
 
   @Override
   protected void serializeAddons(ICDAssociationArtifactScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
-    serializeFurtherObjects(symbolTablePrinterHelper, s2j.printer);
+    serializeFurtherObjects(s2j.printer);
   }
 
   @Override
   protected void deserializeAddons(ICDAssociationScope scope, JsonObject scopeJson) {
     super.deserializeAddons(scope, scopeJson);
-    deserializeFurtherObjects(symAssociations, scopeJson);
+    deserializeFurtherObjects(scopeJson);
   }
 
   @Override
   protected void deserializeAddons(ICDAssociationArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAddons(scope, scopeJson);
-    deserializeFurtherObjects(symAssociations, scopeJson);
+    deserializeFurtherObjects(scopeJson);
   }
 
-  public static void serializeFurtherObjects(CDSymbolTablePrinterHelper symbolTablePrinterHelper, JsonPrinter printer) {
-    if (!symbolTablePrinterHelper.getSymAssociations().isEmpty()) {
+  public static void serializeFurtherObjects(JsonPrinter printer) {
+    if (!CDDeSerHelper.getInstance().getSymAssocForSerialization().isEmpty()) {
       printer.beginObject(FURTHER_OBJECTS_MAP);
-      serializeSymAssociations(printer, symbolTablePrinterHelper);
+      serializeSymAssociations(printer);
       printer.endObject();
 
-      symbolTablePrinterHelper.getSymAssociations().clear();
+      CDDeSerHelper.getInstance().getSymAssocForSerialization().clear();
     }
   }
 
-  public static void deserializeFurtherObjects(Map<Integer, SymAssociation> symAssociations, JsonObject scopeJson) {
+  public static void deserializeFurtherObjects(JsonObject scopeJson) {
     if (scopeJson.hasObjectMember(FURTHER_OBJECTS_MAP)) {
       final JsonObject objectJson = scopeJson.getObjectMember(FURTHER_OBJECTS_MAP);
-      objectJson.getMembers().entrySet().forEach(m -> deserializeSymAssociations(symAssociations, m));
+      objectJson.getMembers().entrySet().forEach(CDAssociationDeSer::deserializeSymAssociations);
     }
   }
 
-  public static void serializeSymAssociations(JsonPrinter printer, CDSymbolTablePrinterHelper symbolTablePrinterHelper) {
-    symbolTablePrinterHelper.getSymAssociations().forEach(a -> CDAssociationDeSer.serializeSymAssociation(printer, a));
+  public static void serializeSymAssociations(JsonPrinter printer) {
+    CDDeSerHelper.getInstance().getSymAssocForSerialization().forEach(a -> CDAssociationDeSer.serializeSymAssociation(printer, a));
   }
 
   /**
@@ -83,13 +74,13 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
     printer.endObject();
   }
 
-  public static int handleSymAssociation(CDSymbolTablePrinterHelper symbolTablePrinterHelper, SymAssociation association) {
+  public static int handleSymAssociation(SymAssociation association) {
     // don't serialize the SymAssociation, just add it to the list and generate an identifier to be placed in the CDAssociation or CDRoleSymbol
-    symbolTablePrinterHelper.addSymAssociation(association);
+    CDDeSerHelper.getInstance().addSymAssociationForSerialization(association);
     return association.hashCode();
   }
 
-  public static void deserializeSymAssociation(Map<Integer, SymAssociation> symAssociations, String name, JsonObject symbolJson) {
+  public static void deserializeSymAssociation(String name, JsonObject symbolJson) {
     JsonDeSers.checkCorrectDeSerForKind(SYM_ASSOCIATION_TYPE, symbolJson);
 
     // don't use the builder, because the symAssociation is just partial
@@ -97,13 +88,13 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
     symAssociation.setIsAssociation(symbolJson.getBooleanMemberOpt("isAssociation").orElse(false));
     symAssociation.setIsComposition(symbolJson.getBooleanMemberOpt("isComposition").orElse(false));
 
-    symAssociations.put(Integer.valueOf(name), symAssociation);
+    CDDeSerHelper.getInstance().addSymAssociationForDeserialization(Integer.parseInt(name), symAssociation);
   }
 
-  public static void deserializeSymAssociations(Map<Integer, SymAssociation> symAssociations, Map.Entry<String, de.monticore.symboltable.serialization.json.JsonElement> entry) {
+  public static void deserializeSymAssociations(Map.Entry<String, JsonElement> entry) {
     final String member = entry.getValue().getAsJsonObject().getStringMember(JsonDeSers.KIND);
     if (member.equals(SYM_ASSOCIATION_TYPE)) {
-      deserializeSymAssociation(symAssociations, entry.getKey(), entry.getValue().getAsJsonObject());
+      deserializeSymAssociation(entry.getKey(), entry.getValue().getAsJsonObject());
     }
   }
 }

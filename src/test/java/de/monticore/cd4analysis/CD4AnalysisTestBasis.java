@@ -11,6 +11,7 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisDeSer;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
+import de.monticore.cdbasis._symboltable.CDBasisGlobalScope;
 import de.monticore.io.paths.ModelPath;
 import org.junit.Before;
 

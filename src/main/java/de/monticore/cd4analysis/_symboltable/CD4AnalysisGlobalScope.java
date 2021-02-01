@@ -9,6 +9,7 @@ import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
 import de.monticore.io.paths.ModelPath;
+import de.monticore.symboltable.serialization.IDeSer;
 
 import java.util.Set;
 

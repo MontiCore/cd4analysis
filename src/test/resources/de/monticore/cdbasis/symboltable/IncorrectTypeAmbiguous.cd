@@ -2,10 +2,10 @@
 
 package de.monticore.cdbasis.symboltable;
 
-import de.monticore.cdbasis.symtabs.MyTypesSerialized;
+import de.monticore.cdbasis.symtabs.MyTypesSerialized1;
 import de.monticore.cdbasis.symtabs.MyTypesSerialized2;
 
-classdiagram CorrectTypeUsages {
+classdiagram IncorrectTypeAmbiguous {
   class D {
     SomeImportedType x; // Type is defined in both imported models
   }

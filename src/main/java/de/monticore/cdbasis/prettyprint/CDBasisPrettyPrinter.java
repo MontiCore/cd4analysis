@@ -64,12 +64,9 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
     printPostComments(node);
   }
 
-  // TODO SVa: remove when implemented in MC (MCBasicTypesPrettyPrinter.java) (#2687)
   public void visit(ASTMCPackageDeclaration node) {
     printPreComments(node);
-    print("package ");
     node.accept(getTraverser());
-    print(";");
     printPostComments(node);
     println();
   }

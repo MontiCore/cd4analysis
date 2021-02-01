@@ -2,7 +2,7 @@
 
 package de.monticore.cdbasis.symboltable;
 
-import de.monticore.cdbasis.symtabs.MyTypesSerialized;
+import de.monticore.cdbasis.symtabs.MyTypesSerialized1;
 
 classdiagram CorrectTypeUsages {
   class C;
