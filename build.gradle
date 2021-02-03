@@ -57,8 +57,9 @@ configurations {
 
 dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-    grammar "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-    grammar "de.monticore:monticore-grammar:${project.properties['mc_version']}:$grammar_classifier"
+    grammar ("de.monticore:monticore-grammar:$mc_version"){ capabilities {
+      requireCapability("de.monticore:monticore-grammar-grammars")}
+    }
     implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
     implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
     implementation "de.monticore:monticore-generator:${project.properties['mc_version']}"
@@ -76,7 +77,9 @@ dependencies {
 }
 
 repositories {
+  if(("true").equals(getProperty('useLocalRepo'))){
     mavenLocal()
+  }
     maven {
         credentials.username mavenUser
         credentials.password mavenPassword
