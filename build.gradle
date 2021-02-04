@@ -48,7 +48,6 @@ sourceSets {
     }
 }
 
-println(sourceSets.test.java.srcDirs)
 
 configurations {
     grammar
