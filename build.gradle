@@ -284,3 +284,8 @@ publishing {
         url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
     }
 }
+
+tasks.withType(MCTask) {
+  getService().set(project.ext.serviceProvider)
+  println(name)
+}
