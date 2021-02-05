@@ -285,7 +285,3 @@ publishing {
     }
 }
 
-tasks.withType(MCTask) {
-  getService().set(project.ext.serviceProvider)
-  println(name)
-}
