@@ -32,7 +32,7 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit nodeReparsed = astcdCompilationUnitReParsed.get();
 
     new CD4CodeAfterParseTrafo().transform(nodeReparsed);
-    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(nodeReparsed);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(nodeReparsed);
     checkLogError();
 
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(nodeReparsed);

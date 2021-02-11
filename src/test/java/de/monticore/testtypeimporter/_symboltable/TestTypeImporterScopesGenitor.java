@@ -15,17 +15,17 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Deque;
 import java.util.Optional;
 
-public class TestTypeImporterSymbolTableCreator
-    extends TestTypeImporterSymbolTableCreatorTOP {
+public class TestTypeImporterScopesGenitor
+    extends TestTypeImporterScopesGenitorTOP {
 
-  public TestTypeImporterSymbolTableCreator() {
+  public TestTypeImporterScopesGenitor() {
   }
 
-  public TestTypeImporterSymbolTableCreator(ITestTypeImporterScope enclosingScope) {
+  public TestTypeImporterScopesGenitor(ITestTypeImporterScope enclosingScope) {
     super(enclosingScope);
   }
 
-  public TestTypeImporterSymbolTableCreator(Deque<? extends ITestTypeImporterScope> scopeStack) {
+  public TestTypeImporterScopesGenitor(Deque<? extends ITestTypeImporterScope> scopeStack) {
     super(scopeStack);
   }
 

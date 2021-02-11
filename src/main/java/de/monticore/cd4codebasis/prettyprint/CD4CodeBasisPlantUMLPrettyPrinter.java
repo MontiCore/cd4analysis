@@ -11,7 +11,6 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisHandler;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 
 public class CD4CodeBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil

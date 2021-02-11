@@ -8,28 +8,24 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.stream.Collectors;
 
-/**
- * @deprecated use {@link CD4AnalysisScopesGenitor} instead
- */
-@Deprecated
-public class CD4AnalysisSymbolTableCreator
-    extends CD4AnalysisSymbolTableCreatorTOP {
-
-  public CD4AnalysisSymbolTableCreator() {
-    setRealThis(this);
+public class CD4AnalysisScopesGenitor
+    extends CD4AnalysisScopesGenitorTOP {
+  
+  public  CD4AnalysisScopesGenitor()  {
+    
   }
 
-  public CD4AnalysisSymbolTableCreator(ICD4AnalysisScope enclosingScope) {
+
+  public CD4AnalysisScopesGenitor(ICD4AnalysisScope enclosingScope) {
     super(enclosingScope);
-    setRealThis(this);
   }
 
-  public CD4AnalysisSymbolTableCreator(Deque<? extends ICD4AnalysisScope> scopeStack) {
+  public CD4AnalysisScopesGenitor(Deque<? extends ICD4AnalysisScope> scopeStack) {
     super(scopeStack);
-    setRealThis(this);
   }
 
   @Override
@@ -41,7 +37,7 @@ public class CD4AnalysisSymbolTableCreator
     artifactScope.setName(rootNode.getCDDefinition().getName());
 
     putOnStack(artifactScope);
-    rootNode.accept(getRealThis());
+    rootNode.accept(getTraverser());
     return artifactScope;
   }
 }

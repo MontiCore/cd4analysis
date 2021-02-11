@@ -30,7 +30,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
 
-    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
     final ICD4CodeArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -51,7 +51,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
-    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
     final Optional<CDTypeSymbol> b = scope.resolveCDType("B");
     final Optional<CDMethodSignatureSymbol> getXMethodSymbol = b.get()

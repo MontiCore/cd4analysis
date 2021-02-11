@@ -8,7 +8,6 @@ import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation._visitor.CDAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 
 import java.util.Stack;

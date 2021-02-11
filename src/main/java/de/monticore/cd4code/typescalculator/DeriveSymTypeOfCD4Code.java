@@ -4,10 +4,9 @@
 
 package de.monticore.cd4code.typescalculator;
 
-import de.monticore.cd._symboltable.TypesScopeHelper;
+import de.monticore.cd._symboltable.*;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._visitor.CD4CodeDelegatorVisitor;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
@@ -23,7 +22,7 @@ public class DeriveSymTypeOfCD4Code
 
   protected CD4CodeTraverser traverser;
   private TypeCheckResult typeCheckResult;
-  private TypesScopeHelper typesScopeHelper;
+  private CD4CodeTraverser typesScopeHelper;
 
   public DeriveSymTypeOfCD4Code() {
     init();
@@ -89,7 +88,14 @@ public class DeriveSymTypeOfCD4Code
   public void init() {
     this.traverser = CD4CodeMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-    this.typesScopeHelper = new TypesScopeHelper();
+  
+    this.typesScopeHelper = CD4CodeMill.traverser();
+  
+    typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
+    typesScopeHelper.add4MCCollectionTypes(new MCCollectionTypesScopeHelper());
+    typesScopeHelper.add4MCSimpleGenericTypes(new MCSimpleGenericTypesScopeHelper());
+    typesScopeHelper.add4MCArrayTypes(new MCArrayTypesScopeHelper());
+    typesScopeHelper.add4MCFullGenericTypes(new MCFullGenericTypesScopeHelper());
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

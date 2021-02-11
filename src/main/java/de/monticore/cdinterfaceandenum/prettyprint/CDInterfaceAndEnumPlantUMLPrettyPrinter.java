@@ -10,7 +10,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
-import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 public class CDInterfaceAndEnumPlantUMLPrettyPrinter

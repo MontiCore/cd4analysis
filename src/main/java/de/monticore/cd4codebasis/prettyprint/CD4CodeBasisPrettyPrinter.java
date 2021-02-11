@@ -8,7 +8,6 @@ import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cd4codebasis._ast.*;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisHandler;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 

@@ -39,7 +39,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -56,7 +56,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     new CD4AnalysisTrafo4Defaults().transform(node);
 
     final String serializedST = deSer.serialize(scope);
@@ -74,7 +74,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -101,7 +101,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");
     final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.scope();
     innerSpanningScope.setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope());

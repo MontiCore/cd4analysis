@@ -70,7 +70,8 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
     checkNullAndPresence(p, parse);
 
     final ASTCDCompilationUnit node = parse.get();
-    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.cD4CodeSymbolTableCreator().createFromAST(node);
+    CD4CodeMill.init();
+    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
   }
 }

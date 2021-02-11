@@ -7,14 +7,12 @@ package de.monticore.cd.prettyprint;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
-import de.monticore.cdbasis._visitor.CDBasisVisitor;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesTraverser;
-import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor;
 
 import java.util.Iterator;
 
@@ -91,7 +89,7 @@ public abstract class PrettyPrintUtil {
    * @param iter      iterator for the list of {@link ASTCDBasisNode}s
    * @param seperator string for seperating the ASTCDBasisNodes
    */
-  public void printSeparatorCDBasis(CDBasisVisitor visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
+  public void printSeparatorCDBasis(CDBasisTraverser visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {

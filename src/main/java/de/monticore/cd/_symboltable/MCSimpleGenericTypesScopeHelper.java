@@ -6,29 +6,15 @@ package de.monticore.cd._symboltable;
 
 import de.monticore.types.mcsimplegenerictypes._ast.ASTMCBasicGenericType;
 import de.monticore.types.mcsimplegenerictypes._ast.ASTMCCustomTypeArgument;
-import de.monticore.types.mcsimplegenerictypes._visitor.MCSimpleGenericTypesVisitor;
+import de.monticore.types.mcsimplegenerictypes._visitor.MCSimpleGenericTypesVisitor2;
 
 /**
  * This visitor sets the enclosing scope of the inner types,
  * so that the typechecks can be used
  */
 public class MCSimpleGenericTypesScopeHelper
-    implements MCSimpleGenericTypesVisitor {
-  protected MCSimpleGenericTypesVisitor realThis;
+    implements MCSimpleGenericTypesVisitor2 {
 
-  public MCSimpleGenericTypesScopeHelper() {
-    setRealThis(this);
-  }
-
-  @Override
-  public MCSimpleGenericTypesVisitor getRealThis() {
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(MCSimpleGenericTypesVisitor realThis) {
-    this.realThis = realThis;
-  }
 
   @Override
   public void visit(ASTMCBasicGenericType node) {

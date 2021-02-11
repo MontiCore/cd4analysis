@@ -34,7 +34,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
 
-    final ICD4CodeArtifactScope scope = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
 
     assertNotNull(scope.resolveCDType("C"));
@@ -72,7 +72,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
 
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);

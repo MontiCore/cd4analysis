@@ -9,6 +9,7 @@ import de.monticore.cd._visitor.CDElementVisitor;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
@@ -24,7 +25,9 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
 
   public <T extends ASTCDElement> List<T> getCDElementListBy(CDElementVisitor.Options... options) {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(options);
-    this.accept(cdElementVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdElementVisitor);
+    this.accept(t);
     return cdElementVisitor.getElements();
   }
 
@@ -42,31 +45,41 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
 
   public List<ASTCDPackage> getCDPackagesList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.PACKAGES);
-    this.accept(cdElementVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdElementVisitor);
+    this.accept(t);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDClass> getCDClassesList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.CLASSES);
-    this.accept(cdElementVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdElementVisitor);
+    this.accept(t);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDInterface> getCDInterfacesList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.INTERFACES);
-    this.accept(cdElementVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdElementVisitor);
+    this.accept(t);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDEnum> getCDEnumsList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ENUMS);
-    this.accept(cdElementVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdElementVisitor);
+    this.accept(t);
     return cdElementVisitor.getElements();
   }
 
   public List<ASTCDAssociation> getCDAssociationsList() {
     final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
-    this.accept(cdElementVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdElementVisitor);
+    this.accept(t);
     return cdElementVisitor.getElements();
   }
 

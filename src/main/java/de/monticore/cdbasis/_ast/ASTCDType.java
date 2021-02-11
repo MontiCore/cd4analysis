@@ -6,6 +6,12 @@ package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDMemberVisitor;
+import de.monticore.cd4code._visitor.CD4CodeVisitor2;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
+import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
 import java.util.ArrayList;
@@ -48,7 +54,9 @@ public interface ASTCDType extends ASTCDTypeTOP {
     list.add(0, option);
 
     final CDMemberVisitor cdMemberVisitor = CDMill.cDMemberVisitor(list.toArray(new CDMemberVisitor.Options[0]));
-    this.accept(cdMemberVisitor);
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(cdMemberVisitor);
+    this.accept(t);
     return cdMemberVisitor.getElements();
   }
 

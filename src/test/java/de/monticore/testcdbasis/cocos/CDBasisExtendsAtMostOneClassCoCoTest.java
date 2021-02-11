@@ -23,7 +23,7 @@ public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
-    CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
 
     coCoChecker.addCoCo(new CDClassExtendsAtMostOneClass());

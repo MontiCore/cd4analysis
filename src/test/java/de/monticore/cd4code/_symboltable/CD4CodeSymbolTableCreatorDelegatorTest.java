@@ -23,7 +23,7 @@ public class CD4CodeSymbolTableCreatorDelegatorTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
 
-    CD4CodeMill.cD4CodeSymbolTableCreatorDelegator().createFromAST(node);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
 
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);

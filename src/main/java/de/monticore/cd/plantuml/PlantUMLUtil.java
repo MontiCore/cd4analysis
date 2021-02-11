@@ -7,7 +7,7 @@ package de.monticore.cd.plantuml;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegator;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -127,8 +127,8 @@ public class PlantUMLUtil {
         ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
       }
 
-      final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill
-          .cD4CodeSymbolTableCreatorDelegator();
+      final CD4CodeScopesGenitorDelegator symbolTableCreator = CD4CodeMill
+          .scopesGenitorDelegator();
       symbolTableCreator.createFromAST(astCD.get());
 
       plantUMLPrettyPrintUtil.getPrinter().print(cdVisitor.prettyprint(astCD.get()));

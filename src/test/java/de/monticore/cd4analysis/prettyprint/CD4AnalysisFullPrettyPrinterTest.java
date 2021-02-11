@@ -37,7 +37,7 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    CD4AnalysisMill.cD4AnalysisSymbolTableCreatorDelegator().createFromAST(node);
+    CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
 
     new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos().checkAll(node);

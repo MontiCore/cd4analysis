@@ -9,7 +9,6 @@ import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
-import de.monticore.cdbasis._visitor.CDBasisVisitor;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;

@@ -58,7 +58,7 @@ public class TestTypeImporterTest extends TestBasis {
     assertTrue(cu.isPresent());
 
     final ASTCompilationUnit compilationUnit = cu.get();
-    final ITestTypeImporterArtifactScope symbolTable = TestTypeImporterMill.testTypeImporterSymbolTableCreatorDelegator().createFromAST(compilationUnit);
+    final ITestTypeImporterArtifactScope symbolTable = TestTypeImporterMill.scopesGenitorDelegator().createFromAST(compilationUnit);
 
     final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("String");
     assertTrue(stringOOType.isPresent());

@@ -7,25 +7,25 @@ import static de.monticore.cdassociation._symboltable.CDAssociationDeSer.seriali
 
 public class CD4AnalysisDeSer extends CD4AnalysisDeSerTOP {
   @Override
-  protected void serializeAddons(ICD4AnalysisScope toSerialize, CD4AnalysisSymbols2Json s2j) {
+  public void serializeAddons(ICD4AnalysisScope toSerialize, CD4AnalysisSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
     serializeFurtherObjects(s2j.printer);
   }
 
   @Override
-  protected void serializeAddons(ICD4AnalysisArtifactScope toSerialize, CD4AnalysisSymbols2Json s2j) {
+  public void serializeAddons(ICD4AnalysisArtifactScope toSerialize, CD4AnalysisSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
     serializeFurtherObjects(s2j.printer);
   }
 
   @Override
-  protected void deserializeAddons(ICD4AnalysisScope scope, JsonObject scopeJson) {
+  public void deserializeAddons(ICD4AnalysisScope scope, JsonObject scopeJson) {
     super.deserializeAddons(scope, scopeJson);
     deserializeFurtherObjects(scopeJson);
   }
 
   @Override
-  protected void deserializeAddons(ICD4AnalysisArtifactScope scope, JsonObject scopeJson) {
+  public void deserializeAddons(ICD4AnalysisArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAddons(scope, scopeJson);
     deserializeFurtherObjects(scopeJson);
   }

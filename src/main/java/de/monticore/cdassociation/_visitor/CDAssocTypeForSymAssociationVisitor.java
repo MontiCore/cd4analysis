@@ -9,23 +9,9 @@ import de.monticore.cdassociation._ast.ASTCDAssocTypeComp;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 
 public class CDAssocTypeForSymAssociationVisitor
-    implements CDAssociationVisitor {
+    implements CDAssociationVisitor2 {
   protected SymAssociationBuilder symAssociation;
 
-  private CDAssocTypeForSymAssociationVisitor realThis;
-
-  public CDAssocTypeForSymAssociationVisitor() {
-    setRealThis(this);
-  }
-
-  @Override
-  public CDAssocTypeForSymAssociationVisitor getRealThis() {
-    return realThis;
-  }
-
-  public void setRealThis(CDAssocTypeForSymAssociationVisitor realThis) {
-    this.realThis = realThis;
-  }
 
   public SymAssociationBuilder getSymAssociation() {
     return symAssociation;

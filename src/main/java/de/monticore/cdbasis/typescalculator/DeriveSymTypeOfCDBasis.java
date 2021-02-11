@@ -4,10 +4,9 @@
 
 package de.monticore.cdbasis.typescalculator;
 
-import de.monticore.cd._symboltable.TypesScopeHelper;
+import de.monticore.cd._symboltable.MCBasicTypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis.CDBasisMill;
-import de.monticore.cdbasis._visitor.CDBasisDelegatorVisitor;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
@@ -23,7 +22,7 @@ public class DeriveSymTypeOfCDBasis implements ITypesCalculator, CDTypesCalculat
   protected CDBasisTraverser traverser;
 
   private TypeCheckResult typeCheckResult;
-  private TypesScopeHelper typesScopeHelper;
+  private CDBasisTraverser typesScopeHelper;
 
   public DeriveSymTypeOfCDBasis() {
     init();
@@ -93,7 +92,10 @@ public class DeriveSymTypeOfCDBasis implements ITypesCalculator, CDTypesCalculat
   public void init() {
     this.traverser = CDBasisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-    this.typesScopeHelper = new TypesScopeHelper();
+  
+    this.typesScopeHelper = CDBasisMill.traverser();
+  
+    typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

@@ -1,10 +1,12 @@
 package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbolSurrogate;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
@@ -115,7 +117,9 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
    * @return
    */
   protected boolean initialize_SymAssociation(SymAssociationBuilder symAssociation, ASTCDAssociation node) {
-    node.getCDAssocType().accept(symbolTableHelper.getAssocTypeVisitor(symAssociation));
+    CDAssociationTraverser t = CDAssociationMill.traverser();
+    t.add4CDAssociation(symbolTableHelper.getAssocTypeVisitor(symAssociation));
+    node.getCDAssocType().accept(t);
 
     return true;
   }
@@ -145,8 +149,10 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     symbol.setType(typeResult.get());
 
     symbolTableHelper.getModifierHandler().handle(side.getModifier(), symbol);
-
-    ast.getCDAssocDir().accept(symbolTableHelper.getNavigableVisitor());
+  
+    CDAssociationTraverser t = CDAssociationMill.traverser();
+    t.add4CDAssociation(symbolTableHelper.getNavigableVisitor());
+    ast.getCDAssocDir().accept(t);
     symbol.setIsDefinitiveNavigable(isLeft ? symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableLeft() : symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableRight());
 
     if (side.isPresentCDCardinality()) {

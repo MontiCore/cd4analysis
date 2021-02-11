@@ -14,25 +14,25 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
 
 
   @Override
-  protected void serializeAddons(ICDAssociationScope toSerialize, CDAssociationSymbols2Json s2j) {
+  public void serializeAddons(ICDAssociationScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
     serializeFurtherObjects(s2j.printer);
   }
 
   @Override
-  protected void serializeAddons(ICDAssociationArtifactScope toSerialize, CDAssociationSymbols2Json s2j) {
+  public void serializeAddons(ICDAssociationArtifactScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
     serializeFurtherObjects(s2j.printer);
   }
 
   @Override
-  protected void deserializeAddons(ICDAssociationScope scope, JsonObject scopeJson) {
+  public void deserializeAddons(ICDAssociationScope scope, JsonObject scopeJson) {
     super.deserializeAddons(scope, scopeJson);
     deserializeFurtherObjects(scopeJson);
   }
 
   @Override
-  protected void deserializeAddons(ICDAssociationArtifactScope scope, JsonObject scopeJson) {
+  public void deserializeAddons(ICDAssociationArtifactScope scope, JsonObject scopeJson) {
     super.deserializeAddons(scope, scopeJson);
     deserializeFurtherObjects(scopeJson);
   }

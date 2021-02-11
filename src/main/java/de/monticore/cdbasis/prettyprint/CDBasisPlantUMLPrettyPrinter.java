@@ -8,7 +8,6 @@ import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
-import de.monticore.cdbasis._visitor.CDBasisVisitor;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 
 import java.util.stream.Collectors;
