@@ -4,6 +4,7 @@
 
 package de.monticore.testcdassociation.parser;
 
+import de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
@@ -70,6 +71,9 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
     checkNullAndPresence(p, parse);
 
     final ASTCDCompilationUnit node = parse.get();
+
+    new CD4AnalysisDirectCompositionTrafo().transform(node);
+
     CD4CodeMill.init();
     final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();

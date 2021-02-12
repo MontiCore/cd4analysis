@@ -205,6 +205,6 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
 
   @Override
   public void visit(ASTCDDirectComposition node) {
-    throw new IllegalStateException("0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation.");
+    throw new IllegalStateException("0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CD4AnalysisDirectCompositionTrafo or CD4CodeDirectCompositionTrafo.");
   }
 }
