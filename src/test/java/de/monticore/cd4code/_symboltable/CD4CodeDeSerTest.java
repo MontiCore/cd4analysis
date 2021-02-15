@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-@Ignore("ignored until deserialization fixed in MC6.8")
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodeDeSerTest extends CD4CodeTestBasis {
   @Test

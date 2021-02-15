@@ -9,7 +9,6 @@ import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
@@ -21,7 +20,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,7 +28,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
 
 public class CDInterfaceAndEnumSTCompleterTest {
 
@@ -151,6 +148,7 @@ public class CDInterfaceAndEnumSTCompleterTest {
   public void serializationTest() {
     String artifact = MODEL_PATH + "de/monticore/cdinterfaceenum/symboltable/EnumAndInterface.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
+    new CD4AnalysisAfterParseTrafo().transform(ast);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
     String serialized = scopeDeser.serialize(artifactScope);
     assertNotNull(serialized);
@@ -158,7 +156,6 @@ public class CDInterfaceAndEnumSTCompleterTest {
     assertEquals(0, Log.getErrorCount());
   }
 
-  @Ignore("ignored until deserialization fixed in MC6.8")
   @Test
   public void symbolTableCompleterNoErrorTest() {
     String artifact = MODEL_PATH + "de/monticore/cdinterfaceenum/symboltable/CorrectTypeUsagesEnumInterface.cd";

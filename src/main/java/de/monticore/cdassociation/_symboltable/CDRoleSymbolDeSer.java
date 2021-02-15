@@ -47,7 +47,7 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
 
   @Override
   protected void serializeType(SymTypeExpression type, CDAssociationSymbols2Json s2j) {
-    SymTypeExpressionDeSer.serializeMember(s2j.printer, "typeQualifier", type);
+    SymTypeExpressionDeSer.serializeMember(s2j.printer, "type", type);
   }
 
   @Override

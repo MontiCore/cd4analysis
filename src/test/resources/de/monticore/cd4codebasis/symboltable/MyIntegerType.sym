@@ -1,35 +1,6 @@
 {
-  "name": "EnumAndInterface",
-  "kindHierarchy": [
-    [
-      "de.monticore.cd4code._symboltable.CDRoleSymbol",
-      "de.monticore.symbols.oosymbols._symboltable.FieldSymbol"
-    ],
-    [
-      "de.monticore.cd4code._symboltable.CDTypeSymbol",
-      "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol"
-    ],
-    [
-      "de.monticore.cd4code._symboltable.FieldSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol"
-    ],
-    [
-      "de.monticore.cd4code._symboltable.CDMethodSignatureSymbol",
-      "de.monticore.symbols.oosymbols._symboltable.MethodSymbol"
-    ],
-    [
-      "de.monticore.cd4code._symboltable.OOTypeSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol"
-    ],
-    [
-      "de.monticore.cd4code._symboltable.MethodSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol"
-    ],
-    [
-      "de.monticore.cd4code._symboltable.TypeVarSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol"
-    ]
-  ],
+  "generated-using": "www.MontiCore.de technology",
+  "name": "MyIntegerType",
   "symbols": [
     {
       "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
@@ -40,39 +11,14 @@
           {
             "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
             "name": "MyInteger",
-            "isClass": true,
-            "isInterface": false,
-            "isEnum": false,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
-            "name": "MyInteger",
-            "isClass": true,
-            "isInterface": false,
-            "isEnum": false,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
-            "name": "MyInteger"
+            "isClass": true
           }
         ]
       }
     },
     {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
-      "name": "EnumAndInterface"
+      "name": "MyIntegerType"
     }
   ]
 }

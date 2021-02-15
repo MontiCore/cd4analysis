@@ -7,7 +7,6 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
@@ -92,8 +91,6 @@ public class CDAssociationSymbolTableCompleter
 
     // remove the role from its current scope(s)
     symbol.getEnclosingScope().remove(symbol);
-    symbol.getEnclosingScope().remove((FieldSymbol) symbol);
-    symbol.getEnclosingScope().remove((VariableSymbol) symbol);
 
     // TODO SVa:
     // change the type to be compatible with with FieldSymbol
@@ -101,8 +98,6 @@ public class CDAssociationSymbolTableCompleter
     if (!spannedScope.getCDRoleSymbols().containsKey(symbol.getName())) {
       // add the symbol to the type; add to all relevant lists
       spannedScope.add(symbol);
-      spannedScope.add((FieldSymbol) symbol);
-      spannedScope.add((VariableSymbol) symbol);
     }
   }
 

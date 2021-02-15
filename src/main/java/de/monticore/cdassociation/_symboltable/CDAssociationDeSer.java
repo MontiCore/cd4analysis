@@ -16,7 +16,6 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
   @Override
   public void serializeAddons(ICDAssociationScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
-    serializeFurtherObjects(s2j.printer);
   }
 
   @Override

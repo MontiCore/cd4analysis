@@ -48,21 +48,25 @@ public class CD4CodeBasisScopesGenitor extends CD4CodeBasisScopesGenitorTOP {
   @Override
   public void endVisit(ASTCDMethod node) {
     initialize_CDMethod(node);
+    super.endVisit(node);
   }
 
   @Override
   public void endVisit(ASTCDConstructor node) {
     initialize_CDConstructor(node);
+    super.endVisit(node);
   }
 
   @Override
   public void endVisit(ASTCDParameter node) {
     initialize_CDParameter(node);
+    super.endVisit(node);
   }
 
   @Override
   public void endVisit(ASTCD4CodeEnumConstant node) {
     initialize_CD4CodeEnumConstant(node);
+    super.endVisit(node);
   }
 
   protected void initialize_CDMethod(ASTCDMethod ast) {

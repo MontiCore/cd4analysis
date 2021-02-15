@@ -7,6 +7,7 @@ import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeDeSer;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
@@ -19,7 +20,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -94,14 +94,15 @@ public class CD4CodeBasisSTCompleterTest {
   public void serializationTest() {
     String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/MyIntegerType.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
+    new CD4CodeAfterParseTrafo().transform(ast);
     ICD4CodeArtifactScope artifactScope = createSymbolTableFromAST(ast);
+
     String serialized = scopeDeser.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
     assertEquals(0, Log.getErrorCount());
   }
 
-  @Ignore("ignored until deserialization fixed in MC6.8")
   @Test
   public void symbolTableCompleterNoErrorTest() {
     String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";

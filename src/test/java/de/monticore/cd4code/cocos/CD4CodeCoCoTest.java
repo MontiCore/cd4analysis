@@ -43,7 +43,6 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
   }
 
   @Test
-  @Ignore("enable test, when the other model/symtab can be imported")
   public void useCLI() throws IOException, ParseException {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());

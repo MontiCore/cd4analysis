@@ -9,7 +9,6 @@ public class CD4CodeDeSer extends CD4CodeDeSerTOP {
   @Override
   public void serializeAddons(ICD4CodeScope toSerialize, CD4CodeSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
-    serializeFurtherObjects(s2j.printer);
   }
 
   @Override

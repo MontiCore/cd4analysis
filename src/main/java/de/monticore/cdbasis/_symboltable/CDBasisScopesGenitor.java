@@ -60,10 +60,10 @@ public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
 
   @Override
   public void endVisit(ASTCDClass node) {
-    super.endVisit(node);
     assert node.getSymbol() != null;
     initialize_CDClass(node);
     symbolTableHelper.removeFromCDTypeStack();
+    super.endVisit(node);
   }
 
   protected void initialize_CDClass(ASTCDClass ast) {
@@ -99,9 +99,9 @@ public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
 
   @Override
   public void endVisit(ASTCDAttribute node) {
-    super.endVisit(node);
     assert node.getSymbol() != null;
     initialize_CDAttribute(node);
+    super.endVisit(node);
   }
 
   protected void initialize_CDAttribute(ASTCDAttribute ast) {

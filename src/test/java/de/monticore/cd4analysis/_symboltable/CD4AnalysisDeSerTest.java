@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-@Ignore("ignored until deserialization fixed in MC6.8")
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
@@ -75,6 +74,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     new CD4AnalysisAfterParseTrafo().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -94,6 +94,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     assertTrue(right.isIsDefinitiveNavigable());
   }
 
+  @Ignore("no inner classes are allowed")
   @Test
   public void innerClass() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));

@@ -9,7 +9,6 @@ public class CD4AnalysisDeSer extends CD4AnalysisDeSerTOP {
   @Override
   public void serializeAddons(ICD4AnalysisScope toSerialize, CD4AnalysisSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
-    serializeFurtherObjects(s2j.printer);
   }
 
   @Override

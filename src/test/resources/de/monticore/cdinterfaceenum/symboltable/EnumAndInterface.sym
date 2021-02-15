@@ -1,31 +1,6 @@
 {
-  "name": "Interfaces",
-  "kindHierarchy": [
-    [
-      "de.monticore.cd4analysis._symboltable.TypeVarSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol"
-    ],
-    [
-      "de.monticore.cd4analysis._symboltable.MethodSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol"
-    ],
-    [
-      "de.monticore.cd4analysis._symboltable.CDRoleSymbol",
-      "de.monticore.symbols.oosymbols._symboltable.FieldSymbol"
-    ],
-    [
-      "de.monticore.cd4analysis._symboltable.CDTypeSymbol",
-      "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol"
-    ],
-    [
-      "de.monticore.cd4analysis._symboltable.OOTypeSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol"
-    ],
-    [
-      "de.monticore.cd4analysis._symboltable.FieldSymbol",
-      "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol"
-    ]
-  ],
+  "generated-using": "www.MontiCore.de technology",
+  "name": "EnumAndInterface",
   "symbols": [
     {
       "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
@@ -36,69 +11,19 @@
           {
             "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
             "name": "MyOtherInterface",
-            "isClass": false,
-            "isInterface": true,
-            "isEnum": false,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+            "isInterface": true
           },
           {
             "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
             "name": "MyEnum",
-            "isClass": false,
-            "isInterface": false,
-            "isEnum": true,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
-            "name": "MyOtherInterface",
-            "isClass": false,
-            "isInterface": true,
-            "isEnum": false,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
-            "name": "MyEnum",
-            "isClass": false,
-            "isInterface": false,
-            "isEnum": true,
-            "isAbstract": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
-            "name": "MyOtherInterface"
-          },
-          {
-            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
-            "name": "MyEnum"
+            "isEnum": true
           }
         ]
       }
     },
     {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
-      "name": "Interfaces"
+      "name": "EnumAndInterface"
     }
   ]
 }

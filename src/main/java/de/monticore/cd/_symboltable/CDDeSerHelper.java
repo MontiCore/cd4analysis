@@ -6,6 +6,7 @@ package de.monticore.cd._symboltable;
 
 import de.monticore.cdassociation._symboltable.SymAssociation;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ public class CDDeSerHelper {
 
   protected CDDeSerHelper(Set<SymAssociation> symAssociations) {
     this.symAssocForSerialization = symAssociations;
+    this.symAssocForDeserialization = new HashMap<>();
   }
 
   public static CDDeSerHelper getInstance() {
