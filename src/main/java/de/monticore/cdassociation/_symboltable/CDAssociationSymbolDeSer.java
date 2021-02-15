@@ -20,4 +20,30 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
     return symbolJson.getIntegerMemberOpt("association")
         .flatMap(a -> Optional.ofNullable(CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
   }
+
+  @Override
+  public String serialize(CDAssociationSymbol toSerialize, CDAssociationSymbols2Json s2j) {
+    // ============== copy from parent ============
+    de.monticore.symboltable.serialization.JsonPrinter p = s2j.getJsonPrinter();
+    p.beginObject();
+    p.member(de.monticore.symboltable.serialization.JsonDeSers.KIND, getSerializedKind());
+    p.member(de.monticore.symboltable.serialization.JsonDeSers.NAME, toSerialize.getName());
+
+    // serialize symbolrule attributes
+    if (toSerialize.isPresentAssoc()) {
+      serializeAssoc(Optional.of(toSerialize.getAssoc()), s2j);
+    }
+    // ============== change ============
+    // don't serialize the spanned scope
+//    if (toSerialize.getSpannedScope().isExportingSymbols()
+//        && toSerialize.getSpannedScope().getSymbolsSize() > 0) {
+//      toSerialize.getSpannedScope().accept(s2j.getTraverser());
+//    }
+    // ============== change end ========
+
+    serializeAddons(toSerialize, s2j);
+    p.endObject();
+
+    return p.toString();
+  }
 }

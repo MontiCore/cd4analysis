@@ -12,22 +12,10 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
   public static final String FURTHER_OBJECTS_MAP = "furtherObjects";
   public static final String SYM_ASSOCIATION_TYPE = "de.monticore.cdassociation._symboltable.SymAssociation";
 
-
-  @Override
-  public void serializeAddons(ICDAssociationScope toSerialize, CDAssociationSymbols2Json s2j) {
-    super.serializeAddons(toSerialize, s2j);
-  }
-
   @Override
   public void serializeAddons(ICDAssociationArtifactScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
     serializeFurtherObjects(s2j.printer);
-  }
-
-  @Override
-  public void deserializeAddons(ICDAssociationScope scope, JsonObject scopeJson) {
-    super.deserializeAddons(scope, scopeJson);
-    deserializeFurtherObjects(scopeJson);
   }
 
   @Override
