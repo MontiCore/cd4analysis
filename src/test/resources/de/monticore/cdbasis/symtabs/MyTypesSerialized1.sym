@@ -4,21 +4,16 @@
   "symbols": [
     {
       "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
-      "name": "de.monticore.cdbasis.symtabs",
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
-          {
-            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-            "name": "SomeImportedType",
-            "isClass": true
-          }
-        ]
-      }
+      "name": "de.monticore.cdbasis.symtabs"
     },
     {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
-      "name": "MyTypesSerialized1"
+      "name": "MyTypes"
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "de.monticore.cdbasis.symtabs.SomeImportedType",
+      "isClass": true
     }
   ]
 }

@@ -198,13 +198,6 @@ Further examples can be found [here][ExampleModels].
     "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
     "name": "de.monticore.life.Person",
     "isClass": true,
-    "isInterface": false,
-    "isEnum": false,
-    "isAbstract": false,
-    "isPrivate": false,
-    "isProtected": false,
-    "isPublic": false,
-    "isStatic": false,
     "symbols": [ 
        // ... contained attributes and roles 
     ]
@@ -217,16 +210,10 @@ Further examples can be found [here][ExampleModels].
   {
     "kind": "de.monticore.types.typesymbols._symboltable.FieldSymbol",
     "name": "de.monticore.life.Person.name",
-    "isPrivate": false,
-    "isProtected": false,
-    "isPublic": false,
-    "isStatic": false,
-    "isFinal": false,
     "type": {
         "kind": "de.monticore.types.check.SymTypeOfObject",
         "objName": "String"
-    },
-    "isReadOnly": false
+    }
   }
 ```
 
@@ -239,8 +226,7 @@ Further examples can be found [here][ExampleModels].
   {
     "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
     "name": 556488341,
-    "isAssociation": true,
-    "isComposition": false
+    "isAssociation": true
   }
 ```
 
@@ -263,18 +249,10 @@ Further examples can be found [here][ExampleModels].
     "isDefinitiveNavigable": true,
     "cardinality": "[*]",
     "association": 556488341,
-    "isOrdered": false,
     "type": {
       "kind": "de.monticore.types.check.SymTypeOfObject",
       "objName": "de.monticore.life.Person"
-    },
-    "isReadOnly": false,
-    "isPrivate": false,
-    "isProtected": false,
-    "isPublic": false,
-    "isStatic": false,
-    "isFinal": false,
-    "isLeft": false
+    }
   }
 ```
 

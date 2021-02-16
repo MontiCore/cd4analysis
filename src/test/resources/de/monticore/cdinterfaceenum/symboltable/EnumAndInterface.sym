@@ -4,26 +4,21 @@
   "symbols": [
     {
       "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
-      "name": "de.monticore.cdinterfaceandenum.symboltable",
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
-          {
-            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-            "name": "MyOtherInterface",
-            "isInterface": true
-          },
-          {
-            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-            "name": "MyEnum",
-            "isEnum": true
-          }
-        ]
-      }
+      "name": "de.monticore.cdinterfaceandenum.symboltable"
     },
     {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
       "name": "EnumAndInterface"
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "de.monticore.cdinterfaceandenum.symboltable.MyOtherInterface",
+      "isInterface": true
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "de.monticore.cdinterfaceandenum.symboltable.MyEnum",
+      "isEnum": true
     }
   ]
 }
