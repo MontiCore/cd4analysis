@@ -8,12 +8,12 @@ import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbolDeSer;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static de.monticore.cdassociation._symboltable.CDAssociationDeSer.handleSymAssociation;
@@ -25,6 +25,13 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
       final CDAssociationFullPrettyPrinter cdAssociationPrettyPrinter = new CDAssociationFullPrettyPrinter(new IndentPrinter());
       cardinality.get().accept(cdAssociationPrettyPrinter.getTraverser());
       s2j.printer.member("cardinality", cdAssociationPrettyPrinter.getPrinter().getContent());
+    }
+  }
+
+  @Override
+  protected void serializeField(Optional<FieldSymbol> field, CDAssociationSymbols2Json s2j) {
+    if (field.isPresent()) {
+      s2j.printer.member("field", field.get().getFullName());
     }
   }
 
@@ -54,6 +61,14 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
   protected Optional<ASTCDCardinality> deserializeCardinality(JsonObject symbolJson) {
     if (symbolJson.hasMember("cardinality")) {
       return Optional.ofNullable(CDCardinalityDeSer.fromString(symbolJson.getStringMember("cardinality")));
+    }
+    return Optional.empty();
+  }
+
+  @Override
+  protected Optional<FieldSymbol> deserializeField(JsonObject symbolJson) {
+    if (symbolJson.hasMember("field")) {
+      return CDAssociationMill.globalScope().resolveField(symbolJson.getStringMember("field"));
     }
     return Optional.empty();
   }

@@ -64,7 +64,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
 
   /** A role symbol is a simple name. It is embedded in the association.
    */
-  symbol CDRole implements CDMember, Field = "(" Name ")";
+  symbol CDRole implements CDMember = "(" Name ")";
 
   /** CDCardinality captures the cardinality of an association side.
       Associations currently allow for standard cardinalities, but
@@ -111,6 +111,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   symbolrule CDRole =
     isDefinitiveNavigable: boolean
     cardinality: Optional<de.monticore.cdassociation._ast.ASTCDCardinality>
+    field: Optional<de.monticore.symbols.oosymbols._symboltable.FieldSymbol>
 
     // Defined exactly if a qualifier is given:
     attributeQualifier: Optional<de.monticore.symbols.basicsymbols._symboltable.VariableSymbol>
@@ -120,6 +121,14 @@ component grammar CDAssociation extends de.monticore.CDBasis {
     assoc: Optional<de.monticore.cdassociation._symboltable.SymAssociation>
     isOrdered: boolean
     isLeft: boolean
+
+    type: de.monticore.types.check.SymTypeExpression
+    isReadOnly: boolean
+    isPrivate: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isStatic:boolean
+    isFinal: boolean
   ;
 
   /** The symbol for CDAssociation is defined for named associations.
