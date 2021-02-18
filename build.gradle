@@ -61,7 +61,6 @@ dependencies {
     }
     implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
     implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-    implementation "de.monticore:monticore-generator:${project.properties['mc_version']}"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation group:'org.antlr', name:'antlr4-runtime', version:antlr_version
