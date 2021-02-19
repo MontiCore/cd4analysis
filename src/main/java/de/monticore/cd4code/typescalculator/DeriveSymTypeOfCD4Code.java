@@ -17,8 +17,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
-public class DeriveSymTypeOfCD4Code 
-    implements ITypesCalculator, CDTypesCalculator {
+public class DeriveSymTypeOfCD4Code
+    implements ITypesCalculator, ISynthesize, CDTypesCalculator {
 
   protected CD4CodeTraverser traverser;
   private TypeCheckResult typeCheckResult;

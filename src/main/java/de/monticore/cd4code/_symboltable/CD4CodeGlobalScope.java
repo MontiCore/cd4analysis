@@ -6,10 +6,11 @@ package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
 import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.io.paths.ModelPath;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
@@ -49,49 +50,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
   }
 
   public void addBuiltInTypes() {
-    if (getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
-      final ICD4CodeArtifactScope artifactScope = CD4CodeMill
-          .artifactScope();
-      artifactScope.setPackageName("");
-      artifactScope.setEnclosingScope(this);
-      artifactScope.setName(BuiltInTypes.SCOPE_NAME);
-
-      addBuiltInPrimitiveTypes(artifactScope);
-      addBuiltInObjectTypes(artifactScope);
-      addBuiltInUtilTypes(artifactScope);
-    }
-  }
-
-  public void addBuiltInPrimitiveTypes(ICD4CodeArtifactScope artifactScope) {
-    final ICD4CodeScope primitiveTypesScope = CD4CodeMill
-        .scope();
-    primitiveTypesScope.setNameAbsent();
-    primitiveTypesScope.setEnclosingScope(artifactScope);
-
-
-    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
-  }
-
-  public void addBuiltInObjectTypes(ICD4CodeArtifactScope artifactScope) {
-    final String scopeName = "java.lang";
-
-    final ICD4CodeScope objectTypesScope = CD4CodeMill
-        .scope();
-    objectTypesScope.setName(scopeName);
-    objectTypesScope.setEnclosingScope(artifactScope);
-
-    BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
-  }
-
-  public void addBuiltInUtilTypes(ICD4CodeArtifactScope artifactScope) {
-    final String scopeName = "java.util";
-
-    final ICD4CodeScope utilTypesScope = CD4CodeMill
-        .scope();
-    utilTypesScope.setName(scopeName);
-    utilTypesScope.setEnclosingScope(artifactScope);
-
-    BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
+    BuiltInTypes.addBuiltInTypes(this, Optional.of(new DeriveSymTypeOfCD4Code()));
   }
 
   @Override

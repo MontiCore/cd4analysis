@@ -65,7 +65,7 @@ public class CDAssociationTrafoTest extends CDAssociationTestBasis {
     checkLogError();
 
     assertFalse(b.get().getFieldList().isEmpty());
-    assertEquals(2, b.get().getFieldList());
+    assertEquals(2, b.get().getFieldList().size());
   }
 
 }

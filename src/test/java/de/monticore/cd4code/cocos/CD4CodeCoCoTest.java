@@ -50,6 +50,8 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     CDCLI.main(new String[] { "-i", otherFileName, "-f", "false", "-p", "src/test/resources", "-o", getTmpAbsolutePath(), "-s",
         getTmpFilePath("Simple.cdsym") });
 
+    checkLogError();
+
     // copy created symtab to correct location for importing
     final File symtab = new File(getTmpFilePath("Simple.cdsym"));
     final File newLocation = new File(getTmpFilePath(Joiner.on(File.separator).join("de", "monticore", "cdbasis", "parser", "Simple.cdsym")));

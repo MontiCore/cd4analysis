@@ -31,7 +31,6 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
         .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cdInterfaceAndEnumCoCos = new CDInterfaceAndEnumCoCos();
   }

@@ -45,6 +45,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     new CD4CodeAfterParseTrafo().transform(node);
     final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
+    node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
 
     new CD4CodeTrafo4Defaults().transform(node);
 
@@ -56,5 +57,21 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
     final Optional<CDRoleSymbol> c2_2 = artifactScope.resolveCDRole("C1.c2_custom");
     assertTrue(c2_2.isPresent());
+  }
+
+  @Test
+  public void resolveJavaTypes() throws IOException {
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/UseJavaTypes.cd"));
+    checkNullAndPresence(p, astcdCompilationUnit);
+
+    final ASTCDCompilationUnit node = astcdCompilationUnit.get();
+    new CD4CodeAfterParseTrafo().transform(node);
+    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    checkLogError();
+    node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
+
+    new CD4CodeTrafo4Defaults().transform(node);
+
+    checkLogError();
   }
 }

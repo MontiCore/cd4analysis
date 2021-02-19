@@ -55,7 +55,7 @@ public class CDAssociationCreateFieldsFromAllRoles
         .setIsFinal(symbol.isIsFinal())
         .build();
 
-    node.getEnclosingScope().add(fieldSymbol);
+    node.getSymbol().getEnclosingScope().add(fieldSymbol);
     node.getSymbol().setField(fieldSymbol);
   }
 

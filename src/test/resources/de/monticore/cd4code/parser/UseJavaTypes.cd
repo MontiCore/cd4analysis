@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd4code.parser;
+
+classdiagram UseJavaTypes {
+  class A {
+    java.util.Date date;
+    java.awt.Color color;
+    //Exception e;
+    java.lang.Exception[] e2;
+    java.util.List<java.lang.String> l;
+  }
+}

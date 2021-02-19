@@ -14,6 +14,8 @@ import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
  * Visitor to collect all CDMembers of specific types
  */
 public class CDMemberVisitor
-    implements CD4CodeVisitor2, CDBasisVisitor2, CD4CodeBasisVisitor2, CDAssociationVisitor2 {
+    implements CD4CodeVisitor2, CDBasisVisitor2, CDInterfaceAndEnumVisitor2, CD4CodeBasisVisitor2, CDAssociationVisitor2 {
   protected final Set<Options> options;
   protected final List<ASTCDMember> elements;
 

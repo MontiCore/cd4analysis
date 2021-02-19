@@ -35,6 +35,7 @@ grammar CD4Analysis extends
     de.monticore.CDAssociation,
     de.monticore.types.MCCollectionTypes,
     de.monticore.types.MCArrayTypes,
+                                       //de.monticore.types.MCFullGenericTypes,
     de.monticore.literals.MCCommonLiterals,
     de.monticore.expressions.BitExpressions,
     de.monticore.expressions.CommonExpressions {

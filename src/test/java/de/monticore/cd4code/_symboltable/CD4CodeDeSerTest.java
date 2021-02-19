@@ -86,7 +86,6 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     // explicitly not using the mill for initializing a global scope
     final CD4CodeGlobalScope globalScopeForDeserialization = new CD4CodeGlobalScope();
     globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScopeForDeserialization.setFileExt(CD4CodeGlobalScope.EXTENSION);
     globalScopeForDeserialization.addBuiltInTypes();
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;

@@ -7,9 +7,9 @@ classdiagram Auction {
   package auction {
     abstract class Auction {
       public long auctionIdent;
-      protected String title;
+      protected java.lang.String title;
       public int getNumberOfBids();
-      public boolean bid(Person p, Date t);
+      public boolean bid(Person p, java.util.Date t);
     }
 
     interface BiddingPolicy;
@@ -18,7 +18,7 @@ classdiagram Auction {
 
   package person {
     class Person {
-      String name;
+      java.lang.String name;
       -> Message [*];
     }
   }

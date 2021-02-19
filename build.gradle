@@ -1,11 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
+/*buildscript {
+  dependencies {
+    classpath "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+  }
+}*/
+
 plugins {
-    id "java"
-    id "monticore" version "$mc_version" // MontiCore Plugin
-    id "maven-publish"
-    id "com.github.johnrengelman.shadow" version "6.0.0"
-    id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
-    id 'org.unbroken-dome.test-sets' version '3.0.1'
+  id "java"
+  id "monticore" version "$mc_version" // MontiCore Plugin
+  id "maven-publish"
+  id "com.github.johnrengelman.shadow" version "6.0.0"
+  id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
+  id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
 group = "de.monticore.lang"
@@ -61,6 +67,7 @@ dependencies {
     }
     implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
     implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+    implementation "de.monticore:class2mc:${project.properties['mc_version']}"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation group:'org.antlr', name:'antlr4-runtime', version:antlr_version

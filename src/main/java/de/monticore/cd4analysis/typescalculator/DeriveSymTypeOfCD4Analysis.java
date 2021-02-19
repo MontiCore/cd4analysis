@@ -4,7 +4,9 @@
 
 package de.monticore.cd4analysis.typescalculator;
 
-import de.monticore.cd._symboltable.*;
+import de.monticore.cd._symboltable.MCArrayTypesScopeHelper;
+import de.monticore.cd._symboltable.MCBasicTypesScopeHelper;
+import de.monticore.cd._symboltable.MCCollectionTypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
@@ -17,8 +19,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
-public class DeriveSymTypeOfCD4Analysis 
-    implements ITypesCalculator, CDTypesCalculator {
+public class DeriveSymTypeOfCD4Analysis
+    implements ITypesCalculator, ISynthesize, CDTypesCalculator {
 
   protected CD4AnalysisTraverser traverser;
   private TypeCheckResult typeCheckResult;
@@ -80,6 +82,7 @@ public class DeriveSymTypeOfCD4Analysis
     getTypeCheckResult().setCurrentResultAbsent();
   }
 
+  @Override
   public Optional<SymTypeExpression> getResult() {
     return getTypeCheckResult().isPresentCurrentResult() ? Optional.of(getTypeCheckResult().getCurrentResult()) : Optional.empty();
   }

@@ -3,11 +3,11 @@
 classdiagram Simple {
 
   class A {
-    String name;
+    java.lang.String name;
   }
 
   class S {
-    String id;
+    java.lang.String id;
   }
 
   class B extends A {
@@ -20,8 +20,8 @@ classdiagram Simple {
 
   final composition Struct [[name]] -> (item) StructItem [1];
   association A -> S;
-  association [*] A (a) -> [String] S [1];
-  private composition comp protected / [0..1] A [[id]] (a) <-> (s) [String] S [1..*] public derived {ordered};
+  association [*] A (a) -> [java.lang.String] S [1];
+  private composition comp protected / [0..1] A [[id]] (a) <-> (s) [java.lang.String] S [1..*] public derived {ordered};
 
   class C1;
   class C2;

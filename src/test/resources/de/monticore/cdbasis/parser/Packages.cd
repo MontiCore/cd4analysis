@@ -36,7 +36,7 @@ classdiagram Packages {
 
   package h {
     class H {
-      String name;
+      java.lang.String name;
       java.lang.String name2;
     }
   }

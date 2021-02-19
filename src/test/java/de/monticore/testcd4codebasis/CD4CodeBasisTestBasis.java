@@ -29,7 +29,6 @@ public class CD4CodeBasisTestBasis extends TestBasis {
         .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos();
   }

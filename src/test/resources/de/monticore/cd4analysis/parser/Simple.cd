@@ -3,7 +3,7 @@
 classdiagram Simple {
 
   class A {
-    String name;
+    java.lang.String name;
   }
 
   class S;

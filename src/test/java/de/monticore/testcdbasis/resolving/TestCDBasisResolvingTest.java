@@ -42,7 +42,6 @@ public class TestCDBasisResolvingTest extends TestBasis {
 
     globalScope = CDBasisMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(compilationUnit);
     checkLogError();

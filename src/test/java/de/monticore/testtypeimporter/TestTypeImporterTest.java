@@ -35,12 +35,10 @@ public class TestTypeImporterTest extends TestBasis {
     TestTypeImporterMill.init();
     final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setFileExt("def");
 
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.clear();
     cdGlobalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    cdGlobalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
     if (cdGlobalScope instanceof CD4CodeGlobalScope) {
       ((CD4CodeGlobalScope) cdGlobalScope).addBuiltInTypes();
     }
@@ -60,17 +58,17 @@ public class TestTypeImporterTest extends TestBasis {
     final ASTCompilationUnit compilationUnit = cu.get();
     final ITestTypeImporterArtifactScope symbolTable = TestTypeImporterMill.scopesGenitorDelegator().createFromAST(compilationUnit);
 
-    final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("String");
+    final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("java.lang.String");
     assertTrue(stringOOType.isPresent());
     assertEquals("java.lang.String", stringOOType.get().getFullName());
 
-    final Optional<TypeSymbol> stringType = symbolTable.resolveType("String");
+    final Optional<TypeSymbol> stringType = symbolTable.resolveType("java.lang.String");
     assertTrue(stringType.isPresent());
     assertEquals("java.lang.String", stringType.get().getFullName());
 
     final Optional<FieldSymbol> a = symbolTable.resolveField("a");
     assertTrue(a.isPresent());
-    assertEquals("String", a.get().getType().getTypeInfo().getName());
+    assertEquals("java.lang.String", a.get().getType().getTypeInfo().getName());
 
     compilationUnit.getDefinition().streamElements().forEach(e -> assertNotNull(e.getSymbol().getType().getTypeInfo()));
   }

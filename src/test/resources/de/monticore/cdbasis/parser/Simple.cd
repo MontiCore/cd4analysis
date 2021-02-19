@@ -12,7 +12,7 @@ classdiagram Simple {
   class S;
 
   class C extends A, B {
-    String name;
+    java.lang.String name;
     int x;
     S s;
   }

@@ -6,6 +6,7 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4Defaults;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbol;
@@ -39,6 +40,13 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     new CD4AnalysisAfterParseTrafo().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+
+    {
+      final CD4AnalysisTraverser traverser = new CD4AnalysisSymbolTableCompleter(node).getTraverser();
+      node.accept(traverser);
+
+      checkLogError();
+    }
 
     final String serializedST = deSer.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -138,7 +146,6 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     // explicitly not using the mill for initializing a global scope
     final CD4AnalysisGlobalScope globalScopeForDeserialization = new CD4AnalysisGlobalScope();
     globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScopeForDeserialization.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
     globalScopeForDeserialization.addBuiltInTypes();
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;

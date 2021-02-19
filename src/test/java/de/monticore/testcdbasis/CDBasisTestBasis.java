@@ -36,7 +36,6 @@ public class CDBasisTestBasis extends TestBasis {
         .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setFileExt(CD4AnalysisGlobalScope.EXTENSION);
 
     coCoChecker = new CD4AnalysisCoCoChecker();
   }
