@@ -5,9 +5,8 @@
 package de.monticore.testtypeimporter;
 
 import de.monticore.cd.TestBasis;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.resolver.CD4CodeResolver;
 import de.monticore.io.paths.ModelPath;
@@ -36,12 +35,11 @@ public class TestTypeImporterTest extends TestBasis {
     final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
 
+    BuiltInTypes.addBuiltInTypes(globalScope, Optional.empty());
+
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.clear();
     cdGlobalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    if (cdGlobalScope instanceof CD4CodeGlobalScope) {
-      ((CD4CodeGlobalScope) cdGlobalScope).addBuiltInTypes();
-    }
 
     final CD4CodeResolver c = new CD4CodeResolver(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolver(c);
@@ -65,6 +63,8 @@ public class TestTypeImporterTest extends TestBasis {
     final Optional<TypeSymbol> stringType = symbolTable.resolveType("java.lang.String");
     assertTrue(stringType.isPresent());
     assertEquals("java.lang.String", stringType.get().getFullName());
+
+    assertEquals(stringOOType.get(), stringType.get());
 
     final Optional<FieldSymbol> a = symbolTable.resolveField("a");
     assertTrue(a.isPresent());

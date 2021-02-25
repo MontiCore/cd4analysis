@@ -4,9 +4,9 @@
 
 package de.monticore.cd._symboltable;
 
-import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
 import de.monticore.class2mc.Java2MCResolver;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 import de.monticore.types.check.ISynthesize;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * contains all types, which are basic Java types
  */
 public class BuiltInTypes {
-  public static void addBuiltInTypes(ICDBasisGlobalScope globalScope, Optional<ISynthesize> synthesizeSymType) {
+  public static void addBuiltInTypes(IOOSymbolsGlobalScope globalScope, Optional<ISynthesize> synthesizeSymType) {
     if (globalScope.getTypeSymbols().isEmpty()) {
       BasicSymbolsMill.initializePrimitives();
 

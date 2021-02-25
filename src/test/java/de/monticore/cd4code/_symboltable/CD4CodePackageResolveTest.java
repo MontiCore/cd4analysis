@@ -11,6 +11,8 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeTrafo4Defaults;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -73,5 +75,13 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     new CD4CodeTrafo4Defaults().transform(node);
 
     checkLogError();
+
+    final Optional<OOTypeSymbol> str1 = artifactScope.resolveOOType("java.lang.String");
+    assertTrue(str1.isPresent());
+
+    final Optional<TypeSymbol> str2 = artifactScope.resolveType("String");
+    assertTrue(str2.isPresent());
+
+    assertEquals(str1.get(), str2.get());
   }
 }
