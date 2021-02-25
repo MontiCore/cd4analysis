@@ -36,7 +36,7 @@ test:
   dependencies:
     - build
   script:
-  - "./gradlew check $GRADLE_OPT $ARGS2"
+  - "./gradlew check $GRADLE_OPT $ARGS2" --stacktrace
 
 trigger-langexp:
   stage: trigger
