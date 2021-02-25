@@ -7,6 +7,7 @@ package de.monticore.cd.cli;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.*;
@@ -16,6 +17,8 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -193,6 +196,30 @@ public class CDCLI {
       traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
       traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
       cdAssociationRoleNameTrafo.transform(ast);
+    }
+
+    if (cmd.hasOption("fieldfromrole")) {
+      switch (cmd.getOptionValue("fieldfromrole")) {
+        case "all": { // add FieldSymbols for all the CDRoleSymbols
+          final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles = new CDAssociationCreateFieldsFromAllRoles();
+          final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+          cdAssociationCreateFieldsFromAllRoles.transform(ast);
+          break;
+        }
+        case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
+          final CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromNavigableRoles = new CDAssociationCreateFieldsFromNavigableRoles();
+          final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+          cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
+          break;
+        }
+        case "none":
+        default:
+          // do nothing
+      }
     }
 
     boolean noTypeCheck = !cmd.hasOption("notypecheck");

@@ -120,6 +120,14 @@ public class CDCLIOptions {
         .build());
 
     options.addOption(Option
+        .builder().longOpt("fieldfromrole")
+        .hasArg().type(String.class)
+        .argName("fieldfromrole").numberOfArgs(1)
+        .desc("Configures if field symbols should be created from rolesymbols [none,all,navigable]. "
+            + "The default value is \"none\".")
+        .build());
+
+    options.addOption(Option
         .builder("nt").longOpt("notypecheck")
         .desc("Configures that types should not be checked. ")
         .build());
