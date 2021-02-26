@@ -142,6 +142,8 @@ java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s
 java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
  -f,--failquick <value>                   Configures if the application should quickfail on errors
                                           [true/false]. The default value is "false".
+    --fieldfromrole <fieldfromrole>       Configures if field symbols should be created from rolesymbols
+                                          [none,all,navigable]. The default value is "none".
  -h,--help                                Print this help dialogue.
  -i,--input <file>                        Reads the input CD artifact given as argument.
  -o,--output <dir>                        Path of generated files (optional). The default value is ".".
