@@ -403,6 +403,27 @@ For storing the symbol file of `MyLife.cd` in the file `syms/MyLifeSyms.cdsym`, 
 java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym
 ```
 
+#### Creating `FieldSymbol`s from `CDRoleSymbol`s
+By default, the CLI does not create `FieldSymbol`s for the `CDRoleSymbol`s.
+Currently there can be two different behaviors:
+1. For each of the `CDRoleSymbol`s create a linked `FieldSymbol` in the source
+   of the role.
+   This can be used in languages, that always allow for the navigation in both
+   directions.
+2. Create `FieldSymbol`s only for navigable roles.
+   This should be preferred, as the model explicitly states, that a role is
+   not navigable.
+   
+Case 1 can be used with:
+```shell
+java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym --fieldfromrole all
+```
+and case 2 with:
+```shell
+java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym --fieldfromrole navigable
+```
+
+
 Congratulations, you have just finished the tutorial about saving CD symbol files!
 
 # TODO ENDE.

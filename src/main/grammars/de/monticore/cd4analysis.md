@@ -51,16 +51,17 @@ classdiagram MyLife {
 The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
 - Definition of two classes `Person` and `Student`
 - `Person` is an abstract class
-- `Student` extends `Person` (like in Java); interfaces would also be possible.
+- `Student` extends `Person` (like in Java); interfaces would also be 
+  possible.
 - Classes contain attributes, which have a type and a name
 - Available types are basic types (from Java), imported types (like `Date`),
   and predefined forms of generic types (like `List`).
 - Associations and compositions are defined between two classes,
   can have a name, a navigation information (e.g. `<->`), role names on both
-  sides, multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
-  (like `{ordered}`).
-- Both, association and compositions can be qualified, for example by `[String]`
-  .
+  sides, multiplicities (like `[0..1]`) and certain predefined 
+  tags/stereotypes (like `{ordered}`).
+- Both, association and compositions can be qualified, for example by 
+  `[String]`.
 - Packages can be used to structure the model
 
 Further examples can be found [here][ExampleModels].
@@ -76,32 +77,34 @@ Further examples can be found [here][ExampleModels].
 ## Parser for CD4Analysis
 - ([`CD4AnalysisParser`][CD4AParser])
   is extended to have additional transformations after parsing.
-- The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] and 
-  [`CD4AnalysisAfterParseDelegatorVisitor`][CD4AAfterParseDelegatorVisitor]
-  handle the transformation which need to be done after parsing.
+- The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] handles the
+  transformation which can be done after parsing.
 
 ## Symboltable for CD4Analysis
-- [`CD4AnalysisSymbolTableCreatorDelegator`][CD4ASTCD]
-  handles the creation and linking of the symbols of all the elements in CD4A
-  and its sublanguages.
+- [`CD4AnalysisScopesGenitorDelegator`][CD4ADelegator] handles the creation of
+  all symbols of the elements in CD4A and its sublangages
+  (!the symbols are not yet linked)
+- [`CD4AnalysisSymbolTableCompleter`][CD4ASTCompleter] links the symbols in 
+  the   symbol table
 - The reference to a type (e.g. the type of an attribute) is stored in a 
   [`SymTypeExpression`][SymTypeExpression].
 - De-/Serialization functionality for the symbol table uses the
-  [`CD4AnalysisScopeDeSer`][CD4ASD] and for specific logic for serialization in
-  [`CD4AnalysisSymbolTablePrinter`][CD4ASTP]
+  [`CD4AnalysisScopeDeSer`][CD4ASD] and for specific logic for serialization 
+  in [`CD4AnalysisSymbol2Json`][CD4ASTP]
 - CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
   all its subgrammars.
 - [`SymAssociation`][SymAssociation] is a class which is included in the
   symbol table and contains all information of a `CDAssociation`. It links to
-  a `CDAssociationSymbol` (which only exists, when the association has a name),
-  and to the two sides of the association which are stored in
+  a `CDAssociationSymbol` (which only exists, when the association has a 
+  name), and to the two sides of the association which are stored in
   [`CDRoleSymbol`][CDRoleSymbol].
 
 ## Symbol kinds used by the CD4A language (importable or subclassed):
-- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] as the basis
-  for the definition of its type-defining symbols.
+- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] as the 
+  basis for the definition of its type-defining symbols.
   - `OOTypeSymbol`s are used for all type-defining Symbols. These are 
-    sub-nonterminals of `CDType`, namely `CDClass`, `CDInterface`, and `CDEnum`.
+    sub-nonterminals of `CDType`, namely `CDClass`, `CDInterface`, and 
+    `CDEnum`.
   - `FieldSymbol`s are used for `CDAttribute`, `CDEnumConstant`, and
     `CDRole`, additionally, grammar `CD4Code` uses `FieldSymbol`
     for`CDParameter`
@@ -116,8 +119,10 @@ Further examples can be found [here][ExampleModels].
 
 - CD4A defines three kinds of symbols: `CDTypeSymbol`, `CDAssociationSymbol`,
   and `CDRoleSymbol`
-- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s and have
-  no additional functionality or attributes
+- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s and 
+  have no additional functionality or attributes.
+  The exception is `CDRoleSymbol`, which is similar to `FieldSymbol` but has
+  a different behavior.
 
 ### `CDTypeSymbol`
 
@@ -149,27 +154,38 @@ Further examples can be found [here][ExampleModels].
 - `CDRoleSymbol` is defined in an association and connected with the class it 
   belongs to. In the concrete model, roles can be omitted, but are then
   calculated by suitable defaults.
-- `CDRoleSymbol` is a subclass of `FieldSymbol` with the following additional
-  attributes
+- `CDRoleSymbol` has the following attributes
 ```
   symbolrule CDRole =
     isDefinitiveNavigable: boolean
-    cardinality: Optional<ASTCDCardinality>
-    attributeQualifier: Optional<FieldSymbol>
-    typeQualifier: Optional<SymTypeExpression>
-    association: SymAssociation
+    cardinality: Optional<de.monticore.cdassociation._ast.ASTCDCardinality>
+    field: Optional<de.monticore.symbols.oosymbols._symboltable.FieldSymbol>
+    attributeQualifier: Optional<de.monticore.symbols.basicsymbols._symboltable.VariableSymbol>
+    typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
+    assoc: Optional<de.monticore.cdassociation._symboltable.SymAssociation>
     isOrdered: boolean
+    isLeft: boolean
+    type: de.monticore.types.check.SymTypeExpression
+    isReadOnly: boolean
+    isPrivate: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isStatic:boolean
+    isFinal: boolean
 ```
 - `attributeQualifier` is defined exactly, if a qualifier is given using 
-    an attribute of the opposite class (i.e. the opposite class knows
-    its qualifier, like in a public phone book)
+  an attribute of the opposite class (i.e. the opposite class knows
+  its qualifier, like in a public phone book)
 - `typeQualifier` is defined, if the qualifier is independent of the
   qualified object (i.e. like in the private phone book of a smart phone)  
+- the `CDRoleSymbol` is separated from the `FieldSymbol` because the type in a
+  role is always the concrete type of the other side of the association, the
+  type of a field can be a container, e.g. `List<Person>`
 
 
 ## Symbols imported by CD4A models:
-- currently CD4A imports only class, interface and enum symbols from other class
-  diagrams.
+- currently CD4A imports only class, interface and enum symbols from other 
+  class diagrams.
 - Extensions to include e.g. implemented Java-classes or other type-definining
   languages are planned.
 - Other kinds and forms of symbols need to be mapped to CD-like symbols to be
@@ -219,7 +235,8 @@ Further examples can be found [here][ExampleModels].
 
 ### `CDAssociationSymbol`
 
-- Additional class `SymAssociation` stores the information about an association.
+- Additional class `SymAssociation` stores the information about an 
+  association.
   It is stored as follows, with a name ID that allows to be referred to by 
   the associated symbols (json format):
 ```json
@@ -288,18 +305,30 @@ Further examples can be found [here][ExampleModels].
   - Correct association qualifiers
     
 ## Transformations
-- two transformations are provided to simplify the parsing and ST creation
-
-### AfterParseTrafo
-- the `AfterParseTrafo`s is executed directly after the parsing of models, currently there are 2 important transformations:
-  - [`CDBasisAfterParseTrafo`][CDBasisAfterParseTrafo]
-    - moves elements in a default package, if they are not already in a package
-    - the default package is either the package of the model file, or if that doesn't exists, `de.monticore` is used
-  - ['CDAssociationAfterParseTrafo`][CDAssociationAfterParseTrafo]
-    - `ASTCDDirectComposition` (short form of composition), are transformed to (normal) `composition`s
-- `Trafo4Defaults` provide additional transformations, that are optional defaults, which can be used after a SymbolTable is created:
-  - [`CDAssociationTrafo4Default`][CDAssociationTrafo4Default] adds Roles and `CDRoleSymbol`s to `AssociationSide`, if there is not already a `CDRole`. That's the case when the side has no name
-  - the name of the new role is either the name of the association, or the (lowercase) name of the type
+- different transformations are provided to simplify the parsing and ST 
+  creation
+1. the `AfterParseTrafo`s can be executed directly after the parsing of 
+   models, currently there are 2 important transformations:
+  - [`CDBasisDefaultPackageTrafo`][CDBasisDefaultPackageTrafo]
+    - moves elements in a default package, if they are not already in a 
+      package
+    - the default package is either the package of the model file, or if that
+      doesn't exists, `de.monticore` is used
+  - ['CD4AnalysisDirectCompositionTrafo`][CD4AnalysisDirectCompositionTrafo]
+    - `ASTCDDirectComposition` (short form of composition), are transformed 
+      to (normal) `composition`s
+2. `Trafo4Defaults` provide additional transformations, that are optional
+   defaults, which can be used after a SymbolTable is created:
+  - [`CDAssociationTrafo4Default`][CDAssociationTrafo4Default] adds Roles and
+    `CDRoleSymbol`s to `AssociationSide`, if there is not already a `CDRole`. 
+    That's the case when the side has no name
+  - the name of the new role is either the name of the association, or the 
+    (lowercase) name of the type
+3. Create `FieldSymbol`s from `CDRoleSymbols`s
+  - [`CDAssociationCreateFieldsFromAllRoles`][CDAssociationCreateFieldsFromAllRoles]
+    creates a `FieldSymbol` for each of the existing `CDRoleSymbol`s
+  - [`CDAssociationCreateFieldsFromNavigableRoles`][CDAssociationCreateFieldsFromNavigableRoles]
+    creates `FieldSymbol`s only for navigable `CDRoleSymbol`s
 
 ### Types
 - Currently: The BuiltinTypes can be found here [`BuiltInTypes`][BuiltInTypes].
@@ -452,10 +481,15 @@ Further examples can be found [here][CD4CExampleModels].
 [CD4CBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CD4CodeBasis.mc4
 
 [ASTCDDefinition]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/_ast/ASTCDDefinition.java
-[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseTrafo.java
-[CD4AAfterParseDelegatorVisitor]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseDelegatorVisitor.java
+[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/trafo/CD4AnalysisAfterParseTrafo.java
+[CDBasisDefaultPackageTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/trafo/CDBasisDefaultPackageTrafo.java
+[CDAssociationDirectCompositionTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationDirectCompositionTrafo.java
+[CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromAllRoles.java
+[CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
+[CD4ADelegator]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalyisScopesGenitorDelegator.java
+[CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
 [CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisScopeDeSer.java
-[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTablePrinter.java
+[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
 [CD4ATC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/typescalculator/DeriveSymTypeOfCD4Analysis.java
 [CD4ASTCD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreatorDelegator.java
 [SymTypeExpression]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
