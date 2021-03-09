@@ -1,10 +1,12 @@
 package de.monticore.testcd4codebasis._symboltable;
 
 import com.google.common.collect.LinkedListMultimap;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeDeSer;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -57,6 +59,7 @@ public class CD4CodeBasisSTCompleterTest {
     String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
 
     LinkedListMultimap<String, CDTypeSymbol> cdTypeSymbols = artifactScope.getCDTypeSymbols();
     assertEquals(1, cdTypeSymbols.size());
@@ -129,6 +132,7 @@ public class CD4CodeBasisSTCompleterTest {
     String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/IncorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
 
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
@@ -142,7 +146,7 @@ public class CD4CodeBasisSTCompleterTest {
 
     ast.accept(t);
 
-    assertEquals(2, Log.getErrorCount());
+    assertEquals(4, Log.getErrorCount());
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {

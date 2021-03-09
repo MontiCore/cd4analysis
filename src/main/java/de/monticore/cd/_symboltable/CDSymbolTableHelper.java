@@ -4,10 +4,9 @@
 
 package de.monticore.cd._symboltable;
 
-import com.google.common.collect.Iterables;
 import de.monticore.cd.CDMill;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
-import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
@@ -19,7 +18,7 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.Names;
@@ -44,6 +43,7 @@ public class CDSymbolTableHelper {
   protected Map<CDRoleSymbol, TypeSymbol> handledRoles;
 
   protected List<ASTMCImportStatement> imports;
+  protected ASTMCQualifiedName packageDeclaration;
 
   private static final String USED_BUT_UNDEFINED = "0xCDA80: Type '%s' is used but not defined.";
   private static final String DEFINED_MUTLIPLE_TIMES = "0xCDA81: Type '%s' is defined more than once.";
@@ -72,8 +72,9 @@ public class CDSymbolTableHelper {
     return prettyPrinter;
   }
 
-  public void setPrettyPrinter(CDBasisFullPrettyPrinter prettyPrinter) {
+  public CDSymbolTableHelper setPrettyPrinter(CDBasisFullPrettyPrinter prettyPrinter) {
     this.prettyPrinter = prettyPrinter;
+    return this;
   }
 
   public CDTypesCalculator getTypeChecker() {
@@ -96,8 +97,9 @@ public class CDSymbolTableHelper {
     return navigableVisitor;
   }
 
-  public void setNavigableVisitor(CDAssociationNavigableVisitor navigableVisitor) {
+  public CDSymbolTableHelper setNavigableVisitor(CDAssociationNavigableVisitor navigableVisitor) {
     this.navigableVisitor = navigableVisitor;
+    return this;
   }
 
   public CDAssocTypeForSymAssociationVisitor getAssocTypeVisitor(SymAssociationBuilder symAssociation) {
@@ -105,20 +107,23 @@ public class CDSymbolTableHelper {
     return assocTypeVisitor;
   }
 
-  public void setAssocTypeVisitor(CDAssocTypeForSymAssociationVisitor assocTypeVisitor) {
+  public CDSymbolTableHelper setAssocTypeVisitor(CDAssocTypeForSymAssociationVisitor assocTypeVisitor) {
     this.assocTypeVisitor = assocTypeVisitor;
+    return this;
   }
 
   public Stack<String> getCdTypeStack() {
     return cdTypeStack;
   }
 
-  public void setCdTypeStack(Stack<String> cdTypeStack) {
+  public CDSymbolTableHelper setCdTypeStack(Stack<String> cdTypeStack) {
     this.cdTypeStack = cdTypeStack;
+    return this;
   }
 
-  public void addToCDTypeStack(String className) {
+  public CDSymbolTableHelper addToCDTypeStack(String className) {
     this.cdTypeStack.push(className);
+    return this;
   }
 
   public String getCurrentCDTypeOnStack() {
@@ -129,12 +134,22 @@ public class CDSymbolTableHelper {
     return this.cdTypeStack.pop();
   }
 
+  public ASTMCQualifiedName getPackageDeclaration() {
+    return packageDeclaration;
+  }
+
+  public CDSymbolTableHelper setPackageDeclaration(ASTMCQualifiedName packageDeclaration) {
+    this.packageDeclaration = packageDeclaration;
+    return this;
+  }
+
   public Map<CDRoleSymbol, TypeSymbol> getHandledRoles() {
     return handledRoles;
   }
 
-  public void setHandledRoles(Map<CDRoleSymbol, TypeSymbol> handledRoles) {
+  public CDSymbolTableHelper setHandledRoles(Map<CDRoleSymbol, TypeSymbol> handledRoles) {
     this.handledRoles = handledRoles;
+    return this;
   }
 
   public TypeSymbol addToHandledRoles(CDRoleSymbol symbol, TypeSymbol type) {
@@ -149,8 +164,9 @@ public class CDSymbolTableHelper {
     return imports;
   }
 
-  public void setImports(List<ASTMCImportStatement> imports) {
+  public CDSymbolTableHelper setImports(List<ASTMCImportStatement> imports) {
     this.imports = imports;
+    return this;
   }
 
   public boolean addImport(ASTMCImportStatement importStatement) {
@@ -199,12 +215,29 @@ public class CDSymbolTableHelper {
     }).flatMap(Collection::stream).collect(Collectors.toSet());
   }
 
-  /*
+  /**
+   * @deprecated removed when typecheck returns no surrogate
+   *
    * Computes the unique type symbol with the simple name simpleTypeName that can be resolved in the CDBasisScope scope
    * via qualifying the simple name with the imports or the packageDeclaration.
    * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
    */
-  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String simpleTypeName, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+  @Deprecated
+  public Optional<TypeSymbol> resolveUniqueTypeSymbol(SymTypeExpression type, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+    return resolveUniqueTypeSymbol(imports, packageDeclaration, type, scope, sourcePositionStart, sourcePositionEnd);
+  }
+
+  /**
+   * @deprecated removed when typecheck returns no surrogate
+   *
+   * Computes the unique type symbol with the simple name simpleTypeName that can be resolved in the CDBasisScope scope
+   * via qualifying the simple name with the imports or the packageDeclaration.
+   * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
+   */
+  @Deprecated
+  public static Optional<TypeSymbol> resolveUniqueTypeSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, SymTypeExpression type, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+    String simpleTypeName = type.getTypeInfo().getName();
+
     // store all found type symbols here
     Set<TypeSymbol> typeSymbols = new HashSet<>();
     // for each potential full< qualified name defining the type..
@@ -253,10 +286,15 @@ public class CDSymbolTableHelper {
       Log.error(String.format(DEFINED_MUTLIPLE_TIMES, simpleTypeName), sourcePositionStart, sourcePositionEnd);
       return Optional.empty();
     }
-    else {
-      // nice, we found exactly one type
-      return Optional.ofNullable(Iterables.getFirst(typeSymbols, null));
+
+    // nice, we found exactly one type
+
+    if (type instanceof SymTypeOfGenerics) {
+      // check all argument types
+      ((SymTypeOfGenerics) type).getArgumentList().forEach(a -> resolveUniqueTypeSymbol(imports, packageDeclaration, a, scope, sourcePositionStart, sourcePositionEnd));
     }
+
+    return typeSymbols.stream().findAny();
   }
 
   /*
@@ -264,31 +302,31 @@ public class CDSymbolTableHelper {
    * via qualifying the name with the imports or the packageDeclaration.
    * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
    */
-  public static Optional<VariableSymbol> resolveUniqueVariableSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, String typeName, String varName, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
-    final Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, scope, sourcePositionStart, sourcePositionEnd);
-    if (typeSymbol.isPresent()) {
-      final List<VariableSymbol> variableList = typeSymbol.get().getVariableList(varName)
-          .stream().distinct().collect(Collectors.toList());
-      if (variableList.size() > 1) {
-        // symbol found multiple times => Error, type name ambiguous
-        Log.error(String.format(DEFINED_MUTLIPLE_TIMES, varName));
-        return Optional.empty();
-      }
-      else if (variableList.size() == 0) {
-        // no field symbol found => Error, variable does not exist
-        Log.error(String.format(USED_BUT_UNDEFINED_VARIABLE, typeName, varName));
-        return Optional.empty();
-      }
-
-      return Optional.ofNullable(variableList.get(0));
-    }
-
-    return Optional.empty();
+  public Optional<VariableSymbol> resolveUniqueVariableSymbol(SymTypeExpression type, String varName, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+    return resolveUniqueVariableSymbol(imports, packageDeclaration, type, varName, scope, sourcePositionStart, sourcePositionEnd);
   }
 
-  public static Optional<SymTypeExpression> resolveSymTypeExpression(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, SymTypeExpression symTypeExpression, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
-    return resolveUniqueTypeSymbol(imports, packageDeclaration, symTypeExpression.getTypeInfo().getName(), scope, sourcePositionStart, sourcePositionEnd)
-        .map(SymTypeExpressionFactory::createTypeExpression);
+  /*
+   * Computes the unique variable symbol with the qualified name varName that can be resolved in the CDBasisScope scope
+   * via qualifying the name with the imports or the packageDeclaration.
+   * If no symbol or multiple symbols can be resolved, then this methods logs an error and returns an empty Optional.
+   */
+  public static Optional<VariableSymbol> resolveUniqueVariableSymbol(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration, SymTypeExpression type, String varName, ICDBasisScope scope, SourcePosition sourcePositionStart, SourcePosition sourcePositionEnd) {
+    final Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, type, scope, sourcePositionStart, sourcePositionEnd);
+    final List<VariableSymbol> variableList = typeSymbol.get().getVariableList(varName)
+        .stream().distinct().collect(Collectors.toList());
+    if (variableList.size() > 1) {
+      // symbol found multiple times => Error, type name ambiguous
+      Log.error(String.format(DEFINED_MUTLIPLE_TIMES, varName));
+      return Optional.empty();
+    }
+    else if (variableList.size() == 0) {
+      // no field symbol found => Error, variable does not exist
+      Log.error(String.format(USED_BUT_UNDEFINED_VARIABLE, type.getTypeInfo().getName(), varName));
+      return Optional.empty();
+    }
+
+    return Optional.of(variableList.get(0));
   }
 
   /*
@@ -317,4 +355,25 @@ public class CDSymbolTableHelper {
     return fqNameCandidates;
   }
 
+  /// @deprecated, should not be necessary when the typecheck resolves the symbols
+  @Deprecated
+  public void resolveTypes(CDMethodSignatureSymbol methodSignature) {
+    // Compute the !final! SymTypeExpression for the exceptions and the return type
+
+    List<SymTypeExpression> correctedExceptionExpressions = new ArrayList<>();
+    for (SymTypeExpression exceptionType : methodSignature.getExceptionsList()) {
+      // store all found type symbols here
+      SourcePosition sourcePositionStart = methodSignature.getAstNode().get_SourcePositionStart();
+      SourcePosition sourcePositionEnd = methodSignature.getAstNode().get_SourcePositionEnd();
+      resolveUniqueTypeSymbol(imports, packageDeclaration, exceptionType, methodSignature.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
+    }
+    methodSignature.setExceptionsList(correctedExceptionExpressions);
+
+    SymTypeExpression returnType = methodSignature.getReturnType();
+    if (!returnType.isVoidType()) {
+      SourcePosition sourcePositionStart = methodSignature.getAstNode().get_SourcePositionStart();
+      SourcePosition sourcePositionEnd = methodSignature.getAstNode().get_SourcePositionEnd();
+      resolveUniqueTypeSymbol(imports, packageDeclaration, returnType, methodSignature.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
+    }
+  }
 }

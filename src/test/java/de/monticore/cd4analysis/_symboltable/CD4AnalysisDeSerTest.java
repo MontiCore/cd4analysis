@@ -64,6 +64,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     new CD4AnalysisAfterParseTrafo().transform(node);
 
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
     new CD4AnalysisTrafo4Defaults().transform(node);
 
     final String serializedST = deSer.serialize(scope);

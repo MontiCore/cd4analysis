@@ -1,58 +1,134 @@
 package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
-import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._ast.*;
+import de.monticore.cdassociation._visitor.CDAssociationHandler;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbolSurrogate;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.cd._symboltable.CDSymbolTableHelper.*;
+import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueTypeSymbol;
+import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueVariableSymbol;
 
 public class CDAssociationSymbolTableCompleter
-    implements CDAssociationVisitor2 {
-  protected final List<ASTMCImportStatement> imports;
-  protected final ASTMCQualifiedName packageDeclaration;
-  protected final CDSymbolTableHelper symbolTableHelper;
+    implements CDAssociationVisitor2, CDAssociationHandler {
+  protected CDSymbolTableHelper symbolTableHelper;
+  protected CDAssociationTraverser traverser;
+
+  public CDAssociationSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
+    this.symbolTableHelper = symbolTableHelper;
+  }
 
   public CDAssociationSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.imports = imports;
-    this.packageDeclaration = packageDeclaration;
-    this.symbolTableHelper = new CDSymbolTableHelper();
+    this.symbolTableHelper = new CDSymbolTableHelper()
+        .setImports(imports)
+        .setPackageDeclaration(packageDeclaration);
+  }
+
+  @Override
+  public CDAssociationTraverser getTraverser() {
+    return traverser;
+  }
+
+  @Override
+  public void setTraverser(CDAssociationTraverser traverser) {
+    this.traverser = traverser;
   }
 
   public CDSymbolTableHelper getSymbolTableHelper() {
     return symbolTableHelper;
   }
 
+  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
+    this.symbolTableHelper = cdSymbolTableHelper;
+  }
+
   @Override
-  public void visit(CDRoleSymbol symbol) {
-    // Compute the !final! SymTypeExpression for the type of the symbol
-    {
-      // Fetch the preliminary type
-      String typeName = symbol.getType().getTypeInfo().getName();
+  public void handle(ASTCDAssociation node) {
+    if (node.getLeft().isPresentSymbol()) {
+      initialize_CDRole(node.getLeft().getSymbol(), node, true);
+    }
+    if (node.getRight().isPresentSymbol()) {
+      initialize_CDRole(node.getRight().getSymbol(), node, false);
+    }
+    endVisit(node);
+  }
 
-      // store all found type symbols here
-      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd());
+  public void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
+    final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
 
-      // replace the !preliminary! SymTypeExpression stored in the field with the !final! one
-      typeSymbol.map(SymTypeExpressionFactory::createTypeExpression).ifPresent(symbol::setType);
+    final Optional<SymTypeExpression> typeResult = getSymTypeExpression(ast, side);
+    if (!typeResult.isPresent()) {
+      return;
+    }
+    symbol.setType(typeResult.get());
+
+    symbolTableHelper.getModifierHandler().handle(side.getModifier(), symbol);
+
+    CDAssociationTraverser t = CDAssociationMill.traverser();
+    t.add4CDAssociation(symbolTableHelper.getNavigableVisitor());
+    ast.getCDAssocDir().accept(t);
+    symbol.setIsDefinitiveNavigable(isLeft ? symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableLeft() : symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableRight());
+
+    if (side.isPresentCDCardinality()) {
+      symbol.setCardinality(side.getCDCardinality());
     }
 
-    if (symbol.isPresentTypeQualifier()) {
-      resolveSymTypeExpression(imports, packageDeclaration, symbol.getTypeQualifier(), symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd()).ifPresent(symbol::setTypeQualifier);
+    handleQualifier(symbol, side);
+    symbol.setIsOrdered(side.isPresentCDOrdered());
+    symbol.setIsLeft(isLeft);
+  }
+
+  protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast, ASTCDAssocSide side) {
+    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(side.getMCQualifiedType());
+    if (!typeResult.isPresent()) {
+      Log.error(String.format(
+          "0xCDA62: The type %s of the role (%s) could not be calculated",
+          symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
+          side.getName(ast)),
+          side.getMCQualifiedType().get_SourcePositionStart());
     }
-    else if (symbol.isPresentAttributeQualifier()) {
-      final VariableSymbol variableSymbol = symbol.getAttributeQualifier();
-      resolveUniqueVariableSymbol(imports, packageDeclaration, symbol.getType().getTypeInfo().getName(), variableSymbol.getName(), symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd())
-          .ifPresent(symbol::setAttributeQualifier);
+
+    // check if the type can be resolved
+    typeResult.ifPresent(t -> symbolTableHelper.resolveUniqueTypeSymbol(t, side.getEnclosingScope(), side.get_SourcePositionStart(), side.get_SourcePositionEnd()));
+
+    return typeResult;
+  }
+
+  protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
+    if (side.isPresentCDQualifier()) {
+      if (side.getCDQualifier().isPresentByType()) {
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(side.getCDQualifier().getByType());
+        if (!result.isPresent()) {
+          Log.error(String.format(
+              "0xCDA63: The type of the interface (%s) could not be calculated",
+              side.getCDQualifier().getByType().getClass().getSimpleName()),
+              side.getCDQualifier().get_SourcePositionStart());
+        }
+        else {
+          symbolTableHelper.resolveUniqueTypeSymbol(result.get(), symbol.getEnclosingScope(), side.getCDQualifier().get_SourcePositionStart(), side.getCDQualifier().get_SourcePositionEnd());
+          symbol.setTypeQualifier(result.get());
+        }
+      }
+      else if (side.getCDQualifier().isPresentByAttributeName()) {
+        final Optional<VariableSymbol> variableSymbol = symbolTableHelper.resolveUniqueVariableSymbol(symbol.getType(), side.getCDQualifier().getByAttributeName(), symbol.getEnclosingScope(), side.get_SourcePositionStart(), side.get_SourcePositionEnd());
+        if (variableSymbol.isPresent()) {
+          variableSymbol.get().setEnclosingScope(side.getEnclosingScope());
+          symbol.setAttributeQualifier(variableSymbol.get());
+        }
+      }
     }
   }
 
@@ -66,7 +142,9 @@ public class CDAssociationSymbolTableCompleter
       leftType = leftSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      leftType = resolveUniqueTypeSymbol(imports, packageDeclaration, leftSide.getMCQualifiedType().getMCQualifiedName().getQName(), node.getEnclosingScope(), leftSide.getMCQualifiedType().get_SourcePositionStart(), leftSide.getMCQualifiedType().get_SourcePositionEnd()).get();
+      final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(leftSide.getMCQualifiedType().getMCQualifiedName());
+      leftType = symbolTableHelper.resolveUniqueTypeSymbol(result.get(), node.getEnclosingScope(), leftSide.getMCQualifiedType().get_SourcePositionStart(), leftSide.getMCQualifiedType().get_SourcePositionEnd())
+          .get();
     }
 
     final TypeSymbol rightType;
@@ -74,7 +152,9 @@ public class CDAssociationSymbolTableCompleter
       rightType = rightSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      rightType = resolveUniqueTypeSymbol(imports, packageDeclaration, rightSide.getMCQualifiedType().getMCQualifiedName().getQName(), node.getEnclosingScope(), rightSide.getMCQualifiedType().get_SourcePositionStart(), rightSide.getMCQualifiedType().get_SourcePositionEnd()).get();
+      final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(rightSide.getMCQualifiedType().getMCQualifiedName());
+      rightType = symbolTableHelper.resolveUniqueTypeSymbol(result.get(), node.getEnclosingScope(), rightSide.getMCQualifiedType().get_SourcePositionStart(), rightSide.getMCQualifiedType().get_SourcePositionEnd())
+          .get();
     }
 
     if (leftSide.isPresentSymbol()) {
@@ -91,9 +171,6 @@ public class CDAssociationSymbolTableCompleter
 
     // remove the role from its current scope(s)
     symbol.getEnclosingScope().remove(symbol);
-
-    // TODO SVa:
-    // change the type to be compatible with with FieldSymbol
 
     if (!spannedScope.getCDRoleSymbols().containsKey(symbol.getName())) {
       // add the symbol to the type; add to all relevant lists

@@ -1,79 +1,59 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
 package de.monticore.cdinterfaceandenum._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cdassociation._symboltable.ICDAssociationScope;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._symboltable.CDBasisScopesGenitorTOP;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Deque;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CDInterfaceAndEnumScopesGenitor extends CDInterfaceAndEnumScopesGenitorTOP {
+public class CDInterfaceAndEnumSymbolTableCompleter
+    implements CDInterfaceAndEnumVisitor2 {
   protected CDSymbolTableHelper symbolTableHelper;
 
-  public CDInterfaceAndEnumScopesGenitor(ICDInterfaceAndEnumScope enclosingScope) {
-    super(enclosingScope);
-    init();
+  public CDInterfaceAndEnumSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
+    this.symbolTableHelper = symbolTableHelper;
   }
 
-  public CDInterfaceAndEnumScopesGenitor(Deque<? extends ICDInterfaceAndEnumScope> scopeStack) {
-    super(scopeStack);
-    init();
-  }
-
-  public CDInterfaceAndEnumScopesGenitor() {
-    super();
-    init();
-  }
-
-  protected void init() {
-    symbolTableHelper = new CDSymbolTableHelper();
-  }
-
-  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
-    this.symbolTableHelper = cdSymbolTableHelper;
+  public CDInterfaceAndEnumSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
+    this.symbolTableHelper = new CDSymbolTableHelper()
+        .setImports(imports)
+        .setPackageDeclaration(packageDeclaration);
   }
 
   @Override
   public void visit(ASTCDInterface node) {
-    super.visit(node);
+    CDInterfaceAndEnumVisitor2.super.visit(node);
     symbolTableHelper.addToCDTypeStack(node.getName());
   }
 
   @Override
   public void endVisit(ASTCDInterface node) {
-    super.endVisit(node);
+    CDInterfaceAndEnumVisitor2.super.endVisit(node);
     symbolTableHelper.removeFromCDTypeStack();
     initialize_CDInterface(node);
   }
 
   @Override
   public void visit(ASTCDEnum node) {
-    super.visit(node);
+    CDInterfaceAndEnumVisitor2.super.visit(node);
     symbolTableHelper.addToCDTypeStack(node.getName());
   }
 
   @Override
   public void endVisit(ASTCDEnum node) {
-    super.endVisit(node);
+    CDInterfaceAndEnumVisitor2.super.endVisit(node);
     symbolTableHelper.removeFromCDTypeStack();
     initialize_CDEnum(node);
   }
@@ -127,8 +107,7 @@ public class CDInterfaceAndEnumScopesGenitor extends CDInterfaceAndEnumScopesGen
 
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    assert scopeStack.peekLast() != null;
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, scopeStack.peekLast().getEnclosingScope());
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, ast.getEnclosingScope());
     symbol.setType(typeObject);
 
     // Don't store the arguments in the ST

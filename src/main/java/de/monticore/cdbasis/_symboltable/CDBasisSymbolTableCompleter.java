@@ -4,66 +4,126 @@
 
 package de.monticore.cdbasis._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.SourcePosition;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueTypeSymbol;
 
-public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVisitor2 {
+public class CDBasisSymbolTableCompleter
+    implements CDBasisVisitor2, OOSymbolsVisitor2 {
+  protected CDSymbolTableHelper symbolTableHelper;
 
-  private final List<ASTMCImportStatement> imports;
-  private final ASTMCQualifiedName packageDeclaration;
+  public CDBasisSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
+    this.symbolTableHelper = symbolTableHelper;
+  }
 
   public CDBasisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.imports = imports;
-    this.packageDeclaration = packageDeclaration;
+    this.symbolTableHelper = new CDSymbolTableHelper()
+        .setImports(imports)
+        .setPackageDeclaration(packageDeclaration);
   }
 
   @Override
-  public void visit(FieldSymbol field) {
+  public void visit(ASTCDClass node) {
+    symbolTableHelper.addToCDTypeStack(node.getName());
+
+    final CDTypeSymbol symbol = node.getSymbol();
+
+    if (node.isPresentCDExtendUsage()) {
+      symbol.addAllSuperTypes(node.getCDExtendUsage().streamSuperclass().map(s -> {
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format("0xCDA00: The type of the extended classes (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
+        }
+        result.ifPresent(r -> symbolTableHelper.resolveUniqueTypeSymbol(r, node.getEnclosingScope(), s.get_SourcePositionStart(), s.get_SourcePositionEnd()).ifPresent(t -> r.getTypeInfo().setFullName(t.getFullName())));
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
+
+    if (node.isPresentCDInterfaceUsage()) {
+      symbol.addAllSuperTypes(node.getCDInterfaceUsage().streamInterface().map(s -> {
+        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
+        if (!result.isPresent()) {
+          Log.error(String.format("0xCDA01: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
+        }
+        result.ifPresent(r -> symbolTableHelper.resolveUniqueTypeSymbol(r, node.getEnclosingScope(), s.get_SourcePositionStart(), s.get_SourcePositionEnd()).ifPresent(t -> r.getTypeInfo().setFullName(t.getFullName())));
+        return result;
+      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+    }
+
+    resolveTypes(symbol);
+  }
+
+  @Override
+  public void endVisit(ASTCDClass node) {
+    assert node.getSymbol() != null;
+    initialize_CDClass(node);
+    symbolTableHelper.removeFromCDTypeStack();
+    CDBasisVisitor2.super.endVisit(node);
+  }
+
+  protected void initialize_CDClass(ASTCDClass ast) {
+    CDTypeSymbol symbol = ast.getSymbol();
+    symbol.setIsClass(true);
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+  }
+
+  @Override
+  public void visit(ASTCDAttribute node) {
+    final FieldSymbol symbol = node.getSymbol();
+
     // Compute the !final! SymTypeExpression for the type of the field
+    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(node.getMCType());
+    if (!typeResult.isPresent()) {
+      Log.error(String.format("0xCDA02: The type (%s) of the attribute (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(node.getMCType()), node.getName()), node.getMCType().get_SourcePositionStart());
+      return;
+    }
+    else {
+      symbol.setType(typeResult.get());
+    }
 
-    // Fetch the preliminary type
-    String typeName = field.getType().getTypeInfo().getName();
-
-    SourcePosition sourcePositionStart = field.getAstNode().get_SourcePositionStart();
-    SourcePosition sourcePositionEnd = field.getAstNode().get_SourcePositionEnd();
-
-    // store all found type symbols here
-    Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) field.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
-
-    // replace the !preliminary! SymTypeExpression stored in the field with the !final! one
-    typeSymbol.ifPresent(symbol -> field.setType(SymTypeExpressionFactory.createTypeExpression(symbol)));
+    SourcePosition sourcePositionStart = node.get_SourcePositionStart();
+    SourcePosition sourcePositionEnd = node.get_SourcePositionEnd();
+    // resolve type
+    symbolTableHelper.resolveUniqueTypeSymbol(typeResult.get(), (ICDBasisScope) symbol.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
   }
 
   @Override
-  public void visit(CDTypeSymbol cdType) {
-    // Compute the !final! SymTypeExpression for the extended and implemented types
+  public void endVisit(ASTCDAttribute node) {
+    assert node.getSymbol() != null;
+    initialize_CDAttribute(node);
+    CDBasisVisitor2.super.endVisit(node);
+  }
 
-    List<SymTypeExpression> correctedExtendsExpressions = new ArrayList<>();
+  protected void initialize_CDAttribute(ASTCDAttribute ast) {
+    FieldSymbol symbol = ast.getSymbol();
+    symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
+  }
+
+  /// @deprecated, should not be necessary when the typecheck resolves the symbols
+  @Deprecated
+  public void resolveTypes(CDTypeSymbol cdType) {
     for (SymTypeExpression superType : cdType.getSuperTypesList()) {
-      // Fetch the preliminary type
-      String typeName = superType.getTypeInfo().getName();
-
       SourcePosition sourcePositionStart = cdType.getAstNode().get_SourcePositionStart();
       SourcePosition sourcePositionEnd = cdType.getAstNode().get_SourcePositionEnd();
 
       // store all found type symbols here
-      Optional<TypeSymbol> typeSymbol = resolveUniqueTypeSymbol(imports, packageDeclaration, typeName, (ICDBasisScope) cdType.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
-      typeSymbol.ifPresent(symbol -> correctedExtendsExpressions.add(SymTypeExpressionFactory.createTypeExpression(symbol)));
+      symbolTableHelper.resolveUniqueTypeSymbol(superType, cdType.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
     }
-    cdType.setSuperTypesList(correctedExtendsExpressions);
   }
 
   /*

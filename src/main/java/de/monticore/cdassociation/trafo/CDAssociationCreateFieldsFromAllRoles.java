@@ -4,6 +4,7 @@
 
 package de.monticore.cdassociation.trafo;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
@@ -12,6 +13,7 @@ import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbolBuilder;
 import de.monticore.types.check.SymTypeExpression;
@@ -21,8 +23,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
-
-import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveSymTypeExpression;
 
 public class CDAssociationCreateFieldsFromAllRoles
     implements CDAssociationVisitor2, CDAssociationHandler {
@@ -59,13 +59,13 @@ public class CDAssociationCreateFieldsFromAllRoles
     node.getSymbol().setField(fieldSymbol);
   }
 
-  public SymTypeExpression calculateType(CDRoleSymbol symbol) {
+  public TypeSymbol calculateType(CDRoleSymbol symbol) {
+    final SymTypeExpression type;
     if (!symbol.isPresentCardinality() || symbol.getCardinality().isOne()) {
-      return symbol.getType();
+      type = symbol.getType();
     }
     else {
       final ASTCDCardinality cardinality = symbol.getCardinality();
-      final SymTypeExpression type;
       if (cardinality.isOpt()) {
         type = SymTypeExpressionFactory.createGenerics("Optional", symbol.getEnclosingScope(), symbol.getType());
       }
@@ -79,9 +79,9 @@ public class CDAssociationCreateFieldsFromAllRoles
         }
         type = SymTypeExpressionFactory.createGenerics(container, symbol.getEnclosingScope(), symbol.getType());
       }
-
-      return resolveSymTypeExpression(imports, packageDeclaration, type, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd()).get();
     }
+
+    return CDSymbolTableHelper.resolveUniqueTypeSymbol(imports, packageDeclaration, type, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd()).get();
   }
 
   public void transform(ASTCDCompilationUnit compilationUnit)

@@ -1,47 +1,27 @@
 package de.monticore.cdassociation._symboltable;
 
-import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbolSurrogate;
-import de.monticore.types.check.SymTypeExpression;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
 import java.util.Optional;
 
 public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
-  protected CDSymbolTableHelper symbolTableHelper;
-
   public CDAssociationScopesGenitor(ICDAssociationScope enclosingScope) {
     super(enclosingScope);
-    init();
   }
 
   public CDAssociationScopesGenitor(Deque<? extends ICDAssociationScope> scopeStack) {
     super(scopeStack);
-    init();
   }
 
   public CDAssociationScopesGenitor() {
     super();
-    init();
-  }
-
-  protected void init() {
-    symbolTableHelper = new CDSymbolTableHelper();
-  }
-
-  public void setSymbolTableHelper(CDSymbolTableHelper cdSymbolTableHelper) {
-    this.symbolTableHelper = cdSymbolTableHelper;
-  }
-
-  public CDSymbolTableHelper getSymbolTableHelper() {
-    return symbolTableHelper;
   }
 
   @Override
@@ -54,32 +34,60 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     }
 
     if (node.getLeft().isPresentCDRole()) {
-      if (buildCDRole(node, true)) {
-        return;
-      }
+      buildCDRole(node, true);
     }
     if (node.getRight().isPresentCDRole()) {
-      if (buildCDRole(node, false)) {
-        return;
-      }
+      buildCDRole(node, false);
     }
 
     createAndInit_SymAssociation(node);
+
+    node.getLeft().setEnclosingScope(node.getEnclosingScope());
+    initSide(node.getLeft());
+    node.getRight().setEnclosingScope(node.getEnclosingScope());
+    initSide(node.getRight());
 
     if (symbol != null) {
       removeCurrentScope();
     }
   }
 
-  public boolean buildCDRole(ASTCDAssociation node, boolean isLeft) {
+  protected void initSide(ASTCDAssocSide side) {
+    if (side.isPresentCDQualifier()) {
+      if (side.getCDQualifier().isPresentByType()) {
+        side.getCDQualifier().getByType().setEnclosingScope(side.getEnclosingScope());
+      }
+    }
+    side.getMCQualifiedType().setEnclosingScope(side.getEnclosingScope());
+    side.getMCQualifiedType().getMCQualifiedName().setEnclosingScope(side.getEnclosingScope());
+  }
+
+  @Override
+  public void handle(ASTCDRole node) {
+    // do nothing, everything is handled by the association
+  }
+
+  @Override
+  public void visit(ASTCDDirectComposition node) {
+    throw new IllegalStateException("0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CD4AnalysisDirectCompositionTrafo or CD4CodeDirectCompositionTrafo.");
+  }
+
+  @Override
+  protected CDAssociationSymbolBuilder create_CDAssociation(ASTCDAssociation ast) {
+    if (ast.isPresentName()) {
+      return super.create_CDAssociation(ast);
+    }
+    else {
+      return null;
+    }
+  }
+
+  public void buildCDRole(ASTCDAssociation node, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? node.getLeft() : node.getRight();
     final ASTCDRole cdRole = side.getCDRole();
 
     final CDRoleSymbol cdRoleSymbol = create_CDRole(cdRole).build();
     addToScopeAndLinkWithNode(cdRoleSymbol, cdRole);
-    initialize_CDRole(cdRoleSymbol, node, isLeft);
-
-    return false;
   }
 
   public void createAndInit_SymAssociation(ASTCDAssociation node) {
@@ -118,93 +126,9 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
    */
   protected boolean initialize_SymAssociation(SymAssociationBuilder symAssociation, ASTCDAssociation node) {
     CDAssociationTraverser t = CDAssociationMill.traverser();
-    t.add4CDAssociation(symbolTableHelper.getAssocTypeVisitor(symAssociation));
+    t.add4CDAssociation(new CDAssocTypeForSymAssociationVisitor(symAssociation));
     node.getCDAssocType().accept(t);
 
     return true;
-  }
-
-  @Override
-  protected CDAssociationSymbolBuilder create_CDAssociation(ASTCDAssociation ast) {
-    if (ast.isPresentName()) {
-      return super.create_CDAssociation(ast);
-    }
-    else {
-      return null;
-    }
-  }
-
-  @Override
-  public void handle(ASTCDRole node) {
-    // do nothing
-  }
-
-  protected void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
-    final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
-
-    final Optional<SymTypeExpression> typeResult = getSymTypeExpression(ast, side);
-    if (!typeResult.isPresent()) {
-      return;
-    }
-    symbol.setType(typeResult.get());
-
-    symbolTableHelper.getModifierHandler().handle(side.getModifier(), symbol);
-  
-    CDAssociationTraverser t = CDAssociationMill.traverser();
-    t.add4CDAssociation(symbolTableHelper.getNavigableVisitor());
-    ast.getCDAssocDir().accept(t);
-    symbol.setIsDefinitiveNavigable(isLeft ? symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableLeft() : symbolTableHelper.getNavigableVisitor().isDefinitiveNavigableRight());
-
-    if (side.isPresentCDCardinality()) {
-      symbol.setCardinality(side.getCDCardinality());
-    }
-
-    handleQualifier(symbol, side, typeResult.get());
-    symbol.setIsOrdered(side.isPresentCDOrdered());
-    symbol.setIsLeft(isLeft);
-  }
-
-  protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast, ASTCDAssocSide side) {
-    side.getMCQualifiedType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
-    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(side.getMCQualifiedType());
-    if (!typeResult.isPresent()) {
-      Log.error(String.format(
-          "0xCDA62: The type %s of the role (%s) could not be calculated",
-          symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
-          side.getName(ast)),
-          side.getMCQualifiedType().get_SourcePositionStart());
-    }
-    return typeResult;
-  }
-
-  protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side, SymTypeExpression type) {
-    if (side.isPresentCDQualifier()) {
-      if (side.getCDQualifier().isPresentByType()) {
-        side.getCDQualifier().getByType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
-        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(side.getCDQualifier().getByType());
-        if (!result.isPresent()) {
-          Log.error(String.format(
-              "0xCDA63: The type of the interface (%s) could not be calculated",
-              side.getCDQualifier().getByType().getClass().getSimpleName()),
-              side.getCDQualifier().get_SourcePositionStart());
-        }
-        else {
-          symbol.setTypeQualifier(result.get());
-        }
-      }
-      else if (side.getCDQualifier().isPresentByAttributeName()) {
-        // create a surrogate, which is resolved later in the SymbolTableCompleter
-        final FieldSymbolSurrogate attributeQualifier = new FieldSymbolSurrogate(
-            side.getCDQualifier().getByAttributeName()
-        );
-        attributeQualifier.setEnclosingScope(side.getEnclosingScope());
-        symbol.setAttributeQualifier(attributeQualifier);
-      }
-    }
-  }
-
-  @Override
-  public void visit(ASTCDDirectComposition node) {
-    throw new IllegalStateException("0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CD4AnalysisDirectCompositionTrafo or CD4CodeDirectCompositionTrafo.");
   }
 }

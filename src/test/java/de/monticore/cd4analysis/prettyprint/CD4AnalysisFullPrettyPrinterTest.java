@@ -6,6 +6,7 @@ package de.monticore.cd4analysis.prettyprint;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -39,6 +40,7 @@ public class CD4AnalysisFullPrettyPrinterTest extends CD4AnalysisTestBasis {
 
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
     new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos().checkAll(node);
   }

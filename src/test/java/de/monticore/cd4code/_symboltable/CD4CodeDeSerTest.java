@@ -11,7 +11,6 @@ import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.io.paths.ModelPath;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -30,6 +29,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     new CD4CodeAfterParseTrafo().transform(node);
 
     final ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
 
     final String serializedST = deSer.serialize(scope);
     final ICD4CodeArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
@@ -51,6 +51,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
     final ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
 
     final Optional<CDTypeSymbol> b = scope.resolveCDType("B");
     final Optional<CDMethodSignatureSymbol> getXMethodSymbol = b.get()

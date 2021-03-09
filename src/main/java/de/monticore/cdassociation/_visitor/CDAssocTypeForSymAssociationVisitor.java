@@ -12,13 +12,20 @@ public class CDAssocTypeForSymAssociationVisitor
     implements CDAssociationVisitor2 {
   protected SymAssociationBuilder symAssociation;
 
+  public CDAssocTypeForSymAssociationVisitor() {
+  }
+
+  public CDAssocTypeForSymAssociationVisitor(SymAssociationBuilder symAssociation) {
+    this.symAssociation = symAssociation;
+  }
 
   public SymAssociationBuilder getSymAssociation() {
     return symAssociation;
   }
 
-  public void setSymAssociation(SymAssociationBuilder symAssociation) {
+  public CDAssocTypeForSymAssociationVisitor setSymAssociation(SymAssociationBuilder symAssociation) {
     this.symAssociation = symAssociation;
+    return this;
   }
 
   @Override

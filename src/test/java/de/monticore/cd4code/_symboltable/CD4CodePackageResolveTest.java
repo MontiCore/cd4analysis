@@ -4,6 +4,7 @@
 
 package de.monticore.cd4code._symboltable;
 
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
@@ -12,7 +13,11 @@ import de.monticore.cd4code.trafo.CD4CodeTrafo4Defaults;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOSymbolsDeSer;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeOfGenerics;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,6 +38,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     new CD4CodeAfterParseTrafo().transform(node);
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
     checkLogError();
 
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(node);
@@ -76,6 +82,13 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
     checkLogError();
 
+    final Optional<FieldSymbol> fieldSymbol = artifactScope.resolveField("A.l");
+    assertTrue(fieldSymbol.isPresent());
+    final SymTypeExpression type = fieldSymbol.get().getType();
+    assertTrue(type.isGenericType());
+    assertEquals("java.util.List", ((SymTypeOfGenerics)type).getFullName());
+    assertEquals("java.lang.String", ((SymTypeOfGenerics)type).getArgumentList().get(0).getTypeInfo().getFullName());
+
     final Optional<OOTypeSymbol> str1 = artifactScope.resolveOOType("java.lang.String");
     assertTrue(str1.isPresent());
 
@@ -83,5 +96,12 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     assertTrue(str2.isPresent());
 
     assertEquals(str1.get(), str2.get());
+
+    final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
+    assertTrue(opt.isPresent());
+
+    String s = new OOSymbolsDeSer().serialize(str1.get().getSpannedScope());
+    String s2 = deSer.serialize(artifactScope);
+    System.out.println(s2);
   }
 }

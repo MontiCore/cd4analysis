@@ -5,7 +5,7 @@ classdiagram Complete {
 
   class A {
     protected java.lang.String name;
-    public java.lang.String getName() throws Exception;
+    public java.lang.String getName() throws java.lang.Exception;
   }
 
   class B extends A {

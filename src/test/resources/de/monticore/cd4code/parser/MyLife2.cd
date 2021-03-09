@@ -14,9 +14,9 @@ classdiagram MyLife2 {
     protected java.lang.String name;
     int age;
     java.util.Date birthday;
-    List<java.lang.String> nickNames;
+    java.util.List<java.lang.String> nickNames;
     public Person(java.lang.String name);
-    Set<Person> getParents();
+    java.util.Set<Person> getParents();
   }
 
   package uni {

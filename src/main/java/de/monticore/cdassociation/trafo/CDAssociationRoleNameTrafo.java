@@ -59,16 +59,16 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
 
   @Override
   public void endVisit(ASTCDAssociation node) {
-    // if there is a SymAssociation already, the don't create a new one
+    // if there is no SymAssociation already, then create a new one
     if (node.getLeft().isPresentSymbol() && !node.getLeft().getSymbol().isPresentAssoc()) {
       symbolTableCreator.createAndInit_SymAssociation(node);
-
-      final ASTCDAssocLeftSide leftSide = node.getLeft();
-      final ASTCDAssocRightSide rightSide = node.getRight();
-      CDAssociationSymbolTableCompleter.addRoleToTheirType(leftSide.getSymbol(), rightSide.getSymbol().getType().getTypeInfo());
-      CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftSide.getSymbol().getType().getTypeInfo());
     }
 
+    final ASTCDAssocLeftSide leftSide = node.getLeft();
+    final ASTCDAssocRightSide rightSide = node.getRight();
+    CDAssociationSymbolTableCompleter.addRoleToTheirType(leftSide.getSymbol(), rightSide.getSymbol().getType().getTypeInfo());
+    CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftSide.getSymbol().getType().getTypeInfo());
+    
     assocStack.pop();
     symbolTableCreator.removeCurrentScope();
   }
@@ -76,20 +76,22 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   @Override
   public void visit(ASTCDAssocLeftSide node) {
     if (node.isPresentCDRole() && !node.isPresentSymbol()) {
-      symbolTableCreator.buildCDRole(assocStack.peek(), true);
+      final ASTCDAssociation assoc = assocStack.peek();
+      symbolTableCreator.buildCDRole(assoc, true);
 
       // complete the types for the newly created CDRoleSymbols
-      symbolTableCompleter.visit(node.getSymbol());
+      symbolTableCompleter.initialize_CDRole(node.getSymbol(), assoc, true);
     }
   }
 
   @Override
   public void visit(ASTCDAssocRightSide node) {
     if (node.isPresentCDRole() && !node.isPresentSymbol()) {
-      symbolTableCreator.buildCDRole(assocStack.peek(), false);
+      final ASTCDAssociation assoc = assocStack.peek();
+      symbolTableCreator.buildCDRole(assoc, false);
 
       // complete the types for the newly created CDRoleSymbols
-      symbolTableCompleter.visit(node.getSymbol());
+      symbolTableCompleter.initialize_CDRole(node.getSymbol(), assoc, false);
     }
   }
 

@@ -4,8 +4,10 @@
 
 package de.monticore.cd4code.prettyprint;
 
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -33,6 +35,7 @@ public class CD4CodeFullPrettyPrinterTest extends CD4CodeTestBasis {
 
     new CD4CodeAfterParseTrafo().transform(nodeReparsed);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(nodeReparsed);
+    nodeReparsed.accept(new CD4CodeSymbolTableCompleter(nodeReparsed).getTraverser());
     checkLogError();
 
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(nodeReparsed);

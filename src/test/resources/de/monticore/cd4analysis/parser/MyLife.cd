@@ -2,6 +2,8 @@
 
 package de.monticore.cd4analysis.parser;
 
+import java.util.List;
+
 classdiagram MyLife {
   abstract class Person implements CorporateEntity {
     java.lang.String name;

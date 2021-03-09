@@ -5,11 +5,9 @@
 package de.monticore.testtypeimporter._symboltable;
 
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testtypeimporter._ast.ASTElement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;

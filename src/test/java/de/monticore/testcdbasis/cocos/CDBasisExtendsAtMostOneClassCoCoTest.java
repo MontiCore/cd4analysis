@@ -5,7 +5,7 @@
 package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.optional.CDClassExtendsAtMostOneClass;
 import de.monticore.testcdbasis.CDBasisTestBasis;
@@ -24,6 +24,8 @@ public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
 
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    checkLogError();
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
     checkLogError();
 
     coCoChecker.addCoCo(new CDClassExtendsAtMostOneClass());

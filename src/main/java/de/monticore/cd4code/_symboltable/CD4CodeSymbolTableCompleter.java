@@ -1,12 +1,16 @@
 package de.monticore.cd4code._symboltable;
 
+import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
+import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
+import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
@@ -14,8 +18,7 @@ import java.util.List;
 
 public class CD4CodeSymbolTableCompleter {
   protected CD4CodeTraverser traverser;
-  protected final List<ASTMCImportStatement> imports;
-  protected final ASTMCQualifiedName packageDeclaration;
+  protected CDSymbolTableHelper symbolTableHelper;
 
   public CD4CodeSymbolTableCompleter(ASTCDCompilationUnit ast) {
     this(ast.getMCImportStatementList(),
@@ -25,16 +28,20 @@ public class CD4CodeSymbolTableCompleter {
   }
 
   public CD4CodeSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.imports = imports;
-    this.packageDeclaration = packageDeclaration;
+    this.symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code())
+        .setImports(imports)
+        .setPackageDeclaration(packageDeclaration);
     this.traverser = CD4CodeMill.traverser();
 
-    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(imports, packageDeclaration);
+    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(symbolTableHelper);
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
-    final CDAssociationSymbolTableCompleter cDAssociationVisitor = new CDAssociationSymbolTableCompleter(imports, packageDeclaration);
+    final CDAssociationSymbolTableCompleter cDAssociationVisitor = new CDAssociationSymbolTableCompleter(symbolTableHelper);
     traverser.add4CDAssociation(cDAssociationVisitor);
-    final CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor = new CD4CodeBasisSymbolTableCompleter(imports, packageDeclaration);
+    traverser.setCDAssociationHandler(cDAssociationVisitor);
+    final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor = new CDInterfaceAndEnumSymbolTableCompleter(symbolTableHelper);
+    traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
+    final CD4CodeBasisSymbolTableCompleter cd4CodeBasisVisitor = new CD4CodeBasisSymbolTableCompleter(symbolTableHelper);
     traverser.add4CD4CodeBasis(cd4CodeBasisVisitor);
   }
 

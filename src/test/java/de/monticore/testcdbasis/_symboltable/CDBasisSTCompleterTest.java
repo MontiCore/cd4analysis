@@ -4,6 +4,7 @@ import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisDeSer;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
@@ -60,6 +61,8 @@ public class CDBasisSTCompleterTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
     new CD4AnalysisAfterParseTrafo().transform(ast);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
+    ast.accept(new CD4AnalysisSymbolTableCompleter(ast).getTraverser());
+
     assertEquals(1, artifactScope.getSubScopes().size());
     ICD4AnalysisScope diagramScope = artifactScope.getSubScopes().get(0);
 
@@ -249,7 +252,7 @@ public class CDBasisSTCompleterTest {
     throw new IllegalStateException("Something went wrong..");
   }
 
-  private ICD4AnalysisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
+  protected ICD4AnalysisArtifactScope createSymbolTableFromAST(ASTCDCompilationUnit ast) {
     return CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
   }
 }

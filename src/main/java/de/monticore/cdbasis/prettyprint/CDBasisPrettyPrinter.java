@@ -41,9 +41,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
   public void traverse(ASTCDCompilationUnit node) {
     printPreComments(node);
     if (node.isPresentMCPackageDeclaration()) {
-      // TODO SVa: remove when implemented in MC (MCBasicTypesPrettyPrinter.java) (#2687)
       visit(node.getMCPackageDeclaration());
-      // node.getMCPackageDeclaration().accept(getTraverser());
       printPreComments(node);
     }
     for (ASTMCImportStatement i : node.getMCImportStatementList()) {
