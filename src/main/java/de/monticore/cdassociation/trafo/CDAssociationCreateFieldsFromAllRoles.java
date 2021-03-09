@@ -13,7 +13,6 @@ import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbolBuilder;
 import de.monticore.types.check.SymTypeExpression;
@@ -46,7 +45,7 @@ public class CDAssociationCreateFieldsFromAllRoles
     final CDRoleSymbol symbol = node.getSymbol();
     final FieldSymbol fieldSymbol = new FieldSymbolBuilder()
         .setName(node.getName())
-        .setType(symbol.getType())
+        .setType(calculateType(symbol))
         .setIsReadOnly(symbol.isIsReadOnly())
         .setIsPrivate(symbol.isIsPrivate())
         .setIsProtected(symbol.isIsProtected())
@@ -59,7 +58,7 @@ public class CDAssociationCreateFieldsFromAllRoles
     node.getSymbol().setField(fieldSymbol);
   }
 
-  public TypeSymbol calculateType(CDRoleSymbol symbol) {
+  public SymTypeExpression calculateType(CDRoleSymbol symbol) {
     final SymTypeExpression type;
     if (!symbol.isPresentCardinality() || symbol.getCardinality().isOne()) {
       type = symbol.getType();
@@ -67,21 +66,22 @@ public class CDAssociationCreateFieldsFromAllRoles
     else {
       final ASTCDCardinality cardinality = symbol.getCardinality();
       if (cardinality.isOpt()) {
-        type = SymTypeExpressionFactory.createGenerics("Optional", symbol.getEnclosingScope(), symbol.getType());
+        type = SymTypeExpressionFactory.createGenerics("java.util.Optional", symbol.getEnclosingScope(), symbol.getType());
       }
       else {
         final String container;
         if (symbol.isIsOrdered()) {
-          container = "List";
+          container = "java.util.List";
         }
         else {
-          container = "Set";
+          container = "java.util.Set";
         }
         type = SymTypeExpressionFactory.createGenerics(container, symbol.getEnclosingScope(), symbol.getType());
       }
     }
 
-    return CDSymbolTableHelper.resolveUniqueTypeSymbol(imports, packageDeclaration, type, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd()).get();
+    CDSymbolTableHelper.resolveUniqueTypeSymbol(imports, packageDeclaration, type, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd());
+    return type;
   }
 
   public void transform(ASTCDCompilationUnit compilationUnit)

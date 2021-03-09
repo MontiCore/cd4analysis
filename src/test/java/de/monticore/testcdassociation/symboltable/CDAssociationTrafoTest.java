@@ -12,6 +12,7 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
+import de.monticore.types.check.SymTypeExpression;
 import org.junit.Test;
 
 import java.util.List;
@@ -66,6 +67,10 @@ public class CDAssociationTrafoTest extends CDAssociationTestBasis {
 
     assertFalse(b.get().getFieldList().isEmpty());
     assertEquals(2, b.get().getFieldList().size());
+
+    final SymTypeExpression type = b.get().getFieldList().get(1).getType();
+    assertTrue(type.isGenericType());
+    assertEquals("java.util.List", type.getTypeInfo().getFullName());
   }
 
 }
