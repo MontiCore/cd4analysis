@@ -29,17 +29,19 @@ package monticore;
 classdiagram MyLife { 
   abstract class Person {
     int age;
-    Date birthday;
-    List<String> nickNames;
+    java.util.Date birthday;
+    java.util.List<java.lang.String> nickNames;
   }
+  class PhoneNumber;
   package uni {
     class Student extends Person {
       StudentStatus status;
       -> Address [1..*] {ordered};
     }
+    class Grade;
     enum StudentStatus { ENROLLED, FINISHED; }
-    composition Student -> Grades [*];
-    association phonebook uni.Student [String] -> PhoneNumber;
+    composition Student -> Grade [*];
+    association phonebook uni.Student [java.lang.String] -> PhoneNumber;
   }
   association [0..1] Person (parent) <-> (child) monticore.Person [*];
 }
@@ -52,13 +54,13 @@ The example CD shows
   are also be possible.
 - classes containing attributes, which have a type and a name.
 - available default types, which are basic types (from Java), imported types 
-  (like `Date`), and predefined forms of generic types (like `List`).
+  (like `java.util.Date`), and predefined forms of generic types (like `java.util.List`).
 - associations and compositions that are defined between two classes and
   can have a name, a navigation information (e.g. `<->`), role names on both
   sides, multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
   (like `{ordered}`).
 - that both, association and compositions, can be qualified for example by 
-  `[String]`.
+  `[java.lang.String]`.
 - that packages can be used to structure the classes contained in the model.
 
 Further examples can be found [here][ExampleModels].
@@ -171,7 +173,7 @@ symbol table, and then checks whether the model satisfies all context
 conditions. Only errors or success are printed.
 
 
-For trying this out, copy the `CD4DevelopmentCLI.jar` into a directory of your 
+For trying this out, copy the `CDCLI.jar` into a directory of your 
 choice. Afterwards, create a text file `Example.cd` 
 containing the following simple CD 
 (please note that like in Java, filename and modelname in the file are
@@ -180,12 +182,12 @@ containing the following simple CD
 classdiagram Example {
   class Person {
     int age;
-    String surename;
+    java.lang.String surname;
   }
 }
 ```
 
-Save the text file as `Example.cd` in the directory where `CD4CLI.jar` is 
+Save the text file as `Example.cd` in the directory where `CDCLI.jar` is 
 located. 
 
 Now execute the following command:
@@ -225,17 +227,14 @@ The command prints the pretty-printed model contained in the input file to the
 console:
 ```
 classdiagram Example {
-  package de.monticore {
-    class Person {
-      int age;
-      String surename;
-    }
+  class Person {
+    int age;
+    java.lang.String surname;
   }
+  
+  association Person -> (associates) Person [*];
 }
 ```
-
-The pretty-printed CD contains the package `de.monticore` as the artifact
-contains no package and `de.monticore` is the default package.
 
 It is possible to pretty-print the models contained in the input file to an 
 output file (here: `PPExample.cd`):
@@ -244,13 +243,74 @@ output file (here: `PPExample.cd`):
 java -jar CDCLI.jar -i Example.cd -pp PPExample.cd
 ```
 
+### Step 3: Storing Symbols
 
-### Step 3: Importing Symbol Files Using a Path
+Now we will use the CLI tool to store a symbol file for our `Example.cd` model.
+The stored symbol file will contain information about the types and associations
+defined in the CD.
+It can be imported by other models for using the introduced symbols.
+
+Using the `-s,--symboltable <file>` option builds the symbol table of the input
+model and stores it in the file path given as argument.
+Providing the file path is optional.
+If you do not provide a file path, the CLI tool stores the symbol table of the
+input model in the file `{fileName}.cdsym` where `fileName` is the name of the
+file containing the input model in the directory where the input file is located
+.
+
+For storing the symbol file of `Example.cd`, execute the following command
+(the context condition checks require using the path option):
+```shell
+java -jar CDCLI.jar -i Example.cd -s
+```
+The CLI tool produces the file `Example.sym`, which can now be
+imported by other models, e.g., by models that need to
+use some of the types defined in the CD `Example`. The tool additionally
+indicates the correct generation by its outputs:
+```
+Successfully parsed Example
+Successfully checked the CoCos for Example
+Creation of symbol table Example.sym successful
+```
+The symbol file contains a JSON representation of the symbols defined in a model
+. In this case, the symbol file contains information about defined types.
+
+For storing the symbol file of `Example.cd` in the file `syms/Example.sym`,
+for example, execute the following command (again, the implicit context 
+condition checks require using the model path option):
+```shell
+java -jar CDCLI.jar -i Example.cd -s syms/Example.sym
+```
+
+#### Creating `FieldSymbol`s from `CDRoleSymbol`s
+
+By default, the CLI does not create `FieldSymbol`s for the `CDRoleSymbol`s.
+Currently there are two different behaviors:
+1. For each of the `CDRoleSymbol`s create a linked `FieldSymbol` in the source
+   of the role.
+   This can be used in languages, that always allow for the navigation in both
+   directions.
+2. Create `FieldSymbol`s only for navigable roles.
+   This should be preferred, as the model explicitly states, that a role is
+   not navigable.
+
+Case 1 can be used with:
+```shell
+java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole all
+```
+- a `FieldSymbol` was created for both sides of the association
+and case 2 with:
+```shell
+java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole navigable
+```
+- a `FieldSymbol` was only created for the navigable Role `associates`
+
+### Step 4: Importing Symbol Files Using a Path
 
 MontiCore is designed for modularity (both on the model and the language level).
 The CD languages are participating in the symbol exchange infrastructure.
 We import a symbol file defining type symbols that are used by 
-a CD. 
+a CD.
 
 Let us now consider the example `MyLife` from above.
 Please, copy the content of `MyLife` and save it 
@@ -266,52 +326,42 @@ After executing the command,
 the output states that a context condition is not satisfied by
 the model: 
 ```
-[ERROR] 0xA1038 TypeSymbolSurrogate Could not load full information of 'Address' ...
+[ERROR] MyLife.cd:<13,9>: 0xCDA80: Type 'Address' is used but not defined.
+[ERROR] 0xA1038 TypeSymbolSurrogate Could not load full information of 'Address' (Kind de.monticore.symbols.basicsymbols._symboltable.TypeSymbol).
+...
 ```
 
-To define the missing the type `Address, e.g. 
-another model is needed.
-Respectively its symbol table is available in the file system.
+To define the missing the type `Address`, another model is needed.
+Respectively its symbol table has to be available in the file system.
 
 The symbol file of this model has to be imported by the CD model. 
 The type can be defined in an arbitrary model of an arbitrary language, 
 this other model only needs to be processed and its symbols stored beforehand.
 This approach has a number of advantages:
-* it allows us to use the CD language with any other language that defines types,
+* it allows us to use the CD language with any other language that defines
+  types,
 * the tools themselves remain decoupled, 
 * the build process can be organized in an incremental effective way
     (when using e.g. `gradle` or make, but not mvn). 
 * even symbols from languages that not defined with MontiCore can be
   integrated (e.g. we do that with handwritten code from programming languages).
 
-# TODO Start
-
-(From BR): Vorschlag wie wäre es, wenn wir nicht ein sym file sondern ein 
-anderes CD zur Verfügung stellen? -- und dann übersetzen lassen.
-* dazu ist dann der Text ab hier anzupassen.
-* Und dabei bitte auch auf Füllsätze verzichten, sowie nur konkrete Beispiele bringen.
-* Wahrscheinlich muss das Tutorial dazu umgestellt werden: erst Symbols
-    speichern & und dann laden
-
-The following describes how to fix the error in the example model `MyLife.sd` 
+The following describes how to fix the error in the example model `MyLife.cd` 
 by importing a symbol file defining the (yet undefined) type. 
 We make use of the model path and provide the CLI tool with
 a symbol file (stored symbol table) of another model, which contains the 
 necessary type information.
 
 Create a new directory `mytypes` in the directory where the CLI tool `CDCLI.jar`
-is located. The symbol file `AddressType.cdsym` of a model, which provides all 
-necessary type information, can be found [here](doc/AddressType.cdsym).
-Download the file, name it `AddressType.cdsym`, and move it into the directory 
-`mytypes`.
-
-The contents of the symbol file are of minor importance for you as a language 
-user. In case you are curious and had a look into the symbol file: 
-The symbol file contains a JSON representation of the symbols defined in a model
-. In this case, the symbol file contains information about defined types. 
-Usually, the CLI tools of MontiCore languages automatically generate the 
-contents of these files and you, as a language user, must not be concerned with 
-their contents. 
+is located. The symbol file `AddressType.sym`, which provides all necessary type
+information, can be created from the `AddressType.cd` that can be found
+[here](doc/AddressType.cd).
+Download the file, name it `AddressType.cd`, and move it into the directory 
+`mytypes`. The next step is to create the symboltable from the model. This is 
+done by:
+```shell
+java -jar CDCLI.jar -i mytypes/AddressType.cd -s mytypes/AddressType.sym
+```
   
 The path containing the directory structure that contains the symbol file is 
 called the "Model Path". If we provide the model path to the tool, it will 
@@ -345,10 +395,7 @@ The added import statement means that the file containing the CD imports all
 symbols that are stored in the symbol file `Address`. 
 Note that you may have to change the name here, depending on how you named the
 symbol file from above.
-The concrete file ending `.cdsym` is not important 
-in this case. However, the file ending of the symbol file must end with `sym`, 
-i.e., the name of the symbol file must be compatible to the pattern `*.*sym`.
-If you strictly followed the instructions of this tutorial, then you are fine.
+The file ending of the symbol file must be `.sym`.
 
 If we now execute the command again, the CLI tool will print the following 
 output: 
@@ -362,72 +409,7 @@ This means that it processed
 the model successfully without any context condition violations.
 Great! 
 
-
-
-### Step 4: Storing Symbols
-The previous section describes how to load symbols from an existing symbol file.
-Now, we will use the CLI tool to store a symbol file for our `MyLife.cd` model.
-The stored symbol file will contain information about the types and associations
-defined in the CD.
-It can be imported by other models for using the introduced symbols,
-similar to how we changed the file `MyLife.cd` for importing the symbols 
-contained in the symbol file `AddressType.cdsym`.
-
-Using the `-s,--symboltable <file>` option builds the symbol table of the input 
-model and stores it in the file path given as argument.
-Providing the file path is optional.
-If you do not provide a file path, the CLI tool stores the symbol table of the 
-input model in the file `{fileName}.cdsym` where `fileName` is the name of the 
-file containing the input model in the directory where the input file is located
-. 
-
-For storing the symbol file of `MyLife.cd`, execute the following command 
-(the context condition checks require using the path option):
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s
-```
-The CLI tool produces the file `monticore/MyLife.cdsym`, which can now be 
-imported by other models, e.g., by models that need to
-use some of the types defined in the CD `MyLife`. The tool additionally 
-indicates the correct generation by its outputs:
-```
-Successfully parsed MyLife
-Successfully checked the CoCos for MyLife
-modelName:MyLife
-Creation of symbol table .\monticore\MyLife.cdsym successful
-```
-
-For storing the symbol file of `MyLife.cd` in the file `syms/MyLifeSyms.cdsym`, for example, execute the following command
-(again, the implicit context condition checks require using the model path option):
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym
-```
-
-#### Creating `FieldSymbol`s from `CDRoleSymbol`s
-By default, the CLI does not create `FieldSymbol`s for the `CDRoleSymbol`s.
-Currently there can be two different behaviors:
-1. For each of the `CDRoleSymbol`s create a linked `FieldSymbol` in the source
-   of the role.
-   This can be used in languages, that always allow for the navigation in both
-   directions.
-2. Create `FieldSymbol`s only for navigable roles.
-   This should be preferred, as the model explicitly states, that a role is
-   not navigable.
-   
-Case 1 can be used with:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym --fieldfromrole all
-```
-and case 2 with:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -s syms/MyLifeSyms.cdsym --fieldfromrole navigable
-```
-
-
 Congratulations, you have just finished the tutorial about saving CD symbol files!
-
-# TODO ENDE.
-
 
 ### Using PlantUML to create graphical representations of CD files
 

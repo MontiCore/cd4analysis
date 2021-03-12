@@ -90,4 +90,16 @@ public class CLITest extends OutTestBasis {
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }
+
+  @Test
+  public void testCLIPlantUML3() throws IOException, ParseException {
+    final File file = new File(getFilePath("cd/Complete.cd"));
+    assertTrue(file.exists());
+    final String fileName = file.toString();
+
+    // for now check for the NullPointerException
+    CDCLI.main(new String[] { "-i", fileName, "-f", "--puml", "--svg", "-attr", "assoc", "--showRoles" });
+
+    assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
+  }
 }

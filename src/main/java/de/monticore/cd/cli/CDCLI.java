@@ -222,9 +222,7 @@ public class CDCLI {
       }
     }
 
-    boolean noTypeCheck = !cmd.hasOption("notypecheck");
-    // check all the cocos
-    checkCocos(noTypeCheck);
+    checkCocos();
     if (Log.getErrorCount() == 0) {
       System.out.println(CHECK_SUCCESSFUL + ast.getCDDefinition().getName());
     }
@@ -239,10 +237,10 @@ public class CDCLI {
       Path symbolPath;
       if (targetFile == null) {
         if (modelFile != null) {
-          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
+          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".sym");
         }
         else {
-          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".cdsym");
+          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".sym");
         }
       }
       else {
@@ -293,14 +291,8 @@ public class CDCLI {
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
 
-  protected void checkCocos(boolean noTypeCheck) {
-    if (noTypeCheck) {
-      // TODO SVa: new CD4CodeCoCosDelegator().getCheckerForAllCoCosNoTypeCheck().checkAll(ast);
-      new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
-    }
-    else {
-      new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
-    }
+  protected void checkCocos() {
+    new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
   protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {

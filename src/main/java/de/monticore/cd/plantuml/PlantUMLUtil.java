@@ -4,14 +4,9 @@
 
 package de.monticore.cd.plantuml;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegator;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.prettyprint.CD4CodePlantUMLFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.io.paths.ModelPath;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import net.sourceforge.plantuml.FileFormat;
@@ -120,17 +115,6 @@ public class PlantUMLUtil {
     final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
     CD4CodePlantUMLFullPrettyPrinter cdVisitor = new CD4CodePlantUMLFullPrettyPrinter(plantUMLPrettyPrintUtil);
     if (astCD.isPresent()) {
-      final ICD4CodeGlobalScope globalScope = CD4CodeMill
-          .globalScope();
-      globalScope.setModelPath(new ModelPath(Paths.get("")));
-      if (globalScope instanceof CD4CodeGlobalScope) {
-        ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
-      }
-
-      final CD4CodeScopesGenitorDelegator symbolTableCreator = CD4CodeMill
-          .scopesGenitorDelegator();
-      symbolTableCreator.createFromAST(astCD.get());
-
       plantUMLPrettyPrintUtil.getPrinter().print(cdVisitor.prettyprint(astCD.get()));
       return plantUMLPrettyPrintUtil.getPrinter().getContent();
     }

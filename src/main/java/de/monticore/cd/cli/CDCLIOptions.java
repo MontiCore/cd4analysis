@@ -126,11 +126,6 @@ public class CDCLIOptions {
         .desc("Configures if field symbols should be created from rolesymbols [none,all,navigable]. "
             + "The default value is \"none\".")
         .build());
-
-    options.addOption(Option
-        .builder("nt").longOpt("notypecheck")
-        .desc("Configures that types should not be checked. ")
-        .build());
   }
 
   protected void initPrettyPrinter() {
