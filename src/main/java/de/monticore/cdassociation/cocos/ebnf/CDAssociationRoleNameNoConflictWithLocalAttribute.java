@@ -17,6 +17,7 @@ import java.util.Optional;
  * Checks that association roles does not conflict with declared Attributes in
  * referred types
  */
+// TODO SVa: still relevant? CDRoleSymbol !extends FieldSymbol
 public class CDAssociationRoleNameNoConflictWithLocalAttribute
     implements CDBasisASTCDDefinitionCoCo {
 

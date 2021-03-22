@@ -3,15 +3,14 @@
  */
 package de.monticore.cdbasis.cocos.ebnf;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;

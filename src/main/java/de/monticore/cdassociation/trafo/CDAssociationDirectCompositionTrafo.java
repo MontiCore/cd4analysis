@@ -70,6 +70,8 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
         .setModifier(UMLModifierMill.modifierBuilder().build())
         .setCDCardinality(CDAssociationMill.cDCardOneBuilder().build())
         .setMCQualifiedType(leftSideQualifiedType)
+        .set_SourcePositionStart(node.get_SourcePositionStart())
+        .set_SourcePositionEnd(node.get_SourcePositionEnd())
         .build();
 
     final ASTCDAssociation assoc = CDAssociationMill
@@ -79,6 +81,8 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
         .setLeft(leftSide)
         .setCDAssocDir(CDAssociationMill.cDLeftToRightDirBuilder().build())
         .setRight(node.getCDAssocRightSide())
+        .set_SourcePositionStart(node.get_SourcePositionStart())
+        .set_SourcePositionEnd(node.get_SourcePositionEnd())
         .build();
 
     createASTCDRoleIfAbsent(assoc);
@@ -100,6 +104,8 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
       ASTCDRole role = CD4AnalysisMill
           .cDRoleBuilder()
           .setName(getRoleName(assoc, side))
+          .set_SourcePositionStart(side.get_SourcePositionStart())
+          .set_SourcePositionEnd(side.get_SourcePositionEnd())
           .build();
       side.setCDRole(role);
     }

@@ -20,8 +20,8 @@ classdiagram Simple {
 
   final composition Struct [[name]] -> (item) StructItem [1];
   association A -> S;
-  association [*] A (a) -> [java.lang.String] S [1];
-  private composition comp protected / [0..1] A [java.lang.String] (a) <-> (s) [[id]] S [1..*] public derived {ordered};
+  association [*] A -> (s2) [java.lang.String] S [1];
+  private composition comp protected / [0..1] A [java.lang.String] (a) <-> (s3) [[id]] S [1..*] public derived {ordered};
 
   class C1;
   class C2;
