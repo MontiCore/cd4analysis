@@ -170,7 +170,7 @@ public class CDCLI {
       new CD4CodeDirectCompositionTrafo().transform(ast);
     }
 
-    boolean defaultTrafo = !cmd.hasOption("defaulttrafo") || Boolean.parseBoolean(cmd.getOptionValue("defaulttrafo", "false"));
+    boolean defaultTrafo = cmd.hasOption("defaulttrafo") && Boolean.parseBoolean(cmd.getOptionValue("defaulttrafo", "false"));
     if (defaultTrafo) {
       final CD4CodeTraverser traverser = CD4CodeMill.traverser();
       final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
