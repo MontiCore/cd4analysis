@@ -115,14 +115,9 @@ public class CD4CodeBasisSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter cdBasisCompleter = new CDBasisSymbolTableCompleter(imports, packageDecl);
-    CD4CodeBasisSymbolTableCompleter cd4codeCompleter = new CD4CodeBasisSymbolTableCompleter(imports, packageDecl);
-    CD4CodeTraverser t = CD4CodeMill.traverser();
-    t.add4CDBasis(cdBasisCompleter);
-    t.add4OOSymbols(cdBasisCompleter);
-    t.add4CD4CodeBasis(cd4codeCompleter);
+    CD4CodeSymbolTableCompleter cd4codeCompleter = new CD4CodeSymbolTableCompleter(imports, packageDecl);
 
-    ast.accept(t);
+    ast.accept(cd4codeCompleter.getTraverser());
 
     assertEquals(0, Log.getErrorCount());
   }
@@ -146,7 +141,7 @@ public class CD4CodeBasisSTCompleterTest {
 
     ast.accept(t);
 
-    assertEquals(4, Log.getErrorCount());
+    assertEquals(8, Log.getErrorCount());
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {

@@ -31,6 +31,7 @@ public class CD4CodeSymbolTableCompleter {
     this.symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code())
         .setImports(imports)
         .setPackageDeclaration(packageDeclaration);
+    ((CD4CodeGlobalScope) CD4CodeMill.globalScope()).setSymbolTableHelper(symbolTableHelper);
     this.traverser = CD4CodeMill.traverser();
 
     final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(symbolTableHelper);

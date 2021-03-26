@@ -4,7 +4,6 @@
 
 package de.monticore.cdassociation.trafo;
 
-import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
@@ -80,7 +79,6 @@ public class CDAssociationCreateFieldsFromAllRoles
       }
     }
 
-    CDSymbolTableHelper.resolveUniqueTypeSymbol(imports, packageDeclaration, type, symbol.getEnclosingScope(), symbol.getAstNode().get_SourcePositionStart(), symbol.getAstNode().get_SourcePositionEnd());
     return type;
   }
 

@@ -168,12 +168,8 @@ public class CDInterfaceAndEnumSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter c = new CDBasisSymbolTableCompleter(imports, packageDecl);
-    CD4AnalysisTraverser t = CD4AnalysisMill.traverser();
-    t.add4CDBasis(c);
-    t.add4OOSymbols(c);
-
-    ast.accept(t);
+    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(imports, packageDecl);
+    ast.accept(c.getTraverser());
 
     assertEquals(0, Log.getErrorCount());
   }
