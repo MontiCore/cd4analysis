@@ -77,9 +77,6 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       Log.error(String.format("0xCDA90: The type of the return type (%s) could not be calculated", ast.getMCReturnType().getClass().getSimpleName()), ast.getMCReturnType().get_SourcePositionStart());
     }
     else {
-      if (!typeResult.get().isVoidType()) {
-        symbolTableHelper.resolveUniqueTypeSymbol(typeResult.get(), ast.getEnclosingScope(), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
-      }
       symbol.setReturnType(typeResult.get());
     }
 
@@ -95,7 +92,6 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
               s.getClass().getSimpleName()),
               s.get_SourcePositionStart());
         }
-        result.ifPresent(r -> symbolTableHelper.resolveUniqueTypeSymbol(r, ast.getEnclosingScope(), s.get_SourcePositionStart(), s.get_SourcePositionEnd()));
         return result;
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
@@ -116,7 +112,6 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
         if (!result.isPresent()) {
           Log.error(String.format("0xCDA92: The type of the exception classes (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
-        result.ifPresent(r -> symbolTableHelper.resolveUniqueTypeSymbol(r, ast.getEnclosingScope(), s.get_SourcePositionStart(), s.get_SourcePositionEnd()));
         return result;
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
@@ -132,7 +127,6 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       Log.error(String.format("0xCDA93: The type (%s) of the attribute (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()), ast.getName()), ast.getMCType().get_SourcePositionStart());
     }
     else {
-      symbolTableHelper.resolveUniqueTypeSymbol(typeResult.get(), ast.getEnclosingScope(), ast.get_SourcePositionStart(), ast.get_SourcePositionEnd());
 
       final SymTypeExpression finalTypeResult;
       if (ast.isEllipsis()) {

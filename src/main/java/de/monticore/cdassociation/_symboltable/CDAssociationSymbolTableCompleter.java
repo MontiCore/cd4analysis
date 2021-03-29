@@ -19,8 +19,6 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueTypeSymbol;
-import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueVariableSymbol;
 
 public class CDAssociationSymbolTableCompleter
     implements CDAssociationVisitor2, CDAssociationHandler {
@@ -102,7 +100,6 @@ public class CDAssociationSymbolTableCompleter
     }
 
     // check if the type can be resolved
-    typeResult.ifPresent(t -> symbolTableHelper.resolveUniqueTypeSymbol(t, side.getEnclosingScope(), side.get_SourcePositionStart(), side.get_SourcePositionEnd()));
 
     return typeResult;
   }
@@ -118,12 +115,11 @@ public class CDAssociationSymbolTableCompleter
               side.getCDQualifier().get_SourcePositionStart());
         }
         else {
-          symbolTableHelper.resolveUniqueTypeSymbol(result.get(), symbol.getEnclosingScope(), side.getCDQualifier().get_SourcePositionStart(), side.getCDQualifier().get_SourcePositionEnd());
           symbol.setTypeQualifier(result.get());
         }
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
-        final Optional<VariableSymbol> variableSymbol = symbolTableHelper.resolveUniqueVariableSymbol(symbol.getType(), side.getCDQualifier().getByAttributeName(), symbol.getEnclosingScope(), side.get_SourcePositionStart(), side.get_SourcePositionEnd());
+        final Optional<VariableSymbol> variableSymbol = symbol.getEnclosingScope().resolveVariable(side.getCDQualifier().getByAttributeName());
         if (variableSymbol.isPresent()) {
           variableSymbol.get().setEnclosingScope(side.getEnclosingScope());
           symbol.setAttributeQualifier(variableSymbol.get());
@@ -143,8 +139,7 @@ public class CDAssociationSymbolTableCompleter
     }
     else {
       final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(leftSide.getMCQualifiedType().getMCQualifiedName());
-      leftType = symbolTableHelper.resolveUniqueTypeSymbol(result.get(), node.getEnclosingScope(), leftSide.getMCQualifiedType().get_SourcePositionStart(), leftSide.getMCQualifiedType().get_SourcePositionEnd())
-          .get();
+      leftType = result.get().getTypeInfo();
     }
 
     final TypeSymbol rightType;
@@ -153,8 +148,7 @@ public class CDAssociationSymbolTableCompleter
     }
     else {
       final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(rightSide.getMCQualifiedType().getMCQualifiedName());
-      rightType = symbolTableHelper.resolveUniqueTypeSymbol(result.get(), node.getEnclosingScope(), rightSide.getMCQualifiedType().get_SourcePositionStart(), rightSide.getMCQualifiedType().get_SourcePositionEnd())
-          .get();
+      rightType = result.get().getTypeInfo();
     }
 
     if (leftSide.isPresentSymbol()) {

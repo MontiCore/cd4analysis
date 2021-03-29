@@ -5,6 +5,7 @@
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd._symboltable.CDSymbolTableHelper.resolveUniqueTypeSymbol;
 
 public class CDBasisSymbolTableCompleter
     implements CDBasisVisitor2, OOSymbolsVisitor2 {
@@ -49,7 +48,6 @@ public class CDBasisSymbolTableCompleter
         if (!result.isPresent()) {
           Log.error(String.format("0xCDA00: The type of the extended classes (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
         }
-        result.ifPresent(r -> symbolTableHelper.resolveUniqueTypeSymbol(r, node.getEnclosingScope(), s.get_SourcePositionStart(), s.get_SourcePositionEnd()).ifPresent(t -> r.getTypeInfo().setFullName(t.getFullName())));
         return result;
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
@@ -60,12 +58,9 @@ public class CDBasisSymbolTableCompleter
         if (!result.isPresent()) {
           Log.error(String.format("0xCDA01: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
-        result.ifPresent(r -> symbolTableHelper.resolveUniqueTypeSymbol(r, node.getEnclosingScope(), s.get_SourcePositionStart(), s.get_SourcePositionEnd()).ifPresent(t -> r.getTypeInfo().setFullName(t.getFullName())));
         return result;
       }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
     }
-
-    resolveTypes(symbol);
   }
 
   @Override
@@ -95,11 +90,6 @@ public class CDBasisSymbolTableCompleter
     else {
       symbol.setType(typeResult.get());
     }
-
-    SourcePosition sourcePositionStart = node.get_SourcePositionStart();
-    SourcePosition sourcePositionEnd = node.get_SourcePositionEnd();
-    // resolve type
-    symbolTableHelper.resolveUniqueTypeSymbol(typeResult.get(), (ICDBasisScope) symbol.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
   }
 
   @Override
@@ -112,18 +102,6 @@ public class CDBasisSymbolTableCompleter
   protected void initialize_CDAttribute(ASTCDAttribute ast) {
     FieldSymbol symbol = ast.getSymbol();
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
-  }
-
-  /// @deprecated, should not be necessary when the typecheck resolves the symbols
-  @Deprecated
-  public void resolveTypes(CDTypeSymbol cdType) {
-    for (SymTypeExpression superType : cdType.getSuperTypesList()) {
-      SourcePosition sourcePositionStart = cdType.getAstNode().get_SourcePositionStart();
-      SourcePosition sourcePositionEnd = cdType.getAstNode().get_SourcePositionEnd();
-
-      // store all found type symbols here
-      symbolTableHelper.resolveUniqueTypeSymbol(superType, cdType.getEnclosingScope(), sourcePositionStart, sourcePositionEnd);
-    }
   }
 
   /*

@@ -16,6 +16,7 @@ import de.monticore.io.paths.ModelPath;
 import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
@@ -191,12 +192,9 @@ public class CDBasisSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter c = new CDBasisSymbolTableCompleter(imports, packageDecl);
-    CD4AnalysisTraverser t = CD4AnalysisMill.traverser();
-    t.add4CDBasis(c);
-    t.add4OOSymbols(c);
+    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(imports, packageDecl);
 
-    ast.accept(t);
+    ast.accept(c.getTraverser());
 
     assertEquals(0, Log.getErrorCount());
   }
@@ -217,8 +215,8 @@ public class CDBasisSTCompleterTest {
 
     ast.accept(t);
 
-    assertEquals(1, Log.getErrorCount());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDA80"));
+    assertEquals(2, Log.getErrorCount());
+    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 
   @Test
@@ -230,15 +228,13 @@ public class CDBasisSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter c = new CDBasisSymbolTableCompleter(imports, packageDecl);
-    CD4AnalysisTraverser t = CD4AnalysisMill.traverser();
-    t.add4CDBasis(c);
-    t.add4OOSymbols(c);
-
-    ast.accept(t);
-
-    assertEquals(1, Log.getErrorCount());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDA81"));
+    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(imports, packageDecl);
+    try{
+      ast.accept(c.getTraverser());
+      fail();
+    }catch(ResolvedSeveralEntriesForSymbolException e){
+      assertTrue(e.getMessage().startsWith("0xA4095"));
+    }
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {

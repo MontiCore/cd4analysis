@@ -29,7 +29,7 @@ public class CDAssociationByAttributeFieldExist implements
     if (side.isPresentCDQualifier() && side.getCDQualifier().isPresentByAttributeName()) {
       final String attributeName = side.getCDQualifier().getByAttributeName();
       final SymTypeExpression type = side.getCDRole().getSymbol().getType();
-      if (type.getFieldList(attributeName).size() == 0) {
+      if (type.getFieldList(attributeName, false).size() == 0) {
         Log.error(
             String
                 .format(

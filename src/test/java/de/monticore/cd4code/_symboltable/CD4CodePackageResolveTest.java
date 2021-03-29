@@ -18,6 +18,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOSymbolsDeSer;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     new CD4CodeAfterParseTrafo().transform(node);
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
-    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
+    node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
     checkLogError();
 
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(node);

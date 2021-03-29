@@ -68,7 +68,7 @@ public class TestTypeImporterTest extends TestBasis {
 
     final Optional<FieldSymbol> a = symbolTable.resolveField("a");
     assertTrue(a.isPresent());
-    assertEquals("java.lang.String", a.get().getType().getTypeInfo().getName());
+    assertEquals("java.lang.String", a.get().getType().getTypeInfo().getFullName());
 
     compilationUnit.getDefinition().streamElements().forEach(e -> assertNotNull(e.getSymbol().getType().getTypeInfo()));
   }
