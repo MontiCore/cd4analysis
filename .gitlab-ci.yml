@@ -1,6 +1,6 @@
 # (c) https://github.com/MontiCore/monticore
 
-image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
+image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk8
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -8,11 +8,9 @@ variables:
 
 cache:
   paths:
-    - .gradle/wrapper
   key: ${CI_COMMIT_REF_SLUG}
   
 before_script:
-  - chmod +x gradlew
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
 stages:
@@ -25,7 +23,7 @@ stages:
 build:
   stage: build
   script:
-  - "./gradlew assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
+  - "gradle assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
     - "."
@@ -36,7 +34,7 @@ test:
   dependencies:
     - build
   script:
-  - "./gradlew check $GRADLE_OPT $ARGS2"
+  - "gradle check $GRADLE_OPT $ARGS2"
 
 trigger-langexp:
   stage: trigger
@@ -53,7 +51,7 @@ deploy:
   dependencies:
     - build
   script:
-    - "./gradlew publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+    - "gradle publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
   
 checkMDLinks:
   stage: check
