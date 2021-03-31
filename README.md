@@ -112,12 +112,12 @@ Change the directory to the root directory of the cloned sources:
 ```shell
 cd cd4analysis
 ```
-Then build the source files with gradle (if `./gradlew.bat` is not 
-recognized as a command in your shell, then use `./gradlew`).
+Then build the source files with gradle (if `gradle` is not 
+recognized as a command in your shell, please install [Gradle](https://gradle.org/releases/)).
 To this effect, execute the following two commands:
 ```shell
-./gradlew.bat clean build
-./gradlew.bat shadowJar
+gradle clean build
+gradle shadowJar
 ```
 Congratulations! You can now find the executable JAR file `CDCLI.jar` in
 the directory `target/libs`.
