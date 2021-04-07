@@ -9,13 +9,6 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import java.util.Deque;
 
 public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
-  public CDBasisScopesGenitor(ICDBasisScope enclosingScope) {
-    super(enclosingScope);
-  }
-
-  public CDBasisScopesGenitor(Deque<? extends ICDBasisScope> scopeStack) {
-    super(scopeStack);
-  }
 
   public CDBasisScopesGenitor() {
     super();
