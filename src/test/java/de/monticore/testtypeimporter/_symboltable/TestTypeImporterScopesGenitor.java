@@ -10,21 +10,12 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Deque;
 import java.util.Optional;
 
 public class TestTypeImporterScopesGenitor
     extends TestTypeImporterScopesGenitorTOP {
 
   public TestTypeImporterScopesGenitor() {
-  }
-
-  public TestTypeImporterScopesGenitor(ITestTypeImporterScope enclosingScope) {
-    super(enclosingScope);
-  }
-
-  public TestTypeImporterScopesGenitor(Deque<? extends ITestTypeImporterScope> scopeStack) {
-    super(scopeStack);
   }
 
   @Override

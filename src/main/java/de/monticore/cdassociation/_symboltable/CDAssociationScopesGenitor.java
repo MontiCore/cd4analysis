@@ -9,7 +9,6 @@ import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Deque;
 import java.util.Optional;
 
 public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
@@ -22,30 +21,30 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
   public void handle(ASTCDAssociation node) {
     node.setEnclosingScope(getCurrentScope().get());
 
-    CDAssociationSymbolBuilder symbolBuilder = CDAssociationMill.cDAssociationSymbolBuilder().setName(node.getName());
-    if (symbolBuilder != null) {
-      CDAssociationSymbol symbol = symbolBuilder.build();
+    CDAssociationSymbolBuilder symbol = create_CDAssociation(node);
+    if (symbol != null) {
+      CDAssociationSymbol realSymbol = symbol.build();
       if (getCurrentScope().isPresent()) {
-        getCurrentScope().get().add(symbol);
+        getCurrentScope().get().add(realSymbol);
       } else {
-        Log.warn("0xA50212 Symbol cannot be added to current scope, since no scope exists.");
+        Log.warn("0xA5021x50113 Symbol cannot be added to current scope, since no scope exists.");
       }
-      ICDAssociationScope scope = createScope(false);
+      de.monticore.cdassociation._symboltable.ICDAssociationScope scope = createScope(false);
       putOnStack(scope);
-      symbol.setSpannedScope(scope);
+      realSymbol.setSpannedScope(scope);
       // symbol -> ast
-      symbol.setAstNode(node);
+      realSymbol.setAstNode(node);
 
       // ast -> symbol
-      node.setSymbol(symbol);
-      node.setEnclosingScope(symbol.getEnclosingScope());
+      node.setSymbol(realSymbol);
+      node.setEnclosingScope(realSymbol.getEnclosingScope());
 
-      // ast -> spannedScope
       // scope -> ast
       scope.setAstNode(node);
 
       // ast -> scope
       node.setSpannedScope(scope);
+      initCDAssociationHP1(node.getSymbol());
     }
 
     if (node.getLeft().isPresentCDRole()) {
@@ -62,7 +61,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     node.getRight().setEnclosingScope(node.getEnclosingScope());
     initSide(node.getRight());
 
-    if (symbolBuilder != null) {
+    if (symbol != null) {
       removeCurrentScope();
     }
   }
@@ -87,55 +86,33 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     throw new IllegalStateException("0xCDA65: Cannot create a symbol for CDDirectComposition, please transform to a CDAssociation using CD4AnalysisDirectCompositionTrafo or CD4CodeDirectCompositionTrafo.");
   }
 
-  @Override
-  public void visit(ASTCDAssociation node){
-    CDAssociationSymbol symbol = CDAssociationMill.cDAssociationSymbolBuilder().setName(node.getName()).build();
-    if(!node.isPresentName()){
-      symbol = null;
+  protected CDAssociationSymbolBuilder create_CDAssociation(ASTCDAssociation ast) {
+    if (ast.isPresentName()) {
+      return CDAssociationMill.cDAssociationSymbolBuilder().setName(ast.getName());
     }
-    if (getCurrentScope().isPresent()) {
-      getCurrentScope().get().add(symbol);
-    } else {
-      Log.warn("0xA5021x02913 Symbol cannot be added to current scope, since no scope exists.");
+    else {
+      return null;
     }
-    ICDAssociationScope scope = createScope(false);
-    putOnStack(scope);
-    symbol.setSpannedScope(scope);
-    // symbol -> ast
-    symbol.setAstNode(node);
-
-    // ast -> symbol
-    node.setSymbol(symbol);
-    node.setEnclosingScope(symbol.getEnclosingScope());
-
-    // scope -> ast
-    scope.setAstNode(node);
-
-    // ast -> scope
-    node.setSpannedScope(scope);
-    initCDAssociationHP1(node.getSymbol());
   }
 
   public void buildCDRole(ASTCDAssociation node, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? node.getLeft() : node.getRight();
     final ASTCDRole cdRole = side.getCDRole();
 
-    final CDRoleSymbol cdRoleSymbol = CDAssociationMill.cDRoleSymbolBuilder().setName(cdRole.getName()).build();
+    final CDRoleSymbol symbol = CDAssociationMill.cDRoleSymbolBuilder().setName(cdRole.getName()).build();
     if (getCurrentScope().isPresent()) {
-      getCurrentScope().get().add(cdRoleSymbol);
+      getCurrentScope().get().add(symbol);
     } else {
-      Log.warn("0xA50212 Symbol cannot be added to current scope, since no scope exists.");
+      Log.warn("0xA5021x49651 Symbol cannot be added to current scope, since no scope exists.");
     }
     // symbol -> ast
-    cdRoleSymbol.setAstNode(cdRole);
+    symbol.setAstNode(cdRole);
 
     // ast -> symbol
-    cdRole.setSymbol(cdRoleSymbol);
-    cdRole.setEnclosingScope(cdRoleSymbol.getEnclosingScope());
+    cdRole.setSymbol(symbol);
+    node.setEnclosingScope(symbol.getEnclosingScope());
 
-    // ast -> spannedScope
-    // scope -> ast
-    cdRoleSymbol.setAstNode(cdRole);
+    initCDRoleHP1(cdRole.getSymbol());
   }
 
   public void createAndInit_SymAssociation(ASTCDAssociation node) {
