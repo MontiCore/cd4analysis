@@ -9,8 +9,10 @@ import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code._visitor.CD4CodeVisitor2;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis.CDBasisMill;
@@ -87,15 +89,15 @@ public interface ASTCDType extends ASTCDTypeTOP {
     return getCDMemberList(CDMemberVisitor.Options.ATTRIBUTES);
   }
 
-  default List<ASTCDAttribute> getCDRoleList() {
+  default List<ASTCDRole> getCDRoleList() {
     return getCDMemberList(CDMemberVisitor.Options.ROLES);
   }
 
-  default List<ASTCDAttribute> getCDConstructorList() {
+  default List<ASTCDConstructor> getCDConstructorList() {
     return getCDMemberList(CDMemberVisitor.Options.CONSTRUCTORS);
   }
 
-  default List<ASTCDAttribute> getCDMethodList() {
+  default List<ASTCDMember> getCDMethodList() {
     return getCDMemberList(CDMemberVisitor.Options.METHODS);
   }
 }
