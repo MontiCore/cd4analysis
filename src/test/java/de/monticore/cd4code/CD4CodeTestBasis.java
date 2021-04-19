@@ -23,7 +23,6 @@ public class CD4CodeTestBasis extends TestBasis {
   protected CD4CodeParser p;
   protected CD4CodeCoCos cd4CodeCoCos;
   protected CD4CodeFullPrettyPrinter printer;
-  protected CD4CodeDeSer deSer;
   protected CD4CodeSymbols2Json symbols2Json;
 
   @Before
@@ -42,7 +41,6 @@ public class CD4CodeTestBasis extends TestBasis {
 
     cd4CodeCoCos = new CD4CodeCoCos();
     printer = new CD4CodeFullPrettyPrinter();
-    deSer = new CD4CodeDeSer();
     symbols2Json = new CD4CodeSymbols2Json();
   }
 }

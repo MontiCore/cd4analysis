@@ -1,12 +1,12 @@
 package de.monticore.testcd4codebasis._symboltable;
 
 import com.google.common.collect.LinkedListMultimap;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeDeSer;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -35,7 +35,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   private static final String MODEL_PATH = "src/test/resources/";
   CD4CodeParser parser;
-  CD4CodeDeSer scopeDeser;
+  CD4CodeSymbols2Json symbols2Json;
 
   @Before
   public void setup() {
@@ -51,7 +51,7 @@ public class CD4CodeBasisSTCompleterTest {
     Log.enableFailQuick(false);
 
     this.parser = CD4CodeMill.parser();
-    scopeDeser = new CD4CodeDeSer();
+    symbols2Json = new CD4CodeSymbols2Json();
   }
 
   @Test
@@ -100,7 +100,7 @@ public class CD4CodeBasisSTCompleterTest {
     new CD4CodeAfterParseTrafo().transform(ast);
     ICD4CodeArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
-    String serialized = scopeDeser.serialize(artifactScope);
+    String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
     assertEquals(0, Log.getErrorCount());

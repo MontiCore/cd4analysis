@@ -15,6 +15,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOSymbolsDeSer;
+import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
@@ -101,8 +102,8 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
     assertTrue(opt.isPresent());
 
-    String s = new OOSymbolsDeSer().serialize(str1.get().getSpannedScope());
-    String s2 = deSer.serialize(artifactScope);
+    String s = new OOSymbolsSymbols2Json().serialize(str1.get().getSpannedScope());
+    String s2 = symbols2Json.serialize(artifactScope);
     System.out.println(s2);
   }
 }

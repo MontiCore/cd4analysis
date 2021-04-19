@@ -5,6 +5,7 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisDeSer;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
@@ -36,7 +37,7 @@ public class CDBasisSTCompleterTest {
 
   private static final String MODEL_PATH = "src/test/resources/";
   CD4AnalysisParser parser;
-  CD4AnalysisDeSer scopeDeser;
+  CD4AnalysisSymbols2Json symbols2Json;
 
   @Before
   public void setup() {
@@ -51,7 +52,7 @@ public class CDBasisSTCompleterTest {
     Log.enableFailQuick(false);
 
     this.parser = CD4AnalysisMill.parser();
-    scopeDeser = new CD4AnalysisDeSer();
+    symbols2Json = new CD4AnalysisSymbols2Json();
   }
 
   @Test
@@ -125,7 +126,7 @@ public class CDBasisSTCompleterTest {
     ASTCDCompilationUnit ast = loadModel(artifact);
     new CD4AnalysisAfterParseTrafo().transform(ast);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
-    String serialized = scopeDeser.serialize(artifactScope);
+    String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
     assertEquals(0, Log.getErrorCount());
@@ -153,10 +154,10 @@ public class CDBasisSTCompleterTest {
     }
 
     // SERIALIZE + DESERIALIZE
-    String serialized = scopeDeser.serialize(artifactScope);
+    String serialized = symbols2Json.serialize(artifactScope);
     assertNotNull(serialized);
     assertNotEquals("", serialized);
-    artifactScope = scopeDeser.deserialize(serialized);
+    artifactScope = symbols2Json.deserialize(serialized);
     assertEquals(0, Log.getErrorCount());
 
     CD4AnalysisMill.reset();

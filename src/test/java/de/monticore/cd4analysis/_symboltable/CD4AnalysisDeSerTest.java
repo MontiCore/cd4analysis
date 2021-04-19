@@ -48,7 +48,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
       checkLogError();
     }
 
-    final String serializedST = deSer.serialize(scope);
+    final String serializedST = symbols2Json.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
     final Optional<CDTypeSymbol> d = deserialize.resolveCDType("D");
@@ -67,7 +67,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
     new CD4AnalysisTrafo4Defaults().transform(node);
 
-    final String serializedST = deSer.serialize(scope);
+    final String serializedST = symbols2Json.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
     final Optional<CDTypeSymbol> b = deserialize.resolveCDType("B");
@@ -85,7 +85,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
-    final String serializedST = deSer.serialize(scope);
+    final String serializedST = symbols2Json.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
     final Optional<CDTypeSymbol> a = deserialize.resolveCDType("A");
@@ -120,7 +120,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
     c.get().getSpannedScope().add(inner);
     innerSpanningScope.setSpanningSymbol(inner);
 
-    final String serializedST = deSer.serialize(scope);
+    final String serializedST = symbols2Json.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
     final Optional<CDTypeSymbol> innerType = deserialize.resolveCDTypeMany("Inner").stream().distinct().findAny();
@@ -142,7 +142,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
   }
 
   public ICD4AnalysisArtifactScope getGlobalScopeForDeserialization(String serializedST) {
-    final ICD4AnalysisArtifactScope deserialize = deSer.deserialize(serializedST);
+    final ICD4AnalysisArtifactScope deserialize = symbols2Json.deserialize(serializedST);
 
     // explicitly not using the mill for initializing a global scope
     final CD4AnalysisGlobalScope globalScopeForDeserialization = new CD4AnalysisGlobalScope();
