@@ -50,7 +50,7 @@ public class CD4CodeGlobalScope extends CD4CodeGlobalScopeTOP {
   }
 
   public void addBuiltInTypes() {
-    BuiltInTypes.addBuiltInTypes(this, Optional.of(new DeriveSymTypeOfCD4Code()));
+    BuiltInTypes.addBuiltInTypes(this);
   }
 
   @Override

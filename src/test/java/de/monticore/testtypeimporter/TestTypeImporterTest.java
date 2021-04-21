@@ -35,7 +35,7 @@ public class TestTypeImporterTest extends TestBasis {
     final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.globalScope();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
 
-    BuiltInTypes.addBuiltInTypes(globalScope, Optional.empty());
+    BuiltInTypes.addBuiltInTypes(globalScope);
 
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.clear();

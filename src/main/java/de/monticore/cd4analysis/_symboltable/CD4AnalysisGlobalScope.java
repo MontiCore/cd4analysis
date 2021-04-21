@@ -49,7 +49,7 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   }
 
   public void addBuiltInTypes() {
-    BuiltInTypes.addBuiltInTypes(this, Optional.of(new DeriveSymTypeOfCD4Analysis()));
+    BuiltInTypes.addBuiltInTypes(this);
   }
 
   @Override

@@ -15,12 +15,11 @@ import java.util.Optional;
  * contains all types, which are basic Java types
  */
 public class BuiltInTypes {
-  public static void addBuiltInTypes(IOOSymbolsGlobalScope globalScope, Optional<ISynthesize> synthesizeSymType) {
+  public static void addBuiltInTypes(IOOSymbolsGlobalScope globalScope) {
     if (globalScope.getTypeSymbols().isEmpty()) {
       BasicSymbolsMill.initializePrimitives();
 
       final Java2MCResolver javaTypeResolver = new Java2MCResolver(globalScope);
-      synthesizeSymType.ifPresent(javaTypeResolver::setSynthesizeSymType);
       globalScope.addAdaptedOOTypeSymbolResolver(javaTypeResolver);
       globalScope.addAdaptedTypeSymbolResolver(javaTypeResolver);
     }
