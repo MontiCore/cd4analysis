@@ -9,7 +9,6 @@ import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
-import de.monticore.types.check.TypeCheck;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -19,8 +18,10 @@ import java.util.stream.Collectors;
 
 /**
  * Checks that overridden attributes are of the same kind.
+ * This coco is optional and should be used when the class diagram is used
+ * by a generator.
  */
-public class CDAttributeOverriddenTypeMatch
+public class CDAttributeOverridden
     implements CDBasisASTCDAttributeCoCo {
 
   /**
@@ -41,10 +42,6 @@ public class CDAttributeOverriddenTypeMatch
     List<VariableSymbol> overriddenSymbols = superAttrs.stream()
         // same name
         .filter(sA -> sA.getName().equals(attrSym.getName()))
-        // different type
-        .filter(sA -> !sA.getType().print().equals(attrSym.getType().print()))
-        // not a subclass
-        .filter(sA -> TypeCheck.isSubtypeOf(attrSym.getType(), sA.getType()))
         .collect(Collectors.toList());
 
     if (!overriddenSymbols.isEmpty()) {
@@ -52,12 +49,10 @@ public class CDAttributeOverriddenTypeMatch
       Log.error(
           String
               .format(
-                  "0xCDC04: Class %s overrides the attribute %s (type: %s) of class %s with the different type %s which is no subtype.",
+                  "0xCDC04: Class %s overrides the attribute %s of class %s which is not allowed.",
                   subClassSym.getName(),
                   anOverriddenSym.getName(),
-                  anOverriddenSym.getType().print(),
-                  anOverriddenSym.getEnclosingScope().getName(),
-                  attrSym.getType().print()),
+                  anOverriddenSym.getEnclosingScope().getName()),
           node.get_SourcePositionStart());
     }
   }
