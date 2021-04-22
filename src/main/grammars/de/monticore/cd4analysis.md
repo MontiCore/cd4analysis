@@ -292,18 +292,28 @@ Further examples can be found [here][ExampleModels].
 - the individual CoCos can be found in the [`cocos`][cocos]-directory of each
   language
 - the CoCos are separated in these categories:
-  - `ebnf`, handles cases which should not be handled by the grammar itself,
+  - `ebnf` handles cases which should not be handled by the grammar itself,
     e.g., the name of an attribute is lowercase
-  - `mcg`, contains CoCos that check semantics of the models, e.g., the list
+  - `mcg` contains CoCos that check semantics of the models, e.g., the list
     of valid `UMLModifier`s on an object
-- CoCos ensure semantic correctness, here is a list of some of the important
-  ones:
+- CoCos ensure semantic correctness, here is a list of some important ones:
   - Uniqueness of names of e.g. classes in each package, attributes in each
     class
   - Classes hierarchy is free of cycles
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
     
+### Shadowing of attributes
+CD4Analysis is meant to behave like Java. Java allows attribute
+shadowing in any shape of form, like the same or a completely different
+type. Supporting this is useful when analysing the class diagrams, as a class
+diagram should not automatically be invalid if an inherited class changes.
+In code generation (using CD4Code) on the other hand, access methods are
+generated for attributes of classes and therefore are problematic with the
+method parameters and return types (see 
+[covariance and contravariance](https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)))
+.
+
 ## Transformations
 - different transformations are provided to simplify the parsing and ST 
   creation
@@ -313,7 +323,7 @@ Further examples can be found [here][ExampleModels].
     - moves elements in a default package, if they are not already in a 
       package
     - the default package is either the package of the model file, or if that
-      doesn't exists, `de.monticore` is used
+      doesn't exist, `de.monticore` is used
   - ['CD4AnalysisDirectCompositionTrafo`][CD4AnalysisDirectCompositionTrafo]
     - `ASTCDDirectComposition` (short form of composition), are transformed 
       to (normal) `composition`s
