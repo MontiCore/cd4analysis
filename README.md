@@ -136,32 +136,48 @@ java -jar CDCLI.jar
 ```
 
 This prints usage information of the CLI 
-tool to the console:
+tool to the console.
+
+## Parameters of the CLI / XXX
+
+The CLI provides quite a number of configurable parameters. 
+These two are examples for calling  the the CLI:
+
 ```shell
-$ java -jar CDCLI.jar
-usage: Examples in case the CLI file is called CDCLI.jar:
 java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s
-java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles
- -f,--failquick <value>                   Configures if the application should quickfail on errors
-                                          [true/false]. The default value is "false".
-    --fieldfromrole <fieldfromrole>       Configures if field symbols should be created from rolesymbols
-                                          [none,all,navigable]. The default value is "none".
- -h,--help                                Print this help dialogue.
- -i,--input <file>                        Reads the input CD artifact given as argument.
- -o,--output <dir>                        Path of generated files (optional). The default value is ".".
- -p,--path <dirlist>                      Sets the artifact path for imported symbols separated by ';'. The
-                                          default value is ".".
- -pp,--prettyprint <prettyprint>          Prints the input CDs to stdout or to the specified file (optional).
- -puml,--plantUML                         Transform the input model to a PlantUML model.
- -r,--report <dir>                        Prints reports of the parsed artifact to the specified directory
-                                          (optional). Available reports are language-specific. The default
-                                          value is "_output_path_".
- -s,--symboltable <file>                  Serializes and prints the symbol table to stdout or the specified
-                                          output file (optional). The default value is
-                                          "{inputArtifactName}.cdsym".
- -stdin,--stdin                           Reads the path to the input CD artifact from stdin.
- -t,--usebuiltintypes <useBuiltinTypes>   Configures if built-in-types should be considered [true/false]. The
-                                          default value is "true".
+java -jar CDCLI.jar -i Person.cd -pp Person.out.cd
+```
+
+The possible options are:
+| Option                     | Explanation |
+| ------                     | ------ |
+| `--fieldfromrole <value>` | Configures if explicit field symbols, which are       
+                                    typically used for implementing associations, should 
+                                    be added, if derivable from from role symbols 
+                                    (default: no).
+                                    Values: `none` is typical for modelling, 
+                                    `all` adds always on both classes,
+                                    `navigable` adds only if the association is navigable.
+| `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. 
+                               `-f` equals to `--failquick true`. 
+                             Default is `false`. If `true` the check stops at the first
+                               error, otherwise tries to find all errors before it stops. |
+| `-h,--help`                | Prints short help information   |
+| `-i,--input <file>`        | Reads the source file (mandatory) and parses the contents 
+                                as CD |
+| `-o,--output <dir>`        | Path for generated files (optional). Default is `.`.
+| `--path <dirlist>`         | Artifact path for importable symbols. 
+                               It is separated by ';', default is `.`. |
+| `-pp,--prettyprint <file>` | Prints the CD to stdout or the specified file (optional). |
+| `-r,--report <dir>`        | Prints reports of the CD to the 
+                                specified directory (optional).  |
+| `-s,--symboltable <file>`  | Stores the symbol table of the CD. 
+                                The default value is `_CDName_.cdsym`. |
+| -stdin,--stdin             | Reads the the input CD from stdin 
+                               instead of argument `-i`. |
+| `-t,--usebuiltintypes <bool>`   Configures if built-in-types should be considered. 
+                              Default: `true`. 
+                              `-f` toggles it to `--usebuiltintypes false` |
 ```
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
