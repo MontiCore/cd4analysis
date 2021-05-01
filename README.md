@@ -96,6 +96,31 @@ Or you can use `wget` to download the latest version in your working directory:
 wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
+### Parameters of the CLI
+
+The CLI provides quite a number of configurable parameters. 
+These two are examples for calling  the the CLI:
+
+```shell
+java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s
+java -jar CDCLI.jar -i Person.cd -pp Person.out.cd
+```
+
+The possible options are:
+| Option                     | Explanation |
+| ------                     | ------ |
+| `--fieldfromrole <value>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from from role symbols  (default: no). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable.
+| `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. `-f` equals to `--failquick true`. Default is `false`. If `true` the check stops at the first error, otherwise tries to find all errors before it stops. |
+| `-h,--help`                | Prints short help information   |
+| `-i,--input <file>`        | Reads the source file (mandatory) and parses the contents as CD |
+| `-o,--output <dir>`        | Path for generated files (optional). Default is `.`. |
+| `--path <dirlist>`         | Artifact path for importable symbols. It is separated by ';', default is `.`. |
+| `-pp,--prettyprint <file>` | Prints the CD to stdout or the specified file (optional). |
+| `-r,--report <dir>`        | Prints reports of the CD to the specified directory (optional).  |
+| `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `_CDName_.cdsym`. |
+| `-stdin,--stdin`             | Reads the the input CD from stdin instead of argument `-i`. |
+| `-t, --usebuiltintypes <bool>`  |  Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
+
 ### Building the CLI Tool from the Sources (if desired)
  
 As alternative to a download, 
@@ -129,40 +154,11 @@ of how to use the CD CLI tool given in `CDCLI.jar`.
 
 ### First Steps
 
-Let us execute the CLI tool with the following 
+This prints usage information of the CLI, if executing the CLI tool with the following 
 command and no parameters:
 ```shell
 java -jar CDCLI.jar
 ```
-
-This prints usage information of the CLI 
-tool to the console.
-
-## Parameters of the CLI / XXX
-
-The CLI provides quite a number of configurable parameters. 
-These two are examples for calling  the the CLI:
-
-```shell
-java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s
-java -jar CDCLI.jar -i Person.cd -pp Person.out.cd
-```
-
-The possible options are:
-| Option                     | Explanation |
-| ------                     | ------ |
-| `--fieldfromrole <value>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from from role symbols  (default: no). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable.
-| `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. `-f` equals to `--failquick true`. Default is `false`. If `true` the check stops at the first error, otherwise tries to find all errors before it stops. |
-| `-h,--help`                | Prints short help information   |
-| `-i,--input <file>`        | Reads the source file (mandatory) and parses the contents as CD |
-| `-o,--output <dir>`        | Path for generated files (optional). Default is `.`. |
-| `--path <dirlist>`         | Artifact path for importable symbols. It is separated by ';', default is `.`. |
-| `-pp,--prettyprint <file>` | Prints the CD to stdout or the specified file (optional). |
-| `-r,--report <dir>`        | Prints reports of the CD to the specified directory (optional).  |
-| `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `_CDName_.cdsym`. |
-| -stdin,--stdin             | Reads the the input CD from stdin instead of argument `-i`. |
-| `-t, --usebuiltintypes <bool>`  |  Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
-
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
 which takes file containing CD models as input.
@@ -172,12 +168,12 @@ That means it parses the model, builds its
 symbol table, and then checks whether the model satisfies all context 
 conditions. Only errors or success are printed.
 
-
 For trying this out, copy the `CDCLI.jar` into a directory of your 
-choice. Afterwards, create a text file `Example.cd` 
-containing the following simple CD 
-(please note that like in Java, filename and modelname in the file are
+choice. Then create a text file `Example.cd` in the directory where `CDCLI.jar` is 
+located containing e.g. the following simple CD 
+(please note that, like in Java, filename and modelname in the file are
  equal):
+
 ```
 classdiagram Example {
   class Person {
@@ -186,9 +182,6 @@ classdiagram Example {
   }
 }
 ```
-
-Save the text file as `Example.cd` in the directory where `CDCLI.jar` is 
-located. 
 
 Now execute the following command:
 ```
