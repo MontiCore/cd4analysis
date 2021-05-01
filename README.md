@@ -298,7 +298,7 @@ java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole navigable
 ```
 * only one additional `FieldSymbol` is stored for the navigable Role `friends`
 
-### Step 4: Importing Symbol Files Using a Path
+### Step 5: Importing Symbol Files Using a Path
 
 MontiCore is designed for modularity (both on the model and the language level).
 The CD languages are participating in the symbol exchange infrastructure.
@@ -367,47 +367,13 @@ The model path is used to identify the directory structure that contains the
 needed symbol files. 
 As we provide the model path to the tool, it will successfully 
 search for symbols in symbol files stored in the model path. 
-
-XXX
-
-
-This means that it processed 
+This means that it processes 
 the model successfully without any context condition violations.
 Great! 
 
-Congratulations, you have just finished the tutorial about saving CD symbol files!
+### Step 6: Creating a graphical representation of CD files
 
-## Using PlantUML to create graphical representations of CD files
-
-The CDCLI provides the option to create plantUML and svg files.
-PlantUML can be configured further to add additional details.
-Using the previously used model files, a plantUML model can be created with:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml
-```
-
-If there is no given output name, then the name of the model is used.
-
-Additionally to the used cli parameter, CDCLI can be configured for PlantUML
-using futher options specifically for PlantUML output:
-```shell
-$ java -jar CDCLI.jar -h -puml
-...
-usage: PLANTUML
- -assoc,--showAssociations            show associations [true] when used. The default value is "false".
- -attr,--showAttributes               show attributes [true] when used. The default value is "false".
- -card,--showCardinality              show cardinalities [true] when used. The default value is "false".
- -comment,--showComments              show comments [true] when used. The default value is "false".
- -mod,--showModifier                  show modifier [true] when used. The default value is "false".
-    --nodeSeparator <nodesep>   set the node separator [number]. The default value is "-1".
-    --orthogonal                      show lines only orthogonal [true] when used. The default value is
-                                      "false".
-    --rankSeparator <ranksep>   set the rank separator [number]. The default value is "-1".
-    --showRoles                   show roles [true] when used. The default value is "false".
-    --shortenWords                shorten displayed words [true] when used. The default value is "false".
-    --svg                             print as plantUML svg
-```
-
+The CDCLI provides the option to create svg files.
 A SVG can be created by passing the parameter `--svg` e.g. by command:
 ```shell
 java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml MyLife --orthogonal -attr -assoc --showRoles --svg
@@ -416,7 +382,10 @@ that creates the following svg:
 
 ![MyLife.svg](doc/MyLife.svg "MyLife")
 
-
+It is also possible to export the class diagram only to plantUML:
+```shell
+java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml
+```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [CLIDownload]: http://monticore.de/download/CDCLI.jar
