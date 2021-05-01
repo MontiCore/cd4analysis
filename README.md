@@ -29,6 +29,7 @@ The CD languages are mainly intended for
 The following example CD `MyLife` illustrates the textual syntax of CDs:
 ```
 package monticore;
+import AddressType; 
 
 classdiagram MyLife { 
   abstract class Person {
@@ -275,7 +276,7 @@ condition checks require using the model path option):
 java -jar CDCLI.jar -i Example.cd -s symbols/Example.cdsym
 ```
 
-### Step 4: Adding `FieldSymbol`s corresponding to defined roles
+### Step 4: Adding `FieldSymbol`s corresponding to association roles
 
 By default, the CLI stores exactly the symbols that have been explicitely defined. This is the typical modelling approach. However, code generation typically maps the `CDRoleSymbol`s defined in an association to attributes and thus implcitly adds `FieldSymbol`s into the classes that host an association. These additional symbols can be made available in the symbol file in the two following forms: 
 
@@ -323,79 +324,52 @@ the model:
 ...
 ```
 
-To define the missing the type `Address`, another model is needed.
-Respectively its symbol table has to be available in the file system.
+The missing type `Address` is currently not imported.
+`MyLife` already has an `import` statement to another class diagram included, but this class diagram doesn't yet exist. E.f. the following minimal diagram can be stored as well
+([also available here](doc/AddressType.cd)):
 
-The symbol file of this model has to be imported by the CD model. 
-The type can be defined in an arbitrary model of an arbitrary language, 
-this other model only needs to be processed and its symbols stored beforehand.
-This approach has a number of advantages:
-* it allows us to use the CD language with any other language that defines
-  types,
-* the tools themselves remain decoupled, 
-* the build process can be organized in an incremental effective way
-    (when using e.g. `gradle` or make, but not mvn). 
-* even symbols from languages that not defined with MontiCore can be
-  integrated (e.g. we do that with handwritten code from programming languages).
-
-The following describes how to fix the error in the example model `MyLife.cd` 
-by importing a symbol file defining the (yet undefined) type. 
-We make use of the model path and provide the CLI tool with
-a symbol file (stored symbol table) of another model, which contains the 
-necessary type information.
-
-Create a new directory `mytypes` in the directory where the CLI tool `CDCLI.jar`
-is located. The symbol file `AddressType.sym`, which provides all necessary type
-information, can be created from the `AddressType.cd` that can be found
-[here](doc/AddressType.cd).
-Download the file, name it `AddressType.cd`, and move it into the directory 
-`mytypes`. The next step is to create the symboltable from the model. This is 
-done by:
-```shell
-java -jar CDCLI.jar -i mytypes/AddressType.cd -s mytypes/AddressType.sym
 ```
-  
-The path containing the directory structure that contains the symbol file is 
-called the "Model Path". If we provide the model path to the tool, it will 
-search for symbols in symbol files, which are stored in directories contained in
-the model path. So, if we want the tool to find our symbol file, we have to 
-provide the model path to the tool via the `-p,--path <dirlist> ` option:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p <MODELPATH>
-```
-where `<MODELPATH>` is the path where you stored the downloaded symbol file.
-In our example, in case you stored the model in the directory `mytypes`,
-execute the following command:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes
-```
-
-Well, executing the above command still produces the same error message.
-This is because the symbol file needs to be imported first, just like in Java.
-Therefore, we add the following import statement to the beginning of the 
-contents contained in the file `MyLife.cd` containing the CD `MyLife`:
-```
-package monticore;
-
-import AddressType;
-
-classdiagram MyLife {
-  ...
+// content of mytypes/AddressType.cdsym
+classdiagram AddressType {
+  class Address {
+    java.lang.String city;
+    java.lang.String street;
+    int number;
+  }
 }
 ```
-The added import statement means that the file containing the CD imports all
-symbols that are stored in the symbol file `Address`. 
-Note that you may have to change the name here, depending on how you named the
-symbol file from above.
-The file ending of the symbol file must be `.sym`.
 
-If we now execute the command again, the CLI tool will print the following 
-output: 
+The CD tool, however, does not directly load dependent models, but only 
+their symbol files. This has several interesting advantages:
 
+* it allows us to use the CD language with any other language that defines
+  types, because it decouples the languages down to shared symbols,
+* the tools themselves also remain decoupled and independent, 
+* the build process can be organized in an incremental effective way
+    (when using e.g. `gradle` or `make`, but not mvn). 
+* even symbols from languages, such as Java, 
+  that not are defined with MontiCore can be
+  integrated (e.g. we integrate handwritten code via their symbols).
+
+However, the CLI tool has to be applied to the new additional model first:
+
+```shell
+java -jar CDCLI.jar -i mytypes/AddressType.cd -s mytypes/AddressType.cdsym
 ```
-Successfully parsed MyLife
-Successfully checked the CoCos for MyLife
+
+We then add the symbol file to the model path using `--path`:
+
+```shell
+java -jar CDCLI.jar -i monticore/MyLife.cd --path mytypes
 ```
+ 
+The model path is used to identify the directory structure that contains the 
+needed symbol files. 
+As we provide the model path to the tool, it will successfully 
+search for symbols in symbol files stored in the model path. 
+
+XXX
+
 
 This means that it processed 
 the model successfully without any context condition violations.
