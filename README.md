@@ -24,7 +24,7 @@ The CD languages are mainly intended for
 1. Finally CDs can also be used as reported results from any other 
    generation or analysis process.
 
-# An Example Model
+## An Example Model
 
 The following example CD `MyLife` illustrates the textual syntax of CDs:
 ```
@@ -72,7 +72,7 @@ Further examples can be found [here][ExampleModels].
 The CD language infrastructure can be used as CLI tool from shell as well 
 as within gradle or just as framework with dirct Java API access.
 
-# Command Line Interface
+## Command Line Interface
  
 The CLI tool provides typical functionality used when
 processing models. It provides funcionality
@@ -86,7 +86,7 @@ for
 The requirements for building and using the CD CLI tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
 
-## Downloading the Latest Version of the CLI Tool
+### Downloading the Latest Version of the CLI Tool
 
 A ready to use version of the CLI tool can be downloaded in the form of an
 executable JAR file.
@@ -96,7 +96,7 @@ Or you can use `wget` to download the latest version in your working directory:
 wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
-## Building the CLI Tool from the Sources (if desired)
+### Building the CLI Tool from the Sources (if desired)
  
 As alternative to a download, 
 it is possible to build an executable JAR of the CLI tool from the source files
@@ -282,7 +282,7 @@ condition checks require using the model path option):
 java -jar CDCLI.jar -i Example.cd -s syms/Example.sym
 ```
 
-#### Creating `FieldSymbol`s from `CDRoleSymbol`s
+### Creating `FieldSymbol`s from `CDRoleSymbol`s
 
 By default, the CLI does not create `FieldSymbol`s for the `CDRoleSymbol`s.
 Currently there are two different behaviors:
@@ -411,7 +411,7 @@ Great!
 
 Congratulations, you have just finished the tutorial about saving CD symbol files!
 
-### Using PlantUML to create graphical representations of CD files
+## Using PlantUML to create graphical representations of CD files
 
 The CDCLI provides the option to create plantUML and svg files.
 PlantUML can be configured further to add additional details.
