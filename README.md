@@ -117,7 +117,7 @@ The possible options are:
 | `--path <dirlist>`         | Artifact path for importable symbols. It is separated by ';', default is `.`. |
 | `-pp,--prettyprint <file>` | Prints the CD to stdout or the specified file (optional). |
 | `-r,--report <dir>`        | Prints reports of the CD to the specified directory (optional).  |
-| `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `_CDName_.cdsym`. |
+| `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. |
 | `-stdin,--stdin`             | Reads the the input CD from stdin instead of argument `-i`. |
 | `-t, --usebuiltintypes <bool>`  |  Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
 
@@ -180,6 +180,8 @@ classdiagram Example {
     int age;
     java.lang.String surname;
   }
+
+  association Person -> (associates) Person [*];
 }
 ```
 
@@ -238,41 +240,39 @@ java -jar CDCLI.jar -i Example.cd -pp PPExample.cd
 
 ### Step 3: Storing Symbols
 
-Now we will use the CLI tool to store a symbol file for our `Example.cd` model.
-The stored symbol file will contain information about the types and associations
+When the symbols of the `Example.cd` model shall be available elsewhere,
+they can bes stored.
+The symbol file will contain information about the types and associations
 defined in the CD.
 It can be imported by other models for using the introduced symbols.
 
 Using the `-s,--symboltable <file>` option builds the symbol table of the input
 model and stores it in the file path given as argument.
 Providing the file path is optional.
-If you do not provide a file path, the CLI tool stores the symbol table of the
-input model in the file `{fileName}.cdsym` where `fileName` is the name of the
-file containing the input model in the directory where the input file is located
-.
+If no file path is provided, the CLI tool stores the symbol table of the
+input model in the file `{CDName}.cdsym`.
 
-For storing the symbol file of `Example.cd`, execute the following command
+For storing the symbol file for `Example.cd`, we execute the following command
 (the context condition checks require using the path option):
 ```shell
 java -jar CDCLI.jar -i Example.cd -s
 ```
-The CLI tool produces the file `Example.sym`, which can now be
+The CLI tool produces the file `Example.cdsym`, which can now be
 imported by other models, e.g., by models that need to
 use some of the types defined in the CD `Example`. The tool additionally
 indicates the correct generation by its outputs:
 ```
 Successfully parsed Example
 Successfully checked the CoCos for Example
-Creation of symbol table Example.sym successful
+Creation of symbol table Example.cdsym successful
 ```
-The symbol file contains a JSON representation of the symbols defined in a model
-. In this case, the symbol file contains information about defined types.
+The symbol file contains a JSON representation of the symbols defined in the CD, which are type, association, interface, attribute and method symbols.
 
-For storing the symbol file of `Example.cd` in the file `syms/Example.sym`,
+For storing the symbol file of `Example.cd` in the file `symbols/Example.cdsym`,
 for example, execute the following command (again, the implicit context 
 condition checks require using the model path option):
 ```shell
-java -jar CDCLI.jar -i Example.cd -s syms/Example.sym
+java -jar CDCLI.jar -i Example.cd -s symbols/Example.cdsym
 ```
 
 ### Creating `FieldSymbol`s from `CDRoleSymbol`s
