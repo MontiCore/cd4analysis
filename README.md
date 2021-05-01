@@ -181,7 +181,7 @@ classdiagram Example {
     java.lang.String surname;
   }
 
-  association Person -> (associates) Person [*];
+  association Person -> (friends) Person [*];
 }
 ```
 
@@ -227,7 +227,7 @@ classdiagram Example {
     java.lang.String surname;
   }
   
-  association Person -> (associates) Person [*];
+  association Person -> (friends) Person [*];
 }
 ```
 
@@ -275,28 +275,27 @@ condition checks require using the model path option):
 java -jar CDCLI.jar -i Example.cd -s symbols/Example.cdsym
 ```
 
-### Creating `FieldSymbol`s from `CDRoleSymbol`s
+### Step 4: Adding `FieldSymbol`s corresponding to defined roles
 
-By default, the CLI does not create `FieldSymbol`s for the `CDRoleSymbol`s.
-Currently there are two different behaviors:
-1. For each of the `CDRoleSymbol`s create a linked `FieldSymbol` in the source
-   of the role.
-   This can be used in languages, that always allow for the navigation in both
-   directions.
-2. Create `FieldSymbol`s only for navigable roles.
-   This should be preferred, as the model explicitly states, that a role is
-   not navigable.
+By default, the CLI stores exactly the symbols that have been explicitely defined. This is the typical modelling approach. However, code generation typically maps the `CDRoleSymbol`s defined in an association to attributes and thus implcitly adds `FieldSymbol`s into the classes that host an association. These additional symbols can be made available in the symbol file in the two following forms: 
 
-Case 1 can be used with:
+Form 1: For each of the `CDRoleSymbol`s add a `FieldSymbol` in the source class
+   of the role. This can be used in languages, like OCL, 
+   that always allow for the navigation in both directions.
+These additional field symbols are stored with:
 ```shell
 java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole all
 ```
-- a `FieldSymbol` was created for both sides of the association
-and case 2 with:
+
+* two additional `FieldSymbol`s were stored for both sides of the association
+
+Form 2:  `FieldSymbol`s are added only for navigable roles.
+  This can be used in implementation oriented languages that have to cope
+  with the actual implementation restrictions:
 ```shell
 java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole navigable
 ```
-- a `FieldSymbol` was only created for the navigable Role `associates`
+* only one additional `FieldSymbol` is stored for the navigable Role `friends`
 
 ### Step 4: Importing Symbol Files Using a Path
 
