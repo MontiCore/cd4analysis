@@ -151,13 +151,7 @@ java -jar CDCLI.jar -i Person.cd -pp Person.out.cd
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `--fieldfromrole <value>` | Configures if explicit field symbols, which are       
-                                    typically used for implementing associations, should 
-                                    be added, if derivable from from role symbols 
-                                    (default: no).
-                                    Values: `none` is typical for modelling, 
-                                    `all` adds always on both classes,
-                                    `navigable` adds only if the association is navigable.
+| `--fieldfromrole <value>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from from role symbols  (default: no). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable.
 | `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. 
                                `-f` equals to `--failquick true`. 
                              Default is `false`. If `true` the check stops at the first
