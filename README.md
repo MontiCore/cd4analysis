@@ -152,27 +152,17 @@ The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
 | `--fieldfromrole <value>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from from role symbols  (default: no). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable.
-| `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. 
-                               `-f` equals to `--failquick true`. 
-                             Default is `false`. If `true` the check stops at the first
-                               error, otherwise tries to find all errors before it stops. |
+| `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. `-f` equals to `--failquick true`. Default is `false`. If `true` the check stops at the first error, otherwise tries to find all errors before it stops. |
 | `-h,--help`                | Prints short help information   |
-| `-i,--input <file>`        | Reads the source file (mandatory) and parses the contents 
-                                as CD |
-| `-o,--output <dir>`        | Path for generated files (optional). Default is `.`.
-| `--path <dirlist>`         | Artifact path for importable symbols. 
-                               It is separated by ';', default is `.`. |
+| `-i,--input <file>`        | Reads the source file (mandatory) and parses the contents as CD |
+| `-o,--output <dir>`        | Path for generated files (optional). Default is `.`. |
+| `--path <dirlist>`         | Artifact path for importable symbols. It is separated by ';', default is `.`. |
 | `-pp,--prettyprint <file>` | Prints the CD to stdout or the specified file (optional). |
-| `-r,--report <dir>`        | Prints reports of the CD to the 
-                                specified directory (optional).  |
-| `-s,--symboltable <file>`  | Stores the symbol table of the CD. 
-                                The default value is `_CDName_.cdsym`. |
-| -stdin,--stdin             | Reads the the input CD from stdin 
-                               instead of argument `-i`. |
-| `-t,--usebuiltintypes <bool>`   Configures if built-in-types should be considered. 
-                              Default: `true`. 
-                              `-f` toggles it to `--usebuiltintypes false` |
-```
+| `-r,--report <dir>`        | Prints reports of the CD to the specified directory (optional).  |
+| `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `_CDName_.cdsym`. |
+| -stdin,--stdin             | Reads the the input CD from stdin instead of argument `-i`. |
+| `-t,--usebuiltintypes <bool>`   Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
+
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
 which takes file containing CD models as input.
