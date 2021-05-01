@@ -1,5 +1,9 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 
+# Class Diagram Languages: CD4A, CD4C
+
+[[_TOC_]]
+
 This introduction is 
 intended for  *modelers* who use the class diagram (CD)
 languages. We also provide a 
@@ -70,7 +74,6 @@ as within gradle or just as framework with dirct Java API access.
 
 # Command Line Interface
  
-This section describes the CLI tool of the CD language. 
 The CLI tool provides typical functionality used when
 processing models. It provides funcionality
 for 
@@ -78,7 +81,7 @@ for
 * pretty-printing, 
 * storing symbols in symbol files, 
 * loading symbols from symbol files, and 
-* transforming CDs into the svg format and textual PlantUML models. 
+* transforming CDs into a graphical svg format. 
 
 The requirements for building and using the CD CLI tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
@@ -88,10 +91,7 @@ and Gradle are installed and available for use e.g. in Bash.
 A ready to use version of the CLI tool can be downloaded in the form of an
 executable JAR file.
 You can use [**this download link**][CLIDownload] for downloading the CLI tool. 
-
-Or you can use `wget`. This
-command downloads the latest version of the CLI tool 
-under the name `CDCLI.jar` in your working directory:
+Or you can use `wget` to download the latest version in your working directory:
 ```shell
 wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
@@ -116,10 +116,10 @@ Then build the source files with gradle (if `gradle` is not
 recognized as a command in your shell, please install [Gradle](https://gradle.org/releases/)).
 To this effect, execute the following two commands:
 ```shell
-gradle clean build
+gradle build
 gradle shadowJar
 ```
-Congratulations! You can now find the executable JAR file `CDCLI.jar` in
+Congratulations! The  executable JAR file `CDCLI.jar` is now in
 the directory `target/libs`.
 
 ## Tutorial: Getting Started Using the CD CLI Tool
