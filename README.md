@@ -442,13 +442,15 @@ usage: PLANTUML
     --svg                             print as plantUML svg
 ```
 
-A SVG can be created by passing the parameter `--svg`.
-The svg ![MyLife.svg](doc/MyLife.svg "MyLife")
-
-is created by the command:
+A SVG can be created by passing the parameter `--svg` e.g. by command:
 ```shell
 java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml MyLife --orthogonal -attr -assoc --showRoles --svg
 ```
+that creates the following svg: 
+
+![MyLife.svg](doc/MyLife.svg "MyLife")
+
+
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [CLIDownload]: http://monticore.de/download/CDCLI.jar
