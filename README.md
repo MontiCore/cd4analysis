@@ -161,7 +161,7 @@ The possible options are:
 | `-r,--report <dir>`        | Prints reports of the CD to the specified directory (optional).  |
 | `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `_CDName_.cdsym`. |
 | -stdin,--stdin             | Reads the the input CD from stdin instead of argument `-i`. |
-| `-t,--usebuiltintypes <bool>`  |  Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
+| `-t, --usebuiltintypes <bool>`  |  Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
 
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
