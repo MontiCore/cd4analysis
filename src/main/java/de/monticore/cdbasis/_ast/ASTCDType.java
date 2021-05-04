@@ -8,23 +8,12 @@ import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code._visitor.CD4CodeVisitor2;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
-import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
-import de.monticore.cdbasis.CDBasisMill;
-import de.monticore.cdbasis._visitor.CDBasisTraverser;
-import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.umlmodifier._ast.ASTModifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public interface ASTCDType extends ASTCDTypeTOP {
@@ -100,4 +89,12 @@ public interface ASTCDType extends ASTCDTypeTOP {
   default List<ASTCDMember> getCDMethodList() {
     return getCDMemberList(CDMemberVisitor.Options.METHODS);
   }
+
+  public ASTModifier getModifier();
+
+  public void setModifier(ASTModifier modifier);
+
+  public boolean addCDMember(ASTCDMember element);
+
+  public boolean addAllCDMembers(Collection<? extends ASTCDMember> collection);
 }
