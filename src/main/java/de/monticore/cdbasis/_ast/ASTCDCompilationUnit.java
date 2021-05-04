@@ -4,7 +4,7 @@
 
 package de.monticore.cdbasis._ast;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
@@ -18,7 +18,7 @@ public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
       return this.mCPackageDeclaration.get().getMCQualifiedName().getPartsList();
     }
     else {
-      return Collections.emptyList();
+      return new ArrayList<String>();
     }
   }
 }

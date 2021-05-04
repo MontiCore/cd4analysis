@@ -21,7 +21,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +51,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
 
     // if there is no constructor present, a default constructor with no arguments is available
     if (constructorParameters.isEmpty()) {
-      constructorParameters.add(Collections.emptyList());
+      constructorParameters.add(new ArrayList<>());
     }
 
     final List<List<SymTypeExpression>> constructors = calculateConstructorParameterTypes(node, constructorParameters);
@@ -109,15 +109,15 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
   public List<List<SymTypeExpression>> calculateEnumArgumentTypes(ASTCDEnum node) {
     return node.streamCDEnumConstants().map(enumConstant -> {
       if (!(enumConstant instanceof ASTCD4CodeEnumConstant)) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
       final ASTCD4CodeEnumConstant codeEnumConstant = (ASTCD4CodeEnumConstant) enumConstant;
       if (!codeEnumConstant.isPresentArguments()) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
       final ASTArguments arguments = codeEnumConstant.getArguments();
       if (arguments.sizeExpressions() == 0) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
 
       // find type of each of the arguments
@@ -143,7 +143,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
       (ASTCDEnum node, List<List<ASTCDParameter>> constructorParameters) {
     return constructorParameters.stream().map(parameter -> {
       if (parameter.size() == 0) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
 
       // find type of each of the parameter
