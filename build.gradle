@@ -14,7 +14,14 @@ plugins {
   id 'org.unbroken-dome.test-sets' version '3.0.1'
 }
 
-group = "de.monticore.lang"
+def var_path = "de.monticore"
+if(hasProperty('bootstrap')) {
+    group = "de.monticore.lang.bs"
+    var_path = "de.monticore.bs"
+} else {
+    group = "de.monticore.lang"
+}
+
 description = "CD4Analysis"
 sourceCompatibility = JavaVersion.VERSION_1_8
 buildDir = file("$projectDir/target")
@@ -62,12 +69,12 @@ configurations {
 
 dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-    grammar ("de.monticore:monticore-grammar:$mc_version"){ capabilities {
+    grammar ("$var_path:monticore-grammar:$mc_version"){ capabilities {
       requireCapability("de.monticore:monticore-grammar-grammars")}
     }
-    implementation "de.monticore:monticore-grammar:${project.properties['mc_version']}"
-    implementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-    implementation "de.monticore:class2mc:${project.properties['mc_version']}"
+    implementation "$var_path:monticore-grammar:${project.properties['mc_version']}"
+    implementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+    implementation "$var_path:class2mc:${project.properties['mc_version']}"
     implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
     implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
     implementation group:'org.antlr', name:'antlr4-runtime', version:antlr_version
@@ -78,7 +85,7 @@ dependencies {
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
-    testImplementation "de.monticore:monticore-runtime:${project.properties['mc_version']}"
+    testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
 }
 
 repositories {
