@@ -10,7 +10,7 @@ import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDInterface extends ASTCDInterfaceTOP {
@@ -23,7 +23,7 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
-    return Collections.emptyList();
+    return new ArrayList<ASTMCObjectType>();
   }
 
   @Override
@@ -34,7 +34,7 @@ public class ASTCDInterface extends ASTCDInterfaceTOP {
   @Override
   public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDExtendUsage()) {
-      return Collections.emptyList();
+      return new ArrayList<ASTMCObjectType>();
     }
     return getCDExtendUsage().getSuperclassList();
   }

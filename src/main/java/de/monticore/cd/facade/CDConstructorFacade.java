@@ -10,8 +10,8 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +43,7 @@ public class CDConstructorFacade {
    */
 
   public ASTCDConstructor createDefaultConstructor(final ASTModifier modifier, final ASTCDClass cdClass) {
-    return createConstructor(modifier, cdClass.getName(), Collections.emptyList());
+    return createConstructor(modifier, cdClass.getName(), new ArrayList<>());
   }
 
   /**
