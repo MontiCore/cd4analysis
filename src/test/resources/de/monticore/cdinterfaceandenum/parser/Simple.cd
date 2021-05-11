@@ -3,7 +3,7 @@
 classdiagram Simple {
 
   class A {
-    String name;
+    java.lang.String name;
   }
 
   class B extends A;
@@ -24,6 +24,6 @@ classdiagram Simple {
 
   enum E {
     ;
-    String name;
+    java.lang.String name;
   }
 }

@@ -4,6 +4,8 @@
 
 package de.monticore.cd._symboltable;
 
+import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdassociation._symboltable.CDRoleSymbolBuilder;
 import de.monticore.symbols.oosymbols._symboltable.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
@@ -22,6 +24,14 @@ public class ModifierHandler {
     fieldSymbol.setIsProtected(modifier.isProtected());
     fieldSymbol.setIsStatic(modifier.isStatic());
     fieldSymbol.setIsFinal(modifier.isFinal());
+  }
+
+  public void handle(ASTModifier modifier, CDRoleSymbolBuilder roleSymbol) {
+    roleSymbol.setIsPublic(modifier.isPublic());
+    roleSymbol.setIsPrivate(modifier.isPrivate());
+    roleSymbol.setIsProtected(modifier.isProtected());
+    roleSymbol.setIsStatic(modifier.isStatic());
+    roleSymbol.setIsFinal(modifier.isFinal());
   }
 
   public void handle(ASTModifier modifier, MethodSymbolBuilder methodSymbol) {
@@ -53,6 +63,18 @@ public class ModifierHandler {
     fieldSymbol.setIsProtected(modifier.isProtected());
     fieldSymbol.setIsStatic(modifier.isStatic());
     fieldSymbol.setIsFinal(modifier.isFinal());
+  }
+
+  /**
+   * @param modifier
+   * @param roleSymbol
+   */
+  public void handle(ASTModifier modifier, CDRoleSymbol roleSymbol) {
+    roleSymbol.setIsPublic(modifier.isPublic());
+    roleSymbol.setIsPrivate(modifier.isPrivate());
+    roleSymbol.setIsProtected(modifier.isProtected());
+    roleSymbol.setIsStatic(modifier.isStatic());
+    roleSymbol.setIsFinal(modifier.isFinal());
   }
 
   /**

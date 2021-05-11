@@ -11,6 +11,6 @@ public class CDRoleSymbol extends CDRoleSymbolTOP {
   }
 
   public CDRoleSymbol getOtherSide() {
-    return getAssociation().getOtherRole(this);
+    return getAssoc().getOtherRole(this);
   }
 }

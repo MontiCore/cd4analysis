@@ -6,34 +6,53 @@ package de.monticore.cd4code.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.ICD4CodeScope;
-import de.monticore.cd4code._visitor.CD4CodeVisitor;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitor;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.se_rwth.commons.logging.Log;
 
-import java.util.Deque;
-
-public class CD4CodeTrafo4Defaults extends CDAfterParseHelper
-    implements CD4CodeVisitor {
-  protected CD4CodeVisitor realThis;
-  protected CD4CodeVisitor symbolTableCreator;
+public class CD4CodeTrafo4Defaults {
+  protected CD4CodeTraverser traverser;
+  protected final CDAfterParseHelper cdAfterParseHelper;
+  protected final CDAssociationScopesGenitor symbolTableCreator;
 
   public CD4CodeTrafo4Defaults() {
-    this(new CDAfterParseHelper(),
-        CD4CodeMill.cD4CodeSymbolTableCreator());
+    this(new CDAfterParseHelper(), CDAssociationMill.scopesGenitor());
   }
 
-  public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4CodeVisitor symbolTableCreator) {
-    super(cdAfterParseHelper);
-    setRealThis(this);
+  public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitor symbolTableCreator) {
+    this.cdAfterParseHelper = cdAfterParseHelper;
+    this.traverser = CD4CodeMill.traverser();
     this.symbolTableCreator = symbolTableCreator;
+
+    init(cdAfterParseHelper, symbolTableCreator, traverser);
   }
 
-  @Override
-  public CD4CodeVisitor getRealThis() {
-    return realThis;
+  public static void init(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitor symbolTableCreator, CD4CodeTraverser traverser) {
+    final CDAssociationRoleNameTrafo cdAssociation = new CDAssociationRoleNameTrafo(cdAfterParseHelper, symbolTableCreator);
+    traverser.add4CDAssociation(cdAssociation);
+    traverser.setCDAssociationHandler(cdAssociation);
   }
 
-  @Override
-  public void setRealThis(CD4CodeVisitor realThis) {
-    this.realThis = realThis;
+  public CD4CodeTraverser getTraverser() {
+    return traverser;
+  }
+
+  public void setTraverser(CD4CodeTraverser traverser) {
+    this.traverser = traverser;
+  }
+
+  public void transform(ASTCDCompilationUnit compilationUnit) {
+    if (!compilationUnit.getCDDefinition().isPresentSymbol()) {
+      final String msg = "0xCD0B3: can't start the transformation, the symbol table is missing";
+      Log.error(msg);
+      throw new RuntimeException(msg);
+    }
+
+    ((CDAssociationRoleNameTrafo)traverser.getCDAssociationHandler().get()).init(compilationUnit);
+
+    compilationUnit.accept(getTraverser());
   }
 }

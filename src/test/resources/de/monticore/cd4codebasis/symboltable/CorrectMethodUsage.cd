@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4codebasis.symboltable;
+
+import de.monticore.cd4codebasis.symboltable.MyIntegerType;
+
+classdiagram CorrectMethodUsage {
+  class C {
+    MyInteger foo(int bar, MyInteger baz);
+  }
+}

@@ -14,6 +14,7 @@ import de.se_rwth.commons.logging.Log;
  * Checks that type of the type-qualifier of an type-qualified association
  * exists.
  */
+// TODO should an enum be allowed?
 public class CDAssociationSourceNotEnum
     implements CDAssociationASTCDAssociationCoCo {
 

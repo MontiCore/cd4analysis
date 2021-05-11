@@ -62,7 +62,7 @@ public class SymAssociation {
 
   public void setLeft(CDRoleSymbol left) {
     this.left = left;
-    this.left.setAssociation(this);
+    this.left.setAssoc(this);
   }
 
   public CDRoleSymbol getRight() {
@@ -71,7 +71,7 @@ public class SymAssociation {
 
   public void setRight(CDRoleSymbol right) {
     this.right = right;
-    this.right.setAssociation(this);
+    this.right.setAssoc(this);
   }
 
   public boolean isAssociation() {
@@ -80,7 +80,7 @@ public class SymAssociation {
 
   public void setAssociation(CDAssociationSymbol association) {
     this.association = Optional.ofNullable(association);
-    this.association.ifPresent(a -> a.setAssociation(this));
+    this.association.ifPresent(a -> a.setAssoc(this));
   }
 
   public void setIsAssociation(boolean association) {

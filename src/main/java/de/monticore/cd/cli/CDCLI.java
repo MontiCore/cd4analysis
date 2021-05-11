@@ -6,23 +6,28 @@ package de.monticore.cd.cli;
 
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromNavigableRoles;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.ModelPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
-import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -33,7 +38,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDCLI {
@@ -135,6 +143,44 @@ public class CDCLI {
 
     parse();
 
+    if (cmd.hasOption("pp")) { // pretty print
+      String ppOptionVal = cmd.getOptionValue("pp");
+
+      // print model
+      final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
+      ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
+
+      if (ppOptionVal == null) {
+        System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+      }
+      else {
+        final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
+        final File file = outputPath.toFile();
+        file.getParentFile().mkdirs();
+
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
+          out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+          System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
+        }
+      }
+    }
+
+    // transformations which are necessary to do after parsing
+    {
+      new CD4CodeDirectCompositionTrafo().transform(ast);
+    }
+
+    boolean defaultTrafo = cmd.hasOption("defaulttrafo") && Boolean.parseBoolean(cmd.getOptionValue("defaulttrafo", "false"));
+    if (defaultTrafo) {
+      final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+      final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
+      traverser.add4CDBasis(cdBasis);
+      traverser.setCDBasisHandler(cdBasis);
+      cdBasis.setTraverser(traverser);
+
+      ast.accept(traverser);
+    }
+
     System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
 
     boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
@@ -143,7 +189,39 @@ public class CDCLI {
     String[] modelPath = cmd.getOptionValue("p", ".").split(";");
     createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
 
-    // check all the cocos
+    // transformations that need an already created symbol table
+    {
+      final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
+      final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+      traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
+      traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
+      cdAssociationRoleNameTrafo.transform(ast);
+    }
+
+    if (cmd.hasOption("fieldfromrole")) {
+      switch (cmd.getOptionValue("fieldfromrole")) {
+        case "all": { // add FieldSymbols for all the CDRoleSymbols
+          final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles = new CDAssociationCreateFieldsFromAllRoles();
+          final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+          cdAssociationCreateFieldsFromAllRoles.transform(ast);
+          break;
+        }
+        case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
+          final CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromNavigableRoles = new CDAssociationCreateFieldsFromNavigableRoles();
+          final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+          cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
+          break;
+        }
+        case "none":
+        default:
+          // do nothing
+      }
+    }
+
     checkCocos();
     if (Log.getErrorCount() == 0) {
       System.out.println(CHECK_SUCCESSFUL + ast.getCDDefinition().getName());
@@ -153,46 +231,23 @@ public class CDCLI {
       return;
     }
 
-    if (cmd.hasOption("pp")) { // pretty print
-      String ppOptionVal = cmd.getOptionValue("pp");
-
-      // print model
-
-      final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-      ast.accept(cd4CodePrettyPrinter);
-
-      if (ppOptionVal == null) {
-        System.out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-      }
-      else {
-        final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
-        final File file = outputPath.toFile();
-        file.getParentFile().mkdirs();
-
-        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-          System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
-        }
-      }
-    }
-
     if (cmd.hasOption("s")) { // symbol table export
       String targetFile = cmd.getOptionValue("s");
 
       Path symbolPath;
       if (targetFile == null) {
         if (modelFile != null) {
-          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
+          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".sym");
         }
         else {
-          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".cdsym");
+          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".sym");
         }
       }
       else {
         symbolPath = Paths.get(targetFile);
       }
-      final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
-      final String path = deser.store(artifactScope, symbolPath.toString());
+      final CD4CodeSymbols2Json symbols2Json = new CD4CodeSymbols2Json();
+      final String path = symbols2Json.store(artifactScope, symbolPath.toString());
       System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString().replace("\\","/"));
     }
 
@@ -219,20 +274,21 @@ public class CDCLI {
       cu = parser.parse(modelReader);
     }
     ast = cu.get();
+
     modelName = ast.getCDDefinition().getName();
   }
 
   protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
-    final ICD4CodeGlobalScope globalScope = CD4CodeMill.cD4CodeGlobalScope();
+    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
     globalScope.setModelPath(modelPath);
-    if (useBuiltInTypes) {
-      globalScope.addBuiltInTypes();
+    if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
+      ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
     }
 
-    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator();
-
-    artifactScope = symbolTableCreator.createFromAST(ast);
+    final CD4CodeScopesGenitorDelegator cd4CodeScopesGenitorDelegator = CD4CodeMill.scopesGenitorDelegator();
+    artifactScope = cd4CodeScopesGenitorDelegator.createFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
 
   protected void checkCocos() {

@@ -6,6 +6,8 @@ package de.monticore.testcdinterfaceandenum.prettyprint;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdinterfaceandenum.prettyprint.CDInterfaceAndEnumFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
 import org.junit.Test;
 
@@ -15,7 +17,7 @@ import java.util.Optional;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDInterfaceAndEnumPretterPrinterTest extends TestBasis {
   final TestCDInterfaceAndEnumParser p = new TestCDInterfaceAndEnumParser();
-  final TestCDInterfaceAndEnumPrettyPrinterDelegator printer = new TestCDInterfaceAndEnumPrettyPrinterDelegator();
+  final CDInterfaceAndEnumFullPrettyPrinter printer = new CDInterfaceAndEnumFullPrettyPrinter(new IndentPrinter());
 
   @Test
   public void completeModel() throws IOException {

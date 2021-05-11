@@ -17,7 +17,7 @@ classdiagram Complete {
   }
 
   <<stereo="value">> class K {
-    static final String name = "finalName";
+    static final java.lang.String name = "finalName";
     int x;
   }
 

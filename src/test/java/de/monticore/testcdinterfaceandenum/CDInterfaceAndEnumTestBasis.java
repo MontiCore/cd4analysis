@@ -9,7 +9,6 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
 import de.monticore.cdinterfaceandenum.CDInterfaceAndEnumMill;
-import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCreatorDelegator;
 import de.monticore.cdinterfaceandenum._symboltable.ICDInterfaceAndEnumGlobalScope;
 import de.monticore.cdinterfaceandenum.cocos.CDInterfaceAndEnumCoCos;
 import de.monticore.io.paths.ModelPath;
@@ -29,10 +28,9 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
     p = new TestCDInterfaceAndEnumParser();
 
     final ICDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill
-        .cDInterfaceAndEnumGlobalScope();
+        .globalScope();
     globalScope.clear();
     globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
 
     cdInterfaceAndEnumCoCos = new CDInterfaceAndEnumCoCos();
   }

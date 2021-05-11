@@ -6,13 +6,16 @@ package de.monticore.cdbasis.prettyprint;
 
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdbasis._visitor.CDBasisVisitor;
+import de.monticore.cdbasis._visitor.CDBasisHandler;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 
 import java.util.stream.Collectors;
 
 public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-    implements CDBasisVisitor {
-  protected CDBasisVisitor realThis;
+    implements CDBasisVisitor2, CDBasisHandler {
+
+  protected CDBasisTraverser traverser;
 
   public CDBasisPlantUMLPrettyPrinter() {
     this(new PlantUMLPrettyPrintUtil());
@@ -20,17 +23,15 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   public CDBasisPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
-    setRealThis(this);
   }
 
   @Override
-  public CDBasisVisitor getRealThis() {
-    return realThis;
+  public CDBasisTraverser getTraverser() {
+    return traverser;
   }
 
-  @Override
-  public void setRealThis(CDBasisVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDBasisTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
@@ -38,7 +39,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     printComment(node);
 
     if (null != node.getCDDefinition()) {
-      node.getCDDefinition().accept(getRealThis());
+      node.getCDDefinition().accept(getTraverser());
     }
   }
 
@@ -77,7 +78,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     for (ASTCDElement element : node.getCDElementList()) {
       printComment(node);
-      element.accept(getRealThis());
+      element.accept(getTraverser());
       println();
     }
   }
@@ -86,7 +87,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void endVisit(ASTCDDefinition node) {
     // associations can not be printed in a package
     immediatelyPrintAssociations.set(true);
-    associations.forEach(a -> a.accept(getRealThis()));
+    associations.forEach(a -> a.accept(getTraverser()));
 
     println("center footer generated with MontiCore using PlantUML");
 
@@ -104,7 +105,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDPackage node) {
-    node.streamCDElements().forEach(e -> e.accept(getRealThis()));
+    node.streamCDElements().forEach(e -> e.accept(getTraverser()));
   }
 
   @Override
@@ -120,7 +121,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDInterfaceUsage node) {
-    printList(getRealThis(), node.getInterfaceList().iterator(), ", ");
+    printList(getTraverser(), node.getInterfaceList().iterator(), ", ");
   }
 
   @Override
@@ -130,7 +131,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDExtendUsage node) {
-    printList(getRealThis(), node.getSuperclassList().iterator(), ", ");
+    printList(getTraverser(), node.getSuperclassList().iterator(), ", ");
   }
 
   @Override
@@ -157,7 +158,7 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   @Override
   public void traverse(ASTCDClass node) {
-    node.getCDMemberList().forEach(m -> m.accept(getRealThis()));
+    node.getCDMemberList().forEach(m -> m.accept(getTraverser()));
   }
 
   @Override
@@ -178,9 +179,9 @@ public class CDBasisPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     if (plantUMLConfig.getShowAtt()) {
       print("{field} "); // be sure that this is handled as a field
       if (plantUMLConfig.getShowModifier()) {
-        node.getModifier().accept(getRealThis());
+        node.getModifier().accept(getTraverser());
       }
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
       println(" " + node.getName());
     }
   }

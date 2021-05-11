@@ -5,10 +5,10 @@
 package de.monticore.cd.plantuml;
 
 import de.monticore.umlmodifier._ast.ASTModifier;
-import de.monticore.umlmodifier._visitor.UMLModifierVisitor;
+import de.monticore.umlmodifier._visitor.UMLModifierVisitor2;
 
 public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-    implements UMLModifierVisitor {
+    implements UMLModifierVisitor2 {
 
   public UMLModiferPlantUMLPrettyPrinter() {
   }
@@ -17,10 +17,6 @@ public class UMLModiferPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     super(util);
   }
 
-  @Override
-  public void setRealThis(UMLModifierVisitor realThis) {
-    // do nothing
-  }
 
   @Override
   public void visit(ASTModifier node) {

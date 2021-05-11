@@ -5,20 +5,19 @@
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ASTCDClass extends ASTCDClassTOP {
-  private final CD4CodePrettyPrinter printer = CD4CodeMill.cD4CodePrettyPrinter();
+  private final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter();
 
   @Override
   public List<ASTMCObjectType> getSuperclassList() {
     if (!isPresentCDExtendUsage()) {
-      return Collections.emptyList();
+      return new ArrayList<ASTMCObjectType>();
     }
     return getCDExtendUsage().getSuperclassList();
   }
@@ -34,14 +33,14 @@ public class ASTCDClass extends ASTCDClassTOP {
       return PrettyPrintUtil.EMPTY_STRING;
     }
     printer.getPrinter().clearBuffer();
-    printer.traverse(getCDExtendUsage());
+    printer.getTraverser().traverse(getCDExtendUsage());
     return printer.getPrinter().getContent();
   }
 
   @Override
   public List<ASTMCObjectType> getInterfaceList() {
     if (!isPresentCDInterfaceUsage()) {
-      return Collections.emptyList();
+      return new ArrayList<ASTMCObjectType>();
     }
     return getCDInterfaceUsage().getInterfaceList();
   }
@@ -57,7 +56,7 @@ public class ASTCDClass extends ASTCDClassTOP {
       return PrettyPrintUtil.EMPTY_STRING;
     }
     printer.getPrinter().clearBuffer();
-    printer.traverse(getCDInterfaceUsage());
+    printer.getTraverser().traverse(getCDInterfaceUsage());
     return printer.getPrinter().getContent();
   }
 }

@@ -9,7 +9,7 @@ classdiagram FeatureModel {
   public interface ASTFeatureModelNode;
 
   public class ASTFMCompilationUnit{
-    protected List<String> r__package;
+    protected List<java.lang.String> r__package;
     protected List<de.monticore.types.Types.ASTImportStatement> importStatements;
     protected de.monticore.lang.featuremodel.FeatureModel.ASTFeatureModel featureModel;
   }
@@ -20,7 +20,7 @@ classdiagram FeatureModel {
 
   public class ASTFeatureModel{
     protected Optional<de.monticore.common.Common.ASTStereotype> stereotype;
-    protected String name;
+    protected java.lang.String name;
     protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeatureDef> featureDefs;
     protected List<de.monticore.lang.featuremodel.FeatureModel.ASTFeatureConstraint> featureConstraints;
   }
@@ -31,7 +31,7 @@ classdiagram FeatureModel {
 
   public class ASTFeatureDef{
     protected Optional<de.monticore.common.Common.ASTStereotype> stereotype;
-    protected String name;
+    protected java.lang.String name;
     protected Optional<de.monticore.lang.featuremodel.FeatureModel.ASTFeatureGroup> featureGroup;
     protected boolean root;
   }
@@ -54,7 +54,7 @@ classdiagram FeatureModel {
   }
 
   public class ASTFeature{
-    protected String name;
+    protected java.lang.String name;
     protected boolean optional;
   }
 

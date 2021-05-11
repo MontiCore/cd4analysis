@@ -9,8 +9,8 @@ public class CDAssociationSymbolBuilder extends CDAssociationSymbolBuilderTOP {
   public CDAssociationSymbol build() {
     final CDAssociationSymbol symbol = super.build();
 
-    if (symbol.isPresentAssociation()) {
-      symbol.getAssociation().setAssociation(symbol);
+    if (symbol.isPresentAssoc()) {
+      symbol.getAssoc().setAssociation(symbol);
     }
 
     return symbol;

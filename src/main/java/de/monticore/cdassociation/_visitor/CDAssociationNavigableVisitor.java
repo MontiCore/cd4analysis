@@ -9,24 +9,10 @@ import de.monticore.cdassociation._ast.ASTCDLeftToRightDir;
 import de.monticore.cdassociation._ast.ASTCDRightToLeftDir;
 import de.monticore.cdassociation._ast.ASTCDUnspecifiedDir;
 
-public class CDAssociationNavigableVisitor implements CDAssociationVisitor {
+public class CDAssociationNavigableVisitor implements CDAssociationVisitor2 {
   protected boolean isDefinitiveNavigableLeft;
   protected boolean isDefinitiveNavigableRight;
 
-  private CDAssociationNavigableVisitor realThis;
-
-  public CDAssociationNavigableVisitor() {
-    setRealThis(this);
-  }
-
-  @Override
-  public CDAssociationNavigableVisitor getRealThis() {
-    return realThis;
-  }
-
-  public void setRealThis(CDAssociationNavigableVisitor realThis) {
-    this.realThis = realThis;
-  }
 
   public boolean isDefinitiveNavigableLeft() {
     return this.isDefinitiveNavigableLeft;

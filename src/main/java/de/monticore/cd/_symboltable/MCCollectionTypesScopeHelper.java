@@ -5,29 +5,14 @@
 package de.monticore.cd._symboltable;
 
 import de.monticore.types.mccollectiontypes._ast.*;
-import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor;
+import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor2;
 
 /**
  * This visitor sets the enclosing scope of the inner types,
  * so that the typechecks can be used
  */
 public class MCCollectionTypesScopeHelper
-    implements MCCollectionTypesVisitor {
-  protected MCCollectionTypesVisitor realThis;
-
-  public MCCollectionTypesScopeHelper() {
-    setRealThis(this);
-  }
-
-  @Override
-  public MCCollectionTypesVisitor getRealThis() {
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(MCCollectionTypesVisitor realThis) {
-    this.realThis = realThis;
-  }
+    implements MCCollectionTypesVisitor2 {
 
   @Override
   public void visit(ASTMCGenericType node) {

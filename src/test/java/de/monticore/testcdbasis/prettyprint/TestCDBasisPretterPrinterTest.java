@@ -6,6 +6,7 @@ package de.monticore.testcdbasis.prettyprint;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import org.junit.Test;
 
@@ -15,7 +16,7 @@ import java.util.Optional;
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisPretterPrinterTest extends TestBasis {
   final TestCDBasisParser p = new TestCDBasisParser();
-  final TestCDBasisPrettyPrinterDelegator printer = new TestCDBasisPrettyPrinterDelegator();
+  final CDBasisFullPrettyPrinter printer = new CDBasisFullPrettyPrinter();
 
   @Test
   public void completeModel() throws IOException {

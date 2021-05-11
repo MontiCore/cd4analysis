@@ -4,9 +4,9 @@
 
 package de.monticore.cd4code.prettyprint;
 
-import de.monticore.cd.TestBasis;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
+import de.monticore.cd4code.CD4CodeTestBasis;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -16,9 +16,16 @@ import java.io.IOException;
 import static org.junit.Assert.assertTrue;
 
 @Ignore
-public class CD4CodePlantUMLPrinterTest extends TestBasis {
+public class CD4CodePlantUMLPrinterTest extends CD4CodeTestBasis {
   @Test
-  public void testLocally() throws IOException {
+  public void testLocally1() throws IOException {
+    final String fileName = new File(getFilePath("cd4analysis/parser/MyLife.cd")).toString();
+    PlantUMLUtil.printCD2PlantUMLLocally(fileName, getTmpFilePath("MyLife.svg"), new PlantUMLConfig());
+    assertTrue(modelFileExists(getTmpFilePath("MyLife.svg")));
+  }
+
+  @Test
+  public void testLocally2() throws IOException {
     final String fileName = new File(getFilePath("cd4code/parser/MyLife2.cd")).toString();
     PlantUMLUtil.printCD2PlantUMLLocally(fileName, getTmpFilePath("MyLife2.svg"), new PlantUMLConfig());
     assertTrue(modelFileExists(getTmpFilePath("MyLife2.svg")));

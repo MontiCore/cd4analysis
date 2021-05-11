@@ -11,12 +11,12 @@ classdiagram MyLife2 {
   }
 
   public abstract class Person implements CorporateEntity {
-    protected String name;
+    protected java.lang.String name;
     int age;
-    Date birthday;
-    List<String> nickNames;
-    public Person(String name);
-    Set<Person> getParents();
+    java.util.Date birthday;
+    java.util.List<java.lang.String> nickNames;
+    public Person(java.lang.String name);
+    java.util.Set<Person> getParents();
   }
 
   package uni {
@@ -39,5 +39,5 @@ classdiagram MyLife2 {
 
   composition Student -> Grades [*];
   association [0..1] Person (parent) <-> (child) Person [*];
-  association phonebook Person [String] -> PhoneNumber;
+  association phonebook Person [java.lang.String] -> PhoneNumber;
 }

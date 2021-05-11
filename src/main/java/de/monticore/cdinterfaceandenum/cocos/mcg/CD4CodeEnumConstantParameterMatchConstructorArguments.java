@@ -7,10 +7,12 @@ package de.monticore.cdinterfaceandenum.cocos.mcg;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd._visitor.CDMemberVisitor;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis.typescalculator.DeriveSymTypeOfCD4CodeBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
@@ -19,7 +21,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +33,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
   final CDSymbolTableHelper helper;
 
   public CD4CodeEnumConstantParameterMatchConstructorArguments() {
-    helper = new CDSymbolTableHelper(CD4CodeBasisMill.deriveSymTypeOfCD4CodeBasis());
+    helper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4CodeBasis());
   }
 
   @Override
@@ -49,7 +51,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
 
     // if there is no constructor present, a default constructor with no arguments is available
     if (constructorParameters.isEmpty()) {
-      constructorParameters.add(Collections.emptyList());
+      constructorParameters.add(new ArrayList<>());
     }
 
     final List<List<SymTypeExpression>> constructors = calculateConstructorParameterTypes(node, constructorParameters);
@@ -107,15 +109,15 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
   public List<List<SymTypeExpression>> calculateEnumArgumentTypes(ASTCDEnum node) {
     return node.streamCDEnumConstants().map(enumConstant -> {
       if (!(enumConstant instanceof ASTCD4CodeEnumConstant)) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
       final ASTCD4CodeEnumConstant codeEnumConstant = (ASTCD4CodeEnumConstant) enumConstant;
       if (!codeEnumConstant.isPresentArguments()) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
       final ASTArguments arguments = codeEnumConstant.getArguments();
       if (arguments.sizeExpressions() == 0) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
 
       // find type of each of the arguments
@@ -141,7 +143,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
       (ASTCDEnum node, List<List<ASTCDParameter>> constructorParameters) {
     return constructorParameters.stream().map(parameter -> {
       if (parameter.size() == 0) {
-        return Collections.<SymTypeExpression>emptyList();
+        return new ArrayList<SymTypeExpression>();
       }
 
       // find type of each of the parameter
@@ -168,7 +170,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     return constructorParameters.stream()
         .map(c -> node.getName() + "(" +
             c.stream()
-                .map(p -> CD4CodeMill.cD4CodePrettyPrinter().prettyprint(p))
+                .map(p -> new CD4CodeFullPrettyPrinter().prettyprint(p))
                 .collect(Collectors.joining(", ")) + ")")
         .collect(Collectors.joining("; "));
   }

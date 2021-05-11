@@ -5,7 +5,7 @@ package de.monticore.cd4analysis.parser;
 classdiagram SimpleSTTest {
 
   class A {
-    String name;
+    java.lang.String name;
   }
 
   class B extends A;

@@ -6,16 +6,17 @@ package de.monticore.cd4codebasis.prettyprint;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cd4codebasis._ast.*;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisHandler;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
-    implements CD4CodeBasisVisitor {
-  protected CD4CodeBasisVisitor realThis;
+    implements CD4CodeBasisVisitor2, CD4CodeBasisHandler {
+  protected CD4CodeBasisTraverser traverser;
 
   public CD4CodeBasisPrettyPrinter() {
     this(new IndentPrinter());
-    setRealThis(this);
   }
 
   public CD4CodeBasisPrettyPrinter(IndentPrinter printer) {
@@ -23,32 +24,31 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
   }
 
   @Override
-  public CD4CodeBasisVisitor getRealThis() {
-    return realThis;
+  public CD4CodeBasisTraverser getTraverser() {
+    return traverser;
   }
 
-  @Override
-  public void setRealThis(CD4CodeBasisVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CD4CodeBasisTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
   public void traverse(ASTCDThrowsDeclaration node) {
     print("throws ");
-    printList(getRealThis(), node.getExceptionList().iterator(), ", ");
+    printList(getTraverser(), node.getExceptionList().iterator(), ", ");
   }
 
   @Override
   public void traverse(ASTCDMethod node) {
     printPreComments(node);
-    node.getModifier().accept(getRealThis());
-    node.getMCReturnType().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
+    node.getMCReturnType().accept(getTraverser());
     print(" " + node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+    printSeparatorCD4CodeBasis(getTraverser(), node.getCDParameterList().iterator(), ", ");
     print(")");
     if (node.isPresentCDThrowsDeclaration()) {
       print(" ");
-      node.getCDThrowsDeclaration().accept(getRealThis());
+      node.getCDThrowsDeclaration().accept(getTraverser());
     }
     println(";");
     printPostComments(node);
@@ -57,13 +57,13 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
   @Override
   public void traverse(ASTCDConstructor node) {
     printPreComments(node);
-    node.getModifier().accept(getRealThis());
+    node.getModifier().accept(getTraverser());
     print(node.getName() + "(");
-    printSeparatorCD4CodeBasis(getRealThis(), node.getCDParameterList().iterator(), ", ");
+    printSeparatorCD4CodeBasis(getTraverser(), node.getCDParameterList().iterator(), ", ");
     print(")");
     if (node.isPresentCDThrowsDeclaration()) {
       print(" ");
-      node.getCDThrowsDeclaration().accept(getRealThis());
+      node.getCDThrowsDeclaration().accept(getTraverser());
     }
     println(";");
     printPostComments(node);
@@ -71,14 +71,14 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
 
   @Override
   public void traverse(ASTCDParameter node) {
-    node.getMCType().accept(getRealThis());
+    node.getMCType().accept(getTraverser());
     if (node.isEllipsis()) {
       print("...");
     }
     print(" " + node.getName());
     if (node.isPresentDefaultValue()) {
       print(" = ");
-      node.getDefaultValue().accept(getRealThis());
+      node.getDefaultValue().accept(getTraverser());
     }
   }
 
@@ -86,7 +86,7 @@ public class CD4CodeBasisPrettyPrinter extends PrettyPrintUtil
   public void traverse(ASTCD4CodeEnumConstant node) {
     print(node.getName());
     if (node.isPresentArguments()) {
-      node.getArguments().accept(getRealThis());
+      node.getArguments().accept(getTraverser());
     }
   }
 }

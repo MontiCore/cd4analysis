@@ -4,15 +4,18 @@
 
 package de.monticore.cd._visitor;
 
-import de.monticore.cd4code._visitor.CD4CodeVisitor;
-import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
+import de.monticore.cd4code._visitor.CD4CodeVisitor2;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDMember;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,10 +24,9 @@ import java.util.stream.Collectors;
  * Visitor to collect all CDMembers of specific types
  */
 public class CDMemberVisitor
-    implements CD4CodeVisitor {
+    implements CD4CodeVisitor2, CDBasisVisitor2, CDInterfaceAndEnumVisitor2, CD4CodeBasisVisitor2, CDAssociationVisitor2 {
   protected final Set<Options> options;
   protected final List<ASTCDMember> elements;
-  protected CD4CodeVisitor realThis;
 
   public CDMemberVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
@@ -33,17 +35,6 @@ public class CDMemberVisitor
     }
 
     this.elements = new ArrayList<>();
-    setRealThis(this);
-  }
-
-  @Override
-  public CD4CodeVisitor getRealThis() {
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(CD4CodeVisitor realThis) {
-    this.realThis = realThis;
   }
 
   public List<ASTCDMember> getCDMemberList() {

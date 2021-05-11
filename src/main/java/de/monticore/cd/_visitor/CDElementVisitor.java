@@ -4,13 +4,16 @@
 
 package de.monticore.cd._visitor;
 
-import de.monticore.cd4code._visitor.CD4CodeVisitor;
+import de.monticore.cd4code._visitor.CD4CodeVisitor2;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDPackage;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,10 +22,9 @@ import java.util.stream.Collectors;
  * Visitor to collect all CDElements of specific types
  */
 public class CDElementVisitor
-    implements CD4CodeVisitor {
+    implements CD4CodeVisitor2, CDBasisVisitor2, CDInterfaceAndEnumVisitor2, CDAssociationVisitor2 {
   protected final Set<Options> options;
   protected final List<ASTCDElement> elements;
-  protected CD4CodeVisitor realThis;
 
   public CDElementVisitor(Options... options) {
     this.options = new HashSet<>(Arrays.asList(options));
@@ -30,18 +32,8 @@ public class CDElementVisitor
       this.options.add(CDElementVisitor.Options.ALL);
     }
     this.elements = new ArrayList<>();
-    setRealThis(this);
   }
 
-  @Override
-  public CD4CodeVisitor getRealThis() {
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(CD4CodeVisitor realThis) {
-    this.realThis = realThis;
-  }
 
   public List<ASTCDElement> getCDElementList() {
     return elements;

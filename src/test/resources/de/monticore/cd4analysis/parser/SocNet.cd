@@ -10,32 +10,32 @@ classdiagram SocNet {
   abstract class Profile {
     // attribute can be of any available type
     Formatter t;
-    String profileName;
+    java.lang.String profileName;
     derived int numOfPosts;
     derived int friends;
   }
 
   class Person extends Profile {
-    Date lastVisit;
-    String firstName;
-    String secondName;
-    Date dateOfBirth;
+    java.util.Date lastVisit;
+    java.lang.String firstName;
+    java.lang.String secondName;
+    java.util.Date dateOfBirth;
     int zip;
-    String city;
-    String country;
+    java.lang.String city;
+    java.lang.String country;
   }
 
   class Group extends Profile {
     boolean isOpen;
-    Date created;
-    String purpose;
+    java.util.Date created;
+    java.lang.String purpose;
     derived int members;
   }
 
   class Relationship {
     boolean isPending;
-    Date requested;
-    Date accepted;
+    java.util.Date requested;
+    java.util.Date accepted;
     // short version of composition from Relationship to RelationType
     -> RelationType [1];
   }
@@ -53,8 +53,8 @@ classdiagram SocNet {
     interface Post;
 
     class InstantMessage implements Post {
-      Date timestamp;
-      String content;
+      java.util.Date timestamp;
+      java.lang.String content;
     }
 
     class PhotoMessage extends InstantMessage;

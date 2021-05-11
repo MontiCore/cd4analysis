@@ -5,7 +5,7 @@
 package de.monticore.cdassociation._ast;
 
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
-import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinterDelegator;
+import de.monticore.cdbasis.prettyprint.CDBasisFullPrettyPrinter;
 
 public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
   default String getName() {
@@ -13,7 +13,7 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
       return this.getCDRole().getName();
     }
 
-    return new CDBasisPrettyPrinterDelegator().prettyprint(this.getMCQualifiedType());
+    return new CDBasisFullPrettyPrinter().prettyprint(this.getMCQualifiedType());
   }
 
   /**
@@ -39,7 +39,7 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
       return assoc.getName();
     }
 
-    return new CDBasisPrettyPrinterDelegator().prettyprint(this.getMCQualifiedType());
+    return new CDBasisFullPrettyPrinter().prettyprint(this.getMCQualifiedType());
   }
 
   default boolean isPresentSymbol() {
