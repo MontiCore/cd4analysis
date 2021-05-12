@@ -70,7 +70,7 @@ configurations {
 dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
     grammar ("$var_path:monticore-grammar:$mc_version"){ capabilities {
-      requireCapability("de.monticore:monticore-grammar-grammars")}
+      requireCapability("$var_path:monticore-grammar-grammars")}
     }
     implementation "$var_path:monticore-grammar:${project.properties['mc_version']}"
     implementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
