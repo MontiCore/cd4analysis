@@ -3,6 +3,9 @@
  */
 package de.monticore.cd.facade;
 
+import de.monticore.cd.facade.exception.CDFactoryErrorCode;
+import de.monticore.cd.facade.exception.CDFactoryException;
+import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -12,8 +15,10 @@ import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -117,4 +122,25 @@ public class CDMethodFacade {
     ASTMCReturnType returnType = MCBasicTypesMill.mCReturnTypeBuilder().setMCType(astmcType).build();
     return createDefaultMethod(modifier, returnType, name, parameters);
   }
+
+  /**
+   * creates a method by a string definition with the help of the parser
+   * only use this method if no of the other methods fit your context !
+   */
+  public ASTCDMethod createMethodByDefinition(final String signature) {
+    Optional<ASTCDMethod> method;
+    try {
+      method = new CD4CodeParser().parse_StringCDMethod(signature);
+    } catch (IOException e) {
+      throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_METHOD, signature, e);
+    }
+
+    if (!method.isPresent()) {
+      throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_METHOD, signature);
+    }
+
+    return method.get();
+  }
+
+
 }
