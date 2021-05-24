@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cli;
 
 import org.apache.commons.cli.*;

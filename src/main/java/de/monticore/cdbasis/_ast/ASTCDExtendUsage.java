@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cdbasis._symboltable.ICDBasisScope;

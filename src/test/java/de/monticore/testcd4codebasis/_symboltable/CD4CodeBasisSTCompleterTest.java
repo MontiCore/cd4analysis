@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis._symboltable;
 
 import com.google.common.collect.LinkedListMultimap;
