@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram AddressType {
+classdiagram MyBasics {
   class Address {
     java.lang.String city;
     java.lang.String street;

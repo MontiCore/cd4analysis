@@ -29,7 +29,7 @@ The CD languages are mainly intended for
 The following example CD `MyLife` illustrates the textual syntax of CDs:
 ```
 package monticore;
-import AddressType; 
+import MyBasics; 
 
 classdiagram MyLife { 
   abstract class Person {
@@ -59,10 +59,12 @@ The example CD shows
   are also be possible.
 - classes containing attributes, which have a type and a name.
 - available default types, which are basic types (from Java), imported types 
-  (like `java.util.Date`), and predefined forms of generic types (like `java.util.List`).
+  (like `java.util.Date`), and predefined forms of generic types (like 
+  `java.util.List`).
 - associations and compositions that are defined between two classes and
   can have a name, a navigation information (e.g. `<->`), role names on both
-  sides, multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
+  sides, multiplicities (like `[0..1]`) and certain predefined 
+  tags/stereotypes 
   (like `{ordered}`).
 - that both, association and compositions, can be qualified for example by 
   `[java.lang.String]`.
@@ -103,24 +105,26 @@ The CLI provides quite a number of configurable parameters.
 These two are examples for calling  the the CLI:
 
 ```shell
-java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s
+java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s
 java -jar CDCLI.jar -i Person.cd -pp Person.out.cd
 ```
 
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `--fieldfromrole <value>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from from role symbols  (default: no). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable.
-| `-f,--failquick <bool>`    | Configures if the application should quickfail on errors. `-f` equals to `--failquick true`. Default is `false`. If `true` the check stops at the first error, otherwise tries to find all errors before it stops. |
-| `-h,--help`                | Prints short help information   |
-| `-i,--input <file>`        | Reads the source file (mandatory) and parses the contents as CD |
-| `-o,--output <dir>`        | Path for generated files (optional). Default is `.`. |
-| `--path <dirlist>`         | Artifact path for importable symbols. It is separated by ';', default is `.`. |
-| `-pp,--prettyprint <file>` | Prints the CD to stdout or the specified file (optional). |
-| `-r,--report <dir>`        | Prints reports of the CD to the specified directory (optional).  |
-| `-s,--symboltable <file>`  | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. |
-| `-stdin,--stdin`             | Reads the the input CD from stdin instead of argument `-i`. |
-| `-t, --usebuiltintypes <bool>`  |  Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false` |
+| `-d,--defaulttrafo <defaulttrafo>` | Configures if default trafos should be executed. Default: false. If `true`, the default trafos move all types in a package. |
+| `-f,--failquick <value>` | Configures if the application should quickfail on errors. `-f` equals to `--failquick true`. Default is `false`.  If `true` the check stops at the first error, otherwise tries to find all errors before it stops |
+| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
+| `-h,--help` | Prints short help |
+| `-i,--input <file>` | Reads the source file (mandatory) and parses the contents as |
+| `-o,--output <dir>` | Path for generated files (optional). Default is `.` |
+| `--path <dirlist>` | Artifact path for importable symbols. It is separated by ':' (colon), default is `.` |
+| `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
+| `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
+| `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.sym` |
+| `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
+| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-f` toggles it to `--usebuiltintypes false |
+
 
 ### Building the CLI Tool from the Sources (if desired)
  
@@ -162,7 +166,7 @@ java -jar CDCLI.jar
 ```
 
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
-which takes file containing CD models as input.
+which takes a file containing CD models as input.
 If no further options are specified, the CLI tool processes the model,
 but does not produce any further output.
 That means it parses the model, builds its 
@@ -170,10 +174,10 @@ symbol table, and then checks whether the model satisfies all context
 conditions. Only errors or success are printed.
 
 For trying this out, copy the `CDCLI.jar` into a directory of your 
-choice. Then create a text file `Example.cd` in the directory where `CDCLI.jar` is 
-located containing e.g. the following simple CD 
-(please note that, like in Java, filename and modelname in the file are
- equal):
+choice. Then create a text file `Example.cd` in a `src` subdirectory of the
+directory where `CDCLI.jar` is located containing e.g. the following simple CD 
+(please note that, like in Java, filename and modelname in the file have to be
+the same):
 
 ```
 classdiagram Example {
@@ -188,7 +192,7 @@ classdiagram Example {
 
 Now execute the following command:
 ```
-java -jar CDCLI.jar -i Example.cd
+java -jar CDCLI.jar -i src/Example.cd
 ```
 
 You may notice that the CLI tool prints the following text to the console:
@@ -201,7 +205,7 @@ The contents of the input CD artifact can also be piped to the CLI tool.
 For trying this out, execute the following command:
 
 ```shell
-cat Example.cd | java -jar CDCLI.jar --stdin
+cat src/Example.cd | java -jar CDCLI.jar --stdin
 ``` 
 The output is the same as for the previous command.
 
@@ -217,7 +221,7 @@ Using the option without any arguments pretty-prints the models contained in the
 input files to the console:
 
 ```shell
-java -jar CDCLI.jar -i Example.cd -pp
+java -jar CDCLI.jar -i src/Example.cd -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
@@ -236,13 +240,13 @@ It is possible to pretty-print the models contained in the input file to an
 output file (here: `PPExample.cd`):
 
 ```shell
-java -jar CDCLI.jar -i Example.cd -pp PPExample.cd
+java -jar CDCLI.jar -i src/Example.cd -pp target/PPExample.cd
 ```
 
 ### Step 3: Storing Symbols
 
 When the symbols of the `Example.cd` model shall be available elsewhere,
-they can bes stored.
+they can be stored.
 The symbol file will contain information about the types and associations
 defined in the CD.
 It can be imported by other models for using the introduced symbols.
@@ -251,41 +255,47 @@ Using the `-s,--symboltable <file>` option builds the symbol table of the input
 model and stores it in the file path given as argument.
 Providing the file path is optional.
 If no file path is provided, the CLI tool stores the symbol table of the
-input model in the file `{CDName}.cdsym`.
+input model in the file `{CDName}.sym`.
 
 For storing the symbol file for `Example.cd`, we execute the following command
 (the context condition checks require using the path option):
 ```shell
-java -jar CDCLI.jar -i Example.cd -s
+java -jar CDCLI.jar -i src/Example.cd -s
 ```
-The CLI tool produces the file `Example.cdsym`, which can now be
+The CLI tool produces the file `Example.sym`, which can now be
 imported by other models, e.g., by models that need to
 use some of the types defined in the CD `Example`. The tool additionally
 indicates the correct generation by its outputs:
 ```
 Successfully parsed Example
 Successfully checked the CoCos for Example
-Creation of symbol table Example.cdsym successful
+Creation of symbol table src/Example.sym successful
 ```
-The symbol file contains a JSON representation of the symbols defined in the CD, which are type, association, interface, attribute and method symbols.
+The symbol file contains a JSON representation of the symbols defined in the CD,
+which are type, association, interface, attribute and method symbols.
 
-For storing the symbol file of `Example.cd` in the file `symbols/Example.cdsym`,
+For storing the symbol file of `Example.cd` in the file `symbols/Example.sym`,
 for example, execute the following command (again, the implicit context 
 condition checks require using the model path option):
 ```shell
-java -jar CDCLI.jar -i Example.cd -s symbols/Example.cdsym
+java -jar CDCLI.jar -i Example.cd -s symbols/Example.sym
 ```
 
 ### Step 4: Adding `FieldSymbol`s corresponding to association roles
 
-By default, the CLI stores exactly the symbols that have been explicitely defined. This is the typical modelling approach. However, code generation typically maps the `CDRoleSymbol`s defined in an association to attributes and thus implcitly adds `FieldSymbol`s into the classes that host an association. These additional symbols can be made available in the symbol file in the two following forms: 
+By default, the CLI stores exactly the symbols that have been explicitly 
+defined. This is the typical modelling approach. However, code generation 
+typically maps the `CDRoleSymbol`s defined in an association to attributes and 
+thus implicitly adds `FieldSymbol`s into the classes that host an association. 
+These additional symbols can be made available in the symbol file in the two 
+following forms: 
 
 Form 1: For each of the `CDRoleSymbol`s add a `FieldSymbol` in the source class
    of the role. This can be used in languages, like OCL, 
    that always allow for the navigation in both directions.
 These additional field symbols are stored with:
 ```shell
-java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole all
+java -jar CDCLI.jar -i Example.cd -s symbols/Example.sym --fieldfromrole all
 ```
 
 * two additional `FieldSymbol`s were stored for both sides of the association
@@ -294,7 +304,7 @@ Form 2:  `FieldSymbol`s are added only for navigable roles.
   This can be used in implementation oriented languages that have to cope
   with the actual implementation restrictions:
 ```shell
-java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole navigable
+java -jar CDCLI.jar -i Example.cd -s symbols/Example.sym --fieldfromrole navigable
 ```
 * only one additional `FieldSymbol` is stored for the navigable Role `friends`
 
@@ -302,35 +312,36 @@ java -jar CDCLI.jar -i Example.cd -s syms/Example.sym --fieldfromrole navigable
 
 MontiCore is designed for modularity (both on the model and the language level).
 The CD languages are participating in the symbol exchange infrastructure.
-We import a symbol file defining type symbols that are used by 
-a CD.
+We import a symbol file defining type symbols that are used by a CD.
 
 Let us now consider the example `MyLife` from above.
 Please, copy the content of `MyLife` and save it 
-in a file `monticore/MyLife.cd`. The directory `monticore` is needed 
+in a file `src/monticore/MyLife.cd`. The directory `monticore` is needed 
 because of the package definition in line 1.
 
 Execute the following command for processing the file `MyLife.cd`:
 ```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd
+java -jar CDCLI.jar -i src/monticore/MyLife.cd
 ```
 
 After executing the command, 
 the output states that a context condition is not satisfied by
 the model: 
 ```
-[ERROR] MyLife.cd:<13,9>: 0xCDA80: Type 'Address' is used but not defined.
-[ERROR] 0xA1038 TypeSymbolSurrogate Could not load full information of 'Address' (Kind de.monticore.symbols.basicsymbols._symboltable.TypeSymbol).
+[ERROR] MyLife.cd:<14,9>: 0xA0324: The qualified type Address cannot be found
+[ERROR] MyLife.cd:<14,9>: 0xCDA62: The type Address of the role (address) could not be calculated
 ...
 ```
 
 The missing type `Address` is currently not imported.
-`MyLife` already has an `import` statement to another class diagram included, but this class diagram doesn't yet exist. E.f. the following minimal diagram can be stored as well
-([also available here](doc/AddressType.cd)):
+`MyLife` already has an `import` statement to another class diagram 
+included, but this class diagram doesn't yet exist. E.g. the following
+minimal diagram can be stored as well
+([also available here](doc/MyBasics.cd)):
 
 ```
-// content of mytypes/AddressType.cdsym
-classdiagram AddressType {
+// content of src/MyBasics.cd
+classdiagram MyBasics {
   class Address {
     java.lang.String city;
     java.lang.String street;
@@ -354,38 +365,48 @@ their symbol files. This has several interesting advantages:
 However, the CLI tool has to be applied to the new additional model first:
 
 ```shell
-java -jar CDCLI.jar -i mytypes/AddressType.cd -s mytypes/AddressType.cdsym
+java -jar CDCLI.jar -i src/MyBasics.cd -s symbols/MyBasics.sym
 ```
 
 We then add the symbol file to the model path using `--path`:
 
 ```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd --path mytypes
+java -jar CDCLI.jar -i src/monticore/MyLife.cd --defaulttrafo --path symbols
 ```
  
 The model path is used to identify the directory structure that contains the 
 needed symbol files. 
 As we provide the model path to the tool, it will successfully 
 search for symbols in symbol files stored in the model path. 
-This means that it processes 
-the model successfully without any context condition violations.
+This means that it processes the model successfully without any context 
+condition violations.
 Great! 
 
-### Step 6: Creating a graphical representation of CD files
+### Step 6: Create default packages in the class diagram
 
-The CDCLI provides the option to create svg files.
-A SVG can be created by passing the parameter `--svg` e.g. by command:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml MyLife --orthogonal -attr -assoc --showRoles --svg
-```
-that creates the following svg: 
+The class diagram languages support structuring the cd with packages. 
+The CDCLI can create additional default packages for types, that are not already
+in a package, making sure, that every type is in a package.
+The default package is either
+1. the package of the artifact itself (if present), or
+2. the default `de.monticore`
 
-![MyLife.svg](doc/MyLife.svg "MyLife")
+[//]: # (### Step 7: Creating a graphical representation of CD files)
 
-It is also possible to export the class diagram only to plantUML:
-```shell
-java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml
-```
+[//]: # (The CDCLI provides the option to create svg files.)
+[//]: # (A SVG can be created by passing the parameter `--svg` e.g. by command:)
+
+[//]: # (```shell)
+[//]: # (java -jar CDCLI.jar -i src/monticore/MyLife.cd --path symbols -puml MyLife --orthogonal -attr -assoc --showRoles --svg)
+[//]: # (```)
+
+[//]: # (that creates the following svg: )
+[//]: # (![MyLife.svg]&#40;doc/MyLife.svg "MyLife"&#41;)
+[//]: # (It is also possible to export the class diagram only to plantUML:)
+
+[//]: # (```shell)
+[//]: # (java -jar CDCLI.jar -i src/monticore/MyLife.cd --path symbols -puml)
+[//]: # (```)
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [CLIDownload]: http://monticore.de/download/CDCLI.jar
@@ -399,4 +420,3 @@ java -jar CDCLI.jar -i monticore/MyLife.cd -p mytypes -puml
 * [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
-
