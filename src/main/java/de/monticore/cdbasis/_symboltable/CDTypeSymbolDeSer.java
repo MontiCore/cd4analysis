@@ -1,4 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.symboltable.serialization.json.JsonObject;

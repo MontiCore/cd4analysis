@@ -1,4 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;

@@ -1,4 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdinterfaceandenum._symboltable;
 
 import com.google.common.collect.LinkedListMultimap;

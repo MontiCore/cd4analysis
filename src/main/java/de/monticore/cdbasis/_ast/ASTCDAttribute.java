@@ -1,4 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;

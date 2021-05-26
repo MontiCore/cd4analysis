@@ -1,4 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis._visitor.CD4AnalysisHandler;
