@@ -20,7 +20,11 @@ public class CDCLIOptions {
   }
 
   public CDCLIOptions() {
-    init();
+    init(false);
+  }
+
+  public CDCLIOptions(boolean showPlantUML) {
+    init(showPlantUML);
   }
 
   public Options getOptions() {
@@ -37,23 +41,24 @@ public class CDCLIOptions {
     return this.cmd;
   }
 
-  protected void init() {
+  protected void init(boolean showPlantUML) {
     options.addOption(Option
         .builder("h").longOpt("help")
-        .desc("Prints this help dialogue.")
+        .desc("Prints short help information")
         .build());
 
     options.addOption(Option
         .builder("f").longOpt("failquick")
         .hasArg().type(Boolean.class)
-        .argName("value").numberOfArgs(1)
-        .optionalArg(false)
-        .desc("Configures if the application should quickfail on errors [true/false]. "
-            + "The default value is \"false\".")
+        .argName("value").optionalArg(true).numberOfArgs(1)
+        .desc("Configures if the application should quickfail on errors. "
+                + "`-f` equals to `--failquick true`. Default is `false`. "
+                + "If `true` the check stops at the first error, otherwise tries "
+                + "to find all errors before it stops.")
         .build());
 
     initCheck();
-    initPrettyPrinter();
+    initPrettyPrinter(showPlantUML);
     initPlantUML();
   }
 
@@ -62,89 +67,91 @@ public class CDCLIOptions {
         .builder("i").longOpt("input")
         .hasArg().type(String.class)
         .argName("file").numberOfArgs(1)
-        .desc("Reads the input CD artifact path given as argument.")
+        .desc("Reads the source file (mandatory) and parses the contents as CD")
         .build());
 
     options.addOption(Option
         .builder("stdin").longOpt("stdin")
-        .desc("Reads the input CD artifact from stdin.")
+        .desc("Reads the input CD from stdin instead of argument `-i`.")
         .build());
 
     options.addOption(Option
-        .builder("p").longOpt("path")
+        .builder().longOpt("path")
         .hasArg().type(String.class)
         .argName("dirlist").numberOfArgs(1)
-        .desc("Sets the artifact path for imported symbols separated by ';'. "
-            + "The default value is \".\".")
+        .desc("Artifact path for importable symbols. It is separated by ':' (colon), default is `.`.")
         .build());
 
     options.addOption(Option
         .builder("s").longOpt("symboltable")
         .hasArg().type(String.class)
         .argName("file").optionalArg(true).numberOfArgs(1)
-        .desc("Serializes and prints the symbol table to stdout or the specified output file (optional). "
-            + "The default value is \"{inputArtifactName}.cdsym\".")
+        .desc("Stores the symbol table of the CD. The default value is `{CDName}.sym`.")
         .build());
 
     options.addOption(Option
         .builder("o").longOpt("output")
         .hasArg().type(String.class)
         .argName("dir").optionalArg(true).numberOfArgs(1)
-        .desc("Path of generated files (optional). "
-            + "The default value is \".\".")
+        .desc("Path for generated files (optional). Default is `.`.")
         .build());
 
+    // Prints reports of the cd artifact to the specified directory. This includes e.g. reachable states and branching degrees
     options.addOption(Option
         .builder("r").longOpt("report")
         .hasArg().type(String.class)
         .argName("dir").optionalArg(true).numberOfArgs(1)
-        .desc("Prints reports of the parsed artifact to the specified directory (optional). "
-            + "Available reports are language-specific. "
-            + "The default value is \"_output_path_\".")
+        .desc("Prints reports of the parsed artifact to the specified directory (optional) (default `.`). "
+            + "This includes e.g. all defined packages, classes, interfaces, enums, and associations. "
+            + "The file name is \"report.{CDName}\".")
         .build());
 
     options.addOption(Option
         .builder("t").longOpt("usebuiltintypes")
         .hasArg().type(Boolean.class)
-        .argName("useBuiltinTypes").numberOfArgs(1)
-        .desc("Configures if built-in-types should be considered [true/false]. "
-            + "The default value is \"true\".")
+        .argName("useBuiltinTypes").optionalArg(true).numberOfArgs(1)
+        .desc("Configures if built-in-types should be considered. "
+                + "Default: `true`. `-f` toggles it to `--usebuiltintypes false`")
         .build());
 
     options.addOption(Option
         .builder("d").longOpt("defaulttrafo")
         .hasArg().type(Boolean.class)
-        .argName("defaulttrafo").numberOfArgs(1)
-        .desc("Configures if default trafos should be executed [true/false]. "
-            + "The default value is \"false\".")
+        .argName("defaulttrafo").optionalArg(true).numberOfArgs(1)
+        .desc("Configures if default trafos should be executed. Default: false. "
+            + "If `true`, the default trafos move all types in a package.")
         .build());
 
     options.addOption(Option
         .builder().longOpt("fieldfromrole")
         .hasArg().type(String.class)
         .argName("fieldfromrole").numberOfArgs(1)
-        .desc("Configures if field symbols should be created from rolesymbols [none,all,navigable]. "
-            + "The default value is \"none\".")
+        .desc("Configures if explicit field symbols, which are typically used for implementing associations, "
+            + "should be added, if derivable from role symbols (default: none). "
+            + "Values: `none` is typical for modelling, `all` adds always on both classes, "
+            + "`navigable` adds only if the association is navigable.")
         .build());
   }
 
-  protected void initPrettyPrinter() {
+  protected void initPrettyPrinter(boolean showPlantUML) {
     options.addOption(Option
         .builder("pp").longOpt("prettyprint")
         .hasArg().type(String.class)
         .argName("file").optionalArg(true).numberOfArgs(1)
         .argName("prettyprint")
-        .desc("Prints the input SDs to stdout or to the specified file (optional).")
+        .desc("Prints the input CDs to stdout or to the specified file (optional).")
         .build());
 
-    // dependent on pp
-    options.addOption(Option
-        .builder("puml").longOpt("plantUML")
-        .hasArg().type(String.class)
-        .argName("file").optionalArg(true).numberOfArgs(1)
-        .argName("puml")
-        .desc("Transform the input model to a PlantUML model.")
-        .build());
+    if (showPlantUML) {
+      // dependent on pp
+      options.addOption(Option
+          .builder("puml").longOpt("plantUML")
+          .hasArg().type(String.class)
+          .argName("file").optionalArg(true).numberOfArgs(1)
+          .argName("puml")
+          .desc("Transform the input model to a PlantUML model.")
+          .build());
+    }
   }
 
   /**

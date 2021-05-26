@@ -109,7 +109,9 @@ public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
             .equals(Joiners.DOT.join(packageNameList)))
         .findFirst();
 
-    if (!defaultPackage.isPresent()) {
+    // only create the default package if not already present
+    // AND we have elements that should be put in the package
+    if (!defaultPackage.isPresent() && !elementsInCDDefinition.isEmpty()) {
       defaultPackage = Optional.of(CDBasisMill.cDPackageBuilder()
           .setMCQualifiedName(MCBasicTypesMill.mCQualifiedNameBuilder()
               .setPartsList(packageNameList)
@@ -118,7 +120,8 @@ public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
       node.addCDPackage(0, defaultPackage.get()); // add the default package as first package
     }
 
-    defaultPackage.get().addAllCDElements(elementsInCDDefinition);
+    defaultPackage.ifPresent(astcdPackage -> astcdPackage.addAllCDElements(elementsInCDDefinition));
+
     node.removeAllCDElements(elementsInCDDefinition);
   }
 
