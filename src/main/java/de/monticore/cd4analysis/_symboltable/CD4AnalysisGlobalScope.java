@@ -7,9 +7,8 @@ package de.monticore.cd4analysis._symboltable;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 
-import java.util.Optional;
 import java.util.Set;
 
 public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
@@ -21,12 +20,12 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis()));
   }
 
-  public CD4AnalysisGlobalScope(ModelPath modelPath) {
+  public CD4AnalysisGlobalScope(MCPath modelPath) {
     super(modelPath, EXTENSION);
     setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis()));
   }
 
-  public CD4AnalysisGlobalScope(ModelPath modelPath, String modelFileExtension) {
+  public CD4AnalysisGlobalScope(MCPath modelPath, String modelFileExtension) {
     super(modelPath, modelFileExtension);
     setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis()));
   }
