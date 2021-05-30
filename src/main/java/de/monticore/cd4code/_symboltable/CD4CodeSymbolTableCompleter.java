@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.symboltable;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
