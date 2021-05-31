@@ -68,6 +68,17 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
   }
 
   @Test
+  public void checkMultiplePathArgs() throws IOException, ParseException {
+    final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
+    assertTrue(otherFile.exists());
+    final String otherFileName = otherFile.toString();
+    CDCLI.main(new String[] { "-i", otherFileName, "-f", "false", "--path", "src/test/resources", "src/test/emptypath", "-o", getTmpAbsolutePath(), "-s",
+            getTmpFilePath("Simple.cdsym") });
+
+    checkLogError();
+  }
+
+  @Test
   public void completeModel() throws IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cdbasis/parser/Complete.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);

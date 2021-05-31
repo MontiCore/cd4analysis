@@ -192,7 +192,10 @@ public class CDCLI {
     boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "false"));
 
     // create a symbol table with provided model paths
-    String[] modelPath = cmd.getOptionValue("path", ".").split(":");
+    String[] modelPath = {"."};
+    if (cmd.hasOption("path")) {
+      modelPath = cmd.getOptionValues("path");
+    }
     createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
 
     // transformations that need an already created symbol table
