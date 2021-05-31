@@ -118,7 +118,7 @@ The possible options are:
 | `-h,--help` | Prints short help |
 | `-i,--input <file>` | Reads the source file (mandatory) and parses the contents as |
 | `-o,--output <dir>` | Path for generated files (optional). Default is `.` |
-| `--path <dirlist>` | Artifact path for importable symbols. It is separated by ':' (colon), default is `.` |
+| `--path <dirlist>` | Artifact path for importable symbols, separated by spaces, default is `.` |
 | `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.sym` |
