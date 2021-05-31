@@ -463,6 +463,42 @@ Further examples can be found [here][CD4CExampleModels].
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
   
+## Generator Extensions
+The class `CD4C` extends the generation possibilities provided in monticore-tuntime by GLEX.
+It is possible to describe both the method signature and the method body in a template.
+For this `CD4C` must be initialized once.
+The method `addMethod` in `CD4C` needs the class and the name of the template as parameters.
+The given template describes the signature in the first line with the call. Subsequently 
+follows the code for the generated method body.
+The class `CD4C` is located [here][CD4C].
+
+## Example 
+```
+  // Configure glex
+  glex = new GlobalExtensionManagement();
+  config = new GeneratorSetup();
+  config.setGlex(glex);
+
+  // Configure CD4C
+  cd4c = new CD4C(config);
+  
+  // add the method that is described in template "PrintMethod"
+  cd4c.addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+  
+  // generate Java-Code
+  GeneratorEngine generatorEngine = new GeneratorEngine(config);
+  final Path output = Paths.get("HelloWorld.java");
+  generatorEngine.generate("de.monticore.cd.methodtemplates.core.Class", output, clazz, printer);
+```
+The corresponding template looks like this:
+```
+${cd4c.method("public String print()")}
+{
+  System.out.println("Hello world");
+}
+```
+The corresponding test can be found [here][CD4CTest].
+
 ## Additional info
 ### Error codes
 `X` stands for any valid character
@@ -522,6 +558,8 @@ Further examples can be found [here][CD4CExampleModels].
 [CD4CLanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
 [CD4CExampleModels]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/
 [CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/prettyprint/CD4CodePrettyPrinter.java
+[CD4C]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/methodtemplates/CD4C.java
+[CD4CTest]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/java/de/monticore/cd/methodtemplates/CD4CTest.java
 
 [OOSymbols]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
 [MCCollectionTypes]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4
