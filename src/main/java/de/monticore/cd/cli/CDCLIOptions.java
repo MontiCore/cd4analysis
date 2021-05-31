@@ -78,9 +78,8 @@ public class CDCLIOptions {
 
     options.addOption(Option
         .builder().longOpt("path")
-        .hasArg().type(String.class)
-        .argName("dirlist").numberOfArgs(1)
-        .desc("Artifact path for importable symbols. It is separated by ':' (colon), default is `.`.")
+        .hasArgs()
+        .desc("Artifact path for importable symbols, space separated.")
         .build());
 
     options.addOption(Option
