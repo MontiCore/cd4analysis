@@ -463,16 +463,20 @@ Further examples can be found [here][CD4CExampleModels].
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
   
-## Generator Extensions
-The class `CD4C` extends the generation possibilities provided in monticore-tuntime by GLEX.
-It is possible to describe both the method signature and the method body in a template.
+## Generator Extensions - CD4C Infrastructure to define method signatures in templates
+The class `CD4C` extends the generation possibilities provided in 
+monticore-tuntime by GLEX.
+It is possible to describe both the method signature and the method body in a 
+template.
 For this `CD4C` must be initialized once.
-The method `addMethod` in `CD4C` needs the class and the name of the template as parameters.
-The given template describes the signature in the first line with the call. Subsequently 
-follows the code for the generated method body.
+The method `addMethod` in `CD4C` needs the class and the name of the template as
+parameters.
+The given template describes the signature in the first line with the call to 
+`cd4c`.
+Subsequently, follows the code for the generated method body.
 The class `CD4C` is located [here][CD4C].
 
-## Example 
+### Example 
 ```
   // Configure glex
   glex = new GlobalExtensionManagement();
@@ -480,10 +484,10 @@ The class `CD4C` is located [here][CD4C].
   config.setGlex(glex);
 
   // Configure CD4C
-  cd4c = new CD4C(config);
+  CD4C.init(config);
   
   // add the method that is described in template "PrintMethod"
-  cd4c.addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+  CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
   
   // generate Java-Code
   GeneratorEngine generatorEngine = new GeneratorEngine(config);
@@ -492,12 +496,149 @@ The class `CD4C` is located [here][CD4C].
 ```
 The corresponding template looks like this:
 ```
-${cd4c.method("public String print()")}
+${tc.signature()}
+${cd4c.method("public java.lang.String print()")}
+{
+  System.out.println("Hello world");
+}
+
+```
+The corresponding test can be found [here][CD4CTest].
+
+### Usage
+
+Starting from a class, the CD4C infrastructure provides methods to call a
+template, that includes a signature and the method body (as usual).
+For this, the Global Extension Manager (GLEX) is extended with the `cd4c`
+tooling components.
+
+#### Call the CD4C
+```java
+    ASTCDClass clazz = ...
+    Optional<ASTCDMethodSignature> methodSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+```
+
+The cd4c infrastructure will create the method (signature), but not
+automatically add it to the provided class. This allows the use of information
+in the class e.g., attributes or associations to create the methods' signature
+and/or the method body.
+
+A template can use the cd4c infrastructure to define a method signature as
+following:
+```freemarker
+${tc.signature()}
+${cd4c.method("public java.lang.String print()")} <#-- use cd4c to create the signature -->
 {
   System.out.println("Hello world");
 }
 ```
-The corresponding test can be found [here][CD4CTest].
+
+Example of a signature with a variable parameter list, extracted from the class.
+Here all public attributes are used to create the parameter list of the
+constructor.
+```freemarker
+${tc.signature()}
+<#assign parameter = ast.getCDAttributeList()?filter(a -> a.getModifier().isPublic())>
+${cd4c.constructor("public HelloWorldWithConstructor(" + parameter?map(a -> a.printType() + " " + a.getName())?join(", ") + ")")}
+{
+  <#list parameter as param>
+    this.${param.getName()} = ${param.getName()};
+  </#list>
+}
+```
+
+The CD4C infrastructure contains multiple ways to create methods.
+The main entry point is the CD4C class which has to be initialized before being
+used for the first time:
+```java
+GeneratorSetup setup = ...
+CD4C.init(config);
+```
+This sets the environment that should be used for generating the code.
+After initialization, the methods can be created.
+
+Create a method/constructor defined in a template resulting in a
+`ASTCDMethodSignature`:
+```java
+ASTCDClass clazz = ...
+// method
+Optional<ASTCDMethodSignature> methodSignature = 
+    CD4C.getInstance().createMethod(clazz, "de.monticore.ToString");
+// constructor
+Optional<ASTCDMethodSignature> constructorSignature = 
+    CD4C.getInstance().createConstructor(clazz, "de.monticore.ConstructorWithAllAttributes");
+```
+
+Those can then be used and added to the class or used elsewhere.
+Another option is to add the method directly to the provided class.
+This can be done using the `addX`-methods:
+```java
+ASTCDClass clazz = ...
+// method
+CD4C.getInstance().addMethod(clazz, "de.monticore.ToString");
+// constructor
+CD4C.getInstance().addConstructor(clazz, "de.monticore.ConstructorWithAllAttributes");
+```
+
+#### Add predicate/checks that handle the methods
+
+After handling the template, the resulting method is then checked with
+1. method predicate (`CD4C.getInstance()..addPredicate` or
+   `CD4C.getInstance()..addCoCo`): check if the method itself is valid (e.g.
+   unique parameter names)
+2. class predicate (`CD4C.getInstance()..addClassPredicate`): if a class would
+   be valid if the method was added (e.g. the new method does not have the exact
+   same signature as an existing method)
+
+CD4C comes with predefined predicates that can be added to the current instance
+with `CD4C.getInstance().addDefaultPredicates` and
+`CD4C.getInstance().addDefaultClassPredicate`.
+
+### Functionality
+
+The following describes the functionality of CD4C and how the different elements
+interact.
+
+#### Call to a CD4C template
+
+A CD4C template is a template that uses the CD4C infrastructure to create
+methods.
+The call to the template is only working when called from CD4C with
+`CD4C.getInstance()...` otherwise the method signature cannot be created.
+Additionally, the use of the template fails (throws an exception during run-time)
+, if there is no method signature defined in the template.
+
+When the template is valid (see above for examples) then a method signature is
+created and added to `CD4C.methodQueue`.
+This allows to call a CD4C template in another (CD4C) template.
+
+#### The `CD4CTemplateMethodHelper` class
+
+For each method that is created, a `CD4CTemplateMethodHelper` object is created
+that stores the `ASTCDMethodSignature` created from the method signature.
+
+#### Method body
+
+The method body is calculated when the template is executed/called as it is
+already processes by the freemarker engine and returned as a string.
+This leads to the fact, that the freemarker logic in the template is executed
+exactly once during the transformation of the AST and not when the generator
+is triggered to create the finished result (usually `generate.generate()`).
+This can be a problem, when the method (body) is added before necessary
+attributes or other settings are set.
+
+#### Connect method signature and body
+
+The connection of the method body and the method AST node (needed for the
+generator) is done by `CD4C.createMethodSignatureAndBody` and
+`CD4C.addMethodBody` using GLEX.
+
+#### different from "normal" template call
+
+The difference to other templates is that the CD4C templates (using the CD4C
+infrastructure) have to be executed from CD4C, otherwise the signature
+definitions can not be handled.
+The method body definition is exactly the same.
 
 ## Additional info
 ### Error codes

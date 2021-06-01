@@ -43,6 +43,7 @@ ext {
     commons_lang_version = "3.11"
     jupiter_version = "5.6.0"
     antlr_version = '4.7.1'
+    freemarker_version = "2.3.31"
 }
 
 // configure non-standard source sets
@@ -83,6 +84,7 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "commons-cli:commons-cli:$commons_cli_version"
     implementation "org.apache.commons:commons-lang3:$commons_lang_version"
+    implementation "org.freemarker:freemarker:$freemarker_version"
     testImplementation "org.antlr:antlr4-runtime:$antlr_version"
     testImplementation "junit:junit:$junit_version"
     testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
