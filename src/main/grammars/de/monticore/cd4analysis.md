@@ -76,29 +76,37 @@ Further examples can be found [here][ExampleModels].
 
 ### AST 
 - [`ASTCDDefinition`][ASTCDDefinition]
-  adds methods for easy access to `CDType`s in
+  adds methods for easy access to and modification of various 
+  elements within a CD. It e.g. allows to access available associations, 
+  classes or enums and also add such model elements.
 - [`ASTCDAssociation`][ASTCDAssociation]
-  adds a method to retreive the name of the association
+  among retrieval methods for role names, method `getPrintableName` to retreive the name of the association, etc.
 
 ## Parser for CD4Analysis
-- ([`CD4AnalysisParser`][CD4AParser])
+- [`CD4AnalysisParser`][CD4AParser]
   is extended to have additional transformations after parsing.
+  (TODO: ich hab keine Trafos gefunden. Anpassen bitte!)
 - The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] handles the
   transformation which can be done after parsing.
+  (TODO: Welche, zu welchem zweck?, müssen die manuell gestartet werden? wie?)
 
 ## Symboltable for CD4Analysis
 - [`CD4AnalysisScopesGenitorDelegator`][CD4ADelegator] handles the creation of
   all symbols of the elements in CD4A and its sublangages
-  (!the symbols are not yet linked)
+  (without linking these symbols into the symboltable)
 - [`CD4AnalysisSymbolTableCompleter`][CD4ASTCompleter] links the symbols in 
-  the   symbol table
+  the symbol table.
 - The reference to a type (e.g. the type of an attribute) is stored in a 
   [`SymTypeExpression`][SymTypeExpression].
+  (TODO: was soll das bedeuten? Es gibt keine Referenzen auf Typen, sondern eben 
+  nur Typen. Die genannte Klasse ist auch nicht in den handcoded extensions?)
 - De-/Serialization functionality for the symbol table uses the
   [`CD4AnalysisScopeDeSer`][CD4ASD] and for specific logic for serialization 
   in [`CD4AnalysisSymbol2Json`][CD4ASTP]
+  (TODO: Klasse wurde nicht gefunden, link geht ins leere)
 - CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
   all its subgrammars.
+
 - [`SymAssociation`][SymAssociation] is a class which is included in the
   symbol table and contains all information of a `CDAssociation`. It links to
   a `CDAssociationSymbol` (which only exists, when the association has a 
