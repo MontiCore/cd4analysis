@@ -110,7 +110,7 @@ wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 The CLI provides quite a number of configurable parameters. 
 These two are examples for calling  the the CLI:
 
-(TODO: Wieso heisst dieses CD Person. Oben wars noch eine Klasse! Ausserdem wäre es sinvoll das CD vorgefertigt zur Verfügung zu haben, zB per wget runterladbar?)
+(TODO: Wieso heisst dieses CD Person. Oben wars noch eine Klasse! Ausserdem wäre es sinvoll das CD vorgefertigt zur Verfügung zu haben, zB per wget runterladbar? Unten ist das für eine Datei so gemacht)
 
 ```shell
 java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s
@@ -202,7 +202,7 @@ classdiagram MyExample {
 
 Now execute the following command:
 ```
-java -jar CDCLI.jar -i src/src/MyExample.cd
+java -jar CDCLI.jar -i src/MyExample.cd
 ```
 
 You may notice that the CLI tool prints the following text to the console:
@@ -215,7 +215,7 @@ The contents of the input CD artifact can also be piped to the CLI tool.
 For trying this out, execute the following command:
 
 ```shell
-cat src/src/MyExample.cd | java -jar CDCLI.jar --stdin
+cat src/MyExample.cd | java -jar CDCLI.jar --stdin
 ``` 
 The output is the same as for the previous command.
 
@@ -231,7 +231,7 @@ Using the option without any arguments pretty-prints the models contained in the
 input files to the console:
 
 ```shell
-java -jar CDCLI.jar -i src/src/MyExample.cd -pp
+java -jar CDCLI.jar -i src/MyExample.cd -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
@@ -250,7 +250,7 @@ It is possible to pretty-print the models contained in the input file to an
 output file (here: `PPExample.cd`):
 
 ```shell
-java -jar CDCLI.jar -i src/src/MyExample.cd -pp target/PPExample.cd
+java -jar CDCLI.jar -i src/MyExample.cd -pp target/PPExample.cd
 ```
 
 ### Step 3: Storing Symbols
@@ -270,7 +270,7 @@ input model in the file `{CDName}.sym`.
 For storing the symbol file for `src/MyExample.cd`, we execute the following command
 (the context condition checks require using the path option):
 ```shell
-java -jar CDCLI.jar -i src/src/MyExample.cd -s
+java -jar CDCLI.jar -i src/MyExample.cd -s
 ```
 The CLI tool produces the file `MyExample.sym`, which can now be
 imported by other models, e.g., by models that need to
