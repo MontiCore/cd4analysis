@@ -6,17 +6,23 @@
 
 We provide two versions of UML class diagrams:
 - [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data
-  structures with classes, attributes, associations, enumerations.
+  structures with classes, attributes, associations, and enumerations. 
+  It is well suited for data modelling as e.g. needed in requirements engineering 
+  activities.
 - [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods
   and constructors.
+  It thus allows to attach behavioral aspects and to modell the APIs of classes.
 
-These are composed of several component grammars for parts of the CDs:
+Both languages are composed of several component languages 
+that describe parts of the CD languages:
 - [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It
-  contains the root compilation unit, classes, and attributes.
-- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and
-  enums.
-- [**CDAssociation**][CDAssocGrammar] defines associations and roles.
-- [**CD4CodeBasis**][CD4CBasisGrammar] defines methods and parameters.
+  contains the root compilation unit, and modelling constructs for 
+  classes, and attributes.
+- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with 
+  modelling constructs for interfaces and enums.
+- [**CDAssociation**][CDAssocGrammar] allows to model associations and roles.
+- [**CD4CodeBasis**][CD4CBasisGrammar] adds the behavioral modelling constructs
+  for methods and their parameters.
 
 # CD4Analysis
 
@@ -49,20 +55,20 @@ classdiagram MyLife {
 ```
 
 The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
-- Definition of two classes `Person` and `Student`
-- `Person` is an abstract class
+- It defines two classes `Person` and `Student`.
+- `Person` is an abstract class.
 - `Student` extends `Person` (like in Java); interfaces would also be 
   possible.
-- Classes contain attributes, which have a type and a name
-- Available types are basic types (from Java), imported types (like `Date`),
-  and predefined forms of generic types (like `List`).
+- Classes contain attributes, which have a type and a name.
+- Available types are basic types (like in Java), imported types (like `Date`),
+  and predefined forms of generic types (like `List<.>`).
 - Associations and compositions are defined between two classes,
   can have a name, a navigation information (e.g. `<->`), role names on both
   sides, multiplicities (like `[0..1]`) and certain predefined 
   tags/stereotypes (like `{ordered}`).
 - Both, association and compositions can be qualified, for example by 
   `[String]`.
-- Packages can be used to structure the model
+- Packages (like in Java) can be used to organize the model.
 
 Further examples can be found [here][ExampleModels].
 
