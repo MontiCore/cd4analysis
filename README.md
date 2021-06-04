@@ -1,11 +1,13 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
 
+<!-- Beta-version: This is intended to become a MontiCore stable explanation. -->
+
 # Class Diagram Languages: CD4A, CD4C
 
 [[_TOC_]]
 
 This introduction is 
-intended for  *modelers* who use the class diagram (CD)
+intended for *modelers* who use the class diagram (CD)
 languages. We also provide a 
 [detailed documentation of CD languages](src/main/grammars/de/monticore/cd4analysis.md). 
 for *language engineers* using or
@@ -34,8 +36,8 @@ import MyBasics;
 classdiagram MyLife { 
   abstract class Person {
     int age;
-    java.util.Date birthday;
-    java.util.List<java.lang.String> nickNames;
+    Date birthday;
+    List<java.lang.String> nickNames;
   }
   class PhoneNumber;
   package uni {
@@ -51,23 +53,26 @@ classdiagram MyLife {
   association [0..1] Person (parent) <-> (child) monticore.Person [*];
 }
 ```
+
+(TODO: java.util.Date ersetzt durch Date ; prüfen, ob das stimmt)
+
 The CD is contained in the package `monticore` and is called `MyLife`.
 The example CD shows
-- the definition of the two classes `Person` and `Student`.
-- the abstract class `Person`.
+- the definition of the two classes `Person` and `Student`,
+- the abstract class `Person`,
 - the class `Student` extending the class `Person` (like in Java); interfaces
-  are also be possible.
-- classes containing attributes, which have a type and a name.
+  are also be possible,
+- classes containing attributes, which have a type and a name,
 - available default types, which are basic types (from Java), imported types 
-  (like `java.util.Date`), and predefined forms of generic types (like 
-  `java.util.List`).
+  (like `Date`), and predefined forms of generic types (like 
+  `List<.>`),
 - associations and compositions that are defined between two classes and
   can have a name, a navigation information (e.g. `<->`), role names on both
   sides, multiplicities (like `[0..1]`) and certain predefined 
   tags/stereotypes 
-  (like `{ordered}`).
+  (like `{ordered}`),
 - that both, association and compositions, can be qualified for example by 
-  `[java.lang.String]`.
+  `[java.lang.String]`, and
 - that packages can be used to structure the classes contained in the model.
 
 Further examples can be found [here][ExampleModels].
