@@ -182,13 +182,15 @@ symbol table, and then checks whether the model satisfies all context
 conditions. Only errors or success are printed.
 
 For trying this out, copy the `CDCLI.jar` into a directory of your 
-choice. Then create a text file `Example.cd` in a `src` subdirectory of the
+choice. Then create a text file `src/MyExample.cd` in a `src` subdirectory of the
 directory where `CDCLI.jar` is located containing e.g. the following simple CD 
 (please note that, like in Java, filename and modelname in the file have to be
 the same):
 
+(TODO: src/MyExample.cd als downloadable file angeben)
+
 ```
-classdiagram Example {
+classdiagram MyExample {
   class Person {
     int age;
     java.lang.String surname;
@@ -200,20 +202,20 @@ classdiagram Example {
 
 Now execute the following command:
 ```
-java -jar CDCLI.jar -i src/Example.cd
+java -jar CDCLI.jar -i src/src/MyExample.cd
 ```
 
 You may notice that the CLI tool prints the following text to the console:
 ```
-Successfully parsed Example
-Successfully checked the CoCos for Example
+Successfully parsed src/MyExample.cd
+Successfully checked the CoCos for class diagram MyExample
 ```
 
 The contents of the input CD artifact can also be piped to the CLI tool.
 For trying this out, execute the following command:
 
 ```shell
-cat src/Example.cd | java -jar CDCLI.jar --stdin
+cat src/src/MyExample.cd | java -jar CDCLI.jar --stdin
 ``` 
 The output is the same as for the previous command.
 
@@ -229,12 +231,12 @@ Using the option without any arguments pretty-prints the models contained in the
 input files to the console:
 
 ```shell
-java -jar CDCLI.jar -i src/Example.cd -pp
+java -jar CDCLI.jar -i src/src/MyExample.cd -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
 ```
-classdiagram Example {
+classdiagram MyExample {
   class Person {
     int age;
     java.lang.String surname;
@@ -248,12 +250,12 @@ It is possible to pretty-print the models contained in the input file to an
 output file (here: `PPExample.cd`):
 
 ```shell
-java -jar CDCLI.jar -i src/Example.cd -pp target/PPExample.cd
+java -jar CDCLI.jar -i src/src/MyExample.cd -pp target/PPExample.cd
 ```
 
 ### Step 3: Storing Symbols
 
-When the symbols of the `Example.cd` model shall be available elsewhere,
+When the symbols of the `src/MyExample.cd` model shall be available elsewhere,
 they can be stored.
 The symbol file will contain information about the types and associations
 defined in the CD.
@@ -265,28 +267,28 @@ Providing the file path is optional.
 If no file path is provided, the CLI tool stores the symbol table of the
 input model in the file `{CDName}.sym`.
 
-For storing the symbol file for `Example.cd`, we execute the following command
+For storing the symbol file for `src/MyExample.cd`, we execute the following command
 (the context condition checks require using the path option):
 ```shell
-java -jar CDCLI.jar -i src/Example.cd -s
+java -jar CDCLI.jar -i src/src/MyExample.cd -s
 ```
-The CLI tool produces the file `Example.sym`, which can now be
+The CLI tool produces the file `MyExample.sym`, which can now be
 imported by other models, e.g., by models that need to
-use some of the types defined in the CD `Example`. The tool additionally
+use some of the types defined in the CD `MyExample`. The tool additionally
 indicates the correct generation by its outputs:
 ```
-Successfully parsed Example
-Successfully checked the CoCos for Example
-Creation of symbol table src/Example.sym successful
+Successfully parsed src/MyExample
+Successfully checked the CoCos for MyExample
+Creation of symbol table src/MyExample.sym successful
 ```
 The symbol file contains a JSON representation of the symbols defined in the CD,
 which are type, association, interface, attribute and method symbols.
 
-For storing the symbol file of `Example.cd` in the file `symbols/Example.sym`,
+For storing the symbol file of `src/MyExample.cd` in the file `symbols/MyExample.sym`,
 for example, execute the following command (again, the implicit context 
 condition checks require using the model path option):
 ```shell
-java -jar CDCLI.jar -i Example.cd -s symbols/Example.sym
+java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.sym
 ```
 
 ### Step 4: Adding `FieldSymbol`s corresponding to association roles
@@ -303,7 +305,7 @@ Form 1: For each of the `CDRoleSymbol`s add a `FieldSymbol` in the source class
    that always allow for the navigation in both directions.
 These additional field symbols are stored with:
 ```shell
-java -jar CDCLI.jar -i Example.cd -s symbols/Example.sym --fieldfromrole all
+java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.sym --fieldfromrole all
 ```
 
 * two additional `FieldSymbol`s were stored for both sides of the association
@@ -312,7 +314,7 @@ Form 2:  `FieldSymbol`s are added only for navigable roles.
   This can be used in implementation oriented languages that have to cope
   with the actual implementation restrictions:
 ```shell
-java -jar CDCLI.jar -i Example.cd -s symbols/Example.sym --fieldfromrole navigable
+java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.sym --fieldfromrole navigable
 ```
 * only one additional `FieldSymbol` is stored for the navigable Role `friends`
 
