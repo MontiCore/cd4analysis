@@ -103,11 +103,14 @@ Or you can use `wget` to download the latest version in your working directory:
 ```shell
 wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
+(TODO: dieses wget funktioniert nicht)
 
 ### Parameters of the CLI
 
 The CLI provides quite a number of configurable parameters. 
 These two are examples for calling  the the CLI:
+
+(TODO: Wieso heisst dieses CD Person. Oben wars noch eine Klasse! Ausserdem wäre es sinvoll das CD vorgefertigt zur Verfügung zu haben, zB per wget runterladbar?)
 
 ```shell
 java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s
