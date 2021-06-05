@@ -77,6 +77,8 @@ public class CD4C {
     }
   }
 
+// TODO: Warum ist dies static, checkInitialized aber nicht?
+//
   public static boolean isInitialized() {
     return getInstance().isInitialized;
   }
@@ -87,6 +89,7 @@ public class CD4C {
    */
   protected void checkInitialized() {
     if (!isInitialized()) {
+// TODO: wie immer 0x vorne bei Fehlermeldungen
       final String error = "11000: CD4C is not yet initialized";
       Log.error(error);
       throw new RuntimeException(error + ", please initialize with `CD4C.init(setup)`");
@@ -145,6 +148,7 @@ public class CD4C {
     checkInitialized();
     final Optional<ASTCDMethodSignature> method = createMethod(clazz, templateName, arguments);
     if (!method.isPresent()) {
+// TODO: 0x ... hier und ueberall
       Log.error("11010: There was no method created in the template '" + templateName + "'");
       return;
     }

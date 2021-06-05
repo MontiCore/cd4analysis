@@ -77,6 +77,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
+    // testing createMethod
     Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertTrue(methSignature.isPresent());
@@ -100,6 +101,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
+    // testing addMethod, .addConstructor
     // add the method that is described in template "PrintMethod"
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
     // add the constructor that is described in template "DefaultConstructor"
@@ -121,6 +123,7 @@ public class CD4CTest extends CD4CodeTestBasis {
         .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
         .build();
 
+    //  testing .createAttribute
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
@@ -218,7 +221,7 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     CD4C.getInstance().addDefaultPredicates();
 
-    // try to create a print method that already exists
+    // try to create a method with unkown type
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownReturnType");
 
     assertEquals(3, Log.getFindingsCount());
