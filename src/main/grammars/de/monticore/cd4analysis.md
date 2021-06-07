@@ -91,9 +91,6 @@ Further examples can be found [here][ExampleModels].
   (TODO: Welche, zu welchem zweck?, müssen die manuell gestartet werden? wie?)
 
 ## Symboltable for CD4Analysis
-- [`CD4AnalysisScopesGenitorDelegator`][CD4ADelegator] handles the creation of
-  all symbols of the elements in CD4A and its sublangages
-  (without linking these symbols into the symboltable)
 - [`CD4AnalysisSymbolTableCompleter`][CD4ASTCompleter] links the symbols in 
   the symbol table.
 - The reference to a type (e.g. the type of an attribute) is stored in a 
@@ -101,7 +98,7 @@ Further examples can be found [here][ExampleModels].
   (TODO: was soll das bedeuten? Es gibt keine Referenzen auf Typen, sondern eben 
   nur Typen. Die genannte Klasse ist auch nicht in den handcoded extensions?)
 - De-/Serialization functionality for the symbol table uses the
-  [`CD4AnalysisScopeDeSer`][CD4ASD] and for specific logic for serialization 
+  [`CD4AnalysisDeSer`][CD4ASD] and for specific logic for serialization 
   in [`CD4AnalysisSymbol2Json`][CD4ASTP]
   (TODO: Klasse wurde nicht gefunden, link geht ins leere)
 - CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
@@ -325,7 +322,7 @@ diagram should not automatically be invalid if an inherited class changes.
 In code generation (using CD4Code) on the other hand, access methods are
 generated for attributes of classes and therefore are problematic with the
 method parameters and return types (see 
-[covariance and contravariance](https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)))
+[covariance and contravariance](https://tinyurl.com/2n4rw87j))
 .
 
 ## Transformations
@@ -372,7 +369,7 @@ method parameters and return types (see
   control concerning the types that should be available.
 
 ### PrettyPrinter
-- [`CD4AnalysisPrettyPrinter`][PrettyPrinter] contains a basic pretty printer
+- [`CD4AnalysisFullPrettyPrinter`][PrettyPrinter] contains a basic pretty printer
   for CD4A
 - Externally available [PlantUML](https://plantuml.com/en/class-diagram)
   printer can be used to upload the model to plant uml and receive a graphical
@@ -458,9 +455,7 @@ The example shows a section of the
 Further examples can be found [here][CD4CExampleModels].
 
 ## Handwritten Extensions
-- CD4Code contains some handwritten extension (similar to CD4Analysis) like:
-  - [`CD4CodePrettyPrinterDelegator`][CD4CodePrinter]
-  - [`CD4CodeSymbolTableCreatorDelegator`][CD4CodeSTC]
+- CD4Code contains some handwritten extension (similar to CD4Analysis) like [`CD4CodeFullPrettyPrinter`][CD4CodePrinter].
 
 ## Usage
 - CD4Code  can play its role as intermediate language (especially it's AST)
@@ -687,12 +682,10 @@ The method body definition is exactly the same.
 [CDAssociationDirectCompositionTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationDirectCompositionTrafo.java
 [CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromAllRoles.java
 [CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
-[CD4ADelegator]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalyisScopesGenitorDelegator.java
 [CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
-[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisScopeDeSer.java
+[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisDeSer.java
 [CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
 [CD4ATC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/typescalculator/DeriveSymTypeOfCD4Analysis.java
-[CD4ASTCD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreatorDelegator.java
 [SymTypeExpression]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
 [SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
@@ -702,17 +695,15 @@ The method body definition is exactly the same.
 [LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
 [ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/master/src/test/resources/de/monticore/cd4analysis/
 [ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
-[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisPrettyPrinter.java
+[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisFullPrettyPrinter.java
 [ASTCDType]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/_ast/ASTCDType.java
-[CD4ASTC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreator.java
 [BuiltInTypes]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/BuiltInTypes.java
 
 [CD4ACoCos]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/cocos/CD4AnalysisCoCosDelegator.java
 [CD4AParser]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisParser.java
-[CD4CodeSTC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/_symboltable/CD4CodeSymbolTableCreator.java
 [CD4CLanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
 [CD4CExampleModels]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/
-[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/prettyprint/CD4CodePrettyPrinter.java
+[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/prettyprint/CD4CodeFullPrettyPrinter.java
 [CD4C]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/methodtemplates/CD4C.java
 [CD4CTest]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/java/de/monticore/cd/methodtemplates/CD4CTest.java
 
