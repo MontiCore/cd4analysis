@@ -40,6 +40,8 @@ public class CD4CTest extends CD4CodeTestBasis {
   public void init() {
     Log.init();
     Log.enableFailQuick(false);
+    Log.clearFindings();
+    CD4C.reset();
 
     // Configure glex
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
