@@ -16,6 +16,7 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +39,7 @@ public class CD4CTest extends CD4CodeTestBasis {
 
   @Before
   public void init() {
-    Log.init();
+    LogStub.init();
     Log.enableFailQuick(false);
     Log.clearFindings();
     CD4C.reset();
