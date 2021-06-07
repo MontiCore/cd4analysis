@@ -8,7 +8,7 @@ ${tc.signature("printer")}
 <#--${ast.printAnnotation()}
 ${ast.printModifier()}--> class ${ast.getName()}
 
-<#-- add additional methods
+<#-- add additional methods -->
 ${cd4c.addMethod(ast, "de.monticore.cd.methodtemplates.Counter")};
 
 {
