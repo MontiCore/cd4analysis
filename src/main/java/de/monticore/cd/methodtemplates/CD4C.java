@@ -89,8 +89,7 @@ public class CD4C {
    */
   protected void checkInitialized() {
     if (!isInitialized()) {
-// TODO: wie immer 0x vorne bei Fehlermeldungen
-      final String error = "11000: CD4C is not yet initialized";
+      final String error = "0x11000: CD4C is not yet initialized";
       Log.error(error);
       throw new RuntimeException(error + ", please initialize with `CD4C.init(setup)`");
     }
@@ -148,12 +147,11 @@ public class CD4C {
     checkInitialized();
     final Optional<ASTCDMethodSignature> method = createMethod(clazz, templateName, arguments);
     if (!method.isPresent()) {
-// TODO: 0x ... hier und ueberall
-      Log.error("11010: There was no method created in the template '" + templateName + "'");
+      Log.error("0x11010: There was no method created in the template '" + templateName + "'");
       return;
     }
     if (this.classPredicates.stream().anyMatch(p -> !p.test(clazz, method.get()))) {
-      Log.error("11011: A check for the class method failed for method '" + method.get().getName() + "'");
+      Log.error("0x11011: A check for the class method failed for method '" + method.get().getName() + "'");
     }
     clazz.addCDMember(method.get());
   }
@@ -215,11 +213,11 @@ public class CD4C {
     checkInitialized();
     final Optional<ASTCDMethodSignature> method = createConstructor(clazz, templateName, arguments);
     if (!method.isPresent()) {
-      Log.error("11020: There was no constructor created in the template '" + templateName + "'");
+      Log.error("0x11020: There was no constructor created in the template '" + templateName + "'");
       return;
     }
     if (this.classPredicates.stream().anyMatch(p -> !p.test(clazz, method.get()))) {
-      Log.error("11021: A check for the class method failed for method '" + method.get().getName() + "'");
+      Log.error("0x11021: A check for the class method failed for method '" + method.get().getName() + "'");
     }
     clazz.addCDMember(method.get());
   }
@@ -268,7 +266,7 @@ public class CD4C {
   protected Optional<CD4CTemplateMethodHelper> addMethodBody(String body) {
     checkInitialized();
     if (methodQueue.isEmpty()) {
-      throw new RuntimeException("110A0: cannot add method body: no previous method present");
+      throw new RuntimeException("0x110A0: cannot add method body: no previous method present");
     }
 
     final CD4CTemplateMethodHelper methodHelper = methodQueue.pop();
@@ -327,7 +325,7 @@ public class CD4C {
         return true;
       }
       else {
-        Log.error("110C0: The following types of the method signature (" +
+        Log.error("0x110C0: The following types of the method signature (" +
             prettyPrinter.prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved '"
             + Joiners.COMMA.join(unknownTypes) + "'.");
         return false;
@@ -338,7 +336,7 @@ public class CD4C {
       if (m instanceof ASTCDMethod) {
         final ASTCDMethod method = (ASTCDMethod) m;
         if (!new DeriveSymTypeOfCD4Code().calculateType(method.getMCReturnType()).isPresent()) {
-          Log.error("110C1: The return type '" + prettyPrinter.prettyprint(method.getMCReturnType()) + "' of the method signature (" +
+          Log.error("0x110C1: The return type '" + prettyPrinter.prettyprint(method.getMCReturnType()) + "' of the method signature (" +
               prettyPrinter.prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved.");
           return false;
         }
@@ -379,7 +377,7 @@ public class CD4C {
             return m.getName().equals(cm.getName()) &&
                 Iterables.elementsEqual(parameterTypes, parameter);
           })) {
-        Log.error("110C8: The class '" + c.getName() + "' already has a method named '" + m.getName() + "'");
+        Log.error("0x110C8: The class '" + c.getName() + "' already has a method named '" + m.getName() + "'");
         return false;
       }
       return true;
