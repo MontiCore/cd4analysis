@@ -8,10 +8,9 @@ import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
 import org.junit.Before;
 
@@ -34,7 +33,7 @@ public class CDAssociationTestBasis extends TestBasis {
     final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill
         .globalScope();
     globalScope.clear();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     if (globalScope instanceof CD4AnalysisGlobalScope) {
       ((CD4AnalysisGlobalScope) globalScope).addBuiltInTypes();
     }

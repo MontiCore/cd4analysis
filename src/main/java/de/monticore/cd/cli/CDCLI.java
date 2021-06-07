@@ -25,7 +25,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -193,7 +193,7 @@ public class CDCLI {
 
     // create a symbol table with provided model paths
     String[] modelPath = cmd.getOptionValue("path", ".").split(":");
-    createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
+    createSymTab(useBuiltInTypes, new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
 
     // transformations that need an already created symbol table
     {
@@ -290,10 +290,10 @@ public class CDCLI {
     modelName = ast.getCDDefinition().getName();
   }
 
-  protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
+  protected void createSymTab(boolean useBuiltInTypes, MCPath symbolPath) {
     final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
-    globalScope.setModelPath(modelPath);
+    globalScope.setSymbolPath(symbolPath);
     if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
       ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
     }
