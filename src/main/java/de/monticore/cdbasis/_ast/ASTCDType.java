@@ -10,6 +10,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -113,6 +114,10 @@ public interface ASTCDType extends ASTCDTypeTOP {
 
   default List<ASTCDMethod> getCDMethodList() {
     return getCDMemberList(CDMemberVisitor.Options.METHODS);
+  }
+
+  default List<ASTCDMethodSignature> getCDMethodSignatureList() {
+    return getCDMemberList(CDMemberVisitor.Options.METHOD_SIGNATURES);
   }
 
   default void setCDMethodList(List<ASTCDMethod> methodList) {

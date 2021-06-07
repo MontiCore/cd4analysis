@@ -6,17 +6,23 @@
 
 We provide two versions of UML class diagrams:
 - [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data
-  structures with classes, attributes, associations, enumerations.
+  structures with classes, attributes, associations, and enumerations. 
+  It is well suited for data modelling as e.g. needed in requirements engineering 
+  activities.
 - [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods
   and constructors.
+  It thus allows to attach behavioral aspects and to modell the APIs of classes.
 
-These are composed of several component grammars for parts of the CDs:
+Both languages are composed of several component languages 
+that describe parts of the CD languages:
 - [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It
-  contains the root compilation unit, classes, and attributes.
-- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and
-  enums.
-- [**CDAssociation**][CDAssocGrammar] defines associations and roles.
-- [**CD4CodeBasis**][CD4CBasisGrammar] defines methods and parameters.
+  contains the root compilation unit, and modelling constructs for 
+  classes, and attributes.
+- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with 
+  modelling constructs for interfaces and enums.
+- [**CDAssociation**][CDAssocGrammar] allows to model associations and roles.
+- [**CD4CodeBasis**][CD4CBasisGrammar] adds the behavioral modelling constructs
+  for methods and their parameters.
 
 # CD4Analysis
 
@@ -49,20 +55,20 @@ classdiagram MyLife {
 ```
 
 The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
-- Definition of two classes `Person` and `Student`
-- `Person` is an abstract class
+- It defines two classes `Person` and `Student`.
+- `Person` is an abstract class.
 - `Student` extends `Person` (like in Java); interfaces would also be 
   possible.
-- Classes contain attributes, which have a type and a name
-- Available types are basic types (from Java), imported types (like `Date`),
-  and predefined forms of generic types (like `List`).
+- Classes contain attributes, which have a type and a name.
+- Available types are basic types (like in Java), imported types (like `Date`),
+  and predefined forms of generic types (like `List<.>`).
 - Associations and compositions are defined between two classes,
   can have a name, a navigation information (e.g. `<->`), role names on both
   sides, multiplicities (like `[0..1]`) and certain predefined 
   tags/stereotypes (like `{ordered}`).
 - Both, association and compositions can be qualified, for example by 
   `[String]`.
-- Packages can be used to structure the model
+- Packages (like in Java) can be used to organize the model.
 
 Further examples can be found [here][ExampleModels].
 
@@ -70,29 +76,37 @@ Further examples can be found [here][ExampleModels].
 
 ### AST 
 - [`ASTCDDefinition`][ASTCDDefinition]
-  adds methods for easy access to `CDType`s in
+  adds methods for easy access to and modification of various 
+  elements within a CD. It e.g. allows to access available associations, 
+  classes or enums and also add such model elements.
 - [`ASTCDAssociation`][ASTCDAssociation]
-  adds a method to retreive the name of the association
+  among retrieval methods for role names, method `getPrintableName` to retreive the name of the association, etc.
 
 ## Parser for CD4Analysis
-- ([`CD4AnalysisParser`][CD4AParser])
+- [`CD4AnalysisParser`][CD4AParser]
   is extended to have additional transformations after parsing.
+  (TODO: ich hab keine Trafos gefunden. Anpassen bitte!)
 - The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] handles the
   transformation which can be done after parsing.
+  (TODO: Welche, zu welchem zweck?, müssen die manuell gestartet werden? wie?)
 
 ## Symboltable for CD4Analysis
 - [`CD4AnalysisScopesGenitorDelegator`][CD4ADelegator] handles the creation of
   all symbols of the elements in CD4A and its sublangages
-  (!the symbols are not yet linked)
+  (without linking these symbols into the symboltable)
 - [`CD4AnalysisSymbolTableCompleter`][CD4ASTCompleter] links the symbols in 
-  the   symbol table
+  the symbol table.
 - The reference to a type (e.g. the type of an attribute) is stored in a 
   [`SymTypeExpression`][SymTypeExpression].
+  (TODO: was soll das bedeuten? Es gibt keine Referenzen auf Typen, sondern eben 
+  nur Typen. Die genannte Klasse ist auch nicht in den handcoded extensions?)
 - De-/Serialization functionality for the symbol table uses the
   [`CD4AnalysisScopeDeSer`][CD4ASD] and for specific logic for serialization 
   in [`CD4AnalysisSymbol2Json`][CD4ASTP]
+  (TODO: Klasse wurde nicht gefunden, link geht ins leere)
 - CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
   all its subgrammars.
+
 - [`SymAssociation`][SymAssociation] is a class which is included in the
   symbol table and contains all information of a `CDAssociation`. It links to
   a `CDAssociationSymbol` (which only exists, when the association has a 
@@ -463,16 +477,20 @@ Further examples can be found [here][CD4CExampleModels].
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
   
-## Generator Extensions
-The class `CD4C` extends the generation possibilities provided in monticore-tuntime by GLEX.
-It is possible to describe both the method signature and the method body in a template.
+## Generator Extensions - CD4C Infrastructure to define method signatures in templates
+The class `CD4C` extends the generation possibilities provided in 
+monticore-tuntime by GLEX.
+It is possible to describe both the method signature and the method body in a 
+template.
 For this `CD4C` must be initialized once.
-The method `addMethod` in `CD4C` needs the class and the name of the template as parameters.
-The given template describes the signature in the first line with the call. Subsequently 
-follows the code for the generated method body.
+The method `addMethod` in `CD4C` needs the class and the name of the template as
+parameters.
+The given template describes the signature in the first line with the call to 
+`cd4c`.
+Subsequently, follows the code for the generated method body.
 The class `CD4C` is located [here][CD4C].
 
-## Example 
+### Example 
 ```
   // Configure glex
   glex = new GlobalExtensionManagement();
@@ -480,10 +498,10 @@ The class `CD4C` is located [here][CD4C].
   config.setGlex(glex);
 
   // Configure CD4C
-  cd4c = new CD4C(config);
+  CD4C.init(config);
   
   // add the method that is described in template "PrintMethod"
-  cd4c.addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+  CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
   
   // generate Java-Code
   GeneratorEngine generatorEngine = new GeneratorEngine(config);
@@ -492,12 +510,149 @@ The class `CD4C` is located [here][CD4C].
 ```
 The corresponding template looks like this:
 ```
-${cd4c.method("public String print()")}
+${tc.signature()}
+${cd4c.method("public java.lang.String print()")}
+{
+  System.out.println("Hello world");
+}
+
+```
+The corresponding test can be found [here][CD4CTest].
+
+### Usage
+
+Starting from a class, the CD4C infrastructure provides methods to call a
+template, that includes a signature and the method body (as usual).
+For this, the Global Extension Manager (GLEX) is extended with the `cd4c`
+tooling components.
+
+#### Call the CD4C
+```java
+    ASTCDClass clazz = ...
+    Optional<ASTCDMethodSignature> methodSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+```
+
+The cd4c infrastructure will create the method (signature), but not
+automatically add it to the provided class. This allows the use of information
+in the class e.g., attributes or associations to create the methods' signature
+and/or the method body.
+
+A template can use the cd4c infrastructure to define a method signature as
+following:
+```freemarker
+${tc.signature()}
+${cd4c.method("public java.lang.String print()")} <#-- use cd4c to create the signature -->
 {
   System.out.println("Hello world");
 }
 ```
-The corresponding test can be found [here][CD4CTest].
+
+Example of a signature with a variable parameter list, extracted from the class.
+Here all public attributes are used to create the parameter list of the
+constructor.
+```freemarker
+${tc.signature()}
+<#assign parameter = ast.getCDAttributeList()?filter(a -> a.getModifier().isPublic())>
+${cd4c.constructor("public HelloWorldWithConstructor(" + parameter?map(a -> a.printType() + " " + a.getName())?join(", ") + ")")}
+{
+  <#list parameter as param>
+    this.${param.getName()} = ${param.getName()};
+  </#list>
+}
+```
+
+The CD4C infrastructure contains multiple ways to create methods.
+The main entry point is the CD4C class which has to be initialized before being
+used for the first time:
+```java
+GeneratorSetup setup = ...
+CD4C.init(config);
+```
+This sets the environment that should be used for generating the code.
+After initialization, the methods can be created.
+
+Create a method/constructor defined in a template resulting in a
+`ASTCDMethodSignature`:
+```java
+ASTCDClass clazz = ...
+// method
+Optional<ASTCDMethodSignature> methodSignature = 
+    CD4C.getInstance().createMethod(clazz, "de.monticore.ToString");
+// constructor
+Optional<ASTCDMethodSignature> constructorSignature = 
+    CD4C.getInstance().createConstructor(clazz, "de.monticore.ConstructorWithAllAttributes");
+```
+
+Those can then be used and added to the class or used elsewhere.
+Another option is to add the method directly to the provided class.
+This can be done using the `addX`-methods:
+```java
+ASTCDClass clazz = ...
+// method
+CD4C.getInstance().addMethod(clazz, "de.monticore.ToString");
+// constructor
+CD4C.getInstance().addConstructor(clazz, "de.monticore.ConstructorWithAllAttributes");
+```
+
+#### Add predicate/checks that handle the methods
+
+After handling the template, the resulting method is then checked with
+1. method predicate (`CD4C.getInstance()..addPredicate` or
+   `CD4C.getInstance()..addCoCo`): check if the method itself is valid (e.g.
+   unique parameter names)
+2. class predicate (`CD4C.getInstance()..addClassPredicate`): if a class would
+   be valid if the method was added (e.g. the new method does not have the exact
+   same signature as an existing method)
+
+CD4C comes with predefined predicates that can be added to the current instance
+with `CD4C.getInstance().addDefaultPredicates` and
+`CD4C.getInstance().addDefaultClassPredicate`.
+
+### Functionality
+
+The following describes the functionality of CD4C and how the different elements
+interact.
+
+#### Call to a CD4C template
+
+A CD4C template is a template that uses the CD4C infrastructure to create
+methods.
+The call to the template is only working when called from CD4C with
+`CD4C.getInstance()...` otherwise the method signature cannot be created.
+Additionally, the use of the template fails (throws an exception during run-time)
+, if there is no method signature defined in the template.
+
+When the template is valid (see above for examples) then a method signature is
+created and added to `CD4C.methodQueue`.
+This allows to call a CD4C template in another (CD4C) template.
+
+#### The `CD4CTemplateMethodHelper` class
+
+For each method that is created, a `CD4CTemplateMethodHelper` object is created
+that stores the `ASTCDMethodSignature` created from the method signature.
+
+#### Method body
+
+The method body is calculated when the template is executed/called as it is
+already processes by the freemarker engine and returned as a string.
+This leads to the fact, that the freemarker logic in the template is executed
+exactly once during the transformation of the AST and not when the generator
+is triggered to create the finished result (usually `generate.generate()`).
+This can be a problem, when the method (body) is added before necessary
+attributes or other settings are set.
+
+#### Connect method signature and body
+
+The connection of the method body and the method AST node (needed for the
+generator) is done by `CD4C.createMethodSignatureAndBody` and
+`CD4C.addMethodBody` using GLEX.
+
+#### different from "normal" template call
+
+The difference to other templates is that the CD4C templates (using the CD4C
+infrastructure) have to be executed from CD4C, otherwise the signature
+definitions can not be handled.
+The method body definition is exactly the same.
 
 ## Additional info
 ### Error codes
@@ -575,4 +730,3 @@ The corresponding test can be found [here][CD4CTest].
 * [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
-

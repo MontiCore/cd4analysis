@@ -13,6 +13,8 @@ import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
@@ -70,6 +72,13 @@ public class DeriveSymTypeOfCD4Code
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
+    reset();
+    node.accept(typesScopeHelper);
+    node.accept(getTraverser());
+    return getResult();
+  }
+
+  public Optional<SymTypeExpression> calculateType(ASTMCReturnType node) {
     reset();
     node.accept(typesScopeHelper);
     node.accept(getTraverser());

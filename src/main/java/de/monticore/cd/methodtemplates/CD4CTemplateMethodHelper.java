@@ -3,7 +3,9 @@
 package de.monticore.cd.methodtemplates;
 
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.IOException;
@@ -13,11 +15,20 @@ import java.util.Optional;
 public class CD4CTemplateMethodHelper {
   protected Optional<ASTCDMethodSignature> astcdMethod = Optional.empty();
 
+  /**
+   * get the current method we are working on
+   */
   public Optional<ASTCDMethodSignature> getMethod() {
     return astcdMethod;
   }
 
+  /**
+   * create a {@link de.monticore.cd4codebasis._ast.ASTCDMethod} from the signature
+   *
+   * @param methodSignature the (textual/syntactical) method signature
+   */
   public void method(String methodSignature) {
+    // if the signature has no semicolon, add one (needed because of the concrete syntax parser)
     if (!methodSignature.endsWith(";")) {
       methodSignature += ";";
     }
@@ -25,37 +36,30 @@ public class CD4CTemplateMethodHelper {
     try {
       this.astcdMethod = new CD4CodeParser()
           .parseCDMethod(new StringReader(methodSignature))
-          .map(e -> e); // needed because we need Optional<ASTCDMethodSignature> and not Optional<ASTCDMethod>
+          .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not Optional<ASTCDMethod>
     }
     catch (IOException e) {
-      Log.error("11010: can't parse method signature '" + methodSignature + "': ", e);
-      return;
+      Log.error("12000: can't parse method signature '" + methodSignature + "': ", e);
     }
-
-    check();
   }
 
+  /**
+   * create a {@link de.monticore.cd4codebasis._ast.ASTCDConstructor} from the signature
+   *
+   * @param constructorSignature the (textual/syntactical) constructor signature
+   */
   public void constructor(String constructorSignature) {
+    // if the signature has no semicolon, add one (needed because of the concrete syntax parser)
     if (!constructorSignature.endsWith(";")) {
       constructorSignature += ";";
     }
     try {
       this.astcdMethod = new CD4CodeParser()
           .parseCDConstructor(new StringReader(constructorSignature))
-          .map(e -> e); // needed because we need Optional<ASTCDMethodSignature> and not Optional<ASTCDConstructor>
+          .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not Optional<ASTCDConstructor>
     }
     catch (IOException e) {
-      Log.error("11011: can't parse constructor signature '" + constructorSignature + "': ", e);
-      return;
+      Log.error("12001: can't parse constructor signature '" + constructorSignature + "': ", e);
     }
-
-    check();
-  }
-
-  public boolean check() {
-    // TODO: check
-    //  - if parameter types are valid/exist
-
-    return true;
   }
 }

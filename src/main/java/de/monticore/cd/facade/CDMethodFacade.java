@@ -106,11 +106,11 @@ public class CDMethodFacade {
   }
 
   public ASTCDMethod createMethod(final ASTModifier modifier, final Class<?> returnType, final String name, final ASTCDParameter... parameters) {
-    return createMethod(modifier, returnType.getSimpleName(), name, parameters);
+    return createMethod(modifier, returnType.getCanonicalName(), name, parameters);
   }
 
   public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final Class<?> returnType, final String name, final ASTCDParameter... parameters) {
-    return createDefaultMethod(modifier, returnType.getSimpleName(), name, parameters);
+    return createDefaultMethod(modifier, returnType.getCanonicalName(), name, parameters);
   }
 
   public ASTCDMethod createMethod(final ASTModifier modifier, final ASTMCType astmcType, final String name, final List<ASTCDParameter> parameters) {
