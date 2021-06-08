@@ -28,7 +28,8 @@ The CD languages are mainly intended for
 
 ## An Example Model
 
-The following example CD `MyLife` illustrates the textual syntax of CDs:
+The following example CD [`MyLife`](doc/MyLife.cd) illustrates the textual 
+syntax of CDs:
 ```
 package monticore;
 import MyBasics; 
@@ -53,8 +54,6 @@ classdiagram MyLife {
   association [0..1] Person (parent) <-> (child) monticore.Person [*];
 }
 ```
-
-(TODO: java.util.Date ersetzt durch Date ; prüfen, ob das stimmt)
 
 The CD is contained in the package `monticore` and is called `MyLife`.
 The example CD shows
@@ -83,7 +82,7 @@ as within gradle or just as framework with dirct Java API access.
 ## Command Line Interface
  
 The CLI tool provides typical functionality used when
-processing models. It provides funcionality
+processing models. It provides functionality
 for 
 * parsing including coco-checking and creating symbol tables, 
 * pretty-printing, 
@@ -103,24 +102,22 @@ Or you can use `wget` to download the latest version in your working directory:
 ```shell
 wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
-(TODO: dieses wget funktioniert nicht)
 
 ### Parameters of the CLI
 
 The CLI provides quite a number of configurable parameters. 
-These two are examples for calling  the the CLI:
-
-(TODO: Wieso heisst dieses CD Person. Oben wars noch eine Klasse! Ausserdem wäre es sinvoll das CD vorgefertigt zur Verfügung zu haben, zB per wget runterladbar? Unten ist das für eine Datei so gemacht)
+These two are examples for calling the CLI (download and use the file 
+[MyLife.cd](doc/MyLife.cd)):
 
 ```shell
-java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s
-java -jar CDCLI.jar -i Person.cd -pp Person.out.cd
+java -jar CDCLI.jar -i MyLife.cd --path target:src/models -o target/out -t true -s
+java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 ```
 
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `-d,--defaulttrafo <defaulttrafo>` | Configures if default trafos should be executed. Default: false. If `true`, the default trafos move all types in a package. |
+| `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all types, that are not already in a package, are moved to the default package. |
 | `-f,--failquick <value>` | Configures if the application should quickfail on errors. `-f` equals to `--failquick true`. Default is `false`.  If `true` the check stops at the first error, otherwise tries to find all errors before it stops |
 | `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
 | `-h,--help` | Prints short help |
@@ -167,8 +164,8 @@ of how to use the CD CLI tool given in `CDCLI.jar`.
 
 ### First Steps
 
-This prints usage information of the CLI, if executing the CLI tool with the following 
-command and no parameters:
+This prints usage information of the CLI, if executing the CLI tool with the 
+following command and no parameters:
 ```shell
 java -jar CDCLI.jar
 ```
@@ -182,12 +179,11 @@ symbol table, and then checks whether the model satisfies all context
 conditions. Only errors or success are printed.
 
 For trying this out, copy the `CDCLI.jar` into a directory of your 
-choice. Then create a text file `src/MyExample.cd` in a `src` subdirectory of the
+choice. Then create a text file `src/MyExample.cd` 
+([also available here](doc/MyExample.cd)) in a `src` subdirectory of the
 directory where `CDCLI.jar` is located containing e.g. the following simple CD 
 (please note that, like in Java, filename and modelname in the file have to be
 the same):
-
-(TODO: src/MyExample.cd als downloadable file angeben)
 
 ```
 classdiagram MyExample {
@@ -267,8 +263,8 @@ Providing the file path is optional.
 If no file path is provided, the CLI tool stores the symbol table of the
 input model in the file `{CDName}.sym`.
 
-For storing the symbol file for `src/MyExample.cd`, we execute the following command
-(the context condition checks require using the path option):
+For storing the symbol file for `src/MyExample.cd`, we execute the following 
+command (the context condition checks require using the path option):
 ```shell
 java -jar CDCLI.jar -i src/MyExample.cd -s
 ```
@@ -284,9 +280,9 @@ Creation of symbol table src/MyExample.sym successful
 The symbol file contains a JSON representation of the symbols defined in the CD,
 which are type, association, interface, attribute and method symbols.
 
-For storing the symbol file of `src/MyExample.cd` in the file `symbols/MyExample.sym`,
-for example, execute the following command (again, the implicit context 
-condition checks require using the model path option):
+For storing the symbol file of `src/MyExample.cd` in the file 
+`symbols/MyExample.sym`, for example, execute the following command (again, the 
+implicit context condition checks require using the model path option):
 ```shell
 java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.sym
 ```
@@ -381,7 +377,7 @@ java -jar CDCLI.jar -i src/MyBasics.cd -s symbols/MyBasics.sym
 We then add the symbol file to the model path using `--path`:
 
 ```shell
-java -jar CDCLI.jar -i src/monticore/MyLife.cd --defaulttrafo --path symbols
+java -jar CDCLI.jar -i src/monticore/MyLife.cd --defaultpackage --path symbols
 ```
  
 The model path is used to identify the directory structure that contains the 
@@ -394,29 +390,13 @@ Great!
 
 ### Step 6: Create default packages in the class diagram
 
-The class diagram languages support structuring the cd with packages. 
-The CDCLI can create additional default packages for types, that are not already
-in a package, making sure, that every type is in a package.
-The default package is either
-1. the package of the artifact itself (if present), or
-2. the default `de.monticore`
-
-[//]: # (### Step 7: Creating a graphical representation of CD files)
-
-[//]: # (The CDCLI provides the option to create svg files.)
-[//]: # (A SVG can be created by passing the parameter `--svg` e.g. by command:)
-
-[//]: # (```shell)
-[//]: # (java -jar CDCLI.jar -i src/monticore/MyLife.cd --path symbols -puml MyLife --orthogonal -attr -assoc --showRoles --svg)
-[//]: # (```)
-
-[//]: # (that creates the following svg: )
-[//]: # (![MyLife.svg]&#40;doc/MyLife.svg "MyLife"&#41;)
-[//]: # (It is also possible to export the class diagram only to plantUML:)
-
-[//]: # (```shell)
-[//]: # (java -jar CDCLI.jar -i src/monticore/MyLife.cd --path symbols -puml)
-[//]: # (```)
+The class diagram languages support structuring the CD into packages.
+For classes with no explicit defined package the CDCLI can assume those classes 
+to be in a default package. This default is calculated as folows:
+1. If the class diagram itself is defined in a package, this package is 
+   propagated to the classes contained in the cd.
+2. If such a package is not explicitly given, the default 'de.monticore' is used
+   .
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [CLIDownload]: http://monticore.de/download/CDCLI.jar

@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cdbasis.parser;
+
+import java.lang.String;
+import java.util.Date;
+
+classdiagram Types {
+  class A {
+    java.lang.String a1;
+    String a2;
+    //java.util.Date a3;
+    Date a4;
+    java.util.List<java.lang.String> a5;
+    List<java.lang.String> a6;
+  }
+}
