@@ -7,8 +7,8 @@
 We provide two versions of UML class diagrams:
 - [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data
   structures with classes, attributes, associations, and enumerations. 
-  It is well suited for data modelling as e.g. needed in requirements engineering 
-  activities.
+  It is well suited for data modelling as e.g. needed in requirements 
+  engineering activities.
 - [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods
   and constructors.
   It thus allows to attach behavioral aspects and to modell the APIs of classes.
@@ -80,27 +80,17 @@ Further examples can be found [here][ExampleModels].
   elements within a CD. It e.g. allows to access available associations, 
   classes or enums and also add such model elements.
 - [`ASTCDAssociation`][ASTCDAssociation]
-  among retrieval methods for role names, method `getPrintableName` to retreive the name of the association, etc.
-
-## Parser for CD4Analysis
-- [`CD4AnalysisParser`][CD4AParser]
-  is extended to have additional transformations after parsing.
-  (TODO: ich hab keine Trafos gefunden. Anpassen bitte!)
-- The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] handles the
-  transformation which can be done after parsing.
-  (TODO: Welche, zu welchem zweck?, müssen die manuell gestartet werden? wie?)
+  among retrieval methods for role names, method `getPrintableName` to retreive 
+  the name of the association, etc.
 
 ## Symboltable for CD4Analysis
 - [`CD4AnalysisSymbolTableCompleter`][CD4ASTCompleter] links the symbols in 
   the symbol table.
-- The reference to a type (e.g. the type of an attribute) is stored in a 
+- The type (e.g. the type of an attribute) is stored in a 
   [`SymTypeExpression`][SymTypeExpression].
-  (TODO: was soll das bedeuten? Es gibt keine Referenzen auf Typen, sondern eben 
-  nur Typen. Die genannte Klasse ist auch nicht in den handcoded extensions?)
 - De-/Serialization functionality for the symbol table uses the
   [`CD4AnalysisDeSer`][CD4ASD] and for specific logic for serialization 
   in [`CD4AnalysisSymbol2Json`][CD4ASTP]
-  (TODO: Klasse wurde nicht gefunden, link geht ins leere)
 - CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
   all its subgrammars.
 

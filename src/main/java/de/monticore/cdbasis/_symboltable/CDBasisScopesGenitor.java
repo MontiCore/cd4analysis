@@ -6,8 +6,6 @@ package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 
-import java.util.Deque;
-
 public class CDBasisScopesGenitor extends CDBasisScopesGenitorTOP {
 
   public CDBasisScopesGenitor() {
