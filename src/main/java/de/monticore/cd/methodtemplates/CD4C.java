@@ -192,12 +192,14 @@ public class CD4C {
 
   private ASTCDMethodSignature setEnclosingScopeTo(ASTCDMethodSignature method, ICDBasisScope scope) {
     // TODO: maybe just create a symbol table
-    method.setEnclosingScope(scope);
-    method.getCDParameterList().forEach(p -> {
-      p.getMCType().setEnclosingScope(scope);
-    });
-    if (method instanceof ASTCDMethod) {
-      ((ASTCDMethod) method).getMCReturnType().setEnclosingScope(scope);
+    if (!this.predicates.isEmpty()) {
+      method.setEnclosingScope(scope);
+      method.getCDParameterList().forEach(p -> {
+        p.getMCType().setEnclosingScope(scope);
+      });
+      if (method instanceof ASTCDMethod) {
+        ((ASTCDMethod) method).getMCReturnType().setEnclosingScope(scope);
+      }
     }
     return method;
   }
