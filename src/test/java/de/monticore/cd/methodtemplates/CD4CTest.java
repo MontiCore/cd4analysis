@@ -78,7 +78,6 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
     // testing createMethod
     Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
@@ -102,7 +101,6 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
     // testing addMethod, .addConstructor
     // add the method that is described in template "PrintMethod"
@@ -129,7 +127,6 @@ public class CD4CTest extends CD4CodeTestBasis {
     //  testing .createAttribute
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
     clazz.addCDMember(
         CDAttributeFacade.getInstance()
@@ -167,7 +164,6 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
 
     final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
