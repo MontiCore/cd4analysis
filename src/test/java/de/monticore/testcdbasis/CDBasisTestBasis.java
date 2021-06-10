@@ -7,10 +7,9 @@ package de.monticore.testcdbasis;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
@@ -35,7 +34,7 @@ public class CDBasisTestBasis extends TestBasis {
     final ICDBasisGlobalScope globalScope = CDBasisMill
         .globalScope();
     globalScope.clear();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
     coCoChecker = new CD4AnalysisCoCoChecker();
   }

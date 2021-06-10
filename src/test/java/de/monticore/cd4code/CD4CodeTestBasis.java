@@ -14,7 +14,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import org.junit.Before;
 
 import java.nio.file.Paths;
@@ -34,7 +34,7 @@ public class CD4CodeTestBasis extends TestBasis {
     final ICD4CodeGlobalScope globalScope = CD4CodeMill
         .globalScope();
     globalScope.clear();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     if (globalScope instanceof CD4CodeGlobalScope) {
       ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
     }

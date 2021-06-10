@@ -27,6 +27,8 @@ public class BuiltInTypes {
       globalScope.addAdaptedTypeSymbolResolver(
           (boolean foundSymbols, String name, de.monticore.symboltable.modifiers.AccessModifier modifier, java.util.function.Predicate<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> predicate) ->
               new ArrayList<>(resolver.resolveAdaptedOOTypeSymbol(foundSymbols, name, modifier, predicate::test)));
+      globalScope.addAdaptedOOTypeSymbolResolver((boolean foundSymbols, String name, de.monticore.symboltable.modifiers.AccessModifier modifier, java.util.function.Predicate<de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol> predicate) ->
+      new ArrayList<>(resolver.resolveAdaptedOOTypeSymbol(foundSymbols, name, modifier, predicate::test)));
     }
   }
 }

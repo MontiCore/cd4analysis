@@ -9,7 +9,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.resolver.CD4CodeResolver;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
@@ -33,13 +33,13 @@ public class TestTypeImporterTest extends TestBasis {
     TestTypeImporterMill.reset();
     TestTypeImporterMill.init();
     final ITestTypeImporterGlobalScope globalScope = TestTypeImporterMill.globalScope();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
     BuiltInTypes.addBuiltInTypes(globalScope);
 
     final ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.clear();
-    cdGlobalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    cdGlobalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
     final CD4CodeResolver c = new CD4CodeResolver(cdGlobalScope);
     globalScope.addAdaptedOOTypeSymbolResolver(c);

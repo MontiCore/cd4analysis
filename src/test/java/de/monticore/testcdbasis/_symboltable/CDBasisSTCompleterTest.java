@@ -4,7 +4,6 @@ package de.monticore.testcdbasis._symboltable;
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisDeSer;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
@@ -14,7 +13,7 @@ import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
@@ -36,7 +35,7 @@ import static org.junit.Assert.*;
 
 public class CDBasisSTCompleterTest {
 
-  private static final String MODEL_PATH = "src/test/resources/";
+  private static final String SYMBOL_PATH = "src/test/resources/";
   CD4AnalysisParser parser;
   CD4AnalysisSymbols2Json symbols2Json;
 
@@ -46,7 +45,7 @@ public class CDBasisSTCompleterTest {
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
     CD4AnalysisMill.globalScope().clear();
-    CD4AnalysisMill.globalScope().setModelPath(new ModelPath(Paths.get(MODEL_PATH)));
+    CD4AnalysisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
 
     // reset the logger
     Log.init();
@@ -60,7 +59,7 @@ public class CDBasisSTCompleterTest {
   public void genitorTest() {
     // reset the GlobalScope
 
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     new CD4AnalysisAfterParseTrafo().transform(ast);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
@@ -93,7 +92,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void resolvingTest() {
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
@@ -123,7 +122,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void serializationTest() {
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     new CD4AnalysisAfterParseTrafo().transform(ast);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
@@ -136,7 +135,7 @@ public class CDBasisSTCompleterTest {
   @Test
   public void resolveSerializeDeserializeResolveTest() {
 
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symtabs/MyTypes.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
@@ -163,7 +162,7 @@ public class CDBasisSTCompleterTest {
 
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
-    CD4AnalysisMill.globalScope().setModelPath(new ModelPath(Paths.get(MODEL_PATH)));
+    CD4AnalysisMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
 
     CD4AnalysisMill.globalScope().addSubScope(artifactScope);
 
@@ -187,7 +186,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterNoErrorTest() {
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/CorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
@@ -203,7 +202,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterTypeDoesNotExistTest() {
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeUsages.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeUsages.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
@@ -223,7 +222,7 @@ public class CDBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterTypeAmbiguousTest() {
-    String artifact = MODEL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeAmbiguous.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeAmbiguous.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
