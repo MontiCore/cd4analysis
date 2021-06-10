@@ -14,7 +14,7 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -146,7 +146,7 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
     // explicitly not using the mill for initializing a global scope
     final CD4AnalysisGlobalScope globalScopeForDeserialization = new CD4AnalysisGlobalScope();
-    globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScopeForDeserialization.setSymbolPath(new MCPath(Paths.get(PATH)));
     globalScopeForDeserialization.addBuiltInTypes();
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;

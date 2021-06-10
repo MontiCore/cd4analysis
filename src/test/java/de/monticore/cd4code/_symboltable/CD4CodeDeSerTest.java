@@ -10,7 +10,7 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
   public ICD4CodeArtifactScope addGlobalScopeForDeserialization(ICD4CodeArtifactScope deserialize) {
     // explicitly not using the mill for initializing a global scope
     final CD4CodeGlobalScope globalScopeForDeserialization = new CD4CodeGlobalScope();
-    globalScopeForDeserialization.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScopeForDeserialization.setSymbolPath(new MCPath(Paths.get(PATH)));
     globalScopeForDeserialization.addBuiltInTypes();
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;

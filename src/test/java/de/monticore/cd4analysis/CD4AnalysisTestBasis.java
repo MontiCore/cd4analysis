@@ -6,13 +6,12 @@ package de.monticore.cd4analysis;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisDeSer;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import org.junit.Before;
 
 import java.nio.file.Paths;
@@ -31,7 +30,7 @@ public class CD4AnalysisTestBasis extends TestBasis {
     final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill
         .globalScope();
     globalScope.clear();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     if (globalScope instanceof CD4AnalysisGlobalScope) {
       ((CD4AnalysisGlobalScope) globalScope).addBuiltInTypes();
     }

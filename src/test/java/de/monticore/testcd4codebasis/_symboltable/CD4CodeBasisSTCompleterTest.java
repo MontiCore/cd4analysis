@@ -5,7 +5,6 @@ import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeDeSer;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -15,8 +14,7 @@ import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdbasis.cocos.ebnf.CDAttributeOverridden;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
@@ -35,7 +33,7 @@ import static org.junit.Assert.*;
 
 public class CD4CodeBasisSTCompleterTest {
 
-  private static final String MODEL_PATH = "src/test/resources/";
+  private static final String SYMBOL_PATH = "src/test/resources/";
   CD4CodeParser parser;
   CD4CodeSymbols2Json symbols2Json;
 
@@ -45,7 +43,7 @@ public class CD4CodeBasisSTCompleterTest {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
-    CD4CodeMill.globalScope().setModelPath(new ModelPath(Paths.get(MODEL_PATH)));
+    CD4CodeMill.globalScope().setSymbolPath(new MCPath(Paths.get(SYMBOL_PATH)));
     BasicSymbolsMill.initializePrimitives();
 
     // reset the logger
@@ -58,7 +56,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   @Test
   public void genitorTest() {
-    String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
@@ -81,7 +79,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   @Test
   public void resolvingTest() {
-    String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     ICD4AnalysisArtifactScope artifactScope = createSymbolTableFromAST(ast);
 
@@ -97,7 +95,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   @Test
   public void serializationTest() {
-    String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/MyIntegerType.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/MyIntegerType.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     new CD4CodeAfterParseTrafo().transform(ast);
     ICD4CodeArtifactScope artifactScope = createSymbolTableFromAST(ast);
@@ -110,7 +108,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterNoErrorTest() {
-    String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/CorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
 
@@ -126,7 +124,7 @@ public class CD4CodeBasisSTCompleterTest {
 
   @Test
   public void symbolTableCompleterErrorsTest() {
-    String artifact = MODEL_PATH + "de/monticore/cd4codebasis/symboltable/IncorrectMethodUsage.cd";
+    String artifact = SYMBOL_PATH + "de/monticore/cd4codebasis/symboltable/IncorrectMethodUsage.cd";
     ASTCDCompilationUnit ast = loadModel(artifact);
     createSymbolTableFromAST(ast);
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());

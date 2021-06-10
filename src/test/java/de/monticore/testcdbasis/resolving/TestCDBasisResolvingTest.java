@@ -6,12 +6,11 @@ package de.monticore.testcdbasis.resolving;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
@@ -41,7 +40,7 @@ public class TestCDBasisResolvingTest extends TestBasis {
     CD4AnalysisMill.init();
 
     globalScope = CDBasisMill.globalScope();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(compilationUnit);
     checkLogError();
