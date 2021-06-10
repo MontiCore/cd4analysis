@@ -6,8 +6,11 @@ package de.monticore.cdbasis._symboltable;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import de.monticore.symboltable.ISymbol;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public interface ICDBasisScope extends ICDBasisScopeTOP {
@@ -34,5 +37,11 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
     // always try to continue, because the subscope could contain the packages
     // the packageName in the artifact scope is not considered in any way
     return this.isExportingSymbols();
+  }
+
+  @Override
+  default <T extends ISymbol> Optional<T> getResolvedOrThrowException(final Collection<T> resolved) {
+    return ICDBasisScopeTOP.super.getResolvedOrThrowException(
+        resolved.stream().distinct().collect(Collectors.toList()));
   }
 }

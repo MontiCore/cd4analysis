@@ -1,6 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature()}
-${cd4c.constructor("public HelloWorld()")}
+${cd4c.method("public int count()")}
 {
-  // Do nothing
+  return 0;
 }

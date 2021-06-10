@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -47,12 +46,15 @@ import java.util.stream.Collectors;
 public class CDCLI {
 
   static final Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-  protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for ";
+  protected static final String PARSE_SUCCESSFUL = "Successfully parsed %s\n";
+  protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for class diagram %s\n";
   protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
+  protected static final String DIR_CREATION_ERROR = "Directory '%s' could not be created\n";
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
   protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written\n";
+  protected static final String INPUT_FILE_NOT_EXISTENT = "Input file '%s' does not exist\n";
 
   public static final String REPORT_NAME = "report";
 
@@ -96,7 +98,8 @@ public class CDCLI {
     }
   }
 
-  protected boolean handleArgs(String[] args) throws IOException, ParseException {
+  protected boolean handleArgs(String[] args)
+      throws IOException, ParseException {
     cmd = cdcliOptions.handleArgs(args);
 
     /*if (cmd.hasOption("log")) {
@@ -127,7 +130,8 @@ public class CDCLI {
         modelFile = cmd.getOptionValue("i");
 
         if (!modelFileExists()) {
-          throw new NoSuchFileException(modelFile);
+          System.out.printf(INPUT_FILE_NOT_EXISTENT, modelFile);
+          return false;
         }
       }
       else {
@@ -147,8 +151,8 @@ public class CDCLI {
     // don't output to stdout when the prettyprint is output to stdout
     final boolean doPrintToStdOut = !(cmd.hasOption("pp") && cmd.getOptionValue("pp") == null);
 
-    boolean defaultTrafo = cmd.hasOption("defaulttrafo") && Boolean.parseBoolean(cmd.getOptionValue("defaulttrafo", "true"));
-    if (defaultTrafo) {
+    boolean defaultPackage = cmd.hasOption("defaultpackage") && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
+    if (defaultPackage) {
       final CD4CodeTraverser traverser = CD4CodeMill.traverser();
       final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
       traverser.add4CDBasis(cdBasis);
@@ -158,26 +162,18 @@ public class CDCLI {
       ast.accept(traverser);
     }
 
+    if (doPrintToStdOut) {
+      String model = modelFile;
+      // is null when we read from stdin
+      if (model == null) {
+        model = "class diagram " + modelName + " from stdin";
+      }
+      System.out.printf(PARSE_SUCCESSFUL, model);
+    }
+
+    final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
     if (cmd.hasOption("pp")) { // pretty print
-      String ppOptionVal = cmd.getOptionValue("pp");
-
-      // print model
-      final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
       ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
-
-      if (ppOptionVal == null) {
-        System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
-      }
-      else {
-        final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
-        final File file = outputPath.toFile();
-        file.getParentFile().mkdirs();
-
-        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-          out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
-          System.out.printf(PRETTYPRINT_SUCCESSFUL, unifyPath(file.toPath()));
-        }
-      }
     }
 
     // transformations which are necessary to do after parsing
@@ -185,14 +181,13 @@ public class CDCLI {
       new CD4CodeDirectCompositionTrafo().transform(ast);
     }
 
-    if (doPrintToStdOut) {
-      System.out.println("Successfully parsed " + modelName);
-    }
-
     boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "false"));
 
     // create a symbol table with provided model paths
-    String[] modelPath = cmd.getOptionValue("path", ".").split(":");
+    String[] modelPath = { "." };
+    if (cmd.hasOption("path")) {
+      modelPath = cmd.getOptionValues("path");
+    }
     createSymTab(useBuiltInTypes, new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
 
     // transformations that need an already created symbol table
@@ -231,7 +226,7 @@ public class CDCLI {
     checkCocos();
     if (doPrintToStdOut) {
       if (Log.getErrorCount() == 0) {
-        System.out.println(CHECK_SUCCESSFUL + modelName);
+        System.out.printf(CHECK_SUCCESSFUL, modelName);
       }
       else {
         System.out.println(CHECK_ERROR);
@@ -264,6 +259,33 @@ public class CDCLI {
     // report
     if (cmd.hasOption("r")) {
       report(ast, cmd.getOptionValue("r", outputPath));
+    }
+
+    if (cmd.hasOption("pp")) { // pretty print
+      String ppTarget = cmd.getOptionValue("pp");
+
+      if (ppTarget == null) {
+        System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+      }
+      else {
+        final Path outputPath;
+        if (Paths.get(ppTarget).isAbsolute()) {
+          outputPath = Paths.get(ppTarget);
+        }
+        else {
+          outputPath = Paths.get(this.outputPath, ppTarget);
+        }
+        final File file = outputPath.toFile();
+        if (!file.getParentFile().mkdirs()) {
+          System.out.printf(DIR_CREATION_ERROR, file.getAbsolutePath());
+          return;
+        }
+
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
+          out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+        }
+        System.out.printf(PRETTYPRINT_SUCCESSFUL, unifyPath(file.toPath()));
+      }
     }
 
     if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
@@ -307,7 +329,8 @@ public class CDCLI {
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
-  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
+  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath)
+      throws IOException {
     final String output = Paths.get(outputPath, cmd.getOptionValue("puml", modelName)).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();

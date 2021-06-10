@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.cli;
 
 import org.apache.commons.cli.*;
@@ -77,9 +78,8 @@ public class CDCLIOptions {
 
     options.addOption(Option
         .builder().longOpt("path")
-        .hasArg().type(String.class)
-        .argName("dirlist").numberOfArgs(1)
-        .desc("Artifact path for importable symbols. It is separated by ':' (colon), default is `.`.")
+        .hasArgs()
+        .desc("Artifact path for importable symbols, space separated.")
         .build());
 
     options.addOption(Option
@@ -115,11 +115,11 @@ public class CDCLIOptions {
         .build());
 
     options.addOption(Option
-        .builder("d").longOpt("defaulttrafo")
+        .builder("d").longOpt("defaultpackage")
         .hasArg().type(Boolean.class)
-        .argName("defaulttrafo").optionalArg(true).numberOfArgs(1)
-        .desc("Configures if default trafos should be executed. Default: false. "
-            + "If `true`, the default trafos move all types in a package.")
+        .argName("defaultpackage").optionalArg(true).numberOfArgs(1)
+        .desc("Configures if a default package should be created. Default: false. "
+            + "If `true`, all types, that are not already in a package, are moved to the default package.")
         .build());
 
     options.addOption(Option
