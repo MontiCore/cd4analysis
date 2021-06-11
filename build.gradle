@@ -236,13 +236,6 @@ task testSourcesJar(type: Jar) {
   archiveClassifier = "testSources"
 }
 
-jar {
-  into("META-INF/maven/$project.group/$project.name") {
-    from { generatePomFileForMavenJavaPublication }
-    rename ".*", "pom.xml"
-  }
-}
-
 shadowJar { // all in one jar
   archiveFileName = 'CDCLI.jar'
   manifest {
