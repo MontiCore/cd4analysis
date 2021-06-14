@@ -202,8 +202,6 @@ compileTestJava {
   dependsOn project.collect { it.tasks.withType(MCTask) }
 }
 
-// Fixes issue with java plugin in projects without resources
-compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -274,6 +272,8 @@ java {
     usingSourceSet(sourceSets.grammars)
   }
 }
+
+sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 
 jar.dependsOn grammarsJar
 
