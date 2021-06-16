@@ -11,6 +11,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodSignatureCoCo;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.generating.GeneratorSetup;
@@ -233,6 +234,60 @@ public class CD4C {
     checkInitialized();
     final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
     m.constructor(constructorSignature);
+    methodQueue.add(m);
+  }
+
+  /***************************************************************************/
+  /* Attributes                                                               */
+  /***************************************************************************/
+
+  /**
+   * create the new attribute
+   *
+   * @param clazz        the class where information can be read from
+   * @return the created attribute
+   */
+  public Optional<ASTCDAttribute> createAttribute(ASTCDClass clazz, String attributeSignature) {
+    checkInitialized();
+    attribute(attributeSignature);
+    return methodQueue.peek().astcdAttribute;
+   }
+
+  private ASTCDAttribute setEnclosingScopeTo(ASTCDAttribute attribute, ICDBasisScope scope) {
+    // TODO: maybe just create a symbol table
+    if (!this.predicates.isEmpty()) {
+      attribute.setEnclosingScope(scope);
+      attribute.getMCType().setEnclosingScope(scope);
+    }
+    return attribute;
+  }
+
+  /**
+   * add the new constructor to the provided class
+   *
+   * @param clazz        the class where the method should be added
+   * @param templateName the name of the template that is used for the method
+   */
+  public void addAttribute(ASTCDClass clazz, String templateName) {
+    checkInitialized();
+    final Optional<ASTCDAttribute> attribute = createAttribute(clazz, templateName);
+    if (!attribute.isPresent()) {
+      Log.error("0x11022: There was no attribute created in the template '" + templateName + "'");
+      return;
+    }
+    // TODO: Predicates
+    clazz.addCDMember(attribute.get());
+  }
+
+  /**
+   * Use this method to describe the signature (with concrete syntax) in templates
+   *
+   * @param attributeSignature the attribute signature as {@link de.monticore.cdbasis._ast.ASTCDAttribute}
+   */
+  public void attribute(String attributeSignature) {
+    checkInitialized();
+    final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
+    m.attribute(attributeSignature);
     methodQueue.add(m);
   }
 
