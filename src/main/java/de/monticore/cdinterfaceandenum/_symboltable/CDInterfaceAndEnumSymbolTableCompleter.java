@@ -99,6 +99,7 @@ public class CDInterfaceAndEnumSymbolTableCompleter
   }
 
   protected void initialize_CDEnumConstant(ASTCDEnumConstant ast) {
+    // this is probably dead code, since it is never executed
     FieldSymbol symbol = ast.getSymbol();
 
     symbol.setIsStatic(true);
@@ -108,7 +109,8 @@ public class CDInterfaceAndEnumSymbolTableCompleter
 
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, ast.getEnclosingScope());
+    // call getEnclosingScope() twice, to achieve the correct package name
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, ast.getEnclosingScope().getEnclosingScope());
     symbol.setType(typeObject);
 
     // Don't store the arguments in the ST
