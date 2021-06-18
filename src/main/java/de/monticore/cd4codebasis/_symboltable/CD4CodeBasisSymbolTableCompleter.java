@@ -150,7 +150,8 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
 
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, symbol.getEnclosingScope());
+    // call getEnclosingScope() twice, so the full name of the type evaluates to the correct package
+    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, symbol.getEnclosingScope().getEnclosingScope());
     symbol.setType(typeObject);
 
     // Don't store the arguments in the ST
