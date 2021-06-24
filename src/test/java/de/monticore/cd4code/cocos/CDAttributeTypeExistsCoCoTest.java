@@ -51,6 +51,8 @@ public class CDAttributeTypeExistsCoCoTest extends CD4CodeTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CDCLI.main(new String[] { "-i", fileName, "-pp", getTmpFilePath("Types.cd").replaceAll("\\\\", "/"), "-s" });
+    CDCLI.main(new String[] { "-i", fileName, 
+                              "-pp", getTmpFilePath("Types.cd").replaceAll("\\\\", "/"), 
+                              "-s",  "target/symbols/Types.sym"});
   }
 }
