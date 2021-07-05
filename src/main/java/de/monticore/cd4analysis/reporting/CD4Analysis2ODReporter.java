@@ -6,7 +6,7 @@ package de.monticore.cd4analysis.reporting;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.cd4analysis._od.CD4Analysis2OD;
+import de.monticore.cd4analysis._od.CD4Analysis2ODDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.generating.templateengine.reporting.commons.AReporter;
@@ -57,7 +57,7 @@ public class CD4Analysis2ODReporter extends AReporter {
     if (ast instanceof ASTCDCompilationUnit || ast instanceof ASTCDDefinition) {
       ASTCD4AnalysisNode cdNode = (ASTCD4AnalysisNode) ast;
       IndentPrinter pp = new IndentPrinter();
-      CD4Analysis2OD odPrinter = new CD4Analysis2OD(pp, reporting);
+      CD4Analysis2ODDelegator odPrinter = new CD4Analysis2ODDelegator(pp, reporting);
       odPrinter.printObjectDiagram(Names.getSimpleName(modelName) + "_AST", cdNode);
       writeLine(pp.getContent());
     }

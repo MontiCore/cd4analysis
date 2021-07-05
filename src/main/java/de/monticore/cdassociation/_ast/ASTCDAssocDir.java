@@ -4,7 +4,9 @@
 
 package de.monticore.cdassociation._ast;
 
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._visitor.CDAssociationNavigableVisitor;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 
 public interface ASTCDAssocDir extends ASTCDAssocDirTOP {
   default CDAssociationNavigableVisitor getNavigableVisitor() {
@@ -13,19 +15,25 @@ public interface ASTCDAssocDir extends ASTCDAssocDirTOP {
 
   default boolean isBidirectional() {
     final CDAssociationNavigableVisitor navigableVisitor = getNavigableVisitor();
-    this.accept(navigableVisitor);
+    CDAssociationTraverser t = CDAssociationMill.traverser();
+    t.add4CDAssociation(navigableVisitor);
+    this.accept(t);
     return navigableVisitor.isDefinitiveNavigableLeft() && navigableVisitor.isDefinitiveNavigableRight();
   }
 
   default boolean isDefinitiveNavigableLeft() {
     final CDAssociationNavigableVisitor navigableVisitor = getNavigableVisitor();
-    this.accept(navigableVisitor);
+    CDAssociationTraverser t = CDAssociationMill.traverser();
+    t.add4CDAssociation(navigableVisitor);
+    this.accept(t);
     return navigableVisitor.isDefinitiveNavigableLeft();
   }
 
   default boolean isDefinitiveNavigableRight() {
     final CDAssociationNavigableVisitor navigableVisitor = getNavigableVisitor();
-    this.accept(navigableVisitor);
+    CDAssociationTraverser t = CDAssociationMill.traverser();
+    t.add4CDAssociation(navigableVisitor);
+    this.accept(t);
     return navigableVisitor.isDefinitiveNavigableRight();
   }
 }

@@ -6,17 +6,23 @@
 
 We provide two versions of UML class diagrams:
 - [**CD4Analysis**][CD4AGrammar] is a CD variant for the modelling of data
-  structures with classes, attributes, associations, enumerations.
+  structures with classes, attributes, associations, and enumerations. 
+  It is well suited for data modelling as e.g. needed in requirements 
+  engineering activities.
 - [**CD4Code**][CD4CGrammar] is an extension of CD4Analysis including methods
   and constructors.
+  It thus allows to attach behavioral aspects and to modell the APIs of classes.
 
-These are composed of several component grammars for parts of the CDs:
+Both languages are composed of several component languages 
+that describe parts of the CD languages:
 - [**CDBasis**][CDBasisGrammar] is the base grammar for all CD languages. It
-  contains the root compilation unit, classes, and attributes.
-- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with interfaces and
-  enums.
-- [**CDAssociation**][CDAssocGrammar] defines associations and roles.
-- [**CD4CodeBasis**][CD4CBasisGrammar] defines methods and parameters.
+  contains the root compilation unit, and modelling constructs for 
+  classes, and attributes.
+- [**CDInterfaceAndEnum**][CDIAEGrammar] extends CDBasis with 
+  modelling constructs for interfaces and enums.
+- [**CDAssociation**][CDAssocGrammar] allows to model associations and roles.
+- [**CD4CodeBasis**][CD4CBasisGrammar] adds the behavioral modelling constructs
+  for methods and their parameters.
 
 # CD4Analysis
 
@@ -49,19 +55,20 @@ classdiagram MyLife {
 ```
 
 The example shows a section of the [CD4ALanguageTeaser][LanguageTeaser]:
-- Definition of two classes `Person` and `Student`
-- `Person` is an abstract class
-- `Student` extends `Person` (like in Java); interfaces would also be possible.
-- Classes contain attributes, which have a type and a name
-- Available types are basic types (from Java), imported types (like `Date`),
-  and predefined forms of generic types (like `List`).
+- It defines two classes `Person` and `Student`.
+- `Person` is an abstract class.
+- `Student` extends `Person` (like in Java); interfaces would also be 
+  possible.
+- Classes contain attributes, which have a type and a name.
+- Available types are basic types (like in Java), imported types (like `Date`),
+  and predefined forms of generic types (like `List<.>`).
 - Associations and compositions are defined between two classes,
   can have a name, a navigation information (e.g. `<->`), role names on both
-  sides, multiplicities (like `[0..1]`) and certain predefined tags/stereotypes 
-  (like `{ordered}`).
-- Both, association and compositions can be qualified, for example by `[String]`
-  .
-- Packages can be used to structure the model
+  sides, multiplicities (like `[0..1]`) and certain predefined 
+  tags/stereotypes (like `{ordered}`).
+- Both, association and compositions can be qualified, for example by 
+  `[String]`.
+- Packages (like in Java) can be used to organize the model.
 
 Further examples can be found [here][ExampleModels].
 
@@ -69,39 +76,36 @@ Further examples can be found [here][ExampleModels].
 
 ### AST 
 - [`ASTCDDefinition`][ASTCDDefinition]
-  adds methods for easy access to `CDType`s in
+  adds methods for easy access to and modification of various 
+  elements within a CD. It e.g. allows to access available associations, 
+  classes or enums and also add such model elements.
 - [`ASTCDAssociation`][ASTCDAssociation]
-  adds a method to retreive the name of the association
-
-## Parser for CD4Analysis
-- ([`CD4AnalysisParser`][CD4AParser])
-  is extended to have additional transformations after parsing.
-- The [`CD4AnalysisAfterParseTrafo`][CD4AAfterParseTrafo] and 
-  [`CD4AnalysisAfterParseDelegatorVisitor`][CD4AAfterParseDelegatorVisitor]
-  handle the transformation which need to be done after parsing.
+  among retrieval methods for role names, method `getPrintableName` to retreive 
+  the name of the association, etc.
 
 ## Symboltable for CD4Analysis
-- [`CD4AnalysisSymbolTableCreatorDelegator`][CD4ASTCD]
-  handles the creation and linking of the symbols of all the elements in CD4A
-  and its sublanguages.
-- The reference to a type (e.g. the type of an attribute) is stored in a 
+- [`CD4AnalysisSymbolTableCompleter`][CD4ASTCompleter] links the symbols in 
+  the symbol table.
+- The type (e.g. the type of an attribute) is stored in a 
   [`SymTypeExpression`][SymTypeExpression].
 - De-/Serialization functionality for the symbol table uses the
-  [`CD4AnalysisScopeDeSer`][CD4ASD] and for specific logic for serialization in
-  [`CD4AnalysisSymbolTablePrinter`][CD4ASTP]
+  [`CD4AnalysisDeSer`][CD4ASD] and for specific logic for serialization 
+  in [`CD4AnalysisSymbol2Json`][CD4ASTP]
 - CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
   all its subgrammars.
+
 - [`SymAssociation`][SymAssociation] is a class which is included in the
   symbol table and contains all information of a `CDAssociation`. It links to
-  a `CDAssociationSymbol` (which only exists, when the association has a name),
-  and to the two sides of the association which are stored in
+  a `CDAssociationSymbol` (which only exists, when the association has a 
+  name), and to the two sides of the association which are stored in
   [`CDRoleSymbol`][CDRoleSymbol].
 
 ## Symbol kinds used by the CD4A language (importable or subclassed):
-- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] as the basis
-  for the definition of its type-defining symbols.
+- CD4A uses the symbol kinds from grammar [`OOSymbols`][OOSymbols] as the 
+  basis for the definition of its type-defining symbols.
   - `OOTypeSymbol`s are used for all type-defining Symbols. These are 
-    sub-nonterminals of `CDType`, namely `CDClass`, `CDInterface`, and `CDEnum`.
+    sub-nonterminals of `CDType`, namely `CDClass`, `CDInterface`, and 
+    `CDEnum`.
   - `FieldSymbol`s are used for `CDAttribute`, `CDEnumConstant`, and
     `CDRole`, additionally, grammar `CD4Code` uses `FieldSymbol`
     for`CDParameter`
@@ -116,8 +120,10 @@ Further examples can be found [here][ExampleModels].
 
 - CD4A defines three kinds of symbols: `CDTypeSymbol`, `CDAssociationSymbol`,
   and `CDRoleSymbol`
-- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s and have
-  no additional functionality or attributes
+- All types either implement `CDTypeSymbol` or one of the `TypeSymbol`s and 
+  have no additional functionality or attributes.
+  The exception is `CDRoleSymbol`, which is similar to `FieldSymbol` but has
+  a different behavior.
 
 ### `CDTypeSymbol`
 
@@ -149,27 +155,38 @@ Further examples can be found [here][ExampleModels].
 - `CDRoleSymbol` is defined in an association and connected with the class it 
   belongs to. In the concrete model, roles can be omitted, but are then
   calculated by suitable defaults.
-- `CDRoleSymbol` is a subclass of `FieldSymbol` with the following additional
-  attributes
+- `CDRoleSymbol` has the following attributes
 ```
   symbolrule CDRole =
     isDefinitiveNavigable: boolean
-    cardinality: Optional<ASTCDCardinality>
-    attributeQualifier: Optional<FieldSymbol>
-    typeQualifier: Optional<SymTypeExpression>
-    association: SymAssociation
+    cardinality: Optional<de.monticore.cdassociation._ast.ASTCDCardinality>
+    field: Optional<de.monticore.symbols.oosymbols._symboltable.FieldSymbol>
+    attributeQualifier: Optional<de.monticore.symbols.basicsymbols._symboltable.VariableSymbol>
+    typeQualifier: Optional<de.monticore.types.check.SymTypeExpression>
+    assoc: Optional<de.monticore.cdassociation._symboltable.SymAssociation>
     isOrdered: boolean
+    isLeft: boolean
+    type: de.monticore.types.check.SymTypeExpression
+    isReadOnly: boolean
+    isPrivate: boolean
+    isProtected: boolean
+    isPublic: boolean
+    isStatic:boolean
+    isFinal: boolean
 ```
 - `attributeQualifier` is defined exactly, if a qualifier is given using 
-    an attribute of the opposite class (i.e. the opposite class knows
-    its qualifier, like in a public phone book)
+  an attribute of the opposite class (i.e. the opposite class knows
+  its qualifier, like in a public phone book)
 - `typeQualifier` is defined, if the qualifier is independent of the
   qualified object (i.e. like in the private phone book of a smart phone)  
+- the `CDRoleSymbol` is separated from the `FieldSymbol` because the type in a
+  role is always the concrete type of the other side of the association, the
+  type of a field can be a container, e.g. `List<Person>`
 
 
 ## Symbols imported by CD4A models:
-- currently CD4A imports only class, interface and enum symbols from other class
-  diagrams.
+- currently CD4A imports only class, interface and enum symbols from other 
+  class diagrams.
 - Extensions to include e.g. implemented Java-classes or other type-definining
   languages are planned.
 - Other kinds and forms of symbols need to be mapped to CD-like symbols to be
@@ -198,13 +215,6 @@ Further examples can be found [here][ExampleModels].
     "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
     "name": "de.monticore.life.Person",
     "isClass": true,
-    "isInterface": false,
-    "isEnum": false,
-    "isAbstract": false,
-    "isPrivate": false,
-    "isProtected": false,
-    "isPublic": false,
-    "isStatic": false,
     "symbols": [ 
        // ... contained attributes and roles 
     ]
@@ -217,30 +227,24 @@ Further examples can be found [here][ExampleModels].
   {
     "kind": "de.monticore.types.typesymbols._symboltable.FieldSymbol",
     "name": "de.monticore.life.Person.name",
-    "isPrivate": false,
-    "isProtected": false,
-    "isPublic": false,
-    "isStatic": false,
-    "isFinal": false,
     "type": {
         "kind": "de.monticore.types.check.SymTypeOfObject",
         "objName": "String"
-    },
-    "isReadOnly": false
+    }
   }
 ```
 
 ### `CDAssociationSymbol`
 
-- Additional class `SymAssociation` stores the information about an association.
+- Additional class `SymAssociation` stores the information about an 
+  association.
   It is stored as follows, with a name ID that allows to be referred to by 
   the associated symbols (json format):
 ```json
   {
     "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
     "name": 556488341,
-    "isAssociation": true,
-    "isComposition": false
+    "isAssociation": true
   }
 ```
 
@@ -263,18 +267,10 @@ Further examples can be found [here][ExampleModels].
     "isDefinitiveNavigable": true,
     "cardinality": "[*]",
     "association": 556488341,
-    "isOrdered": false,
     "type": {
       "kind": "de.monticore.types.check.SymTypeOfObject",
       "objName": "de.monticore.life.Person"
-    },
-    "isReadOnly": false,
-    "isPrivate": false,
-    "isProtected": false,
-    "isPublic": false,
-    "isStatic": false,
-    "isFinal": false,
-    "isLeft": false
+    }
   }
 ```
 
@@ -297,31 +293,53 @@ Further examples can be found [here][ExampleModels].
 - the individual CoCos can be found in the [`cocos`][cocos]-directory of each
   language
 - the CoCos are separated in these categories:
-  - `ebnf`, handles cases which should not be handled by the grammar itself,
+  - `ebnf` handles cases which should not be handled by the grammar itself,
     e.g., the name of an attribute is lowercase
-  - `mcg`, contains CoCos that check semantics of the models, e.g., the list
+  - `mcg` contains CoCos that check semantics of the models, e.g., the list
     of valid `UMLModifier`s on an object
-- CoCos ensure semantic correctness, here is a list of some of the important
-  ones:
+- CoCos ensure semantic correctness, here is a list of some important ones:
   - Uniqueness of names of e.g. classes in each package, attributes in each
     class
   - Classes hierarchy is free of cycles
   - Correct counter part on `extends` and `implements` keywords
   - Correct association qualifiers
     
-## Transformations
-- two transformations are provided to simplify the parsing and ST creation
+### Shadowing of attributes
+CD4Analysis is meant to behave like Java. Java allows attribute
+shadowing in any shape of form, like the same or a completely different
+type. Supporting this is useful when analysing the class diagrams, as a class
+diagram should not automatically be invalid if an inherited class changes.
+In code generation (using CD4Code) on the other hand, access methods are
+generated for attributes of classes and therefore are problematic with the
+method parameters and return types (see 
+[covariance and contravariance](https://tinyurl.com/2n4rw87j))
+.
 
-### AfterParseTrafo
-- the `AfterParseTrafo`s is executed directly after the parsing of models, currently there are 2 important transformations:
-  - [`CDBasisAfterParseTrafo`][CDBasisAfterParseTrafo]
-    - moves elements in a default package, if they are not already in a package
-    - the default package is either the package of the model file, or if that doesn't exists, `de.monticore` is used
-  - ['CDAssociationAfterParseTrafo`][CDAssociationAfterParseTrafo]
-    - `ASTCDDirectComposition` (short form of composition), are transformed to (normal) `composition`s
-- `Trafo4Defaults` provide additional transformations, that are optional defaults, which can be used after a SymbolTable is created:
-  - [`CDAssociationTrafo4Default`][CDAssociationTrafo4Default] adds Roles and `CDRoleSymbol`s to `AssociationSide`, if there is not already a `CDRole`. That's the case when the side has no name
-  - the name of the new role is either the name of the association, or the (lowercase) name of the type
+## Transformations
+- different transformations are provided to simplify the parsing and ST 
+  creation
+1. the `AfterParseTrafo`s can be executed directly after the parsing of 
+   models, currently there are 2 important transformations:
+  - [`CDBasisDefaultPackageTrafo`][CDBasisDefaultPackageTrafo]
+    - moves elements in a default package, if they are not already in a 
+      package
+    - the default package is either the package of the model file, or if that
+      doesn't exist, `de.monticore` is used
+  - ['CD4AnalysisDirectCompositionTrafo`][CD4AnalysisDirectCompositionTrafo]
+    - `ASTCDDirectComposition` (short form of composition), are transformed 
+      to (normal) `composition`s
+2. `Trafo4Defaults` provide additional transformations, that are optional
+   defaults, which can be used after a SymbolTable is created:
+  - [`CDAssociationTrafo4Default`][CDAssociationTrafo4Default] adds Roles and
+    `CDRoleSymbol`s to `AssociationSide`, if there is not already a `CDRole`. 
+    That's the case when the side has no name
+  - the name of the new role is either the name of the association, or the 
+    (lowercase) name of the type
+3. Create `FieldSymbol`s from `CDRoleSymbols`s
+  - [`CDAssociationCreateFieldsFromAllRoles`][CDAssociationCreateFieldsFromAllRoles]
+    creates a `FieldSymbol` for each of the existing `CDRoleSymbol`s
+  - [`CDAssociationCreateFieldsFromNavigableRoles`][CDAssociationCreateFieldsFromNavigableRoles]
+    creates `FieldSymbol`s only for navigable `CDRoleSymbol`s
 
 ### Types
 - Currently: The BuiltinTypes can be found here [`BuiltInTypes`][BuiltInTypes].
@@ -341,7 +359,7 @@ Further examples can be found [here][ExampleModels].
   control concerning the types that should be available.
 
 ### PrettyPrinter
-- [`CD4AnalysisPrettyPrinter`][PrettyPrinter] contains a basic pretty printer
+- [`CD4AnalysisFullPrettyPrinter`][PrettyPrinter] contains a basic pretty printer
   for CD4A
 - Externally available [PlantUML](https://plantuml.com/en/class-diagram)
   printer can be used to upload the model to plant uml and receive a graphical
@@ -427,9 +445,7 @@ The example shows a section of the
 Further examples can be found [here][CD4CExampleModels].
 
 ## Handwritten Extensions
-- CD4Code contains some handwritten extension (similar to CD4Analysis) like:
-  - [`CD4CodePrettyPrinterDelegator`][CD4CodePrinter]
-  - [`CD4CodeSymbolTableCreatorDelegator`][CD4CodeSTC]
+- CD4Code contains some handwritten extension (similar to CD4Analysis) like [`CD4CodeFullPrettyPrinter`][CD4CodePrinter].
 
 ## Usage
 - CD4Code  can play its role as intermediate language (especially it's AST)
@@ -446,6 +462,183 @@ Further examples can be found [here][CD4CExampleModels].
 - This is on contrast to CD4A which allows us to capture data structures for 
   example from the requirements elicitation activities.
   
+## Generator Extensions - CD4C Infrastructure to define method signatures in templates
+The class `CD4C` extends the generation possibilities provided in 
+monticore-tuntime by GLEX.
+It is possible to describe both the method signature and the method body in a 
+template.
+For this `CD4C` must be initialized once.
+The method `addMethod` in `CD4C` needs the class and the name of the template as
+parameters.
+The given template describes the signature in the first line with the call to 
+`cd4c`.
+Subsequently, follows the code for the generated method body.
+The class `CD4C` is located [here][CD4C].
+
+### Example 
+```
+  // Configure glex
+  glex = new GlobalExtensionManagement();
+  config = new GeneratorSetup();
+  config.setGlex(glex);
+
+  // Configure CD4C
+  CD4C.init(config);
+  
+  // add the method that is described in template "PrintMethod"
+  CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+  
+  // generate Java-Code
+  GeneratorEngine generatorEngine = new GeneratorEngine(config);
+  final Path output = Paths.get("HelloWorld.java");
+  generatorEngine.generate("de.monticore.cd.methodtemplates.core.Class", output, clazz, printer);
+```
+The corresponding template looks like this:
+```
+${tc.signature()}
+${cd4c.method("public java.lang.String print()")}
+{
+  System.out.println("Hello world");
+}
+
+```
+The corresponding test can be found [here][CD4CTest].
+
+### Usage
+
+Starting from a class, the CD4C infrastructure provides methods to call a
+template, that includes a signature and the method body (as usual).
+For this, the Global Extension Manager (GLEX) is extended with the `cd4c`
+tooling components.
+
+#### Call the CD4C
+```java
+    ASTCDClass clazz = ...
+    Optional<ASTCDMethodSignature> methodSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+```
+
+The cd4c infrastructure will create the method (signature), but not
+automatically add it to the provided class. This allows the use of information
+in the class e.g., attributes or associations to create the methods' signature
+and/or the method body.
+
+A template can use the cd4c infrastructure to define a method signature as
+following:
+```freemarker
+${tc.signature()}
+${cd4c.method("public java.lang.String print()")} <#-- use cd4c to create the signature -->
+{
+  System.out.println("Hello world");
+}
+```
+
+Example of a signature with a variable parameter list, extracted from the class.
+Here all public attributes are used to create the parameter list of the
+constructor.
+```freemarker
+${tc.signature()}
+<#assign parameter = ast.getCDAttributeList()?filter(a -> a.getModifier().isPublic())>
+${cd4c.constructor("public HelloWorldWithConstructor(" + parameter?map(a -> a.printType() + " " + a.getName())?join(", ") + ")")}
+{
+  <#list parameter as param>
+    this.${param.getName()} = ${param.getName()};
+  </#list>
+}
+```
+
+The CD4C infrastructure contains multiple ways to create methods.
+The main entry point is the CD4C class which has to be initialized before being
+used for the first time:
+```java
+GeneratorSetup setup = ...
+CD4C.init(config);
+```
+This sets the environment that should be used for generating the code.
+After initialization, the methods can be created.
+
+Create a method/constructor defined in a template resulting in a
+`ASTCDMethodSignature`:
+```java
+ASTCDClass clazz = ...
+// method
+Optional<ASTCDMethodSignature> methodSignature = 
+    CD4C.getInstance().createMethod(clazz, "de.monticore.ToString");
+// constructor
+Optional<ASTCDMethodSignature> constructorSignature = 
+    CD4C.getInstance().createConstructor(clazz, "de.monticore.ConstructorWithAllAttributes");
+```
+
+Those can then be used and added to the class or used elsewhere.
+Another option is to add the method directly to the provided class.
+This can be done using the `addX`-methods:
+```java
+ASTCDClass clazz = ...
+// method
+CD4C.getInstance().addMethod(clazz, "de.monticore.ToString");
+// constructor
+CD4C.getInstance().addConstructor(clazz, "de.monticore.ConstructorWithAllAttributes");
+```
+
+#### Add predicate/checks that handle the methods
+
+After handling the template, the resulting method is then checked with
+1. method predicate (`CD4C.getInstance()..addPredicate` or
+   `CD4C.getInstance()..addCoCo`): check if the method itself is valid (e.g.
+   unique parameter names)
+2. class predicate (`CD4C.getInstance()..addClassPredicate`): if a class would
+   be valid if the method was added (e.g. the new method does not have the exact
+   same signature as an existing method)
+
+CD4C comes with predefined predicates that can be added to the current instance
+with `CD4C.getInstance().addDefaultPredicates` and
+`CD4C.getInstance().addDefaultClassPredicate`.
+
+### Functionality
+
+The following describes the functionality of CD4C and how the different elements
+interact.
+
+#### Call to a CD4C template
+
+A CD4C template is a template that uses the CD4C infrastructure to create
+methods.
+The call to the template is only working when called from CD4C with
+`CD4C.getInstance()...` otherwise the method signature cannot be created.
+Additionally, the use of the template fails (throws an exception during run-time)
+, if there is no method signature defined in the template.
+
+When the template is valid (see above for examples) then a method signature is
+created and added to `CD4C.methodQueue`.
+This allows to call a CD4C template in another (CD4C) template.
+
+#### The `CD4CTemplateMethodHelper` class
+
+For each method that is created, a `CD4CTemplateMethodHelper` object is created
+that stores the `ASTCDMethodSignature` created from the method signature.
+
+#### Method body
+
+The method body is calculated when the template is executed/called as it is
+already processes by the freemarker engine and returned as a string.
+This leads to the fact, that the freemarker logic in the template is executed
+exactly once during the transformation of the AST and not when the generator
+is triggered to create the finished result (usually `generate.generate()`).
+This can be a problem, when the method (body) is added before necessary
+attributes or other settings are set.
+
+#### Connect method signature and body
+
+The connection of the method body and the method AST node (needed for the
+generator) is done by `CD4C.createMethodSignatureAndBody` and
+`CD4C.addMethodBody` using GLEX.
+
+#### different from "normal" template call
+
+The difference to other templates is that the CD4C templates (using the CD4C
+infrastructure) have to be executed from CD4C, otherwise the signature
+definitions can not be handled.
+The method body definition is exactly the same.
+
 ## Additional info
 ### Error codes
 `X` stands for any valid character
@@ -474,12 +667,15 @@ Further examples can be found [here][CD4CExampleModels].
 [CD4CBasisGrammar]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/grammars/de/monticore/CD4CodeBasis.mc4
 
 [ASTCDDefinition]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/_ast/ASTCDDefinition.java
-[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseTrafo.java
-[CD4AAfterParseDelegatorVisitor]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisAfterParseDelegatorVisitor.java
-[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisScopeDeSer.java
-[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTablePrinter.java
+[CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/trafo/CD4AnalysisAfterParseTrafo.java
+[CDBasisDefaultPackageTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/trafo/CDBasisDefaultPackageTrafo.java
+[CDAssociationDirectCompositionTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationDirectCompositionTrafo.java
+[CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromAllRoles.java
+[CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
+[CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
+[CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisDeSer.java
+[CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
 [CD4ATC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/typescalculator/DeriveSymTypeOfCD4Analysis.java
-[CD4ASTCD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreatorDelegator.java
 [SymTypeExpression]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
 [SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
@@ -489,17 +685,17 @@ Further examples can be found [here][CD4CExampleModels].
 [LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
 [ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/master/src/test/resources/de/monticore/cd4analysis/
 [ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
-[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisPrettyPrinter.java
+[PrettyPrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/prettyprint/CD4AnalysisFullPrettyPrinter.java
 [ASTCDType]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/_ast/ASTCDType.java
-[CD4ASTC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCreator.java
 [BuiltInTypes]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/BuiltInTypes.java
 
 [CD4ACoCos]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/cocos/CD4AnalysisCoCosDelegator.java
 [CD4AParser]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_parser/CD4AnalysisParser.java
-[CD4CodeSTC]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/_symboltable/CD4CodeSymbolTableCreator.java
 [CD4CLanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/parser/MyLife2.cd
 [CD4CExampleModels]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4code/
-[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/prettyprint/CD4CodePrettyPrinter.java
+[CD4CodePrinter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/prettyprint/CD4CodeFullPrettyPrinter.java
+[CD4C]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/methodtemplates/CD4C.java
+[CD4CTest]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/java/de/monticore/cd/methodtemplates/CD4CTest.java
 
 [OOSymbols]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
 [MCCollectionTypes]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4

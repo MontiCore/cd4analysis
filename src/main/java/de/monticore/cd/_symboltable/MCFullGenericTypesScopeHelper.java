@@ -7,29 +7,14 @@ package de.monticore.cd._symboltable;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCInnerType;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCMultipleGenericType;
 import de.monticore.types.mcfullgenerictypes._ast.ASTMCWildcardTypeArgument;
-import de.monticore.types.mcfullgenerictypes._visitor.MCFullGenericTypesVisitor;
+import de.monticore.types.mcfullgenerictypes._visitor.MCFullGenericTypesVisitor2;
 
 /**
  * This visitor sets the enclosing scope of the inner types,
  * so that the typechecks can be used
  */
 public class MCFullGenericTypesScopeHelper
-    implements MCFullGenericTypesVisitor {
-  protected MCFullGenericTypesVisitor realThis;
-
-  public MCFullGenericTypesScopeHelper() {
-    setRealThis(this);
-  }
-
-  @Override
-  public MCFullGenericTypesVisitor getRealThis() {
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(MCFullGenericTypesVisitor realThis) {
-    this.realThis = realThis;
-  }
+    implements MCFullGenericTypesVisitor2 {
 
   @Override
   public void visit(ASTMCWildcardTypeArgument node) {

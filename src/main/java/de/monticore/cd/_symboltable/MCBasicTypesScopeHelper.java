@@ -6,29 +6,14 @@ package de.monticore.cd._symboltable;
 
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor;
+import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor2;
 
 /**
  * This visitor sets the enclosing scope of the inner types,
  * so that the typechecks can be used
  */
 public class MCBasicTypesScopeHelper
-    implements MCBasicTypesVisitor {
-  protected MCBasicTypesVisitor realThis;
-
-  public MCBasicTypesScopeHelper() {
-    setRealThis(this);
-  }
-
-  @Override
-  public MCBasicTypesVisitor getRealThis() {
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(MCBasicTypesVisitor realThis) {
-    this.realThis = realThis;
-  }
+    implements MCBasicTypesVisitor2 {
 
   @Override
   public void visit(ASTMCQualifiedType node) {

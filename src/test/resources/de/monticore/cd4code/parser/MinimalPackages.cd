@@ -9,7 +9,7 @@ classdiagram MinimalPackages {
   package c {
     class C extends A, B {
       b.B bValue;
-      String name;
+      java.lang.String name;
       java.lang.String value;
       void do(int x);
     }

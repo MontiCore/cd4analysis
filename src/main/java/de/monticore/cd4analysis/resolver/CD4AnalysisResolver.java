@@ -9,10 +9,7 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.ICDRoleSymbolResolver;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdbasis._symboltable.ICDTypeSymbolResolver;
-import de.monticore.symbols.basicsymbols._symboltable.ITypeSymbolResolver;
-import de.monticore.symbols.basicsymbols._symboltable.IVariableSymbolResolver;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.*;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IFieldSymbolResolver;
 import de.monticore.symbols.oosymbols._symboltable.IOOTypeSymbolResolver;
@@ -23,12 +20,17 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class CD4AnalysisResolver
-    implements ICDTypeSymbolResolver, IOOTypeSymbolResolver, ITypeSymbolResolver,
+    implements IDiagramSymbolResolver, ICDTypeSymbolResolver, IOOTypeSymbolResolver, ITypeSymbolResolver,
     ICDRoleSymbolResolver, IFieldSymbolResolver, IVariableSymbolResolver {
   protected final ICD4AnalysisGlobalScope cdGlobalScope;
 
   public CD4AnalysisResolver(ICD4AnalysisGlobalScope cdGlobalScope) {
     this.cdGlobalScope = cdGlobalScope;
+  }
+
+  @Override
+  public List<DiagramSymbol> resolveAdaptedDiagramSymbol(boolean foundSymbols, String name, AccessModifier modifier, Predicate<DiagramSymbol> predicate) {
+    return cdGlobalScope.resolveDiagramMany(foundSymbols, name, modifier, predicate);
   }
 
   @Override

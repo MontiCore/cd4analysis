@@ -3,6 +3,6 @@
 import testtypeimporter.CD;
 
 def {
-  a : String;
+  a : java.lang.String;
   b : int;
 }

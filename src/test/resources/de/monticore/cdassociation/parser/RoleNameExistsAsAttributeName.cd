@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram RoleNameExistsAsAttributeName {
+
+  class A {
+    B b;
+  }
+
+  class B {
+    int value;
+  }
+
+  association B -> (value) A;
+}

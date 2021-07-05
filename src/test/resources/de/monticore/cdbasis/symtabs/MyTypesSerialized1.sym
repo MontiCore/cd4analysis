@@ -1,0 +1,19 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "MyTypesSerialized1",
+  "symbols": [
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
+      "name": "de.monticore.cdbasis.symtabs"
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name": "MyTypes"
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "de.monticore.cdbasis.symtabs.SomeImportedType",
+      "isClass": true
+    }
+  ]
+}

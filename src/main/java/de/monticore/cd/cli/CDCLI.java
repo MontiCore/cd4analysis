@@ -6,23 +6,28 @@ package de.monticore.cd.cli;
 
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeScopeDeSer;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
-import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromNavigableRoles;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
-import de.se_rwth.commons.Splitters;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
@@ -30,23 +35,28 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDCLI {
 
   static final Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-  protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for ";
+  protected static final String PARSE_SUCCESSFUL = "Successfully parsed %s\n";
+  protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for class diagram %s\n";
   protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
+  protected static final String DIR_CREATION_ERROR = "Directory '%s' could not be created\n";
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
   protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written\n";
+  protected static final String INPUT_FILE_NOT_EXISTENT = "Input file '%s' does not exist\n";
 
-  public static final String REPORT_ALL_ELEMENTS = "allElements.txt";
+  public static final String REPORT_NAME = "report";
 
   protected String modelName;
   protected String modelFile;
@@ -55,7 +65,8 @@ public class CDCLI {
   protected String outputPath;
   protected ASTCDCompilationUnit ast;
   protected ICD4CodeArtifactScope artifactScope;
-  protected final CDCLIOptions cdcliOptions = new CDCLIOptions();
+  protected final CDCLIOptions cdcliOptions = new CDCLIOptions(true);
+  protected final CDCLIOptions cdcliOptionsForHelp = new CDCLIOptions();
   protected CommandLine cmd;
 
   protected CDCLI() {
@@ -87,14 +98,15 @@ public class CDCLI {
     }
   }
 
-  protected boolean handleArgs(String[] args) throws IOException, ParseException {
+  protected boolean handleArgs(String[] args)
+      throws IOException, ParseException {
     cmd = cdcliOptions.handleArgs(args);
 
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
     }*/
 
-    failQuick = Boolean.parseBoolean(cmd.getOptionValue("f", "false"));
+    failQuick = cmd.hasOption("f") && Boolean.parseBoolean(cmd.getOptionValue("f", "true"));
 
     outputPath = cmd.getOptionValue("o", ".");
 
@@ -118,7 +130,8 @@ public class CDCLI {
         modelFile = cmd.getOptionValue("i");
 
         if (!modelFileExists()) {
-          throw new NoSuchFileException(modelFile);
+          System.out.printf(INPUT_FILE_NOT_EXISTENT, modelFile);
+          return false;
         }
       }
       else {
@@ -135,44 +148,89 @@ public class CDCLI {
 
     parse();
 
-    System.out.println("Successfully parsed " + ast.getCDDefinition().getName());
+    // don't output to stdout when the prettyprint is output to stdout
+    final boolean doPrintToStdOut = !(cmd.hasOption("pp") && cmd.getOptionValue("pp") == null);
 
-    boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "true"));
+    boolean defaultPackage = cmd.hasOption("defaultpackage") && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
+    if (defaultPackage) {
+      final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+      final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
+      traverser.add4CDBasis(cdBasis);
+      traverser.setCDBasisHandler(cdBasis);
+      cdBasis.setTraverser(traverser);
+
+      ast.accept(traverser);
+    }
+
+    if (doPrintToStdOut) {
+      String model = modelFile;
+      // is null when we read from stdin
+      if (model == null) {
+        model = "class diagram " + modelName + " from stdin";
+      }
+      System.out.printf(PARSE_SUCCESSFUL, model);
+    }
+
+    final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
+    if (cmd.hasOption("pp")) { // pretty print
+      ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
+    }
+
+    // transformations which are necessary to do after parsing
+    {
+      new CD4CodeDirectCompositionTrafo().transform(ast);
+    }
+
+    boolean useBuiltInTypes = !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "false"));
 
     // create a symbol table with provided model paths
-    String[] modelPath = cmd.getOptionValue("p", ".").split(";");
-    createSymTab(useBuiltInTypes, new ModelPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
+    String[] modelPath = { "." };
+    if (cmd.hasOption("path")) {
+      modelPath = cmd.getOptionValues("path");
+    }
+    createSymTab(useBuiltInTypes, new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
 
-    // check all the cocos
+    // transformations that need an already created symbol table
+    {
+      final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
+      final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+      traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
+      traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
+      cdAssociationRoleNameTrafo.transform(ast);
+    }
+
+    if (cmd.hasOption("fieldfromrole")) {
+      switch (cmd.getOptionValue("fieldfromrole")) {
+        case "all": { // add FieldSymbols for all the CDRoleSymbols
+          final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles = new CDAssociationCreateFieldsFromAllRoles();
+          final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+          cdAssociationCreateFieldsFromAllRoles.transform(ast);
+          break;
+        }
+        case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
+          final CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromNavigableRoles = new CDAssociationCreateFieldsFromNavigableRoles();
+          final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+          traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+          traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+          cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
+          break;
+        }
+        case "none":
+        default:
+          // do nothing
+      }
+    }
+
     checkCocos();
-    if (Log.getErrorCount() == 0) {
-      System.out.println(CHECK_SUCCESSFUL + ast.getCDDefinition().getName());
-    }
-    else {
-      System.out.println(CHECK_ERROR);
-      return;
-    }
-
-    if (cmd.hasOption("pp")) { // pretty print
-      String ppOptionVal = cmd.getOptionValue("pp");
-
-      // print model
-
-      final CD4CodePrettyPrinter cd4CodePrettyPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-      ast.accept(cd4CodePrettyPrinter);
-
-      if (ppOptionVal == null) {
-        System.out.println(cd4CodePrettyPrinter.getPrinter().getContent());
+    if (doPrintToStdOut) {
+      if (Log.getErrorCount() == 0) {
+        System.out.printf(CHECK_SUCCESSFUL, modelName);
       }
       else {
-        final Path outputPath = Paths.get(this.outputPath, ppOptionVal);
-        final File file = outputPath.toFile();
-        file.getParentFile().mkdirs();
-
-        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-          out.println(cd4CodePrettyPrinter.getPrinter().getContent());
-          System.out.printf(PRETTYPRINT_SUCCESSFUL, file);
-        }
+        System.out.println(CHECK_ERROR);
+        return;
       }
     }
 
@@ -182,18 +240,20 @@ public class CDCLI {
       Path symbolPath;
       if (targetFile == null) {
         if (modelFile != null) {
-          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
+          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".sym");
         }
         else {
-          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".cdsym");
+          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".sym");
         }
       }
       else {
         symbolPath = Paths.get(targetFile);
       }
-      final CD4CodeScopeDeSer deser = CD4CodeMill.cD4CodeScopeDeSer();
-      final String path = deser.store(artifactScope, symbolPath.toString());
-      System.out.printf(STEXPORT_SUCCESSFUL, symbolPath.toString().replace("\\","/"));
+      final CD4CodeSymbols2Json symbols2Json = new CD4CodeSymbols2Json();
+      final String path = symbols2Json.store(artifactScope, symbolPath.toString());
+      if (doPrintToStdOut) {
+        System.out.printf(STEXPORT_SUCCESSFUL, unifyPath(symbolPath));
+      }
     }
 
     // report
@@ -201,10 +261,39 @@ public class CDCLI {
       report(ast, cmd.getOptionValue("r", outputPath));
     }
 
+    if (cmd.hasOption("pp")) { // pretty print
+      String ppTarget = cmd.getOptionValue("pp");
+
+      if (ppTarget == null) {
+        System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+      }
+      else {
+        final Path outputPath;
+        if (Paths.get(ppTarget).isAbsolute()) {
+          outputPath = Paths.get(ppTarget);
+        }
+        else {
+          outputPath = Paths.get(this.outputPath, ppTarget);
+        }
+        final File file = outputPath.toFile();
+        if (!file.getParentFile().mkdirs()) {
+          System.out.printf(DIR_CREATION_ERROR, file.getAbsolutePath());
+          return;
+        }
+
+        try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
+          out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+        }
+        System.out.printf(PRETTYPRINT_SUCCESSFUL, unifyPath(file.toPath()));
+      }
+    }
+
     if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
       final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
       final String path = createPlantUML(plantUMLCmd, this.outputPath);
-      System.out.printf(PLANTUML_SUCCESSFUL, path);
+      final String dir = System.getProperty("user.dir");
+      String relative = new File(dir).toURI().relativize(new File(path).toURI()).getPath();
+      System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
     }
   }
 
@@ -219,28 +308,30 @@ public class CDCLI {
       cu = parser.parse(modelReader);
     }
     ast = cu.get();
+
     modelName = ast.getCDDefinition().getName();
   }
 
-  protected void createSymTab(boolean useBuiltInTypes, ModelPath modelPath) {
-    final ICD4CodeGlobalScope globalScope = CD4CodeMill.cD4CodeGlobalScope();
+  protected void createSymTab(boolean useBuiltInTypes, MCPath symbolPath) {
+    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
-    globalScope.setModelPath(modelPath);
-    if (useBuiltInTypes) {
-      globalScope.addBuiltInTypes();
+    globalScope.setSymbolPath(symbolPath);
+    if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
+      ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
     }
 
-    final CD4CodeSymbolTableCreatorDelegator symbolTableCreator = CD4CodeMill.cD4CodeSymbolTableCreatorDelegator();
-
-    artifactScope = symbolTableCreator.createFromAST(ast);
+    final CD4CodeScopesGenitorDelegator cd4CodeScopesGenitorDelegator = CD4CodeMill.scopesGenitorDelegator();
+    artifactScope = cd4CodeScopesGenitorDelegator.createFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
 
   protected void checkCocos() {
     new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(ast);
   }
 
-  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
-    final String output = Paths.get(outputPath, cmd.getOptionValue("puml", ast.getCDDefinition().getName())).toUri().getPath();
+  protected String createPlantUML(CommandLine plantUMLCmd, String outputPath)
+      throws IOException {
+    final String output = Paths.get(outputPath, cmd.getOptionValue("puml", modelName)).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
 
@@ -293,10 +384,10 @@ public class CDCLI {
   protected void printHelp(CDCLIOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd -p target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd -pp Person.out.cd -puml --showAtt --showRoles", cdcliOptions.getOptions());
+    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd", cdcliOptionsForHelp.getOptions());
 
     if (subCommand != null) {
-      formatter.printHelp(subCommand.toString(), cdcliOptions.getOptions(subCommand));
+      formatter.printHelp(subCommand.toString(), cdcliOptionsForHelp.getOptions(subCommand));
     }
   }
 
@@ -334,7 +425,7 @@ public class CDCLI {
       return name;
     }).collect(Collectors.toList()))).append("]");
 
-    final Path allElementsPath = Paths.get(path, REPORT_ALL_ELEMENTS);
+    final Path allElementsPath = Paths.get(path, REPORT_NAME + "." + modelName);
     if (Files.notExists(allElementsPath.getParent())) {
       try {
         Files.createDirectories(allElementsPath.getParent());
@@ -352,6 +443,14 @@ public class CDCLI {
       return;
     }
 
-    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Collections.singletonList(allElementsPath.toString())));
+    System.out.printf(REPORT_SUCCESSFUL, Joiners.COMMA.join(Collections.singletonList(unifyPath(allElementsPath))));
+  }
+
+  private String unifyPath(Path path) {
+    return unifyPath(path.toString());
+  }
+
+  private String unifyPath(String path) {
+    return path.replace("\\", "/");
   }
 }

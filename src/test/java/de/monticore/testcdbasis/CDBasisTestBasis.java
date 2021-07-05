@@ -5,32 +5,37 @@
 package de.monticore.testcdbasis;
 
 import de.monticore.cd.TestBasis;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._symboltable.ICDBasisGlobalScope;
-import de.monticore.cdbasis.cocos.CDBasisCoCos;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 
 import java.nio.file.Paths;
 
 public class CDBasisTestBasis extends TestBasis {
   protected TestCDBasisParser p;
-  protected CDBasisCoCos cdBasisCoCos;
+  protected CD4AnalysisCoCoChecker coCoChecker;
 
   @Before
   public void initObjects() {
-    CDBasisMill.reset();
-    CDBasisMill.init();
+    CD4AnalysisMill.reset();
+    CD4AnalysisMill.init();
+
+    // reset the log
+    Log.init();
+    Log.enableFailQuick(false);
+
     p = new TestCDBasisParser();
 
     final ICDBasisGlobalScope globalScope = CDBasisMill
-        .cDBasisGlobalScope();
+        .globalScope();
     globalScope.clear();
-    globalScope.setModelPath(new ModelPath(Paths.get(PATH)));
-    globalScope.setModelFileExtension(CD4AnalysisGlobalScope.EXTENSION);
+    globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
-    cdBasisCoCos = new CDBasisCoCos();
+    coCoChecker = new CD4AnalysisCoCoChecker();
   }
 }

@@ -1,10 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._ast;
 
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope;
 
 public class ASTCDExtendUsage extends ASTCDExtendUsageTOP {
-  // TODO: the setEnclosingScope-methods should call the setter instead of setting the scope directly
   @Override
   public void setEnclosingScope(IMCLiteralsBasisScope enclosingScope) {
     if (enclosingScope instanceof de.monticore.cdbasis._symboltable.ICDBasisScope) {

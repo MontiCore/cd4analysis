@@ -3,16 +3,14 @@
  */
 package de.monticore.cdbasis.cocos.ebnf;
 
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.prettyprint.CD4CodePrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
-import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -30,9 +28,9 @@ public class CDAttributeInitialTypeCompatible
       FieldSymbol symbol = node.getSymbol();
       String className = symbol.getEnclosingScope().getName();
 
-      String typeName = node.getMCType().printType(new MCCollectionTypesPrettyPrinter(new IndentPrinter()));
-      final CD4CodePrettyPrinter initialPrinter = CD4CodeMill.cD4CodePrettyPrinter();
-      node.getInitial().accept(initialPrinter);
+      String typeName = node.getMCType().printType(MCCollectionTypesMill.mcCollectionTypesPrettyPrinter());
+      final CD4CodeFullPrettyPrinter initialPrinter = new CD4CodeFullPrettyPrinter();
+      node.getInitial().accept(initialPrinter.getTraverser());
 
       final DeriveSymTypeOfCDBasis deriveSymTypeOfCDBasis = new DeriveSymTypeOfCDBasis();
       final Optional<SymTypeExpression> symTypeExpressionOfType = deriveSymTypeOfCDBasis.calculateType(node.getMCType());

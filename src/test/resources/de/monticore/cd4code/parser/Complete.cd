@@ -4,16 +4,16 @@ package de.monticore.cd4code.parser;
 classdiagram Complete {
 
   class A {
-    protected String name;
-    public String getName() throws Exception;
+    protected java.lang.String name;
+    public java.lang.String getName() throws java.lang.Exception;
   }
 
   class B extends A {
     readonly int x;
-    /String other;
+    /java.lang.String other;
 
-    B(String name, int x = 5);
-    int getX(String a, String... bs);
+    B(java.lang.String name, int x = 5);
+    int getX(java.lang.String a, java.lang.String... bs);
   }
 
   interface I;
@@ -37,6 +37,6 @@ classdiagram Complete {
 
   enum E {
     ;
-    String name;
+    java.lang.String name;
   }
 }

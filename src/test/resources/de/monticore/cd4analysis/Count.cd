@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cdbasis;
+
+classdiagram Count {
+  class FirstClass;
+
+  class SecondClass;
+
+  public interface FirstInterface;
+
+  public interface SecondInterface;
+
+  public enum FirstEnum;
+
+  public enum SecondEnum;
+
+  public association firstAssociation FirstClass -> FirstEnum;
+
+  public association secondAssociation SecondClass -> SecondEnum;
+}

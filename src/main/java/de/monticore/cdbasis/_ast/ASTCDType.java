@@ -6,12 +6,16 @@ package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDMemberVisitor;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+import de.monticore.umlmodifier._ast.ASTModifier;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public interface ASTCDType extends ASTCDTypeTOP {
@@ -23,6 +27,20 @@ public interface ASTCDType extends ASTCDTypeTOP {
   List<ASTMCObjectType> getInterfaceList();
 
   String printInterfaces();
+
+  ASTModifier getModifier();
+
+  void setModifier(ASTModifier modifier);
+
+  boolean addCDMember(ASTCDMember element);
+
+  boolean addAllCDMembers(Collection<? extends ASTCDMember> collection);
+
+  boolean removeCDMember (Object element);
+
+  ASTCDMember removeCDMember (int index);
+
+  boolean removeAllCDMembers (Collection<?> collection);
 
   /**
    * get a list of the specific CDMember, configured by the options
@@ -48,7 +66,12 @@ public interface ASTCDType extends ASTCDTypeTOP {
     list.add(0, option);
 
     final CDMemberVisitor cdMemberVisitor = CDMill.cDMemberVisitor(list.toArray(new CDMemberVisitor.Options[0]));
-    this.accept(cdMemberVisitor);
+    CD4CodeTraverser t = CD4CodeMill.traverser();
+    t.add4CDBasis(cdMemberVisitor);
+    t.add4CDAssociation(cdMemberVisitor);
+    t.add4CDInterfaceAndEnum(cdMemberVisitor);
+    t.add4CD4CodeBasis(cdMemberVisitor);
+    this.accept(t);
     return cdMemberVisitor.getElements();
   }
 
@@ -71,15 +94,40 @@ public interface ASTCDType extends ASTCDTypeTOP {
     return getCDMemberList(CDMemberVisitor.Options.ATTRIBUTES);
   }
 
-  default List<ASTCDAttribute> getCDRoleList() {
+  default void setCDAttributeList(List<ASTCDAttribute> attrList) {
+    clearCDAttributeList();
+    addAllCDMembers(attrList);
+  }
+
+  default void clearCDAttributeList() {
+    List<ASTCDAttribute> oldAttrMembers = getCDAttributeList();
+    removeAllCDMembers(oldAttrMembers);
+  }
+
+  default List<ASTCDRole> getCDRoleList() {
     return getCDMemberList(CDMemberVisitor.Options.ROLES);
   }
 
-  default List<ASTCDAttribute> getCDConstructorList() {
+  default List<ASTCDConstructor> getCDConstructorList() {
     return getCDMemberList(CDMemberVisitor.Options.CONSTRUCTORS);
   }
 
-  default List<ASTCDAttribute> getCDMethodList() {
+  default List<ASTCDMethod> getCDMethodList() {
     return getCDMemberList(CDMemberVisitor.Options.METHODS);
   }
+
+  default List<ASTCDMethodSignature> getCDMethodSignatureList() {
+    return getCDMemberList(CDMemberVisitor.Options.METHOD_SIGNATURES);
+  }
+
+  default void setCDMethodList(List<ASTCDMethod> methodList) {
+    clearCDMethodList();
+    addAllCDMembers(methodList);
+  }
+
+  default void clearCDMethodList() {
+    List<ASTCDMethod> oldMethodMembers = getCDMethodList();
+    removeAllCDMembers(oldMethodMembers);
+  }
+
 }

@@ -6,13 +6,15 @@ package de.monticore.cdassociation.prettyprint;
 
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;
 import de.monticore.cdassociation._ast.*;
-import de.monticore.cdassociation._visitor.CDAssociationVisitor;
+import de.monticore.cdassociation._visitor.CDAssociationHandler;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 
 import java.util.Stack;
 
 public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
-    implements CDAssociationVisitor {
-  protected CDAssociationVisitor realThis;
+    implements CDAssociationVisitor2, CDAssociationHandler {
+  protected CDAssociationTraverser traverser;
   protected final Stack<Boolean> stackIsAssociation;
 
   public CDAssociationPlantUMLPrettyPrinter() {
@@ -21,17 +23,16 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
   public CDAssociationPlantUMLPrettyPrinter(PlantUMLPrettyPrintUtil util) {
     super(util);
-    setRealThis(this);
     this.stackIsAssociation = new Stack<>();
   }
 
   @Override
-  public CDAssociationVisitor getRealThis() {
-    return realThis;
+  public CDAssociationTraverser getTraverser() {
+    return traverser;
   }
 
-  public void setRealThis(CDAssociationVisitor realThis) {
-    this.realThis = realThis;
+  public void setTraverser(CDAssociationTraverser traverser) {
+    this.traverser = traverser;
   }
 
   @Override
@@ -59,7 +60,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     if (plantUMLConfig.getShowAssoc()) {
       if (immediatelyPrintAssociations.get() && node.getLeft().isPresentSymbol() && node.getRight().isPresentSymbol()) {
         printComment(node);
-        node.getCDAssocType().accept(getRealThis());
+        node.getCDAssocType().accept(getTraverser());
       }
     }
   }
@@ -68,11 +69,11 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void traverse(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
       if (immediatelyPrintAssociations.get() && node.getLeft().isPresentSymbol() && node.getRight().isPresentSymbol()) {
-        node.getLeft().accept(getRealThis());
+        node.getLeft().accept(getTraverser());
         print(" ");
-        node.getCDAssocDir().accept(getRealThis());
+        node.getCDAssocDir().accept(getTraverser());
         print(" ");
-        node.getRight().accept(getRealThis());
+        node.getRight().accept(getTraverser());
       }
       else {
         associations.add(node);
@@ -149,12 +150,12 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     }
 
     if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
-      node.getCDCardinality().accept(getRealThis());
+      node.getCDCardinality().accept(getTraverser());
       print(" ");
     }
 
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
-      node.getCDRole().accept(getRealThis());
+      node.getCDRole().accept(getTraverser());
     }
     /*
     if (node.isPresentCDOrdered()) {
@@ -187,12 +188,12 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     }
      */
     if (plantUMLConfig.getShowRoles() && node.isPresentCDRole()) {
-      node.getCDRole().accept(getRealThis());
+      node.getCDRole().accept(getTraverser());
     }
 
     if (plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) {
       print(" ");
-      node.getCDCardinality().accept(getRealThis());
+      node.getCDCardinality().accept(getTraverser());
     }
 
     if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {

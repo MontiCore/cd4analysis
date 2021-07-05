@@ -4,52 +4,31 @@
 
 package de.monticore.cd._symboltable;
 
+import de.monticore.class2mc.Class2MCResolver;
+import de.monticore.class2mc.Java2MCResolver;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.oosymbols.OOSymbolsMill;
-import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
+import de.monticore.types.check.ISynthesize;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * contains all types, which are basic Java types
  */
 public class BuiltInTypes {
-  public static final String SCOPE_NAME = "BuiltInTypes";
-  public static final List<String> PRIMITIVE_TYPES = Arrays.asList("char", "int", "double", "float", "long", "boolean", "short", "byte", "void");
-  public static final List<String> OBJECT_TYPES = Arrays.asList("Character", "Integer", "Double", "Float", "Long", "Boolean", "Short", "Byte", "Void", "Number", "String");
-  public static final List<String> UTIL_TYPES = Arrays.asList("Date", "List", "Optional", "Set", "Map");
+  public static void addBuiltInTypes(IOOSymbolsGlobalScope globalScope) {
+    if (globalScope.getTypeSymbols().isEmpty()) {
+      BasicSymbolsMill.initializePrimitives();
 
-  public static void addBuiltInOOTypes(IOOSymbolsScope utilTypesScope, List<String> utilTypes, boolean isClass) {
-    utilTypes
-        .forEach(t -> {
-          final IOOSymbolsScope scope = OOSymbolsMill.oOSymbolsScopeBuilder().build();
-          final OOTypeSymbol typeSymbol = OOSymbolsMill
-              .oOTypeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(utilTypesScope)
-              .setSpannedScope(scope)
-              .setIsPublic(true)
-              .setIsClass(isClass)
-              .build();
-          utilTypesScope.add(typeSymbol);
-          utilTypesScope.add((TypeSymbol)typeSymbol);
-        });
-  }
-
-  public static void addBuiltInTypes(IOOSymbolsScope utilTypesScope, List<String> utilTypes) {
-    utilTypes
-        .forEach(t -> {
-          final IBasicSymbolsScope scope = BasicSymbolsMill.basicSymbolsScopeBuilder().build();
-          utilTypesScope.add(OOSymbolsMill
-              .typeSymbolBuilder()
-              .setName(t)
-              .setEnclosingScope(utilTypesScope)
-              .setSpannedScope(scope)
-              .build());
-        });
+      final Class2MCResolver resolver = new Class2MCResolver();
+      globalScope.addAdaptedTypeSymbolResolver(
+          (boolean foundSymbols, String name, de.monticore.symboltable.modifiers.AccessModifier modifier, java.util.function.Predicate<de.monticore.symbols.basicsymbols._symboltable.TypeSymbol> predicate) ->
+              new ArrayList<>(resolver.resolveAdaptedOOTypeSymbol(foundSymbols, name, modifier, predicate::test)));
+      globalScope.addAdaptedOOTypeSymbolResolver((boolean foundSymbols, String name, de.monticore.symboltable.modifiers.AccessModifier modifier, java.util.function.Predicate<de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol> predicate) ->
+      new ArrayList<>(resolver.resolveAdaptedOOTypeSymbol(foundSymbols, name, modifier, predicate::test)));
+    }
   }
 }

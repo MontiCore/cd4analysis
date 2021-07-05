@@ -10,10 +10,10 @@ public class CDAssociationSymbol extends CDAssociationSymbolTOP {
   }
 
   public CDRoleSymbol getLeft() {
-    return getAssociation().getLeft();
+    return getAssoc().getLeft();
   }
 
   public CDRoleSymbol getRight() {
-    return getAssociation().getRight();
+    return getAssoc().getRight();
   }
 }

@@ -1,6 +1,6 @@
 # (c) https://github.com/MontiCore/monticore
 
-image: maven:3.5.4-jdk-8-alpine
+image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk8
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -8,11 +8,9 @@ variables:
 
 cache:
   paths:
-    - .gradle/wrapper
   key: ${CI_COMMIT_REF_SLUG}
   
 before_script:
-  - chmod +x gradlew
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
 stages:
@@ -21,11 +19,12 @@ stages:
   - deploy
   - trigger
   - check
+  - mirror
 
 build:
   stage: build
   script:
-  - "./gradlew assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
+  - "gradle assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
     - "."
@@ -36,7 +35,7 @@ test:
   dependencies:
     - build
   script:
-  - "./gradlew check $GRADLE_OPT $ARGS2"
+  - "gradle check $GRADLE_OPT $ARGS2"
 
 trigger-langexp:
   stage: trigger
@@ -53,10 +52,11 @@ deploy:
   dependencies:
     - build
   script:
-    - "./gradlew publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+    - "gradle publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
   
 checkMDLinks:
   stage: check
+  allow_failure: true
   dependencies:
     - deploy
   script:
@@ -67,4 +67,41 @@ checkMDLinks:
     - "if [[ $linkCheckRes == *\"ERROR\"* ]]; then exit 1; fi"
   only:
     - develop
+
+githubmirror:
+  image: maven:3-jdk-8
+  stage: mirror
+  dependencies:
+    - checkMDLinks
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SE_CIBUILD_SSH_PRIV_KEY")
+    - echo "$SE_CIBUILD_SSH_PRIV_KEY" | tr -d '\r' | ssh-add -
+    - git config --global user.email "noreply-ci@se-rwth.de"
+    - git config --global user.name "MontiCore Mirroring Bot"
+    - mkdir -p ~/.ssh
+    - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+  script:
+    - "curl --location --header \"PRIVATE-TOKEN: $secibuildtoken\" \"https://git.rwth-aachen.de/api/v4/projects/monticore%2Fmdlinkchecker/jobs/artifacts/master/raw/target/libs/MDLinkChangerCLI.jar?job=build\" --output MDLinkChangerCLI.jar"
+    - sh pre/mirror.sh
+    - cd ..
+    - "if [ -d \"tmp\" ]; then rm -rf tmp; fi"
+    - mkdir "tmp"
+    - cd tmp
+    - git clone git@github.com:MontiCore/cd4analysis.git
+    - cd ..
+    - rm -r tmp/cd4analysis/*
+    - mv cd4analysis/* tmp/cd4analysis/
+    - cd tmp/cd4analysis
+    - git add --all
+    - "(git commit -m 'Updated branch with most recent version.') || true"
+    - git push --force
+    - cd ..
+    - cd ..
+    - rm -rf tmp
+    - exit 0
+  only:
+    - develop
+
 

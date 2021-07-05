@@ -6,8 +6,8 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
+import de.monticore.io.paths.MCPath;
 
 import java.util.Set;
 
@@ -15,12 +15,19 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
   public static final String EXTENSION = "cd";
   protected CDSymbolTableHelper symbolTableHelper;
 
-  public CD4AnalysisGlobalScope(ModelPath modelPath) {
-    super(modelPath, EXTENSION);
+  public CD4AnalysisGlobalScope(){
+    super();
+    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis()));
   }
 
-  public CD4AnalysisGlobalScope(ModelPath modelPath, String modelFileExtension) {
+  public CD4AnalysisGlobalScope(MCPath modelPath) {
+    super(modelPath, EXTENSION);
+    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis()));
+  }
+
+  public CD4AnalysisGlobalScope(MCPath modelPath, String modelFileExtension) {
     super(modelPath, modelFileExtension);
+    setSymbolTableHelper(new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis()));
   }
 
   @Override
@@ -40,54 +47,8 @@ public class CD4AnalysisGlobalScope extends CD4AnalysisGlobalScopeTOP {
     return CDSymbolTableHelper.calculateModelNamesSimple(qName, symbolTableHelper);
   }
 
-  @Override
   public void addBuiltInTypes() {
-    if (!getSubScopes().stream().noneMatch(s -> s.getName().equals(BuiltInTypes.SCOPE_NAME))) {
-      final ICD4AnalysisArtifactScope artifactScope = CD4AnalysisMill
-          .cD4AnalysisArtifactScopeBuilder()
-          .setPackageName("")
-          .setEnclosingScope(this)
-          .build();
-      artifactScope.setName(BuiltInTypes.SCOPE_NAME);
-
-      addBuiltInPrimitiveTypes(artifactScope);
-      addBuiltInObjectTypes(artifactScope);
-      addBuiltInUtilTypes(artifactScope);
-    }
-  }
-
-  public void addBuiltInPrimitiveTypes(ICD4AnalysisArtifactScope artifactScope) {
-    final ICD4AnalysisScope primitiveTypesScope = CD4AnalysisMill
-        .cD4AnalysisScopeBuilder()
-        .setNameAbsent()
-        .setEnclosingScope(artifactScope)
-        .build();
-
-    BuiltInTypes.addBuiltInTypes(primitiveTypesScope, BuiltInTypes.PRIMITIVE_TYPES);
-  }
-
-  public void addBuiltInObjectTypes(ICD4AnalysisArtifactScope artifactScope) {
-    final String scopeName = "java.lang";
-
-    final ICD4AnalysisScope objectTypesScope = CD4AnalysisMill
-        .cD4AnalysisScopeBuilder()
-        .setName(scopeName)
-        .setEnclosingScope(artifactScope)
-        .build();
-
-    BuiltInTypes.addBuiltInOOTypes(objectTypesScope, BuiltInTypes.OBJECT_TYPES, true);
-  }
-
-  public void addBuiltInUtilTypes(ICD4AnalysisArtifactScope artifactScope) {
-    final String scopeName = "java.util";
-
-    final ICD4AnalysisScope utilTypesScope = CD4AnalysisMill
-        .cD4AnalysisScopeBuilder()
-        .setName(scopeName)
-        .setEnclosingScope(artifactScope)
-        .build();
-
-    BuiltInTypes.addBuiltInOOTypes(utilTypesScope, BuiltInTypes.UTIL_TYPES, true);
+    BuiltInTypes.addBuiltInTypes(this);
   }
 
   @Override

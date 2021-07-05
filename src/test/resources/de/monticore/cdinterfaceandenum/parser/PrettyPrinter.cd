@@ -17,6 +17,6 @@ classdiagram PrettyPrinter {
 
   enum E {
     ;
-    String name;
+    java.lang.String name;
   }
 }
