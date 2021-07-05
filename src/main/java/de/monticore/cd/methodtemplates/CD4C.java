@@ -11,7 +11,9 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodSignatureCoCo;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.StringHookPoint;
@@ -38,8 +40,10 @@ public class CD4C {
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
   protected static CD4C INSTANCE;
   protected boolean isInitialized = false;
-  protected List<Predicate<ASTCDMethodSignature>> predicates = new ArrayList<>();
+  protected List<Predicate<ASTCDMethodSignature>> methodPredicates = new ArrayList<>();
+  protected List<Predicate<ASTCDAttribute>> attributePredicates = new ArrayList<>();
   protected List<BiPredicate<ASTCDClass, ASTCDMethodSignature>> classPredicates = new ArrayList<>();
+  protected List<BiPredicate<ASTCDClass, ASTCDAttribute>> classAttrPredicates = new ArrayList<>();
   protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter();
   protected CDTypesCalculator typesCalculator = new DeriveSymTypeOfCD4Code();
 
@@ -132,7 +136,7 @@ public class CD4C {
         .flatMap(CD4CTemplateMethodHelper::getMethod)
         .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
         .flatMap(m ->
-            this.predicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
+            this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
         );
   }
 
@@ -186,13 +190,13 @@ public class CD4C {
         .flatMap(CD4CTemplateMethodHelper::getMethod)
         .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
         .flatMap(m ->
-            this.predicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
+            this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
         );
   }
 
   private ASTCDMethodSignature setEnclosingScopeTo(ASTCDMethodSignature method, ICDBasisScope scope) {
     // TODO: maybe just create a symbol table
-    if (!this.predicates.isEmpty()) {
+    if (!this.methodPredicates.isEmpty() || !this.classPredicates.isEmpty()) {
       method.setEnclosingScope(scope);
       method.getCDParameterList().forEach(p -> {
         p.getMCType().setEnclosingScope(scope);
@@ -233,6 +237,67 @@ public class CD4C {
     checkInitialized();
     final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
     m.constructor(constructorSignature);
+    methodQueue.add(m);
+  }
+
+  /***************************************************************************/
+  /* Attributes                                                               */
+  /***************************************************************************/
+
+  /**
+   * create the new attribute
+   *
+   * @param clazz        the class where information can be read from
+   * @return the created attribute
+   */
+  public Optional<ASTCDAttribute> createAttribute(ASTCDClass clazz, String attributeSignature) {
+    checkInitialized();
+    attribute(attributeSignature);
+
+    Optional<ASTCDAttribute> attr = methodQueue.peek().astcdAttribute;
+    attr.ifPresent(a -> {setEnclosingScopeTo(a, clazz.getSpannedScope()); this.attributePredicates.forEach(p -> p.test(a));});
+    return attr;
+   }
+
+  private ASTCDAttribute setEnclosingScopeTo(ASTCDAttribute attribute, ICDBasisScope scope) {
+    // TODO: maybe just create a symbol table
+    if (!this.attributePredicates.isEmpty() || !this.classAttrPredicates.isEmpty()) {
+      attribute.setEnclosingScope(scope);
+      attribute.getMCType().setEnclosingScope(scope);
+    }
+    return attribute;
+  }
+
+  /**
+   * add the new constructor to the provided class
+   *
+   * @param clazz        the class where the method should be added
+   * @param templateName the name of the template that is used for the method
+   */
+  public void addAttribute(ASTCDClass clazz, String templateName) {
+    checkInitialized();
+    final Optional<ASTCDAttribute> attribute = createAttribute(clazz, templateName);
+    if (!attribute.isPresent()) {
+      Log.error("0x11022: There was no attribute created in the template '" + templateName + "'");
+      return;
+    }
+
+    setEnclosingScopeTo(attribute.get(), clazz.getSpannedScope());
+
+    this.classAttrPredicates.forEach((p -> p.test(clazz, attribute.get())));
+
+    clazz.addCDMember(attribute.get());
+  }
+
+  /**
+   * Use this method to describe the signature (with concrete syntax) in templates
+   *
+   * @param attributeSignature the attribute signature as {@link de.monticore.cdbasis._ast.ASTCDAttribute}
+   */
+  public void attribute(String attributeSignature) {
+    checkInitialized();
+    final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
+    m.attribute(attributeSignature);
     methodQueue.add(m);
   }
 
@@ -291,7 +356,32 @@ public class CD4C {
    * @return the current CD4C object
    */
   public CD4C addPredicate(Predicate<ASTCDMethodSignature> predicate) {
-    this.predicates.add(predicate);
+    this.methodPredicates.add(predicate);
+    return this;
+  }
+
+  /**
+   * add a coco that should be checked if a method is valid
+   *
+   * @param predicate a coco that checks a method
+   * @return the current CD4C object
+   */
+  public CD4C addCoco(CDBasisASTCDAttributeCoCo predicate) {
+    this.attributePredicates.add((a) -> {
+      predicate.check(a);
+      return true;
+    });
+    return this;
+  }
+
+  /**
+   * add a predicate that should be checked if a method is valid
+   *
+   * @param predicate a method that checks a method
+   * @return the current CD4C object
+   */
+  public CD4C addAttributePredicate(Predicate<ASTCDAttribute> predicate) {
+    this.attributePredicates.add(predicate);
     return this;
   }
 
@@ -302,7 +392,7 @@ public class CD4C {
    * @return the current CD4C object
    */
   public CD4C addCoco(CD4CodeBasisASTCDMethodSignatureCoCo predicate) {
-    this.predicates.add((m) -> {
+    this.methodPredicates.add((m) -> {
       predicate.check(m);
       return true;
     });
@@ -315,6 +405,7 @@ public class CD4C {
    * @return the current CD4C object
    */
   public CD4C addDefaultPredicates() {
+    // methods
     // check parameter types
     addPredicate((m) -> {
       final List<String> unknownTypes = m.getCDParameterList().stream().filter(p ->
@@ -346,6 +437,29 @@ public class CD4C {
       return true;
     });
     addCoco(new CDMethodSignatureParameterNamesUnique());
+
+    // attributes
+    // check type
+    addAttributePredicate((attribute) -> {
+        if (!new DeriveSymTypeOfCD4Code().calculateType(attribute.getMCType()).isPresent()) {
+          Log.error("0x110C2: The type '" + prettyPrinter.prettyprint(attribute.getMCType()) + "' of the attribute declaration (" +
+                  prettyPrinter.prettyprint(attribute) + ") could not be resolved.");
+          return false;
+        }
+
+      return true;
+    });
+    return this;
+  }
+
+  /**
+   * add a predicate that is checked when a attribute should be added to a class
+   *
+   * @param predicate a predicate that checks a method before adding it to the class
+   * @return the current CD4C object
+   */
+  public CD4C addAttrClassPredicate(BiPredicate<ASTCDClass, ASTCDAttribute> predicate) {
+    this.classAttrPredicates.add(predicate);
     return this;
   }
 
@@ -360,13 +474,15 @@ public class CD4C {
     return this;
   }
 
+
   /**
    * add predefined class predicates
    *
    * @return the current CD4C object
    */
   public CD4C addDefaultClassPredicates() {
-    return addClassPredicate((c, m) -> {
+    // methods
+    addClassPredicate((c, m) -> {
       final List<String> parameterTypes = m.getCDParameterList().stream()
           .map(p -> typesCalculator.calculateType(p.getMCType()).get().getTypeInfo().getFullName())
           .collect(Collectors.toList());
@@ -384,5 +500,21 @@ public class CD4C {
       }
       return true;
     });
+
+    // attributes
+    addAttrClassPredicate((c, a) -> {
+      final String attrType = typesCalculator.calculateType(a.getMCType()).get().getTypeInfo().getFullName();
+      if (c.getCDAttributeList()
+        .stream()
+        .anyMatch(ca -> {
+          return attrType.equals(typesCalculator.calculateType(ca.getMCType()).get().getTypeInfo().getFullName());
+        })) {
+        Log.error("0x110C9: The class '" + c.getName() + "' already has a attribute named '" + a.getName() + "'");
+        return false;
+      }
+      return true;
+    });
+
+    return this;
   }
 }
