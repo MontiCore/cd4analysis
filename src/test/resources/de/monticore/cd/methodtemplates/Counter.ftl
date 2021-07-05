@@ -2,5 +2,5 @@
 ${tc.signature()}
 ${cd4c.method("public int count()")}
 {
-  return 0;
+  return counter++;
 }

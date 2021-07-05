@@ -256,4 +256,55 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     Log.clearFindings();
   }
+
+  @Test
+  public void testWithAttrClassPredicates() {
+    // Build class for testing
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithClassPredicates")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
+    clazz.addCDMember(
+            CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().build(),
+                    "int", "counter"));
+
+    // add class to the AST and create a symbol table to we can resolve the types
+    node.getCDDefinition().addCDElement(clazz);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+
+    CD4C.getInstance().addDefaultClassPredicates();
+
+    // try to create a print method that already exists
+    CD4C.getInstance().addAttribute(clazz, "int counter;");
+
+    assertEquals(1, Log.getFindingsCount());
+    assertEquals("0x110C9: The class 'HelloWorldWithClassPredicates' already has a attribute named 'counter'", Log.getFindings().get(0).getMsg());
+
+    Log.clearFindings();
+  }
+
+  @Test
+  public void testWithUnknownAttributeTypePredicates() {
+    // Build class for testing
+    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithUnknownAttributeTypePredicates")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
+
+    // add class to the AST and create a symbol table to we can resolve the types
+    node.getCDDefinition().addCDElement(clazz);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+
+    CD4C.getInstance().addDefaultPredicates();
+
+    // try to create a method with unkown type
+    CD4C.getInstance().addAttribute(clazz, "UnknownAttributeType unkwonAttributeType;");
+
+    assertEquals(2, Log.getFindingsCount());
+    assertEquals("0xA0324 The qualified type UnknownAttributeType cannot be found", Log.getFindings().get(0).getMsg());
+    assertEquals("0x110C2: The type 'UnknownAttributeType' of the attribute declaration (UnknownAttributeType unkwonAttributeType;\n" +
+            ") could not be resolved.", Log.getFindings().get(1).getMsg());
+
+    Log.clearFindings();
+  }
 }
