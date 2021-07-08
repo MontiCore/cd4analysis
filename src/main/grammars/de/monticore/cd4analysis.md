@@ -464,7 +464,7 @@ Further examples can be found [here][CD4CExampleModels].
   
 ## Generator Extensions - CD4C Infrastructure to define method signatures in templates
 The class `CD4C` extends the generation possibilities provided in 
-monticore-tuntime by GLEX.
+monticore-runtime by GLEX.
 It is possible to describe both the method signature and the method body in a 
 template.
 For this `CD4C` must be initialized once.
