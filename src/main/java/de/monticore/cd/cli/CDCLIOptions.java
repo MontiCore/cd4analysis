@@ -48,16 +48,6 @@ public class CDCLIOptions {
         .desc("Prints short help information")
         .build());
 
-    options.addOption(Option
-        .builder("f").longOpt("failquick")
-        .hasArg().type(Boolean.class)
-        .argName("value").optionalArg(true).numberOfArgs(1)
-        .desc("Configures if the application should quickfail on errors. "
-                + "`-f` equals to `--failquick true`. Default is `false`. "
-                + "If `true` the check stops at the first error, otherwise tries "
-                + "to find all errors before it stops.")
-        .build());
-
     initCheck();
     initPrettyPrinter(showPlantUML);
     initPlantUML();
@@ -86,7 +76,7 @@ public class CDCLIOptions {
         .builder("s").longOpt("symboltable")
         .hasArg().type(String.class)
         .argName("file").optionalArg(true).numberOfArgs(1)
-        .desc("Stores the symbol table of the CD. The default value is `{CDName}.sym`.")
+        .desc("Stores the symbol table of the CD. The default value is `{CDName}.cdsym`.")
         .build());
 
     options.addOption(Option
@@ -111,7 +101,7 @@ public class CDCLIOptions {
         .hasArg().type(Boolean.class)
         .argName("useBuiltinTypes").optionalArg(true).numberOfArgs(1)
         .desc("Configures if built-in-types should be considered. "
-                + "Default: `true`. `-f` toggles it to `--usebuiltintypes false`")
+                + "Default: `true`. `-t` toggles it to `--usebuiltintypes false`")
         .build());
 
     options.addOption(Option
@@ -119,7 +109,7 @@ public class CDCLIOptions {
         .hasArg().type(Boolean.class)
         .argName("defaultpackage").optionalArg(true).numberOfArgs(1)
         .desc("Configures if a default package should be created. Default: false. "
-            + "If `true`, all types, that are not already in a package, are moved to the default package.")
+            + "If `true`, all classes, that are not already in a package, are moved to the default package.")
         .build());
 
     options.addOption(Option

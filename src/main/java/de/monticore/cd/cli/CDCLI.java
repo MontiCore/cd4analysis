@@ -51,6 +51,7 @@ public class CDCLI {
   protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
+  protected static final String FILE_EXISTS_INFO = "File '%s' already exists and will be overwritten\n";
   protected static final String DIR_CREATION_ERROR = "Directory '%s' could not be created\n";
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
   protected static final String REPORT_SUCCESSFUL = "Reports %s successfully written\n";
@@ -61,7 +62,6 @@ public class CDCLI {
   protected String modelName;
   protected String modelFile;
   protected Reader modelReader;
-  protected boolean failQuick = false;
   protected String outputPath;
   protected ASTCDCompilationUnit ast;
   protected ICD4CodeArtifactScope artifactScope;
@@ -80,7 +80,6 @@ public class CDCLI {
     CDCLI cli = new CDCLI();
     try {
       if (cli.handleArgs(args)) {
-        Log.enableFailQuick(cli.failQuick);
         cli.run();
       }
     }
@@ -96,6 +95,9 @@ public class CDCLI {
     catch (MissingArgumentException e) {
       Log.error(String.format("0xCD013: option '%s' is missing an argument", e.getOption()));
     }
+    catch (Exception e) {
+      Log.error(String.format("0xCD014: an error occured: %s", e.getMessage()));
+    }
   }
 
   protected boolean handleArgs(String[] args)
@@ -105,8 +107,6 @@ public class CDCLI {
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
     }*/
-
-    failQuick = cmd.hasOption("f") && Boolean.parseBoolean(cmd.getOptionValue("f", "true"));
 
     outputPath = cmd.getOptionValue("o", ".");
 
@@ -240,10 +240,10 @@ public class CDCLI {
       Path symbolPath;
       if (targetFile == null) {
         if (modelFile != null) {
-          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".sym");
+          symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
         }
         else {
-          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".sym");
+          symbolPath = Paths.get(Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator + modelName + ".cdsym");
         }
       }
       else {
@@ -276,8 +276,10 @@ public class CDCLI {
           outputPath = Paths.get(this.outputPath, ppTarget);
         }
         final File file = outputPath.toFile();
-        if (!file.getParentFile().mkdirs()) {
-          System.out.printf(DIR_CREATION_ERROR, file.getAbsolutePath());
+        if (file.exists()) {
+          System.out.printf(FILE_EXISTS_INFO, unifyPath(file.getPath()));
+        } else if (!file.getParentFile().mkdirs()) {
+          System.out.printf(DIR_CREATION_ERROR, unifyPath(file.getAbsolutePath()));
           return;
         }
 
