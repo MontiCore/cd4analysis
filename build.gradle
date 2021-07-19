@@ -237,7 +237,7 @@ task testSourcesJar(type: Jar) {
 shadowJar { // all in one jar
   archiveFileName = 'CDCLI.jar'
   manifest {
-    attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
+    attributes "Main-Class": "de.monticore.cd4code.CD4CodeCLI"
   }
   archiveClassifier = "cli"
 }

@@ -4,9 +4,9 @@
 
 package de.monticore.cd4code.cocos;
 
-import de.monticore.cd.cli.CDCLI;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import de.monticore.cd4code.CD4CodeCLI;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
@@ -51,7 +51,7 @@ public class CDAttributeTypeExistsCoCoTest extends CD4CodeTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CDCLI.main(new String[] { "-i", fileName, 
+    CD4CodeCLI.main(new String[] { "-i", fileName,
                               "-pp", getTmpFilePath("Types.cd").replaceAll("\\\\", "/"), 
                               "-s",  "target/symbols/Types.sym"});
   }
