@@ -28,7 +28,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
       if (getCurrentScope().isPresent()) {
         getCurrentScope().get().add(realSymbol);
       } else {
-        Log.warn("0xA5021x50113 Symbol cannot be added to current scope, since no scope exists.");
+        Log.warn("0xAE871 Symbol cannot be added to current scope, since no scope exists.");
       }
       de.monticore.cdassociation._symboltable.ICDAssociationScope scope = createScope(false);
       putOnStack(scope);
@@ -104,7 +104,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     if (getCurrentScope().isPresent()) {
       getCurrentScope().get().add(symbol);
     } else {
-      Log.warn("0xA5021x49651 Symbol cannot be added to current scope, since no scope exists.");
+      Log.warn("0xAE872 Symbol cannot be added to current scope, since no scope exists.");
     }
     // symbol -> ast
     symbol.setAstNode(cdRole);
