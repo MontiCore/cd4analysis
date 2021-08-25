@@ -69,7 +69,6 @@ checkMDLinks:
     - develop
 
 githubmirror:
-  image: maven:3-jdk-8
   stage: mirror
   dependencies:
     - checkMDLinks
@@ -92,7 +91,8 @@ githubmirror:
     - git clone git@github.com:MontiCore/cd4analysis.git
     - cd ..
     - rm -r tmp/cd4analysis/*
-    - mv cd4analysis/* tmp/cd4analysis/
+    - shopt -s extglob
+    - mv cd4analysis/!(MDLinkChangerCLI.jar) tmp/cd4analysis/
     - cd tmp/cd4analysis
     - git add --all
     - "(git commit -m 'Updated branch with most recent version.') || true"
