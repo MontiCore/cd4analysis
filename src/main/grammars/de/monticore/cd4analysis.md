@@ -681,7 +681,7 @@ The method body definition is exactly the same.
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
 [STHelper]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/CDSymbolTableHelper.java
 [reporting]: https://github.com/MontiCore/cd4analysis/tree/master/src/main/java/de/monticore/cd4analysis/reporting
-[CDCLI]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/cli/CDCLI.java
+[CDCLI]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/CD4CodeCLI.java
 [LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
 [ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/master/src/test/resources/de/monticore/cd4analysis/
 [ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
