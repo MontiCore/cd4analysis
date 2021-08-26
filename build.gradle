@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 /* (c) https://github.com/MontiCore/monticore */
 /*buildscript {
   dependencies {
@@ -212,6 +215,37 @@ tasks.withType(JavaCompile) {
 tasks.withType(Test) {
   // this won't work with setting the mills, as they can interleave and break thigs
   // maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
+
+tasks.withType(Test) {
+  useJUnit()
+  testLogging {
+    // controls whether test output is shown
+    showExceptions true
+    showCauses true
+    showStackTraces true
+    exceptionFormat TestExceptionFormat.FULL
+    info {
+      events TestLogEvent.FAILED,
+              TestLogEvent.PASSED,
+              TestLogEvent.SKIPPED,
+              TestLogEvent.STANDARD_OUT
+    }
+  }
+  afterTest { desc, result ->
+    logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
+  }
+  afterSuite { desc, result ->
+    if (!desc.parent) { // will match the outermost suite
+      def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+      def startItem = '|  ', endItem = '  |'
+      logger.lifecycle startItem + output + endItem
+    }
+  }
+  reports {
+    junitXml.enabled = false
+    html.enabled = false
+  }
 }
 
 test {
