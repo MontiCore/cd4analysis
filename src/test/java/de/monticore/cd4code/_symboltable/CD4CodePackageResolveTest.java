@@ -20,6 +20,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,6 +32,12 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
+  
+  
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    CD4CodeMill.init();
+  }
 
   @Test
   public void completeModel() throws IOException {

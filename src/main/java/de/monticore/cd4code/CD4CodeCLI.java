@@ -97,9 +97,9 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           System.out.printf(PARSE_SUCCESSFUL, model);
         }
 
-        final CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
         if (cmd.hasOption("pp")) { // pretty print
-          ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
+          String ppTarget = cmd.getOptionValue("pp");
+          prettyPrint(ast, ppTarget);
         }
 
         // transformations which are necessary to do after parsing
@@ -188,10 +188,6 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           report(ast, cmd.getOptionValue("r", outputPath));
         }
 
-        if (cmd.hasOption("pp")) { // pretty print
-          String ppTarget = cmd.getOptionValue("pp");
-          prettyPrint(ast, ppTarget);
-        }
 
         if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
           final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
@@ -367,6 +363,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
   @Override
   public void prettyPrint(ASTCDCompilationUnit ast, String ppTarget) {
     CD4CodeFullPrettyPrinter cd4CodeFullPrettyPrinter = new CD4CodeFullPrettyPrinter();
+    ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
     if (ppTarget == null) {
       System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
     }
