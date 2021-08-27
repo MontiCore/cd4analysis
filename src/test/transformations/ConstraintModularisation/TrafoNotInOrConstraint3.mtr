@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram $_ {
+
+  $BusinessClass[[
+    class $_{ }
+  ]]
+
+  not[[
+    $FactoryClass[[
+      class $_{  }
+    ]]
+  ]]
+
+
+
+  [[ :- 	class $classFactoryName{
+        public $className $createClassMethod();
+      }
+  ]]
+}
+
+assign{
+  $className = $BusinessClass.getName();
+	$classFactoryName = $className+"Factory";
+	$createClassMethod = "create"+$className;
+}
+
+where{
+  ($BusinessClass.getName().equals("Person") &&
+	$FactoryClass.getName().equals("PersonFactory")) ||
+	($BusinessClass.getName().equals("Group") &&
+	$FactoryClass.getName().equals("GroupFactory"))
+}

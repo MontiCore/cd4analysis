@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+
+  class $className {   }
+
+  class $classNameProxy {
+    [[ :- public void someMethod(); ]]
+    not [[ public void someMethod(); ]]
+  }
+
+  not[[
+    $ClassBase[[
+      class $_ { }
+    ]]
+  ]]
+
+  [[ :- class $classBaseName { } ]]
+
+}
+
+assign{
+    $classBaseName = $className+"Base";
+}
+
+where{
+    $classNameProxy.equals($className+"Proxy")
+    && $ClassBase.getName().equals($className+"Base")
+}

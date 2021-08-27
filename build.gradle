@@ -55,7 +55,7 @@ sourceSets {
   }
   grammars {
     resources {
-      srcDirs(grammarDir)
+      srcDirs([grammarDir, grammarOutDir])
       include "**/*.mc4"
     }
   }
@@ -143,6 +143,7 @@ grammarDependencies.each {
     grammar = grammarFile
     outputDir = file grammarOutDir
     handcodedPath "$projectDir/src/main/java"
+    dstlGen = true
     def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
 
     def uptoDate = incCheck(grammarIncludingPackage)
@@ -152,6 +153,25 @@ grammarDependencies.each {
       return grammar.toURI()
     }
     superGrammars.from(superGrammarsList)
+
+    outputs.upToDateWhen { uptoDate }
+  }
+  task "generateTRGrammar${grammarName}"(type: MCTask) {
+    def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
+    dependsOn dependsOnTRGrammars
+
+    def grammarFile = file(grammarOutDir + "/" + de.monticore.dstlgen.util.DSTLPathUtil.getTRGrammar([file("src/main/grammars").toString()], file (g))) // Replace with getTRFile(file (g)) once the plugin is updated and in the upstream
+
+    grammar = grammarFile
+    outputDir = file grammarOutDir
+    handcodedPath "$projectDir/src/main/java"
+    dstlGen = false // Do NOT generate TR grammars for TR grammars
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
+
+    def uptoDate = incCheck(grammarIncludingPackage)
+
+    modelPath(grammarOutDir)
+    modelPath(grammarDir)
 
     outputs.upToDateWhen { uptoDate }
   }
@@ -184,8 +204,28 @@ testGrammarDependencies.each {
   }
 }
 
+task generateTestTrafos {}
+fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
+  def g = it
+  def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
+  task "$taskname"(type: JavaExec) {
+    group = "CD4CodeCLI"
+    classpath += sourceSets.main.runtimeClasspath
+    main = 'de.monticore.tr.CD4CodeCLI'
+    args += ["-i", "$g",
+             "-o", testGrammarOutDir]
+    outputs.dir(testGrammarOutDir)
+  }
+  generateTestTrafos.dependsOn("$taskname")
+}
+
+
 task generate {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+}
+
+task generateTR {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
 }
 
 task generateTest {
@@ -194,10 +234,12 @@ task generateTest {
 
 compileJava {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
 }
 
 compileTestJava {
   dependsOn project.collect { it.tasks.withType(MCTask) }
+  dependsOn generateTestTrafos
 }
 
 

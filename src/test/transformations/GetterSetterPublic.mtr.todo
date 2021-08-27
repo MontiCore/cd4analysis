@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+class $_ {
+  // TODO plus vs minus  +  :- -
+  // TODO: Add HC extension for this
+  $A [[  $M [[ [[public  :- private]]  ]] MCType $T $attrname; ]]
+
+  [[ :-  public $type $get(); ]]
+  [[ :-  public void $set($type $attrname); ]]
+}
+
+assign {
+  $get = "get" +  capitalize($attrname);
+  $set = "set" +  capitalize($attrname);
+  $type = $A.getMCType().printType(new de.monticore.types.prettyprint.MCFullGenericTypesFullPrettyPrinter(new de.monticore.prettyprint.IndentPrinter()));
+}
+where {
+  !("boolean").equals($A.getMCType().printType(new de.monticore.types.prettyprint.MCFullGenericTypesFullPrettyPrinter(new de.monticore.prettyprint.IndentPrinter())))
+}

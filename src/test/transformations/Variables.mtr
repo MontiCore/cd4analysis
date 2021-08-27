@@ -1,0 +1,29 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+class $c;
+
+class $c;
+
+class $_ extends $c;
+
+class $_ extends $b;
+
+class $_ extends $b;
+
+association $a -> $b;
+
+association $a ($d) -> ($c) $e;
+
+class $d;
+
+$Z1 [[ association $a ($f) -> ($g) $e; ]]
+$Z2 [[ association $a ($g) -> ($f) $e; ]]
+
+where { $f.equals($b)  }
+
+do {
+  $Z1.toString();
+     String $foo = "$";
+     String bla = $a;
+     $Z2.deepEquals($Z1);
+}
