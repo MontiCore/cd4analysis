@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram TestCase1 {
+
+  class ClassS;
+  
+  class ClassA extends ClassS{
+  	T1 attributeA;  
+  }
+  
+  class ClassB extends ClassS{
+   T1 attributeA; 
+   T2 attributeB;
+  }
+  
+  class ClassC extends ClassS{
+    T2 attributeB;
+  }
+  
+  class ClassD extends ClassS{
+    T2 attributeB;
+  }
+}

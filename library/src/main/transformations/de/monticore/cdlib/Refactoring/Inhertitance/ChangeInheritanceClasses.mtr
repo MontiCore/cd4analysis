@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.inheritance.tf;
+transformation ChangeInheritanceClasses {
+  classdiagram $_{
+    CDClass $Sub [[
+      class $subclass extends [[ $oldSuperclass :- $newSuperclass ]] ;
+    ]]
+  }
+}

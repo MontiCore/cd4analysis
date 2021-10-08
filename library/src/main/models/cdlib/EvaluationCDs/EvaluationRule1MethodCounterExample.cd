@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule1MethodCounterExample {
+
+  public class ClassC{
+  }
+  
+  public class ClassA1 extends ClassC{
+  	public String getAttribute();  
+  }
+  
+  public class ClassA2 extends ClassC{
+   public String getAttribute();  
+  }
+
+	public class ClassA3 extends ClassC;
+}

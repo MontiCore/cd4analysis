@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.adapter.tf;
+transformation ClassAdapter {
+  classdiagram $_ {
+    class $adaptee;
+
+      [[ :- class $adapter extends $adaptee implements $targetName; ]]
+
+      [[ :- interface $targetName; ]]
+  }
+}

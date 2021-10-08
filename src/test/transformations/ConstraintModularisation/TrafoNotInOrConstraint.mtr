@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+
+  class $className {
+
+  }
+
+  class $notClassImplName {
+    not[[
+      $SomeMethod[[
+        public void $_();
+      ]]
+    ]]
+    [[ :- public void someMethod(); ]]
+  }
+}
+
+where{
+  $notClassImplName.contains($className) &&
+  ($SomeMethod.getName().equals("someMethod")
+  ||
+  !$notClassImplName.equals($className+"Impl"))
+}

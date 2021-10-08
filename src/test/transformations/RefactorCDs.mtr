@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+  class $parent {
+    [[ :- CDAttribute $A1 ]]
+   }
+ class $_ extends $parent{
+   [[ CDAttribute $A1 :- ]]
+ }
+
+ class $_ extends $parent{
+   [[ CDAttribute $A2 :- ]]
+ }
+
+ not  [[ class $_ extends $parent; ]]
+
+}
+
+where { $A1.deepEquals($A2) }

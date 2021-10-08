@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram APrivate {
+
+  class A{
+  	private String a;
+  }
+}

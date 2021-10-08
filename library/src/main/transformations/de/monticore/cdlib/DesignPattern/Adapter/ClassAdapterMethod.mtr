@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.adapter.tf;
+transformation ClassAdapterMethod {
+  CDMethod $A
+  CDMethod $B
+
+  classdiagram $_ {
+      class $adaptee;
+
+      [[ :- class $adapter extends $adaptee implements $targetName{
+        CDMethod $B
+      } ]]
+
+      [[ :- interface $targetName {
+        CDMethod $A
+      } ]]
+  }
+}

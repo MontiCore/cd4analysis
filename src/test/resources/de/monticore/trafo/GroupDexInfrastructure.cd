@@ -1,0 +1,111 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram GroupDexInfrastructure {
+
+  interface Profile {  }
+
+  interface IGroup extends Profile {  }
+
+  class GroupImpl {
+       private void somePredefinedMethod();
+  }
+
+  class GroupBuilder {
+         private void somePredefinedMethod();
+    }
+
+  class GroupProxy{
+  }
+
+  class GroupManager{
+       private void someOtherPredefinedMethod();
+  }
+
+  class Group{
+       public String firstName;
+       public String lastName;
+       private void somePredefinedMethod();
+   }
+
+  interface IPerson extends Profile {
+       private void somePredefinedMethod();
+   }
+
+  class PersonImpl {
+         private void somePredefinedMethod();
+   }
+
+  class PersonBuilder {
+   }
+
+  class PersonProxy{
+     private void somePredefinedMethod();
+  }
+
+  class PersonManager{
+        private void someOtherPredefinedMethod();
+   }
+
+  class Person{
+         private void somePredefinedMethod();
+  }
+
+  class Post{
+
+  }
+
+  class PostImpl{
+  }
+
+  class Dummy1{  }
+  class Dummy2{  }
+  class Dummy3{  }
+  class Dummy4{  }
+  class Dummy5{  }
+  class Dummy6{  }
+  class Dummy7{  }
+  class Dummy8{  }
+  class Dummy9{  }
+  class Dummy10{  }
+  class Dummy11{  }
+  class Dummy12{  }
+  class Dummy13{  }
+  class Dummy14{  }
+  class Dummy15{  }
+  class Dummy16{  }
+  class Dummy17{  }
+  class Dummy18{  }
+  class Dummy19{  }
+  class Dummy20{  }
+  class Dummy21{  }
+  class Dummy22{  }
+  class Dummy23{  }
+  class Dummy24{  }
+  class Dummy25{  }
+  class Dummy26{  }
+  class Dummy27{  }
+  class Dummy28{  }
+  class Dummy29{  }
+  class Dummy30{  }
+  class Dummy31{  }
+  class Dummy32{  }
+  class Dummy33{  }
+  class Dummy34{  }
+  class Dummy35{  }
+  class Dummy36{  }
+  class Dummy37{  }
+  class Dummy38{  }
+  class Dummy39{  }
+  class Dummy40{  }
+  class Dummy41{  }
+  class Dummy42{  }
+  class Dummy43{  }
+  class Dummy44{  }
+  class Dummy45{  }
+  class Dummy46{  }
+  class Dummy47{  }
+  class Dummy48{  }
+  class Dummy49{  }
+  class Dummy50{  }
+
+}

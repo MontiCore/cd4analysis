@@ -1,0 +1,42 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.extractintermediateclass.manualname.attribute.tf;
+transformation ExtractIntermediateClassManualNameAttribute {
+  classdiagram $_{
+
+    class $parent;
+
+    $b [[class $subclass1 extends [[ $parent :- $newParent ]] {
+      [[ CDAttribute $A1  :- ]]
+    } ]]
+
+    list $listName [[ $subclass [[class $_ extends [[$parent :- $newParent]] {
+      [[ CDAttribute $A2  :- ]]
+    }]] ]]
+
+    [[ :- class $newParent extends $parent{
+       CDAttribute $A1
+    } ]]
+  }
+
+  where{
+    $A1.deepEquals($A2)
+  }
+
+  do{
+    ArrayList<String> nameList = new ArrayList();
+    nameList.add($newParent);
+    de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType reference = de.monticore.cdbasis.CDBasisMill
+                  .mCQualifiedTypeBuilder()
+                  .setMCQualifiedName(
+                          de.monticore.cdbasis.CDBasisMill.mCQualifiedNameBuilder()
+                                  .addAllParts(nameList)
+                          .build()
+                 ).build();
+    this.get_$b().getSuperclassList().clear();
+    this.get_$b().getSuperclassList().add(reference);
+    for ( int i = 0; i < get_$subclass().size(); i++){
+      get_$subclass().get(i).getSuperclassList().clear();
+      get_$subclass().get(i).getSuperclassList().add(reference);
+    }
+  }
+}

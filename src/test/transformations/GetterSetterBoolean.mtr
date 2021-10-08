@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+class $_ {
+  $A [[ [[public  :- private]] boolean $attrname; ]]
+
+  [[ :-  public $type $get(); ]]
+  [[ :-  public void $set(boolean $attrname); ]]
+}
+
+assign {
+  $get = "is"  +  capitalize($attrname);
+  $set = "set" +  capitalize($attrname);
+}

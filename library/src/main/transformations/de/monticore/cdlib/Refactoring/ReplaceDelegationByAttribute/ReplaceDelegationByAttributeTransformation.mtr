@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.replacedelegationbyattribute.tf;
+transformation ReplaceDelegationByAttributeTransformation {
+  classdiagram $_{
+      class $superclassName{
+        [[ :- $attrTyp $attrName; ]]
+      }
+
+      class $classToAttrName;
+
+      [[ CDAssociation $A :- ]]
+  }
+
+  where{
+    ($A.getLeftQualifiedName().getQName().equals($classToAttrName)&&
+     $A.getRightQualifiedName().getQName().equals($superclassName)&&
+     $A.getCDAssocDir().isDefinitiveNavigableLeft()
+    )||(
+     $A.getCDAssocDir().isDefinitiveNavigableRight()&&
+     $A.getLeftQualifiedName().getQName().equals($superclassName)&&
+     $A.getRightQualifiedName().getQName().equals($classToAttrName))
+  }
+}

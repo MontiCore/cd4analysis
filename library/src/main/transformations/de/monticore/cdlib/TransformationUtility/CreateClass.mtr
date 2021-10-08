@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.transformationutility.tf;
+transformation CreateClass {
+  classdiagram $_ {
+    not [[ class $className; ]]
+
+    [[:- class $className;]]
+  }
+}
