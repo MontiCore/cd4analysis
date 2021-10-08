@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram PullUpAttrs {
+
+  class Parent {
+  }
+
+  class Sub1 extends Parent {
+     String name;
+      int age;
+  }
+  class Sub2 extends Parent {
+    String name;
+      int age;
+  }
+
+   class Sub3 extends Parent {
+      String name;
+      int age;
+    }
+
+}

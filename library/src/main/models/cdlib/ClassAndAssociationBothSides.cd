@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram ClassAndAssociationBothSides {
+
+  class A;
+  class Old;
+  
+  association Old <-> Old;
+
+}

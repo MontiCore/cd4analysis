@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.delete.tf;
+transformation Delete1to1Association {
+  classdiagram $_ {
+
+    CDClass $old [[ class $oldClassName; ]]
+
+    CDClass $new [[ class $newClassName; ]]
+
+      [[ CDAssociation $A :- ]]
+
+  }where{
+    (
+        ($A.getLeftQualifiedName().getQName().equals($old.getName())&&
+         $A.getRightQualifiedName().getQName().equals($new.getName()))||
+        ($A.getLeftQualifiedName().getQName().equals($new.getName())&&
+         $A.getRightQualifiedName().getQName().equals($old.getName()))
+    )&&(
+      ((!$A.getLeft().isPresentCDCardinality())||
+       $A.getLeft().getCDCardinality().isOne()
+      )&&(
+      (!$A.getRight().isPresentCDCardinality())||
+       $A.getRight().getCDCardinality().isOne()
+      )
+    )
+  }
+}

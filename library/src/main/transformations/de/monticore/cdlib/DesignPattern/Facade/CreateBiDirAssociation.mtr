@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.facade.tf;
+transformation CreateBiDirAssociation {
+  classdiagram $_ {
+    [[ :- association facade $nameFassade <-> $nameClass ; ]]
+  }
+}

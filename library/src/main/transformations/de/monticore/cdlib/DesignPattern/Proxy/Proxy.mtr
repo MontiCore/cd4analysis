@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.proxy.tf;
+transformation Proxy {
+  classdiagram $Classdiagram{
+      class $realClassName;
+
+    [[ :- interface $interfaceName; ]]
+
+      [[ :- class $proxyName implements $interfaceName; ]]
+
+    [[ :- association  $proxyName -> $realClassName; ]]
+  }
+}

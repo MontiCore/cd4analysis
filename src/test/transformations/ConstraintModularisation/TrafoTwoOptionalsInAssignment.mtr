@@ -1,0 +1,29 @@
+/* (c) https://github.com/MontiCore/monticore */
+class Group {
+  [[
+    opt [[
+        public String $someAttribute1;
+    ]]
+    :-
+  ]]
+
+  [[
+    opt [[
+        public String $someAttribute2;
+    ]]
+    :-
+  ]]
+
+  [[ :- public String $combinedAttribute; ]]
+  not[[ public void someMethod(); ]]
+  [[ :- public void someMethod(); ]]
+}
+
+assign{
+  $combinedAttribute = $someAttribute1 + $someAttribute2;
+}
+
+where{
+  $someAttribute1.equals("firstName")
+  && $someAttribute2.equals("lastName")
+}

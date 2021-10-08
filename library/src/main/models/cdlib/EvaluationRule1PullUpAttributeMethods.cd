@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule1PullUpAttributeMethods{
+
+  public class ClassC{
+    public String attribute1;
+    public String getAttribute();
+  }
+
+  public class ClassA1 extends ClassC;
+
+  public class ClassA2 extends ClassC;
+
+}

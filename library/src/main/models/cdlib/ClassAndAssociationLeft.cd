@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram ClassAndAssociationLeft {
+
+  class A;
+  class Old;
+  
+  association Old <- A;
+  
+
+}

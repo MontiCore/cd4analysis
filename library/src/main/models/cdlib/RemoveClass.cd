@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram RemoveClass {
+
+  class A{
+     int a;
+  }
+  
+  class B extends A;
+
+}

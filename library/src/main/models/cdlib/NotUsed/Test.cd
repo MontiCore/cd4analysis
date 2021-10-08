@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule1{
+ 
+  public class ClassA{
+  	int a;
+  }
+  public class ClassA2 extends ClassA;
+  
+  public class ClassA1 extends ClassA;
+
+}

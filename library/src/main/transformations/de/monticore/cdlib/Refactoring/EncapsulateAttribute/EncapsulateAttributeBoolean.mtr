@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.encapsulateattribute.tf;
+transformation EncapsulateAttributeBoolean {
+  classdiagram $_ {
+      class $_ {
+      $A [[
+          [[ public  :- private ]] boolean $attrname;
+      ]]
+
+        [[ :-  public boolean $get(); ]]
+
+        [[ :-  public void $set(boolean $attrname); ]]
+      }
+  }
+
+  assign {
+    $get = "is"  +  capitalize($attrname);
+    $set = "set" +  capitalize($attrname);
+  }
+}

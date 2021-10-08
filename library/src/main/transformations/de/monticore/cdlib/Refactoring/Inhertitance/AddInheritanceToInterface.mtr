@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.inheritance.tf;
+transformation AddInheritanceToInterface {
+  classdiagram $_{
+    CDClass $Sub [[
+      class $subclass implements [[ $oldInterface :-  $newInterfaces ]] ;
+    ]]
+  }
+}

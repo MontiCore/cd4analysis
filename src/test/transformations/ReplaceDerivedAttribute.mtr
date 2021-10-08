@@ -1,0 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+class $_ {
+  // TODO / derived
+ [[ derived String name; :- String getName(); ]]
+}

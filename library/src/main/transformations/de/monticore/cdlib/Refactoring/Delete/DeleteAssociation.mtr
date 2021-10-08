@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.delete.tf;
+transformation DeleteAssociation {
+  classdiagram $_ {
+      $C [[ class $className; ]]
+      [[ CDAssociation $A :- ]]
+  }
+
+  where{
+    $A.getLeftQualifiedName().getQName().equals($className)||
+    $A.getRightQualifiedName().getQName().equals($className)
+  }
+}

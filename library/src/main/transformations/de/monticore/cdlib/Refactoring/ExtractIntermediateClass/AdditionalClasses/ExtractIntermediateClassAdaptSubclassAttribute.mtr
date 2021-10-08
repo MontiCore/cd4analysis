@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.extractintermediateclass.additionalclasses.tf;
+transformation ExtractIntermediateClassAdaptSubclassAttribute {
+  classdiagram $_{
+    class $subclass extends [[ $parent :- $newParent ]] {
+      [[ CDAttribute $A  :- ]]
+    }
+  }
+}

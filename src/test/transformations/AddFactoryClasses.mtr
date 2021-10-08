@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+  class $a;
+  
+    [[ :-
+      class $f {
+        public $a create() ;
+        private $a doCreate();
+      } ]]
+
+
+}
+assign {
+  $f = $a.concat("Factory");
+}

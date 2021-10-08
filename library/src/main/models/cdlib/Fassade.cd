@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram Fassade {
+
+  class A;
+  class B;
+  class C;
+  
+  association C -> A;
+  association C -- A;
+  association C <- A;
+  association C <-> A;
+  
+  association B -> C;
+  association B -- C;
+  association B <- C;
+  association B <-> C;
+  
+  association A -- B;
+
+}

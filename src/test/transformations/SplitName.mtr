@@ -1,0 +1,6 @@
+/* (c) https://github.com/MontiCore/monticore */
+CDClass $C [[ class $_ {
+    [[ opt [[ String name; ]] :- ]]
+    [[ :- String firstName; ]]
+    [[ :- String lastName; ]]
+} ]]

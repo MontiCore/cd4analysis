@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+class $className {
+
+}
+
+list[[
+  $ClassImpl[[
+    class $_ {
+      opt [[
+        $PredefMethod[[
+          private void $_();
+        ]]
+      ]]
+      [[ :- public void someMethod(); ]]
+      not[[ public void someMethod(); ]]
+    }
+  ]]
+]]
+
+where{
+ $PredefMethod.getName().equals("somePredefinedMethod")
+  ||
+  $ClassImpl.getName().equals($className+"Impl")
+}

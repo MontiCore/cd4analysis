@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.decorator.tf;
+transformation Decorator {
+  classdiagram $_ {
+      class $concreteComponent [[ :- extends $componentName ]] {
+        CDMethod $A1 [[ MCReturnType $_ $MName ();  ]]
+      }
+
+      [[ :- class $decoratorName extends $componentName {
+        CDMethod $A1
+      } ]]
+
+      [[ :- class $componentName {
+        CDMethod $A1
+      } ]]
+
+      [[ :- association $decoratorName -> $componentName; ]]
+  }
+}

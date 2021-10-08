@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+class $_ {
+  [[
+    opt [[
+      $SomeAttribute1[[
+        public String $_;
+      ]]
+    ]]
+    :-
+  ]]
+
+  [[
+    opt [[
+      $SomeAttribute2[[
+        public String $_;
+      ]]
+    ]]
+    :-
+  ]]
+
+  [[ :- public String $combinedAttribute; ]]
+  not[[ public void someMethod(); ]]
+  [[ :- public void someMethod(); ]]
+}
+
+assign{
+  $combinedAttribute = $SomeAttribute1.getName() + $SomeAttribute2.getName();
+}
+
+where{
+  $SomeAttribute1.getName().equals("firstName")
+  && $SomeAttribute2.getName().equals("lastName")
+}
