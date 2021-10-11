@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.extractintermediateclass.autoname.attribute.tf;
+transformation ExtractIntermediateClass3ClassesAttribute {
+  classdiagram $_{
+
+    class $parent;
+
+    class $subclass1 extends [[ $parent :- $newParent ]] {
+      [[ CDAttribute $A1  :- ]]
+    }
+
+    class $subclass2 extends [[ $parent :- $newParent ]]{
+       [[ CDAttribute $A2 :- ]]
+    }
+
+    class $subclass3 extends [[ $parent :- $newParent ]]{
+       [[ CDAttribute $A3 :- ]]
+    }
+
+    [[ :- class $newParent extends $parent{
+       CDAttribute $A1
+    } ]]
+  }
+
+  assign{
+    $newParent = $subclass1.concat($subclass2).concat($subclass3);
+  }
+
+  where{
+    $A2.deepEquals($A1)&&
+    $A3.deepEquals($A1)
+  }
+}

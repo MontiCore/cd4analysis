@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram RefactorCDsValid {
+
+  class D extends A {
+    String name;
+  }
+
+  class B extends A {
+     String name;
+  }
+
+  class A;
+
+  class C;
+
+}

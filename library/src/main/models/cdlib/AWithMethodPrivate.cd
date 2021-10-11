@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AWithMethodPrivate {
+
+  class A;
+
+  class B extends A{
+  	private void a ();
+  }
+  
+  class C extends A{
+  	private void a ();
+  }
+
+}

@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.visitor.tf;
+transformation SubNodesDeleteMethods {
+  classdiagram $_ {
+    class $nodeName;
+
+    class $_ extends $nodeName {
+      [[ Modifier $mod MCReturnType $type $name ();  :- ]]
+    }
+  }
+}

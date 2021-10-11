@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.move.tf;
+transformation IsNeighbor {
+  classdiagram $_ {
+      class $c1;
+      class $c2;
+      $A [[ association $left <-> $right ;]]
+  }
+
+  where{
+    (($left.equals($c1) && $right.equals($c2))
+      ||
+        ($right.equals($c1) && $left.equals($c2)))
+    &&
+    (!$A.getLeft().isPresentCDCardinality() || $A.getLeft().getCDCardinality().isOne())
+    &&
+    ((!$A.getRight().isPresentCDCardinality()) || $A.getRight().getCDCardinality().isOne())
+  }
+}

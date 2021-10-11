@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram ExtractClassTestMethod {
+
+  
+  public class ClassA1{
+  	public String method();  
+  }
+  
+  public class ClassA2{
+   public String method();
+  }
+	
+	class A;
+
+}

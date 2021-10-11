@@ -1,0 +1,33 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram TestCase2 {
+
+  class A{
+  	T1 a; 
+  }
+  
+  class B extends A{
+  	T2 b;  
+  }
+  
+  class C extends A{
+   T2 b;
+  }
+  
+   class D{
+  	T1 a; 
+  }
+  
+  class E extends D{
+    T2 b;
+  }
+  
+  class F extends D{
+    T2 b;
+  }
+  
+  class G {
+  	T2 b;
+  }
+  
+
+}

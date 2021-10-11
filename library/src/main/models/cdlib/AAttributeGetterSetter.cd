@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AAttributeGetterSetter {
+
+  class A{
+  	public int a;
+  	public int getA();
+  	public void setA(int b);
+  }
+  
+
+}

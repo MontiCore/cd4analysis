@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram PullUpAssociationCounter {
+
+  class A extends C;
+  class B extends C;
+  class C;
+  class D;
+  
+  association A -> D;
+  association B <-> D;
+
+}

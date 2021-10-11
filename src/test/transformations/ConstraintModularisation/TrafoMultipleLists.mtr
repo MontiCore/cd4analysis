@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+
+  list[[
+    $GroupClass[[
+      class $_ {
+        not[[ public void someMethod(); ]]
+        [[ :- public void someMethod(); ]]
+      }
+    ]]
+  ]]
+
+
+  list[[
+    $PersonClass[[
+      class $_ {
+        not[[ public void someMethod(); ]]
+        [[ :- public void someMethod(); ]]
+      }
+    ]]
+  ]]
+}
+
+where{
+  $GroupClass.getName().contains("Group")
+  && $PersonClass.getName().contains("Person")
+}

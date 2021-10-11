@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AB {
+
+  class A implements D;
+  class B;
+  interface D;
+
+}

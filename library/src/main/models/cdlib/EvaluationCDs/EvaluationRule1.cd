@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule1 {
+
+  public class ClassC{
+  }
+  
+  public class ClassA1 extends ClassC{
+  	public String attribute1;  
+  }
+  
+  public class ClassA2 extends ClassC{
+   public String attribute1;
+  }
+
+}

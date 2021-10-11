@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AInheritance {
+
+  class A;
+  class B extends A;
+  
+
+}

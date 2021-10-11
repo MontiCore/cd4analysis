@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+
+    class $className {
+
+    }
+
+    list[[
+        $DependendClass[[
+            class $_ {
+               not[[ public void someMethod(); ]]
+               [[ :- public void someMethod(); ]]
+            }
+        ]]
+    ]]
+
+}
+
+where{
+    $DependendClass.getName().contains($className)
+}

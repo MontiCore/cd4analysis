@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+$C [[
+  class A {
+    [[ :- $A [[ public java.lang.String attr; ]] ]]
+  }
+ ]]
+
+ do {
+   glex.replaceTemplate("core.DefaultAttibute",
+                        m.$A,
+                        new StringHookPoint("protected String" + m.$A.getName() + ";"));
+ }
