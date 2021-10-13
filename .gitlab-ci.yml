@@ -38,7 +38,7 @@ test:
   script:
   - "gradle check $GRADLE_OPT $ARGS2"
   - "cd library"
-  - "gradle --include-build ../ check --stacktrace --info $GRADLE_OPT $ARGS2"
+  - "gradle --include-build ../ check $GRADLE_OPT $ARGS2"
 
 trigger-langexp:
   stage: trigger
