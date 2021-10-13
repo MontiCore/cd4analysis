@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.transformationutility.replacenameinassociation.tf;
+transformation ChangeLeftQualifierUniDir {
+  classdiagram $_ {
+      association [[ $oldName :- $leftNew ]] -- $_ ;
+  }
+}

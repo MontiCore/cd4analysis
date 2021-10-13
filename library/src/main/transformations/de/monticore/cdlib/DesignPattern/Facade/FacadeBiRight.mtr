@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.facade.tf;
+transformation FacadeBiRight {
+  classdiagram $_ {
+    CDClass $subClass [[ class $nameClass; ]]
+    CDClass $reference [[ class $referenceClass; ]]
+
+    association facade $nameFacade <-> $nameClass;
+
+    not [[ association facade $nameFacade <-> $referenceClass; ]]
+
+    association $referenceClass <-> [[ $nameClass :- $nameFacade ]];
+  }
+}

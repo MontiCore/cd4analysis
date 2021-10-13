@@ -109,8 +109,9 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
     assertTrue(opt.isPresent());
 
-    String s = new OOSymbolsSymbols2Json().serialize(str1.get().getSpannedScope());
-    String s2 = symbols2Json.serialize(artifactScope);
-    System.out.println(s2);
+    // TODO: Code ist (1) sinnlos und (2) fehlerhaft
+    // String s = new OOSymbolsSymbols2Json().serialize(str1.get().getSpannedScope());
+    // String s2 = symbols2Json.serialize(artifactScope);
+    // System.out.println(s2);
   }
 }

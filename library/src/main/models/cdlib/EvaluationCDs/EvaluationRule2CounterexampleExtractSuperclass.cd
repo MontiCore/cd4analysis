@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule2CounterexampleExtractSuperclass {
+
+  class ClassC;
+  
+  class ClassA1 extends ClassC{
+  	String attribute1;  
+  }
+  
+  class ClassA2 extends ClassC{
+   String attribute1;
+  }
+
+  class ClassB1 extends ClassC;
+  class ClassB2 extends ClassC;
+  
+  class ClassC1 extends ClassC{
+  	String attribute2;  
+  }
+  
+  class ClassC2 extends ClassC{
+   String attribute2;
+  }
+  
+  
+}

@@ -1,0 +1,21 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule23ClassesMethods {
+
+  class ClassC;
+
+  class ClassA1 extends ClassC{
+  	void attribute1();
+  }
+
+  class ClassA2 extends ClassC{
+   void attribute1();
+  }
+
+  class ClassA3 extends ClassC{
+   void attribute1();
+  }
+
+  class ClassB1 extends ClassC;
+  class ClassB2 extends ClassC;
+
+}

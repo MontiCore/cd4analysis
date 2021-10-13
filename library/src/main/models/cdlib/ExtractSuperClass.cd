@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram ExtractSuperClass{
+
+
+  public class ClassA {
+  	public String attribute1;
+  	public String attribute2;
+  	public void getAttribute1();
+  	public void getAttribute2();
+  }
+
+  public class ClassB {
+  	public String attribute1;
+  	public String attribute2;
+  	public void getAttribute1();
+  	public void getAttribute2();
+  }
+
+  public class ClassC {
+  	public String attribute1;
+  	public void getAttribute1();
+  }
+}

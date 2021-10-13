@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram RenameClassTest {
+
+	class C;
+	class B extends C;
+  	class A extends B;
+}

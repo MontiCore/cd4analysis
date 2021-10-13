@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationCollapseHierarchy{
+
+  public class ClassC {
+  	public String attribute1;
+  	public String attribute2;
+    public String method1();
+    public String method2();
+  }
+
+  public class ClassA extends ClassC {
+  }
+
+  public class ClassB extends ClassC {
+  }
+  
+  public class ClassD extends ClassC {
+  	public String attribute1;
+  	public String method1();
+  	public String attribute3;
+  	public String method3();
+  }
+
+}

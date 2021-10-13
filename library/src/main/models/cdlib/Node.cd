@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram Node {
+
+  public class Node{
+    public void optimize();
+  	public void generate(); 
+  }
+  
+  public class CNode1 extends Node{
+  	public void optimize();
+  	public void generate(); 
+  }
+  
+  public class CNode2 extends Node{
+    public void optimize();
+  	public void generate(); 
+  }
+
+}

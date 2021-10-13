@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram RemoveAttribute {
+
+  class A{
+  
+     public int a;
+     private String b;
+     int c;
+     
+  }
+  
+}

@@ -4,7 +4,6 @@ image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-  MAVEN_CLI_OPTS: "--settings settings.xml --batch-mode"
 
 cache:
   paths:
@@ -25,6 +24,8 @@ build:
   stage: build
   script:
   - "gradle assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
+  - "cd library"
+  - "gradle --include-build ../ assemble --refresh-dependencies $GRADLE_OPT $ARGS1"
   artifacts:
     paths:
     - "."
@@ -36,6 +37,8 @@ test:
     - build
   script:
   - "gradle check $GRADLE_OPT $ARGS2"
+  - "cd library"
+  - "gradle --include-build ../ check $GRADLE_OPT $ARGS2"
 
 trigger-langexp:
   stage: trigger
@@ -53,7 +56,9 @@ deploy:
     - build
   script:
     - "gradle publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
-  
+    - "cd library"
+    - "gradle --include-build ../ publish $GRADLE_OPT $ARGS3 -PmavenPassword=$password -PmavenUser=$username"
+
 checkMDLinks:
   stage: check
   allow_failure: true
