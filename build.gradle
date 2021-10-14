@@ -220,7 +220,7 @@ fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each
   def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
   task "$taskname"(type: MontiTransExec) {
     getClassPath().setFrom(sourceSets.test.compileClasspath)
-    TFGenCLI = 'de.monticore.tr.CD4CodeTFGenCLI'
+    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
     input = file(g)
     outputDir = file(testGrammarOutDir)
   }

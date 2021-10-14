@@ -74,7 +74,7 @@ fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each
 
   task "$taskname" (type: MontiTransExec){
     getClassPath().setFrom(sourceSets.main.compileClasspath)
-    TFGenCLI = 'de.monticore.tr.CD4CodeTFGenCLI'
+    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
     input = file(g)
     outputDir = file("$buildDir/generated-sources")
   }
