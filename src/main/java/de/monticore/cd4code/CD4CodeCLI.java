@@ -373,7 +373,11 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
         outputPath = Paths.get(ppTarget);
       }
       else {
-        outputPath = Paths.get(this.outputPath, ppTarget);
+        if(this.outputPath.isEmpty()){
+          outputPath = Paths.get(ppTarget);
+        }else {
+          outputPath = Paths.get(this.outputPath, ppTarget);
+        }
       }
       final File file = outputPath.toFile();
       if (file.exists()) {

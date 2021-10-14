@@ -110,11 +110,12 @@ wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ### Parameters of the CLI
 
 The CLI provides quite a number of configurable parameters. 
-These two are examples for calling the CLI (download and use the file 
-[MyLife.cd](doc/MyLife.cd)):
+These two are examples for calling the CLI (download and use the files
+[MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
 ```shell
-java -jar CDCLI.jar -i MyLife.cd --path target:src/models -o target/out -t true -s
+java -jar CDCLI.jar -i MyBasics.cd -t true -s
+java -jar CDCLI.jar -i MyLife.cd -o target/out -t true -s
 java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 ```
 
