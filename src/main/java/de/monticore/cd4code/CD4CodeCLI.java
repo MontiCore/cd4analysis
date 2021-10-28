@@ -119,12 +119,10 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
 
         artifactScope = createSymbolTable(ast);
         final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-        globalScope.clear();
         globalScope.setSymbolPath(new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
         if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
           ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
         }
-        globalScope.addSubScope(artifactScope);
         completeSymbolTable();
 
         // transformations that need an already created symbol table
