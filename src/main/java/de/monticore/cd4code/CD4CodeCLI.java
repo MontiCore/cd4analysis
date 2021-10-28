@@ -9,6 +9,7 @@ import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
@@ -72,6 +73,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
         }else{
           ast = parse(modelReader);
         }
+        new CD4CodeAfterParseTrafo().transform(ast);
         modelName = ast.getCDDefinition().getName();
 
         // don't output to stdout when the prettyprint is output to stdout
@@ -116,7 +118,14 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
         }
 
         artifactScope = createSymbolTable(ast);
-        completeSymbolTable(new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())), useBuiltInTypes);
+        final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
+        globalScope.clear();
+        globalScope.setSymbolPath(new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
+        if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
+          ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
+        }
+        globalScope.addSubScope(artifactScope);
+        completeSymbolTable();
 
         // transformations that need an already created symbol table
         {
@@ -281,13 +290,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     return null;
   }
 
-  public void completeSymbolTable(MCPath symbolPath, boolean useBuiltInTypes){
-    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-    globalScope.clear();
-    globalScope.setSymbolPath(symbolPath);
-    if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
-      ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
-    }
+  public void completeSymbolTable(){
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
   }
 
