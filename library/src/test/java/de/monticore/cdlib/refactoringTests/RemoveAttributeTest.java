@@ -6,8 +6,14 @@ import static org.junit.Assert.assertEquals;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.generating.templateengine.reporting.Reporting;
+import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
+import de.monticore.generating.templateengine.reporting.commons.ReportManager;
+import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
+import de.monticore.generating.templateengine.reporting.reporter.TransformationReporter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+import de.se_rwth.commons.logging.Log;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,9 +29,22 @@ import de.monticore.cdlib.utilities.FileUtility;
  */
 public class RemoveAttributeTest {
 
+
   @BeforeClass
-  public static void init(){
+  public static void disableFailQuick() {
+    Log.enableFailQuick(false);
     CD4CodeMill.init();
+    ReportManager.ReportManagerFactory factory = new ReportManager.ReportManagerFactory() {
+      @Override public ReportManager provide(String modelName) {
+        ReportManager reports = new ReportManager("target/generated-sources");
+        TransformationReporter transformationReporter = new TransformationReporter(
+                "target/generated-sources", modelName, new ReportingRepository(new ASTNodeIdentHelper()));
+        reports.addReportEventHandler(transformationReporter);
+        return reports;
+      }
+    };
+
+    Reporting.init("target/generated-sources", "target/reports", factory);
   }
 
   @Test
