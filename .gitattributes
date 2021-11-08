@@ -1,0 +1,16 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+
+# Declare files with LF line endings
+
+## Isabelle files
+*.thy text eol=lf
+**/ROOT text eol=lf
+**/ROOTS text eol=lf
+
+## Markdown files
+*.md text eol=lf
+
+## Declare files with CRLF line endings
+
+## Declare binary files
