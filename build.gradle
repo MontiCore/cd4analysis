@@ -116,21 +116,21 @@ repositories {
 
 // list of all grammars, needed to have a fix order
 def grammarDependencies = [
-    CDBasis           : [],
-    CDInterfaceAndEnum: ["CDBasis"],
-    CDAssociation     : ["CDBasis"],
-    CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
-    CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
-    CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
+        CDBasis           : [],
+        CDInterfaceAndEnum: ["CDBasis"],
+        CDAssociation     : ["CDBasis"],
+        CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
+        CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
+        CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
 ]
 
 // list of all grammars, needed to have a fix order
 def testGrammarDependencies = [
-    TestCDBasis           : ["CDBasis"],
-    TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
-    TestCDAssociation     : ["CDAssociation"],
-    TestCD4CodeBasis      : ["CD4CodeBasis"],
-    TestTypeImporter      : ["CD4Code"],
+        TestCDBasis           : ["CDBasis"],
+        TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+        TestCDAssociation     : ["CDAssociation"],
+        TestCD4CodeBasis      : ["CD4CodeBasis"],
+        TestTypeImporter      : ["CD4Code"],
 ]
 
 String createGrammarName(String name) {
@@ -168,7 +168,25 @@ grammarDependencies.each {
 
     outputs.upToDateWhen { uptoDate }
   }
+  task "generateTRGrammar${grammarName}"(type: MCTask) {
+    def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
+    dependsOn dependsOnTRGrammars
 
+    def grammarFile = file(grammarOutDir + "/" + de.monticore.dstlgen.util.DSTLPathUtil.getTRGrammar([file("src/main/grammars").toString()], file (g))) // Replace with getTRFile(file (g)) once the plugin is updated and in the upstream
+
+    grammar = grammarFile
+    outputDir = file grammarOutDir
+    handcodedPath "$projectDir/src/main/java"
+    dstlGen = false // Do NOT generate TR grammars for TR grammars
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
+
+    def uptoDate = incCheck(grammarIncludingPackage)
+
+    modelPath(grammarOutDir)
+    modelPath(grammarDir)
+
+    outputs.upToDateWhen { uptoDate }
+  }
 }
 
 // one task per test grammar file
@@ -198,13 +216,27 @@ testGrammarDependencies.each {
   }
 }
 
-
+task generateTestTrafos {}
+fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
+  def g = it
+  def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
+  task "$taskname"(type: MontiTransExec) {
+    getClassPath().setFrom(sourceSets.test.compileClasspath)
+    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
+    input = file(g)
+    outputDir = file(testGrammarOutDir)
+  }
+  generateTestTrafos.dependsOn("$taskname")
+}
 
 
 task generate {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
+task generateTR {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
+}
 
 task generateTest {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
@@ -217,6 +249,7 @@ compileJava {
 
 compileTestJava {
   dependsOn project.collect { it.tasks.withType(MCTask) }
+  dependsOn generateTestTrafos
 }
 
 
