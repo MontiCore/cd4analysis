@@ -4,7 +4,6 @@ package de.monticore.cd.codegen;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
-import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._parser.CD4CodeParser;
@@ -13,10 +12,12 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.TemplateHookPoint;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -34,9 +35,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   public void initGlex() {
     compUnit = parse("de.monticore.cd.codegen.GenAuction");
     this.glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
-    this.glex.setGlobalValue("cd4c", CD4C.getInstance());
   }
-
 
   @Test
   public void testGeneratedCode() {
@@ -51,6 +50,19 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
       ParseResult parseResult = parser.parse(sb.toString());
       Assert.assertTrue(parseResult.isSuccessful());
     }
+  }
+
+  @Test
+  public void testOutput() {
+    GeneratorSetup generatorSetup = new GeneratorSetup();
+    this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
+
+    generatorSetup.setGlex(glex);
+    File file = new File("de/monticore/cd/codegen");
+    //generatorSetup.setAdditionalTemplatePaths(Lists.newArrayList(file));
+    generatorSetup.setOutputDirectory(new File("target/generated"));
+    CDGenerator generator = new CDGenerator(generatorSetup);
+    generator.generate(compUnit);
   }
 
   public ASTCDCompilationUnit parse(String name) {

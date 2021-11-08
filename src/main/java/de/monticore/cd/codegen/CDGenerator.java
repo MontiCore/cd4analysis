@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -24,6 +25,8 @@ public class CDGenerator {
   public CDGenerator(GeneratorSetup generatorSetup) {
     this.generatorEngine = new GeneratorEngine(generatorSetup);
     this.setup = generatorSetup;
+    CD4C.init(setup);
+    CD4C.getInstance().setEmptyBodyTemplate("cd2java.EmptyBody");
   }
 
   public void generate(ASTCDCompilationUnit compilationUnit) {

@@ -22,6 +22,9 @@ ${cdPrinter.printSimpleModifier(cdClass.getModifier())} class ${cdClass.getName(
 <#if cdClass.isPresentCDExtendUsage()>extends ${cdPrinter.printType(cdClass.getCDExtendUsage().getSuperclass(0))} </#if> <#rt><#lt>
 <#if cdClass.isPresentCDInterfaceUsage()>implements ${cdPrinter.printObjectTypeList(cdClass.getCDInterfaceUsage().getInterfaceList())} </#if>{
 
+<#-- Elements HOOK -->
+${defineHookPoint("ClassContent:Elements")}
+
 <#list cdClass.getCDAttributeList() as attribute>
     ${tc.include("cd2java.Attribute", attribute)}
 </#list>
@@ -34,6 +37,6 @@ ${cdPrinter.printSimpleModifier(cdClass.getModifier())} class ${cdClass.getName(
     ${tc.include("cd2java.Method", method)}
 </#list>
 
-<#-- Elements HOOK -->
-${defineHookPoint("ClassContent:Elements")}
 }
+
+
