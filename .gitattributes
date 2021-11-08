@@ -3,13 +3,7 @@
 
 # Declare files with LF line endings
 
-## Isabelle files
-*.thy text eol=lf
-**/ROOT text eol=lf
-**/ROOTS text eol=lf
-
-## Markdown files
-*.md text eol=lf
+** text eof=lf
 
 ## Declare files with CRLF line endings
 
