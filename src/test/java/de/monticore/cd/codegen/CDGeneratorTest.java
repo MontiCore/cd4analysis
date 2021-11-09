@@ -32,7 +32,9 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   private ASTCDCompilationUnit compUnit;
 
   @Before
-  public void initGlex() {
+  @Override
+  public void initObjects() {
+    super.initObjects();
     compUnit = parse("de.monticore.cd.codegen.GenAuction");
     this.glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
   }
