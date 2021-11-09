@@ -1,0 +1,32 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.cd4code.parser;
+
+classdiagram Auction {
+
+  package auction {
+    abstract class Auction {
+      public long auctionIdent;
+      protected java.lang.String title;
+      public int getNumberOfBids();
+      public boolean bid(Person p, java.util.Date t);
+    }
+
+    interface BiddingPolicy;
+    interface TimingPolicy;
+  }
+
+  package person {
+    class Person {
+      java.lang.String name;
+      -> Message [*];
+    }
+  }
+
+  public class Message;
+
+  composition Auction <-> BiddingPolicy [1];
+  composition Auction -> TimingPolicy [1];
+  association participants [*] Auction (auctions) <-> (bidder) Person [*];
+  association Auction -> Message [*] {ordered};
+}

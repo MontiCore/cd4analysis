@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
+import de.monticore.cd.codegen.CDGenerator;
+import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -21,6 +23,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.generating.GeneratorSetup;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
@@ -204,6 +208,16 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
         }
 
+        if (cmd.hasOption("o")) {
+          GlobalExtensionManagement glex = new GlobalExtensionManagement();
+          glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+
+          GeneratorSetup generatorSetup = new GeneratorSetup();
+          generatorSetup.setGlex(glex);
+          generatorSetup.setOutputDirectory(new File(outputPath));
+          CDGenerator generator = new CDGenerator(generatorSetup);
+          generator.generate(ast);
+        }
 
       }
     }catch (AmbiguousOptionException e) {
