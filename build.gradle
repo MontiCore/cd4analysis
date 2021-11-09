@@ -178,7 +178,7 @@ grammarDependencies.each {
     outputDir = file grammarOutDir
     handcodedPath "$projectDir/src/main/java"
     dstlGen = false // Do NOT generate TR grammars for TR grammars
-    def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
+    def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(grammarFile.toURI()).toString()
 
     def uptoDate = incCheck(grammarIncludingPackage)
 
