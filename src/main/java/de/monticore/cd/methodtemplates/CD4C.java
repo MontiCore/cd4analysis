@@ -65,7 +65,7 @@ public class CD4C {
    */
   public static CD4C init(GeneratorSetup setup) {
     getInstance().config = setup;
-    setup.getGlex().defineGlobalVar(GLEX_GLOBAL_VAR, INSTANCE);
+    setup.getGlex().setGlobalValue(GLEX_GLOBAL_VAR, INSTANCE);
     INSTANCE.isInitialized = true;
     return INSTANCE;
   }
