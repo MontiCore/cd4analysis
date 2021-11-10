@@ -49,7 +49,7 @@ public class SymAssociation {
 
   public CDAssociationSymbol getAssociation() {
     if (isPresentAssociation()) {
-      return this.getAssociation();
+      return this.association.get();
     }
     Log.error("0xCD001: Association can't return a value. It is empty.");
     // Normally this statement is not reachable
