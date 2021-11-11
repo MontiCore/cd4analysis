@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class SymAssociation {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  protected Optional<CDAssociationSymbol> association;
+  protected Optional<CDAssociationSymbol> association=Optional.empty();
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
 
