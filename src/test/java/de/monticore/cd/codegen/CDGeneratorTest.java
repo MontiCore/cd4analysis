@@ -14,6 +14,7 @@ import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,13 +29,16 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
 
   private static final String MODEL_PATH = "src/test/resources/";
 
-  private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
+  private GlobalExtensionManagement glex;
 
   private ASTCDCompilationUnit compUnit;
 
   @Before
-  public void initGlex() {
+  @Override
+  public void initObjects() {
+    super.initObjects();
     compUnit = parse("de.monticore.cd.codegen.GenAuction");
+    glex = new GlobalExtensionManagement();
     this.glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
   }
 
@@ -98,5 +102,11 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
 
  */
     return ast.get();
+  }
+
+  @After
+  @Override
+  public void after() {
+    // do nothing
   }
 }
