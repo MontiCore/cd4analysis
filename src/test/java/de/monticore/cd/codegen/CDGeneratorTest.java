@@ -7,6 +7,7 @@ import com.github.javaparser.ParserConfiguration;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.generating.GeneratorEngine;
@@ -78,10 +79,9 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
     if (!ast.isPresent()) {
       fail(String.format("Failed to load model '%s'", qualifiedName));
     }
-/*
-    ASTCDCompilationUnit comp = ast.get();
-    new CD4CodeAfterParseTrafo().transform(ast.get());
 
+    new CD4CodeAfterParseTrafo().transform(ast.get());
+/*
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(comp);
     comp.getEnclosingScope().setAstNode(comp);
     String packageName = Joiners.DOT.join(comp.getCDPackageList());
