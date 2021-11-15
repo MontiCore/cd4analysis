@@ -1,13 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
+import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
@@ -30,6 +34,7 @@ import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -40,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CD4CodeCLI extends CD4CodeCLITOP {
 
@@ -213,6 +219,12 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
           GeneratorSetup generatorSetup = new GeneratorSetup();
+
+          if (cmd.hasOption("fp")) { // Template path
+            String templatePath = cmd.getOptionValue("fp", StringUtils.EMPTY);
+            generatorSetup.setAdditionalTemplatePaths(Collections.singletonList(Paths.get(templatePath).toFile()));
+          }
+
           generatorSetup.setGlex(glex);
           generatorSetup.setOutputDirectory(new File(outputPath));
           CDGenerator generator = new CDGenerator(generatorSetup);

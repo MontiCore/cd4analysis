@@ -86,6 +86,15 @@ public class CDCLIOptions {
         .desc("Path for generated files (optional). Default is `.`.")
         .build());
 
+    // specify template path
+    options.addOption(Option.builder("fp")
+        .longOpt("templatePath")
+        .argName("pathlist")
+        .hasArgs()
+        .type(String.class)
+        .desc("Optional list of directories to look for handwritten templates to integrate.")
+        .build());
+
     // Prints reports of the cd artifact to the specified directory. This includes e.g. reachable states and branching degrees
     options.addOption(Option
         .builder("r").longOpt("report")
