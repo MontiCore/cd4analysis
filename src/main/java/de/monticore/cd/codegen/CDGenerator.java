@@ -5,6 +5,7 @@ import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorEngine;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CDGenerator {
 
@@ -31,12 +33,16 @@ public class CDGenerator {
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
-    String packageAsPath = String.join(File.separator, 
-        compilationUnit.getMCPackageDeclaration().getMCQualifiedName().getPartsList()).toLowerCase();
-
-    this.generateCDClasses(packageAsPath, definition.getCDClassesList());
-    this.generateCDInterfaces(packageAsPath, definition.getCDInterfacesList());
-    this.generateCDEnums(packageAsPath, definition.getCDEnumsList());
+    for (ASTCDPackage pack : definition.getCDPackagesList()) {
+      String packageAsPath = String.join(File.separator,
+              pack.getMCQualifiedName().getPartsList()).toLowerCase();
+      this.generateCDClasses(packageAsPath,
+              pack.getCDElementList().stream().filter(e -> e instanceof ASTCDClass).map(e -> ((ASTCDClass) e)).collect(Collectors.toList()));
+      this.generateCDInterfaces(packageAsPath,
+              pack.getCDElementList().stream().filter(e -> e instanceof ASTCDInterface).map(e -> ((ASTCDInterface) e)).collect(Collectors.toList()));
+      this.generateCDEnums(packageAsPath,
+              pack.getCDElementList().stream().filter(e -> e instanceof ASTCDEnum).map(e -> ((ASTCDEnum) e)).collect(Collectors.toList()));
+    }
   }
 
   protected Path getAsPath(String packageAsPath, String name) {
