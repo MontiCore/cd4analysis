@@ -34,7 +34,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
     CD4CodeCLI.main(input);
 
     Assert.assertTrue("Did not find via templatepath provided template content ",
-          Files.readLines(new File("target/generated/auctionTP/de/monticore/cd4code/parser/Auction.java"),
+          Files.readLines(new File("target/generated/auctionTP/auction/Auction.java"),
                       Charset.defaultCharset())
                 .contains("// empty body provided by the templatePath arg")
          );
