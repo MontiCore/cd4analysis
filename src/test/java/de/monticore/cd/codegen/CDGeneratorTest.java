@@ -4,6 +4,7 @@ package de.monticore.cd.codegen;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseResult;
 import com.github.javaparser.ParserConfiguration;
+import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._parser.CD4CodeParser;
@@ -40,6 +41,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
     compUnit = parse("de.monticore.cd.codegen.GenAuction");
     glex = new GlobalExtensionManagement();
     this.glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
+    CD4C.reset();
   }
 
   @Test
