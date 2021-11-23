@@ -95,6 +95,17 @@ public class CDCLIOptions {
         .desc("Optional list of directories to look for handwritten templates to integrate.")
         .build());
 
+
+    // configTemplate parameter
+    options.addOption(Option.builder("ct")
+        .longOpt("configTemplate")
+        .argName("file")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Provides a config template (optional)")
+        .build());
+
+
     // Prints reports of the cd artifact to the specified directory. This includes e.g. reachable states and branching degrees
     options.addOption(Option
         .builder("r").longOpt("report")

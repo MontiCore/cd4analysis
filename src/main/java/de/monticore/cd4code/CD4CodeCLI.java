@@ -29,6 +29,8 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.generating.templateengine.TemplateController;
+import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
@@ -221,14 +223,19 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           GeneratorSetup generatorSetup = new GeneratorSetup();
 
           if (cmd.hasOption("fp")) { // Template path
-            String templatePath = cmd.getOptionValue("fp", StringUtils.EMPTY);
-            generatorSetup.setAdditionalTemplatePaths(Collections.singletonList(Paths.get(templatePath).toFile()));
+            generatorSetup.setAdditionalTemplatePaths(
+              Arrays.stream(cmd.getOptionValues("fp")).map(Paths::get).map(Path::toFile).collect(Collectors.toList()));
           }
 
           generatorSetup.setGlex(glex);
           generatorSetup.setOutputDirectory(new File(outputPath));
+
           CDGenerator generator = new CDGenerator(generatorSetup);
-          generator.generate(ast);
+          String configTemplate = cmd.getOptionValue("ct", "cd2java.CD2Java");
+          TemplateController tc = generatorSetup.getNewTemplateController(configTemplate);
+          TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
+          List<Object> configTemplateArgs = Arrays.asList(glex, generator);
+          hpp.processValue(tc, ast, configTemplateArgs);
         }
 
       }
