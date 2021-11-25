@@ -13,7 +13,7 @@ plugins {
   id "monticore" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
   id "com.github.johnrengelman.shadow" version "6.0.0"
-  //id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
+  id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
@@ -95,12 +95,14 @@ dependencies {
   testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
 }
 
+/*
 configurations {
   ecj
 }
 dependencies {
   ecj 'org.eclipse.jdt:ecj:3.26.0'
 }
+*/
 
 repositories {
   if (("true").equals(getProperty('useLocalRepo'))) {
@@ -329,7 +331,7 @@ shadowJar { // all in one jar
 
 testSets {
   integrationTest {
-    dirName = 'it'
+    dirName = '01.experiments'
   }
 }
 

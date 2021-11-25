@@ -2,8 +2,6 @@
 
 package de.monticore.cd;
 
-import de.monticore.cdbasis.parser.Simple.*;
-
 targetimport additional.imports;
 
 classdiagram Complete {
@@ -11,14 +9,9 @@ classdiagram Complete {
   abstract class H;
   class H2;
 
-  class I extends H, A;
+  class I extends H;
 
   class J {
-  }
-
-  <<stereo="value">> class K {
-    static final java.lang.String name = "finalName";
-    int x;
   }
 
 }

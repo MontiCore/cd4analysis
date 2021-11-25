@@ -4,6 +4,7 @@
 
 package de.monticore.cd;
 
+import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 import org.junit.BeforeClass;
 

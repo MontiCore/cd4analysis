@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 
 public class ITTestBasis {
 
-  public final static String PATH = "src/it/resources/de/monticore/";
+  public final static String PATH = "src/test/resources/de/monticore/";
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
