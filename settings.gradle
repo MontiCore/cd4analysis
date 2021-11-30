@@ -16,4 +16,4 @@ pluginManagement {
 
 rootProject.name = 'cd4analysis'
 
-include(':gradle-plugin', ':01.experiments:cliTest')
+include(':gradle-plugin', ':01.experiments:cliTest', ':01.experiments:cd4cTest')
