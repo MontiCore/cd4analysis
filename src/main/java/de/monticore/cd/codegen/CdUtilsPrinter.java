@@ -9,6 +9,7 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -182,5 +183,10 @@ public class CdUtilsPrinter {
                       }
                     }));
   }
+
+  public String printExpression(ASTExpression expr) {
+    return new CD4CodeFullPrettyPrinter().prettyprint(expr);
+  }
+
 
 }
