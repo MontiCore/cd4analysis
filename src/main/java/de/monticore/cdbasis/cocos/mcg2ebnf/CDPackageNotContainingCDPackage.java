@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.cocos.mcg2ebnf;
 
 import de.monticore.cdbasis._ast.ASTCDPackage;

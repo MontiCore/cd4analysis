@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.prettyprint;
 
 import de.monticore.cd4code.CD4CodeMill;
@@ -36,7 +33,7 @@ import de.monticore.umlmodifier._ast.ASTUMLModifierNode;
 import de.monticore.umlstereotype._ast.ASTUMLStereotypeNode;
 
 public class CD4CodeFullPrettyPrinter {
-  
+
   protected CD4CodeTraverser traverser;
   protected IndentPrinter printer;
   protected boolean printComments = true;
@@ -56,15 +53,15 @@ public class CD4CodeFullPrettyPrinter {
     cdBasis = new CDBasisPrettyPrinter(printer);
     traverser.add4CDBasis(cdBasis);
     traverser.setCDBasisHandler(cdBasis);
-    
+
     cdInterface = new CDInterfaceAndEnumPrettyPrinter(printer);
     traverser.add4CDInterfaceAndEnum(cdInterface);
     traverser.setCDInterfaceAndEnumHandler(cdInterface);
-    
+
     cdAssoc = new CDAssociationPrettyPrinter(printer);
     traverser.add4CDAssociation(cdAssoc);
     traverser.setCDAssociationHandler(cdAssoc);
-    
+
     cd4CodeBasis = new CD4CodeBasisPrettyPrinter(printer);
     traverser.add4CD4CodeBasis(cd4CodeBasis);
     traverser.setCD4CodeBasisHandler(cd4CodeBasis);
@@ -72,7 +69,7 @@ public class CD4CodeFullPrettyPrinter {
     MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer);
     traverser.add4MCBasicTypes(basicTypes);
     traverser.setMCBasicTypesHandler(basicTypes);
-    
+
     UMLStereotypePrettyPrinter umlStereotype = new UMLStereotypePrettyPrinter(printer);
     traverser.add4UMLStereotype(umlStereotype);
     traverser.setUMLStereotypeHandler(umlStereotype);

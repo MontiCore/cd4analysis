@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testtypeimporter._symboltable;
 
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;

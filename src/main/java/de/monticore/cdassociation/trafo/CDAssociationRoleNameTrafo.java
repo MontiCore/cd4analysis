@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
@@ -68,7 +65,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     final ASTCDAssocRightSide rightSide = node.getRight();
     CDAssociationSymbolTableCompleter.addRoleToTheirType(leftSide.getSymbol(), rightSide.getSymbol().getType().getTypeInfo());
     CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftSide.getSymbol().getType().getTypeInfo());
-    
+
     assocStack.pop();
     symbolTableCreator.removeCurrentScope();
   }
