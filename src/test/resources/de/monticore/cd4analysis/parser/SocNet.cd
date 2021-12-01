@@ -1,5 +1,4 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd4analysis.parser;
 
 import java.util.Formatter;

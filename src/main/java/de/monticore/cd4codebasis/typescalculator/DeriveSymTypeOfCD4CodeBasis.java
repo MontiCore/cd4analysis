@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4codebasis.typescalculator;
 
 import de.monticore.cd._symboltable.*;
@@ -93,9 +90,9 @@ public class DeriveSymTypeOfCD4CodeBasis
     this.traverser = CD4CodeBasisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
     this.typesScopeHelper = CD4CodeBasisMill.traverser();
-  
+
     typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
-    
+
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

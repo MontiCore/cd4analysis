@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd._parser;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
