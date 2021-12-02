@@ -104,16 +104,18 @@ dependencies {
 }
 */
 
-repositories {
-  if (("true").equals(getProperty('useLocalRepo'))) {
-    mavenLocal()
+allprojects {
+  repositories {
+    if (("true").equals(getProperty('useLocalRepo'))) {
+      mavenLocal()
+    }
+    maven {
+      credentials.username mavenUser
+      credentials.password mavenPassword
+      url repo
+    }
+    mavenCentral()
   }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
-  }
-  mavenCentral()
 }
 
 // list of all grammars, needed to have a fix order

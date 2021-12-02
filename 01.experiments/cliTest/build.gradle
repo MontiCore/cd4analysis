@@ -3,27 +3,12 @@ plugins {
   id 'java'
 }
 
-repositories {
-  if (("true").equals(getProperty('useLocalRepo'))) {
-    mavenLocal()
-  }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
-  }
-  mavenCentral()
-}
-
-buildDir = file("$projectDir/target")
-
 dependencies {
   implementation ("de.monticore.lang:cd4analysis:$version")
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementation group: 'org.antlr', name: 'antlr4-runtime', version: antlr_version
   implementation "com.google.guava:guava:$guava_version"
-  implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.freemarker:freemarker:$freemarker_version"

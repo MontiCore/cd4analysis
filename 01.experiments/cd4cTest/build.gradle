@@ -2,18 +2,6 @@ plugins {
   id 'java'
 }
 
-repositories {
-  if (("true").equals(getProperty('useLocalRepo'))) {
-    mavenLocal()
-  }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
-  }
-  mavenCentral()
-}
-
 dependencies {
   implementation ("de.monticore.lang:cd4analysis:$version")
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
