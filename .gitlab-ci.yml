@@ -8,7 +8,7 @@ variables:
 cache:
   paths:
   key: ${CI_COMMIT_REF_SLUG}
-  
+
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
@@ -73,7 +73,7 @@ checkMDLinks:
   only:
     - develop
 
-# Mirrors this repository's `develop` branch to GitHub.
+# Mirrors this repository's `develop` and `master` branches to GitHub.
 #
 # The mirror will always be at either HEAD or HEAD+1 (depending on whether cleanup is necessary).
 # For more information, visit: https://git.rwth-aachen.de/monticore/auxiliary-development-tools/github-mirror-tools (Available internally only)
@@ -111,3 +111,4 @@ githubmirror:
     - git push github $CI_COMMIT_BRANCH --force
   only:
     - develop
+    - master
