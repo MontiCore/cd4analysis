@@ -4,7 +4,6 @@
 
 package de.monticore.cd;
 
-import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
@@ -14,7 +13,7 @@ import java.io.PrintStream;
 /**
  * a base class for tests to use stdout and stderr
  */
-public class OutTestBasis extends ITTestBasis {
+public class OutTestBasis extends TestBasis {
   protected static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   protected static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
