@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis;
 
 import de.monticore.cd.TestBasis;

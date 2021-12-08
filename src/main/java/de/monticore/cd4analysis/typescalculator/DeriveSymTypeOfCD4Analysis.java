@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.typescalculator;
 
 import de.monticore.cd._symboltable.MCArrayTypesScopeHelper;
@@ -91,13 +88,13 @@ public class DeriveSymTypeOfCD4Analysis
   public void init() {
     this.traverser = CD4AnalysisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-  
+
     this.typesScopeHelper = CD4AnalysisMill.traverser();
-  
+
     typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
     typesScopeHelper.add4MCCollectionTypes(new MCCollectionTypesScopeHelper());
     typesScopeHelper.add4MCArrayTypes(new MCArrayTypesScopeHelper());
-    
+
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

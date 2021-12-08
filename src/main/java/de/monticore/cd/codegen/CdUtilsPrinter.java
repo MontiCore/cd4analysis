@@ -1,5 +1,4 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cd.codegen;
 
 import com.google.common.base.Function;

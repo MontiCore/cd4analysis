@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.cdbasis.parser;
 
-targetimport additional.imports;
+import additional.imports;
 
 classdiagram ExtendsAtMostOneClass {
 

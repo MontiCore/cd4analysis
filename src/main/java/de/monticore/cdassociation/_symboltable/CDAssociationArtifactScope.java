@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
 import de.monticore.symboltable.ImportStatement;

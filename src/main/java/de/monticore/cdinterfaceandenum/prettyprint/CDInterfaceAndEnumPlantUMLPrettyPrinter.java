@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum.prettyprint;
 
 import de.monticore.cd.plantuml.PlantUMLPrettyPrintUtil;

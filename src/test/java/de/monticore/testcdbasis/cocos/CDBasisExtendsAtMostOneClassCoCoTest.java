@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -31,6 +28,6 @@ public class CDBasisExtendsAtMostOneClassCoCoTest extends CDBasisTestBasis {
     coCoChecker.addCoCo(new CDClassExtendsAtMostOneClass());
     coCoChecker.checkAll(node);
 
-    expectErrorCount(1, Collections.singletonList("ExtendsAtMostOneClass.cd:<14,2>: 0xCDC2F: Class C cannot extend multiple classes, but extends (A, B). A class may only extend one class."));
+    expectErrorCount(1, Collections.singletonList("ExtendsAtMostOneClass.cd:<13,2>: 0xCDC2F: Class C cannot extend multiple classes, but extends (A, B). A class may only extend one class."));
   }
 }

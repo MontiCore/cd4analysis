@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.cocos;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -52,7 +49,7 @@ public class CDAttributeTypeExistsCoCoTest extends CD4CodeTestBasis {
     final String fileName = file.toString();
 
     CD4CodeCLI.main(new String[] { "-i", fileName,
-                              "-pp", getTmpFilePath("Types.cd").replaceAll("\\\\", "/"), 
+                              "-pp", getTmpFilePath("Types.cd").replaceAll("\\\\", "/"),
                               "-s",  "target/symbols/Types.sym"});
   }
 }
