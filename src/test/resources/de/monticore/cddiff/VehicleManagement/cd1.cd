@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram cd1 {
+	enum InsuranceKind {transport, international;}
+	enum DrivingExp {expert, beginner;}
+	class Employee;
+	class Driver extends Employee {
+		DrivingExp exp;
+	}
+	interface Driveable;
+	abstract class Vehicle implements Driveable {
+		Date regDate;
+		String licensePlate;
+	}
+	class Car extends Vehicle;
+	class Truck extends Vehicle;
+	class Company {}
+	class License {}
+	class Insurance {
+		InsuranceKind kind;
+	}
+	//association [1] Driver (drivenBy) <-> (drives) Car [0..*];
+	
+	// TODO: David fragen, warum [0..*] z.B. nicht erlaubt ist
+	// Ist hier in beiden Beispielen zwar nicht schlimm, da es auch
+	// im Anwendungsfall am besten nicht erlaubt wäre
+	association [1] Driver (drivenBy) <-> (drives) Car [1..*];
+	
+	association [0..1] Company (of) -> (cars) Car [*];
+	association [*] Employee (emps) <- (of) Company [*];
+	composition [1] Employee (of) -> (ins) Insurance [1];
+	
+	// association [1] Driver (owner) -- (license) License [0..3];
+	// TODO: S.o.
+	association [1] Driver (owner) -- (license) License [1..*];
+}

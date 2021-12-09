@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram negativeV2 {
+	class A;
+	class B {
+		Date date; 
+	} 
+}
