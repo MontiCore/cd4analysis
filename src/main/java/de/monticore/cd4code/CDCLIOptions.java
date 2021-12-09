@@ -142,6 +142,11 @@ public class CDCLIOptions {
             + "Values: `none` is typical for modelling, `all` adds always on both classes, "
             + "`navigable` adds only if the association is navigable.")
         .build());
+
+    options.addOption(Option
+      .builder("json")
+      .desc("Write <Schema.json> to output directory.")
+      .build());
   }
 
   protected void initPrettyPrinter(boolean showPlantUML) {
