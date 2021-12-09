@@ -93,6 +93,14 @@ dependencies {
   testImplementation "junit:junit:$junit_version"
   testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
   testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+
+    implementation "de.monticore.lang:od:$mc_version"
+    implementation "edu.mit.alloy:alloy:4.2.0-rc1"
+
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
+    testImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+    testImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
 
 /*

@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram cd2v1 {
+	enum PositionKind{fullTime, partTime;}
+	
+	class Employee {
+		PositionKind kind; 
+	}
+	
+	class Task {
+		Date startDate; 
+	}
+	
+	class Manager; 
+	
+	association [*] Employee (manages) -> (managedBy) Manager [0..1];
+	association [1] Employee  --  Task [*];
+}

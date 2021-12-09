@@ -25,6 +25,7 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cddiff.CDDiffCLI;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -79,6 +80,13 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     try{
       if(handleArgs(args)){
         init();
+
+        //if -cd1 or --cddiff1 is chosen as an option, we use CDDiffCLI
+        if (cmd.hasOption("cd1")){
+          CDDiffCLI diffCLI = new CDDiffCLI();
+          diffCLI.run(args);
+          return;
+        }
 
         if(!modelFile.isEmpty()) {
           ast = parse(modelFile);
@@ -265,6 +273,11 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
   protected boolean handleArgs(String[] args)
     throws IOException, ParseException {
     cmd = cdcliOptions.handleArgs(args);
+
+    //if -cd1 or --cddiff1 is chosen as an option, we use CDDiffCLI
+    if (cmd.hasOption("cd1")){
+      return true;
+    }
 
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
