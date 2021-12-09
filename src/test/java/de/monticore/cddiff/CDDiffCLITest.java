@@ -17,8 +17,8 @@ public class CDDiffCLITest {
     @Test
     public void testRun(){
       // given 2 CDs
-      final String cd1 = "src/test/resources/de/monticore/Manager/cd2v2.cd";
-      final String cd2 = "src/test/resources/de/monticore/Manager/cd2v1.cd";
+      final String cd1 = "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd";
+      final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
       final String output = "./diff_5_cd2v2_cd2v1/";
 
       //when CDDiff CLI is used to compute the semantic difference

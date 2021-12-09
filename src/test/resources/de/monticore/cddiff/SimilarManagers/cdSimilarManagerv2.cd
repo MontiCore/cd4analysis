@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram cdSimilarManagerv2 {
+	enum PositionKind{fullTime, partTime, external;}
+	
+	class Employee {
+		PositionKind kind; 
+	}
+	
+	class Task {
+		Date startDate; 
+	}
+	
+	class Manager extends Employee; 
+	
+	association [*] Employee (manages) -> (managedBy) Manager [0..1];
+	association [1] Employee  --  Task [0..1];
+}

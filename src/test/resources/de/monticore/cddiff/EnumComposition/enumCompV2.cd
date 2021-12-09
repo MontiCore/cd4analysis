@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram enumCompV2 {
+	enum PositionKind{fullTime, partTime, external;}
+	enum Tests{newTest, oldTest;}
+	
+	class Employee {
+		PositionKind kind; 
+	}
+	
+	class Task {
+		Date startDate; 
+	}
+	
+	class Manager; 
+	
+	association [*] Employee (manages) <- (managedBy) Manager [0..1];
+	association [1] Employee  --  Task [0..1];
+}
