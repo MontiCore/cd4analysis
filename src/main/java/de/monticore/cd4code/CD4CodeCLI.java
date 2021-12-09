@@ -1,9 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -56,6 +58,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
   protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
+  protected static final String JSON_SUCCESSFUL = "Creation of json file %s successful\n";
   protected static final String FILE_EXISTS_INFO = "File '%s' already exists and will be overwritten\n";
   protected static final String DIR_CREATION_ERROR = "Directory '%s' could not be created\n";
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
@@ -236,6 +239,21 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           TemplateHookPoint hpp = new TemplateHookPoint(configTemplate);
           List<Object> configTemplateArgs = Arrays.asList(glex, generator);
           hpp.processValue(tc, ast, configTemplateArgs);
+        }
+
+        if (cmd.hasOption("json")) {
+          JsonNode schema = CD2JsonUtil.run(ast, globalScope);
+
+          String filename = "Schema.json";
+          {
+            File output = Paths.get(this.outputPath, filename).toFile();
+            output.createNewFile();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(output));
+            writer.write(schema.toPrettyString());
+            writer.close();
+          }
+          System.out.printf(JSON_SUCCESSFUL, filename);
+
         }
 
       }
