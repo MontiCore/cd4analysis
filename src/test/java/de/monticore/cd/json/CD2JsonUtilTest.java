@@ -77,11 +77,6 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
   }
 
   @Test
-  public void cd2json_SocNet() throws IOException{
-    this.toJson(Paths.get(PATH, "cd4analysis/parser/SocNet.cd"));
-  }
-
-  @Test
   public void cd2json_STTest() throws IOException{
     this.toJson(Paths.get(PATH, "cd4analysis/parser/STTest.cd"));
   }
