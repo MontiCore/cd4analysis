@@ -1,5 +1,6 @@
 package de.monticore.cddiff;
 
+import de.monticore.cd4code.CD4CodeCLI;
 import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class CDDiffCLITest {
 
       //when CDDiff CLI is used to compute the semantic difference
       String[] args = {"-cd1",cd1,"-cd2",cd2,"-k","5","-o",output,"-l","20"};
-      CDDiffCLI cli = new CDDiffCLI();
+      CD4CodeCLI cli = new CD4CodeCLI();
       cli.run(args);
 
       //then corresponding .od files are generated

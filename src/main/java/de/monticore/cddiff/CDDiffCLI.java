@@ -160,14 +160,14 @@ public class CDDiffCLI {
                 .build());
 
         options.addOption(Option
-                .builder("cd1").longOpt("cd1")
+                .builder("cd1").longOpt("cddiff1")
                 .hasArg().type(String.class)
                 .argName("cd1").numberOfArgs(1)
                 .desc("Reads the source file and parses the contents as the first CD (mandatory).")
                 .build());
 
         options.addOption(Option
-                .builder("cd2").longOpt("cd2")
+                .builder("cd2").longOpt("cddiff2")
                 .hasArg().type(String.class)
                 .argName("cd2").numberOfArgs(1)
                 .desc("Reads the source files and parses the contents as the second CD (mandatory).")
