@@ -248,21 +248,24 @@ public class CDCLIOptions {
         .builder("cd1").longOpt("cddiff1")
         .hasArg().type(String.class)
         .argName("cd1").numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as the first CD (mandatory).")
+        .desc("Reads the source file and parses the contents as the first parameter for computing"
+            + " the semantic difference of two CDs (mandatory for cddiff).")
         .build());
 
     options.addOption(Option
         .builder("cd2").longOpt("cddiff2")
         .hasArg().type(String.class)
         .argName("cd2").numberOfArgs(1)
-        .desc("Reads the source files and parses the contents as the second CD (mandatory).")
+        .desc("Reads the source file and parses the contents as the second parameter for computing"
+            + " the semantic difference of two CDs (mandatory for cddiff).")
         .build());
 
     options.addOption(Option
         .builder("k").longOpt("scope")
         .hasArg().type(int.class)
         .argName("k").numberOfArgs(1)
-        .desc("Scope of the alloy solutions (mandatory).")
+        .desc("Scope of the alloy solutions for the semantic difference of two CDs (mandatory "
+            + "for cddiff).")
         .build());
 
     options.addOption(Option

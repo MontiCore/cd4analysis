@@ -16,15 +16,16 @@ import static org.junit.Assert.*;
 
 /**
  * Test classes to test the generation of different alloy modules for cddiff
- *
  */
 public class GeneratorTest extends AbstractTest {
   @Test
   public void testManger() {
     // Parse Test Modules 
-    final ASTCDCompilationUnit astV1 = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+    final ASTCDCompilationUnit astV1 = parseModel(
+        "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+    final ASTCDCompilationUnit astV2 = parseModel(
+        "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd");
     assertNotNull(astV2);
 
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7);
@@ -48,4 +49,5 @@ public class GeneratorTest extends AbstractTest {
     }
 
   }
+
 }

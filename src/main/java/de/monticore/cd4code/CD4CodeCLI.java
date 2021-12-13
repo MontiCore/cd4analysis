@@ -84,13 +84,6 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
       if(handleArgs(args)){
         init();
 
-        //if -cd1 or --cddiff1 is chosen as an option, we use CDDiffCLI
-        if (cmd.hasOption("cd1")){
-          CDDiffCLI diffCLI = new CDDiffCLI();
-          diffCLI.run(args);
-          return;
-        }
-
         if(!modelFile.isEmpty()) {
           ast = parse(modelFile);
         }else{
@@ -292,11 +285,6 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     throws IOException, ParseException {
     cmd = cdcliOptions.handleArgs(args);
 
-    //if -cd1 or --cddiff1 is chosen as an option, we use CDDiffCLI
-    if (cmd.hasOption("cd1")){
-      return true;
-    }
-
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
     }*/
@@ -313,6 +301,14 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
       return false;
     }
     else {
+
+      //if -cd1 or --cddiff1 is chosen as an option, we utilize CDDiffCLI
+      if (cmd.hasOption("cd1")){
+        CDDiffCLI diffCLI = new CDDiffCLI();
+        diffCLI.run(args);
+        return false;
+      }
+
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
         printHelp((CDCLIOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));

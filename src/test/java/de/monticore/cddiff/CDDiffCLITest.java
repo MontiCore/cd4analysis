@@ -14,43 +14,50 @@ import static org.junit.Assert.*;
 
 public class CDDiffCLITest {
 
-    @Test
-    public void testRun(){
-      // given 2 CDs
-      final String cd1 = "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd";
-      final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
-      final String output = "./diff_5_cd2v2_cd2v1/";
+  @Test
+  public void testRun() {
+    // given 2 CDs
+    final String cd1 = "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd";
+    final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
+    final String output = "./diff_5_cd2v2_cd2v1/";
 
-      //when CDDiff CLI is used to compute the semantic difference
-      String[] args = {"-cd1",cd1,"-cd2",cd2,"-k","5","-o",output,"-l","20"};
-      CD4CodeCLI cli = new CD4CodeCLI();
-      cli.run(args);
+    //when CDDiff CLI is used to compute the semantic difference
+    String[] args = { "-cd1", cd1, "-cd2", cd2, "-k", "5", "-o", output, "-l", "20" };
+    CD4CodeCLI cli = new CD4CodeCLI();
+    cli.run(args);
 
-      //then corresponding .od files are generated
-      File[] odFiles = Paths.get(output).toFile().listFiles();
-      assertNotNull(odFiles);
+    //then corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
 
-      List<String> odFilePaths = new LinkedList<>();
-      for (File odFile : odFiles){
-        assertTrue(odFile.getName().endsWith(".od"));
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if(odFile.getName().endsWith(".od")) {
         odFilePaths.add(odFile.toPath().toString());
       }
-
-      // and the ODs match cd1 but not cd2
-      CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-      try {
-        assertTrue(matcher.checkODConsistency(cd1, odFilePaths));
-        assertFalse(matcher.checkODConsistency(cd2, odFilePaths));
-      }catch(Exception e){
-        Log.error(e.getMessage());
-        fail();
-      }
-
-      // clean-up
-      for (File odFile : odFiles){
-        assertTrue(odFile.delete());
-      }
-      assertTrue(Paths.get(output).toFile().delete());
-
     }
+
+    // and the ODs match cd1 but not cd2
+    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    try {
+      assertTrue(matcher.checkODConsistency(cd1, odFilePaths));
+      assertFalse(matcher.checkODConsistency(cd2, odFilePaths));
+    }
+    catch (Exception e) {
+      Log.error(e.getMessage());
+      fail();
+    }
+
+    // clean-up
+    for (File odFile : odFiles) {
+      if(!odFile.delete()){
+        Log.warn("Could not delete "+ odFile.getName());
+      }
+    }
+    if(!Paths.get(output).toFile().delete()){
+      Log.warn("Could not delete "+ output);
+    }
+
+  }
+
 }

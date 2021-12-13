@@ -91,8 +91,9 @@ for
 * parsing including coco-checking and creating symbol tables, 
 * pretty-printing, 
 * storing symbols in symbol files, 
-* loading symbols from symbol files, and 
-* transforming CDs into a graphical svg format. 
+* loading symbols from symbol files, 
+* transforming CDs into a graphical svg format, and
+* computing the semantic difference of 2 CDs.
 
 The requirements for building and using the CD CLI tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
@@ -132,8 +133,13 @@ The possible options are:
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
 | `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
-| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false |
-
+| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
+| `-cd1,--cddiff1 <file>` | Reads the source file and parses the contents as the first parameter for computing the semantic difference of two CDs (mandatory for cddiff). |
+| `-cd2,--cddiff2 <file>` | Reads the source file and parses the contents as the second parameter for computing the semantic difference of two CDs (mandatory for cddiff). |
+| `-k,--scope <int>` | Scope of the alloy solutions for the semantic difference of two CDs (mandatory for cddiff). |
+| `-l,--limit <int>` | Limit for the number of diff-witnesses (optional). Default is 10. |
+| `-nl,--nolimit` | No limit for the number of diff-witnesses (optional). |
+| `-a,--all` | Generate all solutions (optional). Default is to generate only unique solutions. Limit still applies unless option -nl is selected. |
 
 ### Building the CLI Tool from the Sources (if desired)
  
