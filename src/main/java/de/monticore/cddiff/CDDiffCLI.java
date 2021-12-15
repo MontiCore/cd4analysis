@@ -172,6 +172,22 @@ public class CDDiffCLI {
         .desc("Prints short help information. Ignore other options.")
         .build());
 
+    options.addOption(Option.builder("o")
+        .longOpt("output")
+        .hasArg()
+        .type(String.class)
+        .argName("dir")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Path for generated files (optional). Default is `.`.")
+        .build());
+
+    initDiffOptions(options);
+
+  }
+
+  public static void initDiffOptions(Options options) {
+
     options.addOption(Option.builder("cd1")
         .longOpt("cddiff1")
         .hasArg()
@@ -202,16 +218,6 @@ public class CDDiffCLI {
             + "for cddiff).")
         .build());
 
-    options.addOption(Option.builder("o")
-        .longOpt("output")
-        .hasArg()
-        .type(String.class)
-        .argName("dir")
-        .optionalArg(true)
-        .numberOfArgs(1)
-        .desc("Path for generated files (optional). Default is `.`.")
-        .build());
-
     options.addOption(Option.builder("l")
         .longOpt("limit")
         .hasArg()
@@ -232,7 +238,6 @@ public class CDDiffCLI {
         .desc("Generate all solutions (optional). Default is to generate only unique solutions. "
             + "Limit still applies unless option -nl is selected.")
         .build());
-
   }
 
   /**

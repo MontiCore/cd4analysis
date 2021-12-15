@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
+import de.monticore.cddiff.CDDiffCLI;
 import org.apache.commons.cli.*;
 
 import java.util.HashMap;
@@ -51,7 +52,8 @@ public class CDCLIOptions {
     initCheck();
     initPrettyPrinter(showPlantUML);
     initPlantUML();
-    initCDDiff();
+    //We initialize all options for CDDiffCLI that have no equivalent in CD4CodeCLI
+    CDDiffCLI.initDiffOptions(options);
   }
 
   protected void initCheck() {
@@ -239,51 +241,4 @@ public class CDCLIOptions {
     subCommands.put(SubCommand.PLANTUML, plantUMLOptions);
   }
 
-  /**
-   * We initialize all options for CDDiffCLI that have no equivalent in CD4CodeCLI
-   */
-  protected void initCDDiff(){
-
-    options.addOption(Option
-        .builder("cd1").longOpt("cddiff1")
-        .hasArg().type(String.class)
-        .argName("cd1").numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as the first parameter for computing"
-            + " the semantic difference of two CDs (mandatory for cddiff).")
-        .build());
-
-    options.addOption(Option
-        .builder("cd2").longOpt("cddiff2")
-        .hasArg().type(String.class)
-        .argName("cd2").numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as the second parameter for computing"
-            + " the semantic difference of two CDs (mandatory for cddiff).")
-        .build());
-
-    options.addOption(Option
-        .builder("k").longOpt("scope")
-        .hasArg().type(int.class)
-        .argName("k").numberOfArgs(1)
-        .desc("Scope of the alloy solutions for the semantic difference of two CDs (mandatory "
-            + "for cddiff).")
-        .build());
-
-    options.addOption(Option
-        .builder("l").longOpt("limit")
-        .hasArg().type(String.class)
-        .argName("dir").optionalArg(true).numberOfArgs(1)
-        .desc("Limit for the number of diff-witnesses (optional). Default is 10.")
-        .build());
-
-    options.addOption(Option
-        .builder("nl").longOpt("nolimit")
-        .desc("No limit for the number of diff-witnesses (optional).")
-        .build());
-
-    options.addOption(Option
-        .builder("a").longOpt("all")
-        .desc("Generate all solutions (optional). Default is to generate only unique solutions. Limit still applies unless option -nl is selected.")
-        .build());
-
-  }
 }
