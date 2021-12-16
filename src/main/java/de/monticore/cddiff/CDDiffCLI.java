@@ -182,10 +182,15 @@ public class CDDiffCLI {
         .desc("Path for generated files (optional). Default is `.`.")
         .build());
 
+    //initialize SemDiff options
     initDiffOptions(options);
 
   }
 
+  /**
+   * static method that adds semantic differencing options to parameter options
+   * initDiffOptions is public so that it can be used by CDCLIOptions
+   */
   public static void initDiffOptions(Options options) {
 
     options.addOption(Option.builder("cd1")
