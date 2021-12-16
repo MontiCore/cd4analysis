@@ -94,12 +94,13 @@ dependencies {
   testImplementation "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "junit:junit:$junit_version"
   testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
-  testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
+    requireCapability("de.monticore:monticore-runtime-tests") }
+  }
+    implementation "de.monticore.lang:od:$mc_version"
+    implementation "edu.mit.alloy:alloy:4.2.0-rc1"
 
-  // dependencies for CDDiff
-  implementation "de.monticore.lang:od:$mc_version"
-  implementation "edu.mit.alloy:alloy:4.2.0-rc1"
-  testImplementation "de.monticore:monticore-runtime:$mc_version:tests"
+  testImplementation "junit:junit:4.13.2"
   testImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   testImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
@@ -129,21 +130,21 @@ allprojects {
 
 // list of all grammars, needed to have a fix order
 def grammarDependencies = [
-        CDBasis           : [],
-        CDInterfaceAndEnum: ["CDBasis"],
-        CDAssociation     : ["CDBasis"],
-        CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
-        CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
-        CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
+  CDBasis           : [],
+  CDInterfaceAndEnum: ["CDBasis"],
+  CDAssociation     : ["CDBasis"],
+  CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
+  CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
+  CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
 ]
 
 // list of all grammars, needed to have a fix order
 def testGrammarDependencies = [
-        TestCDBasis           : ["CDBasis"],
-        TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
-        TestCDAssociation     : ["CDAssociation"],
-        TestCD4CodeBasis      : ["CD4CodeBasis"],
-        TestTypeImporter      : ["CD4Code"],
+  TestCDBasis           : ["CDBasis"],
+  TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+  TestCDAssociation     : ["CDAssociation"],
+  TestCD4CodeBasis      : ["CD4CodeBasis"],
+  TestTypeImporter      : ["CD4Code"],
 ]
 
 String createGrammarName(String name) {
@@ -293,9 +294,9 @@ tasks.withType(Test) {
     exceptionFormat TestExceptionFormat.FULL
     info {
       events TestLogEvent.FAILED,
-              TestLogEvent.PASSED,
-              TestLogEvent.SKIPPED,
-              TestLogEvent.STANDARD_OUT
+        TestLogEvent.PASSED,
+        TestLogEvent.SKIPPED,
+        TestLogEvent.STANDARD_OUT
     }
   }
   afterTest { desc, result ->
