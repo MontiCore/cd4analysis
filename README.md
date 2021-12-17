@@ -105,7 +105,7 @@ executable JAR file.
 You can use [**this download link**][CLIDownload] for downloading the CLI tool. 
 Or you can use `wget` to download the latest version in your working directory:
 ```shell
-wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
+wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
 ### Parameters of the CLI
@@ -416,12 +416,12 @@ to be in a default package. This default is calculated as follows:
    .
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
-[CLIDownload]: http://monticore.de/download/CDCLI.jar
+[CLIDownload]: https://monticore.de/download/CDCLI.jar
 
 ## Further Information
 
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
-* [MontiCore documentation](http://www.monticore.de/)
+* [MontiCore documentation](https://www.monticore.de/)
 * [**List of languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
 * [**MontiCore Core Grammar Library**](https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/Grammars.md)
 * [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
