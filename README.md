@@ -122,7 +122,7 @@ java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 
 The possible options are:
 | Option                     | Explanation |
-| ------ | ------ |
+| ------                     | ------ |
 | `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
 | `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
 | `-h,--help` | Prints short help |
@@ -131,17 +131,13 @@ The possible options are:
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces, default is `.` |
 | `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
 | `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
-| ------ | ------ |
+
 | `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
-| ------ | ------ |
-| `--semdiff <file>` | Reads `<file>` as second CD and compares it semantically with 
-the first CD given with the `-i` option. Output: Object diagrams (witnesses) that are valid 
-in the `-i`-CD, but invalid in the second CD. This is a semantic based, asymmetric diff. 
-Details: [XXXWEBSITE] |
-| `--diffsize <int>` | Maximum size of found witnesses when comparing 
-the semantic diff with `--semdiff` (default is: 42). This constrains long searches. |
+
+| `--semdiff <file>` | Reads `<file>` as second CD and compares it semantically with the first CD given with the `-i` option. Output: Object diagrams (witnesses) that are valid in the `-i`-CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: [XXXWEBSITE] |
+| `--diffsize <int>` | Maximum size of found witnesses when comparing the semantic diff with `--semdiff` (default is: 42). This constrains long searches. |
 | `--difflimit <int>` | Maximum number of found witnesses. |
 | `--alldiffs` | Show all diff-witnesses (Default is to show only unique, minimal ones). |
 
