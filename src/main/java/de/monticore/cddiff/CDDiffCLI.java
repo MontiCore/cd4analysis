@@ -73,13 +73,13 @@ public class CDDiffCLI {
         // Create temporary directory for alloy modules
         Path tmpdir = Files.createTempDirectory(outputDirectory, "tmpDiffModules");
 
-        //compute cddiff(cd1,cd2)
+        //compute semDiff(cd1,cd2)
         Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, this.scope,
             tmpdir.toString());
 
         // test if solution is present
         if (!optS.isPresent()) {
-          Log.error("could not compute cddiff");
+          Log.error("could not compute diff");
           deleteDir(tmpdir.toFile());
           return;
         }
@@ -133,8 +133,7 @@ public class CDDiffCLI {
 
     outputPathName = cmd.getOptionValue("o", ".");
 
-    if (!cmd.hasOption("cddiff") || !cmd.hasOption("cd1") || !cmd.hasOption("cd2") || !cmd.hasOption(
-        "scope")) {
+    if (!cmd.hasOption("i") || !cmd.hasOption("diff") || !cmd.hasOption("scope")) {
       return false;
     }
 
@@ -147,8 +146,8 @@ public class CDDiffCLI {
       return false;
     }
 
-    cd1PathName = cmd.getOptionValue("cd1");
-    cd2PathName = cmd.getOptionValue("cd2");
+    cd1PathName = cmd.getOptionValue("i");
+    cd2PathName = cmd.getOptionValue("diff");
 
     return true;
   }
@@ -158,7 +157,17 @@ public class CDDiffCLI {
    */
   protected void initOptions() {
 
-    // initialize --output option for CDDiffCLI
+    // initialize Options --input and --output for CDDiffCLI
+
+    options.addOption(Option.builder("i")
+        .longOpt("input")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .numberOfArgs(1)
+        .desc("Reads the source file (mandatory) and parses the contents as CD.")
+        .build());
+
     options.addOption(Option.builder("o")
         .longOpt("output")
         .hasArg()
@@ -180,31 +189,17 @@ public class CDDiffCLI {
    */
   public static void initDiffOptions(Options options) {
 
-    options.addOption(Option.builder("cddiff")
-        .longOpt("cddiff")
-        .desc("Computes the semantic difference semDiff(cd1,cd2) of two CDs specified by Options "
-            + "-cd1 and -cd2. The size of the solution is limited by an integer specified by "
-            + "Option -scope (mandatory for cddiff).")
-        .build());
-
-    options.addOption(Option.builder("cd1")
-        .longOpt("cd1")
+    options.addOption(Option.builder("diff")
+        .longOpt("diff")
         .hasArg()
         .type(String.class)
-        .argName("cd1")
+        .argName("file")
         .numberOfArgs(1)
         .desc(
-            "Reads the source file and parses the contents as the first CD (mandatory for cddiff).")
-        .build());
-
-    options.addOption(Option.builder("cd2")
-        .longOpt("cd2")
-        .hasArg()
-        .type(String.class)
-        .argName("cd2")
-        .numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as the second CD (mandatory for "
-            + "cddiff).")
+            "Reads the source file, parses the contents as a CD and computes the semantic "
+                + "difference semDiff(cd1,cd2) for -i <cd1.cd> --diff <cd2.cd> --scope <k>. The "
+                + "size of the solution is limited by an integer k specified by Option --scope "
+                + "which is mandatory for diff.")
         .build());
 
     options.addOption(Option.builder("scope")
@@ -213,8 +208,8 @@ public class CDDiffCLI {
         .type(int.class)
         .argName("scope")
         .numberOfArgs(1)
-        .desc("An integer that defines the scope of the computation. Mandatory for cddiff where "
-            + "it denotes the maximum size of solutions.")
+        .desc("An integer that defines the scope of the computation. Mandatory for diff where it "
+            + "denotes the maximum size of solutions.")
         .build());
 
     options.addOption(Option.builder("limit")

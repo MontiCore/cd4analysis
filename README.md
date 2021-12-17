@@ -134,10 +134,8 @@ The possible options are:
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
 | `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
 | `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
-| `-cddiff,--cddiff` | Computes the semantic difference semDiff(cd1,cd2) of two CDs specified by Options `-cd1` and `-cd2`. The size of the solution is limited by an integer specified by Option `-scope` (mandatory for cddiff). |
-| `-cd1,--cd1 <file>` | Reads the source file and parses the contents as the first CD (mandatory for cddiff). |
-| `-cd2,--cd2 <file>` | Reads the source file and parses the contents as the second CD (mandatory for cddiff). |
-| `-scope,--scope <int>` | An integer that defines the scope of the computation. Mandatory for cddiff where it denotes the maximum size of solutions. |
+| `-diff,--diff` | Reads the source file, parses the contents as a CD and computes the semantic difference semDiff(cd1,cd2) for -i <cd1.cd> --diff <cd2.cd> --scope <k>. The size of the solution is limited by an integer k specified by Option --scope which is mandatory for diff. |
+| `-scope,--scope <int>` | An integer that defines the scope of the computation. Mandatory for diff where it denotes the maximum size of solutions. |
 | `-limit,--limit <int>` | Limit for the number of solutions (optional). Default is no limit. |
 | `-alldiff,--alldiffsolutions` | Generate all diff-witnesses (optional). Default is to generate only unique witnesses. |
 

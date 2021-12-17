@@ -22,7 +22,7 @@ public class CDDiffCLITest {
     final String output = "./diff_5_cd2v2_cd2v1/";
 
     //when CDDiff CLI is used to compute the semantic difference
-    String[] args = { "-cddiff", "-cd1", cd1, "-cd2", cd2, "-scope", "5", "-o", output, "-limit", "20" };
+    String[] args = { "-i", cd1, "-diff", cd2, "-scope", "5", "-o", output, "-limit", "20" };
     CD4CodeCLI cli = new CD4CodeCLI();
     cli.run(args);
 
@@ -70,8 +70,7 @@ public class CDDiffCLITest {
     final String output = "./diff_5_cd2v2_cd2v1/";
 
     //when CDDiff CLI is used to compute the semantic difference
-    String[] args = { "-cddiff", "-cd1", cd1, "-cd2", cd2, "-scope", "5", "-o", output, "-limit",
-        "20" };
+    String[] args = { "-i", cd1, "-diff", cd2, "-scope", "5", "-o", output, "-limit", "20" };
     CD4CodeCLI cli = new CD4CodeCLI();
     cli.run(args);
 
