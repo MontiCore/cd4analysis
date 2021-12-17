@@ -136,8 +136,8 @@ The possible options are:
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
 | `--semdiff <file>` | Reads `<file>` as second CD and compares it semantically with the first CD given with the `-i` option. Output: Object diagrams (witnesses) that are valid in the `-i`-CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: [XXXWEBSITE] |
 | `--diffsize <int>` | Maximum size of found witnesses when comparing the semantic diff with `--semdiff` (default is: 42). This constrains long searches. |
-| `--difflimit <int>` | Maximum number of found witnesses. |
-| `--alldiffs` | Show all diff-witnesses (Default is to show only unique, minimal ones). |
+| `--difflimit <int>` | Maximum number of found witnesses |
+| `--alldiffs` | Show all diff-witnesses (Default is to show only unique, minimal ones) |
 
 ### Building the CLI Tool from the Sources (if desired)
  
