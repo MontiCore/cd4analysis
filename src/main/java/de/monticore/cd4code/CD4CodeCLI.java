@@ -303,7 +303,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     else {
 
       //if -cd1 or --cddiff1 is chosen as an option, we utilize CDDiffCLI
-      if (cmd.hasOption("cd1")){
+      if (cmd.hasOption("cddiff")){
         CDDiffCLI diffCLI = new CDDiffCLI();
         diffCLI.run(args);
         return false;

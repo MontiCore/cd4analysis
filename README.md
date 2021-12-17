@@ -134,12 +134,12 @@ The possible options are:
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
 | `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
 | `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
-| `-cd1,--cddiff1 <file>` | Reads the source file and parses the contents as the first parameter for computing the semantic difference of two CDs (mandatory for cddiff). |
-| `-cd2,--cddiff2 <file>` | Reads the source file and parses the contents as the second parameter for computing the semantic difference of two CDs (mandatory for cddiff). |
-| `-k,--scope <int>` | Scope of the alloy solutions for the semantic difference of two CDs (mandatory for cddiff). |
-| `-l,--limit <int>` | Limit for the number of diff-witnesses (optional). Default is 10. |
-| `-nl,--nolimit` | No limit for the number of diff-witnesses (optional). |
-| `-a,--all` | Generate all solutions (optional). Default is to generate only unique solutions. Limit still applies unless option -nl is selected. |
+| `-cddiff,--cddiff` | Computes the semantic difference semDiff(cd1,cd2) of two CDs specified by Options `-cd1` and `-cd2`. The size of the solution is limited by an integer specified by Option `-scope` (mandatory for cddiff). |
+| `-cd1,--cd1 <file>` | Reads the source file and parses the contents as the first CD (mandatory for cddiff). |
+| `-cd2,--cd2 <file>` | Reads the source file and parses the contents as the second CD (mandatory for cddiff). |
+| `-scope,--scope <int>` | An integer that defines the scope of the computation. Mandatory for cddiff where it denotes the maximum size of solutions. |
+| `-limit,--limit <int>` | Limit for the number of solutions (optional). Default is no limit. |
+| `-alldiff,--alldiffsolutions` | Generate all diff-witnesses (optional). Default is to generate only unique witnesses. |
 
 ### Building the CLI Tool from the Sources (if desired)
  

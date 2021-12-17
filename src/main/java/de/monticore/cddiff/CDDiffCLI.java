@@ -24,7 +24,7 @@ public class CDDiffCLI {
 
   protected String cd2PathName;
 
-  protected int k;
+  protected int scope;
 
   protected String outputPathName;
 
@@ -56,13 +56,6 @@ public class CDDiffCLI {
       Log.enableFailQuick(false);
       if (handleArgs(args)) {
 
-        // print help when option --help is selected
-        if (cmd.hasOption("h")) {
-          printHelp(options);
-          // do not continue when help is printed
-          return;
-        }
-
         // initialize CD4CodeMill
         CD4CodeMill.init();
         CD4CodeMill.globalScope().clear();
@@ -81,7 +74,7 @@ public class CDDiffCLI {
         Path tmpdir = Files.createTempDirectory(outputDirectory, "tmpDiffModules");
 
         //compute cddiff(cd1,cd2)
-        Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, this.k,
+        Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, this.scope,
             tmpdir.toString());
 
         // test if solution is present
@@ -92,7 +85,7 @@ public class CDDiffCLI {
         }
         AlloyDiffSolution sol = optS.get();
 
-        if (cmd.hasOption("nl")) {
+        if (!cmd.hasOption("limit")) {
           sol.setLimited(false);
         }
         else {
@@ -100,7 +93,7 @@ public class CDDiffCLI {
           sol.setLimited(true);
         }
 
-        if (cmd.hasOption("all")) {
+        if (cmd.hasOption("alldiff")) {
           sol.generateSolutionsToPath(outputDirectory);
         }
         else {
@@ -140,20 +133,17 @@ public class CDDiffCLI {
 
     outputPathName = cmd.getOptionValue("o", ".");
 
-    if (cmd.hasOption("h")) {
-      return true;
-    }
-
-    if (!cmd.hasOption("cd1") || !cmd.hasOption("cd2") || !cmd.hasOption("k")) {
+    if (!cmd.hasOption("cddiff") || !cmd.hasOption("cd1") || !cmd.hasOption("cd2") || !cmd.hasOption(
+        "scope")) {
       return false;
     }
 
     try {
-      this.k = Integer.parseInt(cmd.getOptionValue("k"));
-      this.limit = Integer.parseInt(cmd.getOptionValue("l", "10"));
+      this.scope = Integer.parseInt(cmd.getOptionValue("scope"));
+      this.limit = Integer.parseInt(cmd.getOptionValue("limit", "10"));
     }
     catch (NumberFormatException e) {
-      Log.error("options -k and -l require an integer as argument");
+      Log.error("options -scope and -limit require an integer as argument");
       return false;
     }
 
@@ -167,11 +157,8 @@ public class CDDiffCLI {
    * initialize options for the CLI
    */
   protected void initOptions() {
-    options.addOption(Option.builder("h")
-        .longOpt("help")
-        .desc("Prints short help information. Ignore other options.")
-        .build());
 
+    // initialize --output option for CDDiffCLI
     options.addOption(Option.builder("o")
         .longOpt("output")
         .hasArg()
@@ -188,60 +175,62 @@ public class CDDiffCLI {
   }
 
   /**
-   * static method that adds semantic differencing options to parameter options
-   * initDiffOptions is public so that it can be used by CDCLIOptions
+   * static method that adds semantic differencing options to parameter options initDiffOptions is
+   * public so that it can be used by CDCLIOptions
    */
   public static void initDiffOptions(Options options) {
 
+    options.addOption(Option.builder("cddiff")
+        .longOpt("cddiff")
+        .desc("Computes the semantic difference semDiff(cd1,cd2) of two CDs specified by Options "
+            + "-cd1 and -cd2. The size of the solution is limited by an integer specified by "
+            + "Option -scope (mandatory for cddiff).")
+        .build());
+
     options.addOption(Option.builder("cd1")
-        .longOpt("cddiff1")
+        .longOpt("cd1")
         .hasArg()
         .type(String.class)
         .argName("cd1")
         .numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as the first parameter for computing"
-            + " the semantic difference of two CDs (mandatory for cddiff).")
+        .desc(
+            "Reads the source file and parses the contents as the first CD (mandatory for cddiff).")
         .build());
 
     options.addOption(Option.builder("cd2")
-        .longOpt("cddiff2")
+        .longOpt("cd2")
         .hasArg()
         .type(String.class)
         .argName("cd2")
         .numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as the second parameter for computing"
-            + " the semantic difference of two CDs (mandatory for cddiff).")
+        .desc("Reads the source file and parses the contents as the second CD (mandatory for "
+            + "cddiff).")
         .build());
 
-    options.addOption(Option.builder("k")
+    options.addOption(Option.builder("scope")
         .longOpt("scope")
         .hasArg()
         .type(int.class)
-        .argName("k")
+        .argName("scope")
         .numberOfArgs(1)
-        .desc("Scope of the alloy solutions for the semantic difference of two CDs (mandatory "
-            + "for cddiff).")
+        .desc("An integer that defines the scope of the computation. Mandatory for cddiff where "
+            + "it denotes the maximum size of solutions.")
         .build());
 
-    options.addOption(Option.builder("l")
+    options.addOption(Option.builder("limit")
         .longOpt("limit")
         .hasArg()
         .type(String.class)
-        .argName("dir")
+        .argName("limit")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Limit for the number of diff-witnesses (optional). Default is 10.")
+        .desc("Limit for the number of solutions (optional). Default is no limit.")
         .build());
 
-    options.addOption(Option.builder("nl")
-        .longOpt("nolimit")
-        .desc("No limit for the number of diff-witnesses (optional).")
-        .build());
-
-    options.addOption(Option.builder("a")
-        .longOpt("all")
-        .desc("Generate all solutions (optional). Default is to generate only unique solutions. "
-            + "Limit still applies unless option -nl is selected.")
+    options.addOption(Option.builder("alldiff")
+        .longOpt("alldiffsolutions")
+        .desc("Generate all diff-witnesses (optional). Default is to generate only unique "
+            + "witnesses.")
         .build());
   }
 
