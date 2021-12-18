@@ -302,8 +302,8 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     }
     else {
 
-      //if Option --diff is chosen, we utilize CDDiffCLI
-      if (cmd.hasOption("diff")){
+      //if Option --semdiff is chosen, we utilize CDDiffCLI
+      if (cmd.hasOption("semdiff")){
         CDDiffCLI diffCLI = new CDDiffCLI();
         diffCLI.run(args);
         return false;

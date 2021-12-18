@@ -16,13 +16,14 @@ public class CDDiffCLITest {
 
   @Test
   public void testRunWithDiff() {
-    // given 2 CDs
+    // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd";
     final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
     final String output = "./diff_5_cd2v2_cd2v1/";
 
-    //when CDDiff CLI is used to compute the semantic difference
-    String[] args = { "-i", cd1, "-diff", cd2, "-scope", "5", "-o", output, "-limit", "20" };
+    //when CD4CodeCLI is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "5", "-o", output, "--difflimit",
+        "20" };
     CD4CodeCLI cli = new CD4CodeCLI();
     cli.run(args);
 
@@ -62,19 +63,20 @@ public class CDDiffCLITest {
 
   @Test
   public void testRunWithoutDiff() {
-    // given 2 CDs
-    final String cd1 = "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1"
-        + ".cd";
-    final String cd2 = "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2"
-        + ".cd";
+    // given 2 CDs that are semantically equivalent
+    final String cd1 =
+        "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1" + ".cd";
+    final String cd2 =
+        "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2" + ".cd";
     final String output = "./diff_5_cd2v2_cd2v1/";
 
-    //when CDDiff CLI is used to compute the semantic difference
-    String[] args = { "-i", cd1, "-diff", cd2, "-scope", "5", "-o", output, "-limit", "20" };
+    //when CD4CodeCLI is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "5", "-o", output, "--difflimit",
+        "20" };
     CD4CodeCLI cli = new CD4CodeCLI();
     cli.run(args);
 
-    //then corresponding .od files are generated
+    //no corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();
     assertNotNull(odFiles);
 
@@ -86,6 +88,7 @@ public class CDDiffCLITest {
     }
     assertTrue(odFilePaths.isEmpty());
 
+    //clean-up
     if (!Paths.get(output).toFile().delete()) {
       Log.warn("Could not delete " + output);
     }

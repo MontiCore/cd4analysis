@@ -24,11 +24,11 @@ public class CDDiffCLI {
 
   protected String cd2PathName;
 
-  protected int scope;
+  protected int diffsize;
 
   protected String outputPathName;
 
-  protected int limit;
+  protected int difflimit;
 
   final protected Options options = new Options();
 
@@ -39,7 +39,8 @@ public class CDDiffCLI {
   /**
    * run main for CLI functionality
    *
-   * @param args -h for help or -cd1 ${pathName1} -cd2 ${pathName2} -k ${scope}$ [-o ${pathName3}]
+   * @param args i- ${pathName1} -semdiff ${pathName2} [-diffsize ${int}$] [-difflimit ${int}$]
+   *             [-alldiff] [-o ${pathName3}]
    */
   public static void main(String[] args) {
     CDDiffCLI cdDiffCLI = new CDDiffCLI();
@@ -47,7 +48,7 @@ public class CDDiffCLI {
   }
 
   /**
-   * computes cddiff on args
+   * computes semdiff on args
    */
   public void run(String[] args) {
     try {
@@ -74,22 +75,22 @@ public class CDDiffCLI {
         Path tmpdir = Files.createTempDirectory(outputDirectory, "tmpDiffModules");
 
         //compute semDiff(cd1,cd2)
-        Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, this.scope,
+        Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, this.diffsize,
             tmpdir.toString());
 
         // test if solution is present
         if (!optS.isPresent()) {
-          Log.error("could not compute diff");
+          Log.error("could not compute semdiff");
           deleteDir(tmpdir.toFile());
           return;
         }
         AlloyDiffSolution sol = optS.get();
 
-        if (!cmd.hasOption("limit")) {
+        if (!cmd.hasOption("difflimit")) {
           sol.setLimited(false);
         }
         else {
-          sol.setSolutionLimit(this.limit);
+          sol.setSolutionLimit(this.difflimit);
           sol.setLimited(true);
         }
 
@@ -133,21 +134,23 @@ public class CDDiffCLI {
 
     outputPathName = cmd.getOptionValue("o", ".");
 
-    if (!cmd.hasOption("i") || !cmd.hasOption("diff") || !cmd.hasOption("scope")) {
+    if (!cmd.hasOption("i") || !cmd.hasOption("semdiff")) {
+      Log.error("Options -i and --semdiff are required for the computation of semantic "
+          + "differences. Option --stdin is not supported for this computation.");
       return false;
     }
 
     try {
-      this.scope = Integer.parseInt(cmd.getOptionValue("scope"));
-      this.limit = Integer.parseInt(cmd.getOptionValue("limit", "10"));
+      this.diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "3"));
+      this.difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "100"));
     }
     catch (NumberFormatException e) {
-      Log.error("options -scope and -limit require an integer as argument");
+      Log.error("options --diffsize and --difflimit each require an integer as argument");
       return false;
     }
 
     cd1PathName = cmd.getOptionValue("i");
-    cd2PathName = cmd.getOptionValue("diff");
+    cd2PathName = cmd.getOptionValue("semdiff");
 
     return true;
   }
@@ -189,43 +192,42 @@ public class CDDiffCLI {
    */
   public static void initDiffOptions(Options options) {
 
-    options.addOption(Option.builder("diff")
-        .longOpt("diff")
+    options.addOption(Option.builder()
+        .longOpt("semdiff")
         .hasArg()
         .type(String.class)
         .argName("file")
         .numberOfArgs(1)
         .desc(
-            "Reads the source file, parses the contents as a CD and computes the semantic "
-                + "difference semDiff(cd1,cd2) for -i <cd1.cd> --diff <cd2.cd> --scope <k>. The "
-                + "size of the solution is limited by an integer k specified by Option --scope "
-                + "which is mandatory for diff.")
+            "Reads `<file>` as second CD and compares it semantically with the first CD given "
+                + "with the `-i` option. Output: Object diagrams (witnesses) that are valid in "
+                + "the `-i`-CD, but invalid in the second CD. This is a semantic based, "
+                + "asymmetric diff.")
         .build());
 
-    options.addOption(Option.builder("scope")
-        .longOpt("scope")
+    options.addOption(Option.builder()
+        .longOpt("diffsize")
         .hasArg()
         .type(int.class)
-        .argName("scope")
+        .argName("diffsize")
         .numberOfArgs(1)
-        .desc("An integer that defines the scope of the computation. Mandatory for diff where it "
-            + "denotes the maximum size of solutions.")
+        .desc("Maximum size of found witnesses when comparing the semantic diff with `--semdiff` "
+            + "(default is: 3). This constrains long searches.")
         .build());
 
-    options.addOption(Option.builder("limit")
-        .longOpt("limit")
+    options.addOption(Option.builder()
+        .longOpt("difflimit")
         .hasArg()
         .type(String.class)
-        .argName("limit")
+        .argName("difflimit")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Limit for the number of solutions (optional). Default is no limit.")
+        .desc("Maximum number of found witnesses")
         .build());
 
-    options.addOption(Option.builder("alldiff")
-        .longOpt("alldiffsolutions")
-        .desc("Generate all diff-witnesses (optional). Default is to generate only unique "
-            + "witnesses.")
+    options.addOption(Option.builder()
+        .longOpt("alldiff")
+        .desc("Show all diff-witnesses (Default is to show only unique, minimal ones)")
         .build());
   }
 
