@@ -129,7 +129,7 @@ The possible options are:
 | `-i,--input <file>` | Reads the source file (mandatory) and parses the contents as a CD |
 | `-o,--output <dir>` | Path for generated files (optional). Default is `.` |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces, default is `.` |
-| `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
+| `--stdin` | Reads the input CD from stdin instead of argument `-i` |
 | `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
 | `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
