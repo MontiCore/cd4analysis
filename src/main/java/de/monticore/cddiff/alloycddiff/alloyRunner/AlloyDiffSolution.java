@@ -58,6 +58,7 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
 
   /**
    * @see de.monticore.cddiff.alloycddiff.alloyRunner.AlloySolutionHandler#generateSolutionsToPath(Path)
+   * TODO: This is incorrectly implemented.
    */
   public void generateUniqueSolutionsToPath(Path outputDirectory) {
  // Variable for possibly multiple solutions

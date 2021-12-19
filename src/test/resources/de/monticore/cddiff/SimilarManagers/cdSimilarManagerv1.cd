@@ -1,5 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram cdSimilarManagerv1 {
+
+import java.util.Date;
+
+classdiagram CDSimilarManagerv1 {
 	enum PositionKind{fullTime, partTime, external;}
 	
 	class Employee {

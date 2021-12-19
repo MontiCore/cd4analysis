@@ -1,5 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram cd2v2 {
+
+import java.util.Date;
+
+classdiagram CD2v2 {
 	enum PositionKind{fullTime, partTime, external;}
 	
 	class Employee {

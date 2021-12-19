@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
-import de.monticore.cddiff.CDDiffCLI;
 import org.apache.commons.cli.*;
 
 import java.util.HashMap;
@@ -52,8 +51,7 @@ public class CDCLIOptions {
     initCheck();
     initPrettyPrinter(showPlantUML);
     initPlantUML();
-    //We initialize all options for CDDiffCLI that have no equivalent in CD4CodeCLI
-    CDDiffCLI.initDiffOptions(options);
+    initDiffOptions();
   }
 
   protected void initCheck() {
@@ -239,6 +237,45 @@ public class CDCLIOptions {
         .build());
 
     subCommands.put(SubCommand.PLANTUML, plantUMLOptions);
+  }
+
+  /**
+   * adds options for semantic differencing
+   */
+  public void initDiffOptions() {
+
+    options.addOption(Option.builder()
+        .longOpt("semdiff")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .numberOfArgs(1)
+        .desc(
+            "Reads `<file>` as second CD and compares it semantically with the first CD given "
+                + "with the `-i` option. Output: Object diagrams (witnesses) that are valid in "
+                + "the `-i`-CD, but invalid in the second CD. This is a semantic based, "
+                + "asymmetric diff.")
+        .build());
+
+    options.addOption(Option.builder()
+        .longOpt("diffsize")
+        .hasArg()
+        .type(int.class)
+        .argName("diffsize")
+        .numberOfArgs(1)
+        .desc("Maximum size of found witnesses when comparing the semantic diff with `--semdiff` "
+            + "(default is: 3). This constrains long searches.")
+        .build());
+
+    options.addOption(Option.builder()
+        .longOpt("difflimit")
+        .hasArg()
+        .type(String.class)
+        .argName("difflimit")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Maximum number of found witnesses")
+        .build());
   }
 
 }

@@ -75,7 +75,7 @@ public class P1RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add("ObjAttrib[Task,startDate,type_Date]");
-    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDcd2v1]");
+    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDCD2v1]");
     
     checkP1(lines, expectedResult);
   }
@@ -88,8 +88,8 @@ public class P1RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add("ObjAttrib[Task,startDate,type_Date]");
-    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDcd2v2]");
-    expectedResult.add("ObjAttrib[Manager,kind,PositionKindEnumCDcd2v2]");
+    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDCD2v2]");
+    expectedResult.add("ObjAttrib[Manager,kind,PositionKindEnumCDCD2v2]");
     
     checkP1(lines, expectedResult);
   }

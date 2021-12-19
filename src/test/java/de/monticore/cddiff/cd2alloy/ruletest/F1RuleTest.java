@@ -128,9 +128,9 @@ public class F1RuleTest extends AbstractTest {
     
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("fun TaskSubsCDcd2v1: set Obj { Task }");
-    expectedResult.add("fun EmployeeSubsCDcd2v1: set Obj { Employee }");
-    expectedResult.add("fun ManagerSubsCDcd2v1: set Obj { Manager }");
+    expectedResult.add("fun TaskSubsCDCD2v1: set Obj { Task }");
+    expectedResult.add("fun EmployeeSubsCDCD2v1: set Obj { Employee }");
+    expectedResult.add("fun ManagerSubsCDCD2v1: set Obj { Manager }");
     
     checkF1(lines, expectedResult);
   }
@@ -142,9 +142,9 @@ public class F1RuleTest extends AbstractTest {
     
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("fun TaskSubsCDcd2v2: set Obj { Task }");
-    expectedResult.add("fun EmployeeSubsCDcd2v2: set Obj { Employee + Manager }");
-    expectedResult.add("fun ManagerSubsCDcd2v2: set Obj { Manager }");
+    expectedResult.add("fun TaskSubsCDCD2v2: set Obj { Task }");
+    expectedResult.add("fun EmployeeSubsCDCD2v2: set Obj { Employee + Manager }");
+    expectedResult.add("fun ManagerSubsCDCD2v2: set Obj { Manager }");
     
     checkF1(lines, expectedResult);
   }

@@ -27,7 +27,8 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cddiff.CDDiffCLI;
+import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.cddiff.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -220,7 +221,8 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
         }
 
-        if (cmd.hasOption("o")) {
+        // if option --semdiff is used, we do not export java-templates
+        if (cmd.hasOption("o") && !cmd.hasOption("semdiff")) {
           GlobalExtensionManagement glex = new GlobalExtensionManagement();
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
@@ -256,6 +258,9 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           System.out.printf(JSON_SUCCESSFUL, filename);
 
         }
+        if (cmd.hasOption("semdiff")){
+          computeSemDiff();
+        }
 
       }
     }catch (AmbiguousOptionException e) {
@@ -270,8 +275,12 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     catch (MissingArgumentException e) {
       Log.error(String.format("0xCD0E5: option '%s' is missing an argument", e.getOption()));
     }
+    catch (NumberFormatException e) {
+      Log.error("0xCD0E6: options --diffsize and --difflimit each require an "
+          + "integer as argument");
+    }
     catch (Exception e) {
-      Log.error(String.format("0xCD0E6: an error occured: %s", e.getMessage()));
+      Log.error(String.format("0xCD0E7: an error occurred: %s", e.getMessage()));
     }
   }
 
@@ -301,13 +310,6 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
       return false;
     }
     else {
-
-      //if Option --semdiff is chosen, we utilize CDDiffCLI
-      if (cmd.hasOption("semdiff")){
-        CDDiffCLI diffCLI = new CDDiffCLI();
-        diffCLI.run(args);
-        return false;
-      }
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
         printHelp((CDCLIOptions.SubCommand) null);
@@ -518,4 +520,59 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
       formatter.printHelp(subCommand.toString(), cdcliOptionsForHelp.getOptions(subCommand));
     }
   }
+
+  protected void computeSemDiff() throws IOException,NumberFormatException{
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
+    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "3"));
+    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "100"));
+
+    // Create Output Directory
+    Path outputDirectory = Paths.get(outputPath);
+    if (!outputDirectory.toFile().exists()) {
+      Files.createDirectory(outputDirectory);
+    }
+
+    // Create temporary directory for alloy modules
+    Path tmpdir = Files.createTempDirectory(outputDirectory, "tmpDiffModules");
+
+    //compute semDiff(cd1,cd2)
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize,
+        tmpdir.toString());
+
+    // test if solution is present
+    if (!optS.isPresent()) {
+      Log.error("could not compute semdiff");
+      deleteDir(tmpdir.toFile());
+      return;
+    }
+    AlloyDiffSolution sol = optS.get();
+
+    if (!cmd.hasOption("difflimit")) {
+      sol.setLimited(false);
+    }
+    else {
+      sol.setSolutionLimit(difflimit);
+      sol.setLimited(true);
+    }
+    sol.generateSolutionsToPath(outputDirectory);
+    deleteDir(tmpdir.toFile());
+  }
+
+  /**
+   * deletes directory with files
+   */
+  protected void deleteDir(File file) {
+    File[] contents = file.listFiles();
+    if (contents != null) {
+      for (File f : contents) {
+        if (!Files.isSymbolicLink(f.toPath())) {
+          deleteDir(f);
+        }
+      }
+    }
+    if (!file.delete()) {
+      Log.warn("Could not delete: " + file.getName());
+    }
+  }
+
 }

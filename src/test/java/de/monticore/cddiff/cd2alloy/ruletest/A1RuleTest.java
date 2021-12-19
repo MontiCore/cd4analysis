@@ -78,7 +78,7 @@ public class A1RuleTest extends AbstractTest {
     
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("BidiAssoc[EmployeeSubsCDcd2v1,task,TaskSubsCDcd2v1,employee]");
+    expectedResult.add("BidiAssoc[EmployeeSubsCDCD2v1,task,TaskSubsCDCD2v1,employee]");
     
     checkA1(lines, expectedResult);
   }
@@ -92,7 +92,7 @@ public class A1RuleTest extends AbstractTest {
     
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("BidiAssoc[EmployeeSubsCDcd2v2,task,TaskSubsCDcd2v2,employee]");
+    expectedResult.add("BidiAssoc[EmployeeSubsCDCD2v2,task,TaskSubsCDCD2v2,employee]");
     
     checkA1(lines, expectedResult);
   }
