@@ -65,7 +65,7 @@ public class CDCLIOptions {
         .build());
 
     options.addOption(Option
-        .builder("stdin").longOpt("stdin")
+        .builder().longOpt("stdin")
         .desc("Reads the input CD from stdin instead of argument `-i`.")
         .build());
 
