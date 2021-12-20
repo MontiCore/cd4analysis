@@ -4,6 +4,7 @@ package de.monticore.cd.codegen;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
+import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
@@ -64,18 +65,11 @@ public class CdUtilsPrinter {
    * @param importStatements the list of import statements
    * @return a string list of all import statements
    */
-  public Collection<String> printImportList(
-          List<ASTMCImportStatement> importStatements) {
-
-    return Collections2.transform(importStatements,
-            new Function<ASTMCImportStatement, String>() {
-
-              @Override
-              public String apply(ASTMCImportStatement arg0) {
-                return arg0.getQName();
-              }
-
-            });
+  public String printImportList(Collection<ASTMCImportStatement> importStatements) {
+    CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+    StringBuilder sb = new StringBuilder();
+    importStatements.forEach(i -> sb.append(printer.prettyprint(i) + "\n"));
+    return sb.toString();
   }
 
   /**
