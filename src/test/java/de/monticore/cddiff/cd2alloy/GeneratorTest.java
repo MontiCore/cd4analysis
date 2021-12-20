@@ -26,7 +26,7 @@ public class GeneratorTest extends AbstractTest {
     assertNotNull(ast);
     
     // Create Output Path 
-    final Path outputDirectory = Paths.get("gen/");
+    final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
     
     // Initialize set of asts
     final Set<ASTCDCompilationUnit> asts = new HashSet<>();
@@ -45,7 +45,7 @@ public class GeneratorTest extends AbstractTest {
     assertNotNull(astV2);
     
     // Create Output Path 
-    final Path outputDirectory = Paths.get("gen/");
+    final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
     
     // Initialize set of asts
     final Set<ASTCDCompilationUnit> asts = new HashSet<>();

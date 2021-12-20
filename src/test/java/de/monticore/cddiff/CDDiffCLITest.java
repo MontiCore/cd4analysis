@@ -3,9 +3,11 @@ package de.monticore.cddiff;
 import de.monticore.cd4code.CD4CodeCLI;
 import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +21,7 @@ public class CDDiffCLITest {
     // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd";
     final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
-    final String output = "./diff_5_cd2v2_cd2v1/";
+    final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
     //when CD4CodeCLI is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "5", "-o", output, "--difflimit",
@@ -50,13 +52,10 @@ public class CDDiffCLITest {
     }
 
     // clean-up
-    for (File odFile : odFiles) {
-      if (!odFile.delete()) {
-        Log.warn("Could not delete " + odFile.getName());
-      }
-    }
-    if (!Paths.get(output).toFile().delete()) {
-      Log.warn("Could not delete " + output);
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    } catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
     }
 
   }
@@ -68,7 +67,7 @@ public class CDDiffCLITest {
         "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1" + ".cd";
     final String cd2 =
         "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2" + ".cd";
-    final String output = "./diff_5_cd2v2_cd2v1/";
+    final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
     //when CD4CodeCLI is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "5", "-o", output, "--difflimit",
@@ -88,9 +87,11 @@ public class CDDiffCLITest {
     }
     assertTrue(odFilePaths.isEmpty());
 
-    //clean-up
-    if (!Paths.get(output).toFile().delete()) {
-      Log.warn("Could not delete " + output);
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    } catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
     }
 
   }

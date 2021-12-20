@@ -261,7 +261,7 @@ public class CDCLIOptions {
         .longOpt("diffsize")
         .hasArg()
         .type(int.class)
-        .argName("diffsize")
+        .argName("int")
         .numberOfArgs(1)
         .desc("Maximum size of found witnesses when comparing the semantic diff with `--semdiff` "
             + "(default is: 3). This constrains long searches.")
@@ -271,7 +271,7 @@ public class CDCLIOptions {
         .longOpt("difflimit")
         .hasArg()
         .type(String.class)
-        .argName("difflimit")
+        .argName("int")
         .optionalArg(true)
         .numberOfArgs(1)
         .desc("Maximum number of found witnesses")

@@ -2,7 +2,6 @@
 package de.monticore.cd4code;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.json.CD2JsonUtil;
@@ -40,7 +39,6 @@ import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -51,7 +49,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CD4CodeCLI extends CD4CodeCLITOP {
 
@@ -521,28 +518,17 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     }
   }
 
-  protected void computeSemDiff() throws IOException,NumberFormatException{
+  protected void computeSemDiff() throws NumberFormatException{
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
     int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "3"));
     int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "100"));
 
-    // Create Output Directory
-    Path outputDirectory = Paths.get(outputPath);
-    if (!outputDirectory.toFile().exists()) {
-      Files.createDirectory(outputDirectory);
-    }
-
-    // Create temporary directory for alloy modules
-    Path tmpdir = Files.createTempDirectory(outputDirectory, "tmpDiffModules");
-
     //compute semDiff(cd1,cd2)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize,
-        tmpdir.toString());
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
 
     // test if solution is present
     if (!optS.isPresent()) {
       Log.error("could not compute semdiff");
-      deleteDir(tmpdir.toFile());
       return;
     }
     AlloyDiffSolution sol = optS.get();
@@ -554,25 +540,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
       sol.setSolutionLimit(difflimit);
       sol.setLimited(true);
     }
-    sol.generateSolutionsToPath(outputDirectory);
-    deleteDir(tmpdir.toFile());
-  }
-
-  /**
-   * deletes directory with files
-   */
-  protected void deleteDir(File file) {
-    File[] contents = file.listFiles();
-    if (contents != null) {
-      for (File f : contents) {
-        if (!Files.isSymbolicLink(f.toPath())) {
-          deleteDir(f);
-        }
-      }
-    }
-    if (!file.delete()) {
-      Log.warn("Could not delete: " + file.getName());
-    }
+    sol.generateSolutionsToPath(Paths.get(outputPath));
   }
 
 }

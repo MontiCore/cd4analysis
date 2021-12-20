@@ -76,7 +76,7 @@ public class AssociationChainTest extends AbstractTest {
     // Test first solution
     testSolution(optS1, 1);
     // Write solution to location
-    Path outputDirectoryS1 = Paths.get("gen/diff_" + 1 + "_of_" + astV1.getCDDefinition().getName()
+    Path outputDirectoryS1 = Paths.get("target/generated/cddiff-test/diff_" + 1 + "_of_" + astV1.getCDDefinition().getName()
         + "_" + astV2.getCDDefinition().getName());
 
     // Assertion that no difference should be found in this scope
@@ -90,7 +90,7 @@ public class AssociationChainTest extends AbstractTest {
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
-    Path outputDirectoryS2 = Paths.get("gen/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
+    Path outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
         + "_" + astV2.getCDDefinition().getName());
 
     // Assertion that a difference should be found in this scope
@@ -104,7 +104,7 @@ public class AssociationChainTest extends AbstractTest {
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
-    outputDirectoryS2 = Paths.get("gen/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
+    outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
         + "_" + astV1.getCDDefinition().getName());
     // Assertion that no difference should be found in this scope
     assertTrue(optS2.isPresent() && optS2.get().generateODs().size() == 0);

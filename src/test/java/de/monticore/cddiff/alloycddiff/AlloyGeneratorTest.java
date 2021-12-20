@@ -86,7 +86,7 @@ public class AlloyGeneratorTest extends AbstractTest {
     // Test first solution
 //    testSolution(optS1, 5);
     // Write solution to location
-    Path outputDirectoryS1 = Paths.get("gen/diff_" + 5 + "_of_" + astV1.getCDDefinition().getName()
+    Path outputDirectoryS1 = Paths.get("target/generated/cddiff-test/diff_" + 5 + "_of_" + astV1.getCDDefinition().getName()
         + "_" + astV2.getCDDefinition().getName());
     // Generate outputs
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
@@ -96,11 +96,11 @@ public class AlloyGeneratorTest extends AbstractTest {
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
-    Path outputDirectoryS2 = Paths.get("gen/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
+    Path outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
         + "_" + astV2.getCDDefinition().getName());
     // Generate outputs
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
-    Path outputDirectoryS2U = Paths.get("gen/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()  + "_" + astV2.getCDDefinition().getName() + "_unique");
+    Path outputDirectoryS2U = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()  + "_" + astV2.getCDDefinition().getName() + "_unique");
     optS2.get().generateUniqueSolutionsToPath(outputDirectoryS2U);
     
 
@@ -115,7 +115,7 @@ public class AlloyGeneratorTest extends AbstractTest {
     // Test third solution
     testSolution(optS3, 2);
     // Write solution to location
-    Path outputDirectoryS3 = Paths.get("gen/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
+    Path outputDirectoryS3 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
         + "_" + astV1.getCDDefinition().getName());
     // Generate outputs
     optS3.get().generateSolutionsToPath(outputDirectoryS3);
@@ -146,7 +146,7 @@ public class AlloyGeneratorTest extends AbstractTest {
     // Test first solution
     testSolution(optS1, 2);
     // Write solution to location
-    Path outputDirectoryS1 = Paths.get("gen/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
+    Path outputDirectoryS1 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
         + "_" + astV2.getCDDefinition().getName());
     // Generate outputs
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
@@ -156,7 +156,7 @@ public class AlloyGeneratorTest extends AbstractTest {
     // Test second solution
     testSolution(optS2, 2);
     // Write solution to location
-    Path outputDirectoryS2 = Paths.get("gen/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
+    Path outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
         + "_" + astV1.getCDDefinition().getName());
     // Generate outputs
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
@@ -166,7 +166,7 @@ public class AlloyGeneratorTest extends AbstractTest {
     // Test second solution
     testSolution(optS3, 2);
     // Write solution to location
-    Path outputDirectoryS3 = Paths.get("gen/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
+    Path outputDirectoryS3 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
         + "_" + astV1.getCDDefinition().getName());
     // Generate outputs
     optS3.get().generateSolutionsToPath(outputDirectoryS3);
@@ -233,7 +233,7 @@ public class AlloyGeneratorTest extends AbstractTest {
     Optional<AlloyDiffSolution> optS2 = ClassDifference.cddiff(astV3, astV1, 2);
     assertTrue(optS2.isPresent());
     // Write solution to location
-    Path outputDirectoryS3 = Paths.get("gen/diff_" + 2 + "_of_" + astV3.getCDDefinition().getName()
+    Path outputDirectoryS3 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV3.getCDDefinition().getName()
         + "_" + astV1.getCDDefinition().getName());
     // Generate outputs
     optS2.get().generateUniqueSolutionsToPath(outputDirectoryS3);

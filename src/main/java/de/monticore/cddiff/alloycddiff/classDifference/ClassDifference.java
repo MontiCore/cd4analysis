@@ -6,7 +6,10 @@ import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffRunner;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloySolutionHandler;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.se_rwth.commons.logging.Log;
+import org.apache.commons.io.FileUtils;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -21,7 +24,7 @@ public class ClassDifference {
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
                                                              ASTCDCompilationUnit cd2,
                                                              int k) {
-    return cddiff(cd1,cd2,k,"gen/");
+    return cddiff(cd1,cd2,k,"target/generated/cddiff-test/");
   }
   
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
@@ -48,7 +51,15 @@ public class ClassDifference {
       // If correct extract solution object
       result = Optional.of((AlloyDiffSolution) results.get(0));
     }
-    
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(outputDirectory.toFile());
+    } catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", outputDirectory.getFileName(),
+          e.getMessage()));
+    }
+
     return result;
   }
 
