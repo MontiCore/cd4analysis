@@ -218,8 +218,9 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
         }
 
-        // if option --semdiff is used, we do not export java-templates
-        if (cmd.hasOption("o") && !cmd.hasOption("semdiff")) {
+        // If option --semdiff is used, we do not generate java-templates,
+        // unless option --gen is explicitly used.
+        if (cmd.hasOption("gen") || (cmd.hasOption("o") && !cmd.hasOption("semdiff"))) {
           GlobalExtensionManagement glex = new GlobalExtensionManagement();
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 

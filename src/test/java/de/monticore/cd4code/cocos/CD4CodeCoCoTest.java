@@ -44,7 +44,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());
     final String otherFileName = otherFile.toString();
-    CD4CodeCLI.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "-o", getTmpAbsolutePath(), "-s",
+    CD4CodeCLI.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "--gen", "-o", getTmpAbsolutePath(), "-s",
         getTmpFilePath("Simple.cdsym") });
 
     checkLogError();
@@ -69,7 +69,8 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());
     final String otherFileName = otherFile.toString();
-    CD4CodeCLI.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "src/test/emptypath", "-o", getTmpAbsolutePath(), "-s",
+    CD4CodeCLI.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "src/test"
+        + "/emptypath", "--gen", "-o", getTmpAbsolutePath(), "-s",
             getTmpFilePath("Simple.cdsym") });
 
     checkLogError();
