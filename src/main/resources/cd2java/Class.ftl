@@ -8,7 +8,7 @@ ${defineHookPoint("ClassContent:addComment")}
 ${tc.include("cd2java.Package")}
 
 ${tc.include("cd2java.Imports")}
-import de.monticd2java.ast.ASTCNode;
+${cdPrinter.printImportList(cd4c.getImportList(cdClass))}
 
 <#-- Imports hook -->
 ${defineHookPoint("ClassContent:Imports")}
