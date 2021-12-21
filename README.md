@@ -123,20 +123,24 @@ java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
+| `-ct,--configTemplate <file>` | Provides a config template (optional). |
 | `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
+| `--difflimit <int>` | Maximum number of generated witnesses when using `--semdiff` (recommended). |
+| `--diffsize <int>` | Maximum size of found witnesses when comparing the semantic diff with `--semdiff` (default is: 3). This constrains long searches. |
 | `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
-| `-h,--help` | Prints short help |
+|  `-fp,--templatePath <pathlist>` | Optional list of directories to look for handwritten templates to integrate. |
+| `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
+| `-h,--help` | Prints short help. |
+| `--json` | Write <Schema.json> to output directory. |
 | `-i,--input <file>` | Reads the source file (mandatory) and parses the contents as a CD |
 | `-o,--output <dir>` | Path for generated files (optional). Default is `.` |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces, default is `.` |
-| `--stdin` | Reads the input CD from stdin instead of argument `-i` |
-| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
 | `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
 | `--semdiff <file>` | Reads `<file>` as second CD and compares it semantically with the first CD given with the `-i` option. Output: Object diagrams (witnesses) that are valid in the `-i`-CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: [XXXWEBSITE] |
-| `--diffsize <int>` | Maximum size of found witnesses when comparing the semantic diff with `--semdiff` (default is: 3). This constrains long searches. |
-| `--difflimit <int>` | Maximum number of found witnesses |
+| `--stdin` | Reads the input CD from stdin instead of argument `-i` |
+| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
 
 ### Building the CLI Tool from the Sources (if desired)
  
@@ -401,7 +405,7 @@ This means that it processes the model successfully without any context
 condition violations.
 Great! 
 
-### Step 6: Create a default package in the class diagram
+### Step 6: Create a Default Package in the Class Diagram
 
 The class diagram languages support structuring the CD into packages (similar to
 Java).
@@ -409,8 +413,51 @@ For classes with no explicit defined package the CDCLI can assume those classes
 to be in a default package. This default is calculated as follows:
 1. If the class diagram itself is defined in a package, this package is 
    propagated to the classes contained in the cd.
-2. If such a package is not explicitly given, the default 'de.monticore' is used
-   .
+2. If such a package is not explicitly given, the default 'de.monticore' is used.
+
+### Step 7: Generating .java-Files
+
+By using the option `--gen`, we can generate .java-files corresponding to the
+input class diagram:
+```shell
+java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen
+```
+With option `-o` we can specify the output directory; the default is `.`:
+```shell
+java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen -o out
+```
+If no other option that utilizes `-o` is given, `--gen` is implicitly used as 
+the default:
+```shell
+java -jar CDCLI.jar -i src/MyExample.cd -o out
+```
+
+### Step 8: Computing the Semantic Difference of Two Class Diagrams
+
+We define the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 and
+CD2 as the set of all object sets that are instances of CD1 but not instances of
+CD2. These object sets are referred to as witnesses and can be modelled by object
+diagrams. 
+
+The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the input class 
+diagram CD1 specified by `-i` and a second diagram CD2 that is specified as the argument of 
+`--semdiff`. However, since semdiff(CD1,CD2) might be infinite, we only consider witnesses 
+up to a certain size. The size can be specified with `--diffsize`; the default is 3.
+
+For the following code-examples, download the files [CD1.cd](doc/CD1.cd) and [CD2.cd](doc/CD2.cd) and save them in your
+`src` directory:
+
+```shell
+java -jar CDCLI.jar -i src/CD1.cd --semdiff scr/CD2.cd --diffsize 2
+```
+
+We recommend using the option `difflimit` to specify the maximum number of witnesses 
+that are generated in the output directory; the default is to generate all witnesses not 
+greater than the specified size. `-o` can be used to specify the output directory:
+
+```shell
+java -jar CDCLI.jar -i src/CD1.cd --semdiff src/CD2.cd --diffsize 5 --difflimit 20 -o out
+```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [CLIDownload]: https://monticore.de/download/CDCLI.jar

@@ -59,7 +59,7 @@ public class CDCLIOptions {
         .builder("i").longOpt("input")
         .hasArg().type(String.class)
         .argName("file").numberOfArgs(1)
-        .desc("Reads the source file (mandatory) and parses the contents as CD")
+        .desc("Reads the source file (mandatory) and parses the contents as CD.")
         .build());
 
     options.addOption(Option
@@ -103,7 +103,7 @@ public class CDCLIOptions {
         .argName("file")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Provides a config template (optional)")
+        .desc("Provides a config template (optional).")
         .build());
 
 
@@ -122,7 +122,7 @@ public class CDCLIOptions {
         .hasArg().type(Boolean.class)
         .argName("useBuiltinTypes").optionalArg(true).numberOfArgs(1)
         .desc("Configures if built-in-types should be considered. "
-                + "Default: `true`. `-t` toggles it to `--usebuiltintypes false`")
+                + "Default: `true`. `-t` toggles it to `--usebuiltintypes false`.")
         .build());
 
     options.addOption(Option
@@ -144,9 +144,15 @@ public class CDCLIOptions {
         .build());
 
     options.addOption(Option
-      .builder("json")
+      .builder().longOpt("json")
       .desc("Write <Schema.json> to output directory.")
       .build());
+
+    options.addOption(Option
+        .builder().longOpt("gen")
+        .desc("Generate .java-files corresponding to the classes defined in the input class "
+            + "diagram.")
+        .build());
   }
 
   protected void initPrettyPrinter(boolean showPlantUML) {
@@ -254,7 +260,7 @@ public class CDCLIOptions {
             "Reads `<file>` as second CD and compares it semantically with the first CD given "
                 + "with the `-i` option. Output: Object diagrams (witnesses) that are valid in "
                 + "the `-i`-CD, but invalid in the second CD. This is a semantic based, "
-                + "asymmetric diff.")
+                + "asymmetric diff. Details: [XXXWEBSITE] ")
         .build());
 
     options.addOption(Option.builder()
@@ -274,7 +280,7 @@ public class CDCLIOptions {
         .argName("int")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Maximum number of found witnesses")
+        .desc("Maximum number of generated witnesses when using `--semdiff` (recommended).")
         .build());
   }
 
