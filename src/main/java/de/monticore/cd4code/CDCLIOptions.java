@@ -260,7 +260,7 @@ public class CDCLIOptions {
             "Reads `<file>` as second CD and compares it semantically with the first CD given "
                 + "with the `-i` option. Output: Object diagrams (witnesses) that are valid in "
                 + "the `-i`-CD, but invalid in the second CD. This is a semantic based, "
-                + "asymmetric diff. Details: [XXXWEBSITE] ")
+                + "asymmetric diff.")
         .build());
 
     options.addOption(Option.builder()
@@ -270,7 +270,7 @@ public class CDCLIOptions {
         .argName("int")
         .numberOfArgs(1)
         .desc("Maximum size of found witnesses when comparing the semantic diff with `--semdiff` "
-            + "(default is: 3). This constrains long searches.")
+            + "(default is: 10). This constrains long searches.")
         .build());
 
     options.addOption(Option.builder()
@@ -280,7 +280,7 @@ public class CDCLIOptions {
         .argName("int")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Maximum number of generated witnesses when using `--semdiff` (recommended).")
+        .desc("Maximum number of generated witnesses when using `--semdiff` (default is: 1).")
         .build());
   }
 

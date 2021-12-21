@@ -218,9 +218,8 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
         }
 
-        // If option --semdiff is used, we do not generate java-templates,
-        // unless option --gen is explicitly used.
-        if (cmd.hasOption("gen") || (cmd.hasOption("o") && !cmd.hasOption("semdiff"))) {
+        // generate .java-files in outputPath
+        if (cmd.hasOption("gen")) {
           GlobalExtensionManagement glex = new GlobalExtensionManagement();
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
@@ -521,10 +520,10 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
 
   protected void computeSemDiff() throws NumberFormatException{
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
-    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "3"));
-    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "100"));
+    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "10"));
+    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
 
-    //compute semDiff(cd1,cd2)
+    // compute semDiff(ast,ast2)
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
 
     // test if solution is present
@@ -534,13 +533,11 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     }
     AlloyDiffSolution sol = optS.get();
 
-    if (!cmd.hasOption("difflimit")) {
-      sol.setLimited(false);
-    }
-    else {
-      sol.setSolutionLimit(difflimit);
-      sol.setLimited(true);
-    }
+    // limit number of generated diff-witnesses
+    sol.setSolutionLimit(difflimit);
+    sol.setLimited(true);
+
+    // generate diff-witnesses in outputPath
     sol.generateSolutionsToPath(Paths.get(outputPath));
   }
 
