@@ -17,6 +17,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
   public void testLanguageTeaser() throws RecognitionException {
     String[] input = {
       "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "--gen",
       "-o", "target/generated/auction"
     };
     CD4CodeCLI.main(input);
@@ -27,6 +28,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
     String[] input = {
       "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp", "src/test/resources/templatePath",
+      "--gen",
       "-o", "target/generated/auctionTP"
     };
     CD4CodeCLI.main(input);
@@ -43,6 +45,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
     String[] input = {
       "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
       "-ct", "cd2java.CD2Java",
+      "--gen",
       "-o", "target/generated/auctionCT"
     };
     CD4CodeCLI.main(input);
@@ -55,6 +58,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp", "src/test/resources/templatePath", "src/test/resources/templatePath2",
       "-ct", "cd2java.CD2JavaTestCT",
+      "--gen",
       "-o", "target/generated/auctionTPDCT"
     };
     CD4CodeCLI.main(input);
@@ -73,6 +77,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
       "-fp", "src/test/resources/templatePath", "src/test/resources/templatePath2",
       "-ct", "cd2java.CD2Java",
+      "--gen",
       "-o", "target/generated/auctionTPCT"
     };
     CD4CodeCLI.main(input);
@@ -93,6 +98,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "-fp", "src/test/resources/templatePath",
       "-fp", "src/test/resources/templatePath2",
       "-ct", "cd2java.CD2Java",
+      "--gen",
       "-o", "target/generated/auctionTPCTSep"
     };
     CD4CodeCLI.main(input);
