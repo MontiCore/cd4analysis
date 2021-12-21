@@ -308,7 +308,7 @@ public class CD4C {
     final CD4CTemplateHelper t = new CD4CTemplateHelper();
     t.importStr(importStr);
 
-    Set s;
+    Set<ASTMCImportStatement> s;
     if (importMap.containsKey(clazz)) {
       s = importMap.get(clazz);
     } else {
