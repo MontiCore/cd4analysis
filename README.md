@@ -108,9 +108,9 @@ Or you can use `wget` to download the latest version in your working directory:
 wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
-### Parameters of the CLI
+### Actions and Parameters of the CLI 
 
-The CLI provides quite a number of configurable parameters. 
+The CLI provides quite a number executable actions and configuration parameters. 
 These two are examples for calling the CLI (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
