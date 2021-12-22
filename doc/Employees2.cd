@@ -1,7 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram enumCompV2 {
+
+import java.util.Date;
+
+classdiagram Employees2 {
   enum PositionKind{fullTime, partTime, external;}
-  enum Tests{newTest, oldTest;}
 
   class Employee {
     PositionKind kind;
@@ -11,8 +13,8 @@ classdiagram enumCompV2 {
     Date startDate;
   }
 
-  class Manager;
+  class Manager extends Employee;
 
-  association [*] Employee (manages) <- (managedBy) Manager [0..1];
+  association [*] Employee (manages) -> (managedBy) Manager [0..1];
   association [1] Employee  --  Task [0..1];
 }

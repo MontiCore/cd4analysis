@@ -3,18 +3,18 @@
 import java.util.Date;
 
 classdiagram CD2v1 {
-	enum PositionKind{fullTime, partTime;}
-	
-	class Employee {
-		PositionKind kind; 
-	}
-	
-	class Task {
-		Date startDate; 
-	}
-	
-	class Manager; 
-	
-	association [*] Employee (manages) -> (managedBy) Manager [0..1];
-	association [1] Employee  --  Task [*];
+  enum PositionKind{fullTime, partTime;}
+
+  class Employee {
+    PositionKind kind;
+  }
+
+  class Task {
+    Date startDate;
+  }
+
+  class Manager;
+
+  association [*] Employee (manages) -> (managedBy) Manager [0..1];
+  association [1] Employee  --  Task [*];
 }

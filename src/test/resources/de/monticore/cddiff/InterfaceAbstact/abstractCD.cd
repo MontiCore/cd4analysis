@@ -1,4 +1,4 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram abstractCD {
-	abstract class MyClass; 
+  abstract class MyClass;
 }

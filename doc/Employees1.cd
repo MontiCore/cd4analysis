@@ -1,9 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram cd2 {
+
+import java.util.Date;
+
+classdiagram Employees1 {
   enum PositionKind{fullTime, partTime;}
 
   class Employee {
-    /PositionKind kind;
+	  PositionKind kind;
   }
 
   class Task {

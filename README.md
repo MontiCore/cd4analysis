@@ -441,18 +441,18 @@ diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`
 since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
 those witnesses. With `--diffsize` we can specify the maximum number of objects per witness; the default is 10.
 
-For the following examples, download the files [CD1.cd](doc/CD1.cd) and [CD2.cd](doc/CD2.cd) and save them in
+For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
 `src`:
 
 ```shell
-java -jar CDCLI.jar -i src/CD1.cd --semdiff scr/CD2.cd --diffsize 2
+java -jar CDCLI.jar -i src/Employees1.cd --semdiff scr/Employees2.cd --diffsize 2
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
 that are generated in the output directory; the default is to generate at most 1 diff-witness. Once again, `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar CDCLI.jar -i src/CD1.cd --semdiff src/CD2.cd --diffsize 5 --difflimit 20 -o out
+java -jar CDCLI.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 5 --difflimit 20 -o out
 ```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis

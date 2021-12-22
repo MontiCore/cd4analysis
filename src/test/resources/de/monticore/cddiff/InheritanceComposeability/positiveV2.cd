@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram positiveV2 {
-	class A extends C;
-	class B;
-	class C {
-		Date date; 
-	}  
-	
-	association a [1] A -- B [*]; 
+  class A extends C;
+  class B;
+  class C {
+    Date date;
+  }
+
+  association a [1] A -- B [*];
 }

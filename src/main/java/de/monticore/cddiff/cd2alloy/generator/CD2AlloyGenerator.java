@@ -1232,9 +1232,9 @@ public class CD2AlloyGenerator {
         cardinality = association.getLeft().getCDCardinality();
         firstReferenceName = association.getRightReferenceName();
         secondReferenceName = association.getLeftReferenceName();
-        rolePresent = association.getRight().isPresentCDRole();
+        rolePresent = association.getLeft().isPresentCDRole();
         if (rolePresent) {
-          roleName = association.getRight().getCDRole().getName();
+          roleName = association.getLeft().getCDRole().getName();
         } else {
           roleName = partHandler(firstReferenceName);
         }

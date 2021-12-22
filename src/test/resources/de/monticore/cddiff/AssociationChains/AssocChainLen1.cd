@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram AssocChainLen1 {
-	class A1;
-	class A2;
-	
-	association [1] A1  <->  A2 [1]; 
+  class A1;
+  class A2;
+
+  association [1] A1  <->  A2 [1];
 }

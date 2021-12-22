@@ -54,7 +54,8 @@ public class CDDiffCLITest {
     // clean-up
     try {
       FileUtils.forceDelete(Paths.get(output).toFile());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
     }
 
@@ -90,7 +91,8 @@ public class CDDiffCLITest {
     // clean-up
     try {
       FileUtils.forceDelete(Paths.get(output).toFile());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
     }
 

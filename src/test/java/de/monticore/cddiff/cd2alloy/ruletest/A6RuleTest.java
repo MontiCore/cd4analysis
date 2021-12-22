@@ -70,7 +70,7 @@ public class A6RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add("ObjLU[CarSubsCDcd1,cars,CompanySubsCDcd1,0,1]");
-    expectedResult.add("ObjLU[InsuranceSubsCDcd1,ins,EmployeeSubsCDcd1,1,1]");
+    expectedResult.add("ObjLU[InsuranceSubsCDcd1,of,EmployeeSubsCDcd1,1,1]");
     
     checkA6(lines, expectedResult);
   }

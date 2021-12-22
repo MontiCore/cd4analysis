@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 classdiagram negativeV1 {
-	class A;
-	class B; 
+  class A;
+  class B;
 }
