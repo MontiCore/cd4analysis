@@ -108,9 +108,9 @@ Or you can use `wget` to download the latest version in your working directory:
 wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
-### Parameters of the CLI
+### Actions and Parameters of the CLI 
 
-The CLI provides quite a number of configurable parameters. 
+The CLI provides quite a number executable actions and configuration parameters. 
 These two are examples for calling the CLI (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
@@ -123,12 +123,12 @@ java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `-ct,--configTemplate <file>` | Provides a config template (optional). |
+| `-ct,--configTemplate <file>` | Executes this template at the beginnig of a generation with `--gen`. This allows to configure the generation process (optional). |
 | `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
-| `--difflimit <int>` | Maximum number of generated witnesses when using `--semdiff` (default is: 1). |
-| `--diffsize <int>` | Maximum size of found witnesses when comparing the semantic diff with `--semdiff` (default is: 10). This constrains long searches. |
+| `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (default is: 1, i.e. only one witness is shown). |
+| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (default is: 10). This constrains long searches. |
 | `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
-|  `-fp,--templatePath <pathlist>` | Optional list of directories to look for handwritten templates to integrate. |
+|  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate (optional, but needed, when `-ct` is used). |
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help. |
 | `--json` | Write <Schema.json> to output directory. |
@@ -437,9 +437,10 @@ differencing:
 https://se-rwth.de/publications/CDDiff-Semantic-Differencing-for-Class-Diagrams.pdf
 
 The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
-diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`. However, 
-since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
-those witnesses. With `--diffsize` we can specify the maximum number of objects per witness; the default is 10.
+diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`. We observe 
+this difference is asymmetric.  
+Since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
+those witnesses. With `--diffsize` we can change the default maximum number of objects per witness (10).
 
 For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
 `src`:
