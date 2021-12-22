@@ -437,9 +437,10 @@ differencing:
 https://se-rwth.de/publications/CDDiff-Semantic-Differencing-for-Class-Diagrams.pdf
 
 The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
-diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`. However, 
-since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
-those witnesses. With `--diffsize` we can specify the maximum number of objects per witness; the default is 10.
+diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`. We observe 
+this difference is asymmetric.  
+Since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
+those witnesses. With `--diffsize` we can change the default maximum number of objects per witness (10).
 
 For the following examples, download the files [CD1.cd](doc/CD1.cd) and [CD2.cd](doc/CD2.cd) and save them in
 `src`:
