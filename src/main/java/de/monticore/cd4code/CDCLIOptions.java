@@ -93,7 +93,8 @@ public class CDCLIOptions {
         .argName("pathlist")
         .hasArgs()
         .type(String.class)
-        .desc("Optional list of directories to look for handwritten templates to integrate.")
+        .desc("Directories and jars for handwritten templates to integrate (optional, but needed,"
+            + " when `-ct` is used).")
         .build());
 
 
@@ -103,7 +104,8 @@ public class CDCLIOptions {
         .argName("file")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Provides a config template (optional).")
+        .desc("Executes this template at the beginning of a generation with `--gen`. This allows "
+            + "configuration of the generation process (optional).")
         .build());
 
 
@@ -269,8 +271,8 @@ public class CDCLIOptions {
         .type(int.class)
         .argName("int")
         .numberOfArgs(1)
-        .desc("Maximum size of found witnesses when comparing the semantic diff with `--semdiff` "
-            + "(default is: 10). This constrains long searches.")
+        .desc("Maximum number of objects in witnesses when comparing the semantic diff with "
+            + "`--semdiff` (default is: 10). This constrains long searches.")
         .build());
 
     options.addOption(Option.builder()
@@ -280,7 +282,8 @@ public class CDCLIOptions {
         .argName("int")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Maximum number of generated witnesses when using `--semdiff` (default is: 1).")
+        .desc("Maximum number of shown witnesses when using `--semdiff` (default is: 1, i.e. only"
+            + " one witness is shown).")
         .build());
   }
 

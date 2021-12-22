@@ -83,7 +83,7 @@ Further examples can be found [here][ExampleModels].
 The CD language infrastructure can be used as CLI tool from shell as well 
 as within gradle or just as framework with dirct Java API access.
 
-## Command Line Interface
+## Command Line Interface Tool
  
 The CLI tool provides typical functionality used when
 processing models. It provides functionality
@@ -108,9 +108,9 @@ Or you can use `wget` to download the latest version in your working directory:
 wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
-### Actions and Parameters of the CLI 
+### Actions and Parameters of the CLI Tool
 
-The CLI provides quite a number executable actions and configuration parameters. 
+The CLI tool provides quite a number of executable actions and configuration parameters. 
 These two are examples for calling the CLI (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
@@ -123,7 +123,7 @@ java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `-ct,--configTemplate <file>` | Executes this template at the beginnig of a generation with `--gen`. This allows to configure the generation process (optional). |
+| `-ct,--configTemplate <file>` | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional). |
 | `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
 | `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (default is: 1, i.e. only one witness is shown). |
 | `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (default is: 10). This constrains long searches. |
@@ -431,16 +431,18 @@ java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen -o out
 
 We define the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 and
 CD2 as the set of all object diagrams that are valid in CD1 but invalid in CD2. 
-These object diagrams are also referred to as diff-witnesses. For more details on semantic 
+These object diagrams are also referred to as diff-witnesses. We observe
+that this difference is asymmetric. For more details on semantic 
 differencing:
 
 https://se-rwth.de/publications/CDDiff-Semantic-Differencing-for-Class-Diagrams.pdf
 
 The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
-diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`. We observe 
-this difference is asymmetric.  
+diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`.
+
 Since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
-those witnesses. With `--diffsize` we can change the default maximum number of objects per witness (10).
+those witnesses. The default maximum number of objects per witness is 10. This number can 
+be changed via the option `--diffsize`.
 
 For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
 `src`:
