@@ -4,7 +4,7 @@
 
 package de.monticore.cd;
 
-import de.monticore.cd4code.CD4CodeCLI;
+import de.monticore.cd4code.CD4CodeTool;
 import org.apache.commons.cli.ParseException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +26,7 @@ public class CLITest extends OutTestBasis {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-f", "false" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-f", "false" });
 
     assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
@@ -37,7 +37,7 @@ public class CLITest extends OutTestBasis {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-h", "-f", "false" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-h", "-f", "false" });
 
     assertTrue(getOut(), getOut().startsWith("usage: cd-"));
     assertTrue(getErr(), getErr().isEmpty());
@@ -49,7 +49,7 @@ public class CLITest extends OutTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-t", "false", "-f", "false" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-t", "false", "-f", "false" });
 
     assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
@@ -61,7 +61,7 @@ public class CLITest extends OutTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-f", "false" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-f", "false" });
 
     assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());
@@ -74,7 +74,7 @@ public class CLITest extends OutTestBasis {
     final String fileName = file.toString();
 
     // for now check for the NullPointerException
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-f", "false", "-pp", getTmpFilePath("Complete.puml"), "-puml" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-f", "false", "-pp", getTmpFilePath("Complete.puml"), "-puml" });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.puml")));
   }
@@ -86,7 +86,7 @@ public class CLITest extends OutTestBasis {
     final String fileName = file.toString();
 
     // for now check for the NullPointerException
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-f", "--pp", getTmpFilePath("Complete.svg"), "--puml", "--svg", "--showAttr" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-f", "--pp", getTmpFilePath("Complete.svg"), "--puml", "--svg", "--showAttr" });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }
@@ -98,7 +98,7 @@ public class CLITest extends OutTestBasis {
     final String fileName = file.toString();
 
     // for now check for the NullPointerException
-    CD4CodeCLI.main(new String[] { "-i", fileName, "-f", "--puml", "--svg", "-attr", "assoc", "--showRoles" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-f", "--puml", "--svg", "-attr", "assoc", "--showRoles" });
 
     assertTrue(modelFileExists(getTmpFilePath("Complete.svg")));
   }

@@ -49,7 +49,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CD4CodeCLI extends CD4CodeCLITOP {
+public class CD4CodeTool extends CD4CodeToolTOP {
 
   protected static final String PARSE_SUCCESSFUL = "Successfully parsed %s\n";
   protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for class diagram %s\n";
