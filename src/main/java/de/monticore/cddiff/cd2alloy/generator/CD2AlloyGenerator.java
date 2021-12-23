@@ -1143,7 +1143,7 @@ public class CD2AlloyGenerator {
   }
 
   /**
-   * Executes Rule 5, which ensures the cardinality constraints stated on the
+   * Executes Rule 6, which ensures the cardinality constraints stated on the
    * left sides of associations that are navigable from left to right are
    * respected.
    */

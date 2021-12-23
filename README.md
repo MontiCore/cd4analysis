@@ -123,24 +123,24 @@ java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `-ct,--configTemplate <file>` | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional). |
-| `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
-| `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (default is: 1, i.e. only one witness is shown). |
-| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (default is: 10). This constrains long searches. |
-| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
-|  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate (optional, but needed, when `-ct` is used). |
+| `-ct,--configTemplate <file>` | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional, `-fp` is needed to specify the template path). |
+| `-d,--defaultpackage <boolean>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
+| `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1, i.e. only one witness is shown). |
+| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is: 10). This constrains long searches. |
+| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
+|  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
-| `-h,--help` | Prints short help. |
-| `--json` | Write <Schema.json> to output directory. |
-| `-i,--input <file>` | Reads the source file (mandatory) and parses the contents as a CD |
-| `-o,--output <dir>` | Path for generated files (optional). Default is `.` |
-| `--path <dirlist>` | Artifact path for importable symbols, separated by spaces, default is `.` |
-| `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
-| `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
-| `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
-| `--semdiff <file>` | Reads `<file>` as second CD and compares it semantically with the first CD given with the `-i` option. Output: Object diagrams (witnesses) that are valid in the `-i`-CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://se-rwth.de/publications/CDDiff-Semantic-Differencing-for-Class-Diagrams.pdf |
-| `--stdin` | Reads the input CD from stdin instead of argument `-i` |
-| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false` |
+| `-h,--help` | Prints short help; other options are ignored. |
+| `--json` | Writes a "Schema.json" to the output directory. |
+| `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory, unless `--stdin` is used). |
+| `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
+| `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
+| `-pp,--prettyprint <file>` | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
+| `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
+| `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
+| `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
+| `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
+| `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. Default: `true`; `-t` toggles it to `--usebuiltintypes false`. |
 
 ### Building the CLI Tool from the Sources (if desired)
  
@@ -435,7 +435,7 @@ These object diagrams are also referred to as diff-witnesses. We observe
 that this difference is asymmetric. For more details on semantic 
 differencing:
 
-https://se-rwth.de/publications/CDDiff-Semantic-Differencing-for-Class-Diagrams.pdf
+https://www.se-rwth.de/topics/Semantics.php
 
 The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
 diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`.
@@ -465,8 +465,9 @@ java -jar CDCLI.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 
 
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
 * [MontiCore documentation](https://www.monticore.de/)
-* [**List of languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
+* [**List of Languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
 * [**MontiCore Core Grammar Library**](https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/Grammars.md)
 * [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
+* [Research Topics](https://www.se-rwth.de/topics)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)

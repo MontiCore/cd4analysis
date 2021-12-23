@@ -511,11 +511,12 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
   protected void printHelp(CDCLIOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd", cdcliOptionsForHelp.getOptions());
+    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdcliOptionsForHelp.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdcliOptionsForHelp.getOptions(subCommand));
     }
+    System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
 
   protected void computeSemDiff() throws NumberFormatException{
