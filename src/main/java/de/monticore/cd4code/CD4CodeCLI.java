@@ -1,10 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
-import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -26,8 +24,6 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.cddiff.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -240,25 +236,6 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
           List<Object> configTemplateArgs = Arrays.asList(glex, generator);
           hpp.processValue(tc, ast, configTemplateArgs);
         }
-
-        if (cmd.hasOption("json")) {
-          JsonNode schema = CD2JsonUtil.run(ast, globalScope);
-
-          String filename = "Schema.json";
-          {
-            File output = Paths.get(this.outputPath, filename).toFile();
-            output.createNewFile();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(output));
-            writer.write(schema.toPrettyString());
-            writer.close();
-          }
-          System.out.printf(JSON_SUCCESSFUL, filename);
-
-        }
-        if (cmd.hasOption("semdiff")){
-          computeSemDiff();
-        }
-
       }
     }catch (AmbiguousOptionException e) {
       Log.error(String.format("0xCD0E2: option '%s' can't match any valid option", e.getOption()));
@@ -519,27 +496,5 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
 
-  protected void computeSemDiff() throws NumberFormatException{
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
-    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "10"));
-    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
-
-    // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
-
-    // test if solution is present
-    if (!optS.isPresent()) {
-      Log.error("could not compute semdiff");
-      return;
-    }
-    AlloyDiffSolution sol = optS.get();
-
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(difflimit);
-    sol.setLimited(true);
-
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
-  }
 
 }

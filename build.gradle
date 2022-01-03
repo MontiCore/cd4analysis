@@ -51,18 +51,36 @@ ext {
 }
 
 // configure non-standard source sets
+def hwcMPDir = "$projectDir/src/main/java"
+def genDir = "$buildDir/generated-sources/monticore/sourcecode"
+def hwcDiffDir = "$projectDir/src/cddiff/java"
+def testHWCDir = "$projectDir/src/test/java"
+def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
+
 sourceSets {
   main {
-    java.srcDirs += ["$buildDir/generated-sources/monticore/sourcecode"]
+    java.srcDirs += ["$genDir"]
   }
   test {
-    java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
+    java.srcDirs += ["$testGenDir"]
   }
   grammars {
     resources {
       srcDirs([grammarDir, grammarOutDir])
       include "**/*.mc4"
     }
+  }
+  cddiff {
+    java {
+    }
+    compileClasspath += sourceSets.main.runtimeClasspath
+  }
+  cddifftest {
+    java {
+    }
+    compileClasspath += sourceSets.main.runtimeClasspath
+    compileClasspath += sourceSets.test.runtimeClasspath
+    compileClasspath += sourceSets.cddiff.runtimeClasspath
   }
 }
 
@@ -98,10 +116,10 @@ dependencies {
     requireCapability("de.monticore:monticore-runtime-tests") }
   }
     // dependencies for CDDiff
-    implementation "de.monticore.lang:od:$mc_version"
-    implementation "edu.mit.alloy:alloy:4.2.0-rc1"
-    testImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
-    testImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
+  cddiffImplementation "de.monticore.lang:od:$mc_version"
+  cddiffImplementation "edu.mit.alloy:alloy:4.2.0-rc1"
+  cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+  cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
 
 /*
@@ -265,6 +283,12 @@ compileTestJava {
   dependsOn generateTestTrafos
 }
 
+task cddifftest(type: Test) {
+  description = "Runs CDDiff Tests"
+  group = "Verification"
+  //useTestNG()
+  classpath += sourceSets.cddifftest.runtimeClasspath
+}
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -330,6 +354,12 @@ javadoc.failOnError(false)
 task testSourcesJar(type: Jar) {
   from sourceSets.test.output + sourceSets.test.allSource
   archiveClassifier = "testSources"
+}
+
+// build test sources jar in addition
+task cddiffJar(type: Jar) {
+  from sourceSets.cddiff.output + sourceSets.cddiff.allSource
+  archiveClassifier = "cddiff"
 }
 
 shadowJar { // all in one jar

@@ -15,26 +15,26 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Tests to detect currently not supported modifiers.  
+ * Tests to detect currently not supported modifiers.
  *
  *
  */
 public class IllegalAttributeModifierTest extends AbstractTest {
-  
+
   @Test
   public void invalidInputSymbolTest(){
     ASTCDCompilationUnit a = parseModel("src/test/resources/de/monticore/cddiff/InvalidCoCos/cd2.cd");
-    
-    
+
+
     CD4AnalysisCoCoChecker checker = new CD2AlloyCoCos().getCheckerForAllCoCos();
     checker.checkAll(a);
-    
+
     Collection<Finding> expectedErrors = Collections.singletonList(Finding.error(
         "0xC4A64 Attribute kind has invalid modifiers. No modifiers are allowed for CD4Analysis.",
         new SourcePosition(6, 4)));
-       
+
     Assert.assertErrors(expectedErrors, Log.getFindings());
-    
+
   }
-  
+
 }
