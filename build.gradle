@@ -51,10 +51,7 @@ ext {
 }
 
 // configure non-standard source sets
-def hwcMPDir = "$projectDir/src/main/java"
 def genDir = "$buildDir/generated-sources/monticore/sourcecode"
-def hwcDiffDir = "$projectDir/src/cddiff/java"
-def testHWCDir = "$projectDir/src/test/java"
 def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
 
 sourceSets {
@@ -70,17 +67,17 @@ sourceSets {
       include "**/*.mc4"
     }
   }
-  cddiff {
+  tool {
     java {
     }
     compileClasspath += sourceSets.main.runtimeClasspath
   }
-  cddifftest {
+  tooltest {
     java {
     }
     compileClasspath += sourceSets.main.runtimeClasspath
     compileClasspath += sourceSets.test.runtimeClasspath
-    compileClasspath += sourceSets.cddiff.runtimeClasspath
+    compileClasspath += sourceSets.tool.runtimeClasspath
   }
 }
 
@@ -115,11 +112,11 @@ dependencies {
   testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   }
-    // dependencies for CDDiff
-  cddiffImplementation "de.monticore.lang:od:$mc_version"
-  cddiffImplementation "edu.mit.alloy:alloy:4.2.0-rc1"
-  cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
-  cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
+    // dependencies for tool
+  toolImplementation "de.monticore.lang:od:$mc_version"
+  toolImplementation "edu.mit.alloy:alloy:4.2.0-rc1"
+  tooltestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+  tooltestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
 
 /*
@@ -283,12 +280,16 @@ compileTestJava {
   dependsOn generateTestTrafos
 }
 
-task cddifftest(type: Test) {
-  description = "Runs CDDiff Tests"
+task tooltest(type: Test) {
+  description = "Runs tool Tests"
   group = "Verification"
-  //useTestNG()
-  classpath += sourceSets.cddifftest.runtimeClasspath
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath += sourceSets.tooltest.runtimeClasspath
+  classpath += sourceSets.tool.runtimeClasspath
+  shouldRunAfter test
 }
+
+check.dependsOn tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -338,10 +339,6 @@ tasks.withType(Test) {
   }
 }
 
-test {
-  useJUnit()
-}
-
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
   from javadoc
@@ -357,10 +354,12 @@ task testSourcesJar(type: Jar) {
 }
 
 // build test sources jar in addition
-task cddiffJar(type: Jar) {
-  from sourceSets.cddiff.output + sourceSets.cddiff.allSource
-  archiveClassifier = "cddiff"
+task toolJar(type: Jar) {
+  from sourceSets.tool.output + sourceSets.tool.allSource
+  archiveClassifier = "tool"
 }
+
+jar.dependsOn toolJar
 
 shadowJar { // all in one jar
   archiveFileName = 'CDCLI.jar'
