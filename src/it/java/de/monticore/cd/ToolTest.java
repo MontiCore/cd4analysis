@@ -16,13 +16,13 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CLITest extends OutTestBasis {
+public class ToolTest extends OutTestBasis {
   @SuppressWarnings("deprecation")
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void testCLI() throws IOException, ParseException {
+  public void testTool() throws IOException, ParseException {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
@@ -44,7 +44,7 @@ public class CLITest extends OutTestBasis {
   }
 
   @Test
-  public void testCLINoBuiltInTypes() throws IOException, ParseException {
+  public void testToolNoBuiltInTypes() throws IOException, ParseException {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
@@ -68,7 +68,7 @@ public class CLITest extends OutTestBasis {
   }
 
   @Test
-  public void testCLIPlantUML() throws IOException, ParseException {
+  public void testToolPlantUML() throws IOException, ParseException {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
@@ -80,7 +80,7 @@ public class CLITest extends OutTestBasis {
   }
 
   @Test
-  public void testCLIPlantUML2() throws IOException, ParseException {
+  public void testToolPlantUML2() throws IOException, ParseException {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
@@ -92,7 +92,7 @@ public class CLITest extends OutTestBasis {
   }
 
   @Test
-  public void testCLIPlantUML3() throws IOException, ParseException {
+  public void testToolPlantUML3() throws IOException, ParseException {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();

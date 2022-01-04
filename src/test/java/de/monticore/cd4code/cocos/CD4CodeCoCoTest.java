@@ -41,7 +41,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void useCLI() throws IOException, ParseException {
+  public void useTool() throws IOException, ParseException {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());
     final String otherFileName = otherFile.toString();

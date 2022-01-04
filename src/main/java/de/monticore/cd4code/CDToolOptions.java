@@ -6,7 +6,7 @@ import org.apache.commons.cli.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CDCLIOptions {
+public class CDToolOptions {
   final protected Options options = new Options();
   final protected Map<SubCommand, Options> subCommands = new HashMap<>();
   final protected DefaultParser parser = new DefaultParser();
@@ -20,11 +20,11 @@ public class CDCLIOptions {
     PLANTUML,
   }
 
-  public CDCLIOptions() {
+  public CDToolOptions() {
     init(false);
   }
 
-  public CDCLIOptions(boolean showPlantUML) {
+  public CDToolOptions(boolean showPlantUML) {
     init(showPlantUML);
   }
 
