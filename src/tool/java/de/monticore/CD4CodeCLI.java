@@ -2,6 +2,8 @@
 package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.json.CD2JsonUtil;
@@ -29,8 +31,6 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.cddiff.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
