@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
@@ -32,8 +29,8 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
-  
-  
+
+
   @BeforeClass
   public static void beforeClass() throws Exception {
     CD4CodeMill.init();

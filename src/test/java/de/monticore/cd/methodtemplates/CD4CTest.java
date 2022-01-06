@@ -1,4 +1,5 @@
-package de.monticore.cd.methodtemplates;/* (c) https://github.com/MontiCore/monticore */
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd.methodtemplates;
 
 import com.google.common.collect.Lists;
 import de.monticore.cd.facade.CDAttributeFacade;

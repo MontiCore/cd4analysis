@@ -1,8 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -24,6 +26,8 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.cddiff.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -53,6 +57,7 @@ public class CD4CodeTool extends CD4CodeToolTOP {
   protected static final String CHECK_ERROR = "Error while parsing or CoCo checking";
   protected static final String PLANTUML_SUCCESSFUL = "Creation of plantUML file %s successful\n";
   protected static final String PRETTYPRINT_SUCCESSFUL = "Creation of model file %s successful\n";
+  protected static final String JSON_SUCCESSFUL = "Creation of json file %s successful\n";
   protected static final String FILE_EXISTS_INFO = "File '%s' already exists and will be overwritten\n";
   protected static final String DIR_CREATION_ERROR = "Directory '%s' could not be created\n";
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
@@ -213,7 +218,8 @@ public class CD4CodeTool extends CD4CodeToolTOP {
           System.out.printf(PLANTUML_SUCCESSFUL, unifyPath(relative));
         }
 
-        if (cmd.hasOption("o")) {
+        // generate .java-files in outputPath
+        if (cmd.hasOption("gen")) {
           GlobalExtensionManagement glex = new GlobalExtensionManagement();
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
@@ -235,6 +241,24 @@ public class CD4CodeTool extends CD4CodeToolTOP {
           hpp.processValue(tc, ast, configTemplateArgs);
         }
 
+        if (cmd.hasOption("json")) {
+          JsonNode schema = CD2JsonUtil.run(ast, globalScope);
+
+          String filename = "Schema.json";
+          {
+            File output = Paths.get(this.outputPath, filename).toFile();
+            output.createNewFile();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(output));
+            writer.write(schema.toPrettyString());
+            writer.close();
+          }
+          System.out.printf(JSON_SUCCESSFUL, filename);
+
+        }
+        if (cmd.hasOption("semdiff")){
+          computeSemDiff();
+        }
+
       }
     }catch (AmbiguousOptionException e) {
       Log.error(String.format("0xCD0E2: option '%s' can't match any valid option", e.getOption()));
@@ -248,8 +272,12 @@ public class CD4CodeTool extends CD4CodeToolTOP {
     catch (MissingArgumentException e) {
       Log.error(String.format("0xCD0E5: option '%s' is missing an argument", e.getOption()));
     }
+    catch (NumberFormatException e) {
+      Log.error("0xCD0E6: options --diffsize and --difflimit each require an "
+          + "integer as argument");
+    }
     catch (Exception e) {
-      Log.error(String.format("0xCD0E6: an error occured: %s", e.getMessage()));
+      Log.error(String.format("0xCD0E7: an error occurred: %s", e.getMessage()));
     }
   }
 
@@ -279,6 +307,7 @@ public class CD4CodeTool extends CD4CodeToolTOP {
       return false;
     }
     else {
+
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
         printHelp((CDToolOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
@@ -482,10 +511,35 @@ public class CD4CodeTool extends CD4CodeToolTOP {
   protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the Tool file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd", cdToolOptionsForHelp.getOptions());
+    formatter.printHelp("Examples in case the Tool file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));
     }
+    System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
+
+  protected void computeSemDiff() throws NumberFormatException{
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
+    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "10"));
+    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
+
+    // compute semDiff(ast,ast2)
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
+
+    // test if solution is present
+    if (!optS.isPresent()) {
+      Log.error("could not compute semdiff");
+      return;
+    }
+    AlloyDiffSolution sol = optS.get();
+
+    // limit number of generated diff-witnesses
+    sol.setSolutionLimit(difflimit);
+    sol.setLimited(true);
+
+    // generate diff-witnesses in outputPath
+    sol.generateSolutionsToPath(Paths.get(outputPath));
+  }
+
 }

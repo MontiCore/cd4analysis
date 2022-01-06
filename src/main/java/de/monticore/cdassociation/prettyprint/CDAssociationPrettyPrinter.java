@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.prettyprint;
 
 import de.monticore.cd.prettyprint.PrettyPrintUtil;

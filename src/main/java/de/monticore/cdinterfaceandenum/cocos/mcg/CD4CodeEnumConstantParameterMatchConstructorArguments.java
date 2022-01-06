@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum.cocos.mcg;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;

@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram negativeV2 {
+  class A;
+  class B;
+  class C;
+
+  association a [1] A -- C [*];
+}

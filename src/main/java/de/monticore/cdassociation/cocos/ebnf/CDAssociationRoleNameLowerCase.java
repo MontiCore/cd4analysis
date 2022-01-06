@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
 import de.monticore.cdassociation._ast.ASTCDAssocSide;

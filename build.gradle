@@ -13,7 +13,7 @@ plugins {
   id "monticore" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
   id "com.github.johnrengelman.shadow" version "6.0.0"
-  //id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
+  id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
@@ -40,6 +40,7 @@ ext {
   guava_version = "25.1-jre"
   antlr_version = "4.7-1"
   plantuml_version = "1.2020.15"
+  jackson_version = "2.13.0"
   junit_version = "4.13"
   commons_cli_version = "1.4"
   commons_lang_version = "3.11"
@@ -86,51 +87,63 @@ dependencies {
   implementation group: 'org.antlr', name: 'antlr4-runtime', version: antlr_version
   implementation "com.google.guava:guava:$guava_version"
   implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
+  implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.freemarker:freemarker:$freemarker_version"
   testImplementation "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "junit:junit:$junit_version"
   testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
-  testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
+    requireCapability("de.monticore:monticore-runtime-tests") }
+  }
+    // dependencies for CDDiff
+    implementation "de.monticore.lang:od:$mc_version"
+    implementation "edu.mit.alloy:alloy:4.2.0-rc1"
+    testImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+    testImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
 
+/*
 configurations {
   ecj
 }
 dependencies {
   ecj 'org.eclipse.jdt:ecj:3.26.0'
 }
+*/
 
-repositories {
-  if (("true").equals(getProperty('useLocalRepo'))) {
-    mavenLocal()
+allprojects {
+  repositories {
+    if (("true").equals(getProperty('useLocalRepo'))) {
+      mavenLocal()
+    }
+    maven {
+      credentials.username mavenUser
+      credentials.password mavenPassword
+      url repo
+    }
+    mavenCentral()
   }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
-  }
-  mavenCentral()
 }
 
 // list of all grammars, needed to have a fix order
 def grammarDependencies = [
-        CDBasis           : [],
-        CDInterfaceAndEnum: ["CDBasis"],
-        CDAssociation     : ["CDBasis"],
-        CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
-        CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
-        CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
+  CDBasis           : [],
+  CDInterfaceAndEnum: ["CDBasis"],
+  CDAssociation     : ["CDBasis"],
+  CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
+  CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
+  CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
 ]
 
 // list of all grammars, needed to have a fix order
 def testGrammarDependencies = [
-        TestCDBasis           : ["CDBasis"],
-        TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
-        TestCDAssociation     : ["CDAssociation"],
-        TestCD4CodeBasis      : ["CD4CodeBasis"],
-        TestTypeImporter      : ["CD4Code"],
+  TestCDBasis           : ["CDBasis"],
+  TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+  TestCDAssociation     : ["CDAssociation"],
+  TestCD4CodeBasis      : ["CD4CodeBasis"],
+  TestTypeImporter      : ["CD4Code"],
 ]
 
 String createGrammarName(String name) {
@@ -280,9 +293,9 @@ tasks.withType(Test) {
     exceptionFormat TestExceptionFormat.FULL
     info {
       events TestLogEvent.FAILED,
-              TestLogEvent.PASSED,
-              TestLogEvent.SKIPPED,
-              TestLogEvent.STANDARD_OUT
+        TestLogEvent.PASSED,
+        TestLogEvent.SKIPPED,
+        TestLogEvent.STANDARD_OUT
     }
   }
   afterTest { desc, result ->
@@ -329,7 +342,7 @@ shadowJar { // all in one jar
 
 testSets {
   integrationTest {
-    dirName = 'it'
+    dirName = '01.experiments'
   }
 }
 

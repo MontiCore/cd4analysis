@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.typescalculator;
 
 import de.monticore.cd._symboltable.MCBasicTypesScopeHelper;
@@ -92,9 +89,9 @@ public class DeriveSymTypeOfCDBasis implements IDerive, CDTypesCalculator {
   public void init() {
     this.traverser = CDBasisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-  
+
     this.typesScopeHelper = CDBasisMill.traverser();
-  
+
     typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();

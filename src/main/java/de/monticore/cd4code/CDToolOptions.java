@@ -45,12 +45,13 @@ public class CDToolOptions {
   protected void init(boolean showPlantUML) {
     options.addOption(Option
         .builder("h").longOpt("help")
-        .desc("Prints short help information")
+        .desc("Prints short help; other options are ignored. ")
         .build());
 
     initCheck();
     initPrettyPrinter(showPlantUML);
     initPlantUML();
+    initDiffOptions();
   }
 
   protected void initCheck() {
@@ -58,18 +59,19 @@ public class CDToolOptions {
         .builder("i").longOpt("input")
         .hasArg().type(String.class)
         .argName("file").numberOfArgs(1)
-        .desc("Reads the source file (mandatory) and parses the contents as CD")
+        .desc("Reads the source file and parses the contents as a CD (mandatory, unless `--stdin` "
+            + "is used).")
         .build());
 
     options.addOption(Option
-        .builder("stdin").longOpt("stdin")
+        .builder().longOpt("stdin")
         .desc("Reads the input CD from stdin instead of argument `-i`.")
         .build());
 
     options.addOption(Option
         .builder().longOpt("path")
         .hasArgs()
-        .desc("Artifact path for importable symbols, space separated.")
+        .desc("Artifact path for importable symbols, separated by spaces (default is: `.`).")
         .build());
 
     options.addOption(Option
@@ -83,7 +85,7 @@ public class CDToolOptions {
         .builder("o").longOpt("output")
         .hasArg().type(String.class)
         .argName("dir").optionalArg(true).numberOfArgs(1)
-        .desc("Path for generated files (optional). Default is `.`.")
+        .desc("Defines the path for generated files (optional; default is: `.`).")
         .build());
 
     // specify template path
@@ -92,7 +94,8 @@ public class CDToolOptions {
         .argName("pathlist")
         .hasArgs()
         .type(String.class)
-        .desc("Optional list of directories to look for handwritten templates to integrate.")
+        .desc("Directories and jars for handwritten templates to integrate when using `--gen` "
+            + "(optional, but needed, when `-ct` is used).")
         .build());
 
 
@@ -102,7 +105,8 @@ public class CDToolOptions {
         .argName("file")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Provides a config template (optional)")
+        .desc("Executes this template at the beginning of a generation with `--gen`. This allows "
+            + "configuration of the generation process (optional, `-fp` is needed to specify the template path).")
         .build());
 
 
@@ -111,35 +115,47 @@ public class CDToolOptions {
         .builder("r").longOpt("report")
         .hasArg().type(String.class)
         .argName("dir").optionalArg(true).numberOfArgs(1)
-        .desc("Prints reports of the parsed artifact to the specified directory (optional) (default `.`). "
-            + "This includes e.g. all defined packages, classes, interfaces, enums, and associations. "
-            + "The file name is \"report.{CDName}\".")
+        .desc("Prints reports of the parsed artifact to the specified directory (optional) or the"
+            + " output directory specified by `-o` (default is: `.`) This includes e.g. all  "
+            + "defined packages, classes, interfaces, enums, and associations. The file name is "
+            + "\"report.{CDName}\".")
         .build());
 
     options.addOption(Option
         .builder("t").longOpt("usebuiltintypes")
         .hasArg().type(Boolean.class)
-        .argName("useBuiltinTypes").optionalArg(true).numberOfArgs(1)
-        .desc("Configures if built-in-types should be considered. "
-                + "Default: `true`. `-t` toggles it to `--usebuiltintypes false`")
+        .argName("boolean").optionalArg(true).numberOfArgs(1)
+        .desc("Configures if built-in-types should be considered. Default: `true`; `-t` toggles "
+            + "it to `--usebuiltintypes false`.")
         .build());
 
     options.addOption(Option
         .builder("d").longOpt("defaultpackage")
         .hasArg().type(Boolean.class)
-        .argName("defaultpackage").optionalArg(true).numberOfArgs(1)
-        .desc("Configures if a default package should be created. Default: false. "
-            + "If `true`, all classes, that are not already in a package, are moved to the default package.")
+        .argName("boolean").optionalArg(true).numberOfArgs(1)
+        .desc("Configures if a default package should be created. Default: false. If `true`, all "
+            + "classes, that are not already in a package, are moved to the default package.")
         .build());
 
     options.addOption(Option
         .builder().longOpt("fieldfromrole")
         .hasArg().type(String.class)
         .argName("fieldfromrole").numberOfArgs(1)
-        .desc("Configures if explicit field symbols, which are typically used for implementing associations, "
-            + "should be added, if derivable from role symbols (default: none). "
+        .desc("Configures if explicit field symbols, which are typically used for implementing "
+            + "associations, should be added, if derivable from role symbols (default: none). "
             + "Values: `none` is typical for modelling, `all` adds always on both classes, "
             + "`navigable` adds only if the association is navigable.")
+        .build());
+
+    options.addOption(Option
+      .builder().longOpt("json")
+      .desc("Write a \"Schema.json\" to the output directory.")
+      .build());
+
+    options.addOption(Option
+        .builder().longOpt("gen")
+        .desc("Generate .java-files corresponding to the classes defined in the input class "
+            + "diagram.")
         .build());
   }
 
@@ -148,8 +164,7 @@ public class CDToolOptions {
         .builder("pp").longOpt("prettyprint")
         .hasArg().type(String.class)
         .argName("file").optionalArg(true).numberOfArgs(1)
-        .argName("prettyprint")
-        .desc("Prints the input CDs to stdout or to the specified file (optional).")
+        .desc("Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`.")
         .build());
 
     if (showPlantUML) {
@@ -232,4 +247,45 @@ public class CDToolOptions {
 
     subCommands.put(SubCommand.PLANTUML, plantUMLOptions);
   }
+
+  /**
+   * adds options for semantic differencing
+   */
+  public void initDiffOptions() {
+
+    options.addOption(Option.builder()
+        .longOpt("semdiff")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .numberOfArgs(1)
+        .desc(
+            "Reads `<file>` as the second CD and compares it semantically with the first CD "
+                + "specified by the `-i` option. Output: object diagrams (witnesses) that are "
+                + "valid in the first CD, but invalid in the second CD. This is a semantic based,"
+                + " asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php")
+        .build());
+
+    options.addOption(Option.builder()
+        .longOpt("diffsize")
+        .hasArg()
+        .type(int.class)
+        .argName("int")
+        .numberOfArgs(1)
+        .desc("Maximum number of objects in witnesses when comparing the semantic diff with "
+            + "`--semdiff` (optional; default is: 10). This constrains long searches.")
+        .build());
+
+    options.addOption(Option.builder()
+        .longOpt("difflimit")
+        .hasArg()
+        .type(String.class)
+        .argName("int")
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1,"
+            + " i.e. only one witness is shown).")
+        .build());
+  }
+
 }

@@ -1,22 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseResult;
-import com.github.javaparser.ParserConfiguration;
 import de.monticore.cd.methodtemplates.CD4C;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -45,27 +38,12 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testGeneratedCode() {
-    GeneratorSetup generatorSetup = new GeneratorSetup();
-    generatorSetup.setGlex(glex);
-    GeneratorEngine generatorEngine = new GeneratorEngine(generatorSetup);
-    for (ASTCDClass clazz : compUnit.getCDDefinition().getCDClassesList()) {
-      StringBuilder sb = generatorEngine.generate(CD2JavaTemplates.CLASS, clazz, clazz);
-      // test parsing
-      ParserConfiguration configuration = new ParserConfiguration();
-      JavaParser parser = new JavaParser(configuration);
-      ParseResult parseResult = parser.parse(sb.toString());
-      Assert.assertTrue(parseResult.isSuccessful());
-    }
-  }
-
-  @Test
   public void testOutput() {
     GeneratorSetup generatorSetup = new GeneratorSetup();
+    CD4C.init(generatorSetup);
     this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
 
     generatorSetup.setGlex(glex);
-    File file = new File("de/monticore/cd/codegen");
     generatorSetup.setOutputDirectory(new File("target/generated"));
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);

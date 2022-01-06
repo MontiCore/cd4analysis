@@ -1,8 +1,9 @@
-// (c) https://github.com/MontiCore/monticore
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.methodtemplates;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
@@ -11,21 +12,18 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodSignatureCoCo;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.StringHookPoint;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -35,7 +33,7 @@ public class CD4C {
   /**
    * build a stack for the defined methods to match the body to the "current" defined method signature
    */
-  protected final Stack<CD4CTemplateMethodHelper> methodQueue = new Stack<>();
+  protected final Stack<CD4CTemplateHelper> methodQueue = new Stack<>();
   protected GeneratorSetup config;
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
   protected static CD4C INSTANCE;
@@ -46,6 +44,7 @@ public class CD4C {
   protected List<BiPredicate<ASTCDClass, ASTCDAttribute>> classAttrPredicates = new ArrayList<>();
   protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter();
   protected CDTypesCalculator typesCalculator = new DeriveSymTypeOfCD4Code();
+  protected HashMap<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
 
   protected CD4C() {
   }
@@ -81,7 +80,7 @@ public class CD4C {
     }
   }
 
-// TODO: Warum ist dies static, checkInitialized aber nicht?
+  // TODO: Warum ist dies static, checkInitialized aber nicht?
 //
   public static boolean isInitialized() {
     return getInstance().isInitialized;
@@ -133,11 +132,11 @@ public class CD4C {
   public Optional<ASTCDMethodSignature> createMethod(ASTCDClass clazz, String templateName, Object... arguments) {
     checkInitialized();
     return createMethodSignatureAndBody(clazz, templateName, arguments)
-        .flatMap(CD4CTemplateMethodHelper::getMethod)
-        .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
-        .flatMap(m ->
-            this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
-        );
+      .flatMap(CD4CTemplateHelper::getMethod)
+      .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
+      .flatMap(m ->
+        this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
+      );
   }
 
   /**
@@ -167,7 +166,7 @@ public class CD4C {
    */
   public void method(String methodSignature) {
     checkInitialized();
-    final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
+    final CD4CTemplateHelper m = new CD4CTemplateHelper();
     m.method(methodSignature);
     methodQueue.add(m);
   }
@@ -187,11 +186,11 @@ public class CD4C {
   public Optional<ASTCDMethodSignature> createConstructor(ASTCDClass clazz, String templateName, Object... arguments) {
     checkInitialized();
     return createMethodSignatureAndBody(clazz, templateName, arguments)
-        .flatMap(CD4CTemplateMethodHelper::getMethod)
-        .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
-        .flatMap(m ->
-            this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
-        );
+      .flatMap(CD4CTemplateHelper::getMethod)
+      .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
+      .flatMap(m ->
+        this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
+      );
   }
 
   private ASTCDMethodSignature setEnclosingScopeTo(ASTCDMethodSignature method, ICDBasisScope scope) {
@@ -235,7 +234,7 @@ public class CD4C {
    */
   public void constructor(String constructorSignature) {
     checkInitialized();
-    final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
+    final CD4CTemplateHelper m = new CD4CTemplateHelper();
     m.constructor(constructorSignature);
     methodQueue.add(m);
   }
@@ -257,7 +256,7 @@ public class CD4C {
     Optional<ASTCDAttribute> attr = methodQueue.peek().astcdAttribute;
     attr.ifPresent(a -> {setEnclosingScopeTo(a, clazz.getSpannedScope()); this.attributePredicates.forEach(p -> p.test(a));});
     return attr;
-   }
+  }
 
   private ASTCDAttribute setEnclosingScopeTo(ASTCDAttribute attribute, ICDBasisScope scope) {
     // TODO: maybe just create a symbol table
@@ -296,9 +295,31 @@ public class CD4C {
    */
   public void attribute(String attributeSignature) {
     checkInitialized();
-    final CD4CTemplateMethodHelper m = new CD4CTemplateMethodHelper();
+    final CD4CTemplateHelper m = new CD4CTemplateHelper();
     m.attribute(attributeSignature);
     methodQueue.add(m);
+  }
+
+  /***************************************************************************/
+  /* imports                                                        */
+  /***************************************************************************/
+
+  public void addImport(ASTCDClass clazz, String importStr) {
+    final CD4CTemplateHelper t = new CD4CTemplateHelper();
+    t.importStr(importStr);
+
+    Set<ASTMCImportStatement> s;
+    if (importMap.containsKey(clazz)) {
+      s = importMap.get(clazz);
+    } else {
+      s = Sets.newHashSet();
+      importMap.put(clazz, s);
+    }
+    s.add(t.astcdImport.get());
+  }
+
+  public Collection<ASTMCImportStatement> getImportList(ASTCDClass clazz) {
+    return importMap.getOrDefault(clazz, Sets.newHashSet());
   }
 
   /***************************************************************************/
@@ -313,11 +334,11 @@ public class CD4C {
    * @param arguments    the arguments for the template
    * @return the created method with connected method body
    */
-  protected Optional<CD4CTemplateMethodHelper> createMethodSignatureAndBody(ASTCDClass clazz, String templateName, Object... arguments) {
+  protected Optional<CD4CTemplateHelper> createMethodSignatureAndBody(ASTCDClass clazz, String templateName, Object... arguments) {
     checkInitialized();
     final TemplateHookPoint templateHookPoint = new TemplateHookPoint(
-        templateName,
-        arguments);
+      templateName,
+      arguments);
 
     TemplateController controller = new TemplateController(this.config, templateName);
     return addMethodBody(templateHookPoint.processValue(controller, clazz));
@@ -330,13 +351,13 @@ public class CD4C {
    * @param body the method body given as string
    * @return the created method with connected method body
    */
-  protected Optional<CD4CTemplateMethodHelper> addMethodBody(String body) {
+  protected Optional<CD4CTemplateHelper> addMethodBody(String body) {
     checkInitialized();
     if (methodQueue.isEmpty()) {
       throw new RuntimeException("0x110A0: cannot add method body: no previous method present");
     }
 
-    final CD4CTemplateMethodHelper methodHelper = methodQueue.pop();
+    final CD4CTemplateHelper methodHelper = methodQueue.pop();
     if (!methodHelper.getMethod().isPresent()) {
       // if the method is not set, then add it to the stack again
       methodQueue.add(methodHelper);
@@ -411,16 +432,16 @@ public class CD4C {
       final List<String> unknownTypes = m.getCDParameterList().stream().filter(p ->
           // if parameter types are not valid/exist
           !typesCalculator.calculateType(p.getMCType()).isPresent()
-      )
-          .map(p -> prettyPrinter.prettyprint(p.getMCType()))
-          .collect(Collectors.toList());
+        )
+        .map(p -> prettyPrinter.prettyprint(p.getMCType()))
+        .collect(Collectors.toList());
       if (unknownTypes.isEmpty()) {
         return true;
       }
       else {
         Log.error("0x110C0: The following types of the method signature (" +
-            prettyPrinter.prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved '"
-            + Joiners.COMMA.join(unknownTypes) + "'.");
+          prettyPrinter.prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved '"
+          + Joiners.COMMA.join(unknownTypes) + "'.");
         return false;
       }
     });
@@ -430,7 +451,7 @@ public class CD4C {
         final ASTCDMethod method = (ASTCDMethod) m;
         if (!new DeriveSymTypeOfCD4Code().calculateType(method.getMCReturnType()).isPresent()) {
           Log.error("0x110C1: The return type '" + prettyPrinter.prettyprint(method.getMCReturnType()) + "' of the method signature (" +
-              prettyPrinter.prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved.");
+            prettyPrinter.prettyprint((ASTCD4CodeBasisNode) m) + ") could not be resolved.");
           return false;
         }
       }
@@ -441,11 +462,11 @@ public class CD4C {
     // attributes
     // check type
     addAttributePredicate((attribute) -> {
-        if (!new DeriveSymTypeOfCD4Code().calculateType(attribute.getMCType()).isPresent()) {
-          Log.error("0x110C2: The type '" + prettyPrinter.prettyprint(attribute.getMCType()) + "' of the attribute declaration (" +
-                  prettyPrinter.prettyprint(attribute) + ") could not be resolved.");
-          return false;
-        }
+      if (!new DeriveSymTypeOfCD4Code().calculateType(attribute.getMCType()).isPresent()) {
+        Log.error("0x110C2: The type '" + prettyPrinter.prettyprint(attribute.getMCType()) + "' of the attribute declaration (" +
+          prettyPrinter.prettyprint(attribute) + ") could not be resolved.");
+        return false;
+      }
 
       return true;
     });
@@ -484,17 +505,17 @@ public class CD4C {
     // methods
     addClassPredicate((c, m) -> {
       final List<String> parameterTypes = m.getCDParameterList().stream()
-          .map(p -> typesCalculator.calculateType(p.getMCType()).get().getTypeInfo().getFullName())
-          .collect(Collectors.toList());
+        .map(p -> typesCalculator.calculateType(p.getMCType()).get().getTypeInfo().getFullName())
+        .collect(Collectors.toList());
       if (c.getCDMethodSignatureList()
-          .stream()
-          .anyMatch(cm -> {
-            final List<String> parameter = cm.getCDParameterList().stream()
-                .map(p -> typesCalculator.calculateType(p.getMCType()).get().getTypeInfo().getFullName())
-                .collect(Collectors.toList());
-            return m.getName().equals(cm.getName()) &&
-                Iterables.elementsEqual(parameterTypes, parameter);
-          })) {
+        .stream()
+        .anyMatch(cm -> {
+          final List<String> parameter = cm.getCDParameterList().stream()
+            .map(p -> typesCalculator.calculateType(p.getMCType()).get().getTypeInfo().getFullName())
+            .collect(Collectors.toList());
+          return m.getName().equals(cm.getName()) &&
+            Iterables.elementsEqual(parameterTypes, parameter);
+        })) {
         Log.error("0x110C8: The class '" + c.getName() + "' already has a method named '" + m.getName() + "'");
         return false;
       }

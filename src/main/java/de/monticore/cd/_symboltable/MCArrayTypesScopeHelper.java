@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd._symboltable;
 
 import de.monticore.types.mcarraytypes._ast.ASTMCArrayType;

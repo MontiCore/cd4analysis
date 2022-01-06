@@ -83,7 +83,7 @@ Further examples can be found [here][ExampleModels].
 The CD language infrastructure can be used as tool from shell as well 
 as within gradle or just as framework with dirct Java API access.
 
-## Command Line Interface
+## Command Line Interface Tool
  
 The tool provides typical functionality used when
 processing models. It provides functionality
@@ -91,8 +91,9 @@ for
 * parsing including coco-checking and creating symbol tables, 
 * pretty-printing, 
 * storing symbols in symbol files, 
-* loading symbols from symbol files, and 
-* transforming CDs into a graphical svg format. 
+* loading symbols from symbol files, 
+* transforming CDs into a graphical svg format, and
+* computing the semantic difference of 2 CDs.
 
 The requirements for building and using the CD tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
@@ -104,12 +105,12 @@ executable JAR file.
 You can use [**this download link**][ToolDownload] for downloading the tool. 
 Or you can use `wget` to download the latest version in your working directory:
 ```shell
-wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
+wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
-### Parameters of the Tool
+### Actions and Parameters of the Tool
 
-The tool provides quite a number of configurable parameters. 
+The tool provides quite a number of executable actions and configurable parameters. 
 These two are examples for calling the tool (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
@@ -122,18 +123,24 @@ java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 The possible options are:
 | Option                     | Explanation |
 | ------                     | ------ |
-| `-d,--defaultpackage <defaultpackage>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
-| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols  (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
-| `-h,--help` | Prints short help |
-| `-i,--input <file>` | Reads the source file (mandatory) and parses the contents as |
-| `-o,--output <dir>` | Path for generated files (optional). Default is `.` |
-| `--path <dirlist>` | Artifact path for importable symbols, separated by spaces, default is `.` |
-| `-pp,--prettyprint <prettyprint>` | Prints the input CDs to stdout or to the specified file (optional) |
-| `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) (default `.`). This includes e.g. all  defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
-| `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym` |
-| `-stdin,--stdin` | Reads the input CD from stdin instead of argument `-i` |
-| `-t,--usebuiltintypes <useBuiltinTypes>` | Configures if built-in-types should be considered. Default: `true`. `-t` toggles it to `--usebuiltintypes false |
-
+| `-ct,--configTemplate <file>` | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional, `-fp` is needed to specify the template path). |
+| `-d,--defaultpackage <boolean>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
+| `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1, i.e. only one witness is shown). |
+| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is: 10). This constrains long searches. |
+| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
+|  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
+| `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
+| `-h,--help` | Prints short help; other options are ignored. |
+| `--json` | Writes a "Schema.json" to the output directory. |
+| `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory, unless `--stdin` is used). |
+| `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
+| `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
+| `-pp,--prettyprint <file>` | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
+| `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
+| `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
+| `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
+| `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
+| `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. Default: `true`; `-t` toggles it to `--usebuiltintypes false`. |
 
 ### Building the Tool from the Sources (if desired)
  
@@ -398,7 +405,7 @@ This means that it processes the model successfully without any context
 condition violations.
 Great! 
 
-### Step 6: Create a default package in the class diagram
+### Step 6: Create a Default Package in the Class Diagram
 
 The class diagram languages support structuring the CD into packages (similar to
 Java).
@@ -406,18 +413,61 @@ For classes with no explicit defined package the tool can assume those classes
 to be in a default package. This default is calculated as follows:
 1. If the class diagram itself is defined in a package, this package is 
    propagated to the classes contained in the cd.
-2. If such a package is not explicitly given, the default 'de.monticore' is used
-   .
+2. If such a package is not explicitly given, the default 'de.monticore' is used.
+
+### Step 7: Generating .java-Files
+
+By using the option `--gen`, we can generate .java-files corresponding to the
+input class diagram:
+```shell
+java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen
+```
+With option `-o` we can specify the output directory; the default is `.`:
+```shell
+java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen -o out
+```
+
+### Step 8: Computing the Semantic Difference of Two Class Diagrams
+
+We define the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 and
+CD2 as the set of all object diagrams that are valid in CD1 but invalid in CD2. 
+These object diagrams are also referred to as diff-witnesses. We observe
+that this difference is asymmetric. For more details on semantic 
+differencing:
+
+https://www.se-rwth.de/topics/Semantics.php
+
+The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
+diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`.
+
+Since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
+those witnesses. The default maximum number of objects per witness is 10. This number can 
+be changed via the option `--diffsize`.
+
+For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
+`src`:
+
+```shell
+java -jar CDCLI.jar -i src/Employees1.cd --semdiff scr/Employees2.cd --diffsize 2
+```
+
+We can use the option `difflimit` to specify the maximum number of witnesses 
+that are generated in the output directory; the default is to generate at most 1 diff-witness. Once again, `-o` can be used to specify the output directory; the default is `.`:
+
+```shell
+java -jar CDCLI.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 5 --difflimit 20 -o out
+```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
-[ToolDownload]: http://monticore.de/download/CDCLI.jar
+[ToolDownload]: https://monticore.de/download/CDCLI.jar
 
 ## Further Information
 
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
-* [MontiCore documentation](http://www.monticore.de/)
-* [**List of languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
+* [MontiCore documentation](https://www.monticore.de/)
+* [**List of Languages**](https://github.com/MontiCore/monticore/blob/dev/docs/Languages.md)
 * [**MontiCore Core Grammar Library**](https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/Grammars.md)
 * [Best Practices](https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md)
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
+* [Research Topics](https://www.se-rwth.de/topics)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
