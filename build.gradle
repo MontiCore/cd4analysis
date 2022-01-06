@@ -320,11 +320,11 @@ task testSourcesJar(type: Jar) {
 }
 
 shadowJar { // all in one jar
-  archiveFileName = 'CDTool.jar'
+  archiveFileName = 'CDCLI.jar'
   manifest {
     attributes "Main-Class": "de.monticore.cd4code.CD4CodeTool"
   }
-  archiveClassifier = "tool"
+  archiveClassifier = "cli"
 }
 
 testSets {

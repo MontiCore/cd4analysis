@@ -482,7 +482,7 @@ public class CD4CodeTool extends CD4CodeToolTOP {
   protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the Tool file is called CDTool.jar: " + System.lineSeparator() + "java -jar CDTool.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDTool.jar -i src/Person.cd -pp target/Person.cd", cdToolOptionsForHelp.getOptions());
+    formatter.printHelp("Examples in case the Tool file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd", cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));

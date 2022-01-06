@@ -104,7 +104,7 @@ executable JAR file.
 You can use [**this download link**][ToolDownload] for downloading the tool. 
 Or you can use `wget` to download the latest version in your working directory:
 ```shell
-wget "http://monticore.de/download/CDCLI.jar" -O CDTool.jar
+wget "http://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
 ### Parameters of the Tool
@@ -114,9 +114,9 @@ These two are examples for calling the tool (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
 ```shell
-java -jar CDTool.jar -i MyBasics.cd -t true -s
-java -jar CDTool.jar -i MyLife.cd -o target/out -t true -s
-java -jar CDTool.jar -i MyLife.cd -pp MyLife.out.cd
+java -jar CDCLI.jar -i MyBasics.cd -t true -s
+java -jar CDCLI.jar -i MyLife.cd -o target/out -t true -s
+java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
 ```
 
 The possible options are:
@@ -158,20 +158,20 @@ To this effect, execute the following two commands:
 gradle build
 gradle shadowJar
 ```
-Congratulations! The  executable JAR file `CDTool.jar` is now in
+Congratulations! The  executable JAR file `CDCLI.jar` is now in
 the directory `target/libs`.
 
 ## Tutorial: Getting Started Using the CD Tool
 
 The following small tutorial should help to get an idea 
-of how to use the CD tool given in `CDTool.jar`.
+of how to use the CD tool given in `CDCLI.jar`.
 
 ### First Steps
 
 This prints usage information, if executing the tool with the 
 following command and no parameters:
 ```shell
-java -jar CDTool.jar
+java -jar CDCLI.jar
 ```
 
 To work properly, the tool needs the mandatory argument `-i,--input <file>`,
@@ -182,10 +182,10 @@ That means it parses the model, builds its
 symbol table, and then checks whether the model satisfies all context 
 conditions. Only errors or success are printed.
 
-For trying this out, copy the `CDTool.jar` into a directory of your 
+For trying this out, copy the `CDCLI.jar` into a directory of your 
 choice. Then create a text file `src/MyExample.cd` 
 ([also available here](doc/MyExample.cd)) in a `src` subdirectory of the
-directory where `CDTool.jar` is located containing e.g. the following simple CD 
+directory where `CDCLI.jar` is located containing e.g. the following simple CD 
 (please note that, like in Java, filename and modelname in the file have to be
 the same):
 
@@ -204,7 +204,7 @@ classdiagram MyExample {
 
 Now execute the following command:
 ```
-java -jar CDTool.jar -i src/MyExample.cd
+java -jar CDCLI.jar -i src/MyExample.cd
 ```
 
 You may notice that the tool prints the following text to the console:
@@ -217,7 +217,7 @@ The contents of the input CD artifact can also be piped to the tool.
 For trying this out, execute the following command:
 
 ```shell
-cat src/MyExample.cd | java -jar CDTool.jar --stdin
+cat src/MyExample.cd | java -jar CDCLI.jar --stdin
 ``` 
 The output is the same as for the previous command.
 
@@ -233,7 +233,7 @@ Using the option without any arguments pretty-prints the models contained in the
 input files to the console (stdout):
 
 ```shell
-java -jar CDTool.jar -i src/MyExample.cd -pp
+java -jar CDCLI.jar -i src/MyExample.cd -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
@@ -255,7 +255,7 @@ output file (here: `PPExample.cd`), missing directories are created
 automatically:
 
 ```shell
-java -jar CDTool.jar -i src/MyExample.cd -pp target/PPExample.cd
+java -jar CDCLI.jar -i src/MyExample.cd -pp target/PPExample.cd
 ```
 
 ### Step 3: Storing Symbols
@@ -275,7 +275,7 @@ input model in the file `{CDName}.cdsym`.
 For storing the symbol file for `src/MyExample.cd`, we execute the following 
 command (the context condition checks require using the path option):
 ```shell
-java -jar CDTool.jar -i src/MyExample.cd -s
+java -jar CDCLI.jar -i src/MyExample.cd -s
 ```
 The tool produces the file `MyExample.cdsym`, which can now be
 imported by other models, e.g., by models that need to
@@ -292,12 +292,12 @@ which are type, association, interface, attribute and method symbols.
 For storing the symbol file of `src/MyExample.cd` in the file 
 `symbols/MyExample.cdsym`, for example, execute the following command:
 ```shell
-java -jar CDTool.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
+java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
 ```
 
 ### Step 4: Adding `FieldSymbol`s corresponding to association roles
 
-By default, the CDTool stores exactly the symbols that have been explicitly 
+By default, the CD tool stores exactly the symbols that have been explicitly 
 defined. This is the typical modelling approach. However, code generation 
 typically maps the `CDRoleSymbol`s defined in an association to attributes and 
 thus implicitly adds `FieldSymbol`s into the classes that host an association. 
@@ -309,7 +309,7 @@ Form 1: For each of the `CDRoleSymbol`s add a `FieldSymbol` in the source class
    that always allow for the navigation in both directions.
 These additional field symbols are stored with:
 ```shell
-java -jar CDTool.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole all
+java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole all
 ```
 
 * two additional `FieldSymbol`s were stored for both sides of the association
@@ -318,7 +318,7 @@ Form 2: `FieldSymbol`s are added only for navigable roles.
   This can be used in implementation oriented languages that have to cope
   with the actual implementation restrictions:
 ```shell
-java -jar CDTool.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole navigable
+java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole navigable
 ```
 * only one additional `FieldSymbol` is stored for the navigable Role `friends`,
   because the association is only unidirectional
@@ -336,7 +336,7 @@ because of the package definition in line 1.
 
 Execute the following command for processing the file `MyLife.cd`:
 ```shell
-java -jar CDTool.jar -i src/monticore/MyLife.cd
+java -jar CDCLI.jar -i src/monticore/MyLife.cd
 ```
 
 After executing the command, 
@@ -381,13 +381,13 @@ their symbol files. This has several interesting advantages:
 However, the tool has to be applied to the new additional model first:
 
 ```shell
-java -jar CDTool.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
+java -jar CDCLI.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
 ```
 
 We then add the symbol file to the model path using `--path`:
 
 ```shell
-java -jar CDTool.jar -i src/monticore/MyLife.cd --defaultpackage --path symbols
+java -jar CDCLI.jar -i src/monticore/MyLife.cd --defaultpackage --path symbols
 ```
  
 The model path is used to identify the directory structure that contains the 
@@ -402,7 +402,7 @@ Great!
 
 The class diagram languages support structuring the CD into packages (similar to
 Java).
-For classes with no explicit defined package the CDTool can assume those classes 
+For classes with no explicit defined package the tool can assume those classes 
 to be in a default package. This default is calculated as follows:
 1. If the class diagram itself is defined in a package, this package is 
    propagated to the classes contained in the cd.
