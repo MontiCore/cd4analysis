@@ -80,12 +80,12 @@ The example CD shows
 
 Further examples can be found [here][ExampleModels].
 
-The CD language infrastructure can be used as CLI tool from shell as well 
+The CD language infrastructure can be used as tool from shell as well 
 as within gradle or just as framework with dirct Java API access.
 
 ## Command Line Interface Tool
  
-The CLI tool provides typical functionality used when
+The tool provides typical functionality used when
 processing models. It provides functionality
 for 
 * parsing including coco-checking and creating symbol tables, 
@@ -95,23 +95,23 @@ for
 * transforming CDs into a graphical svg format, and
 * computing the semantic difference of 2 CDs.
 
-The requirements for building and using the CD CLI tool are that Java 8, Git, 
+The requirements for building and using the CD tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
 
-### Downloading the Latest Version of the CLI Tool
+### Downloading the Latest Version of the Tool
 
-A ready to use version of the CLI tool can be downloaded in the form of an
+A ready to use version of the tool can be downloaded in the form of an
 executable JAR file.
-You can use [**this download link**][CLIDownload] for downloading the CLI tool. 
+You can use [**this download link**][ToolDownload] for downloading the tool. 
 Or you can use `wget` to download the latest version in your working directory:
 ```shell
 wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
 ``` 
 
-### Actions and Parameters of the CLI Tool
+### Actions and Parameters of the Tool
 
-The CLI tool provides quite a number of executable actions and configuration parameters. 
-These two are examples for calling the CLI (download and use the files
+The tool provides quite a number of executable actions and configurable parameters. 
+These two are examples for calling the tool (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
 ```shell
@@ -142,12 +142,12 @@ The possible options are:
 | `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
 | `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. Default: `true`; `-t` toggles it to `--usebuiltintypes false`. |
 
-### Building the CLI Tool from the Sources (if desired)
+### Building the Tool from the Sources (if desired)
  
 As alternative to a download, 
-it is possible to build an executable JAR of the CLI tool from the source files
-located in GitHub. The following describes the process for building the CLI tool
-from the source files using Bash. For building an executable Jar of the CLI with
+it is possible to build an executable JAR of the tool from the source files
+located in GitHub. The following describes the process for building the tool
+from the source files using Bash. For building an executable Jar of the tool with
 Bash from the source files available in GitHub, execute the following commands.
 
 First, clone the repository:
@@ -168,22 +168,22 @@ gradle shadowJar
 Congratulations! The  executable JAR file `CDCLI.jar` is now in
 the directory `target/libs`.
 
-## Tutorial: Getting Started Using the CD CLI Tool
+## Tutorial: Getting Started Using the CD Tool
 
 The following small tutorial should help to get an idea 
-of how to use the CD CLI tool given in `CDCLI.jar`.
+of how to use the CD tool given in `CDCLI.jar`.
 
 ### First Steps
 
-This prints usage information of the CLI, if executing the CLI tool with the 
+This prints usage information, if executing the tool with the 
 following command and no parameters:
 ```shell
 java -jar CDCLI.jar
 ```
 
-To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`,
+To work properly, the tool needs the mandatory argument `-i,--input <file>`,
 which takes a file containing CD models as input.
-If no further options are specified, the CLI tool processes the model,
+If no further options are specified, the tool processes the model,
 but does not produce any further output.
 That means it parses the model, builds its 
 symbol table, and then checks whether the model satisfies all context 
@@ -214,13 +214,13 @@ Now execute the following command:
 java -jar CDCLI.jar -i src/MyExample.cd
 ```
 
-You may notice that the CLI tool prints the following text to the console:
+You may notice that the tool prints the following text to the console:
 ```
 Successfully parsed src/MyExample.cd
 Successfully checked the CoCos for class diagram MyExample
 ```
 
-The contents of the input CD artifact can also be piped to the CLI tool.
+The contents of the input CD artifact can also be piped to the tool.
 For trying this out, execute the following command:
 
 ```shell
@@ -230,7 +230,7 @@ The output is the same as for the previous command.
 
 ### Step 2: Pretty-Printing
 
-The CLI tool provides a pretty-printer for the CD language.
+The tool provides a pretty-printer for the CD language.
 A pretty-printer can be used, e.g., to fix the formatting of files containing 
 CDs, but has its main application to print internally constructed 
 or transformed CDs.
@@ -276,7 +276,7 @@ It can be imported by other models for using the introduced symbols.
 Using the `-s,--symboltable <file>` option builds the symbol table of the input
 model and stores it in the file path given as argument.
 Providing the file path is optional.
-If no file path is provided, the CLI tool stores the symbol table of the
+If no file path is provided, the tool stores the symbol table of the
 input model in the file `{CDName}.cdsym`.
 
 For storing the symbol file for `src/MyExample.cd`, we execute the following 
@@ -284,7 +284,7 @@ command (the context condition checks require using the path option):
 ```shell
 java -jar CDCLI.jar -i src/MyExample.cd -s
 ```
-The CLI tool produces the file `MyExample.cdsym`, which can now be
+The tool produces the file `MyExample.cdsym`, which can now be
 imported by other models, e.g., by models that need to
 use some of the classes defined in the CD `MyExample`. The tool additionally
 indicates the correct generation by its outputs:
@@ -304,7 +304,7 @@ java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
 
 ### Step 4: Adding `FieldSymbol`s corresponding to association roles
 
-By default, the CDCLI stores exactly the symbols that have been explicitly 
+By default, the CD tool stores exactly the symbols that have been explicitly 
 defined. This is the typical modelling approach. However, code generation 
 typically maps the `CDRoleSymbol`s defined in an association to attributes and 
 thus implicitly adds `FieldSymbol`s into the classes that host an association. 
@@ -385,7 +385,7 @@ their symbol files. This has several interesting advantages:
   that not are defined with MontiCore can be
   integrated (e.g. we integrate handwritten code via their symbols).
 
-However, the CLI tool has to be applied to the new additional model first:
+However, the tool has to be applied to the new additional model first:
 
 ```shell
 java -jar CDCLI.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
@@ -409,7 +409,7 @@ Great!
 
 The class diagram languages support structuring the CD into packages (similar to
 Java).
-For classes with no explicit defined package the CDCLI can assume those classes 
+For classes with no explicit defined package the tool can assume those classes 
 to be in a default package. This default is calculated as follows:
 1. If the class diagram itself is defined in a package, this package is 
    propagated to the classes contained in the cd.
@@ -459,7 +459,7 @@ java -jar CDCLI.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 
 ```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
-[CLIDownload]: https://monticore.de/download/CDCLI.jar
+[ToolDownload]: https://monticore.de/download/CDCLI.jar
 
 ## Further Information
 

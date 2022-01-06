@@ -1,6 +1,6 @@
 package de.monticore.cddiff;
 
-import de.monticore.cd4code.CD4CodeCLI;
+import de.monticore.cd4code.CD4CodeTool;
 import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
@@ -23,10 +23,10 @@ public class CDDiffCLITest {
     final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
-    //when CD4CodeCLI is used to compute the semantic difference
+    //when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "10", "-o", output, "--difflimit",
         "20" };
-    CD4CodeCLI cli = new CD4CodeCLI();
+    CD4CodeTool cli = new CD4CodeTool();
     cli.run(args);
 
     //then corresponding .od files are generated
@@ -70,10 +70,10 @@ public class CDDiffCLITest {
         "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2" + ".cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
-    //when CD4CodeCLI is used to compute the semantic difference
+    //when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "10", "-o", output, "--difflimit",
         "20" };
-    CD4CodeCLI cli = new CD4CodeCLI();
+    CD4CodeTool cli = new CD4CodeTool();
     cli.run(args);
 
     //no corresponding .od files are generated

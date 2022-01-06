@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CD4CodeCLI extends CD4CodeCLITOP {
+public class CD4CodeTool extends CD4CodeToolTOP {
 
   protected static final String PARSE_SUCCESSFUL = "Successfully parsed %s\n";
   protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for class diagram %s\n";
@@ -72,8 +72,8 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
   protected String outputPath;
   protected ASTCDCompilationUnit ast;
   protected ICD4CodeArtifactScope artifactScope;
-  protected final CDCLIOptions cdcliOptions = new CDCLIOptions(true);
-  protected final CDCLIOptions cdcliOptionsForHelp = new CDCLIOptions();
+  protected final CDToolOptions cdToolOptions = new CDToolOptions(true);
+  protected final CDToolOptions cdToolOptionsForHelp = new CDToolOptions();
   protected CommandLine cmd;
 
   @Override
@@ -211,7 +211,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
 
 
         if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
-          final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
+          final CommandLine plantUMLCmd = cdToolOptions.parse(CDToolOptions.SubCommand.PLANTUML);
           final String path = createPlantUML(plantUMLCmd, this.outputPath);
           final String dir = System.getProperty("user.dir");
           String relative = new File(dir).toURI().relativize(new File(path).toURI()).getPath();
@@ -289,7 +289,7 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
 
   protected boolean handleArgs(String[] args)
     throws IOException, ParseException {
-    cmd = cdcliOptions.handleArgs(args);
+    cmd = cdToolOptions.handleArgs(args);
 
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
@@ -299,17 +299,17 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
 
     if (cmd.hasOption("h")) {
       if (cmd.hasOption("puml")) {
-        printHelp(CDCLIOptions.SubCommand.PLANTUML);
+        printHelp(CDToolOptions.SubCommand.PLANTUML);
       }
       else {
-        printHelp((CDCLIOptions.SubCommand) null);
+        printHelp((CDToolOptions.SubCommand) null);
       }
       return false;
     }
     else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
-        printHelp((CDCLIOptions.SubCommand) null);
+        printHelp((CDToolOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
         return false;
       }
@@ -508,13 +508,13 @@ public class CD4CodeCLI extends CD4CodeCLITOP {
     return Files.exists(filePath);
   }
 
-  protected void printHelp(CDCLIOptions.SubCommand subCommand) {
+  protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdcliOptionsForHelp.getOptions());
+    formatter.printHelp("Examples in case the Tool file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
-      formatter.printHelp(subCommand.toString(), cdcliOptionsForHelp.getOptions(subCommand));
+      formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));
     }
     System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
