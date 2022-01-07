@@ -340,6 +340,8 @@ shadowJar { // all in one jar
   archiveClassifier = "cli"
 }
 
+jar.dependsOn(shadowJar)
+
 testSets {
   integrationTest {
     dirName = '01.experiments'
