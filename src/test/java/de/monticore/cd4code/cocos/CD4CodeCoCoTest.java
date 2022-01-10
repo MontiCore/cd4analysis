@@ -3,15 +3,13 @@ package de.monticore.cd4code.cocos;
 
 import com.google.common.base.Joiner;
 import com.google.common.io.Files;
-import de.monticore.cd4code.CD4CodeCLI;
+import de.monticore.cd4code.CD4CodeTool;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.utils.Names;
 import org.apache.commons.cli.ParseException;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -44,7 +42,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());
     final String otherFileName = otherFile.toString();
-    CD4CodeCLI.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "--gen", "-o", getTmpAbsolutePath(), "-s",
+    CD4CodeTool.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "--gen", "-o", getTmpAbsolutePath(), "-s",
         getTmpFilePath("Simple.cdsym") });
 
     checkLogError();
@@ -60,7 +58,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File file = new File(getFilePath("cdbasis/parser/Import.cd"));
     assertTrue(file.exists());
     final String fileName = file.toString();
-    CD4CodeCLI.main(new String[] { "-i", fileName, "--path", getTmpAbsolutePath() });
+    CD4CodeTool.main(new String[] { "-i", fileName, "--path", getTmpAbsolutePath() });
     checkLogError();
   }
 
@@ -69,7 +67,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
     assertTrue(otherFile.exists());
     final String otherFileName = otherFile.toString();
-    CD4CodeCLI.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "src/test"
+    CD4CodeTool.main(new String[] { "-i", otherFileName, "--path", "src/test/resources", "src/test"
         + "/emptypath", "--gen", "-o", getTmpAbsolutePath(), "-s",
             getTmpFilePath("Simple.cdsym") });
 

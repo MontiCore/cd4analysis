@@ -20,7 +20,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "--gen",
       "-o", "target/generated/auction"
     };
-    CD4CodeCLI.main(input);
+    CD4CodeTool.main(input);
   }
 
   @Test
@@ -31,7 +31,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "--gen",
       "-o", "target/generated/auctionTP"
     };
-    CD4CodeCLI.main(input);
+    CD4CodeTool.main(input);
 
     Assert.assertTrue("Did not find via templatepath provided template content ",
                       Files.readLines(new File("target/generated/auctionTP/auction/Auction.java"),
@@ -48,7 +48,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "--gen",
       "-o", "target/generated/auctionCT"
     };
-    CD4CodeCLI.main(input);
+    CD4CodeTool.main(input);
   }
 
 
@@ -61,7 +61,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "--gen",
       "-o", "target/generated/auctionTPDCT"
     };
-    CD4CodeCLI.main(input);
+    CD4CodeTool.main(input);
 
     // Test if the config template was loaded from the additional template path
     Assert.assertTrue("Did not find via templatepath provided template content ",
@@ -80,7 +80,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "--gen",
       "-o", "target/generated/auctionTPCT"
     };
-    CD4CodeCLI.main(input);
+    CD4CodeTool.main(input);
 
     // Test if the config template was loaded from the additional template path
     Assert.assertTrue("Did not find via templatepath provided template content ",
@@ -101,7 +101,7 @@ public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
       "--gen",
       "-o", "target/generated/auctionTPCTSep"
     };
-    CD4CodeCLI.main(input);
+    CD4CodeTool.main(input);
 
     // Test if the config template was loaded from the additional template path
     Assert.assertTrue("Did not find via templatepath provided template content ",
