@@ -6,7 +6,7 @@ import de.monticore.cddiff.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODObject;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.translator.A4Solution;
 import org.junit.Test;
 
 import java.nio.file.Path;
