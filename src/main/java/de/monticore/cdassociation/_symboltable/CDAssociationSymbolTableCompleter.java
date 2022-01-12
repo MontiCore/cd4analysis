@@ -32,7 +32,6 @@ public class CDAssociationSymbolTableCompleter
 
   public CDAssociationSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
     this.symbolTableHelper = new CDSymbolTableHelper()
-        .setImports(imports)
         .setPackageDeclaration(packageDeclaration);
   }
 

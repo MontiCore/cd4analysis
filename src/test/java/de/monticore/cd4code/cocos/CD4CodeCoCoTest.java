@@ -47,6 +47,9 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
 
     checkLogError();
 
+    // clear everything
+    initObjects();
+
     // copy created symtab to correct location for importing
     final File symtab = new File(getTmpFilePath("Simple.cdsym"));
     final File newLocation = new File(getTmpFilePath(Joiner.on(File.separator).join("de", "monticore", "cdbasis", "parser", "Simple.cdsym")));

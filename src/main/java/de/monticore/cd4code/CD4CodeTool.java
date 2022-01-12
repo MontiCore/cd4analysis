@@ -2,6 +2,7 @@
 package de.monticore.cd4code;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.json.CD2JsonUtil;
@@ -9,7 +10,6 @@ import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
@@ -134,8 +134,8 @@ public class CD4CodeTool extends CD4CodeToolTOP {
         artifactScope = createSymbolTable(ast);
         final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
         globalScope.setSymbolPath(new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
-        if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
-          ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
+        if (useBuiltInTypes) {
+          BuiltInTypes.addBuiltInTypes(globalScope);
         }
         completeSymbolTable();
 

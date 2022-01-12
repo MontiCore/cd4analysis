@@ -7,6 +7,7 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -110,7 +111,7 @@ public class TestBasis {
     checkLogError();
   }
 
-  protected ICD4AnalysisArtifactScope createST(ASTCDCompilationUnit astcdCompilationUnit) {
+  protected ICDBasisArtifactScope createST(ASTCDCompilationUnit astcdCompilationUnit) {
     final ICD4AnalysisArtifactScope st = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     checkLogError();
     return st;
