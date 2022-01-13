@@ -1,6 +1,7 @@
 package de.monticore.cd.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
@@ -32,9 +33,8 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
     final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(cd4a_file));
-    if (globalScope instanceof CD4AnalysisGlobalScope) {
-      ((CD4AnalysisGlobalScope) globalScope).addBuiltInTypes();
-    }
+    BuiltInTypes.addBuiltInTypes(globalScope);
+
 
     new CD4AnalysisAfterParseTrafo().transform(node);
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);

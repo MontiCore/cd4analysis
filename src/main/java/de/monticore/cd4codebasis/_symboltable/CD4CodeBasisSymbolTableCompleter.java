@@ -29,7 +29,6 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
 
   public CD4CodeBasisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
     this.symbolTableHelper = new CDSymbolTableHelper()
-        .setImports(imports)
         .setPackageDeclaration(packageDeclaration);
   }
 
