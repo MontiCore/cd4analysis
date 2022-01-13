@@ -73,9 +73,11 @@ public abstract class AlloyRunner {
       // Get module from optional
       CompModule module = optModule.get();
       
-      // Initialize runner with default options
+      // Initialize runner with noOverflow and skolemDepth = 1 (default options don't always work)
       A4Options options = new A4Options();
       options.solver = A4Options.SatSolver.SAT4J;
+      options.skolemDepth = 1;
+      options.noOverflow = true;
       
       // Execute all commands from the module
       for (Command command : module.getAllCommands()) {
