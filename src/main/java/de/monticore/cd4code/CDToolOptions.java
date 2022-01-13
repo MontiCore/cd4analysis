@@ -273,7 +273,8 @@ public class CDToolOptions {
         .argName("int")
         .numberOfArgs(1)
         .desc("Maximum number of objects in witnesses when comparing the semantic diff with "
-            + "`--semdiff` (optional; default is: 10). This constrains long searches.")
+            + "`--semdiff` (optional; default is based on a heuristic, but at least 20). "
+            + "This constrains long searches.")
         .build());
 
     options.addOption(Option.builder()
