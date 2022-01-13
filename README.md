@@ -126,7 +126,7 @@ The possible options are:
 | `-ct,--configTemplate <file>` | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional, `-fp` is needed to specify the template path). |
 | `-d,--defaultpackage <boolean>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
 | `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1, i.e. only one witness is shown). |
-| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is: 10). This constrains long searches. |
+| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is based on a heuristic, but at least 20). This constrains long searches. |
 | `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
 |  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
