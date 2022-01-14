@@ -48,6 +48,14 @@ trigger-langexp:
   only:
     - develop
 
+trigger-montiarc-dev:
+  stage: trigger
+  trigger:
+    project: monticore/montiarc/core
+    branch: develop
+  only:
+    - develop
+
 deploy:
   stage: deploy
   only:
