@@ -8,6 +8,7 @@ import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitor;
+import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitorDelegator;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
@@ -24,15 +25,15 @@ import static de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTra
 public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     implements CDAssociationVisitor2, CDAssociationHandler {
   protected CDAssociationTraverser traverser;
-  protected CDAssociationScopesGenitor symbolTableCreator;
+  protected CDAssociationScopesGenitorDelegator symbolTableCreator;
   protected CDAssociationSymbolTableCompleter symbolTableCompleter;
 
   public CDAssociationRoleNameTrafo() {
     this(new CDAfterParseHelper(),
-        CDAssociationMill.scopesGenitor());
+        CDAssociationMill.scopesGenitorDelegator());
   }
 
-  public CDAssociationRoleNameTrafo(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitor symbolTableCreator) {
+  public CDAssociationRoleNameTrafo(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitorDelegator symbolTableCreator) {
     super(cdAfterParseHelper);
     this.symbolTableCreator = symbolTableCreator;
   }
@@ -50,7 +51,6 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   @Override
   public void visit(ASTCDAssociation node) {
     assocStack.push(node);
-    symbolTableCreator.addToScopeStack(node.getEnclosingScope());
     createASTCDRoleIfAbsent(node);
   }
 
@@ -58,7 +58,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   public void endVisit(ASTCDAssociation node) {
     // if there is no SymAssociation already, then create a new one
     if (node.getLeft().isPresentSymbol() && !node.getLeft().getSymbol().isPresentAssoc()) {
-      symbolTableCreator.createAndInit_SymAssociation(node);
+      (new CDAssociationScopesGenitor()).createAndInit_SymAssociation(node);
     }
 
     final ASTCDAssocLeftSide leftSide = node.getLeft();
@@ -67,14 +67,13 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftSide.getSymbol().getType().getTypeInfo());
 
     assocStack.pop();
-    symbolTableCreator.removeCurrentScope();
   }
 
   @Override
   public void visit(ASTCDAssocLeftSide node) {
     if (node.isPresentCDRole() && !node.isPresentSymbol()) {
       final ASTCDAssociation assoc = assocStack.peek();
-      symbolTableCreator.buildCDRole(assoc, true);
+      node.accept(symbolTableCreator.getTraverser());
 
       // complete the types for the newly created CDRoleSymbols
       symbolTableCompleter.initialize_CDRole(node.getSymbol(), assoc, true);
@@ -85,7 +84,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   public void visit(ASTCDAssocRightSide node) {
     if (node.isPresentCDRole() && !node.isPresentSymbol()) {
       final ASTCDAssociation assoc = assocStack.peek();
-      symbolTableCreator.buildCDRole(assoc, false);
+      node.accept(symbolTableCreator.getTraverser());
 
       // complete the types for the newly created CDRoleSymbols
       symbolTableCompleter.initialize_CDRole(node.getSymbol(), assoc, false);
