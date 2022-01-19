@@ -16,10 +16,9 @@ public class TestTypeImporterScopesGenitor
   }
 
   @Override
-  public void visit(ASTElement node) {
-    super.visit(node);
+  public void endVisit(ASTElement node) {
+    super.endVisit(node);
 
-    node.getMCType().setEnclosingScope(scopeStack.peekLast()); // TODO SVa: remove when #2549 is fixed
     final Optional<SymTypeExpression> typeResult = new DeriveSymTypeOfCDBasis().calculateType(node.getMCType());
     if (!typeResult.isPresent()) {
       Log.error(String.format(
