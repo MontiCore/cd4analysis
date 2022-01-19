@@ -1,13 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
-import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
+import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
@@ -60,6 +59,16 @@ public class CdUtilsPrinter {
   }
 
   /**
+   * Prints the fully qualified name of an {@code ASTCDPackage}
+   *
+   * @param astPackage  the package whose name to print
+   * @return a dot-separated package name
+   */
+  public String printPackageName(ASTCDPackage astPackage) {
+    return String.join(".", astPackage.getMCQualifiedName().getQName());
+  }
+
+  /**
    * Converts a list of import statements to a string list.
    *
    * @param importStatements the list of import statements
@@ -68,7 +77,7 @@ public class CdUtilsPrinter {
   public String printImportList(Collection<ASTMCImportStatement> importStatements) {
     CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     StringBuilder sb = new StringBuilder();
-    importStatements.forEach(i -> sb.append(printer.prettyprint(i) + "\n"));
+    importStatements.forEach(i -> sb.append(printer.prettyprint(i)).append("\n"));
     return sb.toString();
   }
 
@@ -79,22 +88,8 @@ public class CdUtilsPrinter {
    * @return a string list of enum constants
    */
   public String printEnumConstants(List<ASTCDEnumConstant> enumConstants) {
-
     checkNotNull(enumConstants);
-
-    return Joiner.on(",").join(
-
-            Collections2.transform(enumConstants,
-                    new Function<ASTCDEnumConstant, String>() {
-
-                      @Override
-                      public String apply(ASTCDEnumConstant arg0) {
-                        return arg0.getName();
-                      }
-
-                    }
-
-            ));
+    return Joiner.on(",").join(Collections2.transform(enumConstants, ASTCDEnumConstant::getName));
   }
 
   /**
@@ -120,17 +115,9 @@ public class CdUtilsPrinter {
    */
   public String printCDParametersDecl(List<ASTCDParameter> parameterList) {
     checkNotNull(parameterList);
-
     return Joiner.on(",").join(
-            Collections2.transform(parameterList,
-                    new Function<ASTCDParameter, String>() {
-
-                      @Override
-                      public String apply(ASTCDParameter arg0) {
-                        return printType(arg0.getMCType()) + " " + arg0.getName();
-                      }
-
-                    }));
+      Collections2.transform(parameterList, arg0 -> printType(arg0.getMCType()) + " " + arg0.getName())
+    );
   }
 
   /**
@@ -140,21 +127,9 @@ public class CdUtilsPrinter {
    * @return a string list of all exceptions
    */
   public String printThrowsDecl(ASTCDThrowsDeclaration throwsDecl) {
-    StringBuilder str = new StringBuilder();
-
-    str.append("throws ");
-
-    return str.append(
-            Joiner.on(",").join(
-                    Collections2.transform(throwsDecl.getExceptionList(),
-                            new Function<ASTMCQualifiedName, String>() {
-
-                              @Override
-                              public String apply(ASTMCQualifiedName arg0) {
-                                return Joiner.on(".").join(arg0.getPartsList());
-                              }
-
-                            }))).toString();
+    return "throws " + Joiner.on(",").join(
+      Collections2.transform(throwsDecl.getExceptionList(), arg0 -> Joiner.on(".").join(arg0.getPartsList()))
+    );
   }
 
   /**
@@ -165,16 +140,7 @@ public class CdUtilsPrinter {
    */
   public String printObjectTypeList(List<ASTMCObjectType> extendsList) {
     checkNotNull(extendsList);
-
-    return Joiner.on(",").join(
-            Collections2.transform(extendsList,
-                    new Function<ASTMCObjectType, String>() {
-
-                      @Override
-                      public String apply(ASTMCObjectType arg0) {
-                        return printType(arg0);
-                      }
-                    }));
+    return Joiner.on(",").join(Collections2.transform(extendsList, this::printType));
   }
 
   public String printExpression(ASTExpression expr) {
