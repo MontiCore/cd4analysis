@@ -105,7 +105,7 @@ executable JAR file.
 You can use [**this download link**][ToolDownload] for downloading the tool. 
 Or you can use `wget` to download the latest version in your working directory:
 ```shell
-wget "https://monticore.de/download/CDCLI.jar" -O CDCLI.jar
+wget "https://monticore.de/download/MCCD.jar" -O MCCD.jar
 ``` 
 
 ### Actions and Parameters of the Tool
@@ -115,9 +115,9 @@ These two are examples for calling the tool (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
 ```shell
-java -jar CDCLI.jar -i MyBasics.cd -t true -s
-java -jar CDCLI.jar -i MyLife.cd -o target/out -t true -s
-java -jar CDCLI.jar -i MyLife.cd -pp MyLife.out.cd
+java -jar MCCD.jar -i MyBasics.cd -t true -s
+java -jar MCCD.jar -i MyLife.cd -o target/out -t true -s
+java -jar MCCD.jar -i MyLife.cd -pp MyLife.out.cd
 ```
 
 The possible options are:
@@ -165,20 +165,20 @@ To this effect, execute the following two commands:
 gradle build
 gradle shadowJar
 ```
-Congratulations! The  executable JAR file `CDCLI.jar` is now in
+Congratulations! The  executable JAR file `MCCD.jar` is now in
 the directory `target/libs`.
 
 ## Tutorial: Getting Started Using the CD Tool
 
 The following small tutorial should help to get an idea 
-of how to use the CD tool given in `CDCLI.jar`.
+of how to use the CD tool given in `MCCD.jar`.
 
 ### First Steps
 
 This prints usage information, if executing the tool with the 
 following command and no parameters:
 ```shell
-java -jar CDCLI.jar
+java -jar MCCD.jar
 ```
 
 To work properly, the tool needs the mandatory argument `-i,--input <file>`,
@@ -189,10 +189,10 @@ That means it parses the model, builds its
 symbol table, and then checks whether the model satisfies all context 
 conditions. Only errors or success are printed.
 
-For trying this out, copy the `CDCLI.jar` into a directory of your 
+For trying this out, copy the `MCCD.jar` into a directory of your 
 choice. Then create a text file `src/MyExample.cd` 
 ([also available here](doc/MyExample.cd)) in a `src` subdirectory of the
-directory where `CDCLI.jar` is located containing e.g. the following simple CD 
+directory where `MCCD.jar` is located containing e.g. the following simple CD 
 (please note that, like in Java, filename and modelname in the file have to be
 the same):
 
@@ -211,7 +211,7 @@ classdiagram MyExample {
 
 Now execute the following command:
 ```
-java -jar CDCLI.jar -i src/MyExample.cd
+java -jar MCCD.jar -i src/MyExample.cd
 ```
 
 You may notice that the tool prints the following text to the console:
@@ -224,7 +224,7 @@ The contents of the input CD artifact can also be piped to the tool.
 For trying this out, execute the following command:
 
 ```shell
-cat src/MyExample.cd | java -jar CDCLI.jar --stdin
+cat src/MyExample.cd | java -jar MCCD.jar --stdin
 ``` 
 The output is the same as for the previous command.
 
@@ -240,7 +240,7 @@ Using the option without any arguments pretty-prints the models contained in the
 input files to the console (stdout):
 
 ```shell
-java -jar CDCLI.jar -i src/MyExample.cd -pp
+java -jar MCCD.jar -i src/MyExample.cd -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
@@ -262,7 +262,7 @@ output file (here: `PPExample.cd`), missing directories are created
 automatically:
 
 ```shell
-java -jar CDCLI.jar -i src/MyExample.cd -pp target/PPExample.cd
+java -jar MCCD.jar -i src/MyExample.cd -pp target/PPExample.cd
 ```
 
 ### Step 3: Storing Symbols
@@ -282,7 +282,7 @@ input model in the file `{CDName}.cdsym`.
 For storing the symbol file for `src/MyExample.cd`, we execute the following 
 command (the context condition checks require using the path option):
 ```shell
-java -jar CDCLI.jar -i src/MyExample.cd -s
+java -jar MCCD.jar -i src/MyExample.cd -s
 ```
 The tool produces the file `MyExample.cdsym`, which can now be
 imported by other models, e.g., by models that need to
@@ -299,7 +299,7 @@ which are type, association, interface, attribute and method symbols.
 For storing the symbol file of `src/MyExample.cd` in the file 
 `symbols/MyExample.cdsym`, for example, execute the following command:
 ```shell
-java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
+java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
 ```
 
 ### Step 4: Adding `FieldSymbol`s corresponding to association roles
@@ -316,7 +316,7 @@ Form 1: For each of the `CDRoleSymbol`s add a `FieldSymbol` in the source class
    that always allow for the navigation in both directions.
 These additional field symbols are stored with:
 ```shell
-java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole all
+java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole all
 ```
 
 * two additional `FieldSymbol`s were stored for both sides of the association
@@ -325,7 +325,7 @@ Form 2: `FieldSymbol`s are added only for navigable roles.
   This can be used in implementation oriented languages that have to cope
   with the actual implementation restrictions:
 ```shell
-java -jar CDCLI.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole navigable
+java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym --fieldfromrole navigable
 ```
 * only one additional `FieldSymbol` is stored for the navigable Role `friends`,
   because the association is only unidirectional
@@ -343,7 +343,7 @@ because of the package definition in line 1.
 
 Execute the following command for processing the file `MyLife.cd`:
 ```shell
-java -jar CDCLI.jar -i src/monticore/MyLife.cd
+java -jar MCCD.jar -i src/monticore/MyLife.cd
 ```
 
 After executing the command, 
@@ -388,13 +388,13 @@ their symbol files. This has several interesting advantages:
 However, the tool has to be applied to the new additional model first:
 
 ```shell
-java -jar CDCLI.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
+java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
 ```
 
 We then add the symbol file to the model path using `--path`:
 
 ```shell
-java -jar CDCLI.jar -i src/monticore/MyLife.cd --defaultpackage --path symbols
+java -jar MCCD.jar -i src/monticore/MyLife.cd --defaultpackage --path symbols
 ```
  
 The model path is used to identify the directory structure that contains the 
@@ -420,11 +420,11 @@ to be in a default package. This default is calculated as follows:
 By using the option `--gen`, we can generate .java-files corresponding to the
 input class diagram:
 ```shell
-java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen
+java -jar java -jar MCCD.jar -i src/MyExample.cd --gen
 ```
 With option `-o` we can specify the output directory; the default is `.`:
 ```shell
-java -jar java -jar CDCLI.jar -i src/MyExample.cd --gen -o out
+java -jar java -jar MCCD.jar -i src/MyExample.cd --gen -o out
 ```
 
 ### Step 8: Computing the Semantic Difference of Two Class Diagrams
@@ -448,18 +448,18 @@ For the following examples, download the files [Employees1.cd](doc/Employees1.cd
 `src`:
 
 ```shell
-java -jar CDCLI.jar -i src/Employees1.cd --semdiff scr/Employees2.cd --diffsize 2
+java -jar MCCD.jar -i src/Employees1.cd --semdiff scr/Employees2.cd --diffsize 2
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
 that are generated in the output directory; the default is to generate at most 1 diff-witness. Once again, `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar CDCLI.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 5 --difflimit 20 -o out
+java -jar MCCD.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 5 --difflimit 20 -o out
 ```
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
-[ToolDownload]: https://monticore.de/download/CDCLI.jar
+[ToolDownload]: https://monticore.de/download/MCCD.jar
 
 ## Further Information
 
