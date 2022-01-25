@@ -2,10 +2,8 @@
 package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
-import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.cdassociation._visitor.CDAssocTypeForSymAssociationVisitor;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.se_rwth.commons.logging.Log;
@@ -16,70 +14,6 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
 
   public CDAssociationScopesGenitor() {
     super();
-  }
-
-  @Override
-  public void handle(ASTCDAssociation node) {
-    node.setEnclosingScope(getCurrentScope().get());
-
-    CDAssociationSymbolBuilder symbol = create_CDAssociation(node);
-    if (symbol != null) {
-      CDAssociationSymbol realSymbol = symbol.build();
-      if (getCurrentScope().isPresent()) {
-        getCurrentScope().get().add(realSymbol);
-      } else {
-        Log.warn("0xAE871 Symbol cannot be added to current scope, since no scope exists.");
-      }
-      de.monticore.cdassociation._symboltable.ICDAssociationScope scope = createScope(false);
-      putOnStack(scope);
-      realSymbol.setSpannedScope(scope);
-      // symbol -> ast
-      realSymbol.setAstNode(node);
-
-      // ast -> symbol
-      node.setSymbol(realSymbol);
-      node.setEnclosingScope(realSymbol.getEnclosingScope());
-
-      // scope -> ast
-      scope.setAstNode(node);
-
-      // ast -> scope
-      node.setSpannedScope(scope);
-      initCDAssociationHP1(node.getSymbol());
-    }
-
-    if (node.getLeft().isPresentCDRole()) {
-      buildCDRole(node, true);
-    }
-    if (node.getRight().isPresentCDRole()) {
-      buildCDRole(node, false);
-    }
-
-    createAndInit_SymAssociation(node);
-
-    node.getLeft().setEnclosingScope(node.getEnclosingScope());
-    initSide(node.getLeft());
-    node.getRight().setEnclosingScope(node.getEnclosingScope());
-    initSide(node.getRight());
-
-    if (symbol != null) {
-      removeCurrentScope();
-    }
-  }
-
-  protected void initSide(ASTCDAssocSide side) {
-    if (side.isPresentCDQualifier()) {
-      if (side.getCDQualifier().isPresentByType()) {
-        side.getCDQualifier().getByType().setEnclosingScope(side.getEnclosingScope());
-      }
-    }
-    side.getMCQualifiedType().setEnclosingScope(side.getEnclosingScope());
-    side.getMCQualifiedType().getMCQualifiedName().setEnclosingScope(side.getEnclosingScope());
-  }
-
-  @Override
-  public void handle(ASTCDRole node) {
-    // do nothing, everything is handled by the association
   }
 
   @Override
@@ -96,27 +30,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
     }
   }
 
-  public void buildCDRole(ASTCDAssociation node, boolean isLeft) {
-    final ASTCDAssocSide side = isLeft ? node.getLeft() : node.getRight();
-    final ASTCDRole cdRole = side.getCDRole();
-
-    final CDRoleSymbol symbol = CDAssociationMill.cDRoleSymbolBuilder().setName(cdRole.getName()).build();
-    if (getCurrentScope().isPresent()) {
-      getCurrentScope().get().add(symbol);
-    } else {
-      Log.warn("0xAE872 Symbol cannot be added to current scope, since no scope exists.");
-    }
-    // symbol -> ast
-    symbol.setAstNode(cdRole);
-
-    // ast -> symbol
-    cdRole.setSymbol(symbol);
-    node.setEnclosingScope(symbol.getEnclosingScope());
-
-    initCDRoleHP1(cdRole.getSymbol());
-  }
-
-  public void createAndInit_SymAssociation(ASTCDAssociation node) {
+  public void endVisit(ASTCDAssociation node) {
     // create the SymAssociation connected to the CDAssociationSymbol
     // only if both role names are set
     Optional<SymAssociationBuilder> symAssociation = create_SymAssociation(node);
@@ -131,6 +45,24 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
           .setLeftRole(node.getLeft().getSymbol())
           .setRightRole(node.getRight().getSymbol())
           .build();
+    }
+  }
+
+  public void createAndInit_SymAssociation(ASTCDAssociation node) {
+    // create the SymAssociation connected to the CDAssociationSymbol
+    // only if both role names are set
+    Optional<SymAssociationBuilder> symAssociation = create_SymAssociation(node);
+    if (symAssociation.isPresent()) {
+      initialize_SymAssociation(symAssociation.get(), node);
+      if (node.isPresentSymbol()) {
+        // only link the association symbol to the symAssociation when
+        // the symAssociation is created
+        symAssociation.get().setAssociationSymbol(node.getSymbol());
+      }
+      symAssociation.get()
+        .setLeftRole(node.getLeft().getSymbol())
+        .setRightRole(node.getRight().getSymbol())
+        .build();
     }
   }
 

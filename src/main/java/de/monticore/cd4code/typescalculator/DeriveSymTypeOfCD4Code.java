@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.typescalculator;
 
-import de.monticore.cd._symboltable.*;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
@@ -10,7 +9,6 @@ import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
@@ -21,7 +19,6 @@ public class DeriveSymTypeOfCD4Code
 
   protected CD4CodeTraverser traverser;
   private TypeCheckResult typeCheckResult;
-  private CD4CodeTraverser typesScopeHelper;
 
   public DeriveSymTypeOfCD4Code() {
     init();
@@ -63,21 +60,18 @@ public class DeriveSymTypeOfCD4Code
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
-    type.accept(typesScopeHelper);
     type.accept(getTraverser());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
-    node.accept(typesScopeHelper);
     node.accept(getTraverser());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCReturnType node) {
     reset();
-    node.accept(typesScopeHelper);
     node.accept(getTraverser());
     return getResult();
   }
@@ -94,14 +88,6 @@ public class DeriveSymTypeOfCD4Code
   public void init() {
     this.traverser = CD4CodeMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-
-    this.typesScopeHelper = CD4CodeMill.traverser();
-
-    typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
-    typesScopeHelper.add4MCCollectionTypes(new MCCollectionTypesScopeHelper());
-    typesScopeHelper.add4MCSimpleGenericTypes(new MCSimpleGenericTypesScopeHelper());
-    typesScopeHelper.add4MCArrayTypes(new MCArrayTypesScopeHelper());
-    typesScopeHelper.add4MCFullGenericTypes(new MCFullGenericTypesScopeHelper());
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

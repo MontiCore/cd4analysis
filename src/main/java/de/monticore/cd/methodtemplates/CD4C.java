@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
@@ -194,15 +195,8 @@ public class CD4C {
   }
 
   private ASTCDMethodSignature setEnclosingScopeTo(ASTCDMethodSignature method, ICDBasisScope scope) {
-    // TODO: maybe just create a symbol table
     if (!this.methodPredicates.isEmpty() || !this.classPredicates.isEmpty()) {
-      method.setEnclosingScope(scope);
-      method.getCDParameterList().forEach(p -> {
-        p.getMCType().setEnclosingScope(scope);
-      });
-      if (method instanceof ASTCDMethod) {
-        ((ASTCDMethod) method).getMCReturnType().setEnclosingScope(scope);
-      }
+      method.accept(CD4CodeMill.scopesGenitorDelegator().getTraverser());
     }
     return method;
   }
@@ -259,10 +253,8 @@ public class CD4C {
   }
 
   private ASTCDAttribute setEnclosingScopeTo(ASTCDAttribute attribute, ICDBasisScope scope) {
-    // TODO: maybe just create a symbol table
     if (!this.attributePredicates.isEmpty() || !this.classAttrPredicates.isEmpty()) {
-      attribute.setEnclosingScope(scope);
-      attribute.getMCType().setEnclosingScope(scope);
+      attribute.accept(CD4CodeMill.scopesGenitorDelegator().getTraverser());
     }
     return attribute;
   }
