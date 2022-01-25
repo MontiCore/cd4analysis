@@ -511,7 +511,7 @@ public class CD4CodeTool extends CD4CodeToolTOP {
   protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the Tool file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdToolOptionsForHelp.getOptions());
+    formatter.printHelp("Examples in case the Tool file is called MCCD.jar: " + System.lineSeparator() + "java -jar MCCD.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar MCCD.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));
@@ -520,8 +520,23 @@ public class CD4CodeTool extends CD4CodeToolTOP {
   }
 
   protected void computeSemDiff() throws NumberFormatException{
+    // parse the second CD
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
-    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "10"));
+
+    // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
+    int diffsize;
+    if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
+      diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "20"));
+    } else {
+      int cd1size = ast.getCDDefinition().getCDClassesList().size()
+          + ast.getCDDefinition().getCDInterfacesList().size();
+
+      int cd2size = ast2.getCDDefinition().getCDClassesList().size()
+          + ast2.getCDDefinition().getCDInterfacesList().size();
+
+      diffsize = Math.max(20,2*Math.max(cd1size, cd2size));
+    }
+
     int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
 
     // compute semDiff(ast,ast2)

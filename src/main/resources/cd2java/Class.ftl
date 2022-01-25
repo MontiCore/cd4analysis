@@ -1,11 +1,11 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("cdClass")}
+${tc.signature("cdClass", "package")}
 <#assign cdPrinter = glex.getGlobalVar("cdPrinter")>
 /* (c) https://github.com/MontiCore/monticore */
 
 ${defineHookPoint("ClassContent:addComment")}
 
-${tc.include("cd2java.Package")}
+${tc.include("cd2java.Package", package)}
 
 ${tc.include("cd2java.Imports")}
 ${cdPrinter.printImportList(cd4c.getImportList(cdClass))}
