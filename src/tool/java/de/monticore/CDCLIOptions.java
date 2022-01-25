@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd4code;
+package de.monticore;
 
 import org.apache.commons.cli.*;
 

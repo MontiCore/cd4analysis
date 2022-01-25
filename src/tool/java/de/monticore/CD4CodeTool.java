@@ -1,19 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
-import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code.CD4CodeToolTOP;
-import de.monticore.cd4code.CDCLIOptions;
 import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -53,7 +46,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CD4CodeTool extends CD4CodeToolTOP {
+public class CD4CodeTool extends CD4CodeTool {
 
   protected static final String PARSE_SUCCESSFUL = "Successfully parsed %s\n";
   protected static final String CHECK_SUCCESSFUL = "Successfully checked the CoCos for class diagram %s\n";
@@ -243,25 +236,6 @@ public class CD4CodeTool extends CD4CodeToolTOP {
           List<Object> configTemplateArgs = Arrays.asList(glex, generator);
           hpp.processValue(tc, ast, configTemplateArgs);
         }
-
-        if (cmd.hasOption("json")) {
-          JsonNode schema = CD2JsonUtil.run(ast, globalScope);
-
-          String filename = "Schema.json";
-          {
-            File output = Paths.get(this.outputPath, filename).toFile();
-            output.createNewFile();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(output));
-            writer.write(schema.toPrettyString());
-            writer.close();
-          }
-          System.out.printf(JSON_SUCCESSFUL, filename);
-
-        }
-        if (cmd.hasOption("semdiff")){
-          computeSemDiff();
-        }
-
       }
     }catch (AmbiguousOptionException e) {
       Log.error(String.format("0xCD0E2: option '%s' can't match any valid option", e.getOption()));
@@ -335,7 +309,7 @@ public class CD4CodeTool extends CD4CodeToolTOP {
 
   public ASTCDCompilationUnit parse(Reader reader) {
     try {
-      de.monticore.cd4code._parser.CD4CodeParser parser = CD4CodeMill.parser() ;
+      de.monticore.cd4code._parser.CD4CodeParser parser = de.monticore.cd4code.CD4CodeMill.parser() ;
       Optional<ASTCDCompilationUnit> optAst = parser.parse(reader);
 
       if (!parser.hasErrors() && optAst.isPresent()) {
@@ -343,7 +317,7 @@ public class CD4CodeTool extends CD4CodeToolTOP {
       }
       Log.error("0xCD0E0 Model could not be parsed.");
     }
-    catch (NullPointerException | IOException e) {
+    catch (NullPointerException | java.io.IOException e) {
       Log.error("0xCD0E1 Failed to parse from stdin", e);
     }
     // should never be reached (unless failquick is off)
@@ -522,27 +496,5 @@ public class CD4CodeTool extends CD4CodeToolTOP {
     System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
 
-  protected void computeSemDiff() throws NumberFormatException{
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
-    int diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "10"));
-    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
-
-    // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
-
-    // test if solution is present
-    if (!optS.isPresent()) {
-      Log.error("could not compute semdiff");
-      return;
-    }
-    AlloyDiffSolution sol = optS.get();
-
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(difflimit);
-    sol.setLimited(true);
-
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
-  }
 
 }
