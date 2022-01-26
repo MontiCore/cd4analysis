@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.alloycddiff.alloyRunner;
 
-import edu.mit.csail.sdg.alloy4compiler.ast.Command;
-import edu.mit.csail.sdg.alloy4compiler.parser.CompModule;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.ast.Command;
+import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.translator.A4Solution;
 
 /**
  * A concrete runner for alloy modules computing diff solutions for class
@@ -13,9 +13,9 @@ import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
  */
 public class AlloyDiffRunner extends AlloyRunner {
   /**
-   * @see AlloyRunner#solutionHandlerGenerator(edu.mit.csail.sdg.alloy4compiler.parser.CompModule,
-   * edu.mit.csail.sdg.alloy4compiler.ast.Command,
-   * edu.mit.csail.sdg.alloy4compiler.translator.A4Solution)
+   * @see de.monticore.cddiff.alloycddiff.alloyRunner.AlloyRunner#solutionHandlerGenerator(edu.mit.csail.sdg.parser.CompModule,
+   * edu.mit.csail.sdg.ast.Command,
+   * edu.mit.csail.sdg.translator.A4Solution)
    */
   @Override
   public AlloySolutionHandler solutionHandlerGenerator(CompModule module, Command command,

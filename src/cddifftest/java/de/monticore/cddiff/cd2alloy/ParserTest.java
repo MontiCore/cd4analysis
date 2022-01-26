@@ -11,10 +11,10 @@ import static org.junit.Assert.assertNotNull;
  *
  */
 public class ParserTest extends AbstractTest {
-  
+
   @Test
   public void test() {
-    ASTCDCompilationUnit cd1 = parseModel("src/test/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
     assertNotNull(cd1);
-  }  
+  }
 }

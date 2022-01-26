@@ -22,7 +22,7 @@ public class IllegalAttributeModifierTest extends AbstractTest {
 
   @Test
   public void invalidInputSymbolTest(){
-    ASTCDCompilationUnit a = parseModel("src/test/resources/de/monticore/cddiff/InvalidCoCos/cd2.cd");
+    ASTCDCompilationUnit a = parseModel("src/cddifftest/resources/de/monticore/cddiff/InvalidCoCos/cd2.cd");
 
 
     CD4AnalysisCoCoChecker checker = new CD2AlloyCoCos().getCheckerForAllCoCos();

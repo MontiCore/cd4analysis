@@ -4,9 +4,9 @@ package de.monticore.alloycddiff.alloyRunner;
 import de.monticore.generator.Alloy2ODGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import edu.mit.csail.sdg.alloy4.Err;
-import edu.mit.csail.sdg.alloy4compiler.ast.Command;
-import edu.mit.csail.sdg.alloy4compiler.parser.CompModule;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.ast.Command;
+import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.translator.A4Solution;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

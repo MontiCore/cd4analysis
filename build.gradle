@@ -83,9 +83,10 @@ sourceSets {
   }
   tooltest {
     java {}
-    compileClasspath += sourceSets.tool.runtimeClasspath
     compileClasspath += sourceSets.test.runtimeClasspath
     compileClasspath += sourceSets.cddifftest.runtimeClasspath
+    compileClasspath += sourceSets.tool.runtimeClasspath
+    runtimeClasspath += sourceSets.cddiff.runtimeClasspath
   }
 }
 
@@ -124,9 +125,10 @@ dependencies {
   testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   }
-    // dependencies for cddiff
+
+  // dependencies for cddiff
   cddiffImplementation "de.monticore.lang:od:$mc_version"
-  cddiffImplementation "edu.mit.alloy:alloy:4.2.0-rc1"
+  cddiffImplementation "edu.mit.alloy:alloy:6"
 
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
@@ -375,12 +377,16 @@ task cddiffJar(type: Jar) {
 jar.dependsOn cddiffJar
 
 shadowJar { // all in one jar
-  archiveFileName = 'CDCLI.jar'
+  archiveFileName = 'MCCD.jar'
   manifest {
-    attributes "Main-Class": "de.monticore.CD4CodeCLI"
+    attributes "Main-Class": "de.monticore.CD4CodeTool"
   }
-  archiveClassifier = "cli"
+  from sourceSets.cddiff.output
+  from sourceSets.tool.output
+  archiveClassifier = "mc-tool"
 }
+
+jar.dependsOn(shadowJar)
 
 testSets {
   integrationTest {

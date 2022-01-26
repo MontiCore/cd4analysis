@@ -6,7 +6,7 @@ import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODObject;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.translator.A4Solution;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -57,10 +57,10 @@ public class AssociationChainTest extends AbstractTest {
   @Test
   public void testLength12() {
     // Parse Test Modules
-    final ASTCDCompilationUnit astV1 = parseModel("src/test/resources/de/monticore/cddiff/AssociationChains"
+    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/AssociationChains"
         + "/AssocChainLen1.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 = parseModel("src/test/resources/de/monticore/cddiff/AssociationChains"
+    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/AssociationChains"
         + "/AssocChainLen2.cd");
     assertNotNull(astV2);
 

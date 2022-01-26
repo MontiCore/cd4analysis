@@ -1,14 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.alloycddiff.classDifference.ClassDifference;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
+import de.monticore.cd.json.CD2JsonUtil;
 import de.monticore.cd.plantuml.PlantUMLConfig;
 import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
@@ -69,8 +73,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   protected String outputPath;
   protected ASTCDCompilationUnit ast;
   protected ICD4CodeArtifactScope artifactScope;
-  protected final CDCLIOptions cdcliOptions = new CDCLIOptions(true);
-  protected final CDCLIOptions cdcliOptionsForHelp = new CDCLIOptions();
+  protected final CDToolOptions cdToolOptions = new CDToolOptions(true);
+  protected final CDToolOptions cdToolOptionsForHelp = new CDToolOptions();
   protected CommandLine cmd;
 
   @Override
@@ -131,8 +135,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         artifactScope = createSymbolTable(ast);
         final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
         globalScope.setSymbolPath(new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
-        if (useBuiltInTypes && globalScope instanceof CD4CodeGlobalScope) {
-          ((CD4CodeGlobalScope) globalScope).addBuiltInTypes();
+        if (useBuiltInTypes) {
+          BuiltInTypes.addBuiltInTypes(globalScope);
         }
         completeSymbolTable();
 
@@ -208,7 +212,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
 
         if (cmd.hasOption("puml")) { // if option puml is given, then enable the plantuml options
-          final CommandLine plantUMLCmd = cdcliOptions.parse(CDCLIOptions.SubCommand.PLANTUML);
+          final CommandLine plantUMLCmd = cdToolOptions.parse(CDToolOptions.SubCommand.PLANTUML);
           final String path = createPlantUML(plantUMLCmd, this.outputPath);
           final String dir = System.getProperty("user.dir");
           String relative = new File(dir).toURI().relativize(new File(path).toURI()).getPath();
@@ -237,6 +241,25 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           List<Object> configTemplateArgs = Arrays.asList(glex, generator);
           hpp.processValue(tc, ast, configTemplateArgs);
         }
+
+        if (cmd.hasOption("json")) {
+          JsonNode schema = CD2JsonUtil.run(ast, globalScope);
+
+          String filename = "Schema.json";
+          {
+            File output = Paths.get(this.outputPath, filename).toFile();
+            output.createNewFile();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(output));
+            writer.write(schema.toPrettyString());
+            writer.close();
+          }
+          System.out.printf(JSON_SUCCESSFUL, filename);
+
+        }
+        if (cmd.hasOption("semdiff")){
+          computeSemDiff();
+        }
+
       }
     }catch (AmbiguousOptionException e) {
       Log.error(String.format("0xCD0E2: option '%s' can't match any valid option", e.getOption()));
@@ -252,7 +275,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     catch (NumberFormatException e) {
       Log.error("0xCD0E6: options --diffsize and --difflimit each require an "
-          + "integer as argument");
+        + "integer as argument");
     }
     catch (Exception e) {
       Log.error(String.format("0xCD0E7: an error occurred: %s", e.getMessage()));
@@ -267,7 +290,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   protected boolean handleArgs(String[] args)
     throws IOException, ParseException {
-    cmd = cdcliOptions.handleArgs(args);
+    cmd = cdToolOptions.handleArgs(args);
 
     /*if (cmd.hasOption("log")) {
       root.setLevel(Level.toLevel(cmd.getOptionValue("log", DEFAULT_LOG_LEVEL.levelStr), DEFAULT_LOG_LEVEL));
@@ -277,17 +300,17 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     if (cmd.hasOption("h")) {
       if (cmd.hasOption("puml")) {
-        printHelp(CDCLIOptions.SubCommand.PLANTUML);
+        printHelp(CDToolOptions.SubCommand.PLANTUML);
       }
       else {
-        printHelp((CDCLIOptions.SubCommand) null);
+        printHelp((CDToolOptions.SubCommand) null);
       }
       return false;
     }
     else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
-        printHelp((CDCLIOptions.SubCommand) null);
+        printHelp((CDToolOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
         return false;
       }
@@ -486,16 +509,64 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     return Files.exists(filePath);
   }
 
-  protected void printHelp(CDCLIOptions.SubCommand subCommand) {
+  protected void printHelp(CDToolOptions.SubCommand subCommand) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
-    formatter.printHelp("Examples in case the CLI file is called CDCLI.jar: " + System.lineSeparator() + "java -jar CDCLI.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar CDCLI.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdcliOptionsForHelp.getOptions());
+    formatter.printHelp("Examples in case the Tool file is called MCCD.jar: " + System.lineSeparator() + "java -jar MCCD.jar -i Person.cd --path target:src/models -o target/out -t true -s" + System.lineSeparator() + "java -jar MCCD.jar -i src/Person.cd -pp target/Person.cd" + System.lineSeparator() + "", cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
-      formatter.printHelp(subCommand.toString(), cdcliOptionsForHelp.getOptions(subCommand));
+      formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));
     }
     System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
 
+  protected void computeSemDiff() throws NumberFormatException{
+    // parse the second CD
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
 
+    // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
+    int diffsize;
+    if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
+      diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "20"));
+    } else {
+      int cd1size = ast.getCDDefinition().getCDClassesList().size()
+        + ast.getCDDefinition().getCDInterfacesList().size();
+
+      int cd2size = ast2.getCDDefinition().getCDClassesList().size()
+        + ast2.getCDDefinition().getCDInterfacesList().size();
+
+      diffsize = Math.max(20,2*Math.max(cd1size, cd2size));
+    }
+
+    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
+
+    // compute semDiff(ast,ast2)
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
+
+    // test if solution is present
+    if (!optS.isPresent()) {
+      Log.error("could not compute semdiff");
+      return;
+    }
+    AlloyDiffSolution sol = optS.get();
+
+    // limit number of generated diff-witnesses
+    sol.setSolutionLimit(difflimit);
+    sol.setLimited(true);
+
+    // generate diff-witnesses in outputPath
+    sol.generateSolutionsToPath(Paths.get(outputPath));
+  }
+
+  /* generated by template core.Method*/
+  public  static  void main (String[] args)
+
+  {
+    /* generated by template _cli.Main*/
+
+
+    CD4CodeTool tool = new CD4CodeTool();
+    tool.run(args);
+
+  }
 }

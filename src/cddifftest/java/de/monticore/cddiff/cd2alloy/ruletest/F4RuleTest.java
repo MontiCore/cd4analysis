@@ -19,11 +19,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class F4RuleTest extends AbstractTest {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/test/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
 
   private void checkF4(String f4, Set<String> expectedResult) {
     // Extract function names from result

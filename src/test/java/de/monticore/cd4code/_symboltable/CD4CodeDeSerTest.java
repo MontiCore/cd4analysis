@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -84,7 +85,7 @@ public class CD4CodeDeSerTest extends CD4CodeTestBasis {
     // explicitly not using the mill for initializing a global scope
     final CD4CodeGlobalScope globalScopeForDeserialization = new CD4CodeGlobalScope();
     globalScopeForDeserialization.setSymbolPath(new MCPath(Paths.get(PATH)));
-    globalScopeForDeserialization.addBuiltInTypes();
+    BuiltInTypes.addBuiltInTypes(globalScopeForDeserialization);
     globalScopeForDeserialization.addSubScope(deserialize);
     return deserialize;
   }

@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4codebasis.typescalculator;
 
-import de.monticore.cd._symboltable.*;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
@@ -19,7 +18,6 @@ public class DeriveSymTypeOfCD4CodeBasis
 
   protected CD4CodeBasisTraverser traverser;
   private TypeCheckResult typeCheckResult;
-  private CD4CodeBasisTraverser typesScopeHelper;
 
   public DeriveSymTypeOfCD4CodeBasis() {
     init();
@@ -65,14 +63,12 @@ public class DeriveSymTypeOfCD4CodeBasis
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
-    type.accept(typesScopeHelper);
     type.accept(getTraverser());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
-    node.accept(typesScopeHelper);
     node.accept(getTraverser());
     return getResult();
   }
@@ -89,10 +85,6 @@ public class DeriveSymTypeOfCD4CodeBasis
   public void init() {
     this.traverser = CD4CodeBasisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-    this.typesScopeHelper = CD4CodeBasisMill.traverser();
-
-    typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
-
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

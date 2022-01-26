@@ -6,7 +6,7 @@ import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODObject;
-import edu.mit.csail.sdg.alloy4compiler.translator.A4Solution;
+import edu.mit.csail.sdg.translator.A4Solution;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -69,9 +69,9 @@ public class AlloyGeneratorTest extends AbstractTest {
   @Test
   public void testManger() {
     // Parse Test Modules
-    final ASTCDCompilationUnit astV1 = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
@@ -126,10 +126,10 @@ public class AlloyGeneratorTest extends AbstractTest {
   public void testSimilarMangers() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/test/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
@@ -177,11 +177,11 @@ public class AlloyGeneratorTest extends AbstractTest {
   public void testEmptyClasses() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/test/resources/de/monticore/cddiff/InterfaceAbstact/abstractCD.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/InterfaceAbstact/abstractCD.cd");
     assertNotNull(astV1);
 
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/test/resources/de/monticore/cddiff/InterfaceAbstact/interfaceCD.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/InterfaceAbstact/interfaceCD.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
@@ -204,15 +204,15 @@ public class AlloyGeneratorTest extends AbstractTest {
   public void testEmptyClassComparision() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/test/resources/de/monticore/cddiff/InterfaceAbstact/abstractCD.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/InterfaceAbstact/abstractCD.cd");
     assertNotNull(astV1);
 
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/test/resources/de/monticore/cddiff/InterfaceAbstact/interfaceCD.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/InterfaceAbstact/interfaceCD.cd");
     assertNotNull(astV2);
 
     final ASTCDCompilationUnit astV3 = parseModel(
-        "src/test/resources/de/monticore/cddiff/InterfaceAbstact/CD.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/InterfaceAbstact/CD.cd");
     assertNotNull(astV3);
 
     // Initialize set of asts

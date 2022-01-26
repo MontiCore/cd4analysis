@@ -1,9 +1,9 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-${tc.signature("cdEnum")}
+${tc.signature("cdEnum", "package")}
 /* (c) https://github.com/MontiCore/monticore */
 <#assign cdPrinter = glex.getGlobalVar("cdPrinter")>
 
-${tc.include("cd2java.Package")}
+${tc.include("cd2java.Package", package)}
 
 ${tc.include("cd2java.Annotations")}
 public enum ${cdEnum.getName()}

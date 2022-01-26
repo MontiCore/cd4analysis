@@ -19,9 +19,9 @@ import static org.junit.Assert.*;
  */
 abstract public class AbstractTest {
 
-  public ASTCDCompilationUnit mvAst = parseModel("src/test/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
-  public ASTCDCompilationUnit m1Ast  = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd");
-  public ASTCDCompilationUnit m2Ast  = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  public ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  public ASTCDCompilationUnit m1Ast  = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  public ASTCDCompilationUnit m2Ast  = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
 
 
   /**

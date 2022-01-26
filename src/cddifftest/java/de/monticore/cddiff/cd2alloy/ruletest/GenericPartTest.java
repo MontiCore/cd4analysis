@@ -17,11 +17,11 @@ import static org.junit.Assert.assertTrue;
  */
 public class GenericPartTest extends AbstractTest {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/test/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
 
   String genericPart = " // ***** Generic Part ***** " + System.lineSeparator() +
       " " + System.lineSeparator() +
