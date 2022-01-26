@@ -68,24 +68,33 @@ sourceSets {
     }
   }
   cddiff {
-    java {
-    }
+    java {}
+    compileClasspath += sourceSets.main.runtimeClasspath
   }
   cddifftest {
-    java {
-    }
-    compileClasspath += sourceSets.main.runtimeClasspath
-    compileClasspath += sourceSets.test.runtimeClasspath
+    java {}
     compileClasspath += sourceSets.cddiff.runtimeClasspath
+    compileClasspath += sourceSets.test.runtimeClasspath
   }
   tool {
-    java {
-    }
+    java {}
+    compileClasspath += sourceSets.cddiff.runtimeClasspath
+    compileClasspath += sourceSets.main.runtimeClasspath
+  }
+  tooltest {
+    java {}
+    compileClasspath += sourceSets.tool.runtimeClasspath
+    compileClasspath += sourceSets.test.runtimeClasspath
+    compileClasspath += sourceSets.cddifftest.runtimeClasspath
   }
 }
 
-
 configurations {
+  cddiffImplementation.extendsFrom(mainImplementation)
+  cddifftestImplementation.extendsFrom(cddiffImplementation)
+  toolImplementation.extendsFrom(cddiffImplementation)
+  tooltestImplementation.extendsFrom(toolImplementation)
+  tooltestImplementation.extendsFrom(cddifftestImplementation)
   grammar
   cli
 }
@@ -116,25 +125,12 @@ dependencies {
     requireCapability("de.monticore:monticore-runtime-tests") }
   }
     // dependencies for cddiff
-  cddiffCompile sourceSets.main.output
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:4.2.0-rc1"
 
-  cddifftestCompile sourceSets.main.output
-  cddifftestCompile sourceSets.test.output
-  cddifftestCompile sourceSets.cddiff.output
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
-
-/*
-configurations {
-  ecj
-}
-dependencies {
-  ecj 'org.eclipse.jdt:ecj:3.26.0'
-}
-*/
 
 allprojects {
   repositories {
@@ -297,7 +293,16 @@ task cddifftest(type: Test) {
   shouldRunAfter test
 }
 
-check.dependsOn cddifftest
+task tooltest(type: Test) {
+  description = "Runs Tool Tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath += sourceSets.tooltest.runtimeClasspath
+  classpath += sourceSets.tool.runtimeClasspath
+  shouldRunAfter test
+}
+
+check.dependsOn cddifftest, tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -362,12 +367,12 @@ task testSourcesJar(type: Jar) {
 }
 
 // build test sources jar in addition
-task toolJar(type: Jar) {
+task cddiffJar(type: Jar) {
   from sourceSets.cddiff.output + sourceSets.cddiff.allSource
   archiveClassifier = "cddiff"
 }
 
-jar.dependsOn toolJar
+jar.dependsOn cddiffJar
 
 shadowJar { // all in one jar
   archiveFileName = 'CDCLI.jar'

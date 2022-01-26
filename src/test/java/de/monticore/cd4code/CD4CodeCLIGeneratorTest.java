@@ -4,13 +4,13 @@ package de.monticore.cd4code;
 import com.google.common.io.Files;
 import org.antlr.v4.runtime.RecognitionException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-
-
+@Ignore
 public class CD4CodeCLIGeneratorTest extends CD4CodeTestBasis {
 
   @Test

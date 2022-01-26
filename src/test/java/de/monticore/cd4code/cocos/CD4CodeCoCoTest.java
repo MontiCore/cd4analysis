@@ -10,6 +10,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.apache.commons.cli.ParseException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -37,6 +38,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     cd4CodeCoCos.getCheckerForAllCoCos().checkAll(node);
   }
 
+  @Ignore
   @Test
   public void useCLI() throws IOException, ParseException {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
@@ -62,6 +64,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     checkLogError();
   }
 
+  @Ignore
   @Test
   public void checkMultiplePathArgs() throws IOException, ParseException {
     final File otherFile = new File(getFilePath("cdbasis/parser/Simple.cd"));
