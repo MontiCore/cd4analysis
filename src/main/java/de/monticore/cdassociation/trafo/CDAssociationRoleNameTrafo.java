@@ -58,7 +58,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   public void endVisit(ASTCDAssociation node) {
     // if there is no SymAssociation already, then create a new one
     if (node.getLeft().isPresentSymbol() && !node.getLeft().getSymbol().isPresentAssoc()) {
-      (new CDAssociationScopesGenitor()).createAndInit_SymAssociation(node);
+      (CDAssociationMill.scopesGenitor()).createAndInit_SymAssociation(node);
     }
 
     final ASTCDAssocLeftSide leftSide = node.getLeft();

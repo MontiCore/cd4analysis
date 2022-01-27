@@ -1,2 +1,2 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
-// empty template
+package ${cdPrinter.printPackageName(ast)};

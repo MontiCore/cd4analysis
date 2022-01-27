@@ -33,7 +33,7 @@ public class CDDiffCLITest {
     final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
     //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "10", "-o", output, "--difflimit",
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
         "20" };
     CD4CodeTool cli = new CD4CodeTool();
     cli.run(args);
@@ -80,7 +80,7 @@ public class CDDiffCLITest {
     final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
     //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "10", "-o", output, "--difflimit",
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
         "20" };
     CD4CodeTool cli = new CD4CodeTool();
     cli.run(args);
@@ -96,6 +96,50 @@ public class CDDiffCLITest {
       }
     }
     assertTrue(odFilePaths.isEmpty());
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
+
+  }
+
+  @Test
+  public void testRunWithDefaultDiff() {
+    // given 2 CDs that are not semantically equivalent
+    final String cd1 = "src/test/resources/de/monticore/cddiff/Manager/cd2v2.cd";
+    final String cd2 = "src/test/resources/de/monticore/cddiff/Manager/cd2v1.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithDefaultDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "-o", output};
+    CD4CodeTool cli = new CD4CodeTool();
+    cli.run(args);
+
+    //then corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
+
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        odFilePaths.add(odFile.toPath().toString());
+      }
+    }
+
+    // and the ODs match cd1 but not cd2
+    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    try {
+      assertTrue(matcher.checkODConsistency(cd1, odFilePaths));
+      assertFalse(matcher.checkODConsistency(cd2, odFilePaths));
+    }
+    catch (Exception e) {
+      Log.error(e.getMessage());
+      fail();
+    }
 
     // clean-up
     try {

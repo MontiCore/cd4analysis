@@ -383,9 +383,9 @@ used functionality, e.g.:
 - the tool is designed with [`the best practices`][ToolBestPractices] in mind
 - example usage of the tool
 ```shell
-cd4analysis-cli -i SocNet.cd -r ./reports
-cd4analysis-cli -pp Complete.puml -puml -svg --showAttr
-cd4analysis-cli -script adapted.groovy
+java -jar MCCD.jar -i SocNet.cd -r ./reports
+java -jar MCCD.jar -pp Complete.puml -puml -svg --showAttr
+java -jar MCCD.jar -script adapted.groovy
 ```
 - option '-h' or '--help' can be used to get information of allowed parameters
 

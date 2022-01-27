@@ -1,9 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
-import de.se_rwth.commons.logging.Log;
-
-// TODO: MB Lösche die Klasse, wenn die methoden generiert werden
+// TODO: MB Lösche die Klasse, wenn die Methoden generiert werden
+@Deprecated
 public class CDAssociationScopesGenitorDelegator extends CDAssociationScopesGenitorDelegatorTOP {
 
   public de.monticore.cdassociation._visitor.CDAssociationTraverser getTraverser() {

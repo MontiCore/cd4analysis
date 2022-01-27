@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.typescalculator;
 
-import de.monticore.cd._symboltable.MCBasicTypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
@@ -19,7 +18,6 @@ public class DeriveSymTypeOfCDBasis implements IDerive, CDTypesCalculator {
   protected CDBasisTraverser traverser;
 
   private TypeCheckResult typeCheckResult;
-  private CDBasisTraverser typesScopeHelper;
 
   public DeriveSymTypeOfCDBasis() {
     init();
@@ -65,14 +63,12 @@ public class DeriveSymTypeOfCDBasis implements IDerive, CDTypesCalculator {
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
     reset();
-    type.accept(typesScopeHelper);
     type.accept(getTraverser());
     return getResult();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
     reset();
-    node.accept(typesScopeHelper);
     node.accept(getTraverser());
     return getResult();
   }
@@ -89,10 +85,6 @@ public class DeriveSymTypeOfCDBasis implements IDerive, CDTypesCalculator {
   public void init() {
     this.traverser = CDBasisMill.traverser();
     this.typeCheckResult = new TypeCheckResult();
-
-    this.typesScopeHelper = CDBasisMill.traverser();
-
-    typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
