@@ -56,6 +56,7 @@ public class CDAssociationTrafoTest extends CDAssociationTestBasis {
     assertTrue(cdRoleList.stream().anyMatch(r -> r.getName().equals("s2")));
 
     assertTrue(b.get().getFieldList().isEmpty());
+    assertEquals(0, b.get().getAstNode().getCDAttributeList().size());
 
     { // add FieldSymbols for the CDRoleSymbols
       final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromNavigableRoles = new CDAssociationCreateFieldsFromNavigableRoles();
@@ -67,8 +68,8 @@ public class CDAssociationTrafoTest extends CDAssociationTestBasis {
 
     checkLogError();
 
-    assertFalse(b.get().getFieldList().isEmpty());
     assertEquals(2, b.get().getFieldList().size());
+    assertEquals(2, b.get().getAstNode().getCDAttributeList().size());
 
     final SymTypeExpression type = b.get().getFieldList().get(1).getType();
     assertTrue(type.isGenericType());
