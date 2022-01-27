@@ -6,7 +6,9 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitorDelegator;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
+import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
@@ -14,7 +16,6 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbolBuilder;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -71,24 +72,11 @@ public class CDAssociationCreateFieldsFromAllRoles
       Log.error(msg, node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
 
-    // create a FieldSymbol in the same scope as the RoleSymbol
     final CDRoleSymbol symbol = node.getSymbol();
-    final FieldSymbol fieldSymbol = new FieldSymbolBuilder()
-      .setName(node.getName())
-      .setType(calculateType(symbol))
-      .setIsReadOnly(symbol.isIsReadOnly())
-      .setIsPrivate(symbol.isIsPrivate())
-      .setIsProtected(symbol.isIsProtected())
-      .setIsPublic(symbol.isIsPublic())
-      .setIsStatic(symbol.isIsStatic())
-      .setIsFinal(symbol.isIsFinal())
-      .build();
-    createdFields.put(fieldSymbol, node.get_SourcePositionStart());
+    final ICDAssociationScope enclosingScope = symbol.getEnclosingScope();
 
-    // add new symbol
-    node.getSymbol().getEnclosingScope().add(fieldSymbol);
-
-    // Create the corresponding ASTNode
+    SymTypeExpression fieldType = calculateType(symbol);
+    // Create the ASTNode
     ASTModifier modifier = CDAssociationMill.modifierBuilder()
       .setReadonly(symbol.isIsReadOnly())
       .setPrivate(symbol.isIsPrivate())
@@ -97,24 +85,36 @@ public class CDAssociationCreateFieldsFromAllRoles
       .setStatic(symbol.isIsStatic())
       .setFinal(symbol.isIsFinal())
       .build();
-    modifier.setEnclosingScope(node.getEnclosingScope());
-
     ASTCDAttribute fieldAst = CDAssociationMill.cDAttributeBuilder()
       .setName(node.getName())
-      .setMCType(MCTypeFacade.getInstance().createQualifiedType(fieldSymbol.getFullName()))
+      .setMCType(MCTypeFacade.getInstance().createQualifiedType(fieldType.printFullName()))
       .setModifier(modifier)
       .build();
-    if (node.getEnclosingScope().isPresentSpanningSymbol() && node.getEnclosingScope().getSpanningSymbol().isPresentAstNode()) {
-      ASTNode spannedType = node.getEnclosingScope().getSpanningSymbol().getAstNode();
+
+    // Build scopes
+    CDAssociationScopesGenitorDelegator scopeGenitor = CDAssociationMill.scopesGenitorDelegator();
+    scopeGenitor.putOnStack(enclosingScope);
+    fieldAst.accept(scopeGenitor.getTraverser());
+
+    // Initialize Symbol
+    FieldSymbol fieldSymbol = fieldAst.getSymbol();
+    fieldSymbol.setIsReadOnly(symbol.isIsReadOnly());
+    fieldSymbol.setIsPrivate(symbol.isIsPrivate());
+    fieldSymbol.setIsProtected(symbol.isIsProtected());
+    fieldSymbol.setIsPublic(symbol.isIsPublic());
+    fieldSymbol.setIsStatic(symbol.isIsStatic());
+    fieldSymbol.setIsFinal(symbol.isIsFinal());
+    fieldSymbol.setType(fieldType);
+
+    createdFields.put(fieldSymbol, node.get_SourcePositionStart());
+
+    // add field to ast
+    if (enclosingScope.isPresentSpanningSymbol() &&enclosingScope.getSpanningSymbol().isPresentAstNode()) {
+      ASTNode spannedType = enclosingScope.getSpanningSymbol().getAstNode();
       if (spannedType instanceof ASTCDClass) {
         ((ASTCDClass) spannedType).addCDMember(fieldAst);
       }
     }
-    fieldAst.setEnclosingScope(node.getEnclosingScope());
-    fieldAst.getMCType().setEnclosingScope(node.getEnclosingScope());
-
-    fieldAst.setSymbol(fieldSymbol);
-    fieldSymbol.setAstNode(fieldAst);
   }
 
   public SymTypeExpression calculateType(CDRoleSymbol symbol) {
