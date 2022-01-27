@@ -13,4 +13,7 @@ public class CDAssociationScopesGenitorDelegator extends CDAssociationScopesGeni
     this.traverser = traverser;
   }
 
+  public  void putOnStack (de.monticore.cdassociation._symboltable.ICDAssociationScope scope) {
+    scopeStack.addLast(scope);
+  }
 }
