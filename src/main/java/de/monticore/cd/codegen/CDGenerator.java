@@ -72,21 +72,21 @@ public class CDGenerator {
   protected void generateCDClasses(String packageAsPath, ASTCDPackage astcdPackage, List<ASTCDClass> astcdClassList) {
     for (ASTCDClass cdClass : astcdClassList) {
       Path filePath = getAsPath(packageAsPath, cdClass.getName());
-      this.generatorEngine.generate(CD2JavaTemplates.CLASS, filePath, cdClass, cdClass, astcdPackage);
+      this.generatorEngine.generate(CD2JavaTemplates.CLASS, filePath, cdClass, astcdPackage);
     }
   }
 
   protected void generateCDInterfaces(String packageAsPath, ASTCDPackage astcdPackage, List<ASTCDInterface> astcdInterfaceList) {
     for (ASTCDInterface cdInterface : astcdInterfaceList) {
       Path filePath = getAsPath(packageAsPath, cdInterface.getName());
-      this.generatorEngine.generate(CD2JavaTemplates.INTERFACE, filePath, cdInterface, cdInterface, astcdPackage);
+      this.generatorEngine.generate(CD2JavaTemplates.INTERFACE, filePath, cdInterface, astcdPackage);
     }
   }
 
   protected void generateCDEnums(String packageAsPath, ASTCDPackage astcdPackage, List<ASTCDEnum> astcdEnumList) {
     for (ASTCDEnum cdEnum : astcdEnumList) {
       Path filePath = getAsPath(packageAsPath, cdEnum.getName());
-      this.generatorEngine.generate(CD2JavaTemplates.ENUM, filePath, cdEnum, cdEnum, astcdPackage);
+      this.generatorEngine.generate(CD2JavaTemplates.ENUM, filePath, cdEnum, astcdPackage);
     }
   }
 }

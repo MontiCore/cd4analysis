@@ -78,7 +78,7 @@ public class AbstractService<T extends AbstractService> {
     if (symbols.size() == 1) {
       return symbols.iterator().next();
     } else {
-      Log.error("Cannot resolve classdiagram " + qualifiedName);
+      Log.error("0x110C10 Cannot resolve classdiagram " + qualifiedName);
       return null;
     }
   }
@@ -207,7 +207,7 @@ public class AbstractService<T extends AbstractService> {
         return genericType.getMCTypeArgument(0).getMCTypeOpt().get();
       }
     }
-    Log.error("InternalError: type is not optional");
+    Log.error("0x110C11 InternalError: type is not optional");
     return null; // May not happen
   }
 
