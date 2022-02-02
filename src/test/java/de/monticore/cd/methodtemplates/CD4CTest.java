@@ -2,6 +2,7 @@
 package de.monticore.cd.methodtemplates;
 
 import com.google.common.collect.Lists;
+import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4code.CD4CodeMill;
@@ -9,7 +10,8 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -22,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -39,7 +42,7 @@ public class CD4CTest extends CD4CodeTestBasis {
   private ASTCDCompilationUnit node;
 
   @Before
-  public void init() {
+  public void init() throws IOException {
     LogStub.init();
     Log.enableFailQuick(false);
     Log.clearFindings();
@@ -47,23 +50,21 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     // Configure glex
     GlobalExtensionManagement glex = new GlobalExtensionManagement();
+    glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     config = new GeneratorSetup();
     config.setGlex(glex);
     config.setOutputDirectory(new File("target/generated"));
     config.setTracing(false);
-    File templatePath = new File("src/test/resources");
-    config.setAdditionalTemplatePaths(Lists.newArrayList(templatePath));
-
-    final ASTCDDefinition definition = new ASTCDDefinitionBuilder()
-        .setName("Test")
-        .setModifier(CD4CodeMill.modifierBuilder().build())
-        .build();
-    node = new ASTCDCompilationUnitBuilder()
-        .setCDDefinition(definition)
-        .build();
+    config.setAdditionalTemplatePaths(Lists.newArrayList(
+      new File("src/main/resources"),
+      new File("src/test/resources")));
 
     // Configure CD4C
     CD4C.init(config);
+
+    // create diagram
+    node = p.parse(getFilePath("cd4code/generator/Simple.cd")).get();
+
   }
 
   // =================================================
@@ -114,7 +115,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorld.java");
-    generatorEngine.generate("de.monticore.cd.methodtemplates.core.Class", output, clazz, printer);
+    generatorEngine.generate("cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
   }
 
   @Test
@@ -148,7 +149,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorldWithConstructor.java");
-    generatorEngine.generate("de.monticore.cd.methodtemplates.core.Class", output, clazz, printer);
+    generatorEngine.generate("cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
   }
 
   @Test
@@ -176,7 +177,7 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java");
-    generatorEngine.generate("de.monticore.cd.methodtemplates.core.Class", output, clazz, printer);
+    generatorEngine.generate("cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
   }
 
   @Test
