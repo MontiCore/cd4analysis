@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._symboltable;
 
-import de.monticore.utils.Names;
+import de.se_rwth.commons.Names;
 
 import java.util.HashSet;
 import java.util.Set;
