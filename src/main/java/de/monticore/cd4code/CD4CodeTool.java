@@ -133,7 +133,9 @@ public class CD4CodeTool extends CD4CodeToolTOP {
 
         artifactScope = createSymbolTable(ast);
         final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-        globalScope.setSymbolPath(new MCPath(Arrays.stream(modelPath).map(Paths::get).collect(Collectors.toSet())));
+        for (String path : modelPath) {
+          globalScope.getSymbolPath().addEntry(Paths.get(path));
+        }
         if (useBuiltInTypes) {
           BuiltInTypes.addBuiltInTypes(globalScope);
         }
