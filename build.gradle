@@ -51,12 +51,15 @@ ext {
 }
 
 // configure non-standard source sets
+def genDir = "$buildDir/generated-sources/monticore/sourcecode"
+def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
+
 sourceSets {
   main {
-    java.srcDirs += ["$buildDir/generated-sources/monticore/sourcecode"]
+    java.srcDirs += ["$genDir"]
   }
   test {
-    java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
+    java.srcDirs += ["$testGenDir"]
   }
   grammars {
     resources {
@@ -64,10 +67,35 @@ sourceSets {
       include "**/*.mc4"
     }
   }
+  cddiff {
+    java {}
+    compileClasspath += sourceSets.main.runtimeClasspath
+  }
+  cddifftest {
+    java {}
+    compileClasspath += sourceSets.cddiff.runtimeClasspath
+    compileClasspath += sourceSets.test.runtimeClasspath
+  }
+  tool {
+    java {}
+    compileClasspath += sourceSets.cddiff.runtimeClasspath
+    compileClasspath += sourceSets.main.runtimeClasspath
+  }
+  tooltest {
+    java {}
+    compileClasspath += sourceSets.test.runtimeClasspath
+    compileClasspath += sourceSets.cddifftest.runtimeClasspath
+    compileClasspath += sourceSets.tool.runtimeClasspath
+    runtimeClasspath += sourceSets.cddiff.runtimeClasspath
+  }
 }
 
-
 configurations {
+  cddiffImplementation.extendsFrom(mainImplementation)
+  cddifftestImplementation.extendsFrom(cddiffImplementation)
+  toolImplementation.extendsFrom(cddiffImplementation)
+  tooltestImplementation.extendsFrom(toolImplementation)
+  tooltestImplementation.extendsFrom(cddifftestImplementation)
   grammar
   cli
 }
@@ -97,21 +125,14 @@ dependencies {
   testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   }
-    // dependencies for CDDiff
-    implementation "de.monticore.lang:od:$mc_version"
-    implementation "edu.mit.alloy:alloy:6"
-    testImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
-    testImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
-}
 
-/*
-configurations {
-  ecj
+  // dependencies for cddiff
+  cddiffImplementation "de.monticore.lang:od:$mc_version"
+  cddiffImplementation "edu.mit.alloy:alloy:6"
+
+  cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+  cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
 }
-dependencies {
-  ecj 'org.eclipse.jdt:ecj:3.26.0'
-}
-*/
 
 allprojects {
   repositories {
@@ -265,6 +286,25 @@ compileTestJava {
   dependsOn generateTestTrafos
 }
 
+task cddifftest(type: Test) {
+  description = "Runs CDDiff Tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.cddifftest.output.classesDirs
+  classpath += sourceSets.cddifftest.runtimeClasspath
+  classpath += sourceSets.cddiff.runtimeClasspath
+  shouldRunAfter test
+}
+
+task tooltest(type: Test) {
+  description = "Runs Tool Tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath += sourceSets.tooltest.runtimeClasspath
+  classpath += sourceSets.tool.runtimeClasspath
+  shouldRunAfter test
+}
+
+check.dependsOn cddifftest, tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -314,10 +354,6 @@ tasks.withType(Test) {
   }
 }
 
-test {
-  useJUnit()
-}
-
 // build javadoc jar in addition
 task javadocJar(type: Jar) {
   from javadoc
@@ -332,11 +368,21 @@ task testSourcesJar(type: Jar) {
   archiveClassifier = "testSources"
 }
 
+// build test sources jar in addition
+task cddiffJar(type: Jar) {
+  from sourceSets.cddiff.output + sourceSets.cddiff.allSource
+  archiveClassifier = "cddiff"
+}
+
+jar.dependsOn cddiffJar
+
 shadowJar { // all in one jar
   archiveFileName = 'MCCD.jar'
   manifest {
-    attributes "Main-Class": "de.monticore.cd4code.CD4CodeTool"
+    attributes "Main-Class": "de.monticore.CD4CodeTool"
   }
+  from sourceSets.cddiff.output
+  from sourceSets.tool.output
   archiveClassifier = "mc-tool"
 }
 
