@@ -374,7 +374,13 @@ task cddiffJar(type: Jar) {
   archiveClassifier = "cddiff"
 }
 
-jar.dependsOn cddiffJar
+// build test sources jar in addition
+task toolJar(type: Jar) {
+  from sourceSets.tool.output + sourceSets.tool.allSource
+  archiveClassifier = "tool"
+}
+
+jar.dependsOn cddiffJar, toolJar
 
 shadowJar { // all in one jar
   archiveFileName = 'MCCD.jar'
@@ -423,6 +429,11 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 
 jar.dependsOn grammarsJar
 
+
+artifacts {
+  archives cddiffJar
+  archives toolJar
+}
 // configure deployment
 publishing {
   // configure what artifacts to publish
@@ -431,7 +442,9 @@ publishing {
       suppressPomMetadataWarningsFor('grammarsApiElements')
       suppressPomMetadataWarningsFor('grammarsRuntimeElements')
       from components.java
-      artifact testSourcesJar
+       artifact testSourcesJar
+       artifact cddiffJar
+       artifact toolJar
     }
   }
   repositories.maven {
