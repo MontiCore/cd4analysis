@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd.codegen;
+
+<<component>> classdiagram Lexicals{
+
+  public interface ASTLexicalsNode;
+
+  enum LexicalsLiterals;
+
+ public class ASTName{
+  protected String name;
+ }
+
+  <<symbol>> public class QualifiedName{
+      protected String name;
+      protected java.util.List<String> nameList;
+  }
+}

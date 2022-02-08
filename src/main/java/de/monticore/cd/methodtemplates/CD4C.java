@@ -4,6 +4,9 @@ package de.monticore.cd.methodtemplates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import de.monticore.cd.codegen.methods.AccessorDecorator;
+import de.monticore.cd.codegen.methods.MethodDecorator;
+import de.monticore.cd.codegen.methods.MutatorDecorator;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
@@ -278,6 +281,41 @@ public class CD4C {
     this.classAttrPredicates.forEach((p -> p.test(clazz, attribute.get())));
 
     clazz.addCDMember(attribute.get());
+  }
+
+  public void addAttribute(ASTCDClass clazz, boolean addGetter, boolean addSetter,
+                           String templateName) {
+    checkInitialized();
+    final Optional<ASTCDAttribute> attribute = createAttribute(clazz, templateName);
+    if (!attribute.isPresent()) {
+      Log.error("0x11022: There was no attribute created in the template '" + templateName + "'");
+      return;
+    }
+
+    setEnclosingScopeTo(attribute.get(), clazz.getSpannedScope());
+
+    this.classAttrPredicates.forEach((p -> p.test(clazz, attribute.get())));
+
+    clazz.addCDMember(attribute.get());
+    if (addGetter) {
+      AccessorDecorator accessor = new AccessorDecorator(config.getGlex());
+      clazz.addAllCDMembers(accessor.decorate(attribute.get()));
+    }
+    if (addSetter) {
+      MutatorDecorator mutator = new MutatorDecorator(config.getGlex());
+      clazz.addAllCDMembers(mutator.decorate(attribute.get()));
+    }
+  }
+
+  public void addMethods(ASTCDClass clazz, ASTCDAttribute attr, boolean addGetter, boolean addSetter) {
+    if (addGetter) {
+      AccessorDecorator accessor = new AccessorDecorator(config.getGlex());
+      clazz.addAllCDMembers(accessor.decorate(attr));
+    }
+    if (addSetter) {
+      MutatorDecorator mutator = new MutatorDecorator(config.getGlex());
+      clazz.addAllCDMembers(mutator.decorate(attr));
+    }
   }
 
   /**
