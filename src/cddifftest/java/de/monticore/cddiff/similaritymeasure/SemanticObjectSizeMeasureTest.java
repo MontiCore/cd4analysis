@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.similaritymeasure;
 
+import de.monticore.cddiff.AbstractTest;
 import de.monticore.similaritymeasure.measures.SemanticObjectSizeMeasure;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;

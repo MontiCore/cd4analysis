@@ -2,6 +2,7 @@
 package de.monticore.cddiff.cd2alloy;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.AbstractTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

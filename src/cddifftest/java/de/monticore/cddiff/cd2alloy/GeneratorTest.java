@@ -3,6 +3,7 @@ package de.monticore.cddiff.cd2alloy;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.AbstractTest;
 import org.junit.Test;
 
 import java.nio.file.Path;

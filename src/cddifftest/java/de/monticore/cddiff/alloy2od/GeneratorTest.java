@@ -3,6 +3,7 @@ package de.monticore.cddiff.alloy2od;
 
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.alloycddiff.classDifference.ClassDifference;
+import de.monticore.cddiff.AbstractTest;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.odbasis._ast.ASTODArtifact;

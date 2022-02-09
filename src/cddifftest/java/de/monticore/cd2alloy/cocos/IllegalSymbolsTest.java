@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2alloy.cocos;
 
-import de.monticore.cddiff.cd2alloy.AbstractTest;
+import de.monticore.cddiff.AbstractTest;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cocos.helper.Assert;
