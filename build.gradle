@@ -69,29 +69,21 @@ sourceSets {
   }
   cddiff {
     java {}
-    compileClasspath += sourceSets.main.runtimeClasspath
   }
   cddifftest {
     java {}
-    compileClasspath += sourceSets.cddiff.runtimeClasspath
-    compileClasspath += sourceSets.test.runtimeClasspath
   }
   tool {
     java {}
-    compileClasspath += sourceSets.cddiff.runtimeClasspath
-    compileClasspath += sourceSets.main.runtimeClasspath
   }
   tooltest {
     java {}
-    compileClasspath += sourceSets.test.runtimeClasspath
-    compileClasspath += sourceSets.cddifftest.runtimeClasspath
-    compileClasspath += sourceSets.tool.runtimeClasspath
-    runtimeClasspath += sourceSets.cddiff.runtimeClasspath
   }
 }
 
 configurations {
-  cddiffImplementation.extendsFrom(mainImplementation)
+  cddiffImplementation.extendsFrom(implementation)
+  cddifftestImplementation.extendsFrom(testImplementation)
   cddifftestImplementation.extendsFrom(cddiffImplementation)
   toolImplementation.extendsFrom(cddiffImplementation)
   tooltestImplementation.extendsFrom(toolImplementation)
@@ -129,9 +121,15 @@ dependencies {
   // dependencies for cddiff
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:6"
+  cddiffImplementation(sourceSets.main.output.classesDirs)
 
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
+  cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
+  cddifftestImplementation(sourceSets.test.output.classesDirs)
+
+  toolImplementation(sourceSets.cddiff.output.classesDirs)
+  tooltestImplementation(sourceSets.tool.output.classesDirs)
 }
 
 allprojects {
@@ -291,7 +289,6 @@ task cddifftest(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.cddifftest.output.classesDirs
   classpath += sourceSets.cddifftest.runtimeClasspath
-  classpath += sourceSets.cddiff.runtimeClasspath
   shouldRunAfter test
 }
 
@@ -300,7 +297,6 @@ task tooltest(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.tooltest.output.classesDirs
   classpath += sourceSets.tooltest.runtimeClasspath
-  classpath += sourceSets.tool.runtimeClasspath
   shouldRunAfter test
 }
 
