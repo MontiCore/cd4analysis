@@ -2,7 +2,7 @@ package de.monticore.preprocessing;
 
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import jline.internal.Log;
+import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.StringUtils;
 
 public class OpenWorldPreProcessor {
@@ -18,7 +18,7 @@ public class OpenWorldPreProcessor {
     }
     cd1 = StringUtils.chop(cd1);
 
-    Log.info(cd1);
+    Log.info(cd1, this.getClass().getName());
 
     pprinter = new CD4CodeFullPrettyPrinter();
     ast2.accept(pprinter.getTraverser());
@@ -30,7 +30,7 @@ public class OpenWorldPreProcessor {
     }
     cd2 = StringUtils.chop(cd2);
 
-    Log.info(cd2);
+    Log.info(cd2, this.getClass().getName());
 
     //todo: pre-processing
 
