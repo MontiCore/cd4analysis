@@ -35,8 +35,7 @@ public class CDDiffCLITest {
     //when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
         "20" };
-    CD4CodeTool cli = new CD4CodeTool();
-    cli.run(args);
+    CD4CodeTool.main(args);
 
     //then corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -82,8 +81,7 @@ public class CDDiffCLITest {
     //when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
         "20" };
-    CD4CodeTool cli = new CD4CodeTool();
-    cli.run(args);
+    CD4CodeTool.main(args);
 
     //no corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -116,8 +114,7 @@ public class CDDiffCLITest {
 
     //when CD4CodeTool is used to compute the semantic difference
     String[] args = { "-i", cd1, "--semdiff", cd2, "-o", output};
-    CD4CodeTool cli = new CD4CodeTool();
-    cli.run(args);
+    CD4CodeTool.main(args);
 
     //then corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();
