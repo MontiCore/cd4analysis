@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis.cocos;
 
+
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.testcd4codebasis.TestCD4CodeBasisMill;
@@ -9,7 +10,6 @@ import de.monticore.testcd4codebasis._parser.TestCD4CodeBasisParser;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,7 +29,6 @@ public class CDMethodSignatureParameterNamesUniqueTest {
     Log.enableFailQuick(false);
     TestCD4CodeBasisMill.reset();
     TestCD4CodeBasisMill.init();
-    checker.setTraverser(TestCD4CodeBasisMill.traverser());
     checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
   }
 
@@ -52,8 +51,9 @@ public class CDMethodSignatureParameterNamesUniqueTest {
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     checker.checkAll(ast);
-    assertEquals(1, Log.getFindings().size());
+    assertEquals(2, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC90"));
+    assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDC90"));
   }
 
 }

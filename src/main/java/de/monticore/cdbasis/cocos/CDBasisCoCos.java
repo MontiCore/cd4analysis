@@ -6,6 +6,9 @@ import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.*;
 import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
 import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
+import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassExtendsOnlyClasses;
+import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsNotCyclic;
+import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
   @Override

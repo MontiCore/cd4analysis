@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdbasis.cocos.ebnf;
+package de.monticore.cdinterfaceandenum.cocos.ebnf;
 
 import de.monticore.cd.CDMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
