@@ -10,7 +10,7 @@ import de.se_rwth.commons.logging.Log;
 /**
  * Ensures that an attribute name does not occur twice in a class.
  */
-public class CDAttributeUniqueInClassCoco implements CDBasisASTCDClassCoCo {
+public class CDAttributeUniqueInClass implements CDBasisASTCDClassCoCo {
 	@Override
 	public void check(ASTCDClass node) {
 		CoCoHelper.findDuplicatesBy(node.getSymbol().getFieldList(), VariableSymbol::getName)

@@ -29,7 +29,7 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     checker.addCoCo(new CDAttributeTypeExists());
     checker.addCoCo(new CDAttributeNameLowerCaseIfNotStatic());
     checker.addCoCo(new CDAttributeInitialTypeCompatible());
-    checker.addCoCo(new CDAttributeUniqueInClassCoco());
+    checker.addCoCo(new CDAttributeUniqueInClass());
 
     // CDClass
     checker.addCoCo(new CDClassExtendsNotCyclic());
