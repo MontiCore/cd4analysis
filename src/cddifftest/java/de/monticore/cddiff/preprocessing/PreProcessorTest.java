@@ -3,7 +3,10 @@ package de.monticore.cddiff.preprocessing;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.AbstractTest;
 import de.monticore.preprocessing.OpenWorldPreProcessor;
+import net.sourceforge.plantuml.Log;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class PreProcessorTest extends AbstractTest {
 
@@ -14,8 +17,10 @@ public class PreProcessorTest extends AbstractTest {
   @Test
   public void testOpenWorldPreProcessing(){
     OpenWorldPreProcessor preProcessor = new OpenWorldPreProcessor();
-    preProcessor.completeCDs(m1Ast,m2Ast);
-    //todo: test pre-processing
+    String res = preProcessor.completeCDs(m1Ast,m2Ast);
+    Log.info(res);
+    assertEquals("de.monticore.Task", res);
+    //todo: test actual pre-processing
   }
 
 }
