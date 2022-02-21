@@ -3,11 +3,11 @@
 classdiagram CDTypeNoInitializationOfDerivedAttributeInvalid {
 
   class A {
-    int number = 3;
+    int number = 1;
   }
 
   class B extends A{
-    int number = 5;
+    derived int number = 5;
   }
 
 }
