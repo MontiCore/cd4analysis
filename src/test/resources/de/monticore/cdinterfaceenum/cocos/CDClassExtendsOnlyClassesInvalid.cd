@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDClassExtendsOnlyClassesInvalid {
+
+  interface A;
+  class B extends A;
+
+}

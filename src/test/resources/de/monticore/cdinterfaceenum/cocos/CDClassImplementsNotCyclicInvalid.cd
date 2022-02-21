@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDClassImplementsNotCyclicInvalid {
+
+  class A implements B;
+  interface B extends C;
+  interface C extends B;
+
+}
