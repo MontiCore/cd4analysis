@@ -2,11 +2,17 @@
 
 classdiagram Valid {
 
-  class A {
-    int foo;
-    int bar;
+  package p1 {
+    class A {
+      int foo;
+      int bar;
+      int[] field;
+    }
+    class B extends A;
   }
 
-  class B extends A;
+  package p2 {
+    class C;
+  }
 
 }

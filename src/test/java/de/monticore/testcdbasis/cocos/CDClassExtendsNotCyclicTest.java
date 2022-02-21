@@ -22,11 +22,8 @@ import static org.junit.Assert.assertTrue;
 
 public class CDClassExtendsNotCyclicTest extends CD4AnalysisTestBasis {
 
-  private static CD4AnalysisCoCoChecker coCoChecker;
-
   @Test
   public void testValid() throws IOException {
-    coCoChecker = new CD4AnalysisCoCoChecker();
     coCoChecker.addCoCo(new CDClassExtendsNotCyclic());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
@@ -39,7 +36,6 @@ public class CDClassExtendsNotCyclicTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testInvalid() throws IOException {
-    coCoChecker = new CD4AnalysisCoCoChecker();
     coCoChecker.addCoCo(new CDClassExtendsNotCyclic());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDClassExtendsNotCyclicInvalid.cd"));
     assertTrue(optAST.isPresent());

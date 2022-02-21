@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
+import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeNameLowerCaseIfNotStatic;
 import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ModifierNotMultipleVisibilitiesCoCoTest extends CDBasisTestBasis {
+public class ModifierNotMultipleVisibilitiesCoCoTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testValid() throws IOException {

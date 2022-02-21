@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
+import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeNameLowerCaseIfNotStatic;
 import de.monticore.io.paths.MCPath;
@@ -27,7 +29,7 @@ import static de.monticore.cd.TestBasis.getFilePath;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CDAttributeNameLowerCaseIfNotStaticTest extends CDBasisTestBasis {
+public class CDAttributeNameLowerCaseIfNotStaticTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testValid() throws IOException {

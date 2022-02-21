@@ -4,7 +4,7 @@ classdiagram CDAttributeUniqueInClassInvalid {
 
   class A {
     int Foo;
-    char Foo;
+    int Foo;
   }
 
 }

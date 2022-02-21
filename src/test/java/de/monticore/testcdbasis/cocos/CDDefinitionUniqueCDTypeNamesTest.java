@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
+import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDDefinitionUniqueCDTypeNames;
@@ -15,7 +17,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CDDefinitionUniqueCDTypeNamesTest extends CDBasisTestBasis {
+public class CDDefinitionUniqueCDTypeNamesTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testValid() throws IOException {

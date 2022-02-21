@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDTypeNoInitializationOfDerivedAttributeInvalid {
+
+  class A {
+    int number = 3;
+  }
+
+  class B extends A{
+    int number = 5;
+  }
+
+}

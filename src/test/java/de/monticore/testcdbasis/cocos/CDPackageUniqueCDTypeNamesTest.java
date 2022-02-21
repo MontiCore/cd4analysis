@@ -2,10 +2,9 @@
 package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.cocos.ebnf.CDDefinitionNameUpperCase;
+import de.monticore.cdbasis.cocos.ebnf.CDPackageUniqueCDTypeNames;
 import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
 import org.junit.After;
@@ -17,11 +16,11 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class CDDefinitionNameUpperCaseTest extends CD4AnalysisTestBasis {
+public class CDPackageUniqueCDTypeNamesTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testValid() throws IOException {
-    coCoChecker.addCoCo(new CDDefinitionNameUpperCase());
+    coCoChecker.addCoCo(new CDPackageUniqueCDTypeNames());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
@@ -33,18 +32,19 @@ public class CDDefinitionNameUpperCaseTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testInvalid() throws IOException {
-    coCoChecker.addCoCo(new CDDefinitionNameUpperCase());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/cDDefinitionNameUpperCaseInvalid.cd"));
+    coCoChecker.addCoCo(new CDPackageUniqueCDTypeNames());
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDPackageUniqueCDTypeNamesInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     CDBasisMill.scopesGenitorDelegator().createFromAST(ast);
     coCoChecker.checkAll(ast);
     assertEquals(1, Log.getFindings().size());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC0B"));
+    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC0F"));
   }
 
   @After
-  public void after(){}
+  @Override
+  public void after() {}
 
 }
