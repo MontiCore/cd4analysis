@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.alloycddiff.alloyRunner;
 
-import de.monticore.generator.Alloy2ODGenerator;
+import de.monticore.alloy2od.Alloy2ODGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
