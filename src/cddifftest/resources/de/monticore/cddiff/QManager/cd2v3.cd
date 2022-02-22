@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package man;
+import java.util.Date;
+
+classdiagram CD2v3 {
+  enum PositionKind{fullTime, partTime;}
+
+  package emp {
+    class Employee {
+      PositionKind kind;
+    }
+
+    class Manager;
+  }
+
+  class Task {
+    Date startDate;
+  }
+
+  association [*] man.emp.Employee (manages) -> (managedBy) man.emp.Manager [0..1];
+  association [1] man.emp.Employee  --  Task [*];
+}
