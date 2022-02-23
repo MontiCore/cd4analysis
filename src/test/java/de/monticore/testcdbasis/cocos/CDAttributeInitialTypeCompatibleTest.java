@@ -43,8 +43,10 @@ public class CDAttributeInitialTypeCompatibleTest extends CD4AnalysisTestBasis {
     Log.getFindings().clear();
     createSymTab(ast);
     coCoChecker.checkAll(ast);
-    assertEquals(1, Log.getFindings().size());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC03"));
+    assertEquals(3, Log.getFindings().size());
+    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC02"));
+    assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDC02"));
+    assertTrue(Log.getFindings().get(2).getMsg().startsWith("0xCDC02"));
   }
 
   private ICD4AnalysisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
