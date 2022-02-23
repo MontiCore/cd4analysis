@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram CDAssociationByAttributeFieldExistInvalid {
+package p1 {
+    class A;
+    class B{
+      String bar = A.foo;
+    }
+  }
+}

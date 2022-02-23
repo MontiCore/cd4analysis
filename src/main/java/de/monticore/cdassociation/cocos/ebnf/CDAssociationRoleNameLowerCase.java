@@ -37,5 +37,4 @@ public class CDAssociationRoleNameLowerCase
           assoc.get_SourcePositionStart());
     }
   }
-
 }

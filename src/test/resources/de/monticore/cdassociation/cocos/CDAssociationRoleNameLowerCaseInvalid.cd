@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationRoleNameLowerCaseInvalid {
+
+  class A;
+  interface B;
+  class C extends A implements B;
+
+  enum D implements B {
+    FOO,
+    BAR;
+  }
+}
+

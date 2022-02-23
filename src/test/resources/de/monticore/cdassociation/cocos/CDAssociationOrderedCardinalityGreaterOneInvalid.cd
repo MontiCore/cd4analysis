@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationOrderedCardinalityGreaterOneInvalid {
+package p1 {
+    class A {
+      int foo;
+      int bar;
+      int[] field;
+    }
+    class B extends A;
+  }
+  package p2 {
+    class C;
+  }
+}
+
