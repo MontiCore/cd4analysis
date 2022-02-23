@@ -4,9 +4,8 @@ classdiagram Valid {
 
   package p1 {
     class A {
-      int foo;
-      int bar;
-      int[] field;
+      int foo = 4;
+      int bar = 5;
     }
     class B extends A;
   }

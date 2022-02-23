@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdinterfaceandenum.cocos.mcg;
+package de.monticore.cd4codebasis.cocos.ebnf;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd._visitor.CDMemberVisitor;
