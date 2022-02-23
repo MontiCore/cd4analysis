@@ -18,9 +18,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/******************************************************************************
- * AST specific helper to print AST nodes.
- *****************************************************************************/
+/** AST specific helper to print AST nodes. */
 public class CdUtilsPrinter {
 
   public static final String EMPTY_STRING = "";
