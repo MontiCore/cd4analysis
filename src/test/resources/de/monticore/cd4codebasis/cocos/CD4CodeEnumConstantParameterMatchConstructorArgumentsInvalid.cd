@@ -6,9 +6,7 @@ classdiagram CD4CodeEnumConstantParameterMatchConstructorArgumentsInvalid {
       FOO,
       BAR;
       private int number;
-      public A(int i){
-        number = i;
-      }
+      public A(int i);
     }
 
 }
