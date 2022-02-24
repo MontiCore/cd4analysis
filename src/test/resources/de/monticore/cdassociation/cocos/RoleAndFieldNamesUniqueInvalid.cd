@@ -4,7 +4,7 @@ classdiagram RoleAndFieldNamesUniqueInvalid {
 package p1 {
     class A {
       int foo;
-      int bar;
+      int foo;
       int[] field;
     }
     class B extends A;

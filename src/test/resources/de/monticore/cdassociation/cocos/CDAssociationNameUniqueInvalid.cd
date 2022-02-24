@@ -12,4 +12,6 @@ package p1 {
   package p2 {
     class C;
   }
+  association Bar p1.A -> p2.C;
+  association Bar p1.A -> p2.C;
 }
