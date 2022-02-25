@@ -39,10 +39,9 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     final List<List<SymTypeExpression>> enumConstantsTypes = calculateEnumArgumentTypes(node);
 
     final List<ASTCDMethodSignature> availableConstructors = node
-        .getCDMemberList(CDMemberVisitor.Options.METHOD_SIGNATURES);
+        .getCDMemberList(CDMemberVisitor.Options.CONSTRUCTORS);
 
     final List<List<ASTCDParameter>> constructorParameters = availableConstructors.stream()
-        .filter(s -> s.getSymbol().isIsConstructor())
         .map(ASTCDMethodSignature::getCDParameterList)
         .collect(Collectors.toList());
 
