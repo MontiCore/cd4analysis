@@ -1,14 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 
 classdiagram CDAssociationRoleNameLowerCaseInvalid {
+class Struct;
+class StructItem;
 
-  class A;
-  interface B;
-  class C extends A implements B;
+final composition Struct [[name]] (Main) -> (item) StructItem [1];
 
-  enum D implements B {
-    FOO,
-    BAR;
-  }
 }
-

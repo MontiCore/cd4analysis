@@ -2,10 +2,8 @@
 
 
 classdiagram CDAssociationByAttributeFieldExistInvalid {
-package p1 {
-    class A;
-    class B{
-      String bar = A.foo;
-    }
-  }
+class Struct;
+class StructItem;
+
+final composition Struct [[name]] (struct) -> (item) StructItem [1];
 }

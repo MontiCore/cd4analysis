@@ -12,4 +12,5 @@ package p1 {
   package p2 {
     class C;
   }
+  association foo p1.A (foo) -> (foo) p2.C;
 }

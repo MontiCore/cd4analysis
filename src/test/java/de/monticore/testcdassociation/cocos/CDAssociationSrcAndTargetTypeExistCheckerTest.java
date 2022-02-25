@@ -1,10 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.cocos;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameLowerCase;
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationSrcAndTargetTypeExistChecker;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.After;
 import org.junit.Test;
@@ -40,6 +44,14 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC6A"));
   }
+  private ICD4AnalysisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
+    ICD4AnalysisArtifactScope as = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(
+      ast.getMCImportStatementList(),  MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    ast.accept(c.getTraverser());
+    return as;
+  }
+
 
   @After
   @Override

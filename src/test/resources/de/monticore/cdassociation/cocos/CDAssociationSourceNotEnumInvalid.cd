@@ -10,8 +10,10 @@ package p1 {
     class B extends A;
   }
   package p2 {
-    class C;
+    enum C;
   }
+  association foo p1.A (foo) <- (foo) p2.C;
+
 }
 
 
