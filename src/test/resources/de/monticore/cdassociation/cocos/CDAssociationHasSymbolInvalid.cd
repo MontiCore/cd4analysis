@@ -11,5 +11,5 @@ package p1 {
     class Bar{
       B bar;
     }
-    association foo p1.A  ->
+    association foo p1.A  -> Bar ;
 }

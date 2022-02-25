@@ -12,7 +12,7 @@ package p1 {
   package p2 {
     class C;
   }
-  association foo p1.A -> p3.D;
+  association foo p1.A -> p1.D ;
 }
 
 

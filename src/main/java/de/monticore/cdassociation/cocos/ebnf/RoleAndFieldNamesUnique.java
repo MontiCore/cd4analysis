@@ -41,7 +41,7 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
 
       for (FieldSymbol field : curSymbol.getFieldList()) {
         if (fieldAndRoleNames.contains(field.getName())) {
-          Log.error(String.format(FIELD_ROLE_DEFINED_MULTIPLE_TIMES, field.getName(), node.getName()));
+          Log.error(String.format("0xC4A28" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, field.getName(), node.getName()));
         }
         else {
           fieldAndRoleNames.add(field.getName());
@@ -51,7 +51,7 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
       if (curSymbol instanceof CDTypeSymbol) {
         for (CDRoleSymbol role : ((CDTypeSymbol) curSymbol).getCDRoleList()) {
           if (fieldAndRoleNames.contains(role.getName())) {
-            Log.error(String.format(FIELD_ROLE_DEFINED_MULTIPLE_TIMES, role.getName(), node.getName()));
+            Log.error(String.format("0xC4A29" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, role.getName(), node.getName()));
           }
           else {
             fieldAndRoleNames.add(role.getName());

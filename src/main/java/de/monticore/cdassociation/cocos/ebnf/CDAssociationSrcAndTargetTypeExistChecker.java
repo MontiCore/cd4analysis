@@ -30,19 +30,21 @@ public class CDAssociationSrcAndTargetTypeExistChecker implements
       // no symbol present
       return;
     }
-
+    boolean hasNotBeenFound = false;
     try {
       //noinspection ResultOfMethodCallIgnored
-      side.getSymbol().getType().getTypeInfo();
+      hasNotBeenFound = (side.getSymbol().getType().getTypeInfo() == null) ;
     }
     catch (NoSuchElementException | IllegalStateException e) {
+      hasNotBeenFound = true;
+    }
+    if(hasNotBeenFound){
       Log.error(
-          String
-              .format(
-                  "0xCDC6A: Type %s of %s is unknown. (%s)",
-                  MCBasicTypesMill.mCQualifiedNameBuilder().setPartsList(side.getMCQualifiedType().getNameList()).build().getQName(), prettyPrinter.prettyprint(assoc),
-                  Joiner.on("\n").join(e.getStackTrace())),
-          assoc.get_SourcePositionStart());
+        String
+          .format(
+            "0xCDC6A: Type %s of %s is unknown. (%s)",
+            MCBasicTypesMill.mCQualifiedNameBuilder().setPartsList(side.getMCQualifiedType().getNameList()).build().getQName(), prettyPrinter.prettyprint(assoc)),
+        assoc.get_SourcePositionStart());
     }
   }
 }

@@ -43,7 +43,7 @@ public class RoleAndFieldNamesUniqueTest extends CD4AnalysisTestBasis {
     createSymTab(ast);
     coCoChecker.checkAll(ast);
     assertEquals(2, Log.getFindings().size());
-    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xCDC61")); // -> no Error-code defined in coco
+    assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xC4A28")); // -> no Error-code defined in coco
   }
   private ICD4AnalysisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
     ICD4AnalysisArtifactScope as = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
