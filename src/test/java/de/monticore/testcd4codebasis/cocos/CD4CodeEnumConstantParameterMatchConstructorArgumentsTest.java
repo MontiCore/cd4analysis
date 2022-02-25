@@ -3,7 +3,9 @@ package de.monticore.testcd4codebasis.cocos;
 
 import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.testcd4codebasis.CD4CodeBasisTestBasis;
+import de.monticore.testcd4codebasis.TestCD4CodeBasisMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.After;
 import org.junit.Test;
@@ -18,11 +20,19 @@ public class CD4CodeEnumConstantParameterMatchConstructorArgumentsTest extends C
 
   @Test
   public void testValid() throws IOException {
+    // initialization
+    TestCD4CodeBasisMill.init();
+    BasicSymbolsMill.initializePrimitives();
     coCoChecker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
+
+    //parse + create symtab
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cd4codebasis/cocos/CD4CodeEnumConstantParameterMatchConstructorArgumentsValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
-    Log.getFindings().clear();
+
+    TestCD4CodeBasisMill.scopesGenitorDelegator().createFromAST(ast);
+
+    //check coco
     coCoChecker.checkAll(ast);
     assertTrue(Log.getFindings().isEmpty());
   }
