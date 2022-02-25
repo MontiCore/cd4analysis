@@ -14,12 +14,13 @@ public class CDAssociationHasSymbol
 
   @Override
   public void check(ASTCDAssociation a) {
-    if (a.isPresentName() && !a.isPresentSymbol()) {
+    if ((a.isPresentName() && !a.isPresentSymbol()) || (!a.isPresentName() && a.isPresentSymbol())) {
       final String assocName = a.getName();
 
       Log.error(String.format("0xCDC62: Association %s has no associated symbol, please create a symbol table.",
           assocName),
           a.get_SourcePositionStart());
     }
+
   }
 }
