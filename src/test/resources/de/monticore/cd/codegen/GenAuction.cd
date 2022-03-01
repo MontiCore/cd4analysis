@@ -18,7 +18,7 @@ classdiagram GenAuction {
   package person {
     class Person {
       java.lang.String name;
-      -> Message [*];
+      -> Message [*] {ordered};
     }
   }
 

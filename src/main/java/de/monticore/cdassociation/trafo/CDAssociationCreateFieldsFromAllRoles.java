@@ -21,6 +21,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -75,7 +76,7 @@ public class CDAssociationCreateFieldsFromAllRoles
     final CDRoleSymbol symbol = node.getSymbol();
     final ICDAssociationScope enclosingScope = symbol.getEnclosingScope();
 
-    SymTypeExpression fieldType = calculateType(symbol);
+    ASTMCType fieldType = calculateType(symbol);
     // Create the ASTNode
     ASTModifier modifier = CDAssociationMill.modifierBuilder()
       .setReadonly(symbol.isIsReadOnly())
@@ -87,7 +88,7 @@ public class CDAssociationCreateFieldsFromAllRoles
       .build();
     ASTCDAttribute fieldAst = CDAssociationMill.cDAttributeBuilder()
       .setName(node.getName())
-      .setMCType(MCTypeFacade.getInstance().createQualifiedType(fieldType.printFullName()))
+      .setMCType(fieldType)
       .setModifier(modifier)
       .build();
 
@@ -95,7 +96,6 @@ public class CDAssociationCreateFieldsFromAllRoles
     CDAssociationScopesGenitorDelegator scopeGenitor = CDAssociationMill.scopesGenitorDelegator();
     scopeGenitor.putOnStack(enclosingScope);
     fieldAst.accept(scopeGenitor.getTraverser());
-
     // Initialize Symbol
     FieldSymbol fieldSymbol = fieldAst.getSymbol();
     fieldSymbol.setIsReadOnly(symbol.isIsReadOnly());
@@ -104,7 +104,7 @@ public class CDAssociationCreateFieldsFromAllRoles
     fieldSymbol.setIsPublic(symbol.isIsPublic());
     fieldSymbol.setIsStatic(symbol.isIsStatic());
     fieldSymbol.setIsFinal(symbol.isIsFinal());
-    fieldSymbol.setType(fieldType);
+    fieldSymbol.setType(calculateSymType(symbol));
 
     createdFields.put(fieldSymbol, node.get_SourcePositionStart());
 
@@ -117,7 +117,30 @@ public class CDAssociationCreateFieldsFromAllRoles
     }
   }
 
-  public SymTypeExpression calculateType(CDRoleSymbol symbol) {
+  public ASTMCType calculateType(CDRoleSymbol symbol) {
+    final ASTMCType type;
+    if (!symbol.isPresentCardinality() || symbol.getCardinality().isOne()) {
+      type = MCTypeFacade.getInstance().createQualifiedType(symbol.getType().printFullName());
+    }
+    else {
+      final ASTCDCardinality cardinality = symbol.getCardinality();
+      if (cardinality.isOpt()) {
+        type = MCTypeFacade.getInstance().createOptionalTypeOf(symbol.getType().printFullName());
+      }
+      else {
+        final String container;
+        if (symbol.isIsOrdered()) {
+          type = MCTypeFacade.getInstance().createListTypeOf(symbol.getType().printFullName());
+        }
+        else {
+          type = MCTypeFacade.getInstance().createCollectionTypeOf(symbol.getType().printFullName());
+        }
+      }
+    }
+    return type;
+  }
+
+  public SymTypeExpression calculateSymType(CDRoleSymbol symbol) {
     final SymTypeExpression type;
     if (!symbol.isPresentCardinality() || symbol.getCardinality().isOne()) {
       type = symbol.getType();
