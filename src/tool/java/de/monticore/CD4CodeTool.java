@@ -13,6 +13,7 @@ import de.monticore.cd.plantuml.PlantUMLUtil;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegator;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
@@ -524,6 +525,18 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   protected void computeSemDiff() throws NumberFormatException{
     // parse the second CD
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
+
+    // run trafos
+    new CD4CodeAfterParseTrafo().transform(ast2);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+
+    // complete symbol table
+    ICD4CodeGlobalScope gscope = CD4CodeMill.globalScope();
+    BuiltInTypes.addBuiltInTypes(gscope);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+
+    // run default CoCos
+    runDefaultCoCos(ast);
 
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize;
