@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.monticore.cd.codegen.methods.AccessorDecorator;
-import de.monticore.cd.codegen.methods.MethodDecorator;
 import de.monticore.cd.codegen.methods.MutatorDecorator;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4code.CD4CodeMill;
@@ -33,6 +32,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CD4C {
+
   public static final String GLEX_GLOBAL_VAR = "cd4c";
 
   /*
@@ -120,6 +120,7 @@ public class CD4C {
   protected static void checkInitialized() {
     if (isInitialized()) return;
 
+    // This is used twice. Don't inline to avoid misleading the unique error-code check.
     String error = "0x11000: CD4C is not yet initialized";
 
     Log.error(error);
@@ -150,53 +151,59 @@ public class CD4C {
   \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
   /**
-   * create the new method
+   * Creates a method from the given {@code template}.
    *
-   * @param clazz        the class where information can be read from
-   * @param templateName the name of the template that is executed to create the method signature
-   * @param arguments    the arguments to the template
+   * @param clazz       the class from which to read necessary information
+   * @param template    the name of the template that is executed to create the method signature
+   * @param arguments   the arguments to be provided to the template
+   *
    * @return the created method
    */
-  public Optional<ASTCDMethodSignature> createMethod(ASTCDClass clazz, String templateName, Object... arguments) {
+  public Optional<ASTCDMethodSignature> createMethod(ASTCDClass clazz, String template, Object... arguments) {
     checkInitialized();
-    return createMethodSignatureAndBody(clazz, templateName, arguments)
+
+    return this.createMethodSignatureAndBody(clazz, template, arguments)
       .flatMap(CD4CTemplateHelper::getMethod)
-      .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
-      .flatMap(m ->
-        this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
-      );
+      .map(m -> this.setEnclosingScopeTo(m, clazz.getSpannedScope()))
+      .flatMap(m -> this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m));
   }
 
   /**
-   * add the new method to the provided class
+   * Adds a method created from the given {@code template} to the given class.
    *
-   * @param clazz        the class where the method should be added
-   * @param templateName the name of the template that is used for the method
-   * @param arguments    the arguments for the template
+   * @param clazz       the class to which the method should be added
+   * @param template    the name of the template that is executed to create the method signature
+   * @param arguments   the arguments to be provided to the template
    */
-  public void addMethod(ASTCDClass clazz, String templateName, Object... arguments) {
+  public void addMethod(ASTCDClass clazz, String template, Object... arguments) {
     checkInitialized();
-    final Optional<ASTCDMethodSignature> method = createMethod(clazz, templateName, arguments);
+
+    Optional<ASTCDMethodSignature> method = this.createMethod(clazz, template, arguments);
     if (!method.isPresent()) {
-      Log.error("0x11010: There was no method created in the template '" + templateName + "'");
+      Log.error("0x11010: There was no method created in the template '" + template + "'");
       return;
     }
+
     if (this.classPredicates.stream().anyMatch(p -> !p.test(clazz, method.get()))) {
       Log.error("0x11011: A check for the class method failed for method '" + method.get().getName() + "'");
     }
+
     clazz.addCDMember(method.get());
   }
 
   /**
    * Use this method to describe the signature (with concrete syntax) in templates
    *
-   * @param methodSignature the method signature as {@link de.monticore.cd4codebasis._ast.ASTCDMethod}
+   * <p><b>This method is intended to be used from templates.</b></p>
+   *
+   * @param signature the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDMethod(String) CD4CodeParser})
    */
-  public void method(String methodSignature) {
+  public void method(String signature) {
     checkInitialized();
-    final CD4CTemplateHelper m = new CD4CTemplateHelper();
-    m.method(methodSignature);
-    methodQueue.add(m);
+
+    CD4CTemplateHelper th = new CD4CTemplateHelper();
+    th.method(signature);
+    this.methodQueue.add(th);
   }
 
   /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
@@ -204,21 +211,21 @@ public class CD4C {
   \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
   /**
-   * create the new constructor
+   * Creates a constructor from the given {@code template}.
    *
-   * @param clazz        the class where information can be read from
-   * @param templateName the name of the template that is executed to create the method signature
-   * @param arguments    the arguments to the template
+   * @param clazz       the class from which to read necessary information
+   * @param template    the name of the template that is executed to create the constructor signature
+   * @param arguments   the arguments to be provided to the template
+   *
    * @return the created constructor
    */
-  public Optional<ASTCDMethodSignature> createConstructor(ASTCDClass clazz, String templateName, Object... arguments) {
+  public Optional<ASTCDMethodSignature> createConstructor(ASTCDClass clazz, String template, Object... arguments) {
     checkInitialized();
-    return createMethodSignatureAndBody(clazz, templateName, arguments)
+
+    return this.createMethodSignatureAndBody(clazz, template, arguments)
       .flatMap(CD4CTemplateHelper::getMethod)
-      .map(m -> setEnclosingScopeTo(m, clazz.getSpannedScope()))
-      .flatMap(m ->
-        this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m)
-      );
+      .map(m -> this.setEnclosingScopeTo(m, clazz.getSpannedScope()))
+      .flatMap(m -> this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m));
   }
 
   private ASTCDMethodSignature setEnclosingScopeTo(ASTCDMethodSignature method, ICDBasisScope scope) {
@@ -229,35 +236,41 @@ public class CD4C {
   }
 
   /**
-   * add the new constructor to the provided class
+   * Adds a constructor created from the given {@code template} to the given class.
    *
-   * @param clazz        the class where the method should be added
-   * @param templateName the name of the template that is used for the method
-   * @param arguments    the arguments for the template
+   * @param clazz       the class to which the constructor should be added
+   * @param template    the name of the template that is executed to create the method signature
+   * @param arguments   the arguments to be provided to the template
    */
-  public void addConstructor(ASTCDClass clazz, String templateName, Object... arguments) {
+  public void addConstructor(ASTCDClass clazz, String template, Object... arguments) {
     checkInitialized();
-    final Optional<ASTCDMethodSignature> method = createConstructor(clazz, templateName, arguments);
+
+    Optional<ASTCDMethodSignature> method = this.createConstructor(clazz, template, arguments);
     if (!method.isPresent()) {
-      Log.error("0x11020: There was no constructor created in the template '" + templateName + "'");
+      Log.error("0x11020: There was no constructor created in the template '" + template + "'");
       return;
     }
+
     if (this.classPredicates.stream().anyMatch(p -> !p.test(clazz, method.get()))) {
       Log.error("0x11021: A check for the class method failed for method '" + method.get().getName() + "'");
     }
+
     clazz.addCDMember(method.get());
   }
 
   /**
    * Use this method to describe the signature (with concrete syntax) in templates
    *
-   * @param constructorSignature the method signature as {@link de.monticore.cd4codebasis._ast.ASTCDConstructor}
+   * <p><b>This method is intended to be used from templates.</b></p>
+   *
+   * @param signature the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDConstructor(String) CD4CodeParser})
    */
-  public void constructor(String constructorSignature) {
+  public void constructor(String signature) {
     checkInitialized();
-    final CD4CTemplateHelper m = new CD4CTemplateHelper();
-    m.constructor(constructorSignature);
-    methodQueue.add(m);
+
+    CD4CTemplateHelper th = new CD4CTemplateHelper();
+    th.constructor(signature);
+    this.methodQueue.add(th);
   }
 
   /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
@@ -265,17 +278,23 @@ public class CD4C {
   \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
   /**
-   * create the new attribute
+   * Creates an attribute from the given {@code signature}.
    *
-   * @param clazz        the class where information can be read from
+   * @param clazz       the class from which to read necessary information
+   * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
+   *
    * @return the created attribute
    */
-  public Optional<ASTCDAttribute> createAttribute(ASTCDClass clazz, String attributeSignature) {
+  public Optional<ASTCDAttribute> createAttribute(ASTCDClass clazz, String signature) {
     checkInitialized();
-    attribute(attributeSignature);
+    this.attribute(signature);
 
-    Optional<ASTCDAttribute> attr = methodQueue.peek().astcdAttribute;
-    attr.ifPresent(a -> {setEnclosingScopeTo(a, clazz.getSpannedScope()); this.attributePredicates.forEach(p -> p.test(a));});
+    Optional<ASTCDAttribute> attr = this.methodQueue.peek().astcdAttribute;
+    attr.ifPresent(a -> {
+      this.setEnclosingScopeTo(a, clazz.getSpannedScope());
+      this.attributePredicates.forEach(p -> p.test(a));
+    });
+
     return attr;
   }
 
@@ -287,48 +306,38 @@ public class CD4C {
   }
 
   /**
-   * add the new constructor to the provided class
+   * Adds an attribute with the given {@code signature} to the given class.
    *
-   * @param clazz        the class where the method should be added
-   * @param templateName the name of the template that is used for the method
+   * @param clazz       the class to which the attribute should be added
+   * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
    */
-  public void addAttribute(ASTCDClass clazz, String templateName) {
-    checkInitialized();
-    final Optional<ASTCDAttribute> attribute = createAttribute(clazz, templateName);
-    if (!attribute.isPresent()) {
-      Log.error("0x11022: There was no attribute created in the template '" + templateName + "'");
-      return;
-    }
-
-    setEnclosingScopeTo(attribute.get(), clazz.getSpannedScope());
-
-    this.classAttrPredicates.forEach((p -> p.test(clazz, attribute.get())));
-
-    clazz.addCDMember(attribute.get());
+  public void addAttribute(ASTCDClass clazz, String signature) {
+    this.addAttribute(clazz, false, false, signature);
   }
 
-  public void addAttribute(ASTCDClass clazz, boolean addGetter, boolean addSetter,
-                           String templateName) {
+  /**
+   * Adds an attribute with the given {@code signature} to the given class.
+   *
+   * @param clazz       the class to which the attribute should be added
+   * @param addGetter   whether to generate a getter for the attribute
+   * @param addSetter   whether to generate a setter for the attribute
+   * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
+   *
+   */
+  public void addAttribute(ASTCDClass clazz, boolean addGetter, boolean addSetter, String signature) {
     checkInitialized();
-    final Optional<ASTCDAttribute> attribute = createAttribute(clazz, templateName);
+
+    Optional<ASTCDAttribute> attribute = this.createAttribute(clazz, signature);
     if (!attribute.isPresent()) {
-      Log.error("0x11022: There was no attribute created in the template '" + templateName + "'");
+      Log.error("0x11022: There was no attribute created in the template '" + signature + "'");
       return;
     }
 
-    setEnclosingScopeTo(attribute.get(), clazz.getSpannedScope());
-
+    this.setEnclosingScopeTo(attribute.get(), clazz.getSpannedScope());
     this.classAttrPredicates.forEach((p -> p.test(clazz, attribute.get())));
-
     clazz.addCDMember(attribute.get());
-    if (addGetter) {
-      AccessorDecorator accessor = new AccessorDecorator(config.getGlex());
-      clazz.addAllCDMembers(accessor.decorate(attribute.get()));
-    }
-    if (addSetter) {
-      MutatorDecorator mutator = new MutatorDecorator(config.getGlex());
-      clazz.addAllCDMembers(mutator.decorate(attribute.get()));
-    }
+
+    this.addMethods(clazz, attribute.get(), addGetter, addSetter);
   }
 
   public void addMethods(ASTCDClass clazz, ASTCDAttribute attr, boolean addGetter, boolean addSetter) {
@@ -345,22 +354,33 @@ public class CD4C {
   /**
    * Use this method to describe the signature (with concrete syntax) in templates
    *
-   * @param attributeSignature the attribute signature as {@link de.monticore.cdbasis._ast.ASTCDAttribute}
+   * <p><b>This method is intended to be used from templates.</b></p>
+   *
+   * @param signature the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
    */
-  public void attribute(String attributeSignature) {
+  public void attribute(String signature) {
     checkInitialized();
-    final CD4CTemplateHelper m = new CD4CTemplateHelper();
-    m.attribute(attributeSignature);
-    methodQueue.add(m);
+
+    CD4CTemplateHelper th = new CD4CTemplateHelper();
+    th.attribute(signature);
+    this.methodQueue.add(th);
   }
 
   /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
   | Imports                                                                   |
   \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
-  public void addImport(ASTCDType clazz, String importStr) {
-    final CD4CTemplateHelper t = new CD4CTemplateHelper();
-    t.importStr(importStr);
+  /**
+   * Adds an import with the given {@code signature} to the given class.
+   *
+   * @param clazz     the class to which the import should be added
+   * @param signature the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseMCImportStatement(String) CD4CodeParser})
+   */
+  public void addImport(ASTCDType clazz, String signature) {
+    checkInitialized();
+
+    CD4CTemplateHelper th = new CD4CTemplateHelper();
+    th.importStr(signature);
 
     Set<ASTMCImportStatement> s;
     if (importMap.containsKey(clazz)) {
@@ -369,7 +389,7 @@ public class CD4C {
       s = Sets.newHashSet();
       importMap.put(clazz, s);
     }
-    s.add(t.astcdImport.get());
+    s.add(th.astcdImport.get());
   }
 
   public Collection<ASTMCImportStatement> getImportList(ASTCDType clazz) {
@@ -581,9 +601,7 @@ public class CD4C {
       final String attrType = typesCalculator.synthesizeType(a.getMCType()).getCurrentResult().getTypeInfo().getFullName();
       if (c.getCDAttributeList()
         .stream()
-        .anyMatch(ca -> {
-          return attrType.equals(typesCalculator.synthesizeType(ca.getMCType()).getCurrentResult().getTypeInfo().getFullName());
-        })) {
+        .anyMatch(ca -> attrType.equals(typesCalculator.synthesizeType(ca.getMCType()).getCurrentResult().getTypeInfo().getFullName()))) {
         Log.error("0x110C9: The class '" + c.getName() + "' already has a attribute named '" + a.getName() + "'");
         return false;
       }
@@ -592,4 +610,5 @@ public class CD4C {
 
     return this;
   }
+
 }
