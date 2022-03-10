@@ -34,72 +34,96 @@ import java.util.stream.Collectors;
 
 public class CD4C {
   public static final String GLEX_GLOBAL_VAR = "cd4c";
+
+  /*
+   * TODO: This is not really a singleton because the instance can be recreated
+   *  and released. Additionally, searching for usages reveals that it is not
+   *  statically accessed in many places. A future update should probably
+   *  investigate whether it makes sense to fully remove the "instance caching"
+   *  in favor of just passing the instance to where it's needed.
+   */
+  private static CD4C INSTANCE;
+
   /**
    * build a stack for the defined methods to match the body to the "current" defined method signature
    */
   protected final Stack<CD4CTemplateHelper> methodQueue = new Stack<>();
-  protected GeneratorSetup config;
+
+  protected final List<Predicate<ASTCDMethodSignature>> methodPredicates = new ArrayList<>();
+  protected final List<Predicate<ASTCDAttribute>> attributePredicates = new ArrayList<>();
+  protected final List<BiPredicate<ASTCDClass, ASTCDMethodSignature>> classPredicates = new ArrayList<>();
+  protected final List<BiPredicate<ASTCDClass, ASTCDAttribute>> classAttrPredicates = new ArrayList<>();
+  protected final HashMap<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
+
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
-  protected static CD4C INSTANCE;
-  protected boolean isInitialized = false;
-  protected List<Predicate<ASTCDMethodSignature>> methodPredicates = new ArrayList<>();
-  protected List<Predicate<ASTCDAttribute>> attributePredicates = new ArrayList<>();
-  protected List<BiPredicate<ASTCDClass, ASTCDMethodSignature>> classPredicates = new ArrayList<>();
-  protected List<BiPredicate<ASTCDClass, ASTCDAttribute>> classAttrPredicates = new ArrayList<>();
   protected CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter();
   protected CDTypesCalculator typesCalculator = new DeriveSymTypeOfCD4Code();
-  protected HashMap<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
 
-  protected CD4C() {
-  }
+  protected GeneratorSetup config;
+  protected boolean isInitialized;
 
-  public static CD4C getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new CD4C();
-    }
+  protected CD4C() {}
+
+  /**
+   * Returns the current {@code CD4C} instance. If no instance is current, a new
+   * one is implicitly created but must be explicitly {@link #init(GeneratorSetup)
+   * initialized}.
+   *
+   * @return the current {@code CD4C} instance
+   *
+   * @see #init(GeneratorSetup)
+   * @see #reset()
+   */
+  public static synchronized CD4C getInstance() {
+    if (INSTANCE == null) INSTANCE = new CD4C();
     return INSTANCE;
   }
 
   /**
-   * initialize the CD4C infrastructure
-   * has to be called to use CD4C
+   * Initializes the current {@code CD4C} instance. If no instance is current, a
+   * new one is implicitly created.
    *
    * @param setup the generator setup to use for the generation
    */
-  public static CD4C init(GeneratorSetup setup) {
-    getInstance().config = setup;
-    setup.getGlex().setGlobalValue(GLEX_GLOBAL_VAR, INSTANCE);
-    INSTANCE.isInitialized = true;
-    return INSTANCE;
+  public static synchronized CD4C init(GeneratorSetup setup) {
+    CD4C instance = getInstance();
+
+    instance.config = setup;
+    setup.getGlex().setGlobalValue(GLEX_GLOBAL_VAR, instance);
+
+    instance.isInitialized = true;
+
+    return instance;
   }
 
-  /**
-   * reset the CD4C infrastructure
-   */
-  public static void reset() {
-    if (INSTANCE != null) {
-      INSTANCE.config.getGlex().changeGlobalVar(GLEX_GLOBAL_VAR, null);
-      INSTANCE.isInitialized = false;
-      INSTANCE = null;
-    }
+  /** Invalidates and releases the current {@code C4DC} instance. */
+  public static synchronized void reset() {
+    CD4C instance = INSTANCE; // Don't use getInstance() since that might implicitly create new instance.
+    if (instance == null) return;
+
+    instance.config.getGlex().changeGlobalVar(GLEX_GLOBAL_VAR, null);
+    instance.isInitialized = false;
+
+    INSTANCE = null;
   }
 
-  // TODO: Warum ist dies static, checkInitialized aber nicht?
-//
+  /** Returns {@code true} if a {@code CD4C} instance is current and initialized, or {@code false} otherwise. */
   public static boolean isInitialized() {
-    return getInstance().isInitialized;
+    // Don't use getInstance() to avoid implicitly creating a new instance.
+    return (INSTANCE != null && INSTANCE.isInitialized);
   }
 
   /**
-   * check if the CD4C infrastructure is initialized,
-   * if not, then an exception is thrown
+   * Checks if a {@code CD4C} instance is current and initialized. If the check
+   * fails, an exception is thrown.
    */
-  protected void checkInitialized() {
-    if (!isInitialized()) {
-      final String error = "0x11000: CD4C is not yet initialized";
-      Log.error(error);
-      throw new RuntimeException(error + ", please initialize with `CD4C.init(setup)`");
-    }
+  protected static void checkInitialized() {
+    if (isInitialized()) return;
+
+    String error = "0x11000: CD4C is not yet initialized";
+
+    Log.error(error);
+    throw new RuntimeException(error + ", please initialize with `CD4C.init(setup)`");
   }
 
   public CD4C setPrettyPrinter(CD4CodeFullPrettyPrinter prettyPrinter) {
