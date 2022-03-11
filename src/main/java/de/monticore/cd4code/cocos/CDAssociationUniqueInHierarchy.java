@@ -21,7 +21,6 @@ public class CDAssociationUniqueInHierarchy implements CDBasisASTCDDefinitionCoC
    */
   @Override
   public void check(ASTCDDefinition node) {
-    Log.init();
 
     // we check for each pair of associations
     for(ASTCDAssociation assoc1 : node.getCDAssociationsList()){

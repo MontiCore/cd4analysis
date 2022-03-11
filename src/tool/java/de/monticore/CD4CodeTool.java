@@ -576,12 +576,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     sol.generateSolutionsToPath(Paths.get(outputPath));
   }
 
-  private void runGeneratorCoCo(){
-    // Get checker for all general CoCos
+  /**
+   * Additional CoCo-Check for Code-Generation
+   */
+  protected void runGeneratorCoCo(){
     CD4AnalysisCoCos generalCoCos = new CD4AnalysisCoCos();
     CD4AnalysisCoCoChecker checker = generalCoCos.createNewChecker();
 
-    // Add specific CoCos for this tool
     checker.addCoCo(new CDAssociationUniqueInHierarchy());
     checker.checkAll(ast);
   }
