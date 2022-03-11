@@ -75,14 +75,14 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     ASTCDCompilationUnit badAST = prepareAST(getFilePath("cd4code"
         + "/generator/Animals.cd"));
 
-    /* todo: I want to use assertErrors, but I don't know how to make it work.
     try {
       checker.checkAll(badAST);
     } catch (Exception e){
-      assertErrors("0xCDCE1: Ape redefines an association of Animal.", "0xCDCE1: "
-              + "Ape redefines an association of Animal.");
+      Log.warn(e.getMessage());
     }
-    */
+    assertErrors("0xCDCE1: Ape redefines an association of Animal.", "0xCDCE1: "
+        + "Ape redefines an association of Animal.");
+    Log.clearFindings();
   }
 
   /**
