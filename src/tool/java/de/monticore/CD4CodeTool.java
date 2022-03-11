@@ -579,7 +579,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   private void runGeneratorCoCo(){
     // Get checker for all general CoCos
     CD4AnalysisCoCos generalCoCos = new CD4AnalysisCoCos();
-    CD4AnalysisCoCoChecker checker = generalCoCos.addCheckerForMcg2EbnfCoCos();
+    CD4AnalysisCoCoChecker checker = generalCoCos.createNewChecker();
 
     // Add specific CoCos for this tool
     checker.addCoCo(new CDAssociationUniqueInHierarchy());

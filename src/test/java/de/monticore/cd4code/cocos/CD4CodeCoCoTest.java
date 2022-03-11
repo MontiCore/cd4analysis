@@ -66,7 +66,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     checkLogError();
 
     CD4AnalysisCoCos generalCoCos = new CD4AnalysisCoCos();
-    CD4AnalysisCoCoChecker checker = generalCoCos.addCheckerForMcg2EbnfCoCos();
+    CD4AnalysisCoCoChecker checker = generalCoCos.createNewChecker();
 
     // Add specific CoCos for this tool
     checker.addCoCo(new CDAssociationUniqueInHierarchy());
