@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram RoleAndFieldNamesUniqueInvalid {
+// tests CoCo RoleAndFieldNamesUnique
+
+classdiagram FieldNameTwice {
 package p1 {
     class A {
       int foo;

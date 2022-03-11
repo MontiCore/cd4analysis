@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
 
-  private static final String FIELD_ROLE_DEFINED_MULTIPLE_TIMES = "Name of the field or role '%s' is not unique for the class '%s'. " + "The role and field names of each class must be unique for the class.";
+  private static final String FIELD_ROLE_DEFINED_MULTIPLE_TIMES = " Name of the field or role '%s' is not unique for the class '%s'. " + "The role and field names of each class must be unique for the class.";
 
   /**
    * @param node class to check.

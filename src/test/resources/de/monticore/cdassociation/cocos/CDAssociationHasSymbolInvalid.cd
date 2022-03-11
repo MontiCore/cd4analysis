@@ -1,15 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 
 classdiagram CDAssociationHasSymbolInvalid {
-package p1 {
+  package p1 {
     class A {
       int foo;
     }
-    class B{}
-    int bar;
-  }
-    class Bar{
+    class B {
+      int bar;
+    }
+    class Bar {
       B bar;
     }
-    association foo p1.A  -> Bar ;
+    association foo p1.A -> Bar;
+  }
 }

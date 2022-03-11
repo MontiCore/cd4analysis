@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+// tests CoCo RoleAndFieldNamesUnique
+
+classdiagram SameFieldAndRoleNameInvalid {
+
+  association A (foo) -> B;
+
+  class A {
+    int foo;
+  }
+
+  class B extends A;
+
+}
+
+
