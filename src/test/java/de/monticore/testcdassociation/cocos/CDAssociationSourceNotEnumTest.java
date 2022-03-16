@@ -5,8 +5,10 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationNameLowerCase;
 import de.monticore.cdassociation.cocos.ebnf.CDAssociationSourceNotEnum;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
@@ -50,6 +52,12 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
     CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(
       ast.getMCImportStatementList(),  MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
+    CDAssociationRoleNameTrafo trafo = new CDAssociationRoleNameTrafo();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(trafo);
+    traverser.setCDAssociationHandler(trafo);
+    trafo.transform(ast);
+
     return as;
   }
 
