@@ -13,6 +13,7 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbolSurrogate;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
@@ -139,6 +140,7 @@ public class CDAssociationSymbolTableCompleter
     }
     else {
       final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(leftSide.getMCQualifiedType().getMCQualifiedName());
+      // Result exists (or an error has already been called)
       leftType = result.get().getTypeInfo();
     }
 
@@ -148,6 +150,7 @@ public class CDAssociationSymbolTableCompleter
     }
     else {
       final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(rightSide.getMCQualifiedType().getMCQualifiedName());
+      // Result exists (or an error has already been called)
       rightType = result.get().getTypeInfo();
     }
 
