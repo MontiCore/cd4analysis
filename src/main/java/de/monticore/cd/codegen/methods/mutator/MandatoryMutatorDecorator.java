@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.mutator;
 
-import de.monticore.cd.codegen.AbstractCreator;
+import de.monticore.cd.codegen.methods.AbstractMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -15,7 +15,7 @@ import java.util.List;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
 
-public class MandatoryMutatorDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> {
+public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
 
   protected static final String SET = "set%s";
 

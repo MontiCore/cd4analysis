@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.accessor;
 
-import de.monticore.cd.codegen.AbstractCreator;
+import de.monticore.cd.codegen.methods.AbstractMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -17,7 +17,7 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
 
 
-public class MandatoryAccessorDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> {
+public class MandatoryAccessorDecorator extends AbstractMethodDecorator {
 
   protected static final String GET = "get%s";
 
@@ -26,7 +26,6 @@ public class MandatoryAccessorDecorator extends AbstractCreator<ASTCDAttribute, 
   public MandatoryAccessorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
   }
-
 
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
