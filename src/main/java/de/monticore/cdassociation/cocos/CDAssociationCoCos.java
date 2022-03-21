@@ -28,5 +28,6 @@ public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
     checker.addCoCo(new CDAssociationRoleNameLowerCase());
     // TODO (MB): CDAssociationRoleNameTrafo is neccessary for this coco
     // checker.addCoCo(new CDAssociationSourceNotEnum());
+    checker.addCoCo(new CDAssociationRoleNameNoConflictWithLocalAttribute());
   }
 }
