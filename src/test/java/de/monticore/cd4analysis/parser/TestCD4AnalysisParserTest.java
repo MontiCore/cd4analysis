@@ -24,13 +24,13 @@ public class TestCD4AnalysisParserTest extends CD4AnalysisTestBasis {
   }
 
   @Test
-  public void testLanguageTeaser() throws RecognitionException, IOException {
+  public void testInviDas() throws RecognitionException, IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/real_world_examples/InviDas.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 
     @Test
-  public void testLanguageTeaser() throws RecognitionException, IOException {
+  public void testMaCoCo() throws RecognitionException, IOException {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/real_world_examples/MaCoCo.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
