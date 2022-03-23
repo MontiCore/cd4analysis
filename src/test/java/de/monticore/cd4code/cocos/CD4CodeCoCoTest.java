@@ -80,8 +80,7 @@ public class CD4CodeCoCoTest extends CD4CodeTestBasis {
     } catch (Exception e){
       Log.warn(e.getMessage());
     }
-    assertErrors("0xCDCE1: Ape redefines an association of Animal.", "0xCDCE1: "
-        + "Ape redefines an association of Animal.");
+    assertErrors("0xCDCE1: Ape redefines an association of Animal.");
     Log.clearFindings();
   }
 
