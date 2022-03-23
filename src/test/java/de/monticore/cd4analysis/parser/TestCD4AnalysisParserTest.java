@@ -22,4 +22,16 @@ public class TestCD4AnalysisParserTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/MyLife.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
+
+  @Test
+  public void testLanguageTeaser() throws RecognitionException, IOException {
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/real_world_examples/InviDas.cd"));
+    checkNullAndPresence(p, astcdCompilationUnit);
+  }
+
+    @Test
+  public void testLanguageTeaser() throws RecognitionException, IOException {
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/real_world_examples/MaCoCo.cd"));
+    checkNullAndPresence(p, astcdCompilationUnit);
+  }
 }
