@@ -22,12 +22,17 @@ public class CDAssociationUniqueInHierarchy implements CDBasisASTCDDefinitionCoC
   @Override
   public void check(ASTCDDefinition node) {
 
+    List<ASTCDAssociation> alreadyChecked = new ArrayList<>();
+
     // we check for each pair of associations
     for(ASTCDAssociation assoc1 : node.getCDAssociationsList()){
+
+      alreadyChecked.add(assoc1);
+
       for(ASTCDAssociation assoc2 : node.getCDAssociationsList()){
 
-        // only check if they are not the same association
-        if(assoc1!=assoc2){
+        // only check each pair once
+        if(!alreadyChecked.contains(assoc2)){
 
           // if they share a left role-name, the referenced types on the right should not be in a
           // sub/super-type relation

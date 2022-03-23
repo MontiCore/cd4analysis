@@ -154,6 +154,11 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         if (cmd.hasOption("fieldfromrole")) {
+
+          // This CoCo checks whether a subclass redefines a role of an association, which is
+          // allowed for analysis (e.g. semdiff) but NOT for code-generation
+          runGeneratorCoCo();
+
           switch (cmd.getOptionValue("fieldfromrole")) {
             case "all": { // add FieldSymbols for all the CDRoleSymbols
               final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles = new CDAssociationCreateFieldsFromAllRoles();
@@ -226,7 +231,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         // generate .java-files in outputPath
         if (cmd.hasOption("gen")) {
 
-          runGeneratorCoCo();
           GlobalExtensionManagement glex = new GlobalExtensionManagement();
           glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
 
