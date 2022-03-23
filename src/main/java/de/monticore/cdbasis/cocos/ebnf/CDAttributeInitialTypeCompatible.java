@@ -6,12 +6,10 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.Optional;
 
 /**
  * Checks that an attribute assignment is compatible w.r.t. the attribute's
@@ -31,10 +29,10 @@ public class CDAttributeInitialTypeCompatible
       node.getInitial().accept(initialPrinter.getTraverser());
 
       final DeriveSymTypeOfCDBasis deriveSymTypeOfCDBasis = new DeriveSymTypeOfCDBasis();
-      final Optional<SymTypeExpression> symTypeExpressionOfType = deriveSymTypeOfCDBasis.calculateType(node.getMCType());
-      final Optional<SymTypeExpression> symTypeExpressionOfInitial = deriveSymTypeOfCDBasis.calculateType(node.getInitial());
+      final TypeCheckResult symTypeExpressionOfType = deriveSymTypeOfCDBasis.synthesizeType(node.getMCType());
+      final TypeCheckResult symTypeExpressionOfInitial = deriveSymTypeOfCDBasis.deriveType(node.getInitial());
 
-      if (symTypeExpressionOfType.isPresent()) {
+      if (symTypeExpressionOfType.isPresentCurrentResult()) {
         Log.error(
             String
                 .format(
@@ -42,7 +40,7 @@ public class CDAttributeInitialTypeCompatible
                     node.getName(), typeName, className),
             node.get_SourcePositionStart());
       }
-      if (symTypeExpressionOfInitial.isPresent()) {
+      if (symTypeExpressionOfInitial.isPresentCurrentResult()) {
         Log.error(
             String
                 .format(
@@ -51,8 +49,8 @@ public class CDAttributeInitialTypeCompatible
             node.get_SourcePositionStart());
       }
 
-      if (symTypeExpressionOfType.isPresent() && symTypeExpressionOfInitial.isPresent()) {
-        if (!TypeCheck.isSubtypeOf(symTypeExpressionOfInitial.get(), symTypeExpressionOfType.get())) {
+      if (symTypeExpressionOfType.isPresentCurrentResult() && symTypeExpressionOfInitial.isPresentCurrentResult()) {
+        if (!TypeCheck.isSubtypeOf(symTypeExpressionOfInitial.getCurrentResult(), symTypeExpressionOfType.getCurrentResult())) {
           Log.error(
               String
                   .format(
