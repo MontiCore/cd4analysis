@@ -240,7 +240,7 @@ classdiagram InviDas {
   }
 
   enum AdequacyDecisionCountries {
-    // ... complete list omitted
+    ;// ... complete list omitted
   }
 
 }
