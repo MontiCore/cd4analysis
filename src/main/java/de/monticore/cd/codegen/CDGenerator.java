@@ -34,9 +34,8 @@ public class CDGenerator {
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
-    String mainPackage = String.join(File.separator, compilationUnit.getCDPackageList()).toLowerCase(Locale.ROOT);
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
-      String packageAsPath = mainPackage + File.separator + String.join(File.separator, astPackage.getMCQualifiedName().getPartsList())
+      String packageAsPath = String.join(File.separator, astPackage.getMCQualifiedName().getPartsList())
         .toLowerCase(Locale.ROOT);
 
       this.generateCDClasses(
