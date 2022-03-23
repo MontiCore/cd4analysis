@@ -71,10 +71,10 @@ classdiagram Domain {
   association [*] Sonstiges (sonstigeKonten) <-> (externesKonto) Konto [0..1]; // -> Verbuchungskonto
 
   enum AbrechnungsInterval {
-    JAEHRLICH("Jährlich"),
-    HALBJAEHRLICH("Halbjährlich"),
-    QUARTALSWEISE("Quartalsweise"),
-    MONATLICH("Monatlich");
+    JAEHRLICH,
+    HALBJAEHRLICH,
+    QUARTALSWEISE,
+    MONATLICH;
   }
 
   //----------------------------------------------
@@ -182,31 +182,31 @@ classdiagram Domain {
 
   enum BuchungsStatus {
     EINGEREICHT,
-    SAP("SAP"),
-    SAP_STORNIERT("SAP(Storniert)"),
+    SAP,
+    SAP_STORNIERT,
     PLANUNG,
     FEHLERHAFT;
   }
 
   enum RechnungsstellungStatus {
     OFFENE_RECHNUNG,
-    SAP("SAP"),
-     SAP_STORNIERT("SAP(Storniert)"),
+    SAP,
+    SAP_STORNIERT,
     PLANUNG;
   }
 
   enum MittelzuweisungStatus {
-    BESCHEID_ERHALTEN ("Bescheid erhalten"),
-    SAP("SAP"),
-    SAP_STORNIERT("SAP(Storniert)"),
+    BESCHEID_ERHALTEN,
+    SAP,
+    SAP_STORNIERT,
     PLANUNG,
     FEHLERHAFT;
   }
 
   enum MittelabrufStatus {
     ABGERUFEN,
-    SAP("SAP"),
-     SAP_STORNIERT("SAP(Storniert)"),
+    SAP,
+    SAP_STORNIERT,
     PLANUNG;
   }
 
@@ -220,7 +220,7 @@ classdiagram Domain {
   enum VertragStatus {
     AKTIV,
     PLANUNG,
-    AENDERUNGSVERTRAG("Änderungsvertrag"),
+    AENDERUNGSVERTRAG,
     ABGELAUFEN;
   }
 
@@ -285,11 +285,11 @@ classdiagram Domain {
   association [1] Anstellungsart -> (anstellungsformen) Anstellungsform [*];
 
   enum BeschaeftigungsArt {
-      WiMi("Wissenschaftliche/r Mitarbeiter/in (WiMi)"),
-      HiWi("Hilfskraft (HiWi)"),
-      BTV("Beschäftigte/r in Technik und Verwaltung (BTV)"),
-      BEAMTE("Beamte/r"),
-      AZUBI("Azubi/ne"),
+      WiMi,
+      HiWi,
+      BTV,
+      BEAMTE,
+      AZUBI,
       PLAN;}
 
   //----------------------------------------------
@@ -392,100 +392,100 @@ classdiagram Domain {
   }
 
   enum Geschlecht {
-    NONE(""),
-    WEIBLICH("weiblich"),
-    MAENNLICH("männlich"),
-    DIVERS("divers");
+    NONE,
+    WEIBLICH,
+    MAENNLICH,
+    DIVERS;
   }
 
   enum Titel {
-      NONE(""),
-      E1("Apl. Prof. Dr.") ,
-      E2("B.Sc.") ,
-      E3("Dipl.-Inform.") ,
-      E4("Dipl.-Ing."),
-      E5("Dipl.-Ing. (FH)"),
-      E6("Dipl.-Ing. (RUS)"),
-      E7("Dipl.-Kff.") ,
-      E8("Dipl.-Math."),
-      E9("Dipl.-Phys.") ,
-      E10("Dipl.-Wirt. Ing.") ,
-      E11("Dr.")  ,
-      E12("Dr. phil."),
-      E13("Dr. rer. nat."),
-      E14("Dr. rer. pol."),
-      E15("Dr.-Ing."),
-      E16("M.A.") ,
-      E17("M.Eng."),
-      E18("M.Sc."),
-      E19("PhD"),
-      E20("Prof. Dr.-Ing.");
+      NONE,
+      E1,
+      E2,
+      E3,
+      E4,
+      E5,
+      E6,
+      E7,
+      E8,
+      E9,
+      E10,
+      E11,
+      E12,
+      E13,
+      E14,
+      E15,
+      E16,
+      E17,
+      E18,
+      E19,
+      E20
     }
 
   enum Berufsgruppe {
-      NONE(""),
-      E1("Akademischer Direktor"),
-      E2("Angestellter in der DV"),
-      E3("Auszubildende/r"),
-      E4("Bibl.-Beschäftiger"),
-      E5("Elektriker"),
-      E6("Elektroniker"),
-      E7("Elektrotechniker"),
-      E8("Fachinformatiker"),
-      E9("Fachinformatiker"),
-      E10("Industriemechaniker"),
-      E11("Lagerarbeiter"),
-      E12("Mechaniker"),
-      E13("Meister"),
-      E14("Praktikant, SV-frei"),
-      E15("Programmierer"),
-      E16("Stud. Hilfskraft"),
-      E17("Techn. Beschäftigter"),
-      E18("Techn. Zeichner"),
-      E19("Techniker"),
-      E20("Universitätsprofessor"),
-      E21("Verw. Beschäftigter"),
-      E22("Werkstoffprüfer"),
-      E23("Wiss. Beschäftigter"),
-      E24("Wiss. Hilfskraft Bachelor"),
-      E25("Wiss. Hilfskraft Master");
+      NONE,
+      E1,
+      E2,
+      E3,
+      E4,
+      E5,
+      E6,
+      E7,
+      E8,
+      E9,
+      E10,
+      E11,
+      E12,
+      E13,
+      E14,
+      E15,
+      E16,
+      E17,
+      E18,
+      E19,
+      E20,
+      E21,
+      E22,
+      E23,
+      E24,
+      E25
     }
 
   enum Aktion {
-      NONE(""),
+      NONE,
       ANFRAGE_VERSENDET,
       ERINNERUNG_VERSENDET,
       ZUR_UNTERSCHRIFT_BEIM_VORGESETZTEN,
       BEI_ZHV_VORGELEGT,
-      VON_ZHV_BESTAETIGT("Von ZHV bestätigt");
+      VON_ZHV_BESTAETIGT;
     }
 
   enum Vertragsgrundlage {
-      NONE(""),
-      E1("sonst. Befristungen (gleicht Auszubildenden)"),
-      E2("unbefristet"),
-      E3("unbefr. (Beamter aL)"),
-      E4("§14 Abs. 2 TzBfG"),
-      E5("Elternzeitvertretung"),
-      E6("Befristung SHK"),
-      E7("Mehrbedarf sonstiger"),
-      E8("Mehrb. Forschungspr."),
-      E9("§2(5)Nr.3WZVG MuS-EZ"),
-      E10("§2 WZVG DM (NP)"),
-      E11("§2 WZVG KiBetr NP"),
-      E12("WZVG-Postdoc-Quali."),
-      E13("WZVG-N-Gr._Leiter"),
-      E14("WZVG-Wiss.-Quali NP"),
-      E15("§2 WZVG DM (VP)"),
-      E16("§2 WZVG KiBetr VP"),
-      E17("WZVG-Promotion"),
-      E18("WZVG-sonst.Wiss-Qual"),
-      E19("Befristung WHB"),
-      E20("Befristung WHK"),
-      E21("§2 (1) S.2 WZVG nPr"),
-      E22("§14(1) Nr.2 TzBfG-Üb"),
-      E23("befr. Arbeitszeitänderung"),
-      E24("Übernahme nach Ausbildung");
+      NONE,
+      E1,
+      E2,
+      E3,
+      E4,
+      E5,
+      E6,
+      E7,
+      E8,
+      E9,
+      E10,
+      E11,
+      E12,
+      E13,
+      E14,
+      E15,
+      E16,
+      E17,
+      E18,
+      E19,
+      E20,
+      E21,
+      E22,
+      E23,
+      E24
     }
 
   association [1] Person -> (elternzeiten) Elternzeit [*];
@@ -576,10 +576,10 @@ classdiagram Domain {
     GENEHMIGT,
     ABGELEHNT,
     LAUFEND,
-    FACHLICH_ABGESCHLOSSEN("Fachlich abgeschlossen"),
-    ENDBERICHT_EINGEREICHT("Endbericht eingereicht"),
-    INPRUEFUNG("In Prüfung"),
-    GEPRUEFT("Geprüft"),
+    FACHLICH_ABGESCHLOSSEN,
+    ENDBERICHT_EINGEREICHT,
+    INPRUEFUNG,
+    GEPRUEFT,
     ABGERECHNET,
     ABGESCHLOSSEN,
     ARCHIVIERT;
@@ -595,7 +595,7 @@ classdiagram Domain {
   enum ProjektTyp {
     HOHEITLICH,
     INDUSTRIE,
-    UNIVERSITAET("Universität"),
+    UNIVERSITAET,
     SONSTIGE;
   }
 
@@ -634,9 +634,9 @@ classdiagram Domain {
 
   enum StundenzettelChangeOperation {
     INVALID,
-    ABGEGEBEN("Abgegeben"),
-    INTERN_GEPRUEFT("Intern Geprüft"),
-    INTERN_ABGESCHLOSSEN("Intern Abgeschlossen");
+    ABGEGEBEN,
+    INTERN_GEPRUEFT,
+    INTERN_ABGESCHLOSSEN;
   }
 
   association [1] Person ->  StundenzettelHistorieEintrag [*];
@@ -692,21 +692,21 @@ classdiagram Domain {
   enum Urlaubssstatus {
     NONE,
     BEANTRAGT,
-    GEPRUEFT("Geprüft"),
-    PRUEFUNG_ABGELEHNT("Prüfung abgelehnt"),
+    GEPRUEFT,
+    PRUEFUNG_ABGELEHNT,
     GENEHMIGT,
     GENEHMIGUNG_ABGELEHNT;
   }
 
   enum StundenzettelStatus {
     IN_ERFASSUNG,
-    INTERN_INPRUEFUNG("Intern in Prüfung"),
+    INTERN_INPRUEFUNG,
     INTERN_ABGESCHLOSSEN,
-    DRITTMITTELABTEILUNG_INPRUEFUNG("Drittmittelabteilung in Prüfung"),
+    DRITTMITTELABTEILUNG_INPRUEFUNG,
     DRITTMITTELABTEILUNG_ABGESCHLOSSEN,
     ENDBERICHT_EINGEREICHT,
-    GEPRUEFT("Geprüft"),
-    FOERDERGEBER_ABGESCHLOSSEN("Fördergeber abgeschlossen"),
+    GEPRUEFT,
+    FOERDERGEBER_ABGESCHLOSSEN,
     ABGESCHLOSSEN;
   }
 
@@ -819,29 +819,29 @@ classdiagram Domain {
 
   enum EventStatus {
     // Import
-    SUCCESS("erfolgreich"),
-    ERROR("fehlerhaft"),
-    INFO("erfolgreich"),
-    CREATED("erstellt"),
-    UPDATED("upgedated"),
-    IGNORED("ignoriert"),
-    IN_PROGRESS("in bearbeitung"),
+    SUCCESS,
+    ERROR,
+    IN_DEFINITION,
+    CREATED,
+    UPDATED,
+    IGNORED,
+    IN_PROGRESS,
 
     // Personal Export
-    SENT("verschickt"),
-    CORRECT("sachlich korrekt");
+    SENT,
+    CORRECT;
   }
 
   enum EventType {
-    IMPORT_KONTO("Konten"),
-    IMPORT_BUCHUNG("Buchungs"),
-    IMPORT_PERSON("Personen"),
-    IMPORT_INSTITUT("Instituts"),
-    IMPORT_NUTZER("Nutzer"),
-    IMPORT_VERTRAG("Vertrags"),
-    EXPORT_FINANZEN_KONTO("Konten"),
-    EXPORT_FINANZEN_PLANSTELLE("Planstellen"),
-    EXPORT_FINANZEN_VERTRAG("Vertragabdeckungs");
+    IMPORT_KONTO,
+    IMPORT_BUCHUNG,
+    IMPORT_PERSON,
+    IMPORT_INSTITUT,
+    IMPORT_NUTZER,
+    IMPORT_VERTRAG,
+    EXPORT_FINANZEN_KONTO,
+    EXPORT_FINANZEN_PLANSTELLE,
+    EXPORT_FINANZEN_VERTRAG;
   }
 
   //----------------------------------------------
