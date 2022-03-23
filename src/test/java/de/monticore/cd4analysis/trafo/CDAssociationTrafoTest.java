@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.testcdassociation.symboltable;
+package de.monticore.cd4analysis.trafo;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
@@ -7,8 +7,8 @@ import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
-import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromAllRoles;
-import de.monticore.cdassociation.trafo.CDAssociationCreateFieldsFromNavigableRoles;
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;

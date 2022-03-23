@@ -1,12 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdassociation.trafo;
+package de.monticore.cd4analysis.trafo;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisScopesGenitorDelegator;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitorDelegator;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
@@ -21,6 +22,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -75,9 +77,9 @@ public class CDAssociationCreateFieldsFromAllRoles
     final CDRoleSymbol symbol = node.getSymbol();
     final ICDAssociationScope enclosingScope = symbol.getEnclosingScope();
 
-    SymTypeExpression fieldType = calculateType(symbol);
+    ASTMCType fieldType = calculateType(symbol);
     // Create the ASTNode
-    ASTModifier modifier = CDAssociationMill.modifierBuilder()
+    ASTModifier modifier = CD4AnalysisMill.modifierBuilder()
       .setReadonly(symbol.isIsReadOnly())
       .setPrivate(symbol.isIsPrivate())
       .setProtected(symbol.isIsProtected())
@@ -85,17 +87,16 @@ public class CDAssociationCreateFieldsFromAllRoles
       .setStatic(symbol.isIsStatic())
       .setFinal(symbol.isIsFinal())
       .build();
-    ASTCDAttribute fieldAst = CDAssociationMill.cDAttributeBuilder()
+    ASTCDAttribute fieldAst = CD4AnalysisMill.cDAttributeBuilder()
       .setName(node.getName())
-      .setMCType(MCTypeFacade.getInstance().createQualifiedType(fieldType.printFullName()))
+      .setMCType(fieldType)
       .setModifier(modifier)
       .build();
 
     // Build scopes
-    CDAssociationScopesGenitorDelegator scopeGenitor = CDAssociationMill.scopesGenitorDelegator();
-    scopeGenitor.putOnStack(enclosingScope);
+    CD4AnalysisScopesGenitorDelegator scopeGenitor = CD4AnalysisMill.scopesGenitorDelegator();
+    scopeGenitor.putOnStack((ICD4AnalysisScope) enclosingScope);
     fieldAst.accept(scopeGenitor.getTraverser());
-
     // Initialize Symbol
     FieldSymbol fieldSymbol = fieldAst.getSymbol();
     fieldSymbol.setIsReadOnly(symbol.isIsReadOnly());
@@ -104,7 +105,7 @@ public class CDAssociationCreateFieldsFromAllRoles
     fieldSymbol.setIsPublic(symbol.isIsPublic());
     fieldSymbol.setIsStatic(symbol.isIsStatic());
     fieldSymbol.setIsFinal(symbol.isIsFinal());
-    fieldSymbol.setType(fieldType);
+    fieldSymbol.setType(calculateSymType(symbol));
 
     createdFields.put(fieldSymbol, node.get_SourcePositionStart());
 
@@ -117,7 +118,30 @@ public class CDAssociationCreateFieldsFromAllRoles
     }
   }
 
-  public SymTypeExpression calculateType(CDRoleSymbol symbol) {
+  public ASTMCType calculateType(CDRoleSymbol symbol) {
+    final ASTMCType type;
+    if (!symbol.isPresentCardinality() || symbol.getCardinality().isOne()) {
+      type = MCTypeFacade.getInstance().createQualifiedType(symbol.getType().printFullName());
+    }
+    else {
+      final ASTCDCardinality cardinality = symbol.getCardinality();
+      if (cardinality.isOpt()) {
+        type = MCTypeFacade.getInstance().createOptionalTypeOf(symbol.getType().printFullName());
+      }
+      else {
+        final String container;
+        if (symbol.isIsOrdered()) {
+          type = MCTypeFacade.getInstance().createListTypeOf(symbol.getType().printFullName());
+        }
+        else {
+          type = MCTypeFacade.getInstance().createSetTypeOf(symbol.getType().printFullName());
+        }
+      }
+    }
+    return type;
+  }
+
+  public SymTypeExpression calculateSymType(CDRoleSymbol symbol) {
     final SymTypeExpression type;
     if (!symbol.isPresentCardinality() || symbol.getCardinality().isOne()) {
       type = symbol.getType();

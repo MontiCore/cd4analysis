@@ -383,8 +383,7 @@ shadowJar { // all in one jar
   manifest {
     attributes "Main-Class": "de.monticore.CD4CodeTool"
   }
-  from sourceSets.cddiff.output
-  from sourceSets.tool.output
+  from sourceSets.tool.runtimeClasspath
   archiveClassifier = "mc-tool"
 }
 

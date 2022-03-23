@@ -3,11 +3,9 @@ package de.monticore.testtypeimporter._symboltable;
 
 import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.testtypeimporter._ast.ASTElement;
-import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.Optional;
 
 public class TestTypeImporterScopesGenitor
     extends TestTypeImporterScopesGenitorTOP {
@@ -19,8 +17,8 @@ public class TestTypeImporterScopesGenitor
   public void endVisit(ASTElement node) {
     super.endVisit(node);
 
-    final Optional<SymTypeExpression> typeResult = new DeriveSymTypeOfCDBasis().calculateType(node.getMCType());
-    if (!typeResult.isPresent()) {
+    final TypeCheckResult typeResult = new DeriveSymTypeOfCDBasis().synthesizeType(node.getMCType());
+    if (!typeResult.isPresentCurrentResult()) {
       Log.error(String.format(
           "0xCDE00: The type (%s) of the element (%s) could not be calculated",
           node.getMCType().printType(MCBasicTypesMill.mcBasicTypesPrettyPrinter()),
@@ -28,7 +26,7 @@ public class TestTypeImporterScopesGenitor
           node.getMCType().get_SourcePositionStart());
     }
     else {
-      node.getSymbol().setType(typeResult.get());
+      node.getSymbol().setType(typeResult.getCurrentResult());
     }
   }
 }

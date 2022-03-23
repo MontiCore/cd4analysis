@@ -5,8 +5,7 @@ import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitor;
-import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitorDelegator;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisScopesGenitorDelegator;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
@@ -14,17 +13,17 @@ import de.se_rwth.commons.logging.Log;
 public class CD4AnalysisTrafo4Defaults {
   protected CD4AnalysisTraverser traverser;
   protected final CDAfterParseHelper cdAfterParseHelper;
-  protected final CDAssociationScopesGenitorDelegator symbolTableCreator;
+  protected final CD4AnalysisScopesGenitorDelegator symbolTableCreator;
 
   public CD4AnalysisTrafo4Defaults() {
-    this(new CDAfterParseHelper(), CDAssociationMill.scopesGenitorDelegator());
+    this(new CDAfterParseHelper(), CD4AnalysisMill.scopesGenitorDelegator());
   }
 
-  public CD4AnalysisTrafo4Defaults(CDAssociationScopesGenitorDelegator symbolTableCreator) {
+  public CD4AnalysisTrafo4Defaults(CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
     this(new CDAfterParseHelper(), symbolTableCreator);
   }
 
-  public CD4AnalysisTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitorDelegator symbolTableCreator) {
+  public CD4AnalysisTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
     this.cdAfterParseHelper = cdAfterParseHelper;
     this.symbolTableCreator = symbolTableCreator;
     this.traverser = CD4AnalysisMill.traverser();
@@ -32,7 +31,7 @@ public class CD4AnalysisTrafo4Defaults {
     init(cdAfterParseHelper, symbolTableCreator, traverser);
   }
 
-  public void init(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitorDelegator symbolTableCreator, CD4AnalysisTraverser traverser) {
+  public void init(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator, CD4AnalysisTraverser traverser) {
     final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo(cdAfterParseHelper, symbolTableCreator);
     traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
     traverser.add4CDAssociation(cdAssociationRoleNameTrafo);

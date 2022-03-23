@@ -2,10 +2,10 @@
 package de.monticore.cd4code.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisScopesGenitorDelegator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cdassociation.CDAssociationMill;
-import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitorDelegator;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
@@ -13,13 +13,13 @@ import de.se_rwth.commons.logging.Log;
 public class CD4CodeTrafo4Defaults {
   protected CD4CodeTraverser traverser;
   protected final CDAfterParseHelper cdAfterParseHelper;
-  protected final CDAssociationScopesGenitorDelegator symbolTableCreator;
+  protected final CD4AnalysisScopesGenitorDelegator symbolTableCreator;
 
   public CD4CodeTrafo4Defaults() {
-    this(new CDAfterParseHelper(), CDAssociationMill.scopesGenitorDelegator());
+    this(new CDAfterParseHelper(), CD4AnalysisMill.scopesGenitorDelegator());
   }
 
-  public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitorDelegator symbolTableCreator) {
+  public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
     this.cdAfterParseHelper = cdAfterParseHelper;
     this.traverser = CD4CodeMill.traverser();
     this.symbolTableCreator = symbolTableCreator;
@@ -27,7 +27,7 @@ public class CD4CodeTrafo4Defaults {
     init(cdAfterParseHelper, symbolTableCreator, traverser);
   }
 
-  public void init(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitorDelegator symbolTableCreator, CD4CodeTraverser traverser) {
+  public void init(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator, CD4CodeTraverser traverser) {
     final CDAssociationRoleNameTrafo cdAssociation = new CDAssociationRoleNameTrafo(cdAfterParseHelper, symbolTableCreator);
     traverser.add4CDAssociation(cdAssociation);
     traverser.setCDAssociationHandler(cdAssociation);

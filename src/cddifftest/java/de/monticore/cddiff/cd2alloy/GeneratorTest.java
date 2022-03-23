@@ -56,4 +56,27 @@ public class GeneratorTest extends AbstractTest {
     // Call generator
     CD2AlloyGenerator.generateModuleToFile(asts, outputDirectory.toFile());
   }
+
+  @Test
+  public void testQManger() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
+        + "/QManager/cd2v3.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
+        + "/QManager/cd2v4.cd");
+    assertNotNull(astV2);
+
+    // Create Output Path
+    final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
+
+    // Initialize set of asts
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    asts.add(astV1);
+    asts.add(astV2);
+
+    // Call generator
+    CD2AlloyGenerator.generateModuleToFile(asts, outputDirectory.toFile());
+  }
+
 }

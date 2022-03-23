@@ -9,11 +9,8 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbolSurrogate;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
@@ -91,32 +88,33 @@ public class CDAssociationSymbolTableCompleter
   }
 
   protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast, ASTCDAssocSide side) {
-    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(side.getMCQualifiedType());
-    if (!typeResult.isPresent()) {
+    final TypeCheckResult typeResult = symbolTableHelper.getTypeChecker().synthesizeType(side.getMCQualifiedType());
+    if (!typeResult.isPresentCurrentResult()) {
       Log.error(String.format(
           "0xCDA62: The type %s of the role (%s) could not be calculated",
           symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
           side.getName(ast)),
           side.getMCQualifiedType().get_SourcePositionStart());
+      return Optional.empty();
     }
 
     // check if the type can be resolved
 
-    return typeResult;
+    return Optional.of(typeResult.getCurrentResult());
   }
 
   protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
-        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(side.getCDQualifier().getByType());
-        if (!result.isPresent()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(side.getCDQualifier().getByType());
+        if (!result.isPresentCurrentResult()) {
           Log.error(String.format(
               "0xCDA63: The type of the interface (%s) could not be calculated",
               side.getCDQualifier().getByType().getClass().getSimpleName()),
               side.getCDQualifier().get_SourcePositionStart());
         }
         else {
-          symbol.setTypeQualifier(result.get());
+          symbol.setTypeQualifier(result.getCurrentResult());
         }
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
@@ -139,9 +137,8 @@ public class CDAssociationSymbolTableCompleter
       leftType = leftSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(leftSide.getMCQualifiedType().getMCQualifiedName());
-      // Result exists (or an error has already been called)
-      leftType = result.get().getTypeInfo();
+      final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(leftSide.getMCQualifiedType().getMCQualifiedName());
+      leftType = result.getCurrentResult().getTypeInfo();
     }
 
     final TypeSymbol rightType;
@@ -149,9 +146,8 @@ public class CDAssociationSymbolTableCompleter
       rightType = rightSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(rightSide.getMCQualifiedType().getMCQualifiedName());
-      // Result exists (or an error has already been called)
-      rightType = result.get().getTypeInfo();
+      final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(rightSide.getMCQualifiedType().getMCQualifiedName());
+      rightType = result.getCurrentResult().getTypeInfo();
     }
 
     if (leftSide.isPresentSymbol()) {

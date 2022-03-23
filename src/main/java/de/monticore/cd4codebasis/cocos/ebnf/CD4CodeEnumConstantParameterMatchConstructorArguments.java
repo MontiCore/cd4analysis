@@ -3,9 +3,7 @@ package de.monticore.cd4codebasis.cocos.ebnf;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd._visitor.CDMemberVisitor;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -16,6 +14,7 @@ import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
+import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -117,11 +116,11 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
       }
 
       // find type of each of the arguments
-      final List<Optional<SymTypeExpression>> argumentTypes = arguments
+      final List<TypeCheckResult> argumentTypes = arguments
           .streamExpressions()
-          .map(e -> helper.getTypeChecker().calculateType(e))
+          .map(e -> helper.getTypeChecker().deriveType(e))
           .collect(Collectors.toList());
-      IntStream.range(0, argumentTypes.size()).filter(i -> !argumentTypes.get(i).isPresent()).forEach(i ->
+      IntStream.range(0, argumentTypes.size()).filter(i -> !argumentTypes.get(i).isPresentCurrentResult()).forEach(i ->
           Log.error(
               String
                   .format(
@@ -131,7 +130,8 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
               arguments.getExpression(i).get_SourcePositionStart())
       );
 
-      return argumentTypes.stream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+      return argumentTypes.stream().filter(TypeCheckResult::isPresentCurrentResult)
+        .map(TypeCheckResult::getCurrentResult).collect(Collectors.toList());
     }).collect(Collectors.toList());
   }
 
@@ -143,11 +143,11 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
       }
 
       // find type of each of the parameter
-      final List<Optional<SymTypeExpression>> parameterTypes = parameter
+      final List<TypeCheckResult> parameterTypes = parameter
           .stream()
-          .map(e -> helper.getTypeChecker().calculateType(e.getMCType()))
+          .map(e -> helper.getTypeChecker().synthesizeType(e.getMCType()))
           .collect(Collectors.toList());
-      IntStream.range(0, parameterTypes.size()).filter(i -> !parameterTypes.get(i).isPresent()).forEach(i ->
+      IntStream.range(0, parameterTypes.size()).filter(i -> !parameterTypes.get(i).isPresentCurrentResult()).forEach(i ->
           Log.error(
               String
                   .format(
@@ -158,7 +158,8 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
           )
       );
 
-      return parameterTypes.stream().filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+      return parameterTypes.stream().filter(TypeCheckResult::isPresentCurrentResult)
+        .map(TypeCheckResult::getCurrentResult).collect(Collectors.toList());
     }).collect(Collectors.toList());
   }
 

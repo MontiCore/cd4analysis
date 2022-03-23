@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.generator;
+package de.monticore.alloy2od;
 
 import de.monticore.od4data._parser.OD4DataParser;
 import de.monticore.odbasis._ast.ASTODArtifact;

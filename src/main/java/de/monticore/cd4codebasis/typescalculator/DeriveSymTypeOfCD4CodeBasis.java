@@ -4,86 +4,20 @@ package de.monticore.cd4codebasis.typescalculator;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
-import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.types.check.*;
-import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
-import java.util.Optional;
-
-public class DeriveSymTypeOfCD4CodeBasis
-    implements IDerive, CDTypesCalculator {
-
-  protected CD4CodeBasisTraverser traverser;
-  private TypeCheckResult typeCheckResult;
+public class DeriveSymTypeOfCD4CodeBasis extends CDTypesCalculator {
 
   public DeriveSymTypeOfCD4CodeBasis() {
-    init();
+    this(CD4CodeBasisMill.traverser());
   }
 
-  @Override
-  public CD4CodeBasisTraverser getTraverser() {
-    return traverser;
-  }
-
-  public void setTraverser(CD4CodeBasisTraverser traverser) {
+  public DeriveSymTypeOfCD4CodeBasis(CD4CodeBasisTraverser traverser) {
     this.traverser = traverser;
+    init(traverser);
   }
 
-  public TypeCheckResult getTypeCheckResult() {
-    return typeCheckResult;
-  }
-
-  public void setTypeCheckResult(TypeCheckResult typeCheckResult) {
-    this.typeCheckResult = typeCheckResult;
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
-    reset();
-    ex.accept(getTraverser());
-    return getResult();
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
-    reset();
-    lit.accept(getTraverser());
-    return getResult();
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
-    reset();
-    lit.accept(getTraverser());
-    return getResult();
-  }
-
-  public Optional<SymTypeExpression> calculateType(ASTMCType type) {
-    reset();
-    type.accept(getTraverser());
-    return getResult();
-  }
-
-  public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
-    reset();
-    node.accept(getTraverser());
-    return getResult();
-  }
-
-  public void reset() {
-    getTypeCheckResult().setCurrentResultAbsent();
-  }
-
-  public Optional<SymTypeExpression> getResult() {
-    return getTypeCheckResult().isPresentCurrentResult() ? Optional.of(getTypeCheckResult().getCurrentResult()) : Optional.empty();
-  }
-
-  @Override
-  public void init() {
-    this.traverser = CD4CodeBasisMill.traverser();
+  protected void init(CD4CodeBasisTraverser traverser) {
     this.typeCheckResult = new TypeCheckResult();
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();

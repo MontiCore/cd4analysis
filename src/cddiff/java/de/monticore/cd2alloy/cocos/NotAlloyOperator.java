@@ -3,7 +3,9 @@ package de.monticore.cd2alloy.cocos;
 
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._cocos.CDBasisASTCDCompilationUnitCoCo;
+import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -13,12 +15,12 @@ import java.util.List;
  * Symbols that are operators in Alloy should not be contained in the cd
  *
  */
-public class NotAlloyOperator implements CDBasisASTCDCompilationUnitCoCo {
+public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
 
   /**
-   * @see CDBasisASTCDCompilationUnitCoCo#check(ASTCDCompilationUnit)
+   * @see CDBasisASTCDDefinitionCoCo#check(de.monticore.cdbasis._ast.ASTCDDefinition)
    */
-  public void check(ASTCDCompilationUnit node) {
+  public void check(ASTCDDefinition node) {
     // Check based on printed result
 
     // Get PrettyPrinter

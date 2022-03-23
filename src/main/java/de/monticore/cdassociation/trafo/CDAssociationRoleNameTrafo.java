@@ -3,12 +3,12 @@ package de.monticore.cdassociation.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisScopesGenitorDelegator;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitor;
-import de.monticore.cdassociation._symboltable.CDAssociationScopesGenitorDelegator;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
@@ -25,15 +25,15 @@ import static de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTra
 public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     implements CDAssociationVisitor2, CDAssociationHandler {
   protected CDAssociationTraverser traverser;
-  protected CDAssociationScopesGenitorDelegator symbolTableCreator;
+  protected CD4AnalysisScopesGenitorDelegator symbolTableCreator;
   protected CDAssociationSymbolTableCompleter symbolTableCompleter;
 
   public CDAssociationRoleNameTrafo() {
     this(new CDAfterParseHelper(),
-        CDAssociationMill.scopesGenitorDelegator());
+        CD4AnalysisMill.scopesGenitorDelegator());
   }
 
-  public CDAssociationRoleNameTrafo(CDAfterParseHelper cdAfterParseHelper, CDAssociationScopesGenitorDelegator symbolTableCreator) {
+  public CDAssociationRoleNameTrafo(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
     super(cdAfterParseHelper);
     this.symbolTableCreator = symbolTableCreator;
   }
