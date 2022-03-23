@@ -68,7 +68,7 @@ classdiagram InviDas {
     String description;
   }
 
-  class RightToComplaint extends Right { 
+  class RightToComplaint extends Right {
     Optional<String> supervisoryAuthorityContact;
   }
 
@@ -146,7 +146,7 @@ classdiagram InviDas {
 
   class TransmittingData extends DataProcessing {
     String concreteRecipient;
-    List<RecipientType> recipientType; 
+    List<RecipientType> recipientType;
     List<Location> recipientLocation;
     boolean isCommissionedDataProcessing;
     String intention;
