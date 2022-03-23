@@ -8,15 +8,14 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfObject;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDInterfaceAndEnumSymbolTableCompleter
@@ -71,12 +70,12 @@ public class CDInterfaceAndEnumSymbolTableCompleter
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
-        if (!result.isPresent()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
+        if (!result.isPresentCurrentResult()) {
           Log.error(String.format("0xCDA30: The type of the extended interfaces (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
     }
   }
 
@@ -88,12 +87,12 @@ public class CDInterfaceAndEnumSymbolTableCompleter
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
-        if (!result.isPresent()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
+        if (!result.isPresentCurrentResult()) {
           Log.error(String.format("0xCDA31: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
     }
   }
 
