@@ -3,13 +3,12 @@ package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeInitialTypeCompatible;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
-import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import org.junit.After;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class CDAttributeInitialTypeCompatibleTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testValid() throws IOException {
-    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible());
+    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible(new DeriveSymTypeOfCD4Analysis()));
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
@@ -36,7 +35,7 @@ public class CDAttributeInitialTypeCompatibleTest extends CD4AnalysisTestBasis {
 
   @Test
   public void testInvalid() throws IOException {
-    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible());
+    coCoChecker.addCoCo(new CDAttributeInitialTypeCompatible(new DeriveSymTypeOfCD4Analysis()));
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDAttributeInitialTypeCompatibleInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();

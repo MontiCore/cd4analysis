@@ -33,7 +33,5 @@ public class CDInterfaceAndEnumCoCos
   }
 
   protected void addMcgCoCos(CDInterfaceAndEnumCoCoChecker checker) {
-    // CD4CodeEnumConstant
-    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
   }
 }

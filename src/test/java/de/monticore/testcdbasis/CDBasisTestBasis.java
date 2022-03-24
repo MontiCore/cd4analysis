@@ -2,7 +2,6 @@
 package de.monticore.testcdbasis;
 
 import de.monticore.cd.TestBasis;
-import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.io.paths.MCPath;
 import de.monticore.testcdbasis._cocos.TestCDBasisCoCoChecker;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
@@ -19,12 +18,12 @@ public class CDBasisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
-    TestCDBasisMill.reset();
-    TestCDBasisMill.init();
-
     // reset the log
     LogStub.init();
     Log.enableFailQuick(false);
+
+    TestCDBasisMill.reset();
+    TestCDBasisMill.init();
 
     p = new TestCDBasisParser();
 
