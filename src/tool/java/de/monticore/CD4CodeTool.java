@@ -153,6 +153,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           cdAssociationRoleNameTrafo.transform(ast);
         }
 
+        runDefaultCoCos(ast);
+
         if (cmd.hasOption("fieldfromrole")) {
 
           // This CoCo checks whether a subclass redefines a role of an association, which is
@@ -182,7 +184,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           }
         }
 
-        runDefaultCoCos(ast);
         if (doPrintToStdOut) {
           if (Log.getErrorCount() == 0) {
             System.out.printf(CHECK_SUCCESSFUL, modelName);
