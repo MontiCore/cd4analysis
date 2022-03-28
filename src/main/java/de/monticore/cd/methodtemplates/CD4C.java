@@ -334,7 +334,7 @@ public class CD4C {
   /* imports                                                        */
   /***************************************************************************/
 
-  public void addImport(ASTCDClass clazz, String importStr) {
+  public void addImport(ASTCDType clazz, String importStr) {
     final CD4CTemplateHelper t = new CD4CTemplateHelper();
     t.importStr(importStr);
 
@@ -348,7 +348,7 @@ public class CD4C {
     s.add(t.astcdImport.get());
   }
 
-  public Collection<ASTMCImportStatement> getImportList(ASTCDClass clazz) {
+  public Collection<ASTMCImportStatement> getImportList(ASTCDType clazz) {
     return importMap.getOrDefault(clazz, Sets.newHashSet());
   }
 

@@ -20,6 +20,7 @@ import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +43,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
   @Override
   public void initObjects() {
     super.initObjects();
-    compUnit = parse("de.monticore.cd.codegen.GenAuction");
+    Log.init();
     glex = new GlobalExtensionManagement();
     this.glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
     CD4C.reset();
@@ -50,6 +51,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
 
   @Test
   public void testOutput() {
+    compUnit = parse("de.monticore.cd.codegen.GenAuction");
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
     this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
@@ -62,6 +64,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
 
   @Test
   public void testOutput_WithMethods() {
+    compUnit = parse("de.monticore.cd.codegen.GenAuction");
     GeneratorSetup generatorSetup = new GeneratorSetup();
     CD4C.init(generatorSetup);
     this.glex.bindHookPoint("ClassContent:Elements", new TemplateHookPoint("de.monticore.cd.codegen.AuctionElements"));
@@ -80,6 +83,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
 
   @Test
   public void testOutput_WithAssocsAndMethods() {
+    compUnit = parse("de.monticore.cd.codegen.GenAuction");
     createST(compUnit);
 
     GeneratorSetup generatorSetup = new GeneratorSetup();
@@ -94,6 +98,18 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
       clazz.getCDAttributeList().forEach(a -> methods.addAll(decorator.decorate(a)));
       clazz.addAllCDMembers(methods);
     }
+    CDGenerator generator = new CDGenerator(generatorSetup);
+    generator.generate(compUnit);
+  }
+
+  @Test
+  public void testEnum() {
+    compUnit = parse("de.monticore.cd.codegen.GenAuction_WithEnum");
+    GeneratorSetup generatorSetup = new GeneratorSetup();
+    CD4C.init(generatorSetup);
+
+    generatorSetup.setGlex(glex);
+    generatorSetup.setOutputDirectory(new File("target/generated"));
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);
   }
