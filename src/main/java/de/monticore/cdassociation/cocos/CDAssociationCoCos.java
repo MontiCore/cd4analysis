@@ -26,7 +26,8 @@ public class CDAssociationCoCos extends CoCoParent<CDAssociationCoCoChecker> {
     checker.addCoCo(new CDAssociationNameUnique());
     checker.addCoCo(new CDAssociationOrderedCardinalityGreaterOne());
     checker.addCoCo(new CDAssociationRoleNameLowerCase());
-    // checker.addCoCo(new AssociationSourceNotEnum()); // should this be possible?
-    checker.addCoCo(new CDAssociationSrcAndTargetTypeExistChecker());
+    // TODO (MB): CDAssociationRoleNameTrafo is neccessary for this coco
+    // checker.addCoCo(new CDAssociationSourceNotEnum());
+    checker.addCoCo(new CDAssociationRoleNameNoConflictWithLocalAttribute());
   }
 }

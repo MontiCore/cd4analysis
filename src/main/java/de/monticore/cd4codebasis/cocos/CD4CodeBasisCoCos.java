@@ -2,10 +2,19 @@
 package de.monticore.cd4codebasis.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
+import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisCoCoChecker;
+import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
 
 public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
+
+  protected final CDTypesCalculator calculator;
+
+  public CD4CodeBasisCoCos(CDTypesCalculator calculator) {
+    this.calculator = calculator;
+  }
+
   @Override
   public CD4CodeBasisCoCoChecker createNewChecker() {
     return new CD4CodeBasisCoCoChecker();
@@ -24,5 +33,9 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
 
     // CDMethodSignature
     checker.addCoCo(new CDMethodSignatureParameterNamesUnique());
+
+    // CD4CodeEnumConstant
+    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments(calculator));
+
   }
 }

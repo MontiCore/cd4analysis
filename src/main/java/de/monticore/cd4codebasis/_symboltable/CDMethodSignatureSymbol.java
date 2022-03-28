@@ -18,7 +18,7 @@ public class CDMethodSignatureSymbol extends CDMethodSignatureSymbolTOP {
   @Override
   public List<VariableSymbol> getParameterList() {
     final List<VariableSymbol> variableSymbols = new ArrayList<>(super.getParameterList());
-    variableSymbols.addAll(getSpannedScope().getLocalFieldSymbols());
+    variableSymbols.addAll(getSpannedScope().getLocalVariableSymbols());
     return variableSymbols;
   }
 }

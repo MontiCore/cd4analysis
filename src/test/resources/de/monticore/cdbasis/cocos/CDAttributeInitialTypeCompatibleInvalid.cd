@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAttributeInitialTypeCompatibleInvalid {
+
+  class A {
+    int number = true;
+    boolean b = 'c';
+    char c = 4;
+  }
+
+}

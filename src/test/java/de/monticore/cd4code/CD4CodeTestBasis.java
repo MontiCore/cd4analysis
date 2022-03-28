@@ -14,6 +14,7 @@ import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 
 import java.nio.file.Paths;
@@ -29,6 +30,8 @@ public class CD4CodeTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    LogStub.init();
+    Log.enableFailQuick(false);
     CD4CodeMill.reset();
     CD4CodeMill.init();
     p = new CD4CodeParser();

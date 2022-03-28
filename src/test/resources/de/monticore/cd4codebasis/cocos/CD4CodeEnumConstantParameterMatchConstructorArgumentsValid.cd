@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CD4CodeEnumConstantParameterMatchConstructorArgumentsValid {
+
+  enum A {
+    FOO(1),
+    BAR(2);
+    private int number;
+    public A(int i);
+  }
+
+}

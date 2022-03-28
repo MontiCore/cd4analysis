@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDAssociationRoleNameLowerCaseInvalid {
+class Struct;
+class StructItem;
+
+final composition Struct [[name]] (Main) -> (item) StructItem [1];
+
+}

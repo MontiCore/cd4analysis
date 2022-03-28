@@ -2,10 +2,12 @@
 package de.monticore.cdbasis._symboltable;
 
 import com.google.common.collect.Lists;
+import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static de.se_rwth.commons.Names.getQualifier;
@@ -68,6 +70,13 @@ public interface ICDBasisArtifactScope extends ICDBasisArtifactScopeTOP {
       "IArtifactScope");
 
     return potentialSymbolNames;
+  }
+
+  default Optional<ISymbol> getTopLevelSymbol() {
+    if(1 == getCDTypeSymbols().values().size()){
+      return Optional.ofNullable(getCDTypeSymbols().values().get(0));
+    }
+    return Optional.empty();
   }
 
 }

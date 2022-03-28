@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cdbasis.cocos.ebnf;
+package de.monticore.cdassociation.cocos.ebnf;
 
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
 
-  private static final String FIELD_ROLE_DEFINED_MULTIPLE_TIMES = "Name of the field or role '%s' is not unique for the class '%s'. " + "The role and field names of each class must be unique for the class.";
+  private static final String FIELD_ROLE_DEFINED_MULTIPLE_TIMES = " Name of the field or role '%s' is not unique for the class '%s'. " + "The role and field names of each class must be unique for the class.";
 
   /**
    * @param node class to check.
@@ -41,7 +41,7 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
 
       for (FieldSymbol field : curSymbol.getFieldList()) {
         if (fieldAndRoleNames.contains(field.getName())) {
-          Log.error(String.format(FIELD_ROLE_DEFINED_MULTIPLE_TIMES, field.getName(), node.getName()));
+          Log.error(String.format("0xC4A28" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, field.getName(), node.getName()));
         }
         else {
           fieldAndRoleNames.add(field.getName());
@@ -51,7 +51,7 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
       if (curSymbol instanceof CDTypeSymbol) {
         for (CDRoleSymbol role : ((CDTypeSymbol) curSymbol).getCDRoleList()) {
           if (fieldAndRoleNames.contains(role.getName())) {
-            Log.error(String.format(FIELD_ROLE_DEFINED_MULTIPLE_TIMES, role.getName(), node.getName()));
+            Log.error(String.format("0xC4A29" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, role.getName(), node.getName()));
           }
           else {
             fieldAndRoleNames.add(role.getName());

@@ -3,17 +3,21 @@ package de.monticore.cd4analysis;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.io.paths.MCPath;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 
 import java.nio.file.Paths;
 
 public class CD4AnalysisTestBasis extends TestBasis {
+  protected CD4AnalysisCoCoChecker coCoChecker;
   protected CD4AnalysisParser p;
   protected CD4AnalysisCoCos cd4AnalyisCoCos;
   protected CD4AnalysisFullPrettyPrinter printer;
@@ -21,6 +25,8 @@ public class CD4AnalysisTestBasis extends TestBasis {
 
   @Before
   public void initObjects() {
+    LogStub.init();
+    Log.enableFailQuick(false);
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
     p = new CD4AnalysisParser();
@@ -30,6 +36,7 @@ public class CD4AnalysisTestBasis extends TestBasis {
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
 
+    coCoChecker = new CD4AnalysisCoCoChecker();
     cd4AnalyisCoCos = new CD4AnalysisCoCos();
     printer = new CD4AnalysisFullPrettyPrinter();
     symbols2Json = new CD4AnalysisSymbols2Json();

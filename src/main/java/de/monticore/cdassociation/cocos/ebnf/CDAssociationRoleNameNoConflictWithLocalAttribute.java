@@ -6,6 +6,8 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -38,19 +40,34 @@ public class CDAssociationRoleNameNoConflictWithLocalAttribute
   }
 
   private void checkRoleNoConflict(ASTCDAssocSide roleSide, ASTCDAssocSide referenceSide) {
-    Optional<VariableSymbol> attributeSameName = referenceSide.getSymbol().getType().getTypeInfo().getVariableList()
+    if (referenceSide.getSymbol().getType().getTypeInfo().getSpannedScope() instanceof IOOSymbolsScope) {
+      Optional<FieldSymbol> attributeSameName = ((IOOSymbolsScope) referenceSide.getSymbol().getType().getTypeInfo().getSpannedScope()).getLocalFieldSymbols()
         .stream()
         .filter(f -> f.getName().equals(roleSide.getCDRole().getName()))
         .findAny();
-    if (attributeSameName.isPresent()) {
-      Log.error(String.format(
+      if (attributeSameName.isPresent()) {
+        Log.error(String.format(
           "0xC4A27: Association role (%1$s) %2$s conflicts with attribute %1$s in reference Type %3$s.",
           roleSide.getCDRole().getName(),
           roleSide.getSymbol().getType().getTypeInfo().getName(),
           referenceSide.getSymbol().getType().getTypeInfo().getName()),
           roleSide.get_SourcePositionStart());
+      }
+
+    } else {
+      Optional<VariableSymbol> attributeSameName = referenceSide.getSymbol().getType().getTypeInfo().getVariableList()
+        .stream()
+        .filter(f -> f.getName().equals(roleSide.getCDRole().getName()))
+        .findAny();
+      if (attributeSameName.isPresent()) {
+        Log.error(String.format(
+          "0xC4A27: Association role (%1$s) %2$s conflicts with attribute %1$s in reference Type %3$s.",
+          roleSide.getCDRole().getName(),
+          roleSide.getSymbol().getType().getTypeInfo().getName(),
+          referenceSide.getSymbol().getType().getTypeInfo().getName()),
+          roleSide.get_SourcePositionStart());
+      }
+
     }
-
   }
-
 }

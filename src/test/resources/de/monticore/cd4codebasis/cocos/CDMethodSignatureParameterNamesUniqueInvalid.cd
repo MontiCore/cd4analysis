@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDMethodSignatureParameterNamesUniqueInvalid {
+
+  class A {
+    int foo(int a, int a);
+  }
+
+}

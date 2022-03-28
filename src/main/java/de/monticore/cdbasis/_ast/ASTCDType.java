@@ -3,8 +3,6 @@ package de.monticore.cdbasis._ast;
 
 import de.monticore.cd.CDMill;
 import de.monticore.cd._visitor.CDMemberVisitor;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
@@ -63,12 +61,7 @@ public interface ASTCDType extends ASTCDTypeTOP {
     list.add(0, option);
 
     final CDMemberVisitor cdMemberVisitor = CDMill.cDMemberVisitor(list.toArray(new CDMemberVisitor.Options[0]));
-    CD4CodeTraverser t = CD4CodeMill.traverser();
-    t.add4CDBasis(cdMemberVisitor);
-    t.add4CDAssociation(cdMemberVisitor);
-    t.add4CDInterfaceAndEnum(cdMemberVisitor);
-    t.add4CD4CodeBasis(cdMemberVisitor);
-    this.accept(t);
+    cdMemberVisitor.run(this);
     return cdMemberVisitor.getElements();
   }
 

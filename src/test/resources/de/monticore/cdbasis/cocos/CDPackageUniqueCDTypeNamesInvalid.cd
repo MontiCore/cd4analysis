@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDPackageUniqueCDTypeNamesInvalid {
+
+  package a {
+    class Foo;
+    class Foo;
+  }
+
+}
