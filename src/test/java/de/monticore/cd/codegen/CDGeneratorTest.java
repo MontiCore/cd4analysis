@@ -109,7 +109,7 @@ public class CDGeneratorTest extends CD4CodeTestBasis {
     CD4C.init(generatorSetup);
 
     generatorSetup.setGlex(glex);
-    generatorSetup.setOutputDirectory(new File("target/generated"));
+    generatorSetup.setOutputDirectory(new File("target/generated/auction_enum"));
     CDGenerator generator = new CDGenerator(generatorSetup);
     generator.generate(compUnit);
   }

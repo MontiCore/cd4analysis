@@ -15,7 +15,7 @@ classdiagram GenAuction_WithEnum {
     interface TimingPolicy;
   }
 
-  package person2 {
+  package person {
     class Person {
       java.lang.String name;
       -> Message [*] {ordered};
@@ -27,7 +27,7 @@ classdiagram GenAuction_WithEnum {
       Gender (int i);
 
       protected void check();
-      protected int bla;
+      protected int no;
       }
   }
 
