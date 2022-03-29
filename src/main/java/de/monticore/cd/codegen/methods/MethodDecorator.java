@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
-import de.monticore.cd.codegen.AbstractCreator;
-import de.monticore.cd.codegen.AbstractService;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -10,19 +8,19 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> {
+public class MethodDecorator extends AbstractMethodDecorator {
 
-  protected final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> accessorDecorator;
+  protected final AbstractMethodDecorator accessorDecorator;
 
-  protected final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> mutatorDecorator;
+  protected final AbstractMethodDecorator mutatorDecorator;
 
   public MethodDecorator(final GlobalExtensionManagement glex) {
     this(glex, new AccessorDecorator(glex), new MutatorDecorator(glex));
   }
 
   public MethodDecorator(final GlobalExtensionManagement glex,
-      final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> accessorDecorator,
-      final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> mutatorDecorator) {
+      final AbstractMethodDecorator accessorDecorator,
+      final AbstractMethodDecorator mutatorDecorator) {
     super(glex);
     this.accessorDecorator = accessorDecorator;
     this.mutatorDecorator = mutatorDecorator;
@@ -33,7 +31,6 @@ public class MethodDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDM
     accessorDecorator.enableTemplates();
     mutatorDecorator.enableTemplates();
   }
-
 
   @Override
   public void disableTemplates() {
@@ -49,11 +46,11 @@ public class MethodDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDM
     return result;
   }
 
-  public AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> getAccessorDecorator() {
+  public AbstractMethodDecorator getAccessorDecorator() {
     return accessorDecorator;
   }
 
-  public AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> getMutatorDecorator() {
+  public AbstractMethodDecorator getMutatorDecorator() {
     return mutatorDecorator;
   }
 }

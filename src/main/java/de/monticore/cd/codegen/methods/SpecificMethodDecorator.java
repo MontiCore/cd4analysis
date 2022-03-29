@@ -1,27 +1,27 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
-import de.monticore.cd.codegen.AbstractCreator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 
 import java.util.List;
 
-abstract class SpecificMethodDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> {
+abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
 
-  protected final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> mandatoryMethodDecorator;
+  protected final AbstractMethodDecorator mandatoryMethodDecorator;
 
-  protected final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> optionalMethodDecorator;
+  protected final AbstractMethodDecorator optionalMethodDecorator;
 
-  protected final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> listMethodDecorator;
+  protected final AbstractMethodDecorator listMethodDecorator;
 
   SpecificMethodDecorator(final GlobalExtensionManagement glex,
-      final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> mandatoryMethodDecorator,
-      final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> optionalMethodDecorator,
-      final AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> listMethodDecorator) {
+      final AbstractMethodDecorator mandatoryMethodDecorator,
+      final AbstractMethodDecorator optionalMethodDecorator,
+      final AbstractMethodDecorator listMethodDecorator) {
     super(glex);
     this.mandatoryMethodDecorator = mandatoryMethodDecorator;
     this.optionalMethodDecorator = optionalMethodDecorator;
@@ -44,12 +44,12 @@ abstract class SpecificMethodDecorator extends AbstractCreator<ASTCDAttribute, L
 
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
-    AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> specificMethodDecorator = determineMethodDecoratorStrategy(ast);
+    AbstractMethodDecorator specificMethodDecorator = determineMethodDecoratorStrategy(ast);
     return specificMethodDecorator.decorate(ast);
   }
 
-  protected AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> determineMethodDecoratorStrategy(final ASTCDAttribute ast) {
-    if (getMCTypeFacade().isBooleanType(ast.getMCType())) {
+  protected AbstractMethodDecorator determineMethodDecoratorStrategy(final ASTCDAttribute ast) {
+    if (MCTypeFacade.getInstance().isBooleanType(ast.getMCType())) {
       return mandatoryMethodDecorator;
     } else if (ast.getMCType() instanceof ASTMCListType) {
       return listMethodDecorator;

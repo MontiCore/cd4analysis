@@ -1,22 +1,18 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd.codegen;
+package de.monticore.cd.codegen.methods;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd.facade.CDAttributeFacade;
-import de.monticore.cd.facade.CDConstructorFacade;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd.facade.CDParameterFacade;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.types.MCTypeFacade;
 
-public abstract class AbstractDecorator {
+import java.util.List;
 
-  /**
-   * Do not use for creation of new Decorators
-   * Decide if your new Decorator is a Creator or a Transformer, to overwrite the correct decorate method
-   * Only a class to sum up general Decorator functionality
-   **/
+abstract public class AbstractMethodDecorator {
 
   protected final GlobalExtensionManagement glex;
 
@@ -24,47 +20,35 @@ public abstract class AbstractDecorator {
 
   protected final MCTypeFacade mcTypeFacade;
 
-  protected final CDAttributeFacade cdAttributeFacade;
-
-  protected final CDConstructorFacade cdConstructorFacade;
-
   protected final CDMethodFacade cdMethodFacade;
 
   protected final CDParameterFacade cdParameterFacade;
 
-  protected final AbstractService service;
+  protected final CDGenService service;
 
-  public AbstractDecorator() {
-    this(null);
-  }
-
-  public AbstractDecorator(final GlobalExtensionManagement glex) {
+  public AbstractMethodDecorator(final GlobalExtensionManagement glex) {
     this(glex,
-        MCTypeFacade.getInstance(),
-        CDAttributeFacade.getInstance(),
-        CDConstructorFacade.getInstance(),
-        CDMethodFacade.getInstance(),
-        CDParameterFacade.getInstance(),
-        new AbstractService()
+      MCTypeFacade.getInstance(),
+      CDMethodFacade.getInstance(),
+      CDParameterFacade.getInstance(),
+      new CDGenService()
     );
   }
 
-  public AbstractDecorator(final GlobalExtensionManagement glex,
+  public AbstractMethodDecorator(final GlobalExtensionManagement glex,
                            final MCTypeFacade mcTypeFacade,
-                           final CDAttributeFacade cdAttributeFacade,
-                           final CDConstructorFacade cdConstructorFacade,
                            final CDMethodFacade cdMethodFacade,
                            final CDParameterFacade cdParameterFacade,
-                           final AbstractService service) {
+                           final CDGenService service) {
     this.glex = glex;
     this.templatesEnabled = true;
     this.mcTypeFacade = mcTypeFacade;
-    this.cdAttributeFacade = cdAttributeFacade;
-    this.cdConstructorFacade = cdConstructorFacade;
     this.cdMethodFacade = cdMethodFacade;
     this.cdParameterFacade = cdParameterFacade;
     this.service = service;
   }
+
+  public abstract List<ASTCDMethod> decorate(ASTCDAttribute input);
 
   public void enableTemplates() {
     this.templatesEnabled = true;
@@ -86,14 +70,6 @@ public abstract class AbstractDecorator {
 
   protected MCTypeFacade getMCTypeFacade() {
     return this.mcTypeFacade;
-  }
-
-  protected CDAttributeFacade getCDAttributeFacade() {
-    return this.cdAttributeFacade;
-  }
-
-  protected CDConstructorFacade getCDConstructorFacade() {
-    return this.cdConstructorFacade;
   }
 
   protected CDMethodFacade getCDMethodFacade() {

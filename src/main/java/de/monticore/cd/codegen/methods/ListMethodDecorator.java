@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
-import de.monticore.cd.codegen.AbstractCreator;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
-public abstract class ListMethodDecorator extends AbstractCreator<ASTCDAttribute, List<ASTCDMethod>> {
+public abstract class ListMethodDecorator extends AbstractMethodDecorator {
 
   protected String capitalizedAttributeNameWithS;
 
