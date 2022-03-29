@@ -28,8 +28,8 @@ public class CDDiffCLITest {
   @Test
   public void testRunWithDiff() {
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd";
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
     //when CD4CodeTool is used to compute the semantic difference
@@ -108,8 +108,8 @@ public class CDDiffCLITest {
   @Test
   public void testRunWithDefaultDiff() {
     // given 2 CDs that are not semantically equivalent
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd";
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithDefaultDiff";
 
     //when CD4CodeTool is used to compute the semantic difference

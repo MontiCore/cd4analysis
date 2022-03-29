@@ -1,4 +1,4 @@
-classdiagram AnimalsAndFruits1 {
+classdiagram Animals {
   enum Name{bob, dave;}
   enum State{ripe, unripe;}
 

@@ -21,9 +21,11 @@ public class F1RuleTest extends AbstractTest {
 
   ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
+      + "/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
+      + "/Employees2.cd");
 
   private void checkF1(String[] result, Set<String> expectedResult) {
     // Check if the output starts with a comment:
@@ -122,29 +124,29 @@ public class F1RuleTest extends AbstractTest {
   }
 
   @Test
-  public void testF1_cd2v1() {
+  public void testF1_Employees1() {
     String f1 = CD2AlloyGenerator.executeRuleF1(m1Ast);
     String[] lines = f1.split(System.getProperty("line.separator"));
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("fun TaskSubsCDCD2v1: set Obj { Task }");
-    expectedResult.add("fun EmployeeSubsCDCD2v1: set Obj { Employee }");
-    expectedResult.add("fun ManagerSubsCDCD2v1: set Obj { Manager }");
+    expectedResult.add("fun TaskSubsCDEmployees1: set Obj { Task }");
+    expectedResult.add("fun EmployeeSubsCDEmployees1: set Obj { Employee }");
+    expectedResult.add("fun ManagerSubsCDEmployees1: set Obj { Manager }");
 
     checkF1(lines, expectedResult);
   }
 
   @Test
-  public void testF1_cd2v2() {
+  public void testF1_Employees2() {
     String f1 = CD2AlloyGenerator.executeRuleF1(m2Ast);
     String[] lines = f1.split(System.getProperty("line.separator"));
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("fun TaskSubsCDCD2v2: set Obj { Task }");
-    expectedResult.add("fun EmployeeSubsCDCD2v2: set Obj { Employee + Manager }");
-    expectedResult.add("fun ManagerSubsCDCD2v2: set Obj { Manager }");
+    expectedResult.add("fun TaskSubsCDEmployees2: set Obj { Task }");
+    expectedResult.add("fun EmployeeSubsCDEmployees2: set Obj { Employee + Manager }");
+    expectedResult.add("fun ManagerSubsCDEmployees2: set Obj { Manager }");
 
     checkF1(lines, expectedResult);
   }

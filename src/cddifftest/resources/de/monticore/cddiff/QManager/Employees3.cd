@@ -3,15 +3,15 @@
 package man;
 import java.util.Date;
 
-classdiagram CD2v4 {
-  enum PositionKind{fullTime, partTime, external;}
+classdiagram Employees3 {
+  enum PositionKind{fullTime, partTime;}
 
   package emp {
     class Employee {
       PositionKind kind;
     }
 
-    class Manager extends Employee;
+    class Manager;
   }
 
   class Task {
@@ -19,5 +19,5 @@ classdiagram CD2v4 {
   }
 
   association [*] man.emp.Employee (manages) -> (managedBy) man.emp.Manager [0..1];
-  association [1] man.emp.Employee  --  Task [0..1];
+  association [1] man.emp.Employee  --  Task [*];
 }

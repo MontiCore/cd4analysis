@@ -40,9 +40,9 @@ public class GeneratorTest extends AbstractTest {
   @Test
   public void testManger() {
     // Parse Test Modules
-    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
     assertNotNull(astV2);
 
     // Create Output Path
@@ -61,10 +61,10 @@ public class GeneratorTest extends AbstractTest {
   public void testQManger() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
-        + "/QManager/cd2v3.cd");
+        + "/QManager/Employees3.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
-        + "/QManager/cd2v4.cd");
+        + "/QManager/Employees4.cd");
     assertNotNull(astV2);
 
     // Create Output Path

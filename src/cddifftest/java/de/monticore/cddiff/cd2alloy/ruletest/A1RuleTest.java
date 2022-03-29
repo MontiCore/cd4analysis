@@ -20,9 +20,9 @@ public class A1RuleTest extends AbstractTest {
 
   ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
 
   private void checkA1(String[] result, Set<String> expectedResult) {
     // Check if the output starts with a comment:
@@ -70,7 +70,7 @@ public class A1RuleTest extends AbstractTest {
   }
 
   @Test
-  public void testF1_cd2v1() {
+  public void testF1_Employees1() {
     String a = CD2AlloyGenerator.executeRuleA1(m1Ast);
     String[] lines = a.split(System.getProperty("line.separator"));
 
@@ -78,13 +78,13 @@ public class A1RuleTest extends AbstractTest {
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("BidiAssoc[EmployeeSubsCDCD2v1,task,TaskSubsCDCD2v1,employee]");
+    expectedResult.add("BidiAssoc[EmployeeSubsCDEmployees1,task,TaskSubsCDEmployees1,employee]");
 
     checkA1(lines, expectedResult);
   }
 
   @Test
-  public void testA1_cd2v2() {
+  public void testA1_Employees2() {
     String a = CD2AlloyGenerator.executeRuleA1(m2Ast);
     String[] lines = a.split(System.getProperty("line.separator"));
 
@@ -92,7 +92,7 @@ public class A1RuleTest extends AbstractTest {
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("BidiAssoc[EmployeeSubsCDCD2v2,task,TaskSubsCDCD2v2,employee]");
+    expectedResult.add("BidiAssoc[EmployeeSubsCDEmployees2,task,TaskSubsCDEmployees2,employee]");
 
     checkA1(lines, expectedResult);
   }

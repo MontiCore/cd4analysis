@@ -20,9 +20,9 @@ public class P1RuleTest extends AbstractTest {
 
   ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
 
   private void checkP1(String[] result, Set<String> expectedResult) {
     // Check if the output starts with a comment:
@@ -68,28 +68,28 @@ public class P1RuleTest extends AbstractTest {
   }
 
   @Test
-  public void testP1_cd2v1() {
+  public void testP1_Employees1() {
     String p1 = CD2AlloyGenerator.executeRuleP1(m1Ast);
     String[] lines = p1.split(System.getProperty("line.separator"));
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add("ObjAttrib[Task,startDate,type_Date]");
-    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDCD2v1]");
+    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDEmployees1]");
 
     checkP1(lines, expectedResult);
   }
 
   @Test
-  public void testP1_cd2v2() {
+  public void testP1_Employees2() {
     String p1 = CD2AlloyGenerator.executeRuleP1(m2Ast);
     String[] lines = p1.split(System.getProperty("line.separator"));
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add("ObjAttrib[Task,startDate,type_Date]");
-    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDCD2v2]");
-    expectedResult.add("ObjAttrib[Manager,kind,PositionKindEnumCDCD2v2]");
+    expectedResult.add("ObjAttrib[Employee,kind,PositionKindEnumCDEmployees2]");
+    expectedResult.add("ObjAttrib[Manager,kind,PositionKindEnumCDEmployees2]");
 
     checkP1(lines, expectedResult);
   }

@@ -21,9 +21,11 @@ public class P4RuleTest extends AbstractTest {
 
   ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
+      + "/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/cd2v2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
+      + "/Employees2.cd");
 
   private void checkP4(String[] result, Set<String> expectedResult) {
     // Check if the output starts with a comment:
@@ -99,7 +101,7 @@ public class P4RuleTest extends AbstractTest {
   }
 
   @Test
-  public void testP4_cd2v1() {
+  public void testP4_Employees1() {
     String p4 = CD2AlloyGenerator.executeRuleP4(m1Ast);
     String[] lines = p4.split(System.getProperty("line.separator"));
 
@@ -111,7 +113,7 @@ public class P4RuleTest extends AbstractTest {
   }
 
   @Test
-  public void testP4_cd2v2() {
+  public void testP4_Employees2() {
     String p4 = CD2AlloyGenerator.executeRuleP4(m2Ast);
     String[] lines = p4.split(System.getProperty("line.separator"));
 
