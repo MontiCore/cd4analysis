@@ -48,6 +48,7 @@ ext {
   antlr_version = '4.7.1'
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
+  mockito_version = "3.11.1"
 }
 
 // configure non-standard source sets
@@ -116,6 +117,7 @@ dependencies {
   testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
   testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
+  testImplementation "org.mockito:mockito-core:$mockito_version"
   }
 
   // dependencies for cddiff
