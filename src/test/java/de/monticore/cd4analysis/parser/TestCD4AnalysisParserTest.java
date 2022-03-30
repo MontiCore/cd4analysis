@@ -23,15 +23,4 @@ public class TestCD4AnalysisParserTest extends CD4AnalysisTestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 
-  @Test
-  public void testInviDas() throws RecognitionException, IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/industrial_strength_models/InviDas.cd"));
-    checkNullAndPresence(p, astcdCompilationUnit);
-  }
-
-    @Test
-  public void testMaCoCo() throws RecognitionException, IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/industrial_strength_models/MaCoCo.cd"));
-    checkNullAndPresence(p, astcdCompilationUnit);
-  }
 }

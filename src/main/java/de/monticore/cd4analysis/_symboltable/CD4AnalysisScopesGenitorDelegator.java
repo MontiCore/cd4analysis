@@ -2,8 +2,6 @@
 package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cdassociation._symboltable.ICDAssociationScope;
-import de.monticore.cdbasis._symboltable.ICDBasisScope;
 
 // TODO: MB Lösche die Klasse, wenn die Methoden generiert werden
 @Deprecated
