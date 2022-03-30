@@ -20,10 +20,6 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     this.calculator = calculator;
   }
 
-  public CDBasisCoCos() {
-    this.calculator = new DeriveSymTypeOfCDBasis();
-  }
-
   @Override
   public CDBasisCoCoChecker createNewChecker() {
     return new CDBasisCoCoChecker();

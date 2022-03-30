@@ -4,7 +4,6 @@ package de.monticore.testcdassociation;
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
