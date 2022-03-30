@@ -1,0 +1,12 @@
+classdiagram CDAssociationUniqueInHierarchyTest {
+
+  class A;
+  class B;
+
+  class superclass;
+  class subclass extends superclass;
+
+  association assoc1 [1] superclass (foo) <-> (foo) A [1];
+  association assoc2 [1] subclass (foo) <-> (foo) A [1];
+
+}

@@ -3,6 +3,7 @@ package de.monticore.cd4code;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
@@ -32,6 +33,7 @@ public class CD4CodeTestBasis extends TestBasis {
   protected CD4CodeCoCos cd4CodeCoCos;
   protected CD4CodeFullPrettyPrinter printer;
   protected CD4CodeSymbols2Json symbols2Json;
+  protected CD4CodeCoCoChecker coCoChecker;
 
   @Before
   public void initObjects() {
@@ -50,6 +52,7 @@ public class CD4CodeTestBasis extends TestBasis {
     cd4CodeCoCos = new CD4CodeCoCos();
     printer = new CD4CodeFullPrettyPrinter();
     symbols2Json = new CD4CodeSymbols2Json();
+    coCoChecker = new CD4CodeCoCoChecker();
   }
 
   public static void assertNoErrors() {
