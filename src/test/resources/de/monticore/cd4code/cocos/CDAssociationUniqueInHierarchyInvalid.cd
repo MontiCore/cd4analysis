@@ -1,4 +1,4 @@
-classdiagram CDAssociationUniqueInHierarchyTest {
+classdiagram CDAssociationUniqueInHierarchyInvalid {
 
   class A;
   class B;
@@ -6,7 +6,7 @@ classdiagram CDAssociationUniqueInHierarchyTest {
   class superclass;
   class subclass extends superclass;
 
-  association assoc1 [1] superclass (foo) <-> (foo) A [1];
-  association assoc2 [1] subclass (foo) <-> (foo) A [1];
+  association superclass -> (foo) A;
+  association subclass -> (foo) B;
 
 }

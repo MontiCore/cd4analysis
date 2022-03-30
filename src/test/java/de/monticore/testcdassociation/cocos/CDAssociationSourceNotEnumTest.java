@@ -26,7 +26,7 @@ public class CDAssociationSourceNotEnumTest extends CD4AnalysisTestBasis {
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationSourceNotEnum());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/CDAssociationUniqueInHierarchyValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

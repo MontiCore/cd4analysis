@@ -24,7 +24,7 @@ public class CDAssociationRoleNameNoConflictWithLocalAttributeTest extends CD4An
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationRoleNameNoConflictWithLocalAttribute());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/CDAssociationUniqueInHierarchyValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

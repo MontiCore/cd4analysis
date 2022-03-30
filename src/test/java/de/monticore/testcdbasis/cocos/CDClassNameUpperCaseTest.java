@@ -21,7 +21,7 @@ public class CDClassNameUpperCaseTest extends CD4AnalysisTestBasis {
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDClassNameUpperCase());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDAssociationUniqueInHierarchyValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

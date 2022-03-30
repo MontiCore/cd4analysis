@@ -27,7 +27,7 @@ public class CDTypeNoInitializationOfDerivedAttributeTest extends CD4AnalysisTes
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDTypeNoInitializationOfDerivedAttribute());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDAssociationUniqueInHierarchyValid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

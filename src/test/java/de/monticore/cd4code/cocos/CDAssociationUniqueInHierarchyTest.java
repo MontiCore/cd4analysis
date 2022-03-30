@@ -20,6 +20,18 @@ import static org.junit.Assert.assertTrue;
 public class CDAssociationUniqueInHierarchyTest extends CD4CodeTestBasis {
 
   @Test
+  public void testValid() throws IOException {
+    coCoChecker.addCoCo(new CDAssociationUniqueInHierarchy());
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cd4code/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    assertTrue(optAST.isPresent());
+    final ASTCDCompilationUnit ast = optAST.get();
+    Log.getFindings().clear();
+    createSymTab(ast);
+    coCoChecker.checkAll(ast);
+    assertTrue(Log.getFindings().isEmpty());
+  }
+
+  @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationUniqueInHierarchy());
     final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cd4code/cocos/CDAssociationUniqueInHierarchyInvalid.cd"));
