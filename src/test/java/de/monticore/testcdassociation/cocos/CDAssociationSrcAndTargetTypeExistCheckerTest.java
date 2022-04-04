@@ -25,7 +25,7 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CD4AnalysisTe
 
   @Test
   public void testValid() throws IOException {
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

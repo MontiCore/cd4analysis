@@ -24,7 +24,7 @@ public class CDAssociationHasSymbolTest extends CD4AnalysisTestBasis {
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationHasSymbol());
     final Optional<ASTCDCompilationUnit> optAST = p
-      .parse(getFilePath("cdassociation/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+      .parse(getFilePath("cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

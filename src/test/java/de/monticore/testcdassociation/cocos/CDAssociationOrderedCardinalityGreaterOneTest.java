@@ -20,7 +20,7 @@ public class CDAssociationOrderedCardinalityGreaterOneTest extends CD4AnalysisTe
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAssociationOrderedCardinalityGreaterOne());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdassociation/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

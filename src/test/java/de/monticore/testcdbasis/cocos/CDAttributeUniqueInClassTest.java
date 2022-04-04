@@ -23,7 +23,7 @@ public class CDAttributeUniqueInClassTest extends CD4AnalysisTestBasis {
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDAttributeUniqueInClass());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();

@@ -23,7 +23,7 @@ public class CDInterfaceExtendsOnlyInterfacesTest extends CD4AnalysisTestBasis {
   @Test
   public void testValid() throws IOException {
     coCoChecker.addCoCo(new CDInterfaceExtendsOnlyInterfaces());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdinterfaceenum/cocos/CDAssociationUniqueInHierarchyValid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdinterfaceenum/cocos/Valid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
