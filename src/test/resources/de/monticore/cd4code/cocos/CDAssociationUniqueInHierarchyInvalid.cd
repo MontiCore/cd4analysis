@@ -1,0 +1,12 @@
+classdiagram CDAssociationUniqueInHierarchyInvalid {
+
+  class A;
+  class B;
+
+  class superclass;
+  class subclass extends superclass;
+
+  association superclass -> (foo) A;
+  association subclass -> (foo) B;
+
+}
