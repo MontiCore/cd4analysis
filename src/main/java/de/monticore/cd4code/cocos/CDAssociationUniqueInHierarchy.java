@@ -5,7 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._cocos.CDBasisASTCDDefinitionCoCo;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
@@ -102,31 +102,27 @@ public class CDAssociationUniqueInHierarchy implements CDBasisASTCDDefinitionCoC
   protected void checkSuper(ASTCDDefinition node, ASTCDType type1,
       ASTCDType type2){
 
-    Stack<ASTCDType> typesToVisit = new Stack<>();
+    Stack<TypeSymbol> typesToVisit = new Stack<>();
 
     // getSymbol().getSuperClassesOnly() did not work for some reason
-    type1.getSuperclassList().forEach(s -> typesToVisit.push(findTypeByFullName(node,
-        ((ASTMCQualifiedType) s).getMCQualifiedName().getQName())));
+    type1.getSymbol().getSuperClassesOnly().forEach(s -> typesToVisit.push(s.getTypeInfo()));
 
     // getSymbol().getInterfaces() did not work for some reason
-    type1.getInterfaceList().forEach(s -> typesToVisit.push(findTypeByFullName(node,
-        ((ASTMCQualifiedType) s).getMCQualifiedName().getQName())));
+    type1.getSymbol().getInterfaceList().forEach(s -> typesToVisit.push(s.getTypeInfo()));
 
     while (!typesToVisit.isEmpty()) {
-      final ASTCDType nextType = typesToVisit.pop();
-      if (nextType.getSymbol().getFullName().equals(type2.getSymbol().getFullName())) {
+      final TypeSymbol nextType = typesToVisit.pop();
+      if (nextType.getFullName().equals(type2.getSymbol().getFullName())) {
         Log.error(String.format("0xCDCE1: %s redefines an association of %s.", type1.getName(),
             type2.getName()));
         return;
       }
 
       // getSymbol().getSuperClassesOnly() did not work for some reason
-      nextType.getSuperclassList().forEach(s -> typesToVisit.push(findTypeByFullName(node,
-          ((ASTMCQualifiedType) s).getMCQualifiedName().getQName())));
+      nextType.getSuperClassesOnly().forEach(s -> typesToVisit.push(s.getTypeInfo()));
 
       // getSymbol().getInterfaces() did not work for some reason
-      nextType.getInterfaceList().forEach(s -> typesToVisit.push(findTypeByFullName(node,
-          ((ASTMCQualifiedType) s).getMCQualifiedName().getQName())));
+      nextType.getInterfaceList().forEach(s -> typesToVisit.push(s.getTypeInfo()));
     }
   }
 

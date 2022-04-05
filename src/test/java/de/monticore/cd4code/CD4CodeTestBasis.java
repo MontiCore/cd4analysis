@@ -16,7 +16,6 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
-import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
@@ -25,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class CD4CodeTestBasis extends TestBasis {
@@ -55,36 +53,6 @@ public class CD4CodeTestBasis extends TestBasis {
     coCoChecker = new CD4CodeCoCoChecker();
   }
 
-  public static void assertNoErrors() {
-    if (Log.getErrorCount() > 0) {
-      System.err.println("Expected no errors, but got: ");
-      for (Finding f : Log.getFindings()) {
-        if (f.isError()) {
-          System.err.println(f.toString());
-        }
-      }
-      fail();
-    }
-  }
-
-  public static void assertErrors(String... errorCodes) {
-    assertEquals("Expected and actual number of errors differ!",
-        errorCodes.length, Log.getErrorCount());
-
-    for (String expectedErrorCode : errorCodes) {
-      boolean foundError = false;
-      for (Finding f : Log.getFindings()) {
-        if (f.isError() && f.getMsg().startsWith(expectedErrorCode)) {
-          foundError = true;
-          break;
-        }
-      }
-      if (!foundError) {
-        fail("Expected to find an error with the error code '" +
-            expectedErrorCode + "', but the error did not occur!");
-      }
-    }
-  }
   protected ASTCDCompilationUnit parse(String filePath) {
     Optional<ASTCDCompilationUnit> astcdCompilationUnit = Optional.empty();
     try {
