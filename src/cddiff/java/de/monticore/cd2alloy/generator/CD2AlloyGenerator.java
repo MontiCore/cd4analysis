@@ -6,10 +6,8 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -468,8 +466,15 @@ public class CD2AlloyGenerator {
 
       for (ASTMCObjectType o : currentClass.getSuperclassList()) {
         // Add all superclasses to the processing list
+
+        String superName = "";
+        List<CDTypeSymbol> superList =
+            currentClass.getEnclosingScope().resolveCDTypeMany(o.printType(pp));
+        if(!superList.isEmpty()){
+          superName = superList.get(0).getFullName();
+        }
         for (ASTCDClass astClass : classes) {
-          if (o.printType(pp).equals(astClass.getName())) {
+          if (superName.equals(astClass.getSymbol().getFullName())) {
             toProcess.add(astClass);
           }
         }
@@ -546,8 +551,16 @@ public class CD2AlloyGenerator {
 
     // Add all interfaces of the superclass to the processing List
     for (ASTMCObjectType astcdInterface : superClass.getInterfaceList()) {
+
+      String interfaceName = "";
+      List<CDTypeSymbol> interfaceList =
+          superClass.getEnclosingScope().resolveCDTypeMany(astcdInterface.printType(pp));
+      if(!interfaceList.isEmpty()){
+        interfaceName = interfaceList.get(0).getFullName();
+      }
+
       for (ASTCDInterface allowedInterface : allowedInterfaces) {
-        if (astcdInterface.printType(pp).equals(allowedInterface.getName())) {
+        if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
           toProcess.add(allowedInterface);
           break;
         }
@@ -564,8 +577,16 @@ public class CD2AlloyGenerator {
       // Add all interfaces implemented by the current interface to the
       // processing list
       for (ASTMCObjectType refType : currentInterface.getInterfaceList()) {
+
+        String interfaceName = "";
+        List<CDTypeSymbol> interfaceList =
+            currentInterface.getEnclosingScope().resolveCDTypeMany(refType.printType(pp));
+        if(!interfaceList.isEmpty()){
+          interfaceName = interfaceList.get(0).getFullName();
+        }
+
         for (ASTCDInterface astcdInterface : allowedInterfaces) {
-          if (refType.printType(pp).equals(astcdInterface.getName())) {
+          if (interfaceName.equals(astcdInterface.getSymbol().getFullName())) {
             toProcess.add(astcdInterface);
             break;
           }
@@ -993,10 +1014,10 @@ public class CD2AlloyGenerator {
 
         // Generation
         predicate.append("BidiAssoc[");
-        for (String lRName : leftReferenceNames) {
-          predicate.append(executeRuleH1(lRName, cd));
-          predicate.append(",");
-        }
+
+        predicate.append(executeRuleH1(partHandler(leftReferenceNames,false), cd));
+        predicate.append(",");
+
         if (a.getRight().isPresentCDRole()) {
           predicate.append(a.getRight().getCDRole().getName());
         } else {
@@ -1005,10 +1026,10 @@ public class CD2AlloyGenerator {
           predicate.append(name);
         }
         predicate.append(",");
-        for (String rRName : rightReferenceNames) {
-          predicate.append(executeRuleH1(rRName, cd));
-          predicate.append(",");
-        }
+
+        predicate.append(executeRuleH1(partHandler(rightReferenceNames,false), cd));
+        predicate.append(",");
+
         if (a.getLeft().isPresentCDRole()) {
           predicate.append(a.getLeft().getCDRole().getName());
         } else {
