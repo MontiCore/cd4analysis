@@ -5,6 +5,7 @@ import de.monticore.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
@@ -48,6 +49,9 @@ abstract public class AbstractTest {
       CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
 
       cocos.checkAll(optAutomaton.get());
+
+      new CD4CodeDirectCompositionTrafo().transform(optAutomaton.get());
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(optAutomaton.get());
 
       return optAutomaton.get();
     } catch (Exception e) {
