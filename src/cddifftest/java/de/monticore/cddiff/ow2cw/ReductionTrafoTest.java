@@ -1,5 +1,6 @@
 package de.monticore.cddiff.ow2cw;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.AbstractTest;
@@ -17,11 +18,13 @@ import static org.junit.Assert.assertEquals;
 
 public class ReductionTrafoTest extends AbstractTest {
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
-
   @Test
   public void testResolve(){
+
+    CD4CodeMill.globalScope().clear();
+
+    ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+    ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
 
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(m1Ast,m2Ast);

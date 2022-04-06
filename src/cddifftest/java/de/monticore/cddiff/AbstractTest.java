@@ -47,11 +47,9 @@ abstract public class AbstractTest {
 
       CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
       CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
-
-      cocos.checkAll(optAutomaton.get());
-
       new CD4CodeDirectCompositionTrafo().transform(optAutomaton.get());
       CD4CodeMill.scopesGenitorDelegator().createFromAST(optAutomaton.get());
+      cocos.checkAll(optAutomaton.get());
 
       return optAutomaton.get();
     } catch (Exception e) {

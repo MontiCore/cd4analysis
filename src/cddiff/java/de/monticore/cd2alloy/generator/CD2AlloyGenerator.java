@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2alloy.generator;
 
+import de.monticore.cd2alloy.cocos.CD2AlloyCoCos;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
@@ -1409,7 +1411,10 @@ public class CD2AlloyGenerator {
     for (ASTCDCompilationUnit ast : asts){
       // build symbol table
       new CD4CodeDirectCompositionTrafo().transform(ast);
+      CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
+      CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
       CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+      cocos.checkAll(ast);
     }
 
     // TODO: Could be externalised in a preprocessing function
