@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
@@ -13,13 +10,12 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._visitor.OOSymbolsVisitor2;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDBasisSymbolTableCompleter
@@ -32,7 +28,6 @@ public class CDBasisSymbolTableCompleter
 
   public CDBasisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
     this.symbolTableHelper = new CDSymbolTableHelper()
-        .setImports(imports)
         .setPackageDeclaration(packageDeclaration);
   }
 
@@ -55,22 +50,22 @@ public class CDBasisSymbolTableCompleter
 
     if (node.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(node.getCDExtendUsage().streamSuperclass().map(s -> {
-        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
-        if (!result.isPresent()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
+        if (!result.isPresentCurrentResult()) {
           Log.error(String.format("0xCDA00: The type of the extended classes (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
     }
 
     if (node.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(node.getCDInterfaceUsage().streamInterface().map(s -> {
-        final Optional<SymTypeExpression> result = symbolTableHelper.getTypeChecker().calculateType(s);
-        if (!result.isPresent()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
+        if (!result.isPresentCurrentResult()) {
           Log.error(String.format("0xCDA01: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
     }
   }
 
@@ -93,12 +88,12 @@ public class CDBasisSymbolTableCompleter
     final FieldSymbol symbol = node.getSymbol();
 
     // Compute the !final! SymTypeExpression for the type of the field
-    final Optional<SymTypeExpression> typeResult = symbolTableHelper.getTypeChecker().calculateType(node.getMCType());
-    if (!typeResult.isPresent()) {
+    final TypeCheckResult typeResult = symbolTableHelper.getTypeChecker().synthesizeType(node.getMCType());
+    if (!typeResult.isPresentCurrentResult()) {
       Log.error(String.format("0xCDA02: The type (%s) of the attribute (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(node.getMCType()), node.getName()), node.getMCType().get_SourcePositionStart());
     }
     else {
-      symbol.setType(typeResult.get());
+      symbol.setType(typeResult.getCurrentResult());
     }
   }
 

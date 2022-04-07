@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+{
+  classdiagram $_ {
+
+    class $className {
+
+    }
+
+    class $classImplName {
+      opt [[
+        $PredefMethod[[
+          private void $_();
+        ]]
+      ]]
+      [[ :- public void someMethod(); ]]
+      not[[ public void someMethod(); ]]
+    }
+  }
+
+  where{
+    $PredefMethod.getName().equals("somePredefinedMethod")
+    ||
+    $classImplName.equals($className+"Impl")
+  }
+}

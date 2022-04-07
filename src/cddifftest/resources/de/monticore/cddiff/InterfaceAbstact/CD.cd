@@ -1,0 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram CD {
+  // A class which could have object models
+  class MyClass;
+}

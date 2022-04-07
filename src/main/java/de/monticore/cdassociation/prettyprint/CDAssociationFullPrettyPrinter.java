@@ -2,6 +2,7 @@
 package de.monticore.cdassociation.prettyprint;
 
 import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
@@ -130,6 +131,11 @@ public class CDAssociationFullPrettyPrinter {
   }
 
   public String prettyprint(ASTCDAssociationNode node){
+    getPrinter().clearBuffer();
+    node.accept(getTraverser());
+    return getPrinter().getContent();
+  }
+  public String prettyprint(ASTCDAssociation node){
     getPrinter().clearBuffer();
     node.accept(getTraverser());
     return getPrinter().getContent();

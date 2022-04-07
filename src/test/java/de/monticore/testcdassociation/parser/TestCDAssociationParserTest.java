@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation.parser;
 
 import de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo;

@@ -1,20 +1,23 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd._visitor;
 
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code._visitor.CD4CodeVisitor2;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
+import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDMember;
+import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 import java.util.*;
@@ -89,5 +92,27 @@ public class CDMemberVisitor
     METHOD_SIGNATURES,
     CONSTRUCTORS,
     METHODS,
+  }
+
+  public void run(ASTCDBasisNode ast){ // TBD: How to achieve this without downcasts?
+    CDBasisTraverser t = CDBasisMill.traverser();
+    t.add4CDBasis(this);
+
+    if(t instanceof CD4CodeTraverser){
+      ((CD4CodeTraverser)t).add4CD4Code(this);
+    }
+    if(t instanceof CDAssociationTraverser){
+      ((CDAssociationTraverser)t).add4CDAssociation(this);
+    }
+    if(t instanceof CDInterfaceAndEnumTraverser){
+      ((CDInterfaceAndEnumTraverser)t).add4CDInterfaceAndEnum(this);
+    }
+    if(t instanceof CD4CodeBasisTraverser){
+      ((CD4CodeBasisTraverser)t).add4CD4CodeBasis(this);
+    }
+    if(t instanceof CD4CodeTraverser){
+      ((CD4CodeTraverser)t).add4CD4Code(this);
+    }
+    ast.accept(t);
   }
 }

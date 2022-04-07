@@ -1,13 +1,13 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
 import de.monticore.cd.cocos.CoCoHelper;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
+import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -18,7 +18,7 @@ import de.se_rwth.commons.logging.Log;
 public class CDAssociationSourceNotEnum
     implements CDAssociationASTCDAssociationCoCo {
 
-  protected final CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
+  protected final CDAssociationFullPrettyPrinter prettyPrinter = new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public void check(ASTCDAssociation node) {

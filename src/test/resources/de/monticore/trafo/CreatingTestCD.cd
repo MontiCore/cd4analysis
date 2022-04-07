@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram CreatingTestCD {
+
+  class MySuper;
+
+  class B;
+
+}

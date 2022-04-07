@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram $_ {
+
+  class Group {
+
+  }
+
+  list[[
+    $DependentClass[[
+      class $_ {
+        not[[ public void someMethod(); ]]
+        [[ :- public void someMethod(); ]]
+        opt[[
+            $SomePredefinedMethod[[
+              private void $_();
+            ]]
+        ]]
+      }
+    ]]
+  ]]
+
+}
+
+where{
+    $DependentClass.getName().contains("Group")
+    && $SomePredefinedMethod.getName().equals("somePredefinedMethod")
+}

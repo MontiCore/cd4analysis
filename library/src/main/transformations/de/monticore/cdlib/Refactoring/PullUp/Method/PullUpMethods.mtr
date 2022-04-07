@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.pullup.method.tf;
+transformation PullUpMethods {
+  classdiagram $_ {
+    class $parent {
+      [[ :- CDMethod $M1 ]]
+    }
+
+    class $_ extends $parent {
+      [[ CDMethod $M1  :- ]]
+    }
+
+    list [[
+      class $_ extends $parent{
+         [[ CDMethod $M2 :- ]]
+      }
+    ]]
+
+    not [[ class $_ extends $parent; ]]
+  }
+
+  where{
+    $M2.deepEquals($M1)
+  }
+}

@@ -375,22 +375,22 @@ used functionality, e.g.:
   functionality. This is used by MontiCore to provide additional information 
   concerning changes that have been applied to an AST. 
   
-### CLI stand alone application:
-- [`CDCLI`][CDCLI] contains a standalone, but extensible cli application which:
+### Tool stand alone application:
+- [`CDTool`][CDTool] contains a standalone, but extensible cli application which:
   1. Parses the given model
   2. Creates a symbol table
   3. Checks the CoCos
-- the cli is designed with [`the best practices`][CLIBestPractices] in mind
-- example usage of the cli
+- the tool is designed with [`the best practices`][ToolBestPractices] in mind
+- example usage of the tool
 ```shell
-cd4analysis-cli -i SocNet.cd -r ./reports
-cd4analysis-cli -pp Complete.puml -puml -svg --showAttr
-cd4analysis-cli -script adapted.groovy
+java -jar MCCD.jar -i SocNet.cd -r ./reports
+java -jar MCCD.jar -pp Complete.puml -puml -svg --showAttr
+java -jar MCCD.jar -script adapted.groovy
 ```
 - option '-h' or '--help' can be used to get information of allowed parameters
 
 ### Gradle Plugin
-- the gradle plugin provides the functionality of the cli for gradle builds
+- the gradle plugin provides the functionality of the tool for gradle builds
 - the plugin can be used to check given class diagrams or generate symbol tables
 - example usage of the gradle plugin
 ```gradle
@@ -452,7 +452,7 @@ Further examples can be found [here][CD4CExampleModels].
   capturing the structural part of the classes to be generated.
   It captures classes, and method signatures and allows to add
   templates as hook points that contain method bodies. Examples are:  
-  * [MontiCoreCLI](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java): 
+  * [MontiCoreTool](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java): 
     Grammar -> 
     [Grammar AST encoded in CD4Code](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/MontiCoreScript.java#L411) ->
     [Decoration for custom behavior](https://github.com/MontiCore/monticore/blob/dev/monticore-generator/src/main/java/de/monticore/codegen/cd2java/_symboltable/SymbolTableCDDecorator.java) -> 
@@ -464,7 +464,7 @@ Further examples can be found [here][CD4CExampleModels].
   
 ## Generator Extensions - CD4C Infrastructure to define method signatures in templates
 The class `CD4C` extends the generation possibilities provided in 
-monticore-tuntime by GLEX.
+monticore-runtime by GLEX.
 It is possible to describe both the method signature and the method body in a 
 template.
 For this `CD4C` must be initialized once.
@@ -681,7 +681,7 @@ The method body definition is exactly the same.
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
 [STHelper]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/CDSymbolTableHelper.java
 [reporting]: https://github.com/MontiCore/cd4analysis/tree/master/src/main/java/de/monticore/cd4analysis/reporting
-[CDCLI]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/cli/CDCLI.java
+[CDTool]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/CD4CodeTool.java
 [LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
 [ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/master/src/test/resources/de/monticore/cd4analysis/
 [ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
@@ -700,7 +700,7 @@ The method body definition is exactly the same.
 [OOSymbols]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/symbols/OOSymbols.mc4
 [MCCollectionTypes]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCCollectionTypes.mc4
 
-[CLIBestPractices]: https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md
+[ToolBestPractices]: https://github.com/MontiCore/monticore/blob/dev/docs/BestPractices.md
 
 ## Further Information
 

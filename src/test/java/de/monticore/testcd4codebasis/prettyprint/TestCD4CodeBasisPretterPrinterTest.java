@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis.prettyprint;
 
 import de.monticore.cd.TestBasis;
@@ -30,7 +27,7 @@ public class TestCD4CodeBasisPretterPrinterTest extends TestBasis {
 
     final Optional<ASTCDCompilationUnit> astcdCompilationUnitReParsed = p.parse_StringCDCompilationUnit(output);
     checkNullAndPresence(p, astcdCompilationUnitReParsed);
-    
+
     // check deep equals
     assertTrue(astcdCompilationUnit.get().deepEquals(astcdCompilationUnitReParsed.get()));
   }

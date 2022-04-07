@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.observer.tf;
+transformation Observer {
+  classdiagram $Classdiagram{
+
+      class $subjectName{
+        [[ :-public void getState(); ]]
+      }
+
+    [[ :- class $observable{
+      public void $add ($observer o);
+      public void $delete ($observer o);
+      public void $set ($observer o);
+      public void $notify ();
+    } ]]
+
+    [[ :- class $observer{
+      public void update();
+    } ]]
+
+    [[ :- class $concreteObserver extends $observer{
+      public void update();
+    } ]]
+
+    [[ :- association observers [1] $observable -> $observer [*]; ]]
+    [[ :- association subject [*] $concreteObserver -> $subjectName [1]; ]]
+  }
+}

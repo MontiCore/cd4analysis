@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.pushdown.method.tf;
+transformation CopyMethodToSubclass {
+  classdiagram $_ {
+    class $superclass {
+      CDMethod $method [[ MCReturnType $_ $name (); ]]
+    }
+
+    class $className extends $superclass{
+      not [[ MCReturnType $_ $name (); ]]
+        [[ :- CDMethod $method ]]
+    }
+  }
+}

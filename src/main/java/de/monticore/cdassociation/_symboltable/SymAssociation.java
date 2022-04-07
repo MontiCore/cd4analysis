@@ -1,6 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
 import de.se_rwth.commons.logging.Log;
@@ -9,7 +7,7 @@ import java.util.Optional;
 
 public class SymAssociation {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  protected Optional<CDAssociationSymbol> association;
+  protected Optional<CDAssociationSymbol> association=Optional.empty();
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
 
@@ -49,7 +47,7 @@ public class SymAssociation {
 
   public CDAssociationSymbol getAssociation() {
     if (isPresentAssociation()) {
-      return this.getAssociation();
+      return this.association.get();
     }
     Log.error("0xCD001: Association can't return a value. It is empty.");
     // Normally this statement is not reachable

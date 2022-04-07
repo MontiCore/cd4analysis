@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Valid {
+
+  package p1 {
+    class A {
+      int foo = 4;
+      int bar = 5;
+    }
+    class B extends A;
+  }
+
+  package p2 {
+    class C;
+  }
+
+}

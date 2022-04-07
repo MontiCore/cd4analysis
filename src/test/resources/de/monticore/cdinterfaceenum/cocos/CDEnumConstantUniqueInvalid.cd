@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDEnumConstantUniqueInvalid {
+
+  enum A {
+    FOO,
+    FOO;
+  }
+
+}

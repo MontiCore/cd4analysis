@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.visitor.tf;
+transformation ParentNodeAddMethod {
+  classdiagram $_ {
+      class $node {
+        not [[ public void accept($_ $_); ]]
+
+      [[ :- public void accept($parameterType $parameterName); ]]
+    }
+  }
+}

@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.resolver;
 
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;

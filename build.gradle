@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 /* (c) https://github.com/MontiCore/monticore */
 /*buildscript {
   dependencies {
@@ -11,7 +14,7 @@ plugins {
   id "maven-publish"
   id "com.github.johnrengelman.shadow" version "6.0.0"
   id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
-  id 'org.unbroken-dome.test-sets' version '3.0.1'
+  id 'org.unbroken-dome.test-sets' version '4.0.0'
 }
 
 def var_path = "de.monticore"
@@ -37,33 +40,55 @@ ext {
   guava_version = "25.1-jre"
   antlr_version = "4.7-1"
   plantuml_version = "1.2020.15"
-  logback_version = "1.2.3"
+  jackson_version = "2.13.0"
   junit_version = "4.13"
   commons_cli_version = "1.4"
   commons_lang_version = "3.11"
   jupiter_version = "5.6.0"
   antlr_version = '4.7.1'
   freemarker_version = "2.3.31"
+  javaparser_version = "3.14.11"
+  mockito_version = "3.11.1"
 }
 
 // configure non-standard source sets
+def genDir = "$buildDir/generated-sources/monticore/sourcecode"
+def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
+
 sourceSets {
   main {
-    java.srcDirs += ["$buildDir/generated-sources/monticore/sourcecode"]
+    java.srcDirs += ["$genDir"]
   }
   test {
-    java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
+    java.srcDirs += ["$testGenDir"]
   }
   grammars {
     resources {
-      srcDirs(grammarDir)
+      srcDirs([grammarDir, grammarOutDir])
       include "**/*.mc4"
     }
   }
+  cddiff {
+    java {}
+  }
+  cddifftest {
+    java {}
+  }
+  tool {
+    java {}
+  }
+  tooltest {
+    java {}
+  }
 }
 
-
 configurations {
+  cddiffImplementation.extendsFrom(implementation)
+  cddifftestImplementation.extendsFrom(testImplementation)
+  cddifftestImplementation.extendsFrom(cddiffImplementation)
+  toolImplementation.extendsFrom(cddiffImplementation)
+  tooltestImplementation.extendsFrom(toolImplementation)
+  tooltestImplementation.extendsFrom(cddifftestImplementation)
   grammar
   cli
 }
@@ -83,44 +108,63 @@ dependencies {
   implementation group: 'org.antlr', name: 'antlr4-runtime', version: antlr_version
   implementation "com.google.guava:guava:$guava_version"
   implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
-  implementation "ch.qos.logback:logback-classic:$logback_version"
+  implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.freemarker:freemarker:$freemarker_version"
   testImplementation "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "junit:junit:$junit_version"
-  testImplementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+  testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
+  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
+    requireCapability("de.monticore:monticore-runtime-tests") }
+  testImplementation "org.mockito:mockito-core:$mockito_version"
+  }
+
+  // dependencies for cddiff
+  cddiffImplementation "de.monticore.lang:od:$mc_version"
+  cddiffImplementation "edu.mit.alloy:alloy:6"
+  cddiffImplementation(sourceSets.main.output.classesDirs)
+
+  cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+  cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
+  cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
+  cddifftestImplementation(sourceSets.test.output.classesDirs)
+
+  toolImplementation(sourceSets.cddiff.output.classesDirs)
+  tooltestImplementation(sourceSets.tool.output.classesDirs)
 }
 
-repositories {
-  if (("true").equals(getProperty('useLocalRepo'))) {
-    mavenLocal()
+allprojects {
+  repositories {
+    if (("true").equals(getProperty('useLocalRepo'))) {
+      mavenLocal()
+    }
+    maven {
+      credentials.username mavenUser
+      credentials.password mavenPassword
+      url repo
+    }
+    mavenCentral()
   }
-  maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url repo
-  }
-  mavenCentral()
 }
 
 // list of all grammars, needed to have a fix order
 def grammarDependencies = [
-    CDBasis           : [],
-    CDInterfaceAndEnum: ["CDBasis"],
-    CDAssociation     : ["CDBasis"],
-    CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
-    CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
-    CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
+  CDBasis           : [],
+  CDInterfaceAndEnum: ["CDBasis"],
+  CDAssociation     : ["CDBasis"],
+  CD4Analysis       : ["CDInterfaceAndEnum", "CDAssociation"],
+  CD4CodeBasis      : ["CDBasis", "CDInterfaceAndEnum"],
+  CD4Code           : ["CD4Analysis", "CD4CodeBasis"],
 ]
 
 // list of all grammars, needed to have a fix order
 def testGrammarDependencies = [
-    TestCDBasis           : ["CDBasis"],
-    TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
-    TestCDAssociation     : ["CDAssociation"],
-    TestCD4CodeBasis      : ["CD4CodeBasis"],
-    TestTypeImporter      : ["CD4Code"],
+  TestCDBasis           : ["CDBasis"],
+  TestCDInterfaceAndEnum: ["CDInterfaceAndEnum"],
+  TestCDAssociation     : ["CDAssociation"],
+  TestCD4CodeBasis      : ["CD4CodeBasis"],
+  TestTypeImporter      : ["CD4Code"],
 ]
 
 String createGrammarName(String name) {
@@ -145,6 +189,7 @@ grammarDependencies.each {
     grammar = grammarFile
     outputDir = file grammarOutDir
     handcodedPath "$projectDir/src/main/java"
+    dstlGen = true
     def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
 
     def uptoDate = incCheck(grammarIncludingPackage)
@@ -154,6 +199,25 @@ grammarDependencies.each {
       return grammar.toURI()
     }
     superGrammars.from(superGrammarsList)
+
+    outputs.upToDateWhen { uptoDate }
+  }
+  task "generateTRGrammar${grammarName}"(type: MCTask) {
+    def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
+    dependsOn dependsOnTRGrammars
+
+    def grammarFile = file(grammarOutDir + "/" + de.monticore.dstlgen.util.DSTLPathUtil.getTRGrammar([file("src/main/grammars").toString()], file (g))) // Replace with getTRFile(file (g)) once the plugin is updated and in the upstream
+
+    grammar = grammarFile
+    outputDir = file grammarOutDir
+    handcodedPath "$projectDir/src/main/java"
+    dstlGen = false // Do NOT generate TR grammars for TR grammars
+    def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(grammarFile.toURI()).toString()
+
+    def uptoDate = incCheck(grammarIncludingPackage)
+
+    modelPath(grammarOutDir)
+    modelPath(grammarDir)
 
     outputs.upToDateWhen { uptoDate }
   }
@@ -186,8 +250,26 @@ testGrammarDependencies.each {
   }
 }
 
+task generateTestTrafos {}
+fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
+  def g = it
+  def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
+  task "$taskname"(type: MontiTransExec) {
+    getClassPath().setFrom(sourceSets.test.compileClasspath)
+    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
+    input = file(g)
+    outputDir = file(testGrammarOutDir)
+  }
+  generateTestTrafos.dependsOn("$taskname")
+}
+
+
 task generate {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+}
+
+task generateTR {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
 }
 
 task generateTest {
@@ -196,12 +278,31 @@ task generateTest {
 
 compileJava {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTRGrammar") } }
 }
 
 compileTestJava {
   dependsOn project.collect { it.tasks.withType(MCTask) }
+  dependsOn generateTestTrafos
 }
 
+task cddifftest(type: Test) {
+  description = "Runs CDDiff Tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.cddifftest.output.classesDirs
+  classpath += sourceSets.cddifftest.runtimeClasspath
+  shouldRunAfter test
+}
+
+task tooltest(type: Test) {
+  description = "Runs Tool Tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.tooltest.output.classesDirs
+  classpath += sourceSets.tooltest.runtimeClasspath
+  shouldRunAfter test
+}
+
+check.dependsOn cddifftest, tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -209,6 +310,10 @@ tasks.withType(JavaCompile) {
   options.warnings = false
   options.fork = true
   options.headerOutputDirectory.convention(null)
+  options.forkOptions.with {
+    executable = 'java'
+    jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn', "-Xmx2048m"]
+  }
 }
 
 tasks.withType(Test) {
@@ -216,8 +321,35 @@ tasks.withType(Test) {
   // maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
 }
 
-test {
+tasks.withType(Test) {
   useJUnit()
+  testLogging {
+    // controls whether test output is shown
+    showExceptions true
+    showCauses true
+    showStackTraces true
+    exceptionFormat TestExceptionFormat.FULL
+    info {
+      events TestLogEvent.FAILED,
+        TestLogEvent.PASSED,
+        TestLogEvent.SKIPPED,
+        TestLogEvent.STANDARD_OUT
+    }
+  }
+  afterTest { desc, result ->
+    logger.lifecycle "${desc.className} > ${desc.name} ${result.resultType}"
+  }
+  afterSuite { desc, result ->
+    if (!desc.parent) { // will match the outermost suite
+      def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+      def startItem = '|  ', endItem = '  |'
+      logger.lifecycle startItem + output + endItem
+    }
+  }
+  reports {
+    junitXml.enabled = false
+    html.enabled = false
+  }
 }
 
 // build javadoc jar in addition
@@ -234,17 +366,34 @@ task testSourcesJar(type: Jar) {
   archiveClassifier = "testSources"
 }
 
-shadowJar { // all in one jar
-  archiveFileName = 'CDCLI.jar'
-  manifest {
-    attributes "Main-Class": "de.monticore.cd.cli.CDCLI"
-  }
-  archiveClassifier = "cli"
+// build test sources jar in addition
+task cddiffJar(type: Jar) {
+  from sourceSets.cddiff.output + sourceSets.cddiff.allSource
+  archiveClassifier = "cddiff"
 }
+
+// build test sources jar in addition
+task toolJar(type: Jar) {
+  from sourceSets.tool.output + sourceSets.tool.allSource
+  archiveClassifier = "tool"
+}
+
+jar.dependsOn cddiffJar, toolJar
+
+shadowJar { // all in one jar
+  archiveFileName = 'MCCD.jar'
+  manifest {
+    attributes "Main-Class": "de.monticore.CD4CodeTool"
+  }
+  from sourceSets.tool.runtimeClasspath
+  archiveClassifier = "mc-tool"
+}
+
+jar.dependsOn(shadowJar)
 
 testSets {
   integrationTest {
-    dirName = 'it'
+    dirName = '01.experiments'
   }
 }
 
@@ -277,6 +426,11 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 
 jar.dependsOn grammarsJar
 
+
+artifacts {
+  archives cddiffJar
+  archives toolJar
+}
 // configure deployment
 publishing {
   // configure what artifacts to publish
@@ -285,7 +439,9 @@ publishing {
       suppressPomMetadataWarningsFor('grammarsApiElements')
       suppressPomMetadataWarningsFor('grammarsRuntimeElements')
       from components.java
-      artifact testSourcesJar
+       artifact testSourcesJar
+       artifact cddiffJar
+       artifact toolJar
     }
   }
   repositories.maven {

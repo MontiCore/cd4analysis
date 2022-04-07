@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis.parser;
 
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
@@ -25,4 +22,5 @@ public class TestCD4AnalysisParserTest extends CD4AnalysisTestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cd4analysis/parser/MyLife.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
+
 }

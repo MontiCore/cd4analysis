@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram positiveV1 {
+  class A;
+  class B;
+  class C;
+
+  association a A <-> B;
+}

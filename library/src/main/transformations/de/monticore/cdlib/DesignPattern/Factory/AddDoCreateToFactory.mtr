@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.factory.tf;
+transformation AddDoCreateToFactory {
+  classdiagram $_ {
+    class $concreteProduct;
+
+      class $factory {
+        [[ :-  private $concreteProduct doCreate(); ]]
+      }
+  }
+}

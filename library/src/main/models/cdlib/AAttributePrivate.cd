@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram AAttributePrivate {
+
+	class A;
+	
+	class B extends A{
+		private int a;
+	}
+	 
+	class C extends A{
+		private int a;
+	}
+}

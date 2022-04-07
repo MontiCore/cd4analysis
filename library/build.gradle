@@ -1,0 +1,125 @@
+/* (c) https://github.com/MontiCore/monticore */
+plugins {
+  id "java"
+  id "java-library"
+  id "monticore" version "$mc_version" // MontiCore
+  id "maven-publish"
+}
+
+description = "cd4a-library"
+sourceCompatibility = JavaVersion.VERSION_1_8
+buildDir = file("$projectDir/target")
+
+
+def grammarDir = "src/main/grammars"
+def grammarOutDir = "$buildDir/generated-sources"
+def testGrammarOutDir = "$buildDir/generated-test-sources/mc"
+
+
+// configure non-standard source sets
+sourceSets {
+  test {
+    java.srcDirs += [ "$testGrammarOutDir"]
+  }
+  main {
+    java.srcDirs += [ "$grammarOutDir"]
+
+  }
+  grammars {
+    resources {
+      srcDirs(grammarDir)
+      include "**/*.mc4"
+    }
+  }
+}
+
+configurations { grammar }
+
+
+dependencies {
+  implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
+  implementation group: 'de.monticore', name: 'monticore-grammar', version: mc_version
+  grammar group: 'de.monticore', name: 'monticore-grammar', version: mc_version, classifier: 'grammars'
+
+  implementation group: 'de.monticore.lang', name: 'cd4analysis', version: version
+  grammar group: 'de.monticore.lang', name: 'cd4analysis', version: version, classifier: 'grammars'
+
+  implementation group: 'de.se_rwth.commons', name: 'se-commons-utilities', version: se_commons_version
+  implementation group: 'de.se_rwth.commons', name: 'se-commons-groovy', version: se_commons_version
+  implementation group: 'de.se_rwth.commons', name: 'se-commons-logging', version: se_commons_version
+
+  testImplementation group: 'junit', name: 'junit', version: junit_version
+
+  compileOnly 'org.freemarker:freemarker:2.3.28'
+}
+
+repositories {
+  if (("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url repo
+  }
+}
+
+
+task buildCD4ALibTrafos {}
+
+
+fileTree(dir: "$projectDir/src/main/transformations", include: '**/**.mtr').each {
+  def g = it
+  def taskname = "buildCD4ALibTrafos${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
+
+  task "$taskname" (type: MontiTransExec){
+    getClassPath().setFrom(sourceSets.main.compileClasspath)
+    TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
+    input = file(g)
+    outputDir = file("$buildDir/generated-sources")
+  }
+  buildCD4ALibTrafos.dependsOn("$taskname")
+
+}
+
+compileJava.dependsOn += buildCD4ALibTrafos
+
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.test.output.resourcesDir }
+
+tasks.withType(Test) {
+  maxParallelForks = Runtime.runtime.availableProcessors() ?: 1
+}
+
+
+java {
+  withSourcesJar()
+  registerFeature('grammars') {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+jar.dependsOn grammarsJar
+
+task buildAll(type: GradleBuild) {
+  tasks = ['build']
+}
+
+// configure deployment
+publishing {
+  // configure what artifacts to publish
+  publications {
+    mavenJava(MavenPublication) {
+      suppressPomMetadataWarningsFor('grammarsApiElements')
+      suppressPomMetadataWarningsFor('grammarsRuntimeElements')
+      from components.java
+    }
+  }
+  repositories.maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    def releasesRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-releases/"
+    def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
+    url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+  }
+}

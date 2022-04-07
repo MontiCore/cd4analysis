@@ -1,12 +1,9 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation;
 
 import de.monticore.cd.TestBasis;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -34,9 +31,7 @@ public class CDAssociationTestBasis extends TestBasis {
         .globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
-    if (globalScope instanceof CD4AnalysisGlobalScope) {
-      ((CD4AnalysisGlobalScope) globalScope).addBuiltInTypes();
-    }
+    BuiltInTypes.addBuiltInTypes(globalScope);
 
     cdAssociationCoCos = new CDAssociationCoCos();
   }

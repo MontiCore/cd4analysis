@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum.trafo;
 
 import de.monticore.cd._parser.CDAfterParseHelper;

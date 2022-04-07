@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram CDClassExtendsNotCyclicInvalid {
+
+  class A extends B;
+  class B extends A;
+
+}

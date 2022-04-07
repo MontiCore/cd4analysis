@@ -1,19 +1,11 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd._symboltable;
 
 import de.monticore.class2mc.Class2MCResolver;
-import de.monticore.class2mc.Java2MCResolver;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
-import de.monticore.types.check.ISynthesize;
 
 import java.util.ArrayList;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * contains all types, which are basic Java types

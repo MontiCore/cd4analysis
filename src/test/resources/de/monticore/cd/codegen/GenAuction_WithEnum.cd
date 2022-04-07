@@ -1,0 +1,36 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd.codegen;
+
+classdiagram GenAuction_WithEnum {
+
+  package auction {
+    abstract class Auction {
+      public long auctionIdent;
+      protected java.lang.String title;
+      public int getNumberOfBids();
+      public boolean bid(Person p, java.util.Date t);
+    }
+
+    interface BiddingPolicy;
+    interface TimingPolicy;
+  }
+
+  package person {
+    class Person {
+      java.lang.String name;
+      -> Message [*] {ordered};
+    }
+
+    enum Gender {
+      Female(1),
+      Male(2);
+      Gender (int i);
+
+      protected void check();
+      protected int no;
+      }
+  }
+
+  public class Message;
+
+}

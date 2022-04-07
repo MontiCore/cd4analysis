@@ -11,7 +11,7 @@ public class ASTCDExtendUsage extends ASTCDExtendUsageTOP {
       setEnclosingScope((de.monticore.cdbasis._symboltable.ICDBasisScope) enclosingScope);
     }
     else {
-      de.se_rwth.commons.logging.Log.error("0xA7005x384777510 The EnclosingScope form type de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope could not be casted to the type de.monticore.cdbasis._symboltable.ICDBasisScope. Please call the Method setEnclosingScope with a parameter form type de.monticore.cdbasis._symboltable.ICDBasisScope");
+      de.se_rwth.commons.logging.Log.error("0xAE886 The EnclosingScope form type de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope could not be casted to the type de.monticore.cdbasis._symboltable.ICDBasisScope. Please call the Method setEnclosingScope with a parameter form type de.monticore.cdbasis._symboltable.ICDBasisScope");
     }
   }
 

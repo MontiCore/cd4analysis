@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram EvaluationRule1Boolean {
+
+  public class ClassC{
+  }
+  
+  public class ClassA1 extends ClassC{
+  	public boolean attribute1;  
+  }
+  
+  public class ClassA2 extends ClassC{
+   public boolean attribute1;
+  }
+
+}

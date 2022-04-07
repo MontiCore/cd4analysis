@@ -1,101 +1,27 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.typescalculator;
 
-import de.monticore.cd._symboltable.MCBasicTypesScopeHelper;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
-import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
-import de.monticore.types.check.*;
-import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.check.DeriveSymTypeOfExpression;
+import de.monticore.types.check.DeriveSymTypeOfLiterals;
+import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
+import de.monticore.types.check.TypeCheckResult;
 
-import java.util.Optional;
-
-public class DeriveSymTypeOfCDBasis implements IDerive, CDTypesCalculator {
-
-  protected CDBasisTraverser traverser;
-
-  private TypeCheckResult typeCheckResult;
-  private CDBasisTraverser typesScopeHelper;
+public class DeriveSymTypeOfCDBasis extends CDTypesCalculator {
 
   public DeriveSymTypeOfCDBasis() {
-    init();
+    this(CDBasisMill.traverser());
   }
 
-  public void setTraverser(CDBasisTraverser traverser) {
+  public DeriveSymTypeOfCDBasis(CDBasisTraverser traverser) {
     this.traverser = traverser;
+    init(traverser);
   }
 
-  @Override
-  public CDBasisTraverser getTraverser() {
-    return traverser;
-  }
-
-  public TypeCheckResult getTypeCheckResult() {
-    return typeCheckResult;
-  }
-
-  public void setTypeCheckResult(TypeCheckResult typeCheckResult) {
-    this.typeCheckResult = typeCheckResult;
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
-    reset();
-    ex.accept(getTraverser());
-    return getResult();
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
-    reset();
-    lit.accept(getTraverser());
-    return getResult();
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
-    reset();
-    lit.accept(getTraverser());
-    return getResult();
-  }
-
-  public Optional<SymTypeExpression> calculateType(ASTMCType type) {
-    reset();
-    type.accept(typesScopeHelper);
-    type.accept(getTraverser());
-    return getResult();
-  }
-
-  public Optional<SymTypeExpression> calculateType(ASTMCBasicTypesNode node) {
-    reset();
-    node.accept(typesScopeHelper);
-    node.accept(getTraverser());
-    return getResult();
-  }
-
-  public void reset() {
-    getTypeCheckResult().setCurrentResultAbsent();
-  }
-
-  public Optional<SymTypeExpression> getResult() {
-    return getTypeCheckResult().isPresentCurrentResult() ? Optional.of(getTypeCheckResult().getCurrentResult()) : Optional.empty();
-  }
-
-  @Override
-  public void init() {
-    this.traverser = CDBasisMill.traverser();
+  public void init(CDBasisTraverser traverser) {
     this.typeCheckResult = new TypeCheckResult();
-  
-    this.typesScopeHelper = CDBasisMill.traverser();
-  
-    typesScopeHelper.add4MCBasicTypes(new MCBasicTypesScopeHelper());
 
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());

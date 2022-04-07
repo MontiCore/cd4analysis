@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram Inline2{
+
+  public class ClassC{
+    public String getAttribute();
+    public int a;
+	public String getAttributeB( int a);
+    public int b;  
+  }
+
+ 
+  public class ClassA2;
+  
+  association ClassC -> ClassA2 ;
+  
+
+}

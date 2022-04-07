@@ -3,7 +3,6 @@ package de.monticore.cd4analysis._symboltable;
 
 import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.typescalculator.DeriveSymTypeOfCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
@@ -29,9 +28,7 @@ public class CD4AnalysisSymbolTableCompleter {
 
   public CD4AnalysisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
     this.symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4Analysis())
-        .setImports(imports)
         .setPackageDeclaration(packageDeclaration);
-    ((CD4AnalysisGlobalScope) CD4AnalysisMill.globalScope()).setSymbolTableHelper(symbolTableHelper);
     this.traverser = CD4CodeMill.traverser();
 
     final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(symbolTableHelper);

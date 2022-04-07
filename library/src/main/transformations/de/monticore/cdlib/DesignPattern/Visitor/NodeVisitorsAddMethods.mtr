@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.designpatterns.visitor.tf;
+transformation NodeVisitorsAddMethods {
+  classdiagram $_ {
+
+    class $nodeName;
+
+    class $className extends $nodeName;
+
+      class $_ extends $NodeVisitor {
+        not [[ public void visit($className $_); ]]
+        [[ :- public void visit($className $classNameLow); ]]
+    }
+  }
+  assign {
+    $classNameLow = uncapitalize($className);
+  }
+}

@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram As {
+
+  class A extends C;
+  class B extends C;
+  class F extends C;
+  class C;
+  class D;
+  
+  association A <-> D;
+  association B <-> D;
+
+}

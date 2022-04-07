@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.pullup.attribute.tf;
+transformation TurnPrivateAttributeToProtected {
+  classdiagram $_ {
+    class $_ {
+      $A1 [[
+        [[ private :- protected ]] MCType $_ $_;
+        ]]
+    }
+  }
+}

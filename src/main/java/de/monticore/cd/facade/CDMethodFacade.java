@@ -1,16 +1,19 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.facade;
 
+import com.google.common.collect.Lists;
 import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDMethodBuilder;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -46,21 +49,39 @@ public class CDMethodFacade {
    * base method for creation of a methods via builder
    */
   public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, final List<ASTCDParameter> parameters) {
-    return createMethodInternal(modifier, returnType, name, true, parameters);
+    return createMethodInternal(modifier, returnType, name, true, parameters, Lists.newArrayList());
   }
 
   public ASTCDMethod createMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, final List<ASTCDParameter> parameters) {
-    return createMethodInternal(modifier, returnType, name, false, parameters);
+    return createMethodInternal(modifier, returnType, name, false, parameters, Lists.newArrayList());
   }
 
-  public ASTCDMethod createMethodInternal(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, boolean isDefault, final List<ASTCDParameter> parameters) {
-    return CD4CodeBasisMill.cDMethodBuilder()
-        .setModifier(modifier)
-        .setMCReturnType(returnType)
-        .setName(name)
-        .setCDParametersList(parameters.stream().map(ASTCDParameter::deepClone).collect(Collectors.toList()))
-        .setIsDefault(isDefault)
-        .build();
+  public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name,
+                                         final List<ASTCDParameter> parameters,
+                                         final List<ASTMCQualifiedName> exceptions) {
+    return createMethodInternal(modifier, returnType, name, true, parameters, Lists.newArrayList());
+  }
+
+  public ASTCDMethod createMethod(final ASTModifier modifier, final ASTMCReturnType returnType, final String name,
+                                  final List<ASTCDParameter> parameters,
+                                  final List<ASTMCQualifiedName> exceptions) {
+    return createMethodInternal(modifier, returnType, name, false, parameters, Lists.newArrayList());
+  }
+
+  public ASTCDMethod createMethodInternal(final ASTModifier modifier, final ASTMCReturnType returnType, final String name, boolean isDefault,
+                                          final List<ASTCDParameter> parameters,
+                                          final List<ASTMCQualifiedName> exceptions) {
+    ASTCDMethodBuilder builder = CD4CodeBasisMill.cDMethodBuilder()
+      .setModifier(modifier)
+      .setMCReturnType(returnType)
+      .setName(name)
+      .setCDParametersList(parameters.stream().map(ASTCDParameter::deepClone).collect(Collectors.toList()))
+      .setIsDefault(isDefault);
+    if (!exceptions.isEmpty()) {
+      ASTCDThrowsDeclaration throwsDecl = CD4CodeMill.cDThrowsDeclarationBuilder().addAllException(exceptions).build();
+      builder.setCDThrowsDeclaration(throwsDecl);
+    }
+    return builder.build();
   }
 
   /**
@@ -97,6 +118,13 @@ public class CDMethodFacade {
     return createMethod(modifier,
         mcTypeFacade.createQualifiedType(returnType),
         name, Arrays.asList(parameters));
+  }
+
+  public ASTCDMethod createMethod(final ASTModifier modifier, final String returnType, final String name, final String exception, final ASTCDParameter... parameters) {
+    ASTMCReturnType ast = MCBasicTypesMill.mCReturnTypeBuilder().setMCType(mcTypeFacade.createQualifiedType(returnType)).build();
+    return createMethodInternal(modifier, ast, name, false,
+      Arrays.asList(parameters),
+      Lists.newArrayList(mcTypeFacade.createQualifiedType(exception).getMCQualifiedName()));
   }
 
   public ASTCDMethod createDefaultMethod(final ASTModifier modifier, final String returnType, final String name, final ASTCDParameter... parameters) {

@@ -1,0 +1,36 @@
+classdiagram CDAssociationUniqueInHierarchyValid {
+
+  package p1 {
+    class A1;
+    class B1;
+
+    class superclass1;
+    class subclass1;
+
+    association superclass1 -> (foo) A1;
+    association subclass1 -> (foo) B1;
+  }
+
+  package p2 {
+        class A2;
+        class B2;
+
+        class superclass2;
+        class subclass2 extends superclass2;
+
+        association superclass2 -> (foo) A2;
+        association subclass2 -> (bar) B2;
+  }
+
+    package p3 {
+          class A3;
+          class B3;
+
+          class superclass3;
+          class subclass3 extends superclass3;
+
+          association superclass3 -> (foo) A3;
+          association subclass3 (foo) <- B3;
+    }
+
+}

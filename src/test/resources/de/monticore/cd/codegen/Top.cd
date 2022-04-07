@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd.codegen;
+
+classdiagram Top {
+
+    public class C {
+        protected C();
+    }
+
+    public interface I {}
+
+    public enum E {;}
+}

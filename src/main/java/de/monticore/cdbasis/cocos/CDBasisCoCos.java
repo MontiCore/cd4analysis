@@ -1,16 +1,25 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
+import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.*;
 import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
 import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
+import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
+import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassExtendsOnlyClasses;
+import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsNotCyclic;
+import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
+
+  private final CDTypesCalculator calculator;
+
+  public CDBasisCoCos(CDTypesCalculator calculator) {
+    this.calculator = calculator;
+  }
+
   @Override
   public CDBasisCoCoChecker createNewChecker() {
     return new CDBasisCoCoChecker();
@@ -28,8 +37,8 @@ public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
     // CDAttribute
     checker.addCoCo(new CDAttributeTypeExists());
     checker.addCoCo(new CDAttributeNameLowerCaseIfNotStatic());
-    checker.addCoCo(new CDAttributeInitialTypeCompatible());
-    checker.addCoCo(new CDAttributeUniqueInClassCoco());
+    checker.addCoCo(new CDAttributeInitialTypeCompatible(calculator));
+    checker.addCoCo(new CDAttributeUniqueInClass());
 
     // CDClass
     checker.addCoCo(new CDClassExtendsNotCyclic());

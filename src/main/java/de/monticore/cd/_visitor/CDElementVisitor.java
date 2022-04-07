@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd._visitor;
 
 import de.monticore.cd4code._visitor.CD4CodeVisitor2;

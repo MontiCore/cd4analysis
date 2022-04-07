@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram CDAssociationByAttributeFieldExistInvalid {
+class Struct;
+class StructItem;
+
+final composition Struct [[name]] (struct) -> (item) StructItem [1];
+}

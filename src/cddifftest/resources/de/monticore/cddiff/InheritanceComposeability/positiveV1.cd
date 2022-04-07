@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram positiveV1 {
+  class A {
+    Date date;
+  }
+
+  class B;
+
+  association a A <-> B;
+}

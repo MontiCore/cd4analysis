@@ -1,7 +1,4 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
@@ -20,6 +17,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -31,6 +29,12 @@ import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
+
+
+  @BeforeClass
+  public static void beforeClass() throws Exception {
+    CD4CodeMill.init();
+  }
 
   @Test
   public void completeModel() throws IOException {
@@ -102,8 +106,9 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     final Optional<OOTypeSymbol> opt = artifactScope.resolveOOType("java.util.Optional");
     assertTrue(opt.isPresent());
 
-    String s = new OOSymbolsSymbols2Json().serialize(str1.get().getSpannedScope());
-    String s2 = symbols2Json.serialize(artifactScope);
-    System.out.println(s2);
+    // TODO: Code ist (1) sinnlos und (2) fehlerhaft
+    // String s = new OOSymbolsSymbols2Json().serialize(str1.get().getSpannedScope());
+    // String s2 = symbols2Json.serialize(artifactScope);
+    // System.out.println(s2);
   }
 }

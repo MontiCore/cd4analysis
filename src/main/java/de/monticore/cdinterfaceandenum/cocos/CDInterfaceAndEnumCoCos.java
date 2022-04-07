@@ -1,13 +1,10 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdinterfaceandenum.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumCoCoChecker;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
-import de.monticore.cdinterfaceandenum.cocos.mcg.CD4CodeEnumConstantParameterMatchConstructorArguments;
+import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 
 public class CDInterfaceAndEnumCoCos
     extends CoCoParent<CDInterfaceAndEnumCoCoChecker> {
@@ -36,7 +33,5 @@ public class CDInterfaceAndEnumCoCos
   }
 
   protected void addMcgCoCos(CDInterfaceAndEnumCoCoChecker checker) {
-    // CD4CodeEnumConstant
-    checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments());
   }
 }

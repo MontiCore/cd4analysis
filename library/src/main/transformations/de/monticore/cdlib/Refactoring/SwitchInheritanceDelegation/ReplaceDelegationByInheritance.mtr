@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cdlib.refactoring.switchinheritancedelegation.tf;
+transformation ReplaceDelegationByInheritance {
+  classdiagram $_{
+      class $subclassName [[ :- extends $superclassName ]] ;
+
+      [[ CDAssociation $A :- ]]
+
+  }
+
+  where{
+    ($A.getLeftQualifiedName().getQName().equals($subclassName)&&
+     $A.getRightQualifiedName().getQName().equals($superclassName)&&
+     $A.getCDAssocDir().isDefinitiveNavigableRight()
+    )||(
+     $A.getCDAssocDir().isDefinitiveNavigableLeft()&&
+     $A.getLeftQualifiedName().getQName().equals($superclassName)&&
+     $A.getRightQualifiedName().getQName().equals($subclassName))
+  }
+}

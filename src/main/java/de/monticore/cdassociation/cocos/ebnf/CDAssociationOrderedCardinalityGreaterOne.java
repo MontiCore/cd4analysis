@@ -1,13 +1,12 @@
-/*
- * (c) https://github.com/MontiCore/monticore
- */
-
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.cocos.ebnf;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
+import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -16,7 +15,7 @@ import de.se_rwth.commons.logging.Log;
 public class CDAssociationOrderedCardinalityGreaterOne
     implements CDAssociationASTCDAssociationCoCo {
 
-  final CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
+  final CDAssociationFullPrettyPrinter prettyPrinter = new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   /**
    * @see de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo#check(de.monticore.cdassociation._ast.ASTCDAssociation)

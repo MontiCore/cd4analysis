@@ -1,6 +1,6 @@
 <#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature()}
-${cd4c.method("public int count()")}
+${cd4c.method("public void count()")}
 {
-  return counter++;
+  counter++;
 }
