@@ -58,7 +58,7 @@ public class GeneratorTest extends AbstractTest {
   }
 
   @Test
-  public void testQManger() {
+  public void testQManager() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
         + "/QManager/Employees3.cd");

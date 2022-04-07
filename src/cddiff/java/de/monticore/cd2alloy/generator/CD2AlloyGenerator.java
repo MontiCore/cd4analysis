@@ -1,10 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2alloy.generator;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
@@ -14,6 +16,8 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -466,20 +470,16 @@ public class CD2AlloyGenerator {
       ASTCDClass currentClass = toProcess.pop();
       superclasses.add(currentClass);
 
-      for (ASTMCObjectType o : currentClass.getSuperclassList()) {
-        // Add all superclasses to the processing list
+      String superName = "";
+      for (SymTypeExpression typeExp : currentClass.getSymbol().getSuperClassesOnly()){
+        superName = typeExp.getTypeInfo().getFullName();
 
-        String superName = "";
-        List<CDTypeSymbol> superList =
-            currentClass.getEnclosingScope().resolveCDTypeMany(o.printType(pp));
-        if(!superList.isEmpty()){
-          superName = superList.get(0).getFullName();
-        }
         for (ASTCDClass astClass : classes) {
           if (superName.equals(astClass.getSymbol().getFullName())) {
             toProcess.add(astClass);
           }
         }
+
       }
     }
 
@@ -552,14 +552,10 @@ public class CD2AlloyGenerator {
     LinkedList<ASTCDInterface> toProcess = new LinkedList<>();
 
     // Add all interfaces of the superclass to the processing List
-    for (ASTMCObjectType astcdInterface : superClass.getInterfaceList()) {
 
-      String interfaceName = "";
-      List<CDTypeSymbol> interfaceList =
-          superClass.getEnclosingScope().resolveCDTypeMany(astcdInterface.printType(pp));
-      if(!interfaceList.isEmpty()){
-        interfaceName = interfaceList.get(0).getFullName();
-      }
+    String interfaceName = "";
+    for (SymTypeExpression typeExp : superClass.getSymbol().getInterfaceList()){
+      interfaceName = typeExp.getTypeInfo().getFullName();
 
       for (ASTCDInterface allowedInterface : allowedInterfaces) {
         if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
@@ -578,18 +574,13 @@ public class CD2AlloyGenerator {
 
       // Add all interfaces implemented by the current interface to the
       // processing list
-      for (ASTMCObjectType refType : currentInterface.getInterfaceList()) {
+      interfaceName = "";
+      for (SymTypeExpression typeExp : currentInterface.getSymbol().getInterfaceList()){
+        interfaceName = typeExp.getTypeInfo().getFullName();
 
-        String interfaceName = "";
-        List<CDTypeSymbol> interfaceList =
-            currentInterface.getEnclosingScope().resolveCDTypeMany(refType.printType(pp));
-        if(!interfaceList.isEmpty()){
-          interfaceName = interfaceList.get(0).getFullName();
-        }
-
-        for (ASTCDInterface astcdInterface : allowedInterfaces) {
-          if (interfaceName.equals(astcdInterface.getSymbol().getFullName())) {
-            toProcess.add(astcdInterface);
+        for (ASTCDInterface allowedInterface : allowedInterfaces) {
+          if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
+            toProcess.add(allowedInterface);
             break;
           }
         }
@@ -1410,10 +1401,15 @@ public class CD2AlloyGenerator {
 
     for (ASTCDCompilationUnit ast : asts){
       // build symbol table
+      CD4CodeMill.globalScope().clear();
+      BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
       new CD4CodeDirectCompositionTrafo().transform(ast);
       CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
       CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
       CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(
+          ast.getMCImportStatementList(),  MCBasicTypesMill.mCQualifiedNameBuilder().build());
+      ast.accept(c.getTraverser());
       cocos.checkAll(ast);
     }
 
