@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * Test classes to test the generation of different alloy modules for cddiff
  *
  */
-public class AlloyGeneratorTest extends AbstractTest {
+public class AlloyDiffTest extends AbstractTest {
   /**
    * A helper function to test solution
    *

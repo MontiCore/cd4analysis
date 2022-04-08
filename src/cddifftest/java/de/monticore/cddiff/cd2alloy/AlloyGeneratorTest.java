@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
  * expected.
  *
  */
-public class GeneratorTest extends AbstractTest {
+public class AlloyGeneratorTest extends AbstractTest {
 
   @Test
   public void testVehicleManagement() {
