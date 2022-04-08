@@ -470,7 +470,7 @@ public class CD2AlloyGenerator {
       ASTCDClass currentClass = toProcess.pop();
       superclasses.add(currentClass);
 
-      String superName = "";
+      String superName;
       for (SymTypeExpression typeExp : currentClass.getSymbol().getSuperClassesOnly()){
         superName = typeExp.getTypeInfo().getFullName();
 
@@ -553,7 +553,7 @@ public class CD2AlloyGenerator {
 
     // Add all interfaces of the superclass to the processing List
 
-    String interfaceName = "";
+    String interfaceName;
     for (SymTypeExpression typeExp : superClass.getSymbol().getInterfaceList()){
       interfaceName = typeExp.getTypeInfo().getFullName();
 
@@ -574,7 +574,6 @@ public class CD2AlloyGenerator {
 
       // Add all interfaces implemented by the current interface to the
       // processing list
-      interfaceName = "";
       for (SymTypeExpression typeExp : currentInterface.getSymbol().getInterfaceList()){
         interfaceName = typeExp.getTypeInfo().getFullName();
 
@@ -1430,7 +1429,7 @@ public class CD2AlloyGenerator {
           ((ASTCDCompilationUnit) astsArray[i]).getCDDefinition().setName(currentName);
           versNr++;
           nextName = nextName + "_v" + versNr;
-          ((ASTCDCompilationUnit) astsArray[j]).getCDDefinition().setName(currentName);
+          ((ASTCDCompilationUnit) astsArray[j]).getCDDefinition().setName(nextName);
 
           // Reset j to repeat test
           j = i + 1;
