@@ -1,4 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
+
+import java.util.Date;
+
 classdiagram cd1 {
   enum InsuranceKind {transport, international;}
   enum DrivingExp {expert, beginner;}

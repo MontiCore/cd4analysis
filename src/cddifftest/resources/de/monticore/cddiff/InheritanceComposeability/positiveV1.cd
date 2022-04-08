@@ -1,4 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
+
+import java.util.Date;
+
 classdiagram positiveV1 {
   class A {
     Date date;

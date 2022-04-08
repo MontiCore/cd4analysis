@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
  * expected.
  *
  */
-public class GeneratorTest extends AbstractTest {
+public class AlloyGeneratorTest extends AbstractTest {
 
   @Test
   public void testVehicleManagement() {
@@ -58,7 +58,7 @@ public class GeneratorTest extends AbstractTest {
   }
 
   @Test
-  public void testQManger() {
+  public void testQManager() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
         + "/QManager/Employees3.cd");

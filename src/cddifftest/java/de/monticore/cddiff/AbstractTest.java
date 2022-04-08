@@ -1,11 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 
@@ -46,7 +50,6 @@ abstract public class AbstractTest {
 
       CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
       CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
-
       cocos.checkAll(optAutomaton.get());
 
       return optAutomaton.get();
@@ -57,6 +60,16 @@ abstract public class AbstractTest {
     }
 
     return null;
+  }
+
+  protected void prepareAST(ASTCDCompilationUnit ast){
+    CD4CodeMill.globalScope().clear();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    new CD4CodeDirectCompositionTrafo().transform(ast);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(
+        ast.getMCImportStatementList(),  MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    ast.accept(c.getTraverser());
   }
 
   /**

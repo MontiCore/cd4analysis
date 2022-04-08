@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * Test classes to test the generation of different alloy modules for cddiff
  *
  */
-public class AlloyGeneratorTest extends AbstractTest {
+public class AlloyDiffTest extends AbstractTest {
   /**
    * A helper function to test solution
    *
@@ -110,6 +110,64 @@ public class AlloyGeneratorTest extends AbstractTest {
      }
 
      System.out.println(optS2.get().getNumberOfSatSolutions());
+
+    // Generate third solution
+    Optional<AlloyDiffSolution> optS3 = ClassDifference.cddiff(astV2, astV1, 2);
+    // Test third solution
+    testSolution(optS3, 2);
+    // Write solution to location
+    Path outputDirectoryS3 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
+        + "_" + astV1.getCDDefinition().getName());
+    // Generate outputs
+    optS3.get().generateSolutionsToPath(outputDirectoryS3);
+
+  }
+
+  @Test
+  public void testQManger() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
+        + "/QManager/Employees3.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
+        + "/QManager/Employees4.cd");
+    assertNotNull(astV2);
+
+    // Initialize set of asts
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    asts.add(astV1);
+    asts.add(astV2);
+
+    // Compute diff solutions
+
+    // Generate first solution
+    Optional<AlloyDiffSolution> optS1 = ClassDifference.cddiff(astV1, astV2, 5);
+    // Test first solution
+    //    testSolution(optS1, 5);
+    // Write solution to location
+    Path outputDirectoryS1 = Paths.get("target/generated/cddiff-test/diff_" + 5 + "_of_" + astV1.getCDDefinition().getName()
+        + "_" + astV2.getCDDefinition().getName());
+    // Generate outputs
+    optS1.get().generateSolutionsToPath(outputDirectoryS1);
+
+    // Generate second solution
+    Optional<AlloyDiffSolution> optS2 = ClassDifference.cddiff(astV1, astV2, 2);
+    // Test first solution
+    testSolution(optS2, 2);
+    // Write solution to location
+    Path outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
+        + "_" + astV2.getCDDefinition().getName());
+    // Generate outputs
+    optS2.get().generateSolutionsToPath(outputDirectoryS2);
+    Path outputDirectoryS2U = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()  + "_" + astV2.getCDDefinition().getName() + "_unique");
+    optS2.get().generateUniqueSolutionsToPath(outputDirectoryS2U);
+
+
+    for (A4Solution solution : optS2.get().getAllSatSolutions()) {
+      System.out.println(solution);
+    }
+
+    System.out.println(optS2.get().getNumberOfSatSolutions());
 
     // Generate third solution
     Optional<AlloyDiffSolution> optS3 = ClassDifference.cddiff(astV2, astV1, 2);

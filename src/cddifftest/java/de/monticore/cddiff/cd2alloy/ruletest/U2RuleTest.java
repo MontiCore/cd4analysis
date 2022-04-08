@@ -4,6 +4,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.AbstractTest;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -22,6 +23,13 @@ public class U2RuleTest extends AbstractTest {
   ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
 
   ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+
+  @Before
+  public void prepareASTs(){
+    prepareAST(mvAst);
+    prepareAST(m1Ast);
+    prepareAST(m2Ast);
+  }
 
   private void checkU2(String[] result, Set<String> expectedResult) {
     // Check if the output starts with a comment:

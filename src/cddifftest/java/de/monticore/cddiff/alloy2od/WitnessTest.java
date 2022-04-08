@@ -16,9 +16,9 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 /**
- * Test classes to test the generation of different alloy modules for cddiff
+ * Test if diff-witnesses match first class diagram and not second
  */
-public class GeneratorTest extends AbstractTest {
+public class WitnessTest extends AbstractTest {
   @Test
   public void testManger() {
     // Parse Test Modules

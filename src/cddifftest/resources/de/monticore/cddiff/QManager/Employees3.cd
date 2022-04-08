@@ -18,6 +18,6 @@ classdiagram Employees3 {
     Date startDate;
   }
 
-  association [*] man.emp.Employee (manages) -> (managedBy) man.emp.Manager [0..1];
-  association [1] man.emp.Employee  --  Task [*];
+  association [*] emp.Employee (manages) -> (managedBy) emp.Manager [0..1];
+  association [1] emp.Employee  --  Task [*];
 }

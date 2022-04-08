@@ -85,6 +85,11 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       if(handleArgs(args)){
         init();
 
+        if (cmd.hasOption("semdiff")){
+          computeSemDiff();
+          CD4CodeMill.globalScope().clear();
+        }
+
         if(!modelFile.isEmpty()) {
           ast = parse(modelFile);
         }else{
@@ -266,9 +271,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           }
           System.out.printf(JSON_SUCCESSFUL, filename);
 
-        }
-        if (cmd.hasOption("semdiff")){
-          computeSemDiff();
         }
 
       }
@@ -532,28 +534,26 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   }
 
   protected void computeSemDiff() throws NumberFormatException{
+
+    // parse the first CD
+    ASTCDCompilationUnit ast1;
+
+    if(!modelFile.isEmpty()) {
+      ast1 = parse(modelFile);
+    }else{
+      ast1 = parse(modelReader);
+    }
+
     // parse the second CD
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
-
-    // run trafos
-    new CD4CodeAfterParseTrafo().transform(ast2);
-    new CD4CodeDirectCompositionTrafo().transform(ast2);
-
-    // complete symbol table
-    ICD4CodeGlobalScope gscope = CD4CodeMill.globalScope();
-    BuiltInTypes.addBuiltInTypes(gscope);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
-
-    // run default CoCos
-    runDefaultCoCos(ast);
 
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize;
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
       diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "20"));
     } else {
-      int cd1size = ast.getCDDefinition().getCDClassesList().size()
-        + ast.getCDDefinition().getCDInterfacesList().size();
+      int cd1size = ast1.getCDDefinition().getCDClassesList().size()
+        + ast1.getCDDefinition().getCDInterfacesList().size();
 
       int cd2size = ast2.getCDDefinition().getCDClassesList().size()
         + ast2.getCDDefinition().getCDInterfacesList().size();
@@ -564,7 +564,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
 
     // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast, ast2, diffsize, outputPath);
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize, outputPath);
 
     // test if solution is present
     if (!optS.isPresent()) {
