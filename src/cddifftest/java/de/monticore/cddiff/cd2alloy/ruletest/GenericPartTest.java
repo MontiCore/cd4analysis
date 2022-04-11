@@ -34,13 +34,16 @@ public class GenericPartTest extends AbstractTest {
   String genericPart = " // ***** Generic Part ***** " + System.lineSeparator() +
       " " + System.lineSeparator() +
       "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator() +
-      "abstract sig Obj { get: FName -> {Obj + Val + EnumVal} } " + System.lineSeparator() +
+      "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Class } " + System.lineSeparator() +
       "abstract sig FName {} " + System.lineSeparator() +
       "abstract sig Val {} " + System.lineSeparator() +
       "abstract sig EnumVal {} " + System.lineSeparator() +
+      "abstract sig Class {}" + System.lineSeparator() +
       " " + System.lineSeparator() +
       "// Predicates used to specify cardinality constraints for navigable association" + System.lineSeparator() +
       "// ends and for association ends of undirected associations." + System.lineSeparator() +
+      "pred ObjClasses[obj: set Obj, classes: set Class]{"
+      + System.lineSeparator() + " all o:obj| o.super = classes}" + System.lineSeparator() +
       "pred ObjAttrib[objs: set Obj, fName: one FName," + System.lineSeparator() +
       " fType: set {Obj + Val + EnumVal}] {" + System.lineSeparator() +
       " objs.get[fName] in fType" + System.lineSeparator() +

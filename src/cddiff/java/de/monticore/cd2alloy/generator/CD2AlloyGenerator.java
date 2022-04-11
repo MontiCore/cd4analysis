@@ -68,18 +68,21 @@ public class CD2AlloyGenerator {
         + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
 
         // Abstract Signature for Objects
-        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal} } " + System.lineSeparator()
+        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Class } " + System.lineSeparator()
         // Abstract Signature for Names
         + "abstract sig FName {} " + System.lineSeparator()
         // Abstract Signature for Values
         + "abstract sig Val {} " + System.lineSeparator()
         // Abstract Signature for EnumValues
-        + "abstract sig EnumVal {} " + System.lineSeparator() + " " + System.lineSeparator()
+        + "abstract sig EnumVal {} " + System.lineSeparator()
+        + "abstract sig Class {}" + System.lineSeparator() + " " + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
         + System.lineSeparator()
         + "// ends and for association ends of undirected associations."
+        + System.lineSeparator() + "pred ObjClasses[obj: set Obj, classes: set Class]{"
+        + System.lineSeparator() + " all o:obj| o.super = classes}" + System.lineSeparator()
         + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {"
         + System.lineSeparator() + " objs.get[fName] in fType" + System.lineSeparator()
@@ -379,6 +382,12 @@ public class CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
+  private static String executeRuleU5(Set<ASTCDCompilationUnit> asts){
+
+    // todo: non-dummy part
+    return ("one sig Class_Dummy extends Class {}") + System.lineSeparator();
+  }
+
   /**
    * A helper function to generate all signatures common to all CDs
    */
@@ -403,7 +412,10 @@ public class CD2AlloyGenerator {
         + executeRuleU3(asts) + "" + System.lineSeparator()
 
         // U4: Concrete enum values
-        + executeRuleU4(asts) + "" + System.lineSeparator();
+        + executeRuleU4(asts) + "" + System.lineSeparator()
+
+        // U5: Common Class_Singleton for Obj.super
+        + executeRuleU5(asts) + "" + System.lineSeparator();
   }
 
   /**
@@ -1333,6 +1345,10 @@ public class CD2AlloyGenerator {
         .append(cdDefinition.getName())
         .append(" {")
         .append(System.lineSeparator())
+        .append(System.lineSeparator());
+
+    // todo: non-dummy part
+    predicate.append(("ObjClasses[Obj,(Class_Dummy)]"))
         .append(System.lineSeparator());
 
     predicate.append("// Classes and attributes in ")
