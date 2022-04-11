@@ -24,12 +24,13 @@ public class ClassDifference {
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
                                                              ASTCDCompilationUnit cd2,
                                                              int k) {
-    return cddiff(cd1,cd2,k,"target/generated/cddiff-test/");
+    return cddiff(cd1,cd2,k,false,"target/generated/cddiff-test/");
   }
 
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
                                                    ASTCDCompilationUnit cd2,
-                                                   int k, String outputPathName) {
+                                                   int k, boolean newSemantics,
+      String outputPathName) {
     // Initialize result
     Optional<AlloyDiffSolution> result = Optional.empty();
 
@@ -39,7 +40,7 @@ public class ClassDifference {
             cd1.getCDDefinition().getName() + "_" + cd2.getCDDefinition().getName());
 
     // Generate the module
-    Path moduleFile = DiffModuleGenerator.generateDiffPredicateToFile(cd1, cd2, k,
+    Path moduleFile = DiffModuleGenerator.generateDiffPredicateToFile(cd1, cd2, k, newSemantics,
         outputDirectory.toFile());
 
     // Run alloy on module
