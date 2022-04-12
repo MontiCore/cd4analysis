@@ -23,8 +23,10 @@ public class ReductionTrafoTest extends AbstractTest {
 
     CD4CodeMill.globalScope().clear();
 
-    ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
-    ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+    ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
+        + "/Employees2.cd");
+    ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
+        + "/Employees1.cd");
 
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(m1Ast,m2Ast);
