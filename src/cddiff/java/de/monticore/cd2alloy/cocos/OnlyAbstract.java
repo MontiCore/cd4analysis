@@ -18,7 +18,7 @@ public class OnlyAbstract implements UMLModifierASTModifierCoCo {
   public void check(ASTModifier node) {
     if(!(node.isAbstract())) {
       Log.error(
-          String.format("Modifier %s has invalid modifiers. Only \"abstract\" is permitted.",
+          String.format("0xCDD02: %s has invalid modifiers. Only \"abstract\" is permitted.",
               node),
           node.get_SourcePositionStart());
     }

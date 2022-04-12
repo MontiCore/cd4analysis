@@ -50,14 +50,20 @@ public class CDDiffCLITest {
 
     // and the ODs match cd1 but not cd2
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    boolean first = false;
+    boolean second = true;
+
     try {
-      assertTrue(matcher.checkODConsistency(cd1, odFilePaths));
-      assertFalse(matcher.checkODConsistency(cd2, odFilePaths));
+      first = matcher.checkODConsistency(cd1, odFilePaths);
+      second = matcher.checkODConsistency(cd2, odFilePaths);
     }
     catch (Exception e) {
-      Log.error(e.getMessage());
+      Log.error("0xCDD07: Matching failed due to the following exception " + e.getMessage());
       fail();
     }
+
+    assertTrue(first);
+    assertFalse(second);
 
     // clean-up
     try {
@@ -129,14 +135,20 @@ public class CDDiffCLITest {
 
     // and the ODs match cd1 but not cd2
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    boolean first = false;
+    boolean second = true;
+
     try {
-      assertTrue(matcher.checkODConsistency(cd1, odFilePaths));
-      assertFalse(matcher.checkODConsistency(cd2, odFilePaths));
+      first = matcher.checkODConsistency(cd1, odFilePaths);
+      second = matcher.checkODConsistency(cd2, odFilePaths);
     }
     catch (Exception e) {
-      Log.error(e.getMessage());
+      Log.error("0xCDD07: Matching failed due to the following exception " + e.getMessage());
       fail();
     }
+
+    assertTrue(first);
+    assertFalse(second);
 
     // clean-up
     try {

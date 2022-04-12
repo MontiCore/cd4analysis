@@ -82,7 +82,7 @@ public class Alloy2ODGenerator {
 
     // Handle null.
     if (getObj == null || val == null || enumVal == null || obj == null) {
-      Log.error("Unable to derive getObj, val enumVal and obj.");
+      Log.error("0xCDD03: Unable to derive getObj, val, enumVal or obj.");
       return "";
     }
 

@@ -723,7 +723,7 @@ public class CD2AlloyGenerator {
               .append(cdDefinition.getName());
           classFunctions.append(",").append(c.getRight().getCDRole().getName()).append("] + ");
         } else {
-          Log.error(c + ": has no roleName or more than one LeftReferenceName.");
+          Log.error("0xCDD04: " + c + ": has no roleName or more than one LeftReferenceName.");
         }
       }
       // Remove last '+'
@@ -1304,7 +1304,7 @@ public class CD2AlloyGenerator {
         break;
       }
       default: {
-        Log.error("incorrect ruleID, method is designed for A4-A6 only");
+        Log.error("0xCDD05: incorrect ruleID, method is designed for A4-A6 only");
         return predicate;
       }
     }
@@ -1537,7 +1537,7 @@ public class CD2AlloyGenerator {
     } catch (IOException e) {
       e.printStackTrace();
 
-      Log.error("Could not create Alloy Module file.");
+      Log.error("0xCDD06: Could not create Alloy Module file.");
     }
 
     Log.trace(LOGGER_NAME, "Generated Alloy Module " + moduleName

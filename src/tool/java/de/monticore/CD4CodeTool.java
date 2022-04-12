@@ -569,7 +569,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     // test if solution is present
     if (!optS.isPresent()) {
-      Log.error("could not compute semdiff");
+      Log.error("0xCDD01: Could not compute semdiff.");
       return;
     }
     AlloyDiffSolution sol = optS.get();
