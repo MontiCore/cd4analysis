@@ -18,14 +18,15 @@ public class DiffModuleGenerator {
   /**
    * Helper function to create the diff module predicate.
    */
-  private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2) {
+  private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2
+      , boolean newSemantics) {
     // Create inputs
     Set<ASTCDCompilationUnit> cds = new HashSet<>();
     cds.add(cd1);
     cds.add(cd2);
 
     // Generate general module
-    String alloyModule = CD2AlloyGenerator.generateModule(cds);
+    String alloyModule = CD2AlloyGenerator.generateModule(cds, newSemantics);
 
     // Generate diff predicate
     alloyModule += System.lineSeparator();
@@ -50,9 +51,9 @@ public class DiffModuleGenerator {
    * @return String for an alloy module comparing cd1 and cd2
    */
   public static String generateDiffPredicate(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      int k) {
+      int k, boolean newSemantics) {
     // Create module
-    String alloyModule = diffPredicateGenerator(cd1, cd2);
+    String alloyModule = diffPredicateGenerator(cd1, cd2, newSemantics);
 
     // Add run command for predicate with k as object limit
     alloyModule += "run diff for " + k + System.lineSeparator();
@@ -61,7 +62,7 @@ public class DiffModuleGenerator {
   }
 
   public static Path generateDiffPredicateToFile(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      int k, File outputDirectory) {
+      int k, boolean newSemantics, File outputDirectory) {
 
     // Initialize set of asts
     Set<ASTCDCompilationUnit> asts = new HashSet<>();
@@ -72,7 +73,7 @@ public class DiffModuleGenerator {
     String moduleName = CD2AlloyGenerator.generateModuleName(asts);
 
     // Generate module
-    String module = generateDiffPredicate(cd1, cd2, k);
+    String module = generateDiffPredicate(cd1, cd2, k, newSemantics);
 
     // Save module in file
 

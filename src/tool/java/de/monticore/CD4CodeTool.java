@@ -564,7 +564,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
 
     // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize, outputPath);
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize,
+        false, outputPath);
 
     // test if solution is present
     if (!optS.isPresent()) {

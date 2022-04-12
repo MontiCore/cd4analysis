@@ -382,10 +382,39 @@ public class CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  private static String executeRuleU5(Set<ASTCDCompilationUnit> asts){
+  private static String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics){
 
     // todo: non-dummy part
-    return ("one sig Class_Dummy extends Class {}") + System.lineSeparator();
+    if (!newSemantics) {
+      return ("one sig Class_Dummy extends Class {}") + System.lineSeparator();
+    }
+
+    StringBuilder commonSigs = new StringBuilder();
+
+    // Union of all classes
+    Set<ASTCDClass> classUnion = new HashSet<>();
+    for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
+      Set<ASTCDClass> classSet = new HashSet<>(
+          astcdCompilationUnit.getCDDefinition().getCDClassesList());
+      classUnion.addAll(classSet);
+    }
+
+    // Union of all class Names
+    Set<String> classNameUnion = new HashSet<>();
+    for (ASTCDClass astcdClass : classUnion) {
+      classNameUnion.add(processQName(astcdClass.getSymbol().getFullName()));
+    }
+
+    // Output generation
+    commonSigs.append("// U1: Common classes ").append(System.lineSeparator());
+    for (String className : classNameUnion) {
+      commonSigs.append("one sig Class_");
+      commonSigs.append(className);
+      commonSigs.append(" extends Class {}").append(System.lineSeparator());
+    }
+
+    return commonSigs.toString();
+
   }
 
   /**
@@ -412,10 +441,8 @@ public class CD2AlloyGenerator {
         + executeRuleU3(asts) + "" + System.lineSeparator()
 
         // U4: Concrete enum values
-        + executeRuleU4(asts) + "" + System.lineSeparator()
+        + executeRuleU4(asts) + "" + System.lineSeparator();
 
-        // U5: Common Class_Singleton for Obj.super
-        + executeRuleU5(asts) + "" + System.lineSeparator();
   }
 
   /**
@@ -1408,7 +1435,7 @@ public class CD2AlloyGenerator {
    *
    * @param asts            the set of asts to generate the alloy module for.
    */
-  public static String generate(Set<ASTCDCompilationUnit> asts) {
+  public static String generate(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
     // Only generate a module for non-empty asts
     if (asts.isEmpty()) {
       return "";
@@ -1477,6 +1504,9 @@ public class CD2AlloyGenerator {
     // Signatures common to all CDs
     module.append(createCommonSignatures(asts));
 
+    // Singleton Class Signatures for multi-instance semantics
+    module.append(executeRuleU5(asts, newSemantics)).append(System.lineSeparator());
+
     // Functions specific to CD
     for (ASTCDCompilationUnit cd : asts) {
       module.append(createFunctions(cd));
@@ -1537,13 +1567,16 @@ public class CD2AlloyGenerator {
    *
    * @param asts            the set of asts to generate the alloy module for.
    * @param outputDirectory the directory to generate the Alloy Module in.
+   * @param newSemantics specify whether to use simple or multi-instance semantics
+   *
    */
-  public static void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory) {
+  public static void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory,
+      boolean newSemantics) {
     // Generate the name of the module
     String moduleName = generateModuleName(asts);
 
     // Generate Standard module
-    String module = generate(asts);
+    String module = generate(asts, newSemantics);
 
     System.out.println(module);
 
@@ -1551,14 +1584,18 @@ public class CD2AlloyGenerator {
     saveModule(module, moduleName, outputDirectory);
   }
 
+  public static void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory){
+    generateModuleToFile(asts,outputDirectory,false);
+  }
+
   /**
    * Generates the Alloy Module in outputDirectory using the ast.
    *
    * @param asts the set of asts to generate the alloy module for.
    */
-  public static String generateModule(Set<ASTCDCompilationUnit> asts) {
+  public static String generateModule(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
 
-    return generate(asts);
+    return generate(asts,newSemantics);
   }
 
   /**
@@ -1585,7 +1622,7 @@ public class CD2AlloyGenerator {
       }
     }
 
-    return generate(cds);
+    return generate(cds,false);
   }
 
   public static String generateModuleName(Set<ASTCDCompilationUnit> asts) {

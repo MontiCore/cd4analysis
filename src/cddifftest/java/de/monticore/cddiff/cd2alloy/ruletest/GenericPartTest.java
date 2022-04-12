@@ -118,7 +118,7 @@ public class GenericPartTest extends AbstractTest {
     asts.add(mvAst);
 
     // Generate Module
-    String module = CD2AlloyGenerator.generateModule(asts);
+    String module = CD2AlloyGenerator.generateModule(asts, false);
 
     // Check if generic part was correctly created
     checkGenericPart(module, genericPart);
@@ -131,7 +131,7 @@ public class GenericPartTest extends AbstractTest {
     asts.add(m1Ast);
 
     // Generate Module
-    String module = CD2AlloyGenerator.generateModule(asts);
+    String module = CD2AlloyGenerator.generateModule(asts, false);
 
     // Check if generic part was correctly created
     checkGenericPart(module, genericPart);
@@ -145,7 +145,7 @@ public class GenericPartTest extends AbstractTest {
     asts.add(m2Ast);
 
     // Generate Module
-    String module = CD2AlloyGenerator.generateModule(asts);
+    String module = CD2AlloyGenerator.generateModule(asts, false);
 
     // Check if generic part was correctly created
     checkGenericPart(module, genericPart);
