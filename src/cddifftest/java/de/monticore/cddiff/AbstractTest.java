@@ -50,10 +50,6 @@ abstract public class AbstractTest {
       //assertFalse(parser.hasErrors());
       assertTrue(optAutomaton.isPresent());
 
-      CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
-      CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
-      cocos.checkAll(optAutomaton.get());
-
       return optAutomaton.get();
     } catch (Exception e) {
       e.printStackTrace();
@@ -72,6 +68,9 @@ abstract public class AbstractTest {
     CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(
         ast.getMCImportStatementList(),  MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
+    CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
+    CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
+    cocos.checkAll(ast);
   }
 
   /**
