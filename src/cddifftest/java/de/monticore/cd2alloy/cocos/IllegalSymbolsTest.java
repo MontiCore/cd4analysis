@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2alloy.cocos;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cddiff.AbstractTest;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -23,6 +24,7 @@ public class IllegalSymbolsTest extends AbstractTest {
   @Test
   public void invalidInputSymbolTest(){
     ASTCDCompilationUnit a = parseModel("src/cddifftest/resources/de/monticore/cddiff/InvalidCoCos/cd3.cd");
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(a);
 
 
     CD4AnalysisCoCoChecker checker = new CD2AlloyCoCos().getCheckerForAllCoCos();
@@ -30,9 +32,9 @@ public class IllegalSymbolsTest extends AbstractTest {
 
     Collection<Finding> expectedErrors = Arrays.asList(
         Finding.error("Symbol $ is not allowed, as it is already defined in alloy.",
-            new SourcePosition(2, 0)),
+            new SourcePosition(5, 2)),
         Finding.error("Symbol _ is not allowed, as it is already defined in alloy.",
-            new SourcePosition(2, 0))
+            new SourcePosition(10, 4))
         );
 
     Assert.assertErrors(expectedErrors, Log.getFindings());
