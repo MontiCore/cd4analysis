@@ -2,6 +2,7 @@ package de.monticore;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.CD4CodeTool;
+import de.monticore.cd4code.CD4CodeTestBasis;
 import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -18,12 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CDDiffCLITest {
-
-  @Before
-  public void setup() {
-    CD4CodeMill.reset();
-  }
+public class CDDiffCLITest extends CD4CodeTestBasis {
 
   @Test
   public void testRunWithDiff() {

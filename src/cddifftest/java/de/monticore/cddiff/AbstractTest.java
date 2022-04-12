@@ -29,6 +29,8 @@ abstract public class AbstractTest {
   @Before
   public void setup() {
     Log.init();
+    Log.enableFailQuick(false);
+    CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
   }
