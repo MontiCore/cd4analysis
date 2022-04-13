@@ -47,13 +47,15 @@ public class ReductionTrafo {
     scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    //todo: actual transformation
+    //todo: complete trafo
     completeSecond();
   }
 
+  /**
+   * helper method that completes the second CD
+   * todo: add missing associations
+   */
   private void completeSecond(){
-
-    //todo: add missing attributes, enum-values, associations and inheritance-relations
     for(ASTCDPackage astcdPackage : first.getCDDefinition().getCDPackagesList()){
       if(!scope2.resolveCDTypeDown(astcdPackage.getSymbol().getFullName()).isPresent()){
         ASTCDPackage newPackage = astcdPackage.deepClone();
@@ -111,7 +113,6 @@ public class ReductionTrafo {
 
   /**
    * add all inheritance-relations exclusive to first to second
-   * todo: unless we get cyclical inheritance
    */
   private void completeInheritance(){
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()){
@@ -124,7 +125,7 @@ public class ReductionTrafo {
         ASTCDType targetNode = opt.get().getAstNode();
         List<ASTMCObjectType> extendsList = new ArrayList<>(targetNode.getSuperclassList());
         for (ASTMCObjectType superType : astcdClass.getSuperclassList()){
-          if(isNewSuper(superType,targetNode)) {
+          if(isNewSuper(superType,targetNode) && noCycle(superType,targetNode)) {
             extendsList.add(superType);
           }
           if(targetNode instanceof ASTCDClass){
@@ -134,7 +135,7 @@ public class ReductionTrafo {
         }
         List<ASTMCObjectType> interfaceList = new ArrayList<>(targetNode.getInterfaceList());
         for (ASTMCObjectType superType : astcdClass.getInterfaceList()){
-          if(isNewSuper(superType,targetNode)) {
+          if(isNewSuper(superType,targetNode) && noCycle(superType,targetNode)) {
             interfaceList.add(superType);
           }
           if(targetNode instanceof ASTCDClass){
@@ -154,7 +155,7 @@ public class ReductionTrafo {
         ASTCDType targetNode = opt.get().getAstNode();
         List<ASTMCObjectType> extendsList = new ArrayList<>(targetNode.getInterfaceList());
         for (ASTMCObjectType superType : astcdInterface.getInterfaceList()){
-          if(isNewSuper(superType,targetNode)) {
+          if(isNewSuper(superType,targetNode) && noCycle(superType,targetNode)) {
             extendsList.add(superType);
           }
           if(targetNode instanceof ASTCDInterface){
@@ -171,6 +172,25 @@ public class ReductionTrafo {
       if(oldSuper.getSymbol().getFullName().contains(newSuper.printType(pp))){
         return false;
       }
+    }
+    return true;
+  }
+
+  private boolean noCycle(ASTMCObjectType newSuper, ASTCDType targetNode){
+    Optional<CDTypeSymbol> opt =
+        targetNode.getEnclosingScope().resolveCDTypeDown(newSuper.printType(pp));
+    if(!opt.isPresent()){
+      opt = scope2.resolveCDTypeDown(newSuper.printType(pp));
+    }
+    if(opt.isPresent()){
+      for(ASTCDType superSuper : getAllSuper(opt.get().getAstNode())){
+        if (superSuper.getSymbol().getFullName().equals(targetNode.getSymbol().getFullName())){
+          return false;
+        }
+      }
+    } else{
+      Log.error(String.format("0xCDD08: Could not find %s",
+          newSuper.printType(pp)));
     }
     return true;
   }
