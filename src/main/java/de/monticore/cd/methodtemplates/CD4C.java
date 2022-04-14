@@ -382,13 +382,7 @@ public class CD4C {
     CD4CTemplateHelper th = new CD4CTemplateHelper();
     th.importStr(signature);
 
-    Set<ASTMCImportStatement> s;
-    if (importMap.containsKey(clazz)) {
-      s = importMap.get(clazz);
-    } else {
-      s = Sets.newHashSet();
-      importMap.put(clazz, s);
-    }
+    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(clazz, it -> Sets.newHashSet());
     s.add(th.astcdImport.get());
   }
 
