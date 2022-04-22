@@ -115,17 +115,21 @@ public class ReductionTrafo {
     completeInheritance();
     removeRedundancies();
 
+    // add missing associations
     for (ASTCDAssociation assoc1 : first.getCDDefinition().getCDAssociationsList()) {
+      boolean found = false;
       for (ASTCDAssociation assoc2 : second.getCDDefinition().getCDAssociationsList()) {
         if (sameAssociation(assoc1, assoc2)) {
           if (!(assoc2.getCDAssocDir().isDefinitiveNavigableLeft() || assoc2.getCDAssocDir()
               .isDefinitiveNavigableRight())) {
             assoc2.setCDAssocDir(assoc1.getCDAssocDir().deepClone());
           }
+          found = true;
+          break;
         }
-        else {
-          second.getCDDefinition().getCDElementList().add(assoc1.deepClone());
-        }
+      }
+      if (!found){
+        second.getCDDefinition().getCDElementList().add(assoc1.deepClone());
       }
     }
   }
