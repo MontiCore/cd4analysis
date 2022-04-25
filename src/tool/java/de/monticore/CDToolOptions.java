@@ -287,6 +287,13 @@ public class CDToolOptions {
       .desc("Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1,"
         + " i.e. only one witness is shown).")
       .build());
+
+    options.addOption(Option.builder()
+        .longOpt("open-world")
+        .desc(
+            "Compute the multi-instance open-world difference of 2 class diagrams when using "
+                + "`--semdiff` (via reduction to a closed-world problem).")
+        .build());
   }
 
 }

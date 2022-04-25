@@ -38,6 +38,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.ow2cw.ReductionTrafo;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -547,6 +548,15 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // parse the second CD
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
 
+    // check if open-to-closed world reduction should be performed
+    boolean ow2cw = cmd.hasOption("open-world");
+
+    if(ow2cw){
+      CD4CodeMill.globalScope().clear();
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(ast1,ast2);
+    }
+
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize;
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
@@ -565,7 +575,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     // compute semDiff(ast,ast2)
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize,
-        false, outputPath);
+        ow2cw, outputPath);
 
     // test if solution is present
     if (!optS.isPresent()) {
