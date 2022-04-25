@@ -815,15 +815,11 @@ public class CD2AlloyGenerator {
     classFunctions.append("// P0: New rule for multi-instance semantics. ")
         .append(System.lineSeparator());
     for (ASTCDClass astcdClass : classes) {
-      Set<ASTCDClass> subs = new HashSet<>();
 
       // Computation of Superclasses
-      for (ASTCDClass sub : classes) {
-        Set<ASTCDClass> superclasses = superClasses(sub, classes);
-
-        if (superclasses.contains(astcdClass)) {
-          subs.add(sub);
-        }
+      Set<ASTCDClass> superclasses = superClasses(astcdClass, classes);
+      for (ASTCDClass superclass : superclasses) {
+        superclasses.addAll(superClasses(superclass,classes));
       }
 
       // Output P0
@@ -833,8 +829,8 @@ public class CD2AlloyGenerator {
           .append(",(");
 
       // All subclasses connected with a '+'
-      for (ASTCDClass sub : subs) {
-        classFunctions.append("Class_").append(processQName(sub.getSymbol().getFullName())).append(" + ");
+      for (ASTCDClass superclass : superclasses) {
+        classFunctions.append("Class_").append(processQName(superclass.getSymbol().getFullName())).append(" + ");
       }
       // Remove last '+'
       classFunctions.delete(classFunctions.length() - 3, classFunctions.length());
