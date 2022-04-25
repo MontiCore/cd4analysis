@@ -802,6 +802,49 @@ public class CD2AlloyGenerator {
     return result.toString();
   }
 
+
+  /**
+   * additional rule for new semantics
+   */
+  public static String executeRuleP0(ASTCDCompilationUnit cd) {
+    StringBuilder classFunctions = new StringBuilder();
+
+    // The set of all classes in the class diagram
+    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+
+    classFunctions.append("// P0: New rule for multi-instance semantics. ")
+        .append(System.lineSeparator());
+    for (ASTCDClass astcdClass : classes) {
+      Set<ASTCDClass> subs = new HashSet<>();
+
+      // Computation of Superclasses
+      for (ASTCDClass sub : classes) {
+        Set<ASTCDClass> superclasses = superClasses(sub, classes);
+
+        if (superclasses.contains(astcdClass)) {
+          subs.add(sub);
+        }
+      }
+
+      // Output P0
+      // Functions + Names
+      classFunctions.append("ObjClasses[")
+          .append(processQName(astcdClass.getSymbol().getFullName()))
+          .append(",(");
+
+      // All subclasses connected with a '+'
+      for (ASTCDClass sub : subs) {
+        classFunctions.append("Class_").append(processQName(sub.getSymbol().getFullName())).append(" + ");
+      }
+      // Remove last '+'
+      classFunctions.delete(classFunctions.length() - 3, classFunctions.length());
+      classFunctions.append(")]").append(System.lineSeparator());
+    }
+
+    return classFunctions.toString();
+
+  }
+
   /**
    * Rule P1 uses predicate ObjAttrib to declare the attributes of every class
    * in the class diagram cd.
@@ -1356,7 +1399,7 @@ public class CD2AlloyGenerator {
   /**
    * Creates all predicates necessary for the description of the semantics
    */
-  public static String createPredicates(ASTCDCompilationUnit cd) {
+  public static String createPredicates(ASTCDCompilationUnit cd, boolean newSemantics) {
     StringBuilder predicate = new StringBuilder();
 
     // The definition of the CD
@@ -1375,8 +1418,11 @@ public class CD2AlloyGenerator {
         .append(System.lineSeparator());
 
     // todo: non-dummy part
-    predicate.append(("ObjClasses[Obj,(Class_Dummy)]"))
-        .append(System.lineSeparator());
+    if (newSemantics){
+      predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
+    }else {
+      predicate.append(("ObjClasses[Obj,(Class_Dummy)]")).append(System.lineSeparator()).append(System.lineSeparator());
+    }
 
     predicate.append("// Classes and attributes in ")
         .append(cdDefinition.getName())
@@ -1514,7 +1560,7 @@ public class CD2AlloyGenerator {
 
     // semantics predicate for each CD
     for (ASTCDCompilationUnit cd : asts) {
-      module.append(createPredicates(cd));
+      module.append(createPredicates(cd, newSemantics));
     }
 
     return module.toString();
