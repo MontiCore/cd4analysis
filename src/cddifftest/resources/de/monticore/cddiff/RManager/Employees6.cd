@@ -9,12 +9,9 @@ classdiagram Employees6 {
     PositionKind kind;
   }
 
-  class Task {
-    Date startDate;
-  }
+  class Task;
 
   class Manager extends Employee;
 
-  association [*] Employee (manages) -> (managedBy) Manager [0..1];
   association [1] Employee  --  Task [0..1];
 }

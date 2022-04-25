@@ -3,11 +3,11 @@
 import java.util.Date;
 
 classdiagram Employees5 {
-  enum PositionKind{fullTime, partTime;}
+  enum PositionKind{fullTime, partTime, nightShift;}
 
   interface Person;
 
-  abstract class Employee {
+  abstract class Employee implements Person{
     PositionKind kind;
   }
 

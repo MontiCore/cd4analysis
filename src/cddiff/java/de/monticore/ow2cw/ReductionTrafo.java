@@ -15,7 +15,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -56,7 +55,6 @@ public class ReductionTrafo {
     scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    //todo: complete trafo
     transformFirst();
     transformSecond();
   }
@@ -154,7 +152,6 @@ public class ReductionTrafo {
 
   /**
    * helper method that transforms the second CD
-   * todo: add missing associations
    */
   protected void transformSecond() {
     for (ASTCDPackage astcdPackage : first.getCDDefinition().getCDPackagesList()) {
@@ -202,8 +199,13 @@ public class ReductionTrafo {
               break;
             }
           }
-          if (!found && (opt.get().getAstNode() instanceof ASTCDEnum)) {
-            ((ASTCDEnum) opt.get().getAstNode()).addCDEnumConstant(constant.deepClone());
+          if (!found) {
+            // I wanted to avoid reflection, but I think this is just reflection with extra steps...
+            for (ASTCDEnum someEnum : second.getCDDefinition().getCDEnumsList()){
+              if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())){
+                someEnum.addCDEnumConstant(constant.deepClone());
+              }
+            }
           }
         }
       }
@@ -308,56 +310,64 @@ public class ReductionTrafo {
    * add all inheritance-relations exclusive to first to second
    */
   protected void completeInheritanceInSecond() {
-    for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
+    for (ASTCDClass srcClass : first.getCDDefinition().getCDClassesList()) {
       scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
-      Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
-      if (!opt.isPresent()) {
+
+      ASTCDClass targetClass = null;
+
+      for (ASTCDClass someClass : second.getCDDefinition().getCDClassesList()){
+        if (srcClass.getSymbol().getFullName().equals(someClass.getSymbol().getFullName())){
+          targetClass = someClass;
+        }
+      }
+
+      if (targetClass == null) {
         Log.error(
-            String.format("0xCDD08: Could not find %s", astcdClass.getSymbol().getFullName()));
+            String.format("0xCDD08: Could not find %s", srcClass.getSymbol().getFullName()));
       }
       else {
-        ASTCDType targetNode = opt.get().getAstNode();
-        List<ASTMCObjectType> extendsList = new ArrayList<>(targetNode.getSuperclassList());
-        for (ASTMCObjectType superType : astcdClass.getSuperclassList()) {
-          if (isNewSuper(superType, targetNode) && noCycleInSecond(superType, targetNode)) {
+        List<ASTMCObjectType> extendsList = new ArrayList<>(targetClass.getSuperclassList());
+        for (ASTMCObjectType superType : srcClass.getSuperclassList()) {
+          if (isNewSuper(superType, targetClass) && noCycleInSecond(superType, targetClass)) {
             extendsList.add(superType);
           }
-          if (targetNode instanceof ASTCDClass) {
-            ((ASTCDClass) targetNode).setCDExtendUsage(
+          targetClass.setCDExtendUsage(
                 CD4CodeMill.cDExtendUsageBuilder().addAllSuperclass(extendsList).build());
-          }
+
         }
-        List<ASTMCObjectType> interfaceList = new ArrayList<>(targetNode.getInterfaceList());
-        for (ASTMCObjectType superType : astcdClass.getInterfaceList()) {
-          if (isNewSuper(superType, targetNode) && noCycleInSecond(superType, targetNode)) {
+        List<ASTMCObjectType> interfaceList = new ArrayList<>(targetClass.getInterfaceList());
+        for (ASTMCObjectType superType : srcClass.getInterfaceList()) {
+          if (isNewSuper(superType, targetClass) && noCycleInSecond(superType, targetClass)) {
             interfaceList.add(superType);
           }
-          if (targetNode instanceof ASTCDClass) {
-            ((ASTCDClass) targetNode).setCDInterfaceUsage(
+          targetClass.setCDInterfaceUsage(
                 CD4CodeMill.cDInterfaceUsageBuilder().addAllInterface(interfaceList).build());
-          }
         }
       }
     }
-    for (ASTCDInterface astcdInterface : first.getCDDefinition().getCDInterfacesList()) {
+    for (ASTCDInterface srcInterface : first.getCDDefinition().getCDInterfacesList()) {
       scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
-      Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(
-          astcdInterface.getSymbol().getFullName());
-      if (!opt.isPresent()) {
+
+      ASTCDInterface targetInterface = null;
+
+      for (ASTCDInterface someInterface : second.getCDDefinition().getCDInterfacesList()){
+        if (srcInterface.getSymbol().getFullName().equals(someInterface.getSymbol().getFullName())){
+          targetInterface = someInterface;
+        }
+      }
+
+      if (targetInterface == null) {
         Log.error(
-            String.format("0xCDD08: Could not find %s", astcdInterface.getSymbol().getFullName()));
+            String.format("0xCDD08: Could not find %s", srcInterface.getSymbol().getFullName()));
       }
       else {
-        ASTCDType targetNode = opt.get().getAstNode();
-        List<ASTMCObjectType> extendsList = new ArrayList<>(targetNode.getInterfaceList());
-        for (ASTMCObjectType superType : astcdInterface.getInterfaceList()) {
-          if (isNewSuper(superType, targetNode) && noCycleInSecond(superType, targetNode)) {
+        List<ASTMCObjectType> extendsList = new ArrayList<>(targetInterface.getInterfaceList());
+        for (ASTMCObjectType superType : srcInterface.getInterfaceList()) {
+          if (isNewSuper(superType, targetInterface) && noCycleInSecond(superType, targetInterface)) {
             extendsList.add(superType);
           }
-          if (targetNode instanceof ASTCDInterface) {
-            ((ASTCDInterface) targetNode).setCDExtendUsage(
+          targetInterface.setCDExtendUsage(
                 CD4CodeMill.cDExtendUsageBuilder().addAllSuperclass(extendsList).build());
-          }
         }
       }
     }
