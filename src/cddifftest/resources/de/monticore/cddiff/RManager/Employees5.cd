@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.util.Date;
+
+classdiagram Employees5 {
+  enum PositionKind{fullTime, partTime;}
+
+  interface Person;
+
+  abstract class Employee {
+    PositionKind kind;
+  }
+
+  class Task {
+    Date startDate;
+  }
+
+  association [*] Employee (manages) -> (managedBy) Manager [0..1];
+}
