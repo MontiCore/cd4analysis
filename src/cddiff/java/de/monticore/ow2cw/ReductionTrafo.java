@@ -323,7 +323,7 @@ public class ReductionTrafo {
 
       if (targetClass == null) {
         Log.error(
-            String.format("0xCDD08: Could not find %s", srcClass.getSymbol().getFullName()));
+            String.format("0xCDD08: Could not find class %s", srcClass.getSymbol().getFullName()));
       }
       else {
         List<ASTMCObjectType> extendsList = new ArrayList<>(targetClass.getSuperclassList());
@@ -358,7 +358,8 @@ public class ReductionTrafo {
 
       if (targetInterface == null) {
         Log.error(
-            String.format("0xCDD08: Could not find %s", srcInterface.getSymbol().getFullName()));
+            String.format("0xCDD09: Could not find interface %s",
+                srcInterface.getSymbol().getFullName()));
       }
       else {
         List<ASTMCObjectType> extendsList = new ArrayList<>(targetInterface.getInterfaceList());
@@ -402,7 +403,8 @@ public class ReductionTrafo {
       }
     }
     else {
-      Log.error(String.format("0xCDD08: Could not find %s", newSuper.printType(pp)));
+      Log.error(String.format("0xCDD10: Could not find superclass/interface %s",
+          newSuper.printType(pp)));
     }
     return true;
   }

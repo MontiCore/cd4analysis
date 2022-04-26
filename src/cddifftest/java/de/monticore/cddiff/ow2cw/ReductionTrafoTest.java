@@ -81,7 +81,7 @@ public class ReductionTrafoTest extends AbstractTest {
 
     // test if solution is present
     if (!optS.isPresent()) {
-      Log.error("0xCDD01: Could not compute semdiff.");
+      Log.error("0xCDD12: Could not compute semdiff.");
       fail();
     }
     AlloyDiffSolution sol = optS.get();
