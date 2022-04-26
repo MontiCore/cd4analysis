@@ -31,7 +31,7 @@ public class IllegalAttributeModifierTest extends AbstractTest {
     checker.checkAll(a);
 
     Collection<Finding> expectedErrors = Collections.singletonList(Finding.error(
-        "0xC4A64 Attribute kind has invalid modifiers. No modifiers are allowed for CD4Analysis.",
+        "0xCDD13 Attribute kind has invalid modifiers. No modifiers are allowed for CD4Analysis.",
         new SourcePosition(6, 4)));
 
     Assert.assertErrors(expectedErrors, Log.getFindings());

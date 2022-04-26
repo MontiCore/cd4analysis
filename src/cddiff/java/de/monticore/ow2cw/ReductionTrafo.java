@@ -213,7 +213,8 @@ public class ReductionTrafo {
       Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
         Log.error(
-            String.format("0xCDD08: Could not find %s", astcdClass.getSymbol().getFullName()));
+            String.format("0xCDD08: Could not find class %s",
+                astcdClass.getSymbol().getFullName()));
       }
       else {
         ASTCDType targetNode = opt.get().getAstNode();
@@ -245,7 +246,8 @@ public class ReductionTrafo {
           astcdInterface.getSymbol().getFullName());
       if (!opt.isPresent()) {
         Log.error(
-            String.format("0xCDD08: Could not find %s", astcdInterface.getSymbol().getFullName()));
+            String.format("0xCDD09: Could not find interface %s",
+                astcdInterface.getSymbol().getFullName()));
       }
       else {
         ASTCDType targetNode = opt.get().getAstNode();
@@ -292,7 +294,8 @@ public class ReductionTrafo {
       }
     }
     else {
-      Log.error(String.format("0xCDD08: Could not find %s", newSuper.printType(pp)));
+      Log.error(String.format("0xCDD10: Could not find superclass or interface %s",
+          newSuper.printType(pp)));
     }
     return true;
   }

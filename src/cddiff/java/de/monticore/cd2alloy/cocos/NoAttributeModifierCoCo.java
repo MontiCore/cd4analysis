@@ -28,7 +28,8 @@ public class NoAttributeModifierCoCo implements CDBasisASTCDAttributeCoCo {
       // not with errors, because of a FIXME in the error case
       Log.warn(
               String.format(
-                      "0xC4A64 Attribute %s has invalid modifiers. No modifiers are allowed for CD4Analysis.",
+                      "0xCDD13 Attribute %s has invalid modifiers. No modifiers are allowed for "
+                          + "CD4Analysis.",
                       node.getName()),
               actualMod.get_SourcePositionStart());
     }
