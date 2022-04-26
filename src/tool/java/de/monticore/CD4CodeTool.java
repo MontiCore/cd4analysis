@@ -38,12 +38,15 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
+import de.monticore.ow2cw.ReductionTrafo;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -547,6 +550,43 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // parse the second CD
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
 
+    // check if open-to-closed world reduction should be performed
+    boolean ow2cw = cmd.hasOption("open-world");
+
+    if(ow2cw){
+      CD4CodeMill.globalScope().clear();
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(ast1,ast2);
+
+      CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
+      ast1.accept(pprinter.getTraverser());
+      String cd1= pprinter.getPrinter().getContent();
+
+      pprinter = new CD4CodeFullPrettyPrinter();
+      ast2.accept(pprinter.getTraverser());
+      String cd2= pprinter.getPrinter().getContent();
+
+      String suffix1 = "";
+      String suffix2 = "";
+      if (ast1.getCDDefinition().getName().equals(ast2.getCDDefinition().getName())){
+        suffix1 = "_new";
+        suffix2 = "_old";
+      }
+
+      Path outputFile1 = Paths.get(outputPath, ast1.getCDDefinition().getName() + suffix1 + ".cd");
+      Path outputFile2 = Paths.get(outputPath, ast2.getCDDefinition().getName() + suffix2 + ".cd");
+
+      // Write results into a file
+      try {
+        FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
+        FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
+      }
+      catch (IOException e) {
+        e.printStackTrace();
+      }
+
+    }
+
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize;
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
@@ -565,7 +605,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     // compute semDiff(ast,ast2)
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize,
-        false, outputPath);
+        ow2cw, outputPath);
 
     // test if solution is present
     if (!optS.isPresent()) {
