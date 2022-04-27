@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package man;
+import java.util.Date;
+
+classdiagram Employees7 {
+  enum PositionKind{fullTime, partTime;}
+
+  package emp {
+    class Employee {
+      PositionKind kind;
+    }
+  }
+
+  class Task {
+    Date startDate;
+  }
+
+  package ins {
+    class Insurance;
+  }
+
+
+  association [1] emp.Employee  --  Task [*];
+}
