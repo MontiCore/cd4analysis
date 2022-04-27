@@ -14,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.se_rwth.commons.ImmutableCollectors;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -85,6 +86,22 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     t.add4CDAssociation(cdElementVisitor);
     this.accept(t);
     return cdElementVisitor.getElements();
+  }
+
+  /**
+   * Returns an immutable list of associations for a given {@link ASTCDType type}.
+   *
+   * <p>This method does not take the class hierarchy into account.</p>
+   *
+   * @param type  the type to find associations for
+   * @return an immutable list of matching associations
+   */
+  public List<ASTCDAssociation> getCDAssociationsListForType(ASTCDType type) {
+    return getCDAssociationsList().stream()
+      .filter(it ->
+        (type.getName().equals(it.getLeftQualifiedName().getQName()) && it.getCDAssocDir().isDefinitiveNavigableRight())
+        || (type.getName().equals(it.getRightQualifiedName().getQName()) && it.getCDAssocDir().isDefinitiveNavigableLeft())
+      ).collect(ImmutableCollectors.toImmutableList());
   }
 
   public List<String> getDefaultPackageNameList() {
