@@ -58,13 +58,13 @@ public class AlloyGeneratorTest extends AbstractTest {
   }
 
   @Test
-  public void testMangerWithNewSemantics() {
+  public void testQMangerWithNewSemantics() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
-        + "/Manager/Employees2.cd");
+        + "/QManager/Employees4.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff"
-        + "/Manager/Employees1.cd");
+        + "/QManager/Employees3.cd");
     assertNotNull(astV2);
 
     // Create Output Path

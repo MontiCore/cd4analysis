@@ -11,14 +11,12 @@ import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
@@ -68,21 +66,21 @@ public class CD2AlloyGenerator {
         + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
 
         // Abstract Signature for Objects
-        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Class } " + System.lineSeparator()
+        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set iType } " + System.lineSeparator()
         // Abstract Signature for Names
         + "abstract sig FName {} " + System.lineSeparator()
         // Abstract Signature for Values
         + "abstract sig Val {} " + System.lineSeparator()
         // Abstract Signature for EnumValues
         + "abstract sig EnumVal {} " + System.lineSeparator()
-        + "abstract sig Class {}" + System.lineSeparator() + " " + System.lineSeparator()
+        + "abstract sig iType {}" + System.lineSeparator() + " " + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
         + System.lineSeparator()
         + "// ends and for association ends of undirected associations."
-        + System.lineSeparator() + "pred ObjClasses[obj: set Obj, classes: set Class]{"
-        + System.lineSeparator() + " all o:obj| o.super = classes}" + System.lineSeparator()
+        + System.lineSeparator() + "pred ObjTypes[obj: set Obj, itypes: set iType]{"
+        + System.lineSeparator() + " all o:obj| o.super = itypes}" + System.lineSeparator()
         + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {"
         + System.lineSeparator() + " objs.get[fName] in fType" + System.lineSeparator()
@@ -386,31 +384,32 @@ public class CD2AlloyGenerator {
 
     // todo: non-dummy part
     if (!newSemantics) {
-      return ("one sig Class_Dummy extends Class {}") + System.lineSeparator();
+      return ("one sig Type_Dummy extends iType {}") + System.lineSeparator();
     }
 
     StringBuilder commonSigs = new StringBuilder();
 
-    // Union of all classes
-    Set<ASTCDClass> classUnion = new HashSet<>();
+    // Union of all classes and interfaces
+    Set<ASTCDType> typeUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDClassesList());
-      classUnion.addAll(classSet);
+      typeUnion.addAll(new HashSet<>(
+          astcdCompilationUnit.getCDDefinition().getCDClassesList()));
+      typeUnion.addAll(new HashSet<>(
+          astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
     }
 
     // Union of all class Names
     Set<String> classNameUnion = new HashSet<>();
-    for (ASTCDClass astcdClass : classUnion) {
-      classNameUnion.add(processQName(astcdClass.getSymbol().getFullName()));
+    for (ASTCDType astcdType : typeUnion) {
+      classNameUnion.add(processQName(astcdType.getSymbol().getFullName()));
     }
 
     // Output generation
-    commonSigs.append("// U1: Common classes ").append(System.lineSeparator());
+    commonSigs.append("// U5: Common types ").append(System.lineSeparator());
     for (String className : classNameUnion) {
-      commonSigs.append("one sig Class_");
+      commonSigs.append("one sig Type_");
       commonSigs.append(className);
-      commonSigs.append(" extends Class {}").append(System.lineSeparator());
+      commonSigs.append(" extends iType {}").append(System.lineSeparator());
     }
 
     return commonSigs.toString();
@@ -817,20 +816,21 @@ public class CD2AlloyGenerator {
     for (ASTCDClass astcdClass : classes) {
 
       // Computation of Superclasses
-      Set<ASTCDClass> superclasses = superClasses(astcdClass, classes);
-      for (ASTCDClass superclass : superclasses) {
-        superclasses.addAll(superClasses(superclass,classes));
+      Set<ASTCDInterface> allInterfaces= new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+      Set<ASTCDType> superList = new HashSet<>(superClasses(astcdClass, classes));
+      for (ASTCDClass superclass : superClasses(astcdClass, classes)){
+        superList.addAll(interfaces(superclass, allInterfaces));
       }
 
       // Output P0
       // Functions + Names
-      classFunctions.append("ObjClasses[")
+      classFunctions.append("ObjTypes[")
           .append(processQName(astcdClass.getSymbol().getFullName()))
           .append(",(");
 
       // All subclasses connected with a '+'
-      for (ASTCDClass superclass : superclasses) {
-        classFunctions.append("Class_").append(processQName(superclass.getSymbol().getFullName())).append(" + ");
+      for (ASTCDType superType : superList) {
+        classFunctions.append("Type_").append(processQName(superType.getSymbol().getFullName())).append(" + ");
       }
       // Remove last '+'
       classFunctions.delete(classFunctions.length() - 3, classFunctions.length());
@@ -1417,7 +1417,7 @@ public class CD2AlloyGenerator {
     if (newSemantics){
       predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
     }else {
-      predicate.append(("ObjClasses[Obj,(Class_Dummy)]")).append(System.lineSeparator()).append(System.lineSeparator());
+      predicate.append(("ObjTypes[Obj,(Type_Dummy)]")).append(System.lineSeparator()).append(System.lineSeparator());
     }
 
     predicate.append("// Classes and attributes in ")

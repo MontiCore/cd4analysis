@@ -6,8 +6,14 @@ import java.util.Date;
 classdiagram Employees8 {
   enum PositionKind{fullTime, partTime, external;}
 
+  interface Insurable;
+
+  abstract class Person implements Insurable {
+    String fullName;
+  }
+
   package emp {
-    class Employee {
+    abstract class Employee extends Person{
       PositionKind kind;
     }
 

@@ -110,8 +110,8 @@ public class CDDiffCLITest extends CD4CodeTestBasis {
   @Test
   public void testRunWithoutOWDiff() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/RQManager/Employees8.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/RQManager/Employees7.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
 
     //when CD4CodeTool is used to compute the semantic difference
