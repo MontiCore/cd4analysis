@@ -6,9 +6,14 @@ import java.util.Date;
 classdiagram Employees8 {
   enum PositionKind{fullTime, partTime, external;}
 
-  interface Insurable;
+  package ins {
+    interface Insurable;
+    class Employee;
 
-  abstract class Person implements Insurable {
+    class Manager extends emp.Employee;
+  }
+
+  abstract class Person implements ins.Insurable {
     String fullName;
   }
 
@@ -16,8 +21,6 @@ classdiagram Employees8 {
     abstract class Employee extends Person{
       PositionKind kind;
     }
-
-    class Manager extends Employee;
   }
 
   class Task {
@@ -28,6 +31,6 @@ classdiagram Employees8 {
     class Room;
   }
 
-  association [*] emp.Employee (manages) -> (managedBy) emp.Manager [0..1];
+  association [*] emp.Employee (manages) -> (managedBy) ins.Manager [0..1];
   association [1] emp.Employee  --  Task [0..1];
 }

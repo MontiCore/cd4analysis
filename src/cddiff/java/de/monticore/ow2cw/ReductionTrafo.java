@@ -203,6 +203,10 @@ public class ReductionTrafo {
     }
   }
 
+  /**
+   * Default Package is troublesome!
+   * todo: fix problem with nested packages
+   */
   protected void addClass2PackageInCD(ASTCDClass astcdClass, String packageName,
       ASTCDCompilationUnit ast) {
     if (packageName.equals(ast.getCDDefinition().getDefaultPackageName())) {
@@ -215,7 +219,8 @@ public class ReductionTrafo {
   }
 
   /**
-   * I hate the default package!
+   * Default Package is troublesome!
+   * todo: fix problem with nested packages
    */
   private void addClone2CD(ASTCDType cdType, ASTCDCompilationUnit cd) {
     if (determinePackageName(cdType)
@@ -476,36 +481,32 @@ public class ReductionTrafo {
 
   /**
    * return all superclasses from SuperClassList
+   * since I cannot use getSymbol().getSuperClassesOnly()
    */
   protected List<ASTCDType> getDirectSuperClasses(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     List<ASTCDType> extendsList = new ArrayList<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
-      Optional<CDTypeSymbol> opt = cdType.getEnclosingScope()
-          .resolveCDTypeDown(superType.printType(pp));
-      if (!opt.isPresent()) {
-        opt = artifactScope.resolveCDTypeDown(superType.printType(pp));
-      }
-      opt.ifPresent(cdTypeSymbol -> extendsList.add(cdTypeSymbol.getAstNode()));
+      extendsList.add(resolveSuper(cdType,superType,artifactScope));
     }
     return extendsList;
   }
 
   /**
    * return all interfaces from InterfaceList
+   * since I cannot use getSymbol().getInterfaceList()
    */
   protected List<ASTCDType> getDirectInterfaces(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     List<ASTCDType> interfaceList = new ArrayList<>();
     for (ASTMCObjectType superType : cdType.getInterfaceList()) {
-      Optional<CDTypeSymbol> opt = cdType.getEnclosingScope()
-          .resolveCDTypeDown(superType.printType(pp));
-      if (!opt.isPresent()) {
-        opt = artifactScope.resolveCDTypeDown(superType.printType(pp));
-      }
-      opt.ifPresent(cdTypeSymbol -> interfaceList.add(cdTypeSymbol.getAstNode()));
+      interfaceList.add(resolveSuper(cdType,superType,artifactScope));
     }
     return interfaceList;
   }
 
+  /**
+   * helper-method to determine the package name of an ASTCDType
+   * since getSymbol().getPackageName() is always an empty String
+   */
   protected String determinePackageName(ASTCDType astcdType){
     int start = astcdType.getSymbol().getFullName().length() - astcdType.getName().length() - 1;
 
@@ -515,6 +516,49 @@ public class ReductionTrafo {
 
     StringBuilder packageName = new StringBuilder().append(astcdType.getSymbol().getFullName());
     return packageName.delete(start, packageName.length()).toString();
+  }
+
+  /**
+   * helper-method to resolve extended/implemented class/interface
+   */
+  protected ASTCDType resolveSuper(ASTCDType cdType,
+      ASTMCObjectType superType, ICD4CodeArtifactScope artifactScope){
+
+    List<CDTypeSymbol> symbolList =
+        artifactScope.resolveCDTypeDownMany(superType.printType(pp));
+
+    if (symbolList.isEmpty()){
+      Log.error(String.format("0xCDD15: Could not resolve %s", superType.printType(pp)));
+    }
+
+    CDTypeSymbol current = symbolList.get(0);
+    int currentMatch = getPositionWhereTextDiffer(current.getFullName(),cdType.getSymbol().getFullName());
+    int nextMatch;
+
+    for (CDTypeSymbol symbol : symbolList){
+      nextMatch = getPositionWhereTextDiffer(symbol.getFullName(),
+          cdType.getSymbol().getFullName());
+      if (currentMatch < nextMatch){
+        current = symbol;
+      }
+
+    }
+
+    return current.getAstNode();
+
+  }
+
+  /**
+   * could not find an existing method like that
+   */
+  private int getPositionWhereTextDiffer(String a, String b) {
+    int position = 0;
+    while ( b.length() > position &&
+        a.length() > position &&
+        a.charAt(position) == b.charAt(position)) {
+      position++;
+    }
+    return position;
   }
 
 }
