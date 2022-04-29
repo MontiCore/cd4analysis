@@ -40,9 +40,9 @@ public class CDTypeFacade {
    * delegation methods for a more comfortable usage
    */
 
-  /******************************************************************************************/
-  /*                    CDClass                                                             */
-  /******************************************************************************************/
+  /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
+  | CDClass                                                                   |
+  \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
   public ASTCDClass createCDClass(final String name) {
     return CD4CodeMill.cDClassBuilder().setName(name).build();
@@ -106,9 +106,9 @@ public class CDTypeFacade {
     return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).build();
   }
 
-  /******************************************************************************************/
-  /*                    CDInterface                                                         */
-  /******************************************************************************************/
+  /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
+  | CDInterface                                                               |
+  \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
   public ASTCDInterface createCDInterface(final String name) {
     return CD4CodeMill.cDInterfaceBuilder().setName(name).build();
@@ -132,9 +132,9 @@ public class CDTypeFacade {
     return CD4CodeMill.cDInterfaceBuilder().setName(name).setCDExtendUsage(cdExtend).build();
   }
 
-  /******************************************************************************************/
-  /*                    CDEnum                                                              */
-  /******************************************************************************************/
+  /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
+  | CDEnum                                                                    |
+  \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
 
   public ASTCDEnum createCDEnum(final String name) {
     return CD4CodeMill.cDEnumBuilder().setName(name).build();
