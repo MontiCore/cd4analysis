@@ -14,15 +14,17 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public class ReductionTrafo {
 
@@ -32,6 +34,7 @@ public class ReductionTrafo {
   /**
    * transform 2 CDs for Open-to-Closed World Reduction of CDDiff
    * completeSymbolTable() cannot be used, because CDs likely define the same symbols
+   * todo: check if elements have stereotype ""
    */
   public void transform(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
@@ -109,18 +112,17 @@ public class ReductionTrafo {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
     //add associations exclusive to second, but without cardinalities
-    for (ASTCDAssociation assoc1 : second.getCDDefinition().getCDAssociationsList()) {
-      boolean found = false;
-      for (ASTCDAssociation assoc2 : first.getCDDefinition().getCDAssociationsList()) {
-        if (sameAssociation(assoc1, assoc2)) {
-          found = true;
-          break;
-        }
-      }
+    // todo: visitor?
+    for (ASTCDAssociation assoc2 : second.getCDDefinition().getCDAssociationsList()) {
+      boolean found =
+          first.getCDDefinition().getCDAssociationsList()
+              .stream()
+              .anyMatch(assoc1 -> matchAssociation(assoc1,assoc2));
       if (!found) {
-        ASTCDAssociation newAssoc = assoc1.deepClone();
+        ASTCDAssociation newAssoc = assoc2.deepClone();
         newAssoc.getRight().setCDCardinalityAbsent();
         newAssoc.getLeft().setCDCardinalityAbsent();
+        //todo: check if class/interface has stereotype ""
         first.getCDDefinition().getCDElementList().add(newAssoc);
       }
     }
@@ -136,6 +138,7 @@ public class ReductionTrafo {
     ICD4CodeArtifactScope scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
     // add classes and attributes in classes exclusive to first
+    // todo: in Methode auslagern
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
@@ -147,6 +150,7 @@ public class ReductionTrafo {
     }
 
     // add interfaces and attributes in interfaces exclusive to first
+    // todo: in Methode auslagern
     for (ASTCDInterface astcdInterface : first.getCDDefinition().getCDInterfacesList()) {
       Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(
           astcdInterface.getSymbol().getFullName());
@@ -166,13 +170,8 @@ public class ReductionTrafo {
       }
       else {
         for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
-          boolean found = false;
-          for (FieldSymbol field : opt.get().getFieldList()) {
-            if (field.getName().equals(constant.getName())) {
-              found = true;
-              break;
-            }
-          }
+          boolean found = opt.get().getFieldList().stream()
+              .anyMatch(field -> field.getName().equals(constant.getName()));
           if (!found) {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
             for (ASTCDEnum someEnum : second.getCDDefinition().getCDEnumsList()){
@@ -186,13 +185,14 @@ public class ReductionTrafo {
     }
 
     completeInheritanceInSecond(first,second);
-    removeRedundantAttributes(second);
 
     // add associations exclusive to first
     for (ASTCDAssociation assoc1 : first.getCDDefinition().getCDAssociationsList()) {
       boolean found = false;
       for (ASTCDAssociation assoc2 : second.getCDDefinition().getCDAssociationsList()) {
-        if (sameAssociation(assoc1, assoc2)) {
+        if (matchAssociation(assoc1, assoc2)) {
+          // specify undirected associations
+          //todo: normalize direction
           if (!(assoc2.getCDAssocDir().isDefinitiveNavigableLeft() || assoc2.getCDAssocDir()
               .isDefinitiveNavigableRight())) {
             assoc2.setCDAssocDir(assoc1.getCDAssocDir().deepClone());
@@ -240,9 +240,13 @@ public class ReductionTrafo {
   /**
    * check if assoc1 and assoc2 are the same association
    * i.e. references AND role names match
+   * todo: both directions
    */
-  protected boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+  protected boolean matchAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    return strictMatch(assoc1, assoc2) || reverseMatch(assoc1, assoc2);
+  }
 
+  private boolean strictMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     // check left reference
     if (!assoc1.getLeftQualifiedName()
         .getQName()
@@ -292,6 +296,61 @@ public class ReductionTrafo {
     }
     else {
       roleName2 = assoc2.getRightQualifiedName().getQName();
+    }
+
+    return roleName1.equals(roleName2);
+  }
+
+  private boolean reverseMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    // check left reference
+    if (!assoc1.getLeftQualifiedName()
+        .getQName()
+        .equals(assoc2.getRightQualifiedName().getQName())) {
+      return false;
+    }
+
+    // check right reference
+    if (!assoc1.getRightQualifiedName()
+        .getQName()
+        .equals(assoc2.getLeftQualifiedName().getQName())) {
+      return false;
+    }
+
+    String roleName1;
+    String roleName2;
+
+    // check left role names
+    if (assoc1.getLeft().isPresentCDRole()) {
+      roleName1 = assoc1.getLeft().getCDRole().getName();
+    }
+    else {
+      roleName1 = assoc1.getLeftQualifiedName().getQName();
+    }
+
+    if (assoc2.getRight().isPresentCDRole()) {
+      roleName2 = assoc2.getRight().getCDRole().getName();
+    }
+    else {
+      roleName2 = assoc2.getRightQualifiedName().getQName();
+    }
+
+    if (!roleName1.equals(roleName2)) {
+      return false;
+    }
+
+    // check right role names
+    if (assoc1.getRight().isPresentCDRole()) {
+      roleName1 = assoc1.getRight().getCDRole().getName();
+    }
+    else {
+      roleName1 = assoc1.getRightQualifiedName().getQName();
+    }
+
+    if (assoc2.getLeft().isPresentCDRole()) {
+      roleName2 = assoc2.getLeft().getCDRole().getName();
+    }
+    else {
+      roleName2 = assoc2.getLeftQualifiedName().getQName();
     }
 
     return roleName1.equals(roleName2);
@@ -376,6 +435,7 @@ public class ReductionTrafo {
       }
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
+    removeRedundantAttributes(second);
   }
 
   /**
@@ -396,21 +456,12 @@ public class ReductionTrafo {
    */
   protected boolean inducesNoInheritanceCycle(ASTMCObjectType newSuper, ASTCDType targetNode,
       ICD4CodeArtifactScope artifactScope) {
-    Optional<CDTypeSymbol> opt = targetNode.getEnclosingScope()
-        .resolveCDTypeDown(newSuper.printType(pp));
-    if (!opt.isPresent()) {
-      opt = artifactScope.resolveCDTypeDown(newSuper.printType(pp));
-    }
-    if (opt.isPresent()) {
-      for (ASTCDType superSuper : getAllSuper(opt.get().getAstNode(), artifactScope)) {
-        if (superSuper.getSymbol().getFullName().equals(targetNode.getSymbol().getFullName())) {
-          return false;
-        }
+
+    for (ASTCDType superSuper : getAllSuper(resolveClosestType(targetNode, newSuper.printType(pp),
+        artifactScope), artifactScope)) {
+      if (superSuper.getSymbol().getFullName().equals(targetNode.getSymbol().getFullName())) {
+        return false;
       }
-    }
-    else {
-      Log.error(String.format("0xCDD10: Could not find superclass/interface %s",
-          newSuper.printType(pp)));
     }
     return true;
   }
@@ -496,7 +547,7 @@ public class ReductionTrafo {
   protected List<ASTCDType> getDirectSuperClasses(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     List<ASTCDType> extendsList = new ArrayList<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
-      extendsList.add(resolveSuper(cdType,superType,artifactScope));
+      extendsList.add(resolveClosestType(cdType,superType.printType(pp),artifactScope));
     }
     return extendsList;
   }
@@ -508,7 +559,7 @@ public class ReductionTrafo {
   protected List<ASTCDType> getDirectInterfaces(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     List<ASTCDType> interfaceList = new ArrayList<>();
     for (ASTMCObjectType superType : cdType.getInterfaceList()) {
-      interfaceList.add(resolveSuper(cdType,superType,artifactScope));
+      interfaceList.add(resolveClosestType(cdType,superType.printType(pp),artifactScope));
     }
     return interfaceList;
   }
@@ -531,23 +582,23 @@ public class ReductionTrafo {
   /**
    * helper-method to resolve extended/implemented class/interface
    */
-  protected ASTCDType resolveSuper(ASTCDType cdType,
-      ASTMCObjectType superType, ICD4CodeArtifactScope artifactScope){
+  protected ASTCDType resolveClosestType(ASTCDType srcNode,
+      String targetName, ICD4CodeArtifactScope artifactScope){
 
     List<CDTypeSymbol> symbolList =
-        artifactScope.resolveCDTypeDownMany(superType.printType(pp));
+        artifactScope.resolveCDTypeDownMany(targetName);
 
     if (symbolList.isEmpty()){
-      Log.error(String.format("0xCDD15: Could not resolve %s", superType.printType(pp)));
+      Log.error(String.format("0xCDD15: Could not resolve %s", targetName));
     }
 
     CDTypeSymbol current = symbolList.get(0);
-    int currentMatch = getPositionWhereTextDiffer(current.getFullName(),cdType.getSymbol().getFullName());
+    int currentMatch = getPositionWhereTextDiffer(current.getFullName(),srcNode.getSymbol().getFullName());
     int nextMatch;
 
     for (CDTypeSymbol symbol : symbolList){
       nextMatch = getPositionWhereTextDiffer(symbol.getFullName(),
-          cdType.getSymbol().getFullName());
+          srcNode.getSymbol().getFullName());
       if (currentMatch < nextMatch){
         current = symbol;
       }
@@ -571,4 +622,12 @@ public class ReductionTrafo {
     return position;
   }
 
+
+  protected <T,E> Stream<T> retainAll(Collection<T> input, Collection<E> otherSet,
+      BiFunction<T,E,Boolean> pred){
+    return input.stream()
+        .filter(z->
+            otherSet.stream().anyMatch(o->pred.apply(z,o))
+        );
+  }
 }
