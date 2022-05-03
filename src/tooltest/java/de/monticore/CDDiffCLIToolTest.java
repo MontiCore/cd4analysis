@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CDDiffCLITest extends CD4CodeTestBasis {
+public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
   @Test
   public void testRunWithDiff() {
@@ -130,6 +130,40 @@ public class CDDiffCLITest extends CD4CodeTestBasis {
       }
     }
     assertTrue(odFilePaths.isEmpty());
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
+
+  }
+
+  @Test
+  public void testRunWithOWDiff() {
+    // given 2 CDs such that the first is simply missing an association defined in the second
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees0.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithOWDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20", "--open-world"};
+    CD4CodeTool.main(args);
+
+    //some corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
+
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        odFilePaths.add(odFile.toPath().toString());
+      }
+    }
+    assertFalse(odFilePaths.isEmpty());
 
     // clean-up
     try {

@@ -192,7 +192,7 @@ public class AlloyDiffTest extends AbstractTest {
     assertNotNull(astV2);
 
     // Initialize set of asts
-    final Set<ASTCDCompilationUnit> asts = new HashSet<ASTCDCompilationUnit>();
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
     asts.add(astV1);
     asts.add(astV2);
 
@@ -230,6 +230,49 @@ public class AlloyDiffTest extends AbstractTest {
     // Generate outputs
     optS3.get().generateSolutionsToPath(outputDirectoryS3);
 
+  }
+
+  /**
+   * This should cause a difference with the new semantics only.
+   */
+  @Test
+  public void testRefactoredMangersWithNewSemantics() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/RefactoredManagers/Managers1.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/RefactoredManagers/Managers2.cd");
+    assertNotNull(astV2);
+
+    // Initialize set of asts
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    asts.add(astV1);
+    asts.add(astV2);
+
+    // Run alloy
+    Optional<AlloyDiffSolution> optS1 = ClassDifference.cddiff(astV1, astV2, 1, true, "target"
+            + "/generated/cddiff-test");
+    // Test first solution
+    testSolution(optS1, 2);
+    // Write solution to location
+    Path outputDirectoryS1 =
+        Paths.get("target/generated/cddiff-test/diff_" + 1 + "_of_" + astV1.getCDDefinition().getName()
+        + "_" + astV2.getCDDefinition().getName());
+    // Generate outputs
+    optS1.get().generateSolutionsToPath(outputDirectoryS1);
+
+    // Generate second solution
+    Optional<AlloyDiffSolution> optS2 = ClassDifference.cddiff(astV2, astV1, 1, true, "target"
+        + "/generated/cddiff-test");
+    // Test second solution
+    testSolution(optS2, 2);
+    // Write solution to location
+    Path outputDirectoryS2 =
+        Paths.get("target/generated/cddiff-test/diff_" + 1 + "_of_" + astV2.getCDDefinition().getName()
+        + "_" + astV1.getCDDefinition().getName());
+    // Generate outputs
+    optS2.get().generateSolutionsToPath(outputDirectoryS2);
   }
 
   @Test

@@ -536,7 +536,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
 
-  protected void computeSemDiff() throws NumberFormatException{
+  protected void computeSemDiff() throws NumberFormatException, IOException{
 
     // parse the first CD
     ASTCDCompilationUnit ast1;
@@ -577,13 +577,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       Path outputFile2 = Paths.get(outputPath, ast2.getCDDefinition().getName() + suffix2 + ".cd");
 
       // Write results into a file
-      try {
-        FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
-        FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
-      }
-      catch (IOException e) {
-        e.printStackTrace();
-      }
+      FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
+      FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
 
     }
 

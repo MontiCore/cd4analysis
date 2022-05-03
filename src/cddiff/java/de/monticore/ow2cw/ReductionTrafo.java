@@ -31,6 +31,7 @@ public class ReductionTrafo {
 
   /**
    * transform 2 CDs for Open-to-Closed World Reduction of CDDiff
+   * completeSymbolTable() cannot be used, because CDs likely define the same symbols
    */
   public void transform(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
@@ -50,6 +51,7 @@ public class ReductionTrafo {
    */
   protected void transformFirst(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
+    // construct symbol tables
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
@@ -85,11 +87,12 @@ public class ReductionTrafo {
       addClass2PackageInCD(newClass, determinePackageName(astcdInterface), first);
     }
 
-    // add missing classes
+    // add classes exclusive to second as classes without attributes, extends and implements
     for (ASTCDClass astcdClass : second.getCDDefinition().getCDClassesList()) {
       Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
-        // add empty class without extends
+
+        // construct empty clone
 
         ASTModifier newModifier =
             CD4CodeMill.modifierBuilder().build();
@@ -105,7 +108,7 @@ public class ReductionTrafo {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    //add missing associations
+    //add associations exclusive to second, but without cardinalities
     for (ASTCDAssociation assoc1 : second.getCDDefinition().getCDAssociationsList()) {
       boolean found = false;
       for (ASTCDAssociation assoc2 : first.getCDDefinition().getCDAssociationsList()) {
@@ -128,10 +131,11 @@ public class ReductionTrafo {
    */
   protected void transformSecond(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
+    //re-build symbol tables
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     ICD4CodeArtifactScope scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    // add missing classes and attributes in classes to second
+    // add classes and attributes in classes exclusive to first
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
@@ -142,7 +146,7 @@ public class ReductionTrafo {
       }
     }
 
-    // add missing interfaces and attributes in interfaces to second
+    // add interfaces and attributes in interfaces exclusive to first
     for (ASTCDInterface astcdInterface : first.getCDDefinition().getCDInterfacesList()) {
       Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(
           astcdInterface.getSymbol().getFullName());
@@ -154,7 +158,7 @@ public class ReductionTrafo {
       }
     }
 
-    // add missing enums to second
+    // add enums and enum constants exclusive to first
     for (ASTCDEnum astcdEnum : first.getCDDefinition().getCDEnumsList()) {
       Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
       if (!opt.isPresent()) {
@@ -184,7 +188,7 @@ public class ReductionTrafo {
     completeInheritanceInSecond(first,second);
     removeRedundantAttributes(second);
 
-    // add missing associations to second
+    // add associations exclusive to first
     for (ASTCDAssociation assoc1 : first.getCDDefinition().getCDAssociationsList()) {
       boolean found = false;
       for (ASTCDAssociation assoc2 : second.getCDDefinition().getCDAssociationsList()) {
@@ -235,6 +239,7 @@ public class ReductionTrafo {
 
   /**
    * check if assoc1 and assoc2 are the same association
+   * i.e. references AND role names match
    */
   protected boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
 
@@ -293,18 +298,23 @@ public class ReductionTrafo {
   }
 
   /**
-   * add all inheritance-relations exclusive to first to second
+   * add each inheritance-relations exclusive to first to second
+   * unless it causes cyclical inheritance
    */
   protected void completeInheritanceInSecond(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
     ICD4CodeArtifactScope scope2;
 
+    // for each class in first, find the corresponding class in second and add all
+    // legal extends/implements relations
     for (ASTCDClass srcClass : first.getCDDefinition().getCDClassesList()) {
 
+      // re-build symbol table
       scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
       ASTCDClass targetClass = null;
 
+      // I don't use resolve to avoid reflection
       for (ASTCDClass someClass : second.getCDDefinition().getCDClassesList()){
         if (srcClass.getSymbol().getFullName().equals(someClass.getSymbol().getFullName())){
           targetClass = someClass;
