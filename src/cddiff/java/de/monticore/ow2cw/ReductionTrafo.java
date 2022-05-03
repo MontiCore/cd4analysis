@@ -3,6 +3,7 @@ package de.monticore.ow2cw;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.CDExtendUsageFacade;
 import de.monticore.cd.facade.CDInterfaceUsageFacade;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
@@ -117,7 +118,7 @@ public class ReductionTrafo {
       boolean found =
           first.getCDDefinition().getCDAssociationsList()
               .stream()
-              .anyMatch(assoc1 -> matchAssociation(assoc1,assoc2));
+              .anyMatch(assoc1 -> sameAssociation(assoc1,assoc2));
       if (!found) {
         ASTCDAssociation newAssoc = assoc2.deepClone();
         newAssoc.getRight().setCDCardinalityAbsent();
@@ -190,13 +191,10 @@ public class ReductionTrafo {
     for (ASTCDAssociation assoc1 : first.getCDDefinition().getCDAssociationsList()) {
       boolean found = false;
       for (ASTCDAssociation assoc2 : second.getCDDefinition().getCDAssociationsList()) {
-        if (matchAssociation(assoc1, assoc2)) {
+        if (sameAssociation(assoc1, assoc2)) {
           // specify undirected associations
           //todo: normalize direction
-          if (!(assoc2.getCDAssocDir().isDefinitiveNavigableLeft() || assoc2.getCDAssocDir()
-              .isDefinitiveNavigableRight())) {
-            assoc2.setCDAssocDir(assoc1.getCDAssocDir().deepClone());
-          }
+          copyDirection(assoc1, assoc2);
           found = true;
           break;
         }
@@ -240,10 +238,38 @@ public class ReductionTrafo {
   /**
    * check if assoc1 and assoc2 are the same association
    * i.e. references AND role names match
-   * todo: both directions
    */
-  protected boolean matchAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    return strictMatch(assoc1, assoc2) || reverseMatch(assoc1, assoc2);
+  protected boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    return strictMatch(assoc1,assoc2) || reverseMatch(assoc1,assoc2);
+  }
+
+  /**
+   * Copy direction from assoc1 to assoc2 if assoc2 has underspecified direction
+   */
+  protected void copyDirection(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    if (strictMatch(assoc1,assoc2)){
+      if (!(assoc2.getCDAssocDir().isDefinitiveNavigableLeft() || assoc2.getCDAssocDir()
+          .isDefinitiveNavigableRight())) {
+        assoc2.setCDAssocDir(assoc1.getCDAssocDir().deepClone());
+      }
+      return;
+    }
+    if (reverseMatch(assoc1, assoc2)){
+      if (!(assoc2.getCDAssocDir().isDefinitiveNavigableLeft() || assoc2.getCDAssocDir()
+          .isDefinitiveNavigableRight())) {
+        if (assoc1.getCDAssocDir().isBidirectional()) {
+          assoc2.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
+          return;
+        }
+        if (assoc1.getCDAssocDir().isDefinitiveNavigableRight()) {
+          assoc2.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
+          return;
+        }
+        if (assoc1.getCDAssocDir().isDefinitiveNavigableLeft()) {
+          assoc2.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
+        }
+      }
+    }
   }
 
   private boolean strictMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
