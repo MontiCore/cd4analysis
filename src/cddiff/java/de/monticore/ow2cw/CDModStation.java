@@ -5,6 +5,7 @@ import de.monticore.cd.facade.CDInterfaceUsageFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -18,6 +19,7 @@ import java.util.Optional;
 
 public class CDModStation {
   protected ASTCDCompilationUnit originalCD;  // Genutzt, um stereotype zu lesen
+  protected final CDModHelper modHelper = new CDModHelper();
   protected ASTCDDefinitionBuilder builder = CD4AnalysisMill.cDDefinitionBuilder();  // TODO: nutz einen existierenden
   // Builder
 
@@ -33,7 +35,7 @@ public class CDModStation {
   /**
    * add newClass as subclass to superclass
    */
-  public CDModStation addNewSubClass(String name, ASTCDClass superclass){
+  public void addNewSubClass(String name, ASTCDClass superclass){
 
     ASTModifier newModifier =
         CD4CodeMill.modifierBuilder().build();
@@ -47,13 +49,12 @@ public class CDModStation {
         .build();
     addClass2Package(newClass, determinePackageName(superclass));
 
-    return this;
   }
 
   /**
    * add newClass as sub-class to astcdInterface
    */
-  public CDModStation addNewSubClass(String name, ASTCDInterface astcdInterface){
+  public void addNewSubClass(String name, ASTCDInterface astcdInterface){
 
     ASTModifier newModifier =
         CD4CodeMill.modifierBuilder().build();
@@ -66,7 +67,6 @@ public class CDModStation {
         .setModifier(newModifier)
         .build();
     addClass2Package(newClass, determinePackageName(astcdInterface));
-    return this;
   }
 
   /**
@@ -96,6 +96,22 @@ public class CDModStation {
       originalCD.getCDDefinition()
           .addCDElementToPackage(cdType.deepClone(), determinePackageName(cdType));
     }
+  }
+
+  public void addDummyClass(ASTCDClass srcClass){
+
+    // construct empty clone
+
+    ASTModifier newModifier =
+        CD4CodeMill.modifierBuilder().build();
+
+    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
+        .setName(srcClass.getName())
+        .setCDExtendUsageAbsent()
+        .setCDInterfaceUsageAbsent()
+        .setModifier(newModifier)
+        .build();
+    addClass2Package(newClass, determinePackageName(srcClass));
   }
 
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList){
@@ -154,6 +170,32 @@ public class CDModStation {
         cdType.addCDMember(newAttribute);
       }
     }
+  }
+
+  public void addMissingAssociations(Collection<ASTCDAssociation> assocs,
+      boolean withCardinalities){
+    for (ASTCDAssociation srcAssoc : assocs) {
+      boolean found = originalCD.getCDDefinition()
+          .getCDAssociationsList()
+          .stream()
+          .anyMatch(targetAssoc -> modHelper.sameAssociation(targetAssoc, srcAssoc));
+      if (!found) {
+        ASTCDAssociation newAssoc = srcAssoc.deepClone();
+        if (!withCardinalities){
+          newAssoc.getRight().setCDCardinalityAbsent();
+          newAssoc.getLeft().setCDCardinalityAbsent();
+        }
+        //todo: check if class/interface has stereotype ""
+        originalCD.getCDDefinition().getCDElementList().add(newAssoc);
+      }
+    }
+  }
+
+  /**
+   * update direction of underspecified associations to match those of assocs
+   */
+  public void updateDir2Match(Collection<ASTCDAssociation> assocs){
+    modHelper.updateDir2Match(assocs, originalCD.getCDDefinition().getCDAssociationsList());
   }
 
   /**
