@@ -1,8 +1,6 @@
 package de.monticore.ow2cw;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd.facade.CDExtendUsageFacade;
-import de.monticore.cd.facade.CDInterfaceUsageFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
@@ -11,8 +9,6 @@ import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
@@ -59,36 +55,16 @@ public class ReductionTrafo {
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
+    CDModStation modStation1 = new CDModStation(first);
+
     // add subclass to each interface and abstract class
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
-
-        ASTModifier newModifier =
-            CD4CodeMill.modifierBuilder().build();
-
-        ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-            .setName(astcdClass.getName() + "4Diff")
-            .setCDExtendUsage(CDExtendUsageFacade.getInstance()
-                .createCDExtendUsage(astcdClass.getSymbol().getFullName()))
-            .setCDInterfaceUsageAbsent()
-            .setModifier(newModifier)
-            .build();
-        addClass2PackageInCD(newClass, determinePackageName(astcdClass), first);
+        modStation1.addNewSubClass(astcdClass.getName()+"4Diff",astcdClass);
       }
     }
     for (ASTCDInterface astcdInterface : first.getCDDefinition().getCDInterfacesList()) {
-
-      ASTModifier newModifier =
-          CD4CodeMill.modifierBuilder().build();
-
-      ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-          .setName(astcdInterface.getName() + "4Diff")
-          .setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
-              .createCDInterfaceUsage(astcdInterface.getSymbol().getFullName()))
-          .setCDExtendUsageAbsent()
-          .setModifier(newModifier)
-          .build();
-      addClass2PackageInCD(newClass, determinePackageName(astcdInterface), first);
+      modStation1.addNewSubClass(astcdInterface.getName()+"4Diff",astcdInterface);
     }
 
     // add classes exclusive to second as classes without attributes, extends and implements
@@ -107,7 +83,7 @@ public class ReductionTrafo {
             .setCDInterfaceUsageAbsent()
             .setModifier(newModifier)
             .build();
-        addClass2PackageInCD(newClass, determinePackageName(astcdClass), first);
+        modStation1.addClass2Package(newClass, modStation1.determinePackageName(astcdClass));
       }
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
@@ -136,55 +112,18 @@ public class ReductionTrafo {
 
     //re-build symbol tables
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    ICD4CodeArtifactScope scope2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    // add classes and attributes in classes exclusive to first
-    // todo: in Methode auslagern
-    for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
-      Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
-      if (!opt.isPresent()) {
-        addClone2CD(astcdClass, second);
-      }
-      else {
-        addMissingAttribute(opt.get().getAstNode(), astcdClass.getCDAttributeList());
-      }
-    }
+    CDModStation modStation2 = new CDModStation(second);
 
-    // add interfaces and attributes in interfaces exclusive to first
-    // todo: in Methode auslagern
-    for (ASTCDInterface astcdInterface : first.getCDDefinition().getCDInterfacesList()) {
-      Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(
-          astcdInterface.getSymbol().getFullName());
-      if (!opt.isPresent()) {
-        addClone2CD(astcdInterface, second);
-      }
-      else {
-        addMissingAttribute(opt.get().getAstNode(), astcdInterface.getCDAttributeList());
-      }
-    }
+    // add classes, interfaces and attributes exclusive to first
+    modStation2.addMissingTypesAndAttributes(first.getCDDefinition().getCDClassesList());
+    modStation2.addMissingTypesAndAttributes(first.getCDDefinition().getCDInterfacesList());
 
     // add enums and enum constants exclusive to first
-    for (ASTCDEnum astcdEnum : first.getCDDefinition().getCDEnumsList()) {
-      Optional<CDTypeSymbol> opt = scope2.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
-      if (!opt.isPresent()) {
-        addClone2CD(astcdEnum, second);
-      }
-      else {
-        for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
-          boolean found = opt.get().getFieldList().stream()
-              .anyMatch(field -> field.getName().equals(constant.getName()));
-          if (!found) {
-            // I wanted to avoid reflection, but I think this is just reflection with extra steps...
-            for (ASTCDEnum someEnum : second.getCDDefinition().getCDEnumsList()){
-              if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())){
-                someEnum.addCDEnumConstant(constant.deepClone());
-              }
-            }
-          }
-        }
-      }
-    }
+    modStation2.addMissingEnumsAndConstants(first.getCDDefinition().getCDEnumsList());
 
+    // add inheritance relation to first, unless it causes cyclical inheritance
     completeInheritanceInSecond(first,second);
 
     // add associations exclusive to first
@@ -202,36 +141,6 @@ public class ReductionTrafo {
       if (!found) {
         second.getCDDefinition().getCDElementList().add(assoc1.deepClone());
       }
-    }
-  }
-
-  /**
-   * Default Package is troublesome!
-   * todo: fix problem with nested packages
-   */
-  protected void addClass2PackageInCD(ASTCDClass astcdClass, String packageName,
-      ASTCDCompilationUnit ast) {
-    if (packageName.equals(ast.getCDDefinition().getDefaultPackageName())) {
-      ast.getCDDefinition().getCDElementList().add(astcdClass);
-    }
-    else {
-      ast.getCDDefinition()
-          .addCDElementToPackage(astcdClass, packageName);
-    }
-  }
-
-  /**
-   * Default Package is troublesome!
-   * todo: fix problem with nested packages
-   */
-  private void addClone2CD(ASTCDType cdType, ASTCDCompilationUnit cd) {
-    if (determinePackageName(cdType)
-        .equals(cd.getCDDefinition().getDefaultPackageName())) {
-      cd.getCDDefinition().getCDElementList().add(cdType.deepClone());
-    }
-    else {
-      cd.getCDDefinition()
-          .addCDElementToPackage(cdType.deepClone(), determinePackageName(cdType));
     }
   }
 
@@ -515,25 +424,6 @@ public class ReductionTrafo {
   }
 
   /**
-   * add missing attributes to cdType
-   */
-  protected void addMissingAttribute(ASTCDType cdType, List<ASTCDAttribute> cdAttributeList) {
-    for (ASTCDAttribute attribute1 : cdAttributeList) {
-      boolean found = false;
-      for (ASTCDAttribute attribute2 : cdType.getCDAttributeList()) {
-        if (attribute1.getName().equals(attribute2.getName())) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        ASTCDAttribute newAttribute = attribute1.deepClone();
-        cdType.addCDMember(newAttribute);
-      }
-    }
-  }
-
-  /**
    * check if attribute is in superclass/interface
    */
   protected boolean findInSuper(ASTCDAttribute attribute1, ASTCDType cdType,
@@ -588,21 +478,6 @@ public class ReductionTrafo {
       interfaceList.add(resolveClosestType(cdType,superType.printType(pp),artifactScope));
     }
     return interfaceList;
-  }
-
-  /**
-   * helper-method to determine the package name of an ASTCDType
-   * since getSymbol().getPackageName() is always an empty String
-   */
-  protected String determinePackageName(ASTCDType astcdType){
-    int start = astcdType.getSymbol().getFullName().length() - astcdType.getName().length() - 1;
-
-    if (start<0){
-      return "";
-    }
-
-    StringBuilder packageName = new StringBuilder().append(astcdType.getSymbol().getFullName());
-    return packageName.delete(start, packageName.length()).toString();
   }
 
   /**
