@@ -50,22 +50,22 @@ public class CDBasisSymbolTableCompleter
 
     if (node.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(node.getCDExtendUsage().streamSuperclass().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+        if (!result.isPresentResult()) {
           Log.error(String.format("0xCDA00: The type of the extended classes (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
     }
 
     if (node.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(node.getCDInterfaceUsage().streamInterface().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+        if (!result.isPresentResult()) {
           Log.error(String.format("0xCDA01: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
     }
   }
 
@@ -88,12 +88,12 @@ public class CDBasisSymbolTableCompleter
     final FieldSymbol symbol = node.getSymbol();
 
     // Compute the !final! SymTypeExpression for the type of the field
-    final TypeCheckResult typeResult = symbolTableHelper.getTypeChecker().synthesizeType(node.getMCType());
-    if (!typeResult.isPresentCurrentResult()) {
+    final TypeCheckResult typeResult = symbolTableHelper.getTypeSynthesizer().synthesizeType(node.getMCType());
+    if (!typeResult.isPresentResult()) {
       Log.error(String.format("0xCDA02: The type (%s) of the attribute (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(node.getMCType()), node.getName()), node.getMCType().get_SourcePositionStart());
     }
     else {
-      symbol.setType(typeResult.getCurrentResult());
+      symbol.setType(typeResult.getResult());
     }
   }
 
