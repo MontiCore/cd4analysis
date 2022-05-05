@@ -154,13 +154,9 @@ public class CDModStation {
     }
      */
     for (ASTCDAttribute attribute1 : missingAttributes) {
-      boolean found = false;
-      for (ASTCDAttribute attribute2 : cdType.getCDAttributeList()) {
-        if (attribute1.getName().equals(attribute2.getName())) {
-          found = true;
-          break;
-        }
-      }
+      boolean found = cdType.getCDAttributeList()
+          .stream()
+          .anyMatch(attribute2 -> attribute1.getName().equals(attribute2.getName()));
       if (!found) {
         ASTCDAttribute newAttribute = attribute1.deepClone();
         cdType.addCDMember(newAttribute);

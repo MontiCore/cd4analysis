@@ -9,10 +9,10 @@ import org.junit.Test;
 
 public class CDAssociationMatcherTest extends CDDiffTestBasis {
   protected final ASTCDCompilationUnit lecture1 = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/ow2cw/Lecture1.cd");
+      "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
   protected final ASTCDCompilationUnit lecture2 = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/ow2cw/Lecture2.cd");
+      "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture2.cd");
 
   @Test
   public void testSameAssociation() {

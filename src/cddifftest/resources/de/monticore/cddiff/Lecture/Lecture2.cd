@@ -5,13 +5,22 @@ import java.util.Date;
 
 classdiagram Lecture2 {
 
+  abstract class Being;
+
+  abstract class Person{
+    String fullName;
+    Date birthday;
+  }
+
+  interface Presenting;
+
   interface Lecturer;
 
-  class Professor implements Lecturer{
+  class Professor{
     String chair;
   }
 
-  class PostDoc implements Lecturer;
+  class PostDoc;
 
   class Lecture{
     int credits;
