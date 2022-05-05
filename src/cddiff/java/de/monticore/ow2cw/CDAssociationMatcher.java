@@ -5,32 +5,30 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 
 import java.util.Collection;
 
-public class CDModHelper {
-  public CDModHelper(){}
+public class CDAssociationMatcher {
 
   /**
-   * check if assoc1 and assoc2 are the same association
-   * i.e. references AND role names match
+   * check if assoc1 and assoc2 are the same association i.e. references AND role names match
    */
-  protected boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    return strictMatch(assoc1,assoc2) || reverseMatch(assoc1,assoc2);
+  public static boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+    return strictMatch(assoc1, assoc2) || reverseMatch(assoc1, assoc2);
   }
 
   /**
    * update directions of underspecified associations in sources to match those in targets
    */
-  protected void updateDir2Match(Collection<ASTCDAssociation> sources,
+  public static void updateDir2Match(Collection<ASTCDAssociation> sources,
       Collection<ASTCDAssociation> targets) {
-    for (ASTCDAssociation src : sources){
-      for (ASTCDAssociation target : targets){
-        if (strictMatch(src,target)){
+    for (ASTCDAssociation src : sources) {
+      for (ASTCDAssociation target : targets) {
+        if (strictMatch(src, target)) {
           if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
               .isDefinitiveNavigableRight())) {
             target.setCDAssocDir(src.getCDAssocDir().deepClone());
           }
           break;
         }
-        if (reverseMatch(src, target)){
+        if (reverseMatch(src, target)) {
           if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
               .isDefinitiveNavigableRight())) {
             if (src.getCDAssocDir().isBidirectional()) {
@@ -51,7 +49,7 @@ public class CDModHelper {
     }
   }
 
-  private boolean strictMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+  public static boolean strictMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     // check left reference
     if (!assoc1.getLeftQualifiedName()
         .getQName()
@@ -106,7 +104,7 @@ public class CDModHelper {
     return roleName1.equals(roleName2);
   }
 
-  private boolean reverseMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+  public static boolean reverseMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     // check left reference
     if (!assoc1.getLeftQualifiedName()
         .getQName()
@@ -160,4 +158,5 @@ public class CDModHelper {
 
     return roleName1.equals(roleName2);
   }
+
 }

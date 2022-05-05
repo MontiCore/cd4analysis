@@ -19,26 +19,24 @@ import java.util.Optional;
 
 public class CDModStation {
   protected ASTCDCompilationUnit originalCD;  // Genutzt, um stereotype zu lesen
-  protected final CDModHelper modHelper = new CDModHelper();
-  protected ASTCDDefinitionBuilder builder = CD4AnalysisMill.cDDefinitionBuilder();  // TODO: nutz einen existierenden
+
+  protected ASTCDDefinitionBuilder builder = CD4AnalysisMill.cDDefinitionBuilder();  // TODO:
+  // nutz einen existierenden
   // Builder
 
   /**
-   *
    * @param originalCD Used for checking if adding/etc is allowed
    */
-  public CDModStation(ASTCDCompilationUnit originalCD){
+  public CDModStation(ASTCDCompilationUnit originalCD) {
     this.originalCD = originalCD;
   }
-
 
   /**
    * add newClass as subclass to superclass
    */
-  public void addNewSubClass(String name, ASTCDClass superclass){
+  public void addNewSubClass(String name, ASTCDClass superclass) {
 
-    ASTModifier newModifier =
-        CD4CodeMill.modifierBuilder().build();
+    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(name)
@@ -54,10 +52,9 @@ public class CDModStation {
   /**
    * add newClass as sub-class to astcdInterface
    */
-  public void addNewSubClass(String name, ASTCDInterface astcdInterface){
+  public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
 
-    ASTModifier newModifier =
-        CD4CodeMill.modifierBuilder().build();
+    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(name)
@@ -78,8 +75,7 @@ public class CDModStation {
       originalCD.getCDDefinition().getCDElementList().add(astcdClass);
     }
     else {
-      originalCD.getCDDefinition()
-          .addCDElementToPackage(astcdClass, packageName);
+      originalCD.getCDDefinition().addCDElementToPackage(astcdClass, packageName);
     }
   }
 
@@ -88,8 +84,7 @@ public class CDModStation {
    * todo: fix problem with nested packages
    */
   public void addClone(ASTCDType cdType) {
-    if (determinePackageName(cdType)
-        .equals(originalCD.getCDDefinition().getDefaultPackageName())) {
+    if (determinePackageName(cdType).equals(originalCD.getCDDefinition().getDefaultPackageName())) {
       originalCD.getCDDefinition().getCDElementList().add(cdType.deepClone());
     }
     else {
@@ -98,12 +93,11 @@ public class CDModStation {
     }
   }
 
-  public void addDummyClass(ASTCDClass srcClass){
+  public void addDummyClass(ASTCDClass srcClass) {
 
     // construct empty clone
 
-    ASTModifier newModifier =
-        CD4CodeMill.modifierBuilder().build();
+    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(srcClass.getName())
@@ -114,7 +108,7 @@ public class CDModStation {
     addClass2Package(newClass, determinePackageName(srcClass));
   }
 
-  public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList){
+  public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
     for (ASTCDType astcdType : typeList) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdType.getSymbol().getFullName());
@@ -127,7 +121,7 @@ public class CDModStation {
     }
   }
 
-  public void addMissingEnumsAndConstants(Collection<ASTCDEnum> enumList){
+  public void addMissingEnumsAndConstants(Collection<ASTCDEnum> enumList) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
     // add enums and enum constants exclusive to first
     for (ASTCDEnum astcdEnum : enumList) {
@@ -137,12 +131,14 @@ public class CDModStation {
       }
       else {
         for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
-          boolean found = opt.get().getFieldList().stream()
+          boolean found = opt.get()
+              .getFieldList()
+              .stream()
               .anyMatch(field -> field.getName().equals(constant.getName()));
           if (!found) {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
-            for (ASTCDEnum someEnum : originalCD.getCDDefinition().getCDEnumsList()){
-              if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())){
+            for (ASTCDEnum someEnum : originalCD.getCDDefinition().getCDEnumsList()) {
+              if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())) {
                 someEnum.addCDEnumConstant(constant.deepClone());
               }
             }
@@ -152,7 +148,7 @@ public class CDModStation {
     }
   }
 
-  public void addMissingAttributes(ASTCDType cdType, Collection<ASTCDAttribute> missingAttributes){
+  public void addMissingAttributes(ASTCDType cdType, Collection<ASTCDAttribute> missingAttributes) {
     /*if (check stereotype if allowed to add attribute to class ){
       // add Attribute
     }
@@ -173,15 +169,15 @@ public class CDModStation {
   }
 
   public void addMissingAssociations(Collection<ASTCDAssociation> assocs,
-      boolean withCardinalities){
+      boolean withCardinalities) {
     for (ASTCDAssociation srcAssoc : assocs) {
       boolean found = originalCD.getCDDefinition()
           .getCDAssociationsList()
           .stream()
-          .anyMatch(targetAssoc -> modHelper.sameAssociation(targetAssoc, srcAssoc));
+          .anyMatch(targetAssoc -> CDAssociationMatcher.sameAssociation(targetAssoc, srcAssoc));
       if (!found) {
         ASTCDAssociation newAssoc = srcAssoc.deepClone();
-        if (!withCardinalities){
+        if (!withCardinalities) {
           newAssoc.getRight().setCDCardinalityAbsent();
           newAssoc.getLeft().setCDCardinalityAbsent();
         }
@@ -194,18 +190,19 @@ public class CDModStation {
   /**
    * update direction of underspecified associations to match those of assocs
    */
-  public void updateDir2Match(Collection<ASTCDAssociation> assocs){
-    modHelper.updateDir2Match(assocs, originalCD.getCDDefinition().getCDAssociationsList());
+  public void updateDir2Match(Collection<ASTCDAssociation> assocs) {
+    CDAssociationMatcher.updateDir2Match(assocs,
+        originalCD.getCDDefinition().getCDAssociationsList());
   }
 
   /**
-   * helper-method to determine the package name of an ASTCDType
-   * since getSymbol().getPackageName() is always an empty String
+   * helper-method to determine the package name of an ASTCDType since getSymbol().getPackageName()
+   * is always an empty String
    */
-  protected String determinePackageName(ASTCDType astcdType){
+  protected String determinePackageName(ASTCDType astcdType) {
     int start = astcdType.getSymbol().getFullName().length() - astcdType.getName().length() - 1;
 
-    if (start<0){
+    if (start < 0) {
       return "";
     }
 
@@ -213,10 +210,11 @@ public class CDModStation {
     return packageName.delete(start, packageName.length()).toString();
   }
 
-  public ASTCDCompilationUnit build(){
+  public ASTCDCompilationUnit build() {
     builder.build();
     // todo ... bauen
     // todo removeDuplicateAttributes
     throw new NotImplementedException();
   }
+
 }
