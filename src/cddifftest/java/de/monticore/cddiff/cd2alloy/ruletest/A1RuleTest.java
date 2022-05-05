@@ -22,10 +22,10 @@ public class A1RuleTest extends AbstractTest {
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
   ASTCDCompilationUnit m1Ast = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
   ASTCDCompilationUnit m2Ast = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
   public void prepareASTs() {

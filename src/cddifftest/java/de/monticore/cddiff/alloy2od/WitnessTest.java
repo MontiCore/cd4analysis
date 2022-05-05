@@ -23,10 +23,10 @@ public class WitnessTest extends AbstractTest {
   public void testManger() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7);

@@ -71,13 +71,13 @@ public class AlloyDiffTest extends AbstractTest {
   }
 
   @Test
-  public void testManger() {
+  public void testEmployees() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
@@ -133,13 +133,13 @@ public class AlloyDiffTest extends AbstractTest {
   }
 
   @Test
-  public void testQManger() {
+  public void testEmployeesWithPackages() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff" + "/QManager/Employees3.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees3.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff" + "/QManager/Employees4.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees4.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
