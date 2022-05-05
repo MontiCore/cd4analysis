@@ -15,18 +15,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the P1 rule using the examples from the technical report
- *
  */
 public class P1RuleTest extends AbstractTest {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -101,5 +103,6 @@ public class P1RuleTest extends AbstractTest {
 
     checkP1(lines, expectedResult);
   }
+
 }
 

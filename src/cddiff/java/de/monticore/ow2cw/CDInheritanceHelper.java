@@ -159,12 +159,12 @@ public class CDInheritanceHelper {
   /**
    * check if attribute is in superclass/interface
    */
-  public static boolean findInSuper(ASTCDAttribute attribute1, ASTCDType cdType,
+  public static boolean findInSuper(ASTCDAttribute attribute, ASTCDType cdType,
       ICD4CodeArtifactScope artifactScope) {
     for (ASTCDType supertype : getAllSuper(cdType, artifactScope)) {
       if (supertype != cdType) {
         for (ASTCDAttribute attribute2 : supertype.getCDAttributeList()) {
-          if (attribute1.getName().equals(attribute2.getName())) {
+          if (attribute.getName().equals(attribute2.getName())) {
             return true;
           }
         }

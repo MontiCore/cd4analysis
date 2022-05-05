@@ -1,14 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2alloy.cocos;
 
-
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
 
 /**
  * Defines a CoCo Checker with additional CoCos for this tool
- *
- *
  */
 public class CD2AlloyCoCos {
   public CD4AnalysisCoCoChecker getCheckerForAllCoCos() {
@@ -22,4 +19,5 @@ public class CD2AlloyCoCos {
 
     return checker;
   }
+
 }

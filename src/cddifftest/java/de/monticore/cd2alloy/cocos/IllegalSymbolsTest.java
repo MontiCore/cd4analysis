@@ -16,16 +16,14 @@ import java.util.Collection;
 
 /**
  * Tests for the detection of illegal symbols
- *
- *
  */
 public class IllegalSymbolsTest extends AbstractTest {
 
   @Test
-  public void invalidInputSymbolTest(){
-    ASTCDCompilationUnit a = parseModel("src/cddifftest/resources/de/monticore/cddiff/InvalidCoCos/cd3.cd");
+  public void invalidInputSymbolTest() {
+    ASTCDCompilationUnit a = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/InvalidCoCos/cd3.cd");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(a);
-
 
     CD4AnalysisCoCoChecker checker = new CD2AlloyCoCos().getCheckerForAllCoCos();
     checker.checkAll(a);
@@ -34,8 +32,7 @@ public class IllegalSymbolsTest extends AbstractTest {
         Finding.error("Symbol $ is not allowed, as it is already defined in alloy.",
             new SourcePosition(5, 2)),
         Finding.error("Symbol _ is not allowed, as it is already defined in alloy.",
-            new SourcePosition(10, 4))
-        );
+            new SourcePosition(10, 4)));
 
     Assert.assertErrors(expectedErrors, Log.getFindings());
 

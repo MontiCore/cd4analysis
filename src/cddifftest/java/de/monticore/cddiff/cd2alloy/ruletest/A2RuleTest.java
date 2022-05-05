@@ -15,14 +15,14 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
 public class A2RuleTest extends AbstractTest {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
   }
 
@@ -41,8 +41,7 @@ public class A2RuleTest extends AbstractTest {
     // Check correctnesslines[i]
     for (int i = 1; i < result.length; i++) {
       // Check structure
-      assertTrue(
-          result[i].matches("Composition\\[\\w*(,\\w*)*\\]"));
+      assertTrue(result[i].matches("Composition\\[\\w*(,\\w*)*\\]"));
 
       // Check if result is valid
       if (!(expectedResult.contains(result[i]))) {
@@ -59,7 +58,7 @@ public class A2RuleTest extends AbstractTest {
     String a2 = CD2AlloyGenerator.executeRuleA2(mvAst);
     String[] lines = a2.split(System.getProperty("line.separator"));
 
-//    System.out.println(a2);
+    //    System.out.println(a2);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -67,4 +66,5 @@ public class A2RuleTest extends AbstractTest {
 
     checkA2(lines, expectedResult);
   }
+
 }

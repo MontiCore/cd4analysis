@@ -16,16 +16,14 @@ import java.util.Collections;
 
 /**
  * Tests to detect currently not supported modifiers.
- *
- *
  */
 public class IllegalAttributeModifierTest extends AbstractTest {
 
   @Test
-  public void invalidInputSymbolTest(){
-    ASTCDCompilationUnit a = parseModel("src/cddifftest/resources/de/monticore/cddiff/InvalidCoCos/cd2.cd");
+  public void invalidInputSymbolTest() {
+    ASTCDCompilationUnit a = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/InvalidCoCos/cd2.cd");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(a);
-
 
     CD4AnalysisCoCoChecker checker = new CD2AlloyCoCos().getCheckerForAllCoCos();
     checker.checkAll(a);

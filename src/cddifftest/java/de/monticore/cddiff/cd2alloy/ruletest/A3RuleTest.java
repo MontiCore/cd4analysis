@@ -14,14 +14,14 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
 public class A3RuleTest extends AbstractTest {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
   }
 
@@ -48,8 +48,7 @@ public class A3RuleTest extends AbstractTest {
       result[i] = result[i].replaceAll("\\p{Space}", "");
 
       // Check structure
-      assertTrue(
-          result[i].matches("ObjLU?Attrib\\[\\w*(,\\w*)*\\]"));
+      assertTrue(result[i].matches("ObjLU?Attrib\\[\\w*(,\\w*)*\\]"));
 
       // Check if result is valid
       if (!(expectedResult.contains(result[i]))) {
@@ -76,4 +75,5 @@ public class A3RuleTest extends AbstractTest {
 
     checkA3(lines, expectedResult);
   }
+
 }

@@ -1,14 +1,9 @@
 package de.monticore;
 
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.CD4CodeTool;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -22,7 +17,7 @@ import static org.junit.Assert.*;
 public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
   @Test
-  public void testRunWithDiff() {
+  public void testDiff() {
     // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
@@ -72,7 +67,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testRunWithoutDiff() {
+  public void testNoDiff() {
     // given 2 CDs that are semantically equivalent
     final String cd1 =
         "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1" + ".cd";
@@ -108,75 +103,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testRunWithoutOWDiff() {
-    // given 2 CDs such that the first is a refinement of the second under an open-world assumption
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/RQManager/Employees8.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/RQManager/Employees7.cd";
-    final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
-
-    //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
-        "20", "--open-world"};
-    CD4CodeTool.main(args);
-
-    //no corresponding .od files are generated
-    File[] odFiles = Paths.get(output).toFile().listFiles();
-    assertNotNull(odFiles);
-
-    List<String> odFilePaths = new LinkedList<>();
-    for (File odFile : odFiles) {
-      if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
-      }
-    }
-    assertTrue(odFilePaths.isEmpty());
-
-    // clean-up
-    try {
-      FileUtils.forceDelete(Paths.get(output).toFile());
-    }
-    catch (IOException e) {
-      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
-    }
-
-  }
-
-  @Test
-  public void testRunWithOWDiff() {
-    // given 2 CDs such that the first is simply missing an association defined in the second
-    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees0.cd";
-    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
-    final String output = "./target/generated/cddiff-test/CLITestWithOWDiff";
-
-    //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
-        "20", "--open-world"};
-    CD4CodeTool.main(args);
-
-    //some corresponding .od files are generated
-    File[] odFiles = Paths.get(output).toFile().listFiles();
-    assertNotNull(odFiles);
-
-    List<String> odFilePaths = new LinkedList<>();
-    for (File odFile : odFiles) {
-      if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
-      }
-    }
-    assertFalse(odFilePaths.isEmpty());
-
-    // clean-up
-    try {
-      FileUtils.forceDelete(Paths.get(output).toFile());
-    }
-    catch (IOException e) {
-      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
-    }
-
-  }
-
-  @Test
-  public void testRunWithDefaultDiff() {
+  public void testDefaultDiff() {
     // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
@@ -223,5 +150,108 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     }
 
   }
+
+  @Test
+  public void testOpenWorldDiff() {
+    // given 2 CDs such that the first is simply missing an association defined in the second
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees0.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithOWDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20", "--open-world"};
+    CD4CodeTool.main(args);
+
+    //some corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
+
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        odFilePaths.add(odFile.toPath().toString());
+      }
+    }
+    assertFalse(odFilePaths.isEmpty());
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
+
+  }
+
+  @Test
+  public void testNoOpenWorldDiff() {
+    // given 2 CDs such that the first is a refinement of the second under an open-world assumption
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20", "--open-world"};
+    CD4CodeTool.main(args);
+
+    //no corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
+
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        odFilePaths.add(odFile.toPath().toString());
+      }
+    }
+    assertTrue(odFilePaths.isEmpty());
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
+
+  }
+
+  @Test
+  public void testNoOpenWorldDiffWithPackages() {
+    // given 2 CDs such that the first is a refinement of the second under an open-world assumption
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/RQManager/Employees8.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/RQManager/Employees7.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20", "--open-world"};
+    CD4CodeTool.main(args);
+
+    //no corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
+
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        odFilePaths.add(odFile.toPath().toString());
+      }
+    }
+    assertTrue(odFilePaths.isEmpty());
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
+
+  }
+
 
 }

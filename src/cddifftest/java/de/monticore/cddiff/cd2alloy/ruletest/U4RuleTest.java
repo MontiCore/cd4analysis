@@ -15,18 +15,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
 public class U4RuleTest extends AbstractTest {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -95,4 +97,5 @@ public class U4RuleTest extends AbstractTest {
 
     checkU4(lines, expectedResult);
   }
+
 }

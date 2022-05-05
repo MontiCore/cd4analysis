@@ -21,14 +21,13 @@ import static org.junit.Assert.*;
 
 /**
  * Test classes to test the generation of different alloy modules for cddiff
- *
  */
 public class AssociationChainTest extends AbstractTest {
   /**
    * A helper function to test solution
    *
    * @param optS Optional AlloyDiffSolution
-   * @param k bound for the number of solutions
+   * @param k    bound for the number of solutions
    */
   private void testSolution(Optional<AlloyDiffSolution> optS, int k) {
     // Test if generation was successful
@@ -51,18 +50,22 @@ public class AssociationChainTest extends AbstractTest {
 
     // Check if bound k was not violated
     for (ASTODArtifact od : ods) {
-      assertTrue(od.getObjectDiagram().getODElementList().stream().filter(e -> e instanceof ASTODObject).count() <= k);
+      assertTrue(od.getObjectDiagram()
+          .getODElementList()
+          .stream()
+          .filter(e -> e instanceof ASTODObject)
+          .count() <= k);
     }
   }
 
   @Test
   public void testLength12() {
     // Parse Test Modules
-    final ASTCDCompilationUnit astV1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/AssociationChains"
-        + "/AssocChainLen1.cd");
+    final ASTCDCompilationUnit astV1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/AssociationChains" + "/AssocChainLen1.cd");
     assertNotNull(astV1);
-    final ASTCDCompilationUnit astV2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/AssociationChains"
-        + "/AssocChainLen2.cd");
+    final ASTCDCompilationUnit astV2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/AssociationChains" + "/AssocChainLen2.cd");
     assertNotNull(astV2);
 
     // Initialize set of asts
@@ -77,40 +80,42 @@ public class AssociationChainTest extends AbstractTest {
     // Test first solution
     testSolution(optS1, 1);
     // Write solution to location
-    Path outputDirectoryS1 = Paths.get("target/generated/cddiff-test/diff_" + 1 + "_of_" + astV1.getCDDefinition().getName()
-        + "_" + astV2.getCDDefinition().getName());
+    Path outputDirectoryS1 = Paths.get(
+        "target/generated/cddiff-test/diff_" + 1 + "_of_" + astV1.getCDDefinition().getName() + "_"
+            + astV2.getCDDefinition().getName());
 
     // Assertion that no difference should be found in this scope
     assertTrue(optS1.isPresent() && optS1.get().generateODs().size() == 0);
     // Generate outputs
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
-
     // Generate second solution
     Optional<AlloyDiffSolution> optS2 = ClassDifference.cddiff(astV1, astV2, 2);
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
-    Path outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName()
-        + "_" + astV2.getCDDefinition().getName());
+    Path outputDirectoryS2 = Paths.get(
+        "target/generated/cddiff-test/diff_" + 2 + "_of_" + astV1.getCDDefinition().getName() + "_"
+            + astV2.getCDDefinition().getName());
 
     // Assertion that a difference should be found in this scope
     assertTrue(optS2.isPresent() && optS2.get().generateODs().size() > 0);
     // Generate outputs
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
 
-
     // Generate inversion of second solution
     optS2 = ClassDifference.cddiff(astV2, astV1, 2);
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
-    outputDirectoryS2 = Paths.get("target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName()
-        + "_" + astV1.getCDDefinition().getName());
+    outputDirectoryS2 = Paths.get(
+        "target/generated/cddiff-test/diff_" + 2 + "_of_" + astV2.getCDDefinition().getName() + "_"
+            + astV1.getCDDefinition().getName());
     // Assertion that no difference should be found in this scope
     assertTrue(optS2.isPresent() && optS2.get().generateODs().size() == 0);
     // Generate outputs
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
 
   }
+
 }
