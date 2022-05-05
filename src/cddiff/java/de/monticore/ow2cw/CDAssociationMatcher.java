@@ -72,14 +72,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getLeft().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getLeftQualifiedName().getQName();
+      roleName1 = assoc1.getLeftQualifiedName().getQName().toLowerCase();
     }
 
     if (assoc2.getLeft().isPresentCDRole()) {
       roleName2 = assoc2.getLeft().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getLeftQualifiedName().getQName();
+      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();;
     }
 
     if (!roleName1.equals(roleName2)) {
@@ -91,14 +91,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getRight().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getRightQualifiedName().getQName();
+      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();;
     }
 
     if (assoc2.getRight().isPresentCDRole()) {
       roleName2 = assoc2.getRight().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getRightQualifiedName().getQName();
+      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();;
     }
 
     return roleName1.equals(roleName2);
@@ -127,14 +127,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getLeft().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getLeftQualifiedName().getQName();
+      roleName1 = assoc1.getLeftQualifiedName().getQName().toLowerCase();;
     }
 
     if (assoc2.getRight().isPresentCDRole()) {
       roleName2 = assoc2.getRight().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getRightQualifiedName().getQName();
+      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();;
     }
 
     if (!roleName1.equals(roleName2)) {
@@ -146,14 +146,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getRight().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getRightQualifiedName().getQName();
+      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();;
     }
 
     if (assoc2.getLeft().isPresentCDRole()) {
       roleName2 = assoc2.getLeft().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getLeftQualifiedName().getQName();
+      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();;
     }
 
     return roleName1.equals(roleName2);

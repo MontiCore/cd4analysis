@@ -2,7 +2,7 @@
 package de.monticore.cd2alloy.cocos;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cocos.helper.Assert;
@@ -17,7 +17,7 @@ import java.util.Collection;
 /**
  * Tests for the detection of illegal symbols
  */
-public class IllegalSymbolsTest extends AbstractTest {
+public class IllegalSymbolsTest extends CDDiffTestBasis {
 
   @Test
   public void invalidInputSymbolTest() {

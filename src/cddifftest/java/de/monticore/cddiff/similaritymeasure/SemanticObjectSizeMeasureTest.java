@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.similaritymeasure;
 
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.similaritymeasure.measures.SemanticObjectSizeMeasure;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 /**
  * Test classes to test the similarity measure for semantic size differencing
  */
-public class SemanticObjectSizeMeasureTest extends AbstractTest {
+public class SemanticObjectSizeMeasureTest extends CDDiffTestBasis {
 
   @Test
   public void testManger() {

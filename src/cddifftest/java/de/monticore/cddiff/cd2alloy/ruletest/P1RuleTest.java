@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Tests the P1 rule using the examples from the technical report
  */
-public class P1RuleTest extends AbstractTest {
+public class P1RuleTest extends CDDiffTestBasis {
 
   ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");

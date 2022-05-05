@@ -23,7 +23,7 @@ import static org.junit.Assert.fail;
 /**
  * Provides some helpers for tests.
  */
-abstract public class AbstractTest {
+abstract public class CDDiffTestBasis {
 
   @Before
   public void setup() {

@@ -3,7 +3,7 @@ package de.monticore.cddiff.ow2cw;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.ow2cw.ReductionTrafo;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ReductionTrafoTest extends AbstractTest {
+public class ReductionTrafoTest extends CDDiffTestBasis {
 
   @Test
   public void testTrafo() {

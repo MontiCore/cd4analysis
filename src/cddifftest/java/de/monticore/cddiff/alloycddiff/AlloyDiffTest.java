@@ -4,7 +4,7 @@ package de.monticore.cddiff.alloycddiff;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODObject;
 import edu.mit.csail.sdg.translator.A4Solution;
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 /**
  * Test classes to test the generation of different alloy modules for cddiff
  */
-public class AlloyDiffTest extends AbstractTest {
+public class AlloyDiffTest extends CDDiffTestBasis {
   /**
    * A helper function to test solution
    *

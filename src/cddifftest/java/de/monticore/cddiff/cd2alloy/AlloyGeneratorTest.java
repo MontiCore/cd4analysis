@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * This is an integration test that e.g. checks that generated files exist as expected.
  */
-public class AlloyGeneratorTest extends AbstractTest {
+public class AlloyGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testVehicleManagement() {
