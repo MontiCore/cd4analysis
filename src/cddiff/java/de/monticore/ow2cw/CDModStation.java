@@ -41,7 +41,7 @@ public class CDModStation {
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(name)
         .setCDExtendUsage(CDExtendUsageFacade.getInstance()
-            .createCDExtendUsage(superclass.getSymbol().getFullName()))
+            .createCDExtendUsage(superclass.getName()))
         .setCDInterfaceUsageAbsent()
         .setModifier(newModifier)
         .build();
@@ -59,7 +59,7 @@ public class CDModStation {
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(name)
         .setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
-            .createCDInterfaceUsage(astcdInterface.getSymbol().getFullName()))
+            .createCDInterfaceUsage(astcdInterface.getName()))
         .setCDExtendUsageAbsent()
         .setModifier(newModifier)
         .build();
@@ -195,7 +195,7 @@ public class CDModStation {
    * helper-method to determine the package name of an ASTCDType since getSymbol().getPackageName()
    * is always an empty String
    */
-  protected String determinePackageName(ASTCDType astcdType) {
+  public String determinePackageName(ASTCDType astcdType) {
     int start = astcdType.getSymbol().getFullName().length() - astcdType.getName().length() - 1;
 
     if (start < 0) {

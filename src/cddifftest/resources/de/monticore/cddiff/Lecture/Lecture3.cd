@@ -3,7 +3,7 @@
 import java.util.String;
 import java.util.Date;
 
-classdiagram Lecture2 {
+classdiagram Lecture3 {
 
   abstract class Being;
 
@@ -36,7 +36,7 @@ classdiagram Lecture2 {
     int matrNr;
   }
 
-  association [1..*] Lecture (holds) -- (heldBy) Lecturer [1];
-  association [*] Lecture -- Room [1..*];
-  association [*] Lecture (attends) -> (attendees) Student [*];
+  association Lecture (holds) -- (heldBy) Lecturer;
+  association Lecture -- Room;
+  association Lecture (attends) -> (attendees) Student;
 }
