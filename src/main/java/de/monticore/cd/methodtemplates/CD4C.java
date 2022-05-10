@@ -2,6 +2,7 @@
 package de.monticore.cd.methodtemplates;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.monticore.cd.codegen.methods.AccessorDecorator;
@@ -382,7 +383,7 @@ public class CD4C {
     CD4CTemplateHelper th = new CD4CTemplateHelper();
     th.importStr(signature);
 
-    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(clazz, it -> Sets.newHashSet());
+    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(clazz, it -> Sets.newLinkedHashSet());
     s.add(th.astcdImport.get());
   }
 
