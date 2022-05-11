@@ -1342,7 +1342,7 @@ public class CD2AlloyGenerator {
           roleName = association.getLeft().getCDRole().getName();
         }
         else {
-          roleName = partHandler(firstReferenceName, true);
+          roleName = partHandler(secondReferenceName, true);
         }
         break;
       }
