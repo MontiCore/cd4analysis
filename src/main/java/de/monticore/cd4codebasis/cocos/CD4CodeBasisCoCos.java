@@ -2,16 +2,16 @@
 package de.monticore.cd4codebasis.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
-import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisCoCoChecker;
 import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
+import de.monticore.types.check.AbstractDerive;
 
 public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
 
-  protected final CDTypesCalculator calculator;
+  protected final AbstractDerive calculator;
 
-  public CD4CodeBasisCoCos(CDTypesCalculator calculator) {
+  public CD4CodeBasisCoCos(AbstractDerive calculator) {
     this.calculator = calculator;
   }
 

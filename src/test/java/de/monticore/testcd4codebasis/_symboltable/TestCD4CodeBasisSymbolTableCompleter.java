@@ -8,9 +8,10 @@ import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
-import de.monticore.testcd4codebasis.DeriveSymTypeOfTestCD4CodeBasis;
+import de.monticore.testcd4codebasis.FullDeriveFromTestCD4CodeBasis;
 import de.monticore.testcd4codebasis.TestCD4CodeBasisMill;
 import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisTraverser;
+import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
@@ -28,7 +29,7 @@ public class TestCD4CodeBasisSymbolTableCompleter {
   }
 
   public TestCD4CodeBasisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfTestCD4CodeBasis())
+    this.symbolTableHelper = new CDSymbolTableHelper(new FullDeriveFromTestCD4CodeBasis(), new FullSynthesizeFromMCBasicTypes())
         .setPackageDeclaration(packageDeclaration);
     this.traverser = TestCD4CodeBasisMill.traverser();
 

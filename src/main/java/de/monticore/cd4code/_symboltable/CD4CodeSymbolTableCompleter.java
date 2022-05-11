@@ -5,7 +5,8 @@ import de.monticore.cd._symboltable.CDSymbolTableHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.typescalculator.DeriveSymTypeOfCD4Code;
+import de.monticore.cd4code.typescalculator.FullDeriveFromCD4Code;
+import de.monticore.cd4code.typescalculator.FullSynthesizeFromCD4Code;
 import de.monticore.cd4codebasis._symboltable.CD4CodeBasisSymbolTableCompleter;
 import de.monticore.cdassociation._symboltable.CDAssociationSymbolTableCompleter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -28,7 +29,7 @@ public class CD4CodeSymbolTableCompleter {
   }
 
   public CD4CodeSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper(new DeriveSymTypeOfCD4Code())
+    this.symbolTableHelper = new CDSymbolTableHelper(new FullDeriveFromCD4Code(), new FullSynthesizeFromCD4Code())
         .setPackageDeclaration(packageDeclaration);
     this.traverser = CD4CodeMill.traverser();
 

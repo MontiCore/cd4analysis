@@ -2,21 +2,20 @@
 package de.monticore.cdbasis.cocos;
 
 import de.monticore.cd.cocos.CoCoParent;
-import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cdbasis._cocos.CDBasisCoCoChecker;
 import de.monticore.cdbasis.cocos.ebnf.*;
 import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
 import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
-import de.monticore.cdbasis.typescalculator.DeriveSymTypeOfCDBasis;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassExtendsOnlyClasses;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsNotCyclic;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.CDClassImplementsOnlyInterfaces;
+import de.monticore.types.check.AbstractDerive;
 
 public class CDBasisCoCos extends CoCoParent<CDBasisCoCoChecker> {
 
-  private final CDTypesCalculator calculator;
+  private final AbstractDerive calculator;
 
-  public CDBasisCoCos(CDTypesCalculator calculator) {
+  public CDBasisCoCos(AbstractDerive calculator) {
     this.calculator = calculator;
   }
 
