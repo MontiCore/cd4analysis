@@ -2,7 +2,6 @@
 package de.monticore.cd4codebasis.cocos.ebnf;
 
 import com.google.common.collect.Lists;
-import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeEnumConstant;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -10,6 +9,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types.check.TypeCheckResult;
@@ -21,9 +21,9 @@ import java.util.List;
 public class CD4CodeEnumConstantParameterMatchConstructorArguments
   implements CDInterfaceAndEnumASTCDEnumCoCo {
 
-  final CDTypesCalculator calculator;
+  final AbstractDerive calculator;
 
-  public CD4CodeEnumConstantParameterMatchConstructorArguments(CDTypesCalculator calculator) {
+  public CD4CodeEnumConstantParameterMatchConstructorArguments(AbstractDerive calculator) {
     this.calculator = calculator;
   }
 
@@ -38,7 +38,7 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
         if (cenumConstant.isPresentArguments()) {
           for (ASTExpression expr : cenumConstant.getArguments().getExpressionList()) {
             TypeCheckResult paramType = calculator.deriveType(expr);
-            paramTypes.add(paramType.getCurrentResult());
+            paramTypes.add(paramType.getResult());
           }
           if (!matchConstructor(paramTypes, node.getCDConstructorList())) {
             logError(enumConstant, node.getName());

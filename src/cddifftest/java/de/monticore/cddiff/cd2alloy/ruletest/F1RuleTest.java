@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,20 +16,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
-public class F1RuleTest extends AbstractTest {
+public class F1RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
-      + "/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
-      + "/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -158,4 +158,5 @@ public class F1RuleTest extends AbstractTest {
 
     checkF1(lines, expectedResult);
   }
+
 }

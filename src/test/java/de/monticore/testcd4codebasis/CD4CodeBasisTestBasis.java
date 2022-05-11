@@ -3,6 +3,7 @@ package de.monticore.testcd4codebasis;
 
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4codebasis.cocos.CD4CodeBasisCoCos;
+import de.monticore.cdbasis.typescalculator.FullDeriveFromCDBasis;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.testcd4codebasis._cocos.TestCD4CodeBasisCoCoChecker;
@@ -31,7 +32,7 @@ public class CD4CodeBasisTestBasis extends TestBasis {
       .globalScope();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 
-    cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos(new DeriveSymTypeOfTestCD4CodeBasis());
+    cdCD4CodeBasisCoCos = new CD4CodeBasisCoCos(new FullDeriveFromTestCD4CodeBasis());
     coCoChecker = new TestCD4CodeBasisCoCoChecker();
   }
 }

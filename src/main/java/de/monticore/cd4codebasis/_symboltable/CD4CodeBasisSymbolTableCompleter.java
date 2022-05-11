@@ -64,12 +64,12 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     CDMethodSignatureSymbol symbol = ast.getSymbol();
     symbol.setIsMethod(true);
 
-    final TypeCheckResult typeResult = symbolTableHelper.getTypeChecker().synthesizeType(ast.getMCReturnType());
-    if (!typeResult.isPresentCurrentResult()) {
+    final TypeCheckResult typeResult = symbolTableHelper.getTypeSynthesizer().synthesizeType(ast.getMCReturnType());
+    if (!typeResult.isPresentResult()) {
       Log.error(String.format("0xCDA90: The type of the return type (%s) could not be calculated", ast.getMCReturnType().getClass().getSimpleName()), ast.getMCReturnType().get_SourcePositionStart());
     }
     else {
-      symbol.setReturnType(typeResult.getCurrentResult());
+      symbol.setReturnType(typeResult.getResult());
     }
 
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
@@ -77,15 +77,15 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
     // the exception types don't have to be resolved
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+        if (!result.isPresentResult()) {
           Log.error(String.format(
               "0xCDA91: The type of the exception classes (%s) could not be calculated",
               s.getClass().getSimpleName()),
               s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
     }
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
@@ -100,12 +100,12 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
 
     if (ast.isPresentCDThrowsDeclaration()) {
       symbol.setExceptionsList(ast.getCDThrowsDeclaration().streamException().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+        if (!result.isPresentResult()) {
           Log.error(String.format("0xCDA92: The type of the exception classes (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
     }
 
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
@@ -113,19 +113,19 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
 
   protected void initialize_CDParameter(ASTCDParameter ast) {
     FieldSymbol symbol = ast.getSymbol();
-    TypeCheckResult typeResult = symbolTableHelper.getTypeChecker().synthesizeType(ast.getMCType());
+    TypeCheckResult typeResult = symbolTableHelper.getTypeSynthesizer().synthesizeType(ast.getMCType());
 
-    if (!typeResult.isPresentCurrentResult()) {
+    if (!typeResult.isPresentResult()) {
       Log.error(String.format("0xCDA93: The type (%s) of the attribute (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()), ast.getName()), ast.getMCType().get_SourcePositionStart());
     }
     else {
 
       final SymTypeExpression finalTypeResult;
       if (ast.isEllipsis()) {
-        finalTypeResult = SymTypeExpressionFactory.createTypeArray(symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()), symbol.getEnclosingScope(), 1, typeResult.getCurrentResult());
+        finalTypeResult = SymTypeExpressionFactory.createTypeArray(symbolTableHelper.getPrettyPrinter().prettyprint(ast.getMCType()), symbol.getEnclosingScope(), 1, typeResult.getResult());
       }
       else {
-        finalTypeResult = typeResult.getCurrentResult();
+        finalTypeResult = typeResult.getResult();
       }
 
       symbol.setType(finalTypeResult);

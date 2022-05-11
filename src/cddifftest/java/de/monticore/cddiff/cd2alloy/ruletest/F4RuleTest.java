@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,18 +16,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
-public class F4RuleTest extends AbstractTest {
+public class F4RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -65,18 +67,18 @@ public class F4RuleTest extends AbstractTest {
       String funName = string;
       funName = funName.replaceFirst("fun ", "");
       funName = funName.substring(0, funName.indexOf(":"));
-//      System.out.println("ExpName: " + funName);
+      //      System.out.println("ExpName: " + funName);
 
       // extract function implementation
       String funImpl = string;
       funImpl = funImpl.replaceFirst("fun [\\w]+\\:", "");
       funImpl = funImpl.substring(funImpl.indexOf("{") + 1, funImpl.indexOf("}"));
       funImpl = funImpl.replaceAll("\\p{Space}", "");
-//      System.out.println("ExpImpl: " + funImpl);
+      //      System.out.println("ExpImpl: " + funImpl);
 
       // Save as map
       expNameImpl.put(funName, funImpl);
-//      System.out.println(expNameImpl);
+      //      System.out.println(expNameImpl);
     }
 
     boolean correct = true;
@@ -85,13 +87,14 @@ public class F4RuleTest extends AbstractTest {
       result[i] = result[i].replaceAll("\\p{Space}", "");
       result[i] = result[i].replaceAll("(\\{|\\})", "");
 
-//      System.out.println("Impl: " + result[i]);
+      //      System.out.println("Impl: " + result[i]);
 
       // Check if result is valid
-      if (!(expNameImpl.get(funNameStr[i+1]).equals(result[i]))) {
+      if (!(expNameImpl.get(funNameStr[i + 1]).equals(result[i]))) {
         correct = false;
-        System.out.println("Error in F4: Implementation " + result[i] + " for function "
-            + funNameStr[i] + " not in " + expNameImpl);
+        System.out.println(
+            "Error in F4: Implementation " + result[i] + " for function " + funNameStr[i]
+                + " not in " + expNameImpl);
       }
     }
     assertTrue(correct);
@@ -103,8 +106,7 @@ public class F4RuleTest extends AbstractTest {
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add(
-        "fun InsuranceCompFieldsCDcd1:Obj->Obj {rel[EmployeeSubsCDcd1, ins]}");
+    expectedResult.add("fun InsuranceCompFieldsCDcd1:Obj->Obj {rel[EmployeeSubsCDcd1, ins]}");
 
     checkF4(f4, expectedResult);
   }
@@ -116,7 +118,7 @@ public class F4RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
 
-     checkF4(f4, expectedResult);
+    checkF4(f4, expectedResult);
   }
 
   @Test
@@ -126,6 +128,7 @@ public class F4RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
 
-     checkF4(f4, expectedResult);
+    checkF4(f4, expectedResult);
   }
+
 }

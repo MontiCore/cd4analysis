@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,18 +13,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Tests the P2 rule using the examples from the technical report
- *
  */
-public class P2RuleTest extends AbstractTest {
+public class P2RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -149,4 +151,5 @@ public class P2RuleTest extends AbstractTest {
 
     checkP2(lines, expectedResult);
   }
+
 }

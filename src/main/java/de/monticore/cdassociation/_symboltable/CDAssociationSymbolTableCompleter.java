@@ -88,8 +88,8 @@ public class CDAssociationSymbolTableCompleter
   }
 
   protected Optional<SymTypeExpression> getSymTypeExpression(ASTCDAssociation ast, ASTCDAssocSide side) {
-    final TypeCheckResult typeResult = symbolTableHelper.getTypeChecker().synthesizeType(side.getMCQualifiedType());
-    if (!typeResult.isPresentCurrentResult()) {
+    final TypeCheckResult typeResult = symbolTableHelper.getTypeSynthesizer().synthesizeType(side.getMCQualifiedType());
+    if (!typeResult.isPresentResult()) {
       Log.error(String.format(
           "0xCDA62: The type %s of the role (%s) could not be calculated",
           symbolTableHelper.getPrettyPrinter().prettyprint(side.getMCQualifiedType()),
@@ -100,21 +100,21 @@ public class CDAssociationSymbolTableCompleter
 
     // check if the type can be resolved
 
-    return Optional.of(typeResult.getCurrentResult());
+    return Optional.of(typeResult.getResult());
   }
 
   protected void handleQualifier(CDRoleSymbol symbol, ASTCDAssocSide side) {
     if (side.isPresentCDQualifier()) {
       if (side.getCDQualifier().isPresentByType()) {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(side.getCDQualifier().getByType());
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(side.getCDQualifier().getByType());
+        if (!result.isPresentResult()) {
           Log.error(String.format(
               "0xCDA63: The type of the interface (%s) could not be calculated",
               side.getCDQualifier().getByType().getClass().getSimpleName()),
               side.getCDQualifier().get_SourcePositionStart());
         }
         else {
-          symbol.setTypeQualifier(result.getCurrentResult());
+          symbol.setTypeQualifier(result.getResult());
         }
       }
       else if (side.getCDQualifier().isPresentByAttributeName()) {
@@ -137,8 +137,8 @@ public class CDAssociationSymbolTableCompleter
       leftType = leftSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(leftSide.getMCQualifiedType().getMCQualifiedName());
-      leftType = result.getCurrentResult().getTypeInfo();
+      final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(leftSide.getMCQualifiedType().getMCQualifiedName());
+      leftType = result.getResult().getTypeInfo();
     }
 
     final TypeSymbol rightType;
@@ -146,8 +146,8 @@ public class CDAssociationSymbolTableCompleter
       rightType = rightSide.getSymbol().getType().getTypeInfo();
     }
     else {
-      final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(rightSide.getMCQualifiedType().getMCQualifiedName());
-      rightType = result.getCurrentResult().getTypeInfo();
+      final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(rightSide.getMCQualifiedType().getMCQualifiedName());
+      rightType = result.getResult().getTypeInfo();
     }
 
     if (leftSide.isPresentSymbol()) {

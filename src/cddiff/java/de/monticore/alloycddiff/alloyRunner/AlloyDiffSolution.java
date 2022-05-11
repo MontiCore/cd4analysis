@@ -13,10 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A concrete alloy solution handler to process alloy based diff solutions for
- * class diagrams
- *
- *
+ * A concrete alloy solution handler to process alloy based diff solutions for class diagrams
  */
 public class AlloyDiffSolution extends AlloySolutionHandler {
 
@@ -39,15 +36,16 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
    */
   @Override
   public void generateSolutionsToPath(Path outputDirectory) {
-    if(limited) {
-       Alloy2ODGenerator.generateLimited(alloyModule, initialSolution, solutionLimit, outputDirectory.toFile());
-    } else {
+    if (limited) {
+      Alloy2ODGenerator.generateLimited(alloyModule, initialSolution, solutionLimit,
+          outputDirectory.toFile());
+    }
+    else {
       Alloy2ODGenerator.generateAll(alloyModule, initialSolution, outputDirectory.toFile());
     }
   }
 
   /**
-   *
    * Generates parsed Object diagrams
    *
    * @return A list of corresponding ASTs of parsed Object diagrams
@@ -61,7 +59,7 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
    * TODO: This is incorrectly implemented.
    */
   public void generateUniqueSolutionsToPath(Path outputDirectory) {
- // Variable for possibly multiple solutions
+    // Variable for possibly multiple solutions
     int number = 0;
 
     // Set solution as initial value
@@ -71,20 +69,20 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
     List<String> alreadyComputed = new ArrayList<>();
 
     // Do this for all solutions
-    while (currentSolution.satisfiable() && (!limited || number < solutionLimit )) {
+    while (currentSolution.satisfiable() && (!limited || number < solutionLimit)) {
       // Derive module name
       String name = initialSolution.getOriginalFilename() + number;
 
       // Generate module
       String currentOD = Alloy2ODGenerator.generateString(alloyModule, currentSolution, number);
 
-      if(!alreadyComputed.contains(currentOD.replaceFirst("objectdiagram od[0-9]+ \\{", ""))) {
+      if (!alreadyComputed.contains(currentOD.replaceFirst("objectdiagram od[0-9]+ \\{", ""))) {
         // Save module
         Alloy2ODGenerator.saveOD(currentOD, name, outputDirectory.toFile());
 
         // Add to computed models
         alreadyComputed.add(currentOD.replaceFirst("objectdiagram od[0-9]+ \\{", ""));
-        }
+      }
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
@@ -98,7 +96,6 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
   }
 
   /**
-   *
    * Generates parsed Object diagrams
    *
    * @return A list of corresponding ASTs of parsed Object diagrams
@@ -106,4 +103,5 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
   public List<ASTODArtifact> generateUniqueODs() {
     return Alloy2ODGenerator.generateUniqueODs(alloyModule, initialSolution);
   }
+
 }

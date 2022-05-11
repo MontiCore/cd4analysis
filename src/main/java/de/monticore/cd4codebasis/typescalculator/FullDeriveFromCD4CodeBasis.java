@@ -1,25 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.testcd4codebasis;
+package de.monticore.cd4codebasis.typescalculator;
 
-import de.monticore.cd.typescalculator.CDTypesCalculator;
+import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
-import de.monticore.testcd4codebasis._visitor.TestCD4CodeBasisTraverser;
 import de.monticore.types.check.*;
 
-public class DeriveSymTypeOfTestCD4CodeBasis extends CDTypesCalculator {
+public class FullDeriveFromCD4CodeBasis extends AbstractDerive {
 
-  public DeriveSymTypeOfTestCD4CodeBasis() {
-    this(TestCD4CodeBasisMill.traverser());
-  }
-
-  public DeriveSymTypeOfTestCD4CodeBasis(TestCD4CodeBasisTraverser traverser) {
-    this.traverser = traverser;
+  public FullDeriveFromCD4CodeBasis(CD4CodeBasisTraverser traverser) {
+    super(traverser);
     init(traverser);
   }
 
-  protected void init(CD4CodeBasisTraverser traverser) {
-    this.typeCheckResult = new TypeCheckResult();
+  public FullDeriveFromCD4CodeBasis(){
+    this(CD4CodeBasisMill.traverser());
+  }
 
+  public void init(CD4CodeBasisTraverser traverser){
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);
@@ -37,11 +34,5 @@ public class DeriveSymTypeOfTestCD4CodeBasis extends CDTypesCalculator {
     deriveSymTypeOfCommonExpressions.setTypeCheckResult(getTypeCheckResult());
     traverser.add4CommonExpressions(deriveSymTypeOfCommonExpressions);
     traverser.setCommonExpressionsHandler(deriveSymTypeOfCommonExpressions);
-
-    final SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
-    synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(getTypeCheckResult());
-    traverser.add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
-    traverser.setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
-
   }
 }

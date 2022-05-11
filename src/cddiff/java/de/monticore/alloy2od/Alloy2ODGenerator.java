@@ -23,13 +23,12 @@ import java.util.*;
 
 /**
  * A collection of functions to transform alloy solutions to object diagrams
- *
  */
 public class Alloy2ODGenerator {
 
   /**
-   * Creates the String representation of an Objectdiagram (OD) based on A4
-   * Tuples extracted from an alloy solution
+   * Creates the String representation of an Objectdiagram (OD) based on A4 Tuples extracted from an
+   * alloy solution
    */
   private static String generateOutputString(CompModule module, A4Solution solution, String name) {
     StringBuilder od = new StringBuilder();
@@ -163,8 +162,8 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates the diff witness for a given alloy module and alloy solution and
-   * returns it as string
+   * Generates the diff witness for a given alloy module and alloy solution and returns it as
+   * string
    */
   public static String generateString(CompModule module, A4Solution currentSolution, int number) {
 
@@ -173,11 +172,10 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates the diff witness for a given alloy module and alloy solution and
-   * returns it as string
+   * Generates the diff witness for a given alloy module and alloy solution and returns it as
+   * string
    *
-   * @param module The compiled alloy module for which witnesses should be
-   * generated
+   * @param module   The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static String generateString(CompModule module, A4Solution solution) {
@@ -189,11 +187,10 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates all diff witnesses for a given alloy module and alloy solution
-   * and saves them in the outputDirectory
+   * Generates all diff witnesses for a given alloy module and alloy solution and saves them in the
+   * outputDirectory
    *
-   * @param module The compiled alloy module for which witnesses should be
-   * generated
+   * @param module   The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static void generateAll(CompModule module, A4Solution solution, File outputDirectory) {
@@ -227,11 +224,10 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates at most limit diff witnesses for a given alloy module and alloy
-   * solution and saves them in the outputDirectory
+   * Generates at most limit diff witnesses for a given alloy module and alloy solution and saves
+   * them in the outputDirectory
    *
-   * @param module The compiled alloy module for which witnesses should be
-   * generated
+   * @param module   The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static void generateLimited(CompModule module, A4Solution solution, int limit,
@@ -267,11 +263,9 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates the diff witness for a given alloy module and alloy solution and
-   * saves it as od
+   * Generates the diff witness for a given alloy module and alloy solution and saves it as od
    *
-   * @param module The compiled alloy module for which witnesses should be
-   * generated
+   * @param module   The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static Optional<ASTODArtifact> generateOD(CompModule module, A4Solution solution) {
@@ -294,7 +288,7 @@ public class Alloy2ODGenerator {
       System.out.println(odString);
     }
 
-//    System.out.println(odString);
+    //    System.out.println(odString);
     return od;
   }
 
@@ -330,7 +324,6 @@ public class Alloy2ODGenerator {
 
   /**
    * Generates all unique ODs and returns them as parsed ASTOArtifacts
-   *
    */
   public static List<ASTODArtifact> generateUniqueODs(CompModule module, A4Solution solution) {
     List<ASTODArtifact> ods = new ArrayList<>();
@@ -399,7 +392,7 @@ public class Alloy2ODGenerator {
   /**
    * Writes a string containing an object diagram into a file
    *
-   * @param od the string the Alloy module should contain
+   * @param od              the string the Alloy module should contain
    * @param outputDirectory the directory to generate the Alloy Module in.
    */
   public static void saveOD(String od, String odName, File outputDirectory) {
@@ -417,9 +410,9 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Translation rule Link translated two Obj atoms and one FName atom to a link
-   * declaration. The link connects the objects encoded by the Obj atoms and has
-   * a name that is encoded by the FName atom.
+   * Translation rule Link translated two Obj atoms and one FName atom to a link declaration. The
+   * link connects the objects encoded by the Obj atoms and has a name that is encoded by the FName
+   * atom.
    */
   private static String executeRuleLink(String sourceName, String targetName, String a) {
     StringBuilder od = new StringBuilder();
@@ -445,9 +438,9 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Translation rule Enum translates an EnumVal atom and a FName atom to a
-   * declaration of an attribute having the name of the field encoded by the
-   * FName atom and having the type encoded by the EnumVal atom.
+   * Translation rule Enum translates an EnumVal atom and a FName atom to a declaration of an
+   * attribute having the name of the field encoded by the FName atom and having the type encoded by
+   * the EnumVal atom.
    */
   private static String executeRuleEnum(String val, String fName) {
     StringBuilder od = new StringBuilder();
@@ -474,10 +467,9 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Translation rule Prim translates a Val atom and a FName atom to an
-   * attribute declaration. The name attribute’s name is encoded by the FName
-   * atom, whereas the value and the type of the attribute are encoded by the
-   * Val atom.
+   * Translation rule Prim translates a Val atom and a FName atom to an attribute declaration. The
+   * name attribute’s name is encoded by the FName atom, whereas the value and the type of the
+   * attribute are encoded by the Val atom.
    */
   private static String executeRulePrim(String val, String fName) {
     StringBuilder od = new StringBuilder();
@@ -525,4 +517,5 @@ public class Alloy2ODGenerator {
 
     return od.toString();
   }
+
 }

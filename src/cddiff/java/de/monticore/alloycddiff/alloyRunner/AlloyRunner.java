@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Abstract class for the computation of alloy solutions for alloy modules
- * containing predicates
- *
+ * Abstract class for the computation of alloy solutions for alloy modules containing predicates
  */
 public abstract class AlloyRunner {
 
@@ -39,7 +37,8 @@ public abstract class AlloyRunner {
       // System.out
       @Override
       public void warning(ErrorWarning msg) {
-        System.out.print("Relevance Warning:" + System.lineSeparator() + (msg.toString().trim()) + System.lineSeparator() + System.lineSeparator());
+        System.out.print("Relevance Warning:" + System.lineSeparator() + (msg.toString().trim())
+            + System.lineSeparator() + System.lineSeparator());
         System.out.flush();
       }
     };
@@ -86,8 +85,8 @@ public abstract class AlloyRunner {
 
         A4Solution sol;
         try {
-          sol = TranslateAlloyToKodkod.execute_command(rep,
-              module.getAllReachableSigs(), command, options);
+          sol = TranslateAlloyToKodkod.execute_command(rep, module.getAllReachableSigs(), command,
+              options);
 
           // Generate solution handler and add it to result
           result.add(solutionHandlerGenerator(module, command, sol));
