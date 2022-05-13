@@ -1,7 +1,9 @@
 package de.monticore.ow2cw;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.prettyprint.IndentPrinter;
@@ -12,6 +14,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -151,6 +154,16 @@ public class CDInheritanceHelper {
   protected static <T, E> Stream<T> retainAll(Collection<T> input, Collection<E> otherSet,
       BiFunction<T, E, Boolean> pred) {
     return input.stream().filter(z -> otherSet.stream().anyMatch(o -> pred.apply(z, o)));
+  }
+
+  public static boolean isSuperOf(String srcName, String targetName, ICD4CodeArtifactScope scope) {
+
+    Optional<CDTypeSymbol> optSrc = scope.resolveCDTypeDown(srcName);
+    Optional<CDTypeSymbol> targetSrc = scope.resolveCDTypeDown(targetName);
+    if (optSrc.isPresent() && targetSrc.isPresent()){
+      return CDInheritanceHelper.getAllSuper(targetSrc.get().getAstNode(), scope).contains(optSrc.get());
+    }
+    return false;
   }
 
 }

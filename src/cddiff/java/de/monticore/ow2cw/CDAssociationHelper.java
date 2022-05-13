@@ -15,17 +15,66 @@ public class CDAssociationHelper {
   public static Collection<ASTCDAssociation> collectOverridingAssociations(
       ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
-    ICD4CodeArtifactScope srcScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
     ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
 
     List<ASTCDAssociation> overrides = new ArrayList<>();
     for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-        // todo: implement
+        if (overridesAssociation(srcAssoc, targetAssoc, targetScope)
+            || overridesAssociationInReverse(srcAssoc, targetAssoc, targetScope)) {
+          overrides.add(srcAssoc);
+        }
       }
     }
 
     return overrides;
+  }
+
+  public static boolean overridesAssociation(ASTCDAssociation srcAssoc,
+      ASTCDAssociation targetAssoc, ICD4CodeArtifactScope scope) {
+
+    String srcName = srcAssoc.getLeftQualifiedName().getQName();
+    String targetName = targetAssoc.getLeftQualifiedName().getQName();
+
+    if (CDInheritanceHelper.isSuperOf(srcName, targetName, scope) || CDInheritanceHelper.isSuperOf(targetName,
+        srcName, scope)){
+      return false;
+    }
+
+    srcName = srcAssoc.getRightQualifiedName().getQName();
+    targetName = targetAssoc.getRightQualifiedName().getQName();
+
+    if (CDInheritanceHelper.isSuperOf(srcName, targetName, scope) || CDInheritanceHelper.isSuperOf(targetName,
+        srcName, scope)){
+      return false;
+    }
+
+    return matchRoleNames(srcAssoc,targetAssoc);
+
+  }
+
+  public static boolean overridesAssociationInReverse(ASTCDAssociation srcAssoc,
+      ASTCDAssociation targetAssoc, ICD4CodeArtifactScope scope) {
+
+    String srcName = srcAssoc.getLeftQualifiedName().getQName();
+    String targetName = targetAssoc.getRightQualifiedName().getQName();
+
+    if (CDInheritanceHelper.isSuperOf(srcName, targetName, scope) || CDInheritanceHelper.isSuperOf(targetName,
+        srcName, scope)){
+      return false;
+    }
+
+    srcName = srcAssoc.getRightQualifiedName().getQName();
+    targetName = targetAssoc.getLeftQualifiedName().getQName();
+
+    if (CDInheritanceHelper.isSuperOf(srcName, targetName, scope) || CDInheritanceHelper.isSuperOf(targetName,
+        srcName, scope)){
+      return false;
+    }
+
+    return matchRoleNamesInReverse(srcAssoc,targetAssoc);
+
   }
 
   /**
@@ -85,6 +134,10 @@ public class CDAssociationHelper {
       return false;
     }
 
+    return matchRoleNames(assoc1, assoc2);
+  }
+
+  public static boolean matchRoleNames(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     String roleName1;
     String roleName2;
 
@@ -140,6 +193,10 @@ public class CDAssociationHelper {
       return false;
     }
 
+    return matchRoleNamesInReverse(assoc1, assoc2);
+  }
+
+  private static boolean matchRoleNamesInReverse(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     String roleName1;
     String roleName2;
 
