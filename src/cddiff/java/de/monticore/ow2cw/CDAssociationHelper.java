@@ -1,11 +1,32 @@
 package de.monticore.ow2cw;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-public class CDAssociationMatcher {
+public class CDAssociationHelper {
+
+  public static Collection<ASTCDAssociation> collectOverridingAssociations(
+      ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
+
+    ICD4CodeArtifactScope srcScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
+    ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
+
+    List<ASTCDAssociation> overrides = new ArrayList<>();
+    for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
+      for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+        // todo: implement
+      }
+    }
+
+    return overrides;
+  }
 
   /**
    * check if assoc1 and assoc2 are the same association i.e. references AND role names match
@@ -79,7 +100,7 @@ public class CDAssociationMatcher {
       roleName2 = assoc2.getLeft().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();;
+      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();
     }
 
     if (!roleName1.equals(roleName2)) {
@@ -91,14 +112,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getRight().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();;
+      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();
     }
 
     if (assoc2.getRight().isPresentCDRole()) {
       roleName2 = assoc2.getRight().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();;
+      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();
     }
 
     return roleName1.equals(roleName2);
@@ -127,14 +148,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getLeft().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getLeftQualifiedName().getQName().toLowerCase();;
+      roleName1 = assoc1.getLeftQualifiedName().getQName().toLowerCase();
     }
 
     if (assoc2.getRight().isPresentCDRole()) {
       roleName2 = assoc2.getRight().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();;
+      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();
     }
 
     if (!roleName1.equals(roleName2)) {
@@ -146,14 +167,14 @@ public class CDAssociationMatcher {
       roleName1 = assoc1.getRight().getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();;
+      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();
     }
 
     if (assoc2.getLeft().isPresentCDRole()) {
       roleName2 = assoc2.getLeft().getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();;
+      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();
     }
 
     return roleName1.equals(roleName2);

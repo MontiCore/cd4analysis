@@ -14,6 +14,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -40,8 +41,8 @@ public class CDModStation {
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(name)
-        .setCDExtendUsage(CDExtendUsageFacade.getInstance()
-            .createCDExtendUsage(superclass.getName()))
+        .setCDExtendUsage(
+            CDExtendUsageFacade.getInstance().createCDExtendUsage(superclass.getName()))
         .setCDInterfaceUsageAbsent()
         .setModifier(newModifier)
         .build();
@@ -58,8 +59,8 @@ public class CDModStation {
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
         .setName(name)
-        .setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
-            .createCDInterfaceUsage(astcdInterface.getName()))
+        .setCDInterfaceUsage(
+            CDInterfaceUsageFacade.getInstance().createCDInterfaceUsage(astcdInterface.getName()))
         .setCDExtendUsageAbsent()
         .setModifier(newModifier)
         .build();
@@ -170,7 +171,7 @@ public class CDModStation {
       boolean found = originalCD.getCDDefinition()
           .getCDAssociationsList()
           .stream()
-          .anyMatch(targetAssoc -> CDAssociationMatcher.sameAssociation(targetAssoc, srcAssoc));
+          .anyMatch(targetAssoc -> CDAssociationHelper.sameAssociation(targetAssoc, srcAssoc));
       if (!found) {
         ASTCDAssociation newAssoc = srcAssoc.deepClone();
         if (!withCardinalities) {
@@ -187,7 +188,7 @@ public class CDModStation {
    * update direction of underspecified associations to match those of assocs
    */
   public void updateDir2Match(Collection<ASTCDAssociation> assocs) {
-    CDAssociationMatcher.updateDir2Match(assocs,
+    CDAssociationHelper.updateDir2Match(assocs,
         originalCD.getCDDefinition().getCDAssociationsList());
   }
 
@@ -211,6 +212,11 @@ public class CDModStation {
     // todo ... bauen
     // todo removeDuplicateAttributes
     throw new NotImplementedException();
+  }
+
+  public Collection<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> isolated) {
+    // todo: implement
+    return new ArrayList<>();
   }
 
 }

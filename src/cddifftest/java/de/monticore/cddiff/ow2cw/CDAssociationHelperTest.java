@@ -3,11 +3,11 @@ package de.monticore.cddiff.ow2cw;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.ow2cw.CDAssociationMatcher;
+import de.monticore.ow2cw.CDAssociationHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CDAssociationMatcherTest extends CDDiffTestBasis {
+public class CDAssociationHelperTest extends CDDiffTestBasis {
   protected final ASTCDCompilationUnit lecture1 = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
@@ -20,13 +20,13 @@ public class CDAssociationMatcherTest extends CDDiffTestBasis {
       Assert.assertTrue(lecture2.getCDDefinition()
           .getCDAssociationsList()
           .stream()
-          .anyMatch(assoc2 -> CDAssociationMatcher.sameAssociation(assoc1, assoc2)));
+          .anyMatch(assoc2 -> CDAssociationHelper.sameAssociation(assoc1, assoc2)));
     }
   }
 
   @Test
   public void testUpdateDir2Match() {
-    CDAssociationMatcher.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList(),
+    CDAssociationHelper.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList(),
         lecture2.getCDDefinition().getCDAssociationsList());
 
     Assert.assertTrue(lecture2.getCDDefinition()
@@ -42,8 +42,7 @@ public class CDAssociationMatcherTest extends CDDiffTestBasis {
     Assert.assertFalse(lecture2.getCDDefinition()
         .getCDAssociationsList()
         .stream()
-        .allMatch(
-            assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
+        .allMatch(assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
   }
 
 }
