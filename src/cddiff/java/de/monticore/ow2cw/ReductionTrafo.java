@@ -63,7 +63,6 @@ public class ReductionTrafo {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
     //add unbound associations exclusive to second if they override associations in first
-    // todo: visitor?
     Collection<ASTCDAssociation> overrides = CDAssociationHelper.collectOverridingAssociations(
         second, first);
 

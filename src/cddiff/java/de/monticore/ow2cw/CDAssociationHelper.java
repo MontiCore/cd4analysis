@@ -86,6 +86,7 @@ public class CDAssociationHelper {
 
   /**
    * update directions of underspecified associations in sources to match those in targets
+   * todo: rework, OW allows specification: unspecified -> uni-directional -> bi-directional
    */
   public static void updateDir2Match(Collection<ASTCDAssociation> sources,
       Collection<ASTCDAssociation> targets) {
@@ -137,6 +138,7 @@ public class CDAssociationHelper {
     return matchRoleNames(assoc1, assoc2);
   }
 
+  //todo: rework, only match role-name in navigable direction
   public static boolean matchRoleNames(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     String roleName1;
     String roleName2;
@@ -196,6 +198,7 @@ public class CDAssociationHelper {
     return matchRoleNamesInReverse(assoc1, assoc2);
   }
 
+  //todo: rework, only match role-name in navigable direction
   private static boolean matchRoleNamesInReverse(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     String roleName1;
     String roleName2;

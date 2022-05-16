@@ -2,20 +2,27 @@ package de.monticore.ow2cw;
 
 import de.monticore.cd.facade.CDExtendUsageFacade;
 import de.monticore.cd.facade.CDInterfaceUsageFacade;
+import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd2alloy.generator.QNameHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDLeftToRightDirBuilder;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
+import net.sourceforge.plantuml.Log;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public class CDModStation {
@@ -215,8 +222,101 @@ public class CDModStation {
   }
 
   public Collection<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> isolated) {
-    // todo: implement
-    return new ArrayList<>();
+
+    List<ASTCDAssociation> dummies = new ArrayList<>();
+    String roleName;
+    int i = 0;
+
+    for (ASTCDAssociation src : isolated) {
+      i++;
+
+      if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
+
+        if (src.getRight().isPresentCDRole()) {
+          roleName = src.getRight().getCDRole().getName();
+        }
+        else {
+          roleName = QNameHelper.processQName2RoleName(src.getRightQualifiedName().getQName());
+        }
+
+        dummies.add(buildDummyClassAndAssociation(src.getLeftQualifiedName().getQName(), roleName,
+            src.getRightQualifiedName().getQName(), i));
+
+      }
+      else {
+
+        if (src.getLeft().isPresentCDRole()) {
+          roleName = src.getLeft().getCDRole().getName();
+        }
+        else {
+          roleName = QNameHelper.processQName2RoleName(src.getLeftQualifiedName().getQName());
+        }
+
+        dummies.add(buildDummyClassAndAssociation(src.getRightQualifiedName().getQName(), roleName,
+            src.getLeftQualifiedName().getQName(), i));
+      }
+    }
+    return dummies;
+  }
+
+  public ASTCDAssociation buildDummyClassAndAssociation(String left, String roleName, String right,
+      int id) {
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
+    Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(right);
+    if (opt.isPresent()) {
+
+      ASTCDType rightType = opt.get().getAstNode();
+
+      // construct dummy class
+
+      ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
+
+      ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
+          .setName(rightType.getName() + "Dummy" + id)
+          .setCDExtendUsageAbsent()
+          .setCDInterfaceUsageAbsent()
+          .setModifier(newModifier)
+          .build();
+      addClass2Package(newClass, determinePackageName(rightType));
+
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
+
+      return buildDummyAssociation(left, roleName, newClass.getSymbol().getFullName());
+
+    }
+    else {
+      Log.error(String.format("0xCDD12: Could not resolve %s.", right));
+    }
+    return null;
+  }
+
+  public ASTCDAssociation buildDummyAssociation(String left, String roleName, String right) {
+
+
+    ASTCDAssociation dummy = CDAssociationMill.cDAssociationBuilder()
+        .setModifier(CD4CodeMill.modifierBuilder().build())
+        .setCDAssocType(CDAssociationMill.cDAssocTypeAssocBuilder().build())
+        .setLeft(CDAssociationMill.cDAssocLeftSideBuilder()
+            .setCDCardinalityAbsent()
+            .setCDRoleAbsent()
+            .setCDOrderedAbsent()
+            .setCDQualifierAbsent()
+            .setModifier(CD4CodeMill.modifierBuilder().build())
+            .setMCQualifiedType(MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+                .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(left))
+                .build()).build())
+        .setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build())
+        .setRight(CDAssociationMill.cDAssocRightSideBuilder()
+            .setCDCardinalityAbsent()
+            .setCDRole(CDAssociationMill.cDRoleBuilder().setName(roleName).build())
+            .setCDOrderedAbsent()
+            .setCDQualifierAbsent()
+            .setModifier(CD4CodeMill.modifierBuilder().build())
+            .setMCQualifiedType(MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+                .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(right))
+                .build()).build()).build();
+    originalCD.getCDDefinition().getCDElementList().add(dummy);
+    return dummy;
   }
 
 }
