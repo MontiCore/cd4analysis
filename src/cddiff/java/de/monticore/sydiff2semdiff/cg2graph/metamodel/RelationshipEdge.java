@@ -1,4 +1,4 @@
-package de.monticore.sydiff2semdiff.cg2graph;
+package de.monticore.sydiff2semdiff.cg2graph.metamodel;
 
 import org.jgrapht.graph.DefaultEdge;
 
