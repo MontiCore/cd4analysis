@@ -26,9 +26,7 @@ public class ReductionTrafo {
    */
   public void transform(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
-    /*
-    transform first
-     */
+    // set-up
 
     ICD4CodeGlobalScope gscope = CD4CodeMill.globalScope();
     gscope.clear();
@@ -41,23 +39,32 @@ public class ReductionTrafo {
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    CDModStation modStation1 = new CDModStation(first);
+    CDExpander expander1 = new CDExpander(first);
+    CDExpander expander2 = new CDExpander(second);
+
+    // deal with association directions in second
+    expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
+    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
+
+        /*
+    transform first
+     */
 
     // add subclass to each interface and abstract class
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
-        modStation1.addNewSubClass(astcdClass.getName() + "4Diff", astcdClass);
+        expander1.addNewSubClass(astcdClass.getName() + "4Diff", astcdClass);
       }
     }
     for (ASTCDInterface astcdInterface : first.getCDDefinition().getCDInterfacesList()) {
-      modStation1.addNewSubClass(astcdInterface.getName() + "4Diff", astcdInterface);
+      expander1.addNewSubClass(astcdInterface.getName() + "4Diff", astcdInterface);
     }
 
     // add classes exclusive to second as classes without attributes, extends and implements
     for (ASTCDClass astcdClass : second.getCDDefinition().getCDClassesList()) {
       Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
-        modStation1.addDummyClass(astcdClass);
+        expander1.addDummyClass(astcdClass);
       }
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
@@ -66,13 +73,13 @@ public class ReductionTrafo {
     Collection<ASTCDAssociation> overrides = CDAssociationHelper.collectOverridingAssociations(
         second, first);
 
-    modStation1.addMissingAssociations(overrides, false);
+    expander1.addMissingAssociations(overrides, false);
 
     //add dummy associations where possible
     List<ASTCDAssociation> isolated = new ArrayList<>(
         second.getCDDefinition().getCDAssociationsList());
     isolated.removeAll(overrides);
-    Collection<ASTCDAssociation> dummyCol = modStation1.addDummyAssociations(isolated);
+    Collection<ASTCDAssociation> dummyCol = expander1.addDummyAssociations(isolated);
 
     /*
     transform second
@@ -82,14 +89,12 @@ public class ReductionTrafo {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    CDModStation modStation2 = new CDModStation(second);
-
     // add classes, interfaces and attributes exclusive to first
-    modStation2.addMissingTypesAndAttributes(first.getCDDefinition().getCDClassesList());
-    modStation2.addMissingTypesAndAttributes(first.getCDDefinition().getCDInterfacesList());
+    expander2.addMissingTypesAndAttributes(first.getCDDefinition().getCDClassesList());
+    expander2.addMissingTypesAndAttributes(first.getCDDefinition().getCDInterfacesList());
 
     // add enums and enum constants exclusive to first
-    modStation2.addMissingEnumsAndConstants(first.getCDDefinition().getCDEnumsList());
+    expander2.addMissingEnumsAndConstants(first.getCDDefinition().getCDEnumsList());
 
     // add inheritance relation to first, unless it causes cyclical inheritance
     copyInheritance(first, second);
@@ -98,8 +103,7 @@ public class ReductionTrafo {
     List<ASTCDAssociation> noDummyList = first.getCDDefinition().getCDAssociationsList();
     noDummyList.removeAll(dummyCol);
 
-    modStation2.addMissingAssociations(noDummyList, true);
-    modStation2.updateDir2Match(noDummyList);
+    expander2.addMissingAssociations(noDummyList, true);
 
   }
 

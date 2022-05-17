@@ -3,14 +3,13 @@ package de.monticore.ow2cw;
 import de.monticore.cd.facade.CDExtendUsageFacade;
 import de.monticore.cd.facade.CDInterfaceUsageFacade;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cd2alloy.generator.QNameHelper;
+import de.monticore.cd2alloy.generator.CD2AlloyQNameHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDLeftToRightDirBuilder;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -25,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class CDModStation {
+public class CDExpander {
   protected ASTCDCompilationUnit originalCD;  // Genutzt, um stereotype zu lesen
 
   protected ASTCDDefinitionBuilder builder = CD4AnalysisMill.cDDefinitionBuilder();  // TODO:
@@ -35,7 +34,7 @@ public class CDModStation {
   /**
    * @param originalCD Used for checking if adding/etc is allowed
    */
-  public CDModStation(ASTCDCompilationUnit originalCD) {
+  public CDExpander(ASTCDCompilationUnit originalCD) {
     this.originalCD = originalCD;
   }
 
@@ -178,7 +177,7 @@ public class CDModStation {
       boolean found = originalCD.getCDDefinition()
           .getCDAssociationsList()
           .stream()
-          .anyMatch(targetAssoc -> CDAssociationHelper.sameAssociation(targetAssoc, srcAssoc));
+          .anyMatch(targetAssoc -> CDAssociationHelper.similarAssociation(targetAssoc, srcAssoc));
       if (!found) {
         ASTCDAssociation newAssoc = srcAssoc.deepClone();
         if (!withCardinalities) {
@@ -196,6 +195,11 @@ public class CDModStation {
    */
   public void updateDir2Match(Collection<ASTCDAssociation> assocs) {
     CDAssociationHelper.updateDir2Match(assocs,
+        originalCD.getCDDefinition().getCDAssociationsList());
+  }
+
+  public void updateDir4Diff(Collection<ASTCDAssociation> assocs) {
+    CDAssociationHelper.updateDir4Diff(assocs,
         originalCD.getCDDefinition().getCDAssociationsList());
   }
 
@@ -236,7 +240,8 @@ public class CDModStation {
           roleName = src.getRight().getCDRole().getName();
         }
         else {
-          roleName = QNameHelper.processQName2RoleName(src.getRightQualifiedName().getQName());
+          roleName = CD2AlloyQNameHelper.processQName2RoleName(
+              src.getRightQualifiedName().getQName());
         }
 
         dummies.add(buildDummyClassAndAssociation(src.getLeftQualifiedName().getQName(), roleName,
@@ -249,7 +254,8 @@ public class CDModStation {
           roleName = src.getLeft().getCDRole().getName();
         }
         else {
-          roleName = QNameHelper.processQName2RoleName(src.getLeftQualifiedName().getQName());
+          roleName = CD2AlloyQNameHelper.processQName2RoleName(
+              src.getLeftQualifiedName().getQName());
         }
 
         dummies.add(buildDummyClassAndAssociation(src.getRightQualifiedName().getQName(), roleName,
@@ -292,7 +298,6 @@ public class CDModStation {
 
   public ASTCDAssociation buildDummyAssociation(String left, String roleName, String right) {
 
-
     ASTCDAssociation dummy = CDAssociationMill.cDAssociationBuilder()
         .setModifier(CD4CodeMill.modifierBuilder().build())
         .setCDAssocType(CDAssociationMill.cDAssocTypeAssocBuilder().build())
@@ -304,7 +309,8 @@ public class CDModStation {
             .setModifier(CD4CodeMill.modifierBuilder().build())
             .setMCQualifiedType(MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
                 .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(left))
-                .build()).build())
+                .build())
+            .build())
         .setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build())
         .setRight(CDAssociationMill.cDAssocRightSideBuilder()
             .setCDCardinalityAbsent()
@@ -314,7 +320,9 @@ public class CDModStation {
             .setModifier(CD4CodeMill.modifierBuilder().build())
             .setMCQualifiedType(MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
                 .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(right))
-                .build()).build()).build();
+                .build())
+            .build())
+        .build();
     originalCD.getCDDefinition().getCDElementList().add(dummy);
     return dummy;
   }

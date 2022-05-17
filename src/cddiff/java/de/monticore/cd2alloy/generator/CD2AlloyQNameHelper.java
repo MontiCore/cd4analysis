@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class QNameHelper {
+public class CD2AlloyQNameHelper {
 
   /**
    * This helper functions processes parts of a name such that they can be used in Alloy
@@ -40,4 +40,5 @@ public class QNameHelper {
     Collections.addAll(nameList, qname.split("\\."));
     return partHandler(nameList, true);
   }
+
 }
