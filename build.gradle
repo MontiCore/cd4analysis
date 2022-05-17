@@ -49,7 +49,6 @@ ext {
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
   mockito_version = "3.11.1"
-  jgrapht_version = "1.4.0"
 }
 
 // configure non-standard source sets
@@ -113,7 +112,6 @@ dependencies {
   implementation "commons-cli:commons-cli:$commons_cli_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
   implementation "org.freemarker:freemarker:$freemarker_version"
-  implementation "org.jgrapht:jgrapht-core:$jgrapht_version"
   testImplementation "org.antlr:antlr4-runtime:$antlr_version"
   testImplementation "junit:junit:$junit_version"
   testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
@@ -126,6 +124,7 @@ dependencies {
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:6"
   cddiffImplementation(sourceSets.main.output.classesDirs)
+  cddiffImplementation "org.jgrapht:jgrapht-core:1.4.0"
 
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
