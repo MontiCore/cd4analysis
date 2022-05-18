@@ -69,7 +69,7 @@ public class CD4CodeBasisSymbolTableCompleter implements CD4CodeBasisVisitor2 {
       Log.error(String.format("0xCDA90: The type of the return type (%s) could not be calculated", ast.getMCReturnType().getClass().getSimpleName()), ast.getMCReturnType().get_SourcePositionStart());
     }
     else {
-      symbol.setType(typeResult.getCurrentResult());
+      symbol.setType(typeResult.getResult());
     }
 
     symbol.setIsElliptic(ast.streamCDParameters().anyMatch(ASTCDParameter::isEllipsis));
