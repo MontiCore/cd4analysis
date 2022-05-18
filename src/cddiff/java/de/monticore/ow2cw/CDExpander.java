@@ -177,7 +177,7 @@ public class CDExpander {
       boolean found = originalCD.getCDDefinition()
           .getCDAssociationsList()
           .stream()
-          .anyMatch(targetAssoc -> CDAssociationHelper.similarAssociation(targetAssoc, srcAssoc));
+          .anyMatch(targetAssoc -> CDAssociationHelper.sameAssociation(targetAssoc, srcAssoc));
       if (!found) {
         ASTCDAssociation newAssoc = srcAssoc.deepClone();
         if (!withCardinalities) {
@@ -325,6 +325,14 @@ public class CDExpander {
         .build();
     originalCD.getCDDefinition().getCDElementList().add(dummy);
     return dummy;
+  }
+
+  public void updateUnspecifiedDir2Default() {
+    for (ASTCDAssociation assoc : originalCD.getCDDefinition().getCDAssociationsList()){
+      if (!(assoc.getCDAssocDir().isDefinitiveNavigableRight() || assoc.getCDAssocDir().isDefinitiveNavigableLeft())){
+        assoc.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
+      }
+    }
   }
 
 }

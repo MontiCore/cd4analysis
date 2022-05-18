@@ -12,6 +12,9 @@ import java.util.List;
 
 public class CDAssociationHelper {
 
+  /**
+   * Collect all associations in srcAST that override associations in targetAST
+   */
   public static Collection<ASTCDAssociation> collectOverridingAssociations(
       ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
@@ -31,23 +34,110 @@ public class CDAssociationHelper {
     return overrides;
   }
 
-  public static boolean overridesAssociation(ASTCDAssociation srcAssoc,
-      ASTCDAssociation targetAssoc, ICD4CodeArtifactScope scope) {
+  /**
+   * Collect all associations in srcAST that are in conflict with associations in targetAST
+   */
+  public static Collection<ASTCDAssociation> collectConflictingAssociations(
+      ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
-    String srcName = srcAssoc.getLeftQualifiedName().getQName();
-    String targetName = targetAssoc.getLeftQualifiedName().getQName();
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
+    ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
 
-    if (!(CDInheritanceHelper.isSuperOf(srcName, targetName, scope)
-        || CDInheritanceHelper.isSuperOf(targetName, srcName, scope))) {
+    List<ASTCDAssociation> conflicts = new ArrayList<>();
+    for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
+      for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+        if (inConflict(srcAssoc, targetAssoc, targetScope)) {
+          conflicts.add(srcAssoc);
+        }
+      }
+    }
+
+    return conflicts;
+  }
+
+  public static boolean inConflict(ASTCDAssociation srcAssoc, ASTCDAssociation targetAssoc,
+      ICD4CodeArtifactScope scope) {
+    if (overridesAssociation(srcAssoc, targetAssoc, scope) || overridesAssociationInReverse(
+        srcAssoc, targetAssoc, scope)) {
       return false;
     }
 
-    srcName = srcAssoc.getRightQualifiedName().getQName();
-    targetName = targetAssoc.getRightQualifiedName().getQName();
+    if (weakMatch(srcAssoc, targetAssoc) || weakReverseMatch(srcAssoc, targetAssoc)) {
+      return true;
+    }
 
-    if (!(CDInheritanceHelper.isSuperOf(srcName, targetName, scope)
-        || CDInheritanceHelper.isSuperOf(targetName, srcName, scope))) {
+    String srcLeft = srcAssoc.getLeftQualifiedName().getQName();
+    String targetLeft = targetAssoc.getLeftQualifiedName().getQName();
+    String srcRight = srcAssoc.getRightQualifiedName().getQName();
+    String targetRight = targetAssoc.getRightQualifiedName().getQName();
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableRight() && CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)
+        && CDInheritanceHelper.isSuperOf(targetLeft, srcLeft, scope)) {
+      return matchRightRoleNames(srcAssoc, targetAssoc);
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableLeft() && CDInheritanceHelper.isSuperOf(srcRight, targetRight, scope)
+        && CDInheritanceHelper.isSuperOf(targetRight, srcRight, scope)) {
+      return matchLeftRoleNames(srcAssoc, targetAssoc);
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableLeft() && CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope)
+        && CDInheritanceHelper.isSuperOf(targetRight, srcLeft, scope)) {
+      return matchRight2LeftRoleNames(srcAssoc, targetAssoc);
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableRight() && CDInheritanceHelper.isSuperOf(srcRight, targetLeft, scope)
+        && CDInheritanceHelper.isSuperOf(targetLeft, srcRight, scope)) {
+      return matchLeft2RightRoleNames(srcAssoc, targetAssoc);
+    }
+
+    return false;
+  }
+
+  public static boolean overridesAssociation(ASTCDAssociation srcAssoc,
+      ASTCDAssociation targetAssoc, ICD4CodeArtifactScope scope) {
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableLeft()) {
       return false;
+    }
+
+    if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableRight()) {
+      return false;
+    }
+
+    if (similarAssociation(srcAssoc, targetAssoc)) {
+      return false;
+    }
+
+    String srcLeft = srcAssoc.getLeftQualifiedName().getQName();
+    String targetLeft = targetAssoc.getLeftQualifiedName().getQName();
+    String srcRight = srcAssoc.getRightQualifiedName().getQName();
+    String targetRight = targetAssoc.getRightQualifiedName().getQName();
+
+    if (!(CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)
+        || CDInheritanceHelper.isSuperOf(targetLeft, srcLeft, scope))) {
+      return false;
+    }
+
+    if (!(CDInheritanceHelper.isSuperOf(srcRight, targetRight, scope)
+        || CDInheritanceHelper.isSuperOf(targetRight, srcRight, scope))) {
+      return false;
+    }
+
+    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableLeft()) {
+      return matchRightRoleNames(srcAssoc, targetAssoc);
+    }
+
+    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !targetAssoc.getCDAssocDir()
+        .isDefinitiveNavigableRight()) {
+      return matchLeftRoleNames(srcAssoc, targetAssoc);
     }
 
     return matchLeftRoleNames(srcAssoc, targetAssoc) && matchRightRoleNames(srcAssoc, targetAssoc);

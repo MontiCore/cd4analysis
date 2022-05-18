@@ -42,9 +42,11 @@ public class ReductionTrafo {
     CDExpander expander1 = new CDExpander(first);
     CDExpander expander2 = new CDExpander(second);
 
-    // deal with association directions in second
+    // deal with association directions
     expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
     expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
+    expander1.updateUnspecifiedDir2Default();
+    expander2.updateUnspecifiedDir2Default();
 
         /*
     transform first
@@ -69,9 +71,13 @@ public class ReductionTrafo {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    //add unbound associations exclusive to second if they override associations in first
-    Collection<ASTCDAssociation> overrides = CDAssociationHelper.collectOverridingAssociations(
-        second, first);
+    /*
+    add associations exclusive to second without cardinality constraints if they override
+    associations in first
+    */
+    Collection<ASTCDAssociation> overrides =
+        CDAssociationHelper.collectOverridingAssociations(second, first);
+    overrides.removeAll(CDAssociationHelper.collectConflictingAssociations(second, first));
 
     expander1.addMissingAssociations(overrides, false);
 
@@ -102,6 +108,7 @@ public class ReductionTrafo {
     // add associations exclusive to first, except for dummy association
     List<ASTCDAssociation> noDummyList = first.getCDDefinition().getCDAssociationsList();
     noDummyList.removeAll(dummyCol);
+    noDummyList.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
 
     expander2.addMissingAssociations(noDummyList, true);
 
