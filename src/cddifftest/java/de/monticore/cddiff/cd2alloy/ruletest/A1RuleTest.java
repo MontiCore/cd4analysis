@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,18 +15,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
-public class A1RuleTest extends AbstractTest {
+public class A1RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -47,8 +49,7 @@ public class A1RuleTest extends AbstractTest {
     // Check correctnesslines[i]
     for (int i = 1; i < result.length; i++) {
       // Check structure
-      assertTrue(
-          result[i].matches("BidiAssoc\\[\\w*(,\\w*)*\\]"));
+      assertTrue(result[i].matches("BidiAssoc\\[\\w*(,\\w*)*\\]"));
 
       // Check if result is valid
       if (!(expectedResult.contains(result[i]))) {
@@ -65,7 +66,7 @@ public class A1RuleTest extends AbstractTest {
     String a = CD2AlloyGenerator.executeRuleA1(mvAst);
     String[] lines = a.split(System.getProperty("line.separator"));
 
-//    System.out.println(a);
+    //    System.out.println(a);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -82,7 +83,7 @@ public class A1RuleTest extends AbstractTest {
     String a = CD2AlloyGenerator.executeRuleA1(m1Ast);
     String[] lines = a.split(System.getProperty("line.separator"));
 
-//    System.out.println(a);
+    //    System.out.println(a);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -96,7 +97,7 @@ public class A1RuleTest extends AbstractTest {
     String a = CD2AlloyGenerator.executeRuleA1(m2Ast);
     String[] lines = a.split(System.getProperty("line.separator"));
 
-//    System.out.println(a);
+    //    System.out.println(a);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -104,4 +105,5 @@ public class A1RuleTest extends AbstractTest {
 
     checkA1(lines, expectedResult);
   }
+
 }

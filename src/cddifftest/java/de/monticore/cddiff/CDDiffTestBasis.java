@@ -22,9 +22,8 @@ import static org.junit.Assert.fail;
 
 /**
  * Provides some helpers for tests.
- *
  */
-abstract public class AbstractTest {
+abstract public class CDDiffTestBasis {
 
   @Before
   public void setup() {
@@ -51,22 +50,22 @@ abstract public class AbstractTest {
       assertTrue(optAutomaton.isPresent());
 
       return optAutomaton.get();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
-      fail("There was an exception when parsing the model " + modelFile + ": "
-          + e.getMessage());
+      fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
 
     return null;
   }
 
-  protected void prepareAST(ASTCDCompilationUnit ast){
+  protected void prepareAST(ASTCDCompilationUnit ast) {
     CD4CodeMill.globalScope().clear();
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(ast);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(
-        ast.getMCImportStatementList(),  MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(ast.getMCImportStatementList(),
+        MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
     CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
     CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
@@ -76,13 +75,13 @@ abstract public class AbstractTest {
   /**
    * Checks if a String matches a legal alloy struct
    *
-   * @param prefix Name prefix of the struct
-   * @param structs String representation of an alloy module
+   * @param prefix     Name prefix of the struct
+   * @param structs    String representation of an alloy module
    * @param startIndex optional start index, if struct starts with comments
    */
   protected void checkAlloyStructs(String prefix, String[] structs, int... startIndex) {
     // Check inputs
-    if(startIndex.length > 1) {
+    if (startIndex.length > 1) {
       fail();
       return;
     }
@@ -104,4 +103,5 @@ abstract public class AbstractTest {
       assertTrue(currentLine.matches(prefix + "\\[.*[\\]]"));
     }
   }
+
 }

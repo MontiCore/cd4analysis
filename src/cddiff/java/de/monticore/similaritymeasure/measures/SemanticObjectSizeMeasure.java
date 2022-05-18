@@ -8,9 +8,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.Optional;
 
 /**
- * A similarity measure for class diagrams in cd4analysis based on the size of
- * their semantic difference solution size
- *
+ * A similarity measure for class diagrams in cd4analysis based on the size of their semantic
+ * difference solution size
  */
 public class SemanticObjectSizeMeasure {
   // Parameter to specify the size of the search space
@@ -25,19 +24,16 @@ public class SemanticObjectSizeMeasure {
   }
 
   /**
-   * Constructor for
-   * de.cddiff.similaritymeasure.measures.SemanticObjectSizeMeasure
+   * Constructor for de.cddiff.similaritymeasure.measures.SemanticObjectSizeMeasure
    *
-   * @param k Parameter defining the maximal solution size of the class
-   * difference regarded.
+   * @param k Parameter defining the maximal solution size of the class difference regarded.
    */
   public SemanticObjectSizeMeasure(int k) {
     this.k = k;
   }
 
   /**
-   * Computes the size based difference measure between two ASTs, without
-   * regarding their order.
+   * Computes the size based difference measure between two ASTs, without regarding their order.
    *
    * @param x AST representing the left operand of cddiff_k(x,y)
    * @param y AST representing the right operand of cddiff_k(x,y)
@@ -58,8 +54,7 @@ public class SemanticObjectSizeMeasure {
   }
 
   /**
-   * Computes the size based difference measure between two ASTs, regarding
-   * their order.
+   * Computes the size based difference measure between two ASTs, regarding their order.
    *
    * @param x AST which should be compared with y
    * @param y AST which should be compared with x
@@ -71,4 +66,5 @@ public class SemanticObjectSizeMeasure {
     double yx = sizeDifference(y, x, k);
     return Math.max(xy, yx);
   }
+
 }

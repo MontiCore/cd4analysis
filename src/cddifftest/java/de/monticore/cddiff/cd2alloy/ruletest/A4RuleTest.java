@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,14 +15,14 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
-public class A4RuleTest extends AbstractTest {
+public class A4RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
   }
 
@@ -49,8 +49,7 @@ public class A4RuleTest extends AbstractTest {
       result[i] = result[i].replaceAll("\\p{Space}", "");
 
       // Check structure
-      assertTrue(
-          result[i].matches("ObjLU?\\[\\w*(,\\w*)*\\]"));
+      assertTrue(result[i].matches("ObjLU?\\[\\w*(,\\w*)*\\]"));
 
       // Check if result is valid
       if (!(expectedResult.contains(result[i]))) {
@@ -67,7 +66,7 @@ public class A4RuleTest extends AbstractTest {
     String a = CD2AlloyGenerator.executeRuleA4(mvAst);
     String[] lines = a.split(System.getProperty("line.separator"));
 
-//    System.out.println(a);
+    //    System.out.println(a);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -75,4 +74,5 @@ public class A4RuleTest extends AbstractTest {
 
     checkA4(lines, expectedResult);
   }
+
 }

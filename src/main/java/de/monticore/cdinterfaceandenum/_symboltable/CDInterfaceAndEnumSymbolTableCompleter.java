@@ -70,12 +70,12 @@ public class CDInterfaceAndEnumSymbolTableCompleter
 
     if (ast.isPresentCDExtendUsage()) {
       symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+        if (!result.isPresentResult()) {
           Log.error(String.format("0xCDA30: The type of the extended interfaces (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
     }
   }
 
@@ -87,12 +87,12 @@ public class CDInterfaceAndEnumSymbolTableCompleter
 
     if (ast.isPresentCDInterfaceUsage()) {
       symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeChecker().synthesizeType(s);
-        if (!result.isPresentCurrentResult()) {
+        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+        if (!result.isPresentResult()) {
           Log.error(String.format("0xCDA31: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
         }
         return result;
-      }).filter(TypeCheckResult::isPresentCurrentResult).map(TypeCheckResult::getCurrentResult).collect(Collectors.toList()));
+      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
     }
   }
 

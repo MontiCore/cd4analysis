@@ -17,27 +17,22 @@ import java.util.Optional;
 
 /**
  * A collection of functions to compute the difference between class diagrams
- *
  */
 public class ClassDifference {
 
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
-                                                             ASTCDCompilationUnit cd2,
-                                                             int k) {
-    return cddiff(cd1,cd2,k,false,"target/generated/cddiff-test/");
+      ASTCDCompilationUnit cd2, int k) {
+    return cddiff(cd1, cd2, k, false, "target/generated/cddiff-test/");
   }
 
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
-                                                   ASTCDCompilationUnit cd2,
-                                                   int k, boolean newSemantics,
-      String outputPathName) {
+      ASTCDCompilationUnit cd2, int k, boolean newSemantics, String outputPathName) {
     // Initialize result
     Optional<AlloyDiffSolution> result = Optional.empty();
 
     // Set output path
-    Path outputDirectory = Paths
-        .get(outputPathName,
-            cd1.getCDDefinition().getName() + "_" + cd2.getCDDefinition().getName());
+    Path outputDirectory = Paths.get(outputPathName,
+        cd1.getCDDefinition().getName() + "_" + cd2.getCDDefinition().getName());
 
     // Generate the module
     Path moduleFile = DiffModuleGenerator.generateDiffPredicateToFile(cd1, cd2, k, newSemantics,
@@ -56,7 +51,8 @@ public class ClassDifference {
     // clean-up
     try {
       FileUtils.forceDelete(outputDirectory.toFile());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       Log.warn(String.format("Could not delete %s due to %s", outputDirectory.getFileName(),
           e.getMessage()));
     }

@@ -1,49 +1,45 @@
 package de.monticore.cddiff.ow2cw;
 
-import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.ClassDifference;
+import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.ow2cw.ReductionTrafo;
-import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.Assert.*;
-
-public class ReductionTrafoTest extends AbstractTest {
+public class ReductionTrafoTest extends CDDiffTestBasis {
 
   @Test
-  public void testTrafo(){
+  public void testTrafo() {
 
     CD4CodeMill.globalScope().clear();
 
-    ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/RManager"
-        + "/Employees5.cd");
-    ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/RManager"
-        + "/Employees6.cd");
+    ASTCDCompilationUnit m1Ast = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees5.cd");
+    ASTCDCompilationUnit m2Ast = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees6.cd");
 
     ReductionTrafo trafo = new ReductionTrafo();
-    trafo.transform(m1Ast,m2Ast);
+    trafo.transform(m1Ast, m2Ast);
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
     m1Ast.accept(pprinter.getTraverser());
-    String cd1= pprinter.getPrinter().getContent();
+    String cd1 = pprinter.getPrinter().getContent();
 
     pprinter = new CD4CodeFullPrettyPrinter();
     m2Ast.accept(pprinter.getTraverser());
-    String cd2= pprinter.getPrinter().getContent();
+    String cd2 = pprinter.getPrinter().getContent();
 
     // Set Output Path
     String outputPath = "target/generated/cddiff-test/trafo/";
@@ -62,80 +58,26 @@ public class ReductionTrafoTest extends AbstractTest {
   }
 
   @Test
-  public void testReduction(){
-    CD4CodeMill.globalScope().clear();
-
-    String outputPath = "target/generated/cddiff-test/reduction/";
-
-    ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
-        + "/Employees2.cd");
-    ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager"
-        + "/Employees1.cd");
-
-    ReductionTrafo trafo = new ReductionTrafo();
-    trafo.transform(m1Ast,m2Ast);
-
-
-    // compute semDiff(m1AST,m2AST)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(m1Ast,m2Ast,20,true, outputPath);
-
-    // test if solution is present
-    if (!optS.isPresent()) {
-      Log.error("0xCDD12: Could not compute semdiff.");
-      fail();
-    }
-    AlloyDiffSolution sol = optS.get();
-
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(20);
-    sol.setLimited(true);
-
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
-
-    //no corresponding .od files are generated
-    File[] odFiles = Paths.get(outputPath).toFile().listFiles();
-    assertNotNull(odFiles);
-
-    List<String> odFilePaths = new LinkedList<>();
-    for (File odFile : odFiles) {
-      if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
-      }
-    }
-    assertTrue(odFilePaths.isEmpty());
-
-    // clean-up
-    try {
-      FileUtils.forceDelete(Paths.get(outputPath).toFile());
-    }
-    catch (IOException e) {
-      Log.warn(String.format("Could not delete %s due to %s", outputPath, e.getMessage()));
-    }
-
-  }
-
-  @Test
-  public void testReductionWithPackages(){
+  public void testTrafoWithPackages() {
     CD4CodeMill.globalScope().clear();
 
     String outputPath = "target/generated/cddiff-test/trafo-with-packages/";
 
-    ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/RQManager"
-        + "/Employees8.cd");
-    ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/RQManager"
-        + "/Employees7.cd");
+    ASTCDCompilationUnit m1Ast = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    ASTCDCompilationUnit m2Ast = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
 
     ReductionTrafo trafo = new ReductionTrafo();
-    trafo.transform(m1Ast,m2Ast);
+    trafo.transform(m1Ast, m2Ast);
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
     m1Ast.accept(pprinter.getTraverser());
-    String cd1= pprinter.getPrinter().getContent();
+    String cd1 = pprinter.getPrinter().getContent();
 
     pprinter = new CD4CodeFullPrettyPrinter();
     m2Ast.accept(pprinter.getTraverser());
-    String cd2= pprinter.getPrinter().getContent();
+    String cd2 = pprinter.getPrinter().getContent();
 
     Path outputFile1 = Paths.get(outputPath, m1Ast.getCDDefinition().getName() + ".cd");
     Path outputFile2 = Paths.get(outputPath, m2Ast.getCDDefinition().getName() + ".cd");
@@ -148,46 +90,74 @@ public class ReductionTrafoTest extends AbstractTest {
     catch (IOException e) {
       e.printStackTrace();
     }
+  }
 
-    outputPath = "target/generated/cddiff-test/reduction-with-packages/";
+  @Test
+  public void testCopyInheritance() {
+    ASTCDCompilationUnit lecture1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
-    // compute semDiff(m1AST,m2AST)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(m1Ast,m2Ast,20,true, outputPath);
+    ASTCDCompilationUnit lecture2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture2.cd");
 
-    // test if solution is present
-    if (!optS.isPresent()) {
-      Log.error("0xCDD14: Could not compute semdiff.");
-      fail();
+    lecture1.getCDDefinition()
+        .removeAllCDElements(lecture1.getCDDefinition().getCDAssociationsList());
+    lecture2.getCDDefinition()
+        .removeAllCDElements(lecture2.getCDDefinition().getCDAssociationsList());
+
+    lecture2.getCDDefinition().setName(lecture1.getCDDefinition().getName());
+
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture2);
+
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.copyInheritance(lecture1, lecture2);
+
+    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
+    lecture1.accept(pprinter.getTraverser());
+    String cd1 = pprinter.getPrinter().getContent();
+
+    pprinter = new CD4CodeFullPrettyPrinter();
+    lecture2.accept(pprinter.getTraverser());
+    String cd2 = pprinter.getPrinter().getContent();
+
+    Assert.assertEquals(cd1, cd2);
+
+  }
+
+  @Test
+  public void testRemoveRedundantAttributes() {
+    ASTCDCompilationUnit employees8 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+
+    List<String> subList = new ArrayList<>();
+    subList.add("ins.Manager");
+    subList.add("emp.Employee");
+    subList.add("Person");
+
+    List<ASTCDType> typeList = new ArrayList<>();
+    typeList.addAll(employees8.getCDDefinition().getCDClassesList());
+    typeList.addAll(employees8.getCDDefinition().getCDInterfacesList());
+
+    for (ASTCDType type : typeList) {
+      type.addCDMember(CDAttributeFacade.getInstance()
+          .createAttribute(CD4CodeMill.modifierBuilder().build(), "Date", "test"));
     }
-    AlloyDiffSolution sol = optS.get();
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.removeRedundantAttributes(employees8);
 
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(20);
-    sol.setLimited(true);
-
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
-
-    //no corresponding .od files are generated
-    File[] odFiles = Paths.get(outputPath).toFile().listFiles();
-    assertNotNull(odFiles);
-
-    List<String> odFilePaths = new LinkedList<>();
-    for (File odFile : odFiles) {
-      if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
+    for (ASTCDType type : typeList) {
+      if (subList.stream().anyMatch(sub -> sub.equals(type.getSymbol().getFullName()))) {
+        Assert.assertFalse(type.getCDAttributeList()
+            .stream()
+            .anyMatch(attribute -> attribute.getName().equals("test")));
+      }
+      else {
+        Assert.assertTrue(type.getCDAttributeList()
+            .stream()
+            .anyMatch(attribute -> attribute.getName().equals("test")));
       }
     }
-    assertTrue(odFilePaths.isEmpty());
-
-    // clean-up
-    try {
-      FileUtils.forceDelete(Paths.get(outputPath).toFile());
-    }
-    catch (IOException e) {
-      Log.warn(String.format("Could not delete %s due to %s", outputPath, e.getMessage()));
-    }
-
   }
 
 }

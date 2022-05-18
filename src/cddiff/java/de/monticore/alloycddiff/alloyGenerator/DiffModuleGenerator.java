@@ -10,16 +10,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * All functions needed to generate an alloy module containing a diff predicate
- * for two class diagrams
- *
+ * All functions needed to generate an alloy module containing a diff predicate for two class
+ * diagrams
  */
 public class DiffModuleGenerator {
   /**
    * Helper function to create the diff module predicate.
    */
-  private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2
-      , boolean newSemantics) {
+  private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
+      boolean newSemantics) {
     // Create inputs
     Set<ASTCDCompilationUnit> cds = new HashSet<>();
     cds.add(cd1);
@@ -42,12 +41,12 @@ public class DiffModuleGenerator {
   }
 
   /**
-   * Generates alloy module to compare the class diagram cd1 with cd2 using
-   * scope k (maximal number of objects in OD)
+   * Generates alloy module to compare the class diagram cd1 with cd2 using scope k (maximal number
+   * of objects in OD)
    *
    * @param cd1 Class diagram which is used as base
    * @param cd2 Class diagram the base is compared to
-   * @param k Scope for the execution of the alloy module
+   * @param k   Scope for the execution of the alloy module
    * @return String for an alloy module comparing cd1 and cd2
    */
   public static String generateDiffPredicate(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
@@ -79,4 +78,5 @@ public class DiffModuleGenerator {
 
     return CD2AlloyGenerator.saveModulePath(module, moduleName, outputDirectory);
   }
+
 }

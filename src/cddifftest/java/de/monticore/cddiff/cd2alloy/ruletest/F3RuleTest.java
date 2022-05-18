@@ -3,7 +3,7 @@ package de.monticore.cddiff.cd2alloy.ruletest;
 
 import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,18 +16,20 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for the U1 rule for the generation of common class names
- *
  */
-public class F3RuleTest extends AbstractTest {
+public class F3RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  ASTCDCompilationUnit mvAst = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+  ASTCDCompilationUnit m1Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel("src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+  ASTCDCompilationUnit m2Ast = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
-  public void prepareASTs(){
+  public void prepareASTs() {
     prepareAST(mvAst);
     prepareAST(m1Ast);
     prepareAST(m2Ast);
@@ -118,9 +120,11 @@ public class F3RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_expert + enum_DrivingExp_beginner }");
+        "fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_expert + enum_DrivingExp_beginner"
+            + " }");
     expectedResult.add(
-        "fun InsuranceKindEnumCDcd1: set EnumVal { enum_InsuranceKind_international + enum_InsuranceKind_transport }");
+        "fun InsuranceKindEnumCDcd1: set EnumVal { enum_InsuranceKind_international + "
+            + "enum_InsuranceKind_transport }");
 
     checkF3(lines, expectedResult);
   }
@@ -133,7 +137,8 @@ public class F3RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_partTime + enum_PositionKind_fullTime }");
+        "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_partTime + "
+            + "enum_PositionKind_fullTime }");
 
     checkF3(lines, expectedResult);
   }
@@ -146,8 +151,10 @@ public class F3RuleTest extends AbstractTest {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_partTime + enum_PositionKind_external + enum_PositionKind_fullTime }");
+        "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_partTime + "
+            + "enum_PositionKind_external + enum_PositionKind_fullTime }");
 
     checkF3(lines, expectedResult);
   }
+
 }

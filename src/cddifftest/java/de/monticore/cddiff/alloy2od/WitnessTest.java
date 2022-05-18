@@ -3,7 +3,7 @@ package de.monticore.cddiff.alloy2od;
 
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.alloycddiff.classDifference.ClassDifference;
-import de.monticore.cddiff.AbstractTest;
+import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -18,15 +18,15 @@ import static org.junit.Assert.*;
 /**
  * Test if diff-witnesses match first class diagram and not second
  */
-public class WitnessTest extends AbstractTest {
+public class WitnessTest extends CDDiffTestBasis {
   @Test
   public void testManger() {
     // Parse Test Modules
     final ASTCDCompilationUnit astV1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees1.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     assertNotNull(astV1);
     final ASTCDCompilationUnit astV2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Manager/Employees2.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7);

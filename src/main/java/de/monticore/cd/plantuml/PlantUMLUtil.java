@@ -33,7 +33,7 @@ public class PlantUMLUtil {
 
     final String plantUMLString = printCD2PlantUML(cdString, plantUMLConfig);
     Transcoder t = TranscoderUtil.getDefaultTranscoder();
-    String url = "http://www.plantuml.com/plantuml/svg/" + t.encode(plantUMLString);
+    String url = "https://www.plantuml.com/plantuml/svg/" + t.encode(plantUMLString);
     System.out.println(url);
     BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
     String svg = IOUtils.toString(in, "UTF-8");

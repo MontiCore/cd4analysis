@@ -14,9 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This abstract class serves as abstraction layer between the alloy module and
- * the solution generation.
- *
+ * This abstract class serves as abstraction layer between the alloy module and the solution
+ * generation.
  */
 public abstract class AlloySolutionHandler {
   // The alloy module the solution refers to
@@ -48,9 +47,9 @@ public abstract class AlloySolutionHandler {
   }
 
   /**
-   * Constructor for de.cddiff.alloycddiff.alloyrunner.AlloySolutionHandler
-   * generating the solution using alloys standard solver and reporter. The
-   * alloy error exception is forwarded and has to be handled by the user.
+   * Constructor for de.cddiff.alloycddiff.alloyrunner.AlloySolutionHandler generating the solution
+   * using alloys standard solver and reporter. The alloy error exception is forwarded and has to be
+   * handled by the user.
    */
   public AlloySolutionHandler(CompModule alloyModule, Command command) throws Err {
     // Note that the alloy command must be part of the alloy module
@@ -107,8 +106,8 @@ public abstract class AlloySolutionHandler {
   }
 
   /**
-   * Computes the number of satisfiable solutions. WARNING: Do not use this
-   * function if you compute all solutions separately
+   * Computes the number of satisfiable solutions. WARNING: Do not use this function if you compute
+   * all solutions separately
    *
    * @return Number of satisfiable solutions.
    */
@@ -185,4 +184,5 @@ public abstract class AlloySolutionHandler {
   public void setLimited(boolean limited) {
     this.limited = limited;
   }
+
 }
