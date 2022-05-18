@@ -15,7 +15,7 @@ public class CDMethodSignatureSymbolDeSer
   }
 
   @Override
-  protected void serializeReturnType(SymTypeExpression returnType, CD4CodeBasisSymbols2Json s2j) {
+  protected void serializeType(SymTypeExpression returnType, CD4CodeBasisSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.printer, "returnType", returnType);
   }
 
@@ -25,7 +25,7 @@ public class CDMethodSignatureSymbolDeSer
   }
 
   @Override
-  public SymTypeExpression deserializeReturnType(JsonObject symbolJson) {
+  public SymTypeExpression deserializeType(JsonObject symbolJson) {
     return SymTypeExpressionDeSer.deserializeMember("returnType", symbolJson);
   }
 }
