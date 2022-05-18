@@ -71,21 +71,21 @@ public class ReductionTrafo {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    /*
-    add associations exclusive to second without cardinality constraints if they override
-    associations in first
-    */
-    Collection<ASTCDAssociation> overrides =
-        CDAssociationHelper.collectOverridingAssociations(second, first);
-    overrides.removeAll(CDAssociationHelper.collectConflictingAssociations(second, first));
-
-    expander1.addMissingAssociations(overrides, false);
+    //collect all associations in second that override associations in first
+    Collection<ASTCDAssociation> overrides = CDAssociationHelper.collectOverridingAssociations(
+        second, first);
 
     //add dummy associations where possible
     List<ASTCDAssociation> isolated = new ArrayList<>(
         second.getCDDefinition().getCDAssociationsList());
     isolated.removeAll(overrides);
     Collection<ASTCDAssociation> dummyCol = expander1.addDummyAssociations(isolated);
+
+    /*
+    add all non-conflicting overriding associations to first without cardinality constraints
+    */
+    overrides.removeAll(CDAssociationHelper.collectConflictingAssociations(second, first));
+    expander1.addMissingAssociations(overrides, false);
 
     /*
     transform second
@@ -105,7 +105,10 @@ public class ReductionTrafo {
     // add inheritance relation to first, unless it causes cyclical inheritance
     copyInheritance(first, second);
 
-    // add associations exclusive to first, except for dummy association
+    /*
+    add associations exclusive to first, except for dummy association and other conflicting
+    associations
+     */
     List<ASTCDAssociation> noDummyList = first.getCDDefinition().getCDAssociationsList();
     noDummyList.removeAll(dummyCol);
     noDummyList.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
