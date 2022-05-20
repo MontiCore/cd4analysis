@@ -14,9 +14,9 @@ for *language engineers* using or
 extending one of the CD languages.
 
 The CD languages are mainly intended for  
-1. Analysis modelling (i.e. structures of the system context 
+1. Analysis modeling (i.e. structures of the system context 
    as well as data structures of the system),
-1. Code modelling (implementation) oriented, including method signatures,
+1. Code modeling (implementation) oriented, including method signatures,
 1. Generating code, data tables, transport functions and more.
 1. It is also possible to use CDs only as intermediate structure
    to map from one or more other DSLs into an object-oriented 
@@ -127,7 +127,7 @@ The possible options are:
 | `-d,--defaultpackage <boolean>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
 | `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1, i.e. only one witness is shown). |
 | `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is based on a heuristic, but at least 20). This constrains long searches. |
-| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modelling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
+| `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modeling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
 |  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help; other options are ignored. |
@@ -306,7 +306,7 @@ java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
 ### Step 4: Adding `FieldSymbol`s corresponding to association roles
 
 By default, the CD tool stores exactly the symbols that have been explicitly 
-defined. This is the typical modelling approach. However, code generation 
+defined. This is the typical modeling approach. However, code generation 
 typically maps the `CDRoleSymbol`s defined in an association to attributes and 
 thus implicitly adds `FieldSymbol`s into the classes that host an association. 
 These additional symbols can be made available in the symbol file in the two 
