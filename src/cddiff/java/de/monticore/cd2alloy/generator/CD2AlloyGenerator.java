@@ -72,21 +72,21 @@ public class CD2AlloyGenerator {
         + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
 
         // Abstract Signature for Objects
-        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set iType } "
+        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Type } "
         + System.lineSeparator()
         // Abstract Signature for Names
         + "abstract sig FName {} " + System.lineSeparator()
         // Abstract Signature for Values
         + "abstract sig Val {} " + System.lineSeparator()
         // Abstract Signature for EnumValues
-        + "abstract sig EnumVal {} " + System.lineSeparator() + "abstract sig iType {}"
+        + "abstract sig EnumVal {} " + System.lineSeparator() + "abstract sig Type {}"
         + System.lineSeparator() + " " + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
         + System.lineSeparator() + "// ends and for association ends of undirected associations."
-        + System.lineSeparator() + "pred ObjTypes[obj: set Obj, itypes: set iType]{"
-        + System.lineSeparator() + " all o:obj| o.super = itypes}" + System.lineSeparator()
+        + System.lineSeparator() + "pred ObjTypes[obj: set Obj, types: set Type]{"
+        + System.lineSeparator() + " all o:obj| o.super = types}" + System.lineSeparator()
         + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {" + System.lineSeparator()
         + " objs.get[fName] in fType" + System.lineSeparator() + " all o: objs| one o.get[fName] }"
@@ -361,7 +361,7 @@ public class CD2AlloyGenerator {
 
     // todo: non-dummy part
     if (!newSemantics) {
-      return ("one sig Type_Dummy extends iType {}") + System.lineSeparator();
+      return ("one sig Type_Dummy extends Type {}") + System.lineSeparator();
     }
 
     StringBuilder commonSigs = new StringBuilder();
@@ -384,7 +384,7 @@ public class CD2AlloyGenerator {
     for (String className : classNameUnion) {
       commonSigs.append("one sig Type_");
       commonSigs.append(className);
-      commonSigs.append(" extends iType {}").append(System.lineSeparator());
+      commonSigs.append(" extends Type {}").append(System.lineSeparator());
     }
 
     return commonSigs.toString();
