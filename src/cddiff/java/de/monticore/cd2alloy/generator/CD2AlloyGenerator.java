@@ -1287,7 +1287,7 @@ public class CD2AlloyGenerator {
           roleName = association.getLeft().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(firstReferenceName, true);
+          roleName = CD2AlloyQNameHelper.partHandler(secondReferenceName, true);
         }
         break;
       }
@@ -1311,12 +1311,12 @@ public class CD2AlloyGenerator {
         cardinality = association.getLeft().getCDCardinality();
         firstReferenceName = association.getRightReferenceName();
         secondReferenceName = association.getLeftReferenceName();
-        rolePresent = association.getLeft().isPresentCDRole();
+        rolePresent = association.getRight().isPresentCDRole();
         if (rolePresent) {
-          roleName = association.getLeft().getCDRole().getName();
+          roleName = association.getRight().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(secondReferenceName, true);
+          roleName = CD2AlloyQNameHelper.partHandler(firstReferenceName, true);
         }
         break;
       }

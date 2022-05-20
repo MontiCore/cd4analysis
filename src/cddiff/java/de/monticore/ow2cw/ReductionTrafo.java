@@ -207,7 +207,8 @@ public class ReductionTrafo {
   }
 
   /**
-   * remove redundant attributes
+   * removes redundant occurrences of attributes in subclasses that are already inherited from a
+   * superclass
    */
   public void removeRedundantAttributes(ASTCDCompilationUnit ast) {
     ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
