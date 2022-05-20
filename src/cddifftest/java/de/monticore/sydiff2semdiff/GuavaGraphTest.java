@@ -1,9 +1,7 @@
 package de.monticore.sydiff2semdiff;
 
 import com.google.common.graph.MutableValueGraph;
-import com.google.common.graph.ValueGraph;
 import com.google.common.graph.ValueGraphBuilder;
-import de.monticore.sydiff2semdiff.cg2graph.metamodel.RelationshipEdge;
 import org.junit.Test;
 
 import java.util.HashSet;
