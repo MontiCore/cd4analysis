@@ -1,9 +1,19 @@
+import java.util.Date;
+
 classdiagram Employees1 {
 	enum PositionKind {fullTime, partTime;}
 
 	enum Department {Sales, HR;}
 
-	class Person;
+	interface Machine {
+	  String id;
+	}
+
+	class Car implements Machine {
+	  Date factoryDate;
+	}
+
+	abstract class Person;
 
 	class Employee extends Person {
   	PositionKind kind;
@@ -13,7 +23,10 @@ classdiagram Employees1 {
   	Department inChargeOf;
 	}
 
-	class Task;
+	class Task {
+	  String taskName;
+	  Date startDate;
+	}
 
 	association [1] Person -- Task [1];
 }

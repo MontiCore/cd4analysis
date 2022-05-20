@@ -2,18 +2,18 @@ package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
 public class DiffSuperClass {
   public String name;
-  public DifferentGroup.DiffClassKind diffKind;
-  public DiffClass diffParent;
-  public DiffClass diffChild;
+  public DifferentGroup.DiffRelationKind diffKind;
+  public String diffParentClass;
+  public String diffChildClass;
 
   public DiffSuperClass() {
   }
 
-  public DiffSuperClass(String name, DifferentGroup.DiffClassKind diffKind, DiffClass diffParent, DiffClass diffChild) {
+  public DiffSuperClass(String name, DifferentGroup.DiffRelationKind diffKind, String diffParentClass, String diffChildClass) {
     this.name = name;
     this.diffKind = diffKind;
-    this.diffParent = diffParent;
-    this.diffChild = diffChild;
+    this.diffParentClass = diffParentClass;
+    this.diffChildClass = diffChildClass;
   }
 
   public String getName() {
@@ -24,27 +24,32 @@ public class DiffSuperClass {
     this.name = name;
   }
 
-  public DifferentGroup.DiffClassKind getDiffKind() {
+  public DifferentGroup.DiffRelationKind getDiffKind() {
     return diffKind;
   }
 
-  public void setDiffKind(DifferentGroup.DiffClassKind diffKind) {
+  public void setDiffKind(DifferentGroup.DiffRelationKind diffKind) {
     this.diffKind = diffKind;
   }
 
-  public DiffClass getDiffParent() {
-    return diffParent;
+  public String getDiffParentClass() {
+    return diffParentClass;
   }
 
-  public void setDiffParent(DiffClass diffParent) {
-    this.diffParent = diffParent;
+  public void setDiffParentClass(String diffParentClass) {
+    this.diffParentClass = diffParentClass;
   }
 
-  public DiffClass getDiffChild() {
-    return diffChild;
+  public String getDiffChildClass() {
+    return diffChildClass;
   }
 
-  public void setDiffChild(DiffClass diffChild) {
-    this.diffChild = diffChild;
+  public void setDiffChildClass(String diffChildClass) {
+    this.diffChildClass = diffChildClass;
+  }
+
+  @Override
+  public String toString() {
+    return "DiffSuperClass{" + "name='" + name + '\'' + ", diffKind=" + diffKind + ", diffParentClass='" + diffParentClass + '\'' + ", diffChildClass='" + diffChildClass + '\'' + '}';
   }
 }

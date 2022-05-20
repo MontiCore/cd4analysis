@@ -1,17 +1,23 @@
 package de.monticore.sydiff2semdiff;
 
+import com.google.common.graph.MutableValueGraph;
+import com.google.common.graph.ValueGraph;
+import com.google.common.graph.ValueGraphBuilder;
 import de.monticore.sydiff2semdiff.cg2graph.metamodel.RelationshipEdge;
-import org.jgrapht.*;
-import org.jgrapht.graph.*;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class GraphTest {
+public class GuavaGraphTest {
 
   @Test
   public void createDefaultDirectedGraph() {
-    Graph<Map<String, Object>, RelationshipEdge> g = new DefaultDirectedGraph<>(RelationshipEdge.class);
+    MutableValueGraph<Map<String, Object>, String> graph = ValueGraphBuilder
+      .directed()
+      .allowsSelfLoops(true)
+      .build();
 
     HashSet<Object> diffClassSet1 = new HashSet<>();
     diffClassSet1.add("Person");
@@ -46,21 +52,20 @@ public class GraphTest {
     diffObject_Task2.put("Task2", diffClassSet3);
 
     // add the vertices
-    g.addVertex(diffObject_Employee1);
-    g.addVertex(diffObject_Manager1);
-    g.addVertex(diffObject_Task1);
-    g.addVertex(diffObject_Task2);
+    graph.addNode(diffObject_Employee1);
+    graph.addNode(diffObject_Manager1);
+    graph.addNode(diffObject_Task1);
+    graph.addNode(diffObject_Task2);
 
     // add edges to create a circuit
-    g.addEdge(diffObject_Employee1,diffObject_Task1, new RelationshipEdge("task"));
-    g.addEdge(diffObject_Task1,diffObject_Employee1, new RelationshipEdge("person"));
+    graph.putEdgeValue(diffObject_Employee1,diffObject_Task1, "task");
+    graph.putEdgeValue(diffObject_Task1,diffObject_Employee1, "person");
 
-    g.addEdge(diffObject_Manager1,diffObject_Task2, new RelationshipEdge("task"));
-    g.addEdge(diffObject_Task2,diffObject_Manager1, new RelationshipEdge("person"));
+    graph.putEdgeValue(diffObject_Manager1,diffObject_Task2, "task");
+    graph.putEdgeValue(diffObject_Task2,diffObject_Manager1, "person");
 
     System.out.println("-- toString output");
-    System.out.println(g.toString());
+    System.out.println(graph.toString());
     System.out.println();
-    System.out.println("edge: " + g.edgesOf(diffObject_Employee1));
   }
 }

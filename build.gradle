@@ -124,7 +124,6 @@ dependencies {
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:6"
   cddiffImplementation(sourceSets.main.output.classesDirs)
-  cddiffImplementation "org.jgrapht:jgrapht-core:1.4.0"
 
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"

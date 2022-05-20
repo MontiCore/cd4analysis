@@ -1,29 +1,11 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+
 import java.util.Map;
 
-//enum DifferentGroupType {
-//  SINGLE_INSTANCE, MULTI_INSTANCE
-//}
-//
-//enum DiffClassKind {
-//  CLASS_DIFF_KIND, ENUM_DIFF_KIND, ABSTRACT_CLASS_DIFF_KIND, SUPER_CLASS_DIFF_KIND
-//}
-//
-//enum DiffRelationKind {
-//  ASC_DIFF_KIND, INHERIT_ASC_DIFF_KIND
-//}
-//
-//enum DiffRelationNavigation {
-//  LEFT_TO_RIGHT, RIGHT_TO_LEFT, MULTI
-//}
-//
-//enum DiffMultiplicities {
-//  ONE, ZORE_OR_ONE, ONE_TO_MORE, MORE
-//}
-
 public class DifferentGroup {
-  private Object model;
+  private ASTCDCompilationUnit model;
   private DifferentGroupType type;
   public Map<String, DiffClass> diffClassGroup;
   public Map<String, DiffRelation> diffRelationGroup;
@@ -34,11 +16,11 @@ public class DifferentGroup {
   }
 
   public enum DiffClassKind {
-    CLASS_DIFF_KIND, ENUM_DIFF_KIND, ABSTRACT_CLASS_DIFF_KIND, SUPER_CLASS_DIFF_KIND
+    DIFF_CLASS, DIFF_ENUM, DIFF_ABSTRACT_CLASS, DIFF_INTERFACE
   }
 
   public enum DiffRelationKind {
-    ASC_DIFF_KIND, INHERIT_ASC_DIFF_KIND
+    DIFF_ASC, DIFF_INHERIT_ASC, DIFF_SUPERCLASS
   }
 
   public enum DiffRelationNavigation {
@@ -52,7 +34,7 @@ public class DifferentGroup {
   public DifferentGroup() {
   }
 
-  public DifferentGroup(Object model, DifferentGroupType type, Map<String, DiffClass> diffClassGroup, Map<String, DiffRelation> diffRelationGroup, Map<String, DiffSuperClass> diffSuperClassGroup) {
+  public DifferentGroup(ASTCDCompilationUnit model, DifferentGroupType type, Map<String, DiffClass> diffClassGroup, Map<String, DiffRelation> diffRelationGroup, Map<String, DiffSuperClass> diffSuperClassGroup) {
     this.model = model;
     this.type = type;
     this.diffClassGroup = diffClassGroup;
@@ -60,11 +42,11 @@ public class DifferentGroup {
     this.diffSuperClassGroup = diffSuperClassGroup;
   }
 
-  public Object getModel() {
+  public ASTCDCompilationUnit getModel() {
     return model;
   }
 
-  public void setModel(Object model) {
+  public void setModel(ASTCDCompilationUnit model) {
     this.model = model;
   }
 
