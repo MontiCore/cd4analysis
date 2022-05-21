@@ -150,7 +150,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
     // Functions specific to CD
     for (ASTCDCompilationUnit cd : asts) {
-      module.append(CD2AlloyGenerator.executeRuleF1(cd)).append(System.lineSeparator());
+      module.append(executeRuleF1(cd)).append(System.lineSeparator());
       module.append(CD2AlloyGenerator.executeRuleF2(cd)).append(System.lineSeparator());
       module.append(CD2AlloyGenerator.executeRuleF3(cd)).append(System.lineSeparator());
       module.append(CD2AlloyGenerator.executeRuleF4(cd)).append(System.lineSeparator());
@@ -236,7 +236,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
         .append(" {")
         .append(System.lineSeparator())
         .append(System.lineSeparator());
-    
+
     if (newSemantics) {
       predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
     }
@@ -329,12 +329,42 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
             .append(CD2AlloyQNameHelper.processQName(superType.getSymbol().getFullName()))
             .append(" in Type_")
             .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
-            .append(".super").append(System.lineSeparator());
+            .append(".super")
+            .append(System.lineSeparator());
       }
     }
 
     return classFunctions.toString();
 
+  }
+
+  /**
+   * Executes the F1 rule, which generates functions returning all atoms of all subclasses of all
+   * classes in class diagram cd.
+   */
+  public static String executeRuleF1(ASTCDCompilationUnit cd) {
+    StringBuilder classFunctions = new StringBuilder();
+
+    // The set of all classes in the class diagram
+    Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
+
+    classFunctions.append("// F1: Function returning all atoms of all subclasses of the class. ")
+        .append(System.lineSeparator());
+    for (ASTCDClass astcdClass : classes) {
+
+      // Output F1
+      // Functions + Names
+      classFunctions.append("fun ")
+          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append("SubsCD")
+          .append(cd.getCDDefinition().getName())
+          .append(": set Obj { ")
+          .append("Type_")
+          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(".inst").append("}").append(System.lineSeparator());
+    }
+
+    return classFunctions.toString();
   }
 
 }
