@@ -27,7 +27,7 @@ public class SyntaxDiff {
 
     } else {
       // AssocName is equal -> no name diff
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -38,7 +38,7 @@ public class SyntaxDiff {
       return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDAssocType(), cd2Asso.getCDAssocType());
     } else {
       // AssocType is equal
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -54,7 +54,7 @@ public class SyntaxDiff {
 
     } else {
       // CDCardinality is equal -> no cardinality diff
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -75,7 +75,7 @@ public class SyntaxDiff {
 
     } else {
       // CDCardinality is equal -> no cardinality diff
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -96,7 +96,7 @@ public class SyntaxDiff {
 
     } else {
       // CDQualifier is equal -> no attribute diff
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -117,7 +117,7 @@ public class SyntaxDiff {
 
     } else {
       // CDRole is equal -> no name diff
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -128,7 +128,7 @@ public class SyntaxDiff {
       return new FieldDiff<>(Op.CHANGE, cd1Asso.getMCQualifiedType().getMCQualifiedName(), cd2Asso.getMCQualifiedType().getMCQualifiedName());
     } else {
       // Name is equal
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -167,7 +167,7 @@ public class SyntaxDiff {
       }
     }
     // No diff, both empty or equal
-    return null;
+    return new FieldDiff<>();
   }
 
   // Modifier
@@ -177,7 +177,7 @@ public class SyntaxDiff {
       return new FieldDiff<>(Op.CHANGE, cd1Asso.getModifier(), cd2Asso.getModifier());
     } else {
       // Modifiers are equal
-      return null;
+      return new FieldDiff<>();
     }
   }
 
@@ -188,7 +188,7 @@ public class SyntaxDiff {
       return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDAssocDir(), cd2Asso.getCDAssocDir());
     } else {
       // Directions are equal
-      return null;
+      return new FieldDiff<>();
     }
   }
 }
