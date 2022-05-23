@@ -13,25 +13,25 @@ import java.util.List;
 public class CDAssociationHelper {
 
   /**
-   * Collect all associations in srcAST that override associations in targetAST
+   * Collect all associations in srcAST that are super-associations of an associations in targetAST
    */
-  public static Collection<ASTCDAssociation> collectOverridingAssociations(
-      ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
+  public static Collection<ASTCDAssociation> collectSuperAssociations(ASTCDCompilationUnit srcAST,
+      ASTCDCompilationUnit targetAST) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
     ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
 
-    List<ASTCDAssociation> overrides = new ArrayList<>();
+    List<ASTCDAssociation> superAssociations = new ArrayList<>();
     for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
-        if (overridesAssociation(srcAssoc, targetAssoc, targetScope)
-            || overridesAssociationInReverse(srcAssoc, targetAssoc, targetScope)) {
-          overrides.add(srcAssoc);
+        if (isSuperAssociation(srcAssoc, targetAssoc, targetScope) || isSuperAssociationInReverse(
+            srcAssoc, targetAssoc, targetScope)) {
+          superAssociations.add(srcAssoc);
         }
       }
     }
 
-    return overrides;
+    return superAssociations;
   }
 
   /**
@@ -55,10 +55,15 @@ public class CDAssociationHelper {
     return conflicts;
   }
 
+  /**
+   * An association srcAssoc is in conflict with another association targetAssoc if their
+   * source-classes and target-role-names match in navigable direction, unless srcAssoc is a
+   * super-association of targetAssoc
+   */
   public static boolean inConflict(ASTCDAssociation srcAssoc, ASTCDAssociation targetAssoc,
       ICD4CodeArtifactScope scope) {
-    if (overridesAssociation(srcAssoc, targetAssoc, scope) || overridesAssociationInReverse(
-        srcAssoc, targetAssoc, scope)) {
+    if (isSuperAssociation(srcAssoc, targetAssoc, scope) || isSuperAssociationInReverse(srcAssoc,
+        targetAssoc, scope)) {
       return false;
     }
 
@@ -98,8 +103,14 @@ public class CDAssociationHelper {
     return false;
   }
 
-  public static boolean overridesAssociation(ASTCDAssociation srcAssoc,
-      ASTCDAssociation targetAssoc, ICD4CodeArtifactScope scope) {
+  /**
+   * An association srcAssoc is a super-association of another association targetAssoc iff
+   * srcClass.targetRoleName = srcClass.targetRoleName, srcAssoc.srcClass != targetAssoc.srcClass,
+   * srcAssoc.srcClass is superclass of targetAssoc.srcClass, and srcAssoc.targetClass is superclass
+   * of targetAssoc.targetClass in navigable direction.
+   */
+  public static boolean isSuperAssociation(ASTCDAssociation srcAssoc, ASTCDAssociation targetAssoc,
+      ICD4CodeArtifactScope scope) {
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft()) {
@@ -120,7 +131,7 @@ public class CDAssociationHelper {
     String srcRight = srcAssoc.getRightQualifiedName().getQName();
     String targetRight = targetAssoc.getRightQualifiedName().getQName();
 
-    if (!CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)){
+    if (!CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)) {
       return false;
     }
 
@@ -142,7 +153,7 @@ public class CDAssociationHelper {
 
   }
 
-  public static boolean overridesAssociationInReverse(ASTCDAssociation srcAssoc,
+  public static boolean isSuperAssociationInReverse(ASTCDAssociation srcAssoc,
       ASTCDAssociation targetAssoc, ICD4CodeArtifactScope scope) {
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && (!targetAssoc.getCDAssocDir()
@@ -164,7 +175,7 @@ public class CDAssociationHelper {
     String srcRight = srcAssoc.getRightQualifiedName().getQName();
     String targetRight = targetAssoc.getRightQualifiedName().getQName();
 
-    if (!CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope)){
+    if (!CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope)) {
       return false;
     }
 
