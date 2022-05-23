@@ -1,15 +1,19 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
+import com.google.common.graph.MutableGraph;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class DifferentGroup {
   private ASTCDCompilationUnit model;
   private DifferentGroupType type;
   public Map<String, DiffClass> diffClassGroup;
-  public Map<String, DiffRelation> diffRelationGroup;
-  public Map<String, DiffSuperClass> diffSuperClassGroup;
+  public Map<String, DiffAssociation> diffAssociationGroup;
+  public MutableGraph<String> inheritanceGraph;
+  public List<Set<String>> referenceGroup;
 
   public enum DifferentGroupType {
     SINGLE_INSTANCE, MULTI_INSTANCE
@@ -19,27 +23,27 @@ public class DifferentGroup {
     DIFF_CLASS, DIFF_ENUM, DIFF_ABSTRACT_CLASS, DIFF_INTERFACE
   }
 
-  public enum DiffRelationKind {
-    DIFF_ASC, DIFF_INHERIT_ASC, DIFF_SUPERCLASS
+  public enum DiffAssociationKind {
+    DIFF_ASC, DIFF_INHERIT_ASC
   }
 
-  public enum DiffRelationNavigation {
-    LEFT_TO_RIGHT, RIGHT_TO_LEFT, MULTI
+  public enum DiffAssociationDirection {
+    LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, UNDEFINED
   }
 
-  public enum DiffMultiplicities {
-    ONE, ZORE_OR_ONE, ONE_TO_MORE, MORE
+  public enum DiffAssociationCardinality {
+    ONE, ZORE_TO_ONE, ONE_TO_MORE, MORE
   }
 
   public DifferentGroup() {
   }
 
-  public DifferentGroup(ASTCDCompilationUnit model, DifferentGroupType type, Map<String, DiffClass> diffClassGroup, Map<String, DiffRelation> diffRelationGroup, Map<String, DiffSuperClass> diffSuperClassGroup) {
+  public DifferentGroup(ASTCDCompilationUnit model, DifferentGroupType type, Map<String, DiffClass> diffClassGroup, Map<String, DiffAssociation> diffAssociationGroup, MutableGraph<String> inheritanceGraph) {
     this.model = model;
     this.type = type;
     this.diffClassGroup = diffClassGroup;
-    this.diffRelationGroup = diffRelationGroup;
-    this.diffSuperClassGroup = diffSuperClassGroup;
+    this.diffAssociationGroup = diffAssociationGroup;
+    this.inheritanceGraph = inheritanceGraph;
   }
 
   public ASTCDCompilationUnit getModel() {
@@ -66,19 +70,19 @@ public class DifferentGroup {
     this.diffClassGroup = diffClassGroup;
   }
 
-  public Map<String, DiffRelation> getDiffRelationGroup() {
-    return diffRelationGroup;
+  public Map<String, DiffAssociation> getDiffAssociationGroup() {
+    return diffAssociationGroup;
   }
 
-  public void setDiffRelationGroup(Map<String, DiffRelation> diffRelationGroup) {
-    this.diffRelationGroup = diffRelationGroup;
+  public void setDiffAssociationGroup(Map<String, DiffAssociation> diffAssociationGroup) {
+    this.diffAssociationGroup = diffAssociationGroup;
   }
 
-  public Map<String, DiffSuperClass> getDiffSuperClassGroup() {
-    return diffSuperClassGroup;
+  public MutableGraph<String> getInheritanceGraph() {
+    return inheritanceGraph;
   }
 
-  public void setDiffSuperClassGroup(Map<String, DiffSuperClass> diffSuperClassGroup) {
-    this.diffSuperClassGroup = diffSuperClassGroup;
+  public void setInheritanceGraph(MutableGraph<String> inheritanceGraph) {
+    this.inheritanceGraph = inheritanceGraph;
   }
 }

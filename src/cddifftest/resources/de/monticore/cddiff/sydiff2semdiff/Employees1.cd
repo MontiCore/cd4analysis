@@ -6,7 +6,7 @@ classdiagram Employees1 {
 	enum Department {Sales, HR;}
 
 	interface Machine {
-	  String id;
+	  String machineId;
 	}
 
 	class Car implements Machine {
@@ -15,11 +15,12 @@ classdiagram Employees1 {
 
 	abstract class Person;
 
+
 	class Employee extends Person {
   	PositionKind kind;
 	}
 
-	class Manager extends Employee {
+	class Manager extends Employee, Car{
   	Department inChargeOf;
 	}
 
@@ -28,5 +29,6 @@ classdiagram Employees1 {
 	  Date startDate;
 	}
 
-	association [1] Person -- Task [1];
+	association [0..1] Person -> Task [1..*];
+	association [0..1] Employee (leads) -> (todo) Task [*];
 }

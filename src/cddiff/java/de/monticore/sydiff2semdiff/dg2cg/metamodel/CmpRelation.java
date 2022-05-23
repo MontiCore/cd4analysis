@@ -1,6 +1,6 @@
 package de.monticore.sydiff2semdiff.dg2cg.metamodel;
 
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffRelation;
+import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
 
 import java.util.Set;
 import java.util.UUID;
@@ -21,12 +21,12 @@ public class CmpRelation {
   public Set<Object> cmpFromRoleName;
   public Set<Object> cmpTomRoleName;
   public Set<Object> cmpResult;
-  public DiffRelation originalDiffRelation;
+  public DiffAssociation originalDiffRelation;
 
   public CmpRelation() {
   }
 
-  public CmpRelation(String name, UUID cmpId, CmpRelationKind cmpKind, boolean cmpDG1, boolean cmpDG2, boolean cmpDiff, CmpRelationCategory cmpCategory, CmpRelationDirection cmpDirection, Set<Object> cmpFrom, Set<Object> cmpTo, CmpMultiplicities cmpFromType, CmpMultiplicities cmpToType, Set<Object> cmpFromRoleName, Set<Object> cmpTomRoleName, Set<Object> cmpResult, DiffRelation originalDiffRelation) {
+  public CmpRelation(String name, UUID cmpId, CmpRelationKind cmpKind, boolean cmpDG1, boolean cmpDG2, boolean cmpDiff, CmpRelationCategory cmpCategory, CmpRelationDirection cmpDirection, Set<Object> cmpFrom, Set<Object> cmpTo, CmpMultiplicities cmpFromType, CmpMultiplicities cmpToType, Set<Object> cmpFromRoleName, Set<Object> cmpTomRoleName, Set<Object> cmpResult, DiffAssociation originalDiffRelation) {
     this.name = name;
     this.cmpId = cmpId;
     this.cmpKind = cmpKind;
@@ -165,11 +165,11 @@ public class CmpRelation {
     this.cmpResult = cmpResult;
   }
 
-  public DiffRelation getOriginalDiffRelation() {
+  public DiffAssociation getOriginalDiffRelation() {
     return originalDiffRelation;
   }
 
-  public void setOriginalDiffRelation(DiffRelation originalDiffRelation) {
+  public void setOriginalDiffRelation(DiffAssociation originalDiffRelation) {
     this.originalDiffRelation = originalDiffRelation;
   }
 
