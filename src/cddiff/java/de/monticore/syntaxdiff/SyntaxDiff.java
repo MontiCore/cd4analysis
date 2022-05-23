@@ -1,134 +1,45 @@
 package de.monticore.syntaxdiff;
 
 import de.monticore.cdassociation._ast.*;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereoValue;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+import de.monticore.ast.ASTNode;
+
+import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class SyntaxDiff {
 
   public enum Op { CHANGE, ADD, DELETE}
 
-  // AssocName
-  public static FieldDiff<Op, String, String> assocNameDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
-    if (cd1Asso.isPresentName() && cd2Asso.isPresentName() && !cd1Asso.getName().equals(cd2Asso.getName())) {
-      // AssocName diff reason: name changed
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getName(), cd2Asso.getName());
-
-    } else if (cd1Asso.isPresentName() && !cd2Asso.isPresentName()) {
-      // AssocName diff reason: name deleted
-      return new FieldDiff<>(Op.DELETE, cd1Asso.getName(), null);
-
-    } else if (!cd1Asso.isPresentName() && cd2Asso.isPresentName()) {
-      // AssocName diff reason: name added
-      return new FieldDiff<>(Op.ADD, null, cd2Asso.getName());
-
+  // Todo: Replace each occurrence fieldDiffOptional()
+  public static  Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> fieldDiffNonOptional(ASTNode cd1Field, ASTNode cd2Field) {
+    if (!cd1Field.deepEquals(cd2Field)) {
+      return Optional.of(new FieldDiff<>(Op.CHANGE, Optional.of(cd1Field), Optional.of(cd2Field)));
     } else {
-      // AssocName is equal -> no name diff
-      return null;
+      return Optional.empty();
     }
   }
 
-  // AssocType
-  public static FieldDiff<Op, ASTCDAssocType, ASTCDAssocType> associationTypeDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
-    if (!cd1Asso.getCDAssocType().deepEquals(cd2Asso.getCDAssocType())) {
-      // AssocType diff reason: (type changed), AssocType must always be present
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDAssocType(), cd2Asso.getCDAssocType());
-    } else {
-      // AssocType is equal
-      return null;
-    }
-  }
+  // Field Diff for all optional fields -> they might be empty, therefore check present
+  public static  Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> fieldDiffOptional(Optional<ASTNode> cd1Field, Optional<ASTNode> cd2Field) {
+    if (cd1Field.isPresent() && cd2Field.isPresent() && !cd1Field.get().deepEquals(cd2Field.get())) {
+      // Diff reason: Value changed
+      return Optional.of( new FieldDiff<>(Op.CHANGE, cd1Field, cd2Field));
 
-  // Ordered
-  public static FieldDiff<Op, ASTCDOrdered, ASTCDOrdered> orderedDiff(ASTCDAssocSide cd1Asso, ASTCDAssocSide cd2Asso) {
-    if (cd1Asso.isPresentCDOrdered() && !cd2Asso.isPresentCDOrdered()) {
-      // CDCardinality diff reason: cardinality deleted
-      return new FieldDiff<>(Op.DELETE, cd1Asso.getCDOrdered(), null);
+    } else if (cd1Field.isPresent() && !cd2Field.isPresent()) {
+      // Diff reason: Value deleted
+      return Optional.of( new FieldDiff<>(Op.DELETE, cd1Field, cd2Field));
 
-    } else if (!cd1Asso.isPresentCDOrdered() && cd2Asso.isPresentCDOrdered()) {
-      // CDCardinality diff reason: cardinality added
-      return new FieldDiff<>(Op.ADD, null, cd2Asso.getCDOrdered());
+    } else if (!cd1Field.isPresent() && cd2Field.isPresent()) {
+      // Diff reason: Value added
+      return Optional.of( new FieldDiff<>(Op.ADD, cd1Field, cd2Field));
 
     } else {
-      // CDCardinality is equal -> no cardinality diff
-      return null;
-    }
-  }
-
-  // CDCardinality
-  public static FieldDiff<Op, ASTCDCardinality, ASTCDCardinality> cardinalityDiff(ASTCDAssocSide cd1Asso, ASTCDAssocSide cd2Asso) {
-    if (cd1Asso.isPresentCDCardinality() && cd2Asso.isPresentCDCardinality()
-      && !cd1Asso.getCDCardinality().deepEquals(cd2Asso.getCDCardinality())) {
-      // CDCardinality diff reason: cardinality changed
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDCardinality(), cd2Asso.getCDCardinality());
-
-    } else if (cd1Asso.isPresentCDCardinality() && !cd2Asso.isPresentCDCardinality()) {
-      // CDCardinality diff reason: cardinality deleted
-      return new FieldDiff<>(Op.DELETE, cd1Asso.getCDCardinality(), null);
-
-    } else if (!cd1Asso.isPresentCDCardinality() && cd2Asso.isPresentCDCardinality()) {
-      // CDCardinality diff reason: cardinality added
-      return new FieldDiff<>(Op.ADD, null, cd2Asso.getCDCardinality());
-
-    } else {
-      // CDCardinality is equal -> no cardinality diff
-      return null;
-    }
-  }
-
-  // CDQualifier
-  public static FieldDiff<Op, ASTCDQualifier, ASTCDQualifier> cdQualifierDiff(ASTCDAssocSide cd1Asso, ASTCDAssocSide cd2Asso) {
-    if (cd1Asso.isPresentCDQualifier() && cd2Asso.isPresentCDQualifier()
-      && !cd1Asso.getCDQualifier().deepEquals(cd2Asso.getCDQualifier())) {
-      // CDQualifier diff reason: attribute changed
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDQualifier(), cd2Asso.getCDQualifier());
-
-    } else if (cd1Asso.isPresentCDQualifier() && !cd2Asso.isPresentCDQualifier()) {
-      // CDQualifier diff reason: attribute deleted
-      return new FieldDiff<>(Op.DELETE, cd1Asso.getCDQualifier(), null);
-
-    } else if (!cd1Asso.isPresentCDQualifier() && cd2Asso.isPresentCDQualifier()) {
-      // CDQualifier diff reason: attribute added
-      return new FieldDiff<>(Op.ADD, null, cd2Asso.getCDQualifier());
-
-    } else {
-      // CDQualifier is equal -> no attribute diff
-      return null;
-    }
-  }
-
-  // CDRole
-  public static FieldDiff<Op, ASTCDRole, ASTCDRole> cdRoleDiff(ASTCDAssocSide cd1Asso, ASTCDAssocSide cd2Asso) {
-    if (cd1Asso.isPresentCDRole() && cd2Asso.isPresentCDRole()
-      && !cd1Asso.getCDRole().deepEquals(cd2Asso.getCDRole())) {
-      // CDRole diff reason: name changed
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDRole(), cd2Asso.getCDRole());
-
-    } else if (cd1Asso.isPresentCDRole() && !cd2Asso.isPresentCDRole()) {
-      // CDRole diff reason: name deleted
-      return new FieldDiff<>(Op.DELETE, cd1Asso.getCDRole(), null);
-
-    } else if (!cd1Asso.isPresentCDRole() && cd2Asso.isPresentCDRole()) {
-      // CDRole diff reason: name added
-      return new FieldDiff<>(Op.ADD, null, cd2Asso.getCDRole());
-
-    } else {
-      // CDRole is equal -> no name diff
-      return null;
-    }
-  }
-
-  // QualifiedName
-  public static FieldDiff<Op, ASTMCQualifiedName, ASTMCQualifiedName> qualifiedNameDiff(ASTCDAssocSide cd1Asso, ASTCDAssocSide cd2Asso) {
-    if (!cd1Asso.getMCQualifiedType().getMCQualifiedName().deepEquals(cd2Asso.getMCQualifiedType().getMCQualifiedName())) {
-      // QName diff reason: (name changed), QName must always be present
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getMCQualifiedType().getMCQualifiedName(), cd2Asso.getMCQualifiedType().getMCQualifiedName());
-    } else {
-      // Name is equal
-      return null;
+      // No Diff reason: is equal
+      return Optional.empty();
     }
   }
 
@@ -170,25 +81,95 @@ public class SyntaxDiff {
     return null;
   }
 
-  // Modifier
-  public static FieldDiff<Op, ASTModifier, ASTModifier> modifierDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
-    if (!cd1Asso.getModifier().deepEquals(cd2Asso.getModifier())) {
-      // Diff: Modifier changed
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getModifier(), cd2Asso.getModifier());
+
+
+
+  public static List<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> assoDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
+
+    List<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> diffs = new ArrayList<>();
+
+    // Todo: Rework Stereotype diff
+    //FieldDiff<SyntaxDiff.Op, ASTStereotype, ASTStereotype> assoStereotype = SyntaxDiff.stereotypeDiff(cd1Asso, cd2Asso);
+    //if (assoStereotype != null) { diffs.add(assoStereotype); }
+
+    // Modifier
+    Optional<ASTNode> cd1Modi = Optional.of(cd1Asso.getModifier());
+    Optional<ASTNode> cd2Modi = Optional.of(cd2Asso.getModifier());
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> assoModifier = fieldDiffOptional(cd1Modi, cd2Modi);
+    assoModifier.ifPresent(diffs::add);
+
+
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> assoType = fieldDiffNonOptional(cd1Asso.getCDAssocType(), cd2Asso.getCDAssocType());
+    assoType.ifPresent(diffs::add);
+
+    // Todo: Asso name is currently just a String, diff can only check and return String: find a usefull solution
+    //FieldDiff<SyntaxDiff.Op, String, String> assoName = assocNameDiff(cd1Asso, cd2Asso);
+    //if (assoName != null) { diffs.add(assoName); }
+
+    List<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> tmpOriginalDir = new ArrayList<>();
+    tmpOriginalDir.addAll(assocSideDiff(cd1Asso.getLeft(), cd2Asso.getLeft()));
+
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> assoDir1 = fieldDiffNonOptional(cd1Asso.getCDAssocDir(), cd2Asso.getCDAssocDir());
+    assoDir1.ifPresent(tmpOriginalDir::add);
+
+    tmpOriginalDir.addAll(assocSideDiff(cd1Asso.getRight(), cd2Asso.getRight()));
+
+
+    List<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> tmpReverseDir = new ArrayList<>();
+    tmpReverseDir.addAll(assocSideDiff(cd1Asso.getLeft(), cd2Asso.getRight()));
+
+    // Todo: Add reversed AssoDir
+    //FieldDiff<SyntaxDiff.Op, ASTCDAssocDir, ASTCDAssocDir> assoDir2 = SyntaxDiff.assocDirDiff(cd1Asso, cd2Asso);
+    //if (assoDir2 != null) { tmpAssoDirection2.add(assoDir2); }
+
+    tmpReverseDir.addAll(assocSideDiff(cd1Asso.getRight(), cd2Asso.getLeft()));
+
+    if (tmpOriginalDir.size() < tmpReverseDir.size()){
+      diffs.addAll(tmpOriginalDir);
     } else {
-      // Modifiers are equal
-      return null;
+      diffs.addAll(tmpReverseDir);
     }
+
+    return diffs;
   }
 
-  // AssocDirection
-  public static FieldDiff<Op, ASTCDAssocDir, ASTCDAssocDir> assocDirDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
-    if (!cd1Asso.getCDAssocDir().deepEquals(cd2Asso.getCDAssocDir())) {
-      // Diff: Directions changed
-      return new FieldDiff<>(Op.CHANGE, cd1Asso.getCDAssocDir(), cd2Asso.getCDAssocDir());
-    } else {
-      // Directions are equal
-      return null;
-    }
+  public static List<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> assocSideDiff(ASTCDAssocSide cd1Side, ASTCDAssocSide cd2Side) {
+    List<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> diffs = new ArrayList<>();
+    // Ordered
+    Optional<ASTNode> cd1Ordered = (cd1Side.isPresentCDOrdered()) ? Optional.of(cd1Side.getCDOrdered()) : Optional.empty();
+    Optional<ASTNode> cd2Ordered = (cd2Side.isPresentCDOrdered()) ? Optional.of(cd2Side.getCDOrdered()) : Optional.empty();
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> assoOrdered = fieldDiffOptional(cd1Ordered, cd2Ordered);
+    assoOrdered.ifPresent(diffs::add);
+
+    // Cardinality
+    Optional<ASTNode> cd1Card = (cd1Side.isPresentCDCardinality()) ? Optional.of(cd1Side.getCDCardinality()) : Optional.empty();
+    Optional<ASTNode> cd2Card = (cd2Side.isPresentCDCardinality()) ? Optional.of(cd2Side.getCDCardinality()) : Optional.empty();
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> cardinality = fieldDiffOptional(cd1Card, cd2Card);
+    cardinality.ifPresent(diffs::add);
+
+    // CDRole
+    Optional<ASTNode> cd1Role = (cd1Side.isPresentCDRole()) ? Optional.of(cd1Side.getCDRole()) : Optional.empty();
+    Optional<ASTNode> cd2Role = (cd2Side.isPresentCDRole()) ? Optional.of(cd2Side.getCDRole()) : Optional.empty();
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> role = fieldDiffOptional(cd1Role, cd2Role);
+    role.ifPresent(diffs::add);
+
+    // CDQualifier
+    Optional<ASTNode> cd1Quali = (cd1Side.isPresentCDQualifier()) ? Optional.of(cd1Side.getCDQualifier()) : Optional.empty();
+    Optional<ASTNode> cd2Quali = (cd2Side.isPresentCDQualifier()) ? Optional.of(cd2Side.getCDQualifier()) : Optional.empty();
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> qualifier = fieldDiffOptional(cd1Quali, cd2Quali);
+    qualifier.ifPresent(diffs::add);
+
+    // QualifiedType is the participant in the association
+    Optional<FieldDiff<Op, Optional<ASTNode>, Optional<ASTNode>>> type = fieldDiffNonOptional(
+                          cd1Side.getMCQualifiedType().getMCQualifiedName()
+                         ,cd2Side.getMCQualifiedType().getMCQualifiedName());
+    type.ifPresent(diffs::add);
+
+
+    // Todo: Add Modifier check
+    //modifier = SyntaxDiff.modifierDiff(cd1Side, cd1Side);
+
+    return diffs;
   }
+
 }
