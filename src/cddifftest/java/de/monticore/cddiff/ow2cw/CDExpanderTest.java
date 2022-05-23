@@ -10,14 +10,14 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.ow2cw.CDModStation;
+import de.monticore.ow2cw.CDExpander;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CDModStationTest extends CDDiffTestBasis {
+public class CDExpanderTest extends CDDiffTestBasis {
 
   @Test
   public void testAddNewSubClass() {
@@ -25,16 +25,16 @@ public class CDModStationTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Machines/Machines2.cd");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
 
-    CDModStation modStation = new CDModStation(machines);
+    CDExpander cdExpander = new CDExpander(machines);
 
     for (ASTCDClass superClass : machines.getCDDefinition().getCDClassesList()) {
       if (superClass.getSymbol().getFullName().equals("future.FlyingCar")) {
-        modStation.addNewSubClass("SpaceCar", superClass);
+        cdExpander.addNewSubClass("SpaceCar", superClass);
       }
     }
     for (ASTCDInterface astcdInterface : machines.getCDDefinition().getCDInterfacesList()) {
       if (astcdInterface.getSymbol().getFullName().equals("UI")) {
-        modStation.addNewSubClass("WeirdUI", astcdInterface);
+        cdExpander.addNewSubClass("WeirdUI", astcdInterface);
       }
     }
 
@@ -58,7 +58,7 @@ public class CDModStationTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Machines/Machines1.cd");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
 
-    CDModStation modStation = new CDModStation(machines);
+    CDExpander cdExpander = new CDExpander(machines);
 
     ASTCDClass car = CD4CodeMill.cDClassBuilder()
         .setModifier(CD4CodeMill.modifierBuilder().build())
@@ -67,8 +67,8 @@ public class CDModStationTest extends CDDiffTestBasis {
         .setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance().createCDInterfaceUsage("UI"))
         .build();
 
-    modStation.addClass2Package(car.deepClone(), "old");
-    modStation.addClass2Package(car.deepClone(), "new");
+    cdExpander.addClass2Package(car.deepClone(), "old");
+    cdExpander.addClass2Package(car.deepClone(), "new");
 
     car = CD4CodeMill.cDClassBuilder()
         .setModifier(CD4CodeMill.modifierBuilder().build())
@@ -77,7 +77,7 @@ public class CDModStationTest extends CDDiffTestBasis {
         .setCDInterfaceUsageAbsent()
         .build();
 
-    modStation.addClass2Package(car.deepClone(), "future");
+    cdExpander.addClass2Package(car.deepClone(), "future");
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
     machines.accept(pprinter.getTraverser());
@@ -104,10 +104,11 @@ public class CDModStationTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines4);
     ICD4CodeArtifactScope scope5 = CD4CodeMill.scopesGenitorDelegator().createFromAST(machines5);
 
-    CDModStation modStation = new CDModStation(machines4);
+    CDExpander cdExpander = new CDExpander(machines4);
 
-    scope5.resolveCDTypeDown("new.Truck").ifPresent(type -> modStation.addClone(type.getAstNode()));
-    scope5.resolveCDTypeDown("ancient.Wheel").ifPresent(type -> modStation.addClone(type.getAstNode()));
+    scope5.resolveCDTypeDown("new.Truck").ifPresent(type -> cdExpander.addClone(type.getAstNode()));
+    scope5.resolveCDTypeDown("ancient.Wheel")
+        .ifPresent(type -> cdExpander.addClone(type.getAstNode()));
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
     machines4.accept(pprinter.getTraverser());
@@ -131,11 +132,11 @@ public class CDModStationTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines3);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines4);
 
-    CDModStation modStation = new CDModStation(machines3);
+    CDExpander cdExpander = new CDExpander(machines3);
 
     for (ASTCDClass astcdClass : machines4.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getSymbol().getFullName().equals("future.FutureThing")) {
-        modStation.addDummyClass(astcdClass);
+        cdExpander.addDummyClass(astcdClass);
       }
     }
 
@@ -160,10 +161,10 @@ public class CDModStationTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture4);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture5);
 
-    CDModStation modStation = new CDModStation(lecture5);
+    CDExpander cdExpander = new CDExpander(lecture5);
 
-    modStation.addMissingTypesAndAttributes(lecture4.getCDDefinition().getCDInterfacesList());
-    modStation.addMissingTypesAndAttributes(lecture4.getCDDefinition().getCDClassesList());
+    cdExpander.addMissingTypesAndAttributes(lecture4.getCDDefinition().getCDInterfacesList());
+    cdExpander.addMissingTypesAndAttributes(lecture4.getCDDefinition().getCDClassesList());
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture5);
 
@@ -189,9 +190,9 @@ public class CDModStationTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp1);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp2);
 
-    CDModStation modStation = new CDModStation(enumComp1);
+    CDExpander cdExpander = new CDExpander(enumComp1);
 
-    modStation.addMissingEnumsAndConstants(enumComp2.getCDDefinition().getCDEnumsList());
+    cdExpander.addMissingEnumsAndConstants(enumComp2.getCDDefinition().getCDEnumsList());
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp1);
 
@@ -223,9 +224,9 @@ public class CDModStationTest extends CDDiffTestBasis {
     lecture.getCDDefinition().removeAllCDElements(originals);
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
-    CDModStation modStation = new CDModStation(lecture);
+    CDExpander cdExpander = new CDExpander(lecture);
 
-    modStation.addMissingAssociations(copies, false);
+    cdExpander.addMissingAssociations(copies, false);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
@@ -247,11 +248,11 @@ public class CDModStationTest extends CDDiffTestBasis {
     ASTCDCompilationUnit employees8 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
-    CDModStation modStation = new CDModStation(employees8);
+    CDExpander cdExpander = new CDExpander(employees8);
 
     scope.resolveCDTypeDown("ins.Employee")
         .ifPresent(
-            type -> Assert.assertEquals("ins", modStation.determinePackageName(type.getAstNode())));
+            type -> Assert.assertEquals("ins", cdExpander.determinePackageName(type.getAstNode())));
   }
 
 }

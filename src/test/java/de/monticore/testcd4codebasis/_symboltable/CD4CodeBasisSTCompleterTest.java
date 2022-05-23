@@ -68,7 +68,7 @@ public class CD4CodeBasisSTCompleterTest {
     CDTypeSymbol cSymbol = cdTypeSymbols.get("C").get(0);
     MethodSymbol method = cSymbol.getSpannedScope().resolveMethodLocally("foo").get();
     assertEquals("foo", method.getName());
-    assertEquals("MyInteger", method.getReturnType().getTypeInfo().getName());
+    assertEquals("MyInteger", method.getType().getTypeInfo().getName());
     assertEquals("bar", method.getParameterList().get(0).getName());
     assertEquals("int", method.getParameterList().get(0).getType().getTypeInfo().getName());
     assertEquals("baz", method.getParameterList().get(1).getName());

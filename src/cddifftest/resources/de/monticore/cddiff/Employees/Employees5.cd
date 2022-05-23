@@ -15,5 +15,7 @@ classdiagram Employees5 {
     Date startDate;
   }
 
+  class Manager;
+
   association [*] Employee (manages) -> (managedBy) Manager [0..1];
 }

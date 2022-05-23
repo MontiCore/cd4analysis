@@ -26,7 +26,7 @@ if (hasProperty('bootstrap')) {
 }
 
 description = "CD4Analysis"
-sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
 buildDir = file("$projectDir/target")
 
 ext {
