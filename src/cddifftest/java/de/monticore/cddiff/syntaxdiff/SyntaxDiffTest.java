@@ -41,7 +41,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
     for (ASTCDClass class1 : first.getCDDefinition().getCDClassesList()){
       for (ASTCDClass class2 : second.getCDDefinition().getCDClassesList()){
-        diffList.add(SyntaxDiff.fieldDiffOptional(Optional.of(class1),Optional.of(class2)));
+        diffList.add(SyntaxDiff.getFieldDiff(Optional.of(class1),Optional.of(class2)));
       }
     }
 
