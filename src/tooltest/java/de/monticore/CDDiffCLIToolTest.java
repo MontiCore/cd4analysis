@@ -220,6 +220,42 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
   }
 
   @Test
+  public void testNoOpenWorldDiff4Abstract2Interface() {
+    // given 2 CDs such that the first is a refinement of the second under an open-world assumption
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface"
+        + "/AbstractPerson.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface"
+        + "/InterfacePerson.cd";
+    final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20", "--open-world"};
+    CD4CodeTool.main(args);
+
+    //no corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    assertNotNull(odFiles);
+
+    List<String> odFilePaths = new LinkedList<>();
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        odFilePaths.add(odFile.toPath().toString());
+      }
+    }
+    assertTrue(odFilePaths.isEmpty());
+
+    // clean-up
+    try {
+      FileUtils.forceDelete(Paths.get(output).toFile());
+    }
+    catch (IOException e) {
+      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+    }
+
+  }
+
+  @Test
   public void testNoOpenWorldDiffWithPackages() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd";
