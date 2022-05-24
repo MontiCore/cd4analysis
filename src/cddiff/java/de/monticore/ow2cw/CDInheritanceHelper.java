@@ -9,12 +9,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
+import java.util.*;
 
 public class CDInheritanceHelper {
 
@@ -50,20 +45,29 @@ public class CDInheritanceHelper {
   }
 
   /**
-   * check if attribute is in superclass/interface
+   * check if attribute is already in superclass/interface
    */
-  public static boolean findInSuper(ASTCDAttribute attribute, ASTCDType cdType,
+  public static boolean isAttributInSuper(ASTCDAttribute attribute, ASTCDType cdType,
       ICD4CodeArtifactScope artifactScope) {
+    return findAttributeInSuper(attribute, cdType, artifactScope).isPresent();
+  }
+
+  /**
+   * find duplicate attribute in superclass/interface
+   */
+  public static Optional<ASTCDAttribute> findAttributeInSuper(ASTCDAttribute attribute,
+      ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
     for (ASTCDType supertype : getAllSuper(cdType, artifactScope)) {
       if (supertype != cdType) {
-        for (ASTCDAttribute attribute2 : supertype.getCDAttributeList()) {
-          if (attribute.getName().equals(attribute2.getName())) {
-            return true;
+        for (ASTCDAttribute duplicate : supertype.getCDAttributeList()) {
+          if (attribute.getName().equals(duplicate.getName()) && attribute.printType()
+              .equals(duplicate.printType())) {
+            return Optional.of(duplicate);
           }
         }
       }
     }
-    return false;
+    return Optional.empty();
   }
 
   /**
@@ -149,17 +153,13 @@ public class CDInheritanceHelper {
     return position;
   }
 
-  protected static <T, E> Stream<T> retainAll(Collection<T> input, Collection<E> otherSet,
-      BiFunction<T, E, Boolean> pred) {
-    return input.stream().filter(z -> otherSet.stream().anyMatch(o -> pred.apply(z, o)));
-  }
-
   public static boolean isSuperOf(String srcName, String targetName, ICD4CodeArtifactScope scope) {
 
     Optional<CDTypeSymbol> optSrc = scope.resolveCDTypeDown(srcName);
     Optional<CDTypeSymbol> targetSrc = scope.resolveCDTypeDown(targetName);
-    if (optSrc.isPresent() && targetSrc.isPresent()){
-      return CDInheritanceHelper.getAllSuper(targetSrc.get().getAstNode(), scope).contains(optSrc.get());
+    if (optSrc.isPresent() && targetSrc.isPresent()) {
+      return CDInheritanceHelper.getAllSuper(targetSrc.get().getAstNode(), scope)
+          .contains(optSrc.get());
     }
     return false;
   }

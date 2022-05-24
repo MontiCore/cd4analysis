@@ -19,17 +19,10 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import net.sourceforge.plantuml.Log;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CDExpander {
   protected ASTCDCompilationUnit originalCD;  // Genutzt, um stereotype zu lesen
-
-  protected ASTCDDefinitionBuilder builder = CD4AnalysisMill.cDDefinitionBuilder();  // TODO:
-  // nutz einen existierenden
-  // Builder
 
   /**
    * @param originalCD Used for checking if adding/etc is allowed
@@ -193,9 +186,9 @@ public class CDExpander {
   /**
    * update direction of underspecified associations to match those of assocs
    */
-  public void updateDir2Match(Collection<ASTCDAssociation> assocs) {
+  public void updateDir2Match(Collection<ASTCDAssociation> assocs, boolean isOpenWorld) {
     CDAssociationHelper.updateDir2Match(assocs,
-        originalCD.getCDDefinition().getCDAssociationsList());
+        originalCD.getCDDefinition().getCDAssociationsList(), isOpenWorld);
   }
 
   public void updateDir4Diff(Collection<ASTCDAssociation> assocs) {
@@ -216,13 +209,6 @@ public class CDExpander {
 
     StringBuilder packageName = new StringBuilder().append(astcdType.getSymbol().getFullName());
     return packageName.delete(start, packageName.length()).toString();
-  }
-
-  public ASTCDCompilationUnit build() {
-    builder.build();
-    // todo ... bauen
-    // todo removeDuplicateAttributes
-    throw new NotImplementedException();
   }
 
   public Collection<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> isolated) {
@@ -328,8 +314,9 @@ public class CDExpander {
   }
 
   public void updateUnspecifiedDir2Default() {
-    for (ASTCDAssociation assoc : originalCD.getCDDefinition().getCDAssociationsList()){
-      if (!(assoc.getCDAssocDir().isDefinitiveNavigableRight() || assoc.getCDAssocDir().isDefinitiveNavigableLeft())){
+    for (ASTCDAssociation assoc : originalCD.getCDDefinition().getCDAssociationsList()) {
+      if (!(assoc.getCDAssocDir().isDefinitiveNavigableRight() || assoc.getCDAssocDir()
+          .isDefinitiveNavigableLeft())) {
         assoc.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
       }
     }

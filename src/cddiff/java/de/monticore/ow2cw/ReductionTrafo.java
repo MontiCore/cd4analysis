@@ -42,7 +42,7 @@ public class ReductionTrafo {
 
     // deal with association directions
     expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
-    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
+    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList(), true);
     expander1.updateUnspecifiedDir2Default();
     expander2.updateUnspecifiedDir2Default();
 
@@ -185,10 +185,8 @@ public class ReductionTrafo {
       for (ASTCDType superType : inheritanceGraph.get(type)) {
         superSet.removeAll(inheritanceGraph.get(superType));
       }
-      inheritanceGraph.put(type,superSet);
+      inheritanceGraph.put(type, superSet);
     }
-
-    //todo: remove inheritance with conflicting attributes (i.e. names match but types do not)
 
     //update targetAST (distinguish between extends vs implements)
     for (ASTCDType type : typeList) {
@@ -200,9 +198,10 @@ public class ReductionTrafo {
             extendsList.add(superType.getSymbol().getFullName());
           }
         }
-        if (extendsList.isEmpty()){
+        if (extendsList.isEmpty()) {
           current.setCDExtendUsageAbsent();
-        } else{
+        }
+        else {
           current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
               .createCDExtendUsage(extendsList.toArray(new String[0])));
         }
@@ -219,15 +218,17 @@ public class ReductionTrafo {
             implementsList.add(superType.getSymbol().getFullName());
           }
         }
-        if (extendsList.isEmpty()){
+        if (extendsList.isEmpty()) {
           current.setCDExtendUsageAbsent();
-        } else{
+        }
+        else {
           current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
               .createCDExtendUsage(extendsList.toArray(new String[0])));
         }
-        if (implementsList.isEmpty()){
+        if (implementsList.isEmpty()) {
           current.setCDInterfaceUsageAbsent();
-        } else{
+        }
+        else {
           current.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
               .createCDInterfaceUsage(implementsList.toArray(new String[0])));
         }
@@ -246,14 +247,14 @@ public class ReductionTrafo {
     ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
     for (ASTCDClass astcdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()) {
-        if (CDInheritanceHelper.findInSuper(attribute, astcdClass, artifactScope)) {
+        if (CDInheritanceHelper.isAttributInSuper(attribute, astcdClass, artifactScope)) {
           astcdClass.removeCDMember(attribute);
         }
       }
     }
     for (ASTCDInterface astcdInterface : ast.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDAttribute attribute : astcdInterface.getCDAttributeList()) {
-        if (CDInheritanceHelper.findInSuper(attribute, astcdInterface, artifactScope)) {
+        if (CDInheritanceHelper.isAttributInSuper(attribute, astcdInterface, artifactScope)) {
           astcdInterface.removeCDMember(attribute);
         }
       }
