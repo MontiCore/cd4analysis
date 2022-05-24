@@ -94,7 +94,7 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
     Optional<CDTypeSymbol> opt = scope1.resolveCDType("Truck");
 
-    opt.ifPresent(cdTypeSymbol -> Assert.assertTrue(CDInheritanceHelper.findInSuper(
+    opt.ifPresent(cdTypeSymbol -> Assert.assertTrue(CDInheritanceHelper.isAttributInSuper(
         CDAttributeFacade.getInstance()
             .createAttribute(CD4CodeMill.modifierBuilder().build(), "String", "licensePlate"),
         cdTypeSymbol.getAstNode(), scope1)));

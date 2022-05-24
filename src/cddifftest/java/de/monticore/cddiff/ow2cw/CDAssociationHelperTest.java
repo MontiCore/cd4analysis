@@ -27,7 +27,7 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
   @Test
   public void testUpdateDir2Match() {
     CDAssociationHelper.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList(),
-        lecture2.getCDDefinition().getCDAssociationsList());
+        lecture2.getCDDefinition().getCDAssociationsList(), true);
 
     Assert.assertTrue(lecture2.getCDDefinition()
         .getCDAssociationsList()

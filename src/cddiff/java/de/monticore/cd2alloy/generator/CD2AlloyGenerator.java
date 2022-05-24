@@ -72,21 +72,21 @@ public class CD2AlloyGenerator {
         + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
 
         // Abstract Signature for Objects
-        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set iType } "
+        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Type } "
         + System.lineSeparator()
         // Abstract Signature for Names
         + "abstract sig FName {} " + System.lineSeparator()
         // Abstract Signature for Values
         + "abstract sig Val {} " + System.lineSeparator()
         // Abstract Signature for EnumValues
-        + "abstract sig EnumVal {} " + System.lineSeparator() + "abstract sig iType {}"
+        + "abstract sig EnumVal {} " + System.lineSeparator() + "abstract sig Type {}"
         + System.lineSeparator() + " " + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
         + System.lineSeparator() + "// ends and for association ends of undirected associations."
-        + System.lineSeparator() + "pred ObjTypes[obj: set Obj, itypes: set iType]{"
-        + System.lineSeparator() + " all o:obj| o.super = itypes}" + System.lineSeparator()
+        + System.lineSeparator() + "pred ObjTypes[obj: set Obj, types: set Type]{"
+        + System.lineSeparator() + " all o:obj| o.super = types}" + System.lineSeparator()
         + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {" + System.lineSeparator()
         + " objs.get[fName] in fType" + System.lineSeparator() + " all o: objs| one o.get[fName] }"
@@ -357,11 +357,11 @@ public class CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  private static String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
+  public static String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
 
     // todo: non-dummy part
     if (!newSemantics) {
-      return ("one sig Type_Dummy extends iType {}") + System.lineSeparator();
+      return ("one sig Type_Dummy extends Type {}") + System.lineSeparator();
     }
 
     StringBuilder commonSigs = new StringBuilder();
@@ -384,7 +384,7 @@ public class CD2AlloyGenerator {
     for (String className : classNameUnion) {
       commonSigs.append("one sig Type_");
       commonSigs.append(className);
-      commonSigs.append(" extends iType {}").append(System.lineSeparator());
+      commonSigs.append(" extends Type {}").append(System.lineSeparator());
     }
 
     return commonSigs.toString();
@@ -470,7 +470,7 @@ public class CD2AlloyGenerator {
    *
    * @return All superclasses of a Class
    */
-  private static Set<ASTCDClass> superClasses(ASTCDClass astcdClass, Set<ASTCDClass> classes) {
+  static Set<ASTCDClass> superClasses(ASTCDClass astcdClass, Set<ASTCDClass> classes) {
     // Initialize variables
     Set<ASTCDClass> superclasses = new HashSet<>();
     LinkedList<ASTCDClass> toProcess = new LinkedList<>();
@@ -554,7 +554,7 @@ public class CD2AlloyGenerator {
    * A helper function to compute the transitive hull of all interfaces implemented by a class
    * superClass in environment classes.
    */
-  private static Set<ASTCDInterface> interfaces(ASTCDClass superClass,
+  static Set<ASTCDInterface> interfaces(ASTCDClass superClass,
       Set<ASTCDInterface> allowedInterfaces) {
     // Initialize variables
     Set<ASTCDInterface> interfaces = new HashSet<>();
@@ -1287,7 +1287,7 @@ public class CD2AlloyGenerator {
           roleName = association.getLeft().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(firstReferenceName, true);
+          roleName = CD2AlloyQNameHelper.partHandler(secondReferenceName, true);
         }
         break;
       }
@@ -1311,12 +1311,12 @@ public class CD2AlloyGenerator {
         cardinality = association.getLeft().getCDCardinality();
         firstReferenceName = association.getRightReferenceName();
         secondReferenceName = association.getLeftReferenceName();
-        rolePresent = association.getLeft().isPresentCDRole();
+        rolePresent = association.getRight().isPresentCDRole();
         if (rolePresent) {
-          roleName = association.getLeft().getCDRole().getName();
+          roleName = association.getRight().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(secondReferenceName, true);
+          roleName = CD2AlloyQNameHelper.partHandler(firstReferenceName, true);
         }
         break;
       }
@@ -1482,41 +1482,8 @@ public class CD2AlloyGenerator {
       cocos.checkAll(ast);
     }
 
-    // TODO: Could be externalised in a preprocessing function
     // Check if two CDs have the same name and rename them, if this is the case
-    int versNr = 0;
-    boolean changed = false;
-    Object[] astsArray = asts.toArray();
-    for (int i = 0; i < astsArray.length; i++) {
-      String currentName = ((ASTCDCompilationUnit) astsArray[i]).getCDDefinition().getName();
-      for (int j = i + 1; j < astsArray.length; j++) {
-        String nextName = ((ASTCDCompilationUnit) astsArray[j]).getCDDefinition().getName();
-
-        // Check if a different module has the same name
-        if (currentName.equals(nextName)) {
-          // Rename modules and repeat test
-          currentName = currentName + "_v" + versNr;
-          ((ASTCDCompilationUnit) astsArray[i]).getCDDefinition().setName(currentName);
-          versNr++;
-          nextName = nextName + "_v" + versNr;
-          ((ASTCDCompilationUnit) astsArray[j]).getCDDefinition().setName(nextName);
-
-          // Reset j to repeat test
-          j = i + 1;
-
-          changed = true;
-        }
-      }
-    }
-
-    // adapt changes in asts if changes appeared
-    if (changed) {
-      asts = new HashSet<>();
-      for (Object o : astsArray) {
-        ASTCDCompilationUnit ast = (ASTCDCompilationUnit) o;
-        asts.add(ast);
-      }
-    }
+    renameASTs(asts);
 
     // Derive the name of the module
     String moduleName = generateModuleName(asts);
@@ -1545,6 +1512,40 @@ public class CD2AlloyGenerator {
     }
 
     return module.toString();
+  }
+
+  public static void renameASTs(Collection<ASTCDCompilationUnit> asts){
+    int versNr = 0;
+    boolean changed = false;
+    Object[] astsArray = asts.toArray();
+    for (int i = 0; i < astsArray.length; i++) {
+      String currentName = ((ASTCDCompilationUnit) astsArray[i]).getCDDefinition().getName();
+      for (int j = i + 1; j < astsArray.length; j++) {
+        String nextName = ((ASTCDCompilationUnit) astsArray[j]).getCDDefinition().getName();
+
+        // Check if a different module has the same name
+        if (currentName.equals(nextName)) {
+          // Rename modules and repeat test
+          currentName = currentName + "_v" + versNr;
+          ((ASTCDCompilationUnit) astsArray[i]).getCDDefinition().setName(currentName);
+          versNr++;
+          nextName = nextName + "_v" + versNr;
+          ((ASTCDCompilationUnit) astsArray[j]).getCDDefinition().setName(nextName);
+
+          // Reset j to repeat test
+          j = i + 1;
+
+          changed = true;
+        }
+      }
+    }
+    if (changed) {
+      asts = new HashSet<>();
+      for (Object o : astsArray) {
+        ASTCDCompilationUnit ast = (ASTCDCompilationUnit) o;
+        asts.add(ast);
+      }
+    }
   }
 
   /**
