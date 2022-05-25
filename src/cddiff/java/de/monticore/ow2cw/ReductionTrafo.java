@@ -153,7 +153,7 @@ public class ReductionTrafo {
       inheritanceGraph.get(type).remove(type);
     }
 
-    // make sure abstract classes and interfaces do not extend (non-abstract) classes
+    // make sure interfaces do not extend classes
     for (ASTCDType type : typeList) {
       if (interfaces.contains(type)) {
         inheritanceGraph.get(type)
@@ -162,6 +162,7 @@ public class ReductionTrafo {
                 .filter(superType -> !(interfaces.contains(superType)))
                 .collect(Collectors.toSet()));
       }
+      /*
       else if (type.getModifier().isAbstract()) {
         inheritanceGraph.get(type)
             .removeAll(inheritanceGraph.get(type)
@@ -170,6 +171,7 @@ public class ReductionTrafo {
                     .isAbstract()))
                 .collect(Collectors.toSet()));
       }
+       */
     }
 
     // remove cyclical inheritance
