@@ -273,7 +273,7 @@ public class CDAssociationHelper {
             if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
               target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
             }
-            else {
+            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
               target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
             }
           }
@@ -285,7 +285,7 @@ public class CDAssociationHelper {
             if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
               target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
             }
-            else {
+            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
               target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
             }
           }

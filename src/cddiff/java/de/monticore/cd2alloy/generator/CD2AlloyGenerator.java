@@ -196,22 +196,39 @@ public class CD2AlloyGenerator {
     // Union of all Role Names
     Set<String> roleNameUnion = new HashSet<>();
     for (ASTCDAssociation association : associationUnion) {
+
+      String leftRole;
+      String rightRole;
+
       if (association.getLeft().isPresentCDRole()) {
-        roleNameUnion.add(association.getLeft().getCDRole().getName());
+        leftRole = association.getLeft().getCDRole().getName();
       }
       else {
         // Preprocess parts of reference names and add them as role name
-        String name = CD2AlloyQNameHelper.partHandler(association.getLeftReferenceName(), true);
-        roleNameUnion.add(name);
+        leftRole = CD2AlloyQNameHelper.partHandler(association.getLeftReferenceName(), true);
       }
       if (association.getRight().isPresentCDRole()) {
-        roleNameUnion.add(association.getRight().getCDRole().getName());
+        rightRole = association.getRight().getCDRole().getName();
       }
       else {
         // Preprocess parts of reference names and add them as role name
-        String name = CD2AlloyQNameHelper.partHandler(association.getRightReferenceName(), true);
-        roleNameUnion.add(name);
+        rightRole = CD2AlloyQNameHelper.partHandler(association.getRightReferenceName(), true);
       }
+
+      if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        roleNameUnion.add(leftRole);
+      }
+
+      if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
+        roleNameUnion.add(rightRole);
+      }
+
+      if (!(association.getCDAssocDir().isDefinitiveNavigableLeft() || association.getCDAssocDir()
+          .isDefinitiveNavigableRight())) {
+        roleNameUnion.add(leftRole);
+        roleNameUnion.add(rightRole);
+      }
+
     }
 
     // Union of all attribute and role names
@@ -1514,7 +1531,7 @@ public class CD2AlloyGenerator {
     return module.toString();
   }
 
-  public static void renameASTs(Collection<ASTCDCompilationUnit> asts){
+  public static void renameASTs(Collection<ASTCDCompilationUnit> asts) {
     int versNr = 0;
     boolean changed = false;
     Object[] astsArray = asts.toArray();

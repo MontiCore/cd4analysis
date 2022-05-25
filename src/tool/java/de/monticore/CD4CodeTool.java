@@ -558,30 +558,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(ast1,ast2);
 
-      CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-      ast1.accept(pprinter.getTraverser());
-      String cd1= pprinter.getPrinter().getContent();
+      saveDiffCDs2File(ast1, ast2, outputPath);
 
-      pprinter = new CD4CodeFullPrettyPrinter();
-      ast2.accept(pprinter.getTraverser());
-      String cd2= pprinter.getPrinter().getContent();
-
-      String suffix1 = "";
-      String suffix2 = "";
-      if (ast1.getCDDefinition().getName().equals(ast2.getCDDefinition().getName())){
-        suffix1 = "_new";
-        suffix2 = "_old";
-      }
-
-      Path outputFile1 = Paths.get(outputPath, ast1.getCDDefinition().getName() + suffix1 + ".cd");
-      Path outputFile2 = Paths.get(outputPath, ast2.getCDDefinition().getName() + suffix2 + ".cd");
-
-      // Write results into a file
-      FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
-      FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
-
+    } else {
+      //handle unspecified associations for closed-world
+      ReductionTrafo.handleAssocDirections(ast1,ast2,false);
     }
-
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize;
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
@@ -615,6 +597,34 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     // generate diff-witnesses in outputPath
     sol.generateSolutionsToPath(Paths.get(outputPath));
+  }
+
+  /**
+   * todo: find more appropriate location for this method
+   */
+  protected void saveDiffCDs2File(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
+      String outputPath) throws IOException {
+    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
+    ast1.accept(pprinter.getTraverser());
+    String cd1= pprinter.getPrinter().getContent();
+
+    pprinter = new CD4CodeFullPrettyPrinter();
+    ast2.accept(pprinter.getTraverser());
+    String cd2= pprinter.getPrinter().getContent();
+
+    String suffix1 = "";
+    String suffix2 = "";
+    if (ast1.getCDDefinition().getName().equals(ast2.getCDDefinition().getName())){
+      suffix1 = "_new";
+      suffix2 = "_old";
+    }
+
+    Path outputFile1 = Paths.get(outputPath, ast1.getCDDefinition().getName() + suffix1 + ".cd");
+    Path outputFile2 = Paths.get(outputPath, ast2.getCDDefinition().getName() + suffix2 + ".cd");
+
+    // Write results into a file
+    FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
+    FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
   /**

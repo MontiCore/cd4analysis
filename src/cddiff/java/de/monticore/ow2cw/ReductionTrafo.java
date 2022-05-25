@@ -33,18 +33,15 @@ public class ReductionTrafo {
     new CD4CodeDirectCompositionTrafo().transform(first);
     new CD4CodeDirectCompositionTrafo().transform(second);
 
+    //handle association directions
+    handleAssocDirections(first, second, true);
+
     // construct symbol tables
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
     CDExpander expander1 = new CDExpander(first);
     CDExpander expander2 = new CDExpander(second);
-
-    // deal with association directions
-    expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
-    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList(), true);
-    expander1.updateUnspecifiedDir2Default();
-    expander2.updateUnspecifiedDir2Default();
 
         /*
     transform first
@@ -118,6 +115,24 @@ public class ReductionTrafo {
 
     expander2.addMissingAssociations(noDummyList, true);
 
+  }
+
+  /**
+   * handles unspecified AssocDir for close-world and open-world diff; open-world also allows to
+   * transform uni-directional AssocDir into bi-directional AssocDir
+   */
+  public static void handleAssocDirections(ASTCDCompilationUnit first, ASTCDCompilationUnit second,
+      boolean isOpenWorld) {
+    CDExpander expander1 = new CDExpander(first);
+    CDExpander expander2 = new CDExpander(second);
+
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
+
+    expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
+    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList(), isOpenWorld);
+    expander1.updateUnspecifiedDir2Default();
+    expander2.updateUnspecifiedDir2Default();
   }
 
   /**
