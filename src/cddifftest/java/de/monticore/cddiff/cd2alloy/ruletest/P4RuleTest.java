@@ -19,13 +19,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class P4RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel(
+  protected ASTCDCompilationUnit m1Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel(
+  protected ASTCDCompilationUnit m2Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
@@ -97,7 +97,7 @@ public class P4RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testP4_MV() {
-    String p4 = CD2AlloyGenerator.executeRuleP4(mvAst);
+    String p4 = CD2AlloyGenerator.getInstance().executeRuleP4(mvAst);
     String[] lines = p4.split(System.getProperty("line.separator"));
 
     // Definition of expected result
@@ -110,7 +110,7 @@ public class P4RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testP4_Employees1() {
-    String p4 = CD2AlloyGenerator.executeRuleP4(m1Ast);
+    String p4 = CD2AlloyGenerator.getInstance().executeRuleP4(m1Ast);
     String[] lines = p4.split(System.getProperty("line.separator"));
 
     // Definition of expected result
@@ -122,7 +122,7 @@ public class P4RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testP4_Employees2() {
-    String p4 = CD2AlloyGenerator.executeRuleP4(m2Ast);
+    String p4 = CD2AlloyGenerator.getInstance().executeRuleP4(m2Ast);
     String[] lines = p4.split(System.getProperty("line.separator"));
 
     // Definition of expected result

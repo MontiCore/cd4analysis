@@ -1,5 +1,6 @@
 package de.monticore.cddiff.cd2alloy;
 
+import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cd2alloy.generator.OpenWorldGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -21,13 +22,13 @@ public class OpenWorldGeneratorTest extends CDDiffTestBasis {
     assertNotNull(ast);
 
     // Create Output Path
-    final Path outputDirectory = Paths.get("target/generated/cddiff-test/");
+    final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy");
 
     // Initialize set of asts
     final Set<ASTCDCompilationUnit> asts = new HashSet<>();
     asts.add(ast);
 
     // Call generator
-    System.out.println(OpenWorldGenerator.generate(asts));
+    OpenWorldGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile(), true);
   }
 }

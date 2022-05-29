@@ -2,6 +2,7 @@
 package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cd._symboltable.BuiltInTypes;
@@ -551,14 +552,15 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
 
     // check if open-to-closed world reduction should be performed
-    boolean ow2cw = cmd.hasOption("open-world");
+    CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
 
-    if(ow2cw){
+    if(cmd.hasOption("open-world")){
       CD4CodeMill.globalScope().clear();
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(ast1,ast2);
 
       saveDiffCDs2File(ast1, ast2, outputPath);
+      semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
 
     } else {
       //handle unspecified associations for closed-world
@@ -582,7 +584,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     // compute semDiff(ast,ast2)
     Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize,
-        ow2cw, outputPath);
+        semantics, outputPath);
 
     // test if solution is present
     if (!optS.isPresent()) {

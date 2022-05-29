@@ -17,13 +17,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class GenericPartTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel(
+  protected ASTCDCompilationUnit m1Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel(
+  protected ASTCDCompilationUnit m2Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
@@ -126,7 +126,7 @@ public class GenericPartTest extends CDDiffTestBasis {
     asts.add(mvAst);
 
     // Generate Module
-    String module = CD2AlloyGenerator.generateModule(asts, false);
+    String module = CD2AlloyGenerator.getInstance().generateModule(asts, false);
 
     // Check if generic part was correctly created
     checkGenericPart(module, genericPart);
@@ -139,7 +139,7 @@ public class GenericPartTest extends CDDiffTestBasis {
     asts.add(m1Ast);
 
     // Generate Module
-    String module = CD2AlloyGenerator.generateModule(asts, false);
+    String module = CD2AlloyGenerator.getInstance().generateModule(asts, false);
 
     // Check if generic part was correctly created
     checkGenericPart(module, genericPart);
@@ -153,7 +153,7 @@ public class GenericPartTest extends CDDiffTestBasis {
     asts.add(m2Ast);
 
     // Generate Module
-    String module = CD2AlloyGenerator.generateModule(asts, false);
+    String module = CD2AlloyGenerator.getInstance().generateModule(asts, false);
 
     // Check if generic part was correctly created
     checkGenericPart(module, genericPart);
