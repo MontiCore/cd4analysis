@@ -134,7 +134,7 @@ The possible options are:
 | `--json` | Writes a "Schema.json" to the output directory. |
 | `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory, unless `--stdin` is used). |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
-| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (via reduction to a closed-world problem). |
+| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff`  (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
 | `-pp,--prettyprint <file>` | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |

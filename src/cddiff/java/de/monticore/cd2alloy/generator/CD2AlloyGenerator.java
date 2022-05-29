@@ -37,7 +37,7 @@ public class CD2AlloyGenerator {
   private final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(
       new IndentPrinter());
 
-  public static CD2AlloyGenerator getInstance(){
+  public static CD2AlloyGenerator getInstance() {
     return new CD2AlloyGenerator();
   }
 
@@ -145,24 +145,23 @@ public class CD2AlloyGenerator {
     StringBuilder commonSigs = new StringBuilder();
 
     // Union of all classes
-    Set<ASTCDClass> classUnion = new HashSet<>();
+    Set<ASTCDType> typeUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDClassesList());
-      classUnion.addAll(classSet);
+      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList()));
+      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
     }
 
-    // Union of all class Names
-    Set<String> classNameUnion = new HashSet<>();
-    for (ASTCDClass astcdClass : classUnion) {
-      classNameUnion.add(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()));
+    // Union of all type names
+    Set<String> typeNameUnion = new HashSet<>();
+    for (ASTCDType astcdType : typeUnion) {
+      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
     }
 
     // Output generation
     commonSigs.append("// U1: Common classes ").append(System.lineSeparator());
-    for (String className : classNameUnion) {
+    for (String typeName : typeNameUnion) {
       commonSigs.append("sig ");
-      commonSigs.append(className);
+      commonSigs.append(typeName);
       commonSigs.append(" extends Obj {}").append(System.lineSeparator());
     }
 
@@ -615,6 +614,27 @@ public class CD2AlloyGenerator {
             toProcess.add(allowedInterface);
             break;
           }
+        }
+      }
+    }
+
+    return interfaces;
+  }
+
+  static Set<ASTCDInterface> interfaces(ASTCDInterface astcdInterface,
+      Set<ASTCDInterface> allowedInterfaces) {
+    Set<ASTCDInterface> interfaces = new HashSet<>();
+    interfaces.add(astcdInterface);
+
+    Set<ASTCDInterface> remaining = new HashSet<>(allowedInterfaces);
+    remaining.remove(astcdInterface);
+
+    for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
+      for (ASTCDInterface superInterface : allowedInterfaces) {
+        if (typeExp.getTypeInfo().getFullName().equals(superInterface.getSymbol().getFullName())) {
+          interfaces.add(superInterface);
+          remaining.remove(superInterface);
+          interfaces.addAll(interfaces(superInterface, remaining));
         }
       }
     }

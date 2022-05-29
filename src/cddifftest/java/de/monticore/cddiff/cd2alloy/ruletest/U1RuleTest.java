@@ -78,6 +78,7 @@ public class U1RuleTest extends CDDiffTestBasis {
     expectedResult.add("sig License extends Obj {}");
     expectedResult.add("sig Driver extends Obj {}");
     expectedResult.add("sig Truck extends Obj {}");
+    expectedResult.add("sig Driveable extends Obj {}");
 
     checkU1(lines, expectedResult);
   }

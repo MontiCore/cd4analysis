@@ -1,6 +1,5 @@
 package de.monticore.cddiff.cd2alloy;
 
-import de.monticore.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cd2alloy.generator.OpenWorldGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -16,17 +15,22 @@ import static org.junit.Assert.assertNotNull;
 public class OpenWorldGeneratorTest extends CDDiffTestBasis {
 
   @Test
-  public void testEmployee(){
-    final ASTCDCompilationUnit ast = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
-    assertNotNull(ast);
+  public void testGenerator(){
+    final ASTCDCompilationUnit ast1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface/AbstractPerson.cd");
+    assertNotNull(ast1);
+
+    final ASTCDCompilationUnit ast2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface/InterfacePerson.cd");
+    assertNotNull(ast2);
 
     // Create Output Path
     final Path outputDirectory = Paths.get("target/generated/cddiff-test/ow-alloy");
 
     // Initialize set of asts
     final Set<ASTCDCompilationUnit> asts = new HashSet<>();
-    asts.add(ast);
+    asts.add(ast1);
+    asts.add(ast2);
 
     // Call generator
     OpenWorldGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile(), true);
