@@ -5,22 +5,21 @@ classdiagram Employees1 {
 
 	enum Department {Sales, HR;}
 
-	interface Machine {
-	  String machineId;
+	interface Area {
+	  String timeZone;
 	}
 
-	class Car implements Machine {
-	  Date factoryDate;
+	class Europe implements Area {
+    String country;
 	}
 
 	abstract class Person;
-
 
 	class Employee extends Person {
   	PositionKind kind;
 	}
 
-	class Manager extends Employee, Car{
+	class Manager extends Employee, Europe{
   	Department inChargeOf;
 	}
 
@@ -29,6 +28,9 @@ classdiagram Employees1 {
 	  Date startDate;
 	}
 
-	association [0..1] Person -> Task [1..*];
-	association [0..1] Employee (leads) -> (todo) Task [*];
+  class LimitedTask extends Task{
+    Date endDate;
+  }
+
+  association [1..*] Employee (assignee) <- (todo) Task [*];
 }

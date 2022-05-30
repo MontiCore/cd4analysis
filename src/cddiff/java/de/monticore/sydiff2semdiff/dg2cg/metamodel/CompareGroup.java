@@ -1,94 +1,110 @@
 package de.monticore.sydiff2semdiff.dg2cg.metamodel;
 
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
-
 import java.util.Deque;
-import java.util.Map;
-
-enum CmpClassKind {
-  CLASS_CMP_KIND, ENUM_CMP_KIND, ABSTRACT_CLASS_CMP_KIND
-}
-
-enum CmpRelationKind {
-  ASC_CMP_KIND, INHERIT_ASC_CMP_KIND
-}
-
-enum CmpClassCategory {
-  ORIGINAL, EDITED, DELETED, ONLY_CLASS_NAME_CHANGED, SUBSET
-}
-
-enum CmpRelationCategory {
-  ORIGINAL, EDITED, DELETED, SUBSET, DIRECTION_TYPE_CHANGED, DIRECTION_DIFFERENT_BUT_SAME_MEANING
-}
-
-enum CmpRelationDirection {
-  SINGLE, MULTI
-}
-
-enum CmpMultiplicities {
-  NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
-}
 
 public class CompareGroup {
-  private DifferentGroup baseDG;
-  private DifferentGroup compareDG;
-  public Map<String, CmpClass> cmpClassGroup;
-  public Map<String, CmpRelation> cmpRelationGroup;
-  public Deque<Object> cmpResultQueue;
+  private DifferentGroup basedDG;
+  private DifferentGroup comparedDG;
+  private Deque<CompClass> compClassResultQueueWithDiff;
+  private Deque<CompAssociation> compAssociationResultQueueWithDiff;
+  private Deque<CompClass> compClassResultQueueWithoutDiff;
+  private Deque<CompAssociation> compAssociationResultQueueWithoutDiff;
 
-  public CompareGroup() {
+  public enum CompClassKind {
+    COMP_CLASS, COMP_ENUM, COMP_ABSTRACT_CLASS, COMP_INTERFACE
   }
 
-  public CompareGroup(DifferentGroup baseDG, DifferentGroup compareDG, Map<String, CmpClass> cmpClassGroup, Map<String, CmpRelation> cmpRelationGroup, Deque<Object> cmpResultQueue) {
-    this.baseDG = baseDG;
-    this.compareDG = compareDG;
-    this.cmpClassGroup = cmpClassGroup;
-    this.cmpRelationGroup = cmpRelationGroup;
-    this.cmpResultQueue = cmpResultQueue;
+  public enum CompAssociationKind {
+    COMP_ASC, COMP_INHERIT_ASC
   }
 
-  public DifferentGroup getBaseDG() {
-    return baseDG;
+  public enum CompClassCategory {
+    ORIGINAL, EDITED, DELETED, SUBSET
   }
 
-  public void setBaseDG(DifferentGroup baseDG) {
-    this.baseDG = baseDG;
+  public enum CompAssociationCategory {
+    ORIGINAL, DELETED,
+    DIRECTION_CHANGED, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET,
+    CARDINALITY_CHANGED, CARDINALITY_SUBSET
   }
 
-  public DifferentGroup getCompareDG() {
-    return compareDG;
+  public enum CompAssociationDirection {
+    NONE, LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT
   }
 
-  public void setCompareDG(DifferentGroup compareDG) {
-    this.compareDG = compareDG;
+  public enum CompAssociationCardinality {
+    NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
   }
 
-  public Map<String, CmpClass> getCmpClassGroup() {
-    return cmpClassGroup;
+  public enum WhichPartDiff {
+    DIRECTION, LEFT_CARDINALITY, RIGHT_CARDINALITY
   }
 
-  public void setCmpClassGroup(Map<String, CmpClass> cmpClassGroup) {
-    this.cmpClassGroup = cmpClassGroup;
+  public CompareGroup(DifferentGroup basedDG, DifferentGroup comparedDG) {
+    this.basedDG = basedDG;
+    this.comparedDG = comparedDG;
   }
 
-  public Map<String, CmpRelation> getCmpRelationGroup() {
-    return cmpRelationGroup;
+  public CompareGroup(DifferentGroup basedDG, DifferentGroup comparedDG, Deque<CompClass> compClassResultQueueWithDiff, Deque<CompAssociation> compAssociationResultQueueWithDiff, Deque<CompClass> compClassResultQueueWithoutDiff, Deque<CompAssociation> compAssociationResultQueueWithoutDiff) {
+    this.basedDG = basedDG;
+    this.comparedDG = comparedDG;
+    this.compClassResultQueueWithDiff = compClassResultQueueWithDiff;
+    this.compAssociationResultQueueWithDiff = compAssociationResultQueueWithDiff;
+    this.compClassResultQueueWithoutDiff = compClassResultQueueWithoutDiff;
+    this.compAssociationResultQueueWithoutDiff = compAssociationResultQueueWithoutDiff;
   }
 
-  public void setCmpRelationGroup(Map<String, CmpRelation> cmpRelationGroup) {
-    this.cmpRelationGroup = cmpRelationGroup;
+  public DifferentGroup getBasedDG() {
+    return basedDG;
   }
 
-  public Deque<Object> getCmpResultQueue() {
-    return cmpResultQueue;
+  public void setBasedDG(DifferentGroup basedDG) {
+    this.basedDG = basedDG;
   }
 
-  public void setCmpResultQueue(Deque<Object> cmpResultQueue) {
-    this.cmpResultQueue = cmpResultQueue;
+  public DifferentGroup getComparedDG() {
+    return comparedDG;
+  }
+
+  public void setComparedDG(DifferentGroup comparedDG) {
+    this.comparedDG = comparedDG;
+  }
+
+  public Deque<CompClass> getCompClassResultQueueWithDiff() {
+    return compClassResultQueueWithDiff;
+  }
+
+  public void setCompClassResultQueueWithDiff(Deque<CompClass> compClassResultQueueWithDiff) {
+    this.compClassResultQueueWithDiff = compClassResultQueueWithDiff;
+  }
+
+  public Deque<CompAssociation> getCompAssociationResultQueueWithDiff() {
+    return compAssociationResultQueueWithDiff;
+  }
+
+  public void setCompAssociationResultQueueWithDiff(Deque<CompAssociation> compAssociationResultQueueWithDiff) {
+    this.compAssociationResultQueueWithDiff = compAssociationResultQueueWithDiff;
+  }
+
+  public Deque<CompClass> getCompClassResultQueueWithoutDiff() {
+    return compClassResultQueueWithoutDiff;
+  }
+
+  public void setCompClassResultQueueWithoutDiff(Deque<CompClass> compClassResultQueueWithoutDiff) {
+    this.compClassResultQueueWithoutDiff = compClassResultQueueWithoutDiff;
+  }
+
+  public Deque<CompAssociation> getCompAssociationResultQueueWithoutDiff() {
+    return compAssociationResultQueueWithoutDiff;
+  }
+
+  public void setCompAssociationResultQueueWithoutDiff(Deque<CompAssociation> compAssociationResultQueueWithoutDiff) {
+    this.compAssociationResultQueueWithoutDiff = compAssociationResultQueueWithoutDiff;
   }
 
   @Override
   public String toString() {
-    return "CompareGroup{" + "baseDG=" + baseDG + ", compareDG=" + compareDG + ", cmpClassGroup=" + cmpClassGroup + ", cmpRelationGroup=" + cmpRelationGroup + ", cmpResultQueue=" + cmpResultQueue + '}';
+    return "CompareGroup{" + "basedDG=" + basedDG + ", comparedDG=" + comparedDG + ", compClassResultQueueWithDiff=" + compClassResultQueueWithDiff + ", compAssociationResultQueueWithDiff=" + compAssociationResultQueueWithDiff + ", compClassResultQueueWithoutDiff=" + compClassResultQueueWithoutDiff + ", compAssociationResultQueueWithoutDiff=" + compAssociationResultQueueWithoutDiff + '}';
   }
 }

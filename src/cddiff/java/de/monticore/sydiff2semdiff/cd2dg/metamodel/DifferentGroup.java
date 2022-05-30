@@ -3,9 +3,7 @@ package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 import com.google.common.graph.MutableGraph;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class DifferentGroup {
   private ASTCDCompilationUnit model;
@@ -13,7 +11,6 @@ public class DifferentGroup {
   public Map<String, DiffClass> diffClassGroup;
   public Map<String, DiffAssociation> diffAssociationGroup;
   public MutableGraph<String> inheritanceGraph;
-  public List<Set<String>> referenceGroup;
 
   public enum DifferentGroupType {
     SINGLE_INSTANCE, MULTI_INSTANCE

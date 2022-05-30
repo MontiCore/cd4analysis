@@ -338,6 +338,7 @@ public class CD2DGGenerator {
     getAllBottomNode().forEach(diffClassName -> waitList.addAll(getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName))));
     waitList.forEach(path -> {
       if (path.size() > 1) {
+        boolean isReferenceSetCreated = false;
         for (int i = 0; i < path.size() - 1; i++) {
           DiffClass parent = diffClassGroup.get(path.get(i));
           DiffClass child = diffClassGroup.get(path.get(i + 1));
@@ -367,6 +368,10 @@ public class CD2DGGenerator {
           String parentOriginalName = parent.getName().split("_")[1];
           String childOriginalName = child.getName().split("_")[1];
           Map<String, DiffAssociation> associationMap = parseMapForFilter(diffAssociationGroup, parentOriginalName);
+//          if (isReferenceSetCreated == false && !associationMap.isEmpty()){
+//
+//            System.out.println("a");
+//          }
           associationMap.forEach((oldName, oldDiffAssociation) -> {
             try {
               String newName = oldName.replace(parentOriginalName, childOriginalName);
