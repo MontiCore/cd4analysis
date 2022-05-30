@@ -350,10 +350,10 @@ public class CD2DGGenerator {
             valueMap.put("type", v.get("type"));
             valueMap.put("kind", "inherited");
             // update enumClassMap
-            if(enumClassMap.containsKey(v.get("type"))){
+            if (enumClassMap.containsKey(v.get("type"))) {
               Set<String> set = enumClassMap.get(v.get("type"));
               set.add(child.getName());
-              enumClassMap.put(v.get("type"),set);
+              enumClassMap.put(v.get("type"), set);
             }
 
             Map<String, Map<String, String>> childAttributes = child.getAttributes();
@@ -362,7 +362,6 @@ public class CD2DGGenerator {
           });
           // update all DiffEnum
           updateDiffEnum();
-
 
           // for association
           String parentOriginalName = parent.getName().split("_")[1];
@@ -382,13 +381,13 @@ public class CD2DGGenerator {
                 DiffAssociation newDiffAssociation = oldDiffAssociation.clone();
                 newDiffAssociation.setName(newName);
                 newDiffAssociation.setDiffKind(DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
-                if(newDiffAssociation.getDiffLeftClass().getName().split("_")[1].contains(parentOriginalName)) {
+                if (newDiffAssociation.getDiffLeftClass().getName().split("_")[1].contains(parentOriginalName)) {
                   newDiffAssociation.setDiffLeftClass(child);
                 }
                 if (newDiffAssociation.getDiffRightClass().getName().split("_")[1].contains(parentOriginalName)) {
                   newDiffAssociation.setDiffRightClass(child);
                 }
-                diffAssociationGroup.put(newName,newDiffAssociation);
+                diffAssociationGroup.put(newName, newDiffAssociation);
               }
             }
             catch (CloneNotSupportedException e) {
@@ -400,16 +399,15 @@ public class CD2DGGenerator {
     });
   }
 
-  public static Map<String, DiffAssociation> parseMapForFilter(Map<String, DiffAssociation> map,String filters) {
+  public static Map<String, DiffAssociation> parseMapForFilter(Map<String, DiffAssociation> map, String filters) {
     if (map == null) {
       return null;
-    } else {
-      map = map.entrySet().stream()
+    }
+    else {
+      map = map.entrySet()
+        .stream()
         .filter((e) -> e.getKey().contains(filters))
-        .collect(Collectors.toMap(
-          (e) -> (String) e.getKey(),
-          (e) -> e.getValue()
-        ));
+        .collect(Collectors.toMap((e) -> (String) e.getKey(), (e) -> e.getValue()));
     }
     return map;
   }
