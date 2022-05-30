@@ -36,7 +36,6 @@ ext {
   testGrammarDir = "src/test/grammars"
   testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
   findbugs_version = "3.0.2"
-  commons_version = "1.7.9"
   guava_version = "25.1-jre"
   antlr_version = "4.7-1"
   plantuml_version = "1.2020.15"

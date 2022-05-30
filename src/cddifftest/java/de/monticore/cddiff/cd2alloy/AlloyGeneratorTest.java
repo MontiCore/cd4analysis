@@ -33,7 +33,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     asts.add(ast);
 
     // Call generator
-    CD2AlloyGenerator.generateModuleToFile(asts, outputDirectory.toFile());
+    CD2AlloyGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile());
   }
 
   @Test
@@ -55,7 +55,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     asts.add(astV2);
 
     // Call generator
-    CD2AlloyGenerator.generateModuleToFile(asts, outputDirectory.toFile());
+    CD2AlloyGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile());
   }
 
   @Test
@@ -77,7 +77,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     asts.add(astV2);
 
     // Call generator
-    CD2AlloyGenerator.generateModuleToFile(asts, outputDirectory.toFile());
+    CD2AlloyGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile());
   }
 
   @Test
@@ -99,7 +99,7 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
     asts.add(astV2);
 
     // Call generator
-    CD2AlloyGenerator.generateModuleToFile(asts, outputDirectory.toFile(), true);
+    CD2AlloyGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile(), true);
   }
 
 }

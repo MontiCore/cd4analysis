@@ -32,17 +32,25 @@ import java.util.*;
  * Entry point for the CD2Alloy generator.
  */
 public class CD2AlloyGenerator {
-  private final static String LOGGER_NAME = CD2AlloyGenerator.class.getName();
+  private final String LOGGER_NAME = CD2AlloyGenerator.class.getName();
 
-  private final static MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(
+  private final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(
       new IndentPrinter());
+
+  public static CD2AlloyGenerator getInstance() {
+    return new CD2AlloyGenerator();
+  }
+
+  protected CD2AlloyGenerator() {
+
+  }
 
   /**
    * Generates the generic part of an alloy module
    *
    * @return String containing all predicates needed to model CDs in Alloy
    */
-  private static String createGenericPart() {
+  protected String createGenericPart() {
 
     // Additional facts to restrict the solution space to usable solutions
     //     genericPart.append("// Restrict names to names that are used for Objects" + System
@@ -133,35 +141,34 @@ public class CD2AlloyGenerator {
         + System.lineSeparator() + "}" + System.lineSeparator() + System.lineSeparator();
   }
 
-  public static String executeRuleU1(Set<ASTCDCompilationUnit> asts) {
+  public String executeRuleU1(Set<ASTCDCompilationUnit> asts) {
     StringBuilder commonSigs = new StringBuilder();
 
     // Union of all classes
-    Set<ASTCDClass> classUnion = new HashSet<>();
+    Set<ASTCDType> typeUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDClassesList());
-      classUnion.addAll(classSet);
+      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList()));
+      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
     }
 
-    // Union of all class Names
-    Set<String> classNameUnion = new HashSet<>();
-    for (ASTCDClass astcdClass : classUnion) {
-      classNameUnion.add(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()));
+    // Union of all type names
+    Set<String> typeNameUnion = new HashSet<>();
+    for (ASTCDType astcdType : typeUnion) {
+      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
     }
 
     // Output generation
     commonSigs.append("// U1: Common classes ").append(System.lineSeparator());
-    for (String className : classNameUnion) {
+    for (String typeName : typeNameUnion) {
       commonSigs.append("sig ");
-      commonSigs.append(className);
+      commonSigs.append(typeName);
       commonSigs.append(" extends Obj {}").append(System.lineSeparator());
     }
 
     return commonSigs.toString();
   }
 
-  public static String executeRuleU2(Set<ASTCDCompilationUnit> asts) {
+  public String executeRuleU2(Set<ASTCDCompilationUnit> asts) {
     StringBuilder commonSigs = new StringBuilder();
 
     // Union of all classes
@@ -196,22 +203,39 @@ public class CD2AlloyGenerator {
     // Union of all Role Names
     Set<String> roleNameUnion = new HashSet<>();
     for (ASTCDAssociation association : associationUnion) {
+
+      String leftRole;
+      String rightRole;
+
       if (association.getLeft().isPresentCDRole()) {
-        roleNameUnion.add(association.getLeft().getCDRole().getName());
+        leftRole = association.getLeft().getCDRole().getName();
       }
       else {
         // Preprocess parts of reference names and add them as role name
-        String name = CD2AlloyQNameHelper.partHandler(association.getLeftReferenceName(), true);
-        roleNameUnion.add(name);
+        leftRole = CD2AlloyQNameHelper.partHandler(association.getLeftReferenceName(), true);
       }
       if (association.getRight().isPresentCDRole()) {
-        roleNameUnion.add(association.getRight().getCDRole().getName());
+        rightRole = association.getRight().getCDRole().getName();
       }
       else {
         // Preprocess parts of reference names and add them as role name
-        String name = CD2AlloyQNameHelper.partHandler(association.getRightReferenceName(), true);
-        roleNameUnion.add(name);
+        rightRole = CD2AlloyQNameHelper.partHandler(association.getRightReferenceName(), true);
       }
+
+      if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
+        roleNameUnion.add(leftRole);
+      }
+
+      if (association.getCDAssocDir().isDefinitiveNavigableRight()) {
+        roleNameUnion.add(rightRole);
+      }
+
+      if (!(association.getCDAssocDir().isDefinitiveNavigableLeft() || association.getCDAssocDir()
+          .isDefinitiveNavigableRight())) {
+        roleNameUnion.add(leftRole);
+        roleNameUnion.add(rightRole);
+      }
+
     }
 
     // Union of all attribute and role names
@@ -231,7 +255,7 @@ public class CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  public static String executeRuleU3(Set<ASTCDCompilationUnit> asts) {
+  public String executeRuleU3(Set<ASTCDCompilationUnit> asts) {
     StringBuilder commonSigs = new StringBuilder();
 
     // Union of all classes
@@ -322,7 +346,7 @@ public class CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  public static String executeRuleU4(Set<ASTCDCompilationUnit> asts) {
+  public String executeRuleU4(Set<ASTCDCompilationUnit> asts) {
     StringBuilder commonSigs = new StringBuilder();
 
     // Union of all Enums
@@ -357,9 +381,8 @@ public class CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  public static String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
+  public String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
 
-    // todo: non-dummy part
     if (!newSemantics) {
       return ("one sig Type_Dummy extends Type {}") + System.lineSeparator();
     }
@@ -394,7 +417,7 @@ public class CD2AlloyGenerator {
   /**
    * A helper function to generate all signatures common to all CDs
    */
-  private static String createCommonSignatures(Set<ASTCDCompilationUnit> asts) {
+  private String createCommonSignatures(Set<ASTCDCompilationUnit> asts) {
 
     return "// ***** Structures common to both CDs ***** " + System.lineSeparator()
         + System.lineSeparator()
@@ -423,7 +446,7 @@ public class CD2AlloyGenerator {
    * Executes the F1 rule, which generates functions returning all atoms of all subclasses of all
    * classes in class diagram cd.
    */
-  public static String executeRuleF1(ASTCDCompilationUnit cd) {
+  public String executeRuleF1(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The set of all classes in the class diagram
@@ -502,7 +525,7 @@ public class CD2AlloyGenerator {
    * Executes the F2 rule, which generates functions returning all atoms of all classes implementing
    * an interface for all interfaces of the class diagram cd.
    */
-  public static String executeRuleF2(ASTCDCompilationUnit cd) {
+  public String executeRuleF2(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The set of all classes in the class diagram
@@ -598,13 +621,34 @@ public class CD2AlloyGenerator {
     return interfaces;
   }
 
+  static Set<ASTCDInterface> interfaces(ASTCDInterface astcdInterface,
+      Set<ASTCDInterface> allowedInterfaces) {
+    Set<ASTCDInterface> interfaces = new HashSet<>();
+    interfaces.add(astcdInterface);
+
+    Set<ASTCDInterface> remaining = new HashSet<>(allowedInterfaces);
+    remaining.remove(astcdInterface);
+
+    for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
+      for (ASTCDInterface superInterface : allowedInterfaces) {
+        if (typeExp.getTypeInfo().getFullName().equals(superInterface.getSymbol().getFullName())) {
+          interfaces.add(superInterface);
+          remaining.remove(superInterface);
+          interfaces.addAll(interfaces(superInterface, remaining));
+        }
+      }
+    }
+
+    return interfaces;
+  }
+
   /**
    * Executes the F3 rule, which creates a function for each enumeration type in the CD cd that
    * returns the enumeration’s possible values.
    *
    * @return String for Alloy Module
    */
-  public static String executeRuleF3(ASTCDCompilationUnit cd) {
+  public String executeRuleF3(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The Definition of the class diagram
@@ -643,7 +687,7 @@ public class CD2AlloyGenerator {
    * Executes the rule F4, which creates a function for every part of a composite
    * whole-part-relation that returns all linked whole/part instance pairs in the Class Diagram cd.
    */
-  public static String executeRuleF4(ASTCDCompilationUnit cd) {
+  public String executeRuleF4(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The CD Definition
@@ -709,7 +753,7 @@ public class CD2AlloyGenerator {
   /**
    * Generates the Functions for Subclassing, Interfaces, Compositions, and Enums
    */
-  private static String createFunctions(ASTCDCompilationUnit cd) {
+  private String createFunctions(ASTCDCompilationUnit cd) {
 
     // Comment for each alloy module
 
@@ -735,7 +779,7 @@ public class CD2AlloyGenerator {
    * Translation rule to translate type names from a CD to corresponding Alloy functions or
    * signatures.
    */
-  private static String executeRuleH1(String type, ASTCDCompilationUnit cd) {
+  private String executeRuleH1(String type, ASTCDCompilationUnit cd) {
     StringBuilder result = new StringBuilder();
 
     // CD Definition
@@ -773,7 +817,7 @@ public class CD2AlloyGenerator {
   /**
    * additional rule for new semantics
    */
-  public static String executeRuleP0(ASTCDCompilationUnit cd) {
+  public String executeRuleP0(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The set of all classes in the class diagram
@@ -815,7 +859,7 @@ public class CD2AlloyGenerator {
    * Rule P1 uses predicate ObjAttrib to declare the attributes of every class in the class diagram
    * cd.
    */
-  public static String executeRuleP1(ASTCDCompilationUnit cd) {
+  public String executeRuleP1(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // Definition of the cd
@@ -852,7 +896,7 @@ public class CD2AlloyGenerator {
    * Application of Rule P2, which restricts the tuples of the get relation to the attributes of the
    * class and to the role names of its partners in associations.
    */
-  public static String executeRuleP2(ASTCDCompilationUnit cd) {
+  public String executeRuleP2(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // Definition of the cd
@@ -965,7 +1009,7 @@ public class CD2AlloyGenerator {
    * Application of Rule P3, which ensures that signatures representing abstract classes have no
    * atoms and that signatures representing singleton classes contain exactly one atom.
    */
-  public static String executeRuleP3(ASTCDCompilationUnit cd) {
+  public String executeRuleP3(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1010,7 +1054,7 @@ public class CD2AlloyGenerator {
    * Application of Rule P4, which restricts all objects in object models of the CD to be instances
    * of the classes of the CD.
    */
-  public static String executeRuleP4(ASTCDCompilationUnit cd) {
+  public String executeRuleP4(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1043,7 +1087,7 @@ public class CD2AlloyGenerator {
   /**
    * Rule A1 constraints the sets of links of bidirectional associations.
    */
-  public static String executeRuleA1(ASTCDCompilationUnit cd) {
+  public String executeRuleA1(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1100,7 +1144,7 @@ public class CD2AlloyGenerator {
   /**
    * Executes Rule A2, which ensures that parts of compositions have at most one whole.
    */
-  public static String executeRuleA2(ASTCDCompilationUnit cd) {
+  public String executeRuleA2(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1134,7 +1178,7 @@ public class CD2AlloyGenerator {
    * bidirectional associations, undirected association, and associations that are navigable from
    * right to left are respected.
    */
-  public static String executeRuleA3(ASTCDCompilationUnit cd) {
+  public String executeRuleA3(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1166,7 +1210,7 @@ public class CD2AlloyGenerator {
    * Executes Rule 4, which ensures the cardinality constraints stated on the right sides of
    * associations, which are navigable from right to left, are respected.
    */
-  public static String executeRuleA4(ASTCDCompilationUnit cd) {
+  public String executeRuleA4(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1193,7 +1237,7 @@ public class CD2AlloyGenerator {
    * bidirectional associations, undirected association, and associations that are navigable from
    * right to left are respected.
    */
-  public static String executeRuleA5(ASTCDCompilationUnit cd) {
+  public String executeRuleA5(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1223,7 +1267,7 @@ public class CD2AlloyGenerator {
    * Executes Rule 6, which ensures the cardinality constraints stated on the left sides of
    * associations that are navigable from left to right are respected.
    */
-  public static String executeRuleA6(ASTCDCompilationUnit cd) {
+  public String executeRuleA6(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
     // CD Definition
@@ -1249,7 +1293,7 @@ public class CD2AlloyGenerator {
   /**
    * private helper method that completes predicate for rules A4 - A6
    */
-  private static StringBuilder appendRemainingRuleA(int ruleID, ASTCDCompilationUnit cd,
+  private StringBuilder appendRemainingRuleA(int ruleID, ASTCDCompilationUnit cd,
       ASTCDAssociation association) {
 
     StringBuilder predicate = new StringBuilder();
@@ -1377,7 +1421,7 @@ public class CD2AlloyGenerator {
   /**
    * Creates all predicates necessary for the description of the semantics
    */
-  public static String createPredicates(ASTCDCompilationUnit cd, boolean newSemantics) {
+  public String createPredicates(ASTCDCompilationUnit cd, boolean newSemantics) {
     StringBuilder predicate = new StringBuilder();
 
     // The definition of the CD
@@ -1395,7 +1439,6 @@ public class CD2AlloyGenerator {
         .append(System.lineSeparator())
         .append(System.lineSeparator());
 
-    // todo: non-dummy part
     if (newSemantics) {
       predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
     }
@@ -1462,7 +1505,7 @@ public class CD2AlloyGenerator {
    *
    * @param asts the set of asts to generate the alloy module for.
    */
-  public static String generate(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
+  public String generate(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
     // Only generate a module for non-empty asts
     if (asts.isEmpty()) {
       return "";
@@ -1514,7 +1557,7 @@ public class CD2AlloyGenerator {
     return module.toString();
   }
 
-  public static void renameASTs(Collection<ASTCDCompilationUnit> asts){
+  public void renameASTs(Collection<ASTCDCompilationUnit> asts) {
     int versNr = 0;
     boolean changed = false;
     Object[] astsArray = asts.toArray();
@@ -1554,7 +1597,7 @@ public class CD2AlloyGenerator {
    * @param module          the string the Alloy module should contain
    * @param outputDirectory the directory to generate the Alloy Module in.
    */
-  public static void saveModule(String module, String moduleName, File outputDirectory) {
+  public void saveModule(String module, String moduleName, File outputDirectory) {
     // Set Output Path
     String outputPath = outputDirectory.toString() + "/" + moduleName.toLowerCase() + "/";
     Path outputFile = Paths.get(outputPath, moduleName + ".als");
@@ -1580,7 +1623,7 @@ public class CD2AlloyGenerator {
    * @param outputDirectory the directory to generate the Alloy Module in.
    * @return Path to the file
    */
-  public static Path saveModulePath(String module, String moduleName, File outputDirectory) {
+  public Path saveModulePath(String module, String moduleName, File outputDirectory) {
     // Set Output Path
     String outputPath = outputDirectory.toString() + "/" + moduleName.toLowerCase() + "/";
     Path outputFile = Paths.get(outputPath, moduleName + ".als");
@@ -1598,7 +1641,7 @@ public class CD2AlloyGenerator {
    * @param outputDirectory the directory to generate the Alloy Module in.
    * @param newSemantics    specify whether to use simple or multi-instance semantics
    */
-  public static void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory,
+  public void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory,
       boolean newSemantics) {
     // Generate the name of the module
     String moduleName = generateModuleName(asts);
@@ -1612,7 +1655,7 @@ public class CD2AlloyGenerator {
     saveModule(module, moduleName, outputDirectory);
   }
 
-  public static void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory) {
+  public void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory) {
     generateModuleToFile(asts, outputDirectory, false);
   }
 
@@ -1621,7 +1664,7 @@ public class CD2AlloyGenerator {
    *
    * @param asts the set of asts to generate the alloy module for.
    */
-  public static String generateModule(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
+  public String generateModule(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
 
     return generate(asts, newSemantics);
   }
@@ -1632,7 +1675,7 @@ public class CD2AlloyGenerator {
    *
    * @param filePaths ?
    */
-  public static String generateModuleFromFiles(Set<String> filePaths) {
+  public String generateModuleFromFiles(Set<String> filePaths) {
     Set<ASTCDCompilationUnit> cds = new HashSet<>();
 
     for (String modelFile : filePaths) {
@@ -1655,7 +1698,7 @@ public class CD2AlloyGenerator {
     return generate(cds, false);
   }
 
-  public static String generateModuleName(Set<ASTCDCompilationUnit> asts) {
+  public String generateModuleName(Set<ASTCDCompilationUnit> asts) {
     // Derive the name of the module
     // Is done here so that we can add different checks before the generation in
     // the future

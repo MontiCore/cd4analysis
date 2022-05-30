@@ -269,7 +269,7 @@ public class CDToolOptions {
     options.addOption(Option.builder()
       .longOpt("diffsize")
       .hasArg()
-      .type(int.class)
+      .type(Integer.class)
       .argName("int")
       .numberOfArgs(1)
       .desc("Maximum number of objects in witnesses when comparing the semantic diff with "
@@ -280,7 +280,7 @@ public class CDToolOptions {
     options.addOption(Option.builder()
       .longOpt("difflimit")
       .hasArg()
-      .type(String.class)
+      .type(Integer.class)
       .argName("int")
       .optionalArg(true)
       .numberOfArgs(1)
@@ -290,9 +290,13 @@ public class CDToolOptions {
 
     options.addOption(Option.builder()
         .longOpt("open-world")
-        .desc(
-            "Compute the multi-instance open-world difference of 2 class diagrams when using "
-                + "`--semdiff` (via reduction to a closed-world problem).")
+        .argName("method")
+        .type(String.class)
+        .optionalArg(true)
+        .numberOfArgs(1)
+        .desc("Compute the multi-instance open-world difference of 2 class diagrams when using "
+            + "`--semdiff` (optional). The method is either `reduction-based` or "
+            + "`alloy-based` (default is: `reduction-based`).")
         .build());
   }
 

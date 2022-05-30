@@ -3,6 +3,7 @@ package de.monticore.ow2cw;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
@@ -79,25 +80,25 @@ public class CDAssociationHelper {
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableRight() && CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)
         && CDInheritanceHelper.isSuperOf(targetLeft, srcLeft, scope)) {
-      return matchRightRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
     }
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft() && CDInheritanceHelper.isSuperOf(srcRight, targetRight, scope)
         && CDInheritanceHelper.isSuperOf(targetRight, srcRight, scope)) {
-      return matchLeftRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
     }
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft() && CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope)
         && CDInheritanceHelper.isSuperOf(targetRight, srcLeft, scope)) {
-      return matchRight2LeftRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
     }
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableRight() && CDInheritanceHelper.isSuperOf(srcRight, targetLeft, scope)
         && CDInheritanceHelper.isSuperOf(targetLeft, srcRight, scope)) {
-      return matchLeft2RightRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
     }
 
     return false;
@@ -141,15 +142,16 @@ public class CDAssociationHelper {
 
     if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft()) {
-      return matchRightRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
     }
 
     if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableRight()) {
-      return matchLeftRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
     }
 
-    return matchLeftRoleNames(srcAssoc, targetAssoc) && matchRightRoleNames(srcAssoc, targetAssoc);
+    return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft()) && matchRoleNames(
+        srcAssoc.getRight(), targetAssoc.getRight());
 
   }
 
@@ -185,16 +187,16 @@ public class CDAssociationHelper {
 
     if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableRight()) {
-      return matchRight2LeftRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
     }
 
     if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft()) {
-      return matchLeft2RightRoleNames(srcAssoc, targetAssoc);
+      return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
     }
 
-    return matchLeft2RightRoleNames(srcAssoc, targetAssoc) && matchRight2LeftRoleNames(srcAssoc,
-        targetAssoc);
+    return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight()) && matchRoleNames(
+        srcAssoc.getRight(), targetAssoc.getLeft());
 
   }
 
@@ -215,14 +217,15 @@ public class CDAssociationHelper {
 
   /**
    * update directions of underspecified associations in targets to match those in sources Open
-   * World allows specification: unspecified -> uni-directional -> bi-directional
+   * World allows specification: unspecified -> uni-directional -> bi-directional Closed World only
+   * allows: unspecified -> uni-directional / bi-directional
    */
   public static void updateDir2Match(Collection<ASTCDAssociation> sources,
-      Collection<ASTCDAssociation> targets) {
+      Collection<ASTCDAssociation> targets, boolean isOpenWorld) {
     for (ASTCDAssociation src : sources) {
       for (ASTCDAssociation target : targets) {
         if (strictMatch(src, target)) {
-          if ((!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
+          if (isOpenWorld && (!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
               .isBidirectional()) {
             target.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
             break;
@@ -234,7 +237,7 @@ public class CDAssociationHelper {
           break;
         }
         if (strictReverseMatch(src, target)) {
-          if ((!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
+          if (isOpenWorld && (!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
               .isBidirectional()) {
             target.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
             break;
@@ -270,7 +273,7 @@ public class CDAssociationHelper {
             if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
               target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
             }
-            else {
+            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
               target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
             }
           }
@@ -282,7 +285,7 @@ public class CDAssociationHelper {
             if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
               target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
             }
-            else {
+            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
               target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
             }
           }
@@ -298,7 +301,7 @@ public class CDAssociationHelper {
       if (assoc1.getLeftQualifiedName()
           .getQName()
           .equals(assoc2.getLeftQualifiedName().getQName())) {
-        return matchRightRoleNames(assoc1, assoc2);
+        return matchRoleNames(assoc1.getRight(), assoc2.getRight());
       }
     }
 
@@ -307,7 +310,7 @@ public class CDAssociationHelper {
       if (assoc1.getRightQualifiedName()
           .getQName()
           .equals(assoc2.getRightQualifiedName().getQName())) {
-        return matchLeftRoleNames(assoc1, assoc2);
+        return matchRoleNames(assoc1.getLeft(), assoc2.getLeft());
       }
     }
 
@@ -320,7 +323,7 @@ public class CDAssociationHelper {
       if (assoc1.getLeftQualifiedName()
           .getQName()
           .equals(assoc2.getRightQualifiedName().getQName())) {
-        return matchRight2LeftRoleNames(assoc1, assoc2);
+        return matchRoleNames(assoc1.getRight(), assoc2.getLeft());
       }
     }
 
@@ -329,7 +332,7 @@ public class CDAssociationHelper {
       if (assoc1.getRightQualifiedName()
           .getQName()
           .equals(assoc2.getLeftQualifiedName().getQName())) {
-        return matchLeft2RightRoleNames(assoc1, assoc2);
+        return matchRoleNames(assoc1.getLeft(), assoc2.getRight());
       }
     }
 
@@ -351,7 +354,8 @@ public class CDAssociationHelper {
       return false;
     }
 
-    return matchLeftRoleNames(assoc1, assoc2) && matchRightRoleNames(assoc1, assoc2);
+    return matchRoleNames(assoc1.getLeft(), assoc2.getLeft()) && matchRoleNames(assoc1.getRight(),
+        assoc2.getRight());
   }
 
   public static boolean strictReverseMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
@@ -369,94 +373,27 @@ public class CDAssociationHelper {
       return false;
     }
 
-    return matchLeft2RightRoleNames(assoc1, assoc2) && matchRight2LeftRoleNames(assoc1, assoc2);
+    return matchRoleNames(assoc1.getLeft(), assoc2.getRight()) && matchRoleNames(assoc1.getRight(),
+        assoc2.getLeft());
   }
 
-  public static boolean matchLeftRoleNames(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+  public static boolean matchRoleNames(ASTCDAssocSide side1, ASTCDAssocSide side2) {
     String roleName1;
     String roleName2;
 
     // check left role names
-    if (assoc1.getLeft().isPresentCDRole()) {
-      roleName1 = assoc1.getLeft().getCDRole().getName();
+    if (side1.isPresentCDRole()) {
+      roleName1 = side1.getCDRole().getName();
     }
     else {
-      roleName1 = assoc1.getLeftQualifiedName().getQName().toLowerCase();
+      roleName1 = side1.getMCQualifiedType().getMCQualifiedName().getQName().toLowerCase();
     }
 
-    if (assoc2.getLeft().isPresentCDRole()) {
-      roleName2 = assoc2.getLeft().getCDRole().getName();
+    if (side2.isPresentCDRole()) {
+      roleName2 = side2.getCDRole().getName();
     }
     else {
-      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();
-    }
-
-    return roleName1.equals(roleName2);
-  }
-
-  public static boolean matchRightRoleNames(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    String roleName1;
-    String roleName2;
-
-    // check right role names
-    if (assoc1.getRight().isPresentCDRole()) {
-      roleName1 = assoc1.getRight().getCDRole().getName();
-    }
-    else {
-      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();
-    }
-
-    if (assoc2.getRight().isPresentCDRole()) {
-      roleName2 = assoc2.getRight().getCDRole().getName();
-    }
-    else {
-      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();
-    }
-
-    return roleName1.equals(roleName2);
-  }
-
-  private static boolean matchLeft2RightRoleNames(ASTCDAssociation assoc1,
-      ASTCDAssociation assoc2) {
-    String roleName1;
-    String roleName2;
-
-    // check left role names
-    if (assoc1.getLeft().isPresentCDRole()) {
-      roleName1 = assoc1.getLeft().getCDRole().getName();
-    }
-    else {
-      roleName1 = assoc1.getLeftQualifiedName().getQName().toLowerCase();
-    }
-
-    if (assoc2.getRight().isPresentCDRole()) {
-      roleName2 = assoc2.getRight().getCDRole().getName();
-    }
-    else {
-      roleName2 = assoc2.getRightQualifiedName().getQName().toLowerCase();
-    }
-
-    return roleName1.equals(roleName2);
-  }
-
-  private static boolean matchRight2LeftRoleNames(ASTCDAssociation assoc1,
-      ASTCDAssociation assoc2) {
-    String roleName1;
-    String roleName2;
-
-    // check right role names
-    if (assoc1.getRight().isPresentCDRole()) {
-      roleName1 = assoc1.getRight().getCDRole().getName();
-    }
-    else {
-      roleName1 = assoc1.getRightQualifiedName().getQName().toLowerCase();
-    }
-
-    if (assoc2.getLeft().isPresentCDRole()) {
-      roleName2 = assoc2.getLeft().getCDRole().getName();
-    }
-    else {
-      roleName2 = assoc2.getLeftQualifiedName().getQName().toLowerCase();
+      roleName2 = side2.getMCQualifiedType().getMCQualifiedName().getQName().toLowerCase();
     }
 
     return roleName1.equals(roleName2);

@@ -18,13 +18,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class A1RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel(
+  protected ASTCDCompilationUnit m1Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel(
+  protected ASTCDCompilationUnit m2Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
@@ -63,7 +63,7 @@ public class A1RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testA1_MV() {
-    String a = CD2AlloyGenerator.executeRuleA1(mvAst);
+    String a = CD2AlloyGenerator.getInstance().executeRuleA1(mvAst);
     String[] lines = a.split(System.getProperty("line.separator"));
 
     //    System.out.println(a);
@@ -80,7 +80,7 @@ public class A1RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF1_Employees1() {
-    String a = CD2AlloyGenerator.executeRuleA1(m1Ast);
+    String a = CD2AlloyGenerator.getInstance().executeRuleA1(m1Ast);
     String[] lines = a.split(System.getProperty("line.separator"));
 
     //    System.out.println(a);
@@ -94,7 +94,7 @@ public class A1RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testA1_Employees2() {
-    String a = CD2AlloyGenerator.executeRuleA1(m2Ast);
+    String a = CD2AlloyGenerator.getInstance().executeRuleA1(m2Ast);
     String[] lines = a.split(System.getProperty("line.separator"));
 
     //    System.out.println(a);

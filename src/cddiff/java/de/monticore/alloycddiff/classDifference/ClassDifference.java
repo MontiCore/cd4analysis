@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.alloycddiff.classDifference;
 
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.alloycddiff.alloyGenerator.DiffModuleGenerator;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffRunner;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
@@ -22,11 +23,11 @@ public class ClassDifference {
 
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2, int k) {
-    return cddiff(cd1, cd2, k, false, "target/generated/cddiff-test/");
+    return cddiff(cd1, cd2, k, CDSemantics.SIMPLE_CLOSED_WORLD, "target/generated/cddiff-test/");
   }
 
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
-      ASTCDCompilationUnit cd2, int k, boolean newSemantics, String outputPathName) {
+      ASTCDCompilationUnit cd2, int k, CDSemantics semantics, String outputPathName) {
     // Initialize result
     Optional<AlloyDiffSolution> result = Optional.empty();
 
@@ -35,7 +36,7 @@ public class ClassDifference {
         cd1.getCDDefinition().getName() + "_" + cd2.getCDDefinition().getName());
 
     // Generate the module
-    Path moduleFile = DiffModuleGenerator.generateDiffPredicateToFile(cd1, cd2, k, newSemantics,
+    Path moduleFile = DiffModuleGenerator.generateDiffPredicateToFile(cd1, cd2, k, semantics,
         outputDirectory.toFile());
 
     // Run alloy on module

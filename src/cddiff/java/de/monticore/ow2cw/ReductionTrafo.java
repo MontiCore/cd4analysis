@@ -33,18 +33,15 @@ public class ReductionTrafo {
     new CD4CodeDirectCompositionTrafo().transform(first);
     new CD4CodeDirectCompositionTrafo().transform(second);
 
+    //handle association directions
+    handleAssocDirections(first, second, true);
+
     // construct symbol tables
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
     CDExpander expander1 = new CDExpander(first);
     CDExpander expander2 = new CDExpander(second);
-
-    // deal with association directions
-    expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
-    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
-    expander1.updateUnspecifiedDir2Default();
-    expander2.updateUnspecifiedDir2Default();
 
         /*
     transform first
@@ -121,6 +118,24 @@ public class ReductionTrafo {
   }
 
   /**
+   * handles unspecified AssocDir for close-world and open-world diff; open-world also allows to
+   * transform uni-directional AssocDir into bi-directional AssocDir
+   */
+  public static void handleAssocDirections(ASTCDCompilationUnit first, ASTCDCompilationUnit second,
+      boolean isOpenWorld) {
+    CDExpander expander1 = new CDExpander(first);
+    CDExpander expander2 = new CDExpander(second);
+
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
+
+    expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
+    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList(), isOpenWorld);
+    expander1.updateUnspecifiedDir2Default();
+    expander2.updateUnspecifiedDir2Default();
+  }
+
+  /**
    * add each inheritance-relations exclusive to srcCD to targetCD unless it causes cyclical
    * inheritance
    */
@@ -185,10 +200,8 @@ public class ReductionTrafo {
       for (ASTCDType superType : inheritanceGraph.get(type)) {
         superSet.removeAll(inheritanceGraph.get(superType));
       }
-      inheritanceGraph.put(type,superSet);
+      inheritanceGraph.put(type, superSet);
     }
-
-    //todo: remove inheritance with conflicting attributes (i.e. names match but types do not)
 
     //update targetAST (distinguish between extends vs implements)
     for (ASTCDType type : typeList) {
@@ -200,9 +213,10 @@ public class ReductionTrafo {
             extendsList.add(superType.getSymbol().getFullName());
           }
         }
-        if (extendsList.isEmpty()){
+        if (extendsList.isEmpty()) {
           current.setCDExtendUsageAbsent();
-        } else{
+        }
+        else {
           current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
               .createCDExtendUsage(extendsList.toArray(new String[0])));
         }
@@ -219,15 +233,17 @@ public class ReductionTrafo {
             implementsList.add(superType.getSymbol().getFullName());
           }
         }
-        if (extendsList.isEmpty()){
+        if (extendsList.isEmpty()) {
           current.setCDExtendUsageAbsent();
-        } else{
+        }
+        else {
           current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
               .createCDExtendUsage(extendsList.toArray(new String[0])));
         }
-        if (implementsList.isEmpty()){
+        if (implementsList.isEmpty()) {
           current.setCDInterfaceUsageAbsent();
-        } else{
+        }
+        else {
           current.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
               .createCDInterfaceUsage(implementsList.toArray(new String[0])));
         }
@@ -246,14 +262,14 @@ public class ReductionTrafo {
     ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
     for (ASTCDClass astcdClass : ast.getCDDefinition().getCDClassesList()) {
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()) {
-        if (CDInheritanceHelper.findInSuper(attribute, astcdClass, artifactScope)) {
+        if (CDInheritanceHelper.isAttributInSuper(attribute, astcdClass, artifactScope)) {
           astcdClass.removeCDMember(attribute);
         }
       }
     }
     for (ASTCDInterface astcdInterface : ast.getCDDefinition().getCDInterfacesList()) {
       for (ASTCDAttribute attribute : astcdInterface.getCDAttributeList()) {
-        if (CDInheritanceHelper.findInSuper(attribute, astcdInterface, artifactScope)) {
+        if (CDInheritanceHelper.isAttributInSuper(attribute, astcdInterface, artifactScope)) {
           astcdInterface.removeCDMember(attribute);
         }
       }
