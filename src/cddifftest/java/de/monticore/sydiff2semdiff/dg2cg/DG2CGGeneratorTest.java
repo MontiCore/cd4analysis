@@ -158,7 +158,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
   /**
    * Test for Direction
    * CD1: [*] A <- B [*]
-   * CD2: [*] B <- A [*]
+   * CD2: [*] A <- B [*]
    */
   @Test
   public void testAssociation4DirectionOriginal() {

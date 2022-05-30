@@ -8,16 +8,16 @@ import java.util.Set;
 import java.util.UUID;
 
 public class CompClass {
-  private UUID compId;
-  private String name;
-  private CompareGroup.CompClassKind compKind;
-  private boolean isInBasedDG;
-  private boolean isInComparedDG;
-  private boolean isContentDiff;
-  private CompareGroup.CompClassCategory compCategory;
-  private Map<String, String> compAttributesResult;
-  private List<String> whichAttributesDiff;
-  private DiffClass originalDiffClass;
+  protected UUID compId;
+  protected String name;
+  protected CompareGroup.CompClassKind compKind;
+  protected boolean isInBasedDG;
+  protected boolean isInComparedDG;
+  protected boolean isContentDiff;
+  protected CompareGroup.CompClassCategory compCategory;
+  protected Map<String, String> compAttributesResult;
+  protected List<String> whichAttributesDiff;
+  protected DiffClass originalDiffClass;
 
   public CompClass() {
   }

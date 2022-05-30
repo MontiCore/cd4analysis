@@ -1,54 +1,48 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.distinguishASTCDTypeHelper;
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.getDiffClassKindStrHelper;
+
 public class DiffClass implements Cloneable{
-  public String name;
-  public DifferentGroup.DiffClassKind diffKind;
-  public Set<String> diffClassName;
-  public Set<String> diffLink4EnumClass;
-  public List<String> diffParents;
-  public Map<String, Map<String, String>> attributes;
-  public ASTCDType originalElement;
+  protected final ASTCDType originalElement;
+  protected ASTCDType editedElement;
 
-  public DiffClass() {
-  }
+  protected Map<String, Map<String, String>> attributes = new HashMap<>();
+  protected Set<String> diffLink4EnumClass = new HashSet<>();
 
-  public DiffClass(String name, DifferentGroup.DiffClassKind diffKind, Set<String> diffClassName, Set<String> diffLink4EnumClass, List<String> diffParents, Map<String, Map<String, String>> attributes, ASTCDType originalElement) {
-    this.name = name;
-    this.diffKind = diffKind;
-    this.diffClassName = diffClassName;
-    this.diffLink4EnumClass = diffLink4EnumClass;
-    this.diffParents = diffParents;
-    this.attributes = attributes;
+  public DiffClass(ASTCDType originalElement) {
     this.originalElement = originalElement;
+    this.editedElement = originalElement.deepClone();
+
+    if (originalElement.getClass().equals(ASTCDEnum.class)) {
+      Map<String, Map<String, String>> attributesMap = new HashMap<>();
+      for (ASTCDEnumConstant astcdEnumConstant : ((ASTCDEnum) originalElement).getCDEnumConstantList()) {
+        attributesMap.put(astcdEnumConstant.getName(), null);
+      }
+      this.attributes = attributesMap;
+    }
   }
 
   public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+    return getDiffClassKindStrHelper(getDiffKind()) + "_" + this.originalElement.getName();
   }
 
   public DifferentGroup.DiffClassKind getDiffKind() {
-    return diffKind;
+    return distinguishASTCDTypeHelper(originalElement);
   }
 
-  public void setDiffKind(DifferentGroup.DiffClassKind diffKind) {
-    this.diffKind = diffKind;
-  }
-
-  public Set<String> getDiffClassName() {
-    return diffClassName;
-  }
-
-  public void setDiffClassName(Set<String> diffClassName) {
-    this.diffClassName = diffClassName;
+  public String getOriginalClassName() {
+    return this.originalElement.getName();
   }
 
   public Set<String> getDiffLink4EnumClass() {
@@ -59,28 +53,37 @@ public class DiffClass implements Cloneable{
     this.diffLink4EnumClass = diffLink4EnumClass;
   }
 
-  public List<String> getDiffParents() {
-    return diffParents;
-  }
-
-  public void setDiffParents(List<String> diffParents) {
-    this.diffParents = diffParents;
-  }
-
   public Map<String, Map<String, String>> getAttributes() {
     return attributes;
   }
 
-  public void setAttributes(Map<String, Map<String, String>> attributes) {
-    this.attributes = attributes;
+  public Map<String, String> getAttributeByASTCDAttribute(ASTCDAttribute astcdAttribute) {
+    return attributes.get(astcdAttribute.getName());
+  }
+
+  public void addAttribute(ASTCDAttribute astcdAttribute, boolean isEnumType, boolean isInherited) {
+    if (!this.editedElement.getCDAttributeList()
+      .stream()
+      .anyMatch(e -> e.getName().equals(astcdAttribute.getName())
+        && e.printType().equals(astcdAttribute.printType()))) {
+      this.editedElement.addCDMember(astcdAttribute);
+    }
+
+    Map<String, String> valueMap = new HashMap<>();
+    String type = isEnumType ? "DiffEnum_" + astcdAttribute.printType() : astcdAttribute.printType();
+    String kind = isInherited ? "inherited" : "original";
+    valueMap.put("type", type);
+    valueMap.put("kind", kind);
+
+    this.attributes.put(astcdAttribute.getName(), valueMap);
   }
 
   public ASTCDType getOriginalElement() {
     return originalElement;
   }
 
-  public void setOriginalElement(ASTCDType originalElement) {
-    this.originalElement = originalElement;
+  public ASTCDType getEditedElement() {
+    return editedElement;
   }
 
   @Override

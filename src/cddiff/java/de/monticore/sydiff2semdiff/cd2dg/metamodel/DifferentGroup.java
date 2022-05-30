@@ -3,14 +3,17 @@ package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 import com.google.common.graph.MutableGraph;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DifferentGroup {
-  private ASTCDCompilationUnit model;
-  private DifferentGroupType type;
-  public Map<String, DiffClass> diffClassGroup;
-  public Map<String, DiffAssociation> diffAssociationGroup;
-  public MutableGraph<String> inheritanceGraph;
+  protected ASTCDCompilationUnit model;
+  protected DifferentGroupType type;
+  protected Map<String, DiffClass> diffClassGroup;
+  protected Map<String, DiffAssociation> diffAssociationGroup;
+  protected List<DiffRefSetAssociation> refSetAssociationList = new ArrayList<>();
+  protected MutableGraph<String> inheritanceGraph;
 
   public enum DifferentGroupType {
     SINGLE_INSTANCE, MULTI_INSTANCE
@@ -33,14 +36,6 @@ public class DifferentGroup {
   }
 
   public DifferentGroup() {
-  }
-
-  public DifferentGroup(ASTCDCompilationUnit model, DifferentGroupType type, Map<String, DiffClass> diffClassGroup, Map<String, DiffAssociation> diffAssociationGroup, MutableGraph<String> inheritanceGraph) {
-    this.model = model;
-    this.type = type;
-    this.diffClassGroup = diffClassGroup;
-    this.diffAssociationGroup = diffAssociationGroup;
-    this.inheritanceGraph = inheritanceGraph;
   }
 
   public ASTCDCompilationUnit getModel() {
@@ -73,6 +68,14 @@ public class DifferentGroup {
 
   public void setDiffAssociationGroup(Map<String, DiffAssociation> diffAssociationGroup) {
     this.diffAssociationGroup = diffAssociationGroup;
+  }
+
+  public List<DiffRefSetAssociation> getRefSetAssociationList() {
+    return refSetAssociationList;
+  }
+
+  public void setRefSetAssociationList(List<DiffRefSetAssociation> refSetAssociationList) {
+    this.refSetAssociationList = refSetAssociationList;
   }
 
   public MutableGraph<String> getInheritanceGraph() {

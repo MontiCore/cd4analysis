@@ -7,22 +7,22 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class CompAssociation {
-  public UUID compId;
-  public String name;
-  public CompareGroup.CompAssociationKind compKind;
-  public boolean isInBasedDG;
-  public boolean isInComparedDG;
-  public boolean isContentDiff;
-  public CompareGroup.CompAssociationCategory compCategoryResult;
-  public CompareGroup.CompAssociationDirection compDirectionResult;
-  public DiffClass compLeftClassResult;
-  public DiffClass compRightClassResult;
-  public CompareGroup.CompAssociationCardinality compLeftClassCardinalityResult;
-  public CompareGroup.CompAssociationCardinality compRightClassCardinalityResult;
-  public String compLeftClassRoleName;
-  public String compRightClassRoleName;
-  public Optional<CompareGroup.WhichPartDiff> whichPartDiff;
-  public DiffAssociation originalDiffAssociation;
+  protected UUID compId;
+  protected String name;
+  protected CompareGroup.CompAssociationKind compKind;
+  protected boolean isInBasedDG;
+  protected boolean isInComparedDG;
+  protected boolean isContentDiff;
+  protected CompareGroup.CompAssociationCategory compCategoryResult;
+  protected CompareGroup.CompAssociationDirection compDirectionResult;
+  protected DiffClass compLeftClassResult;
+  protected DiffClass compRightClassResult;
+  protected CompareGroup.CompAssociationCardinality compLeftClassCardinalityResult;
+  protected CompareGroup.CompAssociationCardinality compRightClassCardinalityResult;
+  protected String compLeftClassRoleName;
+  protected String compRightClassRoleName;
+  protected Optional<CompareGroup.WhichPartDiff> whichPartDiff;
+  protected DiffAssociation originalDiffAssociation;
 
   public CompAssociation() {
   }

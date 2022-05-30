@@ -2,13 +2,22 @@ package de.monticore.sydiff2semdiff.cd2dg;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
+import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
+import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffRefSetAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.createDiffRefSetAssociation;
 
 public class CD2DGGeneratorTest extends CDDiffTestBasis {
 
@@ -169,7 +178,7 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
    * [*] C (workOn) -> (toDo) D [1..*]
    */
   @Test
-  public void testClass4SimpleAssociation() {
+  public void testAssociation4SimpleAssociation() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association1.cd");
     Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_toDo_D")));
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
@@ -184,11 +193,12 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
    * class B1 extends A {...}
    * class B2 {...}
    * class C extends B1, B2;
+   * class D;
    * [*] C (workOn) -> (toDo) D [1..*]
    * [1] I -> D [1..*]
    */
   @Test
-  public void testClass4InheritedAssociation() {
+  public void testAssociation4InheritedAssociation() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association2.cd");
     Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_toDo_D", "DiffAssociation_I_i_d_D", "DiffAssociation_A_i_d_D", "DiffAssociation_B1_i_d_D", "DiffAssociation_C_i_d_D")));
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
@@ -196,6 +206,48 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_A_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_B1_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
+  }
+
+  /**
+   * Test for inherited association
+   * CD:
+   * enum E {...}
+   * interface I {...}
+   * abstract class A implements I{...}
+   * class B1 extends A {...}
+   * class B2 {...}
+   * class C extends B1, B2;
+   * class D;
+   * class F extends D;
+   * [*] C (workOn) -> (toDo) D [1..*]
+   * [1] I -> D [1..*]
+   */
+  @Test
+  public void testAssociation4RefSetAssociation() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "Association3.cd");
+    Map<String, DiffAssociation> diffAssociationGroup = dg.getDiffAssociationGroup();
+    List<DiffRefSetAssociation> list = createDiffRefSetAssociation(diffAssociationGroup);
+    Assert.assertEquals(list.size(), 2);
+    Assert.assertTrue(list.stream()
+      .anyMatch(e -> e.getLeftRefSet().stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("C"))
+          && e.getRightRefSet().stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("F", "D"))));
+
+    Assert.assertTrue(list.stream()
+      .anyMatch(e -> e.getLeftRefSet()
+        .stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("I", "A", "B1", "C"))
+          && e.getRightRefSet().stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("F", "D"))));
   }
 
 }

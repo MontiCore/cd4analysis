@@ -4,12 +4,12 @@ import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 import java.util.Deque;
 
 public class CompareGroup {
-  private DifferentGroup basedDG;
-  private DifferentGroup comparedDG;
-  private Deque<CompClass> compClassResultQueueWithDiff;
-  private Deque<CompAssociation> compAssociationResultQueueWithDiff;
-  private Deque<CompClass> compClassResultQueueWithoutDiff;
-  private Deque<CompAssociation> compAssociationResultQueueWithoutDiff;
+  protected DifferentGroup basedDG;
+  protected DifferentGroup comparedDG;
+  protected Deque<CompClass> compClassResultQueueWithDiff;
+  protected Deque<CompAssociation> compAssociationResultQueueWithDiff;
+  protected Deque<CompClass> compClassResultQueueWithoutDiff;
+  protected Deque<CompAssociation> compAssociationResultQueueWithoutDiff;
 
   public enum CompClassKind {
     COMP_CLASS, COMP_ENUM, COMP_ABSTRACT_CLASS, COMP_INTERFACE

@@ -1,25 +1,23 @@
 package de.monticore.sydiff2semdiff.cd2dg;
 
-import com.google.common.collect.Sets;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.ow2cw.CDInheritanceHelper;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
+import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffRefSetAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
 
 public class CD2DGGenerator {
   protected Map<String, DiffClass> diffClassGroup = new HashMap<>();
@@ -42,6 +40,7 @@ public class CD2DGGenerator {
     differentGroup.setDiffClassGroup(diffClassGroup);
     differentGroup.setDiffAssociationGroup(diffAssociationGroup);
     differentGroup.setInheritanceGraph(inheritanceGraph);
+    differentGroup.setRefSetAssociationList(createDiffRefSetAssociation(diffAssociationGroup));
     return differentGroup;
   }
 
@@ -82,53 +81,30 @@ public class CD2DGGenerator {
   }
 
   public DiffClass createDiffClassHelper(ASTCDType astcdType, ICD4CodeArtifactScope scope, List<ASTCDEnum> astcdEnumList) {
-    DiffClass diffClass = new DiffClass();
-    diffClass.setOriginalElement(astcdType);
-    diffClass.setDiffKind(distinguishASTCDTypeHelper(astcdType));
-    diffClass.setName(getDiffClassKindStrHelper(diffClass.getDiffKind()) + "_" + astcdType.getName());
-    diffClass.setDiffClassName(Sets.newHashSet(astcdType.getName()));
+    DiffClass diffClass = new DiffClass(astcdType);
 
     if (!astcdType.getClass().equals(ASTCDEnum.class)) {
-      // add diffParents
-      List<ASTCDType> superList = CDInheritanceHelper.getAllSuper(astcdType, scope).stream().distinct().collect(Collectors.toList());
-      superList.remove(astcdType);
-      List<String> parentsList = new ArrayList<>();
-      superList.forEach(superClass -> parentsList.add(getDiffClassKindStrHelper(distinguishASTCDTypeHelper(superClass)) + "_" + superClass.getName()));
 
       // create InheritanceGraph
       List<ASTCDType> directSuperList = CDInheritanceHelper.getDirectSuperClasses(astcdType, scope);
       directSuperList.addAll(CDInheritanceHelper.getDirectInterfaces(astcdType, scope));
       directSuperList = directSuperList.stream().distinct().collect(Collectors.toList());
       createInheritanceGraph(astcdType, directSuperList);
-      diffClass.setDiffParents(parentsList);
 
       // add attributes
-      Map<String, Map<String, String>> attributesMap = new HashMap<>();
       for (ASTCDAttribute astcdAttribute : astcdType.getCDAttributeList()) {
-        Map<String, String> itemMap = new HashMap<>();
         if (astcdEnumList.stream().anyMatch(s -> s.getName().equals(astcdAttribute.printType()))) {
-          itemMap.put("type", "DiffEnum_" + astcdAttribute.printType());
-          itemMap.put("kind", "original");
-          creatEnumClassMapHelper(itemMap.get("type"), diffClass.getName());
+          diffClass.addAttribute(astcdAttribute, true, false);
+          creatEnumClassMapHelper("DiffEnum_" + astcdAttribute.printType(), diffClass.getName());
         }
         else {
-          itemMap.put("type", astcdAttribute.printType());
-          itemMap.put("kind", "original");
+          diffClass.addAttribute(astcdAttribute, false, false);
         }
-        attributesMap.put(astcdAttribute.getName(), itemMap);
       }
-      diffClass.setAttributes(attributesMap);
     }
     else {
       // add diffLink4EnumClass
       diffClass.setDiffLink4EnumClass(enumClassMap.get(diffClass.getName()));
-
-      // add attributes
-      Map<String, Map<String, String>> attributesMap = new HashMap<>();
-      for (ASTCDEnumConstant astcdEnumConstant : ((ASTCDEnum) astcdType).getCDEnumConstantList()) {
-        attributesMap.put(astcdEnumConstant.getName(), null);
-      }
-      diffClass.setAttributes(attributesMap);
     }
 
     return diffClass;
@@ -149,38 +125,6 @@ public class CD2DGGenerator {
       inheritanceGraph.putEdge(childClass, parentClass);
     });
     return inheritanceGraph;
-  }
-
-  public static DifferentGroup.DiffClassKind distinguishASTCDTypeHelper(ASTCDType astcdType) {
-    if (astcdType.getClass().equals(ASTCDClass.class)) {
-      if (astcdType.getModifier().isAbstract()) {
-        return DifferentGroup.DiffClassKind.DIFF_ABSTRACT_CLASS;
-      }
-      else {
-        return DifferentGroup.DiffClassKind.DIFF_CLASS;
-      }
-    }
-    else if (astcdType.getClass().equals(ASTCDEnum.class)) {
-      return DifferentGroup.DiffClassKind.DIFF_ENUM;
-    }
-    else {
-      return DifferentGroup.DiffClassKind.DIFF_INTERFACE;
-    }
-  }
-
-  public static String getDiffClassKindStrHelper(DifferentGroup.DiffClassKind diffClassKind) {
-    switch (diffClassKind) {
-      case DIFF_CLASS:
-        return "DiffClass";
-      case DIFF_ENUM:
-        return "DiffEnum";
-      case DIFF_ABSTRACT_CLASS:
-        return "DiffAbstractClass";
-      case DIFF_INTERFACE:
-        return "DiffInterface";
-      default:
-        return null;
-    }
   }
 
   public DiffClass findDiffClass4OriginalClassName(String originalClassName) {
@@ -228,72 +172,6 @@ public class CD2DGGenerator {
     return diffAssociation;
   }
 
-  public static DifferentGroup.DiffAssociationDirection distinguishAssociationDirectionHelper(ASTCDAssociation astcdAssociation) {
-    Boolean left = astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft();
-    Boolean right = astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight();
-    Boolean bidirectional = astcdAssociation.getCDAssocDir().isBidirectional();
-    if (!left && right && !bidirectional) {
-      return DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT;
-    }
-    else if (left && !right && !bidirectional) {
-      return DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT;
-    }
-    else if (left && right && bidirectional) {
-      return DifferentGroup.DiffAssociationDirection.BIDIRECTIONAL;
-    }
-    else {
-      return DifferentGroup.DiffAssociationDirection.UNDEFINED;
-    }
-  }
-
-  public static DifferentGroup.DiffAssociationCardinality distinguishLeftAssociationCardinalityHelper(ASTCDAssociation astcdAssociation) {
-    if (astcdAssociation.getLeft().getCDCardinality().isOne()) {
-      return DifferentGroup.DiffAssociationCardinality.ONE;
-    }
-    else if (astcdAssociation.getLeft().getCDCardinality().isOpt()) {
-      return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
-    }
-    else if (astcdAssociation.getLeft().getCDCardinality().isAtLeastOne()) {
-      return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
-    }
-    else {
-      return DifferentGroup.DiffAssociationCardinality.MORE;
-    }
-  }
-
-  public static DifferentGroup.DiffAssociationCardinality distinguishRightAssociationCardinalityHelper(ASTCDAssociation astcdAssociation) {
-    if (astcdAssociation.getRight().getCDCardinality().isOne()) {
-      return DifferentGroup.DiffAssociationCardinality.ONE;
-    }
-    else if (astcdAssociation.getRight().getCDCardinality().isOpt()) {
-      return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
-    }
-    else if (astcdAssociation.getRight().getCDCardinality().isAtLeastOne()) {
-      return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
-    }
-    else {
-      return DifferentGroup.DiffAssociationCardinality.MORE;
-    }
-  }
-
-  public static String getLeftClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
-    if (astcdAssociation.getLeft().isPresentCDRole()) {
-      return astcdAssociation.getLeft().getCDRole().getName();
-    }
-    else {
-      return astcdAssociation.getLeftQualifiedName().getQName().toLowerCase();
-    }
-  }
-
-  public static String getRightClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
-    if (astcdAssociation.getRight().isPresentCDRole()) {
-      return astcdAssociation.getRight().getCDRole().getName();
-    }
-    else {
-      return astcdAssociation.getRightQualifiedName().getQName().toLowerCase();
-    }
-  }
-
   /********************************************************************
    ******************** Solution for Inheritance **********************
    *******************************************************************/
@@ -338,42 +216,43 @@ public class CD2DGGenerator {
     getAllBottomNode().forEach(diffClassName -> waitList.addAll(getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName))));
     waitList.forEach(path -> {
       if (path.size() > 1) {
-        boolean isReferenceSetCreated = false;
+
         for (int i = 0; i < path.size() - 1; i++) {
           DiffClass parent = diffClassGroup.get(path.get(i));
           DiffClass child = diffClassGroup.get(path.get(i + 1));
 
           // for attributes
-          Map<String, Map<String, String>> parentAttributes = parent.getAttributes();
-          parentAttributes.forEach((k, v) -> {
-            Map<String, String> valueMap = new HashMap<>();
-            valueMap.put("type", v.get("type"));
-            valueMap.put("kind", "inherited");
-            // update enumClassMap
-            if (enumClassMap.containsKey(v.get("type"))) {
-              Set<String> set = enumClassMap.get(v.get("type"));
-              set.add(child.getName());
-              enumClassMap.put(v.get("type"), set);
-            }
+          parent.getEditedElement().getCDAttributeList().forEach(e -> {
+            String type = parent.getAttributeByASTCDAttribute(e).get("type");
 
-            Map<String, Map<String, String>> childAttributes = child.getAttributes();
-            childAttributes.put(k, valueMap);
-            child.setAttributes(childAttributes);
+            // update enumClassMap
+            boolean isEnumType = false;
+            if (enumClassMap.containsKey(type)) {
+              isEnumType = true;
+              Set<String> set = enumClassMap.get(type);
+              set.add(child.getName());
+              enumClassMap.put(type, set);
+            }
+            // add inherited attribute into child diffClass
+            child.addAttribute(e, isEnumType, true);
+
           });
+
           // update all DiffEnum
           updateDiffEnum();
 
           // for association
-          String parentOriginalName = parent.getName().split("_")[1];
-          String childOriginalName = child.getName().split("_")[1];
+          String parentOriginalName = parent.getOriginalClassName();
+          String childOriginalName = child.getOriginalClassName();
           Map<String, DiffAssociation> associationMap = parseMapForFilter(diffAssociationGroup, parentOriginalName);
+
           associationMap.forEach((oldName, oldDiffAssociation) -> {
             try {
               String prefix = oldName.split("_")[0];
-              String leftClass = oldName.split("_")[1];
-              String leftRoleName = oldName.split("_")[2];
-              String rightRoleName = oldName.split("_")[3];
-              String rightClass = oldName.split("_")[4];
+              String leftClass = oldDiffAssociation.getDiffLeftClass().getOriginalClassName();
+              String leftRoleName = oldDiffAssociation.getDiffLeftClassRoleName();
+              String rightRoleName = oldDiffAssociation.getDiffRightClassRoleName();
+              String rightClass = oldDiffAssociation.getDiffRightClass().getOriginalClassName();
               leftClass = leftClass.equals(parentOriginalName) ? childOriginalName : leftClass;
               rightClass = rightClass.equals(parentOriginalName) ? childOriginalName : rightClass;
               String newName = prefix + "_" + leftClass + "_" + leftRoleName + "_" + rightRoleName + "_" + rightClass;
@@ -381,10 +260,10 @@ public class CD2DGGenerator {
                 DiffAssociation newDiffAssociation = oldDiffAssociation.clone();
                 newDiffAssociation.setName(newName);
                 newDiffAssociation.setDiffKind(DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
-                if (newDiffAssociation.getDiffLeftClass().getName().split("_")[1].contains(parentOriginalName)) {
+                if (newDiffAssociation.getDiffLeftClass().getOriginalClassName().contains(parentOriginalName)) {
                   newDiffAssociation.setDiffLeftClass(child);
                 }
-                if (newDiffAssociation.getDiffRightClass().getName().split("_")[1].contains(parentOriginalName)) {
+                if (newDiffAssociation.getDiffRightClass().getOriginalClassName().contains(parentOriginalName)) {
                   newDiffAssociation.setDiffRightClass(child);
                 }
                 diffAssociationGroup.put(newName, newDiffAssociation);
@@ -397,19 +276,6 @@ public class CD2DGGenerator {
         }
       }
     });
-  }
-
-  public static Map<String, DiffAssociation> parseMapForFilter(Map<String, DiffAssociation> map, String filters) {
-    if (map == null) {
-      return null;
-    }
-    else {
-      map = map.entrySet()
-        .stream()
-        .filter((e) -> e.getKey().contains(filters))
-        .collect(Collectors.toMap((e) -> (String) e.getKey(), (e) -> e.getValue()));
-    }
-    return map;
   }
 
   private void updateDiffEnum() {

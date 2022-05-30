@@ -94,7 +94,6 @@ public class DG2CGGenerator {
         DiffAssociation comparedDiffAssociation = null;
         try {
           comparedDiffAssociation = exchangeLeftDiffClassWithRightDiffClass(comparedDG.getDiffAssociationGroup().get(assocName2).clone());
-//          comparedDG.setDiffAssociationGroup((Map<String, DiffAssociation>) comparedDG.getDiffAssociationGroup().put(comparedDiffAssociation.getName(), comparedDiffAssociation));
         }
         catch (CloneNotSupportedException e) {
           throw new RuntimeException(e);

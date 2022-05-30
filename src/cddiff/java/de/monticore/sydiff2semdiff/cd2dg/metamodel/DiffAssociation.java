@@ -1,33 +1,27 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
+import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDRole;
+import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 
 public class DiffAssociation implements Cloneable{
-  public String name;
-  public DifferentGroup.DiffAssociationKind diffKind;
-  public DifferentGroup.DiffAssociationDirection diffDirection;
-  public DiffClass diffLeftClass;
-  public DiffClass diffRightClass;
-  public DifferentGroup.DiffAssociationCardinality diffLeftClassCardinality;
-  public DifferentGroup.DiffAssociationCardinality diffRightClassCardinality;
-  public String diffLeftClassRoleName;
-  public String diffRightClassRoleName;
-  public ASTCDAssociation originalElement;
+  protected String name;
+  protected DifferentGroup.DiffAssociationKind diffKind;
+  protected DifferentGroup.DiffAssociationDirection diffDirection;
+  protected DiffClass diffLeftClass;
+  protected DiffClass diffRightClass;
+  protected DifferentGroup.DiffAssociationCardinality diffLeftClassCardinality;
+  protected DifferentGroup.DiffAssociationCardinality diffRightClassCardinality;
+  protected String diffLeftClassRoleName;
+  protected String diffRightClassRoleName;
+  protected ASTCDAssociation originalElement;
+  protected ASTCDAssociation editedElement;
 
   public DiffAssociation() {
-  }
-
-  public DiffAssociation(String name, DifferentGroup.DiffAssociationKind diffKind, DifferentGroup.DiffAssociationDirection diffDirection, DiffClass diffLeftClass, DiffClass diffRightClass, DifferentGroup.DiffAssociationCardinality diffLeftClassCardinality, DifferentGroup.DiffAssociationCardinality diffRightClassCardinality, String diffLeftClassRoleName, String diffRightClassRoleName, ASTCDAssociation originalElement) {
-    this.name = name;
-    this.diffKind = diffKind;
-    this.diffDirection = diffDirection;
-    this.diffLeftClass = diffLeftClass;
-    this.diffRightClass = diffRightClass;
-    this.diffLeftClassCardinality = diffLeftClassCardinality;
-    this.diffRightClassCardinality = diffRightClassCardinality;
-    this.diffLeftClassRoleName = diffLeftClassRoleName;
-    this.diffRightClassRoleName = diffRightClassRoleName;
-    this.originalElement = originalElement;
   }
 
   public String getName() {
@@ -92,6 +86,11 @@ public class DiffAssociation implements Cloneable{
 
   public void setDiffLeftClassRoleName(String diffLeftClassRoleName) {
     this.diffLeftClassRoleName = diffLeftClassRoleName;
+    if (!this.editedElement.getLeft().isPresentCDRole()) {
+      ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
+      astcdRole.setName(diffLeftClassRoleName);
+      this.editedElement.getLeft().setCDRole(astcdRole);
+    }
   }
 
   public String getDiffRightClassRoleName() {
@@ -100,6 +99,11 @@ public class DiffAssociation implements Cloneable{
 
   public void setDiffRightClassRoleName(String diffRightClassRoleName) {
     this.diffRightClassRoleName = diffRightClassRoleName;
+    if (!this.editedElement.getRight().isPresentCDRole()) {
+      ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
+      astcdRole.setName(diffRightClassRoleName);
+      this.editedElement.getRight().setCDRole(astcdRole);
+    }
   }
 
   public ASTCDAssociation getOriginalElement() {
@@ -108,6 +112,15 @@ public class DiffAssociation implements Cloneable{
 
   public void setOriginalElement(ASTCDAssociation originalElement) {
     this.originalElement = originalElement;
+    this.editedElement = originalElement.deepClone();
+  }
+
+  public ASTCDAssociation getEditedElement() {
+    return editedElement;
+  }
+
+  public void setEditedElement(ASTCDAssociation editedElement) {
+    this.editedElement = editedElement;
   }
 
   @Override
