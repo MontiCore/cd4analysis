@@ -307,18 +307,18 @@ public class CD2DGGenerator {
 
   private void getAllInheritancePath4DiffClassHelper(String root, LinkedList<String> path, List<List<String>> pathList) {
     if (inheritanceGraph.successors(root).isEmpty()) {
-      path.addFirst(root);
-      pathList.add(path);
+      LinkedList<String> newPath = new LinkedList<>(path);
+      newPath.addFirst(root);
+      pathList.add(newPath);
       return;
     }
     else {
-      LinkedList<String> newPath = (LinkedList<String>) path.clone();
-      path = null;
+      LinkedList<String> newPath = new LinkedList<>(path);
       newPath.addFirst(root);
       Iterator iterator = inheritanceGraph.successors(root).iterator();
       while (iterator.hasNext()) {
-        String childNode = iterator.next().toString();
-        getAllInheritancePath4DiffClassHelper(childNode, newPath, pathList);
+        String parentNode = iterator.next().toString();
+        getAllInheritancePath4DiffClassHelper(parentNode, newPath, pathList);
       }
     }
   }
@@ -368,22 +368,28 @@ public class CD2DGGenerator {
           String parentOriginalName = parent.getName().split("_")[1];
           String childOriginalName = child.getName().split("_")[1];
           Map<String, DiffAssociation> associationMap = parseMapForFilter(diffAssociationGroup, parentOriginalName);
-//          if (isReferenceSetCreated == false && !associationMap.isEmpty()){
-//
-//            System.out.println("a");
-//          }
           associationMap.forEach((oldName, oldDiffAssociation) -> {
             try {
-              String newName = oldName.replace(parentOriginalName, childOriginalName);
-              DiffAssociation newDiffAssociation = oldDiffAssociation.clone();
-              newDiffAssociation.setDiffKind(DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
-              if(newDiffAssociation.getDiffLeftClass().getName().contains(parentOriginalName)) {
-                newDiffAssociation.setDiffLeftClass(child);
+              String prefix = oldName.split("_")[0];
+              String leftClass = oldName.split("_")[1];
+              String leftRoleName = oldName.split("_")[2];
+              String rightRoleName = oldName.split("_")[3];
+              String rightClass = oldName.split("_")[4];
+              leftClass = leftClass.equals(parentOriginalName) ? childOriginalName : leftClass;
+              rightClass = rightClass.equals(parentOriginalName) ? childOriginalName : rightClass;
+              String newName = prefix + "_" + leftClass + "_" + leftRoleName + "_" + rightRoleName + "_" + rightClass;
+              if (!diffAssociationGroup.containsKey(newName)) {
+                DiffAssociation newDiffAssociation = oldDiffAssociation.clone();
+                newDiffAssociation.setName(newName);
+                newDiffAssociation.setDiffKind(DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
+                if(newDiffAssociation.getDiffLeftClass().getName().split("_")[1].contains(parentOriginalName)) {
+                  newDiffAssociation.setDiffLeftClass(child);
+                }
+                if (newDiffAssociation.getDiffRightClass().getName().split("_")[1].contains(parentOriginalName)) {
+                  newDiffAssociation.setDiffRightClass(child);
+                }
+                diffAssociationGroup.put(newName,newDiffAssociation);
               }
-              if (newDiffAssociation.getDiffRightClass().getName().contains(childOriginalName)) {
-                newDiffAssociation.setDiffRightClass(child);
-              }
-              diffAssociationGroup.put(newName,newDiffAssociation);
             }
             catch (CloneNotSupportedException e) {
               throw new RuntimeException(e);
