@@ -17,7 +17,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import net.sourceforge.plantuml.Log;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.*;
 
@@ -106,6 +105,18 @@ public class CDExpander {
         .setModifier(newModifier)
         .build();
     addClass2Package(newClass, determinePackageName(srcClass));
+  }
+
+  public void addDummyClass(String dummyName) {
+    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
+
+    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
+        .setName(dummyName)
+        .setCDExtendUsageAbsent()
+        .setCDInterfaceUsageAbsent()
+        .setModifier(newModifier)
+        .build();
+    originalCD.getCDDefinition().getCDElementList().add(newClass);
   }
 
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
@@ -211,14 +222,13 @@ public class CDExpander {
     return packageName.delete(start, packageName.length()).toString();
   }
 
-  public Collection<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> isolated) {
+  public Set<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> isolated,
+      String dummyClassName) {
 
-    List<ASTCDAssociation> dummies = new ArrayList<>();
+    Set<ASTCDAssociation> dummies = new HashSet<>();
     String roleName;
-    int i = 0;
 
     for (ASTCDAssociation src : isolated) {
-      i++;
 
       if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
 
@@ -230,8 +240,8 @@ public class CDExpander {
               src.getRightQualifiedName().getQName());
         }
 
-        dummies.add(buildDummyClassAndAssociation(src.getLeftQualifiedName().getQName(), roleName,
-            src.getRightQualifiedName().getQName(), i));
+        dummies.add(
+            buildDummyAssociation(src.getLeftQualifiedName().getQName(), roleName, dummyClassName));
 
       }
       else {
@@ -244,8 +254,8 @@ public class CDExpander {
               src.getLeftQualifiedName().getQName());
         }
 
-        dummies.add(buildDummyClassAndAssociation(src.getRightQualifiedName().getQName(), roleName,
-            src.getLeftQualifiedName().getQName(), i));
+        dummies.add(buildDummyAssociation(src.getRightQualifiedName().getQName(), roleName,
+            dummyClassName));
       }
     }
     return dummies;

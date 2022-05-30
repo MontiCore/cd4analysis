@@ -7,22 +7,20 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CDAssociationHelper {
 
   /**
    * Collect all associations in srcAST that are super-associations of an associations in targetAST
    */
-  public static Collection<ASTCDAssociation> collectSuperAssociations(ASTCDCompilationUnit srcAST,
+  public static Set<ASTCDAssociation> collectSuperAssociations(ASTCDCompilationUnit srcAST,
       ASTCDCompilationUnit targetAST) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
     ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
 
-    List<ASTCDAssociation> superAssociations = new ArrayList<>();
+    Set<ASTCDAssociation> superAssociations = new HashSet<>();
     for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
         if (isSuperAssociation(srcAssoc, targetAssoc, targetScope) || isSuperAssociationInReverse(
@@ -38,13 +36,13 @@ public class CDAssociationHelper {
   /**
    * Collect all associations in srcAST that are in conflict with associations in targetAST
    */
-  public static Collection<ASTCDAssociation> collectConflictingAssociations(
+  public static Set<ASTCDAssociation> collectConflictingAssociations(
       ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
     ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
 
-    List<ASTCDAssociation> conflicts = new ArrayList<>();
+    Set<ASTCDAssociation> conflicts = new HashSet<>();
     for (ASTCDAssociation srcAssoc : srcAST.getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
         if (inConflict(srcAssoc, targetAssoc, targetScope)) {
