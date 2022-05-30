@@ -1,0 +1,12 @@
+import java.lang.String;
+
+classdiagram FieldDiffTest2 {
+  class HDMI;
+  class Monitor;
+  class SmallScreen;
+  class LargeScreen;
+
+   <<abstract>> public association testName {ordered} [1] SmallScreen [String] (has) <- Monitor1 [1];
+   <<test1,test>> composition HDMI [Int] -- (need) Monitor [*];
+
+}
