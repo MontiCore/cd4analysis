@@ -2,10 +2,8 @@ package de.monticore.sydiff2semdiff.cd2dg;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
-import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
@@ -17,7 +15,7 @@ import org.junit.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.createDiffRefSetAssociation;
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
 
 public class CD2DGGeneratorTest extends CDDiffTestBasis {
 
@@ -180,6 +178,10 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testAssociation4SimpleAssociation() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association1.cd");
+    dg.getDiffAssociationGroup().forEach((k, v) -> {
+      Assert.assertTrue(v.getOriginalElement().getLeftQualifiedName().getQName().equals(v.getDiffLeftClass().getOriginalClassName()));
+      Assert.assertTrue(v.getOriginalElement().getRightQualifiedName().getQName().equals(v.getDiffRightClass().getOriginalClassName()));
+    });
     Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_toDo_D")));
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
   }
@@ -200,6 +202,10 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testAssociation4InheritedAssociation() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association2.cd");
+    dg.getDiffAssociationGroup().forEach((k, v) -> {
+      Assert.assertTrue(v.getOriginalElement().getLeftQualifiedName().getQName().equals(v.getDiffLeftClass().getOriginalClassName()));
+      Assert.assertTrue(v.getOriginalElement().getRightQualifiedName().getQName().equals(v.getDiffRightClass().getOriginalClassName()));
+    });
     Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_toDo_D", "DiffAssociation_I_i_d_D", "DiffAssociation_A_i_d_D", "DiffAssociation_B1_i_d_D", "DiffAssociation_C_i_d_D")));
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
     Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_I_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
@@ -248,6 +254,24 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
         .map(DiffClass::getOriginalClassName)
         .collect(Collectors.toSet())
         .containsAll(Set.of("F", "D"))));
+  }
+
+  @Test
+  public void testEditASTCDAssociationLeftSide() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "Association3.cd");
+    ASTCDAssociation original = dg.getDiffAssociationGroup().get("DiffAssociation_I_i_d_D").getOriginalElement();
+    DiffClass diffClass = dg.getDiffClassGroup().get("DiffClass_C");
+    ASTCDAssociation edited = editASTCDAssociationLeftSideByDiffClass(original, diffClass);
+    Assert.assertTrue(edited.getLeftQualifiedName().getQName().equals(diffClass.getOriginalClassName()));
+  }
+
+  @Test
+  public void testEditASTCDAssociationRightSide() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "Association3.cd");
+    ASTCDAssociation original = dg.getDiffAssociationGroup().get("DiffAssociation_I_i_d_D").getOriginalElement();
+    DiffClass diffClass = dg.getDiffClassGroup().get("DiffClass_C");
+    ASTCDAssociation edited = editASTCDAssociationRightSideByDiffClass(original, diffClass);
+    Assert.assertTrue(edited.getRightQualifiedName().getQName().equals(diffClass.getOriginalClassName()));
   }
 
 }

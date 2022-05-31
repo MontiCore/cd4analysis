@@ -1,51 +1,57 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
-import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
+
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
 
 public class DiffAssociation implements Cloneable{
-  protected String name;
-  protected DifferentGroup.DiffAssociationKind diffKind;
-  protected DifferentGroup.DiffAssociationDirection diffDirection;
+  protected final ASTCDAssociation originalElement;
+  protected final DifferentGroup.DiffAssociationKind diffKind;
   protected DiffClass diffLeftClass;
   protected DiffClass diffRightClass;
-  protected DifferentGroup.DiffAssociationCardinality diffLeftClassCardinality;
-  protected DifferentGroup.DiffAssociationCardinality diffRightClassCardinality;
-  protected String diffLeftClassRoleName;
-  protected String diffRightClassRoleName;
-  protected ASTCDAssociation originalElement;
-  protected ASTCDAssociation editedElement;
+  protected final boolean isLeftRightExchange;
 
-  public DiffAssociation() {
+
+  public DiffAssociation(ASTCDAssociation originalElement, boolean isInherited, boolean isLeftRightExchange) {
+    this.originalElement = originalElement;
+    this.isLeftRightExchange = isLeftRightExchange;
+    this.diffKind = isInherited ? DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC : DifferentGroup.DiffAssociationKind.DIFF_ASC;
   }
 
   public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+    if (!isLeftRightExchange) {
+      return "DiffAssociation_"
+        + getDiffLeftClass().getOriginalClassName() + "_"
+        + getDiffLeftClassRoleName() + "_"
+        + getDiffRightClassRoleName() + "_"
+        + getDiffRightClass().getOriginalClassName();
+    } else {
+      return "DiffAssociation_"
+        + getDiffRightClass().getOriginalClassName() + "_"
+        + getDiffRightClassRoleName() + "_"
+        + getDiffLeftClassRoleName() + "_"
+        + getDiffLeftClass().getOriginalClassName();
+    }
   }
 
   public DifferentGroup.DiffAssociationKind getDiffKind() {
     return diffKind;
   }
 
-  public void setDiffKind(DifferentGroup.DiffAssociationKind diffKind) {
-    this.diffKind = diffKind;
-  }
-
   public DifferentGroup.DiffAssociationDirection getDiffDirection() {
-    return diffDirection;
-  }
-
-  public void setDiffDirection(DifferentGroup.DiffAssociationDirection diffDirection) {
-    this.diffDirection = diffDirection;
+    DifferentGroup.DiffAssociationDirection kind = distinguishAssociationDirectionHelper(this.originalElement);
+    if (!isLeftRightExchange) {
+      return kind;
+    } else {
+      switch (kind) {
+        case LEFT_TO_RIGHT:
+          return DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT;
+        case RIGHT_TO_LEFT:
+          return DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT;
+        default:
+          return kind;
+      }
+    }
   }
 
   public DiffClass getDiffLeftClass() {
@@ -64,68 +70,40 @@ public class DiffAssociation implements Cloneable{
     this.diffRightClass = diffRightClass;
   }
 
-  public DifferentGroup.DiffAssociationCardinality getDiffLeftClassCardinality() {
-    return diffLeftClassCardinality;
+  public String getLeftOriginalClassName() {
+    return this.originalElement.getLeftQualifiedName().getQName();
   }
 
-  public void setDiffLeftClassCardinality(DifferentGroup.DiffAssociationCardinality diffLeftClassCardinality) {
-    this.diffLeftClassCardinality = diffLeftClassCardinality;
+  public String getRightOriginalClassName() {
+    return this.originalElement.getRightQualifiedName().getQName();
+  }
+
+  public DifferentGroup.DiffAssociationCardinality getDiffLeftClassCardinality() {
+    if (!isLeftRightExchange) {
+      return distinguishLeftAssociationCardinalityHelper(this.originalElement);
+    } else {
+      return distinguishRightAssociationCardinalityHelper(this.originalElement);
+    }
   }
 
   public DifferentGroup.DiffAssociationCardinality getDiffRightClassCardinality() {
-    return diffRightClassCardinality;
-  }
-
-  public void setDiffRightClassCardinality(DifferentGroup.DiffAssociationCardinality diffRightClassCardinality) {
-    this.diffRightClassCardinality = diffRightClassCardinality;
+    if (!isLeftRightExchange) {
+      return distinguishRightAssociationCardinalityHelper(this.originalElement);
+    } else {
+      return distinguishLeftAssociationCardinalityHelper(this.originalElement);
+    }
   }
 
   public String getDiffLeftClassRoleName() {
-    return diffLeftClassRoleName;
-  }
-
-  public void setDiffLeftClassRoleName(String diffLeftClassRoleName) {
-    this.diffLeftClassRoleName = diffLeftClassRoleName;
-    if (this.editedElement != null) {
-      if (!this.editedElement.getLeft().isPresentCDRole()) {
-        ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
-        astcdRole.setName(diffLeftClassRoleName);
-        this.editedElement.getLeft().setCDRole(astcdRole);
-      }
-    }
-
+    return !isLeftRightExchange ? getLeftClassRoleNameHelper(this.originalElement) : getRightClassRoleNameHelper(this.originalElement);
   }
 
   public String getDiffRightClassRoleName() {
-    return diffRightClassRoleName;
-  }
-
-  public void setDiffRightClassRoleName(String diffRightClassRoleName) {
-    this.diffRightClassRoleName = diffRightClassRoleName;
-    if (this.editedElement != null) {
-      if (!this.editedElement.getRight().isPresentCDRole()) {
-        ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
-        astcdRole.setName(diffRightClassRoleName);
-        this.editedElement.getRight().setCDRole(astcdRole);
-      }
-    }
+    return !isLeftRightExchange ? getRightClassRoleNameHelper(this.originalElement) : getLeftClassRoleNameHelper(this.originalElement);
   }
 
   public ASTCDAssociation getOriginalElement() {
     return originalElement;
-  }
-
-  public void setOriginalElement(ASTCDAssociation originalElement) {
-    this.originalElement = originalElement;
-    this.editedElement = originalElement.deepClone();
-  }
-
-  public ASTCDAssociation getEditedElement() {
-    return editedElement;
-  }
-
-  public void setEditedElement(ASTCDAssociation editedElement) {
-    this.editedElement = editedElement;
   }
 
   @Override

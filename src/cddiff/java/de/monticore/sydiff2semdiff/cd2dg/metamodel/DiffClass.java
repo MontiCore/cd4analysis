@@ -14,7 +14,7 @@ import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.distinguishASTCD
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.getDiffClassKindStrHelper;
 
 public class DiffClass implements Cloneable{
-  protected final ASTCDType originalElement;
+  protected ASTCDType originalElement;
   protected ASTCDType editedElement;
 
   protected Map<String, Map<String, String>> attributes = new HashMap<>();
@@ -88,7 +88,10 @@ public class DiffClass implements Cloneable{
 
   @Override
   public DiffClass clone() throws CloneNotSupportedException {
-    return (DiffClass) super.clone();
+    DiffClass cloned = (DiffClass) super.clone();
+    cloned.originalElement = originalElement.deepClone();
+    cloned.editedElement = editedElement.deepClone();
+    return cloned;
   }
 }
 

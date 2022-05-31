@@ -249,47 +249,24 @@ public class CompareHelper {
   }
 
   public static DiffAssociation exchangeLeftDiffClassWithRightDiffClass(DiffAssociation original) {
-    DiffAssociation exchanged = new DiffAssociation();
-    // change assoc name
-    exchanged.setName(getExchangedLeftDiffClassWithRightDiffClassAssocName(original));
-
-    exchanged.setDiffKind(original.getDiffKind());
-
-    // change assoc direction
-    switch (original.getDiffDirection()) {
-      case LEFT_TO_RIGHT:
-        exchanged.setDiffDirection(DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT);
-        break;
-      case RIGHT_TO_LEFT:
-        exchanged.setDiffDirection(DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT);
-        break;
-      default:
-        exchanged.setDiffDirection(original.getDiffDirection());
-        break;
-    }
+    DiffAssociation exchanged = new DiffAssociation(original.getOriginalElement(), false, true);
 
     // change right to left
     exchanged.setDiffLeftClass(original.getDiffRightClass());
-    exchanged.setDiffLeftClassCardinality(original.getDiffRightClassCardinality());
-    exchanged.setDiffLeftClassRoleName(original.getDiffRightClassRoleName());
 
     // change left to right
     exchanged.setDiffRightClass(original.getDiffLeftClass());
-    exchanged.setDiffRightClassCardinality(original.getDiffLeftClassCardinality());
-    exchanged.setDiffRightClassRoleName(original.getDiffLeftClassRoleName());
-
-    exchanged.setOriginalElement(original.getOriginalElement());
 
     return exchanged;
   }
 
-  public static String getExchangedLeftDiffClassWithRightDiffClassAssocName(DiffAssociation originalDiffAssociation) {
-    String assocName = originalDiffAssociation.getName();
-    String prefix = assocName.split("_")[0];
-    String leftClassName = assocName.split("_")[1];
-    String leftRoleName = assocName.split("_")[2];
-    String rightRoleName = assocName.split("_")[3];
-    String rightClassName = assocName.split("_")[4];
+  public static String getExchangedLeftDiffClassWithRightDiffClassAssocName(DiffAssociation original) {
+    String prefix = original.getName().split("_")[0];
+    String leftClassName = original.getDiffLeftClass().getOriginalClassName();
+    String leftRoleName = original.getDiffLeftClassRoleName();
+    String rightRoleName = original.getDiffRightClassRoleName();
+    String rightClassName = original.getDiffRightClass().getOriginalClassName();
+
     return prefix + "_" + rightClassName + "_" + rightRoleName + "_" + leftRoleName + "_" + leftClassName;
   }
 

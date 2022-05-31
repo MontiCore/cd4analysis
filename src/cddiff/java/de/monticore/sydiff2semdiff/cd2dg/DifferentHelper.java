@@ -1,5 +1,7 @@
 package de.monticore.sydiff2semdiff.cd2dg;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -161,4 +163,33 @@ public class DifferentHelper {
     return refSetAssociationList;
   }
 
+  public static ASTCDAssociation editASTCDAssociationLeftSideByDiffClass(ASTCDAssociation original, DiffClass diffClass) {
+    ASTCDAssociation edited = original.deepClone();
+    edited.getLeft().getMCQualifiedType().setMCQualifiedName(
+      MCBasicTypesMillForCD4Analysis.mCQualifiedNameBuilder()
+        .addParts(diffClass.getOriginalClassName())
+        .build());
+    return edited;
+  }
+
+  public static ASTCDAssociation editASTCDAssociationRightSideByDiffClass(ASTCDAssociation original, DiffClass diffClass) {
+    ASTCDAssociation edited = original.deepClone();
+    edited.getRight().getMCQualifiedType().setMCQualifiedName(
+      MCBasicTypesMillForCD4Analysis.mCQualifiedNameBuilder()
+        .addParts(diffClass.getOriginalClassName())
+        .build());
+    return edited;
+  }
+
+  public static ASTCDAssociation generateASTCDAssociationRoleName(ASTCDAssociation astcdAssociation) {
+    if (!astcdAssociation.getLeft().isPresentCDRole()) {
+      String leftRoleName = astcdAssociation.getLeftQualifiedName().getQName().toLowerCase();
+      astcdAssociation.getLeft().setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(leftRoleName).build());
+    }
+    if (!astcdAssociation.getRight().isPresentCDRole()) {
+      String rightRoleName = astcdAssociation.getRightQualifiedName().getQName().toLowerCase();
+      astcdAssociation.getRight().setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(rightRoleName).build());
+    }
+    return astcdAssociation;
+  }
 }
