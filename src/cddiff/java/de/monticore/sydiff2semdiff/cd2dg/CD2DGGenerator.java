@@ -86,10 +86,9 @@ public class CD2DGGenerator {
     if (!astcdType.getClass().equals(ASTCDEnum.class)) {
 
       // create InheritanceGraph
-      List<ASTCDType> directSuperList = CDInheritanceHelper.getDirectSuperClasses(astcdType, scope);
-      directSuperList.addAll(CDInheritanceHelper.getDirectInterfaces(astcdType, scope));
-      directSuperList = directSuperList.stream().distinct().collect(Collectors.toList());
-      createInheritanceGraph(astcdType, directSuperList);
+      Set<ASTCDType> directSuperSet = CDInheritanceHelper.getDirectSuperClasses(astcdType, scope);
+      directSuperSet.addAll(CDInheritanceHelper.getDirectInterfaces(astcdType, scope));
+      createInheritanceGraph(astcdType, directSuperSet);
 
       // add attributes
       for (ASTCDAttribute astcdAttribute : astcdType.getCDAttributeList()) {
@@ -117,7 +116,8 @@ public class CD2DGGenerator {
     return enumClassMap;
   }
 
-  public MutableGraph<String> createInheritanceGraph(ASTCDType child, List<ASTCDType> directSuperList) {
+  public MutableGraph<String> createInheritanceGraph(ASTCDType child,
+      Collection<ASTCDType> directSuperList) {
     String childClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(child)) + "_" + child.getName();
     inheritanceGraph.addNode(childClass);
     directSuperList.forEach(parent -> {
