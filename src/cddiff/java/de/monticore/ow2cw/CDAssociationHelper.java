@@ -1,6 +1,5 @@
 package de.monticore.ow2cw;
 
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
@@ -211,86 +210,6 @@ public class CDAssociationHelper {
    */
   public static boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
     return strictMatch(assoc1, assoc2) || strictReverseMatch(assoc1, assoc2);
-  }
-
-  /**
-   * update directions of underspecified associations in targets to match those in sources Open
-   * World allows specification: unspecified -> uni-directional -> bi-directional Closed World only
-   * allows: unspecified -> uni-directional / bi-directional
-   */
-  public static void updateDir2Match(Collection<ASTCDAssociation> sources,
-      Collection<ASTCDAssociation> targets, boolean isOpenWorld) {
-    for (ASTCDAssociation src : sources) {
-      for (ASTCDAssociation target : targets) {
-        if (strictMatch(src, target)) {
-          if (isOpenWorld && (!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
-              .isBidirectional()) {
-            target.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
-            break;
-          }
-          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
-              .isDefinitiveNavigableRight())) {
-            target.setCDAssocDir(src.getCDAssocDir().deepClone());
-          }
-          break;
-        }
-        if (strictReverseMatch(src, target)) {
-          if (isOpenWorld && (!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
-              .isBidirectional()) {
-            target.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
-            break;
-          }
-          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
-              .isDefinitiveNavigableRight())) {
-            if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
-              target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
-            }
-            else {
-              if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
-                target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
-              }
-            }
-          }
-          break;
-        }
-      }
-    }
-  }
-
-  /**
-   * update directions of underspecified associations in targets to differ to those in sources Open
-   * World allows specification: unspecified -> uni-directional -> bi-directional
-   */
-  public static void updateDir4Diff(Collection<ASTCDAssociation> sources,
-      Collection<ASTCDAssociation> targets) {
-    for (ASTCDAssociation src : sources) {
-      for (ASTCDAssociation target : targets) {
-        if (strictMatch(src, target)) {
-          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
-              .isDefinitiveNavigableRight())) {
-            if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
-              target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
-            }
-            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
-              target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
-            }
-          }
-          break;
-        }
-        if (strictReverseMatch(src, target)) {
-          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
-              .isDefinitiveNavigableRight())) {
-            if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
-              target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
-            }
-            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
-              target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
-            }
-          }
-          break;
-        }
-      }
-    }
   }
 
   private static boolean weakMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
