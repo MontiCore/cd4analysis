@@ -86,11 +86,14 @@ public class DiffAssociation implements Cloneable{
 
   public void setDiffLeftClassRoleName(String diffLeftClassRoleName) {
     this.diffLeftClassRoleName = diffLeftClassRoleName;
-    if (!this.editedElement.getLeft().isPresentCDRole()) {
-      ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
-      astcdRole.setName(diffLeftClassRoleName);
-      this.editedElement.getLeft().setCDRole(astcdRole);
+    if (this.editedElement != null) {
+      if (!this.editedElement.getLeft().isPresentCDRole()) {
+        ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
+        astcdRole.setName(diffLeftClassRoleName);
+        this.editedElement.getLeft().setCDRole(astcdRole);
+      }
     }
+
   }
 
   public String getDiffRightClassRoleName() {
@@ -99,10 +102,12 @@ public class DiffAssociation implements Cloneable{
 
   public void setDiffRightClassRoleName(String diffRightClassRoleName) {
     this.diffRightClassRoleName = diffRightClassRoleName;
-    if (!this.editedElement.getRight().isPresentCDRole()) {
-      ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
-      astcdRole.setName(diffRightClassRoleName);
-      this.editedElement.getRight().setCDRole(astcdRole);
+    if (this.editedElement != null) {
+      if (!this.editedElement.getRight().isPresentCDRole()) {
+        ASTCDRole astcdRole = CD4AnalysisMill.cDRoleBuilder().uncheckedBuild();
+        astcdRole.setName(diffRightClassRoleName);
+        this.editedElement.getRight().setCDRole(astcdRole);
+      }
     }
   }
 
