@@ -1,7 +1,5 @@
-package de.monticore.ow2cw;
+package de.monticore.ow2cw.expander;
 
-import de.monticore.cd.facade.CDExtendUsageFacade;
-import de.monticore.cd.facade.CDInterfaceUsageFacade;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2alloy.generator.CD2AlloyQNameHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -15,54 +13,36 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.umlmodifier._ast.ASTModifier;
-import net.sourceforge.plantuml.Log;
+import de.monticore.ow2cw.CDAssociationHelper;
 
 import java.util.*;
 
-public class CDExpander {
-  protected ASTCDCompilationUnit originalCD;  // Genutzt, um stereotype zu lesen
+public class FullExpander implements CDExpander{
+  final protected CDExpander expander;
 
   /**
-   * @param originalCD Used for checking if adding/etc is allowed
+   * @param expander checking if adding/etc is allowed
    */
-  public CDExpander(ASTCDCompilationUnit originalCD) {
-    this.originalCD = originalCD;
+  public FullExpander(CDExpander expander) {
+    this.expander = expander;
+  }
+
+  public ASTCDCompilationUnit getCD() {
+    return expander.getCD();
   }
 
   /**
    * add newClass as subclass to superclass
    */
   public void addNewSubClass(String name, ASTCDClass superclass) {
-
-    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
-
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(name)
-        .setCDExtendUsage(
-            CDExtendUsageFacade.getInstance().createCDExtendUsage(superclass.getName()))
-        .setCDInterfaceUsageAbsent()
-        .setModifier(newModifier)
-        .build();
-    addClass2Package(newClass, determinePackageName(superclass));
-
+    expander.addNewSubClass(name,superclass);
   }
 
   /**
    * add newClass as sub-class to astcdInterface
    */
   public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
-
-    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
-
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(name)
-        .setCDInterfaceUsage(
-            CDInterfaceUsageFacade.getInstance().createCDInterfaceUsage(astcdInterface.getName()))
-        .setCDExtendUsageAbsent()
-        .setModifier(newModifier)
-        .build();
-    addClass2Package(newClass, determinePackageName(astcdInterface));
+    expander.addNewSubClass(name,astcdInterface);
   }
 
   /**
@@ -70,12 +50,7 @@ public class CDExpander {
    * todo: fix problem with nested packages
    */
   public void addClass2Package(ASTCDClass astcdClass, String packageName) {
-    if (packageName.equals(originalCD.getCDDefinition().getDefaultPackageName())) {
-      originalCD.getCDDefinition().getCDElementList().add(astcdClass);
-    }
-    else {
-      originalCD.getCDDefinition().addCDElementToPackage(astcdClass, packageName);
-    }
+    expander.addClass2Package(astcdClass,packageName);
   }
 
   /**
@@ -83,44 +58,19 @@ public class CDExpander {
    * todo: fix problem with nested packages
    */
   public void addClone(ASTCDType cdType) {
-    if (determinePackageName(cdType).equals(originalCD.getCDDefinition().getDefaultPackageName())) {
-      originalCD.getCDDefinition().getCDElementList().add(cdType.deepClone());
-    }
-    else {
-      originalCD.getCDDefinition()
-          .addCDElementToPackage(cdType.deepClone(), determinePackageName(cdType));
-    }
+    expander.addClone(cdType);
   }
 
   public void addDummyClass(ASTCDClass srcClass) {
-
-    // construct empty clone
-
-    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
-
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(srcClass.getName())
-        .setCDExtendUsageAbsent()
-        .setCDInterfaceUsageAbsent()
-        .setModifier(newModifier)
-        .build();
-    addClass2Package(newClass, determinePackageName(srcClass));
+    expander.addDummyClass(srcClass);
   }
 
   public void addDummyClass(String dummyName) {
-    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
-
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(dummyName)
-        .setCDExtendUsageAbsent()
-        .setCDInterfaceUsageAbsent()
-        .setModifier(newModifier)
-        .build();
-    originalCD.getCDDefinition().getCDElementList().add(newClass);
+    expander.addDummyClass(dummyName);
   }
 
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     for (ASTCDType astcdType : typeList) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdType.getSymbol().getFullName());
       if (!opt.isPresent()) {
@@ -133,7 +83,7 @@ public class CDExpander {
   }
 
   public void addMissingEnumsAndConstants(Collection<ASTCDEnum> enumList) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     // add enums and enum constants exclusive to first
     for (ASTCDEnum astcdEnum : enumList) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
@@ -148,7 +98,7 @@ public class CDExpander {
               .anyMatch(field -> field.getName().equals(constant.getName()));
           if (!found) {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
-            for (ASTCDEnum someEnum : originalCD.getCDDefinition().getCDEnumsList()) {
+            for (ASTCDEnum someEnum : getCD().getCDDefinition().getCDEnumsList()) {
               if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())) {
                 someEnum.addCDEnumConstant(constant.deepClone());
               }
@@ -178,7 +128,7 @@ public class CDExpander {
   public void addMissingAssociations(Collection<ASTCDAssociation> assocs,
       boolean withCardinalities) {
     for (ASTCDAssociation srcAssoc : assocs) {
-      boolean found = originalCD.getCDDefinition()
+      boolean found = getCD().getCDDefinition()
           .getCDAssociationsList()
           .stream()
           .anyMatch(targetAssoc -> CDAssociationHelper.sameAssociation(targetAssoc, srcAssoc));
@@ -189,37 +139,87 @@ public class CDExpander {
           newAssoc.getLeft().setCDCardinalityAbsent();
         }
         //todo: check if class/interface has stereotype ""
-        originalCD.getCDDefinition().getCDElementList().add(newAssoc);
+        getCD().getCDDefinition().getCDElementList().add(newAssoc);
       }
     }
   }
 
   /**
-   * update direction of underspecified associations to match those of assocs
+   * update directions of underspecified associations to match those in assocs
+   * Open-World allows specification: unspecified -> uni-directional -> bi-directional
+   * Closed-World only allows: unspecified -> uni-directional / bi-directional
    */
   public void updateDir2Match(Collection<ASTCDAssociation> assocs, boolean isOpenWorld) {
-    CDAssociationHelper.updateDir2Match(assocs,
-        originalCD.getCDDefinition().getCDAssociationsList(), isOpenWorld);
-  }
-
-  public void updateDir4Diff(Collection<ASTCDAssociation> assocs) {
-    CDAssociationHelper.updateDir4Diff(assocs,
-        originalCD.getCDDefinition().getCDAssociationsList());
+    for (ASTCDAssociation src : assocs) {
+      for (ASTCDAssociation target : getCD().getCDDefinition().getCDAssociationsList()) {
+        if (CDAssociationHelper.strictMatch(src, target)) {
+          if (isOpenWorld && (!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
+              .isBidirectional()) {
+            target.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
+            break;
+          }
+          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
+              .isDefinitiveNavigableRight())) {
+            target.setCDAssocDir(src.getCDAssocDir().deepClone());
+          }
+          break;
+        }
+        if (CDAssociationHelper.strictReverseMatch(src, target)) {
+          if (isOpenWorld && (!target.getCDAssocDir().isBidirectional()) && src.getCDAssocDir()
+              .isBidirectional()) {
+            target.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
+            break;
+          }
+          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
+              .isDefinitiveNavigableRight())) {
+            if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
+              target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
+            }
+            else {
+              if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
+                target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
   }
 
   /**
-   * helper-method to determine the package name of an ASTCDType since getSymbol().getPackageName()
-   * is always an empty String
+   * update directions of underspecified associations to differ to those in assocs
+   * Open-World allows specification: unspecified -> uni-directional -> bi-directional
    */
-  public String determinePackageName(ASTCDType astcdType) {
-    int start = astcdType.getSymbol().getFullName().length() - astcdType.getName().length() - 1;
-
-    if (start < 0) {
-      return "";
+  public void updateDir4Diff(Collection<ASTCDAssociation> assocs) {
+    for (ASTCDAssociation src : assocs) {
+      for (ASTCDAssociation target : getCD().getCDDefinition().getCDAssociationsList()) {
+        if (CDAssociationHelper.strictMatch(src, target)) {
+          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
+              .isDefinitiveNavigableRight())) {
+            if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
+              target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
+            }
+            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
+              target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
+            }
+          }
+          break;
+        }
+        if (CDAssociationHelper.strictReverseMatch(src, target)) {
+          if (!(target.getCDAssocDir().isDefinitiveNavigableLeft() || target.getCDAssocDir()
+              .isDefinitiveNavigableRight())) {
+            if (src.getCDAssocDir().isDefinitiveNavigableRight()) {
+              target.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
+            }
+            else if (src.getCDAssocDir().isDefinitiveNavigableLeft()) {
+              target.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
+            }
+          }
+          break;
+        }
+      }
     }
-
-    StringBuilder packageName = new StringBuilder().append(astcdType.getSymbol().getFullName());
-    return packageName.delete(start, packageName.length()).toString();
   }
 
   public Set<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> isolated,
@@ -261,37 +261,6 @@ public class CDExpander {
     return dummies;
   }
 
-  public ASTCDAssociation buildDummyClassAndAssociation(String left, String roleName, String right,
-      int id) {
-    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
-    Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(right);
-    if (opt.isPresent()) {
-
-      ASTCDType rightType = opt.get().getAstNode();
-
-      // construct dummy class
-
-      ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
-
-      ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-          .setName(rightType.getName() + "Dummy" + id)
-          .setCDExtendUsageAbsent()
-          .setCDInterfaceUsageAbsent()
-          .setModifier(newModifier)
-          .build();
-      addClass2Package(newClass, determinePackageName(rightType));
-
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(originalCD);
-
-      return buildDummyAssociation(left, roleName, newClass.getSymbol().getFullName());
-
-    }
-    else {
-      Log.error(String.format("0xCDD12: Could not resolve %s.", right));
-    }
-    return null;
-  }
-
   public ASTCDAssociation buildDummyAssociation(String left, String roleName, String right) {
 
     ASTCDAssociation dummy = CDAssociationMill.cDAssociationBuilder()
@@ -319,12 +288,12 @@ public class CDExpander {
                 .build())
             .build())
         .build();
-    originalCD.getCDDefinition().getCDElementList().add(dummy);
+    getCD().getCDDefinition().getCDElementList().add(dummy);
     return dummy;
   }
 
   public void updateUnspecifiedDir2Default() {
-    for (ASTCDAssociation assoc : originalCD.getCDDefinition().getCDAssociationsList()) {
+    for (ASTCDAssociation assoc : getCD().getCDDefinition().getCDAssociationsList()) {
       if (!(assoc.getCDAssocDir().isDefinitiveNavigableRight() || assoc.getCDAssocDir()
           .isDefinitiveNavigableLeft())) {
         assoc.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());

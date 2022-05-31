@@ -11,6 +11,8 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.ow2cw.expander.BasicExpander;
+import de.monticore.ow2cw.expander.FullExpander;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,8 +39,8 @@ public class ReductionTrafo {
     handleAssocDirections(first, second, true);
 
     // construct symbol tables
-    CDExpander expander1 = new CDExpander(first);
-    CDExpander expander2 = new CDExpander(second);
+    FullExpander expander1 = new FullExpander(new BasicExpander(first));
+    FullExpander expander2 = new FullExpander(new BasicExpander(second));
 
         /*
     transform first
@@ -116,13 +118,13 @@ public class ReductionTrafo {
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    CDExpander expander = new CDExpander(first);
+    FullExpander expander = new FullExpander(new BasicExpander(first));
     expander.addDummyClass(dummyName);
   }
 
   public static void addSubClasses4Diff(ASTCDCompilationUnit first) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    CDExpander expander = new CDExpander(first);
+    FullExpander expander = new FullExpander(new BasicExpander(first));
 
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
@@ -140,8 +142,8 @@ public class ReductionTrafo {
    */
   public static void handleAssocDirections(ASTCDCompilationUnit first, ASTCDCompilationUnit second,
       boolean isOpenWorld) {
-    CDExpander expander1 = new CDExpander(first);
-    CDExpander expander2 = new CDExpander(second);
+    FullExpander expander1 = new FullExpander(new BasicExpander(first));
+    FullExpander expander2 = new FullExpander(new BasicExpander(second));
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
@@ -185,7 +187,7 @@ public class ReductionTrafo {
       inheritanceGraph.get(type).remove(type);
     }
 
-    // make sure abstract classes and interfaces do not extend (non-abstract) classes
+    // make sure interfaces do not extend classes
     for (ASTCDType type : typeSet) {
       if (interfaces.contains(type)) {
         inheritanceGraph.get(type)
@@ -194,6 +196,7 @@ public class ReductionTrafo {
                 .filter(superType -> !(interfaces.contains(superType)))
                 .collect(Collectors.toSet()));
       }
+      /*
       else if (type.getModifier().isAbstract()) {
         inheritanceGraph.get(type)
             .removeAll(inheritanceGraph.get(type)
@@ -202,6 +205,7 @@ public class ReductionTrafo {
                     .isAbstract()))
                 .collect(Collectors.toSet()));
       }
+      */
     }
 
     // remove cyclical inheritance
