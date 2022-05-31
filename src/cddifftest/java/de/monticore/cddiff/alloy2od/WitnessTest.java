@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloy2od;
 
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -49,6 +50,62 @@ public class WitnessTest extends CDDiffTestBasis {
       assertFalse(matcher.checkODConsistency(cd2, od.getObjectDiagram()));
     }
 
+  }
+
+  @Test
+  public void testOWAlloyDiff() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+    assertNotNull(astV2);
+
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7,
+        CDSemantics.MULTI_INSTANCE_OPEN_WORLD, "target/generated/cddiff-test/");
+
+    // Test if generation was successful
+    assertTrue(optS.isPresent());
+
+    // Extract solution
+    AlloyDiffSolution s = optS.get();
+
+    // limit number of generated diff-witnesses
+    s.setSolutionLimit(1);
+    s.setLimited(true);
+
+    List<ASTODArtifact> ods = s.generateODs();
+
+    assertFalse(ods.isEmpty());
+  }
+
+  @Test
+  public void testNoOWAlloyDiff() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+    assertNotNull(astV2);
+
+    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7,
+        CDSemantics.MULTI_INSTANCE_OPEN_WORLD, "target/generated/cddiff-test/");
+
+    // Test if generation was successful
+    assertTrue(optS.isPresent());
+
+    // Extract solution
+    AlloyDiffSolution s = optS.get();
+
+    // limit number of generated diff-witnesses
+    s.setSolutionLimit(1);
+    s.setLimited(true);
+
+    List<ASTODArtifact> ods = s.generateODs();
+
+    assertTrue(ods.isEmpty());
   }
 
 }

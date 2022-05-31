@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class A3RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
   @Before
@@ -62,7 +62,7 @@ public class A3RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testA1_MV() {
-    String a = CD2AlloyGenerator.executeRuleA3(mvAst);
+    String a = CD2AlloyGenerator.getInstance().executeRuleA3(mvAst);
     String[] lines = a.split(System.getProperty("line.separator"));
 
     System.out.println(a);

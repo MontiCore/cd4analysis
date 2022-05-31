@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloycddiff;
 
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.alloycddiff.classDifference.ClassDifference;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -267,7 +268,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     asts.add(astV2);
 
     // Run alloy
-    Optional<AlloyDiffSolution> optS1 = ClassDifference.cddiff(astV1, astV2, 1, true,
+    Optional<AlloyDiffSolution> optS1 = ClassDifference.cddiff(astV1, astV2, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
         "target" + "/generated/cddiff-test");
     // Test first solution
     testSolution(optS1, 2);
@@ -279,7 +280,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
     // Generate second solution
-    Optional<AlloyDiffSolution> optS2 = ClassDifference.cddiff(astV2, astV1, 1, true,
+    Optional<AlloyDiffSolution> optS2 = ClassDifference.cddiff(astV2, astV1, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
         "target" + "/generated/cddiff-test");
     // Test second solution
     testSolution(optS2, 2);

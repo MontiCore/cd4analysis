@@ -19,13 +19,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class F2RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel(
+  protected ASTCDCompilationUnit m1Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel(
+  protected ASTCDCompilationUnit m2Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
@@ -114,7 +114,7 @@ public class F2RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF2_MV() {
-    String f2 = CD2AlloyGenerator.executeRuleF2(mvAst);
+    String f2 = CD2AlloyGenerator.getInstance().executeRuleF2(mvAst);
     String[] lines = f2.split(System.getProperty("line.separator"));
 
     // Definition of expected result
@@ -126,7 +126,7 @@ public class F2RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF2_cd2v1() {
-    String f2 = CD2AlloyGenerator.executeRuleF2(m1Ast);
+    String f2 = CD2AlloyGenerator.getInstance().executeRuleF2(m1Ast);
     String[] lines = f2.split(System.getProperty("line.separator"));
 
     // Definition of expected result
@@ -137,7 +137,7 @@ public class F2RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF2_cd2v2() {
-    String f2 = CD2AlloyGenerator.executeRuleF2(m2Ast);
+    String f2 = CD2AlloyGenerator.getInstance().executeRuleF2(m2Ast);
     String[] lines = f2.split(System.getProperty("line.separator"));
 
     // Definition of expected result

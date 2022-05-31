@@ -1,11 +1,5 @@
 package de.monticore.cd2alloy.generator;
 
-import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd2alloy.cocos.CD2AlloyCoCos;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
-import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -13,14 +7,23 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class OpenWorldGenerator extends CD2AlloyGenerator {
-  public static String createGenericPart() {
+
+  public static CD2AlloyGenerator getInstance() {
+    return new OpenWorldGenerator();
+  }
+
+  protected OpenWorldGenerator() {
+
+  }
+
+  @Override
+  public String createGenericPart() {
     return "// ***** Generic Part ***** " + System.lineSeparator() + " " + System.lineSeparator()
 
         // Comment for abstract Signatures
@@ -107,64 +110,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
         + System.lineSeparator() + System.lineSeparator();
   }
 
-  public static String generate(Set<ASTCDCompilationUnit> asts) {
-    // Only generate a module for non-empty asts
-    if (asts.isEmpty()) {
-      return "";
-    }
-
-    for (ASTCDCompilationUnit ast : asts) {
-      // build symbol table
-      CD4CodeMill.globalScope().clear();
-      BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
-      new CD4CodeDirectCompositionTrafo().transform(ast);
-      CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
-      CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(
-          ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
-      ast.accept(c.getTraverser());
-      cocos.checkAll(ast);
-    }
-
-    renameASTs(asts);
-
-    // Derive the name of the module
-    String moduleName = generateModuleName(asts);
-
-    // Initialize output variable
-    StringBuilder module = new StringBuilder(
-        "module " + moduleName + System.lineSeparator() + " " + System.lineSeparator());
-
-    // Generate the Generic Part
-    module.append(createGenericPart());
-
-    // Signatures common to all CDs
-    module.append(CD2AlloyGenerator.executeRuleU1(asts)).append(System.lineSeparator());
-    module.append(CD2AlloyGenerator.executeRuleU2(asts)).append(System.lineSeparator());
-    module.append(CD2AlloyGenerator.executeRuleU3(asts)).append(System.lineSeparator());
-    module.append(executeRuleU4(asts)).append(System.lineSeparator());
-
-    // Singleton Class Signatures for multi-instance semantics
-    module.append(CD2AlloyGenerator.executeRuleU5(asts, true)).append(System.lineSeparator());
-
-    // Functions specific to CD
-    for (ASTCDCompilationUnit cd : asts) {
-      module.append(executeRuleF1(cd)).append(System.lineSeparator());
-      module.append(CD2AlloyGenerator.executeRuleF2(cd)).append(System.lineSeparator());
-      module.append(CD2AlloyGenerator.executeRuleF3(cd)).append(System.lineSeparator());
-      module.append(CD2AlloyGenerator.executeRuleF4(cd)).append(System.lineSeparator());
-    }
-
-    // semantics predicate for each CD
-    for (ASTCDCompilationUnit cd : asts) {
-      module.append(createPredicates(cd, true));
-    }
-
-    return module.toString();
-  }
-
-  public static String executeRuleU4(Set<ASTCDCompilationUnit> asts) {
+  @Override
+  public String executeRuleU4(Set<ASTCDCompilationUnit> asts) {
     StringBuilder commonSigs = new StringBuilder();
 
     // Union of all Enums
@@ -219,86 +166,50 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  public static String createPredicates(ASTCDCompilationUnit cd, boolean newSemantics) {
-    StringBuilder predicate = new StringBuilder();
-
-    // The definition of the CD
-    ASTCDDefinition cdDefinition = cd.getCDDefinition();
-
-    // Comment
-    predicate.append("// Semantics predicate ")
-        .append(cdDefinition.getName())
-        .append(System.lineSeparator());
-
-    // Begin predicate
-    predicate.append("pred ")
-        .append(cdDefinition.getName())
-        .append(" {")
+  @Override
+  public String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
+    StringBuilder commonSigs = new StringBuilder().append(super.executeRuleU5(asts, newSemantics))
         .append(System.lineSeparator())
         .append(System.lineSeparator());
 
-    if (newSemantics) {
-      predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
+    // Union of all classes and interfaces
+    Set<ASTCDType> typeUnion = new HashSet<>();
+    for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
+      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList()));
+      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
     }
-    else {
-      predicate.append(("ObjTypes[Obj,(Type_Dummy)]"))
+
+    // Union of all type names
+    Set<String> typeNameUnion = new HashSet<>();
+    for (ASTCDType astcdType : typeUnion) {
+      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
+    }
+    commonSigs.append("fact{");
+
+    for (String typeName : typeNameUnion) {
+      commonSigs.append("all c: ")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(" | c.type=Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
           .append(System.lineSeparator())
+          .append("Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(" in Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(".super")
           .append(System.lineSeparator());
     }
 
-    predicate.append("// Classes and attributes in ")
-        .append(cdDefinition.getName())
-        .append(System.lineSeparator());
+    commonSigs.append("}");
 
-    // P1: Declaration of Attributes
-    predicate.append(executeRuleP1(cd)).append(System.lineSeparator());
-
-    // P3: Abstract classes have no objects singletons exactly one
-    predicate.append(executeRuleP3(cd)).append(System.lineSeparator());
-
-    // P4: Objects must be Objects of the class diagram
-    predicate.append(executeRuleP4(cd)).append(System.lineSeparator());
-
-    // Handle Associations
-    // Comment
-    predicate.append("// Associations in ")
-        .append(cdDefinition.getName())
-        .append(System.lineSeparator());
-
-    // A1: Constraints the sets of links of bidirectional associations.
-    predicate.append(executeRuleA1(cd)).append(System.lineSeparator());
-
-    // A2: Ensures parts of compositions have at most one whole.
-    predicate.append(executeRuleA2(cd)).append(System.lineSeparator());
-
-    // A3: ensures the cardinality constraints stated on the left sides of
-    // bidirectional associations, undirected association, and associations that
-    // are navigable from right to left are respected.
-    predicate.append(executeRuleA3(cd)).append(System.lineSeparator());
-
-    // A4: ensures the cardinality constraints stated on the right sides of
-    // associations, which are navigable from right to left, are respected.
-    predicate.append(executeRuleA4(cd)).append(System.lineSeparator());
-
-    // A5: ensures the cardinality constraints stated on the right sides of
-    // bidirectional associations, undirected association, and associations that
-    // are navigable from
-    // right to left are respected.
-    predicate.append(executeRuleA5(cd)).append(System.lineSeparator());
-
-    // A6: ensures the cardinality constraints stated on the left sides of
-    // associations that are navigable from left to right are respected.
-    predicate.append(executeRuleA6(cd));
-
-    predicate.append(System.lineSeparator()).append("}");
-
-    return predicate.toString();
+    return commonSigs.toString();
   }
 
   /**
    * additional rule for new semantics
    */
-  public static String executeRuleP0(ASTCDCompilationUnit cd) {
+  @Override
+  public String executeRuleP0(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The set of all classes in the class diagram
@@ -334,15 +245,60 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       }
     }
 
+    Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+    for (ASTCDInterface astcdInterface : interfaces) {
+
+      // Computation of Superclasses
+      Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+      Set<ASTCDType> superList = new HashSet<>(interfaces(astcdInterface, allInterfaces));
+
+      // Output P0
+      // Functions + Names
+      classFunctions.append("all i: ")
+          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append(" | i.type=Type_")
+          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append(System.lineSeparator());
+
+      // All subclasses connected with a '+'
+      for (ASTCDType superType : superList) {
+        classFunctions.append("Type_")
+            .append(CD2AlloyQNameHelper.processQName(superType.getSymbol().getFullName()))
+            .append(" in Type_")
+            .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+            .append(".super")
+            .append(System.lineSeparator());
+      }
+    }
+
     return classFunctions.toString();
 
+  }
+
+  @Override
+  public String executeRuleP2(ASTCDCompilationUnit cd) {
+    return "";
+  }
+
+  @Override
+  public String executeRuleP3(ASTCDCompilationUnit cd) {
+    StringBuilder predicate = new StringBuilder().append(super.executeRuleP3(cd))
+        .append(System.lineSeparator())
+        .append(System.lineSeparator());
+    for (ASTCDInterface astcdInterface : cd.getCDDefinition().getCDInterfacesList()) {
+      predicate.append("no ")
+          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append(System.lineSeparator());
+    }
+    return predicate.toString();
   }
 
   /**
    * Executes the F1 rule, which generates functions returning all atoms of all subclasses of all
    * classes in class diagram cd.
    */
-  public static String executeRuleF1(ASTCDCompilationUnit cd) {
+  @Override
+  public String executeRuleF1(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The set of all classes in the class diagram
@@ -361,10 +317,84 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
           .append(": set Obj { ")
           .append("Type_")
           .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
-          .append(".inst").append("}").append(System.lineSeparator());
+          .append(".inst")
+          .append("}")
+          .append(System.lineSeparator());
     }
 
     return classFunctions.toString();
+  }
+
+  /**
+   * Executes the F1 rule, which generates functions returning all atoms of all subclasses of all
+   * classes in class diagram cd.
+   */
+  @Override
+  public String executeRuleF2(ASTCDCompilationUnit cd) {
+    StringBuilder interfaceFunctions = new StringBuilder();
+
+    // The set of all classes in the class diagram
+    Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
+
+    interfaceFunctions.append(
+            "// F2: Function returning all atoms of all classes implementing " + "the interface" + ". ")
+        .append(System.lineSeparator());
+    for (ASTCDInterface astcdInterface : interfaces) {
+
+      // Output F1
+      // Functions + Names
+      interfaceFunctions.append("fun ")
+          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append("SubsCD")
+          .append(cd.getCDDefinition().getName())
+          .append(": set Obj { ")
+          .append("Type_")
+          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append(".inst")
+          .append("}")
+          .append(System.lineSeparator());
+    }
+
+    return interfaceFunctions.toString();
+  }
+
+  /**
+   * Executes the F3 rule, which creates a function for each enumeration type in the CD cd that
+   * returns the enumeration’s possible values.
+   *
+   * @return String for Alloy Module
+   */
+  @Override
+  public String executeRuleF3(ASTCDCompilationUnit cd) {
+    StringBuilder classFunctions = new StringBuilder();
+
+    // The Definition of the class diagram
+    ASTCDDefinition cdDefinition = cd.getCDDefinition();
+
+    // The set of all enums in the class diagram
+    Set<ASTCDEnum> enums = new HashSet<>(cdDefinition.getCDEnumsList());
+
+    // Comment for F3 rule
+    classFunctions.append(
+            "// F3: Functions returning all possible enum values for all enums in the CD. ")
+        .append(System.lineSeparator());
+    for (ASTCDEnum e : enums) {
+      classFunctions.append("fun ")
+          .append(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))
+          .append("EnumCD")
+          .append(cdDefinition.getName())
+          .append(": set EnumVal { ")
+          .append(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))
+          .append(".values }")
+          .append(System.lineSeparator());
+    }
+
+    return classFunctions.toString();
+  }
+
+  @Override
+  public String executeRuleP4(ASTCDCompilationUnit cd) {
+    return "";
   }
 
 }

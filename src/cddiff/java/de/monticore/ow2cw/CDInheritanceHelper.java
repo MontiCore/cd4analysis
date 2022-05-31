@@ -73,42 +73,42 @@ public class CDInheritanceHelper {
   /**
    * return all superclasses and interfaces of cdType
    */
-  public static List<ASTCDType> getAllSuper(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
-    List<ASTCDType> superList = new ArrayList<>(getDirectSuperClasses(cdType, artifactScope));
-    superList.addAll(getDirectInterfaces(cdType, artifactScope));
+  public static Set<ASTCDType> getAllSuper(ASTCDType cdType, ICD4CodeArtifactScope artifactScope) {
+    Set<ASTCDType> superSet = new HashSet<>(getDirectSuperClasses(cdType, artifactScope));
+    superSet.addAll(getDirectInterfaces(cdType, artifactScope));
 
-    List<ASTCDType> nextSuperSuperList = new ArrayList<>();
-    for (ASTCDType nextSuper : superList) {
-      nextSuperSuperList.addAll(getAllSuper(nextSuper, artifactScope));
+    Set<ASTCDType> nextSuperSuperSet = new HashSet<>();
+    for (ASTCDType nextSuper : superSet) {
+      nextSuperSuperSet.addAll(getAllSuper(nextSuper, artifactScope));
     }
-    superList.addAll(nextSuperSuperList);
-    superList.add(cdType);
-    return superList;
+    superSet.addAll(nextSuperSuperSet);
+    superSet.add(cdType);
+    return superSet;
   }
 
   /**
    * return all superclasses from SuperClassList since I cannot use getSymbol()
    * .getSuperClassesOnly()
    */
-  public static List<ASTCDType> getDirectSuperClasses(ASTCDType cdType,
+  public static Set<ASTCDType> getDirectSuperClasses(ASTCDType cdType,
       ICD4CodeArtifactScope artifactScope) {
-    List<ASTCDType> extendsList = new ArrayList<>();
+    Set<ASTCDType> extendsSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getSuperclassList()) {
-      extendsList.add(resolveClosestType(cdType, superType.printType(pp), artifactScope));
+      extendsSet.add(resolveClosestType(cdType, superType.printType(pp), artifactScope));
     }
-    return extendsList;
+    return extendsSet;
   }
 
   /**
    * return all interfaces from InterfaceList since I cannot use getSymbol().getInterfaceList()
    */
-  public static List<ASTCDType> getDirectInterfaces(ASTCDType cdType,
+  public static Set<ASTCDType> getDirectInterfaces(ASTCDType cdType,
       ICD4CodeArtifactScope artifactScope) {
-    List<ASTCDType> interfaceList = new ArrayList<>();
+    Set<ASTCDType> interfaceSet = new HashSet<>();
     for (ASTMCObjectType superType : cdType.getInterfaceList()) {
-      interfaceList.add(resolveClosestType(cdType, superType.printType(pp), artifactScope));
+      interfaceSet.add(resolveClosestType(cdType, superType.printType(pp), artifactScope));
     }
-    return interfaceList;
+    return interfaceSet;
   }
 
   /**

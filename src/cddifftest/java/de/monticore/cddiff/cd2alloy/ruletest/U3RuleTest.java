@@ -18,13 +18,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class U3RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel(
+  protected ASTCDCompilationUnit m1Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel(
+  protected ASTCDCompilationUnit m2Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
@@ -65,7 +65,7 @@ public class U3RuleTest extends CDDiffTestBasis {
     Set<ASTCDCompilationUnit> asts = new HashSet<>();
     asts.add(mvAst);
 
-    String u3 = CD2AlloyGenerator.executeRuleU3(asts);
+    String u3 = CD2AlloyGenerator.getInstance().executeRuleU3(asts);
     String[] lines = u3.split(System.getProperty("line.separator"));
 
     // Definition of expected result
@@ -82,7 +82,7 @@ public class U3RuleTest extends CDDiffTestBasis {
     asts.add(m1Ast);
     asts.add(m2Ast);
 
-    String u3 = CD2AlloyGenerator.executeRuleU3(asts);
+    String u3 = CD2AlloyGenerator.getInstance().executeRuleU3(asts);
     String[] lines = u3.split(System.getProperty("line.separator"));
 
     // Definition of expected result

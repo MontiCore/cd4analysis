@@ -19,13 +19,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class F4RuleTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit mvAst = parseModel(
+  protected ASTCDCompilationUnit mvAst = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  ASTCDCompilationUnit m1Ast = parseModel(
+  protected ASTCDCompilationUnit m1Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  ASTCDCompilationUnit m2Ast = parseModel(
+  protected ASTCDCompilationUnit m2Ast = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
@@ -102,7 +102,7 @@ public class F4RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF4_MV() {
-    String f4 = CD2AlloyGenerator.executeRuleF4(mvAst);
+    String f4 = CD2AlloyGenerator.getInstance().executeRuleF4(mvAst);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -113,7 +113,7 @@ public class F4RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF4_cd2v1() {
-    String f4 = CD2AlloyGenerator.executeRuleF4(m1Ast);
+    String f4 = CD2AlloyGenerator.getInstance().executeRuleF4(m1Ast);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
@@ -123,7 +123,7 @@ public class F4RuleTest extends CDDiffTestBasis {
 
   @Test
   public void testF4_cd2v2() {
-    String f4 = CD2AlloyGenerator.executeRuleF4(m2Ast);
+    String f4 = CD2AlloyGenerator.getInstance().executeRuleF4(m2Ast);
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
