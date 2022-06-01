@@ -8,7 +8,6 @@ import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompClass;
 import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CompareHelper {
 
@@ -83,32 +82,15 @@ public class CompareHelper {
     }
   }
 
-  public static CompClass createCompClassHelper(DifferentGroup basedDG, DiffClass based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory category) {
-    CompClass compClass = new CompClass();
-    compClass.setOriginalDiffClass(based);
-    compClass.setCompId(UUID.randomUUID());
-    compClass.setCompKind(getCompClassKindHelper(based.getDiffKind()));
-    compClass.setName(getCompClassKindStrHelper(compClass.getCompKind()) + "_" + based.getName().substring(based.getName().indexOf("_") + 1, based.getName().length()));
-    compClass.setInBasedDG(true);
-    compClass.setInComparedDG(isInComparedDG);
-    compClass.setContentDiff(isContentDiff);
-    compClass.setCompCategory(category);
-
-    // add linked class A into EnumClass when the class A extends class B that using this EnumClass
-    if (!compClass.getCompKind().equals(CompareGroup.CompClassKind.COMP_ENUM)) {
-      compClass.setCompAttributesResult(based.getAttributes().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get("type").contains("DiffEnum") ? basedDG.getDiffClassGroup().get(e.getValue().get("type")).getAttributes().keySet().stream().collect(Collectors.toList()).get(0) : e.getValue().get("type"))));
-    }
-    else {
-      compClass.setCompAttributesResult(based.getAttributes().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> "String")));
-    }
-    compClass.setWhichAttributesDiff(compClass.getCompAttributesResult().keySet().stream().collect(Collectors.toList()));
-
+  public static CompClass createCompClassHelper(DiffClass based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory category) {
+    CompClass compClass = new CompClass(based, isInComparedDG, isContentDiff, category);
+    compClass.setWhichAttributesDiff(Optional.empty());
     return compClass;
   }
 
-  public static CompClass createCompClassHelper(DifferentGroup basedDG, DiffClass based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory category, List<String> attributesDiffList) {
-    CompClass compClass = createCompClassHelper(basedDG, based, isInComparedDG, isContentDiff, category);
-    compClass.setWhichAttributesDiff(attributesDiffList);
+  public static CompClass createCompClassHelper(DiffClass based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory category, List<String> attributesDiffList) {
+    CompClass compClass = createCompClassHelper(based, isInComparedDG, isContentDiff, category);
+    compClass.setWhichAttributesDiff(Optional.of(attributesDiffList));
     return compClass;
   }
 
@@ -281,52 +263,35 @@ public class CompareHelper {
     }
   }
 
-  public static CompAssociation createCompareAssociationHelper(DiffAssociation diffAssociation, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory category) {
-    CompAssociation compAssociation = new CompAssociation();
-    compAssociation.setCompId(UUID.randomUUID());
-    compAssociation.setName("CompAssociation_" + diffAssociation.getName().substring(diffAssociation.getName().indexOf("_") + 1, diffAssociation.getName().length()));
-    compAssociation.setCompKind(getCompAssociationKindHelper(diffAssociation.getDiffKind()));
-    compAssociation.setInBasedDG(true);
-    compAssociation.setInComparedDG(isInComparedDG);
-    compAssociation.setContentDiff(isContentDiff);
-    compAssociation.setCompCategoryResult(category);
-
-    compAssociation.setCompLeftClassResult(diffAssociation.getDiffLeftClass());
-    compAssociation.setCompLeftClassRoleName(diffAssociation.getDiffLeftClassRoleName());
-
-    compAssociation.setCompRightClassResult(diffAssociation.getDiffRightClass());
-    compAssociation.setCompRightClassRoleName(diffAssociation.getDiffRightClassRoleName());
-
-    compAssociation.setOriginalDiffAssociation(diffAssociation);
+  public static CompAssociation createCompareAssociationHelper(DiffAssociation based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory category) {
+    CompAssociation compAssociation = new CompAssociation(based, isInComparedDG, isContentDiff, category);
+    compAssociation.setCompDirectionResult(Optional.empty());
+    compAssociation.setCompLeftClassCardinalityResult(Optional.empty());
+    compAssociation.setCompRightClassCardinalityResult(Optional.empty());
     compAssociation.setWhichPartDiff(Optional.empty());
-
-    compAssociation.setCompDirectionResult(CompareGroup.CompAssociationDirection.NONE);
-    compAssociation.setCompLeftClassCardinalityResult(CompareGroup.CompAssociationCardinality.NONE);
-    compAssociation.setCompRightClassCardinalityResult(CompareGroup.CompAssociationCardinality.NONE);
-
     return compAssociation;
   }
 
-  public static CompAssociation createCompareAssociationHelper(DiffAssociation diffAssociation, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory category, Optional<CompareGroup.WhichPartDiff> whichPartDiff, Optional<Object> compResult) {
-    CompAssociation compAssociation = createCompareAssociationHelper(diffAssociation, isInComparedDG, isContentDiff, category);
+  public static CompAssociation createCompareAssociationHelper(DiffAssociation based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory category, Optional<CompareGroup.WhichPartDiff> whichPartDiff, Optional<Object> compResult) {
+    CompAssociation compAssociation = createCompareAssociationHelper(based, isInComparedDG, isContentDiff, category);
     compAssociation.setWhichPartDiff(whichPartDiff);
 
     if (whichPartDiff.isPresent() && compResult.isPresent()) {
       switch (whichPartDiff.get()) {
         case DIRECTION:
-          compAssociation.setCompDirectionResult((CompareGroup.CompAssociationDirection) compResult.get());
-          compAssociation.setCompLeftClassCardinalityResult(CompareGroup.CompAssociationCardinality.NONE);
-          compAssociation.setCompRightClassCardinalityResult(CompareGroup.CompAssociationCardinality.NONE);
+          compAssociation.setCompDirectionResult(Optional.of((CompareGroup.CompAssociationDirection) compResult.get()));
+          compAssociation.setCompLeftClassCardinalityResult(Optional.empty());
+          compAssociation.setCompRightClassCardinalityResult(Optional.empty());
           break;
         case LEFT_CARDINALITY:
-          compAssociation.setCompDirectionResult(CompareGroup.CompAssociationDirection.NONE);
-          compAssociation.setCompLeftClassCardinalityResult((CompareGroup.CompAssociationCardinality) compResult.get());
-          compAssociation.setCompRightClassCardinalityResult(CompareGroup.CompAssociationCardinality.NONE);
+          compAssociation.setCompDirectionResult(Optional.empty());
+          compAssociation.setCompLeftClassCardinalityResult(Optional.of((CompareGroup.CompAssociationCardinality) compResult.get()));
+          compAssociation.setCompRightClassCardinalityResult(Optional.empty());
           break;
         case RIGHT_CARDINALITY:
-          compAssociation.setCompDirectionResult(CompareGroup.CompAssociationDirection.NONE);
-          compAssociation.setCompLeftClassCardinalityResult(CompareGroup.CompAssociationCardinality.NONE);
-          compAssociation.setCompRightClassCardinalityResult((CompareGroup.CompAssociationCardinality) compResult.get());
+          compAssociation.setCompDirectionResult(Optional.empty());
+          compAssociation.setCompLeftClassCardinalityResult(Optional.empty());
+          compAssociation.setCompRightClassCardinalityResult(Optional.of((CompareGroup.CompAssociationCardinality) compResult.get()));
           break;
       }
     }

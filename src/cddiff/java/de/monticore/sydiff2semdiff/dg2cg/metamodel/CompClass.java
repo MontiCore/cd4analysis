@@ -2,121 +2,62 @@ package de.monticore.sydiff2semdiff.dg2cg.metamodel;
 
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindHelper;
+import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindStrHelper;
 
 public class CompClass {
-  protected UUID compId;
-  protected String name;
-  protected CompareGroup.CompClassKind compKind;
-  protected boolean isInBasedDG;
-  protected boolean isInComparedDG;
-  protected boolean isContentDiff;
-  protected CompareGroup.CompClassCategory compCategory;
-  protected Map<String, String> compAttributesResult;
-  protected List<String> whichAttributesDiff;
-  protected DiffClass originalDiffClass;
 
-  public CompClass() {
-  }
+  protected final UUID compId;
+  protected DiffClass originalElement;
+  protected final boolean isInComparedDG;
+  protected final boolean isContentDiff;
+  protected final CompareGroup.CompClassCategory compCategory;
+  protected Optional<List<String>> whichAttributesDiff;
 
-  public CompClass(UUID compId, String name, CompareGroup.CompClassKind compKind, boolean isInBasedDG, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory compCategory, Map<String, String> compAttributesResult, List<String> whichAttributesDiff, DiffClass originalDiffClass) {
-    this.compId = compId;
-    this.name = name;
-    this.compKind = compKind;
-    this.isInBasedDG = isInBasedDG;
+  public CompClass(DiffClass originalElement, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory compCategory) {
+    this.originalElement = originalElement;
     this.isInComparedDG = isInComparedDG;
     this.isContentDiff = isContentDiff;
     this.compCategory = compCategory;
-    this.compAttributesResult = compAttributesResult;
-    this.whichAttributesDiff = whichAttributesDiff;
-    this.originalDiffClass = originalDiffClass;
+    this.compId = UUID.randomUUID();
   }
 
   public UUID getCompId() {
     return compId;
   }
 
-  public void setCompId(UUID compId) {
-    this.compId = compId;
-  }
-
   public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+    return getCompClassKindStrHelper(getCompKind()) + "_" + this.originalElement.getOriginalClassName();
   }
 
   public CompareGroup.CompClassKind getCompKind() {
-    return compKind;
-  }
-
-  public void setCompKind(CompareGroup.CompClassKind compKind) {
-    this.compKind = compKind;
-  }
-
-  public boolean isInBasedDG() {
-    return isInBasedDG;
-  }
-
-  public void setInBasedDG(boolean inBasedDG) {
-    isInBasedDG = inBasedDG;
+    return getCompClassKindHelper(this.originalElement.getDiffKind());
   }
 
   public boolean isInComparedDG() {
     return isInComparedDG;
   }
 
-  public void setInComparedDG(boolean inComparedDG) {
-    isInComparedDG = inComparedDG;
-  }
 
   public boolean isContentDiff() {
     return isContentDiff;
-  }
-
-  public void setContentDiff(boolean contentDiff) {
-    isContentDiff = contentDiff;
   }
 
   public CompareGroup.CompClassCategory getCompCategory() {
     return compCategory;
   }
 
-  public void setCompCategory(CompareGroup.CompClassCategory compCategory) {
-    this.compCategory = compCategory;
-  }
-
-  public Map<String, String> getCompAttributesResult() {
-    return compAttributesResult;
-  }
-
-  public void setCompAttributesResult(Map<String, String> compAttributesResult) {
-    this.compAttributesResult = compAttributesResult;
-  }
-
-  public List<String> getWhichAttributesDiff() {
+  public Optional<List<String>> getWhichAttributesDiff() {
     return whichAttributesDiff;
   }
 
-  public void setWhichAttributesDiff(List<String> whichAttributesDiff) {
+  public void setWhichAttributesDiff(Optional<List<String>> whichAttributesDiff) {
     this.whichAttributesDiff = whichAttributesDiff;
   }
 
-  public DiffClass getOriginalDiffClass() {
-    return originalDiffClass;
-  }
-
-  public void setOriginalDiffClass(DiffClass originalDiffClass) {
-    this.originalDiffClass = originalDiffClass;
-  }
-
-  @Override
-  public String toString() {
-    return "CompClass{" + "compId=" + compId + ", name='" + name + '\'' + ", compKind=" + compKind + ", isInBasedDG=" + isInBasedDG + ", isInComparedDG=" + isInComparedDG + ", isContentDiff=" + isContentDiff + ", compCategory=" + compCategory + ", compAttributesResult=" + compAttributesResult + ", whichAttributesDiff=" + whichAttributesDiff + ", originalDiffClass=" + originalDiffClass + '}';
+  public DiffClass getOriginalElement() {
+    return originalElement;
   }
 }

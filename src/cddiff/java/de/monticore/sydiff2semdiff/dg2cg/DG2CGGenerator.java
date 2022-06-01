@@ -57,7 +57,7 @@ public class DG2CGGenerator {
       CompareGroup.CompClassCategory category = compClassCategoryHelper(based, compared, isContentDiff);
 
       // create compClass
-      CompClass compClass = createCompClassHelper(basedDG, based, isInComparedDG, isContentDiff, category, attributesDiffList);
+      CompClass compClass = createCompClassHelper(based, isInComparedDG, isContentDiff, category, attributesDiffList);
 
       // distinguish compClass by CompCategory
       if (compClass.getCompCategory() == CompareGroup.CompClassCategory.DELETED || compClass.getCompCategory() == CompareGroup.CompClassCategory.EDITED) {
@@ -68,7 +68,7 @@ public class DG2CGGenerator {
       }
 
     } else {
-      compClassResultQueueWithDiff.offer(createCompClassHelper(basedDG, based, isInComparedDG, true, CompareGroup.CompClassCategory.DELETED));
+      compClassResultQueueWithDiff.offer(createCompClassHelper(based, isInComparedDG, true, CompareGroup.CompClassCategory.DELETED));
     }
 
 

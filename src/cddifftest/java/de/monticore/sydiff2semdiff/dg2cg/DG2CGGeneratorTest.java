@@ -9,7 +9,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Set;
 
 public class DG2CGGeneratorTest extends CDDiffTestBasis {
 
@@ -43,7 +42,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(cg.getCompClassResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.EDITED
-        && e.getWhichAttributesDiff().contains("e3")));
+        && e.getWhichAttributesDiff().get().contains("e3")));
   }
 
   /**
@@ -61,7 +60,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.EDITED
         && e.getName().split("_")[1].contains("B")
-        && e.getWhichAttributesDiff().containsAll(List.of("str", "date", "element"))));
+        && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
 
   /**
@@ -79,12 +78,12 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.DELETED
         && e.getName().split("_")[1].contains("A")
-        && e.getWhichAttributesDiff().containsAll(List.of("str", "date", "element"))));
+        && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
     Assert.assertTrue(cg.getCompClassResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.EDITED
         && e.getName().split("_")[1].contains("B")
-        && e.getWhichAttributesDiff().containsAll(List.of("str", "date", "element"))));
+        && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
 
   /**
@@ -102,12 +101,12 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.DELETED
         && e.getName().split("_")[1].contains("A")
-        && e.getWhichAttributesDiff().containsAll(List.of("str", "date", "element"))));
+        && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
     Assert.assertTrue(cg.getCompClassResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.EDITED
         && e.getName().split("_")[1].contains("B")
-        && e.getWhichAttributesDiff().containsAll(List.of("str", "date", "element"))));
+        && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
 
   /**
@@ -124,8 +123,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(cg.getCompClassResultQueueWithoutDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.SUBSET
-        && e.getName().split("_")[1].contains("B")
-        && e.getCompAttributesResult().keySet().containsAll(Set.of("str", "date", "element"))));
+        && e.getName().split("_")[1].contains("B")));
   }
 
   /**
@@ -142,13 +140,11 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(cg.getCompClassResultQueueWithoutDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.ORIGINAL
-        && e.getName().split("_")[1].contains("A")
-        && e.getCompAttributesResult().keySet().containsAll(Set.of("str", "date", "element"))));
+        && e.getName().split("_")[1].contains("A")));
     Assert.assertTrue(cg.getCompClassResultQueueWithoutDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompClassCategory.ORIGINAL
-        && e.getName().split("_")[1].contains("B")
-        && e.getCompAttributesResult().keySet().containsAll(Set.of("str", "date", "element"))));
+        && e.getName().split("_")[1].contains("B")));
   }
 
   /********************************************************************
@@ -166,7 +162,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.ORIGINAL
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.ORIGINAL
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -181,7 +177,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED_BUT_SAME_MEANING
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED_BUT_SAME_MEANING
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -196,7 +192,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED
         && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.DIRECTION));
   }
 
@@ -211,7 +207,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.DIRECTION_SUBSET
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DIRECTION_SUBSET
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -227,7 +223,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithoutDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.DELETED
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DELETED
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -243,7 +239,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithoutDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.DELETED
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DELETED
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -262,7 +258,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.ORIGINAL
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.ORIGINAL
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -277,12 +273,12 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.CARDINALITY_SUBSET
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.CARDINALITY_SUBSET
         && !e.getWhichPartDiff().isPresent()
       ));
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.ORIGINAL
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.ORIGINAL
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -297,13 +293,13 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 2);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED
         && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.LEFT_CARDINALITY
-        && e.getCompLeftClassCardinalityResult() == CompareGroup.CompAssociationCardinality.ZERO_AND_TWO_TO_MORE));
+        && e.getCompLeftClassCardinalityResult().get() == CompareGroup.CompAssociationCardinality.ZERO_AND_TWO_TO_MORE));
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCompCategoryResult() == CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED
         && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.RIGHT_CARDINALITY
-        && e.getCompRightClassCardinalityResult() == CompareGroup.CompAssociationCardinality.TWO_TO_MORE));
+        && e.getCompRightClassCardinalityResult().get() == CompareGroup.CompAssociationCardinality.TWO_TO_MORE));
   }
 }
