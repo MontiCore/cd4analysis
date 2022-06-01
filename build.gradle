@@ -12,9 +12,10 @@ plugins {
   id "java"
   id "monticore" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
-  id "com.github.johnrengelman.shadow" version "6.0.0"
+  id "com.github.johnrengelman.shadow" version "6.0.0" apply false
   id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
+  id "com.dorongold.task-tree" version "2.1.0"
 }
 
 def var_path = "de.monticore"
@@ -377,18 +378,25 @@ task toolJar(type: Jar) {
   archiveClassifier = "tool"
 }
 
-jar.dependsOn cddiffJar, toolJar
-
-shadowJar { // all in one jar
-  archiveFileName = 'MCCD.jar'
-  manifest {
-    attributes "Main-Class": "de.monticore.CD4CodeTool"
-  }
-  from sourceSets.tool.runtimeClasspath
-  archiveClassifier = "mc-tool"
+task mainJar(type: Jar) {
+  from sourceSets.main.output + sourceSets.main.allSource
+  archiveClassifier = "main"
 }
 
-jar.dependsOn(shadowJar)
+if(("false").equals(getProperty('publishMain'))) {
+  jar.dependsOn cddiffJar, toolJar
+  apply plugin: "com.github.johnrengelman.shadow"
+  shadowJar { // all in one jar
+    archiveFileName = 'MCCD.jar'
+    manifest {
+      attributes "Main-Class": "de.monticore.CD4CodeTool"
+    }
+    from sourceSets.tool.runtimeClasspath
+    archiveClassifier = "mc-tool"
+  }
+  jar.dependsOn(shadowJar)
+}
+
 
 testSets {
   integrationTest {
@@ -429,18 +437,28 @@ jar.dependsOn grammarsJar
 artifacts {
   archives cddiffJar
   archives toolJar
+  archives mainJar
 }
 // configure deployment
 publishing {
   // configure what artifacts to publish
   publications {
-    mavenJava(MavenPublication) {
-      suppressPomMetadataWarningsFor('grammarsApiElements')
-      suppressPomMetadataWarningsFor('grammarsRuntimeElements')
-      from components.java
-       artifact testSourcesJar
-       artifact cddiffJar
-       artifact toolJar
+    if(("false").equals(getProperty('publishMain'))) {
+      mavenJava(MavenPublication) {
+        suppressPomMetadataWarningsFor('grammarsApiElements')
+        suppressPomMetadataWarningsFor('grammarsRuntimeElements')
+        from components.java
+        artifact testSourcesJar
+        artifact cddiffJar
+        artifact toolJar
+      }
+    }else{
+      mavenJava(MavenPublication) {
+        suppressPomMetadataWarningsFor('grammarsApiElements')
+        suppressPomMetadataWarningsFor('grammarsRuntimeElements')
+        from components.java
+        artifact mainJar
+      }
     }
   }
   repositories.maven {
@@ -450,5 +468,19 @@ publishing {
     def snapshotsRepoUrl = "https://nexus.se.rwth-aachen.de/content/repositories/monticore-snapshots/"
     url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
   }
+}
+
+task testMain (type:Test) {
+  group("verification")
+  description("Tests the main sources set and its grammars with the test source set.")
+  testClassesDirs = sourceSets.test.output.classesDirs
+  classpath = sourceSets.test.runtimeClasspath
+}
+
+task buildMain (type:GradleBuild){
+  group("build")
+  description("Builds only the main source set with its grammars.")
+  dependsOn(classes)
+  dependsOn(testMain)
 }
 
