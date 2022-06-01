@@ -10,8 +10,8 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.ow2cw.expander.BasicExpander;
 import de.monticore.ow2cw.expander.FullExpander;
+import de.monticore.ow2cw.expander.OpenWorldExpander;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Machines/Machines2.cd");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(machines));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(machines));
 
     for (ASTCDClass superClass : machines.getCDDefinition().getCDClassesList()) {
       if (superClass.getSymbol().getFullName().equals("future.FlyingCar")) {
@@ -59,7 +59,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Machines/Machines1.cd");
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines);
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(machines));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(machines));
 
     ASTCDClass car = CD4CodeMill.cDClassBuilder()
         .setModifier(CD4CodeMill.modifierBuilder().build())
@@ -105,7 +105,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines4);
     ICD4CodeArtifactScope scope5 = CD4CodeMill.scopesGenitorDelegator().createFromAST(machines5);
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(machines4));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(machines4));
 
     scope5.resolveCDTypeDown("new.Truck").ifPresent(type -> fullExpander.addClone(type.getAstNode()));
     scope5.resolveCDTypeDown("ancient.Wheel")
@@ -133,7 +133,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines3);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(machines4);
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(machines3));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(machines3));
 
     for (ASTCDClass astcdClass : machines4.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getSymbol().getFullName().equals("future.FutureThing")) {
@@ -162,7 +162,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture4);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture5);
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(lecture5));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(lecture5));
 
     fullExpander.addMissingTypesAndAttributes(lecture4.getCDDefinition().getCDInterfacesList());
     fullExpander.addMissingTypesAndAttributes(lecture4.getCDDefinition().getCDClassesList());
@@ -191,7 +191,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp1);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(enumComp2);
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(enumComp1));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(enumComp1));
 
     fullExpander.addMissingEnumsAndConstants(enumComp2.getCDDefinition().getCDEnumsList());
 
@@ -225,7 +225,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     lecture.getCDDefinition().removeAllCDElements(originals);
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
-    FullExpander fullExpander = new FullExpander( new BasicExpander(lecture));
+    FullExpander fullExpander = new FullExpander( new OpenWorldExpander(lecture));
 
     fullExpander.addMissingAssociations(copies, false);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
@@ -249,7 +249,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     ASTCDCompilationUnit employees8 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
-    BasicExpander fullExpander = new BasicExpander(employees8);
+    OpenWorldExpander fullExpander = new OpenWorldExpander(employees8);
 
     scope.resolveCDTypeDown("ins.Employee")
         .ifPresent(
@@ -265,9 +265,9 @@ public class FullExpanderTest extends CDDiffTestBasis {
     final ASTCDCompilationUnit lecture2 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture2.cd");
 
-    FullExpander fullExpander = new FullExpander(new BasicExpander(lecture2));
+    FullExpander fullExpander = new FullExpander(new OpenWorldExpander(lecture2));
 
-    fullExpander.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList(), true);
+    fullExpander.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList());
 
     Assert.assertTrue(lecture2.getCDDefinition()
         .getCDAssociationsList()
