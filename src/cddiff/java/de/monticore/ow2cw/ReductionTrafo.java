@@ -13,6 +13,7 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.ow2cw.expander.BasicExpander;
 import de.monticore.ow2cw.expander.FullExpander;
+import de.monticore.ow2cw.expander.OpenWorldExpander;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,7 +23,6 @@ public class ReductionTrafo {
   /**
    * transform 2 CDs for Open-to-Closed World Reduction of CDDiff completeSymbolTable() cannot be
    * used, because CDs likely define the same symbols
-   * todo: check if elements have stereotype ""
    */
   public void transform(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
@@ -39,8 +39,8 @@ public class ReductionTrafo {
     handleAssocDirections(first, second, true);
 
     // construct symbol tables
-    FullExpander expander1 = new FullExpander(new BasicExpander(first));
-    FullExpander expander2 = new FullExpander(new BasicExpander(second));
+    FullExpander expander1 = new FullExpander(new OpenWorldExpander(first));
+    FullExpander expander2 = new FullExpander(new OpenWorldExpander(second));
 
         /*
     transform first
@@ -118,13 +118,13 @@ public class ReductionTrafo {
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    FullExpander expander = new FullExpander(new BasicExpander(first));
+    FullExpander expander = new FullExpander(new OpenWorldExpander(first));
     expander.addDummyClass(dummyName);
   }
 
   public static void addSubClasses4Diff(ASTCDCompilationUnit first) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    FullExpander expander = new FullExpander(new BasicExpander(first));
+    FullExpander expander = new FullExpander(new OpenWorldExpander(first));
 
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
@@ -142,14 +142,23 @@ public class ReductionTrafo {
    */
   public static void handleAssocDirections(ASTCDCompilationUnit first, ASTCDCompilationUnit second,
       boolean isOpenWorld) {
-    FullExpander expander1 = new FullExpander(new BasicExpander(first));
-    FullExpander expander2 = new FullExpander(new BasicExpander(second));
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
+    FullExpander expander1;
+    FullExpander expander2;
+
+    if (isOpenWorld){
+      expander1 = new FullExpander(new OpenWorldExpander(first));
+      expander2 = new FullExpander(new OpenWorldExpander(second));
+    } else {
+      expander1 = new FullExpander(new BasicExpander(first));
+      expander2 = new FullExpander(new BasicExpander(second));
+    }
+
     expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
-    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList(), isOpenWorld);
+    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
     expander1.updateUnspecifiedDir2Default();
     expander2.updateUnspecifiedDir2Default();
   }
