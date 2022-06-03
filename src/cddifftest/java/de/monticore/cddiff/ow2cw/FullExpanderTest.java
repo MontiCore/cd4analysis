@@ -68,8 +68,8 @@ public class FullExpanderTest extends CDDiffTestBasis {
         .setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance().createCDInterfaceUsage("UI"))
         .build();
 
-    fullExpander.addClass2Package(car.deepClone(), "old");
-    fullExpander.addClass2Package(car.deepClone(), "new");
+    fullExpander.addType2Package(car.deepClone(), "old");
+    fullExpander.addType2Package(car.deepClone(), "new");
 
     car = CD4CodeMill.cDClassBuilder()
         .setModifier(CD4CodeMill.modifierBuilder().build())
@@ -78,7 +78,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
         .setCDInterfaceUsageAbsent()
         .build();
 
-    fullExpander.addClass2Package(car.deepClone(), "future");
+    fullExpander.addType2Package(car.deepClone(), "future");
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
     machines.accept(pprinter.getTraverser());

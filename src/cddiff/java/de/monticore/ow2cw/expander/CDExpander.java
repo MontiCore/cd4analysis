@@ -26,17 +26,19 @@ public interface CDExpander {
    * Default Package is troublesome!
    * todo: fix problem with nested packages
    */
-  void addClass2Package(ASTCDClass astcdClass, String packageName);
+  void addType2Package(ASTCDType astcdType, String packageName);
 
   /**
    * Default Package is troublesome!
    * todo: fix problem with nested packages
    */
-  void addClone(ASTCDType cdType);
+  Optional<ASTCDType> addClone(ASTCDType cdType);
 
-  void addDummyClass(ASTCDClass srcClass);
+  Optional<ASTCDClass> addDummyClass(ASTCDType srcType);
 
-  void addDummyClass(String dummyName);
+  Optional<ASTCDInterface> addDummyInterface(ASTCDInterface srcInterface);
+
+  Optional<ASTCDClass> addDummyClass(String dummyName);
 
   Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName, String right);
 
