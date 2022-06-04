@@ -7,8 +7,27 @@ import java.util.*;
 import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindHelper;
 import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindStrHelper;
 
+/**
+ * Each DiffClass in based DifferentGroup will generate one corresponding CompClass
+ *
+ * @attribute compId:
+ *    unique compare id
+ * @attribute originalElement:
+ *    original DiffClass
+ * @attribute isInComparedDG:
+ *    whether this DiffClass exists in compared DifferentGroup (only check DiffClass name)
+ * @attribute isContentDiff:
+ *    if this DiffClass exists in compared DifferentGroup (only check DiffClass name),
+ *    then check whether the content of those two DiffClasses are different
+ * @attribute compCategory:
+ *    - has semantic difference:
+ *        EDITED, DELETED
+ *    - has no semantic difference:
+ *        ORIGINAL, SUBSET
+ * @attribute whichAttributesDiff:
+ *    mark which attribute has syntactic differences
+ */
 public class CompClass {
-
   protected final UUID compId;
   protected DiffClass originalElement;
   protected final boolean isInComparedDG;
@@ -39,7 +58,6 @@ public class CompClass {
   public boolean isInComparedDG() {
     return isInComparedDG;
   }
-
 
   public boolean isContentDiff() {
     return isContentDiff;

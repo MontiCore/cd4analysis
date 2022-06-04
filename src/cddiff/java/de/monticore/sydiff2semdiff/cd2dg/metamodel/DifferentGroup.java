@@ -6,7 +6,22 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * For each CD a corresponding DifferentGroup will be generated.
+ *
+ * @attribute model:
+ *    store original ASTCDCompilationUnit
+ * @attribute type:
+ *    SINGLE_INSTANCE or MULTI_INSTANCE
+ * @attribute diffClassGroup:
+ *    store generated DiffClass
+ * @attribute diffAssociationGroup:
+ *    store generated DiffAssociation
+ * @attribute refSetAssociationList:
+ *    store generated DiffRefSetAssociation
+ * @attribute inheritanceGraph:
+ *    store all inheritance informations that presents all the parents and children of a class.
+ */
 public class DifferentGroup {
   protected ASTCDCompilationUnit model;
   protected DifferentGroupType type;
@@ -18,7 +33,6 @@ public class DifferentGroup {
   public enum DifferentGroupType {
     SINGLE_INSTANCE, MULTI_INSTANCE
   }
-
   public enum DiffClassKind {
     DIFF_CLASS, DIFF_ENUM, DIFF_ABSTRACT_CLASS, DIFF_INTERFACE
   }

@@ -12,7 +12,6 @@ import de.monticore.ow2cw.CDInheritanceHelper;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
-
 import java.util.*;
 
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
@@ -23,6 +22,9 @@ public class CD2DGGenerator {
   protected MutableGraph<String> inheritanceGraph = GraphBuilder.directed().build();
   protected Map<String, Set<String>> enumClassMap = new HashMap<>();
 
+  /**
+   * generating DifferentGroup
+   */
   public DifferentGroup generateDifferentGroup(ASTCDCompilationUnit cd, DifferentGroup.DifferentGroupType type) {
     DifferentGroup differentGroup = new DifferentGroup();
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
@@ -46,6 +48,9 @@ public class CD2DGGenerator {
    *********************    Start for Class    ************************
    *******************************************************************/
 
+  /**
+   * create DiffClass object for class and abstract class in AST
+   */
   public Map<String, DiffClass> createDiffClassForSimpleClassAndAbstractClass(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
     List<ASTCDClass> astcdClassList = cd.getCDDefinition().getCDClassesList();
     List<ASTCDEnum> astcdEnumList = cd.getCDDefinition().getCDEnumsList();
@@ -57,6 +62,9 @@ public class CD2DGGenerator {
     return diffClassGroup;
   }
 
+  /**
+   * create DiffClass object for interface in AST
+   */
   public Map<String, DiffClass> createDiffClassForInterface(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
     List<ASTCDInterface> astcdInterfaceList = cd.getCDDefinition().getCDInterfacesList();
     List<ASTCDEnum> astcdEnumList = cd.getCDDefinition().getCDEnumsList();
@@ -68,6 +76,9 @@ public class CD2DGGenerator {
     return diffClassGroup;
   }
 
+  /**
+   * create DiffClass object for enum in AST
+   */
   public Map<String, DiffClass> createDiffClassForEnum(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
     List<ASTCDEnum> astcdEnumList = cd.getCDDefinition().getCDEnumsList();
 
@@ -78,6 +89,10 @@ public class CD2DGGenerator {
     return diffClassGroup;
   }
 
+
+  /**
+   * all creating DiffClass functions are based on this helper
+   */
   public DiffClass createDiffClassHelper(ASTCDType astcdType, ICD4CodeArtifactScope scope, List<ASTCDEnum> astcdEnumList) {
     DiffClass diffClass = new DiffClass(astcdType);
 
@@ -107,6 +122,9 @@ public class CD2DGGenerator {
     return diffClass;
   }
 
+  /**
+   * After all DiffClass created, putting the temporary enumClassMap into DiffClassGroup.
+   */
   public Map<String, Set<String>> creatEnumClassMapHelper(String enumClass, String baseClass) {
     Set<String> set = enumClassMap.getOrDefault(enumClass, new HashSet<>());
     set.add(baseClass);
@@ -114,6 +132,9 @@ public class CD2DGGenerator {
     return enumClassMap;
   }
 
+  /**
+   * create inheritance graph
+   */
   public MutableGraph<String> createInheritanceGraph(ASTCDType child, Collection<ASTCDType> directSuperList) {
     String childClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(child)) + "_" + child.getName();
     inheritanceGraph.addNode(childClass);
@@ -124,6 +145,9 @@ public class CD2DGGenerator {
     return inheritanceGraph;
   }
 
+  /**
+   * using the original class name to find corresponding DiffClass in DiffClassGroup
+   */
   public DiffClass findDiffClass4OriginalClassName(String originalClassName) {
     if (diffClassGroup.containsKey("DiffClass_" + originalClassName)) {
       return diffClassGroup.get("DiffClass_" + originalClassName);
@@ -143,6 +167,9 @@ public class CD2DGGenerator {
    ********************* Start for Association ************************
    *******************************************************************/
 
+  /**
+   * create DiffAssociation object for association in AST
+   */
   public Map<String, DiffAssociation> createDiffAssociation(ASTCDCompilationUnit cd) {
     List<ASTCDAssociation> astcdAssociationList = cd.getCDDefinition().getCDAssociationsList();
     for (ASTCDAssociation astcdAssociation : astcdAssociationList) {
@@ -152,6 +179,9 @@ public class CD2DGGenerator {
     return diffAssociationGroup;
   }
 
+  /**
+   * the creating DiffAssociation functions are based on this helper
+   */
   public DiffAssociation createDiffAssociationHelper(ASTCDAssociation astcdAssociation, Boolean isInherited) {
     // add role name if the original ASTCDAssociation has no role name for one side or both side
     astcdAssociation = generateASTCDAssociationRoleName(astcdAssociation);
@@ -165,6 +195,9 @@ public class CD2DGGenerator {
    ******************** Solution for Inheritance **********************
    *******************************************************************/
 
+  /**
+   * get all inheritance path for each top class by backtracking
+   */
   public List<List<String>> getAllInheritancePath4DiffClass(DiffClass diffClass) {
     String root = diffClass.getName();
     List<List<String>> pathList = new ArrayList<>();
@@ -172,6 +205,9 @@ public class CD2DGGenerator {
     return pathList;
   }
 
+  /**
+   * backtracking helper
+   */
   private void getAllInheritancePath4DiffClassHelper(String root, LinkedList<String> path, List<List<String>> pathList) {
     if (inheritanceGraph.successors(root).isEmpty()) {
       LinkedList<String> newPath = new LinkedList<>(path);
@@ -190,7 +226,10 @@ public class CD2DGGenerator {
     }
   }
 
-  public Set<String> getAllBottomNode() {
+  /**
+   * getting all top class in inheritance graph
+   */
+  public Set<String> getAllTopNode() {
     Set<String> result = new HashSet<>();
     inheritanceGraph.nodes().forEach(s -> {
       if (inheritanceGraph.predecessors(s).isEmpty()) {
@@ -200,9 +239,14 @@ public class CD2DGGenerator {
     return result;
   }
 
+  /**
+   * solve the inheritance problem:
+   *  1. add inherited attributes into corresponding DiffClass
+   *  2. generate inherited associations and put them into DiffAssociationGroup
+   */
   public void solveInheritance() {
     List<List<String>> waitList = new ArrayList<>();
-    getAllBottomNode().forEach(diffClassName -> waitList.addAll(getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName))));
+    getAllTopNode().forEach(diffClassName -> waitList.addAll(getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName))));
     waitList.forEach(path -> {
       if (path.size() > 1) {
 
@@ -269,6 +313,9 @@ public class CD2DGGenerator {
     });
   }
 
+  /**
+   * After solving inheritance problem update the Enum DiffClass in DiffClassGroup
+   */
   private void updateDiffEnum() {
     enumClassMap.forEach((k, v) -> {
       DiffClass diffEnum = diffClassGroup.get(k);

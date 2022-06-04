@@ -13,6 +13,26 @@ import java.util.Set;
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.distinguishASTCDTypeHelper;
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.getDiffClassKindStrHelper;
 
+/**
+ * The class, abstract class, interface and enum in AST will be converted to the corresponding DiffClass
+ * The kind of DiffClass are DIFF_CLASS, DIFF_ENUM, DIFF_ABSTRACT_CLASS, DIFF_INTERFACE
+ *
+ * @attribute originalElement:
+ *    store the original AST Class
+ * @attribute editedElement:
+ *    if the class has inherited attributes, they will be added into editedElement.
+ * @attribute attributes:
+ *    {
+ *      [attributes name] : {
+ *        "type" : [attribute type] // if the type is enum, then it will be "DiffEnum_[DIFF_ENUM class name]".
+ *        "kind" : ["original", "inherited"]
+ *      }
+ *    }
+ * @attribute diffLink4EnumClass:
+ *    This attribute is only suitable for DIFF_ENUM class.
+ *    If someone DiffClass uses Enum in attributes,
+ *    then this DiffClass name will be added into this diffLink4EnumClass attribute of corresponding DIFF_ENUM class.
+ */
 public class DiffClass implements Cloneable{
   protected final ASTCDType originalElement;
   protected ASTCDType editedElement;

@@ -1,8 +1,32 @@
 package de.monticore.sydiff2semdiff.dg2cg.metamodel;
 
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
-import java.util.Deque;
 
+import java.util.Deque;
+/**
+ * CompareGroup is to compare each element of two DifferentGroup and return the result after comparison.
+ * We should determine which DifferentGroup is the basedDG and which one is the comparedDG.
+ * Determine whether there is a semantic difference between DifferentGroup A and DifferentGroup B,
+ * We should create two CompareGroup:
+ *    1. basedDG = A, comparedDG = B
+ *    1. basedDG = B, comparedDG = A
+ * If there are no objects in compClassResultQueueWithDiff and compAssociationResultQueueWithDiff of above two CompareGroups,
+ * then we can say there is no semantic difference between CD A and CD B,
+ * otherwise there are semantic differences between CD A and CD B.
+ *
+ * @attribute basedDG:
+ *    the based DifferentGroup
+ * @attribute comparedDG:
+ *    the compared DifferentGroup
+ * @attribute compClassResultQueueWithDiff:
+ *    store the CompClass that has semantic difference
+ * @attribute compAssociationResultQueueWithDiff:
+ *    store the CompAssociation that has semantic difference
+ * @attribute compClassResultQueueWithoutDiff:
+ *    store the CompClass that has no semantic difference
+ * @attribute compAssociationResultQueueWithoutDiff:
+ *    store the CompAssociation that has no semantic difference
+ */
 public class CompareGroup {
   protected DifferentGroup basedDG;
   protected DifferentGroup comparedDG;
@@ -24,9 +48,7 @@ public class CompareGroup {
   }
 
   public enum CompAssociationCategory {
-    ORIGINAL, DELETED,
-    DIRECTION_CHANGED, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET,
-    CARDINALITY_CHANGED, CARDINALITY_SUBSET
+    ORIGINAL, DELETED, DIRECTION_CHANGED, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_CHANGED, CARDINALITY_SUBSET
   }
 
   public enum CompAssociationDirection {

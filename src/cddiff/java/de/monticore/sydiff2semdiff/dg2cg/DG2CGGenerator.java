@@ -18,6 +18,9 @@ public class DG2CGGenerator {
   protected Deque<CompClass> compClassResultQueueWithoutDiff = new LinkedList<>();
   protected Deque<CompAssociation> compAssociationResultQueueWithoutDiff = new LinkedList<>();
 
+  /**
+   * generating CompareGroup
+   */
   public CompareGroup generateCompareGroup(DifferentGroup basedDG, DifferentGroup comparedDG) {
     CompareGroup compareGroup = new CompareGroup(basedDG, comparedDG);
     compareClasses(basedDG, comparedDG);
@@ -36,13 +39,21 @@ public class DG2CGGenerator {
    *********************    Start for Class    ************************
    *******************************************************************/
 
+  /**
+   * create CompClass for each DiffClass in based DifferentGroup
+   */
   public void compareClasses(DifferentGroup basedDG, DifferentGroup comparedDG) {
     basedDG.getDiffClassGroup().forEach((className, basedDiffClass) -> {
-      createCompClass(basedDG, basedDiffClass, comparedDG.getDiffClassGroup().get(className), comparedDG.getDiffClassGroup().containsKey(className));
+      createCompareClass(basedDG, basedDiffClass, comparedDG.getDiffClassGroup().get(className), comparedDG.getDiffClassGroup().containsKey(className));
     });
   }
 
-  public void createCompClass(DifferentGroup basedDG, DiffClass based, DiffClass compared, boolean isInComparedDG) {
+  /**
+   * generate CompClass object and
+   * put into compClassResultQueueWithDiff if exists semantic difference,
+   * put into compClassResultQueueWithoutDiff if exists no semantic difference
+   */
+  public void createCompareClass(DifferentGroup basedDG, DiffClass based, DiffClass compared, boolean isInComparedDG) {
 
     // check whether DiffClass Name is also in ComparedDG
     if (isInComparedDG) {
@@ -68,7 +79,7 @@ public class DG2CGGenerator {
       }
 
     } else {
-      compClassResultQueueWithDiff.offer(createCompClassHelper(based, isInComparedDG, true, CompareGroup.CompClassCategory.DELETED));
+      compClassResultQueueWithDiff.offer(createCompClassHelper(based, isInComparedDG, true, CompareGroup.CompClassCategory.DELETED, compClassWhichAttributesDiffHelper(based, null)));
     }
 
 
@@ -78,6 +89,9 @@ public class DG2CGGenerator {
    ********************* Start for Association ************************
    *******************************************************************/
 
+  /**
+   * create CompAssociaion for each DiffAssociation in based DifferentGroup
+   */
   public void compareAssociations(DifferentGroup basedDG, DifferentGroup comparedDG) {
     basedDG.getDiffAssociationGroup().forEach((assocName1, basedDiffAssociation) -> {
 
@@ -106,6 +120,11 @@ public class DG2CGGenerator {
     });
   }
 
+  /**
+   * generate CompAssociation object and
+   * put into compAssociationResultQueueWithDiff if exists semantic difference,
+   * put into compAssociationResultQueueWithoutDiff if exists no semantic difference
+   */
   public void createCompareAssociation(DiffAssociation based, DiffAssociation compared, boolean isInComparedDG, boolean isAssocNameExchanged) {
     List<CompAssociation> compAssociationList = new ArrayList<>();
 

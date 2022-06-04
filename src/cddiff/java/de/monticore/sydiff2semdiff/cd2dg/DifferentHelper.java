@@ -20,6 +20,9 @@ public class DifferentHelper {
    *********************    Start for Class    ************************
    *******************************************************************/
 
+  /**
+   * get the corresponding DiffClass kind by ASTCDType
+   */
   public static DifferentGroup.DiffClassKind distinguishASTCDTypeHelper(ASTCDType astcdType) {
     if (astcdType.getClass().equals(ASTCDClass.class)) {
       if (astcdType.getModifier().isAbstract()) {
@@ -37,6 +40,9 @@ public class DifferentHelper {
     }
   }
 
+  /**
+   * get the corresponding prefix of DiffClass name by diffClassKind
+   */
   public static String getDiffClassKindStrHelper(DifferentGroup.DiffClassKind diffClassKind) {
     switch (diffClassKind) {
       case DIFF_CLASS:
@@ -56,6 +62,9 @@ public class DifferentHelper {
    ********************* Start for Association ************************
    *******************************************************************/
 
+  /**
+   * get the corresponding the direction kind of DiffAssociation by ASTCDAssociation
+   */
   public static DifferentGroup.DiffAssociationDirection distinguishAssociationDirectionHelper(ASTCDAssociation astcdAssociation) {
     Boolean left = astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft();
     Boolean right = astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight();
@@ -74,6 +83,9 @@ public class DifferentHelper {
     }
   }
 
+  /**
+   * get the corresponding the left cardinality kind of DiffAssociation by ASTCDAssociation
+   */
   public static DifferentGroup.DiffAssociationCardinality distinguishLeftAssociationCardinalityHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getLeft().getCDCardinality().isOne()) {
       return DifferentGroup.DiffAssociationCardinality.ONE;
@@ -89,6 +101,9 @@ public class DifferentHelper {
     }
   }
 
+  /**
+   * get the corresponding the right cardinality kind of DiffAssociation by ASTCDAssociation
+   */
   public static DifferentGroup.DiffAssociationCardinality distinguishRightAssociationCardinalityHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getRight().getCDCardinality().isOne()) {
       return DifferentGroup.DiffAssociationCardinality.ONE;
@@ -104,6 +119,11 @@ public class DifferentHelper {
     }
   }
 
+  /**
+   * get the left class role name in DiffAssociation
+   * if it exists in ASTCDAssociation, then direct return the role name
+   * otherwise set the lower case of the left class qualified name as role name
+   */
   public static String getLeftClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getLeft().isPresentCDRole()) {
       return astcdAssociation.getLeft().getCDRole().getName();
@@ -113,6 +133,11 @@ public class DifferentHelper {
     }
   }
 
+  /**
+   * get the right class role name in DiffAssociation
+   * if it exists in ASTCDAssociation, then direct return the role name
+   * otherwise set the lower case of the right class qualified name as role name
+   */
   public static String getRightClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getRight().isPresentCDRole()) {
       return astcdAssociation.getRight().getCDRole().getName();
@@ -126,6 +151,9 @@ public class DifferentHelper {
    ******************** Solution for Inheritance **********************
    *******************************************************************/
 
+  /**
+   * Fuzzy queries for DiffAssociationGroup by keyword
+   */
   public static Map<String, DiffAssociation> parseMapForFilter(Map<String, DiffAssociation> map, String filters) {
     if (map == null) {
       return null;
@@ -136,6 +164,9 @@ public class DifferentHelper {
     return map;
   }
 
+  /**
+   * generate the list of DiffRefSetAssociation
+   */
   public static List<DiffRefSetAssociation> createDiffRefSetAssociation(Map<String, DiffAssociation> diffAssociationGroup) {
     Map<String, Map<String, List<DiffAssociation>>> groupResult = diffAssociationGroup
       .values()
@@ -163,6 +194,9 @@ public class DifferentHelper {
     return refSetAssociationList;
   }
 
+  /**
+   * set the left side class name into ASTCDAssociation
+   */
   public static ASTCDAssociation editASTCDAssociationLeftSideByDiffClass(ASTCDAssociation original, DiffClass diffClass) {
     ASTCDAssociation edited = original.deepClone();
     edited.getLeft().getMCQualifiedType().setMCQualifiedName(
@@ -172,6 +206,9 @@ public class DifferentHelper {
     return edited;
   }
 
+  /**
+   * set the right side class name into ASTCDAssociation
+   */
   public static ASTCDAssociation editASTCDAssociationRightSideByDiffClass(ASTCDAssociation original, DiffClass diffClass) {
     ASTCDAssociation edited = original.deepClone();
     edited.getRight().getMCQualifiedType().setMCQualifiedName(
@@ -181,6 +218,11 @@ public class DifferentHelper {
     return edited;
   }
 
+  /**
+   * genetate the role name for ASTCDAssociation
+   * if there is no role name in the original ASTCDAssociation
+   * then set the lower case of the left/right class qualified name as role name
+   */
   public static ASTCDAssociation generateASTCDAssociationRoleName(ASTCDAssociation astcdAssociation) {
     if (!astcdAssociation.getLeft().isPresentCDRole()) {
       String leftRoleName = astcdAssociation.getLeftQualifiedName().getQName().toLowerCase();

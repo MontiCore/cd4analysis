@@ -8,12 +8,17 @@ import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompClass;
 import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CompareHelper {
 
   /********************************************************************
    *********************    Start for Class    ************************
    *******************************************************************/
+
+  /**
+   * get the corresponding prefix compare class name by compClassKind
+   */
   public static String getCompClassKindStrHelper(CompareGroup.CompClassKind compClassKind) {
     switch (compClassKind) {
       case COMP_CLASS:
@@ -29,6 +34,9 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * get the corresponding compare kind for class by diffClassKind
+   */
   public static CompareGroup.CompClassKind getCompClassKindHelper(DifferentGroup.DiffClassKind diffClassKind) {
     switch (diffClassKind) {
       case DIFF_CLASS:
@@ -44,29 +52,40 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * generate the list of which attributes are different between based DiffClass and compared DiffClass
+   */
   public static List<String> compClassWhichAttributesDiffHelper(DiffClass based, DiffClass compared) {
-    List<String> attributesDiffList = new ArrayList<>();
 
-    // check each attributes
-    based.getAttributes().forEach((attrName, attrMap) -> {
-      // check attributes name
-      if (compared.getAttributes().containsKey(attrName)) {
-        // check attributes type
-        if (!based.getDiffKind().equals(DifferentGroup.DiffClassKind.DIFF_ENUM)) {
-          if (!attrMap.get("type").equals(compared.getAttributes().get(attrName).get("type"))) {
-            // edited
-            attributesDiffList.add(attrName);
+    if (compared == null) {
+      List<String> attributesDiffList = new ArrayList<>();
+      attributesDiffList = based.getAttributes().keySet().stream().collect(Collectors.toList());
+      return attributesDiffList;
+    } else {
+      List<String> attributesDiffList = new ArrayList<>();
+      // check each attributes
+      based.getAttributes().forEach((attrName, attrMap) -> {
+        // check attributes name
+        if (compared.getAttributes().containsKey(attrName)) {
+          // check attributes type
+          if (!based.getDiffKind().equals(DifferentGroup.DiffClassKind.DIFF_ENUM)) {
+            if (!attrMap.get("type").equals(compared.getAttributes().get(attrName).get("type"))) {
+              // edited
+              attributesDiffList.add(attrName);
+            }
           }
         }
-      }
-      else {
-        attributesDiffList.add(attrName);
-      }
-    });
-
-    return attributesDiffList;
+        else {
+          attributesDiffList.add(attrName);
+        }
+      });
+      return attributesDiffList;
+    }
   }
 
+  /**
+   * return the compare class category that helps to determine if there is a semantic difference
+   */
   public static CompareGroup.CompClassCategory compClassCategoryHelper(DiffClass based, DiffClass compared, boolean isContentDiff) {
     // check whether attributes in BasedDiffClass are the subset of attributes in CompareDiffClass
     if (!isContentDiff) {
@@ -82,12 +101,18 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * helper for creating compare class without attributesDiffList
+   */
   public static CompClass createCompClassHelper(DiffClass based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory category) {
     CompClass compClass = new CompClass(based, isInComparedDG, isContentDiff, category);
     compClass.setWhichAttributesDiff(Optional.empty());
     return compClass;
   }
 
+  /**
+   * helper for creating compare class with attributesDiffList
+   */
   public static CompClass createCompClassHelper(DiffClass based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory category, List<String> attributesDiffList) {
     CompClass compClass = createCompClassHelper(based, isInComparedDG, isContentDiff, category);
     compClass.setWhichAttributesDiff(Optional.of(attributesDiffList));
@@ -97,6 +122,10 @@ public class CompareHelper {
   /********************************************************************
    ********************* Start for Association ************************
    *******************************************************************/
+
+  /**
+   * return the result for cardinality of association after comparison between based DiffAssociation and compared DiffAssociation
+   */
   public static CompareGroup.CompAssociationCardinality compAssociationCardinalityHelper(DifferentGroup.DiffAssociationCardinality basedDiffAssociationCardinality, DifferentGroup.DiffAssociationCardinality comparedDiffAssociationCardinality) {
     switch (basedDiffAssociationCardinality) {
       case ONE:
@@ -146,6 +175,9 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * return the result for direction of association after comparison between based DiffAssociation and compared DiffAssociation
+   */
   public static CompareGroup.CompAssociationDirection compAssociationDirectionHelper(DifferentGroup.DiffAssociationDirection basedDiffDirection, DifferentGroup.DiffAssociationDirection comparedDiffDirection) {
     switch (basedDiffDirection) {
       case LEFT_TO_RIGHT:
@@ -195,6 +227,9 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * return the compare association category that helps to determine if there is a semantic difference for direction
+   */
   public static CompareGroup.CompAssociationCategory compAssociationCategoryByDirectionHelper(boolean isDirectionChanged, boolean isAssocNameExchanged, CompareGroup.CompAssociationDirection directionResult) {
     if (isDirectionChanged) {
       // check directionResult
@@ -215,6 +250,9 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * return the compare association category that helps to determine if there is a semantic difference for cardinality
+   */
   public static CompareGroup.CompAssociationCategory compAssociationCategoryByCardinalityHelper(boolean isCardinalityDiff, CompareGroup.CompAssociationCardinality cardinalityResult) {
     if (isCardinalityDiff) {
       // check cardinalityResult
@@ -230,6 +268,10 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * create a new DiffAssociation that exchange the left side information and the right side information
+   * but this new DiffAssociation is not added into DiffAssociationGroup
+   */
   public static DiffAssociation exchangeLeftDiffClassWithRightDiffClass(DiffAssociation original) {
     DiffAssociation exchanged = new DiffAssociation(original.getOriginalElement(), false, true);
 
@@ -242,6 +284,9 @@ public class CompareHelper {
     return exchanged;
   }
 
+  /**
+   * get the association name for the new DiffAssociation that exchange the left side information and the right side information
+   */
   public static String getExchangedLeftDiffClassWithRightDiffClassAssocName(DiffAssociation original) {
     String prefix = original.getName().split("_")[0];
     String leftClassName = original.getDiffLeftClass().getOriginalClassName();
@@ -252,6 +297,9 @@ public class CompareHelper {
     return prefix + "_" + rightClassName + "_" + rightRoleName + "_" + leftRoleName + "_" + leftClassName;
   }
 
+  /**
+   * get the corresponding compare kind for association by diffAssociationKind
+   */
   public static CompareGroup.CompAssociationKind getCompAssociationKindHelper(DifferentGroup.DiffAssociationKind diffAssociationKind) {
     switch (diffAssociationKind) {
       case DIFF_ASC:
@@ -263,6 +311,9 @@ public class CompareHelper {
     }
   }
 
+  /**
+   * helper for creating compare association without whichPartDiff and the result after comparison
+   */
   public static CompAssociation createCompareAssociationHelper(DiffAssociation based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory category) {
     CompAssociation compAssociation = new CompAssociation(based, isInComparedDG, isContentDiff, category);
     compAssociation.setCompDirectionResult(Optional.empty());
@@ -272,6 +323,9 @@ public class CompareHelper {
     return compAssociation;
   }
 
+  /**
+   * helper for creating compare association with whichPartDiff and the result after comparison
+   */
   public static CompAssociation createCompareAssociationHelper(DiffAssociation based, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory category, Optional<CompareGroup.WhichPartDiff> whichPartDiff, Optional<Object> compResult) {
     CompAssociation compAssociation = createCompareAssociationHelper(based, isInComparedDG, isContentDiff, category);
     compAssociation.setWhichPartDiff(whichPartDiff);

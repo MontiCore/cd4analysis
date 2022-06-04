@@ -4,13 +4,36 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
 
+/**
+ * The association in AST will be converted to the corresponding DiffAssociation
+ * The kind of DiffAssociation are DIFF_ASC, DIFF_INHERIT_ASC
+ *
+ * @attribute originalElement:
+ *    store the original AST Association
+ * @attribute diffKind:
+ *    if this DiffAssociation is created by inherited situation,
+ *      then the diffKind is DIFF_INHERIT_ASC
+ *    otherwise DIFF_ASC
+ * @attribute diffLeftClass:
+ *    linked left DiffClass
+ * @attribute diffRightClass:
+ *    linked right DiffClass
+ * @attribute isLeftRightExchange:
+ *    this attribute is to solve the next problem in compare stage:
+ *      in CD1: [*] A <- B [*]
+ *      in CD2: [*] B -> A [*]
+ *      There is no semantic difference.
+ *    For the association in CD2, the system will create a corresponding DiffAssociation that
+ *    the position of left and right DiffClass is exchanged
+ *    and the role name of left and right DiffClass is also exchanged.
+ *    But this created DiffAssociation is only suitable for compare stage and it will not be added into DiffAssociation Map.
+ */
 public class DiffAssociation implements Cloneable{
   protected final ASTCDAssociation originalElement;
   protected final DifferentGroup.DiffAssociationKind diffKind;
   protected DiffClass diffLeftClass;
   protected DiffClass diffRightClass;
   protected final boolean isLeftRightExchange;
-
 
   public DiffAssociation(ASTCDAssociation originalElement, boolean isInherited, boolean isLeftRightExchange) {
     this.originalElement = originalElement;
