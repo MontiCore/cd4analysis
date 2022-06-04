@@ -46,7 +46,7 @@ public class BasicExpander implements CDExpander {
           .setCDInterfaceUsageAbsent()
           .setModifier(newModifier)
           .build();
-      addClass2Package(newClass, determinePackageName(superclass));
+      addType2Package(newClass, determinePackageName(superclass));
     }
 
   }
@@ -65,19 +65,19 @@ public class BasicExpander implements CDExpander {
         .setCDExtendUsageAbsent()
         .setModifier(newModifier)
         .build();
-    addClass2Package(newClass, determinePackageName(astcdInterface));
+    addType2Package(newClass, determinePackageName(astcdInterface));
   }
 
   /**
    * Default Package is troublesome!
    * todo: fix problem with nested packages
    */
-  public void addClass2Package(ASTCDClass astcdClass, String packageName) {
+  public void addType2Package(ASTCDType astcdType, String packageName) {
     if (packageName.equals(cd.getCDDefinition().getDefaultPackageName())) {
-      cd.getCDDefinition().getCDElementList().add(astcdClass);
+      cd.getCDDefinition().getCDElementList().add(astcdType);
     }
     else {
-      cd.getCDDefinition().addCDElementToPackage(astcdClass, packageName);
+      cd.getCDDefinition().addCDElementToPackage(astcdType, packageName);
     }
   }
 
@@ -85,31 +85,35 @@ public class BasicExpander implements CDExpander {
    * Default Package is troublesome!
    * todo: fix problem with nested packages
    */
-  public void addClone(ASTCDType cdType) {
-    if (determinePackageName(cdType).equals(cd.getCDDefinition().getDefaultPackageName())) {
-      cd.getCDDefinition().getCDElementList().add(cdType.deepClone());
+  public Optional<ASTCDType> addClone(ASTCDType srcType) {
+    ASTCDType newType = srcType.deepClone();
+
+    if (determinePackageName(srcType).equals(cd.getCDDefinition().getDefaultPackageName())) {
+      cd.getCDDefinition().getCDElementList().add(newType);
     }
     else {
-      cd.getCDDefinition().addCDElementToPackage(cdType.deepClone(), determinePackageName(cdType));
+      cd.getCDDefinition().addCDElementToPackage(newType, determinePackageName(srcType));
     }
+    return Optional.of(newType);
   }
 
-  public void addDummyClass(ASTCDClass srcClass) {
+  public Optional<ASTCDClass> addDummyClass(ASTCDType srcType) {
 
     // construct empty clone
 
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(srcClass.getName())
+        .setName(srcType.getName())
         .setCDExtendUsageAbsent()
         .setCDInterfaceUsageAbsent()
         .setModifier(newModifier)
         .build();
-    addClass2Package(newClass, determinePackageName(srcClass));
+    addType2Package(newClass, determinePackageName(srcType));
+    return Optional.of(newClass);
   }
 
-  public void addDummyClass(String dummyName) {
+  public Optional<ASTCDClass> addDummyClass(String dummyName) {
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
     ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
@@ -119,6 +123,19 @@ public class BasicExpander implements CDExpander {
         .setModifier(newModifier)
         .build();
     getCD().getCDDefinition().getCDElementList().add(newClass);
+    return Optional.of(newClass);
+  }
+
+  public Optional<ASTCDInterface> addDummyInterface(ASTCDInterface srcInterface) {
+    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
+
+    ASTCDInterface newInterface = CD4CodeMill.cDInterfaceBuilder()
+        .setName(srcInterface.getName())
+        .setCDExtendUsageAbsent()
+        .setModifier(newModifier)
+        .build();
+    addType2Package(newInterface, determinePackageName(srcInterface));
+    return Optional.of(newInterface);
   }
 
   /**

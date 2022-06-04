@@ -1,7 +1,6 @@
 package de.monticore.ow2cw.expander;
 
 import de.monticore.cd2alloy.generator.CD2AlloyQNameHelper;
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -26,13 +25,19 @@ public class FullExpander implements CDExpander {
 
   public <T extends ASTCDType> void addMissingTypesAndAttributes(Collection<T> typeList) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
-    for (ASTCDType astcdType : typeList) {
-      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdType.getSymbol().getFullName());
+    for (ASTCDType type : typeList) {
+      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(type.getSymbol().getFullName());
       if (!opt.isPresent()) {
-        addClone(astcdType);
+        if (type instanceof ASTCDInterface){
+          addDummyInterface((ASTCDInterface) type).ifPresent(newInterface -> addMissingAttributes(newInterface,
+              type.getCDAttributeList()));
+        } else {
+          addDummyClass(type).ifPresent(newClass -> addMissingAttributes(newClass,
+              type.getCDAttributeList()));
+        }
       }
       else {
-        addMissingAttributes(opt.get().getAstNode(), astcdType.getCDAttributeList());
+        addMissingAttributes(opt.get().getAstNode(), type.getCDAttributeList());
       }
     }
   }
@@ -200,20 +205,24 @@ public class FullExpander implements CDExpander {
     expander.addNewSubClass(name, astcdInterface);
   }
 
-  public void addClass2Package(ASTCDClass astcdClass, String packageName) {
-    expander.addClass2Package(astcdClass, packageName);
+  public void addType2Package(ASTCDType astcdType, String packageName) {
+    expander.addType2Package(astcdType, packageName);
   }
 
-  public void addClone(ASTCDType cdType) {
-    expander.addClone(cdType);
+  public Optional<ASTCDType> addClone(ASTCDType cdType) {
+    return expander.addClone(cdType);
   }
 
-  public void addDummyClass(ASTCDClass srcClass) {
-    expander.addDummyClass(srcClass);
+  public Optional<ASTCDClass> addDummyClass(ASTCDType srcType) {
+    return expander.addDummyClass(srcType);
   }
 
-  public void addDummyClass(String dummyName) {
-    expander.addDummyClass(dummyName);
+  public Optional<ASTCDInterface> addDummyInterface(ASTCDInterface srcInterface) {
+    return expander.addDummyInterface(srcInterface);
+  }
+
+  public Optional<ASTCDClass> addDummyClass(String dummyName) {
+    return expander.addDummyClass(dummyName);
   }
 
 

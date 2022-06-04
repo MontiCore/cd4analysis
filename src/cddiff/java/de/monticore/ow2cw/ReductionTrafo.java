@@ -55,11 +55,18 @@ public class ReductionTrafo {
     // get artifact-scope
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    // add classes exclusive to second as classes without attributes, extends and implements
+    // add classes and interfacesexclusive to second as classes without attributes, extends and
+    // implements
     for (ASTCDClass astcdClass : second.getCDDefinition().getCDClassesList()) {
       Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
         expander1.addDummyClass(astcdClass);
+      }
+    }
+    for (ASTCDInterface astcdInterface : second.getCDDefinition().getCDInterfacesList()) {
+      Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdInterface.getSymbol().getFullName());
+      if (!opt.isPresent()) {
+        expander1.addDummyClass(astcdInterface);
       }
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
