@@ -3,6 +3,7 @@ package de.monticore.cdassociation._symboltable;
 
 import de.monticore.cd._symboltable.CDDeSerHelper;
 import de.monticore.cdassociation.CDAssociationMill;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._symboltable.deser.CDCardinalityDeSer;
 import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
@@ -34,6 +35,11 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
     if (field.isPresent()) {
       s2j.printer.member("field", field.get().getFullName());
     }
+  }
+
+  @Override
+  protected void serializeAssocSide(Optional<ASTCDAssocSide> assocSide, CDAssociationSymbols2Json s2j) {
+    // do nothing
   }
 
   @Override
@@ -71,6 +77,11 @@ public class CDRoleSymbolDeSer extends CDRoleSymbolDeSerTOP {
     if (symbolJson.hasMember("field")) {
       return CDAssociationMill.globalScope().resolveField(symbolJson.getStringMember("field"));
     }
+    return Optional.empty();
+  }
+
+  @Override
+  protected Optional<ASTCDAssocSide> deserializeAssocSide(JsonObject symbolJson) {
     return Optional.empty();
   }
 

@@ -81,13 +81,13 @@ component grammar CDAssociation extends de.monticore.CDBasis {
   // TODO SVa: MC#2548, use token when available: _input.LT(2).getText().equals("1") = token(2).equals("1")
 
   splittoken "[*]";
-  
+
   /** CDQualifier describes the two forms of explicit qualifications:
       either through an attribute value contained in the value-object
       or through a type (such as String) , which the value-object doesn't
       know about.
   */
-  CDQualifier = 
+  CDQualifier =
       "[[" byAttributeName:Name@Variable "]]"
     | "["  byType:MCType "]";
 
@@ -112,6 +112,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
     isDefinitiveNavigable: boolean
     cardinality: Optional<de.monticore.cdassociation._ast.ASTCDCardinality>
     field: Optional<de.monticore.symbols.oosymbols._symboltable.FieldSymbol>
+    assocSide: Optional<de.monticore.cdassociation._ast.ASTCDAssocSide>
 
     // Defined exactly if a qualifier is given:
     attributeQualifier: Optional<de.monticore.symbols.basicsymbols._symboltable.VariableSymbol>
@@ -129,6 +130,7 @@ component grammar CDAssociation extends de.monticore.CDBasis {
     isPublic: boolean
     isStatic:boolean
     isFinal: boolean
+    isDerived: boolean
   ;
 
   /** The symbol for CDAssociation is defined for named associations.
