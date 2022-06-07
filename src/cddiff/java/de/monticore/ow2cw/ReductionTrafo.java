@@ -11,6 +11,9 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.ow2cw.expander.BasicExpander;
+import de.monticore.ow2cw.expander.FullExpander;
+import de.monticore.ow2cw.expander.OpenWorldExpander;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +23,6 @@ public class ReductionTrafo {
   /**
    * transform 2 CDs for Open-to-Closed World Reduction of CDDiff completeSymbolTable() cannot be
    * used, because CDs likely define the same symbols
-   * todo: check if elements have stereotype ""
    */
   public void transform(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
@@ -37,8 +39,8 @@ public class ReductionTrafo {
     handleAssocDirections(first, second, true);
 
     // construct symbol tables
-    CDExpander expander1 = new CDExpander(first);
-    CDExpander expander2 = new CDExpander(second);
+    FullExpander expander1 = new FullExpander(new OpenWorldExpander(first));
+    FullExpander expander2 = new FullExpander(new OpenWorldExpander(second));
 
         /*
     transform first
@@ -53,11 +55,18 @@ public class ReductionTrafo {
     // get artifact-scope
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    // add classes exclusive to second as classes without attributes, extends and implements
+    // add classes and interfacesexclusive to second as classes without attributes, extends and
+    // implements
     for (ASTCDClass astcdClass : second.getCDDefinition().getCDClassesList()) {
       Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
       if (!opt.isPresent()) {
         expander1.addDummyClass(astcdClass);
+      }
+    }
+    for (ASTCDInterface astcdInterface : second.getCDDefinition().getCDInterfacesList()) {
+      Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdInterface.getSymbol().getFullName());
+      if (!opt.isPresent()) {
+        expander1.addDummyClass(astcdInterface);
       }
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
@@ -116,13 +125,13 @@ public class ReductionTrafo {
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    CDExpander expander = new CDExpander(first);
+    FullExpander expander = new FullExpander(new OpenWorldExpander(first));
     expander.addDummyClass(dummyName);
   }
 
   public static void addSubClasses4Diff(ASTCDCompilationUnit first) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    CDExpander expander = new CDExpander(first);
+    FullExpander expander = new FullExpander(new OpenWorldExpander(first));
 
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
@@ -140,14 +149,23 @@ public class ReductionTrafo {
    */
   public static void handleAssocDirections(ASTCDCompilationUnit first, ASTCDCompilationUnit second,
       boolean isOpenWorld) {
-    CDExpander expander1 = new CDExpander(first);
-    CDExpander expander2 = new CDExpander(second);
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
+    FullExpander expander1;
+    FullExpander expander2;
+
+    if (isOpenWorld){
+      expander1 = new FullExpander(new OpenWorldExpander(first));
+      expander2 = new FullExpander(new OpenWorldExpander(second));
+    } else {
+      expander1 = new FullExpander(new BasicExpander(first));
+      expander2 = new FullExpander(new BasicExpander(second));
+    }
+
     expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
-    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList(), isOpenWorld);
+    expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
     expander1.updateUnspecifiedDir2Default();
     expander2.updateUnspecifiedDir2Default();
   }
@@ -185,7 +203,7 @@ public class ReductionTrafo {
       inheritanceGraph.get(type).remove(type);
     }
 
-    // make sure abstract classes and interfaces do not extend (non-abstract) classes
+    // make sure interfaces do not extend classes
     for (ASTCDType type : typeSet) {
       if (interfaces.contains(type)) {
         inheritanceGraph.get(type)
@@ -194,6 +212,7 @@ public class ReductionTrafo {
                 .filter(superType -> !(interfaces.contains(superType)))
                 .collect(Collectors.toSet()));
       }
+      /*
       else if (type.getModifier().isAbstract()) {
         inheritanceGraph.get(type)
             .removeAll(inheritanceGraph.get(type)
@@ -202,6 +221,7 @@ public class ReductionTrafo {
                     .isAbstract()))
                 .collect(Collectors.toSet()));
       }
+      */
     }
 
     // remove cyclical inheritance
