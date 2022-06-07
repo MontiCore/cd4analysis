@@ -42,7 +42,9 @@ public class MethodDecorator extends AbstractMethodDecorator {
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
     List<ASTCDMethod> result = new ArrayList<>();
     result.addAll(accessorDecorator.decorate(ast));
-    result.addAll(mutatorDecorator.decorate(ast));
+    if (!ast.getModifier().isDerived()) {
+      result.addAll(mutatorDecorator.decorate(ast));
+    }
     return result;
   }
 
