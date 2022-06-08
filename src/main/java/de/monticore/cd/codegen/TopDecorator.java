@@ -3,6 +3,7 @@ package de.monticore.cd.codegen;
 
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -41,6 +42,24 @@ public class TopDecorator {
         .filter(cdEnum -> existsHandwrittenClass(hwPath, constructQualifiedName(topCD.getCDPackageList(), cdEnum.getName())))
         .forEach(this::applyTopMechanism);
 
+    return topCD;
+  }
+
+  public ASTCDCompilationUnit decoratePackage(final ASTCDCompilationUnit originalCD) {
+    ASTCDCompilationUnit topCD = originalCD;
+    for (ASTCDPackage p: originalCD.getCDDefinition().getCDPackagesList()) {
+      topCD.getCDDefinition().getCDClassesList().stream()
+        .filter(cdClass -> existsHandwrittenClass(hwPath, constructQualifiedName(p.getMCQualifiedName().getPartsList(), cdClass.getName())))
+        .forEach(this::applyTopMechanism);
+
+      topCD.getCDDefinition().getCDInterfacesList().stream()
+        .filter(cdInterface -> existsHandwrittenClass(hwPath, constructQualifiedName(p.getMCQualifiedName().getPartsList(), cdInterface.getName())))
+        .forEach(this::applyTopMechanism);
+
+      topCD.getCDDefinition().getCDEnumsList().stream()
+        .filter(cdEnum -> existsHandwrittenClass(hwPath, constructQualifiedName(p.getMCQualifiedName().getPartsList(), cdEnum.getName())))
+        .forEach(this::applyTopMechanism);
+    }
     return topCD;
   }
 
