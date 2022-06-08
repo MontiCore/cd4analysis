@@ -28,40 +28,44 @@ public class TopDecorator {
     this.hwPath = hwPath;
   }
 
-  public ASTCDCompilationUnit decorate(final ASTCDCompilationUnit originalCD) {
-    ASTCDCompilationUnit topCD = originalCD;
-    topCD.getCDDefinition().getCDClassesList().stream()
-        .filter(cdClass -> existsHandwrittenClass(hwPath, constructQualifiedName(topCD.getCDPackageList(), cdClass.getName())))
+  public ASTCDCompilationUnit decorate(final ASTCDCompilationUnit compUnit) {
+    compUnit.getCDDefinition().getCDClassesList().stream()
+        .filter(cdClass -> existsHandwrittenClass(hwPath, constructQualifiedName(compUnit.getCDPackageList(), cdClass.getName())))
         .forEach(this::applyTopMechanism);
 
-    topCD.getCDDefinition().getCDInterfacesList().stream()
-        .filter(cdInterface -> existsHandwrittenClass(hwPath, constructQualifiedName(topCD.getCDPackageList(), cdInterface.getName())))
+    compUnit.getCDDefinition().getCDInterfacesList().stream()
+        .filter(cdInterface -> existsHandwrittenClass(hwPath, constructQualifiedName(compUnit.getCDPackageList(), cdInterface.getName())))
         .forEach(this::applyTopMechanism);
 
-    topCD.getCDDefinition().getCDEnumsList().stream()
-        .filter(cdEnum -> existsHandwrittenClass(hwPath, constructQualifiedName(topCD.getCDPackageList(), cdEnum.getName())))
+    compUnit.getCDDefinition().getCDEnumsList().stream()
+        .filter(cdEnum -> existsHandwrittenClass(hwPath, constructQualifiedName(compUnit.getCDPackageList(), cdEnum.getName())))
         .forEach(this::applyTopMechanism);
 
-    return topCD;
+    return compUnit;
   }
 
-  public ASTCDCompilationUnit decoratePackage(final ASTCDCompilationUnit originalCD) {
-    ASTCDCompilationUnit topCD = originalCD;
-    for (ASTCDPackage p: originalCD.getCDDefinition().getCDPackagesList()) {
-      topCD.getCDDefinition().getCDClassesList().stream()
+  public void decoratePackage(final ASTCDCompilationUnit compUnit) {
+    for (ASTCDPackage p: compUnit.getCDDefinition().getCDPackagesList()) {
+      p.getCDElementList().stream()
+        .filter(e -> e instanceof ASTCDClass)
+        .map(e -> (ASTCDClass) e)
         .filter(cdClass -> existsHandwrittenClass(hwPath, constructQualifiedName(p.getMCQualifiedName().getPartsList(), cdClass.getName())))
         .forEach(this::applyTopMechanism);
 
-      topCD.getCDDefinition().getCDInterfacesList().stream()
+      p.getCDElementList().stream()
+        .filter(e -> e instanceof ASTCDInterface)
+        .map(e -> (ASTCDInterface) e)
         .filter(cdInterface -> existsHandwrittenClass(hwPath, constructQualifiedName(p.getMCQualifiedName().getPartsList(), cdInterface.getName())))
         .forEach(this::applyTopMechanism);
 
-      topCD.getCDDefinition().getCDEnumsList().stream()
+      p.getCDElementList().stream()
+        .filter(e -> e instanceof ASTCDEnum)
+        .map(e -> (ASTCDEnum) e)
         .filter(cdEnum -> existsHandwrittenClass(hwPath, constructQualifiedName(p.getMCQualifiedName().getPartsList(), cdEnum.getName())))
         .forEach(this::applyTopMechanism);
     }
-    return topCD;
   }
+
 
   protected void applyTopMechanism(ASTCDClass cdClass) {
     makeAbstract(cdClass);

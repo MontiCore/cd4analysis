@@ -69,7 +69,8 @@ public class TopDecoratorTest extends DecoratorTestCase {
   public void testHandWrittenClassInLocalPackageFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
     engineMock.when(() -> GeneratorEngine.existsHandwrittenClass(Mockito.any(MCPath.class), Mockito.any(String.class))).thenReturn(true);
-    ASTCDDefinition ast = this.topDecorator.decoratePackage(this.topCD).getCDDefinition();
+    this.topDecorator.decoratePackage(this.topCD);
+    ASTCDDefinition ast = topCD.getCDDefinition();
 
     assertEquals(1, ast.getCDClassesList().size());
     ASTCDClass cdClass = ast.getCDClassesList().get(0);
