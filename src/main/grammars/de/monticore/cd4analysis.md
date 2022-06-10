@@ -670,8 +670,8 @@ The method body definition is exactly the same.
 [CD4AAfterParseTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/trafo/CD4AnalysisAfterParseTrafo.java
 [CDBasisDefaultPackageTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdbasis/trafo/CDBasisDefaultPackageTrafo.java
 [CDAssociationDirectCompositionTrafo]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationDirectCompositionTrafo.java
-[CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromAllRoles.java
-[CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
+[CDAssociationCreateFieldsFromAllRoles]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/trafo/CDAssociationCreateFieldsFromAllRoles.java
+[CDAssociationCreateFieldsFromNavigableRoles]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/trafo/CDAssociationCreateFieldsFromNavigableRoles.java
 [CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
 [CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisDeSer.java
 [CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
@@ -681,7 +681,7 @@ The method body definition is exactly the same.
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
 [STHelper]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd/_symboltable/CDSymbolTableHelper.java
 [reporting]: https://github.com/MontiCore/cd4analysis/tree/master/src/main/java/de/monticore/cd4analysis/reporting
-[CDTool]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cd4code/CD4CodeTool.java
+[CDTool]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/tool/java/de/monticore/CD4CodeTool.java
 [LanguageTeaser]: https://github.com/MontiCore/cd4analysis/blob/master/src/test/resources/de/monticore/cd4analysis/parser/MyLife.cd
 [ExampleModels]: https://github.com/MontiCore/cd4analysis/tree/master/src/test/resources/de/monticore/cd4analysis/
 [ASTCDAssociation]: https://github.com/MontiCore/cd4analysis/blob/master/src/main/java/de/monticore/cdassociation/_ast/ASTCDAssociation.java
