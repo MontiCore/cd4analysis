@@ -91,8 +91,6 @@ Further examples can be found [here][ExampleModels].
 - De-/Serialization functionality for the symbol table uses the
   [`CD4AnalysisDeSer`][CD4ASD] and for specific logic for serialization 
   in [`CD4AnalysisSymbol2Json`][CD4ASTP]
-- CD4A contains TypesCalculator ([`DeriveSymTypeOfCD4Analysis`][CD4ATC]) for
-  all its subgrammars.
 
 - [`SymAssociation`][SymAssociation] is a class which is included in the
   symbol table and contains all information of a `CDAssociation`. It links to
@@ -675,7 +673,6 @@ The method body definition is exactly the same.
 [CD4ASTCompleter]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbolTableCompleter.java
 [CD4ASD]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisDeSer.java
 [CD4ASTP]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/_symboltable/CD4AnalysisSymbols2Json.java
-[CD4ATC]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cd4analysis/typescalculator/DeriveSymTypeOfCD4Analysis.java
 [SymTypeExpression]: https://github.com/MontiCore/monticore/blob/HEAD/monticore-grammar/src/main/java/de/monticore/types/check/SymTypeExpression.java
 [SymAssociation]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_symboltable/SymAssociation.java
 [CDRoleSymbol]: https://github.com/MontiCore/cd4analysis/blob/HEAD/src/main/java/de/monticore/cdassociation/_symboltable/CDRoleSymbol.java
