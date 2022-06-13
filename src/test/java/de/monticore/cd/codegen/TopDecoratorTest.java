@@ -66,6 +66,35 @@ public class TopDecoratorTest extends DecoratorTestCase {
   }
 
   @Test
+  public void testHandWrittenClassInLocalPackageFound() {
+    MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
+    engineMock.when(() -> GeneratorEngine.existsHandwrittenClass(Mockito.any(MCPath.class), Mockito.any(String.class))).thenReturn(true);
+    this.topDecorator.decoratePackage(this.topCD);
+    ASTCDDefinition ast = topCD.getCDDefinition();
+
+    assertEquals(1, ast.getCDClassesList().size());
+    ASTCDClass cdClass = ast.getCDClassesList().get(0);
+    assertEquals("CTOP", cdClass.getName());
+    assertDeepEquals(PUBLIC_ABSTRACT, cdClass.getModifier());
+
+    assertEquals(1, cdClass.getCDConstructorList().size());
+    ASTCDConstructor constructor = cdClass.getCDConstructorList().get(0);
+    assertEquals("CTOP", constructor.getName());
+    assertDeepEquals(PROTECTED, constructor.getModifier());
+
+    assertEquals(1, ast.getCDInterfacesList().size());
+    ASTCDInterface cdInterface = ast.getCDInterfacesList().get(0);
+    assertEquals("ITOP", cdInterface.getName());
+    assertDeepEquals(PUBLIC, cdInterface.getModifier());
+
+    assertEquals(1, ast.getCDEnumsList().size());
+    ASTCDEnum cdEnum = ast.getCDEnumsList().get(0);
+    assertEquals("ETOP", cdEnum.getName());
+    assertDeepEquals(PUBLIC, cdEnum.getModifier());
+    engineMock.close();
+  }
+
+  @Test
   public void testHandWrittenClassNotFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
     engineMock.when(() -> GeneratorEngine.existsHandwrittenClass(Mockito.any(MCPath.class), Mockito.any(String.class))).thenReturn(false);

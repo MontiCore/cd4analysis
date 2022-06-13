@@ -65,6 +65,7 @@ public class CDAssociationSymbolTableCompleter
   public void initialize_CDRole(CDRoleSymbol symbol, ASTCDAssociation ast, boolean isLeft) {
     final ASTCDAssocSide side = isLeft ? ast.getLeft() : ast.getRight();
 
+    symbol.setAssocSide(side);
     final Optional<SymTypeExpression> typeResult = getSymTypeExpression(ast, side);
     if (!typeResult.isPresent()) {
       return;
