@@ -160,7 +160,7 @@ public class DG2CGGenerator {
       // check right cardinality
       CompareGroup.CompAssociationCardinality rightCardinalityResult = compAssociationCardinalityHelper(based.getDiffRightClassCardinality(), compared.getDiffRightClassCardinality());
       boolean isRightCardinalityDiff = based.getDiffRightClassCardinality() == compared.getDiffRightClassCardinality() ? false : true;
-      categoryResult = compAssociationCategoryByCardinalityHelper(isRightCardinalityDiff, leftCardinalityResult);
+      categoryResult = compAssociationCategoryByCardinalityHelper(isRightCardinalityDiff, rightCardinalityResult);
       switch (categoryResult) {
         case CARDINALITY_CHANGED:
           compAssociationResultQueueWithDiff.offer(createCompareAssociationHelper(based, isInComparedDG, isRightCardinalityDiff, categoryResult, Optional.of(CompareGroup.WhichPartDiff.RIGHT_CARDINALITY), Optional.of(rightCardinalityResult)));

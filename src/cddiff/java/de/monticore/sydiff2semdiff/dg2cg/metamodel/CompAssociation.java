@@ -9,41 +9,41 @@ import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompAssociation
 
 /**
  * Each DiffAssociation in based DifferentGroup will generate three corresponding CompAssociations
- *    1. for direction
- *    2. for left cardinality
- *    3. for right cardinality
+ * 1. for direction
+ * 2. for left cardinality
+ * 3. for right cardinality
  *
  * @attribute compId:
- *    unique compare id
+ * unique compare id
  * @attribute originalElement:
- *    original DiffAssociation
+ * original DiffAssociation
  * @attribute isInComparedDG:
- *    whether this DiffAssociation exists in compared DifferentGroup (only check DiffAssociation name)
+ * whether this DiffAssociation exists in compared DifferentGroup (only check DiffAssociation name)
  * @attribute isContentDiff:
- *    if this DiffAssociation exists in compared DifferentGroup (only check DiffAssociation name),
- *    then check whether the content of those two DiffAssociations are different:
- *      1. for direction
- *      2. for left cardinality
- *      3. for right cardinality
+ * if this DiffAssociation exists in compared DifferentGroup (only check DiffAssociation name),
+ * then check whether the content of those two DiffAssociations are different:
+ * 1. for direction
+ * 2. for left cardinality
+ * 3. for right cardinality
  * @attribute compCategory:
- *    - has semantic difference:
- *        DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED
- *    - has no semantic difference:
- *        ORIGINAL, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_SUBSET
+ * - has semantic difference:
+ * DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED
+ * - has no semantic difference:
+ * ORIGINAL, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_SUBSET
  * @attribute compDirectionResult:
- *    The result after comparison:
- *      NONE, LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT
+ * The result after comparison:
+ * NONE, LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT
  * @attribute compLeftClassCardinalityResult:
- *    The result after comparison:
- *      NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
+ * The result after comparison:
+ * NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
  * @attribute compRightClassCardinalityResult:
- *    The result after comparison:
- *      NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
+ * The result after comparison:
+ * NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
  * @attribute whichPartDiff:
- *    mark which part has syntactic differences:
- *      1. direction
- *      2. left cardinality
- *      3. right cardinality
+ * mark which part has syntactic differences:
+ * 1. direction
+ * 2. left cardinality
+ * 3. right cardinality
  */
 public class CompAssociation {
   protected final UUID compId;

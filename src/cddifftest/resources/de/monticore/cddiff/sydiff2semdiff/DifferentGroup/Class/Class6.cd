@@ -1,0 +1,14 @@
+import java.util.*;
+
+classdiagram cd {
+	enum E {e1, e2;}
+
+	class A {
+	  int id;
+	  E myE;
+	  List<String> myList;
+	  Map<Integer, E> myMap;
+	  Optional<E> myOpt;
+	  Set<Boolean> mySet;
+	}
+}

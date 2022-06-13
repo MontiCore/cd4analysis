@@ -1,0 +1,18 @@
+classdiagram CD2 {
+
+  abstract class A;
+
+  class B extends A;
+
+  class C;
+
+  class D extends C;
+
+  class E;
+
+  class F;
+
+  association [*] E -> F [1..*];
+
+  association [*] A -> C [1..*];
+}

@@ -1,5 +1,6 @@
 package de.monticore.sydiff2semdiff.cd2dg;
 
+import com.google.common.graph.MutableGraph;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -27,15 +28,12 @@ public class DifferentHelper {
     if (astcdType.getClass().equals(ASTCDClass.class)) {
       if (astcdType.getModifier().isAbstract()) {
         return DifferentGroup.DiffClassKind.DIFF_ABSTRACT_CLASS;
-      }
-      else {
+      } else {
         return DifferentGroup.DiffClassKind.DIFF_CLASS;
       }
-    }
-    else if (astcdType.getClass().equals(ASTCDEnum.class)) {
+    } else if (astcdType.getClass().equals(ASTCDEnum.class)) {
       return DifferentGroup.DiffClassKind.DIFF_ENUM;
-    }
-    else {
+    } else {
       return DifferentGroup.DiffClassKind.DIFF_INTERFACE;
     }
   }
@@ -71,14 +69,11 @@ public class DifferentHelper {
     Boolean bidirectional = astcdAssociation.getCDAssocDir().isBidirectional();
     if (!left && right && !bidirectional) {
       return DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT;
-    }
-    else if (left && !right && !bidirectional) {
+    } else if (left && !right && !bidirectional) {
       return DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT;
-    }
-    else if (left && right && bidirectional) {
+    } else if (left && right && bidirectional) {
       return DifferentGroup.DiffAssociationDirection.BIDIRECTIONAL;
-    }
-    else {
+    } else {
       return DifferentGroup.DiffAssociationDirection.UNDEFINED;
     }
   }
@@ -89,14 +84,11 @@ public class DifferentHelper {
   public static DifferentGroup.DiffAssociationCardinality distinguishLeftAssociationCardinalityHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getLeft().getCDCardinality().isOne()) {
       return DifferentGroup.DiffAssociationCardinality.ONE;
-    }
-    else if (astcdAssociation.getLeft().getCDCardinality().isOpt()) {
+    } else if (astcdAssociation.getLeft().getCDCardinality().isOpt()) {
       return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
-    }
-    else if (astcdAssociation.getLeft().getCDCardinality().isAtLeastOne()) {
+    } else if (astcdAssociation.getLeft().getCDCardinality().isAtLeastOne()) {
       return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
-    }
-    else {
+    } else {
       return DifferentGroup.DiffAssociationCardinality.MORE;
     }
   }
@@ -107,14 +99,11 @@ public class DifferentHelper {
   public static DifferentGroup.DiffAssociationCardinality distinguishRightAssociationCardinalityHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getRight().getCDCardinality().isOne()) {
       return DifferentGroup.DiffAssociationCardinality.ONE;
-    }
-    else if (astcdAssociation.getRight().getCDCardinality().isOpt()) {
+    } else if (astcdAssociation.getRight().getCDCardinality().isOpt()) {
       return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
-    }
-    else if (astcdAssociation.getRight().getCDCardinality().isAtLeastOne()) {
+    } else if (astcdAssociation.getRight().getCDCardinality().isAtLeastOne()) {
       return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
-    }
-    else {
+    } else {
       return DifferentGroup.DiffAssociationCardinality.MORE;
     }
   }
@@ -127,8 +116,7 @@ public class DifferentHelper {
   public static String getLeftClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getLeft().isPresentCDRole()) {
       return astcdAssociation.getLeft().getCDRole().getName();
-    }
-    else {
+    } else {
       return astcdAssociation.getLeftQualifiedName().getQName().toLowerCase();
     }
   }
@@ -141,8 +129,7 @@ public class DifferentHelper {
   public static String getRightClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getRight().isPresentCDRole()) {
       return astcdAssociation.getRight().getCDRole().getName();
-    }
-    else {
+    } else {
       return astcdAssociation.getRightQualifiedName().getQName().toLowerCase();
     }
   }
@@ -157,11 +144,66 @@ public class DifferentHelper {
   public static Map<String, DiffAssociation> parseMapForFilter(Map<String, DiffAssociation> map, String filters) {
     if (map == null) {
       return null;
-    }
-    else {
-      map = map.entrySet().stream().filter((e) -> e.getKey().contains(filters)).collect(Collectors.toMap((e) -> (String) e.getKey(), (e) -> e.getValue()));
+    } else {
+      map = map.entrySet()
+        .stream()
+        .filter((e) -> e.getKey().contains(filters))
+        .collect(Collectors.toMap((e) -> (String) e.getKey(), (e) -> e.getValue()));
     }
     return map;
+  }
+
+  /**
+   * get all inheritance path for each top class by backtracking
+   */
+  public List<List<String>> getAllInheritancePath4DiffClass(DiffClass diffClass, MutableGraph<String> inheritanceGraph) {
+    String root = diffClass.getName();
+    List<List<String>> pathList = new ArrayList<>();
+    getAllInheritancePath4DiffClassHelper(root, new LinkedList<>(), pathList, inheritanceGraph);
+    return pathList;
+  }
+
+  /**
+   * backtracking helper
+   */
+  private void getAllInheritancePath4DiffClassHelper(String root, LinkedList<String> path, List<List<String>> pathList, MutableGraph<String> inheritanceGraph) {
+    if (inheritanceGraph.successors(root).isEmpty()) {
+      LinkedList<String> newPath = new LinkedList<>(path);
+      newPath.addFirst(root);
+      pathList.add(newPath);
+      return;
+    } else {
+      LinkedList<String> newPath = new LinkedList<>(path);
+      newPath.addFirst(root);
+      Iterator iterator = inheritanceGraph.successors(root).iterator();
+      while (iterator.hasNext()) {
+        String parentNode = iterator.next().toString();
+        getAllInheritancePath4DiffClassHelper(parentNode, newPath, pathList, inheritanceGraph);
+      }
+    }
+  }
+
+  /**
+   * getting all top class in inheritance graph
+   */
+  public static Set<String> getAllBottomNode(MutableGraph<String> inheritanceGraph) {
+    Set<String> result = new HashSet<>();
+    inheritanceGraph.nodes().forEach(s -> {
+      if (inheritanceGraph.predecessors(s).isEmpty()) {
+        result.add(s);
+      }
+    });
+    return result;
+  }
+
+  public static List<DiffClass> getAllSimpleSubClasses4DiffClass(DiffClass diffClass, MutableGraph<String> inheritanceGraph, Map<String, DiffClass> diffClassGroup) {
+    List<DiffClass> result = new ArrayList<>();
+    inheritanceGraph.predecessors(diffClass.getName()).forEach(e -> {
+      if (diffClassGroup.get(e).getDiffKind() == DifferentGroup.DiffClassKind.DIFF_CLASS) {
+        result.add(diffClassGroup.get(e));
+      }
+    });
+    return result;
   }
 
   /**
@@ -188,7 +230,7 @@ public class DifferentHelper {
             rightRefSet.add(e.getDiffRightClass());
           }
         });
-        refSetAssociationList.add(new DiffRefSetAssociation(leftRefSet, leftRoleName,rightRoleName, rightRefSet));
+        refSetAssociationList.add(new DiffRefSetAssociation(leftRefSet, leftRoleName, rightRoleName, rightRefSet));
       }));
 
     return refSetAssociationList;

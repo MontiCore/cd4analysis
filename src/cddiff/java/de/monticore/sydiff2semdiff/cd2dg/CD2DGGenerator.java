@@ -134,6 +134,7 @@ public class CD2DGGenerator {
 
   /**
    * create inheritance graph
+   * childClass -> parentClass
    */
   public MutableGraph<String> createInheritanceGraph(ASTCDType child, Collection<ASTCDType> directSuperList) {
     String childClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(child)) + "_" + child.getName();
@@ -196,57 +197,14 @@ public class CD2DGGenerator {
    *******************************************************************/
 
   /**
-   * get all inheritance path for each top class by backtracking
-   */
-  public List<List<String>> getAllInheritancePath4DiffClass(DiffClass diffClass) {
-    String root = diffClass.getName();
-    List<List<String>> pathList = new ArrayList<>();
-    getAllInheritancePath4DiffClassHelper(root, new LinkedList<>(), pathList);
-    return pathList;
-  }
-
-  /**
-   * backtracking helper
-   */
-  private void getAllInheritancePath4DiffClassHelper(String root, LinkedList<String> path, List<List<String>> pathList) {
-    if (inheritanceGraph.successors(root).isEmpty()) {
-      LinkedList<String> newPath = new LinkedList<>(path);
-      newPath.addFirst(root);
-      pathList.add(newPath);
-      return;
-    }
-    else {
-      LinkedList<String> newPath = new LinkedList<>(path);
-      newPath.addFirst(root);
-      Iterator iterator = inheritanceGraph.successors(root).iterator();
-      while (iterator.hasNext()) {
-        String parentNode = iterator.next().toString();
-        getAllInheritancePath4DiffClassHelper(parentNode, newPath, pathList);
-      }
-    }
-  }
-
-  /**
-   * getting all top class in inheritance graph
-   */
-  public Set<String> getAllTopNode() {
-    Set<String> result = new HashSet<>();
-    inheritanceGraph.nodes().forEach(s -> {
-      if (inheritanceGraph.predecessors(s).isEmpty()) {
-        result.add(s);
-      }
-    });
-    return result;
-  }
-
-  /**
    * solve the inheritance problem:
    *  1. add inherited attributes into corresponding DiffClass
    *  2. generate inherited associations and put them into DiffAssociationGroup
    */
   public void solveInheritance() {
     List<List<String>> waitList = new ArrayList<>();
-    getAllTopNode().forEach(diffClassName -> waitList.addAll(getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName))));
+    DifferentHelper differentHelper = new DifferentHelper();
+    getAllBottomNode(inheritanceGraph).forEach(diffClassName -> waitList.addAll(differentHelper.getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName), inheritanceGraph)));
     waitList.forEach(path -> {
       if (path.size() > 1) {
 
