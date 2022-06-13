@@ -6,7 +6,6 @@ classdiagram FieldDiffTest1 {
   class SmallScreen;
   class LargeScreen;
 
-  <<abstract>> public association testName {ordered} [1..*] SmallScreen [String] (has) <- (need) [String] Monitor [*];
-  <<test,test1>> association [*] HDMI [String] -- (needed) Monitor;
-
+  association [1..*] SmallScreen [String] (has) <- (need) [String] Monitor [*];
+  association [*] HDMI [String] -- (needed) LargeScreen;
 }

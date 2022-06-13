@@ -1,8 +1,12 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -13,6 +17,7 @@ import de.monticore.syntaxdiff.SyntaxDiff;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+
 import org.junit.Test;
 import org.junit.Assert;
 
@@ -26,27 +31,40 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   public void testSyntaxDiff() {
     CD4CodeMill.globalScope().clear();
 
+
+
     ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/FieldDiffTest1.cd");
     ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/FieldDiffTest2.cd");
+
 
     ICD4CodeGlobalScope gscope = CD4CodeMill.globalScope();
     gscope.clear();
     BuiltInTypes.addBuiltInTypes(gscope);
 
+
+
+    //cd1.accept(new CD4CodeSymbolTableCompleter(cd1).getTraverser());
+    //cd2.accept(new CD4CodeSymbolTableCompleter(cd2).getTraverser());
+
+
+
     new CD4CodeDirectCompositionTrafo().transform(cd1);
     new CD4CodeDirectCompositionTrafo().transform(cd2);
+
+    //new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(cd1);
+    //new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(cd2);
 
     // Associations
     List<ASTCDAssociation> cd1AssociationsList = cd1.getCDDefinition().getCDAssociationsList();
     List<ASTCDAssociation> cd2AssociationsList = cd2.getCDDefinition().getCDAssociationsList();
 
-
+/*
     // Stereotype
     FieldDiff<SyntaxDiff.Op, ASTStereotype> stereotypeEqual = SyntaxDiff.getFieldDiff(
        Optional.of(cd1AssociationsList.get(0).getModifier().getStereotype())
       ,Optional.of(cd2AssociationsList.get(0).getModifier().getStereotype()));
     Assert.assertFalse(stereotypeEqual.isPresent());
-    /*
+
     FieldDiff<SyntaxDiff.Op, ASTStereotype> stereotypeReorderd = SyntaxDiff.getFieldDiff(
       Optional.of(cd1AssociationsList.get(1).getModifier().getStereotype())
       ,Optional.of(cd2AssociationsList.get(1).getModifier().getStereotype()));
@@ -59,10 +77,6 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
       ,Optional.of(cd2AssociationsList.get(0).getModifier()));
     Assert.assertFalse(modifierEqual.isPresent());
 
-    FieldDiff<SyntaxDiff.Op, ASTModifier> modifierUnequal = SyntaxDiff.getFieldDiff(
-      Optional.of(cd1AssociationsList.get(0).getModifier())
-      ,Optional.of(cd2AssociationsList.get(1).getModifier()));
-    Assert.assertEquals(modifierUnequal.getOperation().get(), SyntaxDiff.Op.CHANGE);
 
     // Asso Type
     FieldDiff<SyntaxDiff.Op, ASTCDAssocType> assoTypeEqual = SyntaxDiff.getFieldDiff(
@@ -86,7 +100,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
       Optional.of(cd1AssociationsList.get(0).getName())
       ,Optional.of(cd2AssociationsList.get(1).getName()));
     Assert.assertEquals(assoNameUnequal.getOperation().get(), SyntaxDiff.Op.CHANGE);
-     */
+
     // Ordered
     FieldDiff<SyntaxDiff.Op, ASTCDOrdered> assoOrderedEqual = SyntaxDiff.getFieldDiff(
       Optional.of(cd1AssociationsList.get(0).getLeft().getCDOrdered())
@@ -102,7 +116,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
       Optional.empty(),
       Optional.of(cd1AssociationsList.get(0).getLeft().getCDOrdered()));
     Assert.assertEquals(assoOrderedAdd.getOperation().get(), SyntaxDiff.Op.ADD);
-
+*/
     // Cardinality
     FieldDiff<SyntaxDiff.Op, ASTCDCardinality> assoCardiEqual = SyntaxDiff.getFieldDiff(
       Optional.of(cd1AssociationsList.get(0).getLeft().getCDCardinality())
@@ -151,11 +165,12 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
       ,Optional.of(cd1AssociationsList.get(0).getRight().getCDQualifier()));
     Assert.assertEquals(assoQualifierAdd.getOperation().get(), SyntaxDiff.Op.ADD);
 
+    /*
     FieldDiff<SyntaxDiff.Op, ASTCDQualifier> assoQualifierUnequal = SyntaxDiff.getFieldDiff(
       Optional.of(cd1AssociationsList.get(1).getLeft().getCDQualifier())
       ,Optional.of(cd2AssociationsList.get(1).getLeft().getCDQualifier()));
     Assert.assertEquals(assoQualifierUnequal.getOperation().get(), SyntaxDiff.Op.CHANGE);
-
+*/
     // Role
     FieldDiff<SyntaxDiff.Op, ASTCDRole> assoRoleEqual = SyntaxDiff.getFieldDiff(
       Optional.of(cd1AssociationsList.get(0).getLeft().getCDRole())
