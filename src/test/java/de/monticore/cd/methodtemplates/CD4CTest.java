@@ -12,6 +12,7 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorEngine;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -83,6 +84,27 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     // testing createMethod
     Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+
+    assertTrue(methSignature.isPresent());
+    assertTrue(methSignature.get() instanceof ASTCDMethod);
+    ASTCDMethod meth = (ASTCDMethod) methSignature.get();
+    assertEquals("print", meth.getName());
+
+    checkLogError();
+  }
+
+  @Test
+  public void testCreateMethodInInterfaces() {
+    ASTCDInterface ast = CD4CodeMill.cDInterfaceBuilder()
+      .setName("IHelloWorld")
+      .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+      .build();
+
+    // add class to the AST and create a symbol table to we can resolve the types
+    node.getCDDefinition().addCDElement(ast);
+
+    // testing createMethod
+    Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(ast, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertTrue(methSignature.isPresent());
     assertTrue(methSignature.get() instanceof ASTCDMethod);
