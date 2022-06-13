@@ -13,9 +13,9 @@ public class MutatorDecorator extends SpecificMethodDecorator {
   }
 
   public MutatorDecorator(final GlobalExtensionManagement glex,
-      final MethodDecorator mandatoryMethodDecorator,
-      final MethodDecorator optionalMethodDecorator,
-      final MethodDecorator listMethodDecorator) {
+      final AbstractMethodDecorator mandatoryMethodDecorator,
+      final AbstractMethodDecorator optionalMethodDecorator,
+      final AbstractMethodDecorator listMethodDecorator) {
     super(glex,mandatoryMethodDecorator, optionalMethodDecorator, listMethodDecorator);
   }
 }

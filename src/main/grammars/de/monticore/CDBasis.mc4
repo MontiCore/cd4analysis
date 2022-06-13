@@ -69,6 +69,9 @@ component grammar CDBasis extends
   */
   interface symbol CDType extends CDElement, OOType;
 
+  symbolrule CDType =
+    isDerived: boolean;
+
   /*  Remark:
       Because people that know Java also know interface implementation,
       we decide to add "implements" already here

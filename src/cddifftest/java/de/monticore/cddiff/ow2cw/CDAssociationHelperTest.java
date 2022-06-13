@@ -24,25 +24,4 @@ public class CDAssociationHelperTest extends CDDiffTestBasis {
     }
   }
 
-  @Test
-  public void testUpdateDir2Match() {
-    CDAssociationHelper.updateDir2Match(lecture1.getCDDefinition().getCDAssociationsList(),
-        lecture2.getCDDefinition().getCDAssociationsList(), true);
-
-    Assert.assertTrue(lecture2.getCDDefinition()
-        .getCDAssociationsList()
-        .stream()
-        .anyMatch(assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
-
-    Assert.assertTrue(lecture2.getCDDefinition()
-        .getCDAssociationsList()
-        .stream()
-        .allMatch(assoc2 -> assoc2.getCDAssocDir().isDefinitiveNavigableRight()));
-
-    Assert.assertFalse(lecture2.getCDDefinition()
-        .getCDAssociationsList()
-        .stream()
-        .allMatch(assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
-  }
-
 }

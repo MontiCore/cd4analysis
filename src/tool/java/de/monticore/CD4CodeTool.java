@@ -632,9 +632,20 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
       }
       else if (cmd.getOptionValue("open-world", "reduction-based").equals("alloy-based")) {
+
         semantics = CDSemantics.MULTI_INSTANCE_OPEN_WORLD;
-        //handle unspecified association directions for open-world
+
+        // handle unspecified association directions for open-world
         ReductionTrafo.handleAssocDirections(ast1, ast2, true);
+
+        // add subclasses to interfaces and abstract classes
+        ReductionTrafo.addSubClasses4Diff(ast1);
+        ReductionTrafo.addSubClasses4Diff(ast2);
+
+        // add dummy-class for associations
+        String dummyClassName = "Dummy4Diff";
+        ReductionTrafo.addDummyClass4Associations(ast1,dummyClassName);
+        ReductionTrafo.addDummyClass4Associations(ast2,dummyClassName);
       }
     }
     else {
