@@ -1,0 +1,23 @@
+classdiagram Employees2 {
+  enum PositionKind {fullTime, partTime;}
+
+  enum Department {Sales, HR;}
+
+  class Person;
+
+  class Employee extends Person {
+    PositionKind kind;
+  }
+
+  class Manager extends Employee {
+    Department inChargeOf;
+  }
+
+  class Task;
+
+  class ManagementTask extends Task;
+
+//  association [1..*] Employee (assignee) <- (todo) Task [1];
+//  association [1] Manager (assignee) <- (todo) ManagementTask [1..*];
+
+}

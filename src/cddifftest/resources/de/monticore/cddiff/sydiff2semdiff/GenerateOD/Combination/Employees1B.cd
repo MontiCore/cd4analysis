@@ -1,7 +1,7 @@
 import java.util.Date;
 
 classdiagram Employees2 {
-	enum PositionKind {fullTime, partTime, other;}
+	enum PositionKind {fullTime, partTime;}
 
 	enum Department {Sales, HR;}
 

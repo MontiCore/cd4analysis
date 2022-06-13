@@ -212,8 +212,12 @@ public class GenerateODHelper {
       } else {
         // normal attribute
         String value = null;
-        if (compClass.get().getCompKind() == CompareGroup.CompClassKind.COMP_ENUM) {
-          value = createValue(dg, compClass, astcdAttribute.printType(), true);
+        if (!compClass.isEmpty()) {
+          if (compClass.get().getCompKind() == CompareGroup.CompClassKind.COMP_ENUM) {
+            value = createValue(dg, compClass, astcdAttribute.printType(), true);
+          } else {
+            value = createValue(dg, compClass, astcdAttribute.printType(), false);
+          }
         } else {
           value = createValue(dg, compClass, astcdAttribute.printType(), false);
         }
@@ -350,6 +354,7 @@ public class GenerateODHelper {
    * "objectList"  : List<ASTODNamedObject>
    * "isInList"    : boolean
    * }
+   *
    */
   public static Map<String, Object> getObjectInASTODElementListByDiffClass(DifferentGroup dg, DiffClass diffClass, List<ASTODElement> astodElementList) {
     AtomicBoolean isInList = new AtomicBoolean(false);
@@ -411,8 +416,12 @@ public class GenerateODHelper {
    * if the given DiffAssociation is self-loop, that is no problem.
    * return the found source class and it's positon side.
    *
-   * @return: {  "sourceClass" : DiffClass
-   * "position"    : ["left", "right"] }
+   * @return: Map
+   * {
+   * "sourceClass" : DiffClass
+   * "position"    : ["left", "right"]
+   * }
+   *
    */
   public static Map<String, Object> findSourceClassAndPositionInDiffAssociation(DiffAssociation diffAssociation, DiffClass targetClass) {
     String position;

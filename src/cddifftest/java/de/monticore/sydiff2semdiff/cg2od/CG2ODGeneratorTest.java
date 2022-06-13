@@ -80,8 +80,28 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     }
   }
 
+  @Test
+  public void testGenerateODByRefSetAssociation() {
+    generateCompareGroupTemp("Association","RefSet1A.cd", "RefSet1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    for(int i = 0; i < resultList.size() ; i++) {
+      System.out.println(resultList.get(i));
+    }
+  }
+
   /********************************************************************
    *********************    Start for Combination    ******************
    *******************************************************************/
+
+  @Test
+  public void testGenerateODByCombination () {
+    generateCompareGroupTemp("Combination","Employees1A.cd", "Employees1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    for(int i = 0; i < resultList.size() ; i++) {
+      System.out.println(resultList.get(i));
+    }
+  }
 
 }

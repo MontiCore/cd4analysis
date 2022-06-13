@@ -1,7 +1,7 @@
 import java.util.Date;
 
 classdiagram Employees1 {
-	enum PositionKind {fullTime, partTime;}
+	enum PositionKind {fullTime, partTime, other;}
 
 	enum Department {Sales, HR;}
 
@@ -13,10 +13,11 @@ classdiagram Employees1 {
     String country;
 	}
 
-	abstract class Person;
+	abstract class Person {
+	  PositionKind kind;
+	}
 
 	class Employee extends Person {
-  	PositionKind kind;
 	}
 
 	class Manager extends Employee, Europe{
