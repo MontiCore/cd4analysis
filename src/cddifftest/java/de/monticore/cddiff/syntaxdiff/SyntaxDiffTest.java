@@ -1,27 +1,19 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.*;
-import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.syntaxdiff.FieldDiff;
 import de.monticore.syntaxdiff.SyntaxDiff;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier._ast.ASTModifier;
-import de.monticore.umlstereotype._ast.ASTStereotype;
-
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +23,11 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   public void testSyntaxDiff() {
     CD4CodeMill.globalScope().clear();
 
+    final ASTCDCompilationUnit cd1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest1.cd");
 
-
-    ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/FieldDiffTest1.cd");
-    ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/FieldDiffTest2.cd");
+    final ASTCDCompilationUnit cd2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest2.cd");
 
 
     ICD4CodeGlobalScope gscope = CD4CodeMill.globalScope();
