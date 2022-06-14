@@ -85,22 +85,13 @@ public class FullExpander implements CDExpander {
     }
   }
 
-  public void addMissingAssociations(Collection<ASTCDAssociation> originals,
-      boolean withCardinalities) {
+  public void addAssociationClones(Collection<ASTCDAssociation> originals) {
     for (ASTCDAssociation srcAssoc : originals) {
-      boolean found = getCD().getCDDefinition()
-          .getCDAssociationsList()
-          .stream()
-          .anyMatch(targetAssoc -> CDAssociationHelper.sameAssociation(targetAssoc, srcAssoc));
-      if (!found) {
         ASTCDAssociation newAssoc = srcAssoc.deepClone();
-        if (!withCardinalities) {
-          newAssoc.getRight().setCDCardinalityAbsent();
-          newAssoc.getLeft().setCDCardinalityAbsent();
-        }
+        newAssoc.getRight().setCDCardinalityAbsent();
+        newAssoc.getLeft().setCDCardinalityAbsent();
         //todo: check if class/interface has stereotype ""
         getCD().getCDDefinition().getCDElementList().add(newAssoc);
-      }
     }
   }
 
@@ -112,11 +103,11 @@ public class FullExpander implements CDExpander {
   public void updateDir2Match(Collection<ASTCDAssociation> targets) {
     for (ASTCDAssociation src : getCD().getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation target : targets) {
-        if (CDAssociationHelper.strictMatch(target, src)) {
+        if (CDAssociationHelper.sameAssociation(target, src)) {
           matchDir(src, target);
           break;
         }
-        if (CDAssociationHelper.strictReverseMatch(target, src)) {
+        if (CDAssociationHelper.sameAssociationInReverse(target, src)) {
           matchDirInReverse(src, target);
           break;
         }
@@ -132,11 +123,11 @@ public class FullExpander implements CDExpander {
 
     for (ASTCDAssociation src : getCD().getCDDefinition().getCDAssociationsList()) {
       for (ASTCDAssociation target : targets) {
-        if (CDAssociationHelper.strictMatch(target, src)) {
+        if (CDAssociationHelper.sameAssociation(target, src)) {
           mismatchDir(src, target);
           break;
         }
-        if (CDAssociationHelper.strictReverseMatch(target, src)) {
+        if (CDAssociationHelper.sameAssociationInReverse(target, src)) {
           mismatchDirInReverse(src, target);
           break;
         }
@@ -144,7 +135,7 @@ public class FullExpander implements CDExpander {
     }
   }
 
-  public Set<ASTCDAssociation> addDummyAssociations(Collection<ASTCDAssociation> originals,
+  public Set<ASTCDAssociation> buildDummyAssociations(Collection<ASTCDAssociation> originals,
       String dummyClassName) {
 
     Set<ASTCDAssociation> dummies = new HashSet<>();
@@ -166,7 +157,8 @@ public class FullExpander implements CDExpander {
             dummyClassName).ifPresent(dummies::add);
 
       }
-      else {
+
+      if (original.getCDAssocDir().isDefinitiveNavigableLeft()) {
 
         if (original.getLeft().isPresentCDRole()) {
           roleName = original.getLeft().getCDRole().getName();
@@ -182,6 +174,16 @@ public class FullExpander implements CDExpander {
     }
     return dummies;
   }
+
+  public void addAssociationsWithoutConflicts(Collection<ASTCDAssociation> dummySet) {
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    for (ASTCDAssociation dummy : dummySet){
+      if (getCD().getCDDefinition().getCDAssociationsList().stream().noneMatch(assoc -> CDAssociationHelper.inConflict(dummy, assoc, scope))){
+        getCD().getCDDefinition().getCDElementList().add(dummy);
+      }
+    }
+  }
+
 
   /*
   delegated methods

@@ -227,7 +227,7 @@ public class FullExpanderTest extends CDDiffTestBasis {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
     FullExpander fullExpander = new FullExpander( new OpenWorldExpander(lecture));
 
-    fullExpander.addMissingAssociations(copies, false);
+    fullExpander.addAssociationClones(copies);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture);
 
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
