@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.*;
+import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.mappingCardinality4Initial;
 
 public class CG2ODGenerator {
 
@@ -76,18 +77,25 @@ public class CG2ODGenerator {
   }
 
   protected List<ASTODElement> generateODByClass(DifferentGroup dg, CompClass compClass) {
-    Deque<DiffClass> classStack = new LinkedList<>();
-    Deque<DiffAssociation> associationStack = new LinkedList<>();
-    Map<DiffRefSetAssociation, Boolean> refLinkCheckList = convertRefSetAssociationList2CheckList(dg.getRefSetAssociationList());
+    Deque<Map<String, Object>> classStack4TargetClass = new LinkedList<>();
+    Deque<Map<String, Object>> classStack4SourceClass = new LinkedList<>();
+    Deque<DiffAssociation> associationStack4TargetClass = new LinkedList<>();
+    Deque<DiffAssociation> associationStack4SourceClass = new LinkedList<>();
+    Map<DiffRefSetAssociation, Integer> refLinkCheckList = convertRefSetAssociationList2CheckList(dg.getRefSetAssociationList());
 
     // initial for generate ODs
-    List<ASTODElement> astodElementList = initGenerateODByClass(dg, compClass);
-    classStack.push(compClass.getOriginalElement());
+    List<ASTODElement> astodElementList = initGenerateODByClass(dg, compClass, classStack4TargetClass, classStack4SourceClass);
 
-    return generateODBasicProcess(dg, classStack, associationStack, refLinkCheckList, astodElementList);
+    // using basic process
+    astodElementList =  generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
+    if (astodElementList != null) {
+      return generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
+    } else {
+      return null;
+    }
   }
 
-  public List<ASTODElement> initGenerateODByClass(DifferentGroup dg, CompClass compClass) {
+  public List<ASTODElement> initGenerateODByClass(DifferentGroup dg, CompClass compClass, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
     // get the necessary information
     DiffClass diffClass = compClass.getOriginalElement();
     List<ASTODElement> astodElementList = new LinkedList<>();
@@ -95,35 +103,40 @@ public class CG2ODGenerator {
     // create ASTODElement list
     if (diffClass.getDiffKind() != DifferentGroup.DiffClassKind.DIFF_ENUM) {
       // simple class, abstract class, interface
-      astodElementList.addAll(createObjectList(dg, Optional.of(compClass), diffClass, 1));
+      astodElementList.addAll(createObjectList(dg, Optional.of(compClass), diffClass, 1, classStack4TargetClass, classStack4SourceClass));
     } else {
       // enum
       DiffClass diffClassUsingEnum = dg.getDiffClassGroup().get(diffClass.getDiffLink4EnumClass().iterator().next());
-      astodElementList.addAll(createObjectList(dg, Optional.of(compClass), diffClassUsingEnum, 1));
+      astodElementList.addAll(createObjectList(dg, Optional.of(compClass), diffClassUsingEnum, 1, classStack4TargetClass, classStack4SourceClass));
     }
     return astodElementList;
   }
 
   protected List<ASTODElement> generateODByAssociation(DifferentGroup dg, CompAssociation compAssociation) {
 
-    Deque<DiffClass> classStack = new LinkedList<>();
-    Deque<DiffAssociation> associationStack = new LinkedList<>();
-    Map<DiffRefSetAssociation, Boolean> refLinkCheckList = convertRefSetAssociationList2CheckList(dg.getRefSetAssociationList());
+    Deque<Map<String, Object>> classStack4TargetClass = new LinkedList<>();
+    Deque<Map<String, Object>> classStack4SourceClass = new LinkedList<>();
+    Deque<DiffAssociation> associationStack4TargetClass = new LinkedList<>();
+    Deque<DiffAssociation> associationStack4SourceClass = new LinkedList<>();
+    Map<DiffRefSetAssociation, Integer> refLinkCheckList = convertRefSetAssociationList2CheckList(dg.getRefSetAssociationList());
 
     // initial for generate ODs
-    List<ASTODElement> astodElementList = initGenerateODByAssociation(dg, compAssociation);
-    classStack.push(compAssociation.getOriginalElement().getDiffLeftClass());
-    classStack.push(compAssociation.getOriginalElement().getDiffRightClass());
+    List<ASTODElement> astodElementList = initGenerateODByAssociation(dg, compAssociation, classStack4TargetClass, classStack4SourceClass);
     Optional<DiffRefSetAssociation> initDiffRefSetAssociationOpt = findRelatedDiffRefSetAssociationByDiffAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
     if (!initDiffRefSetAssociationOpt.isEmpty()) {
-      refLinkCheckList.put(initDiffRefSetAssociationOpt.get(), true);
+      refLinkCheckList.put(initDiffRefSetAssociationOpt.get(), refLinkCheckList.get(initDiffRefSetAssociationOpt.get()) - 1);
     }
 
     // using basic process
-    return generateODBasicProcess(dg, classStack, associationStack, refLinkCheckList, astodElementList);
+    astodElementList =  generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
+    if (astodElementList != null) {
+      return generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
+    } else {
+      return null;
+    }
   }
 
-  public List<ASTODElement> initGenerateODByAssociation(DifferentGroup dg, CompAssociation compAssociation) {
+  public List<ASTODElement> initGenerateODByAssociation(DifferentGroup dg, CompAssociation compAssociation, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
     // get the necessary information
     DiffClass leftDiffClass = compAssociation.getOriginalElement().getDiffLeftClass();
     DiffClass rightDiffClass = compAssociation.getOriginalElement().getDiffRightClass();
@@ -136,30 +149,32 @@ public class CG2ODGenerator {
     switch (compAssociation.getCompCategory()) {
       case DELETED:
         directionType = mappingDirection(compAssociation.getOriginalElement().getDiffDirection().toString());
-        leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+        leftCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
         break;
       case DIRECTION_CHANGED:
         directionType = mappingDirection(compAssociation.getCompDirectionResult().get().toString());
-        leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+        leftCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
         break;
       case CARDINALITY_CHANGED:
         directionType = mappingDirection(compAssociation.getOriginalElement().getDiffDirection().toString());
         switch (compAssociation.getWhichPartDiff().get()) {
           case LEFT_CARDINALITY:
-            leftCardinalityCount = mappingCardinality(compAssociation.getCompLeftClassCardinalityResult().get().toString());
-            rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+            leftCardinalityCount = mappingCardinality4Initial(compAssociation.getCompLeftClassCardinalityResult().get().toString());
+            rightCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+            break;
           case RIGHT_CARDINALITY:
-            leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-            rightCardinalityCount = mappingCardinality(compAssociation.getCompRightClassCardinalityResult().get().toString());
+            leftCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
+            rightCardinalityCount = mappingCardinality4Initial(compAssociation.getCompRightClassCardinalityResult().get().toString());
+            break;
         }
         break;
     }
 
     // create ASTODElement list
-    List<ASTODNamedObject> leftElementList = createObjectList(dg, Optional.empty(), leftDiffClass, leftCardinalityCount);
-    List<ASTODNamedObject> rightElementList = createObjectList(dg, Optional.empty(), rightDiffClass, rightCardinalityCount);
+    List<ASTODNamedObject> leftElementList = createObjectList(dg, Optional.empty(), leftDiffClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+    List<ASTODNamedObject> rightElementList = createObjectList(dg, Optional.empty(), rightDiffClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
     List<ASTODLink> linkElementList = createLinkList(leftElementList, rightElementList, leftRoleName, rightRoleName, directionType);
 
     List<ASTODElement> astodElementList = new LinkedList<>();
@@ -170,91 +185,116 @@ public class CG2ODGenerator {
     return astodElementList;
   }
 
-  protected List<ASTODElement> generateODBasicProcess(DifferentGroup dg, Deque<DiffClass> classStack, Deque<DiffAssociation> associationStack, Map<DiffRefSetAssociation, Boolean> refLinkCheckList, List<ASTODElement> astodElementList) {
+  protected List<ASTODElement> generateODBasicProcess(DifferentGroup dg, String opt4StartClassKind, Deque<Map<String, Object>> classStack, Deque<DiffAssociation> associationStack, Map<DiffRefSetAssociation, Integer> refLinkCheckList, List<ASTODElement> astodElementList) {
     // start basic process for compClass and compAssociation
 
     DiffClass currentDiffClass = null;
     while (!classStack.isEmpty()) {
-      DiffClass diffClass = classStack.pop();
+      Map<String, Object> diffClassMap = classStack.pop();
+      List<ASTODNamedObject> objectList = (List<ASTODNamedObject>) diffClassMap.get("objectList");
+      DiffClass diffClass = (DiffClass) diffClassMap.get("diffClass");
       currentDiffClass = diffClass;
-      findAllDiffAssociationByTargetClass(dg, diffClass).forEach(e -> associationStack.push(e));
+      if (opt4StartClassKind.equals("target")) {
+        findAllDiffAssociationByTargetClass(dg, diffClass).forEach(e -> associationStack.push(e));
+      } else {
+        findAllDiffAssociationBySourceClass(dg, diffClass).forEach(e -> associationStack.push(e));
+      }
 
       while (!associationStack.isEmpty()) {
         DiffAssociation currentDiffAssociation = associationStack.pop();
         if (!checkRelatedDiffRefSetAssociationIsUsed(currentDiffAssociation, refLinkCheckList)) {
-          // add this association link into OD
 
-          // get the information of sourceClass and targetClass
-          Map<String,Object> sourceClassMap = findSourceClassAndPositionInDiffAssociation(currentDiffAssociation, currentDiffClass);
+          // get the information of currentSideClass and otherSideClass
 
-          DiffClass sourceClass = (DiffClass) sourceClassMap.get("sourceClass");
-          DiffClass targetClass = currentDiffClass;
-          String sourceRoleName = null;
-          String targetRoleName = null;
+          Map<String,Object> otherSideClassMap = findOtherSideClassAndPositionInDiffAssociation(currentDiffAssociation, currentDiffClass);
+
+          List<ASTODNamedObject> currentSideObjectList = objectList;
+          DiffClass otherSideClass = (DiffClass) otherSideClassMap.get("otherSideClass");
+          DiffClass currentSideClass = currentDiffClass;
+          String otherSideRoleName = null;
+          String currentSideRoleName = null;
           int directionType = 0;
-          int sourceCardinalityCount = 0;
-          int targetCardinalityCount = 0;
+          int otherSideCardinalityCount = 0;
 
-          String sourceClassPosition = (String) sourceClassMap.get("position");
-          if (sourceClassPosition.equals("left")) {
-            sourceRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
-            targetRoleName = currentDiffAssociation.getDiffRightClassRoleName();
+          String otherSideClassPosition = (String) otherSideClassMap.get("position");
+          if (otherSideClassPosition.equals("left")) {
+            otherSideRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
+            currentSideRoleName = currentDiffAssociation.getDiffRightClassRoleName();
             directionType = 1;
-            sourceCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffLeftClassCardinality().toString());
-            targetCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffRightClassCardinality().toString());
+            otherSideCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffLeftClassCardinality().toString());
           } else {
-            sourceRoleName = currentDiffAssociation.getDiffRightClassRoleName();
-            targetRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
+            otherSideRoleName = currentDiffAssociation.getDiffRightClassRoleName();
+            currentSideRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
             directionType = 2;
-            sourceCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffRightClassCardinality().toString());
-            targetCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffLeftClassCardinality().toString());
+            otherSideCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffRightClassCardinality().toString());
           }
           if (mappingDirection(currentDiffAssociation.getDiffDirection().toString()) == 3) {
             directionType = 3;
           }
 
-          if (sourceCardinalityCount != 0) {
-            // get sourceObject
-            Map<String, Object> sourceObjectMap = getObjectInASTODElementListByDiffClass(dg, sourceClass, astodElementList);
-            List<ASTODNamedObject> sourceObjectList = (List<ASTODNamedObject>) sourceObjectMap.get("objectList");
-            ASTODNamedObject sourceObject = null;
+          // determine if a new connection needs to be added by otherSideCardinalityCount
+          if (otherSideCardinalityCount != 0) {
 
+            // get otherSideObject
+            Map<String, Object> otherSideObjectMap = getObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList);
+            List<ASTODNamedObject> otherSideObjectList = (List<ASTODNamedObject>) otherSideObjectMap.get("objectList");
+
+            // determining illegal situations
             // create an object map according the class of Object
-            Map<String, List<ASTODNamedObject>> sourceObjectGroupByClass = sourceObjectList
+            Map<String, List<ASTODNamedObject>> otherSideObjectGroupByClass = otherSideObjectList
               .stream()
               .collect(Collectors.groupingBy(e -> e.getName().split("_")[0]));
-
-            boolean isTwoObjectsInOneClass = sourceObjectGroupByClass.values().stream().anyMatch(e -> e.size() >= 2);
-
-            /* if there are two objects in one class and those two objects are not newly created,
-             * then the object association graph of this semantic difference can not be created,
-             * because this object association graph with current cardinality is not valid in the original CD.
-             */
-            if (isTwoObjectsInOneClass && (Boolean) sourceObjectMap.get("isInList") == true) {
-              return null;
+            if (opt4StartClassKind.equals("target")) {
+              boolean isTwoObjectsInOneClass = otherSideObjectGroupByClass.values().stream().anyMatch(e -> e.size() >= 2);
+              /* if there are two objects in one class and those two objects are not newly created,
+               * then the object association graph of this semantic difference can not be created,
+               * because this object association graph with current cardinality is not valid in the original CD.
+               */
+              if (isTwoObjectsInOneClass && (Boolean) otherSideObjectMap.get("isInList") == true) {
+                return null;
+              }
             } else {
-              sourceObject = sourceObjectList.get(0);
+              boolean isTwoObjectsInOneClass4SourceSide = currentSideObjectList.size() == 2 ? true : false;
+              boolean isOneObjectsInOneClass4TargetSide = otherSideObjectGroupByClass.values().stream().anyMatch(e -> e.size() == 1);
+              if (isTwoObjectsInOneClass4SourceSide && (Boolean) otherSideObjectMap.get("isInList") == true && isOneObjectsInOneClass4TargetSide) {
+                return null;
+              }
             }
 
-            if ((Boolean) sourceObjectMap.get("isInList") == false) {
-              // add new object into ASTODElementList
-              astodElementList.add(sourceObject);
-              // push sourceClass into classStack
-              classStack.push(sourceClass);
+            if (currentSideObjectList.size() == 1) {
+              ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
+              if ((Boolean) otherSideObjectMap.get("isInList") == false) {
+                // add new object into ASTODElementList
+                astodElementList.add(otherSideObject0);
+                // push sourceClass into classStack
+                classStack.push(Map.of("objectList", List.of(otherSideObject0), "diffClass", otherSideClass));
+              }
+              // create new ASTODLinkList and add into ASTODElementList
+              List<ASTODLink> linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
+              astodElementList.addAll(linkList0);
+            } else {
+              ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
+              ASTODNamedObject otherSideObject1 = otherSideObject0.deepClone();
+              String objectName = otherSideObject1.getName().split("_")[0];
+              otherSideObject1.setName(objectName + "_1");
+              if ((Boolean) otherSideObjectMap.get("isInList") == false) {
+                // add new object into ASTODElementList
+                astodElementList.add(otherSideObject0);
+                astodElementList.add(otherSideObject1);
+                // push sourceClass into classStack
+                classStack.push(Map.of("objectList", List.of(otherSideObject0, otherSideObject1), "diffClass", otherSideClass));
+              }
+              // create new ASTODLinkList and add into ASTODElementList
+              List<ASTODLink> linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
+              List<ASTODLink> linkList1 = createLinkList(otherSideObject1, currentSideObjectList.get(1), otherSideRoleName, currentSideRoleName, directionType);
+              astodElementList.addAll(linkList0);
+              astodElementList.addAll(linkList1);
             }
 
-            // get targetObject
-            Map<String, Object> targetObjectMap = getObjectInASTODElementListByDiffClass(dg, targetClass, astodElementList);
-            ASTODNamedObject targetObject = ((List<ASTODNamedObject>) targetObjectMap.get("objectList")).get(0);
-
-            // create new ASTODLinkList and add into ASTODElementList
-            List<ASTODLink> linkList = createLinkList(sourceObject, targetObject, sourceRoleName, targetRoleName, directionType);
-            astodElementList.addAll(linkList);
-
-            // mark related refLink as true
+            // mark related refLink
             Optional<DiffRefSetAssociation> currentDiffRefSetAssociationOpt = findRelatedDiffRefSetAssociationByDiffAssociation(currentDiffAssociation, refLinkCheckList);
             if (!currentDiffRefSetAssociationOpt.isEmpty()) {
-              refLinkCheckList.put(currentDiffRefSetAssociationOpt.get(), true);
+              refLinkCheckList.put(currentDiffRefSetAssociationOpt.get(), refLinkCheckList.get(currentDiffRefSetAssociationOpt.get()) - 1);
             }
           }
         }
@@ -263,5 +303,4 @@ public class CG2ODGenerator {
 
     return astodElementList;
   }
-
 }

@@ -64,12 +64,12 @@ public class CompareHelper {
     } else {
       List<String> attributesDiffList = new ArrayList<>();
       // check each attributes
-      based.getAttributes().forEach((attrName, attrMap) -> {
+      based.getAttributes().forEach((attrName, attrType) -> {
         // check attributes name
         if (compared.getAttributes().containsKey(attrName)) {
           // check attributes type
           if (!based.getDiffKind().equals(DifferentGroup.DiffClassKind.DIFF_ENUM)) {
-            if (!attrMap.get("type").equals(compared.getAttributes().get(attrName).get("type"))) {
+            if (!attrType.equals(compared.getAttributes().get(attrName))) {
               // edited
               attributesDiffList.add(attrName);
             }

@@ -1,23 +1,14 @@
 package de.monticore.sydiff2semdiff.cg2od;
 
-import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.od4data.OD4DataMill;
-import de.monticore.od4data.prettyprinter.OD4DataFullPrettyPrinter;
-import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.odbasis._ast.ASTODAttribute;
-import de.monticore.odbasis._ast.ASTODElement;
-import de.monticore.odbasis._ast.ASTObjectDiagram;
-import de.monticore.odlink.ODLinkMill;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.sydiff2semdiff.cd2dg.CD2DGGenerator;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 import de.monticore.sydiff2semdiff.dg2cg.DG2CGGenerator;
 import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CG2ODGeneratorTest extends CDDiffTestBasis {
@@ -34,8 +25,8 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
       "src/cddifftest/resources/de/monticore/cddiff/sydiff2semdiff/GenerateOD/" + folder + "/" + cd2Name);
     CD2DGGenerator cd1Generator = new CD2DGGenerator();
     CD2DGGenerator cd2Generator = new CD2DGGenerator();
-    dg1 = cd1Generator.generateDifferentGroup(cd1, DifferentGroup.DifferentGroupType.SINGLE_INSTANCE);
-    dg2 = cd2Generator.generateDifferentGroup(cd2, DifferentGroup.DifferentGroupType.SINGLE_INSTANCE);
+    dg1 = cd1Generator.generateDifferentGroup(cd1, CDSemantics.SIMPLE_CLOSED_WORLD);
+    dg2 = cd2Generator.generateDifferentGroup(cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
     DG2CGGenerator dg2CGGenerator4dg1Withdg2 = new DG2CGGenerator();
     DG2CGGenerator dg2CGGenerator4dg2Withdg1 = new DG2CGGenerator();
     cg1 = dg2CGGenerator4dg1Withdg2.generateCompareGroup(dg1, dg2);
@@ -90,6 +81,17 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     }
   }
 
+  @Test
+  public void testGenerateODByAssocStack4TrgetClass() {
+    generateCompareGroupTemp("Association","AssocStack4TargetClass1A.cd", "AssocStack4TargetClass1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    for(int i = 0; i < resultList.size() ; i++) {
+      System.out.println(resultList.get(i));
+    }
+  }
+
+
   /********************************************************************
    *********************    Start for Combination    ******************
    *******************************************************************/
@@ -97,6 +99,17 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testGenerateODByCombination () {
     generateCompareGroupTemp("Combination","Employees1A.cd", "Employees1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    for(int i = 0; i < resultList.size() ; i++) {
+      System.out.println(resultList.get(i));
+    }
+  }
+
+
+  @Test
+  public void testGenerateODByDefaultTest() {
+    generateCompareGroupTemp("Association","testA.cd", "testB.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
     for(int i = 0; i < resultList.size() ; i++) {

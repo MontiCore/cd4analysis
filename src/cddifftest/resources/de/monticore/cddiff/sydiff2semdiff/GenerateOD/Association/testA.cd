@@ -1,0 +1,18 @@
+classdiagram TestA {
+
+  class A {
+    int a;
+  }
+
+  class B;
+
+  class C;
+
+  package uni {
+    class D;
+  }
+
+  association [1] A <-> B [1];
+  association [1] A <-> C [1];
+  association [1] A <-> uni.D [1];
+}

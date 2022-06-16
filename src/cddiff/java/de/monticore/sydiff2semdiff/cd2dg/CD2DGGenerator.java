@@ -2,6 +2,7 @@ package de.monticore.sydiff2semdiff.cd2dg;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -25,7 +26,7 @@ public class CD2DGGenerator {
   /**
    * generating DifferentGroup
    */
-  public DifferentGroup generateDifferentGroup(ASTCDCompilationUnit cd, DifferentGroup.DifferentGroupType type) {
+  public DifferentGroup generateDifferentGroup(ASTCDCompilationUnit cd, CDSemantics type) {
     DifferentGroup differentGroup = new DifferentGroup();
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
 
@@ -106,11 +107,11 @@ public class CD2DGGenerator {
       // add attributes
       for (ASTCDAttribute astcdAttribute : astcdType.getCDAttributeList()) {
         if (astcdEnumList.stream().anyMatch(s -> s.getName().equals(astcdAttribute.printType()))) {
-          diffClass.addAttribute(astcdAttribute, true, false);
+          diffClass.addAttribute(astcdAttribute);
           creatEnumClassMapHelper("DiffEnum_" + astcdAttribute.printType(), diffClass.getName());
         }
         else {
-          diffClass.addAttribute(astcdAttribute, false, false);
+          diffClass.addAttribute(astcdAttribute);
         }
       }
     }
@@ -137,10 +138,10 @@ public class CD2DGGenerator {
    * childClass -> parentClass
    */
   public MutableGraph<String> createInheritanceGraph(ASTCDType child, Collection<ASTCDType> directSuperList) {
-    String childClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(child)) + "_" + child.getName();
+    String childClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(child)) + "_" + child.getSymbol().getFullName();
     inheritanceGraph.addNode(childClass);
     directSuperList.forEach(parent -> {
-      String parentClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(parent)) + "_" + parent.getName();
+      String parentClass = getDiffClassKindStrHelper(distinguishASTCDTypeHelper(parent)) + "_" + parent.getSymbol().getFullName();
       inheritanceGraph.putEdge(childClass, parentClass);
     });
     return inheritanceGraph;
@@ -204,7 +205,8 @@ public class CD2DGGenerator {
   public void solveInheritance() {
     List<List<String>> waitList = new ArrayList<>();
     DifferentHelper differentHelper = new DifferentHelper();
-    getAllBottomNode(inheritanceGraph).forEach(diffClassName -> waitList.addAll(differentHelper.getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName), inheritanceGraph)));
+    getAllBottomNode(inheritanceGraph).forEach(diffClassName ->
+      waitList.addAll(differentHelper.getAllInheritancePath4DiffClass(diffClassGroup.get(diffClassName), inheritanceGraph)));
     waitList.forEach(path -> {
       if (path.size() > 1) {
 
@@ -214,18 +216,15 @@ public class CD2DGGenerator {
 
           // for attributes
           parent.getEditedElement().getCDAttributeList().forEach(e -> {
-            String type = parent.getAttributeByASTCDAttribute(e).get("type");
-
+            String type = "DiffEnum_" + e.printType();
             // update enumClassMap
-            boolean isEnumType = false;
             if (enumClassMap.containsKey(type)) {
-              isEnumType = true;
               Set<String> set = enumClassMap.get(type);
               set.add(child.getName());
               enumClassMap.put(type, set);
             }
             // add inherited attribute into child diffClass
-            child.addAttribute(e, isEnumType, true);
+            child.addAttribute(e);
 
           });
 
@@ -235,7 +234,7 @@ public class CD2DGGenerator {
           // for association
           String parentOriginalName = parent.getOriginalClassName();
           String childOriginalName = child.getOriginalClassName();
-          Map<String, DiffAssociation> associationMap = parseMapForFilter(diffAssociationGroup, parentOriginalName);
+          Map<String, DiffAssociation> associationMap = fuzzySearchDiffAssociationByClassName(diffAssociationGroup, parentOriginalName);
 
           associationMap.forEach((oldName, oldDiffAssociation) -> {
 

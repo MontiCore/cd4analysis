@@ -2,6 +2,7 @@ package de.monticore.sydiff2semdiff.cd2dg;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -22,7 +23,7 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   public DifferentGroup generateDifferentGroupTemp(String folder, String cdName) {
     ASTCDCompilationUnit cd = parseModel("src/cddifftest/resources/de/monticore/cddiff/sydiff2semdiff/DifferentGroup/" + folder + "/" + cdName);
     CD2DGGenerator cd2DGGenerator = new CD2DGGenerator();
-    return cd2DGGenerator.generateDifferentGroup(cd, DifferentGroup.DifferentGroupType.SINGLE_INSTANCE);
+    return cd2DGGenerator.generateDifferentGroup(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
   }
 
   /********************************************************************
@@ -87,10 +88,8 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   public void testClass4AbstractClassInheritance() {
     DifferentGroup dg = generateDifferentGroupTemp("Class", "Class3.cd");
     Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().keySet().containsAll(Set.of("i", "a1", "b1", "element")));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().get("i").get("kind").equals("inherited"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().get("i").get("type").equals("String"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().get("b1").get("kind").equals("original"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().get("b1").get("type").equals("int"));
+    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().get("i").equals("String"));
+    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_B1").getAttributes().get("b1").equals("int"));
   }
 
   /**
@@ -107,10 +106,8 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   public void testClass4SimpleClassInheritance() {
     DifferentGroup dg = generateDifferentGroupTemp("Class", "Class4.cd");
     Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().keySet().containsAll(Set.of("i", "a1", "b1", "element")));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("i").get("kind").equals("inherited"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("i").get("type").equals("String"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("element").get("kind").equals("inherited"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("element").get("type").equals("DiffEnum_E"));
+    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("i").equals("String"));
+    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("element").equals("E"));
     Assert.assertTrue(dg.getDiffClassGroup().get("DiffEnum_E").getDiffLink4EnumClass().containsAll(Set.of("DiffClass_B1", "DiffClass_C")));
   }
 
@@ -128,8 +125,7 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   public void testClass4SimpleClass2Inheritance() {
     DifferentGroup dg = generateDifferentGroupTemp("Class", "Class5.cd");
     Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().keySet().containsAll(Set.of("i", "a1", "b1", "element", "b2")));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("b2").get("kind").equals("inherited"));
-    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("b2").get("type").equals("int"));
+    Assert.assertTrue(dg.getDiffClassGroup().get("DiffClass_C").getAttributes().get("b2").equals("int"));
   }
 
   /********************************************************************

@@ -1,5 +1,6 @@
 package de.monticore.sydiff2semdiff.dg2cg;
 
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.sydiff2semdiff.cd2dg.CD2DGGenerator;
@@ -20,8 +21,8 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
       "src/cddifftest/resources/de/monticore/cddiff/sydiff2semdiff/CompareGroup/" + folder + "/" + cd2Name);
     CD2DGGenerator cd1Generator = new CD2DGGenerator();
     CD2DGGenerator cd2Generator = new CD2DGGenerator();
-    DifferentGroup dg1 = cd1Generator.generateDifferentGroup(cd1, DifferentGroup.DifferentGroupType.SINGLE_INSTANCE);
-    DifferentGroup dg2 = cd2Generator.generateDifferentGroup(cd2, DifferentGroup.DifferentGroupType.SINGLE_INSTANCE);
+    DifferentGroup dg1 = cd1Generator.generateDifferentGroup(cd1, CDSemantics.SIMPLE_CLOSED_WORLD);
+    DifferentGroup dg2 = cd2Generator.generateDifferentGroup(cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
     DG2CGGenerator dg2CGGenerator = new DG2CGGenerator();
     return dg2CGGenerator.generateCompareGroup(dg1,dg2);
   }

@@ -139,18 +139,19 @@ public class DifferentHelper {
    *******************************************************************/
 
   /**
-   * Fuzzy queries for DiffAssociationGroup by keyword
+   * Fuzzy search for DiffAssociationGroup by ClassName
    */
-  public static Map<String, DiffAssociation> parseMapForFilter(Map<String, DiffAssociation> map, String filters) {
+  public static Map<String, DiffAssociation> fuzzySearchDiffAssociationByClassName(Map<String, DiffAssociation> map, String className) {
+    Map<String, DiffAssociation> result = new HashMap<>();
     if (map == null) {
       return null;
     } else {
-      map = map.entrySet()
+      result = map.values()
         .stream()
-        .filter((e) -> e.getKey().contains(filters))
-        .collect(Collectors.toMap((e) -> (String) e.getKey(), (e) -> e.getValue()));
+        .filter(e -> (e.getLeftOriginalClassName().equals(className) || e.getRightOriginalClassName().equals(className)))
+        .collect(Collectors.toMap(e -> (String) e.getName(), e -> e));
     }
-    return map;
+    return result;
   }
 
   /**

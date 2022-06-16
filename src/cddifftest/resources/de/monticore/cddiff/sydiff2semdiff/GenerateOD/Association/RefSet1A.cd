@@ -17,7 +17,7 @@ classdiagram Employees1 {
 
   class ManagementTask extends Task;
 
-  association [1..*] Employee (assignee) <- (todo) Task [1];
+  association [1..*] Employee (assignee) <- (todo) Task [*];
   association [1] Manager (assignee) <- (todo) ManagementTask [1..*];
 
 }

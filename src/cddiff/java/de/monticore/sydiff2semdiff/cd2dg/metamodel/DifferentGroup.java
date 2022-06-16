@@ -1,6 +1,7 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
 import com.google.common.graph.MutableGraph;
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
 import java.util.ArrayList;
@@ -24,15 +25,12 @@ import java.util.Map;
  */
 public class DifferentGroup {
   protected ASTCDCompilationUnit model;
-  protected DifferentGroupType type;
+  protected CDSemantics type;
   protected Map<String, DiffClass> diffClassGroup;
   protected Map<String, DiffAssociation> diffAssociationGroup;
   protected List<DiffRefSetAssociation> refSetAssociationList = new ArrayList<>();
   protected MutableGraph<String> inheritanceGraph;
 
-  public enum DifferentGroupType {
-    SINGLE_INSTANCE, MULTI_INSTANCE
-  }
   public enum DiffClassKind {
     DIFF_CLASS, DIFF_ENUM, DIFF_ABSTRACT_CLASS, DIFF_INTERFACE
   }
@@ -60,11 +58,11 @@ public class DifferentGroup {
     this.model = model;
   }
 
-  public DifferentGroupType getType() {
+  public CDSemantics getType() {
     return type;
   }
 
-  public void setType(DifferentGroupType type) {
+  public void setType(CDSemantics type) {
     this.type = type;
   }
 
