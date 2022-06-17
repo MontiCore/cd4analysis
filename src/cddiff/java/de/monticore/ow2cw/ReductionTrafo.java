@@ -72,7 +72,7 @@ public class ReductionTrafo {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
     //collect all super-associations exclusive to second
-    Set<ASTCDAssociation> superAssociations = CDAssociationHelper.collectSuperAssociations(
+    Set<ASTCDAssociation> superAssociations = CDAssociationHelper.collectStrictSuperAssociations(
         second, first);
 
     //collect all conflicting associations in second
@@ -84,13 +84,14 @@ public class ReductionTrafo {
         second.getCDDefinition().getCDAssociationsList());
     isolated.removeAll(superAssociations);
     isolated.removeAll(conflicts);
-    Set<ASTCDAssociation> dummySet = expander1.addDummyAssociations(isolated, dummyClassName);
+    Set<ASTCDAssociation> dummySet = expander1.buildDummyAssociations(isolated, dummyClassName);
+    expander1.addAssociationsWithoutConflicts(dummySet);
 
     /*
     add all non-conflicting super-associations to first without cardinality constraints
     */
     superAssociations.removeAll(conflicts);
-    expander1.addMissingAssociations(superAssociations, false);
+    expander1.addAssociationClones(superAssociations);
 
     /*
     transform second
@@ -119,7 +120,7 @@ public class ReductionTrafo {
     noDummySet.removeAll(dummySet);
     noDummySet.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
 
-    expander2.addMissingAssociations(noDummySet, true);
+    expander2.addAssociationClones(noDummySet);
 
   }
 

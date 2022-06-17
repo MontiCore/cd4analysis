@@ -188,7 +188,6 @@ public class BasicExpander implements CDExpander {
                 .build())
             .build())
         .build();
-    getCD().getCDDefinition().getCDElementList().add(dummy);
     return Optional.of(dummy);
   }
 

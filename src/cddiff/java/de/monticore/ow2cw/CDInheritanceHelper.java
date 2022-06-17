@@ -156,10 +156,12 @@ public class CDInheritanceHelper {
   public static boolean isSuperOf(String srcName, String targetName, ICD4CodeArtifactScope scope) {
 
     Optional<CDTypeSymbol> optSrc = scope.resolveCDTypeDown(srcName);
-    Optional<CDTypeSymbol> targetSrc = scope.resolveCDTypeDown(targetName);
-    if (optSrc.isPresent() && targetSrc.isPresent()) {
-      return CDInheritanceHelper.getAllSuper(targetSrc.get().getAstNode(), scope)
-          .contains(optSrc.get());
+    Optional<CDTypeSymbol> optTarget = scope.resolveCDTypeDown(targetName);
+    if (optSrc.isPresent() && optTarget.isPresent()) {
+      Log.warn( optSrc.get().getAstNode().getName() + " is super of " + optTarget.get().getAstNode().getName() + ": " + CDInheritanceHelper.getAllSuper(optTarget.get().getAstNode(), scope)
+          .contains(optSrc.get().getAstNode()));
+      return CDInheritanceHelper.getAllSuper(optTarget.get().getAstNode(), scope)
+          .contains(optSrc.get().getAstNode());
     }
     return false;
   }
