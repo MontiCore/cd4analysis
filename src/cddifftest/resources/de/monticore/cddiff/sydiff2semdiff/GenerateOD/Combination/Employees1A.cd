@@ -1,0 +1,37 @@
+import java.util.Date;
+
+classdiagram Employees1 {
+	enum PositionKind {fullTime, partTime, other;}
+
+	enum Department {Sales, HR;}
+
+	interface Area {
+	  String timeZone;
+	}
+
+	class Europe implements Area {
+    String country;
+	}
+
+	abstract class Person {
+	  PositionKind kind;
+	}
+
+	class Employee extends Person {
+	}
+
+	class Manager extends Employee, Europe{
+  	Department inChargeOf;
+	}
+
+	class Task {
+	  String taskName;
+	  Date startDate;
+	}
+
+  class LimitedTask extends Task{
+    Date endDate;
+  }
+
+  association [1..*] Employee (assignee) <- (todo) Task [*];
+}

@@ -1,0 +1,24 @@
+import java.util.Date;
+
+classdiagram cd {
+	enum E {e1, e2;}
+
+	interface I {
+	  String i;
+	}
+
+	abstract class A {
+	  String a1;
+	}
+
+  class B1 {
+    int b1;
+    E element;
+  }
+
+  class B2 {
+    int b2;
+  }
+
+  class C;
+}

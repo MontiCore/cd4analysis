@@ -1,0 +1,11 @@
+classdiagram TestB {
+
+  class A;
+
+  class B;
+
+  class C;
+
+  association [1] A -> B [1];
+  association [1] B <-> C [1];
+}

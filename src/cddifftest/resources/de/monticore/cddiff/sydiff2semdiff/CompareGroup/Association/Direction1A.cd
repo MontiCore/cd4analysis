@@ -1,0 +1,6 @@
+/* (c) https://github.com/MontiCore/monticore */
+classdiagram CD1 {
+  class A;
+  class B;
+  association [*] A <- B [0..1];
+}
