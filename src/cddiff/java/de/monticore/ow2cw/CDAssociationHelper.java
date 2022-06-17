@@ -6,14 +6,15 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CDAssociationHelper {
 
   /**
    * Collect all associations in srcAST that are super-associations of an associations in targetAST
    */
-  public static Set<ASTCDAssociation> collectSuperAssociations(ASTCDCompilationUnit srcAST,
+  public static Set<ASTCDAssociation> collectStrictSuperAssociations(ASTCDCompilationUnit srcAST,
       ASTCDCompilationUnit targetAST) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
@@ -28,6 +29,10 @@ public class CDAssociationHelper {
         }
       }
     }
+    for (ASTCDAssociation targetAssoc : targetAST.getCDDefinition().getCDAssociationsList()) {
+      superAssociations.removeIf(srcAssoc -> isSuperAssociation(targetAssoc, srcAssoc, targetScope)
+          || isSuperAssociationInReverse(targetAssoc, srcAssoc, targetScope));
+    }
 
     return superAssociations;
   }
@@ -35,8 +40,8 @@ public class CDAssociationHelper {
   /**
    * Collect all associations in srcAST that are in conflict with associations in targetAST
    */
-  public static Set<ASTCDAssociation> collectConflictingAssociations(
-      ASTCDCompilationUnit srcAST, ASTCDCompilationUnit targetAST) {
+  public static Set<ASTCDAssociation> collectConflictingAssociations(ASTCDCompilationUnit srcAST,
+      ASTCDCompilationUnit targetAST) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
     ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcAST);
@@ -60,14 +65,6 @@ public class CDAssociationHelper {
    */
   public static boolean inConflict(ASTCDAssociation srcAssoc, ASTCDAssociation targetAssoc,
       ICD4CodeArtifactScope scope) {
-    if (isSuperAssociation(srcAssoc, targetAssoc, scope) || isSuperAssociationInReverse(srcAssoc,
-        targetAssoc, scope)) {
-      return false;
-    }
-
-    if (weakMatch(srcAssoc, targetAssoc) || weakReverseMatch(srcAssoc, targetAssoc)) {
-      return true;
-    }
 
     String srcLeft = srcAssoc.getLeftQualifiedName().getQName();
     String targetLeft = targetAssoc.getLeftQualifiedName().getQName();
@@ -75,26 +72,34 @@ public class CDAssociationHelper {
     String targetRight = targetAssoc.getRightQualifiedName().getQName();
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && targetAssoc.getCDAssocDir()
-        .isDefinitiveNavigableRight() && CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)
-        && CDInheritanceHelper.isSuperOf(targetLeft, srcLeft, scope)) {
+        .isDefinitiveNavigableRight() && (CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope)
+        || CDInheritanceHelper.isSuperOf(targetLeft, srcLeft, scope)) && (!(
+        CDInheritanceHelper.isSuperOf(srcRight, targetRight, scope)
+            || CDInheritanceHelper.isSuperOf(targetRight, srcRight, scope)))) {
       return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
     }
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && targetAssoc.getCDAssocDir()
-        .isDefinitiveNavigableLeft() && CDInheritanceHelper.isSuperOf(srcRight, targetRight, scope)
-        && CDInheritanceHelper.isSuperOf(targetRight, srcRight, scope)) {
+        .isDefinitiveNavigableLeft() && (CDInheritanceHelper.isSuperOf(srcRight, targetRight, scope)
+        || CDInheritanceHelper.isSuperOf(targetRight, srcRight, scope)) && !(
+        CDInheritanceHelper.isSuperOf(srcLeft, targetLeft, scope) || CDInheritanceHelper.isSuperOf(
+            targetLeft, srcLeft, scope))) {
       return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
     }
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && targetAssoc.getCDAssocDir()
-        .isDefinitiveNavigableLeft() && CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope)
-        && CDInheritanceHelper.isSuperOf(targetRight, srcLeft, scope)) {
+        .isDefinitiveNavigableLeft() && (CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope)
+        || CDInheritanceHelper.isSuperOf(targetRight, srcLeft, scope)) && !(
+        CDInheritanceHelper.isSuperOf(srcRight, targetLeft, scope) || CDInheritanceHelper.isSuperOf(
+            targetLeft, srcRight, scope))) {
       return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
     }
 
     if (srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && targetAssoc.getCDAssocDir()
-        .isDefinitiveNavigableRight() && CDInheritanceHelper.isSuperOf(srcRight, targetLeft, scope)
-        && CDInheritanceHelper.isSuperOf(targetLeft, srcRight, scope)) {
+        .isDefinitiveNavigableRight() && (CDInheritanceHelper.isSuperOf(srcRight, targetLeft, scope)
+        || CDInheritanceHelper.isSuperOf(targetLeft, srcRight, scope)) && !(
+        CDInheritanceHelper.isSuperOf(srcLeft, targetRight, scope) || CDInheritanceHelper.isSuperOf(
+            targetRight, srcLeft, scope))) {
       return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
     }
 
@@ -120,10 +125,6 @@ public class CDAssociationHelper {
       return false;
     }
 
-    if (similarAssociation(srcAssoc, targetAssoc)) {
-      return false;
-    }
-
     String srcLeft = srcAssoc.getLeftQualifiedName().getQName();
     String targetLeft = targetAssoc.getLeftQualifiedName().getQName();
     String srcRight = srcAssoc.getRightQualifiedName().getQName();
@@ -137,12 +138,12 @@ public class CDAssociationHelper {
       return false;
     }
 
-    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
+    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() || !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft()) {
       return matchRoleNames(srcAssoc.getRight(), targetAssoc.getRight());
     }
 
-    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !targetAssoc.getCDAssocDir()
+    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() || !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableRight()) {
       return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getLeft());
     }
@@ -165,10 +166,6 @@ public class CDAssociationHelper {
       return false;
     }
 
-    if (similarAssociation(srcAssoc, targetAssoc)) {
-      return false;
-    }
-
     String srcLeft = srcAssoc.getLeftQualifiedName().getQName();
     String targetLeft = targetAssoc.getLeftQualifiedName().getQName();
     String srcRight = srcAssoc.getRightQualifiedName().getQName();
@@ -182,12 +179,12 @@ public class CDAssociationHelper {
       return false;
     }
 
-    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() && !targetAssoc.getCDAssocDir()
+    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableLeft() || !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableRight()) {
       return matchRoleNames(srcAssoc.getRight(), targetAssoc.getLeft());
     }
 
-    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() && !targetAssoc.getCDAssocDir()
+    if (!srcAssoc.getCDAssocDir().isDefinitiveNavigableRight() || !targetAssoc.getCDAssocDir()
         .isDefinitiveNavigableLeft()) {
       return matchRoleNames(srcAssoc.getLeft(), targetAssoc.getRight());
     }
@@ -198,100 +195,59 @@ public class CDAssociationHelper {
   }
 
   /**
-   * check if assoc1 and assoc2 are similar associations, i.e. reference and role-name match in
+   * check if assoc1 and assoc2 are the same associations, i.e. reference and role-names match in
    * navigable direction
    */
-  public static boolean similarAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    return weakMatch(assoc1, assoc2) || weakReverseMatch(assoc1, assoc2);
+  public static boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
+
+    if (assoc1.getLeftQualifiedName().getQName().equals(assoc2.getLeftQualifiedName().getQName())
+        && assoc1.getRightQualifiedName()
+        .getQName()
+        .equals(assoc2.getRightQualifiedName().getQName())) {
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && !assoc2.getCDAssocDir()
+          .isDefinitiveNavigableLeft()) {
+        return matchRoleNames(assoc1.getRight(), assoc2.getRight());
+      }
+
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight() && !assoc2.getCDAssocDir()
+          .isDefinitiveNavigableRight()) {
+        return matchRoleNames(assoc1.getLeft(), assoc2.getLeft());
+      }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getRight()) && matchRoleNames(
+          assoc1.getLeft(), assoc2.getLeft());
+    }
+
+    return false;
   }
 
   /**
-   * check if assoc1 and assoc2 are the same association, i.e. references AND role names match
+   * check if assoc1 and assoc2 are the same associations, i.e. reference and role-names match in
+   * navigable direction
    */
-  public static boolean sameAssociation(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    return strictMatch(assoc1, assoc2) || strictReverseMatch(assoc1, assoc2);
-  }
+  public static boolean sameAssociationInReverse(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
 
-  private static boolean weakMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    if (assoc1.getCDAssocDir().isDefinitiveNavigableRight() && assoc2.getCDAssocDir()
-        .isDefinitiveNavigableRight()) {
-      if (assoc1.getLeftQualifiedName()
-          .getQName()
-          .equals(assoc2.getLeftQualifiedName().getQName())) {
-        return matchRoleNames(assoc1.getRight(), assoc2.getRight());
-      }
-    }
+    if (assoc1.getLeftQualifiedName().getQName().equals(assoc2.getRightQualifiedName().getQName())
+        && assoc1.getRightQualifiedName()
+        .getQName()
+        .equals(assoc2.getLeftQualifiedName().getQName())) {
 
-    if (assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && assoc2.getCDAssocDir()
-        .isDefinitiveNavigableLeft()) {
-      if (assoc1.getRightQualifiedName()
-          .getQName()
-          .equals(assoc2.getRightQualifiedName().getQName())) {
-        return matchRoleNames(assoc1.getLeft(), assoc2.getLeft());
-      }
-    }
-
-    return strictMatch(assoc1, assoc2);
-  }
-
-  private static boolean weakReverseMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    if (assoc1.getCDAssocDir().isDefinitiveNavigableRight() && assoc2.getCDAssocDir()
-        .isDefinitiveNavigableLeft()) {
-      if (assoc1.getLeftQualifiedName()
-          .getQName()
-          .equals(assoc2.getRightQualifiedName().getQName())) {
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && !assoc2.getCDAssocDir()
+          .isDefinitiveNavigableRight()) {
         return matchRoleNames(assoc1.getRight(), assoc2.getLeft());
       }
-    }
 
-    if (assoc1.getCDAssocDir().isDefinitiveNavigableLeft() && assoc2.getCDAssocDir()
-        .isDefinitiveNavigableRight()) {
-      if (assoc1.getRightQualifiedName()
-          .getQName()
-          .equals(assoc2.getLeftQualifiedName().getQName())) {
+      if (!assoc1.getCDAssocDir().isDefinitiveNavigableRight() && !assoc2.getCDAssocDir()
+          .isDefinitiveNavigableLeft()) {
         return matchRoleNames(assoc1.getLeft(), assoc2.getRight());
       }
+
+      return matchRoleNames(assoc1.getRight(), assoc2.getLeft()) && matchRoleNames(assoc1.getLeft(),
+          assoc2.getRight());
     }
 
-    return strictReverseMatch(assoc1, assoc2);
-  }
-
-  public static boolean strictMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    // check left reference
-    if (!assoc1.getLeftQualifiedName()
-        .getQName()
-        .equals(assoc2.getLeftQualifiedName().getQName())) {
-      return false;
-    }
-
-    // check right reference
-    if (!assoc1.getRightQualifiedName()
-        .getQName()
-        .equals(assoc2.getRightQualifiedName().getQName())) {
-      return false;
-    }
-
-    return matchRoleNames(assoc1.getLeft(), assoc2.getLeft()) && matchRoleNames(assoc1.getRight(),
-        assoc2.getRight());
-  }
-
-  public static boolean strictReverseMatch(ASTCDAssociation assoc1, ASTCDAssociation assoc2) {
-    // check left reference
-    if (!assoc1.getLeftQualifiedName()
-        .getQName()
-        .equals(assoc2.getRightQualifiedName().getQName())) {
-      return false;
-    }
-
-    // check right reference
-    if (!assoc1.getRightQualifiedName()
-        .getQName()
-        .equals(assoc2.getLeftQualifiedName().getQName())) {
-      return false;
-    }
-
-    return matchRoleNames(assoc1.getLeft(), assoc2.getRight()) && matchRoleNames(assoc1.getRight(),
-        assoc2.getLeft());
+    return false;
   }
 
   public static boolean matchRoleNames(ASTCDAssocSide side1, ASTCDAssocSide side2) {

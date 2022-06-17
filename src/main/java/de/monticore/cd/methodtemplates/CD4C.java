@@ -2,7 +2,6 @@
 package de.monticore.cd.methodtemplates;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.monticore.cd.codegen.methods.AccessorDecorator;
@@ -15,7 +14,9 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodSignatureCoCo;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.generating.GeneratorSetup;
@@ -52,8 +53,8 @@ public class CD4C {
 
   protected final List<Predicate<ASTCDMethodSignature>> methodPredicates = new ArrayList<>();
   protected final List<Predicate<ASTCDAttribute>> attributePredicates = new ArrayList<>();
-  protected final List<BiPredicate<ASTCDClass, ASTCDMethodSignature>> classPredicates = new ArrayList<>();
-  protected final List<BiPredicate<ASTCDClass, ASTCDAttribute>> classAttrPredicates = new ArrayList<>();
+  protected final List<BiPredicate<ASTCDType, ASTCDMethodSignature>> classPredicates = new ArrayList<>();
+  protected final List<BiPredicate<ASTCDType, ASTCDAttribute>> classAttrPredicates = new ArrayList<>();
   protected final HashMap<ASTCDType, Set<ASTMCImportStatement>> importMap = Maps.newHashMap();
 
   protected String emptyBodyTemplate = "de.monticore.cd.methodtemplates.core.EmptyMethod";
@@ -154,42 +155,42 @@ public class CD4C {
   /**
    * Creates a method from the given {@code template}.
    *
-   * @param clazz       the class from which to read necessary information
+   * @param astcdType   the ASTCDType from which to read necessary information
    * @param template    the name of the template that is executed to create the method signature
    * @param arguments   the arguments to be provided to the template
    *
    * @return the created method
    */
-  public Optional<ASTCDMethodSignature> createMethod(ASTCDClass clazz, String template, Object... arguments) {
+  public Optional<ASTCDMethodSignature> createMethod(ASTCDType astcdType, String template, Object... arguments) {
     checkInitialized();
 
-    return this.createMethodSignatureAndBody(clazz, template, arguments)
+    return this.createMethodSignatureAndBody(astcdType, template, arguments)
       .flatMap(CD4CTemplateHelper::getMethod)
-      .map(m -> this.setEnclosingScopeTo(m, clazz.getSpannedScope()))
+      .map(m -> this.setEnclosingScopeTo(m, astcdType.getSpannedScope()))
       .flatMap(m -> this.methodPredicates.stream().anyMatch(p -> !p.test(m)) ? Optional.empty() : Optional.of(m));
   }
 
   /**
    * Adds a method created from the given {@code template} to the given class.
    *
-   * @param clazz       the class to which the method should be added
+   * @param astcdType   the ASTCDType to which the method should be added
    * @param template    the name of the template that is executed to create the method signature
    * @param arguments   the arguments to be provided to the template
    */
-  public void addMethod(ASTCDClass clazz, String template, Object... arguments) {
+  public void addMethod(ASTCDType astcdType, String template, Object... arguments) {
     checkInitialized();
 
-    Optional<ASTCDMethodSignature> method = this.createMethod(clazz, template, arguments);
+    Optional<ASTCDMethodSignature> method = this.createMethod(astcdType, template, arguments);
     if (!method.isPresent()) {
       Log.error("0x11010: There was no method created in the template '" + template + "'");
       return;
     }
 
-    if (this.classPredicates.stream().anyMatch(p -> !p.test(clazz, method.get()))) {
+    if (this.classPredicates.stream().anyMatch(p -> !p.test(astcdType, method.get()))) {
       Log.error("0x11011: A check for the class method failed for method '" + method.get().getName() + "'");
     }
 
-    clazz.addCDMember(method.get());
+    astcdType.addCDMember(method.get());
   }
 
   /**
@@ -281,18 +282,18 @@ public class CD4C {
   /**
    * Creates an attribute from the given {@code signature}.
    *
-   * @param clazz       the class from which to read necessary information
+   * @param astcdType   the ASTCDType from which to read necessary information
    * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
    *
    * @return the created attribute
    */
-  public Optional<ASTCDAttribute> createAttribute(ASTCDClass clazz, String signature) {
+  public Optional<ASTCDAttribute> createAttribute(ASTCDType astcdType, String signature) {
     checkInitialized();
     this.attribute(signature);
 
     Optional<ASTCDAttribute> attr = this.methodQueue.peek().astcdAttribute;
     attr.ifPresent(a -> {
-      this.setEnclosingScopeTo(a, clazz.getSpannedScope());
+      this.setEnclosingScopeTo(a, astcdType.getSpannedScope());
       this.attributePredicates.forEach(p -> p.test(a));
     });
 
@@ -309,46 +310,46 @@ public class CD4C {
   /**
    * Adds an attribute with the given {@code signature} to the given class.
    *
-   * @param clazz       the class to which the attribute should be added
+   * @param astcdType   the ASTCDType to which the attribute should be added
    * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
    */
-  public void addAttribute(ASTCDClass clazz, String signature) {
-    this.addAttribute(clazz, false, false, signature);
+  public void addAttribute(ASTCDType astcdType, String signature) {
+    this.addAttribute(astcdType, false, false, signature);
   }
 
   /**
    * Adds an attribute with the given {@code signature} to the given class.
    *
-   * @param clazz       the class to which the attribute should be added
+   * @param astcdType   the ASTCDType to which the attribute should be added
    * @param addGetter   whether to generate a getter for the attribute
    * @param addSetter   whether to generate a setter for the attribute
    * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
    *
    */
-  public void addAttribute(ASTCDClass clazz, boolean addGetter, boolean addSetter, String signature) {
+  public void addAttribute(ASTCDType astcdType, boolean addGetter, boolean addSetter, String signature) {
     checkInitialized();
 
-    Optional<ASTCDAttribute> attribute = this.createAttribute(clazz, signature);
+    Optional<ASTCDAttribute> attribute = this.createAttribute(astcdType, signature);
     if (!attribute.isPresent()) {
       Log.error("0x11022: There was no attribute created in the template '" + signature + "'");
       return;
     }
 
-    this.setEnclosingScopeTo(attribute.get(), clazz.getSpannedScope());
-    this.classAttrPredicates.forEach((p -> p.test(clazz, attribute.get())));
-    clazz.addCDMember(attribute.get());
+    this.setEnclosingScopeTo(attribute.get(), astcdType.getSpannedScope());
+    this.classAttrPredicates.forEach((p -> p.test(astcdType, attribute.get())));
+    astcdType.addCDMember(attribute.get());
 
-    this.addMethods(clazz, attribute.get(), addGetter, addSetter);
+    this.addMethods(astcdType, attribute.get(), addGetter, addSetter);
   }
 
-  public void addMethods(ASTCDClass clazz, ASTCDAttribute attr, boolean addGetter, boolean addSetter) {
+  public void addMethods(ASTCDType astcdType, ASTCDAttribute attr, boolean addGetter, boolean addSetter) {
     if (addGetter) {
       AccessorDecorator accessor = new AccessorDecorator(config.getGlex());
-      clazz.addAllCDMembers(accessor.decorate(attr));
+      astcdType.addAllCDMembers(accessor.decorate(attr));
     }
     if (addSetter) {
       MutatorDecorator mutator = new MutatorDecorator(config.getGlex());
-      clazz.addAllCDMembers(mutator.decorate(attr));
+      astcdType.addAllCDMembers(mutator.decorate(attr));
     }
   }
 
@@ -374,21 +375,21 @@ public class CD4C {
   /**
    * Adds an import with the given {@code signature} to the given class.
    *
-   * @param clazz     the class to which the import should be added
+   * @param astcdType the ASTCDType to which the import should be added
    * @param signature the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseMCImportStatement(String) CD4CodeParser})
    */
-  public void addImport(ASTCDType clazz, String signature) {
+  public void addImport(ASTCDType astcdType, String signature) {
     checkInitialized();
 
     CD4CTemplateHelper th = new CD4CTemplateHelper();
     th.importStr(signature);
 
-    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(clazz, it -> Sets.newLinkedHashSet());
+    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(astcdType, it -> Sets.newLinkedHashSet());
     s.add(th.astcdImport.get());
   }
 
-  public Collection<ASTMCImportStatement> getImportList(ASTCDType clazz) {
-    return importMap.getOrDefault(clazz, Sets.newHashSet());
+  public Collection<ASTMCImportStatement> getImportList(ASTCDType astcdType) {
+    return importMap.getOrDefault(astcdType, Sets.newHashSet());
   }
 
   /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
@@ -398,19 +399,19 @@ public class CD4C {
   /**
    * execute the template and add the body to the created method
    *
-   * @param clazz        the class where information can be read from
+   * @param astcdType    the ASTCDType where information can be read from
    * @param templateName the name of the template that is used for the method
    * @param arguments    the arguments for the template
    * @return the created method with connected method body
    */
-  protected Optional<CD4CTemplateHelper> createMethodSignatureAndBody(ASTCDClass clazz, String templateName, Object... arguments) {
+  protected Optional<CD4CTemplateHelper> createMethodSignatureAndBody(ASTCDType astcdType, String templateName, Object... arguments) {
     checkInitialized();
     final TemplateHookPoint templateHookPoint = new TemplateHookPoint(
       templateName,
       arguments);
 
     TemplateController controller = new TemplateController(this.config, templateName);
-    return addMethodBody(templateHookPoint.processValue(controller, clazz));
+    return addMethodBody(templateHookPoint.processValue(controller, astcdType));
   }
 
   /**
@@ -548,7 +549,7 @@ public class CD4C {
    * @param predicate a predicate that checks a method before adding it to the class
    * @return the current CD4C object
    */
-  public CD4C addAttrClassPredicate(BiPredicate<ASTCDClass, ASTCDAttribute> predicate) {
+  public CD4C addAttrClassPredicate(BiPredicate<ASTCDType, ASTCDAttribute> predicate) {
     this.classAttrPredicates.add(predicate);
     return this;
   }
@@ -559,7 +560,7 @@ public class CD4C {
    * @param predicate a predicate that checks a method before adding it to the class
    * @return the current CD4C object
    */
-  public CD4C addClassPredicate(BiPredicate<ASTCDClass, ASTCDMethodSignature> predicate) {
+  public CD4C addClassPredicate(BiPredicate<ASTCDType, ASTCDMethodSignature> predicate) {
     this.classPredicates.add(predicate);
     return this;
   }
