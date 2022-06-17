@@ -40,6 +40,8 @@ public interface CDExpander {
 
   Optional<ASTCDClass> addDummyClass(String dummyName);
 
+  Optional<ASTCDInterface> addDummyInterface(String dummyName);
+
   Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName, String right);
 
   void updateUnspecifiedDir2Default();
