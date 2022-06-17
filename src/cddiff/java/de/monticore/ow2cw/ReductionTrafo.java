@@ -97,9 +97,18 @@ public class ReductionTrafo {
     copyInheritance(first, second);
 
     // add a unidirectional super-association in second for each association in first
+    /*
     superSet = expander2.buildSuperAssociations(first.getCDDefinition().getCDAssociationsList(),
         commonInterface);
     expander1.addAssociationsWithoutConflicts(superSet);
+    */
+
+    // add all non-conflicting associations from first to second
+    Set<ASTCDAssociation> noConflictSet =
+        new HashSet<>(first.getCDDefinition().getCDAssociationsList());
+    noConflictSet.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
+
+    expander2.addAssociationClones(noConflictSet);
 
   }
 
