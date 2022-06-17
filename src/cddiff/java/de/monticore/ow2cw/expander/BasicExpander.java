@@ -138,6 +138,18 @@ public class BasicExpander implements CDExpander {
     return Optional.of(newInterface);
   }
 
+  public Optional<ASTCDInterface> addDummyInterface(String dummyName) {
+    ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
+
+    ASTCDInterface newInterface = CD4CodeMill.cDInterfaceBuilder()
+        .setName(dummyName)
+        .setCDExtendUsageAbsent()
+        .setModifier(newModifier)
+        .build();
+    getCD().getCDDefinition().getCDElementList().add(newInterface);
+    return Optional.of(newInterface);
+  }
+
   /**
    * helper-method to determine the package name of an ASTCDType since getSymbol().getPackageName()
    * is always an empty String

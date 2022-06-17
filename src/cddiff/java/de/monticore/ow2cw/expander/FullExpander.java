@@ -135,10 +135,10 @@ public class FullExpander implements CDExpander {
     }
   }
 
-  public Set<ASTCDAssociation> buildDummyAssociations(Collection<ASTCDAssociation> originals,
+  public Set<ASTCDAssociation> buildSuperAssociations(Collection<ASTCDAssociation> originals,
       String dummyClassName) {
 
-    Set<ASTCDAssociation> dummies = new HashSet<>();
+    Set<ASTCDAssociation> superSet = new HashSet<>();
     String roleName;
 
     for (ASTCDAssociation original : originals) {
@@ -154,7 +154,7 @@ public class FullExpander implements CDExpander {
         }
 
         buildDummyAssociation(original.getLeftQualifiedName().getQName(), roleName,
-            dummyClassName).ifPresent(dummies::add);
+            dummyClassName).ifPresent(superSet::add);
 
       }
 
@@ -169,10 +169,10 @@ public class FullExpander implements CDExpander {
         }
 
         buildDummyAssociation(original.getRightQualifiedName().getQName(), roleName,
-            dummyClassName).ifPresent(dummies::add);
+            dummyClassName).ifPresent(superSet::add);
       }
     }
-    return dummies;
+    return superSet;
   }
 
   public void addAssociationsWithoutConflicts(Collection<ASTCDAssociation> dummySet) {
@@ -225,6 +225,10 @@ public class FullExpander implements CDExpander {
 
   public Optional<ASTCDClass> addDummyClass(String dummyName) {
     return expander.addDummyClass(dummyName);
+  }
+
+  public Optional<ASTCDInterface> addDummyInterface(String dummyName) {
+    return expander.addDummyInterface(dummyName);
   }
 
 

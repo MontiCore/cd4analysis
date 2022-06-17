@@ -636,7 +636,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         semantics = CDSemantics.MULTI_INSTANCE_OPEN_WORLD;
 
         // handle unspecified association directions for open-world
-        ReductionTrafo.handleAssocDirections(ast1, ast2, true);
+        ReductionTrafo.handleAssocDirections(ast1, ast2);
 
         // add subclasses to interfaces and abstract classes
         ReductionTrafo.addSubClasses4Diff(ast1);
@@ -650,7 +650,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     else {
       //handle unspecified association directions for closed-world
-      ReductionTrafo.handleAssocDirections(ast1, ast2, false);
+      ReductionTrafo.handleAssocDirections(ast1, ast2);
     }
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize;
