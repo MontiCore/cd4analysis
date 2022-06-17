@@ -5,7 +5,11 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 
 import java.util.List;
 
-// Diff type which contains two ASTNodes (with their original type) and a list of field diffs between them
+/**
+ * Diff Type for Elements (all-purpose usage for ASTNodes)
+ * Use the constructor to create a diff between two ASTNode Elements (classes, associations enums...)
+ * This diff type contains information extracted from the provided elements
+ */
 public class ElementDiff<ASTNodeType> {
   protected final ASTNodeType cd1Element;
 
@@ -30,7 +34,12 @@ public class ElementDiff<ASTNodeType> {
   public List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> getDiffList() {
     return diffList;
   }
-
+  /**
+   * Constructor of the element diff type
+   * @param cd1Element Element from the original model
+   * @param cd2Element Element from the target(new) model
+   * @param diffList List of diffs between the elements
+   */
   public ElementDiff(ASTNodeType cd1Element, ASTNodeType cd2Element, List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> diffList) {
     this.cd1Element = cd1Element;
     this.cd2Element = cd2Element;

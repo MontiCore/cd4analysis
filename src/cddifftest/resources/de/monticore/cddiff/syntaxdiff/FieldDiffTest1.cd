@@ -1,5 +1,3 @@
-/* (c) https://github.com/MontiCore/monticore */
-
 import java.lang.String;
 
 classdiagram FieldDiffTest1 {
@@ -8,6 +6,6 @@ classdiagram FieldDiffTest1 {
   class SmallScreen;
   class LargeScreen;
 
-  association [1..*] SmallScreen [String] (has) <- (need) [String] Monitor [*];
-  association [*] HDMI [String] -- (needed) LargeScreen;
+  association {ordered} [1..*] SmallScreen [String] (has) <- (need) [String] Monitor [*];
+  <<test>> association {ordered} [*] HDMI [String] -- (needed) LargeScreen;
 }
