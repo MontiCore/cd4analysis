@@ -29,7 +29,9 @@ import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
 
 public class GenerateODHelper {
 
-  // first char to lower case
+  /**
+   * change the first character of class name to lower case except the package name
+   */
   public static String toLowerCaseFirstOne4ClassName(String s) {
     if (s.contains(".")) {
       int position = s.lastIndexOf('.');
@@ -49,6 +51,10 @@ public class GenerateODHelper {
 
   }
 
+  /**
+   * mapping the type of compared direcrtion into integer
+   * it's easy to determine which the direction should be used in OD
+   */
   public static int mappingDirection(String str) {
     switch (str) {
       case "LEFT_TO_RIGHT":
@@ -66,6 +72,10 @@ public class GenerateODHelper {
     }
   }
 
+  /**
+   * mapping the type of compared cardinality into integer in general step
+   * it's easy to determine how many objects of current association should be created in OD
+   */
   public static int mappingCardinality(String str) {
     switch (str) {
       case "ONE":
@@ -87,6 +97,10 @@ public class GenerateODHelper {
     }
   }
 
+  /**
+   * mapping the type of compared cardinality into integer in initial step
+   * it's easy to determine how many objects of current association should be created in OD
+   */
   public static int mappingCardinality4Initial(String str) {
     switch (str) {
       case "ONE":
@@ -108,6 +122,11 @@ public class GenerateODHelper {
     }
   }
 
+  /**
+   * convert refSetAssociationList to checkList
+   * if the item in refSetAssociationList is created,
+   * then the corresponding counter of this item should be minus one until the counter equals zero
+   */
   public static Map<DiffRefSetAssociation, Integer> convertRefSetAssociationList2CheckList(List<DiffRefSetAssociation> refSetAssociationList) {
     Map<DiffRefSetAssociation, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
@@ -116,19 +135,29 @@ public class GenerateODHelper {
     return checkList;
   }
 
-  public static Optional<DiffRefSetAssociation> findRelatedDiffRefSetAssociationByDiffAssociation(DiffAssociation association, Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
+  /**
+   * according to DiffAssociation to find corresponding DiffRefSetAssociation
+   */
+  public static Optional<DiffRefSetAssociation> findRelatedDiffRefSetAssociationByDiffAssociation(DiffAssociation association,
+                                                                                                  Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
     Optional<DiffRefSetAssociation> refSetAssociationOptional = refLinkCheckList.keySet()
       .stream()
-      .filter(item -> item.getLeftRoleName().equals(association.getDiffLeftClassRoleName()) &&
-        item.getRightRoleName().equals(association.getDiffRightClassRoleName()) &&
-        item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(association.getDiffLeftClass().getName())) &&
-        item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(association.getDiffRightClass().getName()))
+      .filter(item ->
+        item.getLeftRoleName().equals(association.getDiffLeftClassRoleName()) &&
+          item.getRightRoleName().equals(association.getDiffRightClassRoleName()) &&
+          item.getDirection().equals(association.getDiffDirection()) &&
+          item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(association.getDiffLeftClass().getName())) &&
+          item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(association.getDiffRightClass().getName()))
       ).findFirst();
 
     return refSetAssociationOptional;
   }
 
-  public static boolean checkRelatedDiffRefSetAssociationIsUsed(DiffAssociation association, Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
+  /**
+   * check whether the related DiffRefSetAssociation is used by DiffAssociation
+   */
+  public static boolean checkRelatedDiffRefSetAssociationIsUsed(DiffAssociation association,
+                                                                Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
     Optional<DiffRefSetAssociation> refSetAssociationOptional = findRelatedDiffRefSetAssociationByDiffAssociation(association, refLinkCheckList);
     if (refLinkCheckList.get(refSetAssociationOptional.get()) != 0) {
       return false;
@@ -137,16 +166,24 @@ public class GenerateODHelper {
     }
   }
 
+  /**
+   * create an attribute
+   */
   public static ASTODAttribute createASTODAttribute(ASTCDAttribute astcdAttribute, ASTODValue oDvalue) {
     return OD4DataMill.oDAttributeBuilder()
       .setName(astcdAttribute.getName())
       .setModifier(OD4DataMill.modifierBuilder().build())
-      .setMCType(OD4DataMill.mCQualifiedTypeBuilder().setMCQualifiedName(OD4DataMill.mCQualifiedNameBuilder().addParts(astcdAttribute.printType()).build()).build())
+      .setMCType(OD4DataMill.mCQualifiedTypeBuilder()
+        .setMCQualifiedName(OD4DataMill.mCQualifiedNameBuilder().addParts(astcdAttribute.printType()).build())
+        .build())
       .setComplete("=")
       .setODValue(oDvalue)
       .build();
   }
 
+  /**
+   * create value for attribute
+   */
   public static String createValue(DifferentGroup dg, Optional<CompClass> compClass, String type, Boolean isEnumClass) {
     String result = null;
     String diffClassKey = "DiffEnum_" + type;
@@ -162,6 +199,10 @@ public class GenerateODHelper {
     return result;
   }
 
+  /**
+   * create all attributes for created object
+   * distinguish the type of object, simple class or collection
+   */
   public static List<ASTODAttribute> createASTODAttributeList(DifferentGroup dg, Optional<CompClass> compClass, DiffClass diffClass) {
     List<ASTODAttribute> astodAttributeList = new ArrayList<>();
     for (ASTCDAttribute astcdAttribute : dg.getDiffClassGroup().get(diffClass.getName()).getEditedElement().getCDAttributeList()) {
@@ -240,6 +281,9 @@ public class GenerateODHelper {
     return astodAttributeList;
   }
 
+  /**
+   * create an object
+   */
   public static ASTODNamedObject createObject(DifferentGroup dg, Optional<CompClass> compClass, DiffClass diffClass, int index) {
 
     // if this DiffClass is interface or abstract class, then find a simple class on inheritancePath
@@ -267,7 +311,15 @@ public class GenerateODHelper {
     return astodNamedObject;
   }
 
-  public static List<ASTODNamedObject> createObjectList(DifferentGroup dg, Optional<CompClass> compClass, DiffClass diffClass, int cardinalityCount, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
+  /**
+   * create all objects that should be used in an OD
+   */
+  public static List<ASTODNamedObject> createObjectList(DifferentGroup dg,
+                                                        Optional<CompClass> compClass,
+                                                        DiffClass diffClass,
+                                                        int cardinalityCount,
+                                                        Deque<Map<String, Object>> classStack4TargetClass,
+                                                        Deque<Map<String, Object>> classStack4SourceClass) {
     List<ASTODNamedObject> astodNamedObjectList = new ArrayList<>();
     List<ASTODNamedObject> tempList = new ArrayList<>();
     for (int i = 0; i < cardinalityCount; i++) {
@@ -281,7 +333,14 @@ public class GenerateODHelper {
     return astodNamedObjectList;
   }
 
-  public static ASTODLink createLink(ASTODNamedObject left, ASTODNamedObject right, String leftRoleName, String rightRoleName, ASTODLinkDirection astodLinkDirection) {
+  /**
+   * create a link between two created objects
+   */
+  public static ASTODLink createLink(ASTODNamedObject left,
+                                     ASTODNamedObject right,
+                                     String leftRoleName,
+                                     String rightRoleName,
+                                     ASTODLinkDirection astodLinkDirection) {
     ASTODLink astodLink = OD4DataMill.oDLinkBuilder()
       .setLink(true)
       .setODLinkLeftSide(OD4DataMill.oDLinkLeftSideBuilder()
@@ -299,7 +358,14 @@ public class GenerateODHelper {
     return astodLink;
   }
 
-  public static List<ASTODLink> createLinkList(List<ASTODNamedObject> leftElementList, List<ASTODNamedObject> rightElementList, String leftRoleName, String rightRoleName, int directionType) {
+  /**
+   * create link for one object to two objects
+   */
+  public static List<ASTODLink> createLinkList(List<ASTODNamedObject> leftElementList,
+                                               List<ASTODNamedObject> rightElementList,
+                                               String leftRoleName,
+                                               String rightRoleName,
+                                               int directionType) {
     List<ASTODLink> linkElementList = new ArrayList<>();
     switch (directionType) {
       case 1:
@@ -331,10 +397,21 @@ public class GenerateODHelper {
     return linkElementList;
   }
 
-  public static List<ASTODLink> createLinkList(ASTODNamedObject left, ASTODNamedObject right, String leftRoleName, String rightRoleName, int directionType) {
+  /**
+   * create link for one object to one object
+   */
+  public static List<ASTODLink> createLinkList(ASTODNamedObject left,
+                                               ASTODNamedObject right,
+                                               String leftRoleName,
+                                               String rightRoleName,
+                                               int directionType) {
     return createLinkList(List.of(left), List.of(right), leftRoleName, rightRoleName, directionType);
   }
 
+  /**
+   * the created object as target class
+   * find all related associations of this created object
+   */
   public static List<DiffAssociation> findAllDiffAssociationByTargetClass(DifferentGroup dg, DiffClass diffClass) {
     List<DiffAssociation> result = new ArrayList<>();
     Map<String, DiffAssociation> diffAssociationMap = fuzzySearchDiffAssociationByClassName(dg.getDiffAssociationGroup(), diffClass.getOriginalClassName());
@@ -358,6 +435,10 @@ public class GenerateODHelper {
     return result;
   }
 
+  /**
+   * the created object as source class
+   * find all related associations of this created object
+   */
   public static List<DiffAssociation> findAllDiffAssociationBySourceClass(DifferentGroup dg, DiffClass diffClass) {
     List<DiffAssociation> result = new ArrayList<>();
     Map<String, DiffAssociation> diffAssociationMap = fuzzySearchDiffAssociationByClassName(dg.getDiffAssociationGroup(), diffClass.getOriginalClassName());
@@ -387,13 +468,12 @@ public class GenerateODHelper {
    * if it is not in ASTODElementList, create a new ASTODElement as return element.
    *
    * @return: Map
-   * {
-   * "objectList"  : List<ASTODNamedObject>
-   * "isInList"    : boolean
-   * }
-   *
+   * {  "objectList"  : List<ASTODNamedObject>
+   *    "isInList"    : boolean                 }
    */
-  public static Map<String, Object> getObjectInASTODElementListByDiffClass(DifferentGroup dg, DiffClass diffClass, List<ASTODElement> astodElementList) {
+  public static Map<String, Object> getObjectInASTODElementListByDiffClass(DifferentGroup dg,
+                                                                           DiffClass diffClass,
+                                                                           List<ASTODElement> astodElementList) {
     AtomicBoolean isInList = new AtomicBoolean(false);
     AtomicReference<List<ASTODNamedObject>> resultList = new AtomicReference<>(new ArrayList<>());
 
@@ -458,11 +538,8 @@ public class GenerateODHelper {
    * return the found the other side class and it's positon side.
    *
    * @return: Map
-   * {
-   * "otherSideClass" : DiffClass
-   * "position"    : ["left", "right"]
-   * }
-   *
+   * {  "otherSideClass" : DiffClass
+   *    "position"       : ["left", "right"] }
    */
   public static Map<String, Object> findOtherSideClassAndPositionInDiffAssociation(DiffAssociation diffAssociation, DiffClass currentClass) {
     String position;
@@ -478,6 +555,9 @@ public class GenerateODHelper {
     return Map.of("otherSideClass", otherSideClass, "position", position);
   }
 
+  /**
+   * generate OD title for semantic difference with association
+   */
   public static String generateODTitle(CompAssociation association, int index) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
@@ -495,6 +575,9 @@ public class GenerateODHelper {
     return stringBuilder.toString();
   }
 
+  /**
+   * generate OD title for semantic difference with class
+   */
   public static String generateODTitle(CompClass compClass, int index) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
@@ -512,6 +595,10 @@ public class GenerateODHelper {
     return stringBuilder.toString();
   }
 
+  /**
+   * ensure the order of elements in OD
+   * first objects, then associations
+   */
   public static List<ASTODElement> organizeASTODElementList(List<ASTODElement> originalList) {
     List<ASTODElement> resultList = new ArrayList<>();
     resultList.addAll(originalList.stream().filter(e -> e.getClass().equals(ASTODNamedObject.class)).collect(Collectors.toList()));

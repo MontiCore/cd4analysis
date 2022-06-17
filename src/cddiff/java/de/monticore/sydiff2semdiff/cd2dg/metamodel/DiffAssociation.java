@@ -1,5 +1,6 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
@@ -18,43 +19,27 @@ import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
  *    linked left DiffClass
  * @attribute diffRightClass:
  *    linked right DiffClass
- * @attribute isLeftRightExchange:
- *    this attribute is to solve the next problem in compare stage:
- *      in CD1: [*] A <- B [*]
- *      in CD2: [*] B -> A [*]
- *      There is no semantic difference.
- *    For the association in CD2, the system will create a corresponding DiffAssociation that
- *    the position of left and right DiffClass is exchanged
- *    and the role name of left and right DiffClass is also exchanged.
- *    But this created DiffAssociation is only suitable for compare stage and it will not be added into DiffAssociation Map.
  */
-public class DiffAssociation implements Cloneable{
+public class DiffAssociation implements Cloneable {
   protected final ASTCDAssociation originalElement;
+  protected ASTCDAssociation editedElement;
   protected final DifferentGroup.DiffAssociationKind diffKind;
   protected DiffClass diffLeftClass;
   protected DiffClass diffRightClass;
-  protected final boolean isLeftRightExchange;
 
-  public DiffAssociation(ASTCDAssociation originalElement, boolean isInherited, boolean isLeftRightExchange) {
+  public DiffAssociation(ASTCDAssociation originalElement, boolean isInherited) {
     this.originalElement = originalElement;
-    this.isLeftRightExchange = isLeftRightExchange;
+    this.editedElement = originalElement.deepClone();
     this.diffKind = isInherited ? DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC : DifferentGroup.DiffAssociationKind.DIFF_ASC;
   }
 
   public String getName() {
-    if (!isLeftRightExchange) {
-      return "DiffAssociation_"
-        + getDiffLeftClass().getOriginalClassName() + "_"
-        + getDiffLeftClassRoleName() + "_"
-        + getDiffRightClassRoleName() + "_"
-        + getDiffRightClass().getOriginalClassName();
-    } else {
-      return "DiffAssociation_"
-        + getDiffRightClass().getOriginalClassName() + "_"
-        + getDiffRightClassRoleName() + "_"
-        + getDiffLeftClassRoleName() + "_"
-        + getDiffLeftClass().getOriginalClassName();
-    }
+    return "DiffAssociation_"
+      + getDiffLeftClass().getOriginalClassName() + "_"
+      + getDiffLeftClassRoleName() + "_"
+      + formatDirection(getDiffDirection()) + "_"
+      + getDiffRightClassRoleName() + "_"
+      + getDiffRightClass().getOriginalClassName();
   }
 
   public DifferentGroup.DiffAssociationKind getDiffKind() {
@@ -62,19 +47,7 @@ public class DiffAssociation implements Cloneable{
   }
 
   public DifferentGroup.DiffAssociationDirection getDiffDirection() {
-    DifferentGroup.DiffAssociationDirection kind = distinguishAssociationDirectionHelper(this.originalElement);
-    if (!isLeftRightExchange) {
-      return kind;
-    } else {
-      switch (kind) {
-        case LEFT_TO_RIGHT:
-          return DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT;
-        case RIGHT_TO_LEFT:
-          return DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT;
-        default:
-          return kind;
-      }
-    }
+    return distinguishAssociationDirectionHelper(this.editedElement);
   }
 
   public DiffClass getDiffLeftClass() {
@@ -102,31 +75,61 @@ public class DiffAssociation implements Cloneable{
   }
 
   public DifferentGroup.DiffAssociationCardinality getDiffLeftClassCardinality() {
-    if (!isLeftRightExchange) {
-      return distinguishLeftAssociationCardinalityHelper(this.originalElement);
-    } else {
-      return distinguishRightAssociationCardinalityHelper(this.originalElement);
+    return distinguishLeftAssociationCardinalityHelper(this.editedElement);
+  }
+
+  public void setDiffLeftClassCardinality(DifferentGroup.DiffAssociationCardinality cardinalityResult) {
+    switch (cardinalityResult) {
+      case ONE:
+        this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
+        break;
+      case ZORE_TO_ONE:
+        this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
+        break;
+      case ONE_TO_MORE:
+        this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
+        break;
+      case MORE:
+        this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
+        break;
     }
   }
 
   public DifferentGroup.DiffAssociationCardinality getDiffRightClassCardinality() {
-    if (!isLeftRightExchange) {
-      return distinguishRightAssociationCardinalityHelper(this.originalElement);
-    } else {
-      return distinguishLeftAssociationCardinalityHelper(this.originalElement);
+    return distinguishRightAssociationCardinalityHelper(this.editedElement);
+  }
+
+  public void setDiffRightClassCardinality(DifferentGroup.DiffAssociationCardinality cardinalityResult) {
+    switch (cardinalityResult) {
+      case ONE:
+        this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
+        break;
+      case ZORE_TO_ONE:
+        this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
+        break;
+      case ONE_TO_MORE:
+        this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
+        break;
+      case MORE:
+        this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
+        break;
     }
   }
 
   public String getDiffLeftClassRoleName() {
-    return !isLeftRightExchange ? getLeftClassRoleNameHelper(this.originalElement) : getRightClassRoleNameHelper(this.originalElement);
+    return getLeftClassRoleNameHelper(this.editedElement);
   }
 
   public String getDiffRightClassRoleName() {
-    return !isLeftRightExchange ? getRightClassRoleNameHelper(this.originalElement) : getLeftClassRoleNameHelper(this.originalElement);
+    return getRightClassRoleNameHelper(this.editedElement);
   }
 
   public ASTCDAssociation getOriginalElement() {
     return originalElement;
+  }
+
+  public ASTCDAssociation getEditedElement() {
+    return editedElement;
   }
 
   @Override

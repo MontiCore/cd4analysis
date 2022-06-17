@@ -56,10 +56,8 @@ public class CompareHelper {
    * generate the list of which attributes are different between based DiffClass and compared DiffClass
    */
   public static List<String> compClassWhichAttributesDiffHelper(DiffClass based, DiffClass compared) {
-
     if (compared == null) {
-      List<String> attributesDiffList = new ArrayList<>();
-      attributesDiffList = based.getAttributes().keySet().stream().collect(Collectors.toList());
+      List<String> attributesDiffList = based.getAttributes().keySet().stream().collect(Collectors.toList());
       return attributesDiffList;
     } else {
       List<String> attributesDiffList = new ArrayList<>();
@@ -74,8 +72,7 @@ public class CompareHelper {
               attributesDiffList.add(attrName);
             }
           }
-        }
-        else {
+        } else {
           attributesDiffList.add(attrName);
         }
       });
@@ -91,12 +88,10 @@ public class CompareHelper {
     if (!isContentDiff) {
       if (compared.getAttributes().keySet().containsAll(based.getAttributes().keySet()) && compared.getAttributes().size() > based.getAttributes().size()) {
         return CompareGroup.CompClassCategory.SUBSET;
-      }
-      else {
+      } else {
         return CompareGroup.CompClassCategory.ORIGINAL;
       }
-    }
-    else {
+    } else {
       return CompareGroup.CompClassCategory.EDITED;
     }
   }
@@ -239,12 +234,10 @@ public class CompareHelper {
         default:
           return CompareGroup.CompAssociationCategory.DIRECTION_CHANGED;
       }
-    }
-    else {
+    } else {
       if (isAssocNameExchanged) {
         return CompareGroup.CompAssociationCategory.DIRECTION_CHANGED_BUT_SAME_MEANING;
-      }
-      else {
+      } else {
         return CompareGroup.CompAssociationCategory.ORIGINAL;
       }
     }
@@ -262,39 +255,9 @@ public class CompareHelper {
         default:
           return CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED;
       }
-    }
-    else {
+    } else {
       return CompareGroup.CompAssociationCategory.ORIGINAL;
     }
-  }
-
-  /**
-   * create a new DiffAssociation that exchange the left side information and the right side information
-   * but this new DiffAssociation is not added into DiffAssociationGroup
-   */
-  public static DiffAssociation exchangeLeftDiffClassWithRightDiffClass(DiffAssociation original) {
-    DiffAssociation exchanged = new DiffAssociation(original.getOriginalElement(), false, true);
-
-    // change right to left
-    exchanged.setDiffLeftClass(original.getDiffRightClass());
-
-    // change left to right
-    exchanged.setDiffRightClass(original.getDiffLeftClass());
-
-    return exchanged;
-  }
-
-  /**
-   * get the association name for the new DiffAssociation that exchange the left side information and the right side information
-   */
-  public static String getExchangedLeftDiffClassWithRightDiffClassAssocName(DiffAssociation original) {
-    String prefix = original.getName().split("_")[0];
-    String leftClassName = original.getDiffLeftClass().getOriginalClassName();
-    String leftRoleName = original.getDiffLeftClassRoleName();
-    String rightRoleName = original.getDiffRightClassRoleName();
-    String rightClassName = original.getDiffRightClass().getOriginalClassName();
-
-    return prefix + "_" + rightClassName + "_" + rightRoleName + "_" + leftRoleName + "_" + leftClassName;
   }
 
   /**

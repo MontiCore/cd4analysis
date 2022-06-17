@@ -7,6 +7,7 @@ import de.monticore.sydiff2semdiff.cd2dg.CD2DGGenerator;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 import de.monticore.sydiff2semdiff.dg2cg.DG2CGGenerator;
 import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -42,9 +43,69 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     generateCompareGroupTemp("Class","Class1A.cd", "Class1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
+    Assert.assertTrue(resultList.stream().anyMatch(e -> {
+      String result =
+        "[CompAbstractClass_A]-[deleted] {\n" +
+          "\n" +
+          "  b_0:B{\n" +
+          "    E myE = e1;\n" +
+          "    List<String> myList = [some_type_String,...];\n" +
+          "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
+          "    Optional<E> myOpt = e1;\n" +
+          "    Set<Boolean> mySet = some_type_Set<Boolean>;\n" +
+          "    int id = some_type_int;\n" +
+          "    Date myDate = some_type_Date;\n" +
+          "  };\n" +
+          "\n" +
+          "}";
+      return e.contains(result);
+    }));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e -> {
+      String result =
+        "[CompClass_C]-[deleted] {\n" +
+          "\n" +
+          "  c_0:C{};\n" +
+          "\n" +
+          "}";
+      return e.contains(result);
+    }));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e -> {
+      String result =
+        "[CompClass_B]-[edited] {\n" +
+          "\n" +
+          "  b_0:B{\n" +
+          "    E myE = e1;\n" +
+          "    List<String> myList = [some_type_String,...];\n" +
+          "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
+          "    Optional<E> myOpt = e1;\n" +
+          "    Set<Boolean> mySet = some_type_Set<Boolean>;\n" +
+          "    int id = some_type_int;\n" +
+          "    Date myDate = some_type_Date;\n" +
+          "  };\n" +
+          "\n" +
+          "}";
+      return e.contains(result);
+    }));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e -> {
+      String result =
+        "[CompEnum_E]-[edited] {\n" +
+        "\n" +
+        "  b_0:B{\n" +
+        "    E myE = e3;\n" +
+        "    List<String> myList = [some_type_String,...];\n" +
+        "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
+        "    Optional<E> myOpt = e1;\n" +
+        "    Set<Boolean> mySet = some_type_Set<Boolean>;\n" +
+        "    int id = some_type_int;\n" +
+        "    Date myDate = some_type_Date;\n" +
+        "  };\n" +
+        "\n" +
+        "}";
+      return e.contains(result);
+    }));
   }
 
   /********************************************************************
@@ -56,9 +117,33 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     generateCompareGroupTemp("Association","Association1A.cd", "Association1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+        e.contains("[CompAssociation_A_a_Bidirectional_b_B]-[deleted]") &&
+        e.contains("b_0:B{};") &&
+        e.contains("c_0:C{};") &&
+        e.contains("link b_0 (a) -> (b) b_0;") &&
+        e.contains("link b_0 (b) -> (a) b_0;") &&
+        e.contains("link c_0 (c) -> (a) b_0;") &&
+        e.contains("link b_0 (a) -> (c) c_0;")
+    ));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompAssociation_A_a_Bidirectional_c_C]-[direction_changed]") &&
+        e.contains("b_0:B{};") &&
+        e.contains("c_0:C{};") &&
+        e.contains("link b_0 (a) -> (c) c_0;") &&
+        e.contains("link c_0 (c) -> (a) b_0;") &&
+        e.contains("link b_0 (b) -> (a) b_0;") &&
+        e.contains("link b_0 (a) -> (b) b_0;")
+    ));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompAssociation_E_work_LeftToRight_todo_F]-[deleted]") &&
+        e.contains("e_0:E{};") &&
+        e.contains("f_0:F{};") &&
+        e.contains("link e_0 (work) -> (todo) f_0;")
+    ));
+
   }
 
   @Test
@@ -66,19 +151,7 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     generateCompareGroupTemp("Association","CircleTest1A.cd", "CircleTest1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
-  }
-
-  @Test
-  public void testGenerateODByRefSetAssociation() {
-    generateCompareGroupTemp("Association","RefSet1A.cd", "RefSet1B.cd");
-    CG2ODGenerator odGenerator = new CG2ODGenerator();
-    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
+    Assert.assertTrue(resultList.size() == 0);
   }
 
   @Test
@@ -86,9 +159,36 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     generateCompareGroupTemp("Association","AssocStack4TargetClass1A.cd", "AssocStack4TargetClass1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+        e.contains("[CompAssociation_A_a_LeftToRight_b_B]-[cardinality_changed]") &&
+        e.contains(
+          "  a_0:A{\n" +
+          "    int a = some_type_int;\n" +
+          "  };") &&
+        e.contains("b_0:B{};") &&
+        e.contains("b_1:B{};") &&
+        e.contains("c_0:C{};") &&
+        e.contains("c_1:C{};") &&
+        e.contains("link a_0 (a) -> (b) b_0;") &&
+        e.contains("link a_0 (a) -> (b) b_1;") &&
+        e.contains("link c_0 (c) -> (b) b_0;") &&
+        e.contains("link b_0 (b) -> (c) c_0;") &&
+        e.contains("link c_1 (c) -> (b) b_1;") &&
+        e.contains("link b_1 (b) -> (c) c_1;")
+    ));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompClass_A]-[edited]") &&
+        e.contains(
+          "  a_0:A{\n" +
+            "    int a = some_type_int;\n" +
+            "  };") &&
+        e.contains("b_0:B{};") &&
+        e.contains("c_0:C{};") &&
+        e.contains("link a_0 (a) -> (b) b_0;") &&
+        e.contains("link c_0 (c) -> (b) b_0;") &&
+        e.contains("link b_0 (b) -> (c) c_0;")
+    ));
   }
 
 
@@ -96,25 +196,24 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
    *********************    Start for Combination    ******************
    *******************************************************************/
 
-  @Test
-  public void testGenerateODByCombination () {
-    generateCompareGroupTemp("Combination","Employees1A.cd", "Employees1B.cd");
-    CG2ODGenerator odGenerator = new CG2ODGenerator();
-    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
-  }
+//  @Test
+//  public void testGenerateODByRefSetAssociation() {
+//    generateCompareGroupTemp("Association","RefSet1A.cd", "RefSet1B.cd");
+//    CG2ODGenerator odGenerator = new CG2ODGenerator();
+//    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+//    for(int i = 0; i < resultList.size() ; i++) {
+//      System.out.println(resultList.get(i));
+//    }
+//  }
 
-
-  @Test
-  public void testGenerateODByDefaultTest() {
-    generateCompareGroupTemp("Association","testA.cd", "testB.cd");
-    CG2ODGenerator odGenerator = new CG2ODGenerator();
-    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-    for(int i = 0; i < resultList.size() ; i++) {
-      System.out.println(resultList.get(i));
-    }
-  }
+//  @Test
+//  public void testGenerateODByCombination () {
+//    generateCompareGroupTemp("Combination","Employees1A.cd", "Employees1B.cd");
+//    CG2ODGenerator odGenerator = new CG2ODGenerator();
+//    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+//    for(int i = 0; i < resultList.size() ; i++) {
+//      System.out.println(resultList.get(i));
+//    }
+//  }
 
 }

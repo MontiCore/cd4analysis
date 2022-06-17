@@ -1,6 +1,7 @@
 package de.monticore.sydiff2semdiff.cd2dg.metamodel;
 
 import java.util.Set;
+
 /**
  *  DiffRefSetAssociation is to solve the next problem in CD:
  *    In CD:
@@ -22,13 +23,17 @@ import java.util.Set;
 public class DiffRefSetAssociation {
   protected Set<DiffClass> leftRefSet;
   protected String leftRoleName;
+  protected DifferentGroup.DiffAssociationDirection direction;
   protected String rightRoleName;
   protected Set<DiffClass> rightRefSet;
+
   public DiffRefSetAssociation() {
   }
-  public DiffRefSetAssociation(Set<DiffClass> leftRefSet, String leftRoleName, String rightRoleName, Set<DiffClass> rightRefSet) {
+
+  public DiffRefSetAssociation(Set<DiffClass> leftRefSet, String leftRoleName, DifferentGroup.DiffAssociationDirection direction, String rightRoleName, Set<DiffClass> rightRefSet) {
     this.leftRefSet = leftRefSet;
     this.leftRoleName = leftRoleName;
+    this.direction = direction;
     this.rightRoleName = rightRoleName;
     this.rightRefSet = rightRefSet;
   }
@@ -47,6 +52,14 @@ public class DiffRefSetAssociation {
 
   public void setLeftRoleName(String leftRoleName) {
     this.leftRoleName = leftRoleName;
+  }
+
+  public DifferentGroup.DiffAssociationDirection getDirection() {
+    return direction;
+  }
+
+  public void setDirection(DifferentGroup.DiffAssociationDirection direction) {
+    this.direction = direction;
   }
 
   public String getRightRoleName() {

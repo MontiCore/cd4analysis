@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 /**
  * For each CD a corresponding DifferentGroup will be generated.
  *

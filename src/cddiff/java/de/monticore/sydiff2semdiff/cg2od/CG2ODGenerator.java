@@ -21,6 +21,9 @@ import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.mappingCardinal
 
 public class CG2ODGenerator {
 
+  /**
+   * generate ODs by solving items with syntactic differences in globalClassQueue and globalAssociationQueue
+   */
   public List<String> generateObjectDiagrams(DifferentGroup dg, CompareGroup cg) {
     List<String> oDResultList = new ArrayList<>();
 
@@ -58,6 +61,9 @@ public class CG2ODGenerator {
     return oDResultList;
   }
 
+  /**
+   * using pretty printer to print OD
+   */
   public String printOD(List<ASTODElement> astodElementList, String odTitle) {
     // set ASTObjectDiagram
     ASTObjectDiagram objectDiagram = OD4DataMill.objectDiagramBuilder()
@@ -76,6 +82,9 @@ public class CG2ODGenerator {
     return ppResult;
   }
 
+  /**
+   * solve the item in globalClassQueue
+   */
   protected List<ASTODElement> generateODByClass(DifferentGroup dg, CompClass compClass) {
     Deque<Map<String, Object>> classStack4TargetClass = new LinkedList<>();
     Deque<Map<String, Object>> classStack4SourceClass = new LinkedList<>();
@@ -87,7 +96,7 @@ public class CG2ODGenerator {
     List<ASTODElement> astodElementList = initGenerateODByClass(dg, compClass, classStack4TargetClass, classStack4SourceClass);
 
     // using basic process
-    astodElementList =  generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
+    astodElementList = generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
     if (astodElementList != null) {
       return generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
     } else {
@@ -95,6 +104,12 @@ public class CG2ODGenerator {
     }
   }
 
+  /**
+   * initial step for item in globalClassQueue
+   *
+   * create an object that its corresponding class has syntactic differences and
+   * put this object into ASTODElement list
+   */
   public List<ASTODElement> initGenerateODByClass(DifferentGroup dg, CompClass compClass, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
     // get the necessary information
     DiffClass diffClass = compClass.getOriginalElement();
@@ -112,6 +127,9 @@ public class CG2ODGenerator {
     return astodElementList;
   }
 
+  /**
+   * solve the item in globalAssociationQueue
+   */
   protected List<ASTODElement> generateODByAssociation(DifferentGroup dg, CompAssociation compAssociation) {
 
     Deque<Map<String, Object>> classStack4TargetClass = new LinkedList<>();
@@ -128,7 +146,7 @@ public class CG2ODGenerator {
     }
 
     // using basic process
-    astodElementList =  generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
+    astodElementList = generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
     if (astodElementList != null) {
       return generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
     } else {
@@ -136,6 +154,13 @@ public class CG2ODGenerator {
     }
   }
 
+  /**
+   * initial step for item in globalAssociationQueue
+   *
+   * create objects that its corresponding association has syntactic differences in direction, left cardinality and right cardinalit then
+   * create corresponding link among those objects and
+   * put those objects into ASTODElement list
+   */
   public List<ASTODElement> initGenerateODByAssociation(DifferentGroup dg, CompAssociation compAssociation, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
     // get the necessary information
     DiffClass leftDiffClass = compAssociation.getOriginalElement().getDiffLeftClass();
@@ -154,19 +179,19 @@ public class CG2ODGenerator {
         break;
       case DIRECTION_CHANGED:
         directionType = mappingDirection(compAssociation.getCompDirectionResult().get().toString());
-        leftCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+        leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
         break;
       case CARDINALITY_CHANGED:
         directionType = mappingDirection(compAssociation.getOriginalElement().getDiffDirection().toString());
         switch (compAssociation.getWhichPartDiff().get()) {
           case LEFT_CARDINALITY:
-            leftCardinalityCount = mappingCardinality4Initial(compAssociation.getCompLeftClassCardinalityResult().get().toString());
-            rightCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+            leftCardinalityCount = mappingCardinality(compAssociation.getCompLeftClassCardinalityResult().get().toString());
+            rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
             break;
           case RIGHT_CARDINALITY:
-            leftCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-            rightCardinalityCount = mappingCardinality4Initial(compAssociation.getCompRightClassCardinalityResult().get().toString());
+            leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
+            rightCardinalityCount = mappingCardinality(compAssociation.getCompRightClassCardinalityResult().get().toString());
             break;
         }
         break;
@@ -177,6 +202,15 @@ public class CG2ODGenerator {
     List<ASTODNamedObject> rightElementList = createObjectList(dg, Optional.empty(), rightDiffClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
     List<ASTODLink> linkElementList = createLinkList(leftElementList, rightElementList, leftRoleName, rightRoleName, directionType);
 
+    // remove duplicate
+    for (int i = 0; i < leftElementList.size(); i++) {
+      for (int j = 0; j < rightElementList.size(); j++) {
+        if (leftElementList.get(i).deepEquals(rightElementList.get(j))) {
+          rightElementList.remove(j);
+        }
+      }
+    }
+
     List<ASTODElement> astodElementList = new LinkedList<>();
     astodElementList.addAll(leftElementList);
     astodElementList.addAll(rightElementList);
@@ -185,6 +219,37 @@ public class CG2ODGenerator {
     return astodElementList;
   }
 
+  /**
+   * The general step for generating ODs after initial step for class and association
+   *
+   * First consider the created objects in initial step as target class and find source classes and so on
+   * Second consider the created objects in initial step as source class and find target classes and so on
+   * All generated ASTODElement will be added into the same ASTODElement list
+   *
+   * situation 1:
+   *    ... [o_i] "->" / "<-"/ "<->" [o_0] "->" / "<-"/ "<->" [o_j] ...
+   *    There is no conflict and successfully generating ODs
+   *
+   * situation 2: (initial object as target class)
+   *    [o_j1] -> ... -> [o_i1]
+   *                          \
+   *                           -> [o_0] -> ?? [o_j] ??
+   *                          /
+   *    [o_j2] -> ... -> [o_i2]
+   *    There is a conflict that [1] o_0 "->" / "<-"/ "<->" o_j [1]
+   *    But this conflict is also present in the original CD, so this semantic difference should be removed.
+   *    That means current syntactic difference for association can not lead to semantic difference.
+   *
+   * situation 3: (initial object as source class)
+   *           -> [o_i1] -> ... -> [o_j1]
+   *         /                           \
+   *    [o_0]                             -> ?? [o_0] ??
+   *         \                           /
+   *           -> [o_i2] -> ... -> [o_j2]
+   *    There is a conflict that [1] o_0 "->" / "<-"/ "<->" o_j [1]
+   *    But this conflict is also present in the original CD, so this semantic difference should be removed.
+   *    That means current syntactic difference for association can not lead to semantic difference.
+   */
   protected List<ASTODElement> generateODBasicProcess(DifferentGroup dg, String opt4StartClassKind, Deque<Map<String, Object>> classStack, Deque<DiffAssociation> associationStack, Map<DiffRefSetAssociation, Integer> refLinkCheckList, List<ASTODElement> astodElementList) {
     // start basic process for compClass and compAssociation
 
@@ -206,7 +271,7 @@ public class CG2ODGenerator {
 
           // get the information of currentSideClass and otherSideClass
 
-          Map<String,Object> otherSideClassMap = findOtherSideClassAndPositionInDiffAssociation(currentDiffAssociation, currentDiffClass);
+          Map<String, Object> otherSideClassMap = findOtherSideClassAndPositionInDiffAssociation(currentDiffAssociation, currentDiffClass);
 
           List<ASTODNamedObject> currentSideObjectList = objectList;
           DiffClass otherSideClass = (DiffClass) otherSideClassMap.get("otherSideClass");

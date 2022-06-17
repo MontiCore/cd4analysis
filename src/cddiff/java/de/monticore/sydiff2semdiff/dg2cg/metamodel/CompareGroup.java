@@ -3,6 +3,7 @@ package de.monticore.sydiff2semdiff.dg2cg.metamodel;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 
 import java.util.Deque;
+
 /**
  * CompareGroup is to compare each element of two DifferentGroup and return the result after comparison.
  * We should determine which DifferentGroup is the basedDG and which one is the comparedDG.

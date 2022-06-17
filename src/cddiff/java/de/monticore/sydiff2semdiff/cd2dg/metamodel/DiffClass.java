@@ -57,9 +57,7 @@ public class DiffClass implements Cloneable {
 
   /**
    * @return attributes:
-   * {
-   * [attributes name] : [attribute type] }
-   * }
+   * {  [attributes name] : [attribute type] }
    */
   public Map<String, String> getAttributes() {
     Map<String, String> attributesMap = new HashMap<>();

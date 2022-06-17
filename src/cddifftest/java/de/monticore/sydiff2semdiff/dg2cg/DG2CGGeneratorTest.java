@@ -244,6 +244,26 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
         && !e.getWhichPartDiff().isPresent()));
   }
 
+  /**
+   * Test for Direction
+   * CD1: [*] A <- B [0..1]
+   * CD2: [*] A <- B [0..1]
+   *      [1] A -> B [*]
+   */
+  @Test
+  public void testAssociation4Duplicate() {
+    CompareGroup cg = generateCompareGroupTemp("Association", "Direction1A.cd","Direction1G.cd");
+    Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 2);
+    Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
+      .stream()
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED
+        && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.DIRECTION));
+    Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
+      .stream()
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED
+        && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.LEFT_CARDINALITY));
+  }
+
   /********************************************************************
    *******************    Start for Cardinality   *********************
    *******************************************************************/

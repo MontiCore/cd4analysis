@@ -6,15 +6,6 @@ classdiagram TestB {
 
   class C;
 
-  class D;
-
-  class E;
-
-  class F;
-
   association [1] A -> B [1];
-  association [1] A -> C [1];
-  association [1] A -> D [1];
-  association [1] B <-> E [1];
-  association [1] B -> F [1];
+  association [1] B <-> C [1];
 }

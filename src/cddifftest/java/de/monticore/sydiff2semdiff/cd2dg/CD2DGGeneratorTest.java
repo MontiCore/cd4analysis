@@ -178,8 +178,8 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
       Assert.assertTrue(v.getOriginalElement().getLeftQualifiedName().getQName().equals(v.getDiffLeftClass().getOriginalClassName()));
       Assert.assertTrue(v.getOriginalElement().getRightQualifiedName().getQName().equals(v.getDiffRightClass().getOriginalClassName()));
     });
-    Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_toDo_D")));
-    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
+    Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_LeftToRight_toDo_D")));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_LeftToRight_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
   }
 
   /**
@@ -202,12 +202,12 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
       Assert.assertTrue(v.getOriginalElement().getLeftQualifiedName().getQName().equals(v.getDiffLeftClass().getOriginalClassName()));
       Assert.assertTrue(v.getOriginalElement().getRightQualifiedName().getQName().equals(v.getDiffRightClass().getOriginalClassName()));
     });
-    Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_toDo_D", "DiffAssociation_I_i_d_D", "DiffAssociation_A_i_d_D", "DiffAssociation_B1_i_d_D", "DiffAssociation_C_i_d_D")));
-    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
-    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_I_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
-    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_A_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
-    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_B1_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
-    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_i_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
+    Assert.assertTrue(dg.getDiffAssociationGroup().keySet().containsAll(Set.of("DiffAssociation_C_workOn_LeftToRight_toDo_D", "DiffAssociation_I_i_LeftToRight_d_D", "DiffAssociation_A_i_LeftToRight_d_D", "DiffAssociation_B1_i_LeftToRight_d_D", "DiffAssociation_C_i_LeftToRight_d_D")));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_workOn_LeftToRight_toDo_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_I_i_LeftToRight_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC);
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_A_i_LeftToRight_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_B1_i_LeftToRight_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_C_i_LeftToRight_d_D").getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_INHERIT_ASC);
   }
 
   /**
@@ -234,8 +234,9 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
       .anyMatch(e -> e.getLeftRefSet().stream()
         .map(DiffClass::getOriginalClassName)
         .collect(Collectors.toSet())
-        .containsAll(Set.of("C"))
-          && e.getRightRefSet().stream()
+        .containsAll(Set.of("C")) &&
+        e.getDirection().equals(DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT) &&
+        e.getRightRefSet().stream()
         .map(DiffClass::getOriginalClassName)
         .collect(Collectors.toSet())
         .containsAll(Set.of("F", "D"))));
@@ -245,8 +246,9 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
         .stream()
         .map(DiffClass::getOriginalClassName)
         .collect(Collectors.toSet())
-        .containsAll(Set.of("I", "A", "B1", "C"))
-          && e.getRightRefSet().stream()
+        .containsAll(Set.of("I", "A", "B1", "C")) &&
+        e.getDirection().equals(DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT) &&
+        e.getRightRefSet().stream()
         .map(DiffClass::getOriginalClassName)
         .collect(Collectors.toSet())
         .containsAll(Set.of("F", "D"))));
@@ -255,7 +257,7 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testEditASTCDAssociationLeftSide() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association3.cd");
-    ASTCDAssociation original = dg.getDiffAssociationGroup().get("DiffAssociation_I_i_d_D").getOriginalElement();
+    ASTCDAssociation original = dg.getDiffAssociationGroup().get("DiffAssociation_I_i_LeftToRight_d_D").getOriginalElement();
     DiffClass diffClass = dg.getDiffClassGroup().get("DiffClass_C");
     ASTCDAssociation edited = editASTCDAssociationLeftSideByDiffClass(original, diffClass);
     Assert.assertTrue(edited.getLeftQualifiedName().getQName().equals(diffClass.getOriginalClassName()));
@@ -264,10 +266,122 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testEditASTCDAssociationRightSide() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association3.cd");
-    ASTCDAssociation original = dg.getDiffAssociationGroup().get("DiffAssociation_I_i_d_D").getOriginalElement();
+    ASTCDAssociation original = dg.getDiffAssociationGroup().get("DiffAssociation_I_i_LeftToRight_d_D").getOriginalElement();
     DiffClass diffClass = dg.getDiffClassGroup().get("DiffClass_C");
     ASTCDAssociation edited = editASTCDAssociationRightSideByDiffClass(original, diffClass);
     Assert.assertTrue(edited.getRightQualifiedName().getQName().equals(diffClass.getOriginalClassName()));
   }
+
+  /**
+   * Test for overlap RefSetAssociation
+   * CD:
+   *   class A;
+   *   class A1 extends A;
+   *   class B;
+   *   class B1 extends B;
+   *
+   *   association [1..*] A -> (toDo) B [1..*];
+   *   association [1] A1 -> (toDo) B1 [1..*];
+   */
+  @Test
+  public void testAssociation4OverlapRefSetAssociation() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "OverlapRefSetAssociation.cd");
+    Map<String, DiffAssociation> diffAssociationGroup = dg.getDiffAssociationGroup();
+    List<DiffRefSetAssociation> list = createDiffRefSetAssociation(diffAssociationGroup);
+    Assert.assertEquals(list.size(), 2);
+    Assert.assertTrue(list.stream()
+      .anyMatch(e -> e.getLeftRefSet().stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("A1")) &&
+        e.getDirection().equals(DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT) &&
+        e.getRightRefSet().stream()
+          .map(DiffClass::getOriginalClassName)
+          .collect(Collectors.toSet())
+          .containsAll(Set.of("B1"))));
+
+    Assert.assertTrue(list.stream()
+      .anyMatch(e -> e.getLeftRefSet()
+        .stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("A", "A1")) &&
+        e.getDirection().equals(DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT) &&
+        e.getRightRefSet().stream()
+          .map(DiffClass::getOriginalClassName)
+          .collect(Collectors.toSet())
+          .containsAll(Set.of("B", "B1"))));
+  }
+
+  /**
+   * Test for duplicated association
+   * CD:
+   *   class A;
+   *   class B;
+   *   association [*] A (a) <- (b) B [*];
+   *   association [*] A (a) <- (b) B [*];
+   */
+  @Test
+  public void testAssociation4DuplicatedAssociation1() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "DuplicateAssociation1.cd");
+    Assert.assertTrue(dg.getDiffAssociationGroup().size() == 1);
+    Assert.assertTrue(dg.getDiffAssociationGroup().containsKey("DiffAssociation_A_a_RightToLeft_b_B"));
+  }
+
+  /**
+   * Test for duplicated association
+   * CD:
+   *   class A;
+   *   class B;
+   *   association [0..1] A (a) <- (b) B [1..*];
+   *   association [1] B (b) -> (a) A [1..*];
+   */
+  @Test
+  public void testAssociation4DuplicatedAssociation2() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "DuplicateAssociation2.cd");
+    Assert.assertTrue(dg.getDiffAssociationGroup().size() == 1);
+    Assert.assertTrue(dg.getDiffAssociationGroup().containsKey("DiffAssociation_B_b_LeftToRight_a_A"));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_B_b_LeftToRight_a_A").getDiffLeftClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ONE));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_B_b_LeftToRight_a_A").getDiffRightClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ONE));
+  }
+
+  /**
+   * Test for duplicated association
+   * CD:
+   *   class A;
+   *   class B;
+   *   association [*] A (a) <- (b) B [*];
+   *   association [*] A (a) -> (b) B [1..*];
+   */
+  @Test
+  public void testAssociation4DuplicatedAssociation3() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "DuplicateAssociation3.cd");
+    Assert.assertTrue(dg.getDiffAssociationGroup().size() == 2);
+    Assert.assertTrue(dg.getDiffAssociationGroup().containsKey("DiffAssociation_A_a_RightToLeft_b_B"));
+    Assert.assertTrue(dg.getDiffAssociationGroup().containsKey("DiffAssociation_A_a_LeftToRight_b_B"));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_A_a_RightToLeft_b_B").getDiffLeftClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ONE) &&
+      dg.getDiffAssociationGroup().get("DiffAssociation_A_a_RightToLeft_b_B").getDiffRightClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.MORE));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_A_a_LeftToRight_b_B").getDiffLeftClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE) &&
+      dg.getDiffAssociationGroup().get("DiffAssociation_A_a_LeftToRight_b_B").getDiffRightClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE));
+  }
+
+  /**
+   * Test for duplicated association
+   * CD:
+   *   class A;
+   *   class B;
+   *   association [1] A (a) <- (b) B [*];
+   *   association [0..1] A (a) -> (b) B [1..*];
+   *   association [*] A (a) <-> (b) B [*];
+   */
+  @Test
+  public void testAssociation4DuplicatedAssociation4() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "DuplicateAssociation4.cd");
+    Assert.assertTrue(dg.getDiffAssociationGroup().size() == 1);
+    Assert.assertTrue(dg.getDiffAssociationGroup().containsKey("DiffAssociation_A_a_Bidirectional_b_B"));
+    Assert.assertTrue(dg.getDiffAssociationGroup().get("DiffAssociation_A_a_Bidirectional_b_B").getDiffLeftClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ONE) &&
+      dg.getDiffAssociationGroup().get("DiffAssociation_A_a_Bidirectional_b_B").getDiffRightClassCardinality().equals(DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE));
+  }
+
 
 }

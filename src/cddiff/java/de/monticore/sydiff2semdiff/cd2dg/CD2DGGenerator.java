@@ -13,6 +13,7 @@ import de.monticore.ow2cw.CDInheritanceHelper;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
+
 import java.util.*;
 
 import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
@@ -109,13 +110,11 @@ public class CD2DGGenerator {
         if (astcdEnumList.stream().anyMatch(s -> s.getName().equals(astcdAttribute.printType()))) {
           diffClass.addAttribute(astcdAttribute);
           creatEnumClassMapHelper("DiffEnum_" + astcdAttribute.printType(), diffClass.getName());
-        }
-        else {
+        } else {
           diffClass.addAttribute(astcdAttribute);
         }
       }
-    }
-    else {
+    } else {
       // add diffLink4EnumClass
       diffClass.setDiffLink4EnumClass(enumClassMap.get(diffClass.getName()));
     }
@@ -153,14 +152,11 @@ public class CD2DGGenerator {
   public DiffClass findDiffClass4OriginalClassName(String originalClassName) {
     if (diffClassGroup.containsKey("DiffClass_" + originalClassName)) {
       return diffClassGroup.get("DiffClass_" + originalClassName);
-    }
-    else if (diffClassGroup.containsKey("DiffAbstractClass_" + originalClassName)) {
+    } else if (diffClassGroup.containsKey("DiffAbstractClass_" + originalClassName)) {
       return diffClassGroup.get("DiffAbstractClass_" + originalClassName);
-    }
-    else if (diffClassGroup.containsKey("DiffInterface_" + originalClassName)) {
+    } else if (diffClassGroup.containsKey("DiffInterface_" + originalClassName)) {
       return diffClassGroup.get("DiffInterface_" + originalClassName);
-    }
-    else {
+    } else {
       return diffClassGroup.get("DiffEnum_" + originalClassName);
     }
   }
@@ -175,8 +171,7 @@ public class CD2DGGenerator {
   public Map<String, DiffAssociation> createDiffAssociation(ASTCDCompilationUnit cd) {
     List<ASTCDAssociation> astcdAssociationList = cd.getCDDefinition().getCDAssociationsList();
     for (ASTCDAssociation astcdAssociation : astcdAssociationList) {
-      DiffAssociation diffAssociation = createDiffAssociationHelper(astcdAssociation, false);
-      diffAssociationGroup.put(diffAssociation.getName(), diffAssociation);
+      createDiffAssociationHelper(astcdAssociation, false);
     }
     return diffAssociationGroup;
   }
@@ -184,13 +179,68 @@ public class CD2DGGenerator {
   /**
    * the creating DiffAssociation functions are based on this helper
    */
-  public DiffAssociation createDiffAssociationHelper(ASTCDAssociation astcdAssociation, Boolean isInherited) {
+  public void createDiffAssociationHelper(ASTCDAssociation astcdAssociation, Boolean isInherited) {
     // add role name if the original ASTCDAssociation has no role name for one side or both side
     astcdAssociation = generateASTCDAssociationRoleName(astcdAssociation);
-    DiffAssociation diffAssociation = new DiffAssociation(astcdAssociation, isInherited, false);
-    diffAssociation.setDiffLeftClass(findDiffClass4OriginalClassName(diffAssociation.getLeftOriginalClassName()));
-    diffAssociation.setDiffRightClass(findDiffClass4OriginalClassName(diffAssociation.getRightOriginalClassName()));
-    return diffAssociation;
+    DiffAssociation currentAssoc = new DiffAssociation(astcdAssociation, isInherited);
+    currentAssoc.setDiffLeftClass(findDiffClass4OriginalClassName(currentAssoc.getLeftOriginalClassName()));
+    currentAssoc.setDiffRightClass(findDiffClass4OriginalClassName(currentAssoc.getRightOriginalClassName()));
+
+    List<Map<String, Object>> matchedAssocList = fuzzySearchDiffAssociationWithoutDirectionByDiffAssociation(diffAssociationGroup, currentAssoc);
+    if (matchedAssocList.size() > 0) {
+      matchedAssocList.forEach(e -> {
+        DiffAssociation existAssoc = (DiffAssociation) e.get("diffAssociation");
+        boolean isReverse = (boolean) e.get("isReverse");
+
+        if (!isReverse) {
+          String directionResult = diffAssociationDirectionHelper(existAssoc.getDiffDirection(), currentAssoc.getDiffDirection());
+          DifferentGroup.DiffAssociationCardinality leftCardinalityResult =
+            diffAssociationCardinalityHelper(existAssoc.getDiffLeftClassCardinality(), currentAssoc.getDiffLeftClassCardinality());
+          DifferentGroup.DiffAssociationCardinality rightCardinalityResult =
+            diffAssociationCardinalityHelper(existAssoc.getDiffRightClassCardinality(), currentAssoc.getDiffRightClassCardinality());
+          switch (directionResult) {
+            case "current":
+              diffAssociationGroup.remove(existAssoc.getName());
+              currentAssoc.setDiffLeftClassCardinality(leftCardinalityResult);
+              currentAssoc.setDiffRightClassCardinality(rightCardinalityResult);
+              diffAssociationGroup.put(currentAssoc.getName(), currentAssoc);
+              break;
+            case "exist":
+              existAssoc.setDiffLeftClassCardinality(leftCardinalityResult);
+              existAssoc.setDiffRightClassCardinality(rightCardinalityResult);
+              diffAssociationGroup.put(existAssoc.getName(), existAssoc);
+              break;
+            default:
+              diffAssociationGroup.put(currentAssoc.getName(), currentAssoc);
+              break;
+          }
+        } else {
+          String directionResult4Current = diffAssociationDirectionHelper(reverseDirection(existAssoc.getDiffDirection()), currentAssoc.getDiffDirection());
+          DifferentGroup.DiffAssociationCardinality leftCardinalityResult4Current =
+            diffAssociationCardinalityHelper(existAssoc.getDiffRightClassCardinality(), currentAssoc.getDiffLeftClassCardinality());
+          DifferentGroup.DiffAssociationCardinality rightCardinalityResult4Current =
+            diffAssociationCardinalityHelper(existAssoc.getDiffLeftClassCardinality(), currentAssoc.getDiffRightClassCardinality());
+          switch (directionResult4Current) {
+            case "current":
+              diffAssociationGroup.remove(existAssoc.getName());
+              currentAssoc.setDiffLeftClassCardinality(leftCardinalityResult4Current);
+              currentAssoc.setDiffRightClassCardinality(rightCardinalityResult4Current);
+              diffAssociationGroup.put(currentAssoc.getName(), currentAssoc);
+              break;
+            case "exist":
+              existAssoc.setDiffLeftClassCardinality(rightCardinalityResult4Current);
+              existAssoc.setDiffRightClassCardinality(leftCardinalityResult4Current);
+              diffAssociationGroup.put(existAssoc.getName(), existAssoc);
+              break;
+            default:
+              diffAssociationGroup.put(currentAssoc.getName(), currentAssoc);
+              break;
+          }
+        }
+      });
+    } else {
+      diffAssociationGroup.put(currentAssoc.getName(), currentAssoc);
+    }
   }
 
   /********************************************************************
@@ -241,11 +291,12 @@ public class CD2DGGenerator {
             String prefix = oldName.split("_")[0];
             String leftClass = oldDiffAssociation.getDiffLeftClass().getOriginalClassName();
             String leftRoleName = oldDiffAssociation.getDiffLeftClassRoleName();
+            String direction = formatDirection(oldDiffAssociation.getDiffDirection());
             String rightRoleName = oldDiffAssociation.getDiffRightClassRoleName();
             String rightClass = oldDiffAssociation.getDiffRightClass().getOriginalClassName();
             leftClass = leftClass.equals(parentOriginalName) ? childOriginalName : leftClass;
             rightClass = rightClass.equals(parentOriginalName) ? childOriginalName : rightClass;
-            String newName = prefix + "_" + leftClass + "_" + leftRoleName + "_" + rightRoleName + "_" + rightClass;
+            String newName = prefix + "_" + leftClass + "_" + leftRoleName + "_" + direction + "_" + rightRoleName + "_" + rightClass;
             if (!diffAssociationGroup.containsKey(newName)) {
               ASTCDAssociation oldASTAssoc = oldDiffAssociation.getOriginalElement();
               ASTCDAssociation newASTAssoc = oldASTAssoc.deepClone();
@@ -259,7 +310,7 @@ public class CD2DGGenerator {
                 newASTAssoc = editASTCDAssociationRightSideByDiffClass(newASTAssoc, child);
                 rightDiffClass = child;
               }
-              DiffAssociation newDiffAssociation = new DiffAssociation(newASTAssoc, true, false);
+              DiffAssociation newDiffAssociation = new DiffAssociation(newASTAssoc, true);
               newDiffAssociation.setDiffLeftClass(leftDiffClass);
               newDiffAssociation.setDiffRightClass(rightDiffClass);
               diffAssociationGroup.put(newDiffAssociation.getName(), newDiffAssociation);

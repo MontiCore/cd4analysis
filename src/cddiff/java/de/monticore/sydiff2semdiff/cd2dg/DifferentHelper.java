@@ -134,12 +134,178 @@ public class DifferentHelper {
     }
   }
 
+  /**
+   * reverse LEFT_TO_RIGHT and RIGHT_TO_LEFT direction
+   */
+  public static DifferentGroup.DiffAssociationDirection reverseDirection(DifferentGroup.DiffAssociationDirection direction) {
+    switch (direction) {
+      case LEFT_TO_RIGHT:
+        return DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT;
+      case RIGHT_TO_LEFT:
+        return DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT;
+      default:
+        return direction;
+    }
+  }
+
+  /**
+   * format direction to String
+   */
+  public static String formatDirection(DifferentGroup.DiffAssociationDirection direction) {
+    switch (direction) {
+      case LEFT_TO_RIGHT:
+        return "LeftToRight";
+      case RIGHT_TO_LEFT:
+        return "RightToLeft";
+      case BIDIRECTIONAL:
+        return "Bidirectional";
+      default:
+        return "Undefined";
+    }
+  }
+
+  /**
+   * calculate the intersection set for exist Cardinality with current Cardinality
+   */
+  public static DifferentGroup.DiffAssociationCardinality diffAssociationCardinalityHelper(DifferentGroup.DiffAssociationCardinality exist, DifferentGroup.DiffAssociationCardinality current) {
+    switch (exist) {
+      case ONE:
+        switch (current) {
+          case ONE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          case ZORE_TO_ONE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          case ONE_TO_MORE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          default:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+        }
+      case ZORE_TO_ONE:
+        switch (current) {
+          case ONE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          case ZORE_TO_ONE:
+            return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
+          case ONE_TO_MORE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          default:
+            return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
+        }
+      case ONE_TO_MORE:
+        switch (current) {
+          case ONE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          case ZORE_TO_ONE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          case ONE_TO_MORE:
+            return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
+          default:
+            return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
+        }
+      default:
+        switch (current) {
+          case ONE:
+            return DifferentGroup.DiffAssociationCardinality.ONE;
+          case ZORE_TO_ONE:
+            return DifferentGroup.DiffAssociationCardinality.ZORE_TO_ONE;
+          case ONE_TO_MORE:
+            return DifferentGroup.DiffAssociationCardinality.ONE_TO_MORE;
+          default:
+            return DifferentGroup.DiffAssociationCardinality.MORE;
+        }
+    }
+  }
+
+  /**
+   * return the intersection set for direction of association
+   * @Return: "current" or "exist" or "both"
+   *    "current" means using current direction
+   *    "exist" means using exist direction
+   *    "both" means using both directions
+   */
+  public static String diffAssociationDirectionHelper(DifferentGroup.DiffAssociationDirection exist, DifferentGroup.DiffAssociationDirection current) {
+    switch (exist) {
+      case LEFT_TO_RIGHT:
+        switch (current) {
+          case LEFT_TO_RIGHT:
+            return "current";
+          case RIGHT_TO_LEFT:
+            return "both";
+          case BIDIRECTIONAL:
+            return "current";
+          default:
+            return "exist";
+        }
+      case RIGHT_TO_LEFT:
+        switch (current) {
+          case LEFT_TO_RIGHT:
+            return "both";
+          case RIGHT_TO_LEFT:
+            return "current";
+          case BIDIRECTIONAL:
+            return "current";
+          default:
+            return "exist";
+        }
+      case BIDIRECTIONAL:
+        switch (current) {
+          case LEFT_TO_RIGHT:
+            return "exist";
+          case RIGHT_TO_LEFT:
+            return "exist";
+          case BIDIRECTIONAL:
+            return "current";
+          default:
+            return "exist";
+        }
+      default:
+        switch (current) {
+          case LEFT_TO_RIGHT:
+            return "current";
+          case RIGHT_TO_LEFT:
+            return "current";
+          case BIDIRECTIONAL:
+            return "current";
+          default:
+            return "current";
+        }
+    }
+  }
+
+  /**
+   * Fuzzy search for DiffAssociation without matching direction
+   * @Return:
+   *  [{"diffAssociation" : DiffAssociation
+   *    "isReverse"       : boolean         }]
+   */
+  public static List<Map<String, Object>> fuzzySearchDiffAssociationWithoutDirectionByDiffAssociation(Map<String, DiffAssociation> map, DiffAssociation currentAssoc) {
+    List<Map<String, Object>> result = new ArrayList<>();
+    if (map == null) {
+      return null;
+    } else {
+      map.values().forEach(existAssoc -> {
+        if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName()) &&
+          currentAssoc.getDiffLeftClassRoleName().equals(existAssoc.getDiffLeftClassRoleName()) &&
+          currentAssoc.getDiffRightClassRoleName().equals(existAssoc.getDiffRightClassRoleName()) &&
+          currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
+          result.add(Map.of("diffAssociation", existAssoc, "isReverse", false));
+        } else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName()) &&
+          currentAssoc.getDiffLeftClassRoleName().equals(existAssoc.getDiffRightClassRoleName()) &&
+          currentAssoc.getDiffRightClassRoleName().equals(existAssoc.getDiffLeftClassRoleName()) &&
+          currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
+          result.add(Map.of("diffAssociation", existAssoc, "isReverse", true));
+        }
+      });
+    }
+    return result;
+  }
+
   /********************************************************************
    ******************** Solution for Inheritance **********************
    *******************************************************************/
 
   /**
-   * Fuzzy search for DiffAssociationGroup by ClassName
+   * Fuzzy search for DiffAssociation by ClassName
    */
   public static Map<String, DiffAssociation> fuzzySearchDiffAssociationByClassName(Map<String, DiffAssociation> map, String className) {
     Map<String, DiffAssociation> result = new HashMap<>();
@@ -197,6 +363,9 @@ public class DifferentHelper {
     return result;
   }
 
+  /**
+   * return all subclasses about given diffClass expect abstract class and interface
+   */
   public static List<DiffClass> getAllSimpleSubClasses4DiffClass(DiffClass diffClass, MutableGraph<String> inheritanceGraph, Map<String, DiffClass> diffClassGroup) {
     List<DiffClass> result = new ArrayList<>();
     inheritanceGraph.predecessors(diffClass.getName()).forEach(e -> {
@@ -211,28 +380,31 @@ public class DifferentHelper {
    * generate the list of DiffRefSetAssociation
    */
   public static List<DiffRefSetAssociation> createDiffRefSetAssociation(Map<String, DiffAssociation> diffAssociationGroup) {
-    Map<String, Map<String, List<DiffAssociation>>> groupResult = diffAssociationGroup
+    Map<String, Map<String, Map<DifferentGroup.DiffAssociationDirection, List<DiffAssociation>>>> groupResult = diffAssociationGroup
       .values()
       .stream()
-      .collect(Collectors.groupingBy(DiffAssociation::getDiffLeftClassRoleName,
-        Collectors.groupingBy(DiffAssociation::getDiffRightClassRoleName)));
+      .collect(
+        Collectors.groupingBy(DiffAssociation::getDiffLeftClassRoleName,
+          Collectors.groupingBy(DiffAssociation::getDiffRightClassRoleName,
+            Collectors.groupingBy(DiffAssociation::getDiffDirection))));
 
     List<DiffRefSetAssociation> refSetAssociationList = new ArrayList<>();
 
-    groupResult.forEach((leftRoleName, v) ->
-      v.forEach((rightRoleName, list) -> {
-        Set<DiffClass> leftRefSet = new HashSet<>();
-        Set<DiffClass> rightRefSet = new HashSet<>();
-        list.forEach(e -> {
-          if (!leftRefSet.stream().anyMatch(s -> s.getOriginalClassName().equals(e.getDiffLeftClass().getOriginalClassName()))) {
-            leftRefSet.add(e.getDiffLeftClass());
-          }
-          if (!rightRefSet.stream().anyMatch(s -> s.getOriginalClassName().equals(e.getDiffRightClass().getOriginalClassName()))) {
-            rightRefSet.add(e.getDiffRightClass());
-          }
-        });
-        refSetAssociationList.add(new DiffRefSetAssociation(leftRefSet, leftRoleName, rightRoleName, rightRefSet));
-      }));
+    groupResult.forEach((leftRoleName, v1) ->
+      v1.forEach((rightRoleName, v2) ->
+        v2.forEach((direction, list) -> {
+          Set<DiffClass> leftRefSet = new HashSet<>();
+          Set<DiffClass> rightRefSet = new HashSet<>();
+          list.forEach(e -> {
+            if (!leftRefSet.stream().anyMatch(s -> s.getOriginalClassName().equals(e.getDiffLeftClass().getOriginalClassName()))) {
+              leftRefSet.add(e.getDiffLeftClass());
+            }
+            if (!rightRefSet.stream().anyMatch(s -> s.getOriginalClassName().equals(e.getDiffRightClass().getOriginalClassName()))) {
+              rightRefSet.add(e.getDiffRightClass());
+            }
+          });
+          refSetAssociationList.add(new DiffRefSetAssociation(leftRefSet, leftRoleName, direction, rightRoleName, rightRefSet));
+        })));
 
     return refSetAssociationList;
   }

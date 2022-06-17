@@ -9,6 +9,8 @@ import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
 
 import java.util.*;
 
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.fuzzySearchDiffAssociationWithoutDirectionByDiffAssociation;
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.reverseDirection;
 import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.*;
 
 public class DG2CGGenerator {
@@ -73,16 +75,13 @@ public class DG2CGGenerator {
       // distinguish compClass by CompCategory
       if (compClass.getCompCategory() == CompareGroup.CompClassCategory.DELETED || compClass.getCompCategory() == CompareGroup.CompClassCategory.EDITED) {
         compClassResultQueueWithDiff.offer(compClass);
-      }
-      else {
+      } else {
         compClassResultQueueWithoutDiff.offer(compClass);
       }
 
     } else {
       compClassResultQueueWithDiff.offer(createCompClassHelper(based, isInComparedDG, true, CompareGroup.CompClassCategory.DELETED, compClassWhichAttributesDiffHelper(based, null)));
     }
-
-
   }
 
   /********************************************************************
@@ -95,26 +94,28 @@ public class DG2CGGenerator {
   public void compareAssociations(DifferentGroup basedDG, DifferentGroup comparedDG) {
     basedDG.getDiffAssociationGroup().forEach((assocName1, basedDiffAssociation) -> {
 
-      String assocName2 = getExchangedLeftDiffClassWithRightDiffClassAssocName(basedDiffAssociation);
-
-      boolean isInComparedDG1 = comparedDG.getDiffAssociationGroup().containsKey(assocName1);
-      boolean isInComparedDG2 = comparedDG.getDiffAssociationGroup().containsKey(assocName2);
-
-      if (isInComparedDG1 && !isInComparedDG2) {
-        DiffAssociation comparedDiffAssociation = comparedDG.getDiffAssociationGroup().get(assocName1);
-        createCompareAssociation(basedDiffAssociation, comparedDiffAssociation, true, false);
-      }
-      else if (!isInComparedDG1 && isInComparedDG2) {
-        DiffAssociation comparedDiffAssociation = null;
-        try {
-          comparedDiffAssociation = exchangeLeftDiffClassWithRightDiffClass(comparedDG.getDiffAssociationGroup().get(assocName2).clone());
+      // get all associations including reversed association in ComparedDG by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
+      List<Map<String, Object>> DiffAssocMapInComparedDG = fuzzySearchDiffAssociationWithoutDirectionByDiffAssociation(comparedDG.getDiffAssociationGroup(), basedDiffAssociation);
+      List<DiffAssociation> forwardDiffAssocListInComparedDG = new ArrayList<>();
+      List<DiffAssociation> reverseDiffAssocListInComparedDG = new ArrayList<>();
+      DiffAssocMapInComparedDG.forEach(e -> {
+        if ((boolean) e.get("isReverse") == false) {
+          forwardDiffAssocListInComparedDG.add((DiffAssociation) e.get("diffAssociation"));
+        } else {
+          reverseDiffAssocListInComparedDG.add((DiffAssociation) e.get("diffAssociation"));
         }
-        catch (CloneNotSupportedException e) {
-          throw new RuntimeException(e);
-        }
-        createCompareAssociation(basedDiffAssociation, comparedDiffAssociation, true, true);
-      }
-      else {
+      });
+
+      boolean isInComparedD4ForwardAssocName = forwardDiffAssocListInComparedDG.size() > 0 ? true : false;
+      boolean isInComparedDG4ReverseAssocName = reverseDiffAssocListInComparedDG.size() > 0 ? true : false;
+
+      if (isInComparedD4ForwardAssocName && !isInComparedDG4ReverseAssocName) {
+        forwardDiffAssocListInComparedDG.forEach(comparedDiffAssociation ->
+          createCompareAssociation(basedDiffAssociation, comparedDiffAssociation, true, false));
+      } else if (!isInComparedD4ForwardAssocName && isInComparedDG4ReverseAssocName) {
+        reverseDiffAssocListInComparedDG.forEach(comparedDiffAssociation ->
+          createCompareAssociation(basedDiffAssociation, comparedDiffAssociation, true, true));
+      } else {
         createCompareAssociation(basedDiffAssociation, null, false, false);
       }
     });
@@ -126,14 +127,17 @@ public class DG2CGGenerator {
    * put into compAssociationResultQueueWithoutDiff if exists no semantic difference
    */
   public void createCompareAssociation(DiffAssociation based, DiffAssociation compared, boolean isInComparedDG, boolean isAssocNameExchanged) {
-    List<CompAssociation> compAssociationList = new ArrayList<>();
 
     if (isInComparedDG) {
       CompareGroup.CompAssociationCategory categoryResult = null;
 
       // check direction type
-      CompareGroup.CompAssociationDirection directionResult = compAssociationDirectionHelper(based.getDiffDirection(), compared.getDiffDirection());
-      boolean isDirectionChanged = based.getDiffDirection() == compared.getDiffDirection() ? false : true;
+      CompareGroup.CompAssociationDirection directionResult = !isAssocNameExchanged ?
+        compAssociationDirectionHelper(based.getDiffDirection(), compared.getDiffDirection()) :
+        compAssociationDirectionHelper(based.getDiffDirection(), reverseDirection(compared.getDiffDirection()));
+      boolean isDirectionChanged = !isAssocNameExchanged ?
+        (based.getDiffDirection() == compared.getDiffDirection() ? false : true) :
+        (based.getDiffDirection() == reverseDirection(compared.getDiffDirection()) ? false : true);
       categoryResult = compAssociationCategoryByDirectionHelper(isDirectionChanged, isAssocNameExchanged, directionResult);
       switch (categoryResult) {
         case DIRECTION_CHANGED:
@@ -145,8 +149,12 @@ public class DG2CGGenerator {
       }
 
       // check left cardinality
-      CompareGroup.CompAssociationCardinality leftCardinalityResult = compAssociationCardinalityHelper(based.getDiffLeftClassCardinality(), compared.getDiffLeftClassCardinality());
-      boolean isLeftCardinalityDiff = based.getDiffLeftClassCardinality() == compared.getDiffLeftClassCardinality() ? false : true;
+      CompareGroup.CompAssociationCardinality leftCardinalityResult = !isAssocNameExchanged ?
+        compAssociationCardinalityHelper(based.getDiffLeftClassCardinality(), compared.getDiffLeftClassCardinality()) :
+        compAssociationCardinalityHelper(based.getDiffLeftClassCardinality(), compared.getDiffRightClassCardinality());
+      boolean isLeftCardinalityDiff = !isAssocNameExchanged ?
+        (based.getDiffLeftClassCardinality() == compared.getDiffLeftClassCardinality() ? false : true) :
+        (based.getDiffLeftClassCardinality() == compared.getDiffRightClassCardinality() ? false : true);
       categoryResult = compAssociationCategoryByCardinalityHelper(isLeftCardinalityDiff, leftCardinalityResult);
       switch (categoryResult) {
         case CARDINALITY_CHANGED:
@@ -158,8 +166,12 @@ public class DG2CGGenerator {
       }
 
       // check right cardinality
-      CompareGroup.CompAssociationCardinality rightCardinalityResult = compAssociationCardinalityHelper(based.getDiffRightClassCardinality(), compared.getDiffRightClassCardinality());
-      boolean isRightCardinalityDiff = based.getDiffRightClassCardinality() == compared.getDiffRightClassCardinality() ? false : true;
+      CompareGroup.CompAssociationCardinality rightCardinalityResult = !isAssocNameExchanged ?
+        (compAssociationCardinalityHelper(based.getDiffRightClassCardinality(), compared.getDiffRightClassCardinality())) :
+        (compAssociationCardinalityHelper(based.getDiffRightClassCardinality(), compared.getDiffLeftClassCardinality()));
+      boolean isRightCardinalityDiff = !isAssocNameExchanged ?
+        (based.getDiffRightClassCardinality() == compared.getDiffRightClassCardinality() ? false : true) :
+        (based.getDiffRightClassCardinality() == compared.getDiffLeftClassCardinality() ? false : true);
       categoryResult = compAssociationCategoryByCardinalityHelper(isRightCardinalityDiff, rightCardinalityResult);
       switch (categoryResult) {
         case CARDINALITY_CHANGED:
@@ -169,8 +181,7 @@ public class DG2CGGenerator {
           compAssociationResultQueueWithoutDiff.offer(createCompareAssociationHelper(based, isInComparedDG, isRightCardinalityDiff, categoryResult));
           break;
       }
-    }
-    else {
+    } else {
       compAssociationResultQueueWithDiff.offer(createCompareAssociationHelper(based, isInComparedDG, true, CompareGroup.CompAssociationCategory.DELETED));
     }
   }
