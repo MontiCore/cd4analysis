@@ -227,8 +227,7 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testAssociation4RefSetAssociation() {
     DifferentGroup dg = generateDifferentGroupTemp("Association", "Association3.cd");
-    Map<String, DiffAssociation> diffAssociationGroup = dg.getDiffAssociationGroup();
-    List<DiffRefSetAssociation> list = createDiffRefSetAssociation(diffAssociationGroup);
+    List<DiffRefSetAssociation> list = dg.getRefSetAssociationList();
     Assert.assertEquals(list.size(), 2);
     Assert.assertTrue(list.stream()
       .anyMatch(e -> e.getLeftRefSet().stream()
@@ -280,14 +279,13 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
    *   class B;
    *   class B1 extends B;
    *
-   *   association [1..*] A -> (toDo) B [1..*];
-   *   association [1] A1 -> (toDo) B1 [1..*];
+   *   association [1..*] A (workOn) -> (toDo) B [1];
+   *   association [1] A1 (workOn) -> (toDo) B1 [1..*];
    */
   @Test
-  public void testAssociation4OverlapRefSetAssociation() {
-    DifferentGroup dg = generateDifferentGroupTemp("Association", "OverlapRefSetAssociation.cd");
-    Map<String, DiffAssociation> diffAssociationGroup = dg.getDiffAssociationGroup();
-    List<DiffRefSetAssociation> list = createDiffRefSetAssociation(diffAssociationGroup);
+  public void testAssociation4OverlapRefSetAssociation1() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "OverlapRefSetAssociation1.cd");
+    List<DiffRefSetAssociation> list = dg.getRefSetAssociationList();
     Assert.assertEquals(list.size(), 2);
     Assert.assertTrue(list.stream()
       .anyMatch(e -> e.getLeftRefSet().stream()
@@ -299,6 +297,46 @@ public class CD2DGGeneratorTest extends CDDiffTestBasis {
           .map(DiffClass::getOriginalClassName)
           .collect(Collectors.toSet())
           .containsAll(Set.of("B1"))));
+
+    Assert.assertTrue(list.stream()
+      .anyMatch(e -> e.getLeftRefSet()
+        .stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("A", "A1")) &&
+        e.getDirection().equals(DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT) &&
+        e.getRightRefSet().stream()
+          .map(DiffClass::getOriginalClassName)
+          .collect(Collectors.toSet())
+          .containsAll(Set.of("B", "B1"))));
+  }
+
+  /**
+   * Test for overlap RefSetAssociation
+   * CD:
+   *   class A;
+   *   class A1 extends A;
+   *   class B;
+   *   class B1 extends B;
+   *
+   *   association [1..*] A (workOn) -> (toDo) B [1];
+   *   association [1..*] B1 (toDo) <- (workOn) A1 [1];
+   */
+  @Test
+  public void testAssociation4OverlapRefSetAssociation2() {
+    DifferentGroup dg = generateDifferentGroupTemp("Association", "OverlapRefSetAssociation2.cd");
+    List<DiffRefSetAssociation> list = dg.getRefSetAssociationList();
+    Assert.assertEquals(list.size(), 2);
+    Assert.assertTrue(list.stream()
+      .anyMatch(e -> e.getLeftRefSet().stream()
+        .map(DiffClass::getOriginalClassName)
+        .collect(Collectors.toSet())
+        .containsAll(Set.of("B1")) &&
+        e.getDirection().equals(DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT) &&
+        e.getRightRefSet().stream()
+          .map(DiffClass::getOriginalClassName)
+          .collect(Collectors.toSet())
+          .containsAll(Set.of("A1"))));
 
     Assert.assertTrue(list.stream()
       .anyMatch(e -> e.getLeftRefSet()

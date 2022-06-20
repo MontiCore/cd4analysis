@@ -13,6 +13,7 @@ import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffRefSetAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class DifferentHelper {
@@ -53,6 +54,21 @@ public class DifferentHelper {
         return "DiffInterface";
       default:
         return null;
+    }
+  }
+
+  /**
+   * using the original class name to find corresponding DiffClass in DiffClassGroup
+   */
+  public static DiffClass findDiffClass4OriginalClassName(Map<String, DiffClass> diffClassGroup, String originalClassName) {
+    if (diffClassGroup.containsKey("DiffClass_" + originalClassName)) {
+      return diffClassGroup.get("DiffClass_" + originalClassName);
+    } else if (diffClassGroup.containsKey("DiffAbstractClass_" + originalClassName)) {
+      return diffClassGroup.get("DiffAbstractClass_" + originalClassName);
+    } else if (diffClassGroup.containsKey("DiffInterface_" + originalClassName)) {
+      return diffClassGroup.get("DiffInterface_" + originalClassName);
+    } else {
+      return diffClassGroup.get("DiffEnum_" + originalClassName);
     }
   }
 
@@ -273,12 +289,118 @@ public class DifferentHelper {
   }
 
   /**
+   * calculate the intersection set of cardinality of given DiffAssociation by its relevant DiffRefSetAssociations
+   */
+  public static DiffAssociation intersectDiffAssociationCardinalityByDiffAssociation(DiffAssociation originalAssoc, DifferentGroup dg){
+    DiffAssociation resultAssoc = null;
+    try {
+      resultAssoc = originalAssoc.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+
+    AtomicReference<DifferentGroup.DiffAssociationCardinality> intersectedLeftCardinality =
+      new AtomicReference<>(originalAssoc.getDiffLeftClassCardinality());
+    AtomicReference<DifferentGroup.DiffAssociationCardinality> intersectedRightCardinality =
+      new AtomicReference<>(originalAssoc.getDiffRightClassCardinality());
+
+    dg.getRefSetAssociationList().forEach(item -> {
+      if (item.getLeftRoleName().equals(originalAssoc.getDiffLeftClassRoleName()) &&
+        item.getRightRoleName().equals(originalAssoc.getDiffRightClassRoleName()) &&
+        item.getDirection().equals(originalAssoc.getDiffDirection()) &&
+        item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffLeftClass().getName())) &&
+        item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffRightClass().getName()))) {
+        Map<String, DifferentGroup.DiffAssociationCardinality> intersectedCardinalityMap =
+          intersectDiffAssociationCardinalityHelper(originalAssoc, false, item, dg, intersectedLeftCardinality.get(), intersectedRightCardinality.get());
+        intersectedLeftCardinality.set(intersectedCardinalityMap.get("leftCardinality"));
+        intersectedRightCardinality.set(intersectedCardinalityMap.get("rightCardinality"));
+      } else if (item.getLeftRoleName().equals(originalAssoc.getDiffRightClassRoleName()) &&
+        item.getRightRoleName().equals(originalAssoc.getDiffLeftClassRoleName()) &&
+        item.getDirection().equals(reverseDirection(originalAssoc.getDiffDirection())) &&
+        item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffRightClass().getName())) &&
+        item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffLeftClass().getName()))) {
+        Map<String, DifferentGroup.DiffAssociationCardinality> intersectedCardinalityMap =
+          intersectDiffAssociationCardinalityHelper(originalAssoc, true, item, dg, intersectedRightCardinality.get(), intersectedLeftCardinality.get());
+        intersectedRightCardinality.set(intersectedCardinalityMap.get("leftCardinality"));
+        intersectedLeftCardinality.set(intersectedCardinalityMap.get("rightCardinality"));
+      }
+    });
+
+    // update Cardinality
+    resultAssoc.setDiffLeftClassCardinality(intersectedLeftCardinality.get());
+    resultAssoc.setDiffRightClassCardinality(intersectedRightCardinality.get());
+
+    return resultAssoc;
+  }
+
+  /**
+   * calculate the intersection set of left and right cardinality of related DiffAssociation in DiffRefSetAssociation
+   * @Return:
+   *  [{"leftCardinality"   : DifferentGroup.DiffAssociationCardinality
+   *    "rightCardinality"  : DifferentGroup.DiffAssociationCardinality }]
+   */
+  public static Map<String, DifferentGroup.DiffAssociationCardinality> intersectDiffAssociationCardinalityHelper(
+    DiffAssociation originalAssoc,
+    boolean isReversed,
+    DiffRefSetAssociation diffRefSetAssociation,
+    DifferentGroup dg,
+    DifferentGroup.DiffAssociationCardinality existLeftCardinality,
+    DifferentGroup.DiffAssociationCardinality existRightCardinality) {
+
+    Set<String> leftSuperClassSet = null;
+    Set<String> rightSuperClassSet = null;
+    if (!isReversed) {
+      leftSuperClassSet = getSuperClassSet(dg.getInheritanceGraph(), originalAssoc.getDiffLeftClass().getName());
+      rightSuperClassSet = getSuperClassSet(dg.getInheritanceGraph(), originalAssoc.getDiffRightClass().getName());
+    } else {
+      leftSuperClassSet = getSuperClassSet(dg.getInheritanceGraph(), originalAssoc.getDiffRightClass().getName());
+      rightSuperClassSet = getSuperClassSet(dg.getInheritanceGraph(), originalAssoc.getDiffLeftClass().getName());
+    }
+
+    AtomicReference<DifferentGroup.DiffAssociationCardinality> leftResult = new AtomicReference<>(existLeftCardinality);
+    AtomicReference<DifferentGroup.DiffAssociationCardinality> rightResult = new AtomicReference<>(existRightCardinality);
+    Set<String> finalLeftSuperClassSet = leftSuperClassSet;
+    Set<String> finalRightSuperClassSet = rightSuperClassSet;
+
+    diffRefSetAssociation.getLeftRefSet().forEach(leftClass -> {
+      diffRefSetAssociation.getRightRefSet().forEach(rightClass -> {
+        StringBuilder sb = new StringBuilder();
+        sb.append("DiffAssociation_");
+        sb.append(leftClass.getOriginalClassName() + "_");
+        sb.append(diffRefSetAssociation.getLeftRoleName() + "_");
+        sb.append(formatDirection(diffRefSetAssociation.getDirection()) + "_");
+        sb.append(diffRefSetAssociation.getRightRoleName() + "_");
+        sb.append(rightClass.getOriginalClassName());
+        if ((finalLeftSuperClassSet.contains(leftClass.getName()) || finalRightSuperClassSet.contains(rightClass.getName())) &&
+          dg.getDiffAssociationGroup().containsKey(sb.toString())) {
+          leftResult.set(diffAssociationCardinalityHelper(leftResult.get(), dg.getDiffAssociationGroup().get(sb.toString()).getDiffLeftClassCardinality()));
+          rightResult.set(diffAssociationCardinalityHelper(rightResult.get(), dg.getDiffAssociationGroup().get(sb.toString()).getDiffRightClassCardinality()));
+        } else {
+          StringBuilder reversedSb = new StringBuilder();
+          reversedSb.append("DiffAssociation_");
+          reversedSb.append(rightClass.getOriginalClassName());
+          reversedSb.append(diffRefSetAssociation.getRightRoleName() + "_");
+          reversedSb.append(formatDirection(reverseDirection(diffRefSetAssociation.getDirection())) + "_");
+          reversedSb.append(diffRefSetAssociation.getLeftRoleName() + "_");
+          reversedSb.append(leftClass.getOriginalClassName() + "_");
+          if ((finalLeftSuperClassSet.contains(leftClass.getName()) || finalRightSuperClassSet.contains(rightClass.getName())) &&
+            dg.getDiffAssociationGroup().containsKey(reversedSb.toString())) {
+            leftResult.set(diffAssociationCardinalityHelper(leftResult.get(), dg.getDiffAssociationGroup().get(reversedSb.toString()).getDiffLeftClassCardinality()));
+            rightResult.set(diffAssociationCardinalityHelper(rightResult.get(), dg.getDiffAssociationGroup().get(reversedSb.toString()).getDiffRightClassCardinality()));
+          }
+        }
+      });
+    });
+    return Map.of("leftCardinality", leftResult.get(), "rightCardinality", rightResult.get());
+  }
+
+  /**
    * Fuzzy search for DiffAssociation without matching direction
    * @Return:
    *  [{"diffAssociation" : DiffAssociation
    *    "isReverse"       : boolean         }]
    */
-  public static List<Map<String, Object>> fuzzySearchDiffAssociationWithoutDirectionByDiffAssociation(Map<String, DiffAssociation> map, DiffAssociation currentAssoc) {
+  public static List<Map<String, Object>> fuzzySearchDiffAssociationByDiffAssociationWithoutDirection(Map<String, DiffAssociation> map, DiffAssociation currentAssoc) {
     List<Map<String, Object>> result = new ArrayList<>();
     if (map == null) {
       return null;
@@ -303,6 +425,32 @@ public class DifferentHelper {
   /********************************************************************
    ******************** Solution for Inheritance **********************
    *******************************************************************/
+
+  /**
+   * Fuzzy search for DiffAssociation only matching leftRoleName, rightRoleName and direction
+   * @Return:
+   *  [{"diffAssociation" : DiffAssociation
+   *    "isReverse"       : boolean         }]
+   */
+  public static List<Map<String, Object>> fuzzySearchDiffAssociationByDiffAssociationWithRoleNameAndDirection(Map<String, DiffAssociation> map, DiffAssociation currentAssoc) {
+    List<Map<String, Object>> result = new ArrayList<>();
+    if (map == null) {
+      return null;
+    } else {
+      map.values().forEach(existAssoc -> {
+        if (currentAssoc.getDiffLeftClassRoleName().equals(existAssoc.getDiffLeftClassRoleName()) &&
+          currentAssoc.getDiffRightClassRoleName().equals(existAssoc.getDiffRightClassRoleName()) &&
+          currentAssoc.getDiffDirection().equals(existAssoc.getDiffDirection())) {
+          result.add(Map.of("diffAssociation", existAssoc, "isReverse", false));
+        } else if (currentAssoc.getDiffLeftClassRoleName().equals(existAssoc.getDiffRightClassRoleName()) &&
+          currentAssoc.getDiffRightClassRoleName().equals(existAssoc.getDiffLeftClassRoleName()) &&
+          currentAssoc.getDiffDirection().equals(reverseDirection(existAssoc.getDiffDirection()))) {
+          result.add(Map.of("diffAssociation", existAssoc, "isReverse", true));
+        }
+      });
+    }
+    return result;
+  }
 
   /**
    * Fuzzy search for DiffAssociation by ClassName
@@ -351,9 +499,9 @@ public class DifferentHelper {
   }
 
   /**
-   * getting all top class in inheritance graph
+   * getting all bottom class in inheritance graph
    */
-  public static Set<String> getAllBottomNode(MutableGraph<String> inheritanceGraph) {
+  public static Set<String> getAllBottomDiffClassNode(MutableGraph<String> inheritanceGraph) {
     Set<String> result = new HashSet<>();
     inheritanceGraph.nodes().forEach(s -> {
       if (inheritanceGraph.predecessors(s).isEmpty()) {
@@ -362,6 +510,41 @@ public class DifferentHelper {
     });
     return result;
   }
+
+  /**
+   * getting inherited diffClass name by given diffClass name
+   */
+  public static Set<String> getInheritedClassSet(MutableGraph<String> inheritanceGraph, String diffClassName) {
+    Set<String> result = new HashSet<>();
+    result.add(diffClassName);
+    Deque<String> currentDiffClassNameQueue = new LinkedList<>();
+    currentDiffClassNameQueue.offer(diffClassName);
+    while (!inheritanceGraph.predecessors(currentDiffClassNameQueue.peek()).isEmpty()) {
+      inheritanceGraph.predecessors(currentDiffClassNameQueue.poll()).forEach(e -> {
+        result.add(e);
+        currentDiffClassNameQueue.offer(e);
+      });
+    }
+    return result;
+  }
+
+  /**
+   * getting super diffClass name by given diffClass name
+   */
+  public static Set<String> getSuperClassSet(MutableGraph<String> inheritanceGraph, String diffClassName) {
+    Set<String> result = new HashSet<>();
+    result.add(diffClassName);
+    Deque<String> currentDiffClassNameQueue = new LinkedList<>();
+    currentDiffClassNameQueue.offer(diffClassName);
+    while (!inheritanceGraph.successors(currentDiffClassNameQueue.peek()).isEmpty()) {
+      inheritanceGraph.successors(currentDiffClassNameQueue.poll()).forEach(e -> {
+        result.add(e);
+        currentDiffClassNameQueue.offer(e);
+      });
+    }
+    return result;
+  }
+
 
   /**
    * return all subclasses about given diffClass expect abstract class and interface
@@ -378,33 +561,49 @@ public class DifferentHelper {
 
   /**
    * generate the list of DiffRefSetAssociation
+   * each original association has one DiffRefSetAssociation object
    */
-  public static List<DiffRefSetAssociation> createDiffRefSetAssociation(Map<String, DiffAssociation> diffAssociationGroup) {
-    Map<String, Map<String, Map<DifferentGroup.DiffAssociationDirection, List<DiffAssociation>>>> groupResult = diffAssociationGroup
-      .values()
-      .stream()
-      .collect(
-        Collectors.groupingBy(DiffAssociation::getDiffLeftClassRoleName,
-          Collectors.groupingBy(DiffAssociation::getDiffRightClassRoleName,
-            Collectors.groupingBy(DiffAssociation::getDiffDirection))));
+  public static List<DiffRefSetAssociation> createDiffRefSetAssociation(Map<String, DiffAssociation> diffAssociationGroup, MutableGraph<String> inheritanceGraph) {
 
     List<DiffRefSetAssociation> refSetAssociationList = new ArrayList<>();
 
-    groupResult.forEach((leftRoleName, v1) ->
-      v1.forEach((rightRoleName, v2) ->
-        v2.forEach((direction, list) -> {
-          Set<DiffClass> leftRefSet = new HashSet<>();
-          Set<DiffClass> rightRefSet = new HashSet<>();
-          list.forEach(e -> {
-            if (!leftRefSet.stream().anyMatch(s -> s.getOriginalClassName().equals(e.getDiffLeftClass().getOriginalClassName()))) {
-              leftRefSet.add(e.getDiffLeftClass());
-            }
-            if (!rightRefSet.stream().anyMatch(s -> s.getOriginalClassName().equals(e.getDiffRightClass().getOriginalClassName()))) {
-              rightRefSet.add(e.getDiffRightClass());
-            }
-          });
-          refSetAssociationList.add(new DiffRefSetAssociation(leftRefSet, leftRoleName, direction, rightRoleName, rightRefSet));
-        })));
+    List<DiffAssociation> originalDiffAssocList = diffAssociationGroup.values()
+      .stream()
+      .filter(e -> e.getDiffKind() == DifferentGroup.DiffAssociationKind.DIFF_ASC)
+      .collect(Collectors.toList());
+
+    originalDiffAssocList.forEach(originalAssoc -> {
+      Set<DiffClass> leftRefSet = new HashSet<>();
+      leftRefSet.add(originalAssoc.getDiffLeftClass());
+      Set<DiffClass> rightRefSet = new HashSet<>();
+      rightRefSet.add(originalAssoc.getDiffRightClass());
+      String leftRoleName = originalAssoc.getDiffLeftClassRoleName();
+      String rightRoleName = originalAssoc.getDiffRightClassRoleName();
+      DifferentGroup.DiffAssociationDirection direction = originalAssoc.getDiffDirection();
+
+      List<Map<String, Object>> matchedAssocList = fuzzySearchDiffAssociationByDiffAssociationWithRoleNameAndDirection(diffAssociationGroup, originalAssoc);
+      Set<String> leftInheritedClassSet = getInheritedClassSet(inheritanceGraph, originalAssoc.getDiffLeftClass().getName());
+      Set<String> rightInheritedClassSet = getInheritedClassSet(inheritanceGraph, originalAssoc.getDiffRightClass().getName());
+      matchedAssocList.forEach(e -> {
+        if ((boolean) e.get("isReverse") == false) {
+          DiffAssociation inheritedAssoc = (DiffAssociation) e.get("diffAssociation");
+          if (leftInheritedClassSet.contains(inheritedAssoc.getDiffLeftClass().getName()) &&
+            rightInheritedClassSet.contains(inheritedAssoc.getDiffRightClass().getName())) {
+            leftRefSet.add(inheritedAssoc.getDiffLeftClass());
+            rightRefSet.add(inheritedAssoc.getDiffRightClass());
+          }
+        } else {
+          DiffAssociation inheritedAssoc = (DiffAssociation) e.get("diffAssociation");
+          if (leftInheritedClassSet.contains(inheritedAssoc.getDiffRightClass().getName()) &&
+            rightInheritedClassSet.contains(inheritedAssoc.getDiffLeftClass().getName())) {
+            leftRefSet.add(inheritedAssoc.getDiffRightClass());
+            rightRefSet.add(inheritedAssoc.getDiffLeftClass());
+          }
+        }
+      });
+
+      refSetAssociationList.add(new DiffRefSetAssociation(leftRefSet, leftRoleName, direction, rightRoleName, rightRefSet));
+    });
 
     return refSetAssociationList;
   }
