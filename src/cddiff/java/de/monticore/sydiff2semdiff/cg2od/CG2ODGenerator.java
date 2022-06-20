@@ -140,10 +140,8 @@ public class CG2ODGenerator {
 
     // initial for generate ODs
     List<ASTODElement> astodElementList = initGenerateODByAssociation(dg, compAssociation, classStack4TargetClass, classStack4SourceClass);
-    Optional<DiffRefSetAssociation> initDiffRefSetAssociationOpt = findRelatedDiffRefSetAssociationByDiffAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
-    if (!initDiffRefSetAssociationOpt.isEmpty()) {
-      refLinkCheckList.put(initDiffRefSetAssociationOpt.get(), refLinkCheckList.get(initDiffRefSetAssociationOpt.get()) - 1);
-    }
+    Optional<List<DiffRefSetAssociation>> optInitDiffRefSetAssociation = findRelatedDiffRefSetAssociationByDiffAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
+    refLinkCheckList = updateCounterInCheckList(optInitDiffRefSetAssociation, refLinkCheckList);
 
     // using basic process
     astodElementList = generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
@@ -337,7 +335,7 @@ public class CG2ODGenerator {
               // create new ASTODLinkList and add into ASTODElementList
               List<ASTODLink> linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
               astodElementList.addAll(linkList0);
-            } else {
+            } else if (currentSideObjectList.size() == 2) {
               ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
               ASTODNamedObject otherSideObject1 = otherSideObject0.deepClone();
               String objectName = otherSideObject1.getName().split("_")[0];
@@ -357,10 +355,8 @@ public class CG2ODGenerator {
             }
 
             // mark related refLink
-            Optional<DiffRefSetAssociation> currentDiffRefSetAssociationOpt = findRelatedDiffRefSetAssociationByDiffAssociation(currentDiffAssociation, refLinkCheckList);
-            if (!currentDiffRefSetAssociationOpt.isEmpty()) {
-              refLinkCheckList.put(currentDiffRefSetAssociationOpt.get(), refLinkCheckList.get(currentDiffRefSetAssociationOpt.get()) - 1);
-            }
+            Optional<List<DiffRefSetAssociation>> optCurrentDiffRefSetAssociation = findRelatedDiffRefSetAssociationByDiffAssociation(currentDiffAssociation, refLinkCheckList);
+            refLinkCheckList = updateCounterInCheckList(optCurrentDiffRefSetAssociation, refLinkCheckList);
           }
         }
       }

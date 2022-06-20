@@ -2,6 +2,7 @@ package de.monticore.sydiff2semdiff.dg2cg;
 
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
+import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffRefSetAssociation;
 import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
 import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompAssociation;
 import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompClass;
@@ -9,6 +10,8 @@ import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.diffAssociationCardinalityHelper;
 
 public class CompareHelper {
 
@@ -55,11 +58,12 @@ public class CompareHelper {
   /**
    * generate the list of which attributes are different between based DiffClass and compared DiffClass
    */
-  public static List<String> compClassWhichAttributesDiffHelper(DiffClass based, DiffClass compared) {
-    if (compared == null) {
+  public static List<String> compClassWhichAttributesDiffHelper(DiffClass based, Optional<DiffClass> optCompared) {
+    if (optCompared.isEmpty()) {
       List<String> attributesDiffList = based.getAttributes().keySet().stream().collect(Collectors.toList());
       return attributesDiffList;
     } else {
+      DiffClass compared = optCompared.get();
       List<String> attributesDiffList = new ArrayList<>();
       // check each attributes
       based.getAttributes().forEach((attrName, attrType) -> {
@@ -314,5 +318,4 @@ public class CompareHelper {
     }
     return compAssociation;
   }
-
 }
