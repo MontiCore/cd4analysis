@@ -1,4 +1,3 @@
-
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis.prettyprint;
 
@@ -10,7 +9,6 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCPackageDeclaration;
-import de.se_rwth.commons.Names;
 
 public class CDBasisPrettyPrinter extends PrettyPrintUtil
     implements CDBasisVisitor2, CDBasisHandler {

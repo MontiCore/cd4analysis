@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.cd;
+
+classdiagram SymbolTableTest{
+
+  class A extends B implements D, E{
+    java.lang.String string;
+    static int i;
+    derived int j;
+  }
+
+  class B extends C implements D{
+    static char character;
+    int value;
+  }
+
+  class C {
+    final int number;
+    int[] field;
+  }
+
+  interface D;
+
+  interface E {
+    int k;
+  }
+
+}
