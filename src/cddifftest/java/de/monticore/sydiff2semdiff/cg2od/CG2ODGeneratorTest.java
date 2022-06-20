@@ -31,7 +31,7 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     DG2CGGenerator dg2CGGenerator4dg1Withdg2 = new DG2CGGenerator();
     DG2CGGenerator dg2CGGenerator4dg2Withdg1 = new DG2CGGenerator();
     cg1 = dg2CGGenerator4dg1Withdg2.generateCompareGroup(dg1, dg2);
-    cg2 = dg2CGGenerator4dg2Withdg1.generateCompareGroup(dg2, dg1);
+//    cg2 = dg2CGGenerator4dg2Withdg1.generateCompareGroup(dg2, dg1);
   }
 
   /********************************************************************
@@ -191,20 +191,62 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     ));
   }
 
-
   /********************************************************************
    *********************    Start for Combination    ******************
    *******************************************************************/
+  @Test
+  public void testGenerateODByOverlapRefSetAssociation1() {
+    generateCompareGroupTemp("Combination","OverlapRefSetAssociation1A.cd", "OverlapRefSetAssociation1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    Assert.assertTrue(resultList.size() == 0);
+  }
 
-//  @Test
-//  public void testGenerateODByRefSetAssociation() {
-//    generateCompareGroupTemp("Association","RefSet1A.cd", "RefSet1B.cd");
-//    CG2ODGenerator odGenerator = new CG2ODGenerator();
-//    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
-//    for(int i = 0; i < resultList.size() ; i++) {
-//      System.out.println(resultList.get(i));
-//    }
-//  }
+  @Test
+  public void testGenerateODByOverlapRefSetAssociation2() {
+    generateCompareGroupTemp("Combination","OverlapRefSetAssociation1C.cd", "OverlapRefSetAssociation1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    Assert.assertTrue(resultList.size() == 0);
+  }
+
+  @Test
+  public void testGenerateODByOverlapRefSetAssociation3() {
+    generateCompareGroupTemp("Combination","OverlapRefSetAssociation2A.cd", "OverlapRefSetAssociation2B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompClass_A]-[edited]") &&
+        e.contains(
+          "  a_0:A{\n" +
+            "    int id = some_type_int;\n" +
+            "  };")
+    ));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompClass_A1]-[edited]") &&
+        e.contains(
+          "  a1_0:A1{\n" +
+            "    int id = some_type_int;\n" +
+            "  };") &&
+        e.contains("b1_0:B1{};") &&
+        e.contains("link a1_0 (workOn) -> (toDo) b1_0;")
+    ));
+  }
+
+  @Test
+  public void testGenerateODByRefSetAssociation() {
+    generateCompareGroupTemp("Combination","RefSet1A.cd", "RefSet1B.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompAssociation_Employee_assignee_RightToLeft_todo_Task]-[cardinality_changed]") &&
+        e.contains(
+          "  employee_0:Employee{\n" +
+            "    PositionKind kind = fullTime;\n" +
+            "  };")
+    ));
+  }
 
 //  @Test
 //  public void testGenerateODByCombination () {

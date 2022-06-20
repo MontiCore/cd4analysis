@@ -130,7 +130,19 @@ public class GenerateODHelper {
   public static Map<DiffRefSetAssociation, Integer> convertRefSetAssociationList2CheckList(List<DiffRefSetAssociation> refSetAssociationList) {
     Map<DiffRefSetAssociation, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
-      checkList.put(item, 1);
+
+      // check the overlapped RefSetAssociation count
+      int count = refSetAssociationList
+        .stream()
+        .filter(e ->
+          e.getLeftRoleName().equals(item.getLeftRoleName()) &&
+            e.getRightRoleName().equals(item.getRightRoleName()) &&
+            e.getDirection().equals(item.getDirection()) &&
+            item.getLeftRefSet().containsAll(e.getLeftRefSet()) &&
+            item.getRightRefSet().containsAll(e.getRightRefSet())
+        ).collect(Collectors.toList()).size();
+
+      checkList.put(item, count);
     });
     return checkList;
   }
@@ -138,32 +150,53 @@ public class GenerateODHelper {
   /**
    * according to DiffAssociation to find corresponding DiffRefSetAssociation
    */
-  public static Optional<DiffRefSetAssociation> findRelatedDiffRefSetAssociationByDiffAssociation(DiffAssociation association,
-                                                                                                  Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
-    Optional<DiffRefSetAssociation> refSetAssociationOptional = refLinkCheckList.keySet()
-      .stream()
-      .filter(item ->
-        item.getLeftRoleName().equals(association.getDiffLeftClassRoleName()) &&
-          item.getRightRoleName().equals(association.getDiffRightClassRoleName()) &&
-          item.getDirection().equals(association.getDiffDirection()) &&
-          item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(association.getDiffLeftClass().getName())) &&
-          item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(association.getDiffRightClass().getName()))
-      ).findFirst();
+  public static Optional<List<DiffRefSetAssociation>> findRelatedDiffRefSetAssociationByDiffAssociation(DiffAssociation originalAssoc, Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
+    List<DiffRefSetAssociation> resultList = new ArrayList<>();
 
-    return refSetAssociationOptional;
+    refLinkCheckList.keySet().forEach(item -> {
+      if (item.getLeftRoleName().equals(originalAssoc.getDiffLeftClassRoleName()) &&
+        item.getRightRoleName().equals(originalAssoc.getDiffRightClassRoleName()) &&
+        item.getDirection().equals(originalAssoc.getDiffDirection()) &&
+        item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffLeftClass().getName())) &&
+        item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffRightClass().getName()))) {
+        resultList.add(item);
+      } else if (item.getLeftRoleName().equals(originalAssoc.getDiffRightClassRoleName()) &&
+        item.getRightRoleName().equals(originalAssoc.getDiffLeftClassRoleName()) &&
+        item.getDirection().equals(reverseDirection(originalAssoc.getDiffDirection())) &&
+        item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffRightClass().getName())) &&
+        item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getDiffLeftClass().getName()))) {
+        resultList.add(item);
+      }
+    });
+
+    if (resultList.size() == 0) {
+      return Optional.empty();
+    } else {
+      return Optional.of(resultList);
+    }
+  }
+
+  public static Map<DiffRefSetAssociation, Integer> updateCounterInCheckList(Optional<List<DiffRefSetAssociation>> optAssociationList, Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
+    if (optAssociationList.isPresent()) {
+      optAssociationList.get().forEach(e -> {
+        refLinkCheckList.put(e, refLinkCheckList.get(e) - 1);
+      });
+    }
+    return refLinkCheckList;
   }
 
   /**
    * check whether the related DiffRefSetAssociation is used by DiffAssociation
    */
-  public static boolean checkRelatedDiffRefSetAssociationIsUsed(DiffAssociation association,
-                                                                Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
-    Optional<DiffRefSetAssociation> refSetAssociationOptional = findRelatedDiffRefSetAssociationByDiffAssociation(association, refLinkCheckList);
-    if (refLinkCheckList.get(refSetAssociationOptional.get()) != 0) {
-      return false;
-    } else {
-      return true;
-    }
+  public static boolean checkRelatedDiffRefSetAssociationIsUsed(DiffAssociation association, Map<DiffRefSetAssociation, Integer> refLinkCheckList) {
+    Optional<List<DiffRefSetAssociation>> optRefSetAssociationList = findRelatedDiffRefSetAssociationByDiffAssociation(association, refLinkCheckList);
+    AtomicBoolean isUsed = new AtomicBoolean(true);
+    optRefSetAssociationList.get().forEach(e -> {
+      if (refLinkCheckList.get(e) != 0) {
+        isUsed.set(false);
+      }
+    });
+    return isUsed.get();
   }
 
   /**
@@ -263,7 +296,7 @@ public class GenerateODHelper {
       } else {
         // normal attribute
         String value = null;
-        if (!compClass.isEmpty()) {
+        if (compClass.isPresent()) {
           if (compClass.get().getCompKind() == CompareGroup.CompClassKind.COMP_ENUM) {
             value = createValue(dg, compClass, astcdAttribute.printType(), true);
           } else {

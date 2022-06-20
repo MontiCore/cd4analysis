@@ -135,6 +135,7 @@ public class DiffAssociation implements Cloneable {
   @Override
   public DiffAssociation clone() throws CloneNotSupportedException {
     DiffAssociation cloned = (DiffAssociation) super.clone();
+    cloned.editedElement = editedElement.deepClone();
     cloned.diffLeftClass = diffLeftClass.clone();
     cloned.diffRightClass = diffRightClass.clone();
     return cloned;
