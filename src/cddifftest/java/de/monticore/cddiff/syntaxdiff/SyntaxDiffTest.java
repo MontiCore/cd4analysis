@@ -1,7 +1,9 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
@@ -18,43 +20,69 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 public class SyntaxDiffTest extends CDDiffTestBasis {
+
+  protected CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+
+  protected final ASTCDCompilationUnit cd1 = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest1.cd");
+
+  protected final ASTCDCompilationUnit cd2 = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest2.cd");
+
+  @Override
+  protected ASTCDCompilationUnit parseModel(String modelFile) {
+    Path model = Paths.get(modelFile);
+    CD4CodeParser parser = new CD4CodeParser();
+    Optional<ASTCDCompilationUnit> optAutomaton;
+    try {
+      optAutomaton = parser.parse(model.toString());
+      //assertFalse(parser.hasErrors());
+      assertTrue(optAutomaton.isPresent());
+
+      return optAutomaton.get();
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
+    }
+
+    return null;
+  }
+
+  @Before
+  public void buildSymTable(){
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    new CD4CodeDirectCompositionTrafo().transform(cd1);
+    new CD4CodeDirectCompositionTrafo().transform(cd2);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2);
+  }
+
+  @Test
+  public void testCreateSyntaxDiff(){
+    SyntaxDiff.createCDDiff(cd1,cd2);
+    cd1.getCDDefinition().getCDClassesList().get(0).getCDAttributeList().get(0).getSymbol().getFullName();
+  }
+
 
   @Test
   public void testSyntaxDiff() {
-    CD4CodeMill.globalScope().clear();
-
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-
-    final ASTCDCompilationUnit cd1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest1.cd");
-
-    final ASTCDCompilationUnit cd2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest2.cd");
-
-
-    ICD4CodeGlobalScope gscope = CD4CodeMill.globalScope();
-    gscope.clear();
-    BuiltInTypes.addBuiltInTypes(gscope);
-
-    //cd1.accept(new CD4CodeSymbolTableCompleter(cd1).getTraverser());
-    //cd2.accept(new CD4CodeSymbolTableCompleter(cd2).getTraverser());
-
-    new CD4CodeDirectCompositionTrafo().transform(cd1);
-    new CD4CodeDirectCompositionTrafo().transform(cd2);
-
-    //new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(cd1);
-    //new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(cd2);
 
     // Associations
     List<ASTCDAssociation> cd1AssociationsList = cd1.getCDDefinition().getCDAssociationsList();
     List<ASTCDAssociation> cd2AssociationsList = cd2.getCDDefinition().getCDAssociationsList();
-
 
     // Stereotype not present
     Optional<ASTStereotype> cd1Stereo;
