@@ -176,14 +176,16 @@ public class CD4C {
    * @param astcdType   the ASTCDType to which the method should be added
    * @param template    the name of the template that is executed to create the method signature
    * @param arguments   the arguments to be provided to the template
+   *
+   * @return the created method
    */
-  public void addMethod(ASTCDType astcdType, String template, Object... arguments) {
+  public ASTCDMethodSignature addMethod(ASTCDType astcdType, String template, Object... arguments) {
     checkInitialized();
 
     Optional<ASTCDMethodSignature> method = this.createMethod(astcdType, template, arguments);
     if (!method.isPresent()) {
       Log.error("0x11010: There was no method created in the template '" + template + "'");
-      return;
+      return null;
     }
 
     if (this.classPredicates.stream().anyMatch(p -> !p.test(astcdType, method.get()))) {
@@ -191,6 +193,7 @@ public class CD4C {
     }
 
     astcdType.addCDMember(method.get());
+    return method.get();
   }
 
   /**
@@ -243,14 +246,16 @@ public class CD4C {
    * @param clazz       the class to which the constructor should be added
    * @param template    the name of the template that is executed to create the method signature
    * @param arguments   the arguments to be provided to the template
+   *
+   * @return the created constructor
    */
-  public void addConstructor(ASTCDClass clazz, String template, Object... arguments) {
+  public ASTCDMethodSignature addConstructor(ASTCDClass clazz, String template, Object... arguments) {
     checkInitialized();
 
     Optional<ASTCDMethodSignature> method = this.createConstructor(clazz, template, arguments);
     if (!method.isPresent()) {
       Log.error("0x11020: There was no constructor created in the template '" + template + "'");
-      return;
+      return null;
     }
 
     if (this.classPredicates.stream().anyMatch(p -> !p.test(clazz, method.get()))) {
@@ -258,6 +263,7 @@ public class CD4C {
     }
 
     clazz.addCDMember(method.get());
+    return method.get();
   }
 
   /**
@@ -312,9 +318,11 @@ public class CD4C {
    *
    * @param astcdType   the ASTCDType to which the attribute should be added
    * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
+   *
+   * @return the created attribute
    */
-  public void addAttribute(ASTCDType astcdType, String signature) {
-    this.addAttribute(astcdType, false, false, signature);
+  public ASTCDAttribute addAttribute(ASTCDType astcdType, String signature) {
+    return this.addAttribute(astcdType, false, false, signature);
   }
 
   /**
@@ -325,14 +333,16 @@ public class CD4C {
    * @param addSetter   whether to generate a setter for the attribute
    * @param signature   the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseCDAttribute(String) CD4CodeParser})
    *
+   * @return the created constructor
+   *
    */
-  public void addAttribute(ASTCDType astcdType, boolean addGetter, boolean addSetter, String signature) {
+  public ASTCDAttribute addAttribute(ASTCDType astcdType, boolean addGetter, boolean addSetter, String signature) {
     checkInitialized();
 
     Optional<ASTCDAttribute> attribute = this.createAttribute(astcdType, signature);
     if (!attribute.isPresent()) {
       Log.error("0x11022: There was no attribute created in the template '" + signature + "'");
-      return;
+      return null;
     }
 
     this.setEnclosingScopeTo(attribute.get(), astcdType.getSpannedScope());
@@ -340,6 +350,7 @@ public class CD4C {
     astcdType.addCDMember(attribute.get());
 
     this.addMethods(astcdType, attribute.get(), addGetter, addSetter);
+    return attribute.get();
   }
 
   public void addMethods(ASTCDType astcdType, ASTCDAttribute attr, boolean addGetter, boolean addSetter) {
@@ -377,8 +388,10 @@ public class CD4C {
    *
    * @param astcdType the ASTCDType to which the import should be added
    * @param signature the signature (as processed by {@link de.monticore.cd4code._parser.CD4CodeParser#parseMCImportStatement(String) CD4CodeParser})
+   *
+   * @return the created import statement
    */
-  public void addImport(ASTCDType astcdType, String signature) {
+  public ASTMCImportStatement addImport(ASTCDType astcdType, String signature) {
     checkInitialized();
 
     CD4CTemplateHelper th = new CD4CTemplateHelper();
@@ -386,6 +399,7 @@ public class CD4C {
 
     Set<ASTMCImportStatement> s = importMap.computeIfAbsent(astcdType, it -> Sets.newLinkedHashSet());
     s.add(th.astcdImport.get());
+    return th.astcdImport.get();
   }
 
   public Collection<ASTMCImportStatement> getImportList(ASTCDType astcdType) {
