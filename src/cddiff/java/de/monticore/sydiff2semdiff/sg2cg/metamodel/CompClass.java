@@ -1,24 +1,24 @@
-package de.monticore.sydiff2semdiff.dg2cg.metamodel;
+package de.monticore.sydiff2semdiff.sg2cg.metamodel;
 
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportClass;
 
 import java.util.*;
 
-import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindHelper;
-import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindStrHelper;
+import static de.monticore.sydiff2semdiff.sg2cg.CompareHelper.getCompClassKindHelper;
+import static de.monticore.sydiff2semdiff.sg2cg.CompareHelper.getCompClassKindStrHelper;
 
 /**
- * Each DiffClass in based DifferentGroup will generate one corresponding CompClass
+ * Each SupportClass in based SupportGroup will generate one corresponding CompClass
  *
  * @attribute compId:
  *    unique compare id
  * @attribute originalElement:
- *    original DiffClass
- * @attribute isInComparedDG:
- *    whether this DiffClass exists in compared DifferentGroup (only check DiffClass name)
+ *    original SupportClass
+ * @attribute isInCompareSG:
+ *    whether this SupportClass exists in compared SupportGroup (only check SupportClass name)
  * @attribute isContentDiff:
- *    if this DiffClass exists in compared DifferentGroup (only check DiffClass name),
- *    then check whether the content of those two DiffClasses are different
+ *    if this SupportClass exists in compared SupportGroup (only check SupportClass name),
+ *    then check whether the content of those two SupportClasses are different
  * @attribute compCategory:
  *    - has semantic difference:
  *        EDITED, DELETED
@@ -29,15 +29,15 @@ import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompClassKindSt
  */
 public class CompClass {
   protected final UUID compId;
-  protected DiffClass originalElement;
-  protected final boolean isInComparedDG;
+  protected SupportClass originalElement;
+  protected final boolean isInCompareSG;
   protected final boolean isContentDiff;
   protected final CompareGroup.CompClassCategory compCategory;
   protected Optional<List<String>> whichAttributesDiff;
 
-  public CompClass(DiffClass originalElement, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompClassCategory compCategory) {
+  public CompClass(SupportClass originalElement, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompClassCategory compCategory) {
     this.originalElement = originalElement;
-    this.isInComparedDG = isInComparedDG;
+    this.isInCompareSG = isInCompareSG;
     this.isContentDiff = isContentDiff;
     this.compCategory = compCategory;
     this.compId = UUID.randomUUID();
@@ -52,11 +52,11 @@ public class CompClass {
   }
 
   public CompareGroup.CompClassKind getCompKind() {
-    return getCompClassKindHelper(this.originalElement.getDiffKind());
+    return getCompClassKindHelper(this.originalElement.getSupportKind());
   }
 
-  public boolean isInComparedDG() {
-    return isInComparedDG;
+  public boolean isInCompareSG() {
+    return isInCompareSG;
   }
 
   public boolean isContentDiff() {
@@ -75,7 +75,7 @@ public class CompClass {
     this.whichAttributesDiff = whichAttributesDiff;
   }
 
-  public DiffClass getOriginalElement() {
+  public SupportClass getOriginalElement() {
     return originalElement;
   }
 }
