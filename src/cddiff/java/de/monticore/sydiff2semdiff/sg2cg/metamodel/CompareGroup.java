@@ -1,24 +1,24 @@
-package de.monticore.sydiff2semdiff.dg2cg.metamodel;
+package de.monticore.sydiff2semdiff.sg2cg.metamodel;
 
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportGroup;
 
 import java.util.Deque;
 
 /**
- * CompareGroup is to compare each element of two DifferentGroup and return the result after comparison.
- * We should determine which DifferentGroup is the basedDG and which one is the comparedDG.
- * Determine whether there is a semantic difference between DifferentGroup A and DifferentGroup B,
+ * CompareGroup is to compare each element of two SupportGroup and return the result after comparison.
+ * We should determine which SupportGroup is the baseSG and which one is the compareSG.
+ * Determine whether there is a semantic difference between SupportGroup A and SupportGroup B,
  * We should create two CompareGroup:
- *    1. basedDG = A, comparedDG = B
- *    1. basedDG = B, comparedDG = A
+ *    1. baseSG = A, compareSG = B
+ *    1. baseSG = B, compareSG = A
  * If there are no objects in compClassResultQueueWithDiff and compAssociationResultQueueWithDiff of above two CompareGroups,
  * then we can say there is no semantic difference between CD A and CD B,
  * otherwise there are semantic differences between CD A and CD B.
  *
- * @attribute basedDG:
- *    the based DifferentGroup
- * @attribute comparedDG:
- *    the compared DifferentGroup
+ * @attribute baseSG:
+ *    the based SupportGroup
+ * @attribute compareSG:
+ *    the compared SupportGroup
  * @attribute compClassResultQueueWithDiff:
  *    store the CompClass that has semantic difference
  * @attribute compAssociationResultQueueWithDiff:
@@ -29,8 +29,8 @@ import java.util.Deque;
  *    store the CompAssociation that has no semantic difference
  */
 public class CompareGroup {
-  protected DifferentGroup basedDG;
-  protected DifferentGroup comparedDG;
+  protected SupportGroup baseSG;
+  protected SupportGroup compareSG;
   protected Deque<CompClass> compClassResultQueueWithDiff;
   protected Deque<CompAssociation> compAssociationResultQueueWithDiff;
   protected Deque<CompClass> compClassResultQueueWithoutDiff;
@@ -64,34 +64,34 @@ public class CompareGroup {
     DIRECTION, LEFT_CARDINALITY, RIGHT_CARDINALITY
   }
 
-  public CompareGroup(DifferentGroup basedDG, DifferentGroup comparedDG) {
-    this.basedDG = basedDG;
-    this.comparedDG = comparedDG;
+  public CompareGroup(SupportGroup baseSG, SupportGroup compareSG) {
+    this.baseSG = baseSG;
+    this.compareSG = compareSG;
   }
 
-  public CompareGroup(DifferentGroup basedDG, DifferentGroup comparedDG, Deque<CompClass> compClassResultQueueWithDiff, Deque<CompAssociation> compAssociationResultQueueWithDiff, Deque<CompClass> compClassResultQueueWithoutDiff, Deque<CompAssociation> compAssociationResultQueueWithoutDiff) {
-    this.basedDG = basedDG;
-    this.comparedDG = comparedDG;
+  public CompareGroup(SupportGroup baseSG, SupportGroup compareSG, Deque<CompClass> compClassResultQueueWithDiff, Deque<CompAssociation> compAssociationResultQueueWithDiff, Deque<CompClass> compClassResultQueueWithoutDiff, Deque<CompAssociation> compAssociationResultQueueWithoutDiff) {
+    this.baseSG = baseSG;
+    this.compareSG = compareSG;
     this.compClassResultQueueWithDiff = compClassResultQueueWithDiff;
     this.compAssociationResultQueueWithDiff = compAssociationResultQueueWithDiff;
     this.compClassResultQueueWithoutDiff = compClassResultQueueWithoutDiff;
     this.compAssociationResultQueueWithoutDiff = compAssociationResultQueueWithoutDiff;
   }
 
-  public DifferentGroup getBasedDG() {
-    return basedDG;
+  public SupportGroup getBaseSG() {
+    return baseSG;
   }
 
-  public void setBasedDG(DifferentGroup basedDG) {
-    this.basedDG = basedDG;
+  public void setBaseSG(SupportGroup baseSG) {
+    this.baseSG = baseSG;
   }
 
-  public DifferentGroup getComparedDG() {
-    return comparedDG;
+  public SupportGroup getCompareSG() {
+    return compareSG;
   }
 
-  public void setComparedDG(DifferentGroup comparedDG) {
-    this.comparedDG = comparedDG;
+  public void setCompareSG(SupportGroup compareSG) {
+    this.compareSG = compareSG;
   }
 
   public Deque<CompClass> getCompClassResultQueueWithDiff() {
@@ -128,6 +128,6 @@ public class CompareGroup {
 
   @Override
   public String toString() {
-    return "CompareGroup{" + "basedDG=" + basedDG + ", comparedDG=" + comparedDG + ", compClassResultQueueWithDiff=" + compClassResultQueueWithDiff + ", compAssociationResultQueueWithDiff=" + compAssociationResultQueueWithDiff + ", compClassResultQueueWithoutDiff=" + compClassResultQueueWithoutDiff + ", compAssociationResultQueueWithoutDiff=" + compAssociationResultQueueWithoutDiff + '}';
+    return "CompareGroup{" + "baseSG=" + baseSG + ", compareSG=" + compareSG + ", compClassResultQueueWithDiff=" + compClassResultQueueWithDiff + ", compAssociationResultQueueWithDiff=" + compAssociationResultQueueWithDiff + ", compClassResultQueueWithoutDiff=" + compClassResultQueueWithoutDiff + ", compAssociationResultQueueWithoutDiff=" + compAssociationResultQueueWithoutDiff + '}';
   }
 }

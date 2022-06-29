@@ -5,18 +5,18 @@ import de.monticore.od4data.prettyprinter.OD4DataFullPrettyPrinter;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffClass;
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffRefSetAssociation;
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
-import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompAssociation;
-import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompClass;
-import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportAssociation;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportClass;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportRefSetAssociation;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportGroup;
+import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompAssociation;
+import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompClass;
+import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompareGroup;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
+import static de.monticore.sydiff2semdiff.cd2sg.SupportHelper.*;
 import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.*;
 
 public class CG2ODGenerator {
@@ -24,7 +24,7 @@ public class CG2ODGenerator {
   /**
    * generate ODs by solving items with syntactic differences in globalClassQueue and globalAssociationQueue
    */
-  public List<String> generateObjectDiagrams(DifferentGroup dg, CompareGroup cg) {
+  public List<String> generateObjectDiagrams(SupportGroup sg, CompareGroup cg) {
     List<String> oDResultList = new ArrayList<>();
 
     Deque<CompClass> globalClassQueue = cg.getCompClassResultQueueWithDiff();
@@ -34,7 +34,7 @@ public class CG2ODGenerator {
     int i = 1;
     while (!globalAssociationQueue.isEmpty()) {
       CompAssociation currentCompAssociation = globalAssociationQueue.pop();
-      List<ASTODElement> currentElementList = generateODByAssociation(dg, currentCompAssociation);
+      List<ASTODElement> currentElementList = generateODByAssociation(sg, currentCompAssociation);
       if (currentElementList == null) {
         continue;
       }
@@ -48,7 +48,7 @@ public class CG2ODGenerator {
     i = 1;
     while (!globalClassQueue.isEmpty()) {
       CompClass currentCompClass = globalClassQueue.pop();
-      List<ASTODElement> currentElementList = generateODByClass(dg, currentCompClass);
+      List<ASTODElement> currentElementList = generateODByClass(sg, currentCompClass);
       if (currentElementList == null) {
         continue;
       }
@@ -85,20 +85,20 @@ public class CG2ODGenerator {
   /**
    * solve the item in globalClassQueue
    */
-  protected List<ASTODElement> generateODByClass(DifferentGroup dg, CompClass compClass) {
+  protected List<ASTODElement> generateODByClass(SupportGroup sg, CompClass compClass) {
     Deque<Map<String, Object>> classStack4TargetClass = new LinkedList<>();
     Deque<Map<String, Object>> classStack4SourceClass = new LinkedList<>();
-    Deque<DiffAssociation> associationStack4TargetClass = new LinkedList<>();
-    Deque<DiffAssociation> associationStack4SourceClass = new LinkedList<>();
-    Map<DiffRefSetAssociation, Integer> refLinkCheckList = convertRefSetAssociationList2CheckList(dg.getRefSetAssociationList());
+    Deque<SupportAssociation> associationStack4TargetClass = new LinkedList<>();
+    Deque<SupportAssociation> associationStack4SourceClass = new LinkedList<>();
+    Map<SupportRefSetAssociation, Integer> refLinkCheckList = convertRefSetAssociationList2CheckList(sg.getRefSetAssociationList());
 
     // initial for generate ODs
-    List<ASTODElement> astodElementList = initGenerateODByClass(dg, compClass, classStack4TargetClass, classStack4SourceClass);
+    List<ASTODElement> astodElementList = initGenerateODByClass(sg, compClass, classStack4TargetClass, classStack4SourceClass);
 
     // using basic process
-    astodElementList = generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
+    astodElementList = generateODBasicProcess(sg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
     if (astodElementList != null) {
-      return generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
+      return generateODBasicProcess(sg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
     } else {
       return null;
     }
@@ -110,19 +110,19 @@ public class CG2ODGenerator {
    * create an object that its corresponding class has syntactic differences and
    * put this object into ASTODElement list
    */
-  public List<ASTODElement> initGenerateODByClass(DifferentGroup dg, CompClass compClass, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
+  public List<ASTODElement> initGenerateODByClass(SupportGroup sg, CompClass compClass, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
     // get the necessary information
-    DiffClass diffClass = compClass.getOriginalElement();
+    SupportClass supportClass = compClass.getOriginalElement();
     List<ASTODElement> astodElementList = new LinkedList<>();
 
     // create ASTODElement list
-    if (diffClass.getDiffKind() != DifferentGroup.DiffClassKind.DIFF_ENUM) {
+    if (supportClass.getSupportKind() != SupportGroup.SupportClassKind.SUPPORT_ENUM) {
       // simple class, abstract class, interface
-      astodElementList.addAll(createObjectList(dg, Optional.of(compClass), diffClass, 1, classStack4TargetClass, classStack4SourceClass));
+      astodElementList.addAll(createObjectList(sg, Optional.of(compClass), supportClass, 1, classStack4TargetClass, classStack4SourceClass));
     } else {
       // enum
-      DiffClass diffClassUsingEnum = dg.getDiffClassGroup().get(diffClass.getDiffLink4EnumClass().iterator().next());
-      astodElementList.addAll(createObjectList(dg, Optional.of(compClass), diffClassUsingEnum, 1, classStack4TargetClass, classStack4SourceClass));
+      SupportClass supportClassUsingEnum = sg.getSupportClassGroup().get(supportClass.getSupportLink4EnumClass().iterator().next());
+      astodElementList.addAll(createObjectList(sg, Optional.of(compClass), supportClassUsingEnum, 1, classStack4TargetClass, classStack4SourceClass));
     }
     return astodElementList;
   }
@@ -130,23 +130,23 @@ public class CG2ODGenerator {
   /**
    * solve the item in globalAssociationQueue
    */
-  protected List<ASTODElement> generateODByAssociation(DifferentGroup dg, CompAssociation compAssociation) {
+  protected List<ASTODElement> generateODByAssociation(SupportGroup sg, CompAssociation compAssociation) {
 
     Deque<Map<String, Object>> classStack4TargetClass = new LinkedList<>();
     Deque<Map<String, Object>> classStack4SourceClass = new LinkedList<>();
-    Deque<DiffAssociation> associationStack4TargetClass = new LinkedList<>();
-    Deque<DiffAssociation> associationStack4SourceClass = new LinkedList<>();
-    Map<DiffRefSetAssociation, Integer> refLinkCheckList = convertRefSetAssociationList2CheckList(dg.getRefSetAssociationList());
+    Deque<SupportAssociation> associationStack4TargetClass = new LinkedList<>();
+    Deque<SupportAssociation> associationStack4SourceClass = new LinkedList<>();
+    Map<SupportRefSetAssociation, Integer> refLinkCheckList = convertRefSetAssociationList2CheckList(sg.getRefSetAssociationList());
 
     // initial for generate ODs
-    List<ASTODElement> astodElementList = initGenerateODByAssociation(dg, compAssociation, classStack4TargetClass, classStack4SourceClass);
-    Optional<List<DiffRefSetAssociation>> optInitDiffRefSetAssociation = findRelatedDiffRefSetAssociationByDiffAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
-    refLinkCheckList = updateCounterInCheckList(optInitDiffRefSetAssociation, refLinkCheckList);
+    List<ASTODElement> astodElementList = initGenerateODByAssociation(sg, compAssociation, classStack4TargetClass, classStack4SourceClass);
+    Optional<List<SupportRefSetAssociation>> optInitSupportRefSetAssociation = findRelatedSupportRefSetAssociationBySupportAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
+    refLinkCheckList = updateCounterInCheckList(optInitSupportRefSetAssociation, refLinkCheckList);
 
     // using basic process
-    astodElementList = generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
+    astodElementList = generateODBasicProcess(sg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
     if (astodElementList != null) {
-      astodElementList = generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
+      astodElementList = generateODBasicProcess(sg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
       return astodElementList;
     } else {
       return null;
@@ -160,39 +160,39 @@ public class CG2ODGenerator {
    * create corresponding link among those objects and
    * put those objects into ASTODElement list
    */
-  public List<ASTODElement> initGenerateODByAssociation(DifferentGroup dg, CompAssociation compAssociation, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
+  public List<ASTODElement> initGenerateODByAssociation(SupportGroup sg, CompAssociation compAssociation, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
 
-    DiffAssociation currentDiffAssoc = intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(compAssociation.getOriginalElement(), dg);
+    SupportAssociation currentDiffAssoc = intersectSupportAssociationCardinalityBySupportAssociationOnlyWithLeftToRightAndRightToLeft(compAssociation.getOriginalElement(), sg);
 
     // get the necessary information
-    DiffClass leftDiffClass = currentDiffAssoc.getDiffLeftClass();
-    DiffClass rightDiffClass = currentDiffAssoc.getDiffRightClass();
-    String leftRoleName = currentDiffAssoc.getDiffLeftClassRoleName();
-    String rightRoleName = currentDiffAssoc.getDiffRightClassRoleName();
+    SupportClass leftSupportClass = currentDiffAssoc.getSupportLeftClass();
+    SupportClass rightSupportClass = currentDiffAssoc.getSupportRightClass();
+    String leftRoleName = currentDiffAssoc.getSupportLeftClassRoleName();
+    String rightRoleName = currentDiffAssoc.getSupportRightClassRoleName();
     int directionType = 0;
     int leftCardinalityCount = 0;
     int rightCardinalityCount = 0;
 
     switch (compAssociation.getCompCategory()) {
       case DELETED:
-        directionType = mappingDirection(currentDiffAssoc.getDiffDirection().toString());
-        leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffRightClassCardinality().toString());
+        directionType = mappingDirection(currentDiffAssoc.getSupportDirection().toString());
+        leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getSupportLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getSupportRightClassCardinality().toString());
         break;
       case DIRECTION_CHANGED:
         directionType = mappingDirection(compAssociation.getCompDirectionResult().get().toString());
-        leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffRightClassCardinality().toString());
+        leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getSupportLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getSupportRightClassCardinality().toString());
         break;
       case CARDINALITY_CHANGED:
-        directionType = mappingDirection(currentDiffAssoc.getDiffDirection().toString());
+        directionType = mappingDirection(currentDiffAssoc.getSupportDirection().toString());
         switch (compAssociation.getWhichPartDiff().get()) {
           case LEFT_CARDINALITY:
             leftCardinalityCount = mappingCardinality(compAssociation.getCompLeftClassCardinalityResult().get().toString());
-            rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffRightClassCardinality().toString());
+            rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getSupportRightClassCardinality().toString());
             break;
           case RIGHT_CARDINALITY:
-            leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffLeftClassCardinality().toString());
+            leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getSupportLeftClassCardinality().toString());
             rightCardinalityCount = mappingCardinality(compAssociation.getCompRightClassCardinalityResult().get().toString());
             break;
         }
@@ -200,8 +200,8 @@ public class CG2ODGenerator {
     }
 
     // create ASTODElement list
-    List<ASTODNamedObject> leftElementList = createObjectList(dg, Optional.empty(), leftDiffClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
-    List<ASTODNamedObject> rightElementList = createObjectList(dg, Optional.empty(), rightDiffClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+    List<ASTODNamedObject> leftElementList = createObjectList(sg, Optional.empty(), leftSupportClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+    List<ASTODNamedObject> rightElementList = createObjectList(sg, Optional.empty(), rightSupportClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
     List<ASTODLink> linkElementList = createLinkList(leftElementList, rightElementList, leftRoleName, rightRoleName, directionType);
 
     // remove duplicate
@@ -252,33 +252,33 @@ public class CG2ODGenerator {
    *    But this conflict is also present in the original CD, so this semantic difference should be removed.
    *    That means current syntactic difference for association can not lead to semantic difference.
    */
-  protected List<ASTODElement> generateODBasicProcess(DifferentGroup dg, String opt4StartClassKind, Deque<Map<String, Object>> classStack, Deque<DiffAssociation> associationStack, Map<DiffRefSetAssociation, Integer> refLinkCheckList, List<ASTODElement> astodElementList) {
+  protected List<ASTODElement> generateODBasicProcess(SupportGroup sg, String opt4StartClassKind, Deque<Map<String, Object>> classStack, Deque<SupportAssociation> associationStack, Map<SupportRefSetAssociation, Integer> refLinkCheckList, List<ASTODElement> astodElementList) {
     // start basic process for compClass and compAssociation
 
-    DiffClass currentDiffClass = null;
+    SupportClass currentSupportClass = null;
     while (!classStack.isEmpty()) {
-      Map<String, Object> diffClassMap = classStack.pop();
-      List<ASTODNamedObject> objectList = (List<ASTODNamedObject>) diffClassMap.get("objectList");
-      DiffClass diffClass = (DiffClass) diffClassMap.get("diffClass");
-      currentDiffClass = diffClass;
+      Map<String, Object> supportClassMap = classStack.pop();
+      List<ASTODNamedObject> objectList = (List<ASTODNamedObject>) supportClassMap.get("objectList");
+      SupportClass supportClass = (SupportClass) supportClassMap.get("supportClass");
+      currentSupportClass = supportClass;
       if (opt4StartClassKind.equals("target")) {
-        findAllDiffAssociationByTargetClass(dg, diffClass).forEach(e -> associationStack.push(e));
+        findAllSupportAssociationByTargetClass(sg, supportClass).forEach(e -> associationStack.push(e));
       } else {
-        findAllDiffAssociationBySourceClass(dg, diffClass).forEach(e -> associationStack.push(e));
+        findAllSupportAssociationBySourceClass(sg, supportClass).forEach(e -> associationStack.push(e));
       }
 
       while (!associationStack.isEmpty()) {
-        DiffAssociation currentDiffAssociation =
-          intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(associationStack.pop(), dg);
-        if (!checkRelatedDiffRefSetAssociationIsUsed(currentDiffAssociation, refLinkCheckList)) {
+        SupportAssociation currentSupportAssociation =
+          intersectSupportAssociationCardinalityBySupportAssociationOnlyWithLeftToRightAndRightToLeft(associationStack.pop(), sg);
+        if (!checkRelatedSupportRefSetAssociationIsUsed(currentSupportAssociation, refLinkCheckList)) {
 
           // get the information of currentSideClass and otherSideClass
 
-          Map<String, Object> otherSideClassMap = findOtherSideClassAndPositionInDiffAssociation(currentDiffAssociation, currentDiffClass);
+          Map<String, Object> otherSideClassMap = findOtherSideClassAndPositionInSupportAssociation(currentSupportAssociation, currentSupportClass);
 
           List<ASTODNamedObject> currentSideObjectList = objectList;
-          DiffClass otherSideClass = (DiffClass) otherSideClassMap.get("otherSideClass");
-          DiffClass currentSideClass = currentDiffClass;
+          SupportClass otherSideClass = (SupportClass) otherSideClassMap.get("otherSideClass");
+          SupportClass currentSideClass = currentSupportClass;
           String otherSideRoleName = null;
           String currentSideRoleName = null;
           int directionType = 0;
@@ -286,25 +286,25 @@ public class CG2ODGenerator {
 
           String otherSideClassPosition = (String) otherSideClassMap.get("position");
           if (otherSideClassPosition.equals("left")) {
-            otherSideRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
-            currentSideRoleName = currentDiffAssociation.getDiffRightClassRoleName();
+            otherSideRoleName = currentSupportAssociation.getSupportLeftClassRoleName();
+            currentSideRoleName = currentSupportAssociation.getSupportRightClassRoleName();
             directionType = opt4StartClassKind.equals("target") ? 1 : 2;
-            if (isPresentObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList)) {
+            if (isPresentObjectInASTODElementListBySupportClass(sg, otherSideClass, astodElementList)) {
               isPresentOtherSideCardinality = true;
             } else {
-              isPresentOtherSideCardinality = mappingCardinality(currentDiffAssociation.getDiffLeftClassCardinality().toString()) > 0 ? true : false;
+              isPresentOtherSideCardinality = mappingCardinality(currentSupportAssociation.getSupportLeftClassCardinality().toString()) > 0 ? true : false;
             }
           } else {
-            otherSideRoleName = currentDiffAssociation.getDiffRightClassRoleName();
-            currentSideRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
+            otherSideRoleName = currentSupportAssociation.getSupportRightClassRoleName();
+            currentSideRoleName = currentSupportAssociation.getSupportLeftClassRoleName();
             directionType = opt4StartClassKind.equals("target") ? 2 : 1;
-            if (isPresentObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList)) {
+            if (isPresentObjectInASTODElementListBySupportClass(sg, otherSideClass, astodElementList)) {
               isPresentOtherSideCardinality = true;
             } else {
-              isPresentOtherSideCardinality = mappingCardinality(currentDiffAssociation.getDiffRightClassCardinality().toString()) > 0 ? true : false;
+              isPresentOtherSideCardinality = mappingCardinality(currentSupportAssociation.getSupportRightClassCardinality().toString()) > 0 ? true : false;
             }
           }
-          if (mappingDirection(currentDiffAssociation.getDiffDirection().toString()) == 3) {
+          if (mappingDirection(currentSupportAssociation.getSupportDirection().toString()) == 3) {
             directionType = 3;
           }
 
@@ -312,7 +312,7 @@ public class CG2ODGenerator {
           if (isPresentOtherSideCardinality) {
 
             // get otherSideObject
-            Map<String, Object> otherSideObjectMap = getObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList);
+            Map<String, Object> otherSideObjectMap = getObjectInASTODElementListBySupportClass(sg, otherSideClass, astodElementList);
             List<ASTODNamedObject> otherSideObjectList = (List<ASTODNamedObject>) otherSideObjectMap.get("objectList");
 
             // determining illegal situations
@@ -343,7 +343,7 @@ public class CG2ODGenerator {
                 // add new object into ASTODElementList
                 astodElementList.add(otherSideObject0);
                 // push sourceClass into classStack
-                classStack.push(Map.of("objectList", List.of(otherSideObject0), "diffClass", otherSideClass));
+                classStack.push(Map.of("objectList", List.of(otherSideObject0), "supportClass", otherSideClass));
               }
               // create new ASTODLinkList and add into ASTODElementList
               List<ASTODLink> linkList0;
@@ -363,7 +363,7 @@ public class CG2ODGenerator {
                 astodElementList.add(otherSideObject0);
                 astodElementList.add(otherSideObject1);
                 // push sourceClass into classStack
-                classStack.push(Map.of("objectList", List.of(otherSideObject0, otherSideObject1), "diffClass", otherSideClass));
+                classStack.push(Map.of("objectList", List.of(otherSideObject0, otherSideObject1), "supportClass", otherSideClass));
               }
               // create new ASTODLinkList and add into ASTODElementList
               List<ASTODLink> linkList0;
@@ -380,8 +380,8 @@ public class CG2ODGenerator {
             }
 
             // mark related refLink
-            Optional<List<DiffRefSetAssociation>> optCurrentDiffRefSetAssociation = findRelatedDiffRefSetAssociationByDiffAssociation(currentDiffAssociation, refLinkCheckList);
-            refLinkCheckList = updateCounterInCheckList(optCurrentDiffRefSetAssociation, refLinkCheckList);
+            Optional<List<SupportRefSetAssociation>> optCurrentSupportRefSetAssociation = findRelatedSupportRefSetAssociationBySupportAssociation(currentSupportAssociation, refLinkCheckList);
+            refLinkCheckList = updateCounterInCheckList(optCurrentSupportRefSetAssociation, refLinkCheckList);
           }
         }
       }

@@ -1,9 +1,9 @@
-package de.monticore.sydiff2semdiff.cd2dg.metamodel;
+package de.monticore.sydiff2semdiff.cd2sg.metamodel;
 
 import java.util.Set;
 
 /**
- *  DiffRefSetAssociation is to solve the next problem in CD:
+ *  SupportRefSetAssociation is to solve the next problem in CD:
  *    In CD:
  *      Class A;
  *      Class B extends Class A;
@@ -11,26 +11,26 @@ import java.util.Set;
  *      Class D;
  *      association [1..*] A (a) -> (d) D [*];
  *
- *    Then in DiffAssociation Map:
+ *    Then in SupportAssociation Map:
  *      association [1..*] A (a) -> (d) D [*]; // original
  *      association [1..*] B (a) -> (d) D [*]; // inherited
  *      association [1..*] C (a) -> (d) D [*]; // inherited
  *
- *    The above three association will create a DiffRefSetAssociation object:
+ *    The above three association will create a SupportRefSetAssociation object:
  *      leftRefSet    leftRoleName   rightRoleName    rightRefSet
  *      [A, B, C]         (a)     ->      (d)             [D]
  */
-public class DiffRefSetAssociation {
-  protected Set<DiffClass> leftRefSet;
+public class SupportRefSetAssociation {
+  protected Set<SupportClass> leftRefSet;
   protected String leftRoleName;
-  protected DifferentGroup.DiffAssociationDirection direction;
+  protected SupportGroup.SupportAssociationDirection direction;
   protected String rightRoleName;
-  protected Set<DiffClass> rightRefSet;
+  protected Set<SupportClass> rightRefSet;
 
-  public DiffRefSetAssociation() {
+  public SupportRefSetAssociation() {
   }
 
-  public DiffRefSetAssociation(Set<DiffClass> leftRefSet, String leftRoleName, DifferentGroup.DiffAssociationDirection direction, String rightRoleName, Set<DiffClass> rightRefSet) {
+  public SupportRefSetAssociation(Set<SupportClass> leftRefSet, String leftRoleName, SupportGroup.SupportAssociationDirection direction, String rightRoleName, Set<SupportClass> rightRefSet) {
     this.leftRefSet = leftRefSet;
     this.leftRoleName = leftRoleName;
     this.direction = direction;
@@ -38,11 +38,11 @@ public class DiffRefSetAssociation {
     this.rightRefSet = rightRefSet;
   }
 
-  public Set<DiffClass> getLeftRefSet() {
+  public Set<SupportClass> getLeftRefSet() {
     return leftRefSet;
   }
 
-  public void setLeftRefSet(Set<DiffClass> leftRefSet) {
+  public void setLeftRefSet(Set<SupportClass> leftRefSet) {
     this.leftRefSet = leftRefSet;
   }
 
@@ -54,11 +54,11 @@ public class DiffRefSetAssociation {
     this.leftRoleName = leftRoleName;
   }
 
-  public DifferentGroup.DiffAssociationDirection getDirection() {
+  public SupportGroup.SupportAssociationDirection getDirection() {
     return direction;
   }
 
-  public void setDirection(DifferentGroup.DiffAssociationDirection direction) {
+  public void setDirection(SupportGroup.SupportAssociationDirection direction) {
     this.direction = direction;
   }
 
@@ -70,11 +70,11 @@ public class DiffRefSetAssociation {
     this.rightRoleName = rightRoleName;
   }
 
-  public Set<DiffClass> getRightRefSet() {
+  public Set<SupportClass> getRightRefSet() {
     return rightRefSet;
   }
 
-  public void setRightRefSet(Set<DiffClass> rightRefSet) {
+  public void setRightRefSet(Set<SupportClass> rightRefSet) {
     this.rightRefSet = rightRefSet;
   }
 }
