@@ -93,7 +93,10 @@ public class DG2CGGenerator {
   public void compareAssociations(DifferentGroup basedDG, DifferentGroup comparedDG) {
     basedDG.getDiffAssociationGroup().forEach((assocName1, basedDiffAssociation) -> {
 
-      DiffAssociation intersectedBasedDiffAssociation = intersectDiffAssociationCardinalityByDiffAssociation(basedDiffAssociation, basedDG);
+      DiffAssociation intersectedBasedDiffAssociation =
+        intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(
+          intersectDiffAssociationCardinalityByDiffAssociationWithOverlap(basedDiffAssociation, basedDG),
+          basedDG);
 
       // get all associations including reversed association in ComparedDG by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
       List<Map<String, Object>> DiffAssocMapInComparedDG = fuzzySearchDiffAssociationByDiffAssociationWithoutDirection(comparedDG.getDiffAssociationGroup(), intersectedBasedDiffAssociation);
@@ -113,11 +116,19 @@ public class DG2CGGenerator {
       if (isInComparedD4ForwardAssocName && !isInComparedDG4ReverseAssocName) {
         forwardDiffAssocListInComparedDG.forEach(comparedDiffAssociation ->
           createCompareAssociation(intersectedBasedDiffAssociation,
-            Optional.of(intersectDiffAssociationCardinalityByDiffAssociation(comparedDiffAssociation, comparedDG)), true, false));
+            Optional.of(intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(
+              intersectDiffAssociationCardinalityByDiffAssociationWithOverlap(comparedDiffAssociation, comparedDG),
+              comparedDG)),
+            true,
+            false));
       } else if (!isInComparedD4ForwardAssocName && isInComparedDG4ReverseAssocName) {
         reverseDiffAssocListInComparedDG.forEach(comparedDiffAssociation ->
           createCompareAssociation(intersectedBasedDiffAssociation,
-            Optional.of(intersectDiffAssociationCardinalityByDiffAssociation(comparedDiffAssociation, comparedDG)), true, true));
+            Optional.of(intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(
+              intersectDiffAssociationCardinalityByDiffAssociationWithOverlap(comparedDiffAssociation, comparedDG),
+              comparedDG)),
+            true,
+            true));
       } else {
         createCompareAssociation(intersectedBasedDiffAssociation, Optional.empty(), false, false);
       }
