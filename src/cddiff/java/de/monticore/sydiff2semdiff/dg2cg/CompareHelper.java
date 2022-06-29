@@ -20,24 +20,6 @@ public class CompareHelper {
    *******************************************************************/
 
   /**
-   * get the corresponding prefix compare class name by compClassKind
-   */
-  public static String getCompClassKindStrHelper(CompareGroup.CompClassKind compClassKind) {
-    switch (compClassKind) {
-      case COMP_CLASS:
-        return "CompClass";
-      case COMP_ENUM:
-        return "CompEnum";
-      case COMP_ABSTRACT_CLASS:
-        return "CompAbstractClass";
-      case COMP_INTERFACE:
-        return "CompInterface";
-      default:
-        return null;
-    }
-  }
-
-  /**
    * get the corresponding compare kind for class by diffClassKind
    */
   public static CompareGroup.CompClassKind getCompClassKindHelper(DifferentGroup.DiffClassKind diffClassKind) {
@@ -50,6 +32,24 @@ public class CompareHelper {
         return CompareGroup.CompClassKind.COMP_ABSTRACT_CLASS;
       case DIFF_INTERFACE:
         return CompareGroup.CompClassKind.COMP_INTERFACE;
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * get the corresponding prefix compare class name by compClassKind
+   */
+  public static String getCompClassKindStrHelper(CompareGroup.CompClassKind compClassKind) {
+    switch (compClassKind) {
+      case COMP_CLASS:
+        return "CompClass";
+      case COMP_ENUM:
+        return "CompEnum";
+      case COMP_ABSTRACT_CLASS:
+        return "CompAbstractClass";
+      case COMP_INTERFACE:
+        return "CompInterface";
       default:
         return null;
     }

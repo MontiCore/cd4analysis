@@ -290,8 +290,62 @@ public class DifferentHelper {
 
   /**
    * calculate the intersection set of cardinality of given DiffAssociation by its relevant DiffRefSetAssociations
+   * only for A -> B and A <- B in the same CD
    */
-  public static DiffAssociation intersectDiffAssociationCardinalityByDiffAssociation(DiffAssociation originalAssoc, DifferentGroup dg){
+  public static DiffAssociation intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(DiffAssociation originalAssoc, DifferentGroup dg){
+    DiffAssociation resultAssoc;
+    try {
+      resultAssoc = originalAssoc.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
+    }
+
+    if (originalAssoc.getDiffDirection() == DifferentGroup.DiffAssociationDirection.LEFT_TO_RIGHT ||
+      originalAssoc.getDiffDirection() == DifferentGroup.DiffAssociationDirection.RIGHT_TO_LEFT) {
+      List<DiffAssociation> diffAssociationList = dg.getDiffAssociationGroup().values()
+        .stream()
+        .filter(e ->
+            // A <- B, A -> B
+            (e.getLeftOriginalClassName().equals(originalAssoc.getLeftOriginalClassName()) &&
+              e.getDiffLeftClassRoleName().equals(originalAssoc.getDiffLeftClassRoleName()) &&
+              e.getDiffDirection().equals(reverseDirection(originalAssoc.getDiffDirection())) &&
+              e.getDiffRightClassRoleName().equals(originalAssoc.getDiffRightClassRoleName()) &&
+              e.getRightOriginalClassName().equals(originalAssoc.getRightOriginalClassName())) ||
+            // A <- B, B <- A
+            (e.getLeftOriginalClassName().equals(originalAssoc.getRightOriginalClassName()) &&
+              e.getDiffLeftClassRoleName().equals(originalAssoc.getDiffRightClassRoleName()) &&
+              e.getDiffDirection().equals(originalAssoc.getDiffDirection()) &&
+              e.getDiffRightClassRoleName().equals(originalAssoc.getDiffLeftClassRoleName()) &&
+              e.getRightOriginalClassName().equals(originalAssoc.getLeftOriginalClassName())))
+        .collect(Collectors.toList());
+
+      AtomicReference<DifferentGroup.DiffAssociationCardinality> finalLeftCardinality =
+        new AtomicReference<>(originalAssoc.getDiffLeftClassCardinality());
+      AtomicReference<DifferentGroup.DiffAssociationCardinality> finalRightCardinality =
+        new AtomicReference<>(originalAssoc.getDiffRightClassCardinality());
+      diffAssociationList.forEach(e -> {
+        if (e.getDiffDirection().equals(reverseDirection(originalAssoc.getDiffDirection()))) {
+          // A <- B, A -> B
+          finalLeftCardinality.set(diffAssociationCardinalityHelper(finalLeftCardinality.get(), e.getDiffLeftClassCardinality()));
+          finalRightCardinality.set(diffAssociationCardinalityHelper(finalRightCardinality.get(), e.getDiffRightClassCardinality()));
+        } else {
+          // A <- B, B <- A
+          finalLeftCardinality.set(diffAssociationCardinalityHelper(finalLeftCardinality.get(), e.getDiffRightClassCardinality()));
+          finalRightCardinality.set(diffAssociationCardinalityHelper(finalRightCardinality.get(), e.getDiffLeftClassCardinality()));
+        }
+      });
+
+      resultAssoc.setDiffLeftClassCardinality(finalLeftCardinality.get());
+      resultAssoc.setDiffRightClassCardinality(finalRightCardinality.get());
+    }
+
+    return resultAssoc;
+  }
+
+  /**
+   * calculate the intersection set of cardinality of given DiffAssociation by its relevant DiffRefSetAssociations
+   */
+  public static DiffAssociation intersectDiffAssociationCardinalityByDiffAssociationWithOverlap(DiffAssociation originalAssoc, DifferentGroup dg){
     DiffAssociation resultAssoc = null;
     try {
       resultAssoc = originalAssoc.clone();
