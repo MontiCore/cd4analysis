@@ -191,6 +191,39 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     ));
   }
 
+  @Test
+  public void testGenerateODByDirection1() {
+    generateCompareGroupTemp("Association","Direction1A.cd", "Direction1G.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompAssociation_A_a_RightToLeft_b_B]-[direction_changed]") &&
+        e.contains("a_0:A{};") &&
+        e.contains("b_0:B{};") &&
+        e.contains("link b_0 (b) -> (a) a_0;")
+    ));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompAssociation_A_a_RightToLeft_b_B]-[cardinality_changed]") &&
+        e.contains("b_0:B{};")
+    ));
+  }
+
+  @Test
+  public void testGenerateODByDirection2() {
+    generateCompareGroupTemp("Association","Direction1G.cd", "Direction1A.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(dg1, cg1);
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[CompAssociation_A_a_LeftToRight_b_B]-[direction_changed]") &&
+        e.contains("a_0:A{};") &&
+        e.contains("b_0:B{};") &&
+        e.contains("link a_0 (a) -> (b) b_0;") &&
+        e.contains("link b_0 (b) -> (a) a_0;")
+    ));
+
+  }
+
   /********************************************************************
    *********************    Start for Combination    ******************
    *******************************************************************/

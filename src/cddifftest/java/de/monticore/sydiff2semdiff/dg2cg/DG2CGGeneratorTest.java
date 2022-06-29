@@ -251,9 +251,9 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
    *      [1] A -> B [*]
    */
   @Test
-  public void testAssociation4Duplicate() {
+  public void testAssociation4Duplicate1() {
     CompareGroup cg = generateCompareGroupTemp("Association", "Direction1A.cd","Direction1G.cd");
-    Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 2);
+    Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 3);
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED
@@ -261,7 +261,24 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED
-        && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.LEFT_CARDINALITY));
+        && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.LEFT_CARDINALITY
+        && e.getCompLeftClassCardinalityResult().get() == CompareGroup.CompAssociationCardinality.ZERO_AND_TWO_TO_MORE));
+  }
+
+  /**
+   * Test for Direction
+   * CD1: [*] A <- B [0..1]
+   *      [1] A -> B [*]
+   * CD2: [*] A <- B [0..1]
+   */
+  @Test
+  public void testAssociation4Duplicate2() {
+    CompareGroup cg = generateCompareGroupTemp("Association", "Direction1G.cd","Direction1A.cd");
+    Assert.assertEquals(cg.getCompAssociationResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCompAssociationResultQueueWithDiff()
+      .stream()
+      .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.DIRECTION_CHANGED
+        && e.getWhichPartDiff().get() == CompareGroup.WhichPartDiff.DIRECTION));
   }
 
   /********************************************************************
@@ -295,8 +312,7 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.CARDINALITY_SUBSET
-        && !e.getWhichPartDiff().isPresent()
-      ));
+        && !e.getWhichPartDiff().isPresent()));
     Assert.assertTrue(cg.getCompAssociationResultQueueWithoutDiff()
       .stream()
       .anyMatch(e -> e.getCompCategory() == CompareGroup.CompAssociationCategory.ORIGINAL
