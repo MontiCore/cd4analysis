@@ -1,14 +1,14 @@
-package de.monticore.sydiff2semdiff.dg2cg.metamodel;
+package de.monticore.sydiff2semdiff.sg2cg.metamodel;
 
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DiffAssociation;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportAssociation;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompAssociationKindHelper;
+import static de.monticore.sydiff2semdiff.sg2cg.CompareHelper.getCompAssociationKindHelper;
 
 /**
- * Each DiffAssociation in based DifferentGroup will generate three corresponding CompAssociations
+ * Each SupportAssociation in based SupportGroup will generate three corresponding CompAssociations
  * 1. for direction
  * 2. for left cardinality
  * 3. for right cardinality
@@ -16,12 +16,12 @@ import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompAssociation
  * @attribute compId:
  * unique compare id
  * @attribute originalElement:
- * original DiffAssociation
- * @attribute isInComparedDG:
- * whether this DiffAssociation exists in compared DifferentGroup (only check DiffAssociation name)
+ * original SupportAssociation
+ * @attribute isInCompareSG:
+ * whether this SupportAssociation exists in compared SupportGroup (only check SupportAssociation name)
  * @attribute isContentDiff:
- * if this DiffAssociation exists in compared DifferentGroup (only check DiffAssociation name),
- * then check whether the content of those two DiffAssociations are different:
+ * if this SupportAssociation exists in compared SupportGroup (only check SupportAssociation name),
+ * then check whether the content of those two SupportAssociations are different:
  * 1. for direction
  * 2. for left cardinality
  * 3. for right cardinality
@@ -47,8 +47,8 @@ import static de.monticore.sydiff2semdiff.dg2cg.CompareHelper.getCompAssociation
  */
 public class CompAssociation {
   protected final UUID compId;
-  protected final DiffAssociation originalElement;
-  protected final boolean isInComparedDG;
+  protected final SupportAssociation originalElement;
+  protected final boolean isInCompareSG;
   protected final boolean isContentDiff;
   protected final CompareGroup.CompAssociationCategory compCategory;
   protected Optional<CompareGroup.CompAssociationDirection> compDirectionResult;
@@ -56,9 +56,9 @@ public class CompAssociation {
   protected Optional<CompareGroup.CompAssociationCardinality> compRightClassCardinalityResult;
   protected Optional<CompareGroup.WhichPartDiff> whichPartDiff;
 
-  public CompAssociation(DiffAssociation originalElement, boolean isInComparedDG, boolean isContentDiff, CompareGroup.CompAssociationCategory compCategory) {
+  public CompAssociation(SupportAssociation originalElement, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompAssociationCategory compCategory) {
     this.originalElement = originalElement;
-    this.isInComparedDG = isInComparedDG;
+    this.isInCompareSG = isInCompareSG;
     this.isContentDiff = isContentDiff;
     this.compCategory = compCategory;
     this.compId = UUID.randomUUID();
@@ -73,11 +73,11 @@ public class CompAssociation {
   }
 
   public CompareGroup.CompAssociationKind getCompKind() {
-    return getCompAssociationKindHelper(this.originalElement.getDiffKind());
+    return getCompAssociationKindHelper(this.originalElement.getSupportKind());
   }
 
-  public boolean isInComparedDG() {
-    return isInComparedDG;
+  public boolean isInCompareSG() {
+    return isInCompareSG;
   }
 
   public boolean isContentDiff() {
@@ -120,7 +120,7 @@ public class CompAssociation {
     this.whichPartDiff = whichPartDiff;
   }
 
-  public DiffAssociation getOriginalElement() {
+  public SupportAssociation getOriginalElement() {
     return originalElement;
   }
 }

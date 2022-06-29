@@ -1,17 +1,17 @@
-package de.monticore.sydiff2semdiff.dg2cg;
+package de.monticore.sydiff2semdiff.sg2cg;
 
 import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.sydiff2semdiff.cd2dg.CD2DGGenerator;
-import de.monticore.sydiff2semdiff.cd2dg.metamodel.DifferentGroup;
-import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
+import de.monticore.sydiff2semdiff.cd2sg.CD2SGGenerator;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportGroup;
+import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompareGroup;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
 
-public class DG2CGGeneratorTest extends CDDiffTestBasis {
+public class SG2CGGeneratorTest extends CDDiffTestBasis {
 
   public CompareGroup generateCompareGroupTemp(String folder, String cd1Name, String cd2Name) {
     ASTCDCompilationUnit cd1 = parseModel(
@@ -19,12 +19,12 @@ public class DG2CGGeneratorTest extends CDDiffTestBasis {
 
     ASTCDCompilationUnit cd2 = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/sydiff2semdiff/CompareGroup/" + folder + "/" + cd2Name);
-    CD2DGGenerator cd1Generator = new CD2DGGenerator();
-    CD2DGGenerator cd2Generator = new CD2DGGenerator();
-    DifferentGroup dg1 = cd1Generator.generateDifferentGroup(cd1, CDSemantics.SIMPLE_CLOSED_WORLD);
-    DifferentGroup dg2 = cd2Generator.generateDifferentGroup(cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
-    DG2CGGenerator dg2CGGenerator = new DG2CGGenerator();
-    return dg2CGGenerator.generateCompareGroup(dg1,dg2);
+    CD2SGGenerator cd1Generator = new CD2SGGenerator();
+    CD2SGGenerator cd2Generator = new CD2SGGenerator();
+    SupportGroup dg1 = cd1Generator.generateSupportGroup(cd1, CDSemantics.SIMPLE_CLOSED_WORLD);
+    SupportGroup dg2 = cd2Generator.generateSupportGroup(cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
+    SG2CGGenerator SG2CGGenerator = new SG2CGGenerator();
+    return SG2CGGenerator.generateCompareGroup(dg1,dg2);
   }
 
   /********************************************************************
