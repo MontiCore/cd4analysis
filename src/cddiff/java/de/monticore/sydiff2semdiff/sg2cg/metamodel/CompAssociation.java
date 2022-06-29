@@ -56,10 +56,7 @@ public class CompAssociation {
   protected Optional<CompareGroup.CompAssociationCardinality> compRightClassCardinalityResult;
   protected Optional<CompareGroup.WhichPartDiff> whichPartDiff;
 
-  public CompAssociation(SupportAssociation originalElement,
-                         boolean isInCompareSG,
-                         boolean isContentDiff,
-                         CompareGroup.CompAssociationCategory compCategory) {
+  public CompAssociation(SupportAssociation originalElement, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompAssociationCategory compCategory) {
     this.originalElement = originalElement;
     this.isInCompareSG = isInCompareSG;
     this.isContentDiff = isContentDiff;
@@ -71,9 +68,8 @@ public class CompAssociation {
     return compId;
   }
 
-  public String getName(boolean is4Print) {
-    String prefix = is4Print ? "Association_" : "CompAssociation_";
-    return prefix + this.originalElement.getName().substring(this.originalElement.getName().indexOf("_") + 1);
+  public String getName() {
+    return "CompAssociation_" + this.originalElement.getName().substring(this.originalElement.getName().indexOf("_") + 1, this.originalElement.getName().length());
   }
 
   public CompareGroup.CompAssociationKind getCompKind() {

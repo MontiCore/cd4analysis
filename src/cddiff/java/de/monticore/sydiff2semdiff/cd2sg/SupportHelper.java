@@ -3,12 +3,14 @@ package de.monticore.sydiff2semdiff.cd2sg;
 import com.google.common.graph.MutableGraph;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
-import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.sydiff2semdiff.cd2sg.metamodel.*;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportAssociation;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportClass;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportRefSetAssociation;
+import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportGroup;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -58,8 +60,7 @@ public class SupportHelper {
   /**
    * using the original class name to find corresponding SupportClass in SupportClassGroup
    */
-  public static SupportClass findSupportClass4OriginalClassName(Map<String, SupportClass> supportClassGroup,
-                                                                String originalClassName) {
+  public static SupportClass findSupportClass4OriginalClassName(Map<String, SupportClass> supportClassGroup, String originalClassName) {
     if (supportClassGroup.containsKey("SupportClass_" + originalClassName)) {
       return supportClassGroup.get("SupportClass_" + originalClassName);
     } else if (supportClassGroup.containsKey("SupportAbstractClass_" + originalClassName)) {
@@ -79,9 +80,9 @@ public class SupportHelper {
    * get the corresponding the direction kind of SupportAssociation by ASTCDAssociation
    */
   public static SupportGroup.SupportAssociationDirection distinguishAssociationDirectionHelper(ASTCDAssociation astcdAssociation) {
-    boolean left = astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft();
-    boolean right = astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight();
-    boolean bidirectional = astcdAssociation.getCDAssocDir().isBidirectional();
+    Boolean left = astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft();
+    Boolean right = astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight();
+    Boolean bidirectional = astcdAssociation.getCDAssocDir().isBidirectional();
     if (!left && right && !bidirectional) {
       return SupportGroup.SupportAssociationDirection.LEFT_TO_RIGHT;
     } else if (left && !right && !bidirectional) {
@@ -182,8 +183,7 @@ public class SupportHelper {
   /**
    * calculate the intersection set for exist Cardinality with current Cardinality
    */
-  public static SupportGroup.SupportAssociationCardinality supportAssociationCardinalityHelper(SupportGroup.SupportAssociationCardinality exist,
-                                                                                               SupportGroup.SupportAssociationCardinality current) {
+  public static SupportGroup.SupportAssociationCardinality supportAssociationCardinalityHelper(SupportGroup.SupportAssociationCardinality exist, SupportGroup.SupportAssociationCardinality current) {
     switch (exist) {
       case ONE:
         switch (current) {
@@ -239,8 +239,7 @@ public class SupportHelper {
    *    "exist" means using exist direction
    *    "both" means using both directions
    */
-  public static String supportAssociationDirectionHelper(SupportGroup.SupportAssociationDirection exist,
-                                                         SupportGroup.SupportAssociationDirection current) {
+  public static String supportAssociationDirectionHelper(SupportGroup.SupportAssociationDirection exist, SupportGroup.SupportAssociationDirection current) {
     switch (exist) {
       case LEFT_TO_RIGHT:
         switch (current) {
@@ -293,8 +292,7 @@ public class SupportHelper {
    * calculate the intersection set of cardinality of given SupportAssociation by its relevant SupportRefSetAssociations
    * only for A -> B and A <- B in the same CD
    */
-  public static SupportAssociation intersectSupportAssociationCardinalityBySupportAssociationOnlyWithLeftToRightAndRightToLeft(SupportAssociation originalAssoc,
-                                                                                                                               SupportGroup sg){
+  public static SupportAssociation intersectSupportAssociationCardinalityBySupportAssociationOnlyWithLeftToRightAndRightToLeft(SupportAssociation originalAssoc, SupportGroup sg){
     SupportAssociation resultAssoc;
     try {
       resultAssoc = originalAssoc.clone();
@@ -328,16 +326,12 @@ public class SupportHelper {
       supportAssociationList.forEach(e -> {
         if (e.getSupportDirection().equals(reverseDirection(originalAssoc.getSupportDirection()))) {
           // A <- B, A -> B
-          finalLeftCardinality.set(
-            supportAssociationCardinalityHelper(finalLeftCardinality.get(), e.getSupportLeftClassCardinality()));
-          finalRightCardinality.set(
-            supportAssociationCardinalityHelper(finalRightCardinality.get(), e.getSupportRightClassCardinality()));
+          finalLeftCardinality.set(supportAssociationCardinalityHelper(finalLeftCardinality.get(), e.getSupportLeftClassCardinality()));
+          finalRightCardinality.set(supportAssociationCardinalityHelper(finalRightCardinality.get(), e.getSupportRightClassCardinality()));
         } else {
           // A <- B, B <- A
-          finalLeftCardinality.set(
-            supportAssociationCardinalityHelper(finalLeftCardinality.get(), e.getSupportRightClassCardinality()));
-          finalRightCardinality.set(
-            supportAssociationCardinalityHelper(finalRightCardinality.get(), e.getSupportLeftClassCardinality()));
+          finalLeftCardinality.set(supportAssociationCardinalityHelper(finalLeftCardinality.get(), e.getSupportRightClassCardinality()));
+          finalRightCardinality.set(supportAssociationCardinalityHelper(finalRightCardinality.get(), e.getSupportLeftClassCardinality()));
         }
       });
 
@@ -351,9 +345,8 @@ public class SupportHelper {
   /**
    * calculate the intersection set of cardinality of given SupportAssociation by its relevant SupportRefSetAssociations
    */
-  public static SupportAssociation intersectSupportAssociationCardinalityBySupportAssociationWithOverlap(SupportAssociation originalAssoc,
-                                                                                                         SupportGroup sg){
-    SupportAssociation resultAssoc;
+  public static SupportAssociation intersectSupportAssociationCardinalityBySupportAssociationWithOverlap(SupportAssociation originalAssoc, SupportGroup sg){
+    SupportAssociation resultAssoc = null;
     try {
       resultAssoc = originalAssoc.clone();
     } catch (CloneNotSupportedException e) {
@@ -371,21 +364,19 @@ public class SupportHelper {
         item.getDirection().equals(originalAssoc.getSupportDirection()) &&
         item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportLeftClass().getName())) &&
         item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportRightClass().getName()))) {
-        SupportAssociationCardinalityPack intersectedCardinalityPack =
-          intersectSupportAssociationCardinalityHelper(originalAssoc,
-            false, item, sg, intersectedLeftCardinality.get(), intersectedRightCardinality.get());
-        intersectedLeftCardinality.set(intersectedCardinalityPack.getLeftCardinality());
-        intersectedRightCardinality.set(intersectedCardinalityPack.getRightCardinality());
+        Map<String, SupportGroup.SupportAssociationCardinality> intersectedCardinalityMap =
+          intersectSupportAssociationCardinalityHelper(originalAssoc, false, item, sg, intersectedLeftCardinality.get(), intersectedRightCardinality.get());
+        intersectedLeftCardinality.set(intersectedCardinalityMap.get("leftCardinality"));
+        intersectedRightCardinality.set(intersectedCardinalityMap.get("rightCardinality"));
       } else if (item.getLeftRoleName().equals(originalAssoc.getSupportRightClassRoleName()) &&
         item.getRightRoleName().equals(originalAssoc.getSupportLeftClassRoleName()) &&
         item.getDirection().equals(reverseDirection(originalAssoc.getSupportDirection())) &&
         item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportRightClass().getName())) &&
         item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportLeftClass().getName()))) {
-        SupportAssociationCardinalityPack intersectedCardinalityPack =
-          intersectSupportAssociationCardinalityHelper(originalAssoc,
-            true, item, sg, intersectedRightCardinality.get(), intersectedLeftCardinality.get());
-        intersectedRightCardinality.set(intersectedCardinalityPack.getLeftCardinality());
-        intersectedLeftCardinality.set(intersectedCardinalityPack.getRightCardinality());
+        Map<String, SupportGroup.SupportAssociationCardinality> intersectedCardinalityMap =
+          intersectSupportAssociationCardinalityHelper(originalAssoc, true, item, sg, intersectedRightCardinality.get(), intersectedLeftCardinality.get());
+        intersectedRightCardinality.set(intersectedCardinalityMap.get("leftCardinality"));
+        intersectedLeftCardinality.set(intersectedCardinalityMap.get("rightCardinality"));
       }
     });
 
@@ -398,12 +389,11 @@ public class SupportHelper {
 
   /**
    * calculate the intersection set of left and right cardinality of related SupportAssociation in SupportRefSetAssociation
-   *
-   * @Return: SupportAssociationCardinalityPack
-   *  {"leftCardinality"   : SupportGroup.SupportAssociationCardinality
-   *   "rightCardinality"  : SupportGroup.SupportAssociationCardinality }
+   * @Return:
+   *  [{"leftCardinality"   : SupportGroup.SupportAssociationCardinality
+   *    "rightCardinality"  : SupportGroup.SupportAssociationCardinality }]
    */
-  public static SupportAssociationCardinalityPack intersectSupportAssociationCardinalityHelper(
+  public static Map<String, SupportGroup.SupportAssociationCardinality> intersectSupportAssociationCardinalityHelper(
     SupportAssociation originalAssoc,
     boolean isReversed,
     SupportRefSetAssociation supportRefSetAssociation,
@@ -411,8 +401,8 @@ public class SupportHelper {
     SupportGroup.SupportAssociationCardinality existLeftCardinality,
     SupportGroup.SupportAssociationCardinality existRightCardinality) {
 
-    Set<String> leftSuperClassSet;
-    Set<String> rightSuperClassSet;
+    Set<String> leftSuperClassSet = null;
+    Set<String> rightSuperClassSet = null;
     if (!isReversed) {
       leftSuperClassSet = getSuperClassSet(sg.getInheritanceGraph(), originalAssoc.getSupportLeftClass().getName());
       rightSuperClassSet = getSuperClassSet(sg.getInheritanceGraph(), originalAssoc.getSupportRightClass().getName());
@@ -437,10 +427,8 @@ public class SupportHelper {
         sb.append(rightClass.getOriginalClassName());
         if ((finalLeftSuperClassSet.contains(leftClass.getName()) || finalRightSuperClassSet.contains(rightClass.getName())) &&
           sg.getSupportAssociationGroup().containsKey(sb.toString())) {
-          leftResult.set(supportAssociationCardinalityHelper(leftResult.get(),
-            sg.getSupportAssociationGroup().get(sb.toString()).getSupportLeftClassCardinality()));
-          rightResult.set(supportAssociationCardinalityHelper(rightResult.get(),
-            sg.getSupportAssociationGroup().get(sb.toString()).getSupportRightClassCardinality()));
+          leftResult.set(supportAssociationCardinalityHelper(leftResult.get(), sg.getSupportAssociationGroup().get(sb.toString()).getSupportLeftClassCardinality()));
+          rightResult.set(supportAssociationCardinalityHelper(rightResult.get(), sg.getSupportAssociationGroup().get(sb.toString()).getSupportRightClassCardinality()));
         } else {
           StringBuilder reversedSb = new StringBuilder();
           reversedSb.append("SupportAssociation_");
@@ -451,27 +439,23 @@ public class SupportHelper {
           reversedSb.append(leftClass.getOriginalClassName() + "_");
           if ((finalLeftSuperClassSet.contains(leftClass.getName()) || finalRightSuperClassSet.contains(rightClass.getName())) &&
             sg.getSupportAssociationGroup().containsKey(reversedSb.toString())) {
-            leftResult.set(supportAssociationCardinalityHelper(leftResult.get(),
-              sg.getSupportAssociationGroup().get(reversedSb.toString()).getSupportLeftClassCardinality()));
-            rightResult.set(supportAssociationCardinalityHelper(rightResult.get(),
-              sg.getSupportAssociationGroup().get(reversedSb.toString()).getSupportRightClassCardinality()));
+            leftResult.set(supportAssociationCardinalityHelper(leftResult.get(), sg.getSupportAssociationGroup().get(reversedSb.toString()).getSupportLeftClassCardinality()));
+            rightResult.set(supportAssociationCardinalityHelper(rightResult.get(), sg.getSupportAssociationGroup().get(reversedSb.toString()).getSupportRightClassCardinality()));
           }
         }
       });
     });
-    return new SupportAssociationCardinalityPack(leftResult.get(), rightResult.get());
+    return Map.of("leftCardinality", leftResult.get(), "rightCardinality", rightResult.get());
   }
 
   /**
    * Fuzzy search for SupportAssociation without matching direction
-   *
-   * @Return: List<SupportAssociationPack>
+   * @Return:
    *  [{"supportAssociation"  : SupportAssociation
    *    "isReverse"           : boolean         }]
    */
-  public static List<SupportAssociationPack> fuzzySearchSupportAssociationBySupportAssociationWithoutDirection(Map<String, SupportAssociation> map,
-                                                                                                               SupportAssociation currentAssoc) {
-    List<SupportAssociationPack> result = new ArrayList<>();
+  public static List<Map<String, Object>> fuzzySearchSupportAssociationBySupportAssociationWithoutDirection(Map<String, SupportAssociation> map, SupportAssociation currentAssoc) {
+    List<Map<String, Object>> result = new ArrayList<>();
     if (map == null) {
       return null;
     } else {
@@ -480,12 +464,12 @@ public class SupportHelper {
           currentAssoc.getSupportLeftClassRoleName().equals(existAssoc.getSupportLeftClassRoleName()) &&
           currentAssoc.getSupportRightClassRoleName().equals(existAssoc.getSupportRightClassRoleName()) &&
           currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
-          result.add(new SupportAssociationPack(existAssoc, false));
+          result.add(Map.of("supportAssociation", existAssoc, "isReverse", false));
         } else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName()) &&
           currentAssoc.getSupportLeftClassRoleName().equals(existAssoc.getSupportRightClassRoleName()) &&
           currentAssoc.getSupportRightClassRoleName().equals(existAssoc.getSupportLeftClassRoleName()) &&
           currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
-          result.add(new SupportAssociationPack(existAssoc, true));
+          result.add(Map.of("supportAssociation", existAssoc, "isReverse", true));
         }
       });
     }
@@ -498,14 +482,12 @@ public class SupportHelper {
 
   /**
    * Fuzzy search for SupportAssociation only matching leftRoleName, rightRoleName and direction
-   *
-   * @Return: List<SupportAssociationPack>
+   * @Return:
    *  [{"supportAssociation"  : SupportAssociation
    *    "isReverse"           : boolean         }]
    */
-  public static List<SupportAssociationPack> fuzzySearchSupportAssociationBySupportAssociationWithRoleNameAndDirection(Map<String, SupportAssociation> map,
-                                                                                                                       SupportAssociation currentAssoc) {
-    List<SupportAssociationPack> result = new ArrayList<>();
+  public static List<Map<String, Object>> fuzzySearchSupportAssociationBySupportAssociationWithRoleNameAndDirection(Map<String, SupportAssociation> map, SupportAssociation currentAssoc) {
+    List<Map<String, Object>> result = new ArrayList<>();
     if (map == null) {
       return null;
     } else {
@@ -513,11 +495,11 @@ public class SupportHelper {
         if (currentAssoc.getSupportLeftClassRoleName().equals(existAssoc.getSupportLeftClassRoleName()) &&
           currentAssoc.getSupportRightClassRoleName().equals(existAssoc.getSupportRightClassRoleName()) &&
           currentAssoc.getSupportDirection().equals(existAssoc.getSupportDirection())) {
-          result.add(new SupportAssociationPack(existAssoc, false));
+          result.add(Map.of("supportAssociation", existAssoc, "isReverse", false));
         } else if (currentAssoc.getSupportLeftClassRoleName().equals(existAssoc.getSupportRightClassRoleName()) &&
           currentAssoc.getSupportRightClassRoleName().equals(existAssoc.getSupportLeftClassRoleName()) &&
           currentAssoc.getSupportDirection().equals(reverseDirection(existAssoc.getSupportDirection()))) {
-          result.add(new SupportAssociationPack(existAssoc, true));
+          result.add(Map.of("supportAssociation", existAssoc, "isReverse", true));
         }
       });
     }
@@ -527,16 +509,14 @@ public class SupportHelper {
   /**
    * Fuzzy search for SupportAssociation by ClassName
    */
-  public static Map<String, SupportAssociation> fuzzySearchSupportAssociationByClassName(Map<String, SupportAssociation> map,
-                                                                                         String className) {
+  public static Map<String, SupportAssociation> fuzzySearchSupportAssociationByClassName(Map<String, SupportAssociation> map, String className) {
     Map<String, SupportAssociation> result = new HashMap<>();
     if (map == null) {
       return null;
     } else {
       result = map.values()
         .stream()
-        .filter(e ->
-          (e.getLeftOriginalClassName().equals(className) || e.getRightOriginalClassName().equals(className)))
+        .filter(e -> (e.getLeftOriginalClassName().equals(className) || e.getRightOriginalClassName().equals(className)))
         .collect(Collectors.toMap(e -> (String) e.getName(), e -> e));
     }
     return result;
@@ -545,8 +525,7 @@ public class SupportHelper {
   /**
    * get all inheritance path for each top class by backtracking
    */
-  public List<List<String>> getAllInheritancePath4SupportClass(SupportClass supportClass,
-                                                               MutableGraph<String> inheritanceGraph) {
+  public List<List<String>> getAllInheritancePath4SupportClass(SupportClass supportClass, MutableGraph<String> inheritanceGraph) {
     String root = supportClass.getName();
     List<List<String>> pathList = new ArrayList<>();
     getAllInheritancePath4SupportClassHelper(root, new LinkedList<>(), pathList, inheritanceGraph);
@@ -556,10 +535,7 @@ public class SupportHelper {
   /**
    * backtracking helper
    */
-  private void getAllInheritancePath4SupportClassHelper(String root,
-                                                        LinkedList<String> path,
-                                                        List<List<String>> pathList,
-                                                        MutableGraph<String> inheritanceGraph) {
+  private void getAllInheritancePath4SupportClassHelper(String root, LinkedList<String> path, List<List<String>> pathList, MutableGraph<String> inheritanceGraph) {
     if (inheritanceGraph.successors(root).isEmpty()) {
       LinkedList<String> newPath = new LinkedList<>(path);
       newPath.addFirst(root);
@@ -627,10 +603,8 @@ public class SupportHelper {
   /**
    * return all subclasses about given SupportClass expect abstract class and interface
    */
-  public static List<SupportClass> getAllSimpleSubClasses4SupportClass(SupportClass supportClass,
-                                                                       MutableGraph<String> inheritanceGraph,
-                                                                       Map<String, SupportClass> supportClassGroup) {
-    List<SupportClass> result = new LinkedList<>();
+  public static List<SupportClass> getAllSimpleSubClasses4SupportClass(SupportClass supportClass, MutableGraph<String> inheritanceGraph, Map<String, SupportClass> supportClassGroup) {
+    List<SupportClass> result = new ArrayList<>();
     inheritanceGraph.predecessors(supportClass.getName()).forEach(e -> {
       if (supportClassGroup.get(e).getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_CLASS) {
         result.add(supportClassGroup.get(e));
@@ -643,8 +617,7 @@ public class SupportHelper {
    * generate the list of SupportRefSetAssociation
    * each original association has one SupportRefSetAssociation object
    */
-  public static List<SupportRefSetAssociation> createSupportRefSetAssociation(Map<String, SupportAssociation> supportAssociationGroup,
-                                                                              MutableGraph<String> inheritanceGraph) {
+  public static List<SupportRefSetAssociation> createSupportRefSetAssociation(Map<String, SupportAssociation> supportAssociationGroup, MutableGraph<String> inheritanceGraph) {
 
     List<SupportRefSetAssociation> refSetAssociationList = new ArrayList<>();
 
@@ -662,22 +635,19 @@ public class SupportHelper {
       String rightRoleName = originalAssoc.getSupportRightClassRoleName();
       SupportGroup.SupportAssociationDirection direction = originalAssoc.getSupportDirection();
 
-      List<SupportAssociationPack> matchedAssocList =
-        fuzzySearchSupportAssociationBySupportAssociationWithRoleNameAndDirection(supportAssociationGroup, originalAssoc);
-      Set<String> leftInheritedClassSet =
-        getInheritedClassSet(inheritanceGraph, originalAssoc.getSupportLeftClass().getName());
-      Set<String> rightInheritedClassSet =
-        getInheritedClassSet(inheritanceGraph, originalAssoc.getSupportRightClass().getName());
+      List<Map<String, Object>> matchedAssocList = fuzzySearchSupportAssociationBySupportAssociationWithRoleNameAndDirection(supportAssociationGroup, originalAssoc);
+      Set<String> leftInheritedClassSet = getInheritedClassSet(inheritanceGraph, originalAssoc.getSupportLeftClass().getName());
+      Set<String> rightInheritedClassSet = getInheritedClassSet(inheritanceGraph, originalAssoc.getSupportRightClass().getName());
       matchedAssocList.forEach(e -> {
-        if (!e.isReverse()) {
-          SupportAssociation inheritedAssoc = e.getSupportAssociation();
+        if ((boolean) e.get("isReverse") == false) {
+          SupportAssociation inheritedAssoc = (SupportAssociation) e.get("supportAssociation");
           if (leftInheritedClassSet.contains(inheritedAssoc.getSupportLeftClass().getName()) &&
             rightInheritedClassSet.contains(inheritedAssoc.getSupportRightClass().getName())) {
             leftRefSet.add(inheritedAssoc.getSupportLeftClass());
             rightRefSet.add(inheritedAssoc.getSupportRightClass());
           }
         } else {
-          SupportAssociation inheritedAssoc = e.getSupportAssociation();
+          SupportAssociation inheritedAssoc = (SupportAssociation) e.get("supportAssociation");
           if (leftInheritedClassSet.contains(inheritedAssoc.getSupportRightClass().getName()) &&
             rightInheritedClassSet.contains(inheritedAssoc.getSupportLeftClass().getName())) {
             leftRefSet.add(inheritedAssoc.getSupportRightClass());
@@ -686,8 +656,7 @@ public class SupportHelper {
         }
       });
 
-      refSetAssociationList.add(
-        new SupportRefSetAssociation(leftRefSet, leftRoleName, direction, rightRoleName, rightRefSet, originalAssoc));
+      refSetAssociationList.add(new SupportRefSetAssociation(leftRefSet, leftRoleName, direction, rightRoleName, rightRefSet));
     });
 
     return refSetAssociationList;
@@ -696,8 +665,7 @@ public class SupportHelper {
   /**
    * set the left side class name into ASTCDAssociation
    */
-  public static ASTCDAssociation editASTCDAssociationLeftSideBySupportClass(ASTCDAssociation original,
-                                                                            SupportClass supportClass) {
+  public static ASTCDAssociation editASTCDAssociationLeftSideBySupportClass(ASTCDAssociation original, SupportClass supportClass) {
     ASTCDAssociation edited = original.deepClone();
     edited.getLeft().getMCQualifiedType().setMCQualifiedName(
       MCBasicTypesMillForCD4Analysis.mCQualifiedNameBuilder()
@@ -709,8 +677,7 @@ public class SupportHelper {
   /**
    * set the right side class name into ASTCDAssociation
    */
-  public static ASTCDAssociation editASTCDAssociationRightSideBySupportClass(ASTCDAssociation original,
-                                                                             SupportClass supportClass) {
+  public static ASTCDAssociation editASTCDAssociationRightSideBySupportClass(ASTCDAssociation original, SupportClass supportClass) {
     ASTCDAssociation edited = original.deepClone();
     edited.getRight().getMCQualifiedType().setMCQualifiedName(
       MCBasicTypesMillForCD4Analysis.mCQualifiedNameBuilder()
@@ -734,31 +701,5 @@ public class SupportHelper {
       astcdAssociation.getRight().setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(rightRoleName).build());
     }
     return astcdAssociation;
-  }
-
-  /**
-   * exchange left side and right side of SupportAssociation
-   */
-  public static SupportAssociation reverseSupportAssociation(SupportAssociation currentAssoc,
-                                                             ASTCDAssocDir reversedAstcdAssocDir) {
-    SupportAssociation reversedAssoc;
-    try {
-      reversedAssoc = currentAssoc.clone();
-    } catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
-    SupportClass currentLeftClass = currentAssoc.getSupportLeftClass();
-    SupportClass currentRightClass = currentAssoc.getSupportRightClass();
-
-    ASTCDAssociation reversedASTCDAssociation = reversedAssoc.getEditedElement();
-    reversedASTCDAssociation = editASTCDAssociationLeftSideBySupportClass(reversedASTCDAssociation, currentRightClass);
-    reversedASTCDAssociation = editASTCDAssociationRightSideBySupportClass(reversedASTCDAssociation, currentLeftClass);
-    reversedASTCDAssociation.setCDAssocDir(reversedAstcdAssocDir);
-
-    reversedAssoc.setEditedElement(reversedASTCDAssociation);
-    reversedAssoc.setSupportLeftClass(currentRightClass);
-    reversedAssoc.setSupportRightClass(currentLeftClass);
-
-    return reversedAssoc;
   }
 }

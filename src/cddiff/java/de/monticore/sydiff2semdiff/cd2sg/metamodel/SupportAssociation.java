@@ -23,15 +23,14 @@ import static de.monticore.sydiff2semdiff.cd2sg.SupportHelper.*;
 public class SupportAssociation implements Cloneable {
   protected final ASTCDAssociation originalElement;
   protected ASTCDAssociation editedElement;
-  protected SupportGroup.SupportAssociationKind supportKind;
+  protected final SupportGroup.SupportAssociationKind supportKind;
   protected SupportClass supportLeftClass;
   protected SupportClass supportRightClass;
 
   public SupportAssociation(ASTCDAssociation originalElement, boolean isInherited) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
-    this.supportKind = isInherited ?
-      SupportGroup.SupportAssociationKind.SUPPORT_INHERIT_ASC : SupportGroup.SupportAssociationKind.SUPPORT_ASC;
+    this.supportKind = isInherited ? SupportGroup.SupportAssociationKind.SUPPORT_INHERIT_ASC : SupportGroup.SupportAssociationKind.SUPPORT_ASC;
   }
 
   public String getName() {
@@ -45,10 +44,6 @@ public class SupportAssociation implements Cloneable {
 
   public SupportGroup.SupportAssociationKind getSupportKind() {
     return supportKind;
-  }
-
-  public void setSupportKind(SupportGroup.SupportAssociationKind supportKind) {
-    this.supportKind = supportKind;
   }
 
   public SupportGroup.SupportAssociationDirection getSupportDirection() {
@@ -135,10 +130,6 @@ public class SupportAssociation implements Cloneable {
 
   public ASTCDAssociation getEditedElement() {
     return editedElement;
-  }
-
-  public void setEditedElement(ASTCDAssociation editedElement) {
-    this.editedElement = editedElement;
   }
 
   @Override

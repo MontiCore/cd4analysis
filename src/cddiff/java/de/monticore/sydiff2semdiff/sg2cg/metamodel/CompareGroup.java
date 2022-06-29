@@ -69,12 +69,7 @@ public class CompareGroup {
     this.compareSG = compareSG;
   }
 
-  public CompareGroup(SupportGroup baseSG,
-                      SupportGroup compareSG,
-                      Deque<CompClass> compClassResultQueueWithDiff,
-                      Deque<CompAssociation> compAssociationResultQueueWithDiff,
-                      Deque<CompClass> compClassResultQueueWithoutDiff,
-                      Deque<CompAssociation> compAssociationResultQueueWithoutDiff) {
+  public CompareGroup(SupportGroup baseSG, SupportGroup compareSG, Deque<CompClass> compClassResultQueueWithDiff, Deque<CompAssociation> compAssociationResultQueueWithDiff, Deque<CompClass> compClassResultQueueWithoutDiff, Deque<CompAssociation> compAssociationResultQueueWithoutDiff) {
     this.baseSG = baseSG;
     this.compareSG = compareSG;
     this.compClassResultQueueWithDiff = compClassResultQueueWithDiff;
@@ -131,4 +126,8 @@ public class CompareGroup {
     this.compAssociationResultQueueWithoutDiff = compAssociationResultQueueWithoutDiff;
   }
 
+  @Override
+  public String toString() {
+    return "CompareGroup{" + "baseSG=" + baseSG + ", compareSG=" + compareSG + ", compClassResultQueueWithDiff=" + compClassResultQueueWithDiff + ", compAssociationResultQueueWithDiff=" + compAssociationResultQueueWithDiff + ", compClassResultQueueWithoutDiff=" + compClassResultQueueWithoutDiff + ", compAssociationResultQueueWithoutDiff=" + compAssociationResultQueueWithoutDiff + '}';
+  }
 }
