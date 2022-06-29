@@ -16,8 +16,8 @@ import de.monticore.sydiff2semdiff.dg2cg.metamodel.CompareGroup;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.monticore.sydiff2semdiff.cd2dg.DifferentHelper.*;
 import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.*;
-import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.mappingCardinality4Initial;
 
 public class CG2ODGenerator {
 
@@ -146,7 +146,8 @@ public class CG2ODGenerator {
     // using basic process
     astodElementList = generateODBasicProcess(dg, "target", classStack4TargetClass, associationStack4TargetClass, refLinkCheckList, astodElementList);
     if (astodElementList != null) {
-      return generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
+      astodElementList = generateODBasicProcess(dg, "source", classStack4SourceClass, associationStack4SourceClass, refLinkCheckList, astodElementList);
+      return astodElementList;
     } else {
       return null;
     }
@@ -160,35 +161,38 @@ public class CG2ODGenerator {
    * put those objects into ASTODElement list
    */
   public List<ASTODElement> initGenerateODByAssociation(DifferentGroup dg, CompAssociation compAssociation, Deque<Map<String, Object>> classStack4TargetClass, Deque<Map<String, Object>> classStack4SourceClass) {
+
+    DiffAssociation currentDiffAssoc = intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(compAssociation.getOriginalElement(), dg);
+
     // get the necessary information
-    DiffClass leftDiffClass = compAssociation.getOriginalElement().getDiffLeftClass();
-    DiffClass rightDiffClass = compAssociation.getOriginalElement().getDiffRightClass();
-    String leftRoleName = compAssociation.getOriginalElement().getDiffLeftClassRoleName();
-    String rightRoleName = compAssociation.getOriginalElement().getDiffRightClassRoleName();
+    DiffClass leftDiffClass = currentDiffAssoc.getDiffLeftClass();
+    DiffClass rightDiffClass = currentDiffAssoc.getDiffRightClass();
+    String leftRoleName = currentDiffAssoc.getDiffLeftClassRoleName();
+    String rightRoleName = currentDiffAssoc.getDiffRightClassRoleName();
     int directionType = 0;
     int leftCardinalityCount = 0;
     int rightCardinalityCount = 0;
 
     switch (compAssociation.getCompCategory()) {
       case DELETED:
-        directionType = mappingDirection(compAssociation.getOriginalElement().getDiffDirection().toString());
-        leftCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality4Initial(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+        directionType = mappingDirection(currentDiffAssoc.getDiffDirection().toString());
+        leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffRightClassCardinality().toString());
         break;
       case DIRECTION_CHANGED:
         directionType = mappingDirection(compAssociation.getCompDirectionResult().get().toString());
-        leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
-        rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+        leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffLeftClassCardinality().toString());
+        rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffRightClassCardinality().toString());
         break;
       case CARDINALITY_CHANGED:
-        directionType = mappingDirection(compAssociation.getOriginalElement().getDiffDirection().toString());
+        directionType = mappingDirection(currentDiffAssoc.getDiffDirection().toString());
         switch (compAssociation.getWhichPartDiff().get()) {
           case LEFT_CARDINALITY:
             leftCardinalityCount = mappingCardinality(compAssociation.getCompLeftClassCardinalityResult().get().toString());
-            rightCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffRightClassCardinality().toString());
+            rightCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffRightClassCardinality().toString());
             break;
           case RIGHT_CARDINALITY:
-            leftCardinalityCount = mappingCardinality(compAssociation.getOriginalElement().getDiffLeftClassCardinality().toString());
+            leftCardinalityCount = mappingCardinality4Initial(currentDiffAssoc.getDiffLeftClassCardinality().toString());
             rightCardinalityCount = mappingCardinality(compAssociation.getCompRightClassCardinalityResult().get().toString());
             break;
         }
@@ -264,7 +268,8 @@ public class CG2ODGenerator {
       }
 
       while (!associationStack.isEmpty()) {
-        DiffAssociation currentDiffAssociation = associationStack.pop();
+        DiffAssociation currentDiffAssociation =
+          intersectDiffAssociationCardinalityByDiffAssociationOnlyWithLeftToRightAndRightToLeft(associationStack.pop(), dg);
         if (!checkRelatedDiffRefSetAssociationIsUsed(currentDiffAssociation, refLinkCheckList)) {
 
           // get the information of currentSideClass and otherSideClass
@@ -277,26 +282,34 @@ public class CG2ODGenerator {
           String otherSideRoleName = null;
           String currentSideRoleName = null;
           int directionType = 0;
-          int otherSideCardinalityCount = 0;
+          boolean isPresentOtherSideCardinality = false;
 
           String otherSideClassPosition = (String) otherSideClassMap.get("position");
           if (otherSideClassPosition.equals("left")) {
             otherSideRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
             currentSideRoleName = currentDiffAssociation.getDiffRightClassRoleName();
-            directionType = 1;
-            otherSideCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffLeftClassCardinality().toString());
+            directionType = opt4StartClassKind.equals("target") ? 1 : 2;
+            if (isPresentObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList)) {
+              isPresentOtherSideCardinality = true;
+            } else {
+              isPresentOtherSideCardinality = mappingCardinality(currentDiffAssociation.getDiffLeftClassCardinality().toString()) > 0 ? true : false;
+            }
           } else {
             otherSideRoleName = currentDiffAssociation.getDiffRightClassRoleName();
             currentSideRoleName = currentDiffAssociation.getDiffLeftClassRoleName();
-            directionType = 2;
-            otherSideCardinalityCount = mappingCardinality(currentDiffAssociation.getDiffRightClassCardinality().toString());
+            directionType = opt4StartClassKind.equals("target") ? 2 : 1;
+            if (isPresentObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList)) {
+              isPresentOtherSideCardinality = true;
+            } else {
+              isPresentOtherSideCardinality = mappingCardinality(currentDiffAssociation.getDiffRightClassCardinality().toString()) > 0 ? true : false;
+            }
           }
           if (mappingDirection(currentDiffAssociation.getDiffDirection().toString()) == 3) {
             directionType = 3;
           }
 
           // determine if a new connection needs to be added by otherSideCardinalityCount
-          if (otherSideCardinalityCount != 0) {
+          if (isPresentOtherSideCardinality) {
 
             // get otherSideObject
             Map<String, Object> otherSideObjectMap = getObjectInASTODElementListByDiffClass(dg, otherSideClass, astodElementList);
@@ -333,7 +346,12 @@ public class CG2ODGenerator {
                 classStack.push(Map.of("objectList", List.of(otherSideObject0), "diffClass", otherSideClass));
               }
               // create new ASTODLinkList and add into ASTODElementList
-              List<ASTODLink> linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
+              List<ASTODLink> linkList0;
+              if (otherSideClassPosition.equals("left")) {
+                linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
+              } else {
+                linkList0 = createLinkList(currentSideObjectList.get(0), otherSideObject0, currentSideRoleName, otherSideRoleName, directionType);
+              }
               astodElementList.addAll(linkList0);
             } else if (currentSideObjectList.size() == 2) {
               ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
@@ -348,8 +366,15 @@ public class CG2ODGenerator {
                 classStack.push(Map.of("objectList", List.of(otherSideObject0, otherSideObject1), "diffClass", otherSideClass));
               }
               // create new ASTODLinkList and add into ASTODElementList
-              List<ASTODLink> linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
-              List<ASTODLink> linkList1 = createLinkList(otherSideObject1, currentSideObjectList.get(1), otherSideRoleName, currentSideRoleName, directionType);
+              List<ASTODLink> linkList0;
+              List<ASTODLink> linkList1;
+              if (otherSideClassPosition.equals("left")) {
+                linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0), otherSideRoleName, currentSideRoleName, directionType);
+                linkList1 = createLinkList(otherSideObject1, currentSideObjectList.get(1), otherSideRoleName, currentSideRoleName, directionType);
+              } else {
+                linkList0 = createLinkList(currentSideObjectList.get(0), otherSideObject0, currentSideRoleName, otherSideRoleName, directionType);
+                linkList1 = createLinkList(currentSideObjectList.get(1), otherSideObject1, currentSideRoleName, otherSideRoleName, directionType);
+              }
               astodElementList.addAll(linkList0);
               astodElementList.addAll(linkList1);
             }

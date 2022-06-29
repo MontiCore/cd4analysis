@@ -400,32 +400,34 @@ public class GenerateODHelper {
                                                String rightRoleName,
                                                int directionType) {
     List<ASTODLink> linkElementList = new ArrayList<>();
-    switch (directionType) {
-      case 1:
-        leftElementList.forEach(left -> {
-          rightElementList.forEach(right -> {
-            // set link
-            linkElementList.add(createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+    if (leftElementList.size() != 0 && rightElementList.size() != 0) {
+      switch (directionType) {
+        case 1:
+          leftElementList.forEach(left -> {
+            rightElementList.forEach(right -> {
+              // set link
+              linkElementList.add(createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+            });
           });
-        });
-        break;
-      case 2:
-        leftElementList.forEach(left -> {
-          rightElementList.forEach(right -> {
-            // set link
-            linkElementList.add(createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+          break;
+        case 2:
+          leftElementList.forEach(left -> {
+            rightElementList.forEach(right -> {
+              // set link
+              linkElementList.add(createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+            });
           });
-        });
-        break;
-      case 3:
-        leftElementList.forEach(left -> {
-          rightElementList.forEach(right -> {
-            // set link
-            linkElementList.add(createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
-            linkElementList.add(createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+          break;
+        case 3:
+          leftElementList.forEach(left -> {
+            rightElementList.forEach(right -> {
+              // set link
+              linkElementList.add(createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+              linkElementList.add(createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+            });
           });
-        });
-        break;
+          break;
+      }
     }
     return linkElementList;
   }
@@ -493,6 +495,44 @@ public class GenerateODHelper {
       }
     });
     return result;
+  }
+
+  /**
+   * check the object of given diffClass whether is in ASTODElementList
+   */
+  public static boolean isPresentObjectInASTODElementListByDiffClass(DifferentGroup dg,
+                                                                     DiffClass diffClass,
+                                                                     List<ASTODElement> astodElementList) {
+    AtomicBoolean isInList = new AtomicBoolean(false);
+
+    // choose ASTODNamedObjects from ASTODElementList
+    List<ASTODNamedObject> objectList = new ArrayList<>();
+    astodElementList.forEach(e -> {
+      if (e.getClass().equals(ASTODNamedObject.class)) {
+        objectList.add((ASTODNamedObject) e);
+      }
+    });
+
+    // if this DiffClass is interface or abstract class, check the subclass of this DiffClass whether is in objectList.
+    if (diffClass.getDiffKind() == DifferentGroup.DiffClassKind.DIFF_INTERFACE ||
+      diffClass.getDiffKind() == DifferentGroup.DiffClassKind.DIFF_ABSTRACT_CLASS) {
+      List<DiffClass> subClassList = getAllSimpleSubClasses4DiffClass(diffClass, dg.getInheritanceGraph(), dg.getDiffClassGroup());
+      subClassList.forEach(c -> {
+        objectList.forEach(e -> {
+          if (e.getName().split("_")[0].equals(toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+            isInList.set(true);
+          }
+        });
+      });
+    } else {
+      objectList.forEach(e -> {
+        if (e.getName().split("_")[0].equals(toLowerCaseFirstOne4ClassName(diffClass.getOriginalClassName()))) {
+          isInList.set(true);
+        }
+      });
+    }
+
+    return isInList.get();
   }
 
   /**
