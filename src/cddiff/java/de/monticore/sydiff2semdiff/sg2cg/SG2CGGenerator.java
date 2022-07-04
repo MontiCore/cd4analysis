@@ -68,7 +68,7 @@ public class SG2CGGenerator {
       List<String> attributesDiffList = compClassWhichAttributesDiffHelper(base, Optional.of(compare));
 
       // calculate boolean isContentDiff
-      boolean isContentDiff = attributesDiffList.size() != 0 ? true : false;
+      boolean isContentDiff = attributesDiffList.size() != 0;
 
       // calculate class category
       CompareGroup.CompClassCategory category = compClassCategoryHelper(base, compare, isContentDiff);

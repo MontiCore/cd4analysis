@@ -96,7 +96,6 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     generateCompareGroupTemp("Association","Association1A.cd", "Association1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(sg1, cg1);
-
     Assert.assertTrue(resultList.stream().anyMatch(e ->
       e.contains("[Association_E_work_LeftToRight_todo_F]-[deleted]") &&
         e.contains("e_0:E{};") &&
@@ -117,11 +116,11 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("[Association_A_a_Bidirectional_b_B]-[deleted]") &&
         e.contains("b_0:B{};") &&
-        e.contains("d_0:D{};") &&
+        e.contains("c_0:C{};") &&
         e.contains("link b_0 (a) -> (b) b_0;") &&
         e.contains("link b_0 (b) -> (a) b_0;") &&
-        e.contains("link b_0 (a) -> (c) d_0;") &&
-        e.contains("link d_0 (c) -> (a) b_0;")
+        e.contains("link b_0 (a) -> (c) c_0;") &&
+        e.contains("link c_0 (c) -> (a) b_0;")
     ));
   }
 
@@ -265,10 +264,6 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     generateCompareGroupTemp("Combination","Employees1A.cd", "Employees1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(sg1, cg1);
-
-    for (int i = 0; i < resultList.size(); i++) {
-      System.out.println(resultList.get(i));
-    }
     Assert.assertTrue(resultList.stream().anyMatch(e ->
       e.contains("[Association_Employee_assignee_RightToLeft_todo_Task]-[direction_changed]") &&
         e.contains(
@@ -338,45 +333,42 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(resultList.stream().anyMatch(e ->
       e.contains("[Interface_Area]-[edited]-[timeZone]") &&
         e.contains(
+              "  employee_0:Employee{\n" +
+                "    PositionKind kind = fullTime;\n" +
+                "    List<Long> devices = [some_type_Long,...];\n" +
+                "    int personId = some_type_int;\n" +
+                "  };") &&
+        e.contains(
               "  company_0:Company{\n" +
-              "    String address = some_type_String;\n" +
-              "    String country = some_type_String;\n" +
-              "    String timeZone = some_type_String;\n" +
-              "  };") &&
-        e.contains(
-              "  manager_0:Manager{\n" +
-              "    Department inChargeOf = Sales;\n" +
-              "    PositionKind kind = fullTime;\n" +
-              "    List<Long> devices = [some_type_Long,...];\n" +
-              "    int personId = some_type_int;\n" +
-              "  };") &&
-        e.contains(
-            "  managementTask_0:ManagementTask{\n" +
-            "    int priority = some_type_int;\n" +
-            "    int taskId = some_type_int;\n" +
-            "    String taskName = some_type_String;\n" +
-            "    Date startDate = some_type_Date;\n" +
-            "    Date endDate = some_type_Date;\n" +
-            "  };") &&
-        e.contains("link manager_0 (work) -> (area) company_0;") &&
-        e.contains("link managementTask_0 (todo) -> (assignee) manager_0;") &&
-        e.contains("link manager_0 (assignee) -> (todo) managementTask_0;")
+                "    String address = some_type_String;\n" +
+                "    String country = some_type_String;\n" +
+                "    String timeZone = some_type_String;\n" +
+                "  };") &&
+        e.contains("link employee_0 (work) -> (area) company_0;")
     ));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
       e.contains("[Enum_PositionKind]-[edited]-[other]") &&
         e.contains(
             "  employee_0:Employee{\n" +
-            "    PositionKind kind = other;\n" +
-            "    List<Long> devices = [some_type_Long,...];\n" +
-            "    int personId = some_type_int;\n" +
-            "  };") &&
+              "    PositionKind kind = fullTime;\n" +
+              "    List<Long> devices = [some_type_Long,...];\n" +
+              "    int personId = some_type_int;\n" +
+              "  };") &&
         e.contains(
-            "  company_0:Company{\n" +
+            "  task_0:Task{\n" +
+              "    int taskId = some_type_int;\n" +
+              "    String taskName = some_type_String;\n" +
+              "    Date startDate = some_type_Date;\n" +
+              "    Date endDate = some_type_Date;\n" +
+              "  };") &&
+        e.contains(
+          "  company_0:Company{\n" +
             "    String address = some_type_String;\n" +
             "    String country = some_type_String;\n" +
             "    String timeZone = some_type_String;\n" +
             "  };") &&
+        e.contains("link task_0 (todo) -> (assignee) employee_0;") &&
         e.contains("link employee_0 (work) -> (area) company_0;")
     ));
 
@@ -389,16 +381,32 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
             "    int personId = some_type_int;\n" +
             "  };") &&
         e.contains(
+          "  task_0:Task{\n" +
+            "    int taskId = some_type_int;\n" +
+            "    String taskName = some_type_String;\n" +
+            "    Date startDate = some_type_Date;\n" +
+            "    Date endDate = some_type_Date;\n" +
+            "  };") &&
+        e.contains(
             "  company_0:Company{\n" +
             "    String address = some_type_String;\n" +
             "    String country = some_type_String;\n" +
             "    String timeZone = some_type_String;\n" +
             "  };") &&
+        e.contains("link task_0 (todo) -> (assignee) employee_0;") &&
         e.contains("link employee_0 (work) -> (area) company_0;")
     ));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
       e.contains("[Class_Manager]-[edited]-[devices]") &&
+        e.contains(
+          "  managementTask_0:ManagementTask{\n" +
+            "    int priority = some_type_int;\n" +
+            "    int taskId = some_type_int;\n" +
+            "    String taskName = some_type_String;\n" +
+            "    Date startDate = some_type_Date;\n" +
+            "    Date endDate = some_type_Date;\n" +
+            "  };") &&
         e.contains(
             "  manager_0:Manager{\n" +
             "    Department inChargeOf = Sales;\n" +
@@ -407,15 +415,7 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
             "    int personId = some_type_int;\n" +
             "  };") &&
         e.contains(
-            "  managementTask_0:ManagementTask{\n" +
-            "    int priority = some_type_int;\n" +
-            "    int taskId = some_type_int;\n" +
-            "    String taskName = some_type_String;\n" +
-            "    Date startDate = some_type_Date;\n" +
-            "    Date endDate = some_type_Date;\n" +
-            "  };") &&
-        e.contains(
-            "  company_0:Company{\n" +
+          "  company_0:Company{\n" +
             "    String address = some_type_String;\n" +
             "    String country = some_type_String;\n" +
             "    String timeZone = some_type_String;\n" +
@@ -428,17 +428,17 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(resultList.stream().anyMatch(e ->
       e.contains("[Class_Company]-[edited]-[timeZone]") &&
         e.contains(
+          "  manager_0:Manager{\n" +
+            "    Department inChargeOf = Sales;\n" +
+            "    PositionKind kind = fullTime;\n" +
+            "    List<Long> devices = [some_type_Long,...];\n" +
+            "    int personId = some_type_int;\n" +
+            "  };") &&
+        e.contains(
               "  company_0:Company{\n" +
               "    String address = some_type_String;\n" +
               "    String country = some_type_String;\n" +
               "    String timeZone = some_type_String;\n" +
-              "  };") &&
-        e.contains(
-              "  manager_0:Manager{\n" +
-              "    Department inChargeOf = Sales;\n" +
-              "    PositionKind kind = fullTime;\n" +
-              "    List<Long> devices = [some_type_Long,...];\n" +
-              "    int personId = some_type_int;\n" +
               "  };") &&
         e.contains(
             "  managementTask_0:ManagementTask{\n" +
@@ -514,12 +514,20 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
             "    List<Long> devices = [some_type_Long,...];\n" +
             "    int personId = some_type_int;\n" +
             "  };") &&
-      e.contains(
+        e.contains(
+            "  task_0:Task{\n" +
+            "    int taskId = some_type_int;\n" +
+            "    String taskName = some_type_String;\n" +
+            "    Date startDate = some_type_Date;\n" +
+            "    Date endDate = some_type_Date;\n" +
+            "  };") &&
+        e.contains(
           "  company_0:Company{\n" +
           "    String address = some_type_String;\n" +
           "    String country = some_type_String;\n" +
           "    String timeZone = some_type_String;\n" +
           "  };") &&
+        e.contains("link task_0 (todo) -> (assignee) employee_0;") &&
         e.contains("link employee_0 (work) -> (area) company_0;")
     ));
   }
@@ -533,6 +541,5 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
 //      System.out.println(resultList.get(i));
 //    }
 //  }
-
 
 }

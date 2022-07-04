@@ -499,12 +499,7 @@ public class GenerateODHelper {
       }
     });
 
-//    Collections.sort(result, (assoc1, assoc2) -> {
-//      int o1 = assoc1.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
-//      int o2 = assoc2.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
-//      return o1 - o2;
-//    });
-    Collections.reverse(result);
+//    Collections.reverse(result);
     return result;
   }
 
@@ -535,12 +530,7 @@ public class GenerateODHelper {
       }
     });
 
-//    Collections.sort(result, (assoc1, assoc2) -> {
-//      int o1 = assoc1.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
-//      int o2 = assoc2.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
-//      return o1 - o2;
-//    });
-    Collections.reverse(result);
+//    Collections.reverse(result);
     return result;
   }
 
