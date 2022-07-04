@@ -17,6 +17,7 @@ import de.monticore.sydiff2semdiff.cg2od.metamodel.SupportClassPack;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompAssociation;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompClass;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompareGroup;
+import de.monticore.syntaxdiff.SyntaxDiff;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -146,7 +147,7 @@ public class CG2ODGenerator {
 
     // call initGenerateODByClassHelper()
     Optional<ASTODPack> optionalAstodPack =
-      initGenerateODByClassHelper(sg, usingSupportClass, classStack4TargetClass, classStack4SourceClass, refLinkCheckList);
+      initGenerateODByClassHelper(sg, compClass, usingSupportClass, classStack4TargetClass, classStack4SourceClass, refLinkCheckList);
     if (optionalAstodPack.isEmpty()) {
       astodPack.extendNamedObjects(
         createObjectList(sg, Optional.of(compClass), usingSupportClass, 1, classStack4TargetClass, classStack4SourceClass));
@@ -163,6 +164,7 @@ public class CG2ODGenerator {
    * if there is no associaton with current class, then return empty()
    */
   protected Optional<ASTODPack> initGenerateODByClassHelper(SupportGroup sg,
+                                                            CompClass compClass,
                                                             SupportClass supportClass,
                                                             Deque<ASTODClassStackPack> classStack4TargetClass,
                                                             Deque<ASTODClassStackPack> classStack4SourceClass,
@@ -196,7 +198,8 @@ public class CG2ODGenerator {
         false,
         true,
         CompareGroup.CompAssociationCategory.DELETED);
-      astodPack = initGenerateODByAssociation(sg, compAssociation, classStack4TargetClass, classStack4SourceClass);
+      astodPack =
+        initGenerateODByAssociation(sg, compAssociation, Optional.of(compClass), classStack4TargetClass, classStack4SourceClass);
       Optional<List<SupportRefSetAssociation>> optInitSupportRefSetAssociation =
         findRelatedSupportRefSetAssociationBySupportAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
       updateCounterInCheckList(optInitSupportRefSetAssociation, refLinkCheckList);
@@ -218,7 +221,8 @@ public class CG2ODGenerator {
       convertRefSetAssociationList2CheckList(sg.getRefSetAssociationList());
 
     // initial for generate ODs
-    ASTODPack astodPack = initGenerateODByAssociation(sg, compAssociation, classStack4TargetClass, classStack4SourceClass);
+    ASTODPack astodPack =
+      initGenerateODByAssociation(sg, compAssociation, Optional.empty(), classStack4TargetClass, classStack4SourceClass);
     Optional<List<SupportRefSetAssociation>> optInitSupportRefSetAssociation =
       findRelatedSupportRefSetAssociationBySupportAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
     updateCounterInCheckList(optInitSupportRefSetAssociation, refLinkCheckList);
@@ -243,6 +247,7 @@ public class CG2ODGenerator {
    */
   public ASTODPack initGenerateODByAssociation(SupportGroup sg,
                                                CompAssociation compAssociation,
+                                               Optional<CompClass>  optionalCompClass,
                                                Deque<ASTODClassStackPack> classStack4TargetClass,
                                                Deque<ASTODClassStackPack> classStack4SourceClass) {
 
@@ -285,10 +290,29 @@ public class CG2ODGenerator {
     }
 
     // create ASTODElement list
-    List<ASTODNamedObject> leftElementList =
-      createObjectList(sg, Optional.empty(), leftSupportClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
-    List<ASTODNamedObject> rightElementList =
-      createObjectList(sg, Optional.empty(), rightSupportClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+    List<ASTODNamedObject> leftElementList;
+    List<ASTODNamedObject> rightElementList;
+    if (optionalCompClass.isPresent()) {
+      if (optionalCompClass.get().getOriginalElement().getSupportLink4EnumClass().contains(leftSupportClass.getName())) {
+        leftElementList =
+          createObjectList(sg, optionalCompClass, leftSupportClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+      } else {
+        leftElementList =
+          createObjectList(sg, Optional.empty(), leftSupportClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+      }
+      if (optionalCompClass.get().getOriginalElement().getSupportLink4EnumClass().contains(rightSupportClass.getName())) {
+        rightElementList =
+          createObjectList(sg, optionalCompClass, rightSupportClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+      } else {
+        rightElementList =
+          createObjectList(sg, Optional.empty(), rightSupportClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+      }
+    } else {
+      leftElementList =
+        createObjectList(sg, Optional.empty(), leftSupportClass, leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+      rightElementList =
+        createObjectList(sg, Optional.empty(), rightSupportClass, rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+    }
     List<ASTODLink> linkElementList =
       createLinkList(leftElementList, rightElementList, leftRoleName, rightRoleName, directionType);
 
