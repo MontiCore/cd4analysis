@@ -2,6 +2,9 @@ package de.monticore.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.syntaxdiff.SyntaxDiff;
 
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class ElementDiff<ASTNodeType> {
 
   protected int diffSize;
 
-  protected final List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> diffList;
+  protected final List<FieldDiff<? extends ASTNode>> diffList;
 
   public ASTNodeType getCd1Element() {
     return cd1Element;
@@ -31,7 +34,7 @@ public class ElementDiff<ASTNodeType> {
     return diffSize;
   }
 
-  public List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> getDiffList() {
+  public List<FieldDiff<? extends ASTNode>> getDiffList() {
     return diffList;
   }
   /**
@@ -40,7 +43,7 @@ public class ElementDiff<ASTNodeType> {
    * @param cd2Element Element from the target(new) model
    * @param diffList List of diffs between the elements
    */
-  public ElementDiff(ASTNodeType cd1Element, ASTNodeType cd2Element, List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> diffList) {
+  public ElementDiff(ASTNodeType cd1Element, ASTNodeType cd2Element, List<FieldDiff<? extends ASTNode>> diffList) {
     this.cd1Element = cd1Element;
     this.cd2Element = cd2Element;
     this.diffList = diffList;
@@ -48,14 +51,14 @@ public class ElementDiff<ASTNodeType> {
   }
   private int calculateDiffSize(){
     int size = diffList.size();
-    for (FieldDiff<SyntaxDiff.Op, ? extends ASTNode> diff : diffList){
+    for (FieldDiff<? extends ASTNode> diff : diffList){
+
       if (diff.isPresent() && diff.getCd1Value().isPresent()){
         // Name Diffs are weighted doubled compared to every other diff
         // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
-        if (diff.getCd1Value().get().getClass().getSimpleName().equals("ASTCDAttribute")
-          || diff.getCd1Value().get().getClass().getSimpleName().equals("ASTMCQualifiedName")
-          || diff.getCd1Value().get().getClass().getSimpleName().equals("ASTCDClass")
-
+        if (diff.getCd1Value().get() instanceof ASTCDAttribute
+          || diff.getCd1Value().get() instanceof ASTMCQualifiedName
+          || diff.getCd1Value().get() instanceof ASTCDClass
         ) {
           size += 1;
         }
