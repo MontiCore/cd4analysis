@@ -1,6 +1,9 @@
 package de.monticore.syntaxdiff;
 
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.*;
@@ -15,20 +18,29 @@ import java.util.*;
 public class SyntaxDiff {
 
   public enum Op { CHANGE, ADD, DELETE}
+  public enum Interpretation {REDUCED, REFINED, REVERSED, SUPERTYPE, SUBTYPE, RENAME, RELOCATION, REFINEMENT
+    , EXPANSION, INCOMPARABLE, DEFAULTVALUECHANGED, ABSTRACTION, REPURPOSED, INHERITED, EQUALINTERVAL
+    , SCOPECHANGE, ROLECHANGE, DELETED, EQUAL, TYPECHANGE}
+
+  StringBuilder outPutAll;
+  StringBuilder cd1Colored;
+  StringBuilder cd2Colored;
 
   // Create the diff between two provided classdiagrams
   // CDs consists of Classes, Interfaces, Enums, Associations
   // Todo: Add json file creator
   // Todo: Extract printing
   // Todo: Add parser, change signature to two file paths
-  public static void createCDDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2){
+  public SyntaxDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2){
 
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
     // Trafo to make in-class declarations of compositions appear in the association list
     new CD4CodeDirectCompositionTrafo().transform(cd1);
     new CD4CodeDirectCompositionTrafo().transform(cd2);
-
+    final String BOLD_RED = "\033[1;31m";
+    final String BOLD_GREEN = "\033[1;32m";
+    final String RESET = "\033[0m";
 
     // Create Lists for each type of CDElement to check
 
@@ -36,7 +48,7 @@ public class SyntaxDiff {
     List<ASTCDClass> cd1ClassesList = cd1.getCDDefinition().getCDClassesList();
     List<ASTCDClass> cd2ClassesList = cd2.getCDDefinition().getCDClassesList();
 
-    List<List<ClassDiff>> classesDiffList = SyntaxDiff.getClassDiffList(cd1ClassesList, cd2ClassesList);
+    //List<List<ClassDiff>> classesDiffList = SyntaxDiff.getClassDiffList(cd1ClassesList, cd2ClassesList);
 
     // Associations
     List<ASTCDAssociation> cd1AssociationsList = cd1.getCDDefinition().getCDAssociationsList();
@@ -46,151 +58,114 @@ public class SyntaxDiff {
 
 
     // Create Class Match
-    int classthreshold = 10;
-    List<Integer> cd1matchedLines = new ArrayList<>();
-    List<Integer> cd2matchedLines = new ArrayList<>();
 
-    List<ClassDiff> matchedClasses = new ArrayList<>();
-    List<ASTCDClass> deletedClasses = new ArrayList<>();
-    List<ASTCDClass> addedClasses = new ArrayList<>();
+    List<ClassDiff> matchedClassList = getClassMatchingList(getClassDiffList(cd1ClassesList, cd2ClassesList));
+    List<ASTCDClass> deletedClasses = absentClassList(matchedClassList, cd1ClassesList);
+    List<ASTCDClass> addedClasses = absentClassList(matchedClassList, cd2ClassesList);
 
-    for (List<ClassDiff> currentClassList: classesDiffList){
-      if (!currentClassList.isEmpty()) {
-        ClassDiff currentClassDiff = currentClassList.get(0);
-        int cd1Line = currentClassDiff.getCd1Element().get_SourcePositionStart().getLine();
-        int cd2Line = currentClassDiff.getCd2Element().get_SourcePositionStart().getLine();
-        if (!cd1matchedLines.contains(cd1Line) && !cd2matchedLines.contains(cd2Line)){
-          int currentMinDiff = currentClassDiff.getDiffSize();
-          //System.out.println("Matching Lines: " + cd1Line + ", " + cd2Line + ", size "+ currentMinDiff);
-          // Todo: Check if there is a match to the target line(in cd2) with a smaller diff size
-          if (currentMinDiff < classthreshold){
-            matchedClasses.add(currentClassDiff);
-            cd1matchedLines.add(cd1Line);
-            cd2matchedLines.add(cd2Line);
-          }
-        }
-      }
 
+
+    //List<ClassDiff> matchedClasses = new ArrayList<>();
+    //List<ASTCDClass> deletedClasses = new ArrayList<>();
+    //List<ASTCDClass> addedClasses = new ArrayList<>();
+
+    StringBuilder initial = new StringBuilder();
+    StringBuilder classPrints = new StringBuilder();
+    StringBuilder assoPrints = new StringBuilder();
+
+    initial.append(System.lineSeparator())
+      .append("In the following the syntax diff between ")
+      .append(cd1.getCDDefinition().getName())
+      .append(" and ")
+      .append(cd2.getCDDefinition().getName())
+      .append(" is created")
+      .append(System.lineSeparator());
+
+
+    for (ClassDiff x : matchedClassList) {
+      classPrints.append(x.print()).append(System.lineSeparator());
     }
-    for (ASTCDClass cd1class : cd1ClassesList){
-      if (!cd1matchedLines.contains(cd1class.get_SourcePositionStart().getLine())){
-        deletedClasses.add(cd1class);
-      }
-    }
-    for (ASTCDClass cd2class : cd2ClassesList){
-      if (!cd2matchedLines.contains(cd2class.get_SourcePositionStart().getLine())){
-        addedClasses.add(cd2class);
-      }
-    }
-
-    for (ClassDiff x : matchedClasses) {
-      StringBuilder output = new StringBuilder();
-
-      x.print();
-
-
-      System.out.println(output);
-    }
-    StringBuilder output = new StringBuilder();
-    output.append("Deleted Classes: ").append(System.lineSeparator());
-    for (ASTCDClass a : deletedClasses) {
-      output.append(a.get_SourcePositionStart().getLine())
-        .append(" ")
-        .append(pp.prettyprint(a));
-    }
-    output.append("Added Classes: ").append(System.lineSeparator());
-    for (ASTCDClass a : addedClasses) {
-      output.append(a.get_SourcePositionStart().getLine())
-        .append(" ")
-        .append(pp.prettyprint(a));
-    }
-    System.out.println(output);
-
 
     // Create Association Match
-    int assothreshold = 3;
-    List<ASTCDAssociation> cd1Assomatched = new ArrayList<>();
-    List<ASTCDAssociation> cd2Assomatched = new ArrayList<>();
+    List<AssoDiff> matchedAssos = getAssoMatchingList(getAssoDiffList(cd1AssociationsList, cd2AssociationsList));
+    List<ASTCDAssociation> deletedAssos = absentAssoList(matchedAssos, cd1AssociationsList);
+    List<ASTCDAssociation> addedAssos = absentAssoList(matchedAssos, cd2AssociationsList);
 
-    List<AssoDiff> matchedAssos = new ArrayList<>();
-    List<ASTCDAssociation> deletedAssos = new ArrayList<>();
-    List<ASTCDAssociation> addedAssos = new ArrayList<>();
 
-    for (List<AssoDiff> currentAssoList: assosDiffList){
-      if (!currentAssoList.isEmpty()) {
-        AssoDiff currentAssoDiff = currentAssoList.get(0);
-        ASTCDAssociation cd1Asso = currentAssoList.get(0).getCd1Element();
-        ASTCDAssociation cd2Asso = currentAssoList.get(0).getCd2Element();
-        if (!cd1Assomatched.contains(cd1Asso) && !cd2Assomatched.contains(cd2Asso)){
-          // Todo: Check if there is a match to the target association with a smaller diff size
-          if (currentAssoDiff.getDiffSize() < assothreshold){
-            matchedAssos.add(currentAssoDiff);
-            cd1Assomatched.add(cd1Asso);
-            cd2Assomatched.add(cd2Asso);
-          }
-        }
-        currentAssoDiff.print();
-      }
+    for (AssoDiff x : matchedAssos) {
+      assoPrints.append(x.print()).append(System.lineSeparator());
+    }
 
+
+
+    classPrints.append("Line Deleted Classes from CD1 (")
+      .append(cd1.getCDDefinition().getName())
+      .append(") :")
+      .append(System.lineSeparator());
+
+    for (ASTCDClass a : deletedClasses) {
+      classPrints.append(a.get_SourcePositionStart().getLine())
+        .append("   ")
+        .append(BOLD_RED)
+        .append(pp.prettyprint(a))
+        .append(RESET);
     }
-    for (ASTCDAssociation cd1assos : cd1AssociationsList){
-      if (!cd1Assomatched.contains(cd1assos)){
-        deletedAssos.add(cd1assos);
-      }
+    classPrints.append("Line Added Classes to CD2 (")
+      .append(cd1.getCDDefinition().getName())
+      .append(") :")
+      .append(System.lineSeparator());
+
+    for (ASTCDClass a : addedClasses) {
+      classPrints.append(a.get_SourcePositionStart().getLine())
+        .append("   ")
+        .append(BOLD_GREEN)
+        .append(pp.prettyprint(a))
+        .append(RESET);
     }
-    for (ASTCDAssociation cd2assos : cd2AssociationsList){
-      if (!cd2Assomatched.contains(cd2assos)){
-        addedAssos.add(cd2assos);
-      }
-    }
+
     StringBuilder addDelAssos = new StringBuilder();
-    addDelAssos.append("Deleted Associations: ")
-               .append(deletedAssos.size())
-               .append(System.lineSeparator());
+    assoPrints.append("Line Deleted Associations from CD1 (")
+      .append(cd1.getCDDefinition().getName())
+      .append(") :")
+      .append(System.lineSeparator());
 
     for (ASTCDAssociationNode asso : deletedAssos){
-      addDelAssos.append(pp.prettyprint(asso));
+      assoPrints.append(asso.get_SourcePositionStart().getLine())
+        .append("   ")
+        .append(BOLD_RED)
+        .append(pp.prettyprint(asso))
+        .append(RESET);
     }
 
-    addDelAssos.append("Added Associations: ")
-               .append(addedAssos.size())
-               .append(System.lineSeparator());
+    assoPrints.append("Line Added Associations to CD2 (")
+      .append(cd1.getCDDefinition().getName())
+      .append(") :")
+      .append(System.lineSeparator());
 
     for (ASTCDAssociationNode asso : addedAssos){
-      addDelAssos.append(pp.prettyprint(asso));
+      assoPrints.append(asso.get_SourcePositionStart().getLine())
+        .append("   ")
+        .append(BOLD_GREEN)
+        .append(pp.prettyprint(asso))
+        .append(RESET);
     }
-    System.out.println(addDelAssos);
+    StringBuilder outPutAll = new StringBuilder();
+    outPutAll.append(addDelAssos)
+      .append(initial)
+      .append(classPrints)
+      .append(assoPrints);
 
-    // Create Interface Match
-
-    // Create Enum Match
+    this.outPutAll = outPutAll;
   }
 
-  /**
-   * Create a FieldDiff Object between the two given Fields
-   * @param cd1Field Field in the original Model
-   * @param cd2Field Field in the target(new) Model
-   * @return A FieldDiff Object, which contains the ASTFields and operation
-   * @param <NodeType> Ensure the boundary of ASTNodes as input
-   */
-  public static <NodeType extends ASTNode> FieldDiff<Op, NodeType> getFieldDiff(Optional<NodeType> cd1Field,
-      Optional<NodeType> cd2Field) {
-    if (cd1Field.isPresent() && cd2Field.isPresent() && !cd1Field.get().deepEquals(cd2Field.get())) {
-      // Diff reason: Value changed
-      return new FieldDiff<>(Op.CHANGE, cd1Field.get(), cd2Field.get());
-
-    } else if (cd1Field.isPresent() && !cd2Field.isPresent()) {
-      // Diff reason: Value deleted
-      return new FieldDiff<>(Op.DELETE, cd1Field.get(), null);
-
-    } else if (!cd1Field.isPresent() && cd2Field.isPresent()) {
-      // Diff reason: Value added
-      return new FieldDiff<>(Op.ADD, null, cd2Field.get());
-
-    } else {
-      // No Diff reason: is equal
-      return new FieldDiff<>();
-    }
+  public void print(){
+    System.out.println(outPutAll);
+  }
+  public void printCD1(){
+    System.out.println(cd1Colored);
+  }
+  public void printCD2(){
+    System.out.println(cd2Colored);
   }
 
   /**
@@ -242,5 +217,98 @@ public class SyntaxDiff {
     }
     return classMatches;
   }
+  protected static List<ClassDiff> getClassMatchingList(List<List<ClassDiff>> elementsDiffList){
+    List<ASTCDClass> cd1matchedElements = new ArrayList<>();
+    List<ASTCDClass> cd2matchedElements = new ArrayList<>();
+    List<ClassDiff> matchedElements = new ArrayList<>();
+
+    for (List<ClassDiff> currentElementList: elementsDiffList){
+      double threshold = 0;
+      OptionalDouble optAverage = currentElementList.stream()
+        .mapToDouble(ClassDiff::getDiffSize)
+        .average();
+      if (optAverage.isPresent()) {
+        threshold = optAverage.getAsDouble() / 2;
+      }
+      if (!currentElementList.isEmpty()) {
+        ClassDiff currentElementDiff = currentElementList.get(0);
+        ASTCDClass cd1Element = currentElementDiff.getCd1Element();
+        ASTCDClass cd2Element = currentElementDiff.getCd2Element();
+        if (!cd1matchedElements.contains(cd1Element) && !cd2matchedElements.contains(cd2Element)){
+          // Todo: Check if there is a match to the target attribute with a smaller diff size
+          if (currentElementDiff.getDiffSize() <= threshold){
+            matchedElements.add(currentElementDiff);
+            cd1matchedElements.add(cd1Element);
+            cd2matchedElements.add(cd2Element);
+          }
+        }
+      }
+    }
+    return matchedElements;
+  }
+  protected static List<AssoDiff> getAssoMatchingList(List<List<AssoDiff>> elementsDiffList){
+    List<ASTCDAssociation> cd1matchedElements = new ArrayList<>();
+    List<ASTCDAssociation> cd2matchedElements = new ArrayList<>();
+    List<AssoDiff> matchedElements = new ArrayList<>();
+
+    for (List<AssoDiff> currentElementList: elementsDiffList){
+      double threshold = 0;
+      OptionalDouble optAverage = currentElementList.stream()
+        .mapToDouble(AssoDiff::getDiffSize)
+        .average();
+      if (optAverage.isPresent()) {
+        threshold = (1 / (double) (currentElementList.size()+1))+optAverage.getAsDouble() / 1.5;
+      }
+      if (!currentElementList.isEmpty()) {
+        for (AssoDiff currentElementDiff : currentElementList){
+          ASTCDAssociation cd1Element = currentElementDiff.getCd1Element();
+          ASTCDAssociation cd2Element = currentElementDiff.getCd2Element();
+          if (!cd1matchedElements.contains(cd1Element) && !cd2matchedElements.contains(cd2Element)){
+            // Todo: Check if there is a match to the target attribute with a smaller diff size
+            if (currentElementDiff.getDiffSize() <= threshold){
+              matchedElements.add(currentElementDiff);
+              cd1matchedElements.add(cd1Element);
+              cd2matchedElements.add(cd2Element);
+              break;
+            }
+          }
+        }
+      }
+    }
+    return matchedElements;
+  }
+  protected static List<ASTCDClass> absentClassList(List<ClassDiff> matchs, List<ASTCDClass> elementList){
+    List<ASTCDClass> output = new ArrayList<>();
+    for (ASTCDClass element: elementList){
+      boolean found = false;
+      for (ClassDiff diff : matchs){
+        if (diff.getCd1Element().deepEquals(element) || diff.getCd2Element().deepEquals(element)){
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        output.add(element);
+      }
+    }
+    return output;
+  }
+  protected static List<ASTCDAssociation> absentAssoList(List<AssoDiff> matchs, List<ASTCDAssociation> elementList){
+    List<ASTCDAssociation> output = new ArrayList<>();
+    for (ASTCDAssociation element: elementList){
+      boolean found = false;
+      for (AssoDiff diff : matchs){
+        if (diff.getCd1Element().deepEquals(element) || diff.getCd2Element().deepEquals(element)){
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        output.add(element);
+      }
+    }
+    return output;
+  }
+
 }
 

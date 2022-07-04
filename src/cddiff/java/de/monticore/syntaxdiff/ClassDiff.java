@@ -2,41 +2,51 @@ package de.monticore.syntaxdiff;
 
   import de.monticore.ast.ASTNode;
   import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+  import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+  import de.monticore.cd4codebasis._ast.ASTCDMethod;
+  import de.monticore.cd4codebasis._ast.ASTCDParameter;
+  import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
   import de.monticore.cdassociation._ast.ASTCDAssociationNode;
   import de.monticore.cdbasis._ast.ASTCDAttribute;
   import de.monticore.cdbasis._ast.ASTCDClass;
   import de.monticore.cdbasis._ast.ASTCDExtendUsage;
   import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
   import de.monticore.prettyprint.IndentPrinter;
+  import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+  import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
   import de.monticore.types.mcbasictypes._ast.ASTMCType;
   import de.monticore.umlmodifier._ast.ASTModifier;
   import de.monticore.syntaxdiff.FieldDiff;
   import de.monticore.syntaxdiff.SyntaxDiff;
 
-  import java.util.ArrayList;
-  import java.util.Comparator;
-  import java.util.List;
-  import java.util.Optional;
+
+  import java.util.*;
 
 /**
  * Diff Type for Classes
  * Use the constructor to create a diff between two classes
  * This diff type contains information extracted from the provided classes
  */
-  public class ClassDiff {
+  public class ClassDiff extends AbstractDiffType{
     protected final ASTCDClass cd1Element;
 
     protected final ASTCDClass cd2Element;
 
     protected int diffSize;
 
-    protected List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> diffList;
+    protected List<FieldDiff<? extends ASTNode>> diffList;
 
     protected List<ElementDiff<ASTCDAttribute>> matchedAttributesList;
-
     protected List<ASTCDAttribute> deleletedAttributes;
-
     protected List<ASTCDAttribute> addedAttributes;
+
+    protected List<ElementDiff<ASTCDMethod>> matchedMethodeList;
+    protected List<ASTCDMethod> deleletedMethodes;
+    protected List<ASTCDMethod> addedMethode;
+
+    protected List<ElementDiff<ASTCDConstructor>> matchedConstructorList;
+    protected List<ASTCDConstructor> deleletedConstructor;
+    protected List<ASTCDConstructor> addedConstructor;
 
     public List<ElementDiff<ASTCDAttribute>> getMatchedAttributesList() {
     return matchedAttributesList;
@@ -62,7 +72,7 @@ package de.monticore.syntaxdiff;
       return diffSize;
     }
 
-    public List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> getDiffList() {
+    public List<FieldDiff<? extends ASTNode>> getDiffList() {
       return diffList;
     }
 
@@ -89,23 +99,18 @@ package de.monticore.syntaxdiff;
     private int calculateDiffSize(){
       int size = diffList.size();
 
-      List<Integer> cd1attributeLines = new ArrayList<>();
-      for (ASTCDAttribute cd1attribute : cd1Element.getCDAttributeList()){
-        cd1attributeLines.add(cd1attribute.get_SourcePositionStart().getLine());
+      for (ElementDiff<ASTCDAttribute> attri : matchedAttributesList){
+        size += attri.getDiffSize();
       }
+      size += deleletedAttributes.size() + addedAttributes.size();
+      for (FieldDiff<? extends ASTNode> diff : diffList){
 
-      List<Integer> cd2attributeLines = new ArrayList<>();
-      for (ASTCDAttribute cd2attribute : cd2Element.getCDAttributeList()){
-        cd2attributeLines.add(cd2attribute.get_SourcePositionStart().getLine());
-      }
-      size += cd1attributeLines.size()-matchedAttributesList.size()+cd2attributeLines.size()-matchedAttributesList.size();
-      for (FieldDiff<SyntaxDiff.Op, ? extends ASTNode> diff : diffList){
         if (diff.isPresent() && diff.getCd1Value().isPresent()){
           // Name Diffs are weighted doubled compared to every other diff
           // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
-          if (diff.getCd1Value().get().getClass().getSimpleName().equals("ASTCDAttribute")
-            || diff.getCd1Value().get().getClass().getSimpleName().equals("ASTMCQualifiedName")
-            || diff.getCd1Value().get().getClass().getSimpleName().equals("ASTCDClass")
+          if (diff.getCd1Value().get() instanceof ASTCDAttribute
+            || diff.getCd1Value().get() instanceof ASTMCQualifiedName
+            || diff.getCd1Value().get() instanceof ASTCDClass
           ) {
             size += 1;
           }
@@ -121,26 +126,26 @@ package de.monticore.syntaxdiff;
    * @param cd2Class Class from the target(new) model
    */
   private void classDiff(ASTCDClass cd1Class, ASTCDClass cd2Class) {
-    List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> diffs = new ArrayList<>();
+    List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
 
     // Modifier, non-optional
     Optional<ASTModifier> cd1Modi = Optional.of(cd1Class.getModifier());
     Optional<ASTModifier> cd2Modi = Optional.of(cd2Class.getModifier());
-    FieldDiff<SyntaxDiff.Op, ASTModifier> assoModifier = SyntaxDiff.getFieldDiff(cd1Modi, cd2Modi);
+    FieldDiff<ASTModifier> assoModifier = new FieldDiff<>(cd1Modi, cd2Modi);
     if (assoModifier.isPresent()){
       diffs.add(assoModifier);
     }
 
     // Class Name, non-optional (always a String therefore return the full class)
     if (!cd1Class.getName().equals(cd2Class.getName())){
-      FieldDiff<SyntaxDiff.Op, ASTCDClass> className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Class, cd2Class);
+      FieldDiff<ASTCDClass> className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Class), Optional.of(cd2Class));
       diffs.add(className);
     }
 
     // Extended, optional
     Optional<ASTCDExtendUsage> cd1Extend = (cd1Class.isPresentCDExtendUsage()) ? Optional.of(cd1Class.getCDExtendUsage()) : Optional.empty();
     Optional<ASTCDExtendUsage> cd2Extend = (cd2Class.isPresentCDExtendUsage()) ? Optional.of(cd2Class.getCDExtendUsage()) : Optional.empty();
-    FieldDiff<SyntaxDiff.Op, ASTCDExtendUsage> classExtended = SyntaxDiff.getFieldDiff(cd1Extend, cd2Extend);
+    FieldDiff<ASTCDExtendUsage> classExtended = new FieldDiff<>(cd1Extend, cd2Extend);
     if (classExtended.isPresent()){
       diffs.add(classExtended);
     }
@@ -149,100 +154,74 @@ package de.monticore.syntaxdiff;
     // Todo: add inherited methods and attributes
 
     // CDMember diffs, members are: Attributes, Methods, Constructors
-    List<List<ElementDiff<ASTCDAttribute>>> attributeDiffList = getAttributeDiffList(cd1Class.getCDAttributeList(),
-                                                                                      cd2Class.getCDAttributeList());
 
-    int threshold = 2;
-    List<ASTCDAttribute> cd1matchedAttributes = new ArrayList<>();
-    List<ASTCDAttribute> cd2matchedAttributes = new ArrayList<>();
-    List<ElementDiff<ASTCDAttribute>> matchedAttributes = new ArrayList<>();
-    List<ASTCDAttribute> deletedAttributes = new ArrayList<>();
-    List<ASTCDAttribute> addedAttributes = new ArrayList<>();
 
-    for (List<ElementDiff<ASTCDAttribute>> currentAttributeList: attributeDiffList){
-      if (!currentAttributeList.isEmpty()) {
-        ElementDiff<ASTCDAttribute> currentAttriDiff = currentAttributeList.get(0);
-        ASTCDAttribute cd1Attri = currentAttriDiff.getCd1Element();
-        ASTCDAttribute cd2Attri = currentAttriDiff.getCd2Element();
-        if (!cd1matchedAttributes.contains(cd1Attri) && !cd2matchedAttributes.contains(cd2Attri)){
-          int currentMinDiff = currentAttriDiff.getDiffSize();
-          // Todo: Check if there is a match to the target attribute with a smaller diff size
-          if (currentMinDiff < threshold){
-            matchedAttributes.add(currentAttriDiff);
-            cd1matchedAttributes.add(cd1Attri);
-            cd2matchedAttributes.add(cd2Attri);
-          }
-        }
-      }
-    }
-
-    for (ASTCDAttribute attr : cd1Class.getCDAttributeList()){
-      if (!cd1matchedAttributes.contains(attr)){
-        deletedAttributes.add(attr);
-      }
-    }
-    for (ASTCDAttribute attr : cd2Class.getCDAttributeList()){
-      if (!cd2matchedAttributes.contains(attr)){
-        addedAttributes.add(attr);
-      }
-    }
     this.diffList = diffs;
-    this.matchedAttributesList = matchedAttributes;
-    this.deleletedAttributes = deletedAttributes;
-    this.addedAttributes = addedAttributes;
+    this.matchedAttributesList = getMatchingList(getElementDiffList(cd1Class.getCDAttributeList(), cd2Class.getCDAttributeList()));
+    this.deleletedAttributes = absentElementList(matchedAttributesList, cd1Class.getCDAttributeList());
+    this.addedAttributes = absentElementList(matchedAttributesList, cd2Class.getCDAttributeList());
 
+    this.matchedMethodeList = getMatchingList(getElementDiffList(cd1Class.getCDMethodList(), cd2Class.getCDMethodList()));
+    this.deleletedMethodes = absentElementList(matchedMethodeList, cd1Class.getCDMethodList());
+    this.addedMethode= absentElementList(matchedMethodeList, cd2Class.getCDMethodList());
 
-    // Only difference between methods and constructors is the absent return type for constructors
-    // cd1Class.getCDMethodList()
-    // Methods
-    //  CDMethod implements CDMethodSignature =
-    //    Modifier
-    //    MCReturnType
-    //    Name "(" (CDParameter || ",")* ")"
-    //    CDThrowsDeclaration?
-    //    ";";
+    this.matchedConstructorList = getMatchingList(getElementDiffList(cd1Class.getCDConstructorList(), cd2Class.getCDConstructorList()));
+    this.deleletedConstructor = absentElementList(matchedConstructorList, cd1Class.getCDConstructorList());
+    this.addedConstructor = absentElementList(matchedConstructorList, cd2Class.getCDConstructorList());
 
-
-    // Conctructor
-    // CDConstructor implements CDMethodSignature =
-    //    Modifier
-    //    Name "(" (CDParameter || ",")* ")"
-    //    CDThrowsDeclaration?
-    //    ";";
   }
 
+
+
   /**
-   * Help method for calculating the class diff because each classcontains multiple attributes which need to be matched
-   * @param cd1MemberList List of attributes from the original model
-   * @param cd2MemberList List of attributes from the target(new) model
-   * @return Returns a difflist for each attribute, ordered by diffsize (small diff values == similar)
+   * Help method for calculating the class diff because each class can contains multiple methodes which need to be matched
+   * @param cd1ElementList List of methodes from the original model
+   * @param cd2ElementList List of methodes from the target(new) model
+   * @return Returns a difflist for each methodes, ordered by diffsize (small diff values == similar)
    */
-  public static List<List<ElementDiff<ASTCDAttribute>>> getAttributeDiffList(List<ASTCDAttribute> cd1MemberList, List<ASTCDAttribute> cd2MemberList) {
-    List<List<ElementDiff<ASTCDAttribute>>> diffs = new ArrayList<>();
-    for (ASTCDAttribute cd1Member : cd1MemberList){
-      List<ElementDiff<ASTCDAttribute>> cd1MemberMatches = new ArrayList<>();
-      for (ASTCDAttribute cd2Member : cd2MemberList) {
-        cd1MemberMatches.add(new ElementDiff<>(cd1Member, cd2Member, getAttributeDiff(cd1Member, cd2Member)));
+  protected static <T> List<List<ElementDiff<T>>> getElementDiffList(List<T> cd1ElementList, List<T> cd2ElementList) {
+    List<List<ElementDiff<T>>> diffs = new ArrayList<>();
+    for (T cd1Element : cd1ElementList){
+      List<ElementDiff<T>> cd1ElementMatches = new ArrayList<>();
+      for (T cd2Element : cd2ElementList) {
+        cd1ElementMatches.add(new ElementDiff<>(cd1Element, cd2Element, getElementDiff(cd1Element, cd2Element)));
       }
       // Sort by size of diffs, ascending
-      cd1MemberMatches.sort(Comparator.comparing(ElementDiff -> ElementDiff.getDiffList().size()));
-      diffs.add(cd1MemberMatches);
+      cd1ElementMatches.sort(Comparator.comparing(ElementDiff::getDiffSize));
+      diffs.add(cd1ElementMatches);
     }
     return diffs;
   }
+  protected static <T> List<FieldDiff<? extends ASTNode>> getElementDiff(T cd1Element,T cd2Element) {
+    if( cd1Element instanceof ASTCDMethod && cd2Element instanceof ASTCDMethod){
+      return getMethodeDiff((ASTCDMethod) cd1Element, (ASTCDMethod) cd2Element);
+    }
+    if( cd1Element instanceof ASTCDParameter && cd2Element instanceof ASTCDParameter){
+      return getParameterDiff((ASTCDParameter) cd1Element, (ASTCDParameter) cd2Element);
+    }
+    if( cd1Element instanceof ASTCDAttribute && cd2Element instanceof ASTCDAttribute){
+      return getAttributeDiff((ASTCDAttribute) cd1Element, (ASTCDAttribute) cd2Element);
+    }
+    if( cd1Element instanceof ASTCDConstructor && cd2Element instanceof ASTCDConstructor){
+      return getConstructorDiff((ASTCDConstructor) cd1Element, (ASTCDConstructor) cd2Element);
+    }
+
+    throw new UnsupportedOperationException();
+  }
+
 
   /**
    * Help method for calculating the attribute diff
    * @return List of FieldDiffs between the provided attributes
    */
   //Attribute: Modifier MCType Name ("=" initial:Expression)? ";";
-  private static List<FieldDiff<SyntaxDiff.Op, ? extends ASTNode>> getAttributeDiff(ASTCDAttribute cd1Member, ASTCDAttribute cd2Member) {
-    List<FieldDiff<SyntaxDiff.Op,  ? extends ASTNode>> diffs = new ArrayList<>();
+  protected static List<FieldDiff<? extends ASTNode>> getAttributeDiff(ASTCDAttribute cd1Member, ASTCDAttribute cd2Member) {
+    List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
 
     // Modifier, non-optional
     Optional<ASTModifier> cd1Modi = Optional.of(cd1Member.getModifier());
     Optional<ASTModifier> cd2Modi = Optional.of(cd2Member.getModifier());
-    FieldDiff<SyntaxDiff.Op, ASTModifier> attributeModifier = SyntaxDiff.getFieldDiff(cd1Modi, cd2Modi);
+    FieldDiff<ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
     if (attributeModifier.isPresent()){
       diffs.add(attributeModifier);
     }
@@ -250,74 +229,245 @@ package de.monticore.syntaxdiff;
     // MCType, non-optional
     Optional<ASTMCType> cd1Type = Optional.of(cd1Member.getMCType());
     Optional<ASTMCType> cd2Type = Optional.of(cd2Member.getMCType());
-    FieldDiff<SyntaxDiff.Op, ASTMCType> attributeType = SyntaxDiff.getFieldDiff(cd1Type, cd2Type);
+    FieldDiff<ASTMCType> attributeType = new FieldDiff<>(cd1Type, cd2Type);
     if (attributeType.isPresent()){
       diffs.add(attributeType);
     }
     // Name, non-optional
     if (!cd1Member.getName().equals(cd2Member.getName())){
-      FieldDiff<SyntaxDiff.Op, ASTCDAttribute> attributeName = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Member, cd2Member);
+      FieldDiff<ASTCDAttribute> attributeName = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Member), Optional.of(cd2Member));
       diffs.add(attributeName);
     }
 
     // Initial expression, optional
     Optional<ASTExpression> cd1Initial = (cd1Member.isPresentInitial()) ? Optional.of(cd1Member.getInitial()) : Optional.empty();
     Optional<ASTExpression> cd2Initial = (cd2Member.isPresentInitial()) ? Optional.of(cd2Member.getInitial()) : Optional.empty();
-    FieldDiff<SyntaxDiff.Op, ASTExpression> attributeInital = SyntaxDiff.getFieldDiff(cd1Initial, cd2Initial);
+    FieldDiff<ASTExpression> attributeInital = new FieldDiff<>(cd1Initial, cd2Initial);
     if (attributeInital.isPresent()){
       diffs.add(attributeInital);
     }
     return diffs;
   }
+
+
+  /**
+   * Help method for calculating the methode signature diff
+   * @return List of FieldDiffs between the provided methodes
+   */
+  //Methods: Modifier MCReturnType Name "(" (CDParameter || ",")* ")" CDThrowsDeclaration? ";";
+  protected static List<FieldDiff<? extends ASTNode>> getMethodeDiff(ASTCDMethod cd1Member, ASTCDMethod cd2Member) {
+    List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
+
+    // Modifier, non-optional
+    Optional<ASTModifier> cd1Modi = Optional.of(cd1Member.getModifier());
+    Optional<ASTModifier> cd2Modi = Optional.of(cd2Member.getModifier());
+    FieldDiff<ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
+    if (attributeModifier.isPresent()){
+      diffs.add(attributeModifier);
+    }
+
+    // ASTMCReturnType, non-optional
+    FieldDiff<ASTMCReturnType> methodeReturnType = new FieldDiff<>(
+        Optional.of(cd1Member.getMCReturnType()),
+        Optional.of(cd2Member.getMCReturnType()));
+    if (methodeReturnType.isPresent()){
+      diffs.add(methodeReturnType);
+    }
+    // Name, non-optional
+    if (!cd1Member.getName().equals(cd2Member.getName())){
+      FieldDiff<ASTCDMethod> methodeName = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Member), Optional.of(cd2Member));
+      diffs.add(methodeName);
+    }
+
+    // ThrowsDeclaration, optional
+    Optional<ASTCDThrowsDeclaration> cd1ThrowDec = (cd1Member.isPresentCDThrowsDeclaration()) ? Optional.of(cd1Member.getCDThrowsDeclaration()) : Optional.empty();
+    Optional<ASTCDThrowsDeclaration> cd2ThrowDec = (cd2Member.isPresentCDThrowsDeclaration()) ? Optional.of(cd2Member.getCDThrowsDeclaration()) : Optional.empty();
+    FieldDiff<ASTCDThrowsDeclaration> throwDecl = new FieldDiff<>(cd1ThrowDec, cd2ThrowDec);
+    if (throwDecl.isPresent()){
+      diffs.add(throwDecl);
+    }
+
+    // Parameter List Diff, non-optional (List is empty is no Parameter is present)
+    List<List<ElementDiff<ASTCDParameter>>> list = getElementDiffList(cd1Member.getCDParameterList(), cd2Member.getCDParameterList());
+    // Todo: Save Parameter Diff in an appropriate way
+    return diffs;
+  }
+  /**
+   * Help method for calculating the constructor signature diff
+   * @return List of FieldDiffs between the provided constructors
+   */
+  //Constructor: Modifier Name "(" (CDParameter || ",")* ")" CDThrowsDeclaration? ";";
+  protected static List<FieldDiff<? extends ASTNode>> getConstructorDiff(ASTCDConstructor cd1Member, ASTCDConstructor cd2Member) {
+    List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
+
+    // Modifier, non-optional
+    Optional<ASTModifier> cd1Modi = Optional.of(cd1Member.getModifier());
+    Optional<ASTModifier> cd2Modi = Optional.of(cd2Member.getModifier());
+    FieldDiff<ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
+    if (attributeModifier.isPresent()){
+      diffs.add(attributeModifier);
+    }
+
+    // Name, non-optional
+    if (!cd1Member.getName().equals(cd2Member.getName())){
+      FieldDiff<ASTCDConstructor> constructorName = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Member), Optional.of(cd2Member));
+      diffs.add(constructorName);
+    }
+
+    // ThrowsDeclaration, optional
+    Optional<ASTCDThrowsDeclaration> cd1ThrowDec = (cd1Member.isPresentCDThrowsDeclaration()) ? Optional.of(cd1Member.getCDThrowsDeclaration()) : Optional.empty();
+    Optional<ASTCDThrowsDeclaration> cd2ThrowDec = (cd2Member.isPresentCDThrowsDeclaration()) ? Optional.of(cd2Member.getCDThrowsDeclaration()) : Optional.empty();
+    FieldDiff<ASTCDThrowsDeclaration> throwDecl = new FieldDiff<>(cd1ThrowDec, cd2ThrowDec);
+    if (throwDecl.isPresent()){
+      diffs.add(throwDecl);
+    }
+
+    // Parameter List Diff, non-optional (List is empty is no Parameter is present)
+    List<List<ElementDiff<ASTCDParameter>>> list = getElementDiffList(cd1Member.getCDParameterList(), cd2Member.getCDParameterList());
+    // Todo: Save Parameter Diff in an appropriate way
+    return diffs;
+  }
+
+  /**
+   * Help method for calculating the class diff because each classcontains multiple attributes which need to be matched
+   * @param cd1Member List of attributes from the original model
+   * @param cd2Member List of attributes from the target(new) model
+   * @return Returns a difflist for each attribute, ordered by diffsize (small diff values == similar)
+   */
+
+  //MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+  protected static List<FieldDiff<? extends ASTNode>> getParameterDiff(ASTCDParameter cd1Member, ASTCDParameter cd2Member) {
+    List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
+
+    // MCType, non-optional
+    Optional<ASTMCType> cd1Type = Optional.of(cd1Member.getMCType());
+    Optional<ASTMCType> cd2Type = Optional.of(cd2Member.getMCType());
+    FieldDiff<ASTMCType> attributeType = new FieldDiff<>(cd1Type, cd2Type);
+    if (attributeType.isPresent()){
+      diffs.add(attributeType);
+    }
+    // Name, non-optional
+    if (!cd1Member.getName().equals(cd2Member.getName())){
+      FieldDiff<ASTCDParameter> attributeName = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Member), Optional.of(cd2Member));
+      diffs.add(attributeName);
+    }
+
+    // Default Value, optional
+    Optional<ASTExpression> cd1Default = (cd1Member.isPresentDefaultValue()) ? Optional.of(cd1Member.getDefaultValue()) : Optional.empty();
+    Optional<ASTExpression> cd2Default = (cd2Member.isPresentDefaultValue()) ? Optional.of(cd2Member.getDefaultValue()) : Optional.empty();
+    FieldDiff<ASTExpression> parameterDefault = new FieldDiff<>(cd1Default, cd2Default);
+    if (parameterDefault.isPresent()){
+      diffs.add(parameterDefault);
+    }
+    return diffs;
+  }
+
+
   /**
    * Print function for the class diff, used to output the diffs appropriately formated
    */
-  public void print() {
+  public StringBuilder print() {
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     StringBuilder output = new StringBuilder();
-    output.append("Matched Classes ")
-      .append(this.getCd1Element().get_SourcePositionStart().getLine())
-      .append(" and ")
-      .append(this.getCd2Element().get_SourcePositionStart().getLine())
-      .append(System.lineSeparator())
-      .append("Diff size: ")
-      .append(this.getDiffSize())
-      .append(System.lineSeparator())
-      .append(pp.prettyprint(this.getCd1Element()))
-      .append(pp.prettyprint(this.getCd2Element()))
-      .append(System.lineSeparator());
+    StringBuilder interpretation = new StringBuilder();
+    interpretation.append("Interpretation: ");
+    String cd1Class = pp.prettyprint(this.getCd1Element());
+    String cd2Class = pp.prettyprint(this.getCd2Element());
 
-    for (FieldDiff<SyntaxDiff.Op, ?> diff : this.getDiffList()) {
-      if (diff.isPresent()) {
-        diff.getOperation().ifPresent(operation -> output.append(operation).append(": "));
-        diff.getCd1Value().ifPresent(cd1v -> output.append(cd1v).append(" -> "));
-        diff.getCd2Value().ifPresent(cd2v -> output.append(cd2v));
-        output.append(System.lineSeparator());
-      }
-    }
-    for (ElementDiff<ASTCDAttribute> matched : this.getMatchedAttributesList()) {
-      for (FieldDiff<SyntaxDiff.Op, ?> diff : matched.getDiffList()) {
-        if (diff.isPresent()) {
-          diff.getOperation().ifPresent(operation -> output.append(operation).append(": "));
-          diff.getCd1Value().ifPresent(cd1v -> output.append(cd1v).append(" -> "));
-          diff.getCd2Value().ifPresent(cd2v -> output.append(cd2v));
-          output.append(System.lineSeparator());
+
+
+    for (FieldDiff<? extends ASTNode> x: diffList) {
+      if (x.isPresent()) {
+        String colorCode = "\033[1;33m"; // Bold White
+        if (x.getOperation().isPresent()) {
+          if (x.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
+            colorCode = "\033[1;31m"; // Bold Red
+          }
+          if (x.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
+            colorCode = "\033[1;32m"; // Bold Green
+          }
+        }
+        if (x.getCd1Value().isPresent() && x.getCd1pp().isPresent()) {
+          String cd1pp = x.getCd1pp().get();
+          if (cd1Class.contains(cd1pp)) {
+            cd1Class = cd1Class.replaceFirst(cd1pp, colorCode + cd1pp + "\033[0m");
+          }
+        }
+        if (x.getCd2Value().isPresent() && x.getCd2pp().isPresent()) {
+          String cd2pp = x.getCd2pp().get();
+          if (cd2Class.contains(cd2pp)) {
+            cd2Class = cd2Class.replaceFirst(cd2pp, colorCode + cd2pp + "\033[0m");
+          }
+        }
+
+        // Build Interpretation
+        if (x.getInterpretation().isPresent()) {
+          interpretation.append(x.getInterpretation().get()).append(" ");
         }
       }
     }
-    output.append("Deleted Attributes: ").append(System.lineSeparator());
-    for (ASTCDAttribute a : this.getDeleletedAttributes()) {
-      output.append(a.get_SourcePositionStart().getLine())
-        .append(" ")
-        .append(pp.prettyprint(a));
-    }
-    output.append("Added Attributes: ").append(System.lineSeparator());
-    for (ASTCDAttribute a : this.getAddedAttributes()) {
-      output.append(a.get_SourcePositionStart().getLine())
-        .append(" ")
-        .append(pp.prettyprint(a));
+
+    for (ElementDiff<ASTCDAttribute> x : matchedAttributesList){
+      if (!x.getDiffList().isEmpty()){
+        for (FieldDiff<? extends ASTNode> diff: x.getDiffList()){
+          if (diff.isPresent()) {
+            String colorCode = "\033[1;33m"; // Bold White
+            if (diff.getOperation().isPresent()) {
+              if (diff.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
+                colorCode = "\033[1;31m"; // Bold Red
+              }
+              if (diff.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
+                colorCode = "\033[1;32m"; // Bold Green
+              }
+            }
+            if (diff.getCd1Value().isPresent() && diff.getCd1pp().isPresent()) {
+              String cd1pp = diff.getCd1pp().get();
+              if (cd1Class.contains(cd1pp)) {
+                cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+              }
+            }
+            if (diff.getCd2Value().isPresent() && diff.getCd2pp().isPresent()) {
+              String cd2pp = diff.getCd2pp().get();
+              if (cd2Class.contains(cd2pp)) {
+                cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+              }
+            }
+            // Build Interpretation
+            if (diff.getInterpretation().isPresent()) {
+              interpretation.append(diff.getInterpretation().get()).append(" ");
+            }
+          }
+        }
+      }
     }
 
-    System.out.println(output);
+    for (ASTCDAttribute x : deleletedAttributes) {
+      String colorCode = "\033[1;31m"; // Bold Red
+      String cd1pp = pp.prettyprint(x);
+      if (cd1Class.contains(cd1pp)) {
+        cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+      }
+    }
+    for (ASTCDAttribute x : addedAttributes) {
+      String colorCode = "\033[1;32m"; // Bold Green
+      String cd2pp = pp.prettyprint(x);
+      if (cd2Class.contains(cd2pp)) {
+        cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+      }
+    }
+
+
+    output.append("Line Matched Classes with diff score ").append(getDiffSize())
+      .append(System.lineSeparator())
+      .append(this.getCd1Element().get_SourcePositionStart().getLine())
+      .append("   ").append(cd1Class)
+      .append(this.getCd2Element().get_SourcePositionStart().getLine())
+      .append("   ").append(cd2Class)
+      .append(interpretation)
+      .append(System.lineSeparator());
+
+
+    //System.out.println(output);
+    return output;
   }
   }

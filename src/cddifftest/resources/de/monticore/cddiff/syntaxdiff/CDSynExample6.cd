@@ -1,0 +1,23 @@
+import java.lang.String;
+import java.util.List;
+
+classdiagram CDSynExample2 {
+  private abstract class TransmitInterface{
+    List<String> specifications;
+  }
+  class SmallMonitor{
+    String height;
+    String width2;
+  }
+  class LargeMonitor {
+    int height = 2;
+    char test;
+    List<String> specifications;
+    String width;
+  }
+  class HDMI extends TransmitInterface1;
+  class DVI extends TransmitInterface;
+  association test {ordered} [*] testa.HDMI [String] (has) -> (test) SmallMonitor [1];
+  association testa {ordered} [0..1] test.HDMI [String] -> (test) BigMonitor;
+  public composition test SmallMonitor (test) -- (has) test.HDMI [*];
+}

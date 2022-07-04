@@ -1,20 +1,54 @@
 package de.monticore.syntaxdiff;
 
+import de.monticore.ast.ASTNode;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
+import de.monticore.cdassociation._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDExtendUsage;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.syntaxdiff.SyntaxDiff.Op;
+import de.monticore.syntaxdiff.SyntaxDiff.Interpretation;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.umlmodifier._ast.ASTModifier;
+import de.monticore.umlstereotype._ast.ASTStereotype;
+import kodkod.engine.bool.Int;
+import kodkod.engine.bool.Operator;
+
 import java.util.Optional;
 /**
  * Diff Type for Fields
  * Use the constructor to create a diff between two given fields
  * This diff type contains information extracted from the provided fields, especially the type of change
  */
-public class FieldDiff<Op, ASTNodeType> {
-  protected final Op operation;
+public class FieldDiff<ASTNodeType extends ASTNode> {
 
-  protected final ASTNodeType cd1Value;
+  protected Interpretation interpretation;
 
-  protected final ASTNodeType cd2Value;
+  protected Op operation;
+
+  protected String cd1pp;
+
+  protected String cd2pp;
+
+  protected final Optional<ASTNodeType> cd1Value;
+
+  protected final Optional<ASTNodeType> cd2Value;
 
   public boolean isPresent(){
     return getOperation().isPresent();
+  }
+
+  public Optional<Interpretation> getInterpretation() {
+    if (interpretation == null) {
+      return Optional.empty();
+    }
+    else {
+      return Optional.of(interpretation);
+    }
   }
 
   public Optional<Op> getOperation() {
@@ -26,41 +60,276 @@ public class FieldDiff<Op, ASTNodeType> {
     }
   }
 
-  public Optional<ASTNodeType> getCd1Value() {
-    if (cd1Value == null) {
+  public Optional<String> getCd1pp() {
+    if (cd1pp == null) {
       return Optional.empty();
     }
     else {
-      return Optional.of(cd1Value);
+      return Optional.of(cd1pp);
     }
+  }
+  public Optional<String> getCd2pp() {
+    if (cd2pp == null) {
+      return Optional.empty();
+    }
+    else {
+      return Optional.of(cd2pp);
+    }
+  }
+
+  public Optional<ASTNodeType> getCd1Value() {
+    return cd1Value;
   }
 
   public Optional<ASTNodeType> getCd2Value() {
-    if (cd2Value == null) {
-      return Optional.empty();
-    }
-    else {
-      return Optional.of(cd2Value);
-    }
+    return cd2Value;
   }
-  /**
-   * Constructor of the field diff type for empty(equal) fields
-   */
-  public FieldDiff(){
-    this.operation = null;
-    this.cd1Value = null;
-    this.cd2Value = null;
-  }
+
   /**
    * Constructor of the field diff type
-   * @param op Operation between both fields
    * @param cd1Value Field from the original model
    * @param cd2Value Field from the target(new) model
    */
-  public FieldDiff(Op op, ASTNodeType cd1Value, ASTNodeType cd2Value) {
-    this.operation = op;
+  public FieldDiff(Optional<ASTNodeType> cd1Value, Optional<ASTNodeType> cd2Value) {
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     this.cd1Value = cd1Value;
     this.cd2Value = cd2Value;
+    this.operation = setOp();
+
+    if (cd1Value.isPresent()){
+      if(cd1Value.get() instanceof ASTCDOrdered){
+        this.cd1pp = pp.prettyprint((ASTCDOrdered) cd1Value.get());
+      }
+      if(cd1Value.get() instanceof ASTModifier){
+        this.cd1pp = pp.prettyprint((ASTModifier) cd1Value.get());
+        ASTModifier cd1 = (ASTModifier) cd1Value.get();
+        if (cd2Value.isPresent()){
+          ASTModifier cd2 = (ASTModifier) cd2Value.get();
+          if (cd1.isPublic() && cd2.isPublic()){
+            this.interpretation = Interpretation.EQUAL;
+          }else if (cd1.isPublic() && (cd2.isPrivate() || cd2.isProtected())){
+            this.interpretation = Interpretation.REFINEMENT;
+          }else {
+            this.interpretation = Interpretation.SCOPECHANGE;
+          }
+        }else {
+          if(!cd1.isPublic()){
+            this.interpretation = Interpretation.EXPANSION;
+          }
+        }
+      }
+      if(cd1Value.get() instanceof ASTCDCardinality){
+        this.cd1pp = pp.prettyprint((ASTCDCardinality) cd1Value.get());
+
+        int cd1Lower = ((ASTCDCardinality) cd1Value.get()).getLowerBound();
+        int cd1Upper = ((ASTCDCardinality) cd1Value.get()).getUpperBound();
+        if (cd2Value.isPresent()){
+          // Cardinality was changed
+          int cd2Lower = ((ASTCDCardinality) cd2Value.get()).getLowerBound();
+          int cd2Upper = ((ASTCDCardinality) cd2Value.get()).getUpperBound();
+          if (cd1Upper == 0 || cd2Upper == 0) {
+            // One/both upper bounds are infinite
+            if (cd1Upper == cd2Upper) {
+              // Both upper bounds are infinite
+              if (cd1Lower < cd2Lower) {
+                this.interpretation = Interpretation.REFINEMENT;
+              } else {
+                  this.interpretation = Interpretation.EXPANSION;
+              }
+            } else {
+              if (cd2Upper == 0) {
+                this.interpretation = Interpretation.EXPANSION;
+              } else {
+                this.interpretation = Interpretation.REFINEMENT;
+              }
+            }
+          }else {
+            if( (cd1Upper-cd1Lower) < (cd2Upper-cd2Lower)){
+              this.interpretation = Interpretation.EXPANSION;
+            } else if ((cd1Upper-cd1Lower) == (cd2Upper-cd2Lower)) {
+              this.interpretation = Interpretation.EQUALINTERVAL;
+            } else {
+              this.interpretation = Interpretation.REFINEMENT;
+            }
+          }
+        }else {
+          // Cardninality was deleted
+          if (cd1Upper == 0 && cd1Lower == 0){
+            // [0..*] == [*]
+            this.interpretation = Interpretation.EQUALINTERVAL;
+          }else {
+            // [n..m] -> [*] (n != 0) or (m != inf)
+            this.interpretation = Interpretation.EXPANSION;
+          }
+        }
+      }
+      if(cd1Value.get() instanceof ASTMCQualifiedName){
+        this.cd1pp = pp.prettyprint((ASTMCQualifiedName) cd1Value.get());
+        this.interpretation = Interpretation.RENAME;
+      }
+      if(cd1Value.get() instanceof ASTCDQualifier){
+        this.cd1pp = pp.prettyprint((ASTCDQualifier) cd1Value.get());
+      }
+      if(cd1Value.get() instanceof ASTCDRole){
+        this.cd1pp = pp.prettyprint((ASTCDAssociationNode) cd1Value.get());
+        if (cd2Value.isPresent()){
+          // Role was changed
+          this.interpretation = Interpretation.ROLECHANGE;
+        }else {
+          //Todo: Recheck is there a default value for non-existent roles?
+          this.interpretation = Interpretation.DELETED;
+        }
+      }
+      if(cd1Value.get() instanceof ASTStereotype){
+        this.cd1pp = pp.prettyprint((ASTStereotype) cd1Value.get());
+      }
+      if(cd1Value.get() instanceof ASTCDAssocDir){
+        this.cd1pp = pp.prettyprint((ASTCDAssocDir) cd1Value.get());
+        // Should always be the case, Direction is non-optional
+        if (cd2Value.isPresent()){
+          ASTCDAssocDir cd1 = (ASTCDAssocDir) cd1Value.get();
+          ASTCDAssocDir cd2 = (ASTCDAssocDir) cd2Value.get();
+          if (cd1.isBidirectional()) {
+            if( !(cd2.isDefinitiveNavigableLeft() || cd2.isDefinitiveNavigableRight())){
+              // <-> to -> or <-
+              this.interpretation = Interpretation.REFINEMENT;
+            } else {
+              // <-> to --
+              this.interpretation = Interpretation.EQUAL;
+            }
+          }else {
+            if ( (cd1.isDefinitiveNavigableRight() && cd2.isDefinitiveNavigableLeft() )
+              || (cd2.isDefinitiveNavigableRight() && cd1.isDefinitiveNavigableLeft() )){
+              // (-> to <-)  (<- to ->)
+              this.interpretation = Interpretation.REVERSED;
+              //Todo: Or REPURPOSED? Because it can we viewed as a new association
+            }else {
+              if (!(cd1.isDefinitiveNavigableLeft() || cd1.isDefinitiveNavigableRight())){
+                // -- to (-> or <-)
+                this.interpretation = Interpretation.REFINEMENT;
+              }else {
+                // (-> or <-) to --
+                this.interpretation = Interpretation.EXPANSION;
+              }
+            }
+          }
+        }
+      }
+      if(cd1Value.get() instanceof ASTCDExtendUsage){
+        this.cd1pp = pp.prettyprint((ASTCDExtendUsage) cd1Value.get());
+      }
+      if(cd1Value.get() instanceof ASTMCType){
+        this.cd1pp = pp.prettyprint((ASTMCType) cd1Value.get());
+      }
+      if(cd1Value.get() instanceof ASTCDAttribute){
+        this.cd1pp = pp.prettyprint((ASTCDAttribute) cd1Value.get());
+        this.interpretation = Interpretation.RENAME;
+      }
+      if(cd1Value.get() instanceof ASTExpression){
+        this.cd1pp = pp.prettyprint((ASTExpression) cd1Value.get());
+        if (!cd2Value.isPresent()){
+          this.interpretation = Interpretation.DELETED;
+        }else {
+          this.interpretation = Interpretation.DEFAULTVALUECHANGED;
+        }
+      }
+      if(cd1Value.get() instanceof ASTMCReturnType){
+        this.cd1pp = pp.prettyprint((ASTMCReturnType) cd1Value.get());
+      }
+      if(cd1Value.get() instanceof ASTCDThrowsDeclaration){
+        this.cd1pp = pp.prettyprint((ASTCDThrowsDeclaration) cd1Value.get());
+      }
+
+    }
+    if (cd2Value.isPresent()){
+      // Only Adds need to be considered, changes are already covered by the cd1value part
+      if(cd2Value.get() instanceof ASTCDOrdered){
+        this.cd2pp = pp.prettyprint((ASTCDOrdered) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTModifier){
+        this.cd2pp = pp.prettyprint((ASTModifier) cd2Value.get());
+        if (!cd1Value.isPresent()){
+          ASTModifier cd2 = (ASTModifier) cd2Value.get();
+          if(cd2.isPublic()){
+            this.interpretation = Interpretation.EQUAL;
+          }
+        }
+
+      }
+      if(cd2Value.get() instanceof ASTCDCardinality){
+        this.cd2pp = pp.prettyprint((ASTCDCardinality) cd2Value.get());
+        // Default value is [*]
+        int cd2Lower = ((ASTCDCardinality) cd2Value.get()).getLowerBound();
+        int cd2Upper = ((ASTCDCardinality) cd2Value.get()).getUpperBound();
+        if (cd2Lower == 0 && cd2Upper == 0) {
+          // [*] to [0..*]
+          this.interpretation = Interpretation.EQUALINTERVAL;
+        }else {
+          // [*] to [n..m] (n != 0) or ( m != inf)
+          this.interpretation = Interpretation.REFINEMENT;
+        }
+      }
+      if(cd2Value.get() instanceof ASTMCQualifiedName){
+        this.cd2pp = pp.prettyprint((ASTMCQualifiedName) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTCDQualifier){
+        this.cd2pp = pp.prettyprint((ASTCDQualifier) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTCDRole){
+        this.cd2pp = pp.prettyprint((ASTCDAssociationNode) cd2Value.get());
+        //Todo: Is adding a role therefore () -> (Role) a refinement? Is there a default value?
+        this.interpretation = Interpretation.REFINEMENT;
+      }
+      if(cd2Value.get() instanceof ASTStereotype){
+        this.cd2pp = pp.prettyprint((ASTStereotype) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTCDAssocDir){
+        this.cd2pp = pp.prettyprint((ASTCDAssocDir) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTCDExtendUsage){
+        this.cd2pp = pp.prettyprint((ASTCDExtendUsage) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTMCType){
+        this.cd2pp = pp.prettyprint((ASTMCType) cd2Value.get());
+        this.interpretation = Interpretation.TYPECHANGE;
+        //Todo: check for Sub/Supertype
+      }
+      if(cd2Value.get() instanceof ASTCDAttribute){
+        this.cd2pp = pp.prettyprint((ASTCDAttribute) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTExpression){
+        this.cd2pp = pp.prettyprint((ASTExpression) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTMCReturnType){
+        this.cd2pp = pp.prettyprint((ASTMCReturnType) cd2Value.get());
+      }
+      if(cd2Value.get() instanceof ASTCDThrowsDeclaration){
+        this.cd2pp = pp.prettyprint((ASTCDThrowsDeclaration) cd2Value.get());
+      }
+    }
+  }
+  public FieldDiff(Op op, Optional<ASTNodeType> cd1Value, Optional<ASTNodeType> cd2Value) {
+    this.cd1Value = cd1Value;
+    this.cd2Value = cd2Value;
+    this.operation = op;
   }
 
+  protected Op setOp() {
+    if (cd1Value.isPresent() && cd2Value.isPresent() && !cd1Value.get().deepEquals(cd2Value.get())) {
+      // Diff reason: Value changed
+      return Op.CHANGE;
+
+    } else if (cd1Value.isPresent() && !cd2Value.isPresent()) {
+      // Diff reason: Value deleted
+      return Op.DELETE;
+
+    } else if (!cd1Value.isPresent() && cd2Value.isPresent()) {
+      // Diff reason: Value added
+      return Op.ADD;
+
+    } else {
+      // No Diff reason: is equal
+      return null;
+    }
+  }
 }
