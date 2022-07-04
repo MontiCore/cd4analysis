@@ -20,8 +20,8 @@ import static org.junit.Assert.fail;
 
 public class SyntaxDemoTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/CDSynExample5.cd");
-  ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/CDSynExample6.cd");
+  ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/CDSynExample1.cd");
+  ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/CDSynExample2.cd");
 
   @Override
   protected ASTCDCompilationUnit parseModel(String modelFile) {

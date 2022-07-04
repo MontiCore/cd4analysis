@@ -111,7 +111,7 @@ public class SyntaxDiff {
         .append(RESET);
     }
     classPrints.append("Line Added Classes to CD2 (")
-      .append(cd1.getCDDefinition().getName())
+      .append(cd2.getCDDefinition().getName())
       .append(") :")
       .append(System.lineSeparator());
 
@@ -138,7 +138,7 @@ public class SyntaxDiff {
     }
 
     assoPrints.append("Line Added Associations to CD2 (")
-      .append(cd1.getCDDefinition().getName())
+      .append(cd2.getCDDefinition().getName())
       .append(") :")
       .append(System.lineSeparator());
 
