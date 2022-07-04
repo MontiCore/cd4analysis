@@ -1,37 +1,46 @@
 import java.util.Date;
 
-classdiagram Employees1 {
+classdiagram EmployeesA {
 	enum PositionKind {fullTime, partTime, other;}
 
 	enum Department {Sales, HR;}
 
 	interface Area {
+	  String country;
 	  String timeZone;
 	}
 
-	class Europe implements Area {
-    String country;
+	class Company implements Area {
+    String address;
 	}
 
 	abstract class Person {
-	  PositionKind kind;
+	  int personId;
 	}
 
 	class Employee extends Person {
+	  PositionKind kind;
+	  List<Long> devices;
 	}
 
-	class Manager extends Employee, Europe{
+	class Manager extends Employee {
   	Department inChargeOf;
 	}
 
 	class Task {
+	  int taskId;
 	  String taskName;
 	  Date startDate;
+	  Date endDate;
 	}
 
-  class LimitedTask extends Task{
-    Date endDate;
+  class ManagementTask extends Task {
+    int priority;
   }
 
   association [1..*] Employee (assignee) <- (todo) Task [*];
+  association [1..*] Manager (assignee) -- (todo) ManagementTask [1..*];
+  association [0..1] ManagementTask (todo) <-> (assignee) Manager [0..1];
+
+  association [1] Employee (work) -> Area [1..*];
 }

@@ -1,0 +1,32 @@
+
+classdiagram EmployeesA {
+
+	interface Area {
+	}
+
+	class Company implements Area {
+	}
+
+	class Zemployee {
+
+	}
+
+	class Manager extends Zemployee {
+
+	}
+
+	class Ztask {
+
+	}
+
+  class ManagementTask extends Ztask {
+
+  }
+
+  association [1] Manager (assignee) <-> (todo) ManagementTask [1];
+  association [1..*] Zemployee (assignee) <- (todo) Ztask [1];
+
+
+  association [1] Zemployee (work) -> Area [1..*];
+
+}

@@ -14,6 +14,7 @@ import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportAssociation;
 import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportClass;
 import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportRefSetAssociation;
 import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportGroup;
+import de.monticore.sydiff2semdiff.cg2od.metamodel.*;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompAssociation;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompClass;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompareGroup;
@@ -36,17 +37,20 @@ public class GenerateODHelper {
     if (s.contains(".")) {
       int position = s.lastIndexOf('.');
       String packageName = s.substring(0, position);
-      String className = s.substring(position + 1, s.length());
+      String className = s.substring(position + 1);
       return (new StringBuilder())
         .append(packageName)
         .append(".")
         .append(Character.toLowerCase(className.charAt(0)))
         .append(className.substring(1)).toString();
     } else {
-      if (Character.isLowerCase(s.charAt(0)))
+      if (Character.isLowerCase(s.charAt(0))) {
         return s;
-      else
-        return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
+      } else {
+        return (new StringBuilder())
+          .append(Character.toLowerCase(s.charAt(0)))
+          .append(s.substring(1)).toString();
+      }
     }
 
   }
@@ -130,7 +134,6 @@ public class GenerateODHelper {
   public static Map<SupportRefSetAssociation, Integer> convertRefSetAssociationList2CheckList(List<SupportRefSetAssociation> refSetAssociationList) {
     Map<SupportRefSetAssociation, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
-
       // check the overlapped RefSetAssociation count
       int count = refSetAssociationList
         .stream()
@@ -150,19 +153,22 @@ public class GenerateODHelper {
   /**
    * according to SupportAssociation to find corresponding SupportRefSetAssociation
    */
-  public static Optional<List<SupportRefSetAssociation>> findRelatedSupportRefSetAssociationBySupportAssociation(SupportAssociation originalAssoc, Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
+  public static Optional<List<SupportRefSetAssociation>> findRelatedSupportRefSetAssociationBySupportAssociation(SupportAssociation originalAssoc,
+                                                                                                                 Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
     List<SupportRefSetAssociation> resultList = new ArrayList<>();
 
     refLinkCheckList.keySet().forEach(item -> {
       if (item.getLeftRoleName().equals(originalAssoc.getSupportLeftClassRoleName()) &&
         item.getRightRoleName().equals(originalAssoc.getSupportRightClassRoleName()) &&
-        item.getDirection().equals(originalAssoc.getSupportDirection()) &&
+        (mappingDirection(originalAssoc.getSupportDirection().toString()) == 3 ||
+          item.getDirection().equals(originalAssoc.getSupportDirection())) &&
         item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportLeftClass().getName())) &&
         item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportRightClass().getName()))) {
         resultList.add(item);
       } else if (item.getLeftRoleName().equals(originalAssoc.getSupportRightClassRoleName()) &&
         item.getRightRoleName().equals(originalAssoc.getSupportLeftClassRoleName()) &&
-        item.getDirection().equals(reverseDirection(originalAssoc.getSupportDirection())) &&
+        (mappingDirection(originalAssoc.getSupportDirection().toString()) == 3 ||
+          item.getDirection().equals(reverseDirection(originalAssoc.getSupportDirection()))) &&
         item.getLeftRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportRightClass().getName())) &&
         item.getRightRefSet().stream().anyMatch(e -> e.getName().equals(originalAssoc.getSupportLeftClass().getName()))) {
         resultList.add(item);
@@ -176,20 +182,20 @@ public class GenerateODHelper {
     }
   }
 
-  public static Map<SupportRefSetAssociation, Integer> updateCounterInCheckList(Optional<List<SupportRefSetAssociation>> optAssociationList, Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
-    if (optAssociationList.isPresent()) {
-      optAssociationList.get().forEach(e -> {
-        refLinkCheckList.put(e, refLinkCheckList.get(e) - 1);
-      });
-    }
+  public static Map<SupportRefSetAssociation, Integer> updateCounterInCheckList(Optional<List<SupportRefSetAssociation>> optAssociationList,
+                                                                                Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
+    optAssociationList.ifPresent(supportRefSetAssociations ->
+      supportRefSetAssociations.forEach(e -> refLinkCheckList.put(e, refLinkCheckList.get(e) - 1)));
     return refLinkCheckList;
   }
 
   /**
    * check whether the related SupportRefSetAssociation is used by SupportAssociation
    */
-  public static boolean checkRelatedSupportRefSetAssociationIsUsed(SupportAssociation association, Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
-    Optional<List<SupportRefSetAssociation>> optRefSetAssociationList = findRelatedSupportRefSetAssociationBySupportAssociation(association, refLinkCheckList);
+  public static boolean checkRelatedSupportRefSetAssociationIsUsed(SupportAssociation association,
+                                                                   Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
+    Optional<List<SupportRefSetAssociation>> optRefSetAssociationList =
+      findRelatedSupportRefSetAssociationBySupportAssociation(association, refLinkCheckList);
     AtomicBoolean isUsed = new AtomicBoolean(true);
     optRefSetAssociationList.get().forEach(e -> {
       if (refLinkCheckList.get(e) != 0) {
@@ -218,13 +224,14 @@ public class GenerateODHelper {
    * create value for attribute
    */
   public static String createValue(SupportGroup sg, Optional<CompClass> compClass, String type, Boolean isEnumClass) {
-    String result = null;
+    String result;
     String supportClassKey = "SupportEnum_" + type;
     if (sg.getSupportClassGroup().containsKey(supportClassKey)) {
       if (isEnumClass) {
         result = compClass.get().getWhichAttributesDiff().get().get(0);
       } else {
-        result = ((ASTCDEnum) sg.getSupportClassGroup().get(supportClassKey).getEditedElement()).getCDEnumConstantList().get(0).getName();
+        result = ((ASTCDEnum) sg.getSupportClassGroup().get(supportClassKey).getEditedElement())
+          .getCDEnumConstantList().get(0).getName();
       }
     } else {
       result = "some_type_" + type;
@@ -236,9 +243,12 @@ public class GenerateODHelper {
    * create all attributes for created object
    * distinguish the type of object, simple class or collection
    */
-  public static List<ASTODAttribute> createASTODAttributeList(SupportGroup sg, Optional<CompClass> compClass, SupportClass supportClass) {
+  public static List<ASTODAttribute> createASTODAttributeList(SupportGroup sg,
+                                                              Optional<CompClass> compClass,
+                                                              SupportClass supportClass) {
     List<ASTODAttribute> astodAttributeList = new ArrayList<>();
-    for (ASTCDAttribute astcdAttribute : sg.getSupportClassGroup().get(supportClass.getName()).getEditedElement().getCDAttributeList()) {
+    for (ASTCDAttribute astcdAttribute :
+      sg.getSupportClassGroup().get(supportClass.getName()).getEditedElement().getCDAttributeList()) {
       // set attribute
       if (Pattern.matches("List<(.*)>", astcdAttribute.printType())) {
         // List<> attribute
@@ -247,7 +257,8 @@ public class GenerateODHelper {
           String value = createValue(sg, compClass, listMatcher.group(1), false);
           ASTODList oDvalue = OD4DataMill
             .oDListBuilder()
-            .addODValue(OD4DataMill.oDSimpleAttributeValueBuilder().setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build()).build())
+            .addODValue(OD4DataMill.oDSimpleAttributeValueBuilder()
+              .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build()).build())
             .addODValue(OD4DataMill.oDAbsentBuilder().build())
             .build();
           astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
@@ -259,7 +270,9 @@ public class GenerateODHelper {
         if (setMatcher.find()) {
           String value = createValue(sg, compClass, astcdAttribute.printType(), false);
           ASTODSimpleAttributeValue oDvalue = OD4DataMill
-            .oDSimpleAttributeValueBuilder().setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build()).build();
+            .oDSimpleAttributeValueBuilder()
+            .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+            .build();
           astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
         }
 
@@ -269,7 +282,9 @@ public class GenerateODHelper {
         if (optMatcher.find()) {
           String value = createValue(sg, compClass, optMatcher.group(1), false);
           ASTODSimpleAttributeValue oDvalue = OD4DataMill
-            .oDSimpleAttributeValueBuilder().setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build()).build();
+            .oDSimpleAttributeValueBuilder()
+            .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+            .build();
           astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
         }
 
@@ -282,8 +297,10 @@ public class GenerateODHelper {
           ASTODMap oDvalue = OD4DataMill
             .oDMapBuilder()
             .addODMapElement(OD4DataMill.oDMapElementBuilder()
-              .setKey(OD4DataMill.oDSimpleAttributeValueBuilder().setExpression(OD4DataMill.nameExpressionBuilder().setName(kValue).build()).build())
-              .setVal(OD4DataMill.oDSimpleAttributeValueBuilder().setExpression(OD4DataMill.nameExpressionBuilder().setName(vValue).build()).build())
+              .setKey(OD4DataMill.oDSimpleAttributeValueBuilder().setExpression(
+                OD4DataMill.nameExpressionBuilder().setName(kValue).build()).build())
+              .setVal(OD4DataMill.oDSimpleAttributeValueBuilder().setExpression(
+                OD4DataMill.nameExpressionBuilder().setName(vValue).build()).build())
               .build())
             .addODMapElement(OD4DataMill.oDMapElementBuilder()
               .setKey(OD4DataMill.oDAbsentBuilder().build())
@@ -295,7 +312,7 @@ public class GenerateODHelper {
 
       } else {
         // normal attribute
-        String value = null;
+        String value;
         if (compClass.isPresent()) {
           if (compClass.get().getCompKind() == CompareGroup.CompClassKind.COMP_ENUM) {
             value = createValue(sg, compClass, astcdAttribute.printType(), true);
@@ -306,7 +323,9 @@ public class GenerateODHelper {
           value = createValue(sg, compClass, astcdAttribute.printType(), false);
         }
         ASTODSimpleAttributeValue oDvalue = OD4DataMill
-          .oDSimpleAttributeValueBuilder().setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build()).build();
+          .oDSimpleAttributeValueBuilder()
+          .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+          .build();
         astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
       }
     }
@@ -317,13 +336,17 @@ public class GenerateODHelper {
   /**
    * create an object
    */
-  public static ASTODNamedObject createObject(SupportGroup sg, Optional<CompClass> compClass, SupportClass supportClass, int index) {
+  public static SupportObjectPack createObject(SupportGroup sg,
+                                               Optional<CompClass> compClass,
+                                               SupportClass supportClass,
+                                               int index) {
 
     // if this SupportClass is interface or abstract class, then find a simple class on inheritancePath
-    SupportClass newSupportClass = null;
+    SupportClass newSupportClass;
     if (supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_INTERFACE ||
       supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_ABSTRACT_CLASS) {
-      newSupportClass = getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup()).get(0);
+      newSupportClass =
+        getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup()).get(0);
     } else {
       newSupportClass = supportClass;
     }
@@ -341,7 +364,7 @@ public class GenerateODHelper {
       .setODAttributesList(astodAttributeList)
       .build();
 
-    return astodNamedObject;
+    return new SupportObjectPack(astodNamedObject, newSupportClass);
   }
 
   /**
@@ -349,20 +372,22 @@ public class GenerateODHelper {
    */
   public static List<ASTODNamedObject> createObjectList(SupportGroup sg,
                                                         Optional<CompClass> compClass,
-                                                        SupportClass supportClass,
+                                                        SupportClass offerSupportClass,
                                                         int cardinalityCount,
-                                                        Deque<Map<String, Object>> classStack4TargetClass,
-                                                        Deque<Map<String, Object>> classStack4SourceClass) {
-    List<ASTODNamedObject> astodNamedObjectList = new ArrayList<>();
-    List<ASTODNamedObject> tempList = new ArrayList<>();
+                                                        Deque<ASTODClassStackPack> classStack4TargetClass,
+                                                        Deque<ASTODClassStackPack> classStack4SourceClass) {
+    List<ASTODNamedObject> astodNamedObjectList = new LinkedList<>();
+    List<ASTODNamedObject> tempList = new LinkedList<>();
+    SupportClass actualSupportClass = offerSupportClass;
     for (int i = 0; i < cardinalityCount; i++) {
       // set objects
-      ASTODNamedObject object = createObject(sg, compClass, supportClass, i);
-      astodNamedObjectList.add(object);
-      tempList.add(object);
+      SupportObjectPack objectPack = createObject(sg, compClass, offerSupportClass, i);
+      actualSupportClass = objectPack.getSupportClass();
+      astodNamedObjectList.add(objectPack.getNamedObject());
+      tempList.add(objectPack.getNamedObject());
     }
-    classStack4TargetClass.push(Map.of("objectList", tempList, "supportClass", supportClass));
-    classStack4SourceClass.push(Map.of("objectList", tempList, "supportClass", supportClass));
+    classStack4TargetClass.push(new ASTODClassStackPack(tempList, actualSupportClass));
+    classStack4SourceClass.push(new ASTODClassStackPack(tempList, actualSupportClass));
     return astodNamedObjectList;
   }
 
@@ -399,14 +424,15 @@ public class GenerateODHelper {
                                                String leftRoleName,
                                                String rightRoleName,
                                                int directionType) {
-    List<ASTODLink> linkElementList = new ArrayList<>();
+    List<ASTODLink> linkElementList = new LinkedList<>();
     if (leftElementList.size() != 0 && rightElementList.size() != 0) {
       switch (directionType) {
         case 1:
           leftElementList.forEach(left -> {
             rightElementList.forEach(right -> {
               // set link
-              linkElementList.add(createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+              linkElementList.add(
+                createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
             });
           });
           break;
@@ -414,7 +440,8 @@ public class GenerateODHelper {
           leftElementList.forEach(left -> {
             rightElementList.forEach(right -> {
               // set link
-              linkElementList.add(createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+              linkElementList.add(
+                createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
             });
           });
           break;
@@ -422,8 +449,10 @@ public class GenerateODHelper {
           leftElementList.forEach(left -> {
             rightElementList.forEach(right -> {
               // set link
-              linkElementList.add(createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
-              linkElementList.add(createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+              linkElementList.add(
+                createLink(left, right, leftRoleName, rightRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
+              linkElementList.add(
+                createLink(right, left, rightRoleName, leftRoleName, ODLinkMill.oDLeftToRightDirBuilder().build()));
             });
           });
           break;
@@ -447,9 +476,11 @@ public class GenerateODHelper {
    * the created object as target class
    * find all related associations of this created object
    */
-  public static List<SupportAssociation> findAllSupportAssociationByTargetClass(SupportGroup sg, SupportClass supportClass) {
-    List<SupportAssociation> result = new ArrayList<>();
-    Map<String, SupportAssociation> supportAssociationMap = fuzzySearchSupportAssociationByClassName(sg.getSupportAssociationGroup(), supportClass.getOriginalClassName());
+  public static List<SupportAssociation> findAllSupportAssociationByTargetClass(SupportGroup sg,
+                                                                                SupportClass supportClass) {
+    List<SupportAssociation> result = new LinkedList<>();
+    Map<String, SupportAssociation> supportAssociationMap =
+      fuzzySearchSupportAssociationByClassName(sg.getSupportAssociationGroup(), supportClass.getOriginalClassName());
     supportAssociationMap.forEach((name, assoc) -> {
       // supportClass <-
       if (assoc.getSupportLeftClass().getOriginalClassName().equals(supportClass.getOriginalClassName()) &&
@@ -467,6 +498,13 @@ public class GenerateODHelper {
         result.add(assoc);
       }
     });
+
+//    Collections.sort(result, (assoc1, assoc2) -> {
+//      int o1 = assoc1.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
+//      int o2 = assoc2.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
+//      return o1 - o2;
+//    });
+    Collections.reverse(result);
     return result;
   }
 
@@ -474,9 +512,11 @@ public class GenerateODHelper {
    * the created object as source class
    * find all related associations of this created object
    */
-  public static List<SupportAssociation> findAllSupportAssociationBySourceClass(SupportGroup sg, SupportClass supportClass) {
+  public static List<SupportAssociation> findAllSupportAssociationBySourceClass(SupportGroup sg,
+                                                                                SupportClass supportClass) {
     List<SupportAssociation> result = new ArrayList<>();
-    Map<String, SupportAssociation> supportAssociationMap = fuzzySearchSupportAssociationByClassName(sg.getSupportAssociationGroup(), supportClass.getOriginalClassName());
+    Map<String, SupportAssociation> supportAssociationMap =
+      fuzzySearchSupportAssociationByClassName(sg.getSupportAssociationGroup(), supportClass.getOriginalClassName());
     supportAssociationMap.forEach((name, assoc) -> {
       // <- supportClass
       if (assoc.getSupportRightClass().getOriginalClassName().equals(supportClass.getOriginalClassName()) &&
@@ -494,6 +534,13 @@ public class GenerateODHelper {
         result.add(assoc);
       }
     });
+
+//    Collections.sort(result, (assoc1, assoc2) -> {
+//      int o1 = assoc1.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
+//      int o2 = assoc2.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
+//      return o1 - o2;
+//    });
+    Collections.reverse(result);
     return result;
   }
 
@@ -501,22 +548,19 @@ public class GenerateODHelper {
    * check the object of given supportClass whether is in ASTODElementList
    */
   public static boolean isPresentObjectInASTODElementListBySupportClass(SupportGroup sg,
-                                                                     SupportClass supportClass,
-                                                                     List<ASTODElement> astodElementList) {
+                                                                        SupportClass supportClass,
+                                                                        ASTODPack astodPack) {
     AtomicBoolean isInList = new AtomicBoolean(false);
 
-    // choose ASTODNamedObjects from ASTODElementList
-    List<ASTODNamedObject> objectList = new ArrayList<>();
-    astodElementList.forEach(e -> {
-      if (e.getClass().equals(ASTODNamedObject.class)) {
-        objectList.add((ASTODNamedObject) e);
-      }
-    });
+    // choose ASTODNamedObjects from ASTODPack
+    List<ASTODNamedObject> objectList = astodPack.getNamedObjects();
 
-    // if this SupportClass is interface or abstract class, check the subclass of this SupportClass whether is in objectList.
+    // if this SupportClass is interface or abstract class,
+    // check the subclass of this SupportClass whether is in objectList.
     if (supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_INTERFACE ||
       supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_ABSTRACT_CLASS) {
-      List<SupportClass> subClassList = getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
+      List<SupportClass> subClassList =
+        getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
       subClassList.forEach(c -> {
         objectList.forEach(e -> {
           if (e.getName().split("_")[0].equals(toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
@@ -540,28 +584,25 @@ public class GenerateODHelper {
    * if it is in ASTODElementList, return the existed ASTODElement
    * if it is not in ASTODElementList, create a new ASTODElement as return element.
    *
-   * @return: Map
+   * @return: ASTODNamedObjectPack
    * {  "objectList"  : List<ASTODNamedObject>
    *    "isInList"    : boolean                 }
    */
-  public static Map<String, Object> getObjectInASTODElementListBySupportClass(SupportGroup sg,
-                                                                           SupportClass supportClass,
-                                                                           List<ASTODElement> astodElementList) {
+  public static ASTODNamedObjectPack getObjectInASTODElementListBySupportClass(SupportGroup sg,
+                                                                               SupportClass supportClass,
+                                                                               ASTODPack astodPack) {
     AtomicBoolean isInList = new AtomicBoolean(false);
     AtomicReference<List<ASTODNamedObject>> resultList = new AtomicReference<>(new ArrayList<>());
 
-    // choose ASTODNamedObjects from ASTODElementList
-    List<ASTODNamedObject> objectList = new ArrayList<>();
-    astodElementList.forEach(e -> {
-      if (e.getClass().equals(ASTODNamedObject.class)) {
-        objectList.add((ASTODNamedObject) e);
-      }
-    });
+    // choose ASTODNamedObjects from ASTODPack
+    List<ASTODNamedObject> objectList = astodPack.getNamedObjects();
 
-    // if this SupportClass is interface or abstract class, check the subclass of this SupportClass whether is in objectList.
+    // if this SupportClass is interface or abstract class,
+    // check the subclass of this SupportClass whether is in objectList.
     if (supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_INTERFACE ||
       supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_ABSTRACT_CLASS) {
-      List<SupportClass> subClassList = getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
+      List<SupportClass> subClassList =
+        getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
       subClassList.forEach(c -> {
         objectList.forEach(e -> {
           if (e.getName().split("_")[0].equals(toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
@@ -587,22 +628,23 @@ public class GenerateODHelper {
     if (!isInList.get()) {
 
       // determine the class of new ASTODNamedObject
-      SupportClass newSupportClass = null;
+      SupportClass newSupportClass;
       if (supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_INTERFACE ||
         supportClass.getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_ABSTRACT_CLASS) {
-        List<SupportClass> supportClassList = getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
+        List<SupportClass> supportClassList =
+          getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
         newSupportClass = supportClassList.get(supportClassList.size() - 1);
       } else {
         newSupportClass = supportClass;
       }
       // put new object into resultList
       List<ASTODNamedObject> tempList = resultList.get();
-      tempList.add(createObject(sg, Optional.empty(), newSupportClass, 0));
+      tempList.add(createObject(sg, Optional.empty(), newSupportClass, 0).getNamedObject());
 
       resultList.set(tempList);
     }
 
-    return Map.of("objectList", resultList.get(), "isInList", isInList.get());
+    return new ASTODNamedObjectPack(resultList.get(), isInList.get());
   }
 
   /**
@@ -610,22 +652,22 @@ public class GenerateODHelper {
    * if the given SupportAssociation is self-loop, that is no problem.
    * return the found the other side class and it's positon side.
    *
-   * @return: Map
+   * @return: SupportClassPack
    * {  "otherSideClass" : SupportClass
    *    "position"       : ["left", "right"] }
    */
-  public static Map<String, Object> findOtherSideClassAndPositionInSupportAssociation(SupportAssociation supportAssociation, SupportClass currentClass) {
-    String position;
-    SupportClass otherSideClass = null;
+  public static SupportClassPack findOtherSideClassAndPositionInSupportAssociation(SupportAssociation supportAssociation,
+                                                                                   SupportClass currentClass) {
+    SupportClassPack.Position position;
+    SupportClass otherSideClass;
     if (supportAssociation.getSupportLeftClass().getOriginalClassName().equals(currentClass.getOriginalClassName())) {
       otherSideClass = supportAssociation.getSupportRightClass();
-      position = "right";
+      position = SupportClassPack.Position.RIGHT;
     } else {
       otherSideClass = supportAssociation.getSupportLeftClass();
-      position = "left";
+      position = SupportClassPack.Position.LEFT;
     }
-
-    return Map.of("otherSideClass", otherSideClass, "position", position);
+    return new SupportClassPack(otherSideClass, position);
   }
 
   /**
@@ -638,12 +680,21 @@ public class GenerateODHelper {
     stringBuilder.append("-[");
 
     // set assoc name
-    stringBuilder.append(association.getName());
+    stringBuilder.append(association.getName(true));
     stringBuilder.append("]-[");
 
     // set assoc type
     stringBuilder.append(association.getCompCategory().toString().toLowerCase());
     stringBuilder.append("]");
+
+    // set which part
+    if (association.getWhichPartDiff().isPresent()) {
+      if (association.getWhichPartDiff().get() != CompareGroup.WhichPartDiff.DIRECTION) {
+        stringBuilder.append("-[");
+        stringBuilder.append(association.getWhichPartDiff().get().toString().toLowerCase());
+        stringBuilder.append("]");
+      }
+    }
 
     return stringBuilder.toString();
   }
@@ -658,26 +709,22 @@ public class GenerateODHelper {
     stringBuilder.append("-[");
 
     // set assoc name
-    stringBuilder.append(compClass.getName());
+    stringBuilder.append(compClass.getName(true));
     stringBuilder.append("]-[");
 
     // set assoc type
     stringBuilder.append(compClass.getCompCategory().toString().toLowerCase());
     stringBuilder.append("]");
 
+    // set which part
+    if (compClass.getCompCategory() == CompareGroup.CompClassCategory.EDITED) {
+      if (compClass.getWhichAttributesDiff().isPresent()) {
+        stringBuilder.append("-");
+        stringBuilder.append(compClass.getWhichAttributesDiff().get());
+      }
+    }
+
     return stringBuilder.toString();
   }
-
-  /**
-   * ensure the order of elements in OD
-   * first objects, then associations
-   */
-  public static List<ASTODElement> organizeASTODElementList(List<ASTODElement> originalList) {
-    List<ASTODElement> resultList = new ArrayList<>();
-    resultList.addAll(originalList.stream().filter(e -> e.getClass().equals(ASTODNamedObject.class)).collect(Collectors.toList()));
-    resultList.addAll(originalList.stream().filter(e -> e.getClass().equals(ASTODLink.class)).collect(Collectors.toList()));
-    return resultList;
-  }
-
 
 }

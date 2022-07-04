@@ -35,7 +35,10 @@ public class CompClass {
   protected final CompareGroup.CompClassCategory compCategory;
   protected Optional<List<String>> whichAttributesDiff;
 
-  public CompClass(SupportClass originalElement, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompClassCategory compCategory) {
+  public CompClass(SupportClass originalElement,
+                   boolean isInCompareSG,
+                   boolean isContentDiff,
+                   CompareGroup.CompClassCategory compCategory) {
     this.originalElement = originalElement;
     this.isInCompareSG = isInCompareSG;
     this.isContentDiff = isContentDiff;
@@ -47,8 +50,8 @@ public class CompClass {
     return compId;
   }
 
-  public String getName() {
-    return getCompClassKindStrHelper(getCompKind()) + "_" + this.originalElement.getOriginalClassName();
+  public String getName(boolean is4Print) {
+    return getCompClassKindStrHelper(getCompKind(), is4Print) + "_" + this.originalElement.getOriginalClassName();
   }
 
   public CompareGroup.CompClassKind getCompKind() {
