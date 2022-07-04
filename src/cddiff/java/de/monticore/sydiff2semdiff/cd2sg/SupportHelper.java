@@ -630,7 +630,7 @@ public class SupportHelper {
   public static List<SupportClass> getAllSimpleSubClasses4SupportClass(SupportClass supportClass,
                                                                        MutableGraph<String> inheritanceGraph,
                                                                        Map<String, SupportClass> supportClassGroup) {
-    List<SupportClass> result = new ArrayList<>();
+    List<SupportClass> result = new LinkedList<>();
     inheritanceGraph.predecessors(supportClass.getName()).forEach(e -> {
       if (supportClassGroup.get(e).getSupportKind() == SupportGroup.SupportClassKind.SUPPORT_CLASS) {
         result.add(supportClassGroup.get(e));

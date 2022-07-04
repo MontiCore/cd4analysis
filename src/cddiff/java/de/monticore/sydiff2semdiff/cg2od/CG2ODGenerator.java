@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static de.monticore.sydiff2semdiff.cd2sg.SupportHelper.*;
 import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.*;
+import static de.monticore.sydiff2semdiff.sg2cg.CompareHelper.createCompareAssociationHelper;
 
 public class CG2ODGenerator {
 
@@ -99,7 +100,7 @@ public class CG2ODGenerator {
       convertRefSetAssociationList2CheckList(sg.getRefSetAssociationList());
 
     // initial for generate ODs
-    ASTODPack astodPack = initGenerateODByClass(sg, compClass, classStack4TargetClass, classStack4SourceClass);
+    ASTODPack astodPack = initGenerateODByClass(sg, compClass, classStack4TargetClass, classStack4SourceClass, refLinkCheckList);
 
     // using basic process
     return usingGenerateODBasicProcess(
@@ -115,30 +116,93 @@ public class CG2ODGenerator {
   /**
    * initial step for item in globalClassQueue
    *
+   * if supportClass is in simple class, abstract class, interface, then using initGenerateODByClassHelper()
+   * if supportClass is enum, get the class that using this enum, then using initGenerateODByClassHelper()
+   * if there is no associations about given support class, then
    * create an object that its corresponding class has syntactic differences and
    * put this object into ASTODPack
+   *
    */
   public ASTODPack initGenerateODByClass(SupportGroup sg,
                                          CompClass compClass,
                                          Deque<ASTODClassStackPack> classStack4TargetClass,
-                                         Deque<ASTODClassStackPack> classStack4SourceClass) {
+                                         Deque<ASTODClassStackPack> classStack4SourceClass,
+                                         Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
     // get the necessary information
     SupportClass supportClass = compClass.getOriginalElement();
     ASTODPack astodPack = new ASTODPack();
 
     // create ASTODElement list
+    SupportClass usingSupportClass;
     if (supportClass.getSupportKind() != SupportGroup.SupportClassKind.SUPPORT_ENUM) {
       // simple class, abstract class, interface
-      astodPack.extendNamedObjects(
-        createObjectList(sg, Optional.of(compClass), supportClass, 1, classStack4TargetClass, classStack4SourceClass));
+      usingSupportClass = supportClass;
     } else {
       // enum
       SupportClass supportClassUsingEnum =
         sg.getSupportClassGroup().get(supportClass.getSupportLink4EnumClass().iterator().next());
-      astodPack.extendNamedObjects(
-        createObjectList(sg, Optional.of(compClass), supportClassUsingEnum, 1, classStack4TargetClass, classStack4SourceClass));
+      usingSupportClass = supportClassUsingEnum;
     }
+
+    // call initGenerateODByClassHelper()
+    Optional<ASTODPack> optionalAstodPack =
+      initGenerateODByClassHelper(sg, usingSupportClass, classStack4TargetClass, classStack4SourceClass, refLinkCheckList);
+    if (optionalAstodPack.isEmpty()) {
+      astodPack.extendNamedObjects(
+        createObjectList(sg, Optional.of(compClass), usingSupportClass, 1, classStack4TargetClass, classStack4SourceClass));
+    } else {
+      astodPack.extendNamedObjects(optionalAstodPack.get().getNamedObjects());
+      astodPack.extendLinks(optionalAstodPack.get().getLinks());
+    }
+
     return astodPack;
+  }
+
+  /**
+   * if exist associations with current class, then we use initGenerateODByAssociation()
+   * if there is no associaton with current class, then return empty()
+   */
+  protected Optional<ASTODPack> initGenerateODByClassHelper(SupportGroup sg,
+                                                            SupportClass supportClass,
+                                                            Deque<ASTODClassStackPack> classStack4TargetClass,
+                                                            Deque<ASTODClassStackPack> classStack4SourceClass,
+                                                            Map<SupportRefSetAssociation, Integer> refLinkCheckList) {
+
+    // get inheritance path of current support class
+    List<SupportClass> supportClassList =
+      getAllSimpleSubClasses4SupportClass(supportClass, sg.getInheritanceGraph(), sg.getSupportClassGroup());
+    supportClassList.add(0, supportClass);
+
+    // find possible associations about current support class and its subclasses
+    List<SupportAssociation> supportAssociationList = new LinkedList<>();
+    for (SupportClass currentClass : supportClassList) {
+      supportAssociationList.addAll(findAllSupportAssociationByTargetClass(sg, currentClass));
+      supportAssociationList.addAll(findAllSupportAssociationBySourceClass(sg, currentClass));
+      if (!supportAssociationList.isEmpty()) {
+        break;
+      }
+    }
+    // guarantee non-inherited associations as first
+    Collections.sort(supportAssociationList, (assoc1, assoc2) -> {
+      int o1 = assoc1.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
+      int o2 = assoc2.getSupportKind() == SupportGroup.SupportAssociationKind.SUPPORT_ASC ? 1 : 0;
+      return o2 - o1;
+    });
+    ASTODPack astodPack = null;
+    if (!supportAssociationList.isEmpty()) {
+      // exist associations with current class
+      CompAssociation compAssociation = createCompareAssociationHelper(
+        supportAssociationList.get(0),
+        false,
+        true,
+        CompareGroup.CompAssociationCategory.DELETED);
+      astodPack = initGenerateODByAssociation(sg, compAssociation, classStack4TargetClass, classStack4SourceClass);
+      Optional<List<SupportRefSetAssociation>> optInitSupportRefSetAssociation =
+        findRelatedSupportRefSetAssociationBySupportAssociation(compAssociation.getOriginalElement(), refLinkCheckList);
+      updateCounterInCheckList(optInitSupportRefSetAssociation, refLinkCheckList);
+    }
+
+    return astodPack == null ? Optional.empty() : Optional.of(astodPack);
   }
 
   /**

@@ -1,32 +1,41 @@
+import java.util.Date;
 
 classdiagram EmployeesA {
+	enum PositionKind {fullTime, partTime, other;}
+
+	enum Department {Sales, HR;}
 
 	interface Area {
+
 	}
 
 	class Company implements Area {
-	}
-
-	class Zemployee {
 
 	}
 
-	class Manager extends Zemployee {
+	abstract class Person {
 
 	}
 
-	class Ztask {
+	class Employee extends Person {
+
+	}
+
+	class Manager extends Employee {
     int id;
 	}
 
-  class ManagementTask extends Ztask {
+	class Task {
+
+	}
+
+  class ManagementTask extends Task {
 
   }
 
-  association [1] Manager (assignee) <-> (todo) ManagementTask [1];
-  association [1..*] Zemployee (assignee) <- (todo) Ztask [1];
+  association [1..*] Employee (assignee) <- (todo) Task [*];
+  association [1..*] Manager (assignee) -- (todo) ManagementTask [1..*];
+  association [0..1] ManagementTask (todo) <-> (assignee) Manager [0..1];
 
-
-  association [1] Zemployee (work) -> Area [1..*];
-
+  association [1] Employee (work) -> Area [1..*];
 }
