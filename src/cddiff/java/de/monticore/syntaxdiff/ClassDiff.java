@@ -8,6 +8,7 @@ package de.monticore.syntaxdiff;
   import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
   import de.monticore.cdassociation._ast.ASTCDAssociationNode;
   import de.monticore.cdbasis._ast.ASTCDAttribute;
+  import de.monticore.cdbasis._ast.ASTCDBasisNode;
   import de.monticore.cdbasis._ast.ASTCDClass;
   import de.monticore.cdbasis._ast.ASTCDExtendUsage;
   import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -438,6 +439,53 @@ package de.monticore.syntaxdiff;
             }
           }
         }
+      }
+    }
+    for (ElementDiff<ASTCDMethod> x : matchedMethodeList){
+      if (!x.getDiffList().isEmpty()){
+        for (FieldDiff<? extends ASTNode> diff: x.getDiffList()){
+          if (diff.isPresent()) {
+            String colorCode = "\033[1;33m"; // Bold White
+            if (diff.getOperation().isPresent()) {
+              if (diff.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
+                colorCode = "\033[1;31m"; // Bold Red
+              }
+              if (diff.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
+                colorCode = "\033[1;32m"; // Bold Green
+              }
+            }
+            if (diff.getCd1Value().isPresent() && diff.getCd1pp().isPresent()) {
+              String cd1pp = diff.getCd1pp().get();
+              if (cd1Class.contains(cd1pp)) {
+                cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+              }
+            }
+            if (diff.getCd2Value().isPresent() && diff.getCd2pp().isPresent()) {
+              String cd2pp = diff.getCd2pp().get();
+              if (cd2Class.contains(cd2pp)) {
+                cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+              }
+            }
+            // Build Interpretation
+            if (diff.getInterpretation().isPresent()) {
+              interpretation.append(diff.getInterpretation().get()).append(" ");
+            }
+          }
+        }
+      }
+    }
+    for (ASTCDMethod x : deleletedMethodes) {
+      String colorCode = "\033[1;31m"; // Bold Red
+      String cd1pp = pp.prettyprint((ASTCDBasisNode) x);
+      if (cd1Class.contains(cd1pp)) {
+        cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+      }
+    }
+    for (ASTCDMethod x : addedMethode) {
+      String colorCode = "\033[1;32m"; // Bold Green
+      String cd2pp = pp.prettyprint((ASTCDBasisNode) x);
+      if (cd2Class.contains(cd2pp)) {
+        cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
       }
     }
 
