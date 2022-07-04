@@ -260,7 +260,7 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void testGenerateODByCombination () {
+  public void testGenerateODByCombination1() {
     generateCompareGroupTemp("Combination","Employees1A.cd", "Employees1B.cd");
     CG2ODGenerator odGenerator = new CG2ODGenerator();
     List<String> resultList = odGenerator.generateObjectDiagrams(sg1, cg1);
@@ -532,8 +532,54 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     ));
   }
 
+  @Test
+  public void testGenerateODByCombination2() {
+    generateCompareGroupTemp("Combination", "Employees1B.cd", "Employees1A.cd");
+    CG2ODGenerator odGenerator = new CG2ODGenerator();
+    List<String> resultList = odGenerator.generateObjectDiagrams(sg1, cg1);
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[Association_Employee_assignee_Bidirectional_todo_Task]-[direction_changed]") &&
+        e.contains(
+          "  employee_0:Employee{\n" +
+            "    int personId = some_type_int;\n" +
+            "    PositionKind kind = fullTime;\n" +
+            "  };") &&
+        e.contains(
+          "  task_0:Task{\n" +
+            "    int taskId = some_type_int;\n" +
+            "    Date startDate = some_type_Date;\n" +
+            "    Date endDate = some_type_Date;\n" +
+            "  };") &&
+        e.contains(
+          "  company_0:Company{\n" +
+            "    String address = some_type_String;\n" +
+            "    String country = some_type_String;\n" +
+            "  };") &&
+        e.contains("link employee_0 (assignee) -> (todo) task_0;") &&
+        e.contains("link task_0 (todo) -> (assignee) employee_0;") &&
+        e.contains("link company_0 (area) -> (work) employee_0;") &&
+        e.contains("link employee_0 (work) -> (area) company_0;")
+    ));
+
+    Assert.assertTrue(resultList.stream().anyMatch(e ->
+      e.contains("[Association_Employee_work_RightToLeft_area_Area]-[direction_changed]") &&
+        e.contains(
+          "  employee_0:Employee{\n" +
+            "    int personId = some_type_int;\n" +
+            "    PositionKind kind = fullTime;\n" +
+            "  };") &&
+        e.contains(
+          "  company_0:Company{\n" +
+            "    String address = some_type_String;\n" +
+            "    String country = some_type_String;\n" +
+            "  };") &&
+        e.contains("link company_0 (area) -> (work) employee_0;") &&
+        e.contains("link employee_0 (work) -> (area) company_0;")
+    ));
+  }
+
 //  @Test
-//  public void testGenerateODByCombination1 () {
+//  public void testGenerateODByCombinationTest () {
 //    generateCompareGroupTemp("Combination", "test1.cd", "test2.cd");
 //    CG2ODGenerator odGenerator = new CG2ODGenerator();
 //    List<String> resultList = odGenerator.generateObjectDiagrams(sg1, cg1);
