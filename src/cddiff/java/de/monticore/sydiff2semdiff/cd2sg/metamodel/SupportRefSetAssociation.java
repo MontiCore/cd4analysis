@@ -27,15 +27,23 @@ public class SupportRefSetAssociation {
   protected String rightRoleName;
   protected Set<SupportClass> rightRefSet;
 
+  protected SupportAssociation originalElement;
+
   public SupportRefSetAssociation() {
   }
 
-  public SupportRefSetAssociation(Set<SupportClass> leftRefSet, String leftRoleName, SupportGroup.SupportAssociationDirection direction, String rightRoleName, Set<SupportClass> rightRefSet) {
+  public SupportRefSetAssociation(Set<SupportClass> leftRefSet,
+                                  String leftRoleName,
+                                  SupportGroup.SupportAssociationDirection direction,
+                                  String rightRoleName,
+                                  Set<SupportClass> rightRefSet,
+                                  SupportAssociation originalElement) {
     this.leftRefSet = leftRefSet;
     this.leftRoleName = leftRoleName;
     this.direction = direction;
     this.rightRoleName = rightRoleName;
     this.rightRefSet = rightRefSet;
+    this.originalElement = originalElement;
   }
 
   public Set<SupportClass> getLeftRefSet() {
@@ -76,5 +84,13 @@ public class SupportRefSetAssociation {
 
   public void setRightRefSet(Set<SupportClass> rightRefSet) {
     this.rightRefSet = rightRefSet;
+  }
+
+  public SupportAssociation getOriginalElement() {
+    return originalElement;
+  }
+
+  public void setOriginalElement(SupportAssociation originalElement) {
+    this.originalElement = originalElement;
   }
 }
