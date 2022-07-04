@@ -351,7 +351,7 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
       e.contains("[Enum_PositionKind]-[edited]-[other]") &&
         e.contains(
             "  employee_0:Employee{\n" +
-              "    PositionKind kind = fullTime;\n" +
+              "    PositionKind kind = other;\n" +
               "    List<Long> devices = [some_type_Long,...];\n" +
               "    int personId = some_type_int;\n" +
               "  };") &&
