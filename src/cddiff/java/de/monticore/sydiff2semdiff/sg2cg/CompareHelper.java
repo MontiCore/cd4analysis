@@ -8,7 +8,6 @@ import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompClass;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompareGroup;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CompareHelper {
 
@@ -37,16 +36,16 @@ public class CompareHelper {
   /**
    * get the corresponding prefix compare class name by compClassKind
    */
-  public static String getCompClassKindStrHelper(CompareGroup.CompClassKind compClassKind) {
+  public static String getCompClassKindStrHelper(CompareGroup.CompClassKind compClassKind, boolean is4Print) {
     switch (compClassKind) {
       case COMP_CLASS:
-        return "CompClass";
+        return is4Print ? "Class" : "CompClass";
       case COMP_ENUM:
-        return "CompEnum";
+        return is4Print ? "Enum" : "CompEnum";
       case COMP_ABSTRACT_CLASS:
-        return "CompAbstractClass";
+        return is4Print ? "AbstractClass" : "CompAbstractClass";
       case COMP_INTERFACE:
-        return "CompInterface";
+        return is4Print ? "Interface" : "CompInterface";
       default:
         return null;
     }
@@ -57,8 +56,7 @@ public class CompareHelper {
    */
   public static List<String> compClassWhichAttributesDiffHelper(SupportClass base, Optional<SupportClass> optCompare) {
     if (optCompare.isEmpty()) {
-      List<String> attributesDiffList = base.getAttributes().keySet().stream().collect(Collectors.toList());
-      return attributesDiffList;
+      return new ArrayList<>(base.getAttributes().keySet());
     } else {
       SupportClass compare = optCompare.get();
       List<String> attributesDiffList = new ArrayList<>();
@@ -84,10 +82,13 @@ public class CompareHelper {
   /**
    * return the compare class category that helps to determine if there is a semantic difference
    */
-  public static CompareGroup.CompClassCategory compClassCategoryHelper(SupportClass base, SupportClass compare, boolean isContentDiff) {
+  public static CompareGroup.CompClassCategory compClassCategoryHelper(SupportClass base,
+                                                                       SupportClass compare,
+                                                                       boolean isContentDiff) {
     // check whether attributes in BaseSupportClass are the subset of attributes in CompareSupportClass
     if (!isContentDiff) {
-      if (compare.getAttributes().keySet().containsAll(base.getAttributes().keySet()) && compare.getAttributes().size() > base.getAttributes().size()) {
+      if (compare.getAttributes().keySet().containsAll(base.getAttributes().keySet()) &&
+        compare.getAttributes().size() > base.getAttributes().size()) {
         return CompareGroup.CompClassCategory.SUBSET;
       } else {
         return CompareGroup.CompClassCategory.ORIGINAL;
@@ -100,7 +101,10 @@ public class CompareHelper {
   /**
    * helper for creating compare class without attributesDiffList
    */
-  public static CompClass createCompClassHelper(SupportClass base, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompClassCategory category) {
+  public static CompClass createCompClassHelper(SupportClass base,
+                                                boolean isInCompareSG,
+                                                boolean isContentDiff,
+                                                CompareGroup.CompClassCategory category) {
     CompClass compClass = new CompClass(base, isInCompareSG, isContentDiff, category);
     compClass.setWhichAttributesDiff(Optional.empty());
     return compClass;
@@ -109,7 +113,11 @@ public class CompareHelper {
   /**
    * helper for creating compare class with attributesDiffList
    */
-  public static CompClass createCompClassHelper(SupportClass base, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompClassCategory category, List<String> attributesDiffList) {
+  public static CompClass createCompClassHelper(SupportClass base,
+                                                boolean isInCompareSG,
+                                                boolean isContentDiff,
+                                                CompareGroup.CompClassCategory category,
+                                                List<String> attributesDiffList) {
     CompClass compClass = createCompClassHelper(base, isInCompareSG, isContentDiff, category);
     compClass.setWhichAttributesDiff(Optional.of(attributesDiffList));
     return compClass;
@@ -120,9 +128,11 @@ public class CompareHelper {
    *******************************************************************/
 
   /**
-   * return the result for cardinality of association after comparison between base SupportAssociation and compare SupportAssociation
+   * return the result for cardinality of association after comparison
+   * between base SupportAssociation and compare SupportAssociation
    */
-  public static CompareGroup.CompAssociationCardinality compAssociationCardinalityHelper(SupportGroup.SupportAssociationCardinality baseSupportAssociationCardinality, SupportGroup.SupportAssociationCardinality compareSupportAssociationCardinality) {
+  public static CompareGroup.CompAssociationCardinality compAssociationCardinalityHelper(SupportGroup.SupportAssociationCardinality baseSupportAssociationCardinality,
+                                                                                         SupportGroup.SupportAssociationCardinality compareSupportAssociationCardinality) {
     switch (baseSupportAssociationCardinality) {
       case ONE:
         switch (compareSupportAssociationCardinality) {
@@ -172,9 +182,11 @@ public class CompareHelper {
   }
 
   /**
-   * return the result for direction of association after comparison between base SupportAssociation and compare SupportAssociation
+   * return the result for direction of association after comparison
+   * between base SupportAssociation and compare SupportAssociation
    */
-  public static CompareGroup.CompAssociationDirection compAssociationDirectionHelper(SupportGroup.SupportAssociationDirection baseSupportDirection, SupportGroup.SupportAssociationDirection compareSupportDirection) {
+  public static CompareGroup.CompAssociationDirection compAssociationDirectionHelper(SupportGroup.SupportAssociationDirection baseSupportDirection,
+                                                                                     SupportGroup.SupportAssociationDirection compareSupportDirection) {
     switch (baseSupportDirection) {
       case LEFT_TO_RIGHT:
         switch (compareSupportDirection) {
@@ -226,15 +238,15 @@ public class CompareHelper {
   /**
    * return the compare association category that helps to determine if there is a semantic difference for direction
    */
-  public static CompareGroup.CompAssociationCategory compAssociationCategoryByDirectionHelper(boolean isDirectionChanged, boolean isAssocNameExchanged, CompareGroup.CompAssociationDirection directionResult) {
+  public static CompareGroup.CompAssociationCategory compAssociationCategoryByDirectionHelper(boolean isDirectionChanged,
+                                                                                              boolean isAssocNameExchanged,
+                                                                                              CompareGroup.CompAssociationDirection directionResult) {
     if (isDirectionChanged) {
       // check directionResult
-      switch (directionResult) {
-        case NONE:
-          return CompareGroup.CompAssociationCategory.DIRECTION_SUBSET;
-        default:
-          return CompareGroup.CompAssociationCategory.DIRECTION_CHANGED;
+      if (directionResult == CompareGroup.CompAssociationDirection.NONE) {
+        return CompareGroup.CompAssociationCategory.DIRECTION_SUBSET;
       }
+      return CompareGroup.CompAssociationCategory.DIRECTION_CHANGED;
     } else {
       if (isAssocNameExchanged) {
         return CompareGroup.CompAssociationCategory.DIRECTION_CHANGED_BUT_SAME_MEANING;
@@ -247,15 +259,14 @@ public class CompareHelper {
   /**
    * return the compare association category that helps to determine if there is a semantic difference for cardinality
    */
-  public static CompareGroup.CompAssociationCategory compAssociationCategoryByCardinalityHelper(boolean isCardinalityDiff, CompareGroup.CompAssociationCardinality cardinalityResult) {
+  public static CompareGroup.CompAssociationCategory compAssociationCategoryByCardinalityHelper(boolean isCardinalityDiff,
+                                                                                                CompareGroup.CompAssociationCardinality cardinalityResult) {
     if (isCardinalityDiff) {
       // check cardinalityResult
-      switch (cardinalityResult) {
-        case NONE:
-          return CompareGroup.CompAssociationCategory.CARDINALITY_SUBSET;
-        default:
-          return CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED;
+      if (cardinalityResult == CompareGroup.CompAssociationCardinality.NONE) {
+        return CompareGroup.CompAssociationCategory.CARDINALITY_SUBSET;
       }
+      return CompareGroup.CompAssociationCategory.CARDINALITY_CHANGED;
     } else {
       return CompareGroup.CompAssociationCategory.ORIGINAL;
     }
@@ -278,7 +289,10 @@ public class CompareHelper {
   /**
    * helper for creating compare association without whichPartDiff and the result after comparison
    */
-  public static CompAssociation createCompareAssociationHelper(SupportAssociation base, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompAssociationCategory category) {
+  public static CompAssociation createCompareAssociationHelper(SupportAssociation base,
+                                                               boolean isInCompareSG,
+                                                               boolean isContentDiff,
+                                                               CompareGroup.CompAssociationCategory category) {
     CompAssociation compAssociation = new CompAssociation(base, isInCompareSG, isContentDiff, category);
     compAssociation.setCompDirectionResult(Optional.empty());
     compAssociation.setCompLeftClassCardinalityResult(Optional.empty());
@@ -290,26 +304,34 @@ public class CompareHelper {
   /**
    * helper for creating compare association with whichPartDiff and the result after comparison
    */
-  public static CompAssociation createCompareAssociationHelper(SupportAssociation base, boolean isInCompareSG, boolean isContentDiff, CompareGroup.CompAssociationCategory category, Optional<CompareGroup.WhichPartDiff> whichPartDiff, Optional<Object> compResult) {
+  public static CompAssociation createCompareAssociationHelper(SupportAssociation base,
+                                                               boolean isInCompareSG,
+                                                               boolean isContentDiff,
+                                                               CompareGroup.CompAssociationCategory category,
+                                                               Optional<CompareGroup.WhichPartDiff> whichPartDiff,
+                                                               Optional<Object> compResult) {
     CompAssociation compAssociation = createCompareAssociationHelper(base, isInCompareSG, isContentDiff, category);
     compAssociation.setWhichPartDiff(whichPartDiff);
 
     if (whichPartDiff.isPresent() && compResult.isPresent()) {
       switch (whichPartDiff.get()) {
         case DIRECTION:
-          compAssociation.setCompDirectionResult(Optional.of((CompareGroup.CompAssociationDirection) compResult.get()));
+          compAssociation.setCompDirectionResult(
+            Optional.of((CompareGroup.CompAssociationDirection) compResult.get()));
           compAssociation.setCompLeftClassCardinalityResult(Optional.empty());
           compAssociation.setCompRightClassCardinalityResult(Optional.empty());
           break;
         case LEFT_CARDINALITY:
           compAssociation.setCompDirectionResult(Optional.empty());
-          compAssociation.setCompLeftClassCardinalityResult(Optional.of((CompareGroup.CompAssociationCardinality) compResult.get()));
+          compAssociation.setCompLeftClassCardinalityResult(
+            Optional.of((CompareGroup.CompAssociationCardinality) compResult.get()));
           compAssociation.setCompRightClassCardinalityResult(Optional.empty());
           break;
         case RIGHT_CARDINALITY:
           compAssociation.setCompDirectionResult(Optional.empty());
           compAssociation.setCompLeftClassCardinalityResult(Optional.empty());
-          compAssociation.setCompRightClassCardinalityResult(Optional.of((CompareGroup.CompAssociationCardinality) compResult.get()));
+          compAssociation.setCompRightClassCardinalityResult(
+            Optional.of((CompareGroup.CompAssociationCardinality) compResult.get()));
           break;
       }
     }
