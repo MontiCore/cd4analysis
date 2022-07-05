@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ReductionTrafo {
 
   /**
-   * transform 2 CDs for Open-to-Closed World Reduction of CDDiff completeSymbolTable() cannot be
+   * transform 2 CDs for Open-to-Closed World Reduction of CDDiff; completeSymbolTable() cannot be
    * used, because CDs likely define the same symbols
    */
   public void transform(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
@@ -67,15 +67,16 @@ public class ReductionTrafo {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    String commonInterface = "CommonInterface0";
-    //addDummyClass4Associations(first, commonInterface);
-    createCommonInterface(first,commonInterface);
+    //create common interface for all classes in first
+    String commonInterface = "Object4Analysis";
+    createCommonInterface(first, commonInterface);
 
     // add subclass to each interface and abstract class
     addSubClasses4Diff(first);
 
     // add a unidirectional super-association in first for each association in second
-    Set<ASTCDAssociation> superSet = expander1.buildSuperAssociations(second.getCDDefinition().getCDAssociationsList(), commonInterface);
+    Set<ASTCDAssociation> superSet = expander1.buildSuperAssociations(
+        second.getCDDefinition().getCDAssociationsList(), commonInterface);
     expander1.addAssociationsWithoutConflicts(superSet);
 
     /*
@@ -85,6 +86,9 @@ public class ReductionTrafo {
     //re-build symbol tables
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
+
+    //create common interface for all classes in second
+    createCommonInterface(second, commonInterface);
 
     // add classes, interfaces and attributes exclusive to first
     expander2.addMissingTypesAndAttributes(first.getCDDefinition().getCDClassesList());
@@ -104,8 +108,8 @@ public class ReductionTrafo {
     */
 
     // add all non-conflicting associations from first to second
-    Set<ASTCDAssociation> noConflictSet =
-        new HashSet<>(first.getCDDefinition().getCDAssociationsList());
+    Set<ASTCDAssociation> noConflictSet = new HashSet<>(
+        first.getCDDefinition().getCDAssociationsList());
     noConflictSet.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
 
     expander2.addAssociationClones(noConflictSet);
@@ -136,7 +140,8 @@ public class ReductionTrafo {
    * handles unspecified AssocDir for close-world and open-world diff; open-world also allows to
    * transform uni-directional AssocDir into bi-directional AssocDir
    */
-  public static void handleAssocDirections(ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
+  public static void handleAssocDirections(ASTCDCompilationUnit first,
+      ASTCDCompilationUnit second) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);

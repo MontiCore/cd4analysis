@@ -80,21 +80,22 @@ public class CD2AlloyGenerator {
         + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
 
         // Abstract Signature for Objects
-        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Type } "
+        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, type: Type } "
         + System.lineSeparator()
         // Abstract Signature for Names
         + "abstract sig FName {} " + System.lineSeparator()
         // Abstract Signature for Values
         + "abstract sig Val {} " + System.lineSeparator()
         // Abstract Signature for EnumValues
-        + "abstract sig EnumVal {} " + System.lineSeparator() + "abstract sig Type {}"
-        + System.lineSeparator() + " " + System.lineSeparator()
+        + "abstract sig EnumVal {} " + System.lineSeparator()
+        + "abstract sig Type { super: set Type, inst : set Obj}" + System.lineSeparator() + " "
+        + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
         + System.lineSeparator() + "// ends and for association ends of undirected associations."
         + System.lineSeparator() + "pred ObjTypes[obj: set Obj, types: set Type]{"
-        + System.lineSeparator() + " all o:obj| o.super = types}" + System.lineSeparator()
+        + System.lineSeparator() + " all o:obj| o.type.super = types}" + System.lineSeparator()
         + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {" + System.lineSeparator()
         + " objs.get[fName] in fType" + System.lineSeparator() + " all o: objs| one o.get[fName] }"
@@ -134,6 +135,8 @@ public class CD2AlloyGenerator {
         + "pred ObjLU[objs: set Obj, fName:one FName, fType: set Obj," + System.lineSeparator()
         + " low: Int, up: Int] {" + System.lineSeparator() + " ObjL[objs, fName, fType, low]"
         + System.lineSeparator() + " ObjU[objs, fName, fType, up] }" + System.lineSeparator()
+        + System.lineSeparator() + "fact InstancesOfTypes {" + System.lineSeparator()
+        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}" + System.lineSeparator()
         + System.lineSeparator() + ""
 
         // Additional Fact from in TechRep Example to exclude illegal
