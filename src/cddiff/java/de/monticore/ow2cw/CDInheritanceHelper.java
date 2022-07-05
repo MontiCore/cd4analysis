@@ -1,9 +1,14 @@
 package de.monticore.ow2cw;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
@@ -111,13 +116,25 @@ public class CDInheritanceHelper {
     return interfaceSet;
   }
 
+
   /**
    * helper-method to resolve extended/implemented class/interface
    */
   public static ASTCDType resolveClosestType(ASTCDType srcNode, String targetName,
       ICD4CodeArtifactScope artifactScope) {
 
-    List<CDTypeSymbol> symbolList = artifactScope.resolveCDTypeDownMany(targetName);
+    ICDBasisScope currentScope = srcNode.getEnclosingScope();
+    List<CDTypeSymbol> symbolList;
+
+    while (currentScope != artifactScope){
+      symbolList = currentScope.resolveCDTypeDownMany(targetName);
+      if (!symbolList.isEmpty()){
+        break;
+      }
+      currentScope = currentScope.getEnclosingScope();
+    }
+
+    symbolList = currentScope.resolveCDTypeDownMany(targetName);
 
     if (symbolList.isEmpty()) {
       Log.error(String.format("0xCDD15: Could not resolve %s", targetName));
