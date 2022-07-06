@@ -13,15 +13,15 @@ import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class SyntaxDemoTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/CDSynExample1.cd");
-  ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/SyntaxDiff/CDSynExample2.cd");
+  ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxDiff/CDSynExample1.cd");
+  ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxDiff/CDSynExample2.cd");
 
   @Override
   protected ASTCDCompilationUnit parseModel(String modelFile) {

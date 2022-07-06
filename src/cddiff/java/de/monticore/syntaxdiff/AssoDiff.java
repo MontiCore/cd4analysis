@@ -2,13 +2,7 @@ package de.monticore.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cdassociation._ast.*;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDBasisNode;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDExtendUsage;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
@@ -16,7 +10,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.syntaxdiff.SyntaxDiff.Op;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +25,7 @@ public class AssoDiff extends AbstractDiffType{
 
   protected final ASTCDAssociation cd2Element;
 
-  protected int diffSize;
+  protected double diffSize;
 
   protected List<FieldDiff<? extends ASTNode>> diffList;
 
@@ -44,7 +37,7 @@ public class AssoDiff extends AbstractDiffType{
     return cd2Element;
   }
 
-  public int getDiffSize() {
+  public double getDiffSize() {
     return diffSize;
   }
 
@@ -73,7 +66,7 @@ public class AssoDiff extends AbstractDiffType{
    * Name changes are weighted more
    * @return Diff size as int
    */
-  private int calculateDiffSize(){
+  private double calculateDiffSize(){
     int size = diffList.size();
 
     for (FieldDiff<? extends ASTNode> diff : diffList){
@@ -226,34 +219,26 @@ public class AssoDiff extends AbstractDiffType{
     String cd1Asso = pp.prettyprint((ASTCDAssociationNode) getCd1Element());
     String cd2Asso = pp.prettyprint((ASTCDAssociationNode) getCd2Element());
 
-    final String RESET = "\033[0m";
-    for (FieldDiff<? extends ASTNode> x: diffList) {
-      if (x.isPresent()) {
-        String colorCode = "\033[1;33m"; // Bold White
-        if (x.getOperation().isPresent()) {
-          if (x.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
-            colorCode = "\033[1;31m"; // Bold Red
-          }
-          if (x.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
-            colorCode = "\033[1;32m"; // Bold Green
-          }
-        }
-        if (x.getCd1Value().isPresent() && x.getCd1pp().isPresent()) {
-          String cd1pp = x.getCd1pp().get();
+    for (FieldDiff<? extends ASTNode> diff: diffList) {
+      if (diff.isPresent()) {
+        String colorCode = getColorCode(diff);
+
+        if (diff.getCd1Value().isPresent() && diff.getCd1pp().isPresent()) {
+          String cd1pp = diff.getCd1pp().get();
           if (cd1Asso.contains(cd1pp)) {
             cd1Asso = cd1Asso.replace(cd1pp, colorCode + cd1pp + RESET);
           }
         }
-        if (x.getCd2Value().isPresent() && x.getCd2pp().isPresent()) {
-          String cd2pp = x.getCd2pp().get();
+        if (diff.getCd2Value().isPresent() && diff.getCd2pp().isPresent()) {
+          String cd2pp = diff.getCd2pp().get();
           if (cd2Asso.contains(cd2pp)) {
             cd2Asso = cd2Asso.replace(cd2pp, colorCode + cd2pp + RESET);
           }
         }
 
         // Build Interpretation
-        if (x.getInterpretation().isPresent()) {
-          interpretation.append(x.getInterpretation().get()).append(" ");
+        if (diff.getInterpretation().isPresent()) {
+          interpretation.append(diff.getInterpretation().get()).append(" ");
         }
       }
     }

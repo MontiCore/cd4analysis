@@ -2,12 +2,12 @@ package de.monticore.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDExtendUsage;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.syntaxdiff.SyntaxDiff.Op;
 import de.monticore.syntaxdiff.SyntaxDiff.Interpretation;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
@@ -15,8 +15,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
-import kodkod.engine.bool.Int;
-import kodkod.engine.bool.Operator;
 
 import java.util.Optional;
 /**
@@ -91,11 +89,47 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
    * @param cd2Value Field from the target(new) model
    */
   public FieldDiff(Optional<ASTNodeType> cd1Value, Optional<ASTNodeType> cd2Value) {
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     this.cd1Value = cd1Value;
     this.cd2Value = cd2Value;
     this.operation = setOp();
 
+    setInterpretation();
+  }
+
+  public FieldDiff(Op op, Optional<ASTNodeType> cd1Value, Optional<ASTNodeType> cd2Value) {
+    this.cd1Value = cd1Value;
+    this.cd2Value = cd2Value;
+    this.operation = op;
+  }
+
+  /**
+   * Set the operation which happens between the fields provided on creation of this object
+   * @return Operation to be set
+   */
+  protected Op setOp() {
+    if (cd1Value.isPresent() && cd2Value.isPresent() && !cd1Value.get().deepEquals(cd2Value.get())) {
+      // Diff reason: Value changed
+      return Op.CHANGE;
+
+    } else if (cd1Value.isPresent() && !cd2Value.isPresent()) {
+      // Diff reason: Value deleted
+      return Op.DELETE;
+
+    } else if (!cd1Value.isPresent() && cd2Value.isPresent()) {
+      // Diff reason: Value added
+      return Op.ADD;
+
+    } else {
+      // No Diff reason: is equal
+      return null;
+    }
+  }
+
+  /**
+   * Set the interpretation and pretty print for each field in this diff (if there is a value given)
+   */
+  private void setInterpretation(){
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     if (cd1Value.isPresent()){
       if(cd1Value.get() instanceof ASTCDOrdered){
         this.cd1pp = pp.prettyprint((ASTCDOrdered) cd1Value.get());
@@ -127,39 +161,41 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
           // Cardinality was changed
           int cd2Lower = ((ASTCDCardinality) cd2Value.get()).getLowerBound();
           int cd2Upper = ((ASTCDCardinality) cd2Value.get()).getUpperBound();
-          if (cd1Upper == 0 || cd2Upper == 0) {
+
+          if (((ASTCDCardinality) cd1Value.get()).toCardinality().isNoUpperLimit()
+            || ((ASTCDCardinality) cd2Value.get()).toCardinality().isNoUpperLimit()) {
             // One/both upper bounds are infinite
             if (cd1Upper == cd2Upper) {
               // Both upper bounds are infinite
               if (cd1Lower < cd2Lower) {
-                this.interpretation = Interpretation.REFINEMENT;
+                this.interpretation = Interpretation.RESTRICT_INTERVAL;
               } else {
-                  this.interpretation = Interpretation.EXPANSION;
+                this.interpretation = Interpretation.EXPAND_INTERVAL;
               }
             } else {
-              if (cd2Upper == 0) {
-                this.interpretation = Interpretation.EXPANSION;
+              if (((ASTCDCardinality) cd2Value.get()).toCardinality().isNoUpperLimit()) {
+                this.interpretation = Interpretation.EXPAND_INTERVAL;
               } else {
-                this.interpretation = Interpretation.REFINEMENT;
+                this.interpretation = Interpretation.RESTRICT_INTERVAL;
               }
             }
           }else {
             if( (cd1Upper-cd1Lower) < (cd2Upper-cd2Lower)){
-              this.interpretation = Interpretation.EXPANSION;
+              this.interpretation = Interpretation.EXPAND_INTERVAL;
             } else if ((cd1Upper-cd1Lower) == (cd2Upper-cd2Lower)) {
-              this.interpretation = Interpretation.EQUALINTERVAL;
+              this.interpretation = Interpretation.EQUAL_INTERVAL;
             } else {
-              this.interpretation = Interpretation.REFINEMENT;
+              this.interpretation = Interpretation.RESTRICT_INTERVAL;
             }
           }
         }else {
           // Cardninality was deleted
-          if (cd1Upper == 0 && cd1Lower == 0){
+          if (((ASTCDCardinality) cd1Value.get()).toCardinality().isNoUpperLimit() && cd1Lower == 0){
             // [0..*] == [*]
-            this.interpretation = Interpretation.EQUALINTERVAL;
+            this.interpretation = Interpretation.EQUAL_INTERVAL;
           }else {
             // [n..m] -> [*] (n != 0) or (m != inf)
-            this.interpretation = Interpretation.EXPANSION;
+            this.interpretation = Interpretation.EXPAND_INTERVAL;
           }
         }
       }
@@ -176,7 +212,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
           // Role was changed
           this.interpretation = Interpretation.ROLECHANGE;
         }else {
-          //Todo: Recheck is there a default value for non-existent roles?
           this.interpretation = Interpretation.DELETED;
         }
       }
@@ -192,10 +227,10 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
           if (cd1.isBidirectional()) {
             if( !(cd2.isDefinitiveNavigableLeft() || cd2.isDefinitiveNavigableRight())){
               // <-> to -> or <-
-              this.interpretation = Interpretation.REFINEMENT;
+              this.interpretation = Interpretation.ABSTRACTION;
             } else {
               // <-> to --
-              this.interpretation = Interpretation.EQUAL;
+              this.interpretation = Interpretation.ABSTRACTION;
             }
           }else {
             if ( (cd1.isDefinitiveNavigableRight() && cd2.isDefinitiveNavigableLeft() )
@@ -209,7 +244,7 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
                 this.interpretation = Interpretation.REFINEMENT;
               }else {
                 // (-> or <-) to --
-                this.interpretation = Interpretation.EXPANSION;
+                this.interpretation = Interpretation.ABSTRACTION;
               }
             }
           }
@@ -248,8 +283,8 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
       }
       if(cd2Value.get() instanceof ASTModifier){
         this.cd2pp = pp.prettyprint((ASTModifier) cd2Value.get());
+        ASTModifier cd2 = (ASTModifier) cd2Value.get();
         if (!cd1Value.isPresent()){
-          ASTModifier cd2 = (ASTModifier) cd2Value.get();
           if(cd2.isPublic()){
             this.interpretation = Interpretation.EQUAL;
           }
@@ -263,10 +298,10 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
         int cd2Upper = ((ASTCDCardinality) cd2Value.get()).getUpperBound();
         if (cd2Lower == 0 && cd2Upper == 0) {
           // [*] to [0..*]
-          this.interpretation = Interpretation.EQUALINTERVAL;
+          this.interpretation = Interpretation.EQUAL_INTERVAL;
         }else {
           // [*] to [n..m] (n != 0) or ( m != inf)
-          this.interpretation = Interpretation.REFINEMENT;
+          this.interpretation = Interpretation.RESTRICT_INTERVAL;
         }
       }
       if(cd2Value.get() instanceof ASTMCQualifiedName){
@@ -299,6 +334,9 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
       }
       if(cd2Value.get() instanceof ASTExpression){
         this.cd2pp = pp.prettyprint((ASTExpression) cd2Value.get());
+        if (!cd1Value.isPresent()){
+          this.interpretation = Interpretation.DEFAULTVALUE_ADDED;
+        }
       }
       if(cd2Value.get() instanceof ASTMCReturnType){
         this.cd2pp = pp.prettyprint((ASTMCReturnType) cd2Value.get());
@@ -306,30 +344,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
       if(cd2Value.get() instanceof ASTCDThrowsDeclaration){
         this.cd2pp = pp.prettyprint((ASTCDThrowsDeclaration) cd2Value.get());
       }
-    }
-  }
-  public FieldDiff(Op op, Optional<ASTNodeType> cd1Value, Optional<ASTNodeType> cd2Value) {
-    this.cd1Value = cd1Value;
-    this.cd2Value = cd2Value;
-    this.operation = op;
-  }
-
-  protected Op setOp() {
-    if (cd1Value.isPresent() && cd2Value.isPresent() && !cd1Value.get().deepEquals(cd2Value.get())) {
-      // Diff reason: Value changed
-      return Op.CHANGE;
-
-    } else if (cd1Value.isPresent() && !cd2Value.isPresent()) {
-      // Diff reason: Value deleted
-      return Op.DELETE;
-
-    } else if (!cd1Value.isPresent() && cd2Value.isPresent()) {
-      // Diff reason: Value added
-      return Op.ADD;
-
-    } else {
-      // No Diff reason: is equal
-      return null;
     }
   }
 }

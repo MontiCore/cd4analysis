@@ -1,36 +1,62 @@
 package de.monticore.syntaxdiff;
 
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-import de.monticore.cd4codebasis._ast.ASTCDConstructor;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDAssociationNode;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
-import de.monticore.cdassociation._ast.*;
-import de.monticore.cdbasis._ast.*;
-import de.monticore.ast.ASTNode;
 
 import java.util.*;
 
 /**
- * Main class of the syntax diff calculation, currently used for creating matches from potential matches which are calculated in previous steps
+ * Main class of the syntax diff calculation, combines all diff types and provide multiple functions to access and print
  */
 public class SyntaxDiff {
+
+  List<ClassDiff> matchedClassList;
+  List<ASTCDClass> deletedClasses;
+  List<ASTCDClass> addedClasses;
+
+  List<AssoDiff> matchedAssos;
+  List<ASTCDAssociation> deletedAssos;
+  List<ASTCDAssociation> addedAssos;
 
   public enum Op { CHANGE, ADD, DELETE}
   public enum Interpretation {REDUCED, REFINED, REVERSED, SUPERTYPE, SUBTYPE, RENAME, RELOCATION, REFINEMENT
     , EXPANSION, INCOMPARABLE, DEFAULTVALUECHANGED, ABSTRACTION, REPURPOSED, INHERITED, EQUALINTERVAL
-    , SCOPECHANGE, ROLECHANGE, DELETED, EQUAL, TYPECHANGE}
+    , SCOPECHANGE, ROLECHANGE, DEFAULTVALUE_ADDED, DELETED, EQUAL, TYPECHANGE, RESTRICTION, RESTRICT_INTERVAL
+    , EXPAND_INTERVAL, EQUAL_INTERVAL}
 
   StringBuilder outPutAll;
   StringBuilder cd1Colored;
   StringBuilder cd2Colored;
 
-  // Create the diff between two provided classdiagrams
-  // CDs consists of Classes, Interfaces, Enums, Associations
+  public List<ClassDiff> getMatchedClassList() {
+    return matchedClassList;
+  }
+  public List<ASTCDClass> getAddedClasses() {
+    return addedClasses;
+  }
+
+  public List<ASTCDClass> getDeletedClasses() {
+    return deletedClasses;
+  }
+
+  public List<AssoDiff> getMatchedAssos() {
+    return matchedAssos;
+  }
+
+  public List<ASTCDAssociation> getAddedAssos() {
+    return addedAssos;
+  }
+
+  public List<ASTCDAssociation> getDeletedAssos() {
+    return deletedAssos;
+  }
+
   // Todo: Add json file creator
-  // Todo: Extract printing
-  // Todo: Add parser, change signature to two file paths
   public SyntaxDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2){
 
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -48,26 +74,16 @@ public class SyntaxDiff {
     List<ASTCDClass> cd1ClassesList = cd1.getCDDefinition().getCDClassesList();
     List<ASTCDClass> cd2ClassesList = cd2.getCDDefinition().getCDClassesList();
 
-    //List<List<ClassDiff>> classesDiffList = SyntaxDiff.getClassDiffList(cd1ClassesList, cd2ClassesList);
-
     // Associations
     List<ASTCDAssociation> cd1AssociationsList = cd1.getCDDefinition().getCDAssociationsList();
     List<ASTCDAssociation> cd2AssociationsList = cd2.getCDDefinition().getCDAssociationsList();
 
-    List<List<AssoDiff>> assosDiffList = SyntaxDiff.getAssoDiffList(cd1AssociationsList, cd2AssociationsList);
-
-
     // Create Class Match
 
-    List<ClassDiff> matchedClassList = getClassMatchingList(getClassDiffList(cd1ClassesList, cd2ClassesList));
-    List<ASTCDClass> deletedClasses = absentClassList(matchedClassList, cd1ClassesList);
-    List<ASTCDClass> addedClasses = absentClassList(matchedClassList, cd2ClassesList);
+    this.matchedClassList = getClassMatchingList(getClassDiffList(cd1ClassesList, cd2ClassesList));
+    this.deletedClasses = absentClassList(getMatchedClassList(), cd1ClassesList);
+    this.addedClasses = absentClassList(getMatchedClassList(), cd2ClassesList);
 
-
-
-    //List<ClassDiff> matchedClasses = new ArrayList<>();
-    //List<ASTCDClass> deletedClasses = new ArrayList<>();
-    //List<ASTCDClass> addedClasses = new ArrayList<>();
 
     StringBuilder initial = new StringBuilder();
     StringBuilder classPrints = new StringBuilder();
@@ -79,6 +95,7 @@ public class SyntaxDiff {
       .append(" and ")
       .append(cd2.getCDDefinition().getName())
       .append(" is created")
+      .append(System.lineSeparator())
       .append(System.lineSeparator());
 
 
@@ -87,9 +104,9 @@ public class SyntaxDiff {
     }
 
     // Create Association Match
-    List<AssoDiff> matchedAssos = getAssoMatchingList(getAssoDiffList(cd1AssociationsList, cd2AssociationsList));
-    List<ASTCDAssociation> deletedAssos = absentAssoList(matchedAssos, cd1AssociationsList);
-    List<ASTCDAssociation> addedAssos = absentAssoList(matchedAssos, cd2AssociationsList);
+    this.matchedAssos = getAssoMatchingList(getAssoDiffList(cd1AssociationsList, cd2AssociationsList));
+    this.deletedAssos = absentAssoList(matchedAssos, cd1AssociationsList);
+    this.addedAssos = absentAssoList(matchedAssos, cd2AssociationsList);
 
 
     for (AssoDiff x : matchedAssos) {
@@ -97,61 +114,68 @@ public class SyntaxDiff {
     }
 
 
+    if (!addedClasses.isEmpty()){
+      classPrints.append("Line Deleted Classes from CD1 (")
+        .append(cd1.getCDDefinition().getName())
+        .append(") :")
+        .append(System.lineSeparator());
 
-    classPrints.append("Line Deleted Classes from CD1 (")
-      .append(cd1.getCDDefinition().getName())
-      .append(") :")
-      .append(System.lineSeparator());
-
-    for (ASTCDClass a : deletedClasses) {
-      classPrints.append(a.get_SourcePositionStart().getLine())
-        .append("   ")
-        .append(BOLD_RED)
-        .append(pp.prettyprint(a))
-        .append(RESET);
-    }
-    classPrints.append("Line Added Classes to CD2 (")
-      .append(cd2.getCDDefinition().getName())
-      .append(") :")
-      .append(System.lineSeparator());
-
-    for (ASTCDClass a : addedClasses) {
-      classPrints.append(a.get_SourcePositionStart().getLine())
-        .append("   ")
-        .append(BOLD_GREEN)
-        .append(pp.prettyprint(a))
-        .append(RESET);
+      for (ASTCDClass a : deletedClasses) {
+        classPrints.append(a.get_SourcePositionStart().getLine())
+          .append("   ")
+          .append(BOLD_RED)
+          .append(pp.prettyprint(a))
+          .append(RESET);
+      }
     }
 
-    StringBuilder addDelAssos = new StringBuilder();
-    assoPrints.append("Line Deleted Associations from CD1 (")
-      .append(cd1.getCDDefinition().getName())
-      .append(") :")
-      .append(System.lineSeparator());
+    if (!addedClasses.isEmpty()){
+      classPrints.append("Line Added Classes to CD2 (")
+        .append(cd2.getCDDefinition().getName())
+        .append(") :")
+        .append(System.lineSeparator());
 
-    for (ASTCDAssociationNode asso : deletedAssos){
-      assoPrints.append(asso.get_SourcePositionStart().getLine())
-        .append("   ")
-        .append(BOLD_RED)
-        .append(pp.prettyprint(asso))
-        .append(RESET);
+      for (ASTCDClass a : addedClasses) {
+        classPrints.append(a.get_SourcePositionStart().getLine())
+          .append("   ")
+          .append(BOLD_GREEN)
+          .append(pp.prettyprint(a))
+          .append(RESET);
+      }
+    }
+    if (!deletedAssos.isEmpty()){
+      assoPrints.append("Line Deleted Associations from CD1 (")
+        .append(cd1.getCDDefinition().getName())
+        .append(") :")
+        .append(System.lineSeparator());
+
+      for (ASTCDAssociationNode asso : deletedAssos){
+        assoPrints.append(asso.get_SourcePositionStart().getLine())
+          .append("   ")
+          .append(BOLD_RED)
+          .append(pp.prettyprint(asso))
+          .append(RESET);
+      }
     }
 
-    assoPrints.append("Line Added Associations to CD2 (")
-      .append(cd2.getCDDefinition().getName())
-      .append(") :")
-      .append(System.lineSeparator());
+    if (!addedAssos.isEmpty()){
+      assoPrints.append("Line Added Associations to CD2 (")
+        .append(cd2.getCDDefinition().getName())
+        .append(") :")
+        .append(System.lineSeparator());
 
-    for (ASTCDAssociationNode asso : addedAssos){
-      assoPrints.append(asso.get_SourcePositionStart().getLine())
-        .append("   ")
-        .append(BOLD_GREEN)
-        .append(pp.prettyprint(asso))
-        .append(RESET);
+      for (ASTCDAssociationNode asso : addedAssos){
+        assoPrints.append(asso.get_SourcePositionStart().getLine())
+          .append("   ")
+          .append(BOLD_GREEN)
+          .append(pp.prettyprint(asso))
+          .append(RESET);
+      }
     }
+
+
     StringBuilder outPutAll = new StringBuilder();
-    outPutAll.append(addDelAssos)
-      .append(initial)
+    outPutAll.append(initial)
       .append(classPrints)
       .append(assoPrints);
 
