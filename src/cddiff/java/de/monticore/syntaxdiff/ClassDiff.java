@@ -6,7 +6,6 @@ package de.monticore.syntaxdiff;
   import de.monticore.cd4codebasis._ast.ASTCDMethod;
   import de.monticore.cd4codebasis._ast.ASTCDParameter;
   import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
-  import de.monticore.cdassociation._ast.ASTCDAssociationNode;
   import de.monticore.cdbasis._ast.ASTCDAttribute;
   import de.monticore.cdbasis._ast.ASTCDBasisNode;
   import de.monticore.cdbasis._ast.ASTCDClass;
@@ -20,8 +19,11 @@ package de.monticore.syntaxdiff;
   import de.monticore.syntaxdiff.FieldDiff;
   import de.monticore.syntaxdiff.SyntaxDiff;
 
+  import java.util.ArrayList;
+  import java.util.Comparator;
+  import java.util.List;
+  import java.util.Optional;
 
-  import java.util.*;
 
 /**
  * Diff Type for Classes
@@ -33,7 +35,7 @@ package de.monticore.syntaxdiff;
 
     protected final ASTCDClass cd2Element;
 
-    protected int diffSize;
+    protected double diffSize;
 
     protected List<FieldDiff<? extends ASTNode>> diffList;
 
@@ -69,14 +71,13 @@ package de.monticore.syntaxdiff;
       return cd2Element;
     }
 
-    public int getDiffSize() {
+    public double getDiffSize() {
       return diffSize;
     }
 
     public List<FieldDiff<? extends ASTNode>> getDiffList() {
       return diffList;
     }
-
 
   /**
    * Constructor of the class diff type
@@ -94,18 +95,45 @@ package de.monticore.syntaxdiff;
     }
   /**
    * Calculation of the diff size between the given classes, automaticly calculated on object creation
-   * Name changes are weighted more
-   * @return Diff size as int
+   * Name changes are weighted more and each member(attribute/methodes/...) add at most one to the size
+   * @return Diff size as double
    */
-    private int calculateDiffSize(){
-      int size = diffList.size();
+    private double calculateDiffSize(){
+      //Diff size of signature
+      double size = diffList.size();
 
-      for (ElementDiff<ASTCDAttribute> attri : matchedAttributesList){
-        size += attri.getDiffSize();
+      // Diff size of attributes (amounts to max ~ 1)
+      for (ElementDiff<ASTCDAttribute> i : matchedAttributesList){
+        if (i.getCd1Element().isPresentInitial()){
+          size += i.getDiffSize()/4.0;
+        }else {
+          size += i.getDiffSize()/3.0;
+        }
       }
       size += deleletedAttributes.size() + addedAttributes.size();
-      for (FieldDiff<? extends ASTNode> diff : diffList){
 
+      //Todo: Add Parameter Diff to size calculation
+      //Diff size of methodes
+      for (ElementDiff<ASTCDMethod> i : matchedMethodeList){
+        if (i.getCd1Element().isPresentCDThrowsDeclaration()){
+          size += i.getDiffSize()/4.0;
+        }else {
+          size += i.getDiffSize()/3.0;
+        }
+      }
+      size += deleletedMethodes.size() + addedMethode.size();
+
+      // Diff size of constructors
+      for (ElementDiff<ASTCDConstructor> i : matchedConstructorList){
+        if (i.getCd1Element().isPresentCDThrowsDeclaration()){
+          size += i.getDiffSize()/4.0;
+        }else {
+          size += i.getDiffSize()/3.0;
+        }
+      }
+      size += deleletedConstructor.size() + addedConstructor.size();
+
+      for (FieldDiff<? extends ASTNode> diff : diffList){
         if (diff.isPresent() && diff.getCd1Value().isPresent()){
           // Name Diffs are weighted doubled compared to every other diff
           // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
@@ -156,8 +184,10 @@ package de.monticore.syntaxdiff;
 
     // CDMember diffs, members are: Attributes, Methods, Constructors
 
-
+    // Set the difflist to signature diffs(if any)
     this.diffList = diffs;
+
+    // Create trivial matches for attributes/constructors/methods
     this.matchedAttributesList = getMatchingList(getElementDiffList(cd1Class.getCDAttributeList(), cd2Class.getCDAttributeList()));
     this.deleletedAttributes = absentElementList(matchedAttributesList, cd1Class.getCDAttributeList());
     this.addedAttributes = absentElementList(matchedAttributesList, cd2Class.getCDAttributeList());
@@ -193,6 +223,14 @@ package de.monticore.syntaxdiff;
     }
     return diffs;
   }
+
+  /**
+   * Help methode caused by type erasure, manages all currently supported ElementalDiff type
+   * @param cd1Element Element from CD1 (original Model)
+   * @param cd2Element Element from CD2 (New Model)
+   * @return List of field diffs between both elements e.g. signature differences
+   * @param <T> Type of the element, must be equal
+   */
   protected static <T> List<FieldDiff<? extends ASTNode>> getElementDiff(T cd1Element,T cd2Element) {
     if( cd1Element instanceof ASTCDMethod && cd2Element instanceof ASTCDMethod){
       return getMethodeDiff((ASTCDMethod) cd1Element, (ASTCDMethod) cd2Element);
@@ -377,60 +415,48 @@ package de.monticore.syntaxdiff;
 
 
 
-    for (FieldDiff<? extends ASTNode> x: diffList) {
-      if (x.isPresent()) {
-        String colorCode = "\033[1;33m"; // Bold White
-        if (x.getOperation().isPresent()) {
-          if (x.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
-            colorCode = "\033[1;31m"; // Bold Red
-          }
-          if (x.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
-            colorCode = "\033[1;32m"; // Bold Green
-          }
-        }
-        if (x.getCd1Value().isPresent() && x.getCd1pp().isPresent()) {
-          String cd1pp = x.getCd1pp().get();
+
+    for (FieldDiff<? extends ASTNode> diff: diffList) {
+      if (diff.isPresent()) {
+        String colorCode = getColorCode(diff);
+
+        if (diff.getCd1Value().isPresent() && diff.getCd1pp().isPresent()) {
+          String cd1pp = diff.getCd1pp().get();
           if (cd1Class.contains(cd1pp)) {
-            cd1Class = cd1Class.replaceFirst(cd1pp, colorCode + cd1pp + "\033[0m");
+            cd1Class = cd1Class.replaceFirst(cd1pp, colorCode + cd1pp + RESET);
           }
         }
-        if (x.getCd2Value().isPresent() && x.getCd2pp().isPresent()) {
-          String cd2pp = x.getCd2pp().get();
+        if (diff.getCd2Value().isPresent() && diff.getCd2pp().isPresent()) {
+          String cd2pp = diff.getCd2pp().get();
           if (cd2Class.contains(cd2pp)) {
-            cd2Class = cd2Class.replaceFirst(cd2pp, colorCode + cd2pp + "\033[0m");
+            cd2Class = cd2Class.replaceFirst(cd2pp, colorCode + cd2pp + RESET);
           }
         }
 
         // Build Interpretation
-        if (x.getInterpretation().isPresent()) {
-          interpretation.append(x.getInterpretation().get()).append(" ");
+        if (diff.getInterpretation().isPresent()) {
+          interpretation.append(diff.getInterpretation().get()).append(" ");
         }
       }
     }
-
     for (ElementDiff<ASTCDAttribute> x : matchedAttributesList){
       if (!x.getDiffList().isEmpty()){
+        String elementCd1 = pp.prettyprint(x.getCd1Element());
+        String elementCd2 = pp.prettyprint(x.getCd2Element());
+
         for (FieldDiff<? extends ASTNode> diff: x.getDiffList()){
           if (diff.isPresent()) {
-            String colorCode = "\033[1;33m"; // Bold White
-            if (diff.getOperation().isPresent()) {
-              if (diff.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
-                colorCode = "\033[1;31m"; // Bold Red
-              }
-              if (diff.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
-                colorCode = "\033[1;32m"; // Bold Green
-              }
-            }
+            String colorCode = getColorCode(diff);
             if (diff.getCd1Value().isPresent() && diff.getCd1pp().isPresent()) {
               String cd1pp = diff.getCd1pp().get();
               if (cd1Class.contains(cd1pp)) {
-                cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+                cd1Class = cd1Class.replace(elementCd1, elementCd1.replace(cd1pp, colorCode + cd1pp + RESET));
               }
             }
             if (diff.getCd2Value().isPresent() && diff.getCd2pp().isPresent()) {
               String cd2pp = diff.getCd2pp().get();
               if (cd2Class.contains(cd2pp)) {
-                cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+                cd2Class = cd2Class.replace(elementCd2, elementCd2.replace(cd2pp, colorCode + cd2pp + RESET));
               }
             }
             // Build Interpretation
@@ -441,29 +467,25 @@ package de.monticore.syntaxdiff;
         }
       }
     }
+
     for (ElementDiff<ASTCDMethod> x : matchedMethodeList){
       if (!x.getDiffList().isEmpty()){
+        String elementCd1 = pp.prettyprint((ASTCDBasisNode) x.getCd1Element());
+        String elementCd2 = pp.prettyprint((ASTCDBasisNode) x.getCd2Element());
+
         for (FieldDiff<? extends ASTNode> diff: x.getDiffList()){
           if (diff.isPresent()) {
-            String colorCode = "\033[1;33m"; // Bold White
-            if (diff.getOperation().isPresent()) {
-              if (diff.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
-                colorCode = "\033[1;31m"; // Bold Red
-              }
-              if (diff.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
-                colorCode = "\033[1;32m"; // Bold Green
-              }
-            }
+            String colorCode = getColorCode(diff);
             if (diff.getCd1Value().isPresent() && diff.getCd1pp().isPresent()) {
               String cd1pp = diff.getCd1pp().get();
               if (cd1Class.contains(cd1pp)) {
-                cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+                cd1Class = cd1Class.replace(elementCd1, elementCd1.replace(cd1pp, colorCode + cd1pp + RESET));
               }
             }
             if (diff.getCd2Value().isPresent() && diff.getCd2pp().isPresent()) {
               String cd2pp = diff.getCd2pp().get();
               if (cd2Class.contains(cd2pp)) {
-                cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+                cd2Class = cd2Class.replace(elementCd2, elementCd2.replace(cd2pp, colorCode + cd2pp + RESET));
               }
             }
             // Build Interpretation
@@ -475,35 +497,55 @@ package de.monticore.syntaxdiff;
       }
     }
     for (ASTCDMethod x : deleletedMethodes) {
-      String colorCode = "\033[1;31m"; // Bold Red
       String cd1pp = pp.prettyprint((ASTCDBasisNode) x);
       if (cd1Class.contains(cd1pp)) {
-        cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+        cd1Class = cd1Class.replace(cd1pp, COLOR_DELETE + cd1pp + RESET);
       }
     }
     for (ASTCDMethod x : addedMethode) {
-      String colorCode = "\033[1;32m"; // Bold Green
       String cd2pp = pp.prettyprint((ASTCDBasisNode) x);
       if (cd2Class.contains(cd2pp)) {
-        cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+        cd2Class = cd2Class.replace(cd2pp, COLOR_ADD + cd2pp + RESET);
       }
     }
 
     for (ASTCDAttribute x : deleletedAttributes) {
-      String colorCode = "\033[1;31m"; // Bold Red
       String cd1pp = pp.prettyprint(x);
       if (cd1Class.contains(cd1pp)) {
-        cd1Class = cd1Class.replace(cd1pp, colorCode + cd1pp + "\033[0m");
+        cd1Class = cd1Class.replace(cd1pp, COLOR_DELETE + cd1pp + RESET);
       }
     }
     for (ASTCDAttribute x : addedAttributes) {
-      String colorCode = "\033[1;32m"; // Bold Green
       String cd2pp = pp.prettyprint(x);
       if (cd2Class.contains(cd2pp)) {
-        cd2Class = cd2Class.replace(cd2pp, colorCode + cd2pp + "\033[0m");
+        cd2Class = cd2Class.replace(cd2pp, COLOR_ADD + cd2pp + RESET);
       }
     }
 
+    /*
+    Split and merge the strings together, not working yet
+    Todo: Add Side-by-Side view for diff output
+
+    String[] cd1ClassSplit = cd1Class.split("\r?\n|\r");
+    String[] cd2ClassSplit = cd2Class.split("\r?\n|\r");
+
+    String[] mergedArray = new String[cd1ClassSplit.length+cd2ClassSplit.length];
+
+    for(int i=0; i<mergedArray.length; i++){
+      if(i%2==0 && i/2 < cd1ClassSplit.length){
+        mergedArray[i]=cd1ClassSplit[i/2]+"         ";
+      }
+      if(i%2==1 && i/2 < cd2ClassSplit.length){
+        mergedArray[i]=cd2ClassSplit[i/2]+"\n";
+      }
+    }
+    StringBuilder merged = new StringBuilder();
+    for (String x : mergedArray){
+      merged.append(x);
+    }
+    System.out.println("The split class: ");
+    System.out.println(merged);
+    */
 
     output.append("Line Matched Classes with diff score ").append(getDiffSize())
       .append(System.lineSeparator())
@@ -514,8 +556,6 @@ package de.monticore.syntaxdiff;
       .append(interpretation)
       .append(System.lineSeparator());
 
-
-    //System.out.println(output);
     return output;
   }
   }

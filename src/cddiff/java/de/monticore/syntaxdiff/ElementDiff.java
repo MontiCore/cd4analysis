@@ -18,7 +18,7 @@ public class ElementDiff<ASTNodeType> {
 
   protected final ASTNodeType cd2Element;
 
-  protected int diffSize;
+  protected double diffSize;
 
   protected final List<FieldDiff<? extends ASTNode>> diffList;
 
@@ -30,7 +30,7 @@ public class ElementDiff<ASTNodeType> {
     return cd2Element;
   }
 
-  public int getDiffSize() {
+  public double getDiffSize() {
     return diffSize;
   }
 
@@ -49,10 +49,10 @@ public class ElementDiff<ASTNodeType> {
     this.diffList = diffList;
     this.diffSize = calculateDiffSize();
   }
-  private int calculateDiffSize(){
-    int size = diffList.size();
-    for (FieldDiff<? extends ASTNode> diff : diffList){
+  private double calculateDiffSize(){
+    double size = diffList.size()/3.0;
 
+    for (FieldDiff<? extends ASTNode> diff : diffList){
       if (diff.isPresent() && diff.getCd1Value().isPresent()){
         // Name Diffs are weighted doubled compared to every other diff
         // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
@@ -60,7 +60,7 @@ public class ElementDiff<ASTNodeType> {
           || diff.getCd1Value().get() instanceof ASTMCQualifiedName
           || diff.getCd1Value().get() instanceof ASTCDClass
         ) {
-          size += 1;
+          size += 1.0/3.0;
         }
       }
     }

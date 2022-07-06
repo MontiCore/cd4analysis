@@ -1,0 +1,20 @@
+import java.lang.String;
+import java.util.List;
+
+classdiagram ClassMatch2 {
+  class MatchAttributeChange{
+    String unchanged;
+    int value = 2;
+    List<String> insert;
+  }
+  protected final class MatchSignatureChange extends MatchAttributeChange{
+    int value;
+    public void randomMethode(String a, int b);
+    List<String> nameList;
+  }
+  class NoChanges;
+  class AddedClass;
+
+  association addStar MatchAttributeChange -- NoChanges [*];
+  association insertedAssociation NoChanges -> AddedClass;
+}

@@ -1,0 +1,20 @@
+import java.lang.String;
+import java.util.List;
+
+classdiagram ClassMatch1 {
+  class MatchAttributeChange{
+    String unchanged;
+    int value;
+    String delete;
+  }
+  protected class MatchSignatureChange{
+    int value;
+    public void randomMethode(String a, int b);
+    List<String> nameList;
+  }
+  class NoChanges;
+  class DeletedClass;
+
+  association addStar MatchAttributeChange -- NoChanges;
+  association deletedAssociation NoChanges -- DeletedClass;
+}
