@@ -250,6 +250,7 @@ public class ReductionTrafo {
     }
 
     //update targetAST (distinguish between extends vs implements)
+    FullExpander expander = new FullExpander(new BasicExpander(targetCD));
 
     for (ASTCDInterface current : interfaces) {
       Set<String> extendsSet = new HashSet<>();

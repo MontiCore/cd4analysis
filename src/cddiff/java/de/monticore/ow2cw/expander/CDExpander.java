@@ -44,6 +44,8 @@ public interface CDExpander {
 
   Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName, String right);
 
+  void addAssociation(ASTCDAssociation assoc);
+
   void updateUnspecifiedDir2Default();
 
   void mismatchDir(ASTCDAssociation src, ASTCDAssociation target);

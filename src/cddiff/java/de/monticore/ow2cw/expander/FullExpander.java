@@ -90,8 +90,7 @@ public class FullExpander implements CDExpander {
         ASTCDAssociation newAssoc = srcAssoc.deepClone();
         newAssoc.getRight().setCDCardinalityAbsent();
         newAssoc.getLeft().setCDCardinalityAbsent();
-        //todo: check if class/interface has stereotype ""
-        getCD().getCDDefinition().getCDElementList().add(newAssoc);
+        addAssociation(newAssoc);
     }
   }
 
@@ -179,7 +178,7 @@ public class FullExpander implements CDExpander {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     for (ASTCDAssociation dummy : dummySet){
       if (getCD().getCDDefinition().getCDAssociationsList().stream().noneMatch(assoc -> CDAssociationHelper.inConflict(dummy, assoc, scope))){
-        getCD().getCDDefinition().getCDElementList().add(dummy);
+        addAssociation(dummy);
       }
     }
   }
@@ -229,6 +228,10 @@ public class FullExpander implements CDExpander {
 
   public Optional<ASTCDInterface> addDummyInterface(String dummyName) {
     return expander.addDummyInterface(dummyName);
+  }
+
+  public void addAssociation(ASTCDAssociation assoc){
+    expander.addAssociation(assoc);
   }
 
 

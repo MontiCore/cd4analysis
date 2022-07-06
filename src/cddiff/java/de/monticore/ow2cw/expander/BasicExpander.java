@@ -150,6 +150,10 @@ public class BasicExpander implements CDExpander {
     return Optional.of(newInterface);
   }
 
+  public void addAssociation(ASTCDAssociation assoc){
+    getCD().getCDDefinition().getCDElementList().add(assoc);
+  }
+
   /**
    * helper-method to determine the package name of an ASTCDType since getSymbol().getPackageName()
    * is always an empty String
