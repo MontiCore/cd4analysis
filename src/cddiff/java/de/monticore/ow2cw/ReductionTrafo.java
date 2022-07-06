@@ -16,6 +16,7 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.ow2cw.expander.BasicExpander;
 import de.monticore.ow2cw.expander.FullExpander;
+import de.monticore.ow2cw.expander.VariableExpander;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,8 +48,8 @@ public class ReductionTrafo {
     // get artifact-scope
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
-    FullExpander expander1 = new FullExpander(new BasicExpander(first));
-    FullExpander expander2 = new FullExpander(new BasicExpander(second));
+    FullExpander expander1 = new FullExpander(new VariableExpander(first));
+    FullExpander expander2 = new FullExpander(new VariableExpander(second));
 
     // add classes and interfaces exclusive to second as classes without attributes, extends and
     // implements
@@ -118,13 +119,13 @@ public class ReductionTrafo {
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    FullExpander expander = new FullExpander(new BasicExpander(first));
+    FullExpander expander = new FullExpander(new VariableExpander(first));
     expander.addDummyClass(dummyName);
   }
 
   public static void addSubClasses4Diff(ASTCDCompilationUnit first) {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
-    FullExpander expander = new FullExpander(new BasicExpander(first));
+    FullExpander expander = new FullExpander(new VariableExpander(first));
 
     for (ASTCDClass astcdClass : first.getCDDefinition().getCDClassesList()) {
       if (astcdClass.getModifier().isAbstract()) {
@@ -146,8 +147,8 @@ public class ReductionTrafo {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    FullExpander expander1 = new FullExpander(new BasicExpander(first));
-    FullExpander expander2 = new FullExpander(new BasicExpander(second));
+    FullExpander expander1 = new FullExpander(new VariableExpander(first));
+    FullExpander expander2 = new FullExpander(new VariableExpander(second));
 
     expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
     expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
@@ -250,7 +251,7 @@ public class ReductionTrafo {
     }
 
     //update targetAST (distinguish between extends vs implements)
-    FullExpander expander = new FullExpander(new BasicExpander(targetCD));
+    FullExpander expander = new FullExpander(new VariableExpander(targetCD));
 
     for (ASTCDInterface current : interfaces) {
       Set<String> extendsSet = new HashSet<>();

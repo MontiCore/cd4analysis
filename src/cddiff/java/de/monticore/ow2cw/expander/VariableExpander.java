@@ -10,6 +10,7 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class VariableExpander extends BasicExpander{
 
@@ -63,15 +64,36 @@ public class VariableExpander extends BasicExpander{
 
   @Override
   public void addNewSubClass(String name, ASTCDClass superclass) {
-    if (superclass.getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (!(superclass.getModifier().isPresentStereotype() && superclass.getModifier().getStereotype().contains(VAR_TAG))) {
       super.addNewSubClass(name, superclass);
     }
   }
 
   @Override
   public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
-    if (astcdInterface.getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+    if (!(astcdInterface.getModifier().isPresentStereotype() && astcdInterface.getModifier().getStereotype().contains(VAR_TAG))) {
       super.addNewSubClass(name, astcdInterface);
+    }
+  }
+
+  @Override
+  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet) {
+    if (!(targetClass.getModifier().isPresentStereotype() && targetClass.getModifier().getStereotype().contains(VAR_TAG))) {
+      super.updateExtends(targetClass, extendsSet);
+    }
+  }
+
+  @Override
+  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet) {
+    if (!(targetClass.getModifier().isPresentStereotype() && targetClass.getModifier().getStereotype().contains(VAR_TAG))) {
+      super.updateImplements(targetClass, implementsSet);
+    }
+  }
+
+  @Override
+  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet) {
+    if (!(targetInterface.getModifier().isPresentStereotype() && targetInterface.getModifier().getStereotype().contains(VAR_TAG))) {
+      super.updateExtends(targetInterface, extendsSet);
     }
   }
 
