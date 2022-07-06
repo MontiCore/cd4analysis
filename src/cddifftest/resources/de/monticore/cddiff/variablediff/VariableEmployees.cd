@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.util.Date;
+
+classdiagram VariableEmployees{
+  enum PositionKind{fullTime, partTime;}
+
+  <<complete>> class Employee {
+    PositionKind kind;
+  }
+
+  class Task {
+    Date startDate;
+  }
+
+  class Manager;
+
+  association [*] Employee (manages) -> (managedBy) Manager [0..1];
+  association [1] Employee  --  Task [*];
+}

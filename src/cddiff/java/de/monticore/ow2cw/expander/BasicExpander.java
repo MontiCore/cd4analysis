@@ -15,6 +15,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class BasicExpander implements CDExpander {
 
@@ -152,6 +153,36 @@ public class BasicExpander implements CDExpander {
 
   public void addAssociation(ASTCDAssociation assoc){
     getCD().getCDDefinition().getCDElementList().add(assoc);
+  }
+
+  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet){
+    if (extendsSet.isEmpty()) {
+      targetClass.setCDExtendUsageAbsent();
+    }
+    else {
+      targetClass.setCDExtendUsage(CDExtendUsageFacade.getInstance()
+          .createCDExtendUsage(extendsSet.toArray(new String[0])));
+    }
+  }
+
+  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet){
+    if (implementsSet.isEmpty()) {
+      targetClass.setCDInterfaceUsageAbsent();
+    }
+    else {
+      targetClass.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
+          .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
+    }
+  }
+
+  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet){
+    if (extendsSet.isEmpty()) {
+      targetInterface.setCDExtendUsageAbsent();
+    }
+    else {
+      targetInterface.setCDExtendUsage(CDExtendUsageFacade.getInstance()
+          .createCDExtendUsage(extendsSet.toArray(new String[0])));
+    }
   }
 
   /**

@@ -259,13 +259,7 @@ public class ReductionTrafo {
           extendsSet.add(superType.getSymbol().getFullName());
         }
       }
-      if (extendsSet.isEmpty()) {
-        current.setCDExtendUsageAbsent();
-      }
-      else {
-        current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
-            .createCDExtendUsage(extendsSet.toArray(new String[0])));
-      }
+      expander.updateExtends(current,extendsSet);
     }
     for (ASTCDClass current : classes) {
       Set<String> extendsSet = new HashSet<>();
@@ -278,20 +272,8 @@ public class ReductionTrafo {
           implementsSet.add(superType.getSymbol().getFullName());
         }
       }
-      if (extendsSet.isEmpty()) {
-        current.setCDExtendUsageAbsent();
-      }
-      else {
-        current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
-            .createCDExtendUsage(extendsSet.toArray(new String[0])));
-      }
-      if (implementsSet.isEmpty()) {
-        current.setCDInterfaceUsageAbsent();
-      }
-      else {
-        current.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
-            .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
-      }
+      expander.updateExtends(current,extendsSet);
+      expander.updateImplements(current,implementsSet);
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(targetCD);
     removeRedundantAttributes(targetCD);

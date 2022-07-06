@@ -5,7 +5,9 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 import java.util.Optional;
 
@@ -25,6 +27,52 @@ public class VariableExpander extends BasicExpander{
       return Optional.empty();
     }
     return super.addDummyClass(dummyName);
+  }
+
+  @Override
+  public Optional<ASTCDClass> addDummyClass(ASTCDType srcType) {
+    if (getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      return Optional.empty();
+    }
+    return super.addDummyClass(srcType);
+  }
+
+  @Override
+  public Optional<ASTCDInterface> addDummyInterface(String dummyName) {
+    if (getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      return Optional.empty();
+    }
+    return super.addDummyInterface(dummyName);
+  }
+
+  @Override
+  public Optional<ASTCDInterface> addDummyInterface(ASTCDInterface srcInterface) {
+    if (getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      return Optional.empty();
+    }
+    return super.addDummyInterface(srcInterface);
+  }
+
+  @Override
+  public Optional<ASTCDType> addClone(ASTCDType srcType) {
+    if (getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      return Optional.empty();
+    }
+    return super.addClone(srcType);
+  }
+
+  @Override
+  public void addNewSubClass(String name, ASTCDClass superclass) {
+    if (superclass.getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      super.addNewSubClass(name, superclass);
+    }
+  }
+
+  @Override
+  public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
+    if (astcdInterface.getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      super.addNewSubClass(name, astcdInterface);
+    }
   }
 
   @Override

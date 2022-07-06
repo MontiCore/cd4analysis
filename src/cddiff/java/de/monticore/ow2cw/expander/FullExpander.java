@@ -234,6 +234,17 @@ public class FullExpander implements CDExpander {
     expander.addAssociation(assoc);
   }
 
+  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet) {
+    expander.updateExtends(targetClass,extendsSet);
+  }
+
+  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet) {
+    expander.updateImplements(targetClass,implementsSet);
+  }
+
+  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet) {
+    expander.updateExtends(targetInterface,extendsSet);
+  }
 
   public void mismatchDir(ASTCDAssociation src, ASTCDAssociation target) {
     expander.mismatchDir(src,target);
