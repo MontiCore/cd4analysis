@@ -175,8 +175,6 @@ public class CDInheritanceHelper {
     Optional<CDTypeSymbol> optSrc = scope.resolveCDTypeDown(srcName);
     Optional<CDTypeSymbol> optTarget = scope.resolveCDTypeDown(targetName);
     if (optSrc.isPresent() && optTarget.isPresent()) {
-      Log.warn( optSrc.get().getAstNode().getName() + " is super of " + optTarget.get().getAstNode().getName() + ": " + CDInheritanceHelper.getAllSuper(optTarget.get().getAstNode(), scope)
-          .contains(optSrc.get().getAstNode()));
       return CDInheritanceHelper.getAllSuper(optTarget.get().getAstNode(), scope)
           .contains(optSrc.get().getAstNode());
     }

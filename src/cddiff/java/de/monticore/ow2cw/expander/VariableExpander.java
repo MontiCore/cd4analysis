@@ -67,14 +67,14 @@ public class VariableExpander extends BasicExpander{
 
   @Override
   public void addNewSubClass(String name, ASTCDClass superclass) {
-    if (!(superclass.getModifier().isPresentStereotype() && superclass.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!(getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG))) {
       super.addNewSubClass(name, superclass);
     }
   }
 
   @Override
   public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
-    if (!(astcdInterface.getModifier().isPresentStereotype() && astcdInterface.getModifier().getStereotype().contains(VAR_TAG))) {
+    if (!(getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG))) {
       super.addNewSubClass(name, astcdInterface);
     }
   }

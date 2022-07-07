@@ -47,45 +47,28 @@ public class ReductionTrafo {
     transform first
     */
 
-    // get artifact-scope
-    ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
+    // built symbol table
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
 
     FullExpander expander1 = new FullExpander(new VariableExpander(first));
     FullExpander expander2 = new FullExpander(new VariableExpander(second));
 
-    // set for new associations for classes that are only <<complete>> in second
-    Set<ASTCDAssociation> newAssocs = new HashSet<>();
+    List<ASTCDType> typeList = new ArrayList<>();
+    typeList.addAll(second.getCDDefinition().getCDClassesList());
+    typeList.addAll(second.getCDDefinition().getCDInterfacesList());
 
-    // add classes and interfaces exclusive to second as classes without attributes, extends and
-    // implements
-    for (ASTCDClass astcdClass : second.getCDDefinition().getCDClassesList()) {
-      Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(astcdClass.getSymbol().getFullName());
-      if (!opt.isPresent()) {
-        expander1.addDummyClass(astcdClass);
-      }
-      if (astcdClass.getModifier().isPresentStereotype() && astcdClass.getModifier()
-          .getStereotype()
-          .contains(VariableExpander.VAR_TAG)) {
-        expander1.buildDummyAssociation(astcdClass.getSymbol().getFullName(),
-            "myNew"+COMMON_INTERFACE,COMMON_INTERFACE).ifPresent(newAssocs::add);
-      }
-    }
-    for (ASTCDInterface astcdInterface : second.getCDDefinition().getCDInterfacesList()) {
-      Optional<CDTypeSymbol> opt = scope1.resolveCDTypeDown(
-          astcdInterface.getSymbol().getFullName());
-      if (!opt.isPresent()) {
-        expander1.addDummyClass(astcdInterface);
-      }
-      if (astcdInterface.getModifier().isPresentStereotype() && astcdInterface.getModifier()
-          .getStereotype()
-          .contains(VariableExpander.VAR_TAG)) {
-        expander1.buildDummyAssociation(astcdInterface.getSymbol().getFullName(),
-            "myNew"+COMMON_INTERFACE,COMMON_INTERFACE).ifPresent(newAssocs::add);
-      }
-    }
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
+    /*
+    Add classes and interfaces exclusive to second as classes without attributes, extends and
+    implements and built new associations for classes that are only <<complete>> in second
+     */
+    Set<ASTCDAssociation> newAssocs = new HashSet<>(
+        expander1.getDummies4Diff(typeList, COMMON_INTERFACE));
+
+    //Add missing Enums and new EnumConstant if Enum is <<complete>> in second.
+    expander1.addNewEnumConstants(second.getCDDefinition().getCDEnumsList());
 
     //create common interface for all classes in first
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     createCommonInterface(first, COMMON_INTERFACE);
 
     // add subclass to each interface and abstract class
