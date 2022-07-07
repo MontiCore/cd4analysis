@@ -1,6 +1,11 @@
 package de.monticore.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,4 +96,25 @@ public abstract class AbstractDiffType {
     // Operation is 'change'
     return COLOR_CHANGE;
   }
+
+  protected static double addWeightToDiffSize(List<FieldDiff<? extends ASTNode>> diffList) {
+    double size = 0.0;
+    for (FieldDiff<? extends ASTNode> diff : diffList) {
+      if (diff.isPresent() && diff.getCd1Value().isPresent()) {
+        // Name Diffs are weighted doubled compared to every other diff
+        // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
+        if (diff.getCd1Value().get() instanceof ASTCDAttribute
+          || diff.getCd1Value().get() instanceof ASTMCQualifiedName
+          || diff.getCd1Value().get() instanceof ASTCDClass
+          || diff.getCd1Value().get() instanceof ASTCDConstructor
+          || diff.getCd1Value().get() instanceof ASTCDMethod
+        ) {
+          size += 1;
+        }
+      }
+    }
+    return size;
+  }
+
+
 }
