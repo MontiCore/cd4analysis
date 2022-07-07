@@ -107,45 +107,6 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  @Override
-  public String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
-    StringBuilder commonSigs = new StringBuilder().append(super.executeRuleU5(asts, newSemantics))
-        .append(System.lineSeparator())
-        .append(System.lineSeparator());
-
-    // Union of all classes and interfaces
-    Set<ASTCDType> typeUnion = new HashSet<>();
-    for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList()));
-      typeUnion.addAll(new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList()));
-    }
-
-    // Union of all type names
-    Set<String> typeNameUnion = new HashSet<>();
-    for (ASTCDType astcdType : typeUnion) {
-      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
-    }
-    commonSigs.append("fact{");
-
-    for (String typeName : typeNameUnion) {
-      commonSigs.append("all c: ")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
-          .append(" | c.type=Type_")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
-          .append(System.lineSeparator())
-          .append("Type_")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
-          .append(" in Type_")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
-          .append(".super")
-          .append(System.lineSeparator());
-    }
-
-    commonSigs.append("}");
-
-    return commonSigs.toString();
-  }
-
   /**
    * additional rule for new semantics
    */

@@ -8,9 +8,12 @@ import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
@@ -153,6 +156,14 @@ public class BasicExpander implements CDExpander {
 
   public void addAssociation(ASTCDAssociation assoc){
     getCD().getCDDefinition().getCDElementList().add(assoc);
+  }
+
+  public void addAttribute(ASTCDType type, ASTCDAttribute attribute){
+    type.addCDMember(attribute);
+  }
+
+  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant){
+    targetEnum.addCDEnumConstant(constant);
   }
 
   public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet){

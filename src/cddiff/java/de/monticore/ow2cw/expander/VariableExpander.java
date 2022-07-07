@@ -3,10 +3,13 @@ package de.monticore.ow2cw.expander;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 import java.util.Optional;
@@ -103,19 +106,33 @@ public class VariableExpander extends BasicExpander{
         CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     if (assoc.getCDAssocDir().isDefinitiveNavigableRight()){
       Optional<CDTypeSymbol> symbol =
-          artifactScope.resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
+          artifactScope.resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
       if (symbol.isPresent() && symbol.get().getAstNode().getModifier().isPresentStereotype() && symbol.get().getAstNode().getModifier().getStereotype().contains(VAR_TAG)){
         return;
       }
     }
     if (assoc.getCDAssocDir().isDefinitiveNavigableLeft()){
       Optional<CDTypeSymbol> symbol =
-          artifactScope.resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
+          artifactScope.resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
       if (symbol.isPresent() && symbol.get().getAstNode().getModifier().isPresentStereotype() && symbol.get().getAstNode().getModifier().getStereotype().contains(VAR_TAG)){
         return;
       }
     }
     super.addAssociation(assoc);
+  }
+
+  @Override
+  public void addAttribute(ASTCDType type, ASTCDAttribute attribute) {
+    if (!(type.getModifier().isPresentStereotype() && type.getModifier().getStereotype().contains(VAR_TAG))) {
+      super.addAttribute(type, attribute);
+    }
+  }
+
+  @Override
+  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant) {
+    if (!(targetEnum.getModifier().isPresentStereotype() && targetEnum.getModifier().getStereotype().contains(VAR_TAG))) {
+      super.addEnumConstant(targetEnum, constant);
+    }
   }
 
 }

@@ -60,7 +60,7 @@ public class FullExpander implements CDExpander {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
             for (ASTCDEnum someEnum : getCD().getCDDefinition().getCDEnumsList()) {
               if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())) {
-                someEnum.addCDEnumConstant(constant.deepClone());
+                addEnumConstant(someEnum,constant.deepClone());
               }
             }
           }
@@ -80,7 +80,7 @@ public class FullExpander implements CDExpander {
           .anyMatch(attribute2 -> attribute1.getName().equals(attribute2.getName()));
       if (!found) {
         ASTCDAttribute newAttribute = attribute1.deepClone();
-        cdType.addCDMember(newAttribute);
+        addAttribute(cdType,newAttribute);
       }
     }
   }
@@ -232,6 +232,14 @@ public class FullExpander implements CDExpander {
 
   public void addAssociation(ASTCDAssociation assoc){
     expander.addAssociation(assoc);
+  }
+
+  public void addAttribute(ASTCDType type, ASTCDAttribute attribute){
+    expander.addAttribute(type,attribute);
+  }
+
+  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant){
+    expander.addEnumConstant(targetEnum,constant);
   }
 
   public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet) {

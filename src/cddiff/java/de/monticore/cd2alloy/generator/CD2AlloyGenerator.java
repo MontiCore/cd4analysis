@@ -413,6 +413,29 @@ public class CD2AlloyGenerator {
       commonSigs.append(" extends Type {}").append(System.lineSeparator());
     }
 
+    // Union of all type names
+    Set<String> typeNameUnion = new HashSet<>();
+    for (ASTCDType astcdType : typeUnion) {
+      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
+    }
+    commonSigs.append("fact{");
+
+    for (String typeName : typeNameUnion) {
+      commonSigs.append("all c: ")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(" | c.type=Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(System.lineSeparator())
+          .append("Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(" in Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(".super")
+          .append(System.lineSeparator());
+    }
+
+    commonSigs.append("}");
+
     return commonSigs.toString();
 
   }
