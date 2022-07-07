@@ -50,13 +50,13 @@ public class ClassDifference {
     }
 
     // clean-up
-    /*try {
+    try {
       FileUtils.forceDelete(outputDirectory.toFile());
     }
     catch (IOException e) {
       Log.warn(String.format("Could not delete %s due to %s", outputDirectory.getFileName(),
           e.getMessage()));
-    }*/
+    }
 
     return result;
   }
