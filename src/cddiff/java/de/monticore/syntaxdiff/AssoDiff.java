@@ -67,17 +67,10 @@ public class AssoDiff extends AbstractDiffType{
    * @return Diff size as int
    */
   private double calculateDiffSize(){
-    int size = diffList.size();
+    double size = diffList.size();
 
-    for (FieldDiff<? extends ASTNode> diff : diffList){
-      if (diff.isPresent() && diff.getCd1Value().isPresent()){
-        // Name Diffs are weighted doubled compared to every other diff
-        // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
-        if (diff.getCd1Value().get() instanceof ASTMCQualifiedName) {
-          size += 1;
-        }
-      }
-    }
+    size += addWeightToDiffSize(diffList);
+
     return size;
   }
 

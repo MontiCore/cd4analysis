@@ -132,19 +132,8 @@ package de.monticore.syntaxdiff;
         }
       }
       size += deleletedConstructor.size() + addedConstructor.size();
+      size += addWeightToDiffSize(diffList);
 
-      for (FieldDiff<? extends ASTNode> diff : diffList){
-        if (diff.isPresent() && diff.getCd1Value().isPresent()){
-          // Name Diffs are weighted doubled compared to every other diff
-          // Parent Object in FieldDiff when we check the name of it (when there is no specific node for the name)
-          if (diff.getCd1Value().get() instanceof ASTCDAttribute
-            || diff.getCd1Value().get() instanceof ASTMCQualifiedName
-            || diff.getCd1Value().get() instanceof ASTCDClass
-          ) {
-            size += 1;
-          }
-        }
-      }
       return size;
     }
 
