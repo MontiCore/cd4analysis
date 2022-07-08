@@ -88,7 +88,7 @@ public class SupportAssociation implements Cloneable {
       case ONE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
         break;
-      case ZORE_TO_ONE:
+      case ZERO_TO_ONE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
         break;
       case ONE_TO_MORE:
@@ -109,7 +109,7 @@ public class SupportAssociation implements Cloneable {
       case ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
         break;
-      case ZORE_TO_ONE:
+      case ZERO_TO_ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
         break;
       case ONE_TO_MORE:

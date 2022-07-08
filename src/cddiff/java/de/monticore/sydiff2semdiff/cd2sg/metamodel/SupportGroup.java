@@ -45,7 +45,7 @@ public class SupportGroup {
   }
 
   public enum SupportAssociationCardinality {
-    ONE, ZORE_TO_ONE, ONE_TO_MORE, MORE
+    ONE, ZERO_TO_ONE, ONE_TO_MORE, MORE
   }
 
   public SupportGroup() {

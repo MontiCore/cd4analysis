@@ -138,18 +138,18 @@ public class CompareHelper {
         switch (compareSupportAssociationCardinality) {
           case ONE:
             return CompareGroup.CompAssociationCardinality.NONE;
-          case ZORE_TO_ONE:
+          case ZERO_TO_ONE:
             return CompareGroup.CompAssociationCardinality.NONE;
           case ONE_TO_MORE:
             return CompareGroup.CompAssociationCardinality.NONE;
           default:
             return CompareGroup.CompAssociationCardinality.NONE;
         }
-      case ZORE_TO_ONE:
+      case ZERO_TO_ONE:
         switch (compareSupportAssociationCardinality) {
           case ONE:
             return CompareGroup.CompAssociationCardinality.ZERO;
-          case ZORE_TO_ONE:
+          case ZERO_TO_ONE:
             return CompareGroup.CompAssociationCardinality.NONE;
           case ONE_TO_MORE:
             return CompareGroup.CompAssociationCardinality.ZERO;
@@ -160,7 +160,7 @@ public class CompareHelper {
         switch (compareSupportAssociationCardinality) {
           case ONE:
             return CompareGroup.CompAssociationCardinality.TWO_TO_MORE;
-          case ZORE_TO_ONE:
+          case ZERO_TO_ONE:
             return CompareGroup.CompAssociationCardinality.TWO_TO_MORE;
           case ONE_TO_MORE:
             return CompareGroup.CompAssociationCardinality.NONE;
@@ -171,7 +171,7 @@ public class CompareHelper {
         switch (compareSupportAssociationCardinality) {
           case ONE:
             return CompareGroup.CompAssociationCardinality.ZERO_AND_TWO_TO_MORE;
-          case ZORE_TO_ONE:
+          case ZERO_TO_ONE:
             return CompareGroup.CompAssociationCardinality.TWO_TO_MORE;
           case ONE_TO_MORE:
             return CompareGroup.CompAssociationCardinality.ZERO;

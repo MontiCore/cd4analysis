@@ -84,7 +84,7 @@ public class GenerateODHelper {
     switch (str) {
       case "ONE":
         return 1;
-      case "ZORE_TO_ONE":
+      case "ZERO_TO_ONE":
         return 0;
       case "ONE_TO_MORE":
         return 1;
@@ -109,7 +109,7 @@ public class GenerateODHelper {
     switch (str) {
       case "ONE":
         return 1;
-      case "ZORE_TO_ONE":
+      case "ZERO_TO_ONE":
         return 1;
       case "ONE_TO_MORE":
         return 1;

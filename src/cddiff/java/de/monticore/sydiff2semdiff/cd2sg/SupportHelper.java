@@ -100,7 +100,7 @@ public class SupportHelper {
     if (astcdAssociation.getLeft().getCDCardinality().isOne()) {
       return SupportGroup.SupportAssociationCardinality.ONE;
     } else if (astcdAssociation.getLeft().getCDCardinality().isOpt()) {
-      return SupportGroup.SupportAssociationCardinality.ZORE_TO_ONE;
+      return SupportGroup.SupportAssociationCardinality.ZERO_TO_ONE;
     } else if (astcdAssociation.getLeft().getCDCardinality().isAtLeastOne()) {
       return SupportGroup.SupportAssociationCardinality.ONE_TO_MORE;
     } else {
@@ -115,7 +115,7 @@ public class SupportHelper {
     if (astcdAssociation.getRight().getCDCardinality().isOne()) {
       return SupportGroup.SupportAssociationCardinality.ONE;
     } else if (astcdAssociation.getRight().getCDCardinality().isOpt()) {
-      return SupportGroup.SupportAssociationCardinality.ZORE_TO_ONE;
+      return SupportGroup.SupportAssociationCardinality.ZERO_TO_ONE;
     } else if (astcdAssociation.getRight().getCDCardinality().isAtLeastOne()) {
       return SupportGroup.SupportAssociationCardinality.ONE_TO_MORE;
     } else {
@@ -189,29 +189,29 @@ public class SupportHelper {
         switch (current) {
           case ONE:
             return SupportGroup.SupportAssociationCardinality.ONE;
-          case ZORE_TO_ONE:
+          case ZERO_TO_ONE:
             return SupportGroup.SupportAssociationCardinality.ONE;
           case ONE_TO_MORE:
             return SupportGroup.SupportAssociationCardinality.ONE;
           default:
             return SupportGroup.SupportAssociationCardinality.ONE;
         }
-      case ZORE_TO_ONE:
+      case ZERO_TO_ONE:
         switch (current) {
           case ONE:
             return SupportGroup.SupportAssociationCardinality.ONE;
-          case ZORE_TO_ONE:
-            return SupportGroup.SupportAssociationCardinality.ZORE_TO_ONE;
+          case ZERO_TO_ONE:
+            return SupportGroup.SupportAssociationCardinality.ZERO_TO_ONE;
           case ONE_TO_MORE:
             return SupportGroup.SupportAssociationCardinality.ONE;
           default:
-            return SupportGroup.SupportAssociationCardinality.ZORE_TO_ONE;
+            return SupportGroup.SupportAssociationCardinality.ZERO_TO_ONE;
         }
       case ONE_TO_MORE:
         switch (current) {
           case ONE:
             return SupportGroup.SupportAssociationCardinality.ONE;
-          case ZORE_TO_ONE:
+          case ZERO_TO_ONE:
             return SupportGroup.SupportAssociationCardinality.ONE;
           case ONE_TO_MORE:
             return SupportGroup.SupportAssociationCardinality.ONE_TO_MORE;
@@ -222,8 +222,8 @@ public class SupportHelper {
         switch (current) {
           case ONE:
             return SupportGroup.SupportAssociationCardinality.ONE;
-          case ZORE_TO_ONE:
-            return SupportGroup.SupportAssociationCardinality.ZORE_TO_ONE;
+          case ZERO_TO_ONE:
+            return SupportGroup.SupportAssociationCardinality.ZERO_TO_ONE;
           case ONE_TO_MORE:
             return SupportGroup.SupportAssociationCardinality.ONE_TO_MORE;
           default:

@@ -398,7 +398,7 @@ public class CD2SGGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(dg.getSupportAssociationGroup().containsKey("SupportAssociation_A_a_LeftToRight_b_B"));
     Assert.assertTrue(dg.getSupportAssociationGroup().get("SupportAssociation_A_a_RightToLeft_b_B").getSupportLeftClassCardinality().equals(SupportGroup.SupportAssociationCardinality.ONE) &&
       dg.getSupportAssociationGroup().get("SupportAssociation_A_a_RightToLeft_b_B").getSupportRightClassCardinality().equals(SupportGroup.SupportAssociationCardinality.MORE));
-    Assert.assertTrue(dg.getSupportAssociationGroup().get("SupportAssociation_A_a_LeftToRight_b_B").getSupportLeftClassCardinality().equals(SupportGroup.SupportAssociationCardinality.ZORE_TO_ONE) &&
+    Assert.assertTrue(dg.getSupportAssociationGroup().get("SupportAssociation_A_a_LeftToRight_b_B").getSupportLeftClassCardinality().equals(SupportGroup.SupportAssociationCardinality.ZERO_TO_ONE) &&
       dg.getSupportAssociationGroup().get("SupportAssociation_A_a_LeftToRight_b_B").getSupportRightClassCardinality().equals(SupportGroup.SupportAssociationCardinality.ONE_TO_MORE));
   }
 
