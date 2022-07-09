@@ -1,12 +1,13 @@
 package de.monticore.ow2cw.expander;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._ast.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface CDExpander {
 
@@ -43,6 +44,18 @@ public interface CDExpander {
   Optional<ASTCDInterface> addDummyInterface(String dummyName);
 
   Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName, String right);
+
+  void addAssociation(ASTCDAssociation assoc);
+
+  void addAttribute(ASTCDType type, ASTCDAttribute attribute);
+
+  void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant);
+
+  void updateExtends(ASTCDClass targetClass, Set<String> extendsSet);
+
+  void updateImplements(ASTCDClass targetClass, Set<String> implementsSet);
+
+  void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet);
 
   void updateUnspecifiedDir2Default();
 

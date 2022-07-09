@@ -509,6 +509,7 @@ public class Alloy2ODGenerator {
 
     // Remove $ and numbers after it to get type
     String type = o.toString().replaceAll("[$]\\d*", "");
+    type = type.replaceAll("[_]",".");
 
     // Generate output
     od.append(name);

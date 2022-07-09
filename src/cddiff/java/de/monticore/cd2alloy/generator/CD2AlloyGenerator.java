@@ -80,21 +80,22 @@ public class CD2AlloyGenerator {
         + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
 
         // Abstract Signature for Objects
-        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, super: set Type } "
+        + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, type: Type } "
         + System.lineSeparator()
         // Abstract Signature for Names
         + "abstract sig FName {} " + System.lineSeparator()
         // Abstract Signature for Values
         + "abstract sig Val {} " + System.lineSeparator()
         // Abstract Signature for EnumValues
-        + "abstract sig EnumVal {} " + System.lineSeparator() + "abstract sig Type {}"
-        + System.lineSeparator() + " " + System.lineSeparator()
+        + "abstract sig EnumVal {} " + System.lineSeparator()
+        + "abstract sig Type { super: set Type, inst : set Obj}" + System.lineSeparator() + " "
+        + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
         + System.lineSeparator() + "// ends and for association ends of undirected associations."
         + System.lineSeparator() + "pred ObjTypes[obj: set Obj, types: set Type]{"
-        + System.lineSeparator() + " all o:obj| o.super = types}" + System.lineSeparator()
+        + System.lineSeparator() + " all o:obj| o.type.super = types}" + System.lineSeparator()
         + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {" + System.lineSeparator()
         + " objs.get[fName] in fType" + System.lineSeparator() + " all o: objs| one o.get[fName] }"
@@ -134,6 +135,8 @@ public class CD2AlloyGenerator {
         + "pred ObjLU[objs: set Obj, fName:one FName, fType: set Obj," + System.lineSeparator()
         + " low: Int, up: Int] {" + System.lineSeparator() + " ObjL[objs, fName, fType, low]"
         + System.lineSeparator() + " ObjU[objs, fName, fType, up] }" + System.lineSeparator()
+        + System.lineSeparator() + "fact InstancesOfTypes {" + System.lineSeparator()
+        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}" + System.lineSeparator()
         + System.lineSeparator() + ""
 
         // Additional Fact from in TechRep Example to exclude illegal
@@ -409,6 +412,29 @@ public class CD2AlloyGenerator {
       commonSigs.append(className);
       commonSigs.append(" extends Type {}").append(System.lineSeparator());
     }
+
+    // Union of all type names
+    Set<String> typeNameUnion = new HashSet<>();
+    for (ASTCDType astcdType : typeUnion) {
+      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
+    }
+    commonSigs.append("fact{");
+
+    for (String typeName : typeNameUnion) {
+      commonSigs.append("all c: ")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(" | c.type=Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(System.lineSeparator())
+          .append("Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(" in Type_")
+          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(".super")
+          .append(System.lineSeparator());
+    }
+
+    commonSigs.append("}");
 
     return commonSigs.toString();
 
@@ -1198,7 +1224,7 @@ public class CD2AlloyGenerator {
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
       if ((asc.getCDAssocDir().isBidirectional() || asc.getCDAssocDir().isDefinitiveNavigableLeft()
           || (!asc.getCDAssocDir().isDefinitiveNavigableLeft() && !asc.getCDAssocDir()
-          .isDefinitiveNavigableRight())) && asc.getLeft().isPresentCDCardinality()) {
+          .isDefinitiveNavigableRight()))) {
         predicate.append(appendRemainingRuleA(3, cd, asc));
       }
     }
@@ -1225,7 +1251,7 @@ public class CD2AlloyGenerator {
     // Computation
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
       if ((asc.getCDAssocDir().isDefinitiveNavigableLeft() && !asc.getCDAssocDir()
-          .isBidirectional()) && asc.getRight().isPresentCDCardinality()) {
+          .isBidirectional())) {
         predicate.append(appendRemainingRuleA(4, cd, asc));
       }
     }
@@ -1256,7 +1282,7 @@ public class CD2AlloyGenerator {
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
       if ((asc.getCDAssocDir().isBidirectional() || asc.getCDAssocDir().isDefinitiveNavigableRight()
           || (!asc.getCDAssocDir().isDefinitiveNavigableLeft() && !asc.getCDAssocDir()
-          .isDefinitiveNavigableRight())) && asc.getRight().isPresentCDCardinality()) {
+          .isDefinitiveNavigableRight()))) {
         predicate.append(appendRemainingRuleA(5, cd, asc));
       }
     }
@@ -1283,7 +1309,7 @@ public class CD2AlloyGenerator {
     // Computation
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
       if ((asc.getCDAssocDir().isDefinitiveNavigableRight() && !asc.getCDAssocDir()
-          .isBidirectional()) && asc.getLeft().isPresentCDCardinality()) {
+          .isBidirectional())) {
         predicate.append(appendRemainingRuleA(6, cd, asc));
       }
     }
@@ -1299,17 +1325,45 @@ public class CD2AlloyGenerator {
     StringBuilder predicate = new StringBuilder();
 
     String infix = "";
-    ASTCDCardinality cardinality;
     List<String> firstReferenceName;
     List<String> secondReferenceName;
     boolean rolePresent;
     String roleName;
 
+    String lowerCardinality;
+    String upperCardinality;
+
+    int leftLowerBound = 0;
+    int leftUpperBound = -1;
+    int rightLowerBound = 0;
+    int rightUpperBound = -1;
+
+    if (association.getLeft().isPresentCDCardinality()){
+      leftLowerBound = association.getLeft().getCDCardinality().getLowerBound();
+      if (!association.getLeft().getCDCardinality().toCardinality().isNoUpperLimit()){
+        leftUpperBound = association.getLeft().getCDCardinality().getUpperBound();
+      }
+    }
+
+    if (association.getRight().isPresentCDCardinality()){
+      rightLowerBound = association.getRight().getCDCardinality().getLowerBound();
+      if (!association.getRight().getCDCardinality().toCardinality().isNoUpperLimit()){
+        rightUpperBound = association.getRight().getCDCardinality().getUpperBound();
+      }
+    }
+
     switch (ruleID) {
       case 3: {
         infix = "Attrib";
-        // Get left cardinality
-        cardinality = association.getLeft().getCDCardinality();
+
+        lowerCardinality = "" + leftLowerBound;
+
+        if (leftUpperBound < 0){
+          upperCardinality = "";
+        } else {
+          upperCardinality = "" + leftUpperBound;
+        }
+
         firstReferenceName = association.getRightReferenceName();
         secondReferenceName = association.getLeftReferenceName();
         rolePresent = association.getLeft().isPresentCDRole();
@@ -1322,8 +1376,15 @@ public class CD2AlloyGenerator {
         break;
       }
       case 4: {
-        // Get right cardinality
-        cardinality = association.getRight().getCDCardinality();
+
+        lowerCardinality = "" + rightLowerBound;
+
+        if (rightUpperBound < 0){
+          upperCardinality = "";
+        } else {
+          upperCardinality = "" + rightUpperBound;
+        }
+
         firstReferenceName = association.getLeftReferenceName();
         secondReferenceName = association.getRightReferenceName();
         rolePresent = association.getLeft().isPresentCDRole();
@@ -1337,8 +1398,16 @@ public class CD2AlloyGenerator {
       }
       case 5: {
         infix = "Attrib";
-        // Get right cardinality
-        cardinality = association.getRight().getCDCardinality();
+
+
+        lowerCardinality = "" + rightLowerBound;
+
+        if (rightUpperBound < 0){
+          upperCardinality = "";
+        } else {
+          upperCardinality = "" + rightUpperBound;
+        }
+
         firstReferenceName = association.getLeftReferenceName();
         secondReferenceName = association.getRightReferenceName();
         rolePresent = association.getRight().isPresentCDRole();
@@ -1351,8 +1420,15 @@ public class CD2AlloyGenerator {
         break;
       }
       case 6: {
-        // Get left cardinality
-        cardinality = association.getLeft().getCDCardinality();
+
+        lowerCardinality = "" + leftLowerBound;
+
+        if (leftUpperBound < 0){
+          upperCardinality = "";
+        } else {
+          upperCardinality = "" + leftUpperBound;
+        }
+
         firstReferenceName = association.getRightReferenceName();
         secondReferenceName = association.getLeftReferenceName();
         rolePresent = association.getRight().isPresentCDRole();
@@ -1370,32 +1446,11 @@ public class CD2AlloyGenerator {
       }
     }
 
-    String lowerCardinality;
-    String upperCardinality = "";
-
-    if (cardinality.isOne() || cardinality.isOpt()) {
-      predicate.append("ObjLU").append(infix).append("[");
-
-      // Get lower Cardinality
-      if (cardinality.isOne()) {
-        lowerCardinality = "1";
-      }
-      else {
-        lowerCardinality = "0";
-      }
-      // Set upperCardinality
-      upperCardinality = "1";
+    if (upperCardinality.equals("")) {
+      predicate.append("ObjL").append(infix).append("[");
     }
     else {
-      predicate.append("ObjL").append(infix).append("[");
-
-      // Set lower cardinality
-      if (cardinality.isAtLeastOne()) {
-        lowerCardinality = "1";
-      }
-      else {
-        lowerCardinality = "0";
-      }
+      predicate.append("ObjLU").append(infix).append("[");
     }
 
     predicate.append(executeRuleH1(CD2AlloyQNameHelper.partHandler(firstReferenceName, false), cd));

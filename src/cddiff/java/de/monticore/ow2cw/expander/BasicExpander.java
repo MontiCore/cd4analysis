@@ -8,13 +8,17 @@ import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
 import java.util.Optional;
+import java.util.Set;
 
 public class BasicExpander implements CDExpander {
 
@@ -148,6 +152,48 @@ public class BasicExpander implements CDExpander {
         .build();
     getCD().getCDDefinition().getCDElementList().add(newInterface);
     return Optional.of(newInterface);
+  }
+
+  public void addAssociation(ASTCDAssociation assoc){
+    getCD().getCDDefinition().getCDElementList().add(assoc);
+  }
+
+  public void addAttribute(ASTCDType type, ASTCDAttribute attribute){
+    type.addCDMember(attribute);
+  }
+
+  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant){
+    targetEnum.addCDEnumConstant(constant);
+  }
+
+  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet){
+    if (extendsSet.isEmpty()) {
+      targetClass.setCDExtendUsageAbsent();
+    }
+    else {
+      targetClass.setCDExtendUsage(CDExtendUsageFacade.getInstance()
+          .createCDExtendUsage(extendsSet.toArray(new String[0])));
+    }
+  }
+
+  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet){
+    if (implementsSet.isEmpty()) {
+      targetClass.setCDInterfaceUsageAbsent();
+    }
+    else {
+      targetClass.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
+          .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
+    }
+  }
+
+  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet){
+    if (extendsSet.isEmpty()) {
+      targetInterface.setCDExtendUsageAbsent();
+    }
+    else {
+      targetInterface.setCDExtendUsage(CDExtendUsageFacade.getInstance()
+          .createCDExtendUsage(extendsSet.toArray(new String[0])));
+    }
   }
 
   /**

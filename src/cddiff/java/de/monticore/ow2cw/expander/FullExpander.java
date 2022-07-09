@@ -28,12 +28,13 @@ public class FullExpander implements CDExpander {
     for (ASTCDType type : typeList) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(type.getSymbol().getFullName());
       if (!opt.isPresent()) {
-        if (type instanceof ASTCDInterface){
-          addDummyInterface((ASTCDInterface) type).ifPresent(newInterface -> addMissingAttributes(newInterface,
-              type.getCDAttributeList()));
-        } else {
-          addDummyClass(type).ifPresent(newClass -> addMissingAttributes(newClass,
-              type.getCDAttributeList()));
+        if (type instanceof ASTCDInterface) {
+          addDummyInterface((ASTCDInterface) type).ifPresent(
+              newInterface -> addMissingAttributes(newInterface, type.getCDAttributeList()));
+        }
+        else {
+          addDummyClass(type).ifPresent(
+              newClass -> addMissingAttributes(newClass, type.getCDAttributeList()));
         }
       }
       else {
@@ -42,10 +43,10 @@ public class FullExpander implements CDExpander {
     }
   }
 
-  public void addMissingEnumsAndConstants(Collection<ASTCDEnum> enumList) {
+  public void addMissingEnumsAndConstants(Collection<ASTCDEnum> enumCol) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     // add enums and enum constants exclusive to first
-    for (ASTCDEnum astcdEnum : enumList) {
+    for (ASTCDEnum astcdEnum : enumCol) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
       if (!opt.isPresent()) {
         addClone(astcdEnum);
@@ -60,7 +61,7 @@ public class FullExpander implements CDExpander {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
             for (ASTCDEnum someEnum : getCD().getCDDefinition().getCDEnumsList()) {
               if (astcdEnum.getSymbol().getFullName().equals(someEnum.getSymbol().getFullName())) {
-                someEnum.addCDEnumConstant(constant.deepClone());
+                addEnumConstant(someEnum, constant.deepClone());
               }
             }
           }
@@ -80,18 +81,17 @@ public class FullExpander implements CDExpander {
           .anyMatch(attribute2 -> attribute1.getName().equals(attribute2.getName()));
       if (!found) {
         ASTCDAttribute newAttribute = attribute1.deepClone();
-        cdType.addCDMember(newAttribute);
+        addAttribute(cdType, newAttribute);
       }
     }
   }
 
   public void addAssociationClones(Collection<ASTCDAssociation> originals) {
     for (ASTCDAssociation srcAssoc : originals) {
-        ASTCDAssociation newAssoc = srcAssoc.deepClone();
-        newAssoc.getRight().setCDCardinalityAbsent();
-        newAssoc.getLeft().setCDCardinalityAbsent();
-        //todo: check if class/interface has stereotype ""
-        getCD().getCDDefinition().getCDElementList().add(newAssoc);
+      ASTCDAssociation newAssoc = srcAssoc.deepClone();
+      newAssoc.getRight().setCDCardinalityAbsent();
+      newAssoc.getLeft().setCDCardinalityAbsent();
+      addAssociation(newAssoc);
     }
   }
 
@@ -177,9 +177,49 @@ public class FullExpander implements CDExpander {
 
   public void addAssociationsWithoutConflicts(Collection<ASTCDAssociation> dummySet) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
-    for (ASTCDAssociation dummy : dummySet){
-      if (getCD().getCDDefinition().getCDAssociationsList().stream().noneMatch(assoc -> CDAssociationHelper.inConflict(dummy, assoc, scope))){
-        getCD().getCDDefinition().getCDElementList().add(dummy);
+    for (ASTCDAssociation dummy : dummySet) {
+      if (getCD().getCDDefinition()
+          .getCDAssociationsList()
+          .stream()
+          .noneMatch(assoc -> CDAssociationHelper.inConflict(dummy, assoc, scope))) {
+        addAssociation(dummy);
+      }
+    }
+  }
+
+  public Set<ASTCDAssociation> getDummies4Diff(Collection<ASTCDType> typeCol
+      , String assocTargetName){
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+    Set<ASTCDAssociation> newAssocs = new HashSet<>();
+    for (ASTCDType srcType : typeCol) {
+      Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(srcType.getSymbol().getFullName());
+      if (!opt.isPresent()) {
+        addDummyClass(srcType);
+      }
+      if (srcType.getModifier().isPresentStereotype() && srcType.getModifier()
+          .getStereotype()
+          .contains(VariableExpander.VAR_TAG)) {
+        buildDummyAssociation(srcType.getSymbol().getFullName(),
+            "myNew"+assocTargetName,assocTargetName).ifPresent(newAssocs::add);
+      }
+    }
+    return newAssocs;
+  }
+
+  public void addNewEnumConstants(Collection<ASTCDEnum> enumCol) {
+    for (ASTCDEnum srcEnum : enumCol) {
+      if (srcEnum.getModifier().isPresentStereotype() && srcEnum.getModifier()
+          .getStereotype()
+          .contains(VariableExpander.VAR_TAG)) {
+        for (ASTCDEnum targetEnum : getCD().getCDDefinition().getCDEnumsList()) {
+          if (srcEnum.getSymbol().getFullName().equals(targetEnum.getSymbol().getFullName())) {
+            addEnumConstant(targetEnum, CD4CodeMill.cD4CodeEnumConstantBuilder()
+                .setArgumentsAbsent()
+                .setName("myNew" + targetEnum.getName() + "Const")
+                .build());
+            break;
+          }
+        }
       }
     }
   }
@@ -231,21 +271,44 @@ public class FullExpander implements CDExpander {
     return expander.addDummyInterface(dummyName);
   }
 
+  public void addAssociation(ASTCDAssociation assoc) {
+    expander.addAssociation(assoc);
+  }
+
+  public void addAttribute(ASTCDType type, ASTCDAttribute attribute) {
+    expander.addAttribute(type, attribute);
+  }
+
+  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant) {
+    expander.addEnumConstant(targetEnum, constant);
+  }
+
+  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet) {
+    expander.updateExtends(targetClass, extendsSet);
+  }
+
+  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet) {
+    expander.updateImplements(targetClass, implementsSet);
+  }
+
+  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet) {
+    expander.updateExtends(targetInterface, extendsSet);
+  }
 
   public void mismatchDir(ASTCDAssociation src, ASTCDAssociation target) {
-    expander.mismatchDir(src,target);
+    expander.mismatchDir(src, target);
   }
 
   public void mismatchDirInReverse(ASTCDAssociation src, ASTCDAssociation target) {
-    expander.mismatchDirInReverse(src,target);
+    expander.mismatchDirInReverse(src, target);
   }
 
   public void matchDir(ASTCDAssociation src, ASTCDAssociation target) {
-    expander.matchDir(src,target);
+    expander.matchDir(src, target);
   }
 
   public void matchDirInReverse(ASTCDAssociation src, ASTCDAssociation target) {
-    expander.matchDirInReverse(src,target);
+    expander.matchDirInReverse(src, target);
   }
 
   public Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName,
