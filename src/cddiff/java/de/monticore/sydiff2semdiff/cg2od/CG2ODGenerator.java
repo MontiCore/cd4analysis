@@ -1,11 +1,13 @@
 package de.monticore.sydiff2semdiff.cg2od;
 
 import de.monticore.alloycddiff.CDSemantics;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4data.OD4DataMill;
 import de.monticore.od4data.prettyprinter.OD4DataFullPrettyPrinter;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.sydiff2semdiff.cd2sg.CD2SGGenerator;
 import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportAssociation;
 import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportClass;
 import de.monticore.sydiff2semdiff.cd2sg.metamodel.SupportRefSetAssociation;
@@ -14,10 +16,10 @@ import de.monticore.sydiff2semdiff.cg2od.metamodel.ASTODClassStackPack;
 import de.monticore.sydiff2semdiff.cg2od.metamodel.ASTODNamedObjectPack;
 import de.monticore.sydiff2semdiff.cg2od.metamodel.ASTODPack;
 import de.monticore.sydiff2semdiff.cg2od.metamodel.SupportClassPack;
+import de.monticore.sydiff2semdiff.sg2cg.SG2CGGenerator;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompAssociation;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompClass;
 import de.monticore.sydiff2semdiff.sg2cg.metamodel.CompareGroup;
-import de.monticore.syntaxdiff.SyntaxDiff;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +29,37 @@ import static de.monticore.sydiff2semdiff.cg2od.GenerateODHelper.*;
 import static de.monticore.sydiff2semdiff.sg2cg.CompareHelper.createCompareAssociationHelper;
 
 public class CG2ODGenerator {
+
+  public String SyntaxDiff2SemanticDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, CDSemantics type) {
+    StringBuilder result = new StringBuilder();
+    CD2SGGenerator cd1Generator = new CD2SGGenerator();
+    CD2SGGenerator cd2Generator = new CD2SGGenerator();
+    SupportGroup sg1 = cd1Generator.generateSupportGroup(cd1, type);
+    SupportGroup sg2 = cd2Generator.generateSupportGroup(cd2, type);
+    SG2CGGenerator sg2CGGenerator4sg1Withsg2 = new SG2CGGenerator();
+    SG2CGGenerator sg2CGGenerator4sg2Withsg1 = new SG2CGGenerator();
+    CompareGroup cg1 = sg2CGGenerator4sg1Withsg2.generateCompareGroup(sg1, sg2);
+    CompareGroup cg2 = sg2CGGenerator4sg2Withsg1.generateCompareGroup(sg2, sg1);
+    List<String> od1 = generateObjectDiagrams(sg1, cg1);
+    List<String> od2 = generateObjectDiagrams(sg2, cg2);
+    if (od1.size() == 0 && od2.size() == 0) {
+      return "Semantic Same";
+    } else {
+      result.append("******************************************** \n");
+      result.append("******  SemanticDiff from CD1 to CD2  ****** \n");
+      result.append("******************************************** \n");
+      for (String str : od1) {
+        result.append(str + '\n');
+      }
+      result.append("******************************************** \n");
+      result.append("******  SemanticDiff from CD2 to CD1  ****** \n");
+      result.append("******************************************** \n");
+      for (String str : od2) {
+        result.append(str + '\n');
+      }
+    }
+    return result.toString();
+  }
 
   /**
    * generate ODs by solving items with syntactic differences in globalClassQueue and globalAssociationQueue
