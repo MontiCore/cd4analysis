@@ -578,6 +578,19 @@ public class CG2ODGeneratorTest extends CDDiffTestBasis {
     ));
   }
 
+  @Test
+  public void testTotal() {
+    ASTCDCompilationUnit cd1 = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+          + "/Employees1A.cd");
+    ASTCDCompilationUnit cd2 = parseModel(
+      "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination/"
+          + "Employees1B.cd");
+    CG2ODGenerator generator = new CG2ODGenerator();
+    String result = generator.SyntaxDiff2SemanticDiff(cd1, cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
+    System.out.println(result);
+  }
+
 //  @Test
 //  public void testGenerateODByCombinationTest () {
 //    generateCompareGroupTemp("Combination", "test1.cd", "test2.cd");
