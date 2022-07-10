@@ -14,7 +14,7 @@ classdiagram EmployeesB {
 	}
 
 	class Employee {
-	  int personId;
+	  Integer personId;
 	  PositionKind kind;
 	}
 
@@ -23,17 +23,17 @@ classdiagram EmployeesB {
 	}
 
 	class Task {
-	  int taskId;
+	  Integer taskId;
 	  Date startDate;
 	  Date endDate;
 	}
 
   class ManagementTask extends Task {
-    int priority;
+    Integer priority;
   }
 
   association [1..*] Employee (assignee) <-> (todo) Task [*];
-  association [1..*] Manager (assignee) -- (todo) ManagementTask [1..*];
+  association [1..*] Manager (assignee) <- (todo) ManagementTask [1..*];
   association [1] ManagementTask (todo) -> (assignee) Manager [1];
 
   association [1] Employee (work) -> Area [1..*];

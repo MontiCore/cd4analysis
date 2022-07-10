@@ -1,7 +1,7 @@
 classdiagram TestA {
 
   class A {
-    int a;
+    Integer a;
   }
 
   class B;

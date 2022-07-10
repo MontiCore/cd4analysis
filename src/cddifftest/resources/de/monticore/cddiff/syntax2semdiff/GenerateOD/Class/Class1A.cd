@@ -15,9 +15,9 @@ classdiagram CD1 {
     Map<Integer, E> myMap;
     Optional<E> myOpt;
     Set<Boolean> mySet;
-//    List<Map<String,Date>> myCombi;
   }
 
   class C;
 
 }
+

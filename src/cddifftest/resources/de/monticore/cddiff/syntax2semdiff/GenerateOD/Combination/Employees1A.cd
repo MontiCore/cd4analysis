@@ -15,12 +15,12 @@ classdiagram EmployeesA {
 	}
 
 	abstract class Person {
-	  int personId;
+	  Integer personId;
 	}
 
 	class Employee extends Person {
 	  PositionKind kind;
-	  List<Long> devices;
+	  String devices;
 	}
 
 	class Manager extends Employee {
@@ -28,18 +28,18 @@ classdiagram EmployeesA {
 	}
 
 	class Task {
-	  int taskId;
+	  Integer taskId;
 	  String taskName;
 	  Date startDate;
 	  Date endDate;
 	}
 
   class ManagementTask extends Task {
-    int priority;
+    Integer priority;
   }
 
   association [1..*] Employee (assignee) <- (todo) Task [*];
-  association [1..*] Manager (assignee) -- (todo) ManagementTask [1..*];
+  association [1..*] Manager (assignee) <- (todo) ManagementTask [1..*];
   association [0..1] ManagementTask (todo) <-> (assignee) Manager [0..1];
 
   association [1] Employee (work) -> Area [1..*];

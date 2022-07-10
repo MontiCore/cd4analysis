@@ -1,7 +1,7 @@
 classdiagram CD1 {
 
   class A {
-    int id;
+    Integer id;
   }
 
   class A1 extends A;

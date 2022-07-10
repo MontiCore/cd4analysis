@@ -1,0 +1,24 @@
+import java.util.*;
+
+classdiagram EmployeesA {
+
+	interface Area ;
+
+	class Company implements Area {
+    Integer id;
+	}
+
+	class Employee;
+
+	class Manager extends Employee;
+
+	class Task;
+
+  class ManagementTask extends Task;
+
+  association [1..*] Employee (assignee) <- (todo) Task [*];
+  association [1..*] Manager (assignee) -- (todo) ManagementTask [1..*];
+  association [0..1] Manager (assignee) <-> (todo) ManagementTask [0..1];
+
+  association [1] Employee (work) -> Area [1..*];
+}
