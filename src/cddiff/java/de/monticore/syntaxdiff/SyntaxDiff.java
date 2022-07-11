@@ -3,8 +3,11 @@ package de.monticore.syntaxdiff;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 
@@ -13,7 +16,7 @@ import java.util.*;
 /**
  * Main class of the syntax diff calculation, combines all diff types and provide multiple functions to access and print
  */
-public class SyntaxDiff {
+public class SyntaxDiff implements CDSyntaxDiff{
 
   List<ClassDiff> matchedClassList;
   List<ASTCDClass> deletedClasses;
@@ -22,6 +25,10 @@ public class SyntaxDiff {
   List<AssoDiff> matchedAssos;
   List<ASTCDAssociation> deletedAssos;
   List<ASTCDAssociation> addedAssos;
+
+  List<InterfaceDiff> matchedInterfacesList;
+  List<ASTCDInterface> deletedInterfaces;
+  List<ASTCDInterface> addedInterfaces;
 
   public enum Op { CHANGE, ADD, DELETE}
   public enum Interpretation {REDUCED, REFINED, REVERSED, SUPERTYPE, SUBTYPE, RENAME, RELOCATION, REFINEMENT
@@ -56,6 +63,31 @@ public class SyntaxDiff {
     return deletedAssos;
   }
 
+  @Override
+  public List<InterfaceDiff> getMatchedInterfaces() {
+    return matchedInterfacesList;
+  }
+
+  @Override
+  public List<ASTCDInterface> getAddedInterfaces() {
+    return addedInterfaces;
+  }
+
+  @Override
+  public List<ASTCDInterface> getDeletedInterfaces() {
+    return deletedInterfaces;
+  }
+
+  @Override
+  public List<ASTCDEnum> getAddedEnums() {
+    return null;
+  }
+
+  @Override
+  public List<ASTCDEnum> getDeletedEnums() {
+    return null;
+  }
+
   // Todo: Add json file creator
   public SyntaxDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2){
 
@@ -74,6 +106,10 @@ public class SyntaxDiff {
     List<ASTCDClass> cd1ClassesList = cd1.getCDDefinition().getCDClassesList();
     List<ASTCDClass> cd2ClassesList = cd2.getCDDefinition().getCDClassesList();
 
+    // Interfaces
+    List<ASTCDInterface> cd1InterfacesList = cd1.getCDDefinition().getCDInterfacesList();
+    List<ASTCDInterface> cd2InterfacesList = cd2.getCDDefinition().getCDInterfacesList();
+
     // Associations
     List<ASTCDAssociation> cd1AssociationsList = cd1.getCDDefinition().getCDAssociationsList();
     List<ASTCDAssociation> cd2AssociationsList = cd2.getCDDefinition().getCDAssociationsList();
@@ -84,9 +120,15 @@ public class SyntaxDiff {
     this.deletedClasses = absentClassList(getMatchedClassList(), cd1ClassesList);
     this.addedClasses = absentClassList(getMatchedClassList(), cd2ClassesList);
 
+    // Create Interface Match
+
+    this.matchedInterfacesList = getInterfaceMatchingList(getInterfacesDiffList(cd1InterfacesList, cd2InterfacesList));
+    this.deletedInterfaces = absentInterfaceList(getMatchedInterfaces(), cd1InterfacesList);
+    this.addedInterfaces = absentInterfaceList(getMatchedInterfaces(), cd2InterfacesList);
 
     StringBuilder initial = new StringBuilder();
     StringBuilder classPrints = new StringBuilder();
+    StringBuilder interfacePrints = new StringBuilder();
     StringBuilder assoPrints = new StringBuilder();
 
     initial.append(System.lineSeparator())
@@ -103,6 +145,10 @@ public class SyntaxDiff {
       classPrints.append(x.print()).append(System.lineSeparator());
     }
 
+    for (InterfaceDiff x : matchedInterfacesList) {
+      interfacePrints.append(x.print()).append(System.lineSeparator());
+    }
+
     // Create Association Match
     this.matchedAssos = getAssoMatchingList(getAssoDiffList(cd1AssociationsList, cd2AssociationsList));
     this.deletedAssos = absentAssoList(matchedAssos, cd1AssociationsList);
@@ -114,7 +160,7 @@ public class SyntaxDiff {
     }
 
 
-    if (!addedClasses.isEmpty()){
+    if (!deletedClasses.isEmpty()){
       classPrints.append("Line Deleted Classes from CD1 (")
         .append(cd1.getCDDefinition().getName())
         .append(") :")
@@ -173,10 +219,40 @@ public class SyntaxDiff {
       }
     }
 
+    if (!deletedInterfaces.isEmpty()){
+      interfacePrints.append("Line Deleted Interface from CD1 (")
+        .append(cd1.getCDDefinition().getName())
+        .append(") :")
+        .append(System.lineSeparator());
+
+      for (ASTCDInterface a : deletedInterfaces) {
+        interfacePrints.append(a.get_SourcePositionStart().getLine())
+          .append("   ")
+          .append(BOLD_RED)
+          .append(pp.prettyprint((ASTCDBasisNode) a))
+          .append(RESET);
+      }
+    }
+
+    if (!addedInterfaces.isEmpty()){
+      interfacePrints.append("Line Added Interface to CD2 (")
+        .append(cd2.getCDDefinition().getName())
+        .append(") :")
+        .append(System.lineSeparator());
+
+      for (ASTCDInterface a : addedInterfaces) {
+        interfacePrints.append(a.get_SourcePositionStart().getLine())
+          .append("   ")
+          .append(BOLD_GREEN)
+          .append(pp.prettyprint((ASTCDBasisNode) a))
+          .append(RESET);
+      }
+    }
 
     StringBuilder outPutAll = new StringBuilder();
     outPutAll.append(initial)
       .append(classPrints)
+      .append(interfacePrints)
       .append(assoPrints);
 
     this.outPutAll = outPutAll;
@@ -270,6 +346,54 @@ public class SyntaxDiff {
     }
     return matchedElements;
   }
+
+  public static List<List<InterfaceDiff>> getInterfacesDiffList(List<ASTCDInterface> cd1List, List<ASTCDInterface> cd2List) {
+    List<List<InterfaceDiff>> matches = new ArrayList<>();
+
+    for (ASTCDInterface cd1Class : cd1List) {
+
+      // Create a new list for each class
+      List<InterfaceDiff> cd1diffs = new ArrayList<>();
+      for (ASTCDInterface cd2Element : cd2List) {
+        // Diff list for the compared classes
+        cd1diffs.add(new InterfaceDiff(cd1Class, cd2Element));
+      }
+      // Sort by size of diffs, ascending
+      cd1diffs.sort(Comparator.comparing(InterfaceDiff::getDiffSize));
+
+      matches.add(cd1diffs);
+    }
+    return matches;
+  }
+  protected static List<InterfaceDiff> getInterfaceMatchingList(List<List<InterfaceDiff>> elementsDiffList){
+    List<ASTCDInterface> cd1matchedElements = new ArrayList<>();
+    List<ASTCDInterface> cd2matchedElements = new ArrayList<>();
+    List<InterfaceDiff> matchedElements = new ArrayList<>();
+
+    for (List<InterfaceDiff> currentElementList: elementsDiffList){
+      double threshold = 0;
+      OptionalDouble optAverage = currentElementList.stream()
+        .mapToDouble(InterfaceDiff::getDiffSize)
+        .average();
+      if (optAverage.isPresent()) {
+        threshold = optAverage.getAsDouble() / 2;
+      }
+      if (!currentElementList.isEmpty()) {
+        InterfaceDiff currentElementDiff = currentElementList.get(0);
+        ASTCDInterface cd1Element = currentElementDiff.getCd1Element();
+        ASTCDInterface cd2Element = currentElementDiff.getCd2Element();
+        if (!cd1matchedElements.contains(cd1Element) && !cd2matchedElements.contains(cd2Element)){
+          // Todo: Check if there is a match to the target attribute with a smaller diff size
+          if (currentElementDiff.getDiffSize() <= threshold){
+            matchedElements.add(currentElementDiff);
+            cd1matchedElements.add(cd1Element);
+            cd2matchedElements.add(cd2Element);
+          }
+        }
+      }
+    }
+    return matchedElements;
+  }
   protected static List<AssoDiff> getAssoMatchingList(List<List<AssoDiff>> elementsDiffList){
     List<ASTCDAssociation> cd1matchedElements = new ArrayList<>();
     List<ASTCDAssociation> cd2matchedElements = new ArrayList<>();
@@ -322,6 +446,22 @@ public class SyntaxDiff {
     for (ASTCDAssociation element: elementList){
       boolean found = false;
       for (AssoDiff diff : matchs){
+        if (diff.getCd1Element().deepEquals(element) || diff.getCd2Element().deepEquals(element)){
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        output.add(element);
+      }
+    }
+    return output;
+  }
+  protected static List<ASTCDInterface> absentInterfaceList(List<InterfaceDiff> matchs, List<ASTCDInterface> elementList){
+    List<ASTCDInterface> output = new ArrayList<>();
+    for (ASTCDInterface element: elementList){
+      boolean found = false;
+      for (InterfaceDiff diff : matchs){
         if (diff.getCd1Element().deepEquals(element) || diff.getCd2Element().deepEquals(element)){
           found = true;
           break;

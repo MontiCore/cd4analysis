@@ -1,5 +1,6 @@
 package de.monticore.syntaxdiff;
 
+import de.monticore.ast.ASTCNode;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -89,12 +90,14 @@ public abstract class AbstractDiffType {
     if (diff.getOperation().isPresent()) {
       if (diff.getOperation().get().equals(SyntaxDiff.Op.DELETE)) {
         return COLOR_DELETE;
-      }else if (diff.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
+      } else if (diff.getOperation().get().equals(SyntaxDiff.Op.ADD)) {
         return COLOR_ADD;
+      } else if (diff.getOperation().get().equals(SyntaxDiff.Op.CHANGE)) {
+        return COLOR_CHANGE;
       }
     }
-    // Operation is 'change'
-    return COLOR_CHANGE;
+    // No Operation
+    return RESET;
   }
 
   protected static double addWeightToDiffSize(List<FieldDiff<? extends ASTNode>> diffList) {
@@ -115,6 +118,4 @@ public abstract class AbstractDiffType {
     }
     return size;
   }
-
-
 }

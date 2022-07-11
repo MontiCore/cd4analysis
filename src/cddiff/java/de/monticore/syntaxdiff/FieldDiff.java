@@ -1,7 +1,10 @@
 package de.monticore.syntaxdiff;
 
+import de.monticore.ast.ASTCNode;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
 import de.monticore.cdassociation._ast.*;
@@ -10,6 +13,7 @@ import de.monticore.cdbasis._ast.ASTCDExtendUsage;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.syntaxdiff.SyntaxDiff.Op;
 import de.monticore.syntaxdiff.SyntaxDiff.Interpretation;
+import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -130,6 +134,18 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
    */
   private void setInterpretation(){
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
+    if(cd1Value.isPresent() && cd1Value.get() instanceof ASTCDBasisNode){
+      this.cd1pp = pp.prettyprint((ASTCDBasisNode) cd1Value.get());
+    }
+    if(cd2Value.isPresent() && cd2Value.get() instanceof ASTCDBasisNode){
+      this.cd2pp = pp.prettyprint((ASTCDBasisNode) cd2Value.get());
+    }
+    if(cd1Value.isPresent() && cd1Value.get() instanceof ASTMCBasicTypesNode){
+      this.cd1pp = pp.prettyprint((ASTMCBasicTypesNode) cd1Value.get());
+    }
+    if(cd2Value.isPresent() && cd2Value.get() instanceof ASTMCBasicTypesNode){
+      this.cd2pp = pp.prettyprint((ASTMCBasicTypesNode) cd2Value.get());
+    }
     if (cd1Value.isPresent()){
       if(cd1Value.get() instanceof ASTCDOrdered){
         this.cd1pp = pp.prettyprint((ASTCDOrdered) cd1Value.get());
@@ -200,7 +216,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
         }
       }
       if(cd1Value.get() instanceof ASTMCQualifiedName){
-        this.cd1pp = pp.prettyprint((ASTMCQualifiedName) cd1Value.get());
         this.interpretation = Interpretation.RENAME;
       }
       if(cd1Value.get() instanceof ASTCDQualifier){
@@ -253,9 +268,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
       if(cd1Value.get() instanceof ASTCDExtendUsage){
         this.cd1pp = pp.prettyprint((ASTCDExtendUsage) cd1Value.get());
       }
-      if(cd1Value.get() instanceof ASTMCType){
-        this.cd1pp = pp.prettyprint((ASTMCType) cd1Value.get());
-      }
       if(cd1Value.get() instanceof ASTCDAttribute){
         this.cd1pp = pp.prettyprint((ASTCDAttribute) cd1Value.get());
         this.interpretation = Interpretation.RENAME;
@@ -268,9 +280,7 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
           this.interpretation = Interpretation.DEFAULTVALUECHANGED;
         }
       }
-      if(cd1Value.get() instanceof ASTMCReturnType){
-        this.cd1pp = pp.prettyprint((ASTMCReturnType) cd1Value.get());
-      }
+
       if(cd1Value.get() instanceof ASTCDThrowsDeclaration){
         this.cd1pp = pp.prettyprint((ASTCDThrowsDeclaration) cd1Value.get());
       }
@@ -304,9 +314,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
           this.interpretation = Interpretation.RESTRICT_INTERVAL;
         }
       }
-      if(cd2Value.get() instanceof ASTMCQualifiedName){
-        this.cd2pp = pp.prettyprint((ASTMCQualifiedName) cd2Value.get());
-      }
       if(cd2Value.get() instanceof ASTCDQualifier){
         this.cd2pp = pp.prettyprint((ASTCDQualifier) cd2Value.get());
       }
@@ -325,7 +332,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
         this.cd2pp = pp.prettyprint((ASTCDExtendUsage) cd2Value.get());
       }
       if(cd2Value.get() instanceof ASTMCType){
-        this.cd2pp = pp.prettyprint((ASTMCType) cd2Value.get());
         this.interpretation = Interpretation.TYPECHANGE;
         //Todo: check for Sub/Supertype
       }
@@ -337,9 +343,6 @@ public class FieldDiff<ASTNodeType extends ASTNode> {
         if (!cd1Value.isPresent()){
           this.interpretation = Interpretation.DEFAULTVALUE_ADDED;
         }
-      }
-      if(cd2Value.get() instanceof ASTMCReturnType){
-        this.cd2pp = pp.prettyprint((ASTMCReturnType) cd2Value.get());
       }
       if(cd2Value.get() instanceof ASTCDThrowsDeclaration){
         this.cd2pp = pp.prettyprint((ASTCDThrowsDeclaration) cd2Value.get());

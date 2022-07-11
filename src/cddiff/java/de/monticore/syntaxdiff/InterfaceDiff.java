@@ -1,29 +1,29 @@
 package de.monticore.syntaxdiff;
 
-  import de.monticore.ast.ASTNode;
-  import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
-  import de.monticore.cd4codebasis._ast.ASTCDConstructor;
-  import de.monticore.cd4codebasis._ast.ASTCDMethod;
-  import de.monticore.cd4codebasis._ast.ASTCDParameter;
-  import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
-  import de.monticore.cdbasis._ast.ASTCDAttribute;
-  import de.monticore.cdbasis._ast.ASTCDBasisNode;
-  import de.monticore.cdbasis._ast.ASTCDClass;
-  import de.monticore.cdbasis._ast.ASTCDExtendUsage;
-  import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-  import de.monticore.ow2cw.CDInheritanceHelper;
-  import de.monticore.prettyprint.IndentPrinter;
-  import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-  import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-  import de.monticore.types.mcbasictypes._ast.ASTMCType;
-  import de.monticore.umlmodifier._ast.ASTModifier;
-  import de.monticore.syntaxdiff.FieldDiff;
-  import de.monticore.syntaxdiff.SyntaxDiff;
+import de.monticore.ast.ASTNode;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4codebasis._ast.ASTCDConstructor;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDParameter;
+import de.monticore.cd4codebasis._ast.ASTCDThrowsDeclaration;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDBasisNode;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDExtendUsage;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.umlmodifier._ast.ASTModifier;
+import de.monticore.syntaxdiff.FieldDiff;
+import de.monticore.syntaxdiff.SyntaxDiff;
 
-  import java.util.ArrayList;
-  import java.util.Comparator;
-  import java.util.List;
-  import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -31,112 +31,112 @@ package de.monticore.syntaxdiff;
  * Use the constructor to create a diff between two classes
  * This diff type contains information extracted from the provided classes
  */
-  public class ClassDiff extends AbstractDiffType{
-    protected final ASTCDClass cd1Element;
+public class InterfaceDiff extends AbstractDiffType{
+  protected final ASTCDInterface cd1Element;
 
-    protected final ASTCDClass cd2Element;
+  protected final ASTCDInterface cd2Element;
 
-    protected double diffSize;
+  protected double diffSize;
 
-    protected List<FieldDiff<? extends ASTNode>> diffList;
+  protected List<FieldDiff<? extends ASTNode>> diffList;
 
-    protected List<ElementDiff<ASTCDAttribute>> matchedAttributesList;
-    protected List<ASTCDAttribute> deleletedAttributes;
-    protected List<ASTCDAttribute> addedAttributes;
+  protected List<ElementDiff<ASTCDAttribute>> matchedAttributesList;
+  protected List<ASTCDAttribute> deleletedAttributes;
+  protected List<ASTCDAttribute> addedAttributes;
 
-    protected List<ElementDiff<ASTCDMethod>> matchedMethodeList;
-    protected List<ASTCDMethod> deleletedMethodes;
-    protected List<ASTCDMethod> addedMethode;
+  protected List<ElementDiff<ASTCDMethod>> matchedMethodeList;
+  protected List<ASTCDMethod> deleletedMethodes;
+  protected List<ASTCDMethod> addedMethode;
 
-    protected List<ElementDiff<ASTCDConstructor>> matchedConstructorList;
-    protected List<ASTCDConstructor> deleletedConstructor;
-    protected List<ASTCDConstructor> addedConstructor;
+  protected List<ElementDiff<ASTCDConstructor>> matchedConstructorList;
+  protected List<ASTCDConstructor> deleletedConstructor;
+  protected List<ASTCDConstructor> addedConstructor;
 
-    public List<ElementDiff<ASTCDAttribute>> getMatchedAttributesList() {
+  public List<ElementDiff<ASTCDAttribute>> getMatchedAttributesList() {
     return matchedAttributesList;
   }
 
-    public List<ASTCDAttribute> getDeleletedAttributes() {
+  public List<ASTCDAttribute> getDeleletedAttributes() {
     return deleletedAttributes;
   }
 
-    public List<ASTCDAttribute> getAddedAttributes() {
+  public List<ASTCDAttribute> getAddedAttributes() {
     return addedAttributes;
   }
 
-    public ASTCDClass getCd1Element() {
-      return cd1Element;
-    }
+  public ASTCDInterface getCd1Element() {
+    return cd1Element;
+  }
 
-    public ASTCDClass getCd2Element() {
-      return cd2Element;
-    }
+  public ASTCDInterface getCd2Element() {
+    return cd2Element;
+  }
 
-    public double getDiffSize() {
-      return diffSize;
-    }
+  public double getDiffSize() {
+    return diffSize;
+  }
 
-    public List<FieldDiff<? extends ASTNode>> getDiffList() {
-      return diffList;
-    }
+  public List<FieldDiff<? extends ASTNode>> getDiffList() {
+    return diffList;
+  }
 
   /**
    * Constructor of the class diff type
    * @param cd1Element Class from the original model
    * @param cd2Element Class from the target(new) model
    */
-    public ClassDiff(ASTCDClass cd1Element, ASTCDClass cd2Element) {
-      this.cd1Element = cd1Element;
-      this.cd2Element = cd2Element;
+  public InterfaceDiff(ASTCDInterface cd1Element, ASTCDInterface cd2Element) {
+    this.cd1Element = cd1Element;
+    this.cd2Element = cd2Element;
 
-      // Set the required parts for diff size calculation
-      classDiff(cd1Element, cd2Element);
+    // Set the required parts for diff size calculation
+    interfaceDiff(cd1Element, cd2Element);
 
-      this.diffSize = calculateDiffSize();
-    }
+    this.diffSize = calculateDiffSize();
+  }
   /**
    * Calculation of the diff size between the given classes, automaticly calculated on object creation
    * Name changes are weighted more and each member(attribute/methodes/...) add at most one to the size
    * @return Diff size as double
    */
-    private double calculateDiffSize(){
-      //Diff size of signature
-      double size = diffList.size();
+  private double calculateDiffSize(){
+    //Diff size of signature
+    double size = diffList.size();
 
-      // Diff size of attributes (amounts to max ~ 1)
-      for (ElementDiff<ASTCDAttribute> i : matchedAttributesList){
-        if (i.getCd1Element().isPresentInitial()){
-          size += i.getDiffSize()/4.0;
-        }else {
-          size += i.getDiffSize()/3.0;
-        }
+    // Diff size of attributes (amounts to max ~ 1)
+    for (ElementDiff<ASTCDAttribute> i : matchedAttributesList){
+      if (i.getCd1Element().isPresentInitial()){
+        size += i.getDiffSize()/4.0;
+      }else {
+        size += i.getDiffSize()/3.0;
       }
-      size += deleletedAttributes.size() + addedAttributes.size();
-
-      //Todo: Add Parameter Diff to size calculation
-      //Diff size of methodes
-      for (ElementDiff<ASTCDMethod> i : matchedMethodeList){
-        if (i.getCd1Element().isPresentCDThrowsDeclaration()){
-          size += i.getDiffSize()/4.0;
-        }else {
-          size += i.getDiffSize()/3.0;
-        }
-      }
-      size += deleletedMethodes.size() + addedMethode.size();
-
-      // Diff size of constructors
-      for (ElementDiff<ASTCDConstructor> i : matchedConstructorList){
-        if (i.getCd1Element().isPresentCDThrowsDeclaration()){
-          size += i.getDiffSize()/4.0;
-        }else {
-          size += i.getDiffSize()/3.0;
-        }
-      }
-      size += deleletedConstructor.size() + addedConstructor.size();
-      size += addWeightToDiffSize(diffList);
-
-      return size;
     }
+    size += deleletedAttributes.size() + addedAttributes.size();
+
+    //Todo: Add Parameter Diff to size calculation
+    //Diff size of methodes
+    for (ElementDiff<ASTCDMethod> i : matchedMethodeList){
+      if (i.getCd1Element().isPresentCDThrowsDeclaration()){
+        size += i.getDiffSize()/4.0;
+      }else {
+        size += i.getDiffSize()/3.0;
+      }
+    }
+    size += deleletedMethodes.size() + addedMethode.size();
+
+    // Diff size of constructors
+    for (ElementDiff<ASTCDConstructor> i : matchedConstructorList){
+      if (i.getCd1Element().isPresentCDThrowsDeclaration()){
+        size += i.getDiffSize()/4.0;
+      }else {
+        size += i.getDiffSize()/3.0;
+      }
+    }
+    size += deleletedConstructor.size() + addedConstructor.size();
+    size += addWeightToDiffSize(diffList);
+
+    return size;
+  }
 
   /**
    * Main method of this class, calculates the differences between both classes using checks between every field
@@ -144,7 +144,7 @@ package de.monticore.syntaxdiff;
    * @param cd1Class Class from the original model
    * @param cd2Class Class from the target(new) model
    */
-  private void classDiff(ASTCDClass cd1Class, ASTCDClass cd2Class) {
+  private void interfaceDiff(ASTCDInterface cd1Class, ASTCDInterface cd2Class) {
     List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
 
     // Modifier, non-optional
@@ -157,7 +157,7 @@ package de.monticore.syntaxdiff;
 
     // Class Name, non-optional (always a String therefore return the full class)
     if (!cd1Class.getName().equals(cd2Class.getName())){
-      FieldDiff<ASTCDClass> className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Class), Optional.of(cd2Class));
+      FieldDiff<ASTCDInterface> className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, Optional.of(cd1Class), Optional.of(cd2Class));
       diffs.add(className);
     }
 
@@ -168,6 +168,7 @@ package de.monticore.syntaxdiff;
     if (classExtended.isPresent()){
       diffs.add(classExtended);
     }
+
 
     // Todo: add inherited methods and attributes
 
@@ -295,8 +296,8 @@ package de.monticore.syntaxdiff;
 
     // ASTMCReturnType, non-optional
     FieldDiff<ASTMCReturnType> methodeReturnType = new FieldDiff<>(
-        Optional.of(cd1Member.getMCReturnType()),
-        Optional.of(cd2Member.getMCReturnType()));
+      Optional.of(cd1Member.getMCReturnType()),
+      Optional.of(cd2Member.getMCReturnType()));
     if (methodeReturnType.isPresent()){
       diffs.add(methodeReturnType);
     }
@@ -398,8 +399,8 @@ package de.monticore.syntaxdiff;
     StringBuilder output = new StringBuilder();
     StringBuilder interpretation = new StringBuilder();
     interpretation.append("Interpretation: ");
-    String cd1Class = pp.prettyprint(this.getCd1Element());
-    String cd2Class = pp.prettyprint(this.getCd2Element());
+    String cd1Class = pp.prettyprint((ASTCDBasisNode) this.getCd1Element());
+    String cd2Class = pp.prettyprint((ASTCDBasisNode) this.getCd2Element());
 
 
 
@@ -546,4 +547,4 @@ package de.monticore.syntaxdiff;
 
     return output;
   }
-  }
+}
