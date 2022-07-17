@@ -4,10 +4,7 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static de.monticore.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.distinguishASTCDTypeHelper;
 import static de.monticore.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.getCDTypeWrapperKindStrHelper;
@@ -31,6 +28,10 @@ public class CDTypeWrapper implements Cloneable {
   protected ASTCDType editedElement;
 
   protected Set<String> cDWrapperLink4EnumClass = new HashSet<>();
+
+  protected Set<String> superclasses = new LinkedHashSet<>();
+
+  protected Set<String> subclasses = new LinkedHashSet<>();
 
   public CDTypeWrapper(ASTCDType originalElement) {
     this.originalElement = originalElement;
@@ -63,7 +64,7 @@ public class CDTypeWrapper implements Cloneable {
    */
   public Map<String, String> getAttributes() {
     Map<String, String> attributesMap = new HashMap<>();
-    if (editedElement.getClass().equals(ASTCDEnum.class)) {
+    if (editedElement instanceof ASTCDEnum) {
       ((ASTCDEnum) editedElement).getCDEnumConstantList()
           .forEach(e -> attributesMap.put(e.getName(), null));
     }
@@ -89,6 +90,22 @@ public class CDTypeWrapper implements Cloneable {
 
   public ASTCDType getEditedElement() {
     return editedElement;
+  }
+
+  public Set<String> getSuperclasses() {
+    return superclasses;
+  }
+
+  public void setSuperclasses(Set<String> superclasses) {
+    this.superclasses = superclasses;
+  }
+
+  public Set<String> getSubclasses() {
+    return subclasses;
+  }
+
+  public void setSubclasses(Set<String> subclasses) {
+    this.subclasses = subclasses;
   }
 
   @Override

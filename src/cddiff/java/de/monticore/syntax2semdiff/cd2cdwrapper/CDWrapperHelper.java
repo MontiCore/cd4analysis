@@ -661,17 +661,20 @@ public class CDWrapperHelper {
   /**
    * getting inherited CDTypeWrapper name by given CDTypeWrapper name
    */
-  public static Set<String> getInheritedClassSet(MutableGraph<String> inheritanceGraph,
+  public static LinkedHashSet<String> getInheritedClassSet(MutableGraph<String> inheritanceGraph,
       String cDTypeWrapperName) {
-    Set<String> result = new HashSet<>();
+    LinkedHashSet<String> result = new LinkedHashSet<>();
     result.add(cDTypeWrapperName);
     Deque<String> currentCDTypeWrapperNameQueue = new LinkedList<>();
     currentCDTypeWrapperNameQueue.offer(cDTypeWrapperName);
-    while (!inheritanceGraph.predecessors(currentCDTypeWrapperNameQueue.peek()).isEmpty()) {
-      inheritanceGraph.predecessors(currentCDTypeWrapperNameQueue.poll()).forEach(e -> {
-        result.add(e);
-        currentCDTypeWrapperNameQueue.offer(e);
-      });
+    while (!currentCDTypeWrapperNameQueue.isEmpty()) {
+      String currentNode = currentCDTypeWrapperNameQueue.poll();
+      if (!inheritanceGraph.predecessors(currentNode).isEmpty()) {
+        inheritanceGraph.predecessors(currentNode).forEach(e -> {
+          result.add(e);
+          currentCDTypeWrapperNameQueue.offer(e);
+        });
+      }
     }
     return result;
   }
@@ -679,27 +682,45 @@ public class CDWrapperHelper {
   /**
    * getting super CDTypeWrapper name by given CDTypeWrapper name
    */
-  public static Set<String> getSuperClassSet(MutableGraph<String> inheritanceGraph,
+  public static LinkedHashSet<String> getSuperClassSet(MutableGraph<String> inheritanceGraph,
       String cDTypeWrapperName) {
-    Set<String> result = new HashSet<>();
-    result.add(cDTypeWrapperName);
+    List<String> temp = new ArrayList<>();
     Deque<String> currentCDTypeWrapperNameQueue = new LinkedList<>();
     currentCDTypeWrapperNameQueue.offer(cDTypeWrapperName);
-    while (!inheritanceGraph.successors(currentCDTypeWrapperNameQueue.peek()).isEmpty()) {
-      inheritanceGraph.successors(currentCDTypeWrapperNameQueue.poll()).forEach(e -> {
-        result.add(e);
-        currentCDTypeWrapperNameQueue.offer(e);
-      });
+    temp.add(cDTypeWrapperName);
+    while (!currentCDTypeWrapperNameQueue.isEmpty()) {
+      String currentNode = currentCDTypeWrapperNameQueue.poll();
+      if (!inheritanceGraph.successors(currentNode).isEmpty()) {
+        inheritanceGraph.successors(currentNode).forEach(e -> {
+          temp.add(e);
+          currentCDTypeWrapperNameQueue.offer(e);
+        });
+      }
     }
+    Collections.reverse(temp);
+    LinkedHashSet<String> result = new LinkedHashSet<>();
+    temp.forEach(e -> result.add(e));
+    return result;
+  }
+
+  /**
+   * return all superclasses about given CDTypeWrapper expect abstract class and interface
+   */
+  public static Set<CDTypeWrapper> getAllSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
+      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
+    Set<CDTypeWrapper> result = new LinkedHashSet<>();
+    inheritanceGraph.successors(cDTypeWrapper.getName()).forEach(e -> {
+      result.add(cDTypeWrapperGroup.get(e));
+    });
     return result;
   }
 
   /**
    * return all subclasses about given CDTypeWrapper expect abstract class and interface
    */
-  public static List<CDTypeWrapper> getAllSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
+  public static Set<CDTypeWrapper> getAllSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
-    List<CDTypeWrapper> result = new LinkedList<>();
+    Set<CDTypeWrapper> result = new LinkedHashSet<>();
     inheritanceGraph.predecessors(cDTypeWrapper.getName()).forEach(e -> {
       result.add(cDTypeWrapperGroup.get(e));
     });

@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 import static de.monticore.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
 public class CD2CDWrapperGenerator {
-  protected Map<String, CDTypeWrapper> CDTypeWrapperGroup = new HashMap<>();
-  protected Map<String, CDAssociationWrapper> CDAssociationWrapperGroup = new HashMap<>();
+  protected Map<String, CDTypeWrapper> cDTypeWrapperGroup = new HashMap<>();
+  protected Map<String, CDAssociationWrapper> cDAssociationWrapperGroup = new HashMap<>();
   protected MutableGraph<String> inheritanceGraph = GraphBuilder.directed().build();
   protected Map<String, Set<String>> enumClassMap = new HashMap<>();
 
@@ -39,15 +39,16 @@ public class CD2CDWrapperGenerator {
     createCDTypeWrapperForEnum(cd, scope);
     createCDAssociationWrapper(cd);
     solveInheritance();
+    solveSuperclassesAndSubclasses();
     solveOverlap();
 
     CDWrapper.setModel(cd);
     CDWrapper.setType(type);
-    CDWrapper.setCDTypeWrapperGroup(CDTypeWrapperGroup);
-    CDWrapper.setCDAssociationWrapperGroup(CDAssociationWrapperGroup);
+    CDWrapper.setCDTypeWrapperGroup(cDTypeWrapperGroup);
+    CDWrapper.setCDAssociationWrapperGroup(cDAssociationWrapperGroup);
     CDWrapper.setInheritanceGraph(inheritanceGraph);
     CDWrapper.setRefSetAssociationList(
-        createCDRefSetAssociationWrapper(CDAssociationWrapperGroup, inheritanceGraph));
+        createCDRefSetAssociationWrapper(cDAssociationWrapperGroup, inheritanceGraph));
     return CDWrapper;
   }
 
@@ -64,7 +65,7 @@ public class CD2CDWrapperGenerator {
 
     for (ASTCDType astcdType : astcdClassList) {
       CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astcdEnumList);
-      CDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
+      cDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
     }
   }
 
@@ -77,7 +78,7 @@ public class CD2CDWrapperGenerator {
 
     for (ASTCDType astcdType : astcdInterfaceList) {
       CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astcdEnumList);
-      CDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
+      cDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
     }
   }
 
@@ -89,7 +90,7 @@ public class CD2CDWrapperGenerator {
 
     for (ASTCDType astcdType : astcdEnumList) {
       CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astcdEnumList);
-      CDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
+      cDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
     }
   }
 
@@ -100,7 +101,7 @@ public class CD2CDWrapperGenerator {
   public CDTypeWrapper createCDTypeWrapperHelper(ASTCDType astcdType, ICD4CodeArtifactScope scope, List<ASTCDEnum> astcdEnumList) {
     CDTypeWrapper cDTypeWrapper = new CDTypeWrapper(astcdType);
 
-    if (!astcdType.getClass().equals(ASTCDEnum.class)) {
+    if (!(astcdType instanceof ASTCDEnum)) {
 
       // create InheritanceGraph
       Set<ASTCDType> directSuperSet = CDInheritanceHelper.getDirectSuperClasses(astcdType, scope);
@@ -117,6 +118,8 @@ public class CD2CDWrapperGenerator {
         }
       }
     } else {
+      // add EnumClass into InheritanceGraph
+      createInheritanceGraph(astcdType);
       // add CDWrapperLink4EnumClass
       cDTypeWrapper.setCDWrapperLink4EnumClass(enumClassMap.get(cDTypeWrapper.getName()));
     }
@@ -148,6 +151,16 @@ public class CD2CDWrapperGenerator {
     });
   }
 
+  /**
+   * create inheritance graph
+   * add Enum class
+   */
+  public void createInheritanceGraph(ASTCDType astcdType) {
+    String enumClass =
+        getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(astcdType)) + "_" + astcdType.getSymbol().getFullName();
+    inheritanceGraph.addNode(enumClass);
+  }
+
   /********************************************************************
    ********************* Start for Association ************************
    *******************************************************************/
@@ -170,10 +183,10 @@ public class CD2CDWrapperGenerator {
     astcdAssociation = generateASTCDAssociationRoleName(astcdAssociation);
     CDAssociationWrapper currentAssoc = new CDAssociationWrapper(astcdAssociation, isInherited);
     currentAssoc.setCDWrapperLeftClass(
-      findCDTypeWrapper4OriginalClassName(CDTypeWrapperGroup, currentAssoc.getLeftOriginalClassName()));
+      findCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getLeftOriginalClassName()));
     currentAssoc.setCDWrapperRightClass(
-      findCDTypeWrapper4OriginalClassName(CDTypeWrapperGroup, currentAssoc.getRightOriginalClassName()));
-    CDAssociationWrapperGroup.put(currentAssoc.getName(), currentAssoc);
+      findCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getRightOriginalClassName()));
+    cDAssociationWrapperGroup.put(currentAssoc.getName(), currentAssoc);
   }
 
   /********************************************************************
@@ -190,13 +203,13 @@ public class CD2CDWrapperGenerator {
     CDWrapperHelper CDWrapperHelper = new CDWrapperHelper();
     getAllBottomCDTypeWrapperNode(inheritanceGraph).forEach(cDTypeWrapperName ->
       waitList.addAll(
-        CDWrapperHelper.getAllInheritancePath4CDTypeWrapper(CDTypeWrapperGroup.get(cDTypeWrapperName), inheritanceGraph)));
+        CDWrapperHelper.getAllInheritancePath4CDTypeWrapper(cDTypeWrapperGroup.get(cDTypeWrapperName), inheritanceGraph)));
     waitList.forEach(path -> {
       if (path.size() > 1) {
 
         for (int i = 0; i < path.size() - 1; i++) {
-          CDTypeWrapper parent = CDTypeWrapperGroup.get(path.get(i));
-          CDTypeWrapper child = CDTypeWrapperGroup.get(path.get(i + 1));
+          CDTypeWrapper parent = cDTypeWrapperGroup.get(path.get(i));
+          CDTypeWrapper child = cDTypeWrapperGroup.get(path.get(i + 1));
 
           // for attributes
           parent.getEditedElement().getCDAttributeList().forEach(e -> {
@@ -219,7 +232,7 @@ public class CD2CDWrapperGenerator {
           String parentOriginalName = parent.getOriginalClassName();
           String childOriginalName = child.getOriginalClassName();
           Map<String, CDAssociationWrapper> associationMap =
-            fuzzySearchCDAssociationWrapperByClassName(CDAssociationWrapperGroup, parentOriginalName);
+            fuzzySearchCDAssociationWrapperByClassName(cDAssociationWrapperGroup, parentOriginalName);
 
           associationMap.forEach((oldName, oldCDAssociationWrapper) -> {
 
@@ -233,7 +246,7 @@ public class CD2CDWrapperGenerator {
             rightClass = rightClass.equals(parentOriginalName) ? childOriginalName : rightClass;
             String newName =
               prefix + "_" + leftClass + "_" + leftRoleName + "_" + direction + "_" + rightRoleName + "_" + rightClass;
-            if (!CDAssociationWrapperGroup.containsKey(newName)) {
+            if (!cDAssociationWrapperGroup.containsKey(newName)) {
               ASTCDAssociation oldASTAssoc = oldCDAssociationWrapper.getOriginalElement();
               ASTCDAssociation newASTAssoc = oldASTAssoc.deepClone();
               CDTypeWrapper leftCDTypeWrapper = oldCDAssociationWrapper.getCDWrapperLeftClass();
@@ -249,7 +262,7 @@ public class CD2CDWrapperGenerator {
               CDAssociationWrapper newCDAssociationWrapper = new CDAssociationWrapper(newASTAssoc, true);
               newCDAssociationWrapper.setCDWrapperLeftClass(leftCDTypeWrapper);
               newCDAssociationWrapper.setCDWrapperRightClass(rightCDTypeWrapper);
-              CDAssociationWrapperGroup.put(newCDAssociationWrapper.getName(),
+              cDAssociationWrapperGroup.put(newCDAssociationWrapper.getName(),
                   newCDAssociationWrapper);
             }
           });
@@ -263,7 +276,7 @@ public class CD2CDWrapperGenerator {
    */
   private void updateCDWrapperEnum() {
     enumClassMap.forEach((k, v) -> {
-      CDTypeWrapper cDWrapperEnum = CDTypeWrapperGroup.get(k);
+      CDTypeWrapper cDWrapperEnum = cDTypeWrapperGroup.get(k);
       cDWrapperEnum.setCDWrapperLink4EnumClass(v);
     });
   }
@@ -277,7 +290,7 @@ public class CD2CDWrapperGenerator {
    */
   private void solveOverlap() {
 
-    Map<String, CDAssociationWrapper> clonedCDAssociationWrapperGroup = CDAssociationWrapperGroup.entrySet()
+    Map<String, CDAssociationWrapper> clonedCDAssociationWrapperGroup = cDAssociationWrapperGroup.entrySet()
       .stream()
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
@@ -285,9 +298,9 @@ public class CD2CDWrapperGenerator {
       if (currentAssoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
         List<CDAssociationWrapperPack> matchedAssocList =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
-              CDAssociationWrapperGroup, currentAssoc);
+              cDAssociationWrapperGroup, currentAssoc);
         if (matchedAssocList.size() > 0) {
-          CDAssociationWrapperGroup.remove(currentAssoc.getName());
+          cDAssociationWrapperGroup.remove(currentAssoc.getName());
           AtomicReference<CDAssociationWrapper> newCDAssocWrapper = new AtomicReference<>(currentAssoc);
 
           matchedAssocList.forEach(e -> {
@@ -303,13 +316,13 @@ public class CD2CDWrapperGenerator {
                 existAssoc.getCDWrapperRightClassCardinality(), newCDAssocWrapper.get().getCDWrapperRightClassCardinality());
               switch (directionResult) {
                 case "current":
-                  CDAssociationWrapperGroup.remove(existAssoc.getName());
+                  cDAssociationWrapperGroup.remove(existAssoc.getName());
                   newCDAssocWrapper.get().setCDWrapperLeftClassCardinality(leftCardinalityResult);
                   newCDAssocWrapper.get().setCDWrapperRightClassCardinality(rightCardinalityResult);
                   newCDAssocWrapper.get().setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
                   break;
                 case "exist":
-                  CDAssociationWrapperGroup.remove(existAssoc.getName());
+                  cDAssociationWrapperGroup.remove(existAssoc.getName());
                   existAssoc.setCDWrapperLeftClassCardinality(leftCardinalityResult);
                   existAssoc.setCDWrapperRightClassCardinality(rightCardinalityResult);
                   existAssoc.setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
@@ -327,13 +340,13 @@ public class CD2CDWrapperGenerator {
                 existAssoc.getCDWrapperLeftClassCardinality(), newCDAssocWrapper.get().getCDWrapperRightClassCardinality());
               switch (directionResult4Current) {
                 case "current":
-                  CDAssociationWrapperGroup.remove(existAssoc.getName());
+                  cDAssociationWrapperGroup.remove(existAssoc.getName());
                   newCDAssocWrapper.get().setCDWrapperLeftClassCardinality(leftCardinalityResult4Current);
                   newCDAssocWrapper.get().setCDWrapperRightClassCardinality(rightCardinalityResult4Current);
                   newCDAssocWrapper.get().setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
                   break;
                 case "exist":
-                  CDAssociationWrapperGroup.remove(existAssoc.getName());
+                  cDAssociationWrapperGroup.remove(existAssoc.getName());
                   existAssoc.setCDWrapperLeftClassCardinality(rightCardinalityResult4Current);
                   existAssoc.setCDWrapperRightClassCardinality(leftCardinalityResult4Current);
                   existAssoc.setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
@@ -345,10 +358,17 @@ public class CD2CDWrapperGenerator {
               }
             }
           });
-          CDAssociationWrapperGroup.put(newCDAssocWrapper.get().getName(), newCDAssocWrapper.get());
+          cDAssociationWrapperGroup.put(newCDAssocWrapper.get().getName(), newCDAssocWrapper.get());
         }
       }
 
+    });
+  }
+
+  private void solveSuperclassesAndSubclasses() {
+    cDTypeWrapperGroup.forEach((cDTypeWrapperName, cDTypeWrapper) -> {
+      cDTypeWrapper.setSuperclasses(getSuperClassSet(inheritanceGraph, cDTypeWrapperName));
+      cDTypeWrapper.setSubclasses(getInheritedClassSet(inheritanceGraph, cDTypeWrapperName));
     });
   }
 
