@@ -46,18 +46,40 @@ public class CDSyntaxDiff2ODGenerator {
     List<ASTODArtifact> ods1 = generateObjectDiagrams(cdw1, cg1, cdSemantics);
     List<ASTODArtifact> ods2 = generateObjectDiagrams(cdw2, cg2, cdSemantics);
     if (ods1.size() == 0 && ods2.size() == 0) {
-      return "Semantic Same";
+      return "\t ********************************************************************* \n" +
+          "\t **************************  Semantic Same  ************************** \n" +
+          "\t ********************************************************************* \n";
     }
     else {
-      result.append("******************************************** \n");
-      result.append("******  SemanticDiff from CD1 to CD2  ****** \n");
-      result.append("******************************************** \n");
+      result.append("\t ******************************************************************** \n");
+      result.append("\t ******************  SemanticDiff from CD1 to CD2  ****************** \n");
+      switch (cdSemantics) {
+        case SIMPLE_CLOSED_WORLD:
+          result.append("\t *********************  in Simple-Closed-World  ********************* \n");
+          break;
+        case MULTI_INSTANCE_CLOSED_WORLD:
+          result.append("\t *****************  in Multi-Instance-Closed-World  ***************** \n");
+          break;
+        default:
+          break;
+      }
+      result.append("\t ******************************************************************** \n");
       for (ASTODArtifact od : ods1) {
         result.append(printOD(od) + '\n');
       }
-      result.append("******************************************** \n");
-      result.append("******  SemanticDiff from CD2 to CD1  ****** \n");
-      result.append("******************************************** \n");
+      result.append("\t ******************************************************************** \n");
+      result.append("\t ******************  SemanticDiff from CD2 to CD1  ****************** \n");
+      switch (cdSemantics) {
+        case SIMPLE_CLOSED_WORLD:
+          result.append("\t *********************  in Simple-Closed-World  ********************* \n");
+          break;
+        case MULTI_INSTANCE_CLOSED_WORLD:
+          result.append("\t *****************  in Multi-Instance-Closed-World  ***************** \n");
+          break;
+        default:
+          break;
+      }
+      result.append("\t ******************************************************************** \n");
       for (ASTODArtifact od : ods2) {
         result.append(printOD(od) + '\n');
       }

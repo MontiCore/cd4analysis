@@ -447,6 +447,11 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
       Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
     }
+
+    List<String> resultList = printOD(ods);
+    for (int i = 0; i < resultList.size(); i++) {
+      System.out.println(resultList.get(i));
+    }
   }
 
   @Test
@@ -466,6 +471,25 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
       Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
     }
+  }
+
+
+  /********************************************************************
+   ******************** Using SyntaxDiff2SemanticDiff *****************
+   *******************************************************************/
+  @Test
+  public void testSyntaxDiff2SemanticDiff() {
+    cd1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+            + "/Employees1A.cd");
+
+    cd2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+            + "/Employees1B.cd");
+
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    String res = odGenerator.SyntaxDiff2SemanticDiff(cd1, cd2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    System.out.println(res);
   }
 
 //  @Test

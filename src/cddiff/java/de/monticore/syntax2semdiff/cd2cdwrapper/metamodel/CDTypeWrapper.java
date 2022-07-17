@@ -21,6 +21,8 @@ import static de.monticore.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.getCDType
  * @attribute cDWrapperLink4EnumClass: This attribute is only suitable for CDWRAPPER_ENUM class. If
  * someone CDTypeWrapper uses Enum in attributes, then this CDTypeWrapper name will be added into
  * this cDWrapperLink4EnumClass attribute of corresponding CDWRAPPER_ENUM class.
+ * @attribute superclasses: store the superclasses (including itself) of this CDTypeWrapper
+ * @attribute subclasses: store the subclasses (including itself) of this CDTypeWrapper
  */
 public class CDTypeWrapper implements Cloneable {
   protected final ASTCDType originalElement;

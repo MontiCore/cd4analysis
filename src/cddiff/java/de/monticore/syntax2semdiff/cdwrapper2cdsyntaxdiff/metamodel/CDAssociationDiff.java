@@ -29,7 +29,7 @@ import static de.monticore.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHel
  *    3. for right cardinality
  * @attribute cDDiffCategory:
  * - has semantic difference:
- *    DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED
+ *    DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED, SUBCLASS_DIFF
  * - has no semantic difference:
  *    ORIGINAL, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_SUBSET
  * @attribute cDDiffDirectionResult:
