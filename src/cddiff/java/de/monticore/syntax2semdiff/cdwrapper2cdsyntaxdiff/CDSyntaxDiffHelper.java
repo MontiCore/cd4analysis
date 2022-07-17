@@ -301,25 +301,32 @@ public class CDSyntaxDiffHelper {
   /**
    * helper for creating CDAssociationDiff without whichPartDiff and the result after comparison
    */
-  public static CDAssociationDiff createCDAssociationDiffHelper(CDAssociationWrapper base,
-      boolean isInCompareCDW, boolean isContentDiff,
+  public static CDAssociationDiff createCDAssociationDiffHelper(
+      CDAssociationWrapper base,
+      boolean isInCompareCDW,
+      boolean isContentDiff,
       CDSyntaxDiff.CDAssociationDiffCategory category) {
-    CDAssociationDiff cDAssociationDiff = new CDAssociationDiff(base, isInCompareCDW, isContentDiff,
-        category);
+    CDAssociationDiff cDAssociationDiff =
+        new CDAssociationDiff(base, isInCompareCDW, isContentDiff, category);
     cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
     cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
     cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
     cDAssociationDiff.setWhichPartDiff(Optional.empty());
+    cDAssociationDiff.setLeftInstanceClass(Optional.empty());
+    cDAssociationDiff.setRightInstanceClass(Optional.empty());
     return cDAssociationDiff;
   }
 
   /**
    * helper for creating CDAssociationDiff with whichPartDiff and the result after comparison
    */
-  public static CDAssociationDiff createCDAssociationDiffHelper(CDAssociationWrapper base,
-      boolean isInCompareCDW, boolean isContentDiff,
+  public static CDAssociationDiff createCDAssociationDiffHelper(
+      CDAssociationWrapper base,
+      boolean isInCompareCDW,
+      boolean isContentDiff,
       CDSyntaxDiff.CDAssociationDiffCategory category,
-      Optional<CDSyntaxDiff.WhichPartDiff> whichPartDiff, Optional<Object> compResult) {
+      Optional<CDSyntaxDiff.WhichPartDiff> whichPartDiff,
+      Optional<Object> compResult) {
     CDAssociationDiff cDAssociationDiff = createCDAssociationDiffHelper(base, isInCompareCDW,
         isContentDiff, category);
     cDAssociationDiff.setWhichPartDiff(whichPartDiff);
@@ -346,6 +353,24 @@ public class CDSyntaxDiffHelper {
           break;
       }
     }
+    return cDAssociationDiff;
+  }
+
+  public static CDAssociationDiff createCDAssociationDiffHelperWithInstanceClass(
+      CDAssociationWrapper base,
+      boolean isInCompareCDW,
+      boolean isContentDiff,
+      CDSyntaxDiff.CDAssociationDiffCategory category,
+      Optional<CDTypeWrapper> leftInstanceClass,
+      Optional<CDTypeWrapper> rightInstanceClass) {
+    CDAssociationDiff cDAssociationDiff =
+        new CDAssociationDiff(base, isInCompareCDW, isContentDiff, category);
+    cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
+    cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+    cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+    cDAssociationDiff.setWhichPartDiff(Optional.empty());
+    cDAssociationDiff.setLeftInstanceClass(leftInstanceClass);
+    cDAssociationDiff.setRightInstanceClass(rightInstanceClass);
     return cDAssociationDiff;
   }
 

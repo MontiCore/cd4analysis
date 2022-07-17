@@ -1,0 +1,15 @@
+import java.util.Date;
+
+classdiagram cd2 {
+	enum E {e1, e2;}
+
+  abstract class AStar {
+    String str;
+    Date date;
+    E element;
+  }
+
+  class B extends AStar {
+  }
+
+}

@@ -1,5 +1,6 @@
 package de.monticore.syntax2semdiff.cdsyntaxdiff2od;
 
+import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -454,37 +455,70 @@ public class GenerateODHelper {
   /**
    * create an object
    */
-  public static CDWrapperObjectPack createObject(CDWrapper cdw, Optional<CDTypeDiff> cDTypeDiff,
-      CDTypeWrapper cDTypeWrapper, int index) {
+  public static CDWrapperObjectPack createObject(
+      CDWrapper cdw,
+      Optional<CDTypeDiff> cDTypeDiff,
+      CDTypeWrapper cDTypeWrapper,
+      int index,
+      Optional<CDTypeWrapper> instanceClass,
+      CDSemantics cdSemantics) {
 
     // if this CDTypeWrapper is interface or abstract class, then find a simple class on
     // inheritancePath
     CDTypeWrapper newCDTypeWrapper;
-    if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
-        || cDTypeWrapper.getCDWrapperKind()
-        == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
-      newCDTypeWrapper = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-          cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()).get(0);
-    }
-    else {
-      newCDTypeWrapper = cDTypeWrapper;
+    if (instanceClass.isPresent()) {
+      newCDTypeWrapper = instanceClass.get();
+    } else {
+      if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
+          || cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+        newCDTypeWrapper = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
+            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()).get(0);
+      }
+      else {
+        newCDTypeWrapper = cDTypeWrapper;
+      }
     }
 
     // set attributes
-    List<ASTODAttribute> astodAttributeList = createASTODAttributeList(cdw, cDTypeDiff,
-        newCDTypeWrapper);
+    List<ASTODAttribute> astodAttributeList =
+        createASTODAttributeList(cdw, cDTypeDiff, newCDTypeWrapper);
 
     // set objects
-    ASTODNamedObject astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
-        .setName(
-            toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
-        .setModifier(OD4DataMill.modifierBuilder().build())
-        .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
-            .setMCQualifiedName(
-                MCQualifiedNameFacade.createQualifiedName(newCDTypeWrapper.getOriginalClassName()))
-            .build())
-        .setODAttributesList(astodAttributeList)
-        .build();
+    ASTODNamedObject astodNamedObject = null;
+
+    if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
+      astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
+          .setName(
+              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
+          .setModifier(OD4DataMill.modifierBuilder().build())
+          .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
+              .setMCQualifiedName(
+                  MCQualifiedNameFacade.createQualifiedName(newCDTypeWrapper.getOriginalClassName()))
+              .build())
+          .setODAttributesList(astodAttributeList)
+          .build();
+    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
+      List<String> classList = new ArrayList<>();
+      newCDTypeWrapper.getSuperclasses().forEach(e -> {
+        classList.add(e.split("_")[1]);
+      });
+      String multiLabel = "instanceOf: " + String.join(", ", classList);
+
+      astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
+          .setName(
+              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
+          .setModifier(OD4DataMill.modifierBuilder().setStereotype(
+              OD4DataMill.stereotypeBuilder().addValues(
+                  OD4DataMill.stereoValueBuilder().setName(multiLabel).setContent("").build()
+              ).build()
+          ).build())
+          .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
+              .setMCQualifiedName(
+                  MCQualifiedNameFacade.createQualifiedName(newCDTypeWrapper.getOriginalClassName()))
+              .build())
+          .setODAttributesList(astodAttributeList)
+          .build();
+    }
 
     return new CDWrapperObjectPack(astodNamedObject, newCDTypeWrapper);
   }
@@ -492,16 +526,23 @@ public class GenerateODHelper {
   /**
    * create all objects that should be used in an OD
    */
-  public static List<ASTODNamedObject> createObjectList(CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff, CDTypeWrapper offerCDTypeWrapper, int cardinalityCount,
+  public static List<ASTODNamedObject> createObjectList(
+      CDWrapper cdw,
+      Optional<CDTypeDiff> cDTypeDiff,
+      CDTypeWrapper offerCDTypeWrapper,
+      int cardinalityCount,
       Deque<ASTODClassStackPack> classStack4TargetClass,
-      Deque<ASTODClassStackPack> classStack4SourceClass) {
+      Deque<ASTODClassStackPack> classStack4SourceClass,
+      Optional<CDTypeWrapper> instanceClass,
+      CDSemantics cdSemantics) {
+
     List<ASTODNamedObject> astodNamedObjectList = new LinkedList<>();
     List<ASTODNamedObject> tempList = new LinkedList<>();
     CDTypeWrapper actualCDTypeWrapper = offerCDTypeWrapper;
     for (int i = 0; i < cardinalityCount; i++) {
       // set objects
-      CDWrapperObjectPack objectPack = createObject(cdw, cDTypeDiff, offerCDTypeWrapper, i);
+      CDWrapperObjectPack objectPack =
+          createObject(cdw, cDTypeDiff, offerCDTypeWrapper, i, instanceClass, cdSemantics);
       actualCDTypeWrapper = objectPack.getCDTypeWrapper();
       astodNamedObjectList.add(objectPack.getNamedObject());
       tempList.add(objectPack.getNamedObject());
@@ -708,8 +749,12 @@ public class GenerateODHelper {
    * {  "objectList"  : List<ASTODNamedObject>
    *    "isInList"    : boolean                 }
    */
-  public static ASTODNamedObjectPack getObjectInASTODElementListByCDTypeWrapper(CDWrapper cdw,
-      CDTypeWrapper cDTypeWrapper, ASTODPack astodPack) {
+  public static ASTODNamedObjectPack getObjectInASTODElementListByCDTypeWrapper(
+      CDWrapper cdw,
+      CDTypeWrapper cDTypeWrapper,
+      ASTODPack astodPack,
+      CDSemantics cdSemantics) {
+
     AtomicBoolean isInList = new AtomicBoolean(false);
     AtomicReference<List<ASTODNamedObject>> resultList = new AtomicReference<>(new ArrayList<>());
 
@@ -762,7 +807,12 @@ public class GenerateODHelper {
       }
       // put new object into resultList
       List<ASTODNamedObject> tempList = resultList.get();
-      tempList.add(createObject(cdw, Optional.empty(), newCDTypeWrapper, 0).getNamedObject());
+      tempList.add(createObject(cdw,
+          Optional.empty(),
+          newCDTypeWrapper,
+          0,
+          Optional.empty(),
+          cdSemantics).getNamedObject());
 
       resultList.set(tempList);
     }

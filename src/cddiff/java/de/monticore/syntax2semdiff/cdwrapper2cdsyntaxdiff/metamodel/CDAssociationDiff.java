@@ -1,6 +1,7 @@
 package de.monticore.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel;
 
 import de.monticore.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
+import de.monticore.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -64,6 +65,10 @@ public class CDAssociationDiff {
   protected Optional<CDSyntaxDiff.CDAssociationDiffCardinality> cDDiffRightClassCardinalityResult;
 
   protected Optional<CDSyntaxDiff.WhichPartDiff> whichPartDiff;
+
+  protected Optional<CDTypeWrapper> leftInstanceClass;
+
+  protected Optional<CDTypeWrapper> rightInstanceClass;
 
   public CDAssociationDiff(CDAssociationWrapper originalElement, boolean isInCompareCDW,
       boolean isContentDiff, CDSyntaxDiff.CDAssociationDiffCategory cDDiffCategory) {
@@ -137,6 +142,22 @@ public class CDAssociationDiff {
 
   public CDAssociationWrapper getOriginalElement() {
     return originalElement;
+  }
+
+  public Optional<CDTypeWrapper> getLeftInstanceClass() {
+    return leftInstanceClass;
+  }
+
+  public void setLeftInstanceClass(Optional<CDTypeWrapper> leftInstanceClass) {
+    this.leftInstanceClass = leftInstanceClass;
+  }
+
+  public Optional<CDTypeWrapper> getRightInstanceClass() {
+    return rightInstanceClass;
+  }
+
+  public void setRightInstanceClass(Optional<CDTypeWrapper> rightInstanceClass) {
+    this.rightInstanceClass = rightInstanceClass;
   }
 
 }

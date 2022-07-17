@@ -27,21 +27,24 @@ import static de.monticore.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.*;
 
 public class CDSyntaxDiff2ODGenerator {
 
-  public String SyntaxDiff2SemanticDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      CDSemantics type) {
+  public String SyntaxDiff2SemanticDiff(
+      ASTCDCompilationUnit cd1,
+      ASTCDCompilationUnit cd2,
+      CDSemantics cdSemantics) {
+
     StringBuilder result = new StringBuilder();
     CD2CDWrapperGenerator cd1Generator = new CD2CDWrapperGenerator();
     CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
-    CDWrapper cdw1 = cd1Generator.generateCDWrapper(cd1, type);
-    CDWrapper cdw2 = cd2Generator.generateCDWrapper(cd2, type);
+    CDWrapper cdw1 = cd1Generator.generateCDWrapper(cd1, cdSemantics);
+    CDWrapper cdw2 = cd2Generator.generateCDWrapper(cd2, cdSemantics);
     CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
         new CDWrapper2CDSyntaxDiffGenerator();
     CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW2WithCDW1 =
         new CDWrapper2CDSyntaxDiffGenerator();
-    CDSyntaxDiff cg1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2);
-    CDSyntaxDiff cg2 = cdw2cddiffGenerator4CDW2WithCDW1.generateCDSyntaxDiff(cdw2, cdw1);
-    List<ASTODArtifact> ods1 = generateObjectDiagrams(cdw1, cg1);
-    List<ASTODArtifact> ods2 = generateObjectDiagrams(cdw2, cg2);
+    CDSyntaxDiff cg1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
+    CDSyntaxDiff cg2 = cdw2cddiffGenerator4CDW2WithCDW1.generateCDSyntaxDiff(cdw2, cdw1, cdSemantics);
+    List<ASTODArtifact> ods1 = generateObjectDiagrams(cdw1, cg1, cdSemantics);
+    List<ASTODArtifact> ods2 = generateObjectDiagrams(cdw2, cg2, cdSemantics);
     if (ods1.size() == 0 && ods2.size() == 0) {
       return "Semantic Same";
     }
@@ -66,7 +69,11 @@ public class CDSyntaxDiff2ODGenerator {
    * generate ODs by solving items with syntactic differences in globalClassQueue and
    * globalAssociationQueue
    */
-  public List<ASTODArtifact> generateObjectDiagrams(CDWrapper cdw, CDSyntaxDiff cg) {
+  public List<ASTODArtifact> generateObjectDiagrams(
+      CDWrapper cdw,
+      CDSyntaxDiff cg,
+      CDSemantics cdSemantics) {
+
     List<ASTODArtifact> astodArtifacts = new ArrayList<>();
 
     Deque<CDTypeDiff> globalClassQueue = cg.getCDTypeDiffResultQueueWithDiff();
@@ -76,26 +83,24 @@ public class CDSyntaxDiff2ODGenerator {
     int i = 1;
     while (!globalAssociationQueue.isEmpty()) {
       CDAssociationDiff currentCDAssociationDiff = globalAssociationQueue.pop();
-      if (cdw.getType() == CDSemantics.SIMPLE_CLOSED_WORLD) {
-        if (currentCDAssociationDiff.getCDDiffKind()
-            == CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_ASC) {
-          Optional<ASTODPack> optionalASTODPack = generateODByAssociation(cdw,
-              currentCDAssociationDiff);
-          if (optionalASTODPack.isEmpty()) {
-            continue;
-          }
-          String odTitle = generateODTitle(currentCDAssociationDiff, i);
-          astodArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(), odTitle));
-          i++;
+      if (currentCDAssociationDiff.getCDDiffKind() == CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_ASC) {
+        Optional<ASTODPack> optionalASTODPack =
+            generateODByAssociation(cdw, currentCDAssociationDiff, cdSemantics);
+        if (optionalASTODPack.isEmpty()) {
+          continue;
         }
+        String odTitle = generateODTitle(currentCDAssociationDiff, i);
+        astodArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(), odTitle));
+        i++;
       }
     }
 
     // solve globalClassQueue
     while (!globalClassQueue.isEmpty()) {
       CDTypeDiff currentCDTypeDiff = globalClassQueue.pop();
-      if (cdw.getType() == CDSemantics.SIMPLE_CLOSED_WORLD) {
-        Optional<ASTODPack> optionalASTODPack = generateODByClass(cdw, currentCDTypeDiff);
+      if (currentCDTypeDiff.getCDDiffKind() == CDSyntaxDiff.CDTypeDiffKind.CDDIFF_CLASS ||
+          currentCDTypeDiff.getCDDiffKind() == CDSyntaxDiff.CDTypeDiffKind.CDDIFF_ENUM) {
+        Optional<ASTODPack> optionalASTODPack = generateODByClass(cdw, currentCDTypeDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           continue;
         }
@@ -111,7 +116,11 @@ public class CDSyntaxDiff2ODGenerator {
   /**
    * solve the item in globalClassQueue
    */
-  protected Optional<ASTODPack> generateODByClass(CDWrapper cdw, CDTypeDiff cDTypeDiff) {
+  protected Optional<ASTODPack> generateODByClass(
+      CDWrapper cdw,
+      CDTypeDiff cDTypeDiff,
+      CDSemantics cdSemantics) {
+
     Deque<ASTODClassStackPack> classStack4TargetClass = new LinkedList<>();
     Deque<ASTODClassStackPack> classStack4SourceClass = new LinkedList<>();
     Deque<CDAssociationWrapper> associationStack4TargetClass = new LinkedList<>();
@@ -121,13 +130,22 @@ public class CDSyntaxDiff2ODGenerator {
         cdw.getRefSetAssociationList());
 
     // initial for generate ODs
-    ASTODPack astodPack = initGenerateODByClass(cdw, cDTypeDiff, classStack4TargetClass,
-        classStack4SourceClass, refLinkCheckList);
+    ASTODPack astodPack = initGenerateODByClass(cdw,
+        cDTypeDiff,
+        classStack4TargetClass,
+        classStack4SourceClass,
+        refLinkCheckList,
+        cdSemantics);
 
     // using basic process
-    return usingGenerateODBasicProcess(cdw, Optional.of(astodPack), classStack4TargetClass,
-        classStack4SourceClass, associationStack4TargetClass, associationStack4SourceClass,
-        refLinkCheckList);
+    return usingGenerateODBasicProcess(cdw,
+        Optional.of(astodPack),
+        classStack4TargetClass,
+        classStack4SourceClass,
+        associationStack4TargetClass,
+        associationStack4SourceClass,
+        refLinkCheckList,
+        cdSemantics);
   }
 
   /**
@@ -142,10 +160,14 @@ public class CDSyntaxDiff2ODGenerator {
    * put this object into ASTODPack
    *
    */
-  public ASTODPack initGenerateODByClass(CDWrapper cdw, CDTypeDiff cDTypeDiff,
+  public ASTODPack initGenerateODByClass(
+      CDWrapper cdw,
+      CDTypeDiff cDTypeDiff,
       Deque<ASTODClassStackPack> classStack4TargetClass,
       Deque<ASTODClassStackPack> classStack4SourceClass,
-      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
+      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList,
+      CDSemantics cdSemantics) {
+
     // get the necessary information
     CDTypeWrapper cDTypeWrapper = cDTypeDiff.getOriginalElement();
     ASTODPack astodPack = new ASTODPack();
@@ -164,12 +186,23 @@ public class CDSyntaxDiff2ODGenerator {
     }
 
     // call initGenerateODByClassHelper()
-    Optional<ASTODPack> optionalAstodPack = initGenerateODByClassHelper(cdw, cDTypeDiff,
-        usingCDTypeWrapper, classStack4TargetClass, classStack4SourceClass, refLinkCheckList);
+    Optional<ASTODPack> optionalAstodPack = initGenerateODByClassHelper(cdw,
+        cDTypeDiff,
+        usingCDTypeWrapper,
+        classStack4TargetClass,
+        classStack4SourceClass,
+        refLinkCheckList,
+        cdSemantics);
     if (optionalAstodPack.isEmpty()) {
       astodPack.extendNamedObjects(
-          createObjectList(cdw, Optional.of(cDTypeDiff), usingCDTypeWrapper, 1,
-              classStack4TargetClass, classStack4SourceClass));
+          createObjectList(cdw,
+              Optional.of(cDTypeDiff),
+              usingCDTypeWrapper,
+              1,
+              classStack4TargetClass,
+              classStack4SourceClass,
+              Optional.empty(),
+              cdSemantics));
     }
     else {
       astodPack.extendNamedObjects(optionalAstodPack.get().getNamedObjects());
@@ -183,10 +216,14 @@ public class CDSyntaxDiff2ODGenerator {
    * if exist associations with current class, then we use initGenerateODByAssociation()
    * if there is no associaton with current class, then return empty()
    */
-  protected Optional<ASTODPack> initGenerateODByClassHelper(CDWrapper cdw, CDTypeDiff cDTypeDiff,
-      CDTypeWrapper cDTypeWrapper, Deque<ASTODClassStackPack> classStack4TargetClass,
+  protected Optional<ASTODPack> initGenerateODByClassHelper(
+      CDWrapper cdw,
+      CDTypeDiff cDTypeDiff,
+      CDTypeWrapper cDTypeWrapper,
+      Deque<ASTODClassStackPack> classStack4TargetClass,
       Deque<ASTODClassStackPack> classStack4SourceClass,
-      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
+      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList,
+      CDSemantics cdSemantics) {
 
     // get inheritance path of current CDTypeWrapper
     List<CDTypeWrapper> CDTypeWrapperList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
@@ -216,8 +253,12 @@ public class CDSyntaxDiff2ODGenerator {
       CDAssociationDiff cDAssociationDiff = CDSyntaxDiffHelper.createCDAssociationDiffHelper(
           CDAssociationWrapperList.get(0), false, true,
           CDSyntaxDiff.CDAssociationDiffCategory.DELETED);
-      astodPack = initGenerateODByAssociation(cdw, cDAssociationDiff, Optional.of(cDTypeDiff),
-          classStack4TargetClass, classStack4SourceClass);
+      astodPack = initGenerateODByAssociation(cdw,
+          cDAssociationDiff,
+          Optional.of(cDTypeDiff),
+          classStack4TargetClass,
+          classStack4SourceClass,
+          cdSemantics);
       List<CDRefSetAssociationWrapper> initCDRefSetAssociationWrapper =
           findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
               cdw, cDAssociationDiff.getOriginalElement(), refLinkCheckList);
@@ -230,29 +271,39 @@ public class CDSyntaxDiff2ODGenerator {
   /**
    * solve the item in globalAssociationQueue
    */
-  protected Optional<ASTODPack> generateODByAssociation(CDWrapper cdw,
-      CDAssociationDiff cDAssociationDiff) {
+  protected Optional<ASTODPack> generateODByAssociation(
+      CDWrapper cdw,
+      CDAssociationDiff cDAssociationDiff,
+      CDSemantics cdSemantics) {
 
     Deque<ASTODClassStackPack> classStack4TargetClass = new LinkedList<>();
     Deque<ASTODClassStackPack> classStack4SourceClass = new LinkedList<>();
     Deque<CDAssociationWrapper> associationStack4TargetClass = new LinkedList<>();
     Deque<CDAssociationWrapper> associationStack4SourceClass = new LinkedList<>();
     Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList =
-        convertRefSetAssociationList2CheckList(
-        cdw.getRefSetAssociationList());
+        convertRefSetAssociationList2CheckList(cdw.getRefSetAssociationList());
 
     // initial for generate ODs
-    ASTODPack astodPack = initGenerateODByAssociation(cdw, cDAssociationDiff, Optional.empty(),
-        classStack4TargetClass, classStack4SourceClass);
+    ASTODPack astodPack = initGenerateODByAssociation(cdw,
+        cDAssociationDiff,
+        Optional.empty(),
+        classStack4TargetClass,
+        classStack4SourceClass,
+        cdSemantics);
     List<CDRefSetAssociationWrapper> initCDRefSetAssociationWrapper =
-        findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
-            cdw, cDAssociationDiff.getOriginalElement(), refLinkCheckList);
+        findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(cdw,
+            cDAssociationDiff.getOriginalElement(), refLinkCheckList);
     updateCounterInCheckList(initCDRefSetAssociationWrapper, refLinkCheckList);
 
     // using basic process
-    return usingGenerateODBasicProcess(cdw, Optional.of(astodPack), classStack4TargetClass,
-        classStack4SourceClass, associationStack4TargetClass, associationStack4SourceClass,
-        refLinkCheckList);
+    return usingGenerateODBasicProcess(cdw,
+        Optional.of(astodPack),
+        classStack4TargetClass,
+        classStack4SourceClass,
+        associationStack4TargetClass,
+        associationStack4SourceClass,
+        refLinkCheckList,
+        cdSemantics);
   }
 
   /**
@@ -263,14 +314,15 @@ public class CDSyntaxDiff2ODGenerator {
    * create corresponding link among those objects and
    * put those objects into ASTODPack
    */
-  public ASTODPack initGenerateODByAssociation(CDWrapper cdw, CDAssociationDiff cDAssociationDiff,
-      Optional<CDTypeDiff> optionalCDTypeDiff, Deque<ASTODClassStackPack> classStack4TargetClass,
-      Deque<ASTODClassStackPack> classStack4SourceClass) {
+  public ASTODPack initGenerateODByAssociation(
+      CDWrapper cdw,
+      CDAssociationDiff cDAssociationDiff,
+      Optional<CDTypeDiff> optionalCDTypeDiff,
+      Deque<ASTODClassStackPack> classStack4TargetClass,
+      Deque<ASTODClassStackPack> classStack4SourceClass,
+      CDSemantics cdSemantics) {
 
     CDAssociationWrapper currentDiffAssoc = cDAssociationDiff.getOriginalElement();
-//    CDAssociationWrapper currentDiffAssoc =
-//        intersectCDAssociationWrapperCardinalityByCDAssociationWrapperOnlyWithLeftToRightAndRightToLeft(
-//        cDAssociationDiff.getOriginalElement(), cdw);
 
     // get the necessary information
     CDTypeWrapper leftCDTypeWrapper = currentDiffAssoc.getCDWrapperLeftClass();
@@ -283,6 +335,7 @@ public class CDSyntaxDiff2ODGenerator {
 
     switch (cDAssociationDiff.getCDDiffCategory()) {
       case DELETED:
+      case SUBCLASS_DIFF:
         directionType = mappingDirection(
             currentDiffAssoc.getCDAssociationWrapperDirection().toString());
         leftCardinalityCount = mappingCardinality4Initial(
@@ -326,33 +379,74 @@ public class CDSyntaxDiff2ODGenerator {
           .getOriginalElement()
           .getCDWrapperLink4EnumClass()
           .contains(leftCDTypeWrapper.getName())) {
-        leftElementList = createObjectList(cdw, optionalCDTypeDiff, leftCDTypeWrapper,
-            leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+        leftElementList = createObjectList(cdw,
+            optionalCDTypeDiff,
+            leftCDTypeWrapper,
+            leftCardinalityCount,
+            classStack4TargetClass,
+            classStack4SourceClass,
+            Optional.empty(),
+            cdSemantics);
       }
       else {
-        leftElementList = createObjectList(cdw, Optional.empty(), leftCDTypeWrapper,
-            leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+        leftElementList = createObjectList(cdw,
+            Optional.empty(),
+            leftCDTypeWrapper,
+            leftCardinalityCount,
+            classStack4TargetClass,
+            classStack4SourceClass,
+            Optional.empty(),
+            cdSemantics);
       }
       if (optionalCDTypeDiff.get()
           .getOriginalElement()
           .getCDWrapperLink4EnumClass()
           .contains(rightCDTypeWrapper.getName())) {
-        rightElementList = createObjectList(cdw, optionalCDTypeDiff, rightCDTypeWrapper,
-            rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+        rightElementList = createObjectList(cdw,
+            optionalCDTypeDiff,
+            rightCDTypeWrapper,
+            rightCardinalityCount,
+            classStack4TargetClass,
+            classStack4SourceClass,
+            Optional.empty(),
+            cdSemantics);
       }
       else {
-        rightElementList = createObjectList(cdw, Optional.empty(), rightCDTypeWrapper,
-            rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+        rightElementList = createObjectList(cdw,
+            Optional.empty(),
+            rightCDTypeWrapper,
+            rightCardinalityCount,
+            classStack4TargetClass,
+            classStack4SourceClass,
+            Optional.empty(),
+            cdSemantics);
       }
     }
     else {
-      leftElementList = createObjectList(cdw, Optional.empty(), leftCDTypeWrapper,
-          leftCardinalityCount, classStack4TargetClass, classStack4SourceClass);
-      rightElementList = createObjectList(cdw, Optional.empty(), rightCDTypeWrapper,
-          rightCardinalityCount, classStack4TargetClass, classStack4SourceClass);
+      leftElementList = createObjectList(cdw,
+          Optional.empty(),
+          leftCDTypeWrapper,
+          leftCardinalityCount,
+          classStack4TargetClass,
+          classStack4SourceClass,
+          cDAssociationDiff.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.SUBCLASS_DIFF ?
+              cDAssociationDiff.getLeftInstanceClass() : Optional.empty(),
+          cdSemantics);
+      rightElementList = createObjectList(cdw,
+          Optional.empty(),
+          rightCDTypeWrapper,
+          rightCardinalityCount,
+          classStack4TargetClass,
+          classStack4SourceClass,
+          cDAssociationDiff.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.SUBCLASS_DIFF ?
+              cDAssociationDiff.getRightInstanceClass() : Optional.empty(),
+          cdSemantics);
     }
-    List<ASTODLink> linkElementList = createLinkList(leftElementList, rightElementList,
-        leftRoleName, rightRoleName, directionType);
+    List<ASTODLink> linkElementList = createLinkList(leftElementList,
+        rightElementList,
+        leftRoleName,
+        rightRoleName,
+        directionType);
 
     // remove duplicate
     for (ASTODNamedObject astodNamedObject : leftElementList) {
@@ -413,7 +507,8 @@ public class CDSyntaxDiff2ODGenerator {
       Deque<ASTODClassStackPack> otherClassStack,
       Deque<CDAssociationWrapper> associationStack,
       Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList,
-      ASTODPack astodPack) {
+      ASTODPack astodPack,
+      CDSemantics cdSemantics) {
 
     // start basic process for CDTypeDiff and CDAssociationDiff
     CDTypeWrapper currentCDTypeWrapper;
@@ -482,8 +577,8 @@ public class CDSyntaxDiff2ODGenerator {
           if (isPresentOtherSideCardinality) {
 
             // get otherSideObject
-            ASTODNamedObjectPack astodNamedObjectPack = getObjectInASTODElementListByCDTypeWrapper(
-                cdw, otherSideClass, astodPack);
+            ASTODNamedObjectPack astodNamedObjectPack =
+                getObjectInASTODElementListByCDTypeWrapper(cdw, otherSideClass, astodPack, cdSemantics);
             List<ASTODNamedObject> otherSideObjectList = astodNamedObjectPack.getNamedObjects();
 
             // determining illegal situations
@@ -589,26 +684,39 @@ public class CDSyntaxDiff2ODGenerator {
     return Optional.of(astodPack);
   }
 
-  protected Optional<ASTODPack> usingGenerateODBasicProcess(CDWrapper cdw,
-      Optional<ASTODPack> optionalASTODPack, Deque<ASTODClassStackPack> classStack4TargetClass,
+  protected Optional<ASTODPack> usingGenerateODBasicProcess(
+      CDWrapper cdw,
+      Optional<ASTODPack> optionalASTODPack,
+      Deque<ASTODClassStackPack> classStack4TargetClass,
       Deque<ASTODClassStackPack> classStack4SourceClass,
       Deque<CDAssociationWrapper> associationStack4TargetClass,
       Deque<CDAssociationWrapper> associationStack4SourceClass,
-      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
+      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList,
+      CDSemantics cdSemantics) {
 
     while (!classStack4TargetClass.isEmpty() || !classStack4SourceClass.isEmpty()) {
       if (!classStack4TargetClass.isEmpty()) {
-        optionalASTODPack = generateODBasicProcess(cdw, "target", classStack4TargetClass,
-            classStack4SourceClass, associationStack4TargetClass, refLinkCheckList,
-            optionalASTODPack.get());
+        optionalASTODPack = generateODBasicProcess(cdw,
+            "target",
+            classStack4TargetClass,
+            classStack4SourceClass,
+            associationStack4TargetClass,
+            refLinkCheckList,
+            optionalASTODPack.get(),
+            cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           break;
         }
       }
       else {
-        optionalASTODPack = generateODBasicProcess(cdw, "source", classStack4SourceClass,
-            classStack4TargetClass, associationStack4SourceClass, refLinkCheckList,
-            optionalASTODPack.get());
+        optionalASTODPack = generateODBasicProcess(cdw,
+            "source",
+            classStack4SourceClass,
+            classStack4TargetClass,
+            associationStack4SourceClass,
+            refLinkCheckList,
+            optionalASTODPack.get(),
+            cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           break;
         }

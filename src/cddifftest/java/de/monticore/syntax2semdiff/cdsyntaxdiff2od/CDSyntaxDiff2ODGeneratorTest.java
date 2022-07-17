@@ -28,32 +28,42 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   CDSyntaxDiff cdd1 = null;
 
-  protected void generateCDSyntaxDiffTemp(String folder, String cd1Name, String cd2Name) {
+  protected void generateCDSyntaxDiffTemp(
+      String folder,
+      String cd1Name,
+      String cd2Name,
+      CDSemantics cdSemantics) {
+
     cd1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/" + folder + "/"
-            + cd1Name);
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
+            + folder + "/" + cd1Name);
 
     cd2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/" + folder + "/"
-            + cd2Name);
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
+            + folder + "/" + cd2Name);
+
     CD2CDWrapperGenerator cd1Generator = new CD2CDWrapperGenerator();
     CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
-    cdw1 = cd1Generator.generateCDWrapper(cd1, CDSemantics.SIMPLE_CLOSED_WORLD);
-    cdw2 = cd2Generator.generateCDWrapper(cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
+    cdw1 = cd1Generator.generateCDWrapper(cd1, cdSemantics);
+    cdw2 = cd2Generator.generateCDWrapper(cd2, cdSemantics);
     CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
         new CDWrapper2CDSyntaxDiffGenerator();
-    cdd1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2);
+    cdd1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
   }
 
   /********************************************************************
    *********************    Start for Class    ************************
+   ********************   simple closed world   ***********************
    *******************************************************************/
 
   @Test
   public void testGenerateODByClass() {
-    generateCDSyntaxDiffTemp("Class", "Class1A.cd", "Class1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Class",
+        "Class1A.cd", "Class1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
     List<String> resultList = printOD(ods);
 
     Assert.assertTrue(resultList.stream().anyMatch(e -> {
@@ -106,13 +116,17 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   /********************************************************************
    *******************    Start for Association    ********************
+   ********************   simple closed world   ***********************
    *******************************************************************/
 
   @Test
   public void testGenerateODByAssociation() {
-    generateCDSyntaxDiffTemp("Association", "Association1A.cd", "Association1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "Association1A.cd", "Association1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
@@ -126,18 +140,24 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByCircleAssociation() {
-    generateCDSyntaxDiffTemp("Association", "CircleTest1A.cd", "CircleTest1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "CircleTest1A.cd", "CircleTest1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
     Assert.assertTrue(ods.size() == 0);
   }
 
   @Test
   public void testGenerateODByAssocStack4TrgetClass() {
-    generateCDSyntaxDiffTemp("Association", "AssocStack4TargetClass1A.cd",
-        "AssocStack4TargetClass1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "AssocStack4TargetClass1A.cd",
+        "AssocStack4TargetClass1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
@@ -151,9 +171,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByDirection1() {
-    generateCDSyntaxDiffTemp("Association", "Direction1A.cd", "Direction1G.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "Direction1A.cd", "Direction1G.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
@@ -167,9 +190,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByDirection2() {
-    generateCDSyntaxDiffTemp("Association", "Direction1G.cd", "Direction1A.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "Direction1G.cd", "Direction1A.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
@@ -189,33 +215,67 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
             && e.contains("link b_0 (b) -> (a) a_0;")));
   }
 
+  @Test
+  public void testGenerateODBySubclassDiff() {
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "SubclassDiff1A.cd", "SubclassDiff1B.cd", cdSemantics);
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
+
+    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
+    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
+      Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
+    }
+
+    List<String> resultList = printOD(ods);
+    for (int i = 0; i < resultList.size(); i++) {
+      System.out.println(resultList.get(i));
+    }
+  }
+
   /********************************************************************
    *********************    Start for Combination    ******************
+   ********************   simple closed world   ***********************
    *******************************************************************/
   @Test
   public void testGenerateODByOverlapRefSetAssociation1() {
-    generateCDSyntaxDiffTemp("Combination", "OverlapRefSetAssociation1A.cd",
-        "OverlapRefSetAssociation1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "OverlapRefSetAssociation1A.cd",
+        "OverlapRefSetAssociation1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
     Assert.assertTrue(ods.size() == 0);
   }
 
   @Test
   public void testGenerateODByOverlapRefSetAssociation2() {
-    generateCDSyntaxDiffTemp("Combination", "OverlapRefSetAssociation1C.cd",
-        "OverlapRefSetAssociation1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "OverlapRefSetAssociation1C.cd",
+        "OverlapRefSetAssociation1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
     Assert.assertTrue(ods.size() == 0);
   }
 
   @Test
   public void testGenerateODByOverlapRefSetAssociation3() {
-    generateCDSyntaxDiffTemp("Combination", "OverlapRefSetAssociation2A.cd",
-        "OverlapRefSetAssociation2B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "OverlapRefSetAssociation2A.cd",
+        "OverlapRefSetAssociation2B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
@@ -229,10 +289,13 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByOverlapRefSetAssociationWithUndefinedLink() {
-    generateCDSyntaxDiffTemp("Combination", "OverlapRefSetAssociation3A.cd",
-        "OverlapRefSetAssociation3B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "OverlapRefSetAssociation3A.cd",
+        "OverlapRefSetAssociation3B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
@@ -252,9 +315,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByRefSetAssociation() {
-    generateCDSyntaxDiffTemp("Combination", "RefSet1A.cd", "RefSet1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "RefSet1A.cd", "RefSet1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
@@ -268,9 +334,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByCombination1() {
-    generateCDSyntaxDiffTemp("Combination", "Employees1A.cd", "Employees1B.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "Employees1A.cd", "Employees1B.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
@@ -284,9 +353,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
   @Test
   public void testGenerateODByCombination2() {
-    generateCDSyntaxDiffTemp("Combination", "Employees1B.cd", "Employees1A.cd");
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "Employees1B.cd", "Employees1A.cd", cdSemantics);
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
@@ -352,11 +424,58 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     ));
   }
 
+
+  /********************************************************************
+   *********************    Start for Combination    ******************
+   *******************  multi-instance closed world  ******************
+   *******************************************************************/
+
+  @Test
+  public void testGenerateODBySubclassDiff2() {
+    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "SubclassDiff1A.cd", "SubclassDiff1B.cd", cdSemantics);
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
+
+    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
+    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
+      Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
+    }
+  }
+
+  @Test
+  public void testGenerateODByCombination3() {
+    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "Employees1A.cd", "Employees1B.cd", cdSemantics);
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
+
+    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
+    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
+      Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
+    }
+  }
+
 //  @Test
 //  public void testGenerateODByCombinationTest () {
-//    generateCDSyntaxDiffTemp("Combination", "test1.cd", "test2.cd");
+//    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+//    generateCDSyntaxDiffTemp("Combination",
+//        "test1.cd", "test2.cd", cdSemantics);
 //    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-//    List<ASTODArtifact> ods = odGenerator.generateObjectDiagrams(cdw1, cdd1);
+//    List<ASTODArtifact> ods =
+//        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 //
 //    List<String> resultList = printOD(ods);
 //    for (int i = 0; i < resultList.size(); i++) {

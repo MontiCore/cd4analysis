@@ -21,8 +21,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
 
   public CDWrapper generateCDWrapperTemp(String folder, String cdName) {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/CDWrapper/" + folder + "/"
-            + cdName);
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/CDWrapper/"
+            + folder + "/" + cdName);
     CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
     return cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
   }
@@ -186,6 +186,11 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
         .containsAll(Set.of("i", "a1", "b1", "element", "b2")));
     Assert.assertTrue(
         dg.getCDTypeWrapperGroup().get("CDWrapperClass_C").getAttributes().get("b2").equals("int"));
+    Assert.assertTrue(dg.getCDTypeWrapperGroup()
+        .get("CDWrapperClass_C")
+        .getSuperclasses()
+        .containsAll(Set.of("CDWrapperInterface_I", "CDWrapperAbstractClass_A", "CDWrapperClass_B1",
+            "CDWrapperClass_B2", "CDWrapperClass_C")));
   }
 
   /********************************************************************
@@ -205,7 +210,7 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testClass4inheritanceGraph() {
     CDWrapper dg = generateCDWrapperTemp("Class", "Class5.cd");
-    Assert.assertFalse(dg.getInheritanceGraph().nodes().contains("CDWrapperEnum_E"));
+    Assert.assertTrue(dg.getInheritanceGraph().nodes().contains("CDWrapperEnum_E"));
     Assert.assertTrue(dg.getInheritanceGraph()
         .nodes()
         .containsAll(Set.of("CDWrapperInterface_I", "CDWrapperAbstractClass_A", "CDWrapperClass_B1",
@@ -215,6 +220,7 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     inheritanceG.putEdge("CDWrapperClass_C", "CDWrapperClass_B2");
     inheritanceG.putEdge("CDWrapperClass_B1", "CDWrapperAbstractClass_A");
     inheritanceG.putEdge("CDWrapperAbstractClass_A", "CDWrapperInterface_I");
+    inheritanceG.addNode("CDWrapperEnum_E");
     Assert.assertTrue(dg.getInheritanceGraph().equals(inheritanceG));
   }
 

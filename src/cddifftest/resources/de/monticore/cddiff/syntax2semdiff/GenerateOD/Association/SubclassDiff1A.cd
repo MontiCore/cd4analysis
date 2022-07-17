@@ -8,7 +8,9 @@ classdiagram EmployeesA {
 
 	class Company2 implements Area;
 
-	class Employee;
+	abstract class Person;
+
+	class Employee extends Person;
 
   association [1] Employee (work) -> Area [1..*];
 }
