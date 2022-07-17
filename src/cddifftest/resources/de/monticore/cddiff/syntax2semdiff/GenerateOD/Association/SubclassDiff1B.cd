@@ -4,9 +4,9 @@ classdiagram EmployeesB {
 
 	interface Area;
 
-	class Company1 implements Area;
+	class CompanyA implements Area;
 
-	class Company2;
+	class CompanyB;
 
 	class Employee;
 
