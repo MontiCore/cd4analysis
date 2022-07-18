@@ -475,7 +475,7 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove type_ and $number from val
-    String type = val.replaceAll(".*_", "");
+    String type = val.replaceAll("_of__","<").replaceAll("__",">").replaceAll(".*_", "");
     type = type.replaceAll("[$]\\d*", "");
 
     // Get name from fName by removing $number from fName
