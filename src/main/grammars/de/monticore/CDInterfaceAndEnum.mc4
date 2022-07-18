@@ -5,10 +5,10 @@ package de.monticore;
  * Adaptations -- if any -- are conservative. */
 
 /**
-   This component grammar defines interfaces and enum classes 
+   This component grammar defines interfaces and enum classes
    for CD4Analysis and CD4Code.
 
-   This includes directions, qualifiers, multiplicities and compositions.   
+   This includes directions, qualifiers, multiplicities and compositions.
 */
 
 component grammar CDInterfaceAndEnum extends de.monticore.CDBasis {
@@ -16,30 +16,25 @@ component grammar CDInterfaceAndEnum extends de.monticore.CDBasis {
   /** An interface is quite similar to a class:
    */
   scope CDInterface implements CDType =
-    Modifier InterfaceKW Name
+    Modifier "interface" Name
     CDExtendUsage?
     ( "{"
         CDMember*
       "}"
     | ";" );
 
-  InterfaceKW = "interface";
-
   /** Enumerations allow to define a list of names that act as constants.
       Please note that Java allows attributes for enums:
       this possibility will be added in CD4Code, but not yet here.
    */
   scope CDEnum implements CDType =
-    Modifier EnumKW Name
+    Modifier "enum" Name
     CDInterfaceUsage?
     ( "{"
         (CDEnumConstant || ",")* ";"
         CDMember*
       "}"
     | ";" );
-
-  EnumKW = "enum";
-
 
   /** Have the enum constants as separate NT. To allow extensions
       an enum constant is a static final attribute of the enum with the type

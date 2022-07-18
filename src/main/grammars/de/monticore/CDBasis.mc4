@@ -46,9 +46,7 @@ component grammar CDBasis extends
   /** The class diagram: defines a set of elements
   */
   CDDefinition implements Diagram =
-    Modifier ClassdiagramKW Name "{" CDElement* "}";
-
-  ClassdiagramKW = "classdiagram";
+    Modifier "classdiagram" Name "{" CDElement* "}";
 
   /* ==== CDElement ==== */
   /** CDElement denotes the basic elements of a class diagram.
@@ -62,11 +60,9 @@ component grammar CDBasis extends
       a hierarchical package structure.
   */
   scope symbol CDPackage implements CDElement =
-    PackageKW MCQualifiedName "{"
+    "package" MCQualifiedName "{"
       CDElement*
     "}";
-
-  PackageKW = "package";
 
   /** CDType are all of the CDElements, which can be used to describe a
       type for e.g. variables, method arguments, ...
@@ -90,31 +86,25 @@ component grammar CDBasis extends
       interfaces (by filling the external NT defined there)
    */
   CDInterfaceUsage =
-    ImplementsKW interface:(MCObjectType || ",")+;
-
-  ImplementsKW = "implements";
+    "implements" interface:(MCObjectType || ",")+;
 
   /** This adds the possibility for classes to extend
       other classes or interfaces extend other interfaces
       (by filling the external NT defined there)
    */
   CDExtendUsage =
-    ExtendsKW superclass:(MCObjectType || ",")+;
-
-  ExtendsKW = "extends";
+    "extends" superclass:(MCObjectType || ",")+;
 
   /** CDClass defines a class including extensions and its body.
    */
   scope CDClass implements CDType =
-    Modifier ClassKW Name
+    Modifier "class" Name
     CDExtendUsage?
     CDInterfaceUsage?
     ( "{"
         CDMember*
       "}"
     | ";" );
-
-  ClassKW = "class";
 
   /* ==== Attributes ==== */
   /** The CDMember interface is for all possible members of class.
@@ -126,5 +116,4 @@ component grammar CDBasis extends
    */
   CDAttribute implements CDMember, Field =
     Modifier MCType Name ("=" initial:Expression)? ";";
-    
 }
