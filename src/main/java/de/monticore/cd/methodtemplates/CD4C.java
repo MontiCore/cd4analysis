@@ -397,7 +397,12 @@ public class CD4C {
     CD4CTemplateHelper th = new CD4CTemplateHelper();
     th.importStr(signature);
 
-    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(astcdType, it -> Sets.newLinkedHashSet());
+    Set<ASTMCImportStatement> s = importMap.computeIfAbsent(astcdType, it -> Sets.newTreeSet(new Comparator<ASTMCImportStatement>() {
+      @Override
+      public int compare(ASTMCImportStatement o1, ASTMCImportStatement o2) {
+        return o1.printType().compareTo(o2.printType());
+      }
+    }));
     s.add(th.astcdImport.get());
     return th.astcdImport.get();
   }
