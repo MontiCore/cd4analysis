@@ -23,7 +23,6 @@ public class SyntaxDemoTest extends CDDiffTestBasis {
   ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample1.cd");
   ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample2.cd");
 
-
   @Override
   protected ASTCDCompilationUnit parseModel(String modelFile) {
     Path model = Paths.get(modelFile);

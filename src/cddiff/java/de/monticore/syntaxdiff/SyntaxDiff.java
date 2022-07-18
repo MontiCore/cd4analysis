@@ -1,5 +1,8 @@
 package de.monticore.syntaxdiff;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
@@ -8,10 +11,13 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.ow2cw.CDInheritanceHelper;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
+import smetana.core.__array_of_double__;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Main class of the syntax diff calculation, combines all diff types and provide multiple functions to access and print
@@ -35,6 +41,8 @@ public class SyntaxDiff implements CDSyntaxDiff{
     , EXPANSION, INCOMPARABLE, DEFAULTVALUECHANGED, ABSTRACTION, REPURPOSED, INHERITED, EQUALINTERVAL
     , SCOPECHANGE, ROLECHANGE, DEFAULTVALUE_ADDED, DELETED, EQUAL, TYPECHANGE, RESTRICTION, RESTRICT_INTERVAL
     , EXPAND_INTERVAL, EQUAL_INTERVAL}
+
+  protected final String cd1Name, cd2Name, cd1Path, cd2Path;
 
   StringBuilder outPutAll;
   StringBuilder cd1Colored;
@@ -88,8 +96,32 @@ public class SyntaxDiff implements CDSyntaxDiff{
     return null;
   }
 
+  public String getCd1Name() {
+    return cd1Name;
+  }
+
+  public String getCd2Name() {
+    return cd2Name;
+  }
+
+  public String getCd1Path() {
+    return cd1Path;
+  }
+
+  public String getCd2Path() {
+    return cd2Path;
+  }
+
   // Todo: Add json file creator
   public SyntaxDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2){
+    /*
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2);
+
+    ICD4CodeArtifactScope scopeCD1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
+    ICD4CodeArtifactScope scopeCD2 = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2);
+   */
+
 
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
@@ -99,6 +131,11 @@ public class SyntaxDiff implements CDSyntaxDiff{
     final String BOLD_RED = "\033[1;31m";
     final String BOLD_GREEN = "\033[1;32m";
     final String RESET = "\033[0m";
+
+    cd1Name = cd1.getCDDefinition().getName();
+    cd2Name = cd2.getCDDefinition().getName();
+    cd1Path = "Path CD1"; //Todo: Wo bekomme ich den Pfad her?
+    cd2Path = "Path CD2";
 
     // Create Lists for each type of CDElement to check
 
@@ -131,6 +168,11 @@ public class SyntaxDiff implements CDSyntaxDiff{
     StringBuilder interfacePrints = new StringBuilder();
     StringBuilder assoPrints = new StringBuilder();
 
+    //Map<String, Integer> outputGathering = new HashMap();
+
+    //System.out.println("Scope: ");
+    //System.out.println(cd1.getEnclosingScope().getRealPackageName());
+
     initial.append(System.lineSeparator())
       .append("In the following the syntax diff between ")
       .append(cd1.getCDDefinition().getName())
@@ -142,11 +184,35 @@ public class SyntaxDiff implements CDSyntaxDiff{
 
 
     for (ClassDiff x : matchedClassList) {
-      classPrints.append(x.print()).append(System.lineSeparator());
+      StringBuilder tmp = new StringBuilder();
+      tmp.append("CD1 (").append(cd1.getCDDefinition().getName()).append(") Line: ")
+        .append(x.getCd1Element().get_SourcePositionStart().getLine()).append("-").append(x.getCd1Element().get_SourcePositionEnd().getLine())
+        .append(System.lineSeparator())
+        .append(x.printCD1()).append(System.lineSeparator())
+        .append("CD2 (").append(cd2.getCDDefinition().getName()).append(") Line: ")
+        .append(x.getCd2Element().get_SourcePositionStart().getLine()).append("-").append(x.getCd2Element().get_SourcePositionEnd().getLine())
+        .append(System.lineSeparator())
+        .append(x.printCD2()).append(System.lineSeparator())
+        .append(x.getInterpretation())
+        .append(System.lineSeparator()).append(System.lineSeparator());
+      classPrints.append(tmp);
+      //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
 
     for (InterfaceDiff x : matchedInterfacesList) {
-      interfacePrints.append(x.print()).append(System.lineSeparator());
+      StringBuilder tmp = new StringBuilder();
+      tmp.append("CD1 (").append(cd1.getCDDefinition().getName()).append(") Line: ")
+        .append(x.getCd1Element().get_SourcePositionStart().getLine()).append("-").append(x.getCd1Element().get_SourcePositionEnd().getLine())
+        .append(System.lineSeparator())
+        .append(x.printCD1()).append(System.lineSeparator())
+        .append("CD2 (").append(cd2.getCDDefinition().getName()).append(") Line: ")
+        .append(x.getCd2Element().get_SourcePositionStart().getLine()).append("-").append(x.getCd2Element().get_SourcePositionEnd().getLine())
+        .append(System.lineSeparator())
+        .append(x.printCD2()).append(System.lineSeparator())
+        .append(x.getInterpretation())
+        .append(System.lineSeparator()).append(System.lineSeparator());
+      interfacePrints.append(tmp);
+      //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
 
     // Create Association Match
@@ -156,7 +222,20 @@ public class SyntaxDiff implements CDSyntaxDiff{
 
 
     for (AssoDiff x : matchedAssos) {
-      assoPrints.append(x.print()).append(System.lineSeparator());
+      StringBuilder tmp = new StringBuilder();
+      tmp.append("CD1 (").append(cd1.getCDDefinition().getName()).append(") and CD2 (")
+        .append(cd2.getCDDefinition().getName()).append(")").append(System.lineSeparator())
+        .append("CD1: ")
+        .append(x.getCd1Element().get_SourcePositionStart().getLine())
+        .append("  ").append(x.printCD1()).append(System.lineSeparator())
+        .append("CD2: ")
+        .append(x.getCd2Element().get_SourcePositionStart().getLine())
+        .append("  ")
+        .append(x.printCD2()).append(System.lineSeparator())
+        .append(x.getInterpretation())
+        .append(System.lineSeparator()).append(System.lineSeparator());
+      assoPrints.append(tmp);
+      //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
 
 
@@ -167,7 +246,7 @@ public class SyntaxDiff implements CDSyntaxDiff{
         .append(System.lineSeparator());
 
       for (ASTCDClass a : deletedClasses) {
-        classPrints.append(a.get_SourcePositionStart().getLine())
+        classPrints.append("CD1: ").append(a.get_SourcePositionStart().getLine())
           .append("   ")
           .append(BOLD_RED)
           .append(pp.prettyprint(a))
@@ -182,7 +261,7 @@ public class SyntaxDiff implements CDSyntaxDiff{
         .append(System.lineSeparator());
 
       for (ASTCDClass a : addedClasses) {
-        classPrints.append(a.get_SourcePositionStart().getLine())
+        classPrints.append("CD2: ").append(a.get_SourcePositionStart().getLine())
           .append("   ")
           .append(BOLD_GREEN)
           .append(pp.prettyprint(a))
@@ -196,7 +275,7 @@ public class SyntaxDiff implements CDSyntaxDiff{
         .append(System.lineSeparator());
 
       for (ASTCDAssociationNode asso : deletedAssos){
-        assoPrints.append(asso.get_SourcePositionStart().getLine())
+        assoPrints.append("CD1: ").append(asso.get_SourcePositionStart().getLine())
           .append("   ")
           .append(BOLD_RED)
           .append(pp.prettyprint(asso))
@@ -211,7 +290,7 @@ public class SyntaxDiff implements CDSyntaxDiff{
         .append(System.lineSeparator());
 
       for (ASTCDAssociationNode asso : addedAssos){
-        assoPrints.append(asso.get_SourcePositionStart().getLine())
+        assoPrints.append("CD2: ").append(asso.get_SourcePositionStart().getLine())
           .append("   ")
           .append(BOLD_GREEN)
           .append(pp.prettyprint(asso))
@@ -226,7 +305,7 @@ public class SyntaxDiff implements CDSyntaxDiff{
         .append(System.lineSeparator());
 
       for (ASTCDInterface a : deletedInterfaces) {
-        interfacePrints.append(a.get_SourcePositionStart().getLine())
+        interfacePrints.append("CD1: ").append(a.get_SourcePositionStart().getLine())
           .append("   ")
           .append(BOLD_RED)
           .append(pp.prettyprint((ASTCDBasisNode) a))
@@ -235,7 +314,7 @@ public class SyntaxDiff implements CDSyntaxDiff{
     }
 
     if (!addedInterfaces.isEmpty()){
-      interfacePrints.append("Line Added Interface to CD2 (")
+      interfacePrints.append("CD2: ").append("Line Added Interface to CD2 (")
         .append(cd2.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
@@ -248,10 +327,17 @@ public class SyntaxDiff implements CDSyntaxDiff{
           .append(RESET);
       }
     }
-
     StringBuilder outPutAll = new StringBuilder();
-    outPutAll.append(initial)
-      .append(classPrints)
+    outPutAll.append(initial);
+
+    /*
+    Map<Integer, String> matchAndDelete = outputGathering.entrySet().stream()
+      .sorted(Map.Entry.comparingByValue())
+      .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey, (e1, e2) -> e1, LinkedHashMap::new));
+    matchAndDelete.forEach((k, v) -> outPutAll.append(v));
+*/
+
+    outPutAll.append(classPrints)
       .append(interfacePrints)
       .append(assoPrints);
 

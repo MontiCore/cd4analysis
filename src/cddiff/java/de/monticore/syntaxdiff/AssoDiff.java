@@ -26,10 +26,6 @@ public class AssoDiff extends AbstractDiffType{
 
   protected final ASTCDAssociation cd2Element;
 
-  protected double diffSize;
-
-  protected List<FieldDiff<? extends ASTNode>> diffList;
-
   public ASTCDAssociation getCd1Element() {
     return cd1Element;
   }
@@ -38,20 +34,19 @@ public class AssoDiff extends AbstractDiffType{
     return cd2Element;
   }
 
-  public double getDiffSize() {
-    return diffSize;
-  }
-
   public List<FieldDiff<? extends ASTNode>> getDiffList() {
     return diffList;
   }
 
+
+
   private String ppStereo1, ppModifier1, ppName1, ppType1, ppDir1
     , ppOrderLeft1, ppModifierLeft1, ppCardLeft1, ppTypeLeft1, ppQualifierLeft1, ppRoleLeft1
-    , ppOrderRight1, ppModifierRight1, ppCardRight1, ppTypeRight1, ppQualifierRight1, ppRoleRight1,
-    ppStereo2, ppModifier2, ppName2, ppType2, ppDir2
+    , ppOrderRight1, ppModifierRight1, ppCardRight1, ppTypeRight1, ppQualifierRight1, ppRoleRight1
+    , ppStereo2, ppModifier2, ppName2, ppType2, ppDir2
     , ppOrderLeft2, ppModifierLeft2, ppCardLeft2, ppTypeLeft2, ppQualifierLeft2, ppRoleLeft2
-    , ppOrderRight2, ppModifierRight2, ppCardRight2, ppTypeRight2, ppQualifierRight2, ppRoleRight2;
+    , ppOrderRight2, ppModifierRight2, ppCardRight2, ppTypeRight2, ppQualifierRight2, ppRoleRight2
+    , assoCD1, assoCD2, bothPrint, bothFullPrint;
 
   /**
    * Constructor of the association diff type
@@ -66,6 +61,7 @@ public class AssoDiff extends AbstractDiffType{
     assoDiff(cd1Element, cd2Element);
 
     this.diffSize = calculateDiffSize();
+    setStrings();
   }
 
   /**
@@ -89,6 +85,7 @@ public class AssoDiff extends AbstractDiffType{
   private void assoDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
     List<FieldDiff<? extends ASTNode>> diffs = new ArrayList<>();
+    interpretation.append("Interpretation: ");
 
     // Stereotype, optional
     Optional<ASTStereotype> cd1Stereo;
@@ -102,6 +99,9 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTStereotype> assoStereo = new FieldDiff<>(cd1Stereo, cd2Stereo);
     if (assoStereo.isPresent()){
       diffs.add(assoStereo);
+      if (assoStereo.getInterpretation().isPresent()){
+        interpretation.append("Stereotype").append(": ").append(assoStereo.getInterpretation().get()).append(", ");
+      }
     }
     cd1Stereo.ifPresent(astStereotype -> ppStereo1 = getColorCode(assoStereo) + pp.prettyprint(astStereotype));
     cd2Stereo.ifPresent(astStereotype -> ppStereo2 = getColorCode(assoStereo) + pp.prettyprint(astStereotype));
@@ -112,6 +112,9 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTModifier> assoModifier = new FieldDiff<>(cd1Modi, cd2Modi);
     if (assoModifier.isPresent()){
       diffs.add(assoModifier);
+      if (assoModifier.getInterpretation().isPresent()){
+        interpretation.append("Modifier").append(": ").append(assoModifier.getInterpretation().get()).append(", ");
+      }
     }
     ppModifier1 = getColorCode(assoModifier) + pp.prettyprint(cd1Modi.get());
     ppModifier2 = getColorCode(assoModifier) + pp.prettyprint(cd2Modi.get());
@@ -123,6 +126,9 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTCDAssocType> assoType = new FieldDiff<>(cd1AssoType,cd2AssoType);
     if (assoType.isPresent()){
       diffs.add(assoType);
+      if (assoType.getInterpretation().isPresent()){
+        interpretation.append("Type").append(": ").append(assoType.getInterpretation().get()).append(", ");
+      }
     }
     ppType1 = getColorCode(assoType) + pp.prettyprint(cd1AssoType.get());
     ppType2 = getColorCode(assoType) + pp.prettyprint(cd2AssoType.get());
@@ -138,6 +144,9 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTCDAssocDir> assoDir1 = new FieldDiff<>(cd1AssoDir, cd2AssoDir);
     if (assoDir1.isPresent()){
       diffs.add(assoDir1);
+      if (assoDir1.getInterpretation().isPresent()){
+        interpretation.append("Direction").append(": ").append(assoDir1.getInterpretation().get()).append(", ");
+      }
     }
 
     tmpOriginalDir.addAll(getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getRight(), false));
@@ -183,6 +192,10 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTCDOrdered> assoOrdered = new FieldDiff<>(cd1Ordered, cd2Ordered);
     if (assoOrdered.isPresent()){
       diffs.add(assoOrdered);
+      if (assoOrdered.getInterpretation().isPresent() && setPP){
+        interpretation.append(cd1Side.isLeft() ? "Left " : "Right ");
+        interpretation.append("Right ").append("Ordered").append(": ").append(assoOrdered.getInterpretation().get()).append(", ");
+      }
     }
 
     // Modifier, non-optional
@@ -191,6 +204,10 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTModifier> assoModifier = new FieldDiff<>(cd1Modi, cd2Modi);
     if (assoModifier.isPresent()){
       diffs.add(assoModifier);
+      if (assoModifier.getInterpretation().isPresent() && setPP){
+        interpretation.append(cd1Side.isLeft() ? "Left " : "Right ");
+        interpretation.append("Modifier").append(": ").append(assoModifier.getInterpretation().get()).append(", ");
+      }
     }
 
 
@@ -200,6 +217,10 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTCDCardinality> assoCard = new FieldDiff<>(cd1Card, cd2Card);
     if (assoCard.isPresent()){
       diffs.add(assoCard);
+      if (assoCard.getInterpretation().isPresent() && setPP){
+        interpretation.append(cd1Side.isLeft() ? "Left " : "Right ");
+        interpretation.append("Cardinality").append(": ").append(assoCard.getInterpretation().get()).append(", ");
+      }
     }
 
     // QualifiedType, non-optional (participant in the association)
@@ -209,6 +230,10 @@ public class AssoDiff extends AbstractDiffType{
 
     if (type.isPresent()){
       diffs.add(type);
+      if (type.getInterpretation().isPresent() && setPP){
+        interpretation.append(cd1Side.isLeft() ? "Left " : "Right ");
+        interpretation.append("Name").append(": ").append(type.getInterpretation().get()).append(", ");
+      }
     }
 
     // CDQualifier, optional
@@ -217,6 +242,10 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTCDQualifier> assoQuali = new FieldDiff<>(cd1Quali, cd2Quali);
     if (assoQuali.isPresent()){
       diffs.add(assoQuali);
+      if (assoQuali.getInterpretation().isPresent() && setPP){
+        interpretation.append(cd1Side.isLeft() ? "Left " : "Right ");
+        interpretation.append("Qualifier").append(": ").append(assoQuali.getInterpretation().get()).append(", ");
+      }
     }
 
     // CDRole, optional
@@ -225,6 +254,10 @@ public class AssoDiff extends AbstractDiffType{
     FieldDiff<ASTCDRole> assoRole = new FieldDiff<>(cd1Role, cd2Role);
     if (assoRole.isPresent()){
       diffs.add(assoRole);
+      if (assoRole.getInterpretation().isPresent() && setPP){
+        interpretation.append(cd1Side.isLeft() ? "Left " : "Right ");
+        interpretation.append("Role").append(": ").append(assoRole.getInterpretation().get()).append(", ");
+      }
     }
 
     if (setPP) {
@@ -262,82 +295,72 @@ public class AssoDiff extends AbstractDiffType{
     return diffs;
   }
 
-  /**
-   * Print function for the association diff, used to output the diffs appropriately formated
-   */
-  public StringBuilder print() {
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
-    StringBuilder output = new StringBuilder();
-    StringBuilder interpretation = new StringBuilder();
-    interpretation.append("Interpretation: ");
+  private void setStrings(){
+    StringBuilder outputBoth = new StringBuilder();
+    StringBuilder outputBothFull = new StringBuilder();
 
-    StringBuilder cd1AssoSelfbuild = new StringBuilder();
-      //Signature
-    cd1AssoSelfbuild
+    StringBuilder assoCD1Builder = new StringBuilder();
+    //Signature
+    assoCD1Builder
       .append(ppStereo1).append(" ")
       .append(ppModifier1).append(" ")
       .append(ppType1).append(" ")
       .append(ppName1).append(" ")
 
       // Left Side
-        .append(ppOrderLeft1).append(" ")
-        .append(ppModifierLeft1).append(" ")
-        .append(ppCardLeft1).append(" ")
-        .append(ppTypeLeft1).append(" ")
-        .append(ppQualifierLeft1).append(" ")
-        .append(ppRoleLeft1).append(" ")
+      .append(ppOrderLeft1).append(" ")
+      .append(ppModifierLeft1).append(" ")
+      .append(ppCardLeft1).append(" ")
+      .append(ppTypeLeft1).append(" ")
+      .append(ppQualifierLeft1).append(" ")
+      .append(ppRoleLeft1).append(" ")
 
       .append(ppDir1).append(" ")
       // Right Side
-        .append(ppRoleRight1).append(" ")
-        .append(ppQualifierRight1).append(" ")
-        .append(ppTypeRight1).append(" ")
-        .append(ppCardRight1).append(" ")
-        .append(ppModifierRight1).append(" ")
-        .append(ppOrderRight1)
+      .append(ppRoleRight1).append(" ")
+      .append(ppQualifierRight1).append(" ")
+      .append(ppTypeRight1).append(" ")
+      .append(ppCardRight1).append(" ")
+      .append(ppModifierRight1).append(" ")
+      .append(ppOrderRight1)
       .append(";");
-    String cd1AssoSelfbuildString = cd1AssoSelfbuild.toString().replace("null", "").replace("  "," ").replace("  "," ");
+    assoCD1 = assoCD1Builder.toString().replace("null", "").replace("  "," ").replace("  "," ");
 
-    StringBuilder cd2AssoSelfbuild = new StringBuilder();
+    StringBuilder assoCD2Builder = new StringBuilder();
     //Signature
-    cd2AssoSelfbuild
+    assoCD2Builder
       .append(ppStereo2).append(" ")
       .append(ppModifier2).append(" ")
       .append(ppType2).append(" ")
       .append(ppName2).append(" ")
 
       // Left Side
-        .append(ppOrderLeft2).append(" ")
-        .append(ppModifierLeft2).append(" ")
-        .append(ppCardLeft2).append(" ")
-        .append(ppTypeLeft2).append(" ")
-        .append(ppQualifierLeft2).append(" ")
-        .append(ppRoleLeft2).append(" ")
+      .append(ppOrderLeft2).append(" ")
+      .append(ppModifierLeft2).append(" ")
+      .append(ppCardLeft2).append(" ")
+      .append(ppTypeLeft2).append(" ")
+      .append(ppQualifierLeft2).append(" ")
+      .append(ppRoleLeft2).append(" ")
 
       .append(ppDir2).append(" ")
       // Right Side
-        .append(ppRoleRight2).append(" ")
-        .append(ppQualifierRight2).append(" ")
-        .append(ppTypeRight2).append(" ")
-        .append(ppCardRight2).append(" ")
-        .append(ppModifierRight2).append(" ")
-        .append(ppOrderRight2)
+      .append(ppRoleRight2).append(" ")
+      .append(ppQualifierRight2).append(" ")
+      .append(ppTypeRight2).append(" ")
+      .append(ppCardRight2).append(" ")
+      .append(ppModifierRight2).append(" ")
+      .append(ppOrderRight2)
       .append(";");
-    String cd2AssoSelfbuildString = cd2AssoSelfbuild.toString().replace("null", "").replace("  "," ").replace("  "," ");
+    assoCD2 = assoCD2Builder.toString().replace("null", "").replace("  "," ").replace("  "," ");
+  }
 
-    // Build Association Output
-    output.append("Line Matched Association with diff score ").append(getDiffSize())
-      .append(System.lineSeparator())
-      .append(this.getCd1Element().get_SourcePositionStart().getLine())
-      .append("   ").append(cd1AssoSelfbuildString)
-      .append(System.lineSeparator())
-      .append(this.getCd2Element().get_SourcePositionStart().getLine())
-      .append("   ").append(cd2AssoSelfbuildString)
-      .append(System.lineSeparator())
-      .append(interpretation)
-      .append(System.lineSeparator());
-
-    //System.out.println(output);
-    return output;
+  /**
+   * Print function for the association diff, used to output the diffs appropriately formated
+   */
+  public String printCD1() {
+    return assoCD1;
+  }
+  public String printCD2() {
+    return assoCD2;
   }
 }

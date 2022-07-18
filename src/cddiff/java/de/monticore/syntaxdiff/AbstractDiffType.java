@@ -9,6 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalDouble;
 
@@ -18,6 +19,25 @@ public abstract class AbstractDiffType {
   protected static final String COLOR_ADD = "\033[1;32m";
   protected static final String COLOR_CHANGE = "\033[1;33m";
   protected static final String RESET = "\033[0m";
+  protected StringBuilder interpretation = new StringBuilder();
+  protected double diffSize;
+  protected List<FieldDiff<? extends ASTNode>> diffList;
+  protected int breakingChange;
+
+  public StringBuilder getInterpretation() {
+    return interpretation;
+  }
+
+  public int getBreakingChange() {
+    return breakingChange;
+  }
+
+  public double getDiffSize() {
+    return diffSize;
+  }
+  public List<FieldDiff<? extends ASTNode>> getDiffList() {
+    return diffList;
+  }
 
   /**
    * Methode for calculating a list of elements which are not included in any match provided by the matchs list.
@@ -26,7 +46,7 @@ public abstract class AbstractDiffType {
    * @return Reduced list of type provided as elementList
    * @param <T> Type of the element, e.g. Classes
    */
-  protected static <T> List<T> absentElementList(List<ElementDiff<T>> matchs, List<T> elementList){
+  protected static <T extends ASTCNode> List<T> absentElementList(List<ElementDiff<T>> matchs, List<T> elementList){
     List<T> output = new ArrayList<>();
     for (T element : elementList){
       boolean found = false;
@@ -42,14 +62,13 @@ public abstract class AbstractDiffType {
     }
     return output;
   }
-
   /**
    * Methode to reduce a given list of potential matches between elements to at most one match for each entry
    * @param elementsDiffList List of diffs between one element of the first model and every element of the same type from the second model
    * @return Reduced list of matches for elements between two models
    * @param <T> Type of the element, e.g. Classes
    */
-  protected static <T> List<ElementDiff<T>> getMatchingList(List<List<ElementDiff<T>>> elementsDiffList){
+  protected static <T extends ASTCNode> List<ElementDiff<T>> getMatchingList(List<List<ElementDiff<T>>> elementsDiffList){
     List<T> cd1matchedElements = new ArrayList<>();
     List<T> cd2matchedElements = new ArrayList<>();
     List<ElementDiff<T>> matchedElements = new ArrayList<>();
@@ -117,5 +136,37 @@ public abstract class AbstractDiffType {
       }
     }
     return size;
+  }
+
+
+  /**
+   * Help method for calculating the class diff because each class can contains multiple methodes which need to be matched
+   * @param cd1ElementList List of methodes from the original model
+   * @param cd2ElementList List of methodes from the target(new) model
+   * @return Returns a difflist for each methodes, ordered by diffsize (small diff values == similar)
+   */
+  protected static <T extends ASTCNode> List<List<ElementDiff<T>>> getElementDiffList(List<T> cd1ElementList, List<T> cd2ElementList) {
+    List<List<ElementDiff<T>>> diffs = new ArrayList<>();
+    for (T cd1Element : cd1ElementList){
+      List<ElementDiff<T>> cd1ElementMatches = new ArrayList<>();
+      for (T cd2Element : cd2ElementList) {
+        cd1ElementMatches.add(new ElementDiff<>(cd1Element, cd2Element));
+      }
+      // Sort by size of diffs, ascending
+      cd1ElementMatches.sort(Comparator.comparing(ElementDiff::getDiffSize));
+      diffs.add(cd1ElementMatches);
+    }
+    return diffs;
+  }
+
+  protected String combineWithoutNulls(List<String> stringList){
+    StringBuilder output = new StringBuilder();
+
+    for (String field: stringList){
+      if (!(field == null) && field.length() > 8){
+        output.append(field).append(" ");
+      }
+    }
+    return output.toString();
   }
 }

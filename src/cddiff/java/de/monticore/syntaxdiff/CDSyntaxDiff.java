@@ -27,6 +27,7 @@ public interface CDSyntaxDiff {
    List<ASTCDEnum> getAddedEnums();
    List<ASTCDEnum> getDeletedEnums();
 
+  String getCd1Name();
   // Resolve methods for returning interpretations = what happend to the element?
 
   // SyntaxDiff.Interpretation resolve(ASTCDAttribute attribute, ASTCDClass astcdClass);
