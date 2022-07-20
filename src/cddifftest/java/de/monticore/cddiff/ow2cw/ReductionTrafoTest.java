@@ -2,10 +2,12 @@ package de.monticore.cddiff.ow2cw;
 
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.ow2cw.CDInheritanceHelper;
 import de.monticore.ow2cw.ReductionTrafo;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -159,5 +161,27 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
       }
     }
   }
+
+  @Test
+  public void testCreateCommonInterface() {
+    ASTCDCompilationUnit employees8 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    new ReductionTrafo().createCommonInterface(employees8, "Object");
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
+
+    Assert.assertTrue(employees8.getCDDefinition()
+        .getCDClassesList()
+        .stream()
+        .allMatch(
+            cdClass -> CDInheritanceHelper.isSuperOf("Object", cdClass.getSymbol().getFullName(),
+                scope)));
+
+    Assert.assertTrue(employees8.getCDDefinition()
+        .getCDInterfacesList()
+        .stream()
+        .allMatch(cdInterface -> CDInheritanceHelper.isSuperOf("Object",
+            cdInterface.getSymbol().getFullName(), scope)));
+  }
+
 
 }

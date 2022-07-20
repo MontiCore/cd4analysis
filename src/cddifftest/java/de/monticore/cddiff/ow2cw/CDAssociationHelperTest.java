@@ -9,14 +9,58 @@ import de.monticore.ow2cw.CDAssociationHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CDAssociationHelperTest extends CDDiffTestBasis {
   protected final ASTCDCompilationUnit conflictCD = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/Conflict/ConflictEmployees.cd");
+
   @Test
-  public void testInConflict(){
+  public void testInConflict() {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(conflictCD);
-    for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()){
-      Assert.assertTrue(conflictCD.getCDDefinition().getCDAssociationsList().stream().anyMatch(target -> CDAssociationHelper.inConflict(src,target,scope)));
+    List<ASTCDAssociation> assocList = new ArrayList<>(
+        conflictCD.getCDDefinition().getCDAssociationsList());
+    for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
+      assocList.remove(src);
+      Assert.assertTrue(assocList.stream()
+          .anyMatch(target -> CDAssociationHelper.inConflict(src, target, scope)));
+      Assert.assertFalse(assocList.stream()
+          .allMatch(target -> CDAssociationHelper.inConflict(src, target, scope)));
+      assocList.add(src);
+    }
+  }
+
+  @Test
+  public void testSameAssociation() {
+    List<ASTCDAssociation> assocList = new ArrayList<>(
+        conflictCD.getCDDefinition().getCDAssociationsList());
+    for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
+      assocList.remove(src);
+      Assert.assertTrue(assocList.stream()
+          .noneMatch(target -> CDAssociationHelper.sameAssociation(src, target)));
+      assocList.add(src);
+    }
+  }
+
+  @Test
+  public void testSuperAssociation() {
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(conflictCD);
+    List<ASTCDAssociation> assocList = new ArrayList<>(
+        conflictCD.getCDDefinition().getCDAssociationsList());
+    for (ASTCDAssociation src : conflictCD.getCDDefinition().getCDAssociationsList()) {
+      assocList.remove(src);
+      Assert.assertTrue(assocList.stream()
+          .anyMatch(target -> CDAssociationHelper.isSuperAssociation(src, target, scope)
+              || CDAssociationHelper.isSuperAssociationInReverse(src, target, scope)
+              || CDAssociationHelper.isSuperAssociation(target, src, scope)
+              || CDAssociationHelper.isSuperAssociationInReverse(target, src, scope)));
+      Assert.assertFalse(assocList.stream()
+          .allMatch(target -> CDAssociationHelper.isSuperAssociation(src, target, scope)
+              || CDAssociationHelper.isSuperAssociationInReverse(src, target, scope)
+              || CDAssociationHelper.isSuperAssociation(target, src, scope)
+              || CDAssociationHelper.isSuperAssociationInReverse(target, src, scope)));
+      assocList.add(src);
     }
   }
 

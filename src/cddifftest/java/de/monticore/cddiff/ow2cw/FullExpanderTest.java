@@ -6,17 +6,21 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.ow2cw.CDAssociationHelper;
 import de.monticore.ow2cw.expander.BasicExpander;
 import de.monticore.ow2cw.expander.FullExpander;
+import de.se_rwth.commons.logging.Log;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FullExpanderTest extends CDDiffTestBasis {
 
@@ -283,6 +287,79 @@ public class FullExpanderTest extends CDDiffTestBasis {
         .getCDAssociationsList()
         .stream()
         .allMatch(assoc2 -> assoc2.getCDAssocDir().isBidirectional()));
+  }
+
+  @Test
+  public void testUpdateDir4Diff() {
+
+    final ASTCDCompilationUnit lecture1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
+
+    final ASTCDCompilationUnit lecture2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture2.cd");
+
+    FullExpander fullExpander = new FullExpander(new BasicExpander(lecture2));
+
+    fullExpander.updateDir4Diff(lecture1.getCDDefinition().getCDAssociationsList());
+
+
+    Assert.assertTrue(lecture2.getCDDefinition()
+        .getCDAssociationsList()
+        .stream()
+        .anyMatch(assoc -> assoc.getCDAssocDir().isDefinitiveNavigableLeft()));
+
+    Assert.assertTrue(lecture2.getCDDefinition()
+        .getCDAssociationsList()
+        .stream()
+        .noneMatch(assoc -> assoc.getCDAssocDir().isBidirectional()));
+
+    Assert.assertTrue(lecture2.getCDDefinition()
+        .getCDAssociationsList()
+        .stream()
+        .allMatch(
+            assoc -> assoc.getCDAssocDir().isDefinitiveNavigableLeft() || assoc.getCDAssocDir()
+                .isDefinitiveNavigableRight()));
+  }
+
+  @Test
+  public void buildSuperAssociationTest(){
+    final ASTCDCompilationUnit lecture1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
+    FullExpander fullExpander = new FullExpander(new BasicExpander(lecture1));
+    fullExpander.addDummyClass("Object");
+
+    List<ASTCDAssociation> assocList =
+        new ArrayList<>(fullExpander.buildSuperAssociations(lecture1.getCDDefinition().getCDAssociationsList(),"Object"));
+
+    long left2right =
+        lecture1.getCDDefinition().getCDAssociationsList().stream().filter(assoc -> assoc.getCDAssocDir().isDefinitiveNavigableRight()).count();
+    long right2left =
+        lecture1.getCDDefinition().getCDAssociationsList().stream().filter(assoc -> assoc.getCDAssocDir().isDefinitiveNavigableLeft()).count();
+
+    Assert.assertEquals(left2right+right2left,assocList.size());
+
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
+    for (ASTCDAssociation assoc : assocList){
+      assoc.accept(pp.getTraverser());
+      String node = pp.prettyprint((ASTCDAssociationNode) assoc);
+      Assert.assertTrue(node.contains("->"));
+      Assert.assertTrue(node.contains("Object ;"));
+    }
+  }
+
+  @Test
+  public void testInConflict() {
+    final ASTCDCompilationUnit conflictCD = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/Conflict/ConflictEmployees.cd");
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(conflictCD);
+
+    List<ASTCDAssociation> assocList = new ArrayList<>(
+        conflictCD.getCDDefinition().getCDAssociationsList());
+
+    FullExpander fullExpander = new FullExpander(new BasicExpander(conflictCD));
+    fullExpander.addAssociationsWithoutConflicts(assocList);
+
+    Assert.assertEquals(assocList,conflictCD.getCDDefinition().getCDAssociationsList());
   }
 
 }

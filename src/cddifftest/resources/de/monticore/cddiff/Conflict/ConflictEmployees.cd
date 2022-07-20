@@ -14,7 +14,10 @@ classdiagram ConflictEmployees {
   }
 
   class Manager extends Employee;
+  class ManagementTask extends Task;
 
   association [*] Employee (manages) -> (managedBy) Manager [0..1];
-  association Employee -> (managedBy) Task;
+  association Task (managedBy) <- Employee;
+  association Manager (managedBy) <- Manager;
+  association [*] ManagementTask (managedBy) <- Manager [0..1];
 }
