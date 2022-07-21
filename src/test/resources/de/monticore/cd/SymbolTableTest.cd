@@ -25,4 +25,8 @@ classdiagram SymbolTableTest{
     int k;
   }
 
+  association A -> C;
+
+  association B <-> C;
+
 }

@@ -7,6 +7,7 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeTrafo4Defaults;
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -44,35 +45,47 @@ public class CDSymbolTablesTest extends CD4CodeTestBasis {
 
   @Test
   public void getTransitiveSuperClassesTest() throws IOException {
-
     final ICD4CodeArtifactScope scope = getICD4CodeArtifactScope("cd/SymbolTableTest.cd");
     final Optional<CDTypeSymbol> type = scope.resolveCDType("A");
     assertTrue(type.isPresent());
     List<ASTCDClass> classes = CDSymbolTables.getTransitiveSuperClasses((ASTCDClass) type.get().getAstNode());
     assertEquals(3, classes.size());
-
   }
 
   @Test
   public void getTransitiveSuperInterfacesTest() throws IOException {
-
     final ICD4CodeArtifactScope scope = getICD4CodeArtifactScope("cd/SymbolTableTest.cd");
     final Optional<CDTypeSymbol> type = scope.resolveCDType("A");
     assertTrue(type.isPresent());
     List<ASTCDInterface> interfaces = CDSymbolTables.getTransitiveSuperInterfaces(type.get().getAstNode());
     assertEquals(2, interfaces.size());
-
   }
 
   @Test
   public void getTransitiveSuperTypesTest() throws IOException {
-
     final ICD4CodeArtifactScope scope = getICD4CodeArtifactScope("cd/SymbolTableTest.cd");
     final Optional<CDTypeSymbol> type = scope.resolveCDType("A");
     assertTrue(type.isPresent());
     List<ASTCDType> types = CDSymbolTables.getTransitiveSuperTypes(type.get().getAstNode());
     assertEquals(5, types.size());
+  }
 
+  @Test
+  public void getAssociationsTest() throws IOException {
+    final ICD4CodeArtifactScope scope = getICD4CodeArtifactScope("cd/SymbolTableTest.cd");
+    final Optional<CDTypeSymbol> type = scope.resolveCDType("A");
+    assertTrue(type.isPresent());
+    List<ASTCDAssocSide> assocs = CDSymbolTables.getAssociations(type.get().getAstNode());
+    assertEquals(1, assocs.size());
+  }
+
+  @Test
+  public void getAssociationsInHierarchyTest() throws IOException {
+    final ICD4CodeArtifactScope scope = getICD4CodeArtifactScope("cd/SymbolTableTest.cd");
+    final Optional<CDTypeSymbol> type = scope.resolveCDType("A");
+    assertTrue(type.isPresent());
+    List<ASTCDAssocSide> assocs = CDSymbolTables.getAssociationsInHierarchy(type.get().getAstNode());
+    assertEquals(3, assocs.size());
   }
 
   private ICD4CodeArtifactScope getICD4CodeArtifactScope(String filePath) throws IOException {

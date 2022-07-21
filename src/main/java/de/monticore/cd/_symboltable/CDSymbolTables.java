@@ -30,10 +30,15 @@ public class CDSymbolTables {
     return attributes;
   }
 
-  public static List<ASTCDAssocSide> getAssociationsInHierarchy(ASTCDType ast) {
+  public static List<ASTCDAssocSide> getAssociations(ASTCDType ast) {
+    return ast.getSymbol().getCDRoleList().stream().filter(r -> r.isIsDefinitiveNavigable())
+      .map(a -> a.getAssocSide()).collect(Collectors.toList());
+  }
+
+   public static List<ASTCDAssocSide> getAssociationsInHierarchy(ASTCDType ast) {
     List<ASTCDAssocSide> assocs = Lists.newArrayList();
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
-      assocs.addAll(sc.getSymbol().getCDRoleList().stream().map(a -> a.getAssocSide()).collect(Collectors.toList()));
+      assocs.addAll(getAssociations(sc));
     }
     return assocs;
   }
