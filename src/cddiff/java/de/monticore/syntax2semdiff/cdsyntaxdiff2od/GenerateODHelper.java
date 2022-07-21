@@ -384,7 +384,7 @@ public class GenerateODHelper {
         // Set<> attribute
         Matcher setMatcher = Pattern.compile("Set<(.*)>").matcher(astcdAttribute.printType());
         if (setMatcher.find()) {
-          String value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), false);
+          String value = createValue(cdw, cDTypeDiff, "Set_" + setMatcher.group(1), false);
           ASTODSimpleAttributeValue oDvalue = OD4DataMill.oDSimpleAttributeValueBuilder()
               .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
               .build();
@@ -890,22 +890,22 @@ public class GenerateODHelper {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
     stringBuilder.append(index);
-    stringBuilder.append("-[");
+    stringBuilder.append("_$");
 
     // set assoc name
     stringBuilder.append(association.getName(true));
-    stringBuilder.append("]-[");
+    stringBuilder.append("$_$");
 
     // set assoc type
     stringBuilder.append(association.getCDDiffCategory().toString().toLowerCase());
-    stringBuilder.append("]");
+    stringBuilder.append("$");
 
     // set which part
     if (association.getWhichPartDiff().isPresent()) {
       if (association.getWhichPartDiff().get() != CDSyntaxDiff.WhichPartDiff.DIRECTION) {
-        stringBuilder.append("-[");
+        stringBuilder.append("_$");
         stringBuilder.append(association.getWhichPartDiff().get().toString().toLowerCase());
-        stringBuilder.append("]");
+        stringBuilder.append("$");
       }
     }
 
@@ -919,21 +919,25 @@ public class GenerateODHelper {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
     stringBuilder.append(index);
-    stringBuilder.append("-[");
+    stringBuilder.append("_$");
 
     // set assoc name
     stringBuilder.append(cDTypeDiff.getName(true));
-    stringBuilder.append("]-[");
+    stringBuilder.append("$_$");
 
     // set assoc type
     stringBuilder.append(cDTypeDiff.getCDDiffCategory().toString().toLowerCase());
-    stringBuilder.append("]");
+    stringBuilder.append("$");
 
     // set which part
     if (cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED) {
       if (cDTypeDiff.getWhichAttributesDiff().isPresent()) {
-        stringBuilder.append("-");
-        stringBuilder.append(cDTypeDiff.getWhichAttributesDiff().get());
+        stringBuilder.append("_");
+        stringBuilder.append(cDTypeDiff.getWhichAttributesDiff().get().toString()
+            .replace(" ", "")
+            .replace(",", "_")
+            .replace("[", "$")
+            .replace("]", "$"));
       }
     }
 

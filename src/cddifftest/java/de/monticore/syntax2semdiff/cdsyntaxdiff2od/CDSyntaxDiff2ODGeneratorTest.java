@@ -68,7 +68,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
     Assert.assertTrue(resultList.stream().anyMatch(e -> {
       String result =
-          "[Class_C]-[deleted] {\n" +
+          "$Class_C$_$deleted$ {\n" +
               "\n" +
               "  c_0:C{};\n" +
               "\n" +
@@ -78,14 +78,14 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
     Assert.assertTrue(resultList.stream().anyMatch(e -> {
       String result =
-          "[Class_B]-[edited]-[myDate, myList, myE, myMap, id, mySet, myOpt] {\n" +
+          "$Class_B$_$edited$_$myDate_myList_myE_myMap_id_mySet_myOpt$ {\n" +
               "\n" +
               "  b_0:B{\n" +
               "    E myE = e1;\n" +
               "    List<String> myList = [some_type_String,...];\n" +
               "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
               "    Optional<E> myOpt = e1;\n" +
-              "    Set<Boolean> mySet = some_type_Set<Boolean>;\n" +
+              "    Set<Boolean> mySet = some_type_Set_Boolean;\n"+
               "    int id = some_type_int;\n" +
               "    Date myDate = some_type_Date;\n" +
               "  };\n" +
@@ -96,14 +96,14 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
     Assert.assertTrue(resultList.stream().anyMatch(e -> {
       String result =
-          "[Enum_E]-[edited]-[e3] {\n" +
+          "$Enum_E$_$edited$_$e3$ {\n" +
               "\n" +
               "  b_0:B{\n" +
               "    E myE = e3;\n" +
               "    List<String> myList = [some_type_String,...];\n" +
               "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
               "    Optional<E> myOpt = e1;\n" +
-              "    Set<Boolean> mySet = some_type_Set<Boolean>;\n" +
+              "    Set<Boolean> mySet = some_type_Set_Boolean;\n" +
               "    int id = some_type_int;\n" +
               "    Date myDate = some_type_Date;\n" +
               "  };\n" +
@@ -199,14 +199,14 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
-        e.contains("[Association_A_a_LeftToRight_b_B]-[direction_changed]")
+        e.contains("$Association_A_a_LeftToRight_b_B$_$direction_changed$")
             && e.contains("a_0:A{};")
             && e.contains("b_0:B{};")
             && e.contains("link a_0 (a) -> (b) b_0;")
             && e.contains("link b_0 (b) -> (a) a_0;")));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
-        e.contains("[Association_A_a_LeftToRight_b_B]-[cardinality_changed]-[right_cardinality]")
+        e.contains("$Association_A_a_LeftToRight_b_B$_$cardinality_changed$_$right_cardinality$")
             && e.contains("a_0:A{};")
             && e.contains("b_0:B{};")
             && e.contains("b_1:B{};")
@@ -299,7 +299,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
-        e.contains("[Class_Company]-[edited]-[id]") &&
+        e.contains("$Class_Company$_$edited$_$id$") &&
             e.contains("manager_0:Manager{};") &&
             e.contains(
                 "  company_0:Company{\n" +
@@ -362,7 +362,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
-        e.contains("[Association_Employee_work_RightToLeft_area_Area]-[direction_changed]") &&
+        e.contains("$Association_Employee_work_RightToLeft_area_Area$_$direction_changed$") &&
             e.contains(
                 "  employee_0:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
@@ -378,7 +378,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     ));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
-        e.contains("[Association_Employee_work_RightToLeft_area_Area]-[cardinality_changed]-[left_cardinality]") &&
+        e.contains("$Association_Employee_work_RightToLeft_area_Area$_$cardinality_changed$_$left_cardinality$") &&
             e.contains(
                 "  employee_0:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
@@ -400,7 +400,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     ));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
-        e.contains("[Association_Employee_assignee_Bidirectional_todo_Task]-[direction_changed]") &&
+        e.contains("$Association_Employee_assignee_Bidirectional_todo_Task$_$direction_changed$") &&
             e.contains(
                 "  employee_0:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
@@ -493,7 +493,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
   }
 
 //  @Test
-//  public void testGenerateODByCombinationTest () {
+//  public void testGenerateODByTest (){
 //    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
 //    generateCDSyntaxDiffTemp("Combination",
 //        "test1.cd", "test2.cd", cdSemantics);
