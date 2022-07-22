@@ -1,6 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package man;
 import java.util.Date;
 import java.util.String;
 
@@ -17,15 +16,13 @@ classdiagram Employees3 {
     class Employee extends Person {
       PositionKind kind;
     }
-    package man {
-      class Manager;
-    }
+    class Manager;
   }
 
   class Task {
     Date startDate;
   }
 
-  association [*] emp.Employee (manages) -> (managedBy) emp.man.Manager [0..1];
+  association [*] emp.Employee (manages) -> (managedBy) emp.Manager [0..1];
   association [1] emp.Employee  --  Task [*];
 }

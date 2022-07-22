@@ -1,6 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package man;
 import java.util.Date;
 
 classdiagram Employees7 {

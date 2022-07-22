@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class ReductionTrafo {
 
-  public static final String COMMON_INTERFACE = "Object4Analysis";
+  public static final String COMMON_INTERFACE = "Object";
 
   /**
    * transform 2 CDs for Open-to-Closed World Reduction of CDDiff; completeSymbolTable() cannot be

@@ -450,6 +450,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods =
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
+    printODs2Dir(ods, "target/generated/od-validity-test-cases/Multi-Instance");
+
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = cd1.getCDDefinition();
     ASTCDDefinition cdDef2 = cd2.getCDDefinition();

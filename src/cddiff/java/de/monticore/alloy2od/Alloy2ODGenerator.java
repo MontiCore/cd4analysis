@@ -34,6 +34,8 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     A4TupleSet fNames = null;
+    A4TupleSet type = null;
+    A4TupleSet superTypes = null;
     A4TupleSet obj = null;
     A4TupleSet val = null;
     A4TupleSet enumVal = null;
@@ -74,6 +76,10 @@ public class Alloy2ODGenerator {
     try {
       e = CompUtil.parseOneExpression_fromString(module, "get");
       getObj = (A4TupleSet) solution.eval(e);
+      e = CompUtil.parseOneExpression_fromString(module, "type");
+      type = (A4TupleSet) solution.eval(e);
+      e = CompUtil.parseOneExpression_fromString(module, "super");
+      superTypes = (A4TupleSet) solution.eval(e);
     }
     catch (Err e1) {
       e1.printStackTrace();
@@ -114,10 +120,14 @@ public class Alloy2ODGenerator {
     // Write static part into the OD
     od.append("objectdiagram ");
     od.append(name);
-    od.append(" {").append(System.lineSeparator());
+    od.append(" {").append(System.lineSeparator()).append(System.lineSeparator());
 
     // Write dynamic part to OD
     for (A4Tuple o : obj) {
+
+      if (!(type == null || superTypes == null || isDummyType(type))) {
+        od.append(indent).append(executeRuleOType(o, type, superTypes));
+      }
       od.append(indent).append(executeRuleODecl(o));
       od.append(" {").append(System.lineSeparator());
 
@@ -143,8 +153,9 @@ public class Alloy2ODGenerator {
         }
       }
       indent = indent.substring(0, 2);
-      od.append(indent).append("};").append(System.lineSeparator());
+      od.append(indent).append("};").append(System.lineSeparator()).append(System.lineSeparator());
     }
+
     // Handle links
     for (A4Tuple a4Tuple : getObj) {
       String sourceName = a4Tuple.atom(0);
@@ -159,6 +170,15 @@ public class Alloy2ODGenerator {
     od.append("}").append(System.lineSeparator());
 
     return od.toString();
+  }
+
+  private static boolean isDummyType(A4TupleSet type) {
+    for (A4Tuple t : type) {
+      if (!t.atom(1).contains("Dummy")) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
@@ -475,7 +495,7 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove type_ and $number from val
-    String type = val.replaceAll("_of__","<").replaceAll("__",">").replaceAll(".*_", "");
+    String type = val.replaceAll("_of__", "<").replaceAll("__", ">").replaceAll(".*_", "");
     type = type.replaceAll("[$]\\d*", "");
 
     // Get name from fName by removing $number from fName
@@ -509,7 +529,7 @@ public class Alloy2ODGenerator {
 
     // Remove $ and numbers after it to get type
     String type = o.toString().replaceAll("[$]\\d*", "");
-    type = type.replaceAll("[_]",".");
+    type = type.replaceAll("[_]", ".");
 
     // Generate output
     od.append(name);
@@ -517,6 +537,26 @@ public class Alloy2ODGenerator {
     od.append(type);
 
     return od.toString();
+  }
+
+  private static String executeRuleOType(A4Tuple o, A4TupleSet type, A4TupleSet superTypes) {
+    StringBuilder typeDecl = new StringBuilder();
+    typeDecl.append("<<instanceOf = \"");
+
+    for (A4Tuple t : type) {
+      if (o.atom(0).equals(t.atom(0))) {
+        for (A4Tuple superType : superTypes) {
+          if (t.atom(1).equals(superType.atom(0))) {
+            typeDecl.append(superType.atom(1)
+                .replaceAll("Type_", ", ")
+                .replaceAll("[$]\\d*", ""));
+          }
+        }
+      }
+    }
+
+    typeDecl.append("\">>").append(System.lineSeparator());
+    return typeDecl.toString().replaceFirst("= \", ", "= \"");
   }
 
 }

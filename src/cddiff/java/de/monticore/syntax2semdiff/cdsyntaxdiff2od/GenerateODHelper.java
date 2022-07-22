@@ -38,28 +38,23 @@ public class GenerateODHelper {
       int position = s.lastIndexOf('.');
       String packageName = s.substring(0, position);
       String className = s.substring(position + 1);
-      return (new StringBuilder()).append(packageName)
-          .append(".")
-          .append(Character.toLowerCase(className.charAt(0)))
-          .append(className.substring(1))
-          .toString();
+      return packageName + "." + Character.toLowerCase(className.charAt(0)) + className.substring(
+          1);
     }
     else {
       if (Character.isLowerCase(s.charAt(0))) {
         return s;
       }
       else {
-        return (new StringBuilder()).append(Character.toLowerCase(s.charAt(0)))
-            .append(s.substring(1))
-            .toString();
+        return Character.toLowerCase(s.charAt(0)) + s.substring(1);
       }
     }
 
   }
 
   /**
-   * mapping the type of compare direcrtion into integer
-   * it's easy to determine which the direction should be used in OD
+   * mapping the type of compare direction into integer it's easy to determine which the direction
+   * should be used in OD
    */
   public static int mappingDirection(String str) {
     switch (str) {
@@ -79,8 +74,8 @@ public class GenerateODHelper {
   }
 
   /**
-   * mapping the type of compare cardinality into integer in general step
-   * it's easy to determine how many objects of current association should be created in OD
+   * mapping the type of compare cardinality into integer in general step it's easy to determine how
+   * many objects of current association should be created in OD
    */
   public static int mappingCardinality(String str) {
     switch (str) {
@@ -104,8 +99,8 @@ public class GenerateODHelper {
   }
 
   /**
-   * mapping the type of compare cardinality into integer in initial step
-   * it's easy to determine how many objects of current association should be created in OD
+   * mapping the type of compare cardinality into integer in initial step it's easy to determine how
+   * many objects of current association should be created in OD
    */
   public static int mappingCardinality4Initial(String str) {
     switch (str) {
@@ -129,22 +124,24 @@ public class GenerateODHelper {
   }
 
   /**
-   * convert refSetAssociationList to checkList
-   * if the item in refSetAssociationList is created,
+   * convert refSetAssociationList to checkList if the item in refSetAssociationList is created,
    * then the corresponding counter of this item should be minus one until the counter equals zero
    */
   public static Map<CDRefSetAssociationWrapper, Integer> convertRefSetAssociationList2CheckList(
       List<CDRefSetAssociationWrapper> refSetAssociationList) {
     Map<CDRefSetAssociationWrapper, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
-//      // check the overlapped RefSetAssociation count
-//      int count = refSetAssociationList.stream()
-//          .filter(e -> e.getLeftRoleName().equals(item.getLeftRoleName()) && e.getRightRoleName()
-//              .equals(item.getRightRoleName()) && e.getDirection().equals(item.getDirection())
-//              && item.getLeftRefSet().containsAll(e.getLeftRefSet()) && item.getRightRefSet()
-//              .containsAll(e.getRightRefSet()))
-//          .collect(Collectors.toList())
-//          .size();
+      //      // check the overlapped RefSetAssociation count
+      //      int count = refSetAssociationList.stream()
+      //          .filter(e -> e.getLeftRoleName().equals(item.getLeftRoleName()) && e
+      //          .getRightRoleName()
+      //              .equals(item.getRightRoleName()) && e.getDirection().equals(item
+      //              .getDirection())
+      //              && item.getLeftRefSet().containsAll(e.getLeftRefSet()) && item
+      //              .getRightRefSet()
+      //              .containsAll(e.getRightRefSet()))
+      //          .collect(Collectors.toList())
+      //          .size();
 
       checkList.put(item, 1);
     });
@@ -156,45 +153,47 @@ public class GenerateODHelper {
    * including Inheritance CDRefSetAssociationWrapper
    */
   public static List<CDRefSetAssociationWrapper> findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
-      CDWrapper cdw,
-      CDAssociationWrapper originalAssoc,
+      CDWrapper cdw, CDAssociationWrapper originalAssoc,
       Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
     Set<CDRefSetAssociationWrapper> resulSet = new HashSet<>();
 
     // get all subclasses of leftCDTypeWrapper and rightCDTypeWrapper in originalAssoc
     Set<CDTypeWrapper> CDTypeWrapperSet = new HashSet<>();
     CDTypeWrapperSet.add(originalAssoc.getCDWrapperLeftClass());
-    CDTypeWrapperSet.addAll(getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperLeftClass(),
-        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()));
+    CDTypeWrapperSet.addAll(
+        getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperLeftClass(),
+            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()));
     CDTypeWrapperSet.add(originalAssoc.getCDWrapperRightClass());
-    CDTypeWrapperSet.addAll(getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperRightClass(),
-        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()));
+    CDTypeWrapperSet.addAll(
+        getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperRightClass(),
+            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()));
 
     // get all related Assocs of each class in CDTypeWrapperSet
     Map<String, CDAssociationWrapper> cDAssociationWrapperMap = new HashMap<>();
-    CDTypeWrapperSet.forEach(e -> {
-      cDAssociationWrapperMap.putAll(
-          fuzzySearchCDAssociationWrapperByClassName(
-              cdw.getCDAssociationWrapperGroup(),
-              e.getOriginalClassName()));
-    });
+    CDTypeWrapperSet.forEach(e -> cDAssociationWrapperMap.putAll(
+        fuzzySearchCDAssociationWrapperByClassName(cdw.getCDAssociationWrapperGroup(),
+            e.getOriginalClassName())));
 
     // get all related CDRefSetAssociationWrapper of each Assoc in cDAssociationWrapperMap
     cDAssociationWrapperMap.values().forEach(e -> {
       if ((e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-          && e.getCDWrapperRightClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-          && (mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
-              || e.getCDAssociationWrapperDirection().equals(originalAssoc.getCDAssociationWrapperDirection())))
-          || (e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-          && e.getCDWrapperRightClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName()))
-          && (mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
-              || e.getCDAssociationWrapperDirection().equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection())))) {
+          && e.getCDWrapperRightClassRoleName()
+          .equals(originalAssoc.getCDWrapperRightClassRoleName()) && (
+          mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+              || e.getCDAssociationWrapperDirection()
+              .equals(originalAssoc.getCDAssociationWrapperDirection()))) ||
+          (e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
+              && e.getCDWrapperRightClassRoleName()
+              .equals(originalAssoc.getCDWrapperLeftClassRoleName())) && (
+              mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+                  || e.getCDAssociationWrapperDirection()
+                  .equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection())))) {
         resulSet.addAll(
             findDirectRelatedCDRefSetAssociationWrapperByCDAssociationWrapper(e, refLinkCheckList));
       }
     });
 
-    return resulSet.stream().collect(Collectors.toList());
+    return new ArrayList<>(resulSet);
   }
 
   /**
@@ -207,8 +206,8 @@ public class GenerateODHelper {
 
     refLinkCheckList.keySet().forEach(item -> {
       if (item.getLeftRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-          && item.getRightRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-          && (mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+          && item.getRightRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName()) && (
+          mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
               || item.getDirection().equals(originalAssoc.getCDAssociationWrapperDirection()))
           && item.getLeftRefSet()
           .stream()
@@ -219,9 +218,10 @@ public class GenerateODHelper {
         resulSet.add(item);
       }
       else if (item.getLeftRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-          && item.getRightRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-          && (mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
-              || item.getDirection().equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection())))
+          && item.getRightRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName()) && (
+          mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+              || item.getDirection()
+              .equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection())))
           && item.getLeftRefSet()
           .stream()
           .anyMatch(e -> e.getName().equals(originalAssoc.getCDWrapperRightClass().getName()))
@@ -234,7 +234,6 @@ public class GenerateODHelper {
 
     return resulSet;
   }
-
 
   public static Map<CDRefSetAssociationWrapper, Integer> updateCounterInCheckList(
       List<CDRefSetAssociationWrapper> associationList,
@@ -250,11 +249,10 @@ public class GenerateODHelper {
    * check whether the related CDRefSetAssociationWrapper is used by CDAssociationWrapper
    */
   public static boolean checkRelatedCDRefSetAssociationWrapperIsUsed(CDWrapper cdw,
-      CDAssociationWrapper association,
-      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
+      CDAssociationWrapper association, Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
     List<CDRefSetAssociationWrapper> refSetAssociationList =
         findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
-            cdw, association, refLinkCheckList);
+        cdw, association, refLinkCheckList);
     AtomicBoolean isUsed = new AtomicBoolean(true);
     refSetAssociationList.forEach(e -> {
       if (refLinkCheckList.get(e) != 0) {
@@ -265,50 +263,41 @@ public class GenerateODHelper {
   }
 
   /**
-   * using in generateOD basic process
-   *
-   * if current Assoc = A -> B
-   * then check if exist A <- B in CD and if A <- B is created
-   *    if it is created, this situation is not illegal
-   *        otherwise this situation is illegal
-   *
-   * if current Assoc = A -> B
-   * then check if exist B -> A in CD and if B -> A is created
-   *    if it is created, this situation is not illegal
-   *        otherwise this situation is illegal
+   * using in generateOD basic process if current Assoc = A -> B then check if exist A <- B in CD
+   * and if A <- B is created if it is created, this situation is not illegal otherwise this
+   * situation is illegal if current Assoc = A -> B then check if exist B -> A in CD and if B -> A
+   * is created if it is created, this situation is not illegal otherwise this situation is illegal
    */
   public static boolean checkIllegalSituationOnly4CDAssociationWrapperWithLeftToRightAndRightToLeft(
-      CDWrapper cdw,
-      CDAssociationWrapper currentAssoc,
+      CDWrapper cdw, CDAssociationWrapper currentAssoc,
       Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
 
-    if (currentAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
-        currentAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+    if (currentAssoc.getCDAssociationWrapperDirection()
+        == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT
+        || currentAssoc.getCDAssociationWrapperDirection()
+        == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
 
       List<CDAssociationWrapperPack> cDAssociationWrapperPacks =
-          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(cdw.getCDAssociationWrapperGroup(), currentAssoc);
+          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
+          cdw.getCDAssociationWrapperGroup(), currentAssoc);
 
-      boolean isIllegal = cDAssociationWrapperPacks
-          .stream()
-          .filter(pack ->
-              // A -> B, A <- B
-              (!pack.isReverse()
-                  && pack.getCDAssociationWrapper().getCDAssociationWrapperDirection()
-                      .equals(reverseDirection(currentAssoc.getCDAssociationWrapperDirection()))) ||
+      return cDAssociationWrapperPacks.stream().filter(pack ->
+          // A -> B, A <- B
+          (!pack.isReverse() && pack.getCDAssociationWrapper()
+              .getCDAssociationWrapperDirection()
+              .equals(reverseDirection(currentAssoc.getCDAssociationWrapperDirection()))) ||
               // A -> B, B -> A
-              (pack.isReverse()
-                  && pack.getCDAssociationWrapper().getCDAssociationWrapperDirection()
-                  .equals(currentAssoc.getCDAssociationWrapperDirection())))
-          .noneMatch(pack -> {
-            // check pack.getCDAssociationWrapper() whether is used ?
-            Set<CDRefSetAssociationWrapper> cDRefSetAssociationWrappers =
-                findDirectRelatedCDRefSetAssociationWrapperByCDAssociationWrapper(pack.getCDAssociationWrapper(), refLinkCheckList);
-            return cDRefSetAssociationWrappers
-                .stream()
-                .filter(e -> e.getOriginalElement().equals(pack.getCDAssociationWrapper()))
-                .allMatch(e -> refLinkCheckList.get(e) == 0);
-          });
-      return isIllegal;
+              (pack.isReverse() && pack.getCDAssociationWrapper()
+                  .getCDAssociationWrapperDirection()
+                  .equals(currentAssoc.getCDAssociationWrapperDirection()))).noneMatch(pack -> {
+        // check pack.getCDAssociationWrapper() whether is used ?
+        Set<CDRefSetAssociationWrapper> cDRefSetAssociationWrappers =
+            findDirectRelatedCDRefSetAssociationWrapperByCDAssociationWrapper(
+            pack.getCDAssociationWrapper(), refLinkCheckList);
+        return cDRefSetAssociationWrappers.stream()
+            .filter(e -> e.getOriginalElement().equals(pack.getCDAssociationWrapper()))
+            .allMatch(e -> refLinkCheckList.get(e) == 0);
+      });
     }
     return true;
   }
@@ -354,8 +343,8 @@ public class GenerateODHelper {
   }
 
   /**
-   * create all attributes for created object
-   * distinguish the type of object, simple class or collection
+   * create all attributes for created object distinguish the type of object, simple class or
+   * collection
    */
   public static List<ASTODAttribute> createASTODAttributeList(CDWrapper cdw,
       Optional<CDTypeDiff> cDTypeDiff, CDTypeWrapper cDTypeWrapper) {
@@ -455,12 +444,8 @@ public class GenerateODHelper {
   /**
    * create an object
    */
-  public static CDWrapperObjectPack createObject(
-      CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff,
-      CDTypeWrapper cDTypeWrapper,
-      int index,
-      Optional<CDTypeWrapper> instanceClass,
+  public static CDWrapperObjectPack createObject(CDWrapper cdw, Optional<CDTypeDiff> cDTypeDiff,
+      CDTypeWrapper cDTypeWrapper, int index, Optional<CDTypeWrapper> instanceClass,
       CDSemantics cdSemantics) {
 
     // if this CDTypeWrapper is interface or abstract class, then find a simple class on
@@ -468,9 +453,11 @@ public class GenerateODHelper {
     CDTypeWrapper newCDTypeWrapper;
     if (instanceClass.isPresent()) {
       newCDTypeWrapper = instanceClass.get();
-    } else {
+    }
+    else {
       if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
-          || cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+          || cDTypeWrapper.getCDWrapperKind()
+          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
         newCDTypeWrapper = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
             cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()).get(0);
       }
@@ -480,8 +467,8 @@ public class GenerateODHelper {
     }
 
     // set attributes
-    List<ASTODAttribute> astodAttributeList =
-        createASTODAttributeList(cdw, cDTypeDiff, newCDTypeWrapper);
+    List<ASTODAttribute> astodAttributeList = createASTODAttributeList(cdw, cDTypeDiff,
+        newCDTypeWrapper);
 
     // set objects
     ASTODNamedObject astodNamedObject = null;
@@ -492,29 +479,36 @@ public class GenerateODHelper {
               toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
           .setModifier(OD4DataMill.modifierBuilder().build())
           .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
-              .setMCQualifiedName(
-                  MCQualifiedNameFacade.createQualifiedName(newCDTypeWrapper.getOriginalClassName()))
+              .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
+                  newCDTypeWrapper.getOriginalClassName()))
               .build())
           .setODAttributesList(astodAttributeList)
           .build();
-    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
+    }
+    else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
       List<String> classList = new ArrayList<>();
       newCDTypeWrapper.getSuperclasses().forEach(e -> {
         classList.add(e.split("_")[1]);
       });
-      String multiLabel = "instanceOf: " + String.join(", ", classList);
+      String multiLabel = "instanceOf";
 
       astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
           .setName(
               toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
-          .setModifier(OD4DataMill.modifierBuilder().setStereotype(
-              OD4DataMill.stereotypeBuilder().addValues(
-                  OD4DataMill.stereoValueBuilder().setName(multiLabel).setContent("").build()
-              ).build()
-          ).build())
+          .setModifier(OD4DataMill.modifierBuilder()
+              .setStereotype(OD4DataMill.stereotypeBuilder()
+                  .addValues(OD4DataMill.stereoValueBuilder()
+                      .setName(multiLabel)
+                      .setContent(String.join(", ", classList))
+                      .setText(OD4DataMill.stringLiteralBuilder()
+                          .setSource(String.join(", ", classList))
+                          .build())
+                      .build())
+                  .build())
+              .build())
           .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
-              .setMCQualifiedName(
-                  MCQualifiedNameFacade.createQualifiedName(newCDTypeWrapper.getOriginalClassName()))
+              .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
+                  newCDTypeWrapper.getOriginalClassName()))
               .build())
           .setODAttributesList(astodAttributeList)
           .build();
@@ -526,14 +520,10 @@ public class GenerateODHelper {
   /**
    * create all objects that should be used in an OD
    */
-  public static List<ASTODNamedObject> createObjectList(
-      CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff,
-      CDTypeWrapper offerCDTypeWrapper,
-      int cardinalityCount,
+  public static List<ASTODNamedObject> createObjectList(CDWrapper cdw,
+      Optional<CDTypeDiff> cDTypeDiff, CDTypeWrapper offerCDTypeWrapper, int cardinalityCount,
       Deque<ASTODClassStackPack> classStack4TargetClass,
-      Deque<ASTODClassStackPack> classStack4SourceClass,
-      Optional<CDTypeWrapper> instanceClass,
+      Deque<ASTODClassStackPack> classStack4SourceClass, Optional<CDTypeWrapper> instanceClass,
       CDSemantics cdSemantics) {
 
     List<ASTODNamedObject> astodNamedObjectList = new LinkedList<>();
@@ -541,8 +531,8 @@ public class GenerateODHelper {
     CDTypeWrapper actualCDTypeWrapper = offerCDTypeWrapper;
     for (int i = 0; i < cardinalityCount; i++) {
       // set objects
-      CDWrapperObjectPack objectPack =
-          createObject(cdw, cDTypeDiff, offerCDTypeWrapper, i, instanceClass, cdSemantics);
+      CDWrapperObjectPack objectPack = createObject(cdw, cDTypeDiff, offerCDTypeWrapper, i,
+          instanceClass, cdSemantics);
       actualCDTypeWrapper = objectPack.getCDTypeWrapper();
       astodNamedObjectList.add(objectPack.getNamedObject());
       tempList.add(objectPack.getNamedObject());
@@ -557,7 +547,7 @@ public class GenerateODHelper {
    */
   public static ASTODLink createLink(ASTODNamedObject left, ASTODNamedObject right,
       String leftRoleName, String rightRoleName, ASTODLinkDirection astodLinkDirection) {
-    ASTODLink astodLink = OD4DataMill.oDLinkBuilder()
+    return OD4DataMill.oDLinkBuilder()
         .setLink(true)
         .setODLinkLeftSide(OD4DataMill.oDLinkLeftSideBuilder()
             .setModifier(OD4DataMill.modifierBuilder().build())
@@ -571,7 +561,6 @@ public class GenerateODHelper {
             .setRole(rightRoleName)
             .build())
         .build();
-    return astodLink;
   }
 
   /**
@@ -627,8 +616,7 @@ public class GenerateODHelper {
   }
 
   /**
-   * the created object as target class
-   * find all related associations of this created object
+   * the created object as target class find all related associations of this created object
    */
   public static List<CDAssociationWrapper> findAllCDAssociationWrapperByTargetClass(CDWrapper cdw,
       CDTypeWrapper cDTypeWrapper) {
@@ -665,8 +653,7 @@ public class GenerateODHelper {
   }
 
   /**
-   * the created object as source class
-   * find all related associations of this created object
+   * the created object as source class find all related associations of this created object
    */
   public static List<CDAssociationWrapper> findAllCDAssociationWrapperBySourceClass(CDWrapper cdw,
       CDTypeWrapper cDTypeWrapper) {
@@ -741,19 +728,15 @@ public class GenerateODHelper {
   }
 
   /**
-   * check the object of given CDTypeWrapper whether is in ASTODElementList
-   * if it is in ASTODElementList, return the existed ASTODElement
-   * if it is not in ASTODElementList, create a new ASTODElement as return element.
+   * check the object of given CDTypeWrapper whether is in ASTODElementList if it is in
+   * ASTODElementList, return the existed ASTODElement if it is not in ASTODElementList, create a
+   * new ASTODElement as return element.
    *
-   * @return: ASTODNamedObjectPack
-   * {  "objectList"  : List<ASTODNamedObject>
-   *    "isInList"    : boolean                 }
+   * @return: ASTODNamedObjectPack {  "objectList"  : List<ASTODNamedObject> "isInList"    : boolean
+   * }
    */
-  public static ASTODNamedObjectPack getObjectInASTODElementListByCDTypeWrapper(
-      CDWrapper cdw,
-      CDTypeWrapper cDTypeWrapper,
-      ASTODPack astodPack,
-      CDSemantics cdSemantics) {
+  public static ASTODNamedObjectPack getObjectInASTODElementListByCDTypeWrapper(CDWrapper cdw,
+      CDTypeWrapper cDTypeWrapper, ASTODPack astodPack, CDSemantics cdSemantics) {
 
     AtomicBoolean isInList = new AtomicBoolean(false);
     AtomicReference<List<ASTODNamedObject>> resultList = new AtomicReference<>(new ArrayList<>());
@@ -764,7 +747,8 @@ public class GenerateODHelper {
     // if this CDTypeWrapper is interface or abstract class,
     // check the subclass of this CDTypeWrapper whether is in objectList.
     if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
-        || cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+        || cDTypeWrapper.getCDWrapperKind()
+        == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
       List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
           cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> {
@@ -797,7 +781,8 @@ public class GenerateODHelper {
       // determine the class of new ASTODNamedObject
       CDTypeWrapper newCDTypeWrapper;
       if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
-          || cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+          || cDTypeWrapper.getCDWrapperKind()
+          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
         List<CDTypeWrapper> CDTypeWrapperList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
             cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
         newCDTypeWrapper = CDTypeWrapperList.get(CDTypeWrapperList.size() - 1);
@@ -807,11 +792,7 @@ public class GenerateODHelper {
       }
       // put new object into resultList
       List<ASTODNamedObject> tempList = resultList.get();
-      tempList.add(createObject(cdw,
-          Optional.empty(),
-          newCDTypeWrapper,
-          0,
-          Optional.empty(),
+      tempList.add(createObject(cdw, Optional.empty(), newCDTypeWrapper, 0, Optional.empty(),
           cdSemantics).getNamedObject());
 
       resultList.set(tempList);
@@ -821,13 +802,11 @@ public class GenerateODHelper {
   }
 
   /**
-   * get the other side class in CDAssociationWrapper
-   * if the given CDAssociationWrapper is self-loop, that is no problem.
-   * return the found the other side class and it's positon side.
+   * get the other side class in CDAssociationWrapper if the given CDAssociationWrapper is
+   * self-loop, that is no problem. return the found the other side class and it's positon side.
    *
-   * @return: CDTypeWrapperPack
-   * {  "otherSideClass" : CDTypeWrapper
-   *    "position"       : ["left", "right"] }
+   * @return: CDTypeWrapperPack {  "otherSideClass" : CDTypeWrapper "position"       : ["left",
+   * "right"] }
    */
   public static CDTypeWrapperPack findOtherSideClassAndPositionInCDAssociationWrapper(
       CDAssociationWrapper CDAssociationWrapper, CDTypeWrapper currentClass) {
@@ -849,7 +828,8 @@ public class GenerateODHelper {
   /**
    * generate ASTODArtifact
    */
-  public static ASTODArtifact generateASTODArtifact(List<ASTODElement> astodElementList, String odTitle) {
+  public static ASTODArtifact generateASTODArtifact(List<ASTODElement> astodElementList,
+      String odTitle) {
     // set ASTObjectDiagram
     ASTObjectDiagram objectDiagram = OD4DataMill.objectDiagramBuilder()
         .setName(odTitle)
@@ -933,7 +913,9 @@ public class GenerateODHelper {
     if (cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED) {
       if (cDTypeDiff.getWhichAttributesDiff().isPresent()) {
         stringBuilder.append("_");
-        stringBuilder.append(cDTypeDiff.getWhichAttributesDiff().get().toString()
+        stringBuilder.append(cDTypeDiff.getWhichAttributesDiff()
+            .get()
+            .toString()
             .replace(" ", "")
             .replace(",", "_")
             .replace("[", "$")
