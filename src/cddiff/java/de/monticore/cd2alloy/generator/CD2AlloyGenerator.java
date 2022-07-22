@@ -387,7 +387,7 @@ public class CD2AlloyGenerator {
   public String executeRuleU5(Set<ASTCDCompilationUnit> asts, boolean newSemantics) {
 
     if (!newSemantics) {
-      return ("one sig Type_Dummy extends Type {}") + System.lineSeparator();
+      return ("one sig Type_Dummy4SimpleSemantics extends Type {}") + System.lineSeparator();
     }
 
     StringBuilder commonSigs = new StringBuilder();
@@ -1498,7 +1498,7 @@ public class CD2AlloyGenerator {
       predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
     }
     else {
-      predicate.append(("ObjTypes[Obj,(Type_Dummy)]"))
+      predicate.append(("ObjTypes[Obj,(Type_Dummy4SimpleSemantics)]"))
           .append(System.lineSeparator())
           .append(System.lineSeparator());
     }

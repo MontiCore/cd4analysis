@@ -174,7 +174,7 @@ public class Alloy2ODGenerator {
 
   private static boolean isDummyType(A4TupleSet type) {
     for (A4Tuple t : type) {
-      if (!t.atom(1).contains("Dummy")) {
+      if (!t.atom(1).contains("Dummy4SimpleSemantics")) {
         return false;
       }
     }
