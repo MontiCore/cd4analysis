@@ -2,7 +2,7 @@
 package de.monticore.similaritymeasure.measures;
 
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.ClassDifference;
+import de.monticore.alloycddiff.classDifference.AlloyCDDiff;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
 import java.util.Optional;
@@ -43,7 +43,7 @@ public class SemanticObjectSizeMeasure {
   public double sizeDifference(ASTCDCompilationUnit x, ASTCDCompilationUnit y, int k) {
     double result = 0;
 
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(x, y, k);
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(x, y, k);
 
     if (optS.isPresent()) {
       AlloyDiffSolution S = optS.get();

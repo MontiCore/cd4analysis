@@ -4,7 +4,7 @@ package de.monticore;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.ClassDifference;
+import de.monticore.alloycddiff.classDifference.AlloyCDDiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -672,7 +672,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
 
     // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(ast1, ast2, diffsize, semantics,
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(ast1, ast2, diffsize, semantics,
         outputPath);
 
     // test if solution is present

@@ -3,7 +3,7 @@ package de.monticore.cddiff.alloy2od;
 
 import de.monticore.alloycddiff.CDSemantics;
 import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.ClassDifference;
+import de.monticore.alloycddiff.classDifference.AlloyCDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -30,7 +30,7 @@ public class WitnessTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7);
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(astV1, astV2, 7);
 
     // Test if generation was successful
     assertTrue(optS.isPresent());
@@ -62,7 +62,7 @@ public class WitnessTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7,
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(astV1, astV2, 7,
         CDSemantics.MULTI_INSTANCE_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful
@@ -90,7 +90,7 @@ public class WitnessTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     assertNotNull(astV2);
 
-    Optional<AlloyDiffSolution> optS = ClassDifference.cddiff(astV1, astV2, 7,
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(astV1, astV2, 7,
         CDSemantics.MULTI_INSTANCE_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful

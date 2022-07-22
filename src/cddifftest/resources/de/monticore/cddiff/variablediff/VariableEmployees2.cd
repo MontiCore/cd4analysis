@@ -2,10 +2,16 @@
 
 import java.util.Date;
 
-classdiagram VariableEmployees{
-  enum PositionKind{fullTime, partTime;}
+<<complete>> classdiagram VariableEmployees2{
+  enum PositionKind{fullTime, partTime, external;}
 
-  <<complete>> class Employee {
+  interface Insurable;
+
+  abstract class Person{
+    Date birthday;
+  }
+
+  class Employee implements Insurable{
     PositionKind kind;
   }
 
@@ -17,4 +23,5 @@ classdiagram VariableEmployees{
 
   association [*] Employee (manages) -> (managedBy) Manager [0..1];
   association [1] Employee  --  Task [*];
+  association Employee -> Manager;
 }

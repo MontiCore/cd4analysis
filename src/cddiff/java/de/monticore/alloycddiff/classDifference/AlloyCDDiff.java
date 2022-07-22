@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * A collection of functions to compute the difference between class diagrams
  */
-public class ClassDifference {
+public class AlloyCDDiff {
 
   public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2, int k) {

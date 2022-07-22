@@ -11,6 +11,7 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 import java.util.Set;
@@ -102,8 +103,13 @@ public class VariableExpander extends BasicExpander{
 
   @Override
   public void addAssociation(ASTCDAssociation assoc) {
+    if (getCD().getCDDefinition().getModifier().isPresentStereotype() && getCD().getCDDefinition().getModifier().getStereotype().contains(VAR_TAG)) {
+      return;
+    }
+
     ICD4CodeArtifactScope artifactScope =
         CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
+
     if (assoc.getCDAssocDir().isDefinitiveNavigableRight()){
       Optional<CDTypeSymbol> symbol =
           artifactScope.resolveCDTypeDown(assoc.getLeftQualifiedName().getQName());
@@ -111,6 +117,7 @@ public class VariableExpander extends BasicExpander{
         return;
       }
     }
+
     if (assoc.getCDAssocDir().isDefinitiveNavigableLeft()){
       Optional<CDTypeSymbol> symbol =
           artifactScope.resolveCDTypeDown(assoc.getRightQualifiedName().getQName());
@@ -118,6 +125,7 @@ public class VariableExpander extends BasicExpander{
         return;
       }
     }
+
     super.addAssociation(assoc);
   }
 
