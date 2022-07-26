@@ -98,7 +98,7 @@ public class JavaCDDiff {
       }
     } catch (Exception e){
       e.printStackTrace();
-      Log.error("0xCDD14: Could not print ODs to directory " + outputDirectory);
+      Log.error("0xCDD10: Could not print ODs to directory " + outputDirectory);
     }
   }
 

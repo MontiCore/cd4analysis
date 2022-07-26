@@ -133,7 +133,7 @@ public class CDInheritanceHelper {
     symbolList = currentScope.resolveCDTypeDownMany(targetName);
 
     if (symbolList.isEmpty()) {
-      Log.error(String.format("0xCDD15: Could not resolve %s", targetName));
+      Log.error(String.format("0xCDD08: Could not resolve %s", targetName));
     }
 
     CDTypeSymbol current = symbolList.get(0);

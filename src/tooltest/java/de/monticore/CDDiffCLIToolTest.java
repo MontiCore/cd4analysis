@@ -136,7 +136,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       second = matcher.checkODConsistency(cd2, odFilePaths);
     }
     catch (Exception e) {
-      Log.error("0xCDD11: Matching failed due to the following exception " + e.getMessage());
+      Log.error("0xCDD09: Matching failed due to the following exception " + e.getMessage());
       fail();
     }
 

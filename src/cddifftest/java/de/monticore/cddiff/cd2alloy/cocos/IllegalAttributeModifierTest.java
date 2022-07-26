@@ -29,7 +29,7 @@ public class IllegalAttributeModifierTest extends CDDiffTestBasis {
     checker.checkAll(a);
 
     Collection<Finding> expectedErrors = Collections.singletonList(Finding.error(
-        "0xCDD12: Attribute kind has invalid modifiers. No modifiers are allowed for CD4Analysis.",
+        "Attribute kind has invalid modifiers. No modifiers are allowed for CD4Analysis.",
         new SourcePosition(6, 4)));
 
     Assert.assertErrors(expectedErrors, Log.getFindings());
