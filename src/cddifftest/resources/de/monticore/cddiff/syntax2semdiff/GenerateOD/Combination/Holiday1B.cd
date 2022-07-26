@@ -1,0 +1,107 @@
+import java.util.Date;
+
+classdiagram HolidayB {
+
+  enum CurrencyUnit {
+    Dollar, Euro, Pound;
+  }
+
+  enum CarCategory {
+    MicroCar, MiniCompact, SubCompact, Compact, MPV;
+  }
+
+  class Client {
+    String name;
+    String surname;
+    Integer creditCardNumber;
+    Integer identifier;
+    String address;
+    Integer telNumber;
+    String dateOfBirth;
+    String email;
+  }
+
+	class Order {
+	  Integer fileNumber;
+	  String status;
+	  Long amount;
+	  CurrencyUnit unit;
+	}
+
+	class Invoice {
+	  Integer id;
+	  Date date;
+	}
+
+	class PartnerAgency {
+	  String name;
+	}
+
+	class Holiday {
+	  String specificInfo;
+	  Date departureDate;
+	  Date arrivalDate;
+	  Boolean priority;
+	}
+
+	class CarRentalReservation {
+    CarCategory carCategory;
+    Integer numberOfOccupants;
+    Date startDate;
+    Date endDate;
+    String carRentalCompany;
+	}
+
+	class Insurance {
+	  Integer contactNumber;
+	}
+
+	class CancellationInsurance extends Insurance;
+
+	class Trip {
+	  Integer discount;
+	  Long price;
+	  CurrencyUnit unit;
+	  String offerReference;
+	}
+
+	class Flight {
+	  String flightNo;
+	  Date departureDate;
+	  Date arrivalDate;
+	  String pointOfDeparture;
+	  String pointOfArrival;
+	}
+
+	class RoomReservation {
+	  Date startDate;
+	  Date endDate;
+	  String complementaryService;
+	}
+
+	class Destination {
+	  String country;
+	  String continent;
+	}
+
+	class Hotel {
+	  String name;
+	  String town;
+	  Integer id;
+	}
+
+  association [*] Order (order) -> (book) Client [1];
+  association [0..1] Order (order) -> (invoice) Invoice [0..1];
+  association [*] Client (participant) <- (individualTrip) Holiday [*];
+  association [1] Order (order) -> (orderLine) Holiday [*];
+  association [1] Holiday (contain) -> (car) CarRentalReservation [0..1];
+  association [*] Holiday (occurrence) -> (offer) Trip [1];
+  association [1] Holiday (insured) -> (insurance) Insurance [*];
+  association [1] Holiday (contain) -> (flight) Flight [*];
+  association [1] Holiday (contain) -> (hotel) RoomReservation [0..1];
+  association [*] Trip (product) -> (origin) PartnerAgency [1];
+  association [*] RoomReservation (room) -> (hotel) Hotel [1];
+  association [1..*] Hotel (hotel) -> (localization) Destination [1];
+  association [*] Trip (journey) -> (destination) Destination [1];
+
+}

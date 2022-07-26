@@ -219,11 +219,16 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       }
     }
 
-    createCDAssociationDiff(baseCDW,
-        intersectedBaseCDAssociationWrapper,
-        Optional.of(intersectedCompareCDAssociationWrapper),
-        isInCompareSG,
-        isAssocNameExchanged);
+    // Except the duplication witnesses in MULTI_INSTANCE_CLOSED_WORLD
+    // when the left class or right class (including its superclasses)
+    // in association have syntax difference.
+    if (isInCompareSG) {
+      createCDAssociationDiff(baseCDW,
+          intersectedBaseCDAssociationWrapper,
+          Optional.of(intersectedCompareCDAssociationWrapper),
+          isInCompareSG,
+          isAssocNameExchanged);
+    }
   }
 
   /**

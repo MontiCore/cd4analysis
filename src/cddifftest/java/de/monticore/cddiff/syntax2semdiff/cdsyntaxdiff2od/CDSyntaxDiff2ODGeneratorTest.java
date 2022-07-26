@@ -2,10 +2,14 @@ package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.cddiff.ow2cw.ReductionTrafo;
+import de.monticore.cddiff.syntax2semdiff.JavaCDDiff;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CD2CDWrapperGenerator;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapper2CDSyntaxDiffGenerator;
@@ -16,13 +20,15 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.printOD;
+import static org.junit.Assert.assertNotNull;
 
 public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
-  ASTCDCompilationUnit cd1 = null;
+  ASTCDCompilationUnit ast1 = null;
 
-  ASTCDCompilationUnit cd2 = null;
+  ASTCDCompilationUnit ast2 = null;
 
   CDWrapper cdw1 = null;
 
@@ -36,18 +42,18 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
       String cd2Name,
       CDSemantics cdSemantics) {
 
-    cd1 = parseModel(
+    ast1 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
             + folder + "/" + cd1Name);
 
-    cd2 = parseModel(
+    ast2 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
             + folder + "/" + cd2Name);
 
     CD2CDWrapperGenerator cd1Generator = new CD2CDWrapperGenerator();
     CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
-    cdw1 = cd1Generator.generateCDWrapper(cd1, cdSemantics);
-    cdw2 = cd2Generator.generateCDWrapper(cd2, cdSemantics);
+    cdw1 = cd1Generator.generateCDWrapper(ast1, cdSemantics);
+    cdw2 = cd2Generator.generateCDWrapper(ast2, cdSemantics);
     CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
         new CDWrapper2CDSyntaxDiffGenerator();
     cdd1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
@@ -133,8 +139,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -164,8 +170,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -183,8 +189,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -231,17 +237,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
       Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
-    }
-
-    List<String> resultList = printOD(ods);
-    for (String s : resultList) {
-      System.out.println(s);
     }
   }
 
@@ -284,8 +285,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -331,8 +332,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -350,8 +351,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -434,6 +435,24 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     ));
   }
 
+  @Test
+  public void testGenerateODByCombinationLarge() {
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Combination",
+        "Holiday1A.cd", "Holiday1B.cd", cdSemantics);
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
+
+    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
+
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
+      Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
+    }
+  }
 
   /********************************************************************
    *********************    Start for Combination    ******************
@@ -452,17 +471,12 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     printODs2Dir(ods, "target/generated/od-validity-test-cases/Multi-Instance");
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
       Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
-    }
-
-    List<String> resultList = printOD(ods);
-    for (String s : resultList) {
-      System.out.println(s);
     }
   }
 
@@ -476,8 +490,8 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    ASTCDDefinition cdDef1 = cd1.getCDDefinition();
-    ASTCDDefinition cdDef2 = cd2.getCDDefinition();
+    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
 
     for (ASTODArtifact od : ods) {
       Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
@@ -491,33 +505,61 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
    *******************************************************************/
   @Test
   public void testSyntaxDiff2SemanticDiff() {
-    cd1 = parseModel(
+    ast1 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
             + "/Employees1A.cd");
 
-    cd2 = parseModel(
+    ast2 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
             + "/Employees1B.cd");
 
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    String res = odGenerator.SyntaxDiff2SemanticDiff(cd1, cd2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    String res = JavaCDDiff.SyntaxDiff2SemanticDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
     System.out.println(res);
   }
 
-//  @Test
-//  public void testGenerateODByTest (){
-//    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
-//    generateCDSyntaxDiffTemp("Combination",
-//        "test1.cd", "test2.cd", cdSemantics);
-//    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-//    List<ASTODArtifact> ods =
-//        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
-//
-//    List<String> resultList = printOD(ods);
-//    for (int i = 0; i < resultList.size(); i++) {
-//      System.out.println(resultList.get(i));
-//    }
-//  }
+  @Test
+  public void testRunningTime4GenerateODs(){
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Combination/Holiday1A.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Combination/Holiday1B.cd";
+    String output = "./target/test-running-time/";
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1_old = parseModel(filePath1);
+    ASTCDCompilationUnit ast2_old = parseModel(filePath2);
+    ASTCDCompilationUnit ast1_new = parseModel(filePath1);
+    ASTCDCompilationUnit ast2_new = parseModel(filePath2);
+    assertNotNull(ast1_old);
+    assertNotNull(ast2_old);
+    assertNotNull(ast1_new);
+    assertNotNull(ast2_new);
+
+    // old method
+    long startTime_old = System.currentTimeMillis();   // start time
+    ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
+    Optional<AlloyDiffSolution> optS =
+        AlloyCDDiff.cddiff(ast1_old, ast2_old, 2, cdSemantics, output);
+    List<ASTODArtifact> ods_old = optS.get().generateODs();
+    long endTime_old = System.currentTimeMillis(); // end time
+
+    // new method
+    long startTime_new = System.currentTimeMillis();   // start time
+    List<ASTODArtifact> ods_new = JavaCDDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+    long endTime_new = System.currentTimeMillis(); // end time
+
+    System.out.println("old witness size: " + ods_old.size());
+    System.out.println("Running Time of old method: " + (endTime_old - startTime_old) + "ms");
+    System.out.println("new witness size: " + ods_new.size());
+    System.out.println("Running Time of new method: " + (endTime_new - startTime_new) + "ms");
+  }
+
+  public void printODs(List<ASTODArtifact> ods) {
+    List<String> resultList = printOD(ods);
+    for (String s : resultList) {
+      System.out.println(s);
+    }
+  }
 
   public void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory){
     try {

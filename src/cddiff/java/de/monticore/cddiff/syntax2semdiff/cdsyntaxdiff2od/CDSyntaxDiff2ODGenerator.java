@@ -1,10 +1,8 @@
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CD2CDWrapperGenerator;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDRefSetAssociationWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
@@ -14,7 +12,6 @@ import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODNamedOb
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODPack;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.CDTypeWrapperPack;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapper2CDSyntaxDiffGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssociationDiff;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeDiff;
@@ -26,66 +23,6 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.*;
 
 public class CDSyntaxDiff2ODGenerator {
-
-  public String SyntaxDiff2SemanticDiff(
-      ASTCDCompilationUnit cd1,
-      ASTCDCompilationUnit cd2,
-      CDSemantics cdSemantics) {
-
-    StringBuilder result = new StringBuilder();
-    CD2CDWrapperGenerator cd1Generator = new CD2CDWrapperGenerator();
-    CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
-    CDWrapper cdw1 = cd1Generator.generateCDWrapper(cd1, cdSemantics);
-    CDWrapper cdw2 = cd2Generator.generateCDWrapper(cd2, cdSemantics);
-    CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
-        new CDWrapper2CDSyntaxDiffGenerator();
-    CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW2WithCDW1 =
-        new CDWrapper2CDSyntaxDiffGenerator();
-    CDSyntaxDiff cg1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
-    CDSyntaxDiff cg2 = cdw2cddiffGenerator4CDW2WithCDW1.generateCDSyntaxDiff(cdw2, cdw1, cdSemantics);
-    List<ASTODArtifact> ods1 = generateObjectDiagrams(cdw1, cg1, cdSemantics);
-    List<ASTODArtifact> ods2 = generateObjectDiagrams(cdw2, cg2, cdSemantics);
-    if (ods1.size() == 0 && ods2.size() == 0) {
-      return "\t ********************************************************************* \n" +
-          "\t **************************  Semantic Same  ************************** \n" +
-          "\t ********************************************************************* \n";
-    }
-    else {
-      result.append("\t ******************************************************************** \n");
-      result.append("\t ******************  SemanticDiff from CD1 to CD2  ****************** \n");
-      switch (cdSemantics) {
-        case SIMPLE_CLOSED_WORLD:
-          result.append("\t *********************  in Simple-Closed-World  ********************* \n");
-          break;
-        case MULTI_INSTANCE_CLOSED_WORLD:
-          result.append("\t *****************  in Multi-Instance-Closed-World  ***************** \n");
-          break;
-        default:
-          break;
-      }
-      result.append("\t ******************************************************************** \n");
-      for (ASTODArtifact od : ods1) {
-        result.append(printOD(od) + '\n');
-      }
-      result.append("\t ******************************************************************** \n");
-      result.append("\t ******************  SemanticDiff from CD2 to CD1  ****************** \n");
-      switch (cdSemantics) {
-        case SIMPLE_CLOSED_WORLD:
-          result.append("\t *********************  in Simple-Closed-World  ********************* \n");
-          break;
-        case MULTI_INSTANCE_CLOSED_WORLD:
-          result.append("\t *****************  in Multi-Instance-Closed-World  ***************** \n");
-          break;
-        default:
-          break;
-      }
-      result.append("\t ******************************************************************** \n");
-      for (ASTODArtifact od : ods2) {
-        result.append(printOD(od) + '\n');
-      }
-    }
-    return result.toString();
-  }
 
   /**
    * generate ODs by solving items with syntactic differences in globalClassQueue and
@@ -202,9 +139,8 @@ public class CDSyntaxDiff2ODGenerator {
     }
     else {
       // enum
-      CDTypeWrapper CDTypeWrapperUsingEnum = cdw.getCDTypeWrapperGroup()
+      usingCDTypeWrapper = cdw.getCDTypeWrapperGroup()
           .get(cDTypeWrapper.getCDWrapperLink4EnumClass().iterator().next());
-      usingCDTypeWrapper = CDTypeWrapperUsingEnum;
     }
 
     // call initGenerateODByClassHelper()
@@ -255,14 +191,16 @@ public class CDSyntaxDiff2ODGenerator {
     // find possible associations about current CDTypeWrapper and its subclasses
     List<CDAssociationWrapper> CDAssociationWrapperList = new LinkedList<>();
     for (CDTypeWrapper currentClass : CDTypeWrapperList) {
-      CDAssociationWrapperList.addAll(findAllCDAssociationWrapperByTargetClass(cdw, currentClass));
-      CDAssociationWrapperList.addAll(findAllCDAssociationWrapperBySourceClass(cdw, currentClass));
+      CDAssociationWrapperList.addAll(findAllCDAssociationWrapperByTargetClass(cdw,
+          currentClass, true));
+      CDAssociationWrapperList.addAll(findAllCDAssociationWrapperBySourceClass(cdw,
+          currentClass, true));
       if (!CDAssociationWrapperList.isEmpty()) {
         break;
       }
     }
     // guarantee non-inherited associations as first
-    Collections.sort(CDAssociationWrapperList, (assoc1, assoc2) -> {
+    CDAssociationWrapperList.sort((assoc1, assoc2) -> {
       int o1 =
           assoc1.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC ? 1 : 0;
       int o2 =
@@ -539,10 +477,10 @@ public class CDSyntaxDiff2ODGenerator {
       List<ASTODNamedObject> objectList = cDTypeWrapperPack.getNamedObjects();
       currentCDTypeWrapper = cDTypeWrapperPack.getCDTypeWrapper();
       if (opt4StartClassKind.equals("target")) {
-        findAllCDAssociationWrapperByTargetClass(cdw, currentCDTypeWrapper).forEach(associationStack::push);
+        findAllCDAssociationWrapperByTargetClass(cdw, currentCDTypeWrapper, false).forEach(associationStack::push);
       }
       else {
-        findAllCDAssociationWrapperBySourceClass(cdw, currentCDTypeWrapper).forEach(associationStack::push);
+        findAllCDAssociationWrapperBySourceClass(cdw, currentCDTypeWrapper, false).forEach(associationStack::push);
       }
 
       while (!associationStack.isEmpty()) {
@@ -558,12 +496,11 @@ public class CDSyntaxDiff2ODGenerator {
               findOtherSideClassAndPositionInCDAssociationWrapper(
               currentCDAssociationWrapper, currentCDTypeWrapper);
 
-          List<ASTODNamedObject> currentSideObjectList = objectList;
           CDTypeWrapper otherSideClass = otherSideClassPack.getOtherSideClass();
           String otherSideRoleName;
           String currentSideRoleName;
-          int directionType = 0;
-          boolean isPresentOtherSideCardinality = false;
+          int directionType;
+          boolean isPresentOtherSideCardinality;
 
           CDTypeWrapperPack.Position otherSideClassPosition = otherSideClassPack.getPosition();
           if (otherSideClassPosition == CDTypeWrapperPack.Position.LEFT) {
@@ -624,7 +561,7 @@ public class CDSyntaxDiff2ODGenerator {
                 }
               }
               else {
-                boolean isTwoObjectsInOneClass4SourceSide = currentSideObjectList.size() == 2;
+                boolean isTwoObjectsInOneClass4SourceSide = objectList.size() == 2;
                 boolean isOneObjectsInOneClass4TargetSide = otherSideObjectGroupByClass.values()
                     .stream()
                     .anyMatch(e -> e.size() == 1);
@@ -636,7 +573,7 @@ public class CDSyntaxDiff2ODGenerator {
             }
 
 
-            if (currentSideObjectList.size() == 1) {
+            if (objectList.size() == 1) {
               ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
               if (!astodNamedObjectPack.isInList()) {
                 // add new object into ASTODElementList
@@ -649,16 +586,16 @@ public class CDSyntaxDiff2ODGenerator {
               // create new ASTODLinkList and add into ASTODElementList
               List<ASTODLink> linkList0;
               if (otherSideClassPosition == CDTypeWrapperPack.Position.LEFT) {
-                linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0),
+                linkList0 = createLinkList(otherSideObject0, objectList.get(0),
                     otherSideRoleName, currentSideRoleName, directionType);
               }
               else {
-                linkList0 = createLinkList(currentSideObjectList.get(0), otherSideObject0,
+                linkList0 = createLinkList(objectList.get(0), otherSideObject0,
                     currentSideRoleName, otherSideRoleName, directionType);
               }
               astodPack.extendLinks(linkList0);
             }
-            else if (currentSideObjectList.size() == 2) {
+            else if (objectList.size() == 2) {
               ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
               ASTODNamedObject otherSideObject1 = otherSideObject0.deepClone();
               String objectName = otherSideObject1.getName().split("_")[0];
@@ -678,15 +615,15 @@ public class CDSyntaxDiff2ODGenerator {
               List<ASTODLink> linkList0;
               List<ASTODLink> linkList1;
               if (otherSideClassPosition == CDTypeWrapperPack.Position.LEFT) {
-                linkList0 = createLinkList(otherSideObject0, currentSideObjectList.get(0),
+                linkList0 = createLinkList(otherSideObject0, objectList.get(0),
                     otherSideRoleName, currentSideRoleName, directionType);
-                linkList1 = createLinkList(otherSideObject1, currentSideObjectList.get(1),
+                linkList1 = createLinkList(otherSideObject1, objectList.get(1),
                     otherSideRoleName, currentSideRoleName, directionType);
               }
               else {
-                linkList0 = createLinkList(currentSideObjectList.get(0), otherSideObject0,
+                linkList0 = createLinkList(objectList.get(0), otherSideObject0,
                     currentSideRoleName, otherSideRoleName, directionType);
-                linkList1 = createLinkList(currentSideObjectList.get(1), otherSideObject1,
+                linkList1 = createLinkList(objectList.get(1), otherSideObject1,
                     currentSideRoleName, otherSideRoleName, directionType);
               }
               astodPack.extendLinks(linkList0);

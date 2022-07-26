@@ -617,8 +617,10 @@ public class GenerateODHelper {
   /**
    * the created object as target class find all related associations of this created object
    */
-  public static List<CDAssociationWrapper> findAllCDAssociationWrapperByTargetClass(CDWrapper cdw,
-      CDTypeWrapper cDTypeWrapper) {
+  public static List<CDAssociationWrapper> findAllCDAssociationWrapperByTargetClass(
+      CDWrapper cdw,
+      CDTypeWrapper cDTypeWrapper,
+      boolean checkCardinality) {
     List<CDAssociationWrapper> result = new LinkedList<>();
     Map<String, CDAssociationWrapper> cDAssociationWrapperMap =
         fuzzySearchCDAssociationWrapperByClassName(
@@ -629,21 +631,48 @@ public class GenerateODHelper {
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
-        result.add(assoc);
+        if (checkCardinality) {
+          if (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            result.add(assoc);
+          }
+        } else {
+          result.add(assoc);
+        }
       }
       // -> CDTypeWrapper
       if (assoc.getCDWrapperRightClass()
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
-        result.add(assoc);
+        if (checkCardinality) {
+          if (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            result.add(assoc);
+          }
+        } else {
+          result.add(assoc);
+        }
       }
       // <->  --
       if (assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL
           || assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
-        result.add(assoc);
+        if (checkCardinality) {
+          if (assoc.getCDWrapperLeftClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
+              && (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+                  || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+            result.add(assoc);
+          }
+          if (assoc.getCDWrapperRightClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
+              && (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+            result.add(assoc);
+          }
+        } else {
+          result.add(assoc);
+        }
       }
     });
 
@@ -654,8 +683,10 @@ public class GenerateODHelper {
   /**
    * the created object as source class find all related associations of this created object
    */
-  public static List<CDAssociationWrapper> findAllCDAssociationWrapperBySourceClass(CDWrapper cdw,
-      CDTypeWrapper cDTypeWrapper) {
+  public static List<CDAssociationWrapper> findAllCDAssociationWrapperBySourceClass(
+      CDWrapper cdw,
+      CDTypeWrapper cDTypeWrapper,
+      boolean checkCardinality) {
     List<CDAssociationWrapper> result = new ArrayList<>();
     Map<String, CDAssociationWrapper> cDAssociationWrapperMap =
         fuzzySearchCDAssociationWrapperByClassName(
@@ -666,21 +697,48 @@ public class GenerateODHelper {
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
-        result.add(assoc);
+        if (checkCardinality) {
+          if (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            result.add(assoc);
+          }
+        } else {
+          result.add(assoc);
+        }
       }
       // CDTypeWrapper ->
       if (assoc.getCDWrapperLeftClass()
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
-        result.add(assoc);
+        if (checkCardinality) {
+          if (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            result.add(assoc);
+          }
+        } else {
+          result.add(assoc);
+        }
       }
       // <->  --
       if (assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL
           || assoc.getCDAssociationWrapperDirection()
           == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
-        result.add(assoc);
+        if (checkCardinality) {
+          if (assoc.getCDWrapperLeftClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
+              && (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+            result.add(assoc);
+          }
+          if (assoc.getCDWrapperRightClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
+              && (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+            result.add(assoc);
+          }
+        } else {
+          result.add(assoc);
+        }
       }
     });
 
