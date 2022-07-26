@@ -2,7 +2,7 @@
 package de.monticore.cddiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd2alloy.cocos.CD2AlloyCoCos;
+import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;

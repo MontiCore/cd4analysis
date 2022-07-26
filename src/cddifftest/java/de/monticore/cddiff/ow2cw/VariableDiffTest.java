@@ -6,11 +6,7 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.ow2cw.CDInheritanceHelper;
-import de.monticore.ow2cw.ReductionTrafo;
-import de.monticore.ow2cw.expander.FullExpander;
-import de.monticore.ow2cw.expander.VariableExpander;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.cddiff.ow2cw.expander.VariableExpander;
 import org.junit.Assert;
 import org.junit.Test;
 

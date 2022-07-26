@@ -2,7 +2,6 @@
 package de.monticore.cddiff.similaritymeasure;
 
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.similaritymeasure.measures.SemanticObjectSizeMeasure;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Test;
 

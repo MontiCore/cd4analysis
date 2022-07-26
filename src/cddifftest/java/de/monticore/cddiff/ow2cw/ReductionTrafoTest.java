@@ -7,8 +7,6 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.ow2cw.CDInheritanceHelper;
-import de.monticore.ow2cw.ReductionTrafo;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;

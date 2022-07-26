@@ -1,6 +1,6 @@
 package de.monticore.cddiff.cd2alloy;
 
-import de.monticore.cd2alloy.generator.OpenWorldGenerator;
+import de.monticore.cddiff.cd2alloy.generator.OpenWorldGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Test;

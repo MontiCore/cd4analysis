@@ -11,16 +11,13 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.ow2cw.CDAssociationHelper;
-import de.monticore.ow2cw.expander.BasicExpander;
-import de.monticore.ow2cw.expander.FullExpander;
-import de.se_rwth.commons.logging.Log;
+import de.monticore.cddiff.ow2cw.expander.BasicExpander;
+import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FullExpanderTest extends CDDiffTestBasis {
 

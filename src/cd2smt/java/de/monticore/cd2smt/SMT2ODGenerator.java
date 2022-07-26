@@ -7,7 +7,7 @@ import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper;
+import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper;
 
 import java.util.*;
 

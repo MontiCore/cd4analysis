@@ -5,7 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.syntaxdiff.SyntaxDiff;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 
 import org.junit.Before;

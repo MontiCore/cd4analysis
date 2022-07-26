@@ -12,7 +12,6 @@ import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.syntaxdiff.*;
 
 import org.junit.Assert;
 import org.junit.Before;

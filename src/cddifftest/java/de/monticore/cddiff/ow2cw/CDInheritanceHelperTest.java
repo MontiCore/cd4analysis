@@ -11,7 +11,6 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.ow2cw.CDInheritanceHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import org.junit.Assert;
 import org.junit.Test;

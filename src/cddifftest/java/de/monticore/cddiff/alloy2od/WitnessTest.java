@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloy2od;
 
-import de.monticore.alloycddiff.CDSemantics;
-import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.AlloyCDDiff;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;

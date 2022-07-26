@@ -5,7 +5,6 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.ow2cw.CDAssociationHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

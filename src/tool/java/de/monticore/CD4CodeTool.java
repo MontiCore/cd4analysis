@@ -2,9 +2,9 @@
 package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.monticore.alloycddiff.CDSemantics;
-import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.alloycddiff.classDifference.AlloyCDDiff;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -39,7 +39,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import de.monticore.ow2cw.ReductionTrafo;
+import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
