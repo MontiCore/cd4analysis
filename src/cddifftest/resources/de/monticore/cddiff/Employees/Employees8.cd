@@ -30,6 +30,6 @@ classdiagram Employees8 {
     class Room;
   }
 
-  association [*] emp.Employee (manages) -> (managedBy) ins.Manager [0..1];
-  association [1] emp.Employee  --  Task [0..1];
+  association managing [*] emp.Employee (manages) -> (managedBy) ins.Manager [0..1];
+  association todo [1] emp.Employee  --  Task [0..1];
 }

@@ -46,6 +46,7 @@ public class CDAssociationScopesGenitor extends CDAssociationScopesGenitorTOP {
           .setRightRole(node.getRight().getSymbol())
           .build();
     }
+    super.endVisit(node);
   }
 
   public void createAndInit_SymAssociation(ASTCDAssociation node) {

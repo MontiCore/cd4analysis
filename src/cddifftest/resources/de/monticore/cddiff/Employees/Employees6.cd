@@ -13,5 +13,5 @@ classdiagram Employees6 {
 
   class Manager extends Employee;
 
-  association [1] Employee  --  Task [0..1];
+  association todo [1] Employee  --  Task [0..1];
 }

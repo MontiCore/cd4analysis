@@ -17,5 +17,5 @@ classdiagram Employees5 {
 
   class Manager;
 
-  association [*] Employee (manages) -> (managedBy) Manager [0..1];
+  association managing [*] Employee (manages) -> (managedBy) Manager [0..1];
 }

@@ -20,5 +20,5 @@ classdiagram Employees7 {
   }
 
 
-  association [1] emp.Employee  --  Task [*];
+  association todo [1] emp.Employee  --  Task [*];
 }
