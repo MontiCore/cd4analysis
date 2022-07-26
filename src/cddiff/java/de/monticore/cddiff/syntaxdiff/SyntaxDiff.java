@@ -517,7 +517,6 @@ public class SyntaxDiff implements CDSyntaxDiff {
 
     // test if solution is present
     if (!optS.isPresent()) {
-      Log.error("0xCDD01: Could not compute semdiff.");
       return;
     }
     AlloyDiffSolution sol = optS.get();

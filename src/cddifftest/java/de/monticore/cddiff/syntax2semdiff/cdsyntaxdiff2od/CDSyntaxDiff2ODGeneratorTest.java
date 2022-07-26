@@ -74,7 +74,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
     List<String> resultList = printOD(ods);
 
-    printODs2Dir(ods,"target/generated/od-validity-test-cases/Class");
+    JavaCDDiff.printODs2Dir(ods,"target/generated/od-validity-test-cases/Class");
 
     Assert.assertTrue(resultList.stream().anyMatch(e -> {
       String result =
@@ -207,7 +207,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods =
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
-    printODs2Dir(ods,"target/generated/od-validity-test-cases/Direction");
+    JavaCDDiff.printODs2Dir(ods,"target/generated/od-validity-test-cases/Direction");
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
@@ -304,7 +304,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods =
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
-    printODs2Dir(ods,"target/generated/od-validity-test-cases/Association");
+    JavaCDDiff.printODs2Dir(ods,"target/generated/od-validity-test-cases/Association");
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
@@ -369,7 +369,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods =
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
-    printODs2Dir(ods,"target/generated/od-validity-test-cases//Combination");
+    JavaCDDiff.printODs2Dir(ods,"target/generated/od-validity-test-cases//Combination");
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
@@ -468,7 +468,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods =
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
-    printODs2Dir(ods, "target/generated/od-validity-test-cases/Multi-Instance");
+    JavaCDDiff.printODs2Dir(ods, "target/generated/od-validity-test-cases/Multi-Instance");
 
     CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
     ASTCDDefinition cdDef1 = ast1.getCDDefinition();
@@ -514,7 +514,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
             + "/Employees1B.cd");
 
     CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
-    String res = JavaCDDiff.SyntaxDiff2SemanticDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    String res = JavaCDDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
     System.out.println(res);
   }
 
@@ -561,17 +561,5 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     }
   }
 
-  public void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory){
-    try {
-      File out = new File(outputDirectory);
-      for (ASTODArtifact od : ods) {
-        String odDescr = printOD(od);
-        Alloy2ODGenerator.saveOD(odDescr,od.getObjectDiagram().getName(),out);
-      }
-    } catch (Exception e){
-      e.printStackTrace();
-      Assert.fail();
-    }
-  }
 
 }

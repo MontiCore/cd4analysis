@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syntax2semdiff;
 
+import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -8,7 +9,9 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntaxDiff2ODGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapper2CDSyntaxDiffGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
+import net.sourceforge.plantuml.Log;
 
+import java.io.File;
 import java.util.List;
 
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.printOD;
@@ -35,7 +38,7 @@ public class JavaCDDiff {
     return odGenerator.generateObjectDiagrams(cdw1, cg, cdSemantics);
   }
 
-  public static String SyntaxDiff2SemanticDiff(
+  public static String printSemDiff(
       ASTCDCompilationUnit ast1,
       ASTCDCompilationUnit ast2,
       CDSemantics cdSemantics) {
@@ -46,7 +49,7 @@ public class JavaCDDiff {
     StringBuilder result = new StringBuilder();
     if (ods1.size() == 0 && ods2.size() == 0) {
       return "\t ********************************************************************* \n" +
-          "\t ************************  Euqivalent Semantics ********************** \n" +
+          "\t ************************  Equivalent Semantics ********************** \n" +
           "\t ********************************************************************* \n";
     }
     else {
@@ -85,4 +88,18 @@ public class JavaCDDiff {
     }
     return result.toString();
   }
+
+  public static void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory){
+    try {
+      File out = new File(outputDirectory);
+      for (ASTODArtifact od : ods) {
+        String odDescr = printOD(od);
+        Alloy2ODGenerator.saveOD(odDescr,od.getObjectDiagram().getName(),out);
+      }
+    } catch (Exception e){
+      e.printStackTrace();
+      Log.error("0xCDD14: Could not print ODs to directory " + outputDirectory);
+    }
+  }
+
 }
