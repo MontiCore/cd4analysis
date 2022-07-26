@@ -55,6 +55,7 @@ public class SyntaxDemoTest extends CDDiffTestBasis {
   @Test
   public void syntaxDemoTest() {
     SyntaxDiff syntaxDiff = new SyntaxDiff (cd1,cd2);
+
     syntaxDiff.print();
   }
 }

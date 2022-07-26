@@ -694,16 +694,23 @@ public class CD2AlloyGenerator {
           .append(cdDefinition.getName())
           .append(": set EnumVal { ");
       List<ASTCDEnumConstant> enumVals = e.getCDEnumConstantList();
-      for (ASTCDEnumConstant enumVal : enumVals) {
-        classFunctions.append("enum_")
-            .append(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))
-            .append("_")
-            .append(enumVal.getName());
-        classFunctions.append(" + ");
+
+      if (enumVals.isEmpty()) {
+        classFunctions.append("none }").append(System.lineSeparator());
       }
-      // Remove last '+'
-      classFunctions.delete(classFunctions.length() - 2, classFunctions.length());
-      classFunctions.append("}").append(System.lineSeparator());
+      else {
+
+        for (ASTCDEnumConstant enumVal : enumVals) {
+          classFunctions.append("enum_")
+              .append(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))
+              .append("_")
+              .append(enumVal.getName());
+          classFunctions.append(" + ");
+        }
+        // Remove last '+'
+        classFunctions.delete(classFunctions.length() - 2, classFunctions.length());
+        classFunctions.append("}").append(System.lineSeparator());
+      }
     }
 
     return classFunctions.toString();

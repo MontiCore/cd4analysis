@@ -9,7 +9,7 @@ classdiagram CDSynExample2 {
   }
   class SmallMonitor{
     String height;
-    String width2;
+    String width;
   }
   class LargeMonitor {
     int height = 2;

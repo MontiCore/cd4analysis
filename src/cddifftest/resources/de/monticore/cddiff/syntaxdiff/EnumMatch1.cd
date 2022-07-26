@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram EnumMatch1 {
+  enum EnumConstReorder { ONE, TWO;}
+
+  package Test {
+    enum EnumConstDelReorder {
+      EQUAL1, EQUAL2, DELETE;
+      String test;
+    }
+  }
+   enum DeletedEnum;
+}

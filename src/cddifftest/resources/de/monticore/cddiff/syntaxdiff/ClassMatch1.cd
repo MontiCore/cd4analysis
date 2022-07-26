@@ -15,6 +15,6 @@ classdiagram ClassMatch1 {
   class NoChanges;
   class DeletedClass;
 
-  association addStar MatchAttributeChange -- NoChanges;
-  association deletedAssociation NoChanges -- DeletedClass;
+  association MatchAttributeChange -- NoChanges;
+  association NoChanges -- DeletedClass;
 }

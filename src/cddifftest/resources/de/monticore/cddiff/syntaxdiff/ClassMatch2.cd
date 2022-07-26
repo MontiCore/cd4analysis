@@ -15,6 +15,6 @@ classdiagram ClassMatch2 {
   class NoChanges;
   class AddedClass;
 
-  association addStar MatchAttributeChange -- NoChanges [*];
-  association insertedAssociation NoChanges -> AddedClass;
+  association MatchAttributeChange -- NoChanges [*];
+  association NoChanges -> AddedClass;
 }

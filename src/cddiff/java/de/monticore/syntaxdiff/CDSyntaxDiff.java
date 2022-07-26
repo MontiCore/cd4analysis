@@ -1,10 +1,7 @@
 package de.monticore.syntaxdiff;
 
-import de.monticore.cdassociation._ast.ASTCDAssocType;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 
@@ -12,22 +9,22 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.List;
 
 public interface CDSyntaxDiff {
-   List<ClassDiff> getMatchedClassList();
-   List<ASTCDClass> getAddedClasses();
-   List<ASTCDClass> getDeletedClasses();
-   List<AssoDiff> getMatchedAssos();
-   List<ASTCDAssociation> getAddedAssos();
-   List<ASTCDAssociation> getDeletedAssos();
 
-   List<InterfaceDiff> getMatchedInterfaces();
-   List<ASTCDInterface> getAddedInterfaces();
-   List<ASTCDInterface> getDeletedInterfaces();
+  List<ClassInterfaceEnumDiff<ASTCDClass,ASTCDClass>> getMatchedClassList();
+  List<ClassInterfaceEnumDiff<ASTCDInterface,ASTCDInterface>> getMatchedInterfaces();
+  List<ClassInterfaceEnumDiff<ASTCDEnum,ASTCDEnum>> getMatchedEnumList();
+  List<AssoDiff> getMatchedAssos();
 
-  // List<EnumDiff> getMatchedEnums();
-   List<ASTCDEnum> getAddedEnums();
-   List<ASTCDEnum> getDeletedEnums();
+  List<ASTCDClass> getAddedClasses();
+  List<ASTCDAssociation> getAddedAssos();
+  List<ASTCDInterface> getAddedInterfaces();
+  List<ASTCDEnum> getAddedEnums();
 
-  String getCd1Name();
+  List<ASTCDClass> getDeletedClasses();
+  List<ASTCDAssociation> getDeletedAssos();
+  List<ASTCDInterface> getDeletedInterfaces();
+  List<ASTCDEnum> getDeletedEnums();
+
   // Resolve methods for returning interpretations = what happend to the element?
 
   // SyntaxDiff.Interpretation resolve(ASTCDAttribute attribute, ASTCDClass astcdClass);

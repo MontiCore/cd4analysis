@@ -1,0 +1,4 @@
+classdiagram ClassToInterface1 {
+  class A;
+  interface B;
+}

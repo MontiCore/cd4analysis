@@ -1,21 +1,18 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.syntaxdiff.AssoDiff;
-import de.monticore.syntaxdiff.ClassDiff;
-import de.monticore.syntaxdiff.FieldDiff;
-import de.monticore.syntaxdiff.SyntaxDiff;
+import de.monticore.syntaxdiff.*;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,18 +26,31 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class SyntaxDiffTest extends CDDiffTestBasis {
+  CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
   protected final ASTCDCompilationUnit cd1 = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest1.cd");
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest1.cd");
 
   protected final ASTCDCompilationUnit cd2 = parseModel(
       "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/FieldDiffTest2.cd");
 
-  protected final ASTCDCompilationUnit cd1Match = parseModel(
+  protected final ASTCDCompilationUnit cd1ClassMatch = parseModel(
     "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/ClassMatch1.cd");
 
-  protected final ASTCDCompilationUnit cd2Match = parseModel(
+  protected final ASTCDCompilationUnit cd2ClassMatch = parseModel(
     "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/ClassMatch2.cd");
+
+  protected final ASTCDCompilationUnit cd1EnumMatch = parseModel(
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/EnumMatch1.cd");
+
+  protected final ASTCDCompilationUnit cd2EnumMatch = parseModel(
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/EnumMatch2.cd");
+
+  protected final ASTCDCompilationUnit cd1ClassInterMatch = parseModel(
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/ClassToInterface1.cd");
+
+  protected final ASTCDCompilationUnit cd2ClassInterMatch = parseModel(
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/ClassToInterface2.cd");
 
   @Override
   protected ASTCDCompilationUnit parseModel(String modelFile) {
@@ -69,12 +79,23 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
     new CD4CodeDirectCompositionTrafo().transform(cd2);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2);
+    new CD4CodeDirectCompositionTrafo().transform(cd1ClassMatch);
+    new CD4CodeDirectCompositionTrafo().transform(cd2ClassMatch);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1ClassMatch);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2ClassMatch);
+
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1EnumMatch);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2EnumMatch);
+
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1ClassInterMatch);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2ClassInterMatch);
+
   }
 
   @Test
   public void testClassMatching(){
-    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1Match,cd2Match);
-    List<ClassDiff> matchedClasses = syntaxDiff.getMatchedClassList();
+    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1ClassMatch,cd2ClassMatch);
+    List<ClassInterfaceEnumDiff<ASTCDClass,ASTCDClass>> matchedClasses = syntaxDiff.getMatchedClassList();
     List<ASTCDClass> deletedClasses = syntaxDiff.getDeletedClasses();
     List<ASTCDClass> addedClasses = syntaxDiff.getAddedClasses();
 
@@ -92,17 +113,45 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   }
 
   @Test
+  public void testEnumMatching(){
+    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1EnumMatch,cd2EnumMatch);
+    List<ClassInterfaceEnumDiff<ASTCDEnum,ASTCDEnum>> matched = syntaxDiff.getMatchedEnumList();
+    List<ASTCDEnum> deleted = syntaxDiff.getDeletedEnums();
+    List<ASTCDEnum> added = syntaxDiff.getAddedEnums();
+
+    Assert.assertEquals(matched.get(0).getCd1Element().getName().equals("EnumConstReorder")
+      ,matched.get(0).getCd2Element().getName().equals("EnumConstReorder"));
+
+    Assert.assertEquals(matched.get(1).getCd1Element().getName().equals("EnumConstDelReorder")
+      ,matched.get(1).getCd2Element().getName().equals("EnumConstDelReorder"));
+
+    assertEquals("DeletedEnum", deleted.get(0).getName());
+    assertEquals("AddedEnum", added.get(0).getName());
+  }
+
+  @Test
+  public void testClassToInterfaceMatching(){
+    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1ClassInterMatch,cd2ClassInterMatch);
+    List<ClassInterfaceEnumDiff<ASTCDClass, ASTCDInterface>> matchedClassInter = syntaxDiff.getMatchedClassInterfaceList();
+    List<ClassInterfaceEnumDiff<ASTCDInterface, ASTCDClass>> matchedInterClass = syntaxDiff.getMatchedInterfaceClassList();
+
+    Assert.assertEquals(matchedClassInter.get(0).getInterpretationList().get(0), SyntaxDiff.Interpretation.REPURPOSED);
+    Assert.assertEquals(matchedInterClass.get(0).getInterpretationList().get(0), SyntaxDiff.Interpretation.REPURPOSED);
+
+  }
+
+  @Test
   public void testAssociationMatching(){
-    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1Match,cd2Match);
+    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1ClassMatch,cd2ClassMatch);
     List<AssoDiff> matchedAssos = syntaxDiff.getMatchedAssos();
     List<ASTCDAssociation> deletedAssos = syntaxDiff.getDeletedAssos();
     List<ASTCDAssociation> addedAssos = syntaxDiff.getAddedAssos();
 
-    Assert.assertEquals(matchedAssos.get(0).getCd1Element().getName().equals("addStar")
-      ,matchedAssos.get(0).getCd2Element().getName().equals("addStar"));
+    Assert.assertEquals(matchedAssos.get(0).getCd1Element().getLeft().getMCQualifiedType().getNameList().get(0).equals("MatchAttributeChange")
+      ,matchedAssos.get(0).getCd2Element().getLeft().getMCQualifiedType().getNameList().get(0).equals("MatchAttributeChange"));
 
-    assertEquals("deletedAssociation", deletedAssos.get(0).getName());
-    assertEquals("insertedAssociation", addedAssos.get(0).getName());
+    assertEquals("DeletedClass", deletedAssos.get(0).getRight().getMCQualifiedType().getNameList().get(0));
+    assertEquals("AddedClass", addedAssos.get(0).getRight().getMCQualifiedType().getNameList().get(0));
   }
 
 
@@ -115,54 +164,54 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
 
 
     // Asso Type
-    FieldDiff<ASTCDAssocType> assoTypeEqual = new FieldDiff<>(
+    FieldDiff<ASTCDAssocType,ASTCDAssocType> assoTypeEqual = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(0).getCDAssocType())
       ,Optional.of(cd2AssociationsList.get(0).getCDAssocType()));
     Assert.assertFalse(assoTypeEqual.isPresent());
 
-    FieldDiff<ASTCDAssocType> assoTypeUnequal = new FieldDiff<>(
+    FieldDiff<ASTCDAssocType,ASTCDAssocType> assoTypeUnequal = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(1).getCDAssocType())
       ,Optional.of(cd2AssociationsList.get(1).getCDAssocType()));
     Assert.assertEquals(assoTypeUnequal.getOperation().get(), SyntaxDiff.Op.CHANGE);
 
     // Cardinality
-    FieldDiff<ASTCDCardinality> assoCardiEqual = new FieldDiff<>(
+    FieldDiff<ASTCDCardinality,ASTCDCardinality> assoCardiEqual = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(0).getLeft().getCDCardinality())
       ,Optional.of(cd2AssociationsList.get(0).getLeft().getCDCardinality()));
     Assert.assertFalse(assoCardiEqual.isPresent());
 
-    FieldDiff<ASTCDAssociationNode> assoCardiDelete = new FieldDiff<>(
+    FieldDiff<ASTCDAssociationNode,ASTCDAssociationNode> assoCardiDelete = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(1).getLeft().getCDCardinality())
       ,Optional.empty());
     Assert.assertEquals(assoCardiDelete.getOperation().get(), SyntaxDiff.Op.DELETE);
 
-    FieldDiff<ASTCDAssociationNode> assoCardiAdd = new FieldDiff<>(
+    FieldDiff<ASTCDAssociationNode,ASTCDAssociationNode> assoCardiAdd = new FieldDiff<>(
       Optional.empty()
       ,Optional.of(cd2AssociationsList.get(1).getRight().getCDCardinality()));
     Assert.assertEquals(assoCardiAdd.getOperation().get(), SyntaxDiff.Op.ADD);
 
-    FieldDiff<ASTCDAssociationNode> assoCardiChange = new FieldDiff<>(
+    FieldDiff<ASTCDAssociationNode,ASTCDAssociationNode> assoCardiChange = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(0).getRight().getCDCardinality())
       ,Optional.of(cd2AssociationsList.get(0).getRight().getCDCardinality()));
     Assert.assertEquals(assoCardiChange.getOperation().get(), SyntaxDiff.Op.CHANGE);
 
     // Role
-    FieldDiff<ASTCDRole> assoRoleEqual = new FieldDiff<>(
+    FieldDiff<ASTCDRole,ASTCDRole> assoRoleEqual = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(0).getLeft().getCDRole())
       ,Optional.of(cd2AssociationsList.get(0).getLeft().getCDRole()));
     Assert.assertFalse(assoRoleEqual.isPresent());
 
-    FieldDiff<ASTCDAssociationNode> assoRoleDelete = new FieldDiff<>(
+    FieldDiff<ASTCDAssociationNode,ASTCDAssociationNode> assoRoleDelete = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(0).getRight().getCDRole())
       ,Optional.empty());
     Assert.assertEquals(assoRoleDelete.getOperation().get(), SyntaxDiff.Op.DELETE);
 
-    FieldDiff<ASTCDAssociationNode> assoRoleAdd = new FieldDiff<>(
+    FieldDiff<ASTCDAssociationNode,ASTCDAssociationNode> assoRoleAdd = new FieldDiff<>(
       Optional.empty()
       ,Optional.of(cd1AssociationsList.get(0).getRight().getCDRole()));
     Assert.assertEquals(assoRoleAdd.getOperation().get(), SyntaxDiff.Op.ADD);
 
-    FieldDiff<ASTCDRole> assoRoleUnequal = new FieldDiff<>(
+    FieldDiff<ASTCDRole,ASTCDRole> assoRoleUnequal = new FieldDiff<>(
       Optional.of(cd1AssociationsList.get(1).getRight().getCDRole())
       ,Optional.of(cd2AssociationsList.get(1).getRight().getCDRole()));
     Assert.assertEquals(assoRoleUnequal.getOperation().get(), SyntaxDiff.Op.CHANGE);
