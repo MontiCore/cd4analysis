@@ -95,7 +95,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   @Test
   public void testClassMatching(){
     SyntaxDiff syntaxDiff = new SyntaxDiff(cd1ClassMatch,cd2ClassMatch);
-    List<ClassInterfaceEnumDiff<ASTCDClass,ASTCDClass>> matchedClasses = syntaxDiff.getMatchedClassList();
+    List<CDTypeDiff<ASTCDClass,ASTCDClass>> matchedClasses = syntaxDiff.getMatchedClassList();
     List<ASTCDClass> deletedClasses = syntaxDiff.getDeletedClasses();
     List<ASTCDClass> addedClasses = syntaxDiff.getAddedClasses();
 
@@ -115,7 +115,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   @Test
   public void testEnumMatching(){
     SyntaxDiff syntaxDiff = new SyntaxDiff(cd1EnumMatch,cd2EnumMatch);
-    List<ClassInterfaceEnumDiff<ASTCDEnum,ASTCDEnum>> matched = syntaxDiff.getMatchedEnumList();
+    List<CDTypeDiff<ASTCDEnum,ASTCDEnum>> matched = syntaxDiff.getMatchedEnumList();
     List<ASTCDEnum> deleted = syntaxDiff.getDeletedEnums();
     List<ASTCDEnum> added = syntaxDiff.getAddedEnums();
 
@@ -132,8 +132,8 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   @Test
   public void testClassToInterfaceMatching(){
     SyntaxDiff syntaxDiff = new SyntaxDiff(cd1ClassInterMatch,cd2ClassInterMatch);
-    List<ClassInterfaceEnumDiff<ASTCDClass, ASTCDInterface>> matchedClassInter = syntaxDiff.getMatchedClassInterfaceList();
-    List<ClassInterfaceEnumDiff<ASTCDInterface, ASTCDClass>> matchedInterClass = syntaxDiff.getMatchedInterfaceClassList();
+    List<CDTypeDiff<ASTCDClass, ASTCDInterface>> matchedClassInter = syntaxDiff.getMatchedClassInterfaceList();
+    List<CDTypeDiff<ASTCDInterface, ASTCDClass>> matchedInterClass = syntaxDiff.getMatchedInterfaceClassList();
 
     Assert.assertEquals(matchedClassInter.get(0).getInterpretationList().get(0), SyntaxDiff.Interpretation.REPURPOSED);
     Assert.assertEquals(matchedInterClass.get(0).getInterpretationList().get(0), SyntaxDiff.Interpretation.REPURPOSED);
@@ -143,7 +143,7 @@ public class SyntaxDiffTest extends CDDiffTestBasis {
   @Test
   public void testAssociationMatching(){
     SyntaxDiff syntaxDiff = new SyntaxDiff(cd1ClassMatch,cd2ClassMatch);
-    List<AssoDiff> matchedAssos = syntaxDiff.getMatchedAssos();
+    List<CDAssociationDiff> matchedAssos = syntaxDiff.getMatchedAssos();
     List<ASTCDAssociation> deletedAssos = syntaxDiff.getDeletedAssos();
     List<ASTCDAssociation> addedAssos = syntaxDiff.getAddedAssos();
 

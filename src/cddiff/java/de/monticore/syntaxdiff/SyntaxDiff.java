@@ -1,5 +1,8 @@
 package de.monticore.syntaxdiff;
 
+import de.monticore.alloycddiff.CDSemantics;
+import de.monticore.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.alloycddiff.classDifference.AlloyCDDiff;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -10,12 +13,14 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
+import de.monticore.ow2cw.ReductionTrafo;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
+import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Main class of the syntax diff calculation, combines all diff types and provide multiple functions
@@ -23,35 +28,35 @@ import java.util.stream.Collectors;
  */
 public class SyntaxDiff implements CDSyntaxDiff {
 
-  protected List<ClassInterfaceEnumDiff<ASTCDClass, ASTCDClass>> matchedClassList;
+  protected final String outputPath = "target/git-diff";
+
+  protected List<CDTypeDiff<ASTCDClass, ASTCDClass>> matchedClassList;
 
   protected List<ASTCDClass> deletedClasses;
 
   protected List<ASTCDClass> addedClasses;
 
-  protected List<ClassInterfaceEnumDiff<ASTCDInterface, ASTCDInterface>> matchedInterfacesList;
+  protected List<CDTypeDiff<ASTCDInterface, ASTCDInterface>> matchedInterfacesList;
 
   protected List<ASTCDInterface> deletedInterfaces;
 
   protected List<ASTCDInterface> addedInterfaces;
 
-  protected List<ClassInterfaceEnumDiff<ASTCDEnum, ASTCDEnum>> matchedEnumList;
+  protected List<CDTypeDiff<ASTCDEnum, ASTCDEnum>> matchedEnumList;
 
   protected List<ASTCDEnum> deletedEnum;
 
   protected List<ASTCDEnum> addedEnum;
 
-  protected List<AssoDiff> matchedAssos;
+  protected List<CDAssociationDiff> matchedAssos;
 
   protected List<ASTCDAssociation> deletedAssos;
 
   protected List<ASTCDAssociation> addedAssos;
 
-  protected List<ClassInterfaceEnumDiff<ASTCDInterface, ASTCDClass>> matchedInterfaceClassList;
+  protected List<CDTypeDiff<ASTCDInterface, ASTCDClass>> matchedInterfaceClassList;
 
-  protected List<ClassInterfaceEnumDiff<ASTCDClass, ASTCDInterface>> matchedClassInterfaceList;
-
-  protected SemDiff semDiff;
+  protected List<CDTypeDiff<ASTCDClass, ASTCDInterface>> matchedClassInterfaceList;
 
   public enum Op {CHANGE, ADD, DELETE}
 
@@ -68,7 +73,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
 
   protected StringBuilder cd2Colored;
 
-  public List<ClassInterfaceEnumDiff<ASTCDClass, ASTCDClass>> getMatchedClassList() {
+  public List<CDTypeDiff<ASTCDClass, ASTCDClass>> getMatchedClassList() {
     return matchedClassList;
   }
 
@@ -76,11 +81,11 @@ public class SyntaxDiff implements CDSyntaxDiff {
     return addedClasses;
   }
 
-  public List<ClassInterfaceEnumDiff<ASTCDClass, ASTCDInterface>> getMatchedClassInterfaceList() {
+  public List<CDTypeDiff<ASTCDClass, ASTCDInterface>> getMatchedClassInterfaceList() {
     return matchedClassInterfaceList;
   }
 
-  public List<ClassInterfaceEnumDiff<ASTCDInterface, ASTCDClass>> getMatchedInterfaceClassList() {
+  public List<CDTypeDiff<ASTCDInterface, ASTCDClass>> getMatchedInterfaceClassList() {
     return matchedInterfaceClassList;
   }
 
@@ -96,7 +101,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
     return deletedClasses;
   }
 
-  public List<AssoDiff> getMatchedAssos() {
+  public List<CDAssociationDiff> getMatchedAssos() {
     return matchedAssos;
   }
 
@@ -108,7 +113,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
     return deletedAssos;
   }
 
-  public List<ClassInterfaceEnumDiff<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces() {
+  public List<CDTypeDiff<ASTCDInterface, ASTCDInterface>> getMatchedInterfaces() {
     return matchedInterfacesList;
   }
 
@@ -120,7 +125,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
     return deletedInterfaces;
   }
 
-  public List<ClassInterfaceEnumDiff<ASTCDEnum, ASTCDEnum>> getMatchedEnumList() {
+  public List<CDTypeDiff<ASTCDEnum, ASTCDEnum>> getMatchedEnumList() {
     return matchedEnumList;
   }
 
@@ -136,7 +141,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
     final String BOLD_GREEN = "\033[1;32m";
     final String RESET = "\033[0m";
 
-    this.semDiff = new SemDiff(cd1.deepClone(), cd2.deepClone());
+    computeSemDiff(cd2.deepClone(), cd1.deepClone());
 
     // Create Lists for each type of CDElement to check
 
@@ -215,7 +220,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
         .append(System.lineSeparator())
         .append(System.lineSeparator());
 
-    for (ClassInterfaceEnumDiff<ASTCDClass, ASTCDClass> x : matchedClassList) {
+    for (CDTypeDiff<ASTCDClass, ASTCDClass> x : matchedClassList) {
       StringBuilder tmp = new StringBuilder();
       tmp.append("CD1 (")
           .append(cd1.getCDDefinition().getName())
@@ -242,7 +247,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
       //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
 
-    for (ClassInterfaceEnumDiff<ASTCDInterface, ASTCDInterface> x : matchedInterfacesList) {
+    for (CDTypeDiff<ASTCDInterface, ASTCDInterface> x : matchedInterfacesList) {
       StringBuilder tmp = new StringBuilder();
       tmp.append("CD1 (")
           .append(cd1.getCDDefinition().getName())
@@ -269,7 +274,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
       //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
 
-    for (ClassInterfaceEnumDiff<ASTCDEnum, ASTCDEnum> x : matchedEnumList) {
+    for (CDTypeDiff<ASTCDEnum, ASTCDEnum> x : matchedEnumList) {
       StringBuilder tmp = new StringBuilder();
       tmp.append("CD1 (")
           .append(cd1.getCDDefinition().getName())
@@ -295,7 +300,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
       enumPrints.append(tmp);
       //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
-    for (ClassInterfaceEnumDiff<ASTCDInterface, ASTCDClass> x : matchedInterfaceClassList) {
+    for (CDTypeDiff<ASTCDInterface, ASTCDClass> x : matchedInterfaceClassList) {
       StringBuilder tmp = new StringBuilder();
       tmp.append("CD1 (")
           .append(cd1.getCDDefinition().getName())
@@ -322,7 +327,7 @@ public class SyntaxDiff implements CDSyntaxDiff {
       //outputGathering.put(tmp.toString(),x.getBreakingChange());
     }
 
-    for (AssoDiff x : matchedAssos) {
+    for (CDAssociationDiff x : matchedAssos) {
       StringBuilder tmp = new StringBuilder();
       tmp.append("CD1 (")
           .append(cd1.getCDDefinition().getName())
@@ -494,6 +499,37 @@ public class SyntaxDiff implements CDSyntaxDiff {
     this.outPutAll = outPutAll;
   }
 
+  private void computeSemDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2) {
+
+    ReductionTrafo trafo = new ReductionTrafo();
+    trafo.transform(cd1, cd2);
+
+    int cd1size = cd1.getCDDefinition().getCDClassesList().size() + cd1.getCDDefinition()
+        .getCDInterfacesList()
+        .size();
+
+    int cd2size = cd2.getCDDefinition().getCDClassesList().size() + cd2.getCDDefinition()
+        .getCDInterfacesList()
+        .size();
+    int diffsizeSem = Math.max(20, 2 * Math.max(cd1size, cd2size));
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(cd1, cd2, diffsizeSem,
+        CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputPath);
+
+    // test if solution is present
+    if (!optS.isPresent()) {
+      Log.error("0xCDD01: Could not compute semdiff.");
+      return;
+    }
+    AlloyDiffSolution sol = optS.get();
+
+    // limit number of generated diff-witnesses
+    sol.setSolutionLimit(1);
+    sol.setLimited(true);
+
+    // generate diff-witnesses in outputPath
+    sol.generateSolutionsToPath(Paths.get(outputPath));
+  }
+
   public void print() {
     System.out.println(outPutAll);
   }
@@ -514,71 +550,71 @@ public class SyntaxDiff implements CDSyntaxDiff {
    * @param cd2AssoList List of associations in the target(new) Model
    * @return Returns a list for each association, ordered by diffsize (small diff values == similar)
    */
-  public static List<List<AssoDiff>> getAssoDiffList(List<ASTCDAssociation> cd1AssoList,
+  public static List<List<CDAssociationDiff>> getAssoDiffList(List<ASTCDAssociation> cd1AssoList,
       List<ASTCDAssociation> cd2AssoList) {
-    List<List<AssoDiff>> assoMatches = new ArrayList<>();
+    List<List<CDAssociationDiff>> assoMatches = new ArrayList<>();
 
     for (ASTCDAssociation cd1Asso : cd1AssoList) {
 
       // Create a new list for each Association
-      List<AssoDiff> cd1AssoMatches = new ArrayList<>();
+      List<CDAssociationDiff> cd1AssoMatches = new ArrayList<>();
       for (ASTCDAssociation cd2Asso : cd2AssoList) {
         // Diff list for the compared assos
-        cd1AssoMatches.add(new AssoDiff(cd1Asso, cd2Asso));
+        cd1AssoMatches.add(new CDAssociationDiff(cd1Asso, cd2Asso));
       }
       // Sort by size of diffs, ascending
-      cd1AssoMatches.sort(Comparator.comparing(AssoDiff::getDiffSize));
+      cd1AssoMatches.sort(Comparator.comparing(CDAssociationDiff::getDiffSize));
 
       assoMatches.add(cd1AssoMatches);
     }
     return assoMatches;
   }
 
-  public static <T1 extends ASTNode, T2 extends ASTNode> List<List<ClassInterfaceEnumDiff<T1, T2>>> getDiffList(
+  public static <T1 extends ASTNode, T2 extends ASTNode> List<List<CDTypeDiff<T1, T2>>> getDiffList(
       List<T1> cd1List, List<T2> cd2List) {
-    List<List<ClassInterfaceEnumDiff<T1, T2>>> matches = new ArrayList<>();
+    List<List<CDTypeDiff<T1, T2>>> matches = new ArrayList<>();
 
     for (T1 cd1Element : cd1List) {
 
       // Create a new list for each class
-      List<ClassInterfaceEnumDiff<T1, T2>> cd1diffs = new ArrayList<>();
+      List<CDTypeDiff<T1, T2>> cd1diffs = new ArrayList<>();
       for (T2 cd2Element : cd2List) {
         // Diff list for the compared classes
-        cd1diffs.add(new ClassInterfaceEnumDiff<T1, T2>(cd1Element, cd2Element));
+        cd1diffs.add(new CDTypeDiff<T1, T2>(cd1Element, cd2Element));
       }
       // Sort by size of diffs, ascending
-      cd1diffs.sort(Comparator.comparing(ClassInterfaceEnumDiff<T1, T2>::getDiffSize));
+      cd1diffs.sort(Comparator.comparing(CDTypeDiff<T1, T2>::getDiffSize));
 
       matches.add(cd1diffs);
     }
     return matches;
   }
 
-  protected static <T1 extends ASTNode, T2 extends ASTNode> List<ClassInterfaceEnumDiff<T1, T2>> getMatchingList(
-      List<List<ClassInterfaceEnumDiff<T1, T2>>> elementsDiffList) {
+  protected static <T1 extends ASTNode, T2 extends ASTNode> List<CDTypeDiff<T1, T2>> getMatchingList(
+      List<List<CDTypeDiff<T1, T2>>> elementsDiffList) {
     List<T1> cd1matchedElements = new ArrayList<>();
     List<T2> cd2matchedElements = new ArrayList<>();
-    List<ClassInterfaceEnumDiff<T1, T2>> matchedElements = new ArrayList<>();
+    List<CDTypeDiff<T1, T2>> matchedElements = new ArrayList<>();
 
-    for (List<ClassInterfaceEnumDiff<T1, T2>> currentElementList : elementsDiffList) {
+    for (List<CDTypeDiff<T1, T2>> currentElementList : elementsDiffList) {
       double threshold = 0;
       OptionalDouble optAverage = currentElementList.stream()
-          .mapToDouble(ClassInterfaceEnumDiff<T1, T2>::getDiffSize)
+          .mapToDouble(CDTypeDiff<T1, T2>::getDiffSize)
           .average();
       if (optAverage.isPresent()) {
         threshold = optAverage.getAsDouble() / 2;
       }
       if (!currentElementList.isEmpty()) {
-        for (ClassInterfaceEnumDiff<T1, T2> currentElementDiff : currentElementList) {
+        for (CDTypeDiff<T1, T2> currentElementDiff : currentElementList) {
           T1 currentcd1Element = currentElementDiff.getCd1Element();
           T2 currentcd2Element = currentElementDiff.getCd2Element();
           if (!cd1matchedElements.contains(currentcd1Element) && !cd2matchedElements.contains(
               currentcd2Element)) {
             boolean found = false;
-            for (List<ClassInterfaceEnumDiff<T1, T2>> nextElementDiffList : elementsDiffList) {
+            for (List<CDTypeDiff<T1, T2>> nextElementDiffList : elementsDiffList) {
               if (!nextElementDiffList.equals(currentElementList)) {
                 if (!nextElementDiffList.isEmpty()) {
-                  for (ClassInterfaceEnumDiff<T1, T2> nextElementDiff : nextElementDiffList) {
+                  for (CDTypeDiff<T1, T2> nextElementDiff : nextElementDiffList) {
                     if (nextElementDiff.getCd2Element().deepEquals(currentcd2Element)
                         && nextElementDiff.getDiffSize() < currentElementDiff.getDiffSize()) {
                       found = true;
@@ -600,30 +636,30 @@ public class SyntaxDiff implements CDSyntaxDiff {
     return matchedElements;
   }
 
-  protected static List<AssoDiff> getAssoMatchingList(List<List<AssoDiff>> elementsDiffList) {
+  protected static List<CDAssociationDiff> getAssoMatchingList(List<List<CDAssociationDiff>> elementsDiffList) {
     List<ASTCDAssociation> cd1matchedElements = new ArrayList<>();
     List<ASTCDAssociation> cd2matchedElements = new ArrayList<>();
-    List<AssoDiff> matchedElements = new ArrayList<>();
+    List<CDAssociationDiff> matchedElements = new ArrayList<>();
 
-    for (List<AssoDiff> currentElementList : elementsDiffList) {
+    for (List<CDAssociationDiff> currentElementList : elementsDiffList) {
       double threshold = 0;
       OptionalDouble optAverage = currentElementList.stream()
-          .mapToDouble(AssoDiff::getDiffSize)
+          .mapToDouble(CDAssociationDiff::getDiffSize)
           .average();
       if (optAverage.isPresent()) {
         threshold = (1 / (double) (currentElementList.size() + 1)) + optAverage.getAsDouble() / 1.5;
       }
       if (!currentElementList.isEmpty()) {
-        for (AssoDiff currentElementDiff : currentElementList) {
+        for (CDAssociationDiff currentElementDiff : currentElementList) {
           ASTCDAssociation cd1Element = currentElementDiff.getCd1Element();
           ASTCDAssociation cd2Element = currentElementDiff.getCd2Element();
           if (!cd1matchedElements.contains(cd1Element) && !cd2matchedElements.contains(
               cd2Element)) {
             boolean found = false;
-            for (List<AssoDiff> nextElementDiffList : elementsDiffList) {
+            for (List<CDAssociationDiff> nextElementDiffList : elementsDiffList) {
               if (!nextElementDiffList.equals(currentElementList)) {
                 if (!nextElementDiffList.isEmpty()) {
-                  for (AssoDiff nextElementDiff : nextElementDiffList) {
+                  for (CDAssociationDiff nextElementDiff : nextElementDiffList) {
                     if (nextElementDiff.getCd2Element().deepEquals(cd2Element)
                         && nextElementDiff.getDiffSize() < currentElementDiff.getDiffSize()) {
                       found = true;
@@ -645,12 +681,12 @@ public class SyntaxDiff implements CDSyntaxDiff {
     return matchedElements;
   }
 
-  protected static List<ASTCDAssociation> absentAssoList(List<AssoDiff> matchs,
+  protected static List<ASTCDAssociation> absentAssoList(List<CDAssociationDiff> matchs,
       List<ASTCDAssociation> elementList) {
     List<ASTCDAssociation> output = new ArrayList<>();
     for (ASTCDAssociation element : elementList) {
       boolean found = false;
-      for (AssoDiff diff : matchs) {
+      for (CDAssociationDiff diff : matchs) {
         if (diff.getCd1Element().deepEquals(element) || diff.getCd2Element().deepEquals(element)) {
           found = true;
           break;
@@ -664,11 +700,11 @@ public class SyntaxDiff implements CDSyntaxDiff {
   }
 
   protected static <T1 extends ASTNode, T2 extends ASTNode, T> List<T> absentElementList(
-      List<ClassInterfaceEnumDiff<T1, T2>> matchs, List<T> elementList) {
+      List<CDTypeDiff<T1, T2>> matchs, List<T> elementList) {
     List<T> output = new ArrayList<>();
     for (T element : elementList) {
       boolean found = false;
-      for (ClassInterfaceEnumDiff<T1, T2> diff : matchs) {
+      for (CDTypeDiff<T1, T2> diff : matchs) {
         if (diff.getCd1Element().deepEquals(element) || diff.getCd2Element().deepEquals(element)) {
           found = true;
           break;

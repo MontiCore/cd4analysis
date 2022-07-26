@@ -19,7 +19,7 @@ import java.util.Optional;
  * diff type contains information extracted from the provided associations, especially all field
  * changes
  */
-public class AssoDiff extends AbstractDiffType {
+public class CDAssociationDiff extends AbstractDiffType {
   protected final ASTCDAssociation cd1Element;
 
   protected final ASTCDAssociation cd2Element;
@@ -49,7 +49,7 @@ public class AssoDiff extends AbstractDiffType {
    * @param cd1Element Association from the original model
    * @param cd2Element Association from the target(new) model
    */
-  public AssoDiff(ASTCDAssociation cd1Element, ASTCDAssociation cd2Element) {
+  public CDAssociationDiff(ASTCDAssociation cd1Element, ASTCDAssociation cd2Element) {
     this.cd1Element = cd1Element;
     this.cd2Element = cd2Element;
 

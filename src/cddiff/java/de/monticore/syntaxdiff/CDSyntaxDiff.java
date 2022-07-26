@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface CDSyntaxDiff {
 
-  List<ClassInterfaceEnumDiff<ASTCDClass,ASTCDClass>> getMatchedClassList();
-  List<ClassInterfaceEnumDiff<ASTCDInterface,ASTCDInterface>> getMatchedInterfaces();
-  List<ClassInterfaceEnumDiff<ASTCDEnum,ASTCDEnum>> getMatchedEnumList();
-  List<AssoDiff> getMatchedAssos();
+  List<CDTypeDiff<ASTCDClass,ASTCDClass>> getMatchedClassList();
+  List<CDTypeDiff<ASTCDInterface,ASTCDInterface>> getMatchedInterfaces();
+  List<CDTypeDiff<ASTCDEnum,ASTCDEnum>> getMatchedEnumList();
+  List<CDAssociationDiff> getMatchedAssos();
 
   List<ASTCDClass> getAddedClasses();
   List<ASTCDAssociation> getAddedAssos();

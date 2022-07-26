@@ -18,7 +18,7 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ClassInterfaceEnumDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNode>
+public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNode>
     extends AbstractDiffType {
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
@@ -81,7 +81,7 @@ public class ClassInterfaceEnumDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 e
     return cd2Element;
   }
 
-  public ClassInterfaceEnumDiff(ASTNodeType1 cd1Element, ASTNodeType2 cd2Element) {
+  public CDTypeDiff(ASTNodeType1 cd1Element, ASTNodeType2 cd2Element) {
     this.cd1Element = cd1Element;
     this.cd2Element = cd2Element;
 
