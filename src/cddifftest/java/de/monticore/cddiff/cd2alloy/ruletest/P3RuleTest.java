@@ -59,6 +59,7 @@ public class P3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add("no Vehicle");
+    expectedResult.add("no Driveable");
 
     checkP3(lines, expectedResult);
   }

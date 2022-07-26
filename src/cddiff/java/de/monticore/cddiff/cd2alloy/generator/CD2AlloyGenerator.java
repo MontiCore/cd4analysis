@@ -182,10 +182,24 @@ public class CD2AlloyGenerator {
       classUnion.addAll(classSet);
     }
 
+    // Union of all interfaces
+    Set<ASTCDInterface> interfaceUnion = new HashSet<>();
+    for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
+      Set<ASTCDInterface> interfaceSet = new HashSet<>(
+          astcdCompilationUnit.getCDDefinition().getCDInterfacesList());
+      interfaceUnion.addAll(interfaceSet);
+    }
+
     // Union of all attributes in all classes
     Set<ASTCDAttribute> attributeUnion = new HashSet<>();
     for (ASTCDClass astcdClass : classUnion) {
       Set<ASTCDAttribute> attributes = new HashSet<>(astcdClass.getCDAttributeList());
+      attributeUnion.addAll(attributes);
+    }
+
+    // Union of all attributes in all interfaces
+    for (ASTCDInterface astcdInterface: interfaceUnion) {
+      Set<ASTCDAttribute> attributes = new HashSet<>(astcdInterface.getCDAttributeList());
       attributeUnion.addAll(attributes);
     }
 
@@ -282,11 +296,6 @@ public class CD2AlloyGenerator {
       attributeUnion.addAll(attributes);
     }
 
-    // Union of all Attribute Names
-    Set<String> attributeNameUnion = new HashSet<>();
-    for (ASTCDAttribute astcdAttribute : attributeUnion) {
-      attributeNameUnion.add(astcdAttribute.getName());
-    }
 
     // Union of all Interfaces
     Set<ASTCDInterface> interfaceUnion = new HashSet<>();
@@ -312,14 +321,6 @@ public class CD2AlloyGenerator {
     Set<String> enumNameUnion = new HashSet<>();
     for (ASTCDEnum astcdEnum : enumUnion) {
       enumNameUnion.add(CD2AlloyQNameHelper.processQName(astcdEnum.getSymbol().getFullName()));
-    }
-    Set<String> enumTypeNameUnion = new HashSet<>();
-    for (ASTCDEnum e : enumUnion) {
-      List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
-      for (ASTCDEnumConstant astcdEnumConstant : v) {
-        enumTypeNameUnion.add(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()) + "_"
-            + astcdEnumConstant.getName());
-      }
     }
 
     // Union of all Class or Interface Type Names
@@ -359,11 +360,7 @@ public class CD2AlloyGenerator {
           astcdCompilationUnit.getCDDefinition().getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
-    // Union of all Enum Names
-    Set<String> enumNameUnion = new HashSet<>();
-    for (ASTCDEnum astcdEnum : enumUnion) {
-      enumNameUnion.add(CD2AlloyQNameHelper.processQName(astcdEnum.getSymbol().getFullName()));
-    }
+
     Set<String> enumTypeNameUnion = new HashSet<>();
     for (ASTCDEnum e : enumUnion) {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
@@ -548,8 +545,8 @@ public class CD2AlloyGenerator {
   }
 
   /**
-   * Executes the F2 rule, which generates functions returning all atoms of all classes implementing
-   * an interface for all interfaces of the class diagram cd.
+   * Executes the F2 rule, which generates functions returning all atoms of all interfaces of all
+   * classes implementing the interfaces in class diagram cd.
    */
   public String executeRuleF2(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
@@ -900,6 +897,7 @@ public class CD2AlloyGenerator {
 
     // All classes of the cd
     Set<ASTCDClass> cdClasses = new HashSet<>(cdDefinition.getCDClassesList());
+    Set<ASTCDInterface> cdInterfaces = new HashSet<>(cdDefinition.getCDInterfacesList());
 
     // Comment
     predicate.append("// P1: Attribute declaration").append(System.lineSeparator());
@@ -908,6 +906,9 @@ public class CD2AlloyGenerator {
       Set<ASTCDAttribute> attributeUnion = new HashSet<>();
       for (ASTCDClass attributeClass : superClasses(astcdClass, cdClasses)) {
         attributeUnion.addAll(attributeClass.getCDAttributeList());
+      }
+      for (ASTCDInterface attributeInterface : interfaces(astcdClass, cdInterfaces)){
+        attributeUnion.addAll(attributeInterface.getCDAttributeList());
       }
 
       // Generate Alloy predicate
@@ -967,6 +968,13 @@ public class CD2AlloyGenerator {
       // All attributes of the superclasses
       for (ASTCDClass superclass : superClasses(astcdClass, cdClasses)) {
         for (ASTCDAttribute a : superclass.getCDAttributeList()) {
+          fields.add(a.getName());
+        }
+      }
+
+      // All attributes of the superclasses
+      for (ASTCDInterface astcdInterface : interfaces(astcdClass, cdInterfaces)) {
+        for (ASTCDAttribute a : astcdInterface.getCDAttributeList()) {
           fields.add(a.getName());
         }
       }
@@ -1070,6 +1078,13 @@ public class CD2AlloyGenerator {
     for (ASTCDClass astcdClass : abstractClasses) {
       predicate.append("no ")
           .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(System.lineSeparator());
+    }
+
+    // Alloy predicate for interfaces
+    for (ASTCDInterface astcdInterface : cd.getCDDefinition().getCDInterfacesList()) {
+      predicate.append("no ")
+          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
 

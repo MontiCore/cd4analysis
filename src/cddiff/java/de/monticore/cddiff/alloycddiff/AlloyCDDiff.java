@@ -47,6 +47,7 @@ public class AlloyCDDiff {
       result = Optional.of((AlloyDiffSolution) results.get(0));
     }
 
+    /*
     // clean-up
     try {
       FileUtils.forceDelete(outputDirectory.toFile());
@@ -55,6 +56,8 @@ public class AlloyCDDiff {
       Log.warn(String.format("Could not delete %s due to %s", outputDirectory.getFileName(),
           e.getMessage()));
     }
+
+     */
 
     return result;
   }

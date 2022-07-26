@@ -183,19 +183,6 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     return "";
   }
 
-  @Override
-  public String executeRuleP3(ASTCDCompilationUnit cd) {
-    StringBuilder predicate = new StringBuilder().append(super.executeRuleP3(cd))
-        .append(System.lineSeparator())
-        .append(System.lineSeparator());
-    for (ASTCDInterface astcdInterface : cd.getCDDefinition().getCDInterfacesList()) {
-      predicate.append("no ")
-          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
-          .append(System.lineSeparator());
-    }
-    return predicate.toString();
-  }
-
   /**
    * Executes the F1 rule, which generates functions returning all atoms of all subclasses of all
    * classes in class diagram cd.
@@ -229,8 +216,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
   }
 
   /**
-   * Executes the F1 rule, which generates functions returning all atoms of all subclasses of all
-   * classes in class diagram cd.
+   * Executes the F2 rule, which generates functions returning all atoms of all interfaces of all
+   * classes implementing the interfaces in class diagram cd.
    */
   @Override
   public String executeRuleF2(ASTCDCompilationUnit cd) {
