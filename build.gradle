@@ -74,12 +74,18 @@ sourceSets {
   cddifftest {
     java {}
   }
-    cd2smt {
-        java {}
-    }
-    cd2smttest {
-        java {}
-    }
+  cd2smt {
+      java {}
+  }
+  cd2smttest {
+      java {}
+  }
+  coevolution {
+      java {}
+  }
+  coevolutiontest {
+      java {}
+  }
   tool {
     java {}
   }
@@ -96,6 +102,10 @@ configurations {
   cd2smtImplementation.extendsFrom(cddiffImplementation)
   cd2smttestImplementation.extendsFrom(cd2smtImplementation)
   cd2smttestImplementation.extendsFrom(cddifftestImplementation)
+
+  coevolutionImplementation.extendsFrom(cddiffImplementation)
+  coevolutiontestImplementation.extendsFrom(coevolutionImplementation)
+  coevolutiontestImplementation.extendsFrom(cddifftestImplementation)
 
   toolImplementation.extendsFrom(cddiffImplementation)
   tooltestImplementation.extendsFrom(toolImplementation)
@@ -135,6 +145,7 @@ dependencies {
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:6"
   cddiffImplementation(sourceSets.main.output.classesDirs)
+
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
   cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
@@ -145,8 +156,16 @@ dependencies {
   cd2smtImplementation 'tools.aqua:z3-turnkey:4.8.17'
   // cd2smtImplementation "org.sosy-lab:java-smt:3.12.0"
   // cd2smtImplementation 'org.sosy-lab:smtinterpol:2.5:g108647d8'
+
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
   cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
+
+  //dependencies for coevolution
+  coevolutionImplementation(sourceSets.cddiff.output.classesDirs)
+  coevolutionImplementation 'fr.inria.gforge.spoon:spoon-core:10.2.0-beta-11'
+
+  coevolutiontestImplementation(sourceSets.coevolution.output.classesDirs)
+  coevolutiontestImplementation(sourceSets.cddifftest.output.classesDirs)
 
   toolImplementation(sourceSets.cddiff.output.classesDirs)
   tooltestImplementation(sourceSets.tool.output.classesDirs)
@@ -320,6 +339,14 @@ task cd2smttest(type: Test) {
     shouldRunAfter test
 }
 
+task coevolutiontest(type: Test) {
+    description = "Runs Co-Evolution Tests"
+    group = "Verification"
+    testClassesDirs = sourceSets.coevolutiontest.output.classesDirs
+    classpath += sourceSets.coevolutiontest.runtimeClasspath
+    shouldRunAfter test
+}
+
 task tooltest(type: Test) {
   description = "Runs Tool Tests"
   group = "Verification"
@@ -328,7 +355,7 @@ task tooltest(type: Test) {
   shouldRunAfter test
 }
 
-check.dependsOn cddifftest, cd2smttest, tooltest
+check.dependsOn cddifftest, cd2smttest, coevolutiontest, tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -405,6 +432,12 @@ task cd2smtJar(type: Jar) {
 }
 
 // build test sources jar in addition
+task coevolutionJar(type: Jar) {
+    from sourceSets.cd2smt.output + sourceSets.coevolution.allSource
+    archiveClassifier = "coevolution"
+}
+
+// build test sources jar in addition
 task toolJar(type: Jar) {
   from sourceSets.tool.output + sourceSets.tool.allSource
   archiveClassifier = "tool"
@@ -416,7 +449,7 @@ task mainJar(type: Jar) {
 }
 
 if(("false").equals(getProperty('publishMain'))) {
-  jar.dependsOn cddiffJar, cd2smtJar, toolJar
+  jar.dependsOn cddiffJar, cd2smtJar, coevolutionJar, toolJar
   apply plugin: "com.github.johnrengelman.shadow"
   shadowJar { // all in one jar
     archiveFileName = 'MCCD.jar'
@@ -469,6 +502,7 @@ jar.dependsOn grammarsJar
 artifacts {
   archives cddiffJar
   archives cd2smtJar
+  archives coevolutionJar
   archives toolJar
   archives mainJar
 }
@@ -484,6 +518,7 @@ publishing {
         artifact testSourcesJar
         artifact cddiffJar
         artifact cd2smtJar
+        artifact coevolutionJar
         artifact toolJar
       }
     }else{

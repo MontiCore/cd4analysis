@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.util.Date;
+
+classdiagram Driving1 {
+
+  class Person {
+    String fullName;
+    Date birthday;
+  }
+
+  abstract class Vehicle {
+    String licensePlate
+    public boolean equals(Vehicle vehicle);
+  }
+
+  class Car extends Vehicle {
+    int kilometers;
+  }
+
+  class Truck extends Vehicle {
+    long kilometers;
+  }
+
+  association [*] Person -> (drives) Vehicle [*];
+  association [1] Person (owns) <-> (owner) Vehicle [*];
+
+}
