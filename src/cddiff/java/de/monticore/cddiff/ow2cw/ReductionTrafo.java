@@ -140,8 +140,7 @@ public class ReductionTrafo {
   }
 
   /**
-   * handles unspecified AssocDir for close-world and open-world diff; open-world also allows to
-   * transform uni-directional AssocDir into bi-directional AssocDir
+   * handles unspecified AssocDir
    */
   public static void handleAssocDirections(ASTCDCompilationUnit first,
       ASTCDCompilationUnit second) {
@@ -152,8 +151,13 @@ public class ReductionTrafo {
     FullExpander expander1 = new FullExpander(new VariableExpander(first));
     FullExpander expander2 = new FullExpander(new VariableExpander(second));
 
+    // undirected association are currently treated as bidirectional associations
+
+    /*
     expander1.updateDir4Diff(second.getCDDefinition().getCDAssociationsList());
     expander2.updateDir2Match(first.getCDDefinition().getCDAssociationsList());
+    */
+
     expander1.updateUnspecifiedDir2Default();
     expander2.updateUnspecifiedDir2Default();
   }
