@@ -1,0 +1,6 @@
+classdiagram cd1 {
+  class A;
+  class B;
+  association A (a) <-> (b) B [1];
+}
+

@@ -130,18 +130,6 @@ public class GenerateODHelper {
       List<CDRefSetAssociationWrapper> refSetAssociationList) {
     Map<CDRefSetAssociationWrapper, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
-      //      // check the overlapped RefSetAssociation count
-      //      int count = refSetAssociationList.stream()
-      //          .filter(e -> e.getLeftRoleName().equals(item.getLeftRoleName()) && e
-      //          .getRightRoleName()
-      //              .equals(item.getRightRoleName()) && e.getDirection().equals(item
-      //              .getDirection())
-      //              && item.getLeftRefSet().containsAll(e.getLeftRefSet()) && item
-      //              .getRightRefSet()
-      //              .containsAll(e.getRightRefSet()))
-      //          .collect(Collectors.toList())
-      //          .size();
-
       checkList.put(item, 1);
     });
     return checkList;
@@ -742,7 +730,6 @@ public class GenerateODHelper {
       }
     });
 
-    //    Collections.reverse(result);
     return result;
   }
 
@@ -785,12 +772,62 @@ public class GenerateODHelper {
   }
 
   /**
+   * check the inherited object of given CDTypeWrapper whether is in ASTODElementList
+   */
+  public static boolean isPresentInheritedObjectInASTODElementListByCDTypeWrapper(CDWrapper cdw,
+      CDTypeWrapper cDTypeWrapper, ASTODPack astodPack) {
+    AtomicBoolean isInList = new AtomicBoolean(false);
+
+    // choose ASTODNamedObjects from ASTODPack
+    List<ASTODNamedObject> objectList = astodPack.getNamedObjects();
+
+    List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
+        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+    subClassList.forEach(c -> {
+      objectList.forEach(e -> {
+        if (e.getName().split("_")[0].equals(
+            toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+          isInList.set(true);
+        }
+      });
+    });
+
+    return isInList.get();
+  }
+
+  /**
+   * check the super object of given CDTypeWrapper whether is in ASTODElementList
+   */
+  public static boolean isPresentSuperObjectInASTODElementListByCDTypeWrapper(CDWrapper cdw,
+      CDTypeWrapper cDTypeWrapper, ASTODPack astodPack) {
+    AtomicBoolean isInList = new AtomicBoolean(false);
+
+    // choose ASTODNamedObjects from ASTODPack
+    List<ASTODNamedObject> objectList = astodPack.getNamedObjects();
+
+    List<CDTypeWrapper> superClassList = getAllSimpleSuperClasses4CDTypeWrapper(cDTypeWrapper,
+        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+    superClassList.forEach(c -> {
+      objectList.forEach(e -> {
+        if (e.getName().split("_")[0].equals(
+            toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+          isInList.set(true);
+        }
+      });
+    });
+
+    return isInList.get();
+  }
+
+  /**
    * check the object of given CDTypeWrapper whether is in ASTODElementList if it is in
    * ASTODElementList, return the existed ASTODElement if it is not in ASTODElementList, create a
    * new ASTODElement as return element.
    *
-   * @return: ASTODNamedObjectPack {  "objectList"  : List<ASTODNamedObject> "isInList"    : boolean
-   * }
+   * @return:
+   * ASTODNamedObjectPack {
+   *   "objectList"  : List<ASTODNamedObject>
+   *   "isInList"    : boolean                }
    */
   public static ASTODNamedObjectPack getObjectInASTODElementListByCDTypeWrapper(CDWrapper cdw,
       CDTypeWrapper cDTypeWrapper, ASTODPack astodPack, CDSemantics cdSemantics) {
@@ -862,22 +899,63 @@ public class GenerateODHelper {
    * get the other side class in CDAssociationWrapper if the given CDAssociationWrapper is
    * self-loop, that is no problem. return the found the other side class and it's positon side.
    *
-   * @return: CDTypeWrapperPack {  "otherSideClass" : CDTypeWrapper "position"       : ["left",
-   * "right"] }
+   * @return:
+   * CDTypeWrapperPack {
+   * "otherSideClass" : CDTypeWrapper "
+   *  position"       : ["left", "right"] }
    */
   public static CDTypeWrapperPack findOtherSideClassAndPositionInCDAssociationWrapper(
-      CDAssociationWrapper CDAssociationWrapper, CDTypeWrapper currentClass) {
+      CDAssociationWrapper cDAssociationWrapper,
+      CDTypeWrapper currentClass,
+      String opt4StartClassKind) {
     CDTypeWrapperPack.Position position;
     CDTypeWrapper otherSideClass;
-    if (CDAssociationWrapper.getCDWrapperLeftClass()
-        .getOriginalClassName()
-        .equals(currentClass.getOriginalClassName())) {
-      otherSideClass = CDAssociationWrapper.getCDWrapperRightClass();
-      position = CDTypeWrapperPack.Position.RIGHT;
-    }
-    else {
-      otherSideClass = CDAssociationWrapper.getCDWrapperLeftClass();
-      position = CDTypeWrapperPack.Position.LEFT;
+    if (opt4StartClassKind.equals("target")) {
+      switch (cDAssociationWrapper.getCDAssociationWrapperDirection()) {
+        case LEFT_TO_RIGHT:
+          otherSideClass = cDAssociationWrapper.getCDWrapperLeftClass();
+          position = CDTypeWrapperPack.Position.LEFT;
+          break;
+        case RIGHT_TO_LEFT:
+          otherSideClass = cDAssociationWrapper.getCDWrapperRightClass();
+          position = CDTypeWrapperPack.Position.RIGHT;
+          break;
+        default:
+          if (cDAssociationWrapper.getCDWrapperLeftClass()
+              .getOriginalClassName()
+              .equals(currentClass.getOriginalClassName())) {
+            otherSideClass = cDAssociationWrapper.getCDWrapperRightClass();
+            position = CDTypeWrapperPack.Position.RIGHT;
+          }
+          else {
+            otherSideClass = cDAssociationWrapper.getCDWrapperLeftClass();
+            position = CDTypeWrapperPack.Position.LEFT;
+          }
+          break;
+      }
+    } else {
+      switch (cDAssociationWrapper.getCDAssociationWrapperDirection()) {
+        case LEFT_TO_RIGHT:
+          otherSideClass = cDAssociationWrapper.getCDWrapperRightClass();
+          position = CDTypeWrapperPack.Position.RIGHT;
+          break;
+        case RIGHT_TO_LEFT:
+          otherSideClass = cDAssociationWrapper.getCDWrapperLeftClass();
+          position = CDTypeWrapperPack.Position.LEFT;
+          break;
+        default:
+          if (cDAssociationWrapper.getCDWrapperLeftClass()
+              .getOriginalClassName()
+              .equals(currentClass.getOriginalClassName())) {
+            otherSideClass = cDAssociationWrapper.getCDWrapperRightClass();
+            position = CDTypeWrapperPack.Position.RIGHT;
+          }
+          else {
+            otherSideClass = cDAssociationWrapper.getCDWrapperLeftClass();
+            position = CDTypeWrapperPack.Position.LEFT;
+          }
+          break;
+      }
     }
     return new CDTypeWrapperPack(otherSideClass, position);
   }

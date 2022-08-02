@@ -7,14 +7,18 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
 /**
  * The association in AST will be converted to the corresponding CDAssociationWrapper
- * The kind of CDAssociationWrapper are CDWRAPPER_ASC, CDWRAPPER_INHERIT_ASC
+ * The kind of CDAssociationWrapper are CDWRAPPER_ASC, CDWRAPPER_INHERIT_ASC, CDWRAPPER_INHERIT_DISPLAY_ASC
  *
  * @attribute originalElement:
  *    store the original AST Association
  * @attribute cDWrapperKind:
- *    if this CDAssociationWrapper is created by inherited situation,
- *      then the cDWrapperKind is CDWRAPPER_INHERIT_ASC
- *    otherwise CDWRAPPER_ASC
+ *    - if this CDAssociationWrapper is created by inherited situation,
+ *      then the cDWrapperKind is 'CDWRAPPER_INHERIT_ASC'
+ *      otherwise 'CDWRAPPER_ASC'
+ *    - Special situation of inherited association:
+ *      In comparing process, if this inherited association should be displayed and generate a
+ *      witness, the CDWrapperKind of this current inherited association will be changed into
+ *      'CDWRAPPER_INHERIT_DISPLAY_ASC'
  * @attribute cDWrapperLeftClass:
  *    linked left CDTypeWrapper
  * @attribute cDWrapperRightClass:

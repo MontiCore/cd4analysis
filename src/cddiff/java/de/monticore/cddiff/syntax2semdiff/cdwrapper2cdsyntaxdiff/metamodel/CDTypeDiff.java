@@ -21,7 +21,7 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntax
  *    then check whether the content of those two CDTypeWrappers are different
  * @attribute cDDiffCategory:
  *    - has semantic difference:
- *        EDITED, DELETED
+ *        EDITED, DELETED, FREED
  *    - has no semantic difference:
  *        ORIGINAL, SUBSET
  * @attribute whichAttributesDiff:

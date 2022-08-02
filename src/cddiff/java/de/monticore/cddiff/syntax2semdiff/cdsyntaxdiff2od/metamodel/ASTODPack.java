@@ -1,12 +1,12 @@
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel;
 
+import de.monticore.od4data.prettyprinter.OD4DataFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.prettyprint.IndentPrinter;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ASTODPack {
   private List<ASTODNamedObject> namedObjects = new LinkedList<>();
@@ -59,16 +59,13 @@ public class ASTODPack {
 
   public List<ASTODElement> getASTODElementList() {
     // remove links duplicate
-    for (int i = 0; i < this.links.size(); i++) {
-      for (int j = i + 1; j < this.links.size(); j++) {
-        if (this.links.get(i).deepEquals(this.links.get(j))) {
-          this.links.remove(j);
-        }
-      }
-    }
+    Map<String, ASTODLink> linksMap = new HashMap<>();
+    this.links.forEach(e ->
+        linksMap.put(new OD4DataFullPrettyPrinter(new IndentPrinter()).prettyprint(e), e));
+
     List<ASTODElement> astodElementList = new ArrayList<>();
     astodElementList.addAll(this.namedObjects);
-    astodElementList.addAll(this.links);
+    astodElementList.addAll(linksMap.values());
     return astodElementList;
   }
 

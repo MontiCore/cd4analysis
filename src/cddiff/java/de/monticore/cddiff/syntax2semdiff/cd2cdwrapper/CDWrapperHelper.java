@@ -7,6 +7,7 @@ import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cddiff.cd2alloy.CD2AlloyQNameHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
 
@@ -442,9 +443,10 @@ public class CDWrapperHelper {
    * calculate the intersection set of left and right cardinality of related CDAssociationWrapper in
    * CDRefSetAssociationWrapper
    *
-   * @Return: CDAssociationWrapperCardinalityPack {"leftCardinality"   :
-   * CDWrapper.CDAssociationWrapperCardinality "rightCardinality"  :
-   * CDWrapper.CDAssociationWrapperCardinality }
+   * @Return:
+   * CDAssociationWrapperCardinalityPack {
+   *  "leftCardinality"   :   CDWrapper.CDAssociationWrapperCardinality
+   *  "rightCardinality"  :   CDWrapper.CDAssociationWrapperCardinality }
    */
   public static CDAssociationWrapperCardinalityPack intersectCDAssociationWrapperCardinalityHelper(
       CDAssociationWrapper originalAssoc, boolean isReversed,
@@ -547,6 +549,34 @@ public class CDWrapperHelper {
                 && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
                 && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
                 && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, true));
+        }
+      });
+    }
+    return result;
+  }
+
+  /**
+   * Fuzzy search for CDAssociationWrapper without matching direction and role name
+   *
+   * @Return: List<CDAssociationWrapperPack>
+   *   [{"cDAssociationWrapper" : CDAssociationWrapper
+   *     "isReverse"            : boolean             }]
+   */
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName(
+      Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
+    List<CDAssociationWrapperPack> result = new ArrayList<>();
+    if (map == null) {
+      return null;
+    }
+    else {
+      map.values().forEach(existAssoc -> {
+        if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, false));
+        }
+        else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
           result.add(new CDAssociationWrapperPack(existAssoc, true));
         }
       });
@@ -728,6 +758,21 @@ public class CDWrapperHelper {
   }
 
   /**
+   * return all simple super-classes about given CDTypeWrapper expect abstract class and interface
+   */
+  public static List<CDTypeWrapper> getAllSimpleSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
+      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
+    List<CDTypeWrapper> result = new LinkedList<>();
+    inheritanceGraph.successors(cDTypeWrapper.getName()).forEach(e -> {
+      if (cDTypeWrapperGroup.get(e).getCDWrapperKind()
+          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_CLASS) {
+        result.add(cDTypeWrapperGroup.get(e));
+      }
+    });
+    return result;
+  }
+
+  /**
    * return all simple subclasses about given CDTypeWrapper expect abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
@@ -831,20 +876,36 @@ public class CDWrapperHelper {
   }
 
   /**
-   * genetate the role name for ASTCDAssociation if there is no role name in the original
-   * ASTCDAssociation then set the lower case of the left/right class qualified name as role name
+   * generate the role name for ASTCDAssociation if there is no role name in the original
+   * ASTCDAssociation then set the lower case of the left/right class name as role name
    */
   public static ASTCDAssociation generateASTCDAssociationRoleName(
       ASTCDAssociation astcdAssociation) {
     if (!astcdAssociation.getLeft().isPresentCDRole()) {
-      String leftRoleName = astcdAssociation.getLeftQualifiedName().getQName().toLowerCase();
+      String leftRoleName =
+          CD2AlloyQNameHelper.partHandler(astcdAssociation.getLeftReferenceName(), true);
       astcdAssociation.getLeft()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(leftRoleName).build());
     }
     if (!astcdAssociation.getRight().isPresentCDRole()) {
-      String rightRoleName = astcdAssociation.getRightQualifiedName().getQName().toLowerCase();
+      String rightRoleName =
+          CD2AlloyQNameHelper.partHandler(astcdAssociation.getRightReferenceName(), true);
       astcdAssociation.getRight()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(rightRoleName).build());
+    }
+    return astcdAssociation;
+  }
+  /**
+   * If an association has no cardinality that means its underspecified and for (static) semdiff:
+   * no cardinality == [*]
+   */
+  public static ASTCDAssociation generateASTCDAssociationCardinality(
+      ASTCDAssociation astcdAssociation) {
+    if (!astcdAssociation.getLeft().isPresentCDCardinality()) {
+      astcdAssociation.getLeft().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
+    }
+    if (!astcdAssociation.getRight().isPresentCDCardinality()) {
+      astcdAssociation.getRight().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
     }
     return astcdAssociation;
   }

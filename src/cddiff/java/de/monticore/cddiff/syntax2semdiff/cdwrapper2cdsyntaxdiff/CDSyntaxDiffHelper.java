@@ -1,6 +1,7 @@
 package de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff;
 
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperPack;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
@@ -8,6 +9,10 @@ import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTyp
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssociationDiff;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap;
 
 public class CDSyntaxDiffHelper {
 
@@ -127,9 +132,100 @@ public class CDSyntaxDiffHelper {
     return cDTypeDiff;
   }
 
+  /**
+   * check equivalence between given Superclasses s1 and s2
+   * "Abstract Class", "Interface" and "Class" are the same in this process
+   * only check the inheritance path
+   */
+  public static boolean checkEquivalence4Superclasses(Set<String> s1, Set<String> s2) {
+
+    return s1.stream().map(e -> e.split("_")[1]).collect(Collectors.toSet())
+        .equals(s2.stream().map(e -> e.split("_")[1]).collect(Collectors.toSet()));
+  }
+
   /********************************************************************
    ********************* Start for Association ************************
    *******************************************************************/
+
+  /**
+   * create check list for association in compareCDW
+   */
+  public static void createCheckList4AssocInCompareCDW(
+      CDWrapper compareCDW,
+      Map<CDAssociationWrapper, Boolean> checkList4AssocInCompareCDW) {
+    compareCDW.getCDAssociationWrapperGroup().forEach((assocName, assoc) -> {
+      if (assoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
+        checkList4AssocInCompareCDW.put(assoc, false);
+      }
+    });
+  }
+
+  /**
+   * update checkList4AssocInCompareCDW
+   */
+  public static void updateCheckList4AssocInCompareCDW(
+      CDWrapper baseCDW,
+      CDWrapper compareCDW,
+      Map<CDAssociationWrapper, Boolean> checkList4AssocInCompareCDW) {
+    baseCDW.getCDAssociationWrapperGroup().forEach((assocName, baseCDAssociationWrapper) -> {
+
+      CDAssociationWrapper intersectedBaseCDAssociationWrapper =
+          intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap(
+              baseCDAssociationWrapper, baseCDW);
+
+      // get all associations including reversed association in CompareSG
+      // by matching [leftClass], [rightClass]
+      List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
+          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName(
+              compareCDW.getCDAssociationWrapperGroup(), intersectedBaseCDAssociationWrapper);
+      List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
+      List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
+      DiffAssocMapInCompareSG.forEach(e -> {
+        if (!e.isReverse()) {
+          forwardDiffAssocListInCompareSG.add(e.getCDAssociationWrapper());
+        }
+        else {
+          reverseDiffAssocListInCompareSG.add(e.getCDAssociationWrapper());
+        }
+      });
+
+      boolean isInCompareSG4ForwardAssocName = forwardDiffAssocListInCompareSG.size() > 0;
+      boolean isInCompareSG4ReverseAssocName = reverseDiffAssocListInCompareSG.size() > 0;
+
+      if (isInCompareSG4ForwardAssocName && !isInCompareSG4ReverseAssocName) {
+        forwardDiffAssocListInCompareSG.forEach(compareCDAssociationWrapper -> {
+
+          // change the flag of current compareCDAssociationWrapper to True (is used)
+          if (compareCDAssociationWrapper.getCDWrapperKind()
+              == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
+            // change CDWrapperKind to ensure display this inherited assoc
+            if (baseCDAssociationWrapper.getCDWrapperKind()
+                == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC) {
+              baseCDAssociationWrapper.setCDWrapperKind(
+                  CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_DISPLAY_ASC);
+            }
+            checkList4AssocInCompareCDW.put(compareCDAssociationWrapper, true);
+          }
+        });
+      }
+      if (!isInCompareSG4ForwardAssocName && isInCompareSG4ReverseAssocName) {
+        reverseDiffAssocListInCompareSG.forEach(compareCDAssociationWrapper -> {
+
+          // change the flag of current compareCDAssociationWrapper to True (is used)
+          if (compareCDAssociationWrapper.getCDWrapperKind()
+              == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
+            // change CDWrapperKind to ensure display this inherited assoc
+            if (baseCDAssociationWrapper.getCDWrapperKind()
+                == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC) {
+              baseCDAssociationWrapper.setCDWrapperKind(
+                  CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_DISPLAY_ASC);
+            }
+            checkList4AssocInCompareCDW.put(compareCDAssociationWrapper, true);
+          }
+        });
+      }
+    });
+  }
 
   /**
    * return the result for cardinality of association after comparison
@@ -293,6 +389,8 @@ public class CDSyntaxDiffHelper {
         return CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_ASC;
       case CDWRAPPER_INHERIT_ASC:
         return CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC;
+      case CDWRAPPER_INHERIT_DISPLAY_ASC:
+        return CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_DISPLAY_ASC;
       default:
         return null;
     }

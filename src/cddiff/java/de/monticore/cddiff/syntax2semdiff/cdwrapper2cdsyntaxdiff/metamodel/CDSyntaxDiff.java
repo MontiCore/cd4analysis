@@ -47,11 +47,11 @@ public class CDSyntaxDiff {
   }
 
   public enum CDAssociationDiffKind {
-    CDDIFF_ASC, CDDIFF_INHERIT_ASC
+    CDDIFF_ASC, CDDIFF_INHERIT_ASC, CDDIFF_INHERIT_DISPLAY_ASC
   }
 
   public enum CDTypeDiffCategory {
-    ORIGINAL, EDITED, DELETED, SUBSET
+    ORIGINAL, EDITED, DELETED, SUBSET, FREED
   }
 
   public enum CDAssociationDiffCategory {

@@ -557,4 +557,27 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
         .equals(CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE));
   }
 
+  /**
+   * Test for no cardinality
+   * CD:
+   *   class A;
+   *   class B;
+   *   association A (a) <-> (b) B [1];
+   */
+  @Test
+  public void testAssociation4NoCardinality() {
+    CDWrapper dg = generateCDWrapperTemp("Association", "NoCardinality.cd");
+    Assert.assertTrue(dg.getCDAssociationWrapperGroup().size() == 1);
+    Assert.assertTrue(dg.getCDAssociationWrapperGroup()
+        .containsKey("CDAssociationWrapper_A_a_Bidirectional_b_B"));
+    Assert.assertTrue(dg.getCDAssociationWrapperGroup()
+        .get("CDAssociationWrapper_A_a_Bidirectional_b_B")
+        .getCDWrapperLeftClassCardinality()
+        .equals(CDWrapper.CDAssociationWrapperCardinality.MORE)
+        && dg.getCDAssociationWrapperGroup()
+        .get("CDAssociationWrapper_A_a_Bidirectional_b_B")
+        .getCDWrapperRightClassCardinality()
+        .equals(CDWrapper.CDAssociationWrapperCardinality.ONE));
+  }
+
 }

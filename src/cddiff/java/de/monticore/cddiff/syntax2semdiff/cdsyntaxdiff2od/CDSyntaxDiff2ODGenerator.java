@@ -42,7 +42,7 @@ public class CDSyntaxDiff2ODGenerator {
     int i = 1;
     while (!globalAssociationQueue.isEmpty()) {
       CDAssociationDiff currentCDAssociationDiff = globalAssociationQueue.pop();
-      if (currentCDAssociationDiff.getCDDiffKind() == CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_ASC) {
+      if (currentCDAssociationDiff.getCDDiffKind() != CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC) {
         Optional<ASTODPack> optionalASTODPack =
             generateODByAssociation(cdw, currentCDAssociationDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
@@ -143,14 +143,22 @@ public class CDSyntaxDiff2ODGenerator {
           .get(cDTypeWrapper.getCDWrapperLink4EnumClass().iterator().next());
     }
 
-    // call initGenerateODByClassHelper()
-    Optional<ASTODPack> optionalAstodPack = initGenerateODByClassHelper(cdw,
-        cDTypeDiff,
-        usingCDTypeWrapper,
-        classStack4TargetClass,
-        classStack4SourceClass,
-        refLinkCheckList,
-        cdSemantics);
+    Optional<ASTODPack> optionalAstodPack;
+
+    // if CDTypeDiffCategory is FREED, there is only one object instance in OD (no links)
+    if (cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.FREED) {
+      optionalAstodPack = Optional.empty();
+    } else {
+      // call initGenerateODByClassHelper()
+      optionalAstodPack = initGenerateODByClassHelper(cdw,
+          cDTypeDiff,
+          usingCDTypeWrapper,
+          classStack4TargetClass,
+          classStack4SourceClass,
+          refLinkCheckList,
+          cdSemantics);
+    }
+
     if (optionalAstodPack.isEmpty()) {
       astodPack.extendNamedObjects(
           createObjectList(cdw,
@@ -224,6 +232,7 @@ public class CDSyntaxDiff2ODGenerator {
               cdw, cDAssociationDiff.getOriginalElement(), refLinkCheckList);
       updateCounterInCheckList(initCDRefSetAssociationWrapper, refLinkCheckList);
     }
+
 
     return astodPack == null ? Optional.empty() : Optional.of(astodPack);
   }
@@ -485,16 +494,13 @@ public class CDSyntaxDiff2ODGenerator {
 
       while (!associationStack.isEmpty()) {
         CDAssociationWrapper currentCDAssociationWrapper = associationStack.pop();
-//        CDAssociationWrapper currentCDAssociationWrapper =
-//            intersectCDAssociationWrapperCardinalityByCDAssociationWrapperOnlyWithLeftToRightAndRightToLeft(
-//            associationStack.pop(), cdw);
         if (!checkRelatedCDRefSetAssociationWrapperIsUsed(cdw, currentCDAssociationWrapper, refLinkCheckList)) {
 
           // get the information of currentSideClass and otherSideClass
 
           CDTypeWrapperPack otherSideClassPack =
               findOtherSideClassAndPositionInCDAssociationWrapper(
-              currentCDAssociationWrapper, currentCDTypeWrapper);
+              currentCDAssociationWrapper, currentCDTypeWrapper, opt4StartClassKind);
 
           CDTypeWrapper otherSideClass = otherSideClassPack.getOtherSideClass();
           String otherSideRoleName;
@@ -511,6 +517,12 @@ public class CDSyntaxDiff2ODGenerator {
               isPresentOtherSideCardinality = true;
             }
             else {
+              if (isPresentInheritedObjectInASTODElementListByCDTypeWrapper(cdw, otherSideClass, astodPack)) {
+                continue;
+              }
+              if (isPresentSuperObjectInASTODElementListByCDTypeWrapper(cdw, otherSideClass, astodPack)) {
+                return Optional.empty();
+              }
               isPresentOtherSideCardinality = mappingCardinality(
                   currentCDAssociationWrapper.getCDWrapperLeftClassCardinality().toString()) > 0;
             }
@@ -523,6 +535,12 @@ public class CDSyntaxDiff2ODGenerator {
               isPresentOtherSideCardinality = true;
             }
             else {
+              if (isPresentInheritedObjectInASTODElementListByCDTypeWrapper(cdw, otherSideClass, astodPack)) {
+                continue;
+              }
+              if (isPresentSuperObjectInASTODElementListByCDTypeWrapper(cdw, otherSideClass, astodPack)) {
+                return Optional.empty();
+              }
               isPresentOtherSideCardinality = mappingCardinality(
                   currentCDAssociationWrapper.getCDWrapperRightClassCardinality().toString()) > 0;
             }

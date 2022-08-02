@@ -47,7 +47,6 @@ public class AlloyCDDiff {
       result = Optional.of((AlloyDiffSolution) results.get(0));
     }
 
-    /*
     // clean-up
     try {
       FileUtils.forceDelete(outputDirectory.toFile());
@@ -57,7 +56,6 @@ public class AlloyCDDiff {
           e.getMessage()));
     }
 
-     */
 
     return result;
   }

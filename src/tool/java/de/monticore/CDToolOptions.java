@@ -267,6 +267,17 @@ public class CDToolOptions {
       .build());
 
     options.addOption(Option.builder()
+        .longOpt("jsemdiff")
+        .hasArg()
+        .type(String.class)
+        .argName("file")
+        .numberOfArgs(1)
+        .desc(
+            "Alternative to `--semdiff`: use a prototype of a purely Java-based implementation of"
+                + " a semantic diff.")
+        .build());
+
+    options.addOption(Option.builder()
       .longOpt("diffsize")
       .hasArg()
       .type(Integer.class)

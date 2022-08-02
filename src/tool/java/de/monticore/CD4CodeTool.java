@@ -33,6 +33,7 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cddiff.syntax2semdiff.JavaCDDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -111,6 +112,11 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
         if (cmd.hasOption("semdiff")) {
           computeSemDiff();
+          CD4CodeMill.globalScope().clear();
+        }
+
+        if (cmd.hasOption("jsemdiff")) {
+          computeJavaSemDiff();
           CD4CodeMill.globalScope().clear();
         }
 
@@ -600,6 +606,43 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));
     }
     System.out.println("Further details: https://www.se-rwth.de/topics/");
+  }
+
+
+  protected void computeJavaSemDiff() throws IOException {
+    // parse the first CD
+    ASTCDCompilationUnit ast1;
+
+    if (!modelFile.isEmpty()) {
+      ast1 = parse(modelFile);
+    }
+    else {
+      ast1 = parse(modelReader);
+    }
+
+    // parse the second CD
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("jsemdiff"));
+
+    CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+
+    // determine if open-world should be applied
+    if (cmd.hasOption("open-world")) {
+
+      CD4CodeMill.globalScope().clear();
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(ast1, ast2);
+
+      if (cmd.hasOption("o")) {
+        saveDiffCDs2File(ast1, ast2, outputPath);
+      }
+      semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    }
+
+    if (cmd.hasOption("o")){
+      JavaCDDiff.printODs2Dir(JavaCDDiff.computeSemDiff(ast1,ast2,semantics),outputPath);
+    } else {
+      JavaCDDiff.printSemDiff(ast1,ast2,semantics);
+    }
   }
 
   protected void computeSemDiff() throws NumberFormatException, IOException {

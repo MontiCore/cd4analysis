@@ -181,6 +181,7 @@ public class CD2CDWrapperGenerator {
   public void createCDAssociationWrapperHelper(ASTCDAssociation astcdAssociation, Boolean isInherited) {
     // add role name if the original ASTCDAssociation has no role name for one side or both side
     astcdAssociation = generateASTCDAssociationRoleName(astcdAssociation);
+    astcdAssociation = generateASTCDAssociationCardinality(astcdAssociation);
     CDAssociationWrapper currentAssoc = new CDAssociationWrapper(astcdAssociation, isInherited);
     currentAssoc.setCDWrapperLeftClass(
       findCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getLeftOriginalClassName()));

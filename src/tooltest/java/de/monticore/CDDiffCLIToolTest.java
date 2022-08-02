@@ -18,6 +18,8 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
   final String[] methods = { "alloy-based", "reduction-based" };
 
+  final String[] commands = { "--semdiff", "--jsemdiff" };
+
   @Test
   public void testDiff() {
     // given 2 CDs that are not semantically equivalent
@@ -25,45 +27,47 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
-    //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
-        "20" };
-    CD4CodeTool.main(args);
+    for (String command : commands) {
+      //when CD4CodeTool is used to compute the semantic difference
+      String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+          "20" };
+      CD4CodeTool.main(args);
 
-    //then corresponding .od files are generated
-    File[] odFiles = Paths.get(output).toFile().listFiles();
-    assertNotNull(odFiles);
+      //then corresponding .od files are generated
+      File[] odFiles = Paths.get(output).toFile().listFiles();
+      assertNotNull(odFiles);
 
-    List<String> odFilePaths = new LinkedList<>();
-    for (File odFile : odFiles) {
-      if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
+      List<String> odFilePaths = new LinkedList<>();
+      for (File odFile : odFiles) {
+        if (odFile.getName().endsWith(".od")) {
+          odFilePaths.add(odFile.toPath().toString());
+        }
       }
-    }
 
-    // and the ODs match cd1 but not cd2
-    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    boolean first = false;
-    boolean second = true;
+      // and the ODs match cd1 but not cd2
+      CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+      boolean first = false;
+      boolean second = true;
 
-    try {
-      first = matcher.checkODConsistency(cd1, odFilePaths);
-      second = matcher.checkODConsistency(cd2, odFilePaths);
-    }
-    catch (Exception e) {
-      Log.error("0xCDD07: Matching failed due to the following exception " + e.getMessage());
-      fail();
-    }
+      try {
+        first = matcher.checkODConsistency(cd1, odFilePaths);
+        second = matcher.checkODConsistency(cd2, odFilePaths);
+      }
+      catch (Exception e) {
+        Log.error("0xCDD07: Matching failed due to the following exception " + e.getMessage());
+        fail();
+      }
 
-    assertTrue(first);
-    assertFalse(second);
+      assertTrue(first);
+      assertFalse(second);
 
-    // clean-up
-    try {
-      FileUtils.forceDelete(Paths.get(output).toFile());
-    }
-    catch (IOException e) {
-      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+      // clean-up
+      try {
+        FileUtils.forceDelete(Paths.get(output).toFile());
+      }
+      catch (IOException e) {
+        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+      }
     }
 
   }
@@ -77,29 +81,34 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv2" + ".cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutDiff";
 
-    //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
-        "20" };
-    CD4CodeTool.main(args);
+    for (String command : commands) {
+      //when CD4CodeTool is used to compute the semantic difference
+      String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+          "20" };
+      CD4CodeTool.main(args);
 
-    //no corresponding .od files are generated
-    File[] odFiles = Paths.get(output).toFile().listFiles();
-    assertNotNull(odFiles);
+      //no corresponding .od files are generated
+      File[] odFiles = Paths.get(output).toFile().listFiles();
 
-    List<String> odFilePaths = new LinkedList<>();
-    for (File odFile : odFiles) {
-      if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
+      if(odFiles == null){
+        return;
       }
-    }
-    assertTrue(odFilePaths.isEmpty());
 
-    // clean-up
-    try {
-      FileUtils.forceDelete(Paths.get(output).toFile());
-    }
-    catch (IOException e) {
-      Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+      List<String> odFilePaths = new LinkedList<>();
+      for (File odFile : odFiles) {
+        if (odFile.getName().endsWith(".od")) {
+          odFilePaths.add(odFile.toPath().toString());
+        }
+      }
+      assertTrue(odFilePaths.isEmpty());
+
+      // clean-up
+      try {
+        FileUtils.forceDelete(Paths.get(output).toFile());
+      }
+      catch (IOException e) {
+        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+      }
     }
 
   }
@@ -159,31 +168,32 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees0.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithOWDiff";
+    for (String command : commands) {
+      for (String method : methods) {
+        //when CD4CodeTool is used to compute the semantic difference
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
+            "--difflimit", "20", "--open-world", method };
+        CD4CodeTool.main(args);
 
-    for (String method : methods) {
-      //when CD4CodeTool is used to compute the semantic difference
-      String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
-          "--difflimit", "20", "--open-world", method };
-      CD4CodeTool.main(args);
+        //some corresponding .od files are generated
+        File[] odFiles = Paths.get(output).toFile().listFiles();
+        assertNotNull(odFiles);
 
-      //some corresponding .od files are generated
-      File[] odFiles = Paths.get(output).toFile().listFiles();
-      assertNotNull(odFiles);
-
-      List<String> odFilePaths = new LinkedList<>();
-      for (File odFile : odFiles) {
-        if (odFile.getName().endsWith(".od")) {
-          odFilePaths.add(odFile.toPath().toString());
+        List<String> odFilePaths = new LinkedList<>();
+        for (File odFile : odFiles) {
+          if (odFile.getName().endsWith(".od")) {
+            odFilePaths.add(odFile.toPath().toString());
+          }
         }
-      }
-      assertFalse(odFilePaths.isEmpty());
+        assertFalse(odFilePaths.isEmpty());
 
-      // clean-up
-      try {
-        FileUtils.forceDelete(Paths.get(output).toFile());
-      }
-      catch (IOException e) {
-        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+        // clean-up
+        try {
+          FileUtils.forceDelete(Paths.get(output).toFile());
+        }
+        catch (IOException e) {
+          Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+        }
       }
     }
 
@@ -196,31 +206,33 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithoutOWDiff";
 
-    for (String method : methods) {
+    for (String command : commands) {
+      for (String method : methods) {
 
-      //when CD4CodeTool is used to compute the semantic difference
-      String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
-          "--difflimit", "20", "--open-world", method };
-      CD4CodeTool.main(args);
+        //when CD4CodeTool is used to compute the semantic difference
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
+            "--difflimit", "20", "--open-world", method };
+        CD4CodeTool.main(args);
 
-      //no corresponding .od files are generated
-      File[] odFiles = Paths.get(output).toFile().listFiles();
-      assertNotNull(odFiles);
+        //no corresponding .od files are generated
+        File[] odFiles = Paths.get(output).toFile().listFiles();
+        assertNotNull(odFiles);
 
-      List<String> odFilePaths = new LinkedList<>();
-      for (File odFile : odFiles) {
-        if (odFile.getName().endsWith(".od")) {
-          odFilePaths.add(odFile.toPath().toString());
+        List<String> odFilePaths = new LinkedList<>();
+        for (File odFile : odFiles) {
+          if (odFile.getName().endsWith(".od")) {
+            odFilePaths.add(odFile.toPath().toString());
+          }
         }
-      }
-      assertTrue(odFilePaths.isEmpty());
+        assertTrue(odFilePaths.isEmpty());
 
-      // clean-up
-      try {
-        FileUtils.forceDelete(Paths.get(output).toFile());
-      }
-      catch (IOException e) {
-        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+        // clean-up
+        try {
+          FileUtils.forceDelete(Paths.get(output).toFile());
+        }
+        catch (IOException e) {
+          Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+        }
       }
     }
 
@@ -235,33 +247,34 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface" + "/InterfacePerson.cd";
     final String output = "./target/generated/cddiff-test/CLITestAbstract2InterfaceNoOWDiff";
 
-    for (String method : methods) {
-      //when CD4CodeTool is used to compute the semantic difference
-      String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
-          "--difflimit", "20", "--open-world", method };
-      CD4CodeTool.main(args);
+    for (String command : commands) {
+      for (String method : methods) {
+        //when CD4CodeTool is used to compute the semantic difference
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
+            "--difflimit", "20", "--open-world", method };
+        CD4CodeTool.main(args);
 
-      //no corresponding .od files are generated
-      File[] odFiles = Paths.get(output).toFile().listFiles();
-      assertNotNull(odFiles);
+        //no corresponding .od files are generated
+        File[] odFiles = Paths.get(output).toFile().listFiles();
+        assertNotNull(odFiles);
 
-      List<String> odFilePaths = new LinkedList<>();
-      for (File odFile : odFiles) {
-        if (odFile.getName().endsWith(".od")) {
-          odFilePaths.add(odFile.toPath().toString());
+        List<String> odFilePaths = new LinkedList<>();
+        for (File odFile : odFiles) {
+          if (odFile.getName().endsWith(".od")) {
+            odFilePaths.add(odFile.toPath().toString());
+          }
+        }
+        assertTrue(odFilePaths.isEmpty());
+
+        // clean-up
+        try {
+          FileUtils.forceDelete(Paths.get(output).toFile());
+        }
+        catch (IOException e) {
+          Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
         }
       }
-      assertTrue(odFilePaths.isEmpty());
-
-      // clean-up
-      try {
-        FileUtils.forceDelete(Paths.get(output).toFile());
-      }
-      catch (IOException e) {
-        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
-      }
     }
-
   }
 
   @Test
@@ -271,31 +284,33 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd";
     final String output = "./target/generated/cddiff-test/CLITestWithPackagesAndNoOWDiff";
 
-    for (String method : methods) {
+    for (String command : commands) {
+      for (String method : methods) {
 
-      //when CD4CodeTool is used to compute the semantic difference
-      String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
-          "--difflimit", "20", "--open-world", method };
-      CD4CodeTool.main(args);
+        //when CD4CodeTool is used to compute the semantic difference
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
+            "--difflimit", "20", "--open-world", method };
+        CD4CodeTool.main(args);
 
-      //no corresponding .od files are generated
-      File[] odFiles = Paths.get(output).toFile().listFiles();
-      assertNotNull(odFiles);
+        //no corresponding .od files are generated
+        File[] odFiles = Paths.get(output).toFile().listFiles();
+        assertNotNull(odFiles);
 
-      List<String> odFilePaths = new LinkedList<>();
-      for (File odFile : odFiles) {
-        if (odFile.getName().endsWith(".od")) {
-          odFilePaths.add(odFile.toPath().toString());
+        List<String> odFilePaths = new LinkedList<>();
+        for (File odFile : odFiles) {
+          if (odFile.getName().endsWith(".od")) {
+            odFilePaths.add(odFile.toPath().toString());
+          }
         }
-      }
-      assertTrue(odFilePaths.isEmpty());
+        assertTrue(odFilePaths.isEmpty());
 
-      // clean-up
-      try {
-        FileUtils.forceDelete(Paths.get(output).toFile());
-      }
-      catch (IOException e) {
-        Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+        // clean-up
+        try {
+          FileUtils.forceDelete(Paths.get(output).toFile());
+        }
+        catch (IOException e) {
+          Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
+        }
       }
     }
 
