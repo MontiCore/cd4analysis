@@ -198,7 +198,7 @@ public class CD2AlloyGenerator {
     }
 
     // Union of all attributes in all interfaces
-    for (ASTCDInterface astcdInterface: interfaceUnion) {
+    for (ASTCDInterface astcdInterface : interfaceUnion) {
       Set<ASTCDAttribute> attributes = new HashSet<>(astcdInterface.getCDAttributeList());
       attributeUnion.addAll(attributes);
     }
@@ -296,7 +296,6 @@ public class CD2AlloyGenerator {
       attributeUnion.addAll(attributes);
     }
 
-
     // Union of all Interfaces
     Set<ASTCDInterface> interfaceUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
@@ -332,7 +331,7 @@ public class CD2AlloyGenerator {
     Set<String> puTypes = new HashSet<>();
     for (ASTCDAttribute astcdAttribute : attributeUnion) {
       // TODO: Im Tech.-Report sind enums drin, im Beispiel nicht, klären!
-      String typeName = astcdAttribute.printType().replaceAll("<","_of__").replaceAll(">","__");
+      String typeName = astcdAttribute.printType().replaceAll("<", "_of__").replaceAll(">", "__");
       if (!ciTypes.contains(typeName) && !enumNameUnion.contains(typeName)) {
         puTypes.add(typeName);
       }
@@ -907,7 +906,7 @@ public class CD2AlloyGenerator {
       for (ASTCDClass attributeClass : superClasses(astcdClass, cdClasses)) {
         attributeUnion.addAll(attributeClass.getCDAttributeList());
       }
-      for (ASTCDInterface attributeInterface : interfaces(astcdClass, cdInterfaces)){
+      for (ASTCDInterface attributeInterface : interfaces(astcdClass, cdInterfaces)) {
         attributeUnion.addAll(attributeInterface.getCDAttributeList());
       }
 
@@ -917,9 +916,9 @@ public class CD2AlloyGenerator {
             .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
             .append(", ");
         predicate.append(astcdAttribute.getName()).append(", ");
-        predicate.append(executeRuleH1(astcdAttribute.printType().replaceAll("<","_of__").replaceAll(">","__"), cd))
-            .append("]")
-            .append(System.lineSeparator());
+        predicate.append(
+            executeRuleH1(astcdAttribute.printType().replaceAll("<", "_of__").replaceAll(">", "__"),
+                cd)).append("]").append(System.lineSeparator());
       }
 
     }
@@ -1057,7 +1056,7 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append("// P3: Atoms for Singleton classes and abstarct classses ")
+    predicate.append("// P3: Atoms for interfaces, singleton, and abstract classes")
         .append(System.lineSeparator());
 
     // Abstract classes should not have objects
@@ -1070,7 +1069,9 @@ public class CD2AlloyGenerator {
         abstractClasses.add(astcdClass);
       }
       // TODO: Überprüfen und testen -> Gibt es nicht, was also tun?
-      if (astcdClass.getModifier().toString().equals(" singleton ")) {
+      if (astcdClass.getModifier().isPresentStereotype() && astcdClass.getModifier()
+          .getStereotype()
+          .contains("singleton")) {
         singletonClasses.add(astcdClass);
       }
     }
@@ -1360,16 +1361,16 @@ public class CD2AlloyGenerator {
     int rightLowerBound = 0;
     int rightUpperBound = -1;
 
-    if (association.getLeft().isPresentCDCardinality()){
+    if (association.getLeft().isPresentCDCardinality()) {
       leftLowerBound = association.getLeft().getCDCardinality().getLowerBound();
-      if (!association.getLeft().getCDCardinality().toCardinality().isNoUpperLimit()){
+      if (!association.getLeft().getCDCardinality().toCardinality().isNoUpperLimit()) {
         leftUpperBound = association.getLeft().getCDCardinality().getUpperBound();
       }
     }
 
-    if (association.getRight().isPresentCDCardinality()){
+    if (association.getRight().isPresentCDCardinality()) {
       rightLowerBound = association.getRight().getCDCardinality().getLowerBound();
-      if (!association.getRight().getCDCardinality().toCardinality().isNoUpperLimit()){
+      if (!association.getRight().getCDCardinality().toCardinality().isNoUpperLimit()) {
         rightUpperBound = association.getRight().getCDCardinality().getUpperBound();
       }
     }
@@ -1380,9 +1381,10 @@ public class CD2AlloyGenerator {
 
         lowerCardinality = "" + leftLowerBound;
 
-        if (leftUpperBound < 0){
+        if (leftUpperBound < 0) {
           upperCardinality = "";
-        } else {
+        }
+        else {
           upperCardinality = "" + leftUpperBound;
         }
 
@@ -1401,9 +1403,10 @@ public class CD2AlloyGenerator {
 
         lowerCardinality = "" + rightLowerBound;
 
-        if (rightUpperBound < 0){
+        if (rightUpperBound < 0) {
           upperCardinality = "";
-        } else {
+        }
+        else {
           upperCardinality = "" + rightUpperBound;
         }
 
@@ -1421,12 +1424,12 @@ public class CD2AlloyGenerator {
       case 5: {
         infix = "Attrib";
 
-
         lowerCardinality = "" + rightLowerBound;
 
-        if (rightUpperBound < 0){
+        if (rightUpperBound < 0) {
           upperCardinality = "";
-        } else {
+        }
+        else {
           upperCardinality = "" + rightUpperBound;
         }
 
@@ -1445,9 +1448,10 @@ public class CD2AlloyGenerator {
 
         lowerCardinality = "" + leftLowerBound;
 
-        if (leftUpperBound < 0){
+        if (leftUpperBound < 0) {
           upperCardinality = "";
-        } else {
+        }
+        else {
           upperCardinality = "" + leftUpperBound;
         }
 
