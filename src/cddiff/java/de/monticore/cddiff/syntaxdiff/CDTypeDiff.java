@@ -1,30 +1,33 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDBasisNode;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDExtendUsage;
+import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.umlmodifier._ast.ASTModifier;
+import org.checkerframework.checker.nullness.Opt;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNode>
+public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDType>
     extends AbstractDiffType {
   CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
-  protected final ASTNodeType1 cd1Element;
+  protected final ASTCDType1 cd1Element;
 
-  protected final ASTNodeType2 cd2Element;
+  protected final ASTCDType2 cd2Element;
 
   private String ppModifier1, ppName1, ppExtended1, ppInter1, ppModifier2, ppName2, ppExtended2,
       ppInter2, cd1Print, cd2Print, keywordCD1, keywordCD2;
@@ -37,7 +40,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
 
   protected List<ElementDiff<ASTCDMethod>> matchedMethodeList;
 
-  protected List<ASTCDMethod> deleletedMethodes;
+  protected List<ASTCDMethod> deleletedMethods;
 
   protected List<ASTCDMethod> addedMethode;
 
@@ -51,10 +54,18 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
 
   protected List<ASTCDEnumConstant> deleletedEnumConstants;
 
-  protected List<ASTCDEnumConstant> addedEnumConstant;
+  protected List<ASTCDEnumConstant> addedEnumConstants;
 
-  public List<ASTCDEnumConstant> getAddedEnumConstant() {
-    return addedEnumConstant;
+  ICD4CodeArtifactScope scopecd1;
+
+  ICD4CodeArtifactScope scopecd2;
+
+  public List<ElementDiff<ASTCDEnumConstant>> getMatchedEnumConstantList() {
+    return matchedEnumConstantList;
+  }
+
+  public List<ASTCDEnumConstant> getAddedEnumConstants() {
+    return addedEnumConstants;
   }
 
   public List<ASTCDEnumConstant> getDeleletedEnumConstants() {
@@ -65,31 +76,58 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
     return matchedAttributesList;
   }
 
-  public List<ASTCDAttribute> getDeleletedAttributes() {
-    return deleletedAttributes;
-  }
-
   public List<ASTCDAttribute> getAddedAttributes() {
     return addedAttributes;
   }
 
-  public ASTNodeType1 getCd1Element() {
+  public List<ASTCDAttribute> getDeleletedAttributes() {
+    return deleletedAttributes;
+  }
+
+  public List<ElementDiff<ASTCDMethod>> getMatchedMethodeList() {
+    return matchedMethodeList;
+  }
+
+  public List<ASTCDMethod> getAddedMethode() {
+    return addedMethode;
+  }
+
+  public List<ASTCDMethod> getDeleletedMethods() {
+    return deleletedMethods;
+  }
+
+  public List<ElementDiff<ASTCDConstructor>> getMatchedConstructorList() {
+    return matchedConstructorList;
+  }
+
+  public List<ASTCDConstructor> getAddedConstructor() {
+    return addedConstructor;
+  }
+
+  public List<ASTCDConstructor> getDeleletedConstructor() {
+    return deleletedConstructor;
+  }
+
+  public ASTCDType1 getCd1Element() {
     return cd1Element;
   }
 
-  public ASTNodeType2 getCd2Element() {
+  public ASTCDType2 getCd2Element() {
     return cd2Element;
   }
 
-  public CDTypeDiff(ASTNodeType1 cd1Element, ASTNodeType2 cd2Element) {
+  public CDTypeDiff(ASTCDType1 cd1Element, ASTCDType2 cd2Element, ICD4CodeArtifactScope scopecd1, ICD4CodeArtifactScope scopecd2) {
     this.cd1Element = cd1Element;
     this.cd2Element = cd2Element;
+    this.scopecd1 = scopecd1;
+    this.scopecd2 = scopecd2;
+
+    createDefaultDiffList(cd1Element, cd2Element);
 
     if ((cd1Element instanceof ASTCDClass) && (cd2Element instanceof ASTCDClass)) {
       keywordCD1 = "class";
       keywordCD2 = "class";
       createClassDiff((ASTCDClass) cd1Element, (ASTCDClass) cd2Element);
-
     }
     else if (cd1Element instanceof ASTCDInterface && cd2Element instanceof ASTCDInterface) {
       keywordCD1 = "interface";
@@ -104,8 +142,8 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
 
     }
     else if (cd1Element instanceof ASTCDInterface && cd2Element instanceof ASTCDClass) {
-      keywordCD1 = "interface";
-      keywordCD2 = "class";
+      keywordCD1 = COLOR_CHANGE + "interface" + RESET;
+      keywordCD2 = COLOR_CHANGE + "class" + RESET;
       createInterfaceClassDiff((ASTCDInterface) cd1Element, (ASTCDClass) cd2Element);
       this.interpretation.append("Interface")
           .append(": ")
@@ -115,8 +153,8 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
 
     }
     else if (cd1Element instanceof ASTCDClass && cd2Element instanceof ASTCDInterface) {
-      keywordCD1 = "class";
-      keywordCD2 = "interface";
+      keywordCD1 = COLOR_CHANGE + "class" + RESET;
+      keywordCD2 = COLOR_CHANGE + "interface" + RESET;
       createClassInterfaceDiff((ASTCDClass) cd1Element, (ASTCDInterface) cd2Element);
       this.interpretation.append("Class")
           .append(": ")
@@ -125,13 +163,43 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
       this.interpretationList.add(SyntaxDiff.Interpretation.REPURPOSED);
     }
 
+    // Set the diff lists for the current diff
+    setCDMemberDiffLists(cd1Element, cd2Element, scopecd1, scopecd2);
+
     this.diffSize = calculateDiffSize();
     setStrings();
   }
 
+  private void setCDMemberDiffLists(ASTCDType1 cd1Element, ASTCDType2 cd2Element, ICD4CodeArtifactScope scopecd1, ICD4CodeArtifactScope scopecd2) {
+    Set<ASTCDType> superClassesCD1 = CDInheritanceHelper.getDirectSuperClasses(cd1Element, scopecd1);
+    Set<ASTCDType> superClassesCD2 = CDInheritanceHelper.getDirectSuperClasses(cd2Element, scopecd2);
+
+    List<ASTCDAttribute> attributeListCd1 = addInheritedAttributes(superClassesCD1, cd1Element.getCDAttributeList());
+    List<ASTCDAttribute> attributeListCd2 = addInheritedAttributes(superClassesCD2, cd2Element.getCDAttributeList());
+
+    List<ASTCDMethod> methodeListCd1 = addInheritedMethods(superClassesCD1, cd1Element.getCDMethodList());
+    List<ASTCDMethod> methodeListCd2 = addInheritedMethods(superClassesCD2, cd2Element.getCDMethodList());
+
+    // Create trivial matches for attributes/constructors/methods
+    this.matchedAttributesList = getMatchingList(getElementDiffList(attributeListCd1, attributeListCd2));
+    this.deleletedAttributes = absentElementList(matchedAttributesList, attributeListCd1);
+    this.addedAttributes = absentElementList(matchedAttributesList, attributeListCd2);
+
+    this.matchedMethodeList = getMatchingList(getElementDiffList(methodeListCd1, methodeListCd2));
+    this.deleletedMethods = absentElementList(matchedMethodeList, methodeListCd1);
+    this.addedMethode = absentElementList(matchedMethodeList, methodeListCd2);
+
+    this.matchedConstructorList = getMatchingList(
+      getElementDiffList(cd1Element.getCDConstructorList(), cd2Element.getCDConstructorList()));
+    this.deleletedConstructor = absentElementList(matchedConstructorList,
+      cd1Element.getCDConstructorList());
+    this.addedConstructor = absentElementList(matchedConstructorList,
+      cd2Element.getCDConstructorList());
+  }
+
   /**
    * Calculation of the diff size between the given classes, automaticly calculated on object
-   * creation Name changes are weighted more and each member(attribute/methodes/...) add at most one
+   * creation Name changes are weighted more and each member(attribute/methods/...) add at most one
    * to the size
    *
    * @return Diff size as double
@@ -152,7 +220,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
     size += deleletedAttributes.size() + addedAttributes.size();
 
     //Todo: Add Parameter Diff to size calculation
-    //Diff size of methodes
+    //Diff size of methods
     for (ElementDiff<ASTCDMethod> i : matchedMethodeList) {
       if (i.getCd1Element().isPresentCDThrowsDeclaration()) {
         size += i.getDiffSize() / 4.0;
@@ -161,7 +229,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         size += i.getDiffSize() / 3.0;
       }
     }
-    size += deleletedMethodes.size() + addedMethode.size();
+    size += deleletedMethods.size() + addedMethode.size();
 
     // Diff size of constructors
     for (ElementDiff<ASTCDConstructor> i : matchedConstructorList) {
@@ -198,31 +266,20 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
     createDiffList(cd1Element, cd2Element);
   }
 
-  private void createDiffList(ASTCDClass cd1Element, ASTCDInterface cd2Element) {
+  private void createDefaultDiffList(ASTCDType1 cd1Element, ASTCDType2 cd2Element) {
     List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
     interpretation.append("Interpretation: ");
 
     // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Element.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Element.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-
-    ppModifier1 = getColorCode(attributeModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    ppModifier2 = getColorCode(attributeModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-
-    if (attributeModifier.isPresent()) {
-      diffs.add(attributeModifier);
-      if (attributeModifier.getInterpretation().isPresent()) {
-        interpretation.append("Modifier")
-            .append(": ")
-            .append(attributeModifier.getInterpretation().get())
-            .append(" ");
-      }
+    if (!(pp.prettyprint(cd1Element.getModifier()).length() < 1
+      && pp.prettyprint(cd2Element.getModifier()).length() < 1)){
+      diffs.add(setModifier(cd1Element.getModifier(), cd2Element.getModifier()));
     }
+
     // Name, non-optional
-    Optional<ASTCDClass> cd1Name = Optional.of(cd1Element);
-    Optional<ASTCDInterface> cd2Name = Optional.of(cd2Element);
-    FieldDiff<ASTCDClass, ASTCDInterface> className = new FieldDiff<>(null, cd1Name, cd2Name);
+    Optional<ASTCDType1> cd1Name = Optional.of(cd1Element);
+    Optional<ASTCDType2> cd2Name = Optional.of(cd2Element);
+    FieldDiff<ASTCDType1, ASTCDType2> className = new FieldDiff<>(null, cd1Name, cd2Name);
 
     if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
       className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
@@ -235,21 +292,25 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
       diffs.add(className);
       if (className.getInterpretation().isPresent()) {
         interpretation.append("Name")
-            .append(": ")
-            .append(className.getInterpretation().get())
-            .append(" ");
+          .append(": ")
+          .append(className.getInterpretation().get())
+          .append(" ");
       }
     }
     if (cd1Name.get().getName().equals(cd2Name.get().getName()) && !cd1Name.get()
-        .getSymbol()
-        .getFullName()
-        .equals(cd2Name.get().getSymbol().getFullName())) {
+      .getSymbol()
+      .getFullName()
+      .equals(cd2Name.get().getSymbol().getFullName())) {
       interpretation.append("Package")
-          .append(": ")
-          .append(SyntaxDiff.Interpretation.RELOCATION)
-          .append(" ");
+        .append(": ")
+        .append(SyntaxDiff.Interpretation.RELOCATION)
+        .append(" ");
     }
 
+    this.diffList = diffs;
+  }
+
+  private void createDiffList(ASTCDClass cd1Element, ASTCDInterface cd2Element) {
     // Extended, optional
     Optional<ASTCDExtendUsage> cd1Extend = (cd1Element.isPresentCDExtendUsage()) ?
         Optional.of(cd1Element.getCDExtendUsage()) :
@@ -266,7 +327,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         initial -> ppExtended2 = getColorCode(classExtended) + pp.prettyprint(initial) + RESET);
 
     if (classExtended.isPresent()) {
-      diffs.add(classExtended);
+      diffList.add(classExtended);
       if (classExtended.getInterpretation().isPresent()) {
         interpretation.append("Extended")
             .append(": ")
@@ -274,87 +335,9 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
             .append(" ");
       }
     }
-
-    // Todo: add inherited methods and attributes
-
-    // Set the difflist to signature diffs(if any)
-    this.diffList = diffs;
-
-    // Create trivial matches for attributes/constructors/methods
-    this.matchedAttributesList = getMatchingList(
-        getElementDiffList(cd1Element.getCDAttributeList(), cd2Element.getCDAttributeList()));
-    this.deleletedAttributes = absentElementList(matchedAttributesList,
-        cd1Element.getCDAttributeList());
-    this.addedAttributes = absentElementList(matchedAttributesList,
-        cd2Element.getCDAttributeList());
-
-    this.matchedMethodeList = getMatchingList(
-        getElementDiffList(cd1Element.getCDMethodList(), cd2Element.getCDMethodList()));
-    this.deleletedMethodes = absentElementList(matchedMethodeList, cd1Element.getCDMethodList());
-    this.addedMethode = absentElementList(matchedMethodeList, cd2Element.getCDMethodList());
-
-    this.matchedConstructorList = getMatchingList(
-        getElementDiffList(cd1Element.getCDConstructorList(), cd2Element.getCDConstructorList()));
-    this.deleletedConstructor = absentElementList(matchedConstructorList,
-        cd1Element.getCDConstructorList());
-    this.addedConstructor = absentElementList(matchedConstructorList,
-        cd2Element.getCDConstructorList());
   }
 
   private void createDiffList(ASTCDInterface cd1Element, ASTCDInterface cd2Element) {
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
-    interpretation.append("Interpretation: ");
-
-    // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Element.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Element.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-
-    ppModifier1 = getColorCode(attributeModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    ppModifier2 = getColorCode(attributeModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-
-    if (attributeModifier.isPresent()) {
-      diffs.add(attributeModifier);
-      if (attributeModifier.getInterpretation().isPresent()) {
-        interpretation.append("Modifier")
-            .append(": ")
-            .append(attributeModifier.getInterpretation().get())
-            .append(" ");
-      }
-    }
-
-    // Name, non-optional
-    Optional<ASTCDInterface> cd1Name = Optional.of(cd1Element);
-    Optional<ASTCDInterface> cd2Name = Optional.of(cd2Element);
-    FieldDiff<ASTCDInterface, ASTCDInterface> interfaceName = new FieldDiff<>(null, cd1Name,
-        cd2Name);
-
-    if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
-      interfaceName = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
-    }
-
-    ppName1 = getColorCode(interfaceName) + cd1Name.get().getName() + RESET;
-    ppName2 = getColorCode(interfaceName) + cd2Name.get().getName() + RESET;
-
-    if (interfaceName.isPresent()) {
-      diffs.add(interfaceName);
-      if (interfaceName.getInterpretation().isPresent()) {
-        interpretation.append("Name")
-            .append(": ")
-            .append(interfaceName.getInterpretation().get())
-            .append(" ");
-      }
-    }
-    if (cd1Name.get().getName().equals(cd2Name.get().getName()) && !cd1Name.get()
-        .getSymbol()
-        .getFullName()
-        .equals(cd2Name.get().getSymbol().getFullName())) {
-      interpretation.append("Package")
-          .append(": ")
-          .append(SyntaxDiff.Interpretation.RELOCATION)
-          .append(" ");
-    }
-
     // Extended, optional
     Optional<ASTCDExtendUsage> cd1Extend = (cd1Element.isPresentCDExtendUsage()) ?
         Optional.of(cd1Element.getCDExtendUsage()) :
@@ -371,7 +354,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         initial -> ppExtended2 = getColorCode(interfaceExtended) + pp.prettyprint(initial) + RESET);
 
     if (interfaceExtended.isPresent()) {
-      diffs.add(interfaceExtended);
+      diffList.add(interfaceExtended);
       if (interfaceExtended.getInterpretation().isPresent()) {
         interpretation.append("Extended")
             .append(": ")
@@ -379,86 +362,9 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
             .append(" ");
       }
     }
-
-    // Todo: add inherited methods and attributes
-
-    // Set the difflist to signature diffs(if any)
-    this.diffList = diffs;
-
-    // Create trivial matches for attributes/constructors/methods
-    this.matchedAttributesList = getMatchingList(
-        getElementDiffList(cd1Element.getCDAttributeList(), cd2Element.getCDAttributeList()));
-    this.deleletedAttributes = absentElementList(matchedAttributesList,
-        cd1Element.getCDAttributeList());
-    this.addedAttributes = absentElementList(matchedAttributesList,
-        cd2Element.getCDAttributeList());
-
-    this.matchedMethodeList = getMatchingList(
-        getElementDiffList(cd1Element.getCDMethodList(), cd2Element.getCDMethodList()));
-    this.deleletedMethodes = absentElementList(matchedMethodeList, cd1Element.getCDMethodList());
-    this.addedMethode = absentElementList(matchedMethodeList, cd2Element.getCDMethodList());
-
-    this.matchedConstructorList = getMatchingList(
-        getElementDiffList(cd1Element.getCDConstructorList(), cd2Element.getCDConstructorList()));
-    this.deleletedConstructor = absentElementList(matchedConstructorList,
-        cd1Element.getCDConstructorList());
-    this.addedConstructor = absentElementList(matchedConstructorList,
-        cd2Element.getCDConstructorList());
   }
 
   private void createDiffList(ASTCDEnum cd1Element, ASTCDEnum cd2Element) {
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
-    interpretation.append("Interpretation: ");
-
-    // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Element.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Element.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-
-    ppModifier1 = getColorCode(attributeModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    ppModifier2 = getColorCode(attributeModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-
-    if (attributeModifier.isPresent()) {
-      diffs.add(attributeModifier);
-      if (attributeModifier.getInterpretation().isPresent()) {
-        interpretation.append("Enum modifier")
-            .append(": ")
-            .append(attributeModifier.getInterpretation().get())
-            .append(" ");
-      }
-    }
-
-    // Name, non-optional
-    Optional<ASTCDEnum> cd1Name = Optional.of(cd1Element);
-    Optional<ASTCDEnum> cd2Name = Optional.of(cd2Element);
-    FieldDiff<ASTCDEnum, ASTCDEnum> name = new FieldDiff<>(null, cd1Name, cd2Name);
-
-    if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
-      name = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
-    }
-
-    ppName1 = getColorCode(name) + cd1Name.get().getName() + RESET;
-    ppName2 = getColorCode(name) + cd2Name.get().getName() + RESET;
-
-    if (name.isPresent()) {
-      diffs.add(name);
-      if (name.getInterpretation().isPresent()) {
-        interpretation.append("Name")
-            .append(": ")
-            .append(name.getInterpretation().get())
-            .append(" ");
-      }
-    }
-    if (cd1Name.get().getName().equals(cd2Name.get().getName()) && !cd1Name.get()
-        .getSymbol()
-        .getFullName()
-        .equals(cd2Name.get().getSymbol().getFullName())) {
-      interpretation.append("Package")
-          .append(": ")
-          .append(SyntaxDiff.Interpretation.RELOCATION)
-          .append(" ");
-    }
-
     // Implements, optional
     Optional<ASTMCObjectType> cd1Imple = (cd1Element.isPresentCDInterfaceUsage()) ?
         Optional.of(cd1Element.getInterfaceList().get(0)) :
@@ -475,7 +381,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         inter -> ppInter2 = getColorCode(classInterfaceuse) + pp.prettyprint(inter) + RESET);
 
     if (classInterfaceuse.isPresent()) {
-      diffs.add(classInterfaceuse);
+      diffList.add(classInterfaceuse);
       if (classInterfaceuse.getInterpretation().isPresent()) {
         interpretation.append("Interface")
             .append(": ")
@@ -483,89 +389,9 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
             .append(" ");
       }
     }
-    this.diffList = diffs;
-
-    // Create trivial matches for attributes/constructors/methods
-    this.matchedAttributesList = getMatchingList(
-        getElementDiffList(cd1Element.getCDAttributeList(), cd2Element.getCDAttributeList()));
-    this.deleletedAttributes = absentElementList(matchedAttributesList,
-        cd1Element.getCDAttributeList());
-    this.addedAttributes = absentElementList(matchedAttributesList,
-        cd2Element.getCDAttributeList());
-
-    this.matchedMethodeList = getMatchingList(
-        getElementDiffList(cd1Element.getCDMethodList(), cd2Element.getCDMethodList()));
-    this.deleletedMethodes = absentElementList(matchedMethodeList, cd1Element.getCDMethodList());
-    this.addedMethode = absentElementList(matchedMethodeList, cd2Element.getCDMethodList());
-
-    this.matchedConstructorList = getMatchingList(
-        getElementDiffList(cd1Element.getCDConstructorList(), cd2Element.getCDConstructorList()));
-    this.deleletedConstructor = absentElementList(matchedConstructorList,
-        cd1Element.getCDConstructorList());
-    this.addedConstructor = absentElementList(matchedConstructorList,
-        cd2Element.getCDConstructorList());
-
-    this.matchedEnumConstantList = getMatchingList(
-        getElementDiffList(cd1Element.getCDEnumConstantList(), cd2Element.getCDEnumConstantList()));
-    this.deleletedEnumConstants = absentElementList(matchedEnumConstantList,
-        cd1Element.getCDEnumConstantList());
-    this.addedEnumConstant = absentElementList(matchedEnumConstantList,
-        cd2Element.getCDEnumConstantList());
   }
 
   private void createDiffList(ASTCDClass cd1Element, ASTCDClass cd2Element) {
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
-    interpretation.append("Interpretation: ");
-
-    // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Element.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Element.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-
-    ppModifier1 = getColorCode(attributeModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    ppModifier2 = getColorCode(attributeModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-
-    if (attributeModifier.isPresent()) {
-      diffs.add(attributeModifier);
-      if (attributeModifier.getInterpretation().isPresent()) {
-        interpretation.append("Modifier")
-            .append(": ")
-            .append(attributeModifier.getInterpretation().get())
-            .append(" ");
-      }
-    }
-
-    // Name, non-optional
-    Optional<ASTCDClass> cd1Name = Optional.of(cd1Element);
-    Optional<ASTCDClass> cd2Name = Optional.of(cd2Element);
-    FieldDiff<ASTCDClass, ASTCDClass> className = new FieldDiff<>(null, cd1Name, cd2Name);
-
-    if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
-      className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
-    }
-
-    ppName1 = getColorCode(className) + cd1Name.get().getName() + RESET;
-    ppName2 = getColorCode(className) + cd2Name.get().getName() + RESET;
-
-    if (className.isPresent()) {
-      diffs.add(className);
-      if (className.getInterpretation().isPresent()) {
-        interpretation.append("Name")
-            .append(": ")
-            .append(className.getInterpretation().get())
-            .append(" ");
-      }
-    }
-    if (cd1Name.get().getName().equals(cd2Name.get().getName()) && !cd1Name.get()
-        .getSymbol()
-        .getFullName()
-        .equals(cd2Name.get().getSymbol().getFullName())) {
-      interpretation.append("Package")
-          .append(": ")
-          .append(SyntaxDiff.Interpretation.RELOCATION)
-          .append(" ");
-    }
-
     // Extended, optional
     Optional<ASTCDExtendUsage> cd1Extend = (cd1Element.isPresentCDExtendUsage()) ?
         Optional.of(cd1Element.getCDExtendUsage()) :
@@ -582,7 +408,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         initial -> ppExtended2 = getColorCode(classExtended) + pp.prettyprint(initial) + RESET);
 
     if (classExtended.isPresent()) {
-      diffs.add(classExtended);
+      diffList.add(classExtended);
       if (classExtended.getInterpretation().isPresent()) {
         interpretation.append("Extended")
             .append(": ")
@@ -607,7 +433,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         inter -> ppInter2 = getColorCode(classInterfaceuse) + pp.prettyprint(inter) + RESET);
 
     if (classInterfaceuse.isPresent()) {
-      diffs.add(classInterfaceuse);
+      diffList.add(classInterfaceuse);
       if (classInterfaceuse.getInterpretation().isPresent()) {
         interpretation.append("Interface")
             .append(": ")
@@ -615,86 +441,9 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
             .append(" ");
       }
     }
-
-    // Todo: add inherited methods and attributes
-
-    // Set the difflist to signature diffs(if any)
-    this.diffList = diffs;
-
-    // Create trivial matches for attributes/constructors/methods
-    this.matchedAttributesList = getMatchingList(
-        getElementDiffList(cd1Element.getCDAttributeList(), cd2Element.getCDAttributeList()));
-    this.deleletedAttributes = absentElementList(matchedAttributesList,
-        cd1Element.getCDAttributeList());
-    this.addedAttributes = absentElementList(matchedAttributesList,
-        cd2Element.getCDAttributeList());
-
-    this.matchedMethodeList = getMatchingList(
-        getElementDiffList(cd1Element.getCDMethodList(), cd2Element.getCDMethodList()));
-    this.deleletedMethodes = absentElementList(matchedMethodeList, cd1Element.getCDMethodList());
-    this.addedMethode = absentElementList(matchedMethodeList, cd2Element.getCDMethodList());
-
-    this.matchedConstructorList = getMatchingList(
-        getElementDiffList(cd1Element.getCDConstructorList(), cd2Element.getCDConstructorList()));
-    this.deleletedConstructor = absentElementList(matchedConstructorList,
-        cd1Element.getCDConstructorList());
-    this.addedConstructor = absentElementList(matchedConstructorList,
-        cd2Element.getCDConstructorList());
-
   }
 
   private void createDiffList(ASTCDInterface cd1Element, ASTCDClass cd2Element) {
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
-    interpretation.append("Interpretation: ");
-
-    // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Element.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Element.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> attributeModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-
-    ppModifier1 = getColorCode(attributeModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    ppModifier2 = getColorCode(attributeModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-
-    if (attributeModifier.isPresent()) {
-      diffs.add(attributeModifier);
-      if (attributeModifier.getInterpretation().isPresent()) {
-        interpretation.append("Modifier")
-            .append(": ")
-            .append(attributeModifier.getInterpretation().get())
-            .append(" ");
-      }
-    }
-    // Name, non-optional
-    Optional<ASTCDInterface> cd1Name = Optional.of(cd1Element);
-    Optional<ASTCDClass> cd2Name = Optional.of(cd2Element);
-    FieldDiff<ASTCDInterface, ASTCDClass> className = new FieldDiff<>(null, cd1Name, cd2Name);
-
-    if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
-      className = new FieldDiff<>(SyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
-    }
-
-    ppName1 = getColorCode(className) + cd1Name.get().getName() + RESET;
-    ppName2 = getColorCode(className) + cd2Name.get().getName() + RESET;
-
-    if (className.isPresent()) {
-      diffs.add(className);
-      if (className.getInterpretation().isPresent()) {
-        interpretation.append("Name")
-            .append(": ")
-            .append(className.getInterpretation().get())
-            .append(" ");
-      }
-    }
-    if (cd1Name.get().getName().equals(cd2Name.get().getName()) && !cd1Name.get()
-        .getSymbol()
-        .getFullName()
-        .equals(cd2Name.get().getSymbol().getFullName())) {
-      interpretation.append("Package")
-          .append(": ")
-          .append(SyntaxDiff.Interpretation.RELOCATION)
-          .append(" ");
-    }
-
     // Extended, optional
     Optional<ASTCDExtendUsage> cd1Extend = (cd1Element.isPresentCDExtendUsage()) ?
         Optional.of(cd1Element.getCDExtendUsage()) :
@@ -711,7 +460,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         initial -> ppExtended2 = getColorCode(classExtended) + pp.prettyprint(initial) + RESET);
 
     if (classExtended.isPresent()) {
-      diffs.add(classExtended);
+      diffList.add(classExtended);
       if (classExtended.getInterpretation().isPresent()) {
         interpretation.append("Extended")
             .append(": ")
@@ -719,34 +468,97 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
             .append(" ");
       }
     }
-
-    // Todo: add inherited methods and attributes
-
-    // Set the difflist to signature diffs(if any)
-    this.diffList = diffs;
-
-    // Create trivial matches for attributes/constructors/methods
-    this.matchedAttributesList = getMatchingList(
-        getElementDiffList(cd1Element.getCDAttributeList(), cd2Element.getCDAttributeList()));
-    this.deleletedAttributes = absentElementList(matchedAttributesList,
-        cd1Element.getCDAttributeList());
-    this.addedAttributes = absentElementList(matchedAttributesList,
-        cd2Element.getCDAttributeList());
-
-    this.matchedMethodeList = getMatchingList(
-        getElementDiffList(cd1Element.getCDMethodList(), cd2Element.getCDMethodList()));
-    this.deleletedMethodes = absentElementList(matchedMethodeList, cd1Element.getCDMethodList());
-    this.addedMethode = absentElementList(matchedMethodeList, cd2Element.getCDMethodList());
-
-    this.matchedConstructorList = getMatchingList(
-        getElementDiffList(cd1Element.getCDConstructorList(), cd2Element.getCDConstructorList()));
-    this.deleletedConstructor = absentElementList(matchedConstructorList,
-        cd1Element.getCDConstructorList());
-    this.addedConstructor = absentElementList(matchedConstructorList,
-        cd2Element.getCDConstructorList());
-
   }
 
+  /**
+   * Help function to reduce code reusing. Create a modifier diff and sets print and interpretation strings.
+   * @param cd1Modi Modifier of the first model
+   * @param cd2Modi Modifier of the second model
+   * @return FieldDiff of type ASTModifier
+   */
+
+  protected FieldDiff<ASTModifier, ASTModifier> setModifier (ASTModifier cd1Modi, ASTModifier cd2Modi){
+    FieldDiff<ASTModifier, ASTModifier> modifier = new FieldDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
+
+    if (! (pp.prettyprint(cd1Modi).length() < 1)){
+      ppModifier1 = getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
+    }
+    if (! (pp.prettyprint(cd2Modi).length() < 1)){
+      ppModifier2 = getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
+    }
+
+    if (modifier.isPresent() && modifier.getOperation().isPresent()) {
+      if (modifier.getInterpretation().isPresent()) {
+        interpretation.append("Modifier")
+          .append(": ")
+          .append(modifier.getInterpretation().get())
+          .append(" ");
+      }
+    }
+    return modifier;
+  }
+
+  /**
+   * Adds all inherited attributes, which have no local copy (overwrite).
+   * @param superClasses List of superclasses/interfaces for the current set of attributes
+   * @param attributeList List of attributes from the element, which should be expanded
+   * @return List of original attributes + inherited without conflicts
+   */
+  private List<ASTCDAttribute> addInheritedAttributes (Set<ASTCDType> superClasses, List<ASTCDAttribute> attributeList){
+    for (ASTCDType x : superClasses){
+      List<ASTCDAttribute> inheritedAttributes = x.getCDAttributeList();
+
+      for (ASTCDAttribute inheritedAttribute : inheritedAttributes){
+        String name = inheritedAttribute.getName();
+        boolean found = false;
+        for (ASTCDAttribute localAttribute : attributeList){
+          if (localAttribute.getName().equals(name)){
+            found = true;
+            break;
+          }
+        }
+        if (!found){
+          attributeList.add(inheritedAttribute);
+        }
+      }
+    }
+    return attributeList;
+  }
+
+  /**
+   * Adds all inherited methods, which have no local signature overwrites
+   * @param superClasses List of superclasses/interfaces for the current set of methods
+   * @param methodeList List of methods from the element, which should be expanded
+   * @return List of original attributes + inherited without conflicts
+   */
+  //Todo: Add check for signature
+  private List<ASTCDMethod> addInheritedMethods (Set<ASTCDType> superClasses, List<ASTCDMethod> methodeList){
+    List<ASTCDMethod> output = new ArrayList<>(methodeList);
+    for (ASTCDType x : superClasses){
+      List<ASTCDMethod> inheritedMethods = x.getCDMethodList();
+
+      for (ASTCDMethod inheritedMethod : inheritedMethods){
+        String name = inheritedMethod.getName();
+        boolean found = false;
+        for (ASTCDMethod localMethod : output){
+          if (localMethod.getName().equals(name)
+            && !(inheritedMethod.getCDParameterList().size() == localMethod.getCDParameterList().size())){
+            //Todo: Add check for signature when size is equal
+            found = true;
+            break;
+          }
+        }
+        if (!found){
+          output.add(inheritedMethod);
+        }
+      }
+    }
+    return output;
+  }
+
+  /**
+   * Create Strings ready to be printed for both elements in the current diff
+   */
   private void setStrings() {
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
@@ -757,9 +569,9 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
     StringBuilder bodyCD2 = new StringBuilder();
 
     String signatureCD1 = combineWithoutNulls(
-        Arrays.asList(ppModifier1, RESET + keywordCD1, ppName1, ppExtended1, ppInter1));
+        Arrays.asList(ppModifier1, keywordCD1, ppName1, ppExtended1, ppInter1));
     String signatureCD2 = combineWithoutNulls(
-        Arrays.asList(ppModifier2, RESET + keywordCD2, ppName2, ppExtended2, ppInter2));
+        Arrays.asList(ppModifier2, keywordCD2, ppName2, ppExtended2, ppInter2));
 
     //Map<String, Integer> matchDel = new HashMap();
     Map<String, Integer> add = new HashMap<>();
@@ -802,7 +614,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
         matchDel.put(delEnumConstant.toString(), Integer.valueOf(
             x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
       }
-      for (ASTCDEnumConstant x : addedEnumConstant) {
+      for (ASTCDEnumConstant x : addedEnumConstants) {
         StringBuilder addEnumConst = new StringBuilder();
         String addedEnumConstant = pp.prettyprint(x);
         if (addedEnumConstant.contains("\n")) {
@@ -828,14 +640,14 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
               .getColumn()));
     }
 
-    for (ASTCDMethod x : deleletedMethodes) {
-      StringBuilder delMethodes = new StringBuilder();
+    for (ASTCDMethod x : deleletedMethods) {
+      StringBuilder delMethods = new StringBuilder();
       String deletedMethode = pp.prettyprint((ASTCDBasisNode) x);
       if (deletedMethode.contains("\n")) {
         deletedMethode = deletedMethode.split("\n")[0];
       }
-      delMethodes.append(COLOR_DELETE).append(deletedMethode).append(RESET);
-      matchDel.put(delMethodes.toString(), Integer.valueOf(
+      delMethods.append(COLOR_DELETE).append(deletedMethode).append(RESET);
+      matchDel.put(delMethods.toString(), Integer.valueOf(
           x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
     }
     for (ASTCDAttribute x : deleletedAttributes) {
@@ -906,7 +718,7 @@ public class CDTypeDiff<ASTNodeType1 extends ASTNode, ASTNodeType2 extends ASTNo
   }
 
   /**
-   * Print function for the class diff, used to output the diffs appropriately formated
+   * Print function for the CDTypeDiff, used to output the diffs appropriately formated
    */
   public String printCD1() {
     return cd1Print;

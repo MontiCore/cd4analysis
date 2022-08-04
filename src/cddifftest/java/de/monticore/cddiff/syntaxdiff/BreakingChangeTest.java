@@ -3,24 +3,29 @@ package de.monticore.cddiff.syntaxdiff;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
-public class SyntaxDemoTest extends CDDiffTestBasis {
+public class BreakingChangeTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample1.cd");
-  ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample2.cd");
+  protected final ASTCDCompilationUnit cd1 = parseModel(
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/BreakingChange1.cd");
+
+  protected final ASTCDCompilationUnit cd2 = parseModel(
+    "src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/BreakingChange2.cd");
+
 
   @Override
   protected ASTCDCompilationUnit parseModel(String modelFile) {
@@ -49,13 +54,14 @@ public class SyntaxDemoTest extends CDDiffTestBasis {
     new CD4CodeDirectCompositionTrafo().transform(cd2);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd2);
-  }
+   }
 
   @Test
-  public void syntaxDemoTest() {
-    SyntaxDiff syntaxDiff = new SyntaxDiff (cd1,cd2);
+  public void testScore(){
+    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1,cd2);
+    List<CDAssociationDiff> matchedAssos = syntaxDiff.getMatchedAssos();
 
-    syntaxDiff.print();
-    syntaxDiff.printCD1();
+    Assert.assertTrue(matchedAssos.get(0).getInterpretationList().contains(SyntaxDiff.Interpretation.BREAKINGCHANGE));
+    Assert.assertFalse(matchedAssos.get(1).getInterpretationList().contains(SyntaxDiff.Interpretation.BREAKINGCHANGE));
   }
 }

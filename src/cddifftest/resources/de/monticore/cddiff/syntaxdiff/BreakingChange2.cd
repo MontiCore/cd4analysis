@@ -1,0 +1,8 @@
+classdiagram BreakingChange2 {
+  class A;
+  class B;
+  class C;
+
+  association A -> (newBreaking) B;
+  association A (newNotBreaking) -> C;
+}

@@ -5,6 +5,10 @@ import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDMember;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 
 import java.util.ArrayList;
@@ -28,7 +32,7 @@ public abstract class AbstractDiffType {
 
   protected List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffList;
 
-  protected int breakingChange;
+  protected int breakingChange = 0;
 
   protected List<SyntaxDiff.Interpretation> interpretationList = new ArrayList<>();
 
@@ -153,35 +157,56 @@ public abstract class AbstractDiffType {
       }
     }
     // No Operation
-    return RESET;
+    return "";
   }
 
   protected static double addWeightToDiffSize(
       List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffList) {
     double size = 0.0;
+    boolean foundSignatureNameDiff = false;
+    int associationNameCounter = 0;
     for (FieldDiff<? extends ASTNode, ? extends ASTNode> diff : diffList) {
       if (diff.isPresent() && diff.getCd1Value().isPresent()) {
         // Name Diffs are weighted doubled compared to every other diff
         // Parent Object in FieldDiff when we check the name of it (when there is no specific
         // node for the name)
-        if (diff.getCd1Value().get() instanceof ASTCDAttribute || diff.getCd1Value()
-            .get() instanceof ASTMCQualifiedName || diff.getCd1Value().get() instanceof ASTCDClass
-            || diff.getCd1Value().get() instanceof ASTCDConstructor || diff.getCd1Value()
-            .get() instanceof ASTCDMethod) {
+
+        ASTNode type = diff.getCd1Value().get();
+
+        // CDMember / Fields
+        if (type instanceof ASTCDAttribute || type instanceof ASTCDConstructor || type instanceof ASTCDMethod) {
           size += 1;
+        } else
+
+        // Main Signature Names
+        if (type instanceof ASTCDType){
+          size += 2;
+          foundSignatureNameDiff = true;
+        } else
+        // Association participant names
+        if (type instanceof ASTMCQualifiedName){
+          size += 1;
+          associationNameCounter += 1;
         }
       }
+    }
+    // No namediff in current diff set -> Name is equal, asso counter is 0 only if both qualified names are equal
+    if ( (!foundSignatureNameDiff) && (associationNameCounter == 0) ){
+      size -= 2;
+    }
+    if (associationNameCounter > 0){
+      size -= ( 2 - associationNameCounter );
     }
     return size;
   }
 
   /**
-   * Help method for calculating the class diff because each class can contains multiple methodes
+   * Help method for calculating the class diff because each class can contains multiple methods
    * which need to be matched
    *
-   * @param cd1ElementList List of methodes from the original model
-   * @param cd2ElementList List of methodes from the target(new) model
-   * @return Returns a difflist for each methodes, ordered by diffsize (small diff values ==
+   * @param cd1ElementList List of methods from the original model
+   * @param cd2ElementList List of methods from the target(new) model
+   * @return Returns a difflist for each method, ordered by diffsize (small diff values ==
    * similar)
    */
   protected static <T extends ASTNode> List<List<ElementDiff<T>>> getElementDiffList(
@@ -203,7 +228,8 @@ public abstract class AbstractDiffType {
     StringBuilder output = new StringBuilder();
 
     for (String field : stringList) {
-      if (!(field == null) && field.length() > 8) {
+     // if (!(field == null) && field.length() > 8) {
+       if (!(field == null)) {
         output.append(field).append(" ");
       }
     }

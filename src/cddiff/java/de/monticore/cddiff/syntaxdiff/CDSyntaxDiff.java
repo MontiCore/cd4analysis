@@ -14,7 +14,8 @@ public interface CDSyntaxDiff {
   List<CDTypeDiff<ASTCDInterface,ASTCDInterface>> getMatchedInterfaces();
   List<CDTypeDiff<ASTCDEnum,ASTCDEnum>> getMatchedEnumList();
   List<CDAssociationDiff> getMatchedAssos();
-
+  List<CDTypeDiff<ASTCDClass, ASTCDInterface>> getMatchedClassInterfaceList();
+  List<CDTypeDiff<ASTCDInterface, ASTCDClass>> getMatchedInterfaceClassList();
   List<ASTCDClass> getAddedClasses();
   List<ASTCDAssociation> getAddedAssos();
   List<ASTCDInterface> getAddedInterfaces();
