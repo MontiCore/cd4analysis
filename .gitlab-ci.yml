@@ -3,7 +3,7 @@
 image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
 
 variables:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Pdstl"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 cache:
   paths:
