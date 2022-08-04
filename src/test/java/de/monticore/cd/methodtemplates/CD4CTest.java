@@ -247,10 +247,8 @@ public class CD4CTest extends CD4CodeTestBasis {
     // try to create a method with unkown type
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownReturnType");
 
-    assertEquals(3, Log.getFindingsCount());
+    assertEquals(1, Log.getFindingsCount());
     assertEquals("0xA0324 The qualified type UnknownReturnType cannot be found", Log.getFindings().get(0).getMsg());
-    assertEquals("0x110C1: The return type 'UnknownReturnType' of the method signature (public UnknownReturnType print();\n) could not be resolved.", Log.getFindings().get(1).getMsg());
-    assertEquals("0x11010: There was no method created in the template 'de.monticore.cd.methodtemplates.UnknownReturnType'", Log.getFindings().get(2).getMsg());
 
     Log.clearFindings();
   }
@@ -272,11 +270,8 @@ public class CD4CTest extends CD4CodeTestBasis {
     // try to create a print method that already exists
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownParameterType");
 
-    assertEquals(3, Log.getFindingsCount());
+    assertEquals(1, Log.getFindingsCount());
     assertEquals("0xA0324 The qualified type UnknownParameterType cannot be found", Log.getFindings().get(0).getMsg());
-    assertEquals("0x110C0: The following types of the method signature (public String print(UnknownParameterType p);\n"
-        + ") could not be resolved 'UnknownParameterType'.", Log.getFindings().get(1).getMsg());
-    assertEquals("0x11010: There was no method created in the template 'de.monticore.cd.methodtemplates.UnknownParameterType'", Log.getFindings().get(2).getMsg());
 
     Log.clearFindings();
   }
@@ -324,10 +319,8 @@ public class CD4CTest extends CD4CodeTestBasis {
     // try to create a method with unkown type
     CD4C.getInstance().addAttribute(clazz, "UnknownAttributeType unkwonAttributeType;");
 
-    assertEquals(2, Log.getFindingsCount());
+    assertEquals(1, Log.getFindingsCount());
     assertEquals("0xA0324 The qualified type UnknownAttributeType cannot be found", Log.getFindings().get(0).getMsg());
-    assertEquals("0x110C2: The type 'UnknownAttributeType' of the attribute declaration (UnknownAttributeType unkwonAttributeType;\n" +
-            ") could not be resolved.", Log.getFindings().get(1).getMsg());
 
     Log.clearFindings();
   }

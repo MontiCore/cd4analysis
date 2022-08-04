@@ -39,7 +39,7 @@ public class CDAssociationSrcAndTargetTypeExistCheckerTest extends CD4AnalysisTe
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
-    assertThrows(NoSuchElementException.class, () -> createSymTab(ast));
+    createSymTab(ast);
     assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }

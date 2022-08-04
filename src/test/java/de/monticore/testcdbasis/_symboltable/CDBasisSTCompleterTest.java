@@ -216,7 +216,7 @@ public class CDBasisSTCompleterTest {
 
     ast.accept(t);
 
-    assertEquals(2, Log.getErrorCount());
+    assertEquals(1, Log.getErrorCount());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
   }
 

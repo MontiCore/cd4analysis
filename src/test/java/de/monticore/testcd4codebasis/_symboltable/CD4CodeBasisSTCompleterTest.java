@@ -141,7 +141,7 @@ public class CD4CodeBasisSTCompleterTest {
 
     ast.accept(t);
 
-    assertEquals(8, Log.getErrorCount());
+    assertEquals(4, Log.getErrorCount());
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {

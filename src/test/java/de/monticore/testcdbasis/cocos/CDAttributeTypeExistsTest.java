@@ -39,10 +39,9 @@ public class CDAttributeTypeExistsTest extends CD4AnalysisTestBasis {
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
     createSymTab(ast);
-    assertThrows(NullPointerException.class, () -> coCoChecker.checkAll(ast));
-    assertEquals(2, Log.getFindings().size());
+    coCoChecker.checkAll(ast);
+    assertEquals(1, Log.getFindings().size());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
-    assertTrue(Log.getFindings().get(1).getMsg().startsWith("0xCDA02"));
   }
 
   private ICD4AnalysisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
