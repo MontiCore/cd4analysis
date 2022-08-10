@@ -477,7 +477,7 @@ public class GenerateODHelper {
       newCDTypeWrapper.getSuperclasses().forEach(e -> {
         classList.add(e.split("_")[1]);
       });
-      String multiLabel = "instanceOf";
+      String multiLabel = "instanceof";
 
       astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
           .setName(

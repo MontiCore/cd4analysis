@@ -541,7 +541,7 @@ public class Alloy2ODGenerator {
 
   private static String executeRuleOType(A4Tuple o, A4TupleSet type, A4TupleSet superTypes) {
     StringBuilder typeDecl = new StringBuilder();
-    typeDecl.append("<<instanceOf = \"");
+    typeDecl.append("<<instanceof = \"");
 
     for (A4Tuple t : type) {
       if (o.atom(0).equals(t.atom(0))) {
