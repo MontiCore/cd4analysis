@@ -564,7 +564,7 @@ public class CDSyntaxDiff2ODGenerator {
               // create an object map according the class of Object
               Map<String, List<ASTODNamedObject>> otherSideObjectGroupByClass =
                   otherSideObjectList.stream()
-                      .collect(Collectors.groupingBy(e -> e.getName().split("_")[0]));
+                      .collect(Collectors.groupingBy(e -> e.getName().split("__")[0]));
               if (opt4StartClassKind.equals("target")) {
                 boolean isTwoObjectsInOneClass = otherSideObjectGroupByClass.values()
                     .stream()
@@ -616,8 +616,8 @@ public class CDSyntaxDiff2ODGenerator {
             else if (objectList.size() == 2) {
               ASTODNamedObject otherSideObject0 = otherSideObjectList.get(0);
               ASTODNamedObject otherSideObject1 = otherSideObject0.deepClone();
-              String objectName = otherSideObject1.getName().split("_")[0];
-              otherSideObject1.setName(objectName + "_1");
+              String objectName = otherSideObject1.getName().split("__")[0];
+              otherSideObject1.setName(objectName + "__1");
               if (!astodNamedObjectPack.isInList()) {
                 // add new object into ASTODElementList
                 astodPack.addNamedObject(otherSideObject0);
