@@ -1,0 +1,25 @@
+objectdiagram EmployeesInstance {
+
+  Task0:Task {
+    Date startDate = some_type_Date;
+  };
+
+  Task1:Task {
+    Date startDate = some_type_Date;
+  };
+
+  Task2:Task {
+    Date startDate = some_type_Date;
+  };
+
+  Employee0:Employee {
+    PositionKind kind = partTime;
+  };
+
+  link Task0 -> (employee) Employee0;
+  link Task1 -> (employee) Employee0;
+  link Task2 -> (employee) Employee0;
+  link Employee0 -> (task) Task0;
+  link Employee0 -> (task) Task1;
+  link Employee0 -> (task) Task2;
+}
