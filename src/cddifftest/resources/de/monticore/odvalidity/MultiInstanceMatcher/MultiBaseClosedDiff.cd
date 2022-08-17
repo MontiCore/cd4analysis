@@ -1,0 +1,6 @@
+classdiagram CD_Base_5 {
+
+  class B;
+
+  class A;
+}

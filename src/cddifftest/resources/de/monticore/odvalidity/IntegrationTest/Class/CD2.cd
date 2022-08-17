@@ -1,0 +1,13 @@
+import java.util.*;
+
+classdiagram CD2 {
+
+	enum E {e1, e2;}
+
+  class A;
+
+  class B extends A {
+    Integer b;
+  }
+
+}

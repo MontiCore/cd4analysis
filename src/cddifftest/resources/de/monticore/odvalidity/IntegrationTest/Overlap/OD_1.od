@@ -1,0 +1,20 @@
+objectdiagram OD_1 {
+
+  manager_0:Manager{};
+
+  company_0:Company{
+    Integer id = 0;
+  };
+
+  managementTask_0:ManagementTask{};
+
+
+  link manager_0 (work) -> (area) company_0;
+
+
+  link manager_0 (assignee) -> (todo) managementTask_0;
+
+
+  link managementTask_0 (todo) -> (assignee) manager_0;
+
+}

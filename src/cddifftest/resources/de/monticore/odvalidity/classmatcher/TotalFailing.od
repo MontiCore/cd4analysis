@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import StandardClassTest.*;
+
+objectdiagram TotalFailing {
+  
+  p:Person {
+	List<String> nicknames = ["Test"];
+	String name = "Firstname Surname";
+	double weight = 80.5;
+	Color eyes = GREEN;
+	int height = 180;
+  };
+  
+  c:CarPackage.Audi {
+	String productionPlace = "Aachen";
+	int age = 2;
+	double length = 5.0;
+  };
+  
+  link car p <-> c;
+}

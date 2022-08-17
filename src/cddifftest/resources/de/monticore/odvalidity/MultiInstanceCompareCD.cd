@@ -1,0 +1,15 @@
+classdiagram Compare {
+
+  class SuperSuper {}
+
+  class Super implements I {}
+
+  class Leaf extends Super {}
+
+  class X extends SuperSuper {}
+
+  interface I {}
+
+  association [*] Leaf <-> X [*];
+
+}

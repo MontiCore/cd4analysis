@@ -1,0 +1,6 @@
+classdiagram CD_Comp_1 {
+
+  class B;
+
+  class A;
+}

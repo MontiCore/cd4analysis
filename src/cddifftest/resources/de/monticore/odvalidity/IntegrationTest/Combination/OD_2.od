@@ -1,0 +1,30 @@
+objectdiagram OD_2 {
+
+  employee_0:Employee{
+    Integer personId = some_type_Integer;
+    PositionKind kind = fullTime;
+  };
+
+  employee_1:Employee{
+    Integer personId = 1;
+    PositionKind kind = fullTime;
+  };
+
+  company_0:Company{
+    String address = "Ahornstrasse 55, 52074 Aachen";
+    String country = "Germany";
+  };
+
+
+  link company_0 (area) -> (work) employee_0;
+
+
+  link company_0 (area) -> (work) employee_1;
+
+
+  link company_0 (area) <- (work) employee_1;
+
+
+  link employee_0 (work) -> (area) company_0;
+
+}

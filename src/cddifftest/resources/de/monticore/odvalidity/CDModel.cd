@@ -1,0 +1,21 @@
+
+package de.monticore.odvalidity.test;
+
+classdiagram CDModel {
+
+    class Employee {
+
+    }
+
+    abstract class Person {
+
+    }
+
+    class Task {
+
+    }
+
+    association assigned [1] Employee -> Task [1..*];
+
+
+}

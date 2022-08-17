@@ -1,0 +1,11 @@
+objectdiagram Example {
+    e1:Employee{
+
+    };
+
+    t1:Task {
+
+    };
+
+    link assigned e1 <-> t1;
+}

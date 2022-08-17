@@ -1,0 +1,6 @@
+classdiagram CD_Base_1 {
+
+  class B;
+
+  class A extends B;
+}

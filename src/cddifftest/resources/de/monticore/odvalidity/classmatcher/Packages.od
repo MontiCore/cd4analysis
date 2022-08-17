@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import StandardClassTest.*;
+
+objectdiagram Packages {
+  
+  p:Person {
+	List<String> nicknames = ["Test"];
+	int age = 26;
+	String name = "Firstname Surname";
+	double weight = 80.5;
+	Color eyes = GREEN;
+  };
+  
+  c:CarPackage.Audi {
+	String productionPlace = "Aachen";
+	int age = 2;
+	double length = 5.0;
+  };
+  
+  link car p <-> c;
+}

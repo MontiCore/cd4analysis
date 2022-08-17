@@ -1,9 +1,13 @@
 package de.monticore;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -312,6 +316,108 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
           Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
         }
       }
+    }
+
+  }
+
+  //Todo: Remove redundant tests and old Matcher
+  @Test
+  public void testValidityOfCDDiff() {
+    // given 2 CDs that are not semantically equivalent
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String output = "target/generated/cddiff-test/ValidityOfCDDiff";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--jsemdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20" };
+    CD4CodeTool.main(args);
+
+    //then corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    Assert.assertNotNull(odFiles);
+
+    // and the ODs match cd1 but not cd2
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        Assert.assertTrue(new OD2CDMatcher().checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD,
+            Paths.get(cd1).toFile(), odFile));
+        Assert.assertFalse(new OD2CDMatcher().checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD,
+            Paths.get(cd2).toFile(), odFile));
+      }
+    }
+  }
+
+  @Test
+  public void testValidityOfCDDiffWithPackages() {
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().clear();
+    CD4CodeMill.globalScope().init();
+    Log.init();
+    Log.enableFailQuick(false);
+
+    // given 2 CDs that are not semantically equivalent
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees4.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees3.cd";
+    final String output = "target/generated/cddiff-test/ValidityOfCDDiffWithPackages";
+
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--jsemdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20" };
+    CD4CodeTool.main(args);
+
+    //then corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    Assert.assertNotNull(odFiles);
+
+    // and the ODs match cd1 but not cd2
+
+    for (File odFile : odFiles) {
+      if (odFile.getName().endsWith(".od")) {
+        Assert.assertTrue(new OD2CDMatcher().checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD,
+            Paths.get(cd1).toFile(), odFile));
+        Assert.assertFalse(new OD2CDMatcher().checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD,
+            Paths.get(cd2).toFile(), odFile));
+      }
+    }
+
+  }
+
+
+  @Test
+  public void testValidityOfOW2CWReduction() {
+    // given 2 CDs such that the first is a refinement of the second under an open-world assumption
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd";
+    final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction";
+
+
+    //TODO: fix for --jsemdiff
+    //when CD4CodeTool is used to compute the semantic difference
+    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        "20", "--open-world" };
+    CD4CodeTool.main(args);
+
+    //no corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    Assert.assertNotNull(odFiles);
+
+    try {
+      for (File odFile : odFiles) {
+        if (odFile.getName().endsWith(".od")) {
+          Assert.assertTrue(
+              new OD2CDMatcher().checkIfDiffWitness(
+                  CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, Paths.get(output + "/Employees7.cd").toFile(), Paths.get(output + "/Employees8.cd").toFile()
+                  , odFile));
+        }
+      }
+
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+      Log.warn("This should not happen!");
+      Assert.fail();
     }
 
   }

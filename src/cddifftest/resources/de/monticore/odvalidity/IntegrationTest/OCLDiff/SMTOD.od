@@ -1,0 +1,97 @@
+objectdiagram SMTOD {
+
+  Motor_obj3:Motor{
+    java.lang.String name = "hello_world";
+    double price = 2;
+    int id = 2;
+  };
+
+  Car_obj3:Car{
+    boolean isExpensive = false;
+    java.lang.String name = "hello_world";
+    int numberOfWheel = 3;
+    double price = 3;
+  };
+
+  Wheel_obj1:Wheel{
+    double price = 4;
+    java.lang.String manufacturer = "hello_world";
+    int id = 4;
+  };
+
+  Motor_obj1:Motor{
+    java.lang.String name = "hello_world";
+    double price = 2;
+    int id = 2;
+  };
+
+  Wheel_obj0:Wheel{
+    double price = 4;
+    java.lang.String manufacturer = "hello_world";
+    int id = 4;
+  };
+
+  Wheel_obj2:Wheel{
+    double price = 4;
+    java.lang.String manufacturer = "hello_world";
+    int id = 4;
+  };
+
+  Wheel_obj3:Wheel{
+    double price = 4;
+    java.lang.String manufacturer = "hello_world";
+    int id = 4;
+  };
+
+  Car_obj0:Car{
+    boolean isExpensive = false;
+    java.lang.String name = "hello_world";
+    int numberOfWheel = 3;
+    double price = 3;
+  };
+
+  Motor_obj0:Motor{
+    java.lang.String name = "hello_world";
+    double price = 2;
+    int id = 2;
+  };
+
+  Motor_obj2:Motor{
+    java.lang.String name = "hello_world";
+    double price = 2;
+    int id = 2;
+  };
+
+  Car_obj1:Car{
+    boolean isExpensive = false;
+    java.lang.String name = "hello_world";
+    int numberOfWheel = 3;
+    double price = 3;
+  };
+
+  Car_obj2:Car{
+    boolean isExpensive = false;
+    java.lang.String name = "hello_world";
+    int numberOfWheel = 3;
+    double price = 3;
+  };
+
+
+  link Car_obj3 (car) -- (motor) Motor_obj0;
+
+  link Car_obj0 (car) -- (motor) Motor_obj1;
+
+  link Car_obj1 (car) -- (motor) Motor_obj3;
+
+  link Car_obj2 (car) -- (motor) Motor_obj2;
+
+
+  link Car_obj3 (car) -- (wheel) Wheel_obj3;
+
+  link Car_obj0 (car) -- (wheel) Wheel_obj0;
+
+  link Car_obj1 (car) -- (wheel) Wheel_obj1;
+
+  link Car_obj2 (car) -- (wheel) Wheel_obj2;
+
+}
