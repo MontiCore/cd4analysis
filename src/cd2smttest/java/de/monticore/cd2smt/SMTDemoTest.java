@@ -51,7 +51,7 @@ public class SMTDemoTest {
     //When
 
     System.out.println("---------------Test------------------------------------------");
-    CD2SMTGenerator obj = new CD2SMTGenerator();
+    CD2ODGenerator obj = new CD2ODGenerator();
     Optional<ASTODArtifact> myOd = obj.cd2od(cd);
     assertTrue(myOd.isPresent());
 
@@ -74,5 +74,8 @@ public class SMTDemoTest {
 
 
   }
+
+
+
 
 }

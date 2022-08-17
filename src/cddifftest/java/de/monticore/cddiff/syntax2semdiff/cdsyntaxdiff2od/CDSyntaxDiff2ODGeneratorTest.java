@@ -85,7 +85,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
       String result =
           "$Class_C$_$deleted$ {\n" +
               "\n" +
-              "  c__0:C{};\n" +
+              "  c_0:C{};\n" +
               "\n" +
               "}";
       return e.contains(result);
@@ -95,7 +95,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
       String result =
           "$Class_B$_$edited$_$myDate_myList_myE_myMap_id_mySet_myOpt$ {\n" +
               "\n" +
-              "  b__0:B{\n" +
+              "  b_0:B{\n" +
               "    E myE = e1;\n" +
               "    List<String> myList = [some_type_String,...];\n" +
               "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
@@ -113,7 +113,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
       String result =
           "$Enum_E$_$edited$_$e3$ {\n" +
               "\n" +
-              "  b__0:B{\n" +
+              "  b_0:B{\n" +
               "    E myE = e3;\n" +
               "    List<String> myList = [some_type_String,...];\n" +
               "    Map<Integer,E> myMap = [some_type_Integer -> e1,... -> ...];\n" +
@@ -217,19 +217,19 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("$Association_A_a_LeftToRight_b_B$_$direction_changed$")
-            && e.contains("a__0:A{};")
-            && e.contains("b__0:B{};")
-            && e.contains("link a__0 (a) -> (b) b__0;")
-            && e.contains("link b__0 (b) -> (a) a__0;")));
+            && e.contains("a_0:A{};")
+            && e.contains("b_0:B{};")
+            && e.contains("link a_0 (a) -> (b) b_0;")
+            && e.contains("link b_0 (b) -> (a) a_0;")));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("$Association_A_a_LeftToRight_b_B$_$cardinality_changed$_$right_cardinality$")
-            && e.contains("a__0:A{};")
-            && e.contains("b__0:B{};")
-            && e.contains("b__1:B{};")
-            && e.contains("link a__0 (a) -> (b) b__0;")
-            && e.contains("link a__0 (a) -> (b) b__1;")
-            && e.contains("link b__0 (b) -> (a) a__0;")));
+            && e.contains("a_0:A{};")
+            && e.contains("b_0:B{};")
+            && e.contains("b_1:B{};")
+            && e.contains("link a_0 (a) -> (b) b_0;")
+            && e.contains("link a_0 (a) -> (b) b_1;")
+            && e.contains("link b_0 (b) -> (a) a_0;")));
   }
 
   @Test
@@ -314,15 +314,15 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("$Class_Company$_$edited$_$id$") &&
-            e.contains("manager__0:Manager{};") &&
+            e.contains("manager_0:Manager{};") &&
             e.contains(
-                "  company__0:Company{\n" +
+                "  company_0:Company{\n" +
                 "    Integer id = some_type_Integer;\n" +
                 "  };") &&
-            e.contains("managementTask__0:ManagementTask{};") &&
-            e.contains("link manager__0 (work) -> (area) company__0;") &&
-            e.contains("link manager__0 (assignee) -> (todo) managementTask__0;") &&
-            e.contains("link managementTask__0 (todo) -> (assignee) manager__0;")
+            e.contains("managementTask_0:ManagementTask{};") &&
+            e.contains("link manager_0 (work) -> (area) company_0;") &&
+            e.contains("link manager_0 (assignee) -> (todo) managementTask_0;") &&
+            e.contains("link managementTask_0 (todo) -> (assignee) manager_0;")
     ));
 
   }
@@ -380,63 +380,63 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("$Association_Employee_work_RightToLeft_area_Area$_$direction_changed$") &&
             e.contains(
-                "  employee__0:Employee{\n" +
+                "  employee_0:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
                 "    PositionKind kind = fullTime;\n" +
                 "  };") &&
             e.contains(
-                "  company__0:Company{\n" +
+                "  company_0:Company{\n" +
                 "    String address = some_type_String;\n" +
                 "    String country = some_type_String;\n" +
                 "  };") &&
-            e.contains("link company__0 (area) -> (work) employee__0;") &&
-            e.contains("link employee__0 (work) -> (area) company__0;")
+            e.contains("link company_0 (area) -> (work) employee_0;") &&
+            e.contains("link employee_0 (work) -> (area) company_0;")
     ));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("$Association_Employee_work_RightToLeft_area_Area$_$cardinality_changed$_$left_cardinality$") &&
             e.contains(
-                "  employee__0:Employee{\n" +
+                "  employee_0:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
                 "    PositionKind kind = fullTime;\n" +
                 "  };") &&
             e.contains(
-                "  employee__1:Employee{\n" +
+                "  employee_1:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
                 "    PositionKind kind = fullTime;\n" +
                 "  };") &&
             e.contains(
-                "  company__0:Company{\n" +
+                "  company_0:Company{\n" +
                 "    String address = some_type_String;\n" +
                 "    String country = some_type_String;\n" +
                 "  };") &&
-            e.contains("link company__0 (area) -> (work) employee__0;") &&
-            e.contains("link company__0 (area) -> (work) employee__1;") &&
-            e.contains("link employee__0 (work) -> (area) company__0;")
+            e.contains("link company_0 (area) -> (work) employee_0;") &&
+            e.contains("link company_0 (area) -> (work) employee_1;") &&
+            e.contains("link employee_0 (work) -> (area) company_0;")
     ));
 
     Assert.assertTrue(resultList.stream().anyMatch(e ->
         e.contains("$Association_Employee_assignee_Bidirectional_todo_Task$_$direction_changed$") &&
             e.contains(
-                "  employee__0:Employee{\n" +
+                "  employee_0:Employee{\n" +
                 "    Integer personId = some_type_Integer;\n" +
                 "    PositionKind kind = fullTime;\n" +
                 "  };") &&
             e.contains(
-                "  task__0:Task{\n" +
+                "  task_0:Task{\n" +
                 "    Integer taskId = some_type_Integer;\n" +
                 "    Date startDate = some_type_Date;\n" +
                 "    Date endDate = some_type_Date;\n" +
                 "  };") &&
             e.contains(
-                "  company__0:Company{\n" +
+                "  company_0:Company{\n" +
                 "    String address = some_type_String;\n" +
                 "    String country = some_type_String;\n" +
                 "  };") &&
-            e.contains("link employee__0 (assignee) -> (todo) task__0;") &&
-            e.contains("link task__0 (todo) -> (assignee) employee__0;") &&
-            e.contains("link company__0 (area) -> (work) employee__0;") &&
-            e.contains("link employee__0 (work) -> (area) company__0;")
+            e.contains("link employee_0 (assignee) -> (todo) task_0;") &&
+            e.contains("link task_0 (todo) -> (assignee) employee_0;") &&
+            e.contains("link company_0 (area) -> (work) employee_0;") &&
+            e.contains("link employee_0 (work) -> (area) company_0;")
     ));
   }
 

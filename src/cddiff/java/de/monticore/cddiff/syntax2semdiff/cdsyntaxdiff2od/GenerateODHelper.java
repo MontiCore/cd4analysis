@@ -463,8 +463,7 @@ public class GenerateODHelper {
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
           .setName(
-              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName().replaceAll(
-                  "\\.","_")) + "__" + index)
+              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
           .setModifier(OD4DataMill.modifierBuilder().build())
           .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
               .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
@@ -482,8 +481,7 @@ public class GenerateODHelper {
 
       astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
           .setName(
-              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName().replaceAll(
-                  "\\.","_")) + "__" + index)
+              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName()) + "_" + index)
           .setModifier(OD4DataMill.modifierBuilder()
               .setStereotype(OD4DataMill.stereotypeBuilder()
                   .addValues(OD4DataMill.stereoValueBuilder()
@@ -969,7 +967,7 @@ public class GenerateODHelper {
       String odTitle) {
     // set ASTObjectDiagram
     ASTObjectDiagram objectDiagram = OD4DataMill.objectDiagramBuilder()
-        .setName(odTitle.replaceAll("\\.","_"))
+        .setName(odTitle)
         .setODElementsList(astodElementList)
         .build();
 

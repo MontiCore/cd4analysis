@@ -1,0 +1,13 @@
+classdiagram STTest {
+
+ class Wheel  extends Element {
+    double price ;
+    java.lang.String manufacturer ;
+  }
+
+  class Element{
+      int id ;
+      java.lang.String name ;
+  }
+
+}

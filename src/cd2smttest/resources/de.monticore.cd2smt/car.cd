@@ -1,5 +1,13 @@
 classdiagram STTest {
-
+ class BigBigCar extends BigCar{
+  int lol ;
+ }
+  class BigCar extends Car{
+   int numberOfPlace ;
+  }
+  class SmallCar extends Car{
+     int numberOfPlace ;
+   }
   class Car {
     boolean isExpensive ;
     java.lang.String name;
@@ -7,23 +15,30 @@ classdiagram STTest {
     double price ;
   }
 
-  class Wheel  {
-    int id ;
+ class Wheel  extends Element {
     double price ;
     java.lang.String manufacturer ;
-
   }
 
-  class Motor {
-    int id ;
+  class Element{
+      int id ;
+           java.lang.String name ;
+  }
+  class Profil  {
+      int Number ;
+  }
+
+ class Motor extends Element{
     double price ;
-    java.lang.String name ;
-  }
+
+
+ }
 
 
 
-  association [1..*] Car (car) -- (wheel) Wheel [1];
-  association [1] Car (car) -- (motor) Motor [1..*];
+  association [1] BigCar (car) -- (wheel) Wheel [1];
+  association [1] Car   (car)     -- (motor)   Motor   [1];
+  association [1] Element (element) -- (profil) Profil [1];
 
 
 }
