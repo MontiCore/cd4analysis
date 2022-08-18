@@ -283,7 +283,7 @@ public class MultiInstanceMatcher {
    * Returns the set of "instanceof" from an object if present in a stereotype Returns
    * Optional.empty() otherwise
    */
-  private Optional<Set<String>> getSuperSetFromStereotype(ASTODObject obj) {
+  public static Optional<Set<String>> getSuperSetFromStereotype(ASTODObject obj) {
 
     //get object modifier
     ASTModifier modifier = obj.getModifier();

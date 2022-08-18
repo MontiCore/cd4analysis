@@ -77,7 +77,7 @@ public class OD2CDMatcher {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
 
     //Check all objects from OD if they can exist in the CD
-    if (classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic) && associationsMatcher.checkAssociations(od.deepClone().getObjectDiagram(), cd, semantic)) {
+    if (classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic) && associationsMatcher.checkAssociations(od, cd, semantic)) {
       Log.println(String.format("[RESULT] %s permits %s.",cd.getCDDefinition().getName(),
           od.getObjectDiagram().getName()));
       return true;
