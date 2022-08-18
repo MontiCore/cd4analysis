@@ -21,7 +21,6 @@ import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 public class AssociationsMatcher {
 
   MCBasicTypesFullPrettyPrinter pp;
@@ -43,15 +42,18 @@ public class AssociationsMatcher {
   }
 
   //TODO: consider qualifiers, compare super/sub types when making diff
-  public boolean checkAssociations(ASTObjectDiagram od, ASTCDCompilationUnit cd, CDSemantics semantic) {
+  public boolean checkAssociations(ASTObjectDiagram od, ASTCDCompilationUnit cd,
+      CDSemantics semantic) {
 
     leftMap = new HashMap<>();
     rightMap = new HashMap<>();
     this.cd = cd;
 
-    List<ASTODLink> transformedLinks =
-        new LinkTrafo().transformLinksToLTR(ODHelper.getAllLinks(od));
-    ASTCDAssociation[] associations = cd.getCDDefinition().getCDAssociationsList().toArray(new ASTCDAssociation[0]);
+    List<ASTODLink> transformedLinks = new NormalizeLinksTrafo().transformLinksToLTR(
+        ODHelper.getAllLinks(od));
+    ASTCDAssociation[] associations = cd.getCDDefinition()
+        .getCDAssociationsList()
+        .toArray(new ASTCDAssociation[0]);
 
     //Iterate over all links and try to match them against the given list of associations
     for (ASTODLink link : transformedLinks) {
@@ -82,23 +84,25 @@ public class AssociationsMatcher {
         if (Semantic.isOpenWorld(semantic)) {
           //but not if they are specified by an association
           if (openWorldDiffFound) {
-            Log.warn("Link found with diff.");
+            Log.println("[CONFLICT] Link found with diff.");
             return false;
           }
           //open world without any match means no diff
-        } else {
+        }
+        else {
           Log.warn(
-            "No association found matching link with objects: " + link.getLeftReferenceNames());
-        return false;
-      }}
+              "No association found matching link with objects: " + link.getLeftReferenceNames());
+          return false;
+        }
+      }
     }
     //iterate over all objects to check required associations
-    for(ASTODObject object: ODHelper.getAllObjects(od)){
+    for (ASTODObject object : ODHelper.getAllObjects(od)) {
       //we can only check this for named objects since links need names for reference
-      if(object instanceof ASTODNamedObject){
+      if (object instanceof ASTODNamedObject) {
         ASTODNamedObject namedObj = (ASTODNamedObject) object;
-        for(int i = 0; i < associations.length; i++){
-          if (!checkRequiredAssociationsPresent(namedObj, cd, semantic, associations)){
+        for (int i = 0; i < associations.length; i++) {
+          if (!checkRequiredAssociationsPresent(namedObj, cd, semantic, associations)) {
             return false;
           }
         }
@@ -111,10 +115,11 @@ public class AssociationsMatcher {
   /**
    * Orchestrates the single checks by association direction. Returns true if all checks find a
    * match. Returns false otherwise.
-   * @param associationIndex the index of the association in the Array of association maps. This
-   *                         is used to identify the matched association and links when counting
+   *
+   * @param associationIndex the index of the association in the Array of association maps. This is
+   *                         used to identify the matched association and links when counting
    *                         cardinalities.
-   * @param semantic Open or closed world semantics
+   * @param semantic         Open or closed world semantics
    */
   private boolean matchLinkAgainstAssociation(ASTODLink link, ASTCDAssociation association,
       int associationIndex, ASTObjectDiagram od, CDSemantics semantic) {
@@ -127,12 +132,12 @@ public class AssociationsMatcher {
       //check types
       if (association.getCDAssocType().isAssociation() && link.isComposition()) {
         openWorldDiffFound = true;
-        Log.warn("Link representing an association was a composition in the OD.");
+        Log.println("[CONFLICT] Link representing an association was a composition in the OD.");
         return false;
       }
       if (association.getCDAssocType().isComposition() && !link.isComposition()) {
         openWorldDiffFound = true;
-        Log.warn("Link representing an association was a composition in the OD.");
+        Log.println("[CONFLICT] Link representing an association was a composition in the OD.");
         return false;
       }
       return true;
@@ -165,10 +170,12 @@ public class AssociationsMatcher {
     boolean result = false;
 
     if (lTR) {
-      result = checkRoleNamesAndExecuteDiff(true, link, association, associationIndex, objects, semantic);
+      result = checkRoleNamesAndExecuteDiff(true, link, association, associationIndex, objects,
+          semantic);
     }
     else if (rTL) {
-      result = checkRoleNamesAndExecuteDiff(false, link, association, associationIndex, objects, semantic);
+      result = checkRoleNamesAndExecuteDiff(false, link, association, associationIndex, objects,
+          semantic);
     }
     else {
 
@@ -179,19 +186,20 @@ public class AssociationsMatcher {
 
         if (association.getRight().getCDRole().getName().equals(targetRoleName)) {
           //association goes left to right
-          result = checkRoleNamesAndExecuteDiff(true, link, association, associationIndex,
-              objects,semantic);
+          result = checkRoleNamesAndExecuteDiff(true, link, association, associationIndex, objects,
+              semantic);
         }
         else if (association.getLeft().isPresentCDRole() && association.getLeft()
             .getCDRole()
             .getName()
             .equals(targetRoleName)) {
           // and association goes right to left
-          result = checkRoleNamesAndExecuteDiff(false, link, association, associationIndex,
-              objects, semantic);
+          result = checkRoleNamesAndExecuteDiff(false, link, association, associationIndex, objects,
+              semantic);
         }
         if (!result) {
-          Log.warn("No association side matched the target role name: " + targetRoleName);
+          Log.println(
+              "[CONFLICT] No association side matched the target role name: " + targetRoleName);
         }
       }
       else {
@@ -230,8 +238,8 @@ public class AssociationsMatcher {
         }
         //the origin role name, if not present doesn't matter, but a warning should be logged
         if (!associationLeft.isPresentCDRole() || !linkLeft.isPresentRole()) {
-          Log.warn("Compared link or association had no role name in origin or names didn't match. "
-              + "link: " + link.getLeftReferenceNames() + "Association: "
+          Log.println("[INFO] Compared link or association had no role name in origin or names "
+              + "didn't match. " + "link: " + link.getLeftReferenceNames() + "Association: "
               + associationRight.getCDRole().getName());
         }
         else if (!associationLeft.getCDRole().getName().equals(linkLeft.getRole())) {
@@ -260,37 +268,36 @@ public class AssociationsMatcher {
     }
     //if not left to right, the opposite sides of link and association have to be checked
     else {
-        //associations are allowed to not have roles specified, but then should have their type
-        // in lower cases set as role
-        if (!associationLeft.isPresentCDRole()) {
-          associationLeft = (ASTCDAssocLeftSide) setAssociationTypeAsRoleName(association, true);
-          association.setLeft(associationLeft);
-        }
-        //check diff, iff role names in navigation direction match
-        if (associationLeft.getCDRole().getName().equals(linkRight.getRole())) {
-          //open/closed world diff??
-          if (!diffObjectsTypeBySideOfAssociation(link, objects, false, true, association, semantic)) {
-            return false;
-          }
-        }
-        else {
+      //associations are allowed to not have roles specified, but then should have their type
+      // in lower cases set as role
+      if (!associationLeft.isPresentCDRole()) {
+        associationLeft = (ASTCDAssocLeftSide) setAssociationTypeAsRoleName(association, true);
+        association.setLeft(associationLeft);
+      }
+      //check diff, iff role names in navigation direction match
+      if (associationLeft.getCDRole().getName().equals(linkRight.getRole())) {
+        //open/closed world diff??
+        if (!diffObjectsTypeBySideOfAssociation(link, objects, false, true, association,
+            semantic)) {
           return false;
         }
-        if (associationRight.isPresentCDRole() && linkLeft.isPresentRole()) {
-          if (!associationRight.getCDRole().getName().equals(linkLeft.getRole())) {
-            Log.warn("Compared link or association had no role name in origin. link: "
-                + link.getRightReferenceNames() + "Association: " + associationRight.getCDRole()
-                .getName());
-          }
+      }
+      else {
+        return false;
+      }
+      if (associationRight.isPresentCDRole() && linkLeft.isPresentRole()) {
+        if (!associationRight.getCDRole().getName().equals(linkLeft.getRole())) {
+          Log.println("[CONFLICT] Compared link or association had no role name in origin. link: "
+              + link.getRightReferenceNames() + "Association: " + associationRight.getCDRole()
+              .getName());
         }
-        if (!diffObjectsTypeBySideOfAssociation(link, objects, true, false, association, semantic)) {
-          return false;
-        }
-        //only add referenced objects to maps, if they are required by cardinality
-        if(isRequiredDueToCardinality(association)){
-        this.rightMap.merge(associationIndex,
-            linkLeft.getReferenceNamesList(),
-            (old, n) -> {
+      }
+      if (!diffObjectsTypeBySideOfAssociation(link, objects, true, false, association, semantic)) {
+        return false;
+      }
+      //only add referenced objects to maps, if they are required by cardinality
+      if (isRequiredDueToCardinality(association)) {
+        this.rightMap.merge(associationIndex, linkLeft.getReferenceNamesList(), (old, n) -> {
           old.addAll(n);
           return old;
         });
@@ -298,26 +305,29 @@ public class AssociationsMatcher {
           old.addAll(n);
           return old;
         });
-        }
       }
+    }
 
     //check single link cardinality
-    if(checkCardinality(link, association)) {
+    if (checkCardinality(link, association)) {
       return true;
-    } else {
+    }
+    else {
       openWorldDiffFound = true;
       return false;
     }
   }
 
   /**
-   *  Compares the objects referenced in one side of a link with an association side definition by
-   *  comparing the types with the allowed classes for the association.
-   * @param link A link referencing objects by name
-   * @param objects A list of all objects to find the type of the referenced object names
-   * @param leftLinkSide true if the links left side should be compared
+   * Compares the objects referenced in one side of a link with an association side definition by
+   * comparing the types with the allowed classes for the association.
+   *
+   * @param link                A link referencing objects by name
+   * @param objects             A list of all objects to find the type of the referenced object
+   *                            names
+   * @param leftLinkSide        true if the links left side should be compared
    * @param leftAssociationSide true if the left association side should be compared
-   * @param association An association defining possible links.
+   * @param association         An association defining possible links.
    * @return true iff the referenced objects are of types allowed by the association.
    */
   private boolean diffObjectsTypeBySideOfAssociation(ASTODLink link, List<ASTODObject> objects,
@@ -345,7 +355,7 @@ public class AssociationsMatcher {
         }
       }
       else {
-        Log.warn("No Object with name " + s + " was found in object list.");
+        Log.println("[CONFLICT] No Object with name " + s + " was found in object list.");
         return false;
       }
     }
@@ -353,34 +363,37 @@ public class AssociationsMatcher {
   }
 
   /**
-   * Method to check if any given object has a missing association that is required by the cd if
-   * the object exists.
+   * Method to check if any given object has a missing association that is required by the cd if the
+   * object exists.
    */
-  private boolean checkRequiredAssociationsPresent(ASTODNamedObject object,
-      ASTCDCompilationUnit cd, CDSemantics semantic, ASTCDAssociation[] associationArray){
+  private boolean checkRequiredAssociationsPresent(ASTODNamedObject object, ASTCDCompilationUnit cd,
+      CDSemantics semantic, ASTCDAssociation[] associationArray) {
     //retrieve all associations that have to exist iff an object of its type is instantiated
-    List<ASTCDAssociation> associations =
-        cd.getCDDefinition().getCDAssociationsList().stream().filter(
-                this::isRequiredDueToCardinality)
-            //then filter for associations that match the objects type on either side
-            .filter(req -> isOAndCTypeMatch(cd, object, getAssociationTypeBySide(req, true),
-                semantic)|| isOAndCTypeMatch(cd, object, getAssociationTypeBySide(req, false), semantic))
-            .collect(Collectors.toList());
+    List<ASTCDAssociation> associations = cd.getCDDefinition()
+        .getCDAssociationsList()
+        .stream()
+        .filter(this::isRequiredDueToCardinality)
+        //then filter for associations that match the objects type on either side
+        .filter(req -> isOAndCTypeMatch(cd, object, getAssociationTypeBySide(req, true), semantic)
+            || isOAndCTypeMatch(cd, object, getAssociationTypeBySide(req, false), semantic))
+        .collect(Collectors.toList());
 
     boolean result = false;
 
     //iterate over the required associations for the object
-    for(ASTCDAssociation assoc : associations){
-      for(int i = 0; i < associationArray.length; i++) {
+    for (ASTCDAssociation assoc : associations) {
+      for (int i = 0; i < associationArray.length; i++) {
         //find the indices of the required associations and check if they are referenced
-        if(assoc.equals(associationArray[i])){
-          result = (isObjectReferencedForAssociationindex(object, i, leftMap) ||
-              isObjectReferencedForAssociationindex(object, i, rightMap));
+        if (assoc.equals(associationArray[i])) {
+          result = (isObjectReferencedForAssociationindex(object, i, leftMap)
+              || isObjectReferencedForAssociationindex(object, i, rightMap));
         }
       }
       //if there is no reference for the required association, false is returned
-      if(!result){
-        Log.warn("The object " + object.getName() + " was missing a required association:" + new CDAssociationFullPrettyPrinter(new IndentPrinter()).prettyprint(assoc));
+      if (!result) {
+        Log.println(
+            "[CONFLICT] The object " + object.getName() + " was missing a required association:"
+                + new CDAssociationFullPrettyPrinter(new IndentPrinter()).prettyprint(assoc));
         return false;
       }
     }
@@ -389,29 +402,33 @@ public class AssociationsMatcher {
 
   }
 
-  private boolean isObjectReferencedForAssociationindex(ASTODNamedObject object,
-      int index, Map<Integer, List<ASTODName>> map){
-    if(map.containsKey(index)){
+  private boolean isObjectReferencedForAssociationindex(ASTODNamedObject object, int index,
+      Map<Integer, List<ASTODName>> map) {
+    if (map.containsKey(index)) {
       return map.get(index).stream().anyMatch(n -> n.getName().equals(object.getName()));
-    } else {
+    }
+    else {
       return false;
     }
   }
 
   /**
-   * Matches the given object with the class name given. Returns true iff the objects type is
-   * the given class or a subclass of it. For open world semantics the object has to have the
-   * <<instanceof>> stereotype set for any additional super types. Otherwise the type match
-   * might fail for added types.
-   * @param cd cd compilation unit to check in
-   * @param object the object which should be matched
-   * @param cdType the class name that should be matched
+   * Matches the given object with the class name given. Returns true iff the objects type is the
+   * given class or a subclass of it. For open world semantics the object has to have the
+   * <<instanceof>> stereotype set for any additional super types. Otherwise the type match might
+   * fail for added types.
+   *
+   * @param cd       cd compilation unit to check in
+   * @param object   the object which should be matched
+   * @param cdType   the class name that should be matched
    * @param semantic the used semantic to determine diffs strategy
    */
-  private boolean isOAndCTypeMatch(ASTCDCompilationUnit cd, ASTODNamedObject object,
-      String cdType, CDSemantics semantic) {
+  private boolean isOAndCTypeMatch(ASTCDCompilationUnit cd, ASTODNamedObject object, String cdType,
+      CDSemantics semantic) {
 
-    Log.debug("Do type check for association with type " + cdType + " and object " + object.getName(), "AssociationMatcherLog");
+    Log.debug(
+        "Do type check for association with type " + cdType + " and object " + object.getName(),
+        "AssociationMatcherLog");
     String odType = pp.prettyprint(object.getMCObjectType());
 
     CD4CodeMill.reset();
@@ -423,20 +440,21 @@ public class AssociationsMatcher {
     Set<String> objectSuperTypes = MultiInstanceMatcher.getSuperSet(odType, scope);
 
     //if present, make use of the instanceOf stereotype
-    if(Semantic.isOpenWorld(semantic)){
+    if (Semantic.isOpenWorld(semantic)) {
       ASTModifier modifier = object.getModifier();
-      if(modifier.isPresentStereotype()){
-        if(modifier.getStereotype().contains(INSTANCE_OF_STEREOTYPE)){
+      if (modifier.isPresentStereotype()) {
+        if (modifier.getStereotype().contains(INSTANCE_OF_STEREOTYPE)) {
           String instanceStereotype = modifier.getStereotype().getValue(INSTANCE_OF_STEREOTYPE);
-          List<String> instances =
-              Arrays.stream(instanceStereotype.split(",")).collect(Collectors.toList());
+          List<String> instances = Arrays.stream(instanceStereotype.split(","))
+              .collect(Collectors.toList());
           instances.addAll(objectSuperTypes);
           //in the open world case, with existing "instanceOf" stereotype, we know that the
           // objects type has to inherit from the given class type. Otherwise we can only tell
           // for types present in closed world scenario
-          if(instances.stream().anyMatch(sup -> sup.equals(cdType))){
+          if (instances.stream().anyMatch(sup -> sup.equals(cdType))) {
             return true;
-          }else {
+          }
+          else {
             openWorldDiffFound = true;
             return false;
           }
@@ -446,11 +464,12 @@ public class AssociationsMatcher {
 
     //Without the stereotype the types have to be checked the usual way and open world diffs
     // can't be determined here
-    if(objectSuperTypes.stream().anyMatch(sup -> sup.equals(cdType))){
+    if (objectSuperTypes.stream().anyMatch(sup -> sup.equals(cdType))) {
       return true;
-    } else {
-      Log.warn("Object of type: " + odType + " did not match class type: " + cdType + " or any"
-          + " Subtypes of it.");
+    }
+    else {
+      Log.println("[CONFLICT] Object of type: " + odType + " did not match class type: " + cdType
+          + " or any" + " Subtypes of it.");
       return false;
     }
   }
@@ -463,7 +482,6 @@ public class AssociationsMatcher {
       return pp.prettyprint((association.getRight().getMCQualifiedType()));
     }
   }
-
 
   private boolean checkCardinality(ASTODLink link, ASTCDAssociation assoc) {
 
@@ -489,14 +507,16 @@ public class AssociationsMatcher {
       }
       else if (rTL) {
         leftOK = compareNumberWithCardinality(leftCard, rightNo);
-      } else {
+      }
+      else {
         //undirected or bidirectional so check for role names, both roles have to be present
-        if(assoc.getLeft().isPresentCDRole() && assoc.getRight().isPresentCDRole()) {
+        if (assoc.getLeft().isPresentCDRole() && assoc.getRight().isPresentCDRole()) {
           //the link represents the right to left side of the bidirectional association
-          if(assoc.getLeft().getCDRole().getName().equals(link.getODLinkRightSide().getRole())){
+          if (assoc.getLeft().getCDRole().getName().equals(link.getODLinkRightSide().getRole())) {
             leftOK = compareNumberWithCardinality(leftCard, rightNo);
           }
-        } else {
+        }
+        else {
           Log.error("Bidirectional Associations have to have roles in both directions.");
         }
       }
@@ -509,14 +529,16 @@ public class AssociationsMatcher {
       }
       else if (rTL) {
         rightOK = compareNumberWithCardinality(rightCard, leftNo);
-      } else {
+      }
+      else {
         //undirected or bidirectional so check for role names, both roles have to be present
-        if(assoc.getLeft().isPresentCDRole() && assoc.getRight().isPresentCDRole()) {
+        if (assoc.getLeft().isPresentCDRole() && assoc.getRight().isPresentCDRole()) {
           //the link represents the left to right side of the bidirectional association
-          if(assoc.getRight().getCDRole().getName().equals(link.getODLinkRightSide().getRole())){
+          if (assoc.getRight().getCDRole().getName().equals(link.getODLinkRightSide().getRole())) {
             rightOK = compareNumberWithCardinality(rightCard, rightNo);
           }
-        } else {
+        }
+        else {
           Log.error("Bidirectional Associations have to have roles in both directions.");
         }
       }
@@ -528,8 +550,9 @@ public class AssociationsMatcher {
   /**
    * Sets the associations' role to the type of the side. The affected association side is
    * determined by the isLeftSide flag.
+   *
    * @param association an association that should have its role name changed
-   * @param isLeftSide pass in true, if the left association role is supposed to be changed.
+   * @param isLeftSide  pass in true, if the left association role is supposed to be changed.
    * @return TODO
    */
   private ASTCDAssocSide setAssociationTypeAsRoleName(ASTCDAssociation association,
@@ -556,56 +579,52 @@ public class AssociationsMatcher {
     if (card.isMult()) {
       return true;
     }
-    else
-      //is +
-      if (card.isAtLeastOne()) {
-        if (elements < 1) {
-          Log.warn("Link violates cardinality \"at least one [+]\" constraint.");
-          return false;
-        }
-        else {
-          return true;
-        }
+    else if (card.isAtLeastOne()) {
+      if (elements < 1) {
+        Log.println("[CONFLICT] Link violates cardinality [+] constraint.");
+        return false;
       }
-      else
-        //is bound
-        if (card.isOne()) {
-          if (elements != 1) {
-            Log.warn("Link violates cardinality [1] constraint.");
-            return false;
-          }
-          else {
-            return true;
-          }
-        }
-        else {
-          if (elements > card.getUpperBound() && elements < card.getLowerBound()) {
-            Log.warn("Link violates cardinality boundary constraint.");
-            return false;
-          }
-          else {
-            return true;
-          }
-        }
+      else {
+        return true;
+      }
+    }
+    else if (card.isOne()) {
+      if (elements != 1) {
+        Log.println("[CONFLICT] Link violates cardinality [1] constraint.");
+        return false;
+      }
+    } else if (card.isOpt()){
+      if (elements > 1) {
+        Log.println("[CONFLICT] Link violates cardinality [1] constraint.");
+        return false;
+      }
+    }
+
+    return ((card.toCardinality().isNoUpperLimit() || elements <= card.getUpperBound()) && elements >= card.getLowerBound());
+
   }
 
   /**
-   * Checks if an association is required due to its cardinalities. Eg. A[+] -> B[+] would have
-   * to be represented by a link, since both sides have to reference at least one object.
+   * Checks if an association is required due to its cardinalities. Eg. A[+] -> B[+] would have to
+   * be represented by a link, since both sides have to reference at least one object.
+   *
    * @return true if the association is required.
    */
-  private boolean isRequiredDueToCardinality(ASTCDAssociation assoc){
+  private boolean isRequiredDueToCardinality(ASTCDAssociation assoc) {
     //only if both sides have at least one cardinality, they are required
-    return hasCardinalityAtLeastGreaterZero(assoc.getRight()) && hasCardinalityAtLeastGreaterZero(assoc.getLeft());
+    return hasCardinalityAtLeastGreaterZero(assoc.getRight()) && hasCardinalityAtLeastGreaterZero(
+        assoc.getLeft());
   }
+
   /**
    * Helper method to check if there has to be at least one object linked to fit this association.
    */
   private boolean hasCardinalityAtLeastGreaterZero(ASTCDAssocSide side) {
-    if(side.isPresentCDCardinality()){
+    if (side.isPresentCDCardinality()) {
       ASTCDCardinality card = side.getCDCardinality();
       return card.isAtLeastOne() || card.isOne();
-    } else {
+    }
+    else {
       return false;
     }
   }

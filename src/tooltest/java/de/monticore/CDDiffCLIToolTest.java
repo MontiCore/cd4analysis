@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,38 +33,34 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     final String output = "./target/generated/cddiff-test/CLITestWithDiff";
 
     for (String command : commands) {
-      //when CD4CodeTool is used to compute the semantic difference
+      // when CD4CodeTool is used to compute the semantic difference
       String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
           "20" };
       CD4CodeTool.main(args);
 
-      //then corresponding .od files are generated
+      // then corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
       assertNotNull(odFiles);
 
-      List<String> odFilePaths = new LinkedList<>();
+      // now check for each OD if it is a diff-witness, i.e., in sem(cd1)\sem(cd2)
+      boolean isWitness = false;
+
+      File baseCDFile = Paths.get(cd1).toFile();
+      File compareCDFile = Paths.get(cd2).toFile();
+
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
-          odFilePaths.add(odFile.toPath().toString());
+          try {
+            isWitness =
+                new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, baseCDFile,
+                    compareCDFile, odFile);
+          } catch (IOException e){
+            e.printStackTrace();
+            Assert.fail();
+          }
+          Assert.assertTrue(isWitness);
         }
       }
-
-      // and the ODs match cd1 but not cd2
-      CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-      boolean first = false;
-      boolean second = true;
-
-      try {
-        first = matcher.checkODConsistency(cd1, odFilePaths);
-        second = matcher.checkODConsistency(cd2, odFilePaths);
-      }
-      catch (Exception e) {
-        Log.error("0xCDD07: Matching failed due to the following exception " + e.getMessage());
-        fail();
-      }
-
-      assertTrue(first);
-      assertFalse(second);
 
       // clean-up
       try {
@@ -128,33 +125,29 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     String[] args = { "-i", cd1, "--semdiff", cd2, "-o", output };
     CD4CodeTool.main(args);
 
-    //then corresponding .od files are generated
+    // then corresponding .od files are generated
     File[] odFiles = Paths.get(output).toFile().listFiles();
     assertNotNull(odFiles);
 
-    List<String> odFilePaths = new LinkedList<>();
+    // now check for each OD if it is a diff-witness, i.e., in sem(cd1)\sem(cd2)
+    boolean isWitness = false;
+
+    File baseCDFile = Paths.get(cd1).toFile();
+    File compareCDFile = Paths.get(cd2).toFile();
+
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        odFilePaths.add(odFile.toPath().toString());
+        try {
+          isWitness =
+              new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, baseCDFile,
+                  compareCDFile, odFile);
+        } catch (IOException e){
+          e.printStackTrace();
+          Assert.fail();
+        }
+        Assert.assertTrue(isWitness);
       }
     }
-
-    // and the ODs match cd1 but not cd2
-    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
-    boolean first = false;
-    boolean second = true;
-
-    try {
-      first = matcher.checkODConsistency(cd1, odFilePaths);
-      second = matcher.checkODConsistency(cd2, odFilePaths);
-    }
-    catch (Exception e) {
-      Log.error("0xCDD09: Matching failed due to the following exception " + e.getMessage());
-      fail();
-    }
-
-    assertTrue(first);
-    assertFalse(second);
 
     // clean-up
     try {

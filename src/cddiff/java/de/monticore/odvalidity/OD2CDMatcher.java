@@ -71,14 +71,21 @@ public class OD2CDMatcher {
   public boolean checkODValidity(CDSemantics semantic, ASTODArtifact od,
       ASTCDCompilationUnit cd) {
 
+    Log.println(String.format("[CHECK] Check if %s permits %s.",cd.getCDDefinition().getName(),
+            od.getObjectDiagram().getName()));
+
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
 
     //Check all objects from OD if they can exist in the CD
-    if (!classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic)) {
-      return false;
+    if (classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic) && associationsMatcher.checkAssociations(od.deepClone().getObjectDiagram(), cd, semantic)) {
+      Log.println(String.format("[RESULT] %s permits %s.",cd.getCDDefinition().getName(),
+          od.getObjectDiagram().getName()));
+      return true;
     }
 
-    return associationsMatcher.checkAssociations(od.getObjectDiagram(), cd, semantic);
+    Log.println(String.format("[RESULT] %s does not permit %s.",cd.getCDDefinition().getName(),
+        od.getObjectDiagram().getName()));
+    return false;
   }
 
 }

@@ -19,9 +19,9 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-public class LinkTrafoTest {
+public class NormalizeLinksTrafoTest {
 
-  LinkTrafo trafo;
+  NormalizeLinksTrafo trafo;
 
   @Before
   public void setUp() {
@@ -29,7 +29,7 @@ public class LinkTrafoTest {
     OD4ReportMill.reset();
     OD4ReportMill.init();
     Log.enableFailQuick(false);
-    trafo = new LinkTrafo();
+    trafo = new NormalizeLinksTrafo();
 
   }
 
