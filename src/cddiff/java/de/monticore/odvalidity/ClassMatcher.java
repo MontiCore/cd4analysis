@@ -382,7 +382,7 @@ public class ClassMatcher {
   private boolean isNameEnumInCD(String name) {
     for (var cdEnum : cd.getCDDefinition().getCDEnumsList()) {
       //Check if we can find
-      if (cdEnum.getSymbol().getFullName().contains(name)) {
+      if (cdEnum.getSymbol().getFullName().equals(name)) {
         return true;
       }
     }
@@ -396,7 +396,7 @@ public class ClassMatcher {
     return cd.getCDDefinition()
         .getCDEnumsList()
         .stream()
-        .filter(cdEnum -> cdEnum.getSymbol().getFullName().contains(enumName))
+        .filter(cdEnum -> cdEnum.getSymbol().getFullName().equals(enumName))
         .findAny();
   }
 
