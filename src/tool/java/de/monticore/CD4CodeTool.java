@@ -41,6 +41,7 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
+import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -283,6 +284,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
                 .map(Paths::get)
                 .map(Path::toFile)
                 .collect(Collectors.toList()));
+          }
+
+          if (cmd.hasOption("hwc")){
+            generatorSetup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
           }
 
           generatorSetup.setGlex(glex);

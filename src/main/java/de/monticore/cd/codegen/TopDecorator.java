@@ -5,10 +5,17 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.cdbasis._symboltable.CDPackageSymbol;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.io.paths.MCPath;
+import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.umlmodifier._ast.ASTModifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static de.monticore.generating.GeneratorEngine.existsHandwrittenClass;
 import static de.se_rwth.commons.Names.constructQualifiedName;
@@ -30,19 +37,39 @@ public class TopDecorator {
 
   public ASTCDCompilationUnit decorate(final ASTCDCompilationUnit compUnit) {
     compUnit.getCDDefinition().getCDClassesList().stream()
-        .filter(cdClass -> existsHandwrittenClass(hwPath, constructQualifiedName(compUnit.getCDPackageList(), cdClass.getName())))
+        .filter(cdClass -> existsHandwrittenClass(hwPath, determineQualifiedName(cdClass, compUnit)))
         .forEach(this::applyTopMechanism);
 
     compUnit.getCDDefinition().getCDInterfacesList().stream()
-        .filter(cdInterface -> existsHandwrittenClass(hwPath, constructQualifiedName(compUnit.getCDPackageList(), cdInterface.getName())))
+        .filter(cdInterface -> existsHandwrittenClass(hwPath, determineQualifiedName(cdInterface, compUnit)))
         .forEach(this::applyTopMechanism);
 
     compUnit.getCDDefinition().getCDEnumsList().stream()
-        .filter(cdEnum -> existsHandwrittenClass(hwPath, constructQualifiedName(compUnit.getCDPackageList(), cdEnum.getName())))
+        .filter(cdEnum -> existsHandwrittenClass(hwPath, determineQualifiedName(cdEnum, compUnit)))
         .forEach(this::applyTopMechanism);
 
     return compUnit;
   }
+
+  protected String determineQualifiedName(ASTCDType astcdtype, ASTCDCompilationUnit astcdCompilationUnit){
+    List<String> packagesNames = new ArrayList<>();
+    CDTypeSymbol typeSymbol = astcdtype.getSymbol();
+    ICDBasisScope scope = typeSymbol.getEnclosingScope();
+    while(scope != null ){
+      if(scope.isPresentSpanningSymbol()){
+        IScopeSpanningSymbol symbol = scope.getSpanningSymbol();
+        if(symbol instanceof CDPackageSymbol){
+          packagesNames.add(0, symbol.getName());
+        }
+      }
+      scope = scope.getEnclosingScope();
+    }
+    if(packagesNames.isEmpty()){
+      return constructQualifiedName(astcdCompilationUnit.getCDPackageList(), astcdtype.getName());
+    }
+    return constructQualifiedName(packagesNames, astcdtype.getName());
+  }
+
 
   public void decoratePackage(final ASTCDCompilationUnit compUnit) {
     for (ASTCDPackage p: compUnit.getCDDefinition().getCDPackagesList()) {

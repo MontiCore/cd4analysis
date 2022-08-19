@@ -157,6 +157,17 @@ public class CDToolOptions {
       .desc("Generate .java-files corresponding to the classes defined in the input class "
         + "diagram.")
       .build());
+
+    // specify template path
+    options.addOption(Option.builder("hwc")
+      .longOpt("handwritten-code")
+      .argName("path")
+      .hasArgs()
+      .type(String.class)
+      .desc("Configure a path for adding handwritten code when generating with the option '--gen'. " +
+        "This leads to TOP-classes being generated for all classes that are already present in the handwritten code.")
+      .build());
+
   }
 
   protected void initPrettyPrinter(boolean showPlantUML) {
