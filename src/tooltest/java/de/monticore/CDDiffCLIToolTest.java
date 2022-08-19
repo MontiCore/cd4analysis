@@ -4,7 +4,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
-import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
@@ -13,7 +12,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,10 +49,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
           try {
-            isWitness =
-                new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, baseCDFile,
-                    compareCDFile, odFile);
-          } catch (IOException e){
+            isWitness = new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD,
+                baseCDFile, compareCDFile, odFile);
+          }
+          catch (IOException e) {
             e.printStackTrace();
             Assert.fail();
           }
@@ -91,7 +89,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       //no corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
 
-      if(odFiles == null){
+      if (odFiles == null) {
         return;
       }
 
@@ -138,10 +136,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
         try {
-          isWitness =
-              new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD, baseCDFile,
-                  compareCDFile, odFile);
-        } catch (IOException e){
+          isWitness = new OD2CDMatcher().checkIfDiffWitness(CDSemantics.SIMPLE_CLOSED_WORLD,
+              baseCDFile, compareCDFile, odFile);
+        }
+        catch (IOException e) {
           e.printStackTrace();
           Assert.fail();
         }
@@ -168,8 +166,8 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     for (String command : commands) {
       for (String method : methods) {
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
-            "--difflimit", "20", "--open-world", method };
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+            "20", "--open-world", method };
         CD4CodeTool.main(args);
 
         //some corresponding .od files are generated
@@ -207,8 +205,8 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       for (String method : methods) {
 
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
-            "--difflimit", "20", "--open-world", method };
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+            "20", "--open-world", method };
         CD4CodeTool.main(args);
 
         //no corresponding .od files are generated
@@ -247,8 +245,8 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     for (String command : commands) {
       for (String method : methods) {
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
-            "--difflimit", "20", "--open-world", method };
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+            "20", "--open-world", method };
         CD4CodeTool.main(args);
 
         //no corresponding .od files are generated
@@ -285,8 +283,8 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       for (String method : methods) {
 
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output,
-            "--difflimit", "20", "--open-world", method };
+        String[] args = { "-i", cd1, command, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+            "20", "--open-world", method };
         CD4CodeTool.main(args);
 
         //no corresponding .od files are generated
@@ -377,14 +375,12 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
   }
 
-
   @Test
   public void testValidityOfOW2CWReduction() {
     // given 2 CDs such that the first is a refinement of the second under an open-world assumption
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd";
     final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction";
-
 
     //TODO: fix for --jsemdiff
     //when CD4CodeTool is used to compute the semantic difference
@@ -400,9 +396,9 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
           Assert.assertTrue(
-              new OD2CDMatcher().checkIfDiffWitness(
-                  CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, Paths.get(output + "/Employees7.cd").toFile(), Paths.get(output + "/Employees8.cd").toFile()
-                  , odFile));
+              new OD2CDMatcher().checkIfDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
+                  Paths.get(output + "/Employees7.cd").toFile(),
+                  Paths.get(output + "/Employees8.cd").toFile(), odFile));
         }
       }
 

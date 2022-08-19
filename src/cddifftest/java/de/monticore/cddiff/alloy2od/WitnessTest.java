@@ -47,8 +47,8 @@ public class WitnessTest extends CDDiffTestBasis {
     int i=0;
     for (ASTODArtifact od : ods) {
       od.getObjectDiagram().setName("witness"+i);
-      //assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, od, astV1));
-      //assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, od, astV2));
+      assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, od, astV1));
+      assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, od, astV2));
       i++;
     }
 

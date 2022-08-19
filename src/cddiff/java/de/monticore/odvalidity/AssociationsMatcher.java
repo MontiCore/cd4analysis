@@ -74,6 +74,9 @@ public class AssociationsMatcher {
             .getCDAssociationsList()
             .stream()
             .noneMatch(assoc -> matchLinkAgainstAssociation(link, assoc))) {
+          Log.println(String.format(
+              "[Conflict] No association found for link " + link.getLeftReferenceNames() + " -> ("
+                  + link.getODLinkRightSide().getRole() + ") " + link.getRightReferenceNames() + "."));
           return false;
         }
       }
@@ -88,7 +91,6 @@ public class AssociationsMatcher {
       }
     }
 
-    //TODO: implement check pair-instances for bidirectional associations
     for (ASTCDAssociation assoc : cd.getCDDefinition()
         .getCDAssociationsList()
         .stream()
@@ -101,7 +103,6 @@ public class AssociationsMatcher {
       }
     }
 
-    assert false;
     return true;
   }
 
@@ -112,8 +113,9 @@ public class AssociationsMatcher {
             .noneMatch(otherLink -> otherLink.getRightReferenceNames().contains(leftObject)
                 && otherLink.getLeftReferenceNames().contains(rightObject)
                 && matchLinkAgainstAssociation(otherLink, assoc))) {
-          Log.println(String.format("No counterpart found for link %s -> (%s) %s", leftObject,
-              link.getODLinkRightSide().getRole(), rightObject));
+          Log.println(
+              String.format("[Conflict] No counterpart found for link %s -> (%s) %s", leftObject,
+                  link.getODLinkRightSide().getRole(), rightObject));
           return false;
         }
       }
@@ -141,6 +143,8 @@ public class AssociationsMatcher {
             && !link.getRightReferenceNames()
             .stream()
             .allMatch(objName -> isInstanceOf(getObject(objName).get(), targetType)))) {
+      Log.println(String.format("[Type Conflict] %s -> (%s) %s", object.getName(), targetRole,
+          targetType));
       return false;
     }
     if (targetSide.isPresentCDCardinality()) {
@@ -315,7 +319,7 @@ public class AssociationsMatcher {
     }
 
     // right role-name of link should match targetRole
-    return link.getODLinkLeftSide().isPresentRole() && link.getODLinkRightSide()
+    return link.getODLinkRightSide().isPresentRole() && link.getODLinkRightSide()
         .getRole()
         .equals(targetRole);
   }
@@ -346,7 +350,7 @@ public class AssociationsMatcher {
     }
     else if (card.isOpt()) {
       if (elements > 1) {
-        Log.println("[CONFLICT] Link violates cardinality [1] constraint.");
+        Log.println("[CONFLICT] Link violates cardinality [0..1] constraint.");
         return false;
       }
       else {
