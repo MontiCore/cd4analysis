@@ -41,7 +41,9 @@ public class AssociationsMatcher {
     targetMap = new HashMap<>();
   }
 
-  //TODO: consider qualifiers, compare super/sub types when making diff
+  /**
+   * check if links in od match associations in cd according to semantics
+   */
   public boolean checkAssociations(ASTODArtifact od, ASTCDCompilationUnit cd,
       CDSemantics semantics) {
 
@@ -50,9 +52,15 @@ public class AssociationsMatcher {
     this.semantics = semantics;
 
     this.objects = new HashSet<>(ODHelper.getAllNamedObjects(od.getObjectDiagram()));
+
+    // we split bidirectional links and make them all left-to-right
     this.links = new HashSet<>(
         new NormalizeLinksTrafo().transformLinksToLTR(ODHelper.getAllLinks(od.getObjectDiagram())));
 
+    /* initialize srcMap and targetMap:
+    srcMap(object) = { association in cd | object intanceof association.srcType}
+    srcMap(object) = { association in cd | object intanceof association.targetType}
+     */
     for (ASTODNamedObject object : objects) {
       Set<ASTCDAssociation> srcSet = cd.getCDDefinition()
           .getCDAssociationsList()
@@ -68,6 +76,7 @@ public class AssociationsMatcher {
       targetMap.put(object.getName(), targetSet);
     }
 
+    // for closed-world semantics each link in od must be an instance of an association in cd
     if (Semantic.isClosedWorld(semantics)) {
       for (ASTODLink link : links) {
         if (cd.getCDDefinition()
@@ -76,12 +85,14 @@ public class AssociationsMatcher {
             .noneMatch(assoc -> matchLinkAgainstAssociation(link, assoc))) {
           Log.println(String.format(
               "[Conflict] No association found for link " + link.getLeftReferenceNames() + " -> ("
-                  + link.getODLinkRightSide().getRole() + ") " + link.getRightReferenceNames() + "."));
+                  + link.getODLinkRightSide().getRole() + ") " + link.getRightReferenceNames()
+                  + "."));
           return false;
         }
       }
     }
 
+    // for each object and each association the cardinality constraints have to hold on both sides
     for (ASTODNamedObject object : objects) {
       if (srcMap.get(object.getName())
           .stream()
@@ -91,6 +102,8 @@ public class AssociationsMatcher {
       }
     }
 
+    // Each instance of a bidirectional association is a pair of matching l2r-links
+    // i.e. association A <-> B and objects a instanceof A, b instanceof B: a -> b <=> b -> a
     for (ASTCDAssociation assoc : cd.getCDDefinition()
         .getCDAssociationsList()
         .stream()
@@ -106,6 +119,10 @@ public class AssociationsMatcher {
     return true;
   }
 
+  /**
+   * Check if a link for a bidirectional association has a corresponding reverse-link
+   * i.e. for association A <-> B and link a -> b, check if there is link b -> a
+   */
   private boolean findReverseLink(ASTODLink link, ASTCDAssociation assoc) {
     for (String leftObject : link.getLeftReferenceNames()) {
       for (String rightObject : link.getRightReferenceNames()) {
@@ -123,6 +140,10 @@ public class AssociationsMatcher {
     return true;
   }
 
+  /**
+   * Check if all outgoing links of object have the correct target-type and respect cardinality
+   * constraints iff they are an instance of assoc.
+   */
   private boolean checkTargetTypeAndCardinality(ASTODNamedObject object, ASTCDAssociation assoc) {
     Set<ASTODLink> outgoingLinks = links.stream()
         .filter(link -> link.getLeftReferenceNames().contains(object.getName()))
@@ -143,8 +164,8 @@ public class AssociationsMatcher {
             && !link.getRightReferenceNames()
             .stream()
             .allMatch(objName -> isInstanceOf(getObject(objName).get(), targetType)))) {
-      Log.println(String.format("[Type Conflict] %s -> (%s) %s", object.getName(), targetRole,
-          targetType));
+      Log.println(
+          String.format("[Type Conflict] %s -> (%s) %s", object.getName(), targetRole, targetType));
       return false;
     }
     if (targetSide.isPresentCDCardinality()) {
@@ -154,11 +175,15 @@ public class AssociationsMatcher {
           numberOfTargets += link.getRightReferenceNames().size();
         }
       }
-      return compareNumberWithCardinality(targetSide.getCDCardinality(), numberOfTargets);
+      return checkIfObjectNumberIsValid(targetSide.getCDCardinality(), numberOfTargets);
     }
     return true;
   }
 
+  /**
+   * Check if all incoming links of object that are an instance of assoc respect cardinality
+   * constraints.
+   */
   private boolean checkSourceCardinality(ASTODNamedObject object, ASTCDAssociation assoc) {
     Set<ASTODLink> incomingLinks = links.stream()
         .filter(link -> link.getRightReferenceNames().contains(object.getName())
@@ -173,16 +198,23 @@ public class AssociationsMatcher {
           numberOfTargets += link.getLeftReferenceNames().size();
         }
       }
-      return compareNumberWithCardinality(srcSide.getCDCardinality(), numberOfTargets);
+      return checkIfObjectNumberIsValid(srcSide.getCDCardinality(), numberOfTargets);
     }
     return true;
 
   }
 
+  /**
+   * return any object with name objname
+   */
   private Optional<ASTODNamedObject> getObject(String objName) {
     return objects.stream().filter(object -> object.getName().equals(objName)).findAny();
   }
 
+  /**
+   * Return the target-side of the association;
+   * Iff bidirectional, determine side of object and return the other side.
+   */
   private ASTCDAssocSide getTargetSide4Object(ASTODNamedObject object,
       ASTCDAssociation association) {
 
@@ -202,6 +234,10 @@ public class AssociationsMatcher {
 
   }
 
+  /**
+   * Return the source-side of the association;
+   * Iff bidirectional, determine side of object and return the other side.
+   */
   private ASTCDAssocSide getSourceSide4Object(ASTODNamedObject object,
       ASTCDAssociation association) {
 
@@ -220,16 +256,25 @@ public class AssociationsMatcher {
     return association.getLeft();
   }
 
+  /**
+   * Check if object fits type of association-source.
+   */
   private boolean isObject4AssocSrc(ASTODNamedObject object, ASTCDAssociation association) {
     return isObjectInAssociation(object, association, association.getLeftQualifiedName(),
         association.getRightQualifiedName());
   }
 
+  /**
+   * Check if object fits type of association-target.
+   */
   private boolean isObject4AssocTarget(ASTODNamedObject object, ASTCDAssociation association) {
     return isObjectInAssociation(object, association, association.getRightQualifiedName(),
         association.getLeftQualifiedName());
   }
 
+  /**
+   * Extracted helper-method for isObject4AssocSrc and isObject4AssocTarget.
+   */
   private boolean isObjectInAssociation(ASTODNamedObject object, ASTCDAssociation association,
       ASTMCQualifiedName nameL2R, ASTMCQualifiedName nameR2L) {
     if (association.getCDAssocDir().isDefinitiveNavigableRight() && !association.getCDAssocDir()
@@ -246,15 +291,19 @@ public class AssociationsMatcher {
     }
   }
 
-  private boolean isInstanceOf(ASTODNamedObject object, String qName) {
+  /**
+   * Check if object is instance of type.
+   */
+  private boolean isInstanceOf(ASTODNamedObject object, String type) {
 
+    // check the intanceof-stereotype iff semantics is multi-instance open-world
     if (semantics.equals(CDSemantics.MULTI_INSTANCE_OPEN_WORLD)) {
       Optional<Set<String>> optSuper = MultiInstanceMatcher.getSuperSetFromStereotype(object);
       if (optSuper.isPresent()) {
-        return optSuper.get().contains(qName);
+        return optSuper.get().contains(type);
       }
     }
-    return CDInheritanceHelper.isSuperOf(qName, object.getMCObjectType().printType(pp), scope);
+    return CDInheritanceHelper.isSuperOf(type, object.getMCObjectType().printType(pp), scope);
   }
 
   /**
@@ -296,6 +345,10 @@ public class AssociationsMatcher {
     }
   }
 
+  /**
+   * Check if link-objects are instances of association types && srcRole == link.leftRole &&
+   * targetRole == link.rightRole.
+   */
   private boolean matchTypesAndRoles(ASTODLink link, ASTCDAssociation association, String srcRole,
       String targetRole) {
 
@@ -324,14 +377,16 @@ public class AssociationsMatcher {
         .equals(targetRole);
   }
 
-  private boolean compareNumberWithCardinality(ASTCDCardinality card, long elements) {
+  /**
+   * Check if objectNumber is valid according to cardinality card.
+   */
+  private boolean checkIfObjectNumberIsValid(ASTCDCardinality card, long objectNumber) {
 
-    //is *
     if (card.isMult()) {
       return true;
     }
     else if (card.isAtLeastOne()) {
-      if (elements < 1) {
+      if (objectNumber < 1) {
         Log.println("[CONFLICT] Link violates cardinality [+] constraint.");
         return false;
       }
@@ -340,7 +395,7 @@ public class AssociationsMatcher {
       }
     }
     else if (card.isOne()) {
-      if (elements != 1) {
+      if (objectNumber != 1) {
         Log.println("[CONFLICT] Link violates cardinality [1] constraint.");
         return false;
       }
@@ -349,7 +404,7 @@ public class AssociationsMatcher {
       }
     }
     else if (card.isOpt()) {
-      if (elements > 1) {
+      if (objectNumber > 1) {
         Log.println("[CONFLICT] Link violates cardinality [0..1] constraint.");
         return false;
       }
@@ -358,8 +413,9 @@ public class AssociationsMatcher {
       }
     }
 
-    return ((card.toCardinality().isNoUpperLimit() || elements <= card.getUpperBound())
-        && elements >= card.getLowerBound());
+    // for possible future extension of available cardinalities
+    return ((card.toCardinality().isNoUpperLimit() || objectNumber <= card.getUpperBound())
+        && objectNumber >= card.getLowerBound());
 
   }
 
