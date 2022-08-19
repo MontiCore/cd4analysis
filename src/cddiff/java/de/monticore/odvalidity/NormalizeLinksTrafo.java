@@ -6,7 +6,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LinkTrafo {
+public class NormalizeLinksTrafo {
 
   /**
    * Transforms all links into unidirectional, left to right links. Bidirectional links get split

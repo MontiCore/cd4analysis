@@ -50,16 +50,24 @@ public class MultiInstanceMatcher {
     ICD4CodeArtifactScope baseScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(baseCD);
     ICD4CodeArtifactScope compScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(compCD);
 
-    //Single Instance Checks
+    Log.print(System.lineSeparator() + String.format("[CHECK] Check if %s in sem(%s)\\sem(%s)",
+        od.getName(), baseCD.getCDDefinition().getName(), compCD.getCDDefinition().getName())
+        + System.lineSeparator());
+
+    Log.print(System.lineSeparator() + "BASE_CD: " + baseCD.getCDDefinition().getName()
+        + System.lineSeparator());
+
     //OD has to be in the semantics of the base CD
     if (!matcher.checkODValidity(semantic, odAll, baseCD)) {
-      Log.print("After first single instance check: OD is not in baseCD\n");
+      Log.println(System.lineSeparator() + "[RESULT] " + od.getName() + " is not a diff-witness.");
       return false;
     }
 
+    Log.print(System.lineSeparator() + "COMPARE_CD: " + compCD.getCDDefinition().getName()
+        + System.lineSeparator());
     if (!matcher.checkODValidity(semantic, odAll, compCD)) {
       //OD is a diffWitness for OD in semantics of base CD and in semantics of comp CD
-      Log.print("After second single instance check: OD is in baseCD and not in compCD\n");
+      Log.println(System.lineSeparator() + "[RESULT] " + od.getName() + " is a diff-witness.");
       return true;
     }
 
@@ -172,7 +180,7 @@ public class MultiInstanceMatcher {
     }
 
     //repeat checks for superset in stereotype of the object instead of the baseSuperSet
-    //if stereotype "instanceOf" is present
+    //if stereotype "instanceof" is present
     Optional<Set<String>> stereotypeSuperSet = getSuperSetFromStereotype(obj);
     if (stereotypeSuperSet.isPresent()) {
       //compare Super Sets
@@ -272,10 +280,10 @@ public class MultiInstanceMatcher {
   }
 
   /**
-   * Returns the set of "instanceOf" from an object if present in a stereotype Returns
+   * Returns the set of "instanceof" from an object if present in a stereotype Returns
    * Optional.empty() otherwise
    */
-  private Optional<Set<String>> getSuperSetFromStereotype(ASTODObject obj) {
+  public static Optional<Set<String>> getSuperSetFromStereotype(ASTODObject obj) {
 
     //get object modifier
     ASTModifier modifier = obj.getModifier();

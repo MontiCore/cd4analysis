@@ -34,7 +34,7 @@ public class AssociationsMatcherTest {
 
   List<ASTCDAssociation> cdAssociations;
 
-  ASTObjectDiagram od;
+  ASTODArtifact od;
 
   ASTCDCompilationUnit cd;
 
@@ -61,7 +61,7 @@ public class AssociationsMatcherTest {
 
     Optional<ASTCDCompilationUnit> cd = loader.loadCDModel(cdModel1);
     Optional<ASTODArtifact> od = loader.loadODModel(odModel1);
-    this.od = od.get().getObjectDiagram();
+    this.od = od.get();
     this.cd = cd.get();
 
     odLinks = ODHelper.getAllLinks(od.get().getObjectDiagram());
