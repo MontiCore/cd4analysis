@@ -2,6 +2,7 @@
 package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.ast.Comment;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -34,6 +35,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.syntax2semdiff.JavaCDDiff;
+import de.monticore.cddiff.syntaxdiff.SyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -120,6 +122,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           computeJavaSemDiff();
           CD4CodeMill.globalScope().clear();
         }
+
+        if (cmd.hasOption("syntaxdiff")) {
+          computeSyntaxDiff();
+          CD4CodeMill.globalScope().clear();
+        }
+
 
         if (!modelFile.isEmpty()) {
           ast = parse(modelFile);
@@ -736,6 +744,69 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     // generate diff-witnesses in outputPath
     sol.generateSolutionsToPath(Paths.get(outputPath));
+  }
+
+  protected void computeSyntaxDiff() throws IOException {
+    // parse the first CD
+    ASTCDCompilationUnit ast1;
+    String pathCD1;
+    if (!modelFile.isEmpty()) {
+      ast1 = parse(modelFile);
+      pathCD1 = modelFile;
+    }
+    else {
+      ast1 = parse(modelReader);
+      pathCD1 = modelReader.toString();
+    }
+
+    // parse the second CD
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syntaxdiff"));
+
+    String pathCD2 = cmd.getOptionValue("syntaxdiff");
+
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    new CD4CodeDirectCompositionTrafo().transform(ast1);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+
+
+    if (cmd.hasOption("showpath")){
+      ast1.add_PreComment(0, (new Comment(pathCD1)));
+      ast2.add_PreComment(0, (new Comment(pathCD2)));
+    }
+    SyntaxDiff syntaxDiff = new SyntaxDiff(ast1,ast2);
+
+    if (cmd.hasOption("semdiff")){
+      syntaxDiff.createSemDiff(outputPath);
+    }
+
+    if (cmd.hasOption("json")){
+      syntaxDiff.createJsonReport(outputPath);
+    }
+
+    String printType = cmd.getOptionValue("print", "diff");
+    if (printType.equals("diff")){
+      syntaxDiff.print();
+    }
+    if (printType.equals("cd1")){
+      syntaxDiff.printCD1();
+    }
+    if (printType.equals("cd2")){
+      syntaxDiff.printCD2();
+    }
+    if (printType.equals("both")){
+      syntaxDiff.printCD1();
+      syntaxDiff.printCD2();
+    }
+    if (printType.equals("all")){
+      syntaxDiff.print();
+      syntaxDiff.printCD1();
+      syntaxDiff.printCD2();
+    }
+    if (printType.equals("nocolor")){
+      syntaxDiff.printNoColour();
+    }
   }
 
   /**

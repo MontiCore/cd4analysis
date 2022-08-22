@@ -52,6 +52,7 @@ public class CDToolOptions {
     initPrettyPrinter(showPlantUML);
     initPlantUML();
     initDiffOptions();
+    initSyntaxDiffOptions();
   }
 
   protected void initCheck() {
@@ -320,6 +321,48 @@ public class CDToolOptions {
             + "`--semdiff` (optional). The method is either `reduction-based` or "
             + "`alloy-based` (default is: `reduction-based`).")
         .build());
+  }
+
+  /**
+   * adds options for syntax diff access
+   */
+  public void initSyntaxDiffOptions() {
+    options.addOption(Option.builder()
+      .longOpt("syntaxdiff")
+      .hasArg()
+      .type(String.class)
+      .argName("file")
+      .numberOfArgs(1)
+      .desc(
+        "Syntax based analysis of differences between class diagrams.")
+      .build());
+
+    options.addOption(Option.builder()
+      .longOpt("print")
+      .hasArg().type(String.class)
+      .argName("printType").optionalArg(true).numberOfArgs(1)
+      .desc("Type of print, options are: (default) diff, nocolor, cd1, cd2, both, all "
+      + "diff will print a coloured version of all diffs and matchs "
+      + "nocolor print an alternative with +, -, ~ indicators "
+      + "cd1, cd2, both will provide coloured version of the provided models "
+      + "all provides diff, cd1, cd2")
+      .build());
+
+    options.addOption(Option.builder()
+      .longOpt("json")
+      .desc("Creates a json report file in the output directory.")
+      .build());
+
+    options.addOption(Option.builder()
+      .longOpt("semDiff")
+      .desc("Creates at most one diff witness")
+      .build());
+
+    options.addOption(Option.builder()
+      .longOpt("showPath")
+      .desc("Each print contains the full path of the file, git commit hash included "
+        + "without this option only the file name is printed")
+      .build());
   }
 
 }

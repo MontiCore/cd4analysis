@@ -37,7 +37,7 @@ public class CDAssociationDiff extends AbstractDiffType {
       ppCardRight1, ppTypeRight1, ppQualifierRight1, ppRoleRight1, ppStereo2, ppModifier2,
       ppName2, ppType2, ppDir2, ppOrderLeft2, ppModifierLeft2, ppCardLeft2, ppTypeLeft2,
       ppQualifierLeft2, ppRoleLeft2, ppOrderRight2, ppModifierRight2, ppCardRight2, ppTypeRight2,
-      ppQualifierRight2, ppRoleRight2, assoCD1, assoCD2;
+      ppQualifierRight2, ppRoleRight2, assoCD1, assoCD2, assoCD1NC, assoCD2NC;
 
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   /**
@@ -133,6 +133,16 @@ public class CDAssociationDiff extends AbstractDiffType {
    * @param cd2Asso Association from the target(new) model
    */
   private void assoDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
+    this.assoCD1NC = pp.prettyprint((ASTCDAssociationNode) cd1Asso);
+    this.assoCD2NC = pp.prettyprint((ASTCDAssociationNode) cd2Asso);
+
+    if (assoCD1NC.contains("\n")) {
+      assoCD1NC = assoCD1NC.split("\n")[0];
+    }
+    if (assoCD2NC.contains("\n")) {
+      assoCD2NC = assoCD2NC.split("\n")[0];
+    }
+
 
     List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
     interpretation.append("Interpretation: ");
@@ -516,6 +526,14 @@ public class CDAssociationDiff extends AbstractDiffType {
 
   public String printCD2() {
     return assoCD2;
+  }
+
+  public String printCD1NC() {
+    return assoCD1NC;
+  }
+
+  public String printCD2NC() {
+    return assoCD2NC;
   }
 
 }
