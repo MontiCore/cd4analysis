@@ -88,7 +88,7 @@ public class ODContext {
     }
   }
 
-    Optional<Model> getModel (Context ctx, List < BoolExpr > constraints){
+ public  static   Optional<Model> getModel (Context ctx, List < BoolExpr > constraints){
       Solver s = ctx.mkSolver();
       for (BoolExpr expr : constraints)
         s.add(expr);

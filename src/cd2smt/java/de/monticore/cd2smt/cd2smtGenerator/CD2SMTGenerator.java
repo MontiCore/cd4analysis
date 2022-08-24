@@ -26,11 +26,11 @@ public class CD2SMTGenerator {
    */
   public CDContext cd2smt(ASTCDDefinition cd) {
     //setup
-    CDContext cdContext = new CDContext() ;
+
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     cfg.put("proof", "true");
-    cdContext.setContext( new Context(cfg));
+    CDContext cdContext = new CDContext(new Context(cfg)) ;
 
     //declare all classes
     for (ASTCDClass myclass : cd.getCDClassesList())

@@ -22,6 +22,7 @@ public class CDContext {
   private List<BoolExpr>  assocConstr  ;
   private List<BoolExpr> inherConstr ;
 
+
   public Context getContext() {
     return context;
   }
@@ -70,10 +71,10 @@ public class CDContext {
     this.smtClasses = smtClasses;
   }
 
-  public CDContext() {
+  public CDContext(Context context) {
+    this.context = context ;
     smtClasses = new HashMap<>();
     assocFunctions = new HashMap<>();
-
 
   }
 
