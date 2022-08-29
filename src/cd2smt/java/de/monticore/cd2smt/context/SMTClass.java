@@ -39,6 +39,11 @@ public class SMTClass {
     return sort;
   }
 
+
+  public ASTCDClass getASTCDClass() {
+    return Class;
+  }
+
   public void setSubClass(FuncDecl<Sort> getSubClass) {
     this.subClass = getSubClass;
   }
@@ -54,6 +59,9 @@ public class SMTClass {
   public void setConvert2Superclass(Optional<FuncDecl<UninterpretedSort>> convert2Superclass) {
     this.convert2Superclass = convert2Superclass;
   }
+
+
+
 
   public void setSort(UninterpretedSort sort) {
     this.sort = sort;
