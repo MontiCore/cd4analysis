@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
@@ -51,25 +52,18 @@ public class CDContext {
     this.assocConstr = assocConstr;
   }
 
-  public void setAssocFunctions(Map<ASTCDAssociation, FuncDecl<BoolSort>> assocFunctions) {
-    this.assocFunctions = assocFunctions;
-  }
+
 
   public void setClassConstrs(List<BoolExpr> classConstrs) {
     this.classConstrs = classConstrs;
   }
 
-  public void setContext(Context context) {
-    this.context = context;
-  }
 
   public void setInherConstr(List<BoolExpr> inherConstr) {
     this.inherConstr = inherConstr;
   }
 
-  public void setSmtClasses(Map<ASTCDClass, SMTClass> smtClasses) {
-    this.smtClasses = smtClasses;
-  }
+
 
   public CDContext(Context context) {
     this.context = context ;
@@ -92,6 +86,9 @@ public class CDContext {
 
   public String printAttributeNameSMT(ASTCDClass myClass, ASTCDAttribute myAttribute) {
     return fCharToLowerCase(myClass.getName()) + "_attrib_" + myAttribute.getName();
+  }
+  public String printAttributeNameSMT(ASTCDClass myClass, String attrName) {
+    return fCharToLowerCase(myClass.getName()) + "_attrib_" + attrName;
   }
 
   public String printSubclassFuncName(ASTCDClass myClass) {
@@ -145,6 +142,30 @@ public class CDContext {
         res = myClass;
     }
     return Optional.of(res);
+  }
+
+  public Optional <SMTClass> getSMTClass(String className){
+    for (Map.Entry<ASTCDClass,SMTClass> entry : smtClasses.entrySet()){
+      if (entry.getKey().getName().equals(className)){
+        return Optional.of(entry.getValue()) ;
+      }
+    }
+    return Optional.empty() ;
+  }
+  public Optional <SMTClass> getSMTClass(Expr<?extends  Sort> obj){
+    String className = obj.getSort().toString().split("_")[0] ;
+    return  getSMTClass(className) ;
+  }
+
+  public FuncDecl<?extends Sort> getAttributeFunc(SMTClass smtClass, String attr ){
+    assert smtClass != null ;
+    for (FuncDecl<? extends Sort> entry : smtClass.getAttributes()){
+      if (entry.getName().toString().equals(printAttributeNameSMT(smtClass.getASTCDClass(),attr))){
+        return entry ;
+      }
+    }
+    Log.error("attribute" + attr + "not found in the smtclass" + smtClass.getASTCDClass().getName());
+    return null ;
   }
 
 }

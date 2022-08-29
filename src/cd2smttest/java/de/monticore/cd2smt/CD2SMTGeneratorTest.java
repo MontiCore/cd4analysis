@@ -11,6 +11,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.se_rwth.commons.logging.Log;
 import org.junit.After;
 import org.junit.Assert;
@@ -110,7 +111,6 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
     CDContext cdContext2 = cd2ODGenerator.cd2smt(cd.get());
 
     Optional< ASTCDClass >wheel = cdContext2.getClass("Car",cd.get()) ;
-
     assertTrue(wheel.isPresent());
 
     Assert.assertEquals( cdContext2.getSmtClasses().get(wheel.get()).getAttributes().size(),4);

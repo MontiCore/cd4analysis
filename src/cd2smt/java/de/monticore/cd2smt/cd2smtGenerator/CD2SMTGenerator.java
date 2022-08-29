@@ -50,7 +50,7 @@ public class CD2SMTGenerator {
   //-----------------------------------Class--declaration---------------------------------------------------------------
   protected CDContext declareClass(CDContext cdContext, ASTCDDefinition cd, ASTCDClass myClass) {
     SMTClass smtClass = new SMTClass();
-
+    smtClass.setClass(myClass);
     //(declare-sort A_obj 0)
     String className = cdContext.printSMTClassName(myClass);
     UninterpretedSort classSort = cdContext.getContext().mkUninterpretedSort(cdContext.getContext().mkSymbol(className));
