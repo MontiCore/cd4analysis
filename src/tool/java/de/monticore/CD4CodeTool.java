@@ -2,6 +2,7 @@
 package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -288,6 +289,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
           if (cmd.hasOption("hwc")){
             generatorSetup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
+            TopDecorator topDecorator = new TopDecorator(generatorSetup.getHandcodedPath());
+            ast = topDecorator.decorate(ast);
           }
 
           generatorSetup.setGlex(glex);
@@ -346,7 +349,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     Log.initWARN();
   }
 
-  protected boolean handleArgs(String[] args) throws IOException, ParseException {
+  protected boolean handleArgs(String[] args) throws ParseException {
     cmd = cdToolOptions.handleArgs(args);
 
     /*if (cmd.hasOption("log")) {
@@ -485,7 +488,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       }
     }
     try (PrintWriter out = new PrintWriter(allElementsPath.toFile())) {
-      out.println(sb.toString());
+      out.println(sb);
     }
     catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -724,7 +727,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         outputPath);
 
     // test if solution is present
-    if (!optS.isPresent()) {
+    if (optS.isEmpty()) {
       Log.error("0xCDD01: Could not compute semdiff.");
       return;
     }
