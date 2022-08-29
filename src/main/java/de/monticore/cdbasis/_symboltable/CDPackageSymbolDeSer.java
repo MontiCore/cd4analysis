@@ -25,6 +25,7 @@ public class CDPackageSymbolDeSer extends CDPackageSymbolDeSerTOP {
 //         && toSerialize.getSpannedScope().getSymbolsSize() > 0) {
 //       toSerialize.getSpannedScope().accept(s2j.getTraverser());
 //     }
+    s2j.getTraverser().addTraversedElement(toSerialize.getSpannedScope());
 
     serializeAddons(toSerialize, s2j);
     p.endObject();
