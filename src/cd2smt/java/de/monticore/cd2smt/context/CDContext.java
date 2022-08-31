@@ -1,8 +1,8 @@
 package de.monticore.cd2smt.context;
 
+import de.monticore.cd2smt.Helper.SMTNameHelper;
 import com.microsoft.z3.*;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.prettyprint.IndentPrinter;
@@ -15,13 +15,13 @@ import java.util.*;
 public class CDContext {
 
 
-  private Map<ASTCDAssociation, FuncDecl<BoolSort>> assocFunctions;
-  private Map<ASTCDClass, SMTClass> smtClasses;
+  private final Map<ASTCDAssociation, SMTAssociation> smtAssociations;
+  private final Map<ASTCDClass, SMTClass> smtClasses;
   private Context context;
 
-  private List<BoolExpr> classConstrs ;
-  private List<BoolExpr>  assocConstr  ;
-  private List<BoolExpr> inherConstr ;
+  private List<BoolExpr> classConstrs;
+  private List<BoolExpr> assocConstr;
+  private List<BoolExpr> inherConstr;
 
 
   public Context getContext() {
@@ -40,8 +40,8 @@ public class CDContext {
     return inherConstr;
   }
 
-  public Map<ASTCDAssociation, FuncDecl<BoolSort>> getAssocFunctions() {
-    return assocFunctions;
+  public Map<ASTCDAssociation, SMTAssociation> getSMTAssociations() {
+    return smtAssociations;
   }
 
   public Map<ASTCDClass, SMTClass> getSmtClasses() {
@@ -68,7 +68,7 @@ public class CDContext {
   public CDContext(Context context) {
     this.context = context ;
     smtClasses = new HashMap<>();
-    assocFunctions = new HashMap<>();
+    smtAssociations = new HashMap<>();
 
   }
 
@@ -81,67 +81,6 @@ public class CDContext {
       }
     }
     return subclasses;
-  }
-
-
-  public String printAttributeNameSMT(ASTCDClass myClass, ASTCDAttribute myAttribute) {
-    return fCharToLowerCase(myClass.getName()) + "_attrib_" + myAttribute.getName();
-  }
-  public String printAttributeNameSMT(ASTCDClass myClass, String attrName) {
-    return fCharToLowerCase(myClass.getName()) + "_attrib_" + attrName;
-  }
-
-  public String printSubclassFuncName(ASTCDClass myClass) {
-    return fCharToLowerCase(myClass.getName()) + "_get_subclass";
-  }
-
-  public String printSMTClassName(ASTCDClass myClass) {
-    return myClass.getName() + "_obj";
-  }
-
-  public String printSMTAssociationName(ASTCDAssociation myAssociation) {
-    String right = myAssociation.getRight().getName();
-    String left = myAssociation.getLeft().getName();
-    return fCharToLowerCase(left) + "_" + fCharToLowerCase(right) + "_assoc";
-  }
-
-  public String fCharToLowerCase(String str) {
-    return Character.toLowerCase(str.charAt(0)) + str.substring(1);
-  }
-
-  public Sort parseAttribType2SMT(Context ctx, ASTCDAttribute myAttribute) {
-    String att = myAttribute.printType();
-    switch (att) {
-      case "boolean":
-        return ctx.mkBoolSort();
-      case "int":
-        return ctx.mkIntSort();
-      case "double":
-        return ctx.mkRealSort();
-      case "java.lang.String":
-        return ctx.mkStringSort();
-      default:
-        System.out.println("type not support \n interpret like a String");
-        return ctx.mkStringSort();
-    }
-  }
-
-  public Optional<List<ASTCDAttribute>> getAttributeList(String className, ASTCDDefinition cd) {
-    List<ASTCDAttribute> attributes = new LinkedList<>();
-    for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className))
-        attributes = myClass.getCDAttributeList();
-    }
-    return Optional.of(attributes);
-  }
-
-  public Optional<ASTCDClass> getClass(String className, ASTCDDefinition cd) {
-    ASTCDClass res = new ASTCDClass();
-    for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className))
-        res = myClass;
-    }
-    return Optional.of(res);
   }
 
   public Optional <SMTClass> getSMTClass(String className){
@@ -160,8 +99,8 @@ public class CDContext {
   public FuncDecl<?extends Sort> getAttributeFunc(SMTClass smtClass, String attr ){
     assert smtClass != null ;
     for (FuncDecl<? extends Sort> entry : smtClass.getAttributes()){
-      if (entry.getName().toString().equals(printAttributeNameSMT(smtClass.getASTCDClass(),attr))){
-        return entry ;
+      if (entry.getName().toString().equals(SMTNameHelper.printAttributeNameSMT(smtClass.getASTCDClass(), attr))) {
+        return entry;
       }
     }
     Log.error("attribute" + attr + "not found in the smtclass" + smtClass.getASTCDClass().getName());

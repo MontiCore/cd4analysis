@@ -1,0 +1,19 @@
+classdiagram STTest {
+  class Car {
+     boolean isExpensive ;
+     java.lang.String name;
+     int numberOfWheel ;
+     double price ;
+   }
+
+  class Motor {
+     double price ;
+  }
+
+  class Driver{
+   java.lang.String name ;
+  }
+
+   association [0..1] Car(car)      --  (motor)    Motor[1..*];
+   association [0..1] Car           --             Driver[1..*];
+ }
