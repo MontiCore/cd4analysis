@@ -12,17 +12,4 @@ classdiagram STTest {
     java.lang.String manufacturer ;
   }
 
-
- class Motor {
-    double price ;
- }
-
-
-
-
-
-  association [1] Car (car) -- (wheel) Wheel [1];
-  association [1] Car   (car)     -- (motor)   Motor   [1];
-
-
 }

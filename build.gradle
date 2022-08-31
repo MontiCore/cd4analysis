@@ -126,7 +126,8 @@ configurations {
 
 dependencies {
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-  grammar("$var_path:monticore-grammar:$mc_version") {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    grammar("$var_path:monticore-grammar:$mc_version") {
     capabilities {
       requireCapability("$var_path:monticore-grammar-grammars")
     }

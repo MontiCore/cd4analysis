@@ -1,16 +1,15 @@
 package de.monticore.cd2smt.context;
 
+import de.monticore.cd2smt.Helper.CDHelper;
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
 public class ODContext {
-  private Map<Expr<Sort>, SMTObject> objectMap;
-
-
+  private final Map<Expr<Sort>, SMTObject> objectMap;
 
   protected void addObject(Expr<Sort> expr, SMTObject obj) {
     objectMap.put(expr, obj);
@@ -20,72 +19,68 @@ public class ODContext {
     return objectMap;
   }
 
-  public void setObjectMap(Map<Expr<Sort>, SMTObject> objectMap) {
-    this.objectMap = objectMap;
-  }
 
   public ODContext (CDContext cdContext, ASTCDDefinition cd) {
     objectMap = new HashMap<>();
-    List<Expr> objToDelete = new ArrayList<>();
+    List<Expr<? extends Sort>> objToDelete = new ArrayList<>();
 
 
     //add constraints and get the Model
     List<BoolExpr> constraints = cdContext.getClassConstrs();
     constraints.addAll(cdContext.getInherConstr());
     constraints.addAll(cdContext.getAssocConstr());
+    Optional<Model> modelOpt = getModel(cdContext.getContext(), constraints);
+    if (modelOpt.isEmpty()) {
+      Log.error("************Model not found************Model not found************Model not found************Model not found");
+    }
+    assert modelOpt.isPresent();
+    Model model = modelOpt.get();
 
-    Optional<Model> modelopt = getModel(cdContext.getContext(), constraints);
-    if (modelopt.isPresent()) {
-     Model model = modelopt.get() ;
-      //get all objects
-      for (Sort mySort : model.getSorts()) {
-        for (Expr<Sort> element : model.getSortUniverse(mySort)) {
-          SMTObject obj = new SMTObject();
-          for (FuncDecl func : cdContext.getSmtClasses().get(cdContext.getClass(mySort.toString().split("_")[0], cd).
-            get()).getAttributes()) {
-            obj.addAttribute(func, model.eval(func.apply(element), true));
-            obj.setSmtExpr( element);
-          }
-          addObject(element, obj);
+    //get all objects
+    for (Sort mySort : model.getSorts()) {
+      for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
+        SMTObject obj = new SMTObject(smtExpr);
+        for (FuncDecl<Sort> func : cdContext.getSmtClasses().get(CDHelper.getClass(mySort.toString().split("_")[0], cd)).getAttributes()) {
+          obj.addAttribute(func, model.eval(func.apply(smtExpr), true));
         }
-      }
-
-
-      //get link between Objects
-      for (Map.Entry<ASTCDAssociation, FuncDecl<BoolSort>> assoc : cdContext.getAssocFunctions().entrySet()) {
-        Sort leftSort = assoc.getValue().getDomain()[0];
-        Sort rightSort = assoc.getValue().getDomain()[1];
-
-        for (Map.Entry<Expr<Sort>, SMTObject> leftObj : objectMap.entrySet())
-          for (Map.Entry<Expr<Sort>, SMTObject> rightObj : objectMap.entrySet())
-            if ((leftSort.equals(leftObj.getValue().getSmtExpr().getSort())) &&
-              (rightObj.getValue().getSmtExpr().getSort().equals(rightSort)) &&
-              (model.eval(assoc.getValue().apply(leftObj.getValue().getSmtExpr(), rightObj.getValue().getSmtExpr()),
-                true).getBoolValue() == Z3_lbool.Z3_L_TRUE)) {
-              objectMap.get(leftObj.getKey()).getLinkedObjects().add(rightObj.getValue());
-
-            }
-      }
-      //get the subclass instances
-      for (Map.Entry<Expr<Sort>, SMTObject> obj : objectMap.entrySet()) {
-        Optional<FuncDecl<UninterpretedSort>> converTo = cdContext.getSmtClasses().
-          get(cdContext.getClass(obj.getValue().getSmtExpr().getSort().toString().
-            split("_")[0], cd).get()).getConvert2Superclass();
-        if (converTo.isPresent()) {
-          Expr subObj = model.eval(converTo.get().apply(obj.getValue().getSmtExpr()), true);
-          //add it to the subclass
-          objectMap.get(obj.getKey()).setSuperClass( Optional.of(objectMap.get(subObj)));
-          objToDelete.add(subObj);
-
-
-        }
-      }
-      ////remove the subclass instances and their links
-      for (Expr expr : objToDelete) {
-        SMTObject obj = objectMap.get(expr);
-        objectMap.remove(expr);
+        addObject(smtExpr, obj);
       }
     }
+
+
+    //get link between Objects
+    for (SMTAssociation assoc : cdContext.getSMTAssociations().values()) {
+      Sort leftSort = assoc.getAssocFunc().getDomain()[0];
+      Sort rightSort = assoc.getAssocFunc().getDomain()[1];
+
+      for (SMTObject leftObj : objectMap.values()) {
+        for (SMTObject rightObj : objectMap.values()) {
+          if ((leftObj.hasSort(leftSort)) && (rightObj.hasSort(rightSort))) {
+            if ((model.eval(assoc.getAssocFunc().apply(leftObj.getSmtExpr(), rightObj.getSmtExpr()), true).getBoolValue() == Z3_lbool.Z3_L_TRUE)) {
+              leftObj.getLinkedObjects().add(new LinkedSMTObject(rightObj, assoc, false));
+            }
+          }
+        }
+      }
+    }
+
+    //get the superclass instances
+    for (SMTObject obj : objectMap.values()) {
+      FuncDecl<UninterpretedSort> converTo = cdContext.getSmtClasses().
+        get(CDHelper.getClass(obj.getSmtExpr().getSort().toString().
+          split("_")[0], cd)).getConvert2Superclass();
+      if (converTo != null) {
+        Expr<? extends Sort> subObj = model.eval(converTo.apply(obj.getSmtExpr()), true);
+        obj.setSuperClass(objectMap.get(subObj));
+        objToDelete.add(subObj);
+      }
+    }
+    ////remove the subclass instances and their links
+    for (Expr<? extends Sort> expr : objToDelete) {
+      objectMap.remove(expr);
+    }
+
+
   }
 
  public  static   Optional<Model> getModel (Context ctx, List < BoolExpr > constraints){
@@ -95,10 +90,10 @@ public class ODContext {
       if (s.check() == Status.SATISFIABLE)
         return Optional.of(s.getModel());
       else {
-        System.out.println("UNSAT--UNSAT--UNSAT--UNSAT--UNSAT--");
         return Optional.empty();
       }
 
   }
+
 
 }

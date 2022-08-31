@@ -1,5 +1,6 @@
+
 classdiagram STTest {
   class Car {
-  //test for an empty class
+
   }
 }
