@@ -1,6 +1,6 @@
 package de.monticore.cddiff.ow2cw.expander;
 
-import de.monticore.cddiff.cd2alloy.CD2AlloyQNameHelper;
+import de.monticore.cddiff.CDQNameHelper;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -27,7 +27,7 @@ public class FullExpander implements CDExpander {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     for (ASTCDType type : typeList) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(type.getSymbol().getFullName());
-      if (!opt.isPresent()) {
+      if (opt.isEmpty()) {
         if (type instanceof ASTCDInterface) {
           addDummyInterface((ASTCDInterface) type).ifPresent(
               newInterface -> addMissingAttributes(newInterface, type.getCDAttributeList()));
@@ -48,7 +48,7 @@ public class FullExpander implements CDExpander {
     // add enums and enum constants exclusive to first
     for (ASTCDEnum astcdEnum : enumCol) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
-      if (!opt.isPresent()) {
+      if (opt.isEmpty()) {
         addClone(astcdEnum);
       }
       else {
@@ -149,7 +149,7 @@ public class FullExpander implements CDExpander {
           roleName = original.getRight().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.processQName2RoleName(
+          roleName = CDQNameHelper.processQName2RoleName(
               original.getRightQualifiedName().getQName());
         }
 
@@ -164,7 +164,7 @@ public class FullExpander implements CDExpander {
           roleName = original.getLeft().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.processQName2RoleName(
+          roleName = CDQNameHelper.processQName2RoleName(
               original.getLeftQualifiedName().getQName());
         }
 
@@ -193,7 +193,7 @@ public class FullExpander implements CDExpander {
     Set<ASTCDAssociation> newAssocs = new HashSet<>();
     for (ASTCDType srcType : typeCol) {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(srcType.getSymbol().getFullName());
-      if (!opt.isPresent()) {
+      if (opt.isEmpty()) {
         addDummyClass(srcType);
       }
       if (srcType.getModifier().isPresentStereotype() && srcType.getModifier()

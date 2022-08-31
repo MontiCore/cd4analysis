@@ -1,10 +1,10 @@
-package de.monticore.cddiff.cd2alloy;
+package de.monticore.cddiff;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CD2AlloyQNameHelper {
+public class CDQNameHelper {
 
   /**
    * This helper functions processes parts of a name such that they can be used in Alloy
@@ -16,7 +16,9 @@ public class CD2AlloyQNameHelper {
 
     // Process to role name only
     if (toRoleName) {
-      return parts.get(parts.size()-1).toLowerCase();
+      char[] roleName = parts.get(parts.size()-1).toCharArray();
+      roleName[0] = Character.toLowerCase(roleName[0]);
+      return new String (roleName);
     }
 
     // Combine all parts using "_" as separator instead of "."
