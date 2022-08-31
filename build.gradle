@@ -161,7 +161,7 @@ dependencies {
   cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
   cddifftestImplementation(sourceSets.test.output.classesDirs)
 
-  // dependencies for de.monticore.cdmerge
+  // dependencies for cdmerge
   cdmergeImplementation(sourceSets.main.output.classesDirs)
 
   cdmergetestImplementation(sourceSets.cdmerge.output.classesDirs)
@@ -452,7 +452,7 @@ task cddiffJar(type: Jar) {
 // build test sources jar in addition
 task cdmergeJar(type: Jar) {
     from sourceSets.cdmerge.output + sourceSets.cdmerge.allSource
-    archiveClassifier = "de.monticore.cdmerge"
+    archiveClassifier = "cdmerge"
 }
 
 // build test sources jar in addition
