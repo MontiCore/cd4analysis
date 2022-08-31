@@ -49,6 +49,8 @@ ext {
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
   mockito_version = "3.11.1"
+  logback_version = "1.2.3"
+  apache_commons_version = '4.4'
 }
 
 // configure non-standard source sets
@@ -162,7 +164,9 @@ dependencies {
   cddifftestImplementation(sourceSets.test.output.classesDirs)
 
   // dependencies for cdmerge
+  cdmergeImplementation "org.apache.commons:commons-collections4:$apache_commons_version"
   cdmergeImplementation(sourceSets.main.output.classesDirs)
+
 
   cdmergetestImplementation(sourceSets.cdmerge.output.classesDirs)
   cdmergetestImplementation(sourceSets.test.output.classesDirs)

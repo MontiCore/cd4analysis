@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+package inheritanceAttributePullup3;
+classdiagram A {
+
+
+
+	class Person{
+		String name;
+		int persNumber;
+	}
+	
+	class Customer extends Person {
+		Date birthday;
+		String company;
+	}
+	
+
+		
+}

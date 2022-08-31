@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package rolesWithAssocName;
+classdiagram mergedCD {
+	class Office;
+	class Person;
+	association Office (workPlace) <-> (worker) Person;
+}

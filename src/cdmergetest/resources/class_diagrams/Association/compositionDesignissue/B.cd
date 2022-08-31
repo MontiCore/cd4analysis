@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package compositionDesignissue;
+classdiagram B {
+	class Office;
+	class Customer;
+	composition serves Office -> Customer;
+}

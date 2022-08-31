@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package conflictCyclicInheritance;
+classdiagram A {
+	class Human;
+	class Person extends Human;
+	class Employee extends Person;
+
+}

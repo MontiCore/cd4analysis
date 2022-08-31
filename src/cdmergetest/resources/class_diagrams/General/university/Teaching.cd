@@ -1,0 +1,52 @@
+/* (c) https://github.com/MontiCore/monticore */
+package university;
+classdiagram Teaching{
+
+	class Person{
+		String forename;
+	}
+	
+	class Employee extends Person{
+		int emplNumber;
+	}
+
+	class Student extends Person {
+		int enrollmentNumber;
+	}
+	
+	
+	class Lecturer extends Person{
+		
+	}
+	
+	class CourseOfStudy{
+		String name;
+	    String researchArea;
+	}
+	
+	association Student -> CourseOfStudy;
+	
+
+	class Lecture{
+		String title;
+		int credits;
+	}
+	
+	association Lecture -> CourseOfStudy [1..*];
+	association Lecture -> (attendees) Student [*];
+	association [*] Lecture -> Lecturer;
+	
+	class Room{
+		String building;
+	}
+	
+	class Schedule{
+		Date start;
+		Date end;
+	}
+	
+    association Lecture -> Schedule [*];	
+	association [*] Schedule <-> Room [1];
+	
+	association booking Person -> (theRoom) Room [1];
+}

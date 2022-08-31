@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package heterogenousClassEnum;
+classdiagram A {
+	
+	class ABC{
+		String alphabet;
+	}
+}

@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package transitiveInheritanceInterfaces;
+classdiagram B {
+	interface Person;
+	interface Staff extends Person;	
+	interface Employee extends Staff;
+}

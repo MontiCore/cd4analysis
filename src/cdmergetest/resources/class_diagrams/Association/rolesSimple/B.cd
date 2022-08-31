@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package rolesSimple;
+classdiagram B {
+	class Office;
+	class Person;
+	association employment Office (workPlace) <- Person;
+}

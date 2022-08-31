@@ -1,0 +1,36 @@
+/* (c) https://github.com/MontiCore/monticore */
+package allFlavours;
+classdiagram CDB{
+
+	/* interface two*/
+	interface I2;
+
+	class A{
+		String forename;
+		String place;
+	}
+	
+	//Class B
+	class B extends A implements I2{
+		String bb;
+	}
+	
+	class C extends B implements I2{
+		String name;
+	}
+	
+	class D;
+	
+	class E{
+		//Lastname from class E
+		String lastname;
+		//attribute test in class E
+		String test;
+		int drei;
+	}	
+
+	association assoc1 [*] A -> C [*];
+	
+	//Another fine association
+	association D [String] -- E ;
+}

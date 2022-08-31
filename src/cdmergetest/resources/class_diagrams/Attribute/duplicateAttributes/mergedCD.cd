@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package duplicateAttributes;
+classdiagram mergedCD {
+	class Person {
+		String name;
+	}
+}

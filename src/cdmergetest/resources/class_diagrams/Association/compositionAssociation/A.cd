@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package compositionAssociation;
+classdiagram A {
+	class Contract;
+	class Person;
+	
+	association employment Person -> Contract [1];
+	
+}

@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package transitiveInheritanceClasses;
+classdiagram A {
+	class Person;
+	
+	class Employee extends Person {
+		int id;
+		String branch;
+	}	
+}

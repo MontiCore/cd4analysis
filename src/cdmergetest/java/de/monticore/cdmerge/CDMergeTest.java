@@ -4,7 +4,8 @@ import org.junit.Test;
 
 public class CDMergeTest {
   @Test
-  public void testMerge(){
+  public void testMerge() {
     //todo
   }
+
 }

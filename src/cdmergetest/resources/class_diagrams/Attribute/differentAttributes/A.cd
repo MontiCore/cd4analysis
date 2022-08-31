@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package differentAttributes;
+classdiagram A {
+	class Person {
+		String name;
+	}
+	
+	class Office;
+	
+	class Room{
+		int roomNumber;
+	}
+	
+	class NoAttributesA;
+}

@@ -7,13 +7,14 @@ import java.util.Optional;
 import java.util.Set;
 
 public class CDMerge {
-  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs){
+  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs) {
     Optional<ASTCDCompilationUnit> optAST = inputs.stream().findAny();
-    if (optAST.isPresent()){
+    if (optAST.isPresent()) {
       return optAST.get();
 
     }
     Log.error("No input!");
     return null;
   }
+
 }

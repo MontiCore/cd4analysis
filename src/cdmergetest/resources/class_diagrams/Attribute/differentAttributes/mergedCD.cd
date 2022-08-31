@@ -1,0 +1,20 @@
+package differentAttributes;
+classdiagram mergedCD {
+	
+	class Person {
+		String name;
+		int id;
+	}
+	
+	class Office{
+		int number;
+	}
+	
+	class Room{
+		int roomNumber;
+	}
+	
+	class NoAttributesA;
+	
+	class NoAttributesB;
+}
