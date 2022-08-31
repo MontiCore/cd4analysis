@@ -4,53 +4,50 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 
+
 import java.util.*;
 
 public class SMTObject {
 
-    private Expr<Sort> smtExpr;
-    private Optional<SMTObject> superClass;
-    private Map<FuncDecl, Expr<Sort>> attributes = new HashMap<>();
-    private List<SMTObject> linkedObjects;
+    private final Expr<? extends Sort> smtExpr;
 
-    SMTObject() {
-      superClass = Optional.empty();
+    private SMTObject superClass;
+    private final Map<FuncDecl<? extends Sort>, Expr<Sort>>   attributes = new HashMap<>();
+    private final List< LinkedSMTObject> linkedObjects;
+
+    SMTObject(Expr<? extends  Sort> smtExpr) {
+      this.smtExpr = smtExpr;
       linkedObjects = new ArrayList<>();
     }
-
-    public void addAttribute(FuncDecl name, Expr<Sort> value) {
+  public boolean isPresentSuperclass(){
+      return  this.superClass != null;
+  }
+    public void addAttribute(FuncDecl<? extends  Sort> name, Expr<Sort> value) {
       attributes.put(name, value);
     }
 
-  public Expr<Sort> getSmtExpr() {
+  public Expr<? extends Sort> getSmtExpr() {
     return smtExpr;
   }
 
-  public List<SMTObject> getLinkedObjects() {
+  public List<LinkedSMTObject> getLinkedObjects() {
     return linkedObjects;
   }
 
-  public void setAttributes(Map<FuncDecl, Expr<Sort>> attributes) {
-    this.attributes = attributes;
-  }
-
-  public Map<FuncDecl, Expr<Sort>> getAttributes() {
+  public Map<FuncDecl<? extends  Sort>, Expr<Sort>> getAttributes() {
     return attributes;
   }
 
-  public Optional<SMTObject> getSuperClass() {
+  public SMTObject getSuperClass() {
     return superClass;
   }
 
-  public void setLinkedObjects(List<SMTObject> linkedObjects) {
-    this.linkedObjects = linkedObjects;
-  }
-
-  public void setSmtExpr(Expr<Sort> smtExpr) {
-    this.smtExpr = smtExpr;
-  }
-
-  public void setSuperClass(Optional<SMTObject> superClass) {
+  public void setSuperClass(SMTObject superClass) {
     this.superClass = superClass;
   }
+
+  public boolean hasSort(Sort sort){
+      return sort.equals(this.getSmtExpr().getSort());
+  }
+
 }

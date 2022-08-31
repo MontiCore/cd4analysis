@@ -1,21 +1,24 @@
 package de.monticore.cd2smt.context;
 
 import com.microsoft.z3.*;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 
 import java.util.*;
 
 public class SMTClass {
 
-   private ASTCDClass Class;
-   private UninterpretedSort sort;
-   private List<FuncDecl<Sort>> attributes;
-   private DatatypeSort subclassDatatype;
-   private FuncDecl<Sort> subClass;
-   private Map<ASTCDClass, Constructor> subClassConstrList;
-   private Optional<FuncDecl<UninterpretedSort>> convert2Superclass;
+  private ASTCDClass Class;
+  private UninterpretedSort sort;
+  private final List<FuncDecl<Sort>> attributes;
+  private DatatypeSort<? extends Sort> subclassDatatype;
+  private FuncDecl<Sort> subClass;
+  private final Map<ASTCDAssociation, SMTAssociation> smtAssociations;
+  private final Map<ASTCDClass, Constructor<? extends Sort>> subClassConstrList;
+  private FuncDecl<UninterpretedSort> convert2Superclass;
 
-  public DatatypeSort getSubclassDatatype() {
+
+  public DatatypeSort<? extends Sort> getSubclassDatatype() {
     return subclassDatatype;
   }
 
@@ -27,16 +30,20 @@ public class SMTClass {
     return attributes;
   }
 
-  public Map<ASTCDClass, Constructor> getSubClassConstrList() {
+  public Map<ASTCDClass, Constructor<? extends Sort>> getSubClassConstrList() {
     return subClassConstrList;
   }
 
-  public Optional<FuncDecl<UninterpretedSort>> getConvert2Superclass() {
+  public FuncDecl<UninterpretedSort> getConvert2Superclass() {
     return convert2Superclass;
   }
 
   public UninterpretedSort getSort() {
     return sort;
+  }
+
+  public Map<ASTCDAssociation, SMTAssociation> getSMTAssociations() {
+    return smtAssociations;
   }
 
 
@@ -48,36 +55,29 @@ public class SMTClass {
     this.subClass = getSubClass;
   }
 
-  public void setAttributes(List<FuncDecl<Sort>> attributes) {
-    this.attributes = attributes;
-  }
+
 
   public void setClass(ASTCDClass aClass) {
     Class = aClass;
   }
 
-  public void setConvert2Superclass(Optional<FuncDecl<UninterpretedSort>> convert2Superclass) {
+  public void setConvert2Superclass(FuncDecl<UninterpretedSort> convert2Superclass) {
     this.convert2Superclass = convert2Superclass;
   }
-
-
 
 
   public void setSort(UninterpretedSort sort) {
     this.sort = sort;
   }
 
-  public void setSubClassConstrList(Map<ASTCDClass, Constructor> subClassConstrList) {
-    this.subClassConstrList = subClassConstrList;
-  }
 
-  public void setSubclassDatatype(DatatypeSort subclassDatatype) {
+  public void setSubclassDatatype(DatatypeSort<? extends Sort> subclassDatatype) {
     this.subclassDatatype = subclassDatatype;
   }
 
   public SMTClass() {
-      attributes = new ArrayList<>();
+    smtAssociations = new HashMap<>();
+    attributes = new ArrayList<>();
       subClassConstrList = new HashMap<>();
-      convert2Superclass = Optional.empty();
     }
 }
