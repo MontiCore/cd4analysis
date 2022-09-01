@@ -19,7 +19,7 @@ public class SMT2ODGenerator {
   public SMT2ODGenerator() {
   }
 
-  public ASTODArtifact buildOd(ODContext odContext) {
+  public ASTODArtifact buildOd(ODContext odContext, String ODName) {
     OD4ReportMill.init();
     List<ASTODElement> elementList = new ArrayList<>();
 
@@ -35,13 +35,15 @@ public class SMT2ODGenerator {
 
     return OD4ReportMill.oDArtifactBuilder()
       .setObjectDiagram(OD4ReportMill.objectDiagramBuilder()
-        .setName("SMTOD")
+        .setName(ODName)
         .setStereotypeAbsent()
         .setODElementsList(elementList)
         .build())
       .build();
   }
-
+  public ASTODArtifact buildOd(ODContext odContext) {
+    return  buildOd(odContext,"SMTOD");
+  }
   ASTODNamedObject buildObject(SMTObject obj) {
     OD4ReportMill.init();
     List<ASTODAttribute> attributeList = new ArrayList<>();
