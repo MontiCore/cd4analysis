@@ -1,0 +1,82 @@
+package de.monticore.cd2smt;
+
+import com.microsoft.z3.FuncDecl;
+import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.context.CDContext;
+import de.monticore.cd2smt.context.SMTClass;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffTestBasis;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
+
+public class CD2SMTGeneratorTest extends CDDiffTestBasis {
+  protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
+
+  CDContext buildCDContext(String fileName) {
+    ASTCDCompilationUnit cpt2 = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
+    CD2SMTGenerator cd2ODGenerator = new CD2SMTGenerator();
+    return cd2ODGenerator.cd2smt(cpt2);
+  }
+
+  @Test
+  public void testDeclare_empty_class() {
+    CDContext cdContext = buildCDContext("car1.cd");
+    Assert.assertEquals(cdContext.getSmtClasses().size(), 1);
+
+    for (Map.Entry<ASTCDClass, SMTClass> entry : cdContext.getSmtClasses().entrySet()) {
+      Assert.assertEquals(entry.getValue().getAttributes().size(), 0);
+    }
+  }
+
+  @Test
+  public void testDeclareClass_with_attribute() {
+
+    CDContext cdContext = buildCDContext("car11.cd");
+
+    Assert.assertEquals(cdContext.getSmtClasses().size(), 1);
+
+    Set<Map.Entry<ASTCDClass, SMTClass>> classes = cdContext.getSmtClasses().entrySet();
+    int is = 0;
+    int rs = 0;
+    int bs = 0;
+    int ss = 0;
+    for (Map.Entry<ASTCDClass, SMTClass> entry : classes) {
+      Assert.assertEquals(entry.getValue().getAttributes().size(), 4);
+      for (FuncDecl<Sort> attr : entry.getValue().getAttributes()) {
+        if ((attr.getRange().equals(cdContext.getContext().mkRealSort()))) {
+          rs++;
+        }
+        if ((attr.getRange().equals(cdContext.getContext().mkBoolSort()))) {
+          bs++;
+        }
+        if ((attr.getRange().equals(cdContext.getContext().mkIntSort()))) {
+          is++;
+        }
+        if ((attr.getRange().equals(cdContext.getContext().mkStringSort()))) {
+          ss++;
+        }
+      }
+      Assert.assertEquals(is, 1);
+      Assert.assertEquals(rs, 1);
+      Assert.assertEquals(bs, 1);
+      Assert.assertEquals(ss, 1);
+
+    }
+  }
+
+  @Test
+  public void TestAssocDeclaration() {
+    CDContext cdContext = buildCDContext("car12.cd");
+    Assert.assertEquals(cdContext.getSmtClasses().size(), 3);
+    Assert.assertEquals(cdContext.getSMTAssociations().size(), 2);
+  }
+
+}
+
+

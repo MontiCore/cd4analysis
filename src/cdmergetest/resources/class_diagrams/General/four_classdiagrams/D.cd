@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package four_classdiagrams;
+classdiagram D {
+	abstract class Living;
+	class Animal;
+	composition Living <- Animal;
+	class Building;
+	class Office extends Building {
+		int rooms;
+	}
+	class House extends Building;	
+	enum Color { BLACK, RED; }
+}

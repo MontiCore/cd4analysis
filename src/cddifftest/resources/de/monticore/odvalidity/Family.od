@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import MyFamily.*;
+
+objectdiagram MyFamily {
+  alice:Person {
+    age = 29;
+    cars = [
+      :BMW {
+        bought = "2020-01-05";
+        color = BLUE;
+      },
+      tiger:Jaguar {
+        bought = "2000/01/05";
+        color = RED;
+        length = 5.3;
+      }
+    ];
+  };
+  bob:Person {
+    cars -> tiger;
+  };
+  link married alice (person) <-> (person) bob;
+}

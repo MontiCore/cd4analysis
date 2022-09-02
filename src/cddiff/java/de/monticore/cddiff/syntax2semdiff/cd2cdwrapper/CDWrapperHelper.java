@@ -7,7 +7,7 @@ import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.cd2alloy.CD2AlloyQNameHelper;
+import de.monticore.cddiff.CDQNameHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
 
@@ -895,13 +895,13 @@ public class CDWrapperHelper {
       ASTCDAssociation astcdAssociation) {
     if (!astcdAssociation.getLeft().isPresentCDRole()) {
       String leftRoleName =
-          CD2AlloyQNameHelper.partHandler(astcdAssociation.getLeftReferenceName(), true);
+          CDQNameHelper.partHandler(astcdAssociation.getLeftReferenceName(), true);
       astcdAssociation.getLeft()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(leftRoleName).build());
     }
     if (!astcdAssociation.getRight().isPresentCDRole()) {
       String rightRoleName =
-          CD2AlloyQNameHelper.partHandler(astcdAssociation.getRightReferenceName(), true);
+          CDQNameHelper.partHandler(astcdAssociation.getRightReferenceName(), true);
       astcdAssociation.getRight()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(rightRoleName).build());
     }

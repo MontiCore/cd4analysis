@@ -1,0 +1,37 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package examples.cd;
+
+classdiagram ClassMatcherCD {
+
+  class Person {
+    List<String> nicknames;
+    int age;
+	String name;
+	double weight;
+	Color eyes;
+  }
+  
+  class House {
+	String city;
+  }
+
+  package CarPackage {
+	
+	class Car {
+		String productionPlace;
+		int age;
+	}
+
+	class Audi extends Car {
+		double length;
+	}
+  }
+
+  enum Color {
+    BLUE, GREEN, BROWN;
+  }
+  
+  association car [1] Person <-> Car [1];
+
+}

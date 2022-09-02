@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package qualifierConflict;
+classdiagram A {
+	class CA;
+	
+	class CB{
+		int key;
+	}
+	class CC{
+		String identifier;
+	}
+	
+	class CD;
+		
+	
+	association ab [0..1] CA -- CB [1];
+	
+	association ac CA -- CC [1];
+	
+	association ad [1] CA  -> CD [1..*];
+	
+	
+}

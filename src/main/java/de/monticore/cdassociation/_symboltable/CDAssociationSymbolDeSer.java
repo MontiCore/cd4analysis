@@ -41,6 +41,7 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
 //      toSerialize.getSpannedScope().accept(s2j.getTraverser());
 //    }
     // ============== change end ========
+    s2j.getTraverser().addTraversedElement(toSerialize.getSpannedScope());
 
     serializeAddons(toSerialize, s2j);
     p.endObject();

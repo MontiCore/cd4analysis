@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import StandardClassTest.*;
+
+objectdiagram WithAttributeTypesOW {
+  
+  c:CarPackage.Audi {
+	String productionPlace = "Aachen";
+	int age = 2;
+	double length = 5.0;
+	int width = 2;
+  };
+  
+  link car p <-> c;
+}

@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloy2od;
 
-import de.monticore.od4data._parser.OD4DataParser;
+import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import edu.mit.csail.sdg.alloy4.Err;
@@ -298,7 +298,7 @@ public class Alloy2ODGenerator {
     String odString = generateOutputString(module, solution, "od" + number);
 
     // Parse output
-    OD4DataParser odParser = new OD4DataParser();
+    OD4ReportParser odParser = new OD4ReportParser();
 
     try {
       od = odParser.parse_String(odString);

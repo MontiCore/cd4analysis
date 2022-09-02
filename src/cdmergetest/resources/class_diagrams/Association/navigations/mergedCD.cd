@@ -1,0 +1,31 @@
+/* (c) https://github.com/MontiCore/monticore */
+package navigations;
+classdiagram mergedCD {
+
+	class CA;
+	class CB;
+	class CC;
+	class CD;
+		
+	association aa CA <->  CA;
+
+	association ab CA -> CB;
+	
+	association ac CA <-> CC;
+	
+	association ad CA <-> CD;
+	
+	association bb CB -> CB;
+	
+	association bc CB -> CC;
+	
+	association bd CB <-> CD;
+	
+	association cd CC <-> CD;
+	
+	  association CA -- CB ;
+
+
+	
+	
+}

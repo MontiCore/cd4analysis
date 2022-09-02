@@ -1,0 +1,42 @@
+objectdiagram Cardinality {
+
+    a1:A{
+
+    };
+
+    a2:A{
+
+    };
+
+    a3:A{
+
+    };
+
+    b1:B{
+
+    };
+
+    e1:E{
+    };
+
+    a4:A{
+    };
+
+    <<instanceof="A, F, G">> stereoE:E{
+    };
+
+    composition a2 (a) -> (b) b1;
+    composition a1 (a) -> (b) b1;
+    composition a3 (a) -> (b) e1;
+    composition a4 (a) -> (b) stereoE;
+
+    c1:C{
+    };
+    c2:C{
+    };
+    d1:D{
+    };
+
+    link c1, c2 (c) <- (d) d1;
+    link c2 (rightBi) <-> (leftBi) a1, a2, a3, a4;
+}

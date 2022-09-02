@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import StandardClassTest.*;
+
+objectdiagram WithoutAttributeTypesCW {
+  
+  p:Person {
+	nicknames = ["test"];
+    age = 26;
+	name = "Firstname Surname";
+	weight = 80.5;
+	eyes = GREEN;
+  };
+  
+  c:CarPackage.Audi {
+	productionPlace = "Aachen";
+	age = 2;
+	length = 5.0;
+  };
+  
+  link car p <-> c;
+}

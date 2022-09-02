@@ -1,0 +1,6 @@
+classdiagram CD_Comp_3 {
+
+  class A;
+
+  class B extends A;
+}

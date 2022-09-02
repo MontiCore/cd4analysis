@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package inheritanceAttributePullup1;
+classdiagram B {
+
+	class Person {
+		String nickname;
+		int id;	
+	}
+}

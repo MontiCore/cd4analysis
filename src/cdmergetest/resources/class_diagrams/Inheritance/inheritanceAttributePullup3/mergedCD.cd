@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+package inheritanceAttributePullup3;
+classdiagram mergedCD {
+
+	class Human{
+		Date birthday;
+	}
+	class Person extends Human{
+		String name;
+		int persNumber;
+	}
+
+	class Student extends Person {
+		int enrollmentNumber;
+	}
+	
+	class Customer extends Person {
+		String company;
+	}
+	
+}
+	

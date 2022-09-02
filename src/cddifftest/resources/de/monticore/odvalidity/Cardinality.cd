@@ -1,0 +1,28 @@
+classdiagram Cardinality {
+
+    class A {
+
+    }
+
+    class B {
+
+    }
+
+    class C {
+
+    }
+
+    class D {
+
+    }
+
+    class E extends B {
+
+    }
+
+    composition [*] A (a) -> (b) B [1];
+
+    association [*] C (c) <- (d) D [1];
+
+    association [1] C (rightBi) <-> (leftBi) A [*];
+}

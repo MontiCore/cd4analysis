@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package examples.od;
+
+import examples.cd.MyFamily.*;
+
+objectdiagram MyFamily {
+  bob:Person {
+    nicknames = ["Bob", "Bobby", "Robert"];
+    cars -> tiger;
+  };
+  alice:Person {
+    age = 29;
+    cars = [
+      :BMW {
+        bought = "2020-01-05 15:30:00";
+        color = BLUE;
+      },
+      tiger:Jaguar {
+        bought = "2000/01/05 15:00:00";
+        color = RED;
+        length = 5.3;
+      }
+    ];
+  };
+  link married alice <-> bob;
+}

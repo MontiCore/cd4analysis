@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+package rolesAttributeConflict;
+classdiagram B {
+	
+	class Office{
+		//causes conflict with role (worker) Person from other CD
+		String worker;
+	}
+	class Person;
+	
+	association Office -> Person;
+}

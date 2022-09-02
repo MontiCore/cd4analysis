@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+package navigations;
+classdiagram B {
+
+	class CA;
+	class CB;
+	class CC;
+	class CD;
+		
+	
+	association CA -- CB;
+		
+	association ab CA -> CB;
+	
+	association ac CA <- CC;
+
+	association  CA <-> CD;
+
+	association bb CB -> CB;
+	
+	association  CB -> CC;
+		
+	association bd CB <-> CD;
+	
+	association  CC <- CD;
+	
+	
+}

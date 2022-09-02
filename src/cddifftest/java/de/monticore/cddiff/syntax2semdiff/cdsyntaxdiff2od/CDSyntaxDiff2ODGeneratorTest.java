@@ -52,9 +52,9 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
     cdw1 = cd1Generator.generateCDWrapper(ast1, cdSemantics);
     cdw2 = cd2Generator.generateCDWrapper(ast2, cdSemantics);
-    CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
+    CDWrapper2CDSyntaxDiffGenerator cdw2diffGenerator4CDW1WithCDW2 =
         new CDWrapper2CDSyntaxDiffGenerator();
-    cdd1 = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
+    cdd1 = cdw2diffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
   }
 
   public void printODs(List<ASTODArtifact> ods) {
@@ -374,7 +374,7 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods =
         odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
 
-    JavaCDDiff.printODs2Dir(ods,"target/generated/od-validity-test-cases//Combination");
+    JavaCDDiff.printODs2Dir(ods,"target/generated/od-validity-test-cases/Combination");
 
     List<String> resultList = printOD(ods);
     Assert.assertTrue(resultList.stream().anyMatch(e ->

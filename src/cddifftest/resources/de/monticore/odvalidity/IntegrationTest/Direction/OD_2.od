@@ -1,0 +1,18 @@
+objectdiagram OD_2 {
+
+  a_0:A{};
+
+  b_0:B{};
+
+  b_1:B{};
+
+
+  link a_0 (a) -> (b) b_0;
+
+
+  link a_0 (a) -> (b) b_1;
+
+
+  link b_0 (b) -> (a) a_0;
+
+}

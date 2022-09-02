@@ -1,0 +1,15 @@
+classdiagram Base {
+
+  class SuperSuper {}
+
+  class Super extends SuperSuper implements I {}
+
+  class Leaf extends Super {}
+
+  class X extends SuperSuper {}
+
+  interface I {}
+
+  association [*] Leaf <-> X [*];
+
+}

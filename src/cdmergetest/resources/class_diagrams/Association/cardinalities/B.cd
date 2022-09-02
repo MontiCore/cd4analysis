@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+package cardinalities;
+classdiagram B {
+
+	class CA;
+	class CB;
+	class CC;
+	class CD;
+		
+	
+	association aa [1] CA --  CA [*];
+	
+	association ab [1] CA -> CB [1];
+	
+	association ac [0..1] CC <-> CA [0..1];
+
+	association ad CA -- CD;
+
+	association bb CB <- CB [1];
+	
+	association [1..*] CB -> CC [*];
+		
+	association bd [*] CB <-> CD;
+	
+	association  CC <- CD [1];
+	
+}

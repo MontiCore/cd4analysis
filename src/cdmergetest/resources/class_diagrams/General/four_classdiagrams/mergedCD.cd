@@ -1,0 +1,45 @@
+/* (c) https://github.com/MontiCore/monticore */
+package four_classdiagrams;
+
+classdiagram mergedCD{
+
+  class Office extends Building{
+    String address;
+    int rooms;
+  }
+
+  class Employee extends Person;
+
+  class Customer extends Male;
+
+  abstract class Living;
+
+  class Male extends Person;
+
+  class House extends Building;
+
+  class Person extends Living{
+    int id;
+    String name;
+    int height;
+  }
+
+  class Building;
+
+  class Animal;
+
+  enum Color{
+    BLACK,
+    RED,
+    GREEN,
+    BLUE,
+    RED;
+  }
+
+  association employment  [1]  Office <-> Person  [*]  ;
+
+  association Person (resident) -- (home) House ;
+
+  composition Living <- Animal ;
+
+}

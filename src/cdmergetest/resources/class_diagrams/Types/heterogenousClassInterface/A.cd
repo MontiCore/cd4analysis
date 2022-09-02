@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package heterogenousClassInterface;
+classdiagram A {
+	
+	interface Human;
+	interface Person extends Human;
+}

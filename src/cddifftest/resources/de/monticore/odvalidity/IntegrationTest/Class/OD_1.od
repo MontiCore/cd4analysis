@@ -1,0 +1,13 @@
+objectdiagram OD_1 {
+
+  b_0:B{
+    E myE = e1;
+    List<String> myList = ["Hello","World"];
+    Map<Integer,E> myMap = [1 -> e1,2 -> e2, 3 -> e3];
+    Optional<E> myOpt = Optional.of(e1);
+    Set<Boolean> mySet = [false, true];
+    int id = 42;
+    Date myDate = 14/08/2022;
+  };
+
+}

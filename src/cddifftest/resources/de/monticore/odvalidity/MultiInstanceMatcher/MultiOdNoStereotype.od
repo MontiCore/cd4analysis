@@ -1,0 +1,4 @@
+objectdiagram OD_Multi {
+
+  a_0:A{};
+}

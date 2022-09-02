@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import StandardClassTest.*;
+
+objectdiagram EnumFailing {
+  
+  p:Person {
+	List<String> nicknames = ["Test"];
+	int age = 1;
+	String name = "Test";
+	double weight = 1.5;
+	Color eyes = GREEN;
+  };
+  
+  s:Person {
+	List<String> nicknames = ["Test"];
+	int age = 1;
+	String name = "Test";
+	double weight = 1.5;
+	Color eyes = YELLOW;
+  };
+}

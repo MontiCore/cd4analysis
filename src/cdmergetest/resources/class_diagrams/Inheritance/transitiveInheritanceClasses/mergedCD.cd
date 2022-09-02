@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package transitiveInheritanceClasses;
+classdiagram mergedCD {
+	class Person {
+		int id;
+	}	
+	
+	class Staff extends Person {
+		String branch;
+	}	
+	
+	class Employee extends Staff;	
+}

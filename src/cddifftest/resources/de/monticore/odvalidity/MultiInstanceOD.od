@@ -1,0 +1,6 @@
+objectdiagram OD {
+
+  leaf:Leaf {};
+
+  x:X {};
+}
