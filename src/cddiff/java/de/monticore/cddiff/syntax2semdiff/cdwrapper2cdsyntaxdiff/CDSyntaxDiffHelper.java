@@ -176,7 +176,7 @@ public class CDSyntaxDiffHelper {
       // by matching [leftClass], [rightClass]
       List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName(
-              compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
+              compareCDW.getCDAssociationWrapperGroup(), intersectedBaseCDAssociationWrapper);
       List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
       List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
       DiffAssocMapInCompareSG.forEach(e -> {

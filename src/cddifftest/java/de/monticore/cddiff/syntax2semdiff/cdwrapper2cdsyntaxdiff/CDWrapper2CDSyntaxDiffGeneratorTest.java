@@ -287,16 +287,11 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
   public void testAssociation4Duplicate1() {
     CDSyntaxDiff cg = generateCDSyntaxDiffTemp("Association",
         "Direction1A.cd","Direction1G.cd", CDSemantics.SIMPLE_CLOSED_WORLD);
-    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 2);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED
         && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.DIRECTION));
-    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
-      .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED
-        && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.LEFT_CARDINALITY
-        && e.getCDDiffLeftClassCardinalityResult().get() == CDSyntaxDiff.CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE));
   }
 
   /**
@@ -309,16 +304,11 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
   public void testAssociation4Duplicate2() {
     CDSyntaxDiff cg = generateCDSyntaxDiffTemp("Association",
         "Direction1G.cd","Direction1A.cd", CDSemantics.SIMPLE_CLOSED_WORLD);
-    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 2);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED
         && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.DIRECTION));
-    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
-        .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED
-            && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.RIGHT_CARDINALITY
-            && e.getCDDiffRightClassCardinalityResult().get() == CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE));
   }
 
   /********************************************************************
