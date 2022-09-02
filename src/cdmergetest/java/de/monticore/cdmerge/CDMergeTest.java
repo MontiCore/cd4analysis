@@ -19,13 +19,12 @@ public class CDMergeTest extends BaseTest{
   @Test
   public void testMerge(){
 
-    final String srcDir = "src/cdmergetest/resources/class_diagrams/General/four_classdiagrams/";
+    final String srcDir = "src/cdmergetest/resources/class_diagrams/CDMergeTest/";
 
     Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
     inputSet.add(parseModel(srcDir + "A.cd"));
     inputSet.add(parseModel(srcDir + "B.cd"));
     inputSet.add(parseModel(srcDir + "C.cd"));
-    inputSet.add(parseModel(srcDir + "D.cd"));
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet);
 

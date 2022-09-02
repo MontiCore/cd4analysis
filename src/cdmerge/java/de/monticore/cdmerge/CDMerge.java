@@ -81,7 +81,6 @@ public class CDMerge {
   private static CDMergeConfig getConfig(List<String> inputModels) {
     CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(
             MergeParameter.OUTPUT_PATH, TEMP_DIR)
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES, MergeParameter.ON)
         .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
     for (String m : inputModels) {
       builder.addInputFile(m);
