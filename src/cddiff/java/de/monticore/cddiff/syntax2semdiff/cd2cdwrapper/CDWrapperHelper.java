@@ -734,7 +734,19 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all superclasses about given CDTypeWrapper expect abstract class and interface
+   * getting all super- and sub-CDTypeWrapper name by given CDTypeWrapper name
+   */
+  public static LinkedHashSet<String> getAllSuperClassAndSubClassSet(
+      MutableGraph<String> inheritanceGraph,
+      String cDTypeWrapperName) {
+    LinkedHashSet<String> result = new LinkedHashSet<>();
+    result.addAll(getSuperClassSet(inheritanceGraph, cDTypeWrapperName));
+    result.addAll(getInheritedClassSet(inheritanceGraph, cDTypeWrapperName));
+    return result;
+  }
+
+  /**
+   * return all superclasses about given CDTypeWrapper
    */
   public static Set<CDTypeWrapper> getAllSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -746,7 +758,7 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all subclasses about given CDTypeWrapper expect abstract class and interface
+   * return all subclasses about given CDTypeWrapper
    */
   public static Set<CDTypeWrapper> getAllSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -758,7 +770,7 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all simple super-classes about given CDTypeWrapper expect abstract class and interface
+   * return all simple super-classes about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -773,7 +785,7 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all simple subclasses about given CDTypeWrapper expect abstract class and interface
+   * return all simple subclasses about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -938,5 +950,284 @@ public class CDWrapperHelper {
 
     return reversedAssoc;
   }
+
+  /********************************************************************
+   ************************    CD Status    ***************************
+   *******************************************************************/
+
+  /**
+   * update CD status for CDTypeWrapper if its corresponding assoc has conflict
+   */
+  public static void updateCDStatus4CDTypeWrapper(CDTypeWrapper cdTypeWrapper) {
+    if (cdTypeWrapper.getCDWrapperKind() != CDWrapper.CDTypeWrapperKind.CDWRAPPER_ENUM) {
+      cdTypeWrapper.setStatus(CDWrapper.CDStatus.LOCKED);
+    }
+  }
+
+  /**
+   * update CD status for two CDTypeWrappers in CDAssociationWrapper if its these CDAssociationWrapper
+   * has conflict
+   */
+  public static void updateCDStatus4CDTypeWrapper(List<CDAssociationWrapperPack> cdAssociationWrapperPacks) {
+    cdAssociationWrapperPacks.forEach(e -> {
+      updateCDStatus4CDTypeWrapper(e.getCDAssociationWrapper().getCDWrapperLeftClass());
+      updateCDStatus4CDTypeWrapper(e.getCDAssociationWrapper().getCDWrapperRightClass());
+    });
+  }
+
+  /**
+   * update CD status for CDAssociationWrapper if it has conflict
+   */
+  public static void updateCDStatus4CDAssociationWrapper(List<CDAssociationWrapperPack> cdAssociationWrapperPacks) {
+    cdAssociationWrapperPacks.forEach(e ->
+        e.getCDAssociationWrapper().setStatus(CDWrapper.CDStatus.CONFLICTING));
+  }
+
+  public static Set<CDTypeWrapper> getTargetClass(CDAssociationWrapper cdAssociationWrapper) {
+    Set<CDTypeWrapper> result = new HashSet<>();
+    switch (cdAssociationWrapper.getCDAssociationWrapperDirection()) {
+      case LEFT_TO_RIGHT:
+        result.add(cdAssociationWrapper.getCDWrapperRightClass());
+        break;
+      case RIGHT_TO_LEFT:
+        result.add(cdAssociationWrapper.getCDWrapperLeftClass());
+        break;
+      case BIDIRECTIONAL:
+        result.add(cdAssociationWrapper.getCDWrapperLeftClass());
+        result.add(cdAssociationWrapper.getCDWrapperRightClass());
+        break;
+      default:
+        result.add(cdAssociationWrapper.getCDWrapperLeftClass());
+        result.add(cdAssociationWrapper.getCDWrapperRightClass());
+        break;
+    }
+    return result;
+  }
+
+  /**
+   * Fuzzy search for CDAssociationWrapper for checking conflict
+   *
+   * @Return: List<CDAssociationWrapperPack>
+   *   [{"cDAssociationWrapper" : CDAssociationWrapper
+   *     "isReverse"            : boolean             }]
+   */
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapper4CheckingConflict(
+      Map<String, CDAssociationWrapper> map,
+      MutableGraph<String> inheritanceGraph,
+      CDAssociationWrapper baseAssoc) {
+    List<CDAssociationWrapperPack> result = new ArrayList<>();
+    Set<CDTypeWrapper> targetClassSet4BaseAssoc = getTargetClass(baseAssoc);
+    map.values().forEach(currentAssoc -> {
+      if (currentAssoc.getLeftOriginalClassName().equals(baseAssoc.getLeftOriginalClassName()) &&
+          currentAssoc.getCDWrapperLeftClassRoleName().equals(baseAssoc.getCDWrapperLeftClassRoleName()) &&
+          currentAssoc.getCDAssociationWrapperDirection() == baseAssoc.getCDAssociationWrapperDirection() &&
+          currentAssoc.getCDWrapperRightClassRoleName().equals(baseAssoc.getCDWrapperRightClassRoleName()) &&
+          !getAllSuperClassAndSubClassSet(inheritanceGraph, baseAssoc.getCDWrapperRightClass().getName())
+              .contains(currentAssoc.getCDWrapperRightClass().getName())) {
+        // check target class
+        Set<CDTypeWrapper> targetClassSet4CurrentAssoc = getTargetClass(currentAssoc);
+        if (targetClassSet4BaseAssoc.size() > 1 || !targetClassSet4CurrentAssoc.equals(targetClassSet4BaseAssoc)) {
+          result.add(new CDAssociationWrapperPack(currentAssoc, false));
+        }
+      }
+      else if (currentAssoc.getLeftOriginalClassName().equals(baseAssoc.getRightOriginalClassName()) &&
+          currentAssoc.getCDWrapperLeftClassRoleName().equals(baseAssoc.getCDWrapperRightClassRoleName()) &&
+          currentAssoc.getCDAssociationWrapperDirection() == reverseDirection(baseAssoc.getCDAssociationWrapperDirection()) &&
+          currentAssoc.getCDWrapperRightClassRoleName().equals(baseAssoc.getCDWrapperLeftClassRoleName()) &&
+          !getAllSuperClassAndSubClassSet(inheritanceGraph, baseAssoc.getCDWrapperLeftClass().getName())
+              .contains(currentAssoc.getCDWrapperLeftClass().getName())) {
+        // check target class
+        Set<CDTypeWrapper> targetClassSet4CurrentAssoc = getTargetClass(currentAssoc);
+        if (targetClassSet4BaseAssoc.size() > 1 || !targetClassSet4CurrentAssoc.equals(targetClassSet4BaseAssoc)) {
+          result.add(new CDAssociationWrapperPack(currentAssoc, true));
+        }
+      }
+    });
+    if (!result.isEmpty()) {
+      result.add(new CDAssociationWrapperPack(baseAssoc, false));
+    }
+    return result;
+  }
+
+  public static void checkConflict4CDAssociationWrapper(
+      Map<String, CDAssociationWrapper> cDAssociationWrapperGroup,
+      MutableGraph<String> inheritanceGraph) {
+    cDAssociationWrapperGroup.forEach((name, baseAssoc) -> {
+      List<CDAssociationWrapperPack> cdAssociationWrapperPacks =
+          fuzzySearchCDAssociationWrapper4CheckingConflict(cDAssociationWrapperGroup, inheritanceGraph, baseAssoc);
+
+      if (!cdAssociationWrapperPacks.isEmpty()) {
+
+        // Cardinality in [*, 0..1]
+        if (baseAssoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+            baseAssoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE) {
+
+          // -> / <-> / --
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+            // original
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
+            }
+
+            // reversed
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
+            }
+          }
+
+          // <-
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+            // original
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
+            }
+
+            // reversed
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
+            }
+          }
+        }
+        // Cardinality in [1, 1..*]
+        else {
+          // -> / <-> / --
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+            // original
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+            }
+
+            // reversed
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+            }
+          }
+
+          // <-
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+            // original
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                        e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> !e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                        e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+            }
+
+            // reversed
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+                        e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+              updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+            }
+            if (cdAssociationWrapperPacks
+                .stream()
+                .filter(e -> e.isReverse())
+                .anyMatch(e ->
+                    e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE ||
+                        e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+            }
+          }
+        }
+
+      }
+    });
+  }
+
 
 }

@@ -11,8 +11,7 @@ import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAss
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName;
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
 public class CDSyntaxDiffHelper {
 
@@ -153,7 +152,7 @@ public class CDSyntaxDiffHelper {
   public static void createCheckList4AssocInCompareCDW(
       CDWrapper compareCDW,
       Map<CDAssociationWrapper, Boolean> checkList4AssocInCompareCDW) {
-    compareCDW.getCDAssociationWrapperGroup().forEach((assocName, assoc) -> {
+    compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN().forEach((assocName, assoc) -> {
       if (assoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
         checkList4AssocInCompareCDW.put(assoc, false);
       }
@@ -177,7 +176,7 @@ public class CDSyntaxDiffHelper {
       // by matching [leftClass], [rightClass]
       List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName(
-              compareCDW.getCDAssociationWrapperGroup(), intersectedBaseCDAssociationWrapper);
+              compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
       List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
       List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
       DiffAssocMapInCompareSG.forEach(e -> {

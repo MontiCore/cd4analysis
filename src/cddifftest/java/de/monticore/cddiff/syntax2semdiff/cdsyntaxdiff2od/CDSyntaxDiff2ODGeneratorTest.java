@@ -569,6 +569,34 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(ods.size(), 1);
   }
 
+  /********************************************************************
+   *********************   Start for Conflict   ***********************
+   ********************   simple closed world   ***********************
+   *******************************************************************/
+
+//  @Test
+//  public void testConflict1() {
+//    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+//        + "/Association/Association2A.cd";
+//    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+//        + "/Association/Association2B.cd";
+//    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+//    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+//    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+//    List<ASTODArtifact> ods = JavaCDDiff.computeSemDiff(ast1, ast2, cdSemantics);
+//
+//    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+//    ASTCDDefinition cdDef1 = ast1.getCDDefinition();
+//    ASTCDDefinition cdDef2 = ast2.getCDDefinition();
+//
+//    for (ASTODArtifact od : ods) {
+//      Assert.assertTrue(matcher.checkODConsistency(cdDef1, od.getObjectDiagram()));
+//      Assert.assertFalse(matcher.checkODConsistency(cdDef2, od.getObjectDiagram()));
+//    }
+//
+//    printODs(ods);
+//  }
+
 
   /********************************************************************
    ******************** Using SyntaxDiff2SemanticDiff *****************

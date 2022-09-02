@@ -15,14 +15,20 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.ge
  * The kind of CDTypeWrapper are CDWRAPPER_CLASS, CDWRAPPER_ENUM, CDWRAPPER_ABSTRACT_CLASS,
  * CDWRAPPER_INTERFACE
  *
- * @attribute originalElement: store the original AST Class
- * @attribute editedElement: if the class has inherited attributes, they will be added into
- * editedElement.
- * @attribute cDWrapperLink4EnumClass: This attribute is only suitable for CDWRAPPER_ENUM class. If
- * someone CDTypeWrapper uses Enum in attributes, then this CDTypeWrapper name will be added into
- * this cDWrapperLink4EnumClass attribute of corresponding CDWRAPPER_ENUM class.
- * @attribute superclasses: store the superclasses (including itself) of this CDTypeWrapper
- * @attribute subclasses: store the subclasses (including itself) of this CDTypeWrapper
+ * @attribute originalElement:
+ *    store the original AST Class
+ * @attribute editedElement:
+ *    if the class has inherited attributes, they will be added into editedElement.
+ * @attribute cDWrapperLink4EnumClass:
+ *    This attribute is only suitable for CDWRAPPER_ENUM class. If someone CDTypeWrapper uses
+ *    Enum in attributes, then this CDTypeWrapper name will be added into
+ *    this cDWrapperLink4EnumClass attribute of corresponding CDWRAPPER_ENUM class.
+ * @attribute superclasses:
+ *    store the superclasses (including itself) of this CDTypeWrapper
+ * @attribute subclasses:
+ *    store the subclasses (including itself) of this CDTypeWrapper
+ * @attribute status:
+ *    OPEN, LOCKED
  */
 public class CDTypeWrapper implements Cloneable {
   protected final ASTCDType originalElement;
@@ -35,9 +41,12 @@ public class CDTypeWrapper implements Cloneable {
 
   protected Set<String> subclasses = new LinkedHashSet<>();
 
+  protected CDWrapper.CDStatus status;
+
   public CDTypeWrapper(ASTCDType originalElement) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
+    this.status = CDWrapper.CDStatus.OPEN;
   }
 
   public String getName() {
@@ -108,6 +117,14 @@ public class CDTypeWrapper implements Cloneable {
 
   public void setSubclasses(Set<String> subclasses) {
     this.subclasses = subclasses;
+  }
+
+  public CDWrapper.CDStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(CDWrapper.CDStatus status) {
+    this.status = status;
   }
 
   @Override

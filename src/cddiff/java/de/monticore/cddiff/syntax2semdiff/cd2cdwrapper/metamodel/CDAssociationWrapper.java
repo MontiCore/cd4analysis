@@ -23,6 +23,8 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
  *    linked left CDTypeWrapper
  * @attribute cDWrapperRightClass:
  *    linked right CDTypeWrapper
+ * @attribute status:
+ *    OPEN, CONFLICTING
  */
 public class CDAssociationWrapper implements Cloneable {
   protected final ASTCDAssociation originalElement;
@@ -30,12 +32,14 @@ public class CDAssociationWrapper implements Cloneable {
   protected CDWrapper.CDAssociationWrapperKind cDWrapperKind;
   protected CDTypeWrapper cDWrapperLeftClass;
   protected CDTypeWrapper cDWrapperRightClass;
+  protected CDWrapper.CDStatus status;
 
   public CDAssociationWrapper(ASTCDAssociation originalElement, boolean isInherited) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
     this.cDWrapperKind = isInherited ?
       CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC : CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC;
+    this.status = CDWrapper.CDStatus.OPEN;
   }
 
   public String getName() {
@@ -145,6 +149,14 @@ public class CDAssociationWrapper implements Cloneable {
 
   public void setEditedElement(ASTCDAssociation editedElement) {
     this.editedElement = editedElement;
+  }
+
+  public CDWrapper.CDStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(CDWrapper.CDStatus status) {
+    this.status = status;
   }
 
   @Override

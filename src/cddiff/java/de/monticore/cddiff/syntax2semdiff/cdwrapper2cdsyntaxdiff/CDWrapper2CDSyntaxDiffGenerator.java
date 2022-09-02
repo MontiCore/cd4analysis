@@ -78,12 +78,12 @@ public class CDWrapper2CDSyntaxDiffGenerator {
 
     boolean isInCompareSG = false;
     CDTypeWrapper compareCDTypeWrapper =
-        compareCDW.getCDTypeWrapperGroup().get(baseCDTypeWrapper.getName());
+        compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().get(baseCDTypeWrapper.getName());
 
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
-      isInCompareSG = compareCDW.getCDTypeWrapperGroup().containsKey(baseCDTypeWrapper.getName());
+      isInCompareSG = compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().containsKey(baseCDTypeWrapper.getName());
     } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
-      if (compareCDW.getCDTypeWrapperGroup().containsKey(baseCDTypeWrapper.getName())) {
+      if (compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().containsKey(baseCDTypeWrapper.getName())) {
         if (checkEquivalence4Superclasses(baseCDTypeWrapper.getSuperclasses(), compareCDTypeWrapper.getSuperclasses())) {
           isInCompareSG = true;
         }
@@ -205,7 +205,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       // by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
       List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
-          compareCDW.getCDAssociationWrapperGroup(), intersectedBaseCDAssociationWrapper);
+          compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
       List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
       List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
       DiffAssocMapInCompareSG.forEach(e -> {

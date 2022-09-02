@@ -27,6 +27,18 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     return CDW2CDDGenerator.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
   }
 
+  public CDSyntaxDiff generateCDSyntaxDiffTemp(String cd1Path, String cd2Path, CDSemantics cdSemantics) {
+    ASTCDCompilationUnit cd1 = parseModel(cd1Path);
+
+    ASTCDCompilationUnit cd2 = parseModel(cd2Path);
+    CD2CDWrapperGenerator cd1Generator = new CD2CDWrapperGenerator();
+    CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
+    CDWrapper cdw1 = cd1Generator.generateCDWrapper(cd1, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapper cdw2 = cd2Generator.generateCDWrapper(cd2, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapper2CDSyntaxDiffGenerator CDW2CDDGenerator = new CDWrapper2CDSyntaxDiffGenerator();
+    return CDW2CDDGenerator.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
+  }
+
   /********************************************************************
    *********************    Start for Class    ************************
    ********************   simple closed world   ***********************
@@ -370,6 +382,116 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
       .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED
         && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.RIGHT_CARDINALITY
         && e.getCDDiffRightClassCardinalityResult().get() == CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE));
+  }
+
+  /********************************************************************
+   *********************   Start for Conflict   ***********************
+   ********************   simple closed world   ***********************
+   *******************************************************************/
+  @Test
+  public void testAssociation4Conflict1() {
+    String cd1Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2A.cd";
+    String cd2Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2B.cd";
+    CDSyntaxDiff cg = generateCDSyntaxDiffTemp(cd1Path, cd2Path, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+            && !e.getWhichPartDiff().isPresent()));
+  }
+
+  @Test
+  public void testAssociation4Conflict2() {
+    String cd1Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2C.cd";
+    String cd2Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2D.cd";
+    CDSyntaxDiff cg = generateCDSyntaxDiffTemp(cd1Path, cd2Path, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+            && !e.getWhichPartDiff().isPresent()));
+    Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("A")));
+  }
+
+  @Test
+  public void testAssociation4Conflict2Reverse() {
+    String cd1Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2C.cd";
+    String cd2Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2D_reverse.cd";
+    CDSyntaxDiff cg = generateCDSyntaxDiffTemp(cd1Path, cd2Path, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+            && !e.getWhichPartDiff().isPresent()));
+    Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("A")));
+  }
+
+  @Test
+  public void testAssociation4Conflict3() {
+    String cd1Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2E.cd";
+    String cd2Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2F.cd";
+    CDSyntaxDiff cg = generateCDSyntaxDiffTemp(cd1Path, cd2Path, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+            && !e.getWhichPartDiff().isPresent()));
+    Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 3);
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("A")));
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("B")));
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("C")));
+  }
+
+  @Test
+  public void testAssociation4Conflict4() {
+    String cd1Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2E.cd";
+    String cd2Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2H.cd";
+    CDSyntaxDiff cg = generateCDSyntaxDiffTemp(cd1Path, cd2Path, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+            && !e.getWhichPartDiff().isPresent()));
+    Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 3);
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("A")));
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("B")));
+    Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+            && e.getName(false).split("_")[1].contains("C")));
   }
 
 
