@@ -42,7 +42,9 @@ public class CDSyntaxDiff2ODGenerator {
     int i = 1;
     while (!globalAssociationQueue.isEmpty()) {
       CDAssociationDiff currentCDAssociationDiff = globalAssociationQueue.pop();
-      if (currentCDAssociationDiff.getCDDiffKind() != CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC) {
+      if (currentCDAssociationDiff.getCDDiffKind() != CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC ||
+          (currentCDAssociationDiff.getCDDiffKind() == CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC &&
+              currentCDAssociationDiff.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING)) {
         Optional<ASTODPack> optionalASTODPack =
             generateODByAssociation(cdw, currentCDAssociationDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
@@ -304,6 +306,7 @@ public class CDSyntaxDiff2ODGenerator {
 
     switch (cDAssociationDiff.getCDDiffCategory()) {
       case DELETED:
+      case CONFLICTING:
       case SUBCLASS_DIFF:
         directionType = mappingDirection(
             currentDiffAssoc.getCDAssociationWrapperDirection().toString());

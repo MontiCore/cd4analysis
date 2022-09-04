@@ -241,6 +241,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
         });
       } else {
         createCDAssociationDiff(baseCDW,
+            compareCDW,
             intersectedBaseCDAssociationWrapper,
             Optional.empty(),
             false,
@@ -281,6 +282,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
     // in association have syntax difference.
     if (isInCompareSG) {
       createCDAssociationDiff(baseCDW,
+          compareCDW,
           intersectedBaseCDAssociationWrapper,
           Optional.of(intersectedCompareCDAssociationWrapper),
           isInCompareSG,
@@ -295,6 +297,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
    */
   public void createCDAssociationDiff(
       CDWrapper baseCDW,
+      CDWrapper compareCDW,
       CDAssociationWrapper base,
       Optional<CDAssociationWrapper> optIntersectedCompare,
       boolean isInCompareSG,
@@ -465,11 +468,23 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       }
     }
     else {
-      cDAssociationDiffResultQueueWithDiff.offer(
-          createCDAssociationDiffHelper(base,
-              isInCompareSG,
-              true,
-              CDSyntaxDiff.CDAssociationDiffCategory.DELETED));
+      List<CDAssociationWrapperPack> cdAssociationWrapperPackList =
+          findSameCDAssociationWrapperByCDAssociationWrapper(compareCDW.getCDAssociationWrapperGroup(), base);
+      if (cdAssociationWrapperPackList.stream().anyMatch(e ->
+          e.getCDAssociationWrapper().getStatus() == CDWrapper.CDStatus.CONFLICTING)) {
+        cDAssociationDiffResultQueueWithDiff.offer(
+            createCDAssociationDiffHelper(base,
+                isInCompareSG,
+                true,
+                CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING));
+      } else {
+        cDAssociationDiffResultQueueWithDiff.offer(
+            createCDAssociationDiffHelper(base,
+                isInCompareSG,
+                true,
+                CDSyntaxDiff.CDAssociationDiffCategory.DELETED));
+      }
+
     }
   }
 

@@ -388,7 +388,21 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
+            && !e.getWhichPartDiff().isPresent()));
+  }
+
+  @Test
+  public void testAssociation4Conflict1Inheritance() {
+    String cd1Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2A_inheritance.cd";
+    String cd2Path = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2B_inheritance.cd";
+    CDSyntaxDiff cg = generateCDSyntaxDiffTemp(cd1Path, cd2Path, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
+    Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
+        .stream()
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -402,7 +416,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
@@ -421,7 +435,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
@@ -440,7 +454,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 3);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()

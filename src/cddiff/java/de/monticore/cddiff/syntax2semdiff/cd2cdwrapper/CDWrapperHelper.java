@@ -557,6 +557,40 @@ public class CDWrapperHelper {
   }
 
   /**
+   * find the same CDAssociationWrapper in compareCDW
+   *
+   * @Return: List<CDAssociationWrapperPack>
+   *   [{"cDAssociationWrapper" : CDAssociationWrapper
+   *     "isReverse"            : boolean             }]
+   */
+  public static List<CDAssociationWrapperPack> findSameCDAssociationWrapperByCDAssociationWrapper(
+      Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
+    List<CDAssociationWrapperPack> result = new ArrayList<>();
+    if (map == null) {
+      return null;
+    }
+    else {
+      map.values().forEach(existAssoc -> {
+        if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(existAssoc.getCDAssociationWrapperDirection())
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, false));
+        }
+        else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(reverseDirection(existAssoc.getCDAssociationWrapperDirection()))
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, true));
+        }
+      });
+    }
+    return result;
+  }
+
+  /**
    * Fuzzy search for CDAssociationWrapper without matching direction and role name
    *
    * @Return: List<CDAssociationWrapperPack>
@@ -1018,12 +1052,26 @@ public class CDWrapperHelper {
     List<CDAssociationWrapperPack> result = new ArrayList<>();
     Set<CDTypeWrapper> targetClassSet4BaseAssoc = getTargetClass(baseAssoc);
     map.values().forEach(currentAssoc -> {
+
+      // calculate intersection set of all superclasses and subclasses
+      // for baseAssoc and currentAssoc
+      LinkedHashSet<String> originalIntersectionSet = getAllSuperClassAndSubClassSet(inheritanceGraph,
+          baseAssoc.getCDWrapperRightClass().getName());
+      originalIntersectionSet.retainAll(getAllSuperClassAndSubClassSet(inheritanceGraph,
+          currentAssoc.getCDWrapperRightClass().getName()));
+
+      LinkedHashSet<String> reversedIntersectionSet = getAllSuperClassAndSubClassSet(inheritanceGraph,
+              baseAssoc.getCDWrapperLeftClass().getName());
+      reversedIntersectionSet.retainAll(getAllSuperClassAndSubClassSet(inheritanceGraph,
+          currentAssoc.getCDWrapperRightClass().getName()));
+
+
       if (currentAssoc.getLeftOriginalClassName().equals(baseAssoc.getLeftOriginalClassName()) &&
           currentAssoc.getCDWrapperLeftClassRoleName().equals(baseAssoc.getCDWrapperLeftClassRoleName()) &&
           currentAssoc.getCDAssociationWrapperDirection() == baseAssoc.getCDAssociationWrapperDirection() &&
           currentAssoc.getCDWrapperRightClassRoleName().equals(baseAssoc.getCDWrapperRightClassRoleName()) &&
-          !getAllSuperClassAndSubClassSet(inheritanceGraph, baseAssoc.getCDWrapperRightClass().getName())
-              .contains(currentAssoc.getCDWrapperRightClass().getName())) {
+          originalIntersectionSet.isEmpty()
+      ) {
         // check target class
         Set<CDTypeWrapper> targetClassSet4CurrentAssoc = getTargetClass(currentAssoc);
         if (targetClassSet4BaseAssoc.size() > 1 || !targetClassSet4CurrentAssoc.equals(targetClassSet4BaseAssoc)) {
@@ -1034,8 +1082,7 @@ public class CDWrapperHelper {
           currentAssoc.getCDWrapperLeftClassRoleName().equals(baseAssoc.getCDWrapperRightClassRoleName()) &&
           currentAssoc.getCDAssociationWrapperDirection() == reverseDirection(baseAssoc.getCDAssociationWrapperDirection()) &&
           currentAssoc.getCDWrapperRightClassRoleName().equals(baseAssoc.getCDWrapperLeftClassRoleName()) &&
-          !getAllSuperClassAndSubClassSet(inheritanceGraph, baseAssoc.getCDWrapperLeftClass().getName())
-              .contains(currentAssoc.getCDWrapperLeftClass().getName())) {
+          reversedIntersectionSet.isEmpty()) {
         // check target class
         Set<CDTypeWrapper> targetClassSet4CurrentAssoc = getTargetClass(currentAssoc);
         if (targetClassSet4BaseAssoc.size() > 1 || !targetClassSet4CurrentAssoc.equals(targetClassSet4BaseAssoc)) {

@@ -428,6 +428,27 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
+  public void testConflict1Inheritance() {
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2A_inheritance.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2B_inheritance.cd";
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+    List<ASTODArtifact> ods = JavaCDDiff.computeSemDiff(ast1, ast2, cdSemantics);
+
+    Assert.assertEquals(ods.size(), 1);
+
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODValidity(cdSemantics, od, ast1));
+      Assert.assertFalse(matcher.checkODValidity(cdSemantics, od, ast2));
+    }
+
+  }
+
+  @Test
   public void testConflict2() {
     String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
         + "/Association/Association2C.cd";
@@ -515,6 +536,24 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     System.out.println("Running Time of old method: " + (endTime_old - startTime_old) + "ms");
     System.out.println("new witness size: " + ods_new.size());
     System.out.println("Running Time of new method: " + (endTime_new - startTime_new) + "ms");
+  }
+
+  @Test
+  public void test() {
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2E.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Association/Association2F.cd";
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+    List<ASTODArtifact> ods = JavaCDDiff.computeSemDiff(ast1, ast2, cdSemantics);
+
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODValidity(cdSemantics, od, ast1));
+      Assert.assertFalse(matcher.checkODValidity(cdSemantics, od, ast2));
+    }
   }
 
 }
