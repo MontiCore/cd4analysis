@@ -1,6 +1,9 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.reverseDirection;
 
 /**
  *  CDRefSetAssociationWrapper is to solve the next problem in CD:
@@ -93,6 +96,30 @@ public class CDRefSetAssociationWrapper {
 
   public void setOriginalElement(CDAssociationWrapper originalElement) {
     this.originalElement = originalElement;
+  }
+
+  public boolean isPresentInCDRefSetAssociationWrapper(CDAssociationWrapper originalElement) {
+    if (
+        // original
+        (this.getLeftRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getLeftOriginalClassName()) &&
+        this.getLeftRoleName().equals(originalElement.getCDWrapperLeftClassRoleName()) &&
+        this.getDirection().equals(originalElement.getCDAssociationWrapperDirection()) &&
+        this.getRightRoleName().equals(originalElement.getCDWrapperRightClassRoleName()) &&
+        this.getRightRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getRightOriginalClassName())) ||
+        // reversed
+        (this.getLeftRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getRightOriginalClassName()) &&
+        this.getLeftRoleName().equals(originalElement.getCDWrapperRightClassRoleName()) &&
+        this.getDirection().equals(reverseDirection(originalElement.getCDAssociationWrapperDirection())) &&
+        this.getRightRoleName().equals(originalElement.getCDWrapperLeftClassRoleName()) &&
+        this.getRightRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getLeftOriginalClassName()))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

@@ -68,7 +68,8 @@ public class CDSyntaxDiff {
   }
 
   public enum WhichPartDiff {
-    DIRECTION, LEFT_CARDINALITY, RIGHT_CARDINALITY
+    DIRECTION, LEFT_CARDINALITY, RIGHT_CARDINALITY,
+    LEFT_SPECIAL_CARDINALITY, RIGHT_SPECIAL_CARDINALITY
   }
 
   public CDSyntaxDiff(CDWrapper baseCDW, CDWrapper compareCDW) {

@@ -525,13 +525,13 @@ public class CDWrapperHelper {
   }
 
   /**
-   * Fuzzy search for CDAssociationWrapper without matching direction
+   * Fuzzy search for CDAssociationWrapper without matching direction and cardinality
    *
    * @Return: List<CDAssociationWrapperPack>
    *   [{"cDAssociationWrapper" : CDAssociationWrapper
    *     "isReverse"            : boolean             }]
    */
-  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
       Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
     List<CDAssociationWrapperPack> result = new ArrayList<>();
     if (map == null) {
@@ -557,13 +557,13 @@ public class CDWrapperHelper {
   }
 
   /**
-   * find the same CDAssociationWrapper in compareCDW
+   * Fuzzy search for CDAssociationWrapper without checking cardinality in compareCDW
    *
    * @Return: List<CDAssociationWrapperPack>
    *   [{"cDAssociationWrapper" : CDAssociationWrapper
    *     "isReverse"            : boolean             }]
    */
-  public static List<CDAssociationWrapperPack> findSameCDAssociationWrapperByCDAssociationWrapper(
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutCardinality(
       Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
     List<CDAssociationWrapperPack> result = new ArrayList<>();
     if (map == null) {
@@ -591,13 +591,51 @@ public class CDWrapperHelper {
   }
 
   /**
-   * Fuzzy search for CDAssociationWrapper without matching direction and role name
+   * find the same CDAssociationWrapper in compareCDW
    *
    * @Return: List<CDAssociationWrapperPack>
    *   [{"cDAssociationWrapper" : CDAssociationWrapper
    *     "isReverse"            : boolean             }]
    */
-  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName(
+  public static List<CDAssociationWrapperPack> findSameCDAssociationWrapperByCDAssociationWrapper(
+      Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
+    List<CDAssociationWrapperPack> result = new ArrayList<>();
+    if (map == null) {
+      return null;
+    }
+    else {
+      map.values().forEach(existAssoc -> {
+        if (currentAssoc.getCDWrapperLeftClassCardinality().equals(existAssoc.getCDWrapperLeftClassCardinality())
+            && currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(existAssoc.getCDAssociationWrapperDirection())
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getCDWrapperRightClassCardinality().equals(existAssoc.getCDWrapperRightClassCardinality())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, false));
+        }
+        else if (currentAssoc.getCDWrapperLeftClassCardinality().equals(existAssoc.getCDWrapperRightClassCardinality())
+            && currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(reverseDirection(existAssoc.getCDAssociationWrapperDirection()))
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getCDWrapperRightClassCardinality().equals(existAssoc.getCDWrapperLeftClassCardinality())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, true));
+        }
+      });
+    }
+    return result;
+  }
+
+  /**
+   * Fuzzy search for CDAssociationWrapper without matching direction, role name and cardinality
+   *
+   * @Return: List<CDAssociationWrapperPack>
+   *   [{"cDAssociationWrapper" : CDAssociationWrapper
+   *     "isReverse"            : boolean             }]
+   */
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleNameAndCardinality(
       Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
     List<CDAssociationWrapperPack> result = new ArrayList<>();
     if (map == null) {

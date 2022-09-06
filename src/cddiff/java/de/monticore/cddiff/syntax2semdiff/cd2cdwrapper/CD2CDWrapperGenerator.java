@@ -299,7 +299,7 @@ public class CD2CDWrapperGenerator {
     clonedCDAssociationWrapperGroup.forEach((currentAssocName, currentAssoc) -> {
       if (currentAssoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
         List<CDAssociationWrapperPack> matchedAssocList =
-          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
+          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
               cDAssociationWrapperGroup, currentAssoc);
         if (matchedAssocList.size() > 0) {
           cDAssociationWrapperGroup.remove(currentAssoc.getName());

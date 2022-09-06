@@ -185,6 +185,43 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     }
   }
 
+  @Test
+  public void testTwoDirections1() {
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "TwoDirections1A.cd", "TwoDirections1B.cd", cdSemantics);
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
+
+    Assert.assertTrue(ods.size() > 0);
+
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODValidity(cdSemantics, od, ast1));
+      Assert.assertFalse(matcher.checkODValidity(cdSemantics, od, ast2));
+    }
+  }
+
+  @Test
+  public void testTwoDirections2() {
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    generateCDSyntaxDiffTemp("Association",
+        "TwoDirections2A.cd", "TwoDirections2B.cd", cdSemantics);
+    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    List<ASTODArtifact> ods =
+        odGenerator.generateObjectDiagrams(cdw1, cdd1, cdSemantics);
+
+    Assert.assertTrue(ods.size() > 0);
+
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODValidity(cdSemantics, od, ast1));
+      Assert.assertFalse(matcher.checkODValidity(cdSemantics, od, ast2));
+    }
+
+  }
+
   /********************************************************************
    *********************    Start for Combination    ******************
    ********************   simple closed world   ***********************

@@ -1,0 +1,7 @@
+classdiagram A {
+  class A;
+  class B;
+
+  association [1] A (a) -> B [1..*];
+  association [*] A (a) <- B [1];
+}
