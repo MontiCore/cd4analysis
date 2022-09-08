@@ -33,10 +33,6 @@ public class CDGenerator {
   }
 
   public void generate(ASTCDCompilationUnit compilationUnit) {
-    if(!this.setup.getHandcodedPath().isEmpty()){
-      TopDecorator topDecorator = new TopDecorator(this.setup.getHandcodedPath());
-      compilationUnit = topDecorator.decorate(compilationUnit);
-    }
     ASTCDDefinition definition = compilationUnit.getCDDefinition();
     for (ASTCDPackage astPackage : definition.getCDPackagesList()) {
       String packageAsPath = String.join(File.separator, astPackage.getMCQualifiedName().getPartsList())

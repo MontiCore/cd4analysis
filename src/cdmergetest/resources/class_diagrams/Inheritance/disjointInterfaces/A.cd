@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package disjointInterfaces;
+classdiagram A {
+	interface Breathing;
+	class Person implements Breathing;
+
+}

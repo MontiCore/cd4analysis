@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package ambiguousRole;
+classdiagram B {
+		
+	class Person;
+	class Contract{
+	    int contractor;
+	}
+	
+	association [*] Person (contractor) <-> (workContract) Contract [1];
+}

@@ -1,0 +1,19 @@
+package office;
+classdiagram mergedCD{
+    class Location{
+        String address;
+    }
+    class Person {  
+        String name;
+        Date birthdate;
+    }   
+    class Employee extends Person{
+        int id;
+    }       
+    class Company;
+    class Customer extends Person;
+    association office Company -> Location [*];
+    association staff Company -> Person [*];
+    association [*] Person <-> (home) Location [1];
+    association accountManager [1] Employee -> Customer[*];
+}

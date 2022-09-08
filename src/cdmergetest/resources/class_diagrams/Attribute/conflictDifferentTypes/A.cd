@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package conflictDifferentTypes;
+classdiagram A {
+	class Person {
+		String birthday;
+	}
+}

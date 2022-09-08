@@ -1,0 +1,11 @@
+package office;
+classdiagram B {
+    class Location;
+    class Person{
+        Date birthdate;
+    }
+    class Customer extends Person;
+    class Employee; 
+    association accountManager [1] Employee -> Customer[*];
+    association Person -- (home) Location [1];
+}

@@ -49,6 +49,8 @@ ext {
   freemarker_version = "2.3.31"
   javaparser_version = "3.14.11"
   mockito_version = "3.11.1"
+  logback_version = "1.2.3"
+  apache_commons_version = '4.4'
 }
 
 // configure non-standard source sets
@@ -74,17 +76,23 @@ sourceSets {
   cddifftest {
     java {}
   }
+  cdmerge {
+    java {}
+  }
+  cdmergetest {
+    java {}
+  }
   cd2smt {
-      java {}
+    java {}
   }
   cd2smttest {
-      java {}
+    java {}
   }
   coevolution {
-      java {}
+    java {}
   }
   coevolutiontest {
-      java {}
+    java {}
   }
   tool {
     java {}
@@ -98,6 +106,10 @@ configurations {
   cddiffImplementation.extendsFrom(implementation)
   cddifftestImplementation.extendsFrom(testImplementation)
   cddifftestImplementation.extendsFrom(cddiffImplementation)
+
+  cdmergeImplementation.extendsFrom(implementation)
+  cdmergetestImplementation.extendsFrom(testImplementation)
+  cdmergetestImplementation.extendsFrom(cdmergeImplementation)
 
   cd2smtImplementation.extendsFrom(cddiffImplementation)
   cd2smttestImplementation.extendsFrom(cd2smtImplementation)
@@ -116,7 +128,8 @@ configurations {
 
 dependencies {
   implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-  grammar("$var_path:monticore-grammar:$mc_version") {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    grammar("$var_path:monticore-grammar:$mc_version") {
     capabilities {
       requireCapability("$var_path:monticore-grammar-grammars")
     }
@@ -150,6 +163,14 @@ dependencies {
   cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
   cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
   cddifftestImplementation(sourceSets.test.output.classesDirs)
+
+  // dependencies for cdmerge
+  cdmergeImplementation "org.apache.commons:commons-collections4:$apache_commons_version"
+  cdmergeImplementation(sourceSets.main.output.classesDirs)
+
+
+  cdmergetestImplementation(sourceSets.cdmerge.output.classesDirs)
+  cdmergetestImplementation(sourceSets.test.output.classesDirs)
 
   //dependencies for cd2smt
   cd2smtImplementation(sourceSets.cddiff.output.classesDirs)
@@ -331,6 +352,14 @@ task cddifftest(type: Test) {
   shouldRunAfter test
 }
 
+task cdmergetest(type: Test) {
+    description = "Runs CDMerge Tests"
+    group = "Verification"
+    testClassesDirs = sourceSets.cdmergetest.output.classesDirs
+    classpath += sourceSets.cdmergetest.runtimeClasspath
+    shouldRunAfter test
+}
+
 task cd2smttest(type: Test) {
     description = "Runs CD2SMT Tests"
     group = "Verification"
@@ -355,7 +384,7 @@ task tooltest(type: Test) {
   shouldRunAfter test
 }
 
-check.dependsOn cddifftest, cd2smttest, coevolutiontest, tooltest
+check.dependsOn cddifftest, cdmergetest, cd2smttest, coevolutiontest, tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -426,6 +455,12 @@ task cddiffJar(type: Jar) {
 }
 
 // build test sources jar in addition
+task cdmergeJar(type: Jar) {
+    from sourceSets.cdmerge.output + sourceSets.cdmerge.allSource
+    archiveClassifier = "cdmerge"
+}
+
+// build test sources jar in addition
 task cd2smtJar(type: Jar) {
     from sourceSets.cd2smt.output + sourceSets.cd2smt.allSource
     archiveClassifier = "cd2smt"
@@ -433,7 +468,7 @@ task cd2smtJar(type: Jar) {
 
 // build test sources jar in addition
 task coevolutionJar(type: Jar) {
-    from sourceSets.cd2smt.output + sourceSets.coevolution.allSource
+    from sourceSets.coevolution.output + sourceSets.coevolution.allSource
     archiveClassifier = "coevolution"
 }
 
@@ -449,7 +484,7 @@ task mainJar(type: Jar) {
 }
 
 if(("false").equals(getProperty('publishMain'))) {
-  jar.dependsOn cddiffJar, cd2smtJar, coevolutionJar, toolJar
+  jar.dependsOn cddiffJar, cdmergeJar, cd2smtJar, coevolutionJar, toolJar
   apply plugin: "com.github.johnrengelman.shadow"
   shadowJar { // all in one jar
     archiveFileName = 'MCCD.jar'
@@ -501,6 +536,7 @@ jar.dependsOn grammarsJar
 
 artifacts {
   archives cddiffJar
+  archives cdmergeJar
   archives cd2smtJar
   archives coevolutionJar
   archives toolJar
@@ -517,6 +553,7 @@ publishing {
         from components.java
         artifact testSourcesJar
         artifact cddiffJar
+        artifact cdmergeJar
         artifact cd2smtJar
         artifact coevolutionJar
         artifact toolJar

@@ -1,11 +1,15 @@
 package de.monticore.cd2smt.cd2smtGenerator;
 
+import de.monticore.cd2smt.Helper.CDHelper;
 import com.microsoft.z3.*;
+import de.monticore.cd2smt.Helper.SMTNameHelper;
 import de.monticore.cd2smt.context.CDContext;
+import de.monticore.cd2smt.context.SMTAssociation;
 import de.monticore.cd2smt.context.SMTClass;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
@@ -20,41 +24,48 @@ public class CD2SMTGenerator {
 
   /**
    * declared an object diagram in a SMT Context
-   *
-   * @param cd        the class diagram to declared
+   * @param astCd the class diagram to declared
    * @return the context
    */
-  public CDContext cd2smt(ASTCDDefinition cd) {
+  public CDContext cd2smt(ASTCDCompilationUnit astCd) {
     //setup
-    CDContext cdContext = new CDContext() ;
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     cfg.put("proof", "true");
-    cdContext.setContext( new Context(cfg));
+    CDContext cdContext = new CDContext(new Context(cfg));
+
+    //set All Associations Role
+    CDHelper.setAssociationsRoles(astCd);
 
     //declare all classes
-    for (ASTCDClass myclass : cd.getCDClassesList())
-      cdContext = declareClass(cdContext, cd, myclass);
+    for (ASTCDClass myclass : astCd.getCDDefinition().getCDClassesList())
+      cdContext = declareClass(cdContext, astCd.getCDDefinition(), myclass);
 
     //declare  all associations
-    for (ASTCDAssociation myAssociation : cd.getCDAssociationsList())
-      cdContext = declareAssociation(cdContext, myAssociation, cd);
+    for (ASTCDAssociation myAssociation : astCd.getCDDefinition().getCDAssociationsList()) {
+      cdContext = declareAssociation(cdContext, myAssociation, astCd.getCDDefinition());
+    }
 
-    cdContext.setClassConstrs(buildClassConstraint(cdContext, cd));
-    cdContext.setAssocConstr(buildAssocConstraints(cdContext, cd));
-    cdContext.setInherConstr( buildInheritanceConstraints(cdContext, cd));
+
+    //add all constraints to the context
+    cdContext.setClassConstrs(buildClassConstraint(cdContext, astCd.getCDDefinition()));
+    cdContext.setAssocConstr(buildAssocConstraints(cdContext, astCd.getCDDefinition()));
+    cdContext.setInherConstr(buildInheritanceConstraints(cdContext, astCd.getCDDefinition()));
+
     return cdContext;
   }
 
 
   //-----------------------------------Class--declaration---------------------------------------------------------------
   protected CDContext declareClass(CDContext cdContext, ASTCDDefinition cd, ASTCDClass myClass) {
+    //create SMTClass object to save Class information
     SMTClass smtClass = new SMTClass();
+    smtClass.setClass(myClass);
 
     //(declare-sort A_obj 0)
-    String className = cdContext.printSMTClassName(myClass);
-    UninterpretedSort classSort = cdContext.getContext().mkUninterpretedSort(cdContext.getContext().mkSymbol(className));
-    smtClass.setSort( classSort);
+    UninterpretedSort classSort = cdContext.getContext().mkUninterpretedSort(cdContext.getContext().
+      mkSymbol(SMTNameHelper.printSMTClassName(myClass)));
+    smtClass.setSort(classSort);
 
     //(declare-datatype B_subclasses ((TT_NO_SUBTYPE) (TT_B)))
     List<ASTCDClass> subclassList = cdContext.getSubclassList(cd, myClass);
@@ -71,24 +82,23 @@ public class CD2SMTGenerator {
     smtClass.setSubclassDatatype( cdContext.getContext().mkDatatypeSort(myClass.getName() + "_subclasses", constructors));
 
     //(declare-fun b_get_subclass (B_obj) B_subclasses)
-    smtClass.setSubClass( cdContext.getContext().mkFuncDecl(cdContext.
-      printSubclassFuncName(myClass), classSort, smtClass.getSubclassDatatype()));
+    smtClass.setSubClass( cdContext.getContext().mkFuncDecl(SMTNameHelper.printSubclassFuncName(myClass), classSort, smtClass.getSubclassDatatype()));
 
-    //(declare-fun a_attrib_something (A_obj) String)
+    //(declare-fun a_attrib_something (A_obj) String) declare all attributes
     for (ASTCDAttribute myAttribute : myClass.getCDAttributeList()) {
-      String attribName = cdContext.printAttributeNameSMT(myClass, myAttribute);
-      FuncDecl<Sort> attributeFunc = cdContext.getContext().mkFuncDecl(attribName, classSort, cdContext.
-        parseAttribType2SMT(cdContext.getContext(), myAttribute));
+      String attribName = SMTNameHelper.printAttributeNameSMT(myClass, myAttribute);
+      FuncDecl<Sort> attributeFunc = cdContext.getContext().mkFuncDecl(attribName, classSort,
+       CDHelper.parseAttribType2SMT(cdContext.getContext(), myAttribute));
       smtClass.getAttributes().add(attributeFunc);
     }
     cdContext.getSmtClasses().put(myClass, smtClass);
+
     return cdContext;
   }
 
   /**
    * add constraints to the solver to make sure that
    * all attribute of each function will be defined
-   *
    * @param cdContext the context where the class diagram are already declared
    * @param cd        the class diagram
    * @return the list of constraint
@@ -115,13 +125,8 @@ public class CD2SMTGenerator {
 
   //-----------------------------------Association------------------------------------------------------------------------
   protected CDContext declareAssociation(CDContext cdContext, ASTCDAssociation myAssociation, ASTCDDefinition cd) {
-    //(declare-fun bc_assoc (B_obj C_obj) Bool)
-    Sort rightSortSMT = cdContext.getSmtClasses().get(cdContext.getClass(myAssociation.getRightQualifiedName().getQName(), cd).get()).getSort();
-    Sort leftSortSMT = cdContext.getSmtClasses().get(cdContext.getClass(myAssociation.getLeftQualifiedName().getQName(), cd).get()).getSort();
-    String assocName = cdContext.printSMTAssociationName(myAssociation);
-    FuncDecl<BoolSort> assocFunc = cdContext.getContext().mkFuncDecl(assocName, new Sort[]{leftSortSMT, rightSortSMT}, cdContext.getContext().getBoolSort());
-    cdContext.getAssocFunctions().put(myAssociation, assocFunc);
-
+    SMTAssociation smtAssociation = new SMTAssociation(cd, cdContext, myAssociation);
+    cdContext.getSMTAssociations().put(myAssociation, smtAssociation);
     return cdContext;
   }
 
@@ -129,10 +134,10 @@ public class CD2SMTGenerator {
     List<BoolExpr> constraints = new LinkedList<>();
 
     for (ASTCDAssociation myAssoc : cd.getCDAssociationsList()) {
-      Sort rightSortSMT = cdContext.getSmtClasses().get(cdContext.getClass(myAssoc.getRightQualifiedName().getQName(), cd).get()).getSort();
-      Sort leftSortSMT = cdContext.getSmtClasses().get(cdContext.getClass(myAssoc.getLeftQualifiedName().getQName(), cd).get()).getSort();
-      String assocName = cdContext.printSMTAssociationName(myAssoc);
-      FuncDecl assocFunc = cdContext.getAssocFunctions().get(myAssoc);
+      Sort rightSortSMT = cdContext.getSmtClasses().get(CDHelper.getClass(myAssoc.getRightQualifiedName().getQName(), cd)).getSort();
+      Sort leftSortSMT = cdContext.getSmtClasses().get(CDHelper.getClass(myAssoc.getLeftQualifiedName().getQName(), cd)).getSort();
+      String assocName = SMTNameHelper.printSMTAssociationName(myAssoc);
+      SMTAssociation smtAssociation = cdContext.getSMTAssociations().get(myAssoc);
 
       //Cardinality on the right side
       if (myAssoc.getRight().isPresentCDCardinality()) {
@@ -142,7 +147,7 @@ public class CD2SMTGenerator {
         //[1..*]
         BoolExpr atLeastOne = cdContext.getContext().mkForall(new Expr[]{l1},
           cdContext.getContext().mkExists(new Expr[]{r1},
-            cdContext.getContext().mkApp(assocFunc, l1, r1),
+            cdContext.getContext().mkApp(smtAssociation.getAssocFunc(), l1, r1),
             0, null, null, null, null), 0,
           null, null, null, null);
         //[1..0]
@@ -150,8 +155,8 @@ public class CD2SMTGenerator {
         BoolExpr optional = cdContext.getContext().mkForall(new Expr[]{l1, r1, r2},
           cdContext.getContext().mkImplies(
             cdContext.getContext().mkAnd(
-              cdContext.getContext().mkApp(assocFunc, l1, r1),
-              cdContext.getContext().mkApp(assocFunc, l1, r2)),
+              cdContext.getContext().mkApp(smtAssociation.getAssocFunc(), l1, r1),
+              cdContext.getContext().mkApp(smtAssociation.getAssocFunc(), l1, r2)),
             cdContext.getContext().mkEq(r1, r2)),
           0, null, null, null, null);
 
@@ -167,22 +172,22 @@ public class CD2SMTGenerator {
       //Cardinality on the left side
       if (myAssoc.getLeft().isPresentCDCardinality()) {
         Expr<Sort> rr1 = cdContext.getContext().mkConst(assocName + "r11", rightSortSMT);
-        Expr<Sort> ll1 = cdContext.getContext().mkConst(assocName + "l11", leftSortSMT);
+        Expr<Sort> l1 = cdContext.getContext().mkConst(assocName + "l11", leftSortSMT);
 
         //[1..*]
         BoolExpr atLeastOne = cdContext.getContext().mkForall(new Expr[]{rr1},
-          cdContext.getContext().mkExists(new Expr[]{ll1},
-            cdContext.getContext().mkApp(assocFunc, ll1, rr1),
+          cdContext.getContext().mkExists(new Expr[]{l1},
+            cdContext.getContext().mkApp(smtAssociation.getAssocFunc(), l1, rr1),
             0, null, null, null, null), 0,
           null, null, null, null);
         //[1..0]
         Expr<Sort> l2 = cdContext.getContext().mkConst(assocName + "l2", leftSortSMT);
-        BoolExpr optional = cdContext.getContext().mkForall(new Expr[]{ll1, rr1, l2},
+        BoolExpr optional = cdContext.getContext().mkForall(new Expr[]{l1, rr1, l2},
           cdContext.getContext().mkImplies(
             cdContext.getContext().mkAnd(
-              cdContext.getContext().mkApp(assocFunc, ll1, rr1),
-              cdContext.getContext().mkApp(assocFunc, l2, rr1)),
-            cdContext.getContext().mkEq(l2, ll1)),
+              cdContext.getContext().mkApp(smtAssociation.getAssocFunc(), l1, rr1),
+              cdContext.getContext().mkApp(smtAssociation.getAssocFunc(), l2, rr1)),
+            cdContext.getContext().mkEq(l2, l1)),
           0, null, null, null, null);
 
         if (myAssoc.getLeft().getCDCardinality().isAtLeastOne())
@@ -206,13 +211,13 @@ public class CD2SMTGenerator {
       if (!myClass.getSuperclassList().isEmpty()) {
         //convert an object to an object of the superclass
         //(declare-fun convert_to_A (B_obj) A_obj)
-        Optional<ASTCDClass> superClass = cdContext.getClass(myClass.getSuperclassList().get(0).
-          printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd);
+        Optional<ASTCDClass> superClass = Optional.of(CDHelper.getClass(myClass.getSuperclassList().get(0).
+          printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd));
 
         //add declare  the function to the smt representation of the subclass
-        cdContext.getSmtClasses().get(myClass).setConvert2Superclass( Optional.of(cdContext.getContext().mkFuncDecl(
+        cdContext.getSmtClasses().get(myClass).setConvert2Superclass(cdContext.getContext().mkFuncDecl(
           "Convert_" + myClass.getName() + "_to_" + superClass.get().getName(),
-          cdContext.getSmtClasses().get(myClass).getSort(), cdContext.getSmtClasses().get(superClass.get()).getSort())));
+          cdContext.getSmtClasses().get(myClass).getSort(), cdContext.getSmtClasses().get(superClass.get()).getSort()));
 
         //constraints to make sure that the function convert_to will be defined
         Expr<Sort> subclassObj = cdContext.getContext().mkConst(myClass.getName() + "scc", cdContext.getSmtClasses().
@@ -223,7 +228,7 @@ public class CD2SMTGenerator {
         BoolExpr constr = cdContext.getContext().mkForall(new Expr[]{subclassObj}, cdContext
             .getContext().mkExists(new Expr[]{superClassObj},
               cdContext.getContext().mkEq(cdContext.getContext().mkApp(cdContext.getSmtClasses()
-                .get(myClass).getConvert2Superclass().get(), subclassObj), superClassObj), 0, null,
+                .get(myClass).getConvert2Superclass(), subclassObj), superClassObj), 0, null,
               null, null, null), 0,
           null, null, null, null);
         constraints.add(constr);
@@ -234,20 +239,20 @@ public class CD2SMTGenerator {
         Expr<Sort> b2 = cdContext.getContext().mkConst("b2", cdContext.getSmtClasses().get(myClass).getSort());
         BoolExpr bijektiv = cdContext.getContext().mkForall(new Expr[]{b1, b2}, cdContext.getContext().mkEq(
             cdContext.getContext().mkEq(cdContext.getContext().mkApp(cdContext.getSmtClasses().get(myClass).
-                getConvert2Superclass().get(), b1),
-              cdContext.getContext().mkApp(cdContext.getSmtClasses().get(myClass).getConvert2Superclass().get(), b2)), cdContext
+                getConvert2Superclass(), b1),
+              cdContext.getContext().mkApp(cdContext.getSmtClasses().get(myClass).getConvert2Superclass(), b2)), cdContext
               .getContext().mkEq(b1, b2)),
           0, null, null, null, null);
         constraints.add(bijektiv);
 
         Expr<Sort> b3 = cdContext.getContext().mkConst("b3", cdContext.getSmtClasses().get(myClass).getSort());
 
-        Expr x = cdContext.getContext().mkConst(cdContext.getSmtClasses().get(superClass.get())
+        Expr<? extends Sort> x = cdContext.getContext().mkConst(cdContext.getSmtClasses().get(superClass.get())
           .getSubClassConstrList().get(superClass.get()).ConstructorDecl());
 
         BoolExpr typeConstr = cdContext.getContext().mkForall(new Expr[]{b3}, cdContext.getContext().mkEq(
             cdContext.getContext().mkApp(cdContext.getSmtClasses().get(superClass.get()).getSubClass(),
-              cdContext.getContext().mkApp(cdContext.getSmtClasses().get(myClass).getConvert2Superclass().get(), b1)), x),
+              cdContext.getContext().mkApp(cdContext.getSmtClasses().get(myClass).getConvert2Superclass(), b1)), x),
           0, null, null, null, null);
         constraints.add(bijektiv);
         constraints.add(typeConstr);

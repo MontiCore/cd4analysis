@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package redundantSuperinterfaces1;
+classdiagram mergedCD {
+	
+	interface Living;
+	interface Breathing extends Living;
+	class Person implements Breathing;
+}

@@ -1,0 +1,16 @@
+package office;
+classdiagram A {  
+    class Location{
+        String address;
+    }
+    class Person {  
+            String name;
+    }   
+    class Employee extends Person{
+        int id;
+    }
+    class Company;
+    association office Company -> Location [*];
+    association staff Company -> Person [*];
+    association [*] Person <-> (home) Location [1];
+}

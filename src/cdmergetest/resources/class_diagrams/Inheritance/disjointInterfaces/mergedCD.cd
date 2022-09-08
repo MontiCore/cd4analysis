@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package disjointInterfaces;
+classdiagram mergedCD {
+	interface Breathing;
+	interface Living;
+	class Person implements Breathing, Living;
+	
+}

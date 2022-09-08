@@ -1,0 +1,41 @@
+/* (c) https://github.com/MontiCore/monticore */
+//A Compilation Unit Comment
+
+package allFlavours;
+/*
+ * A Classsiagramm Comment
+ */
+classdiagram CDA{
+
+	interface I1;
+
+	/* Comment for class A*/
+	class A implements I1{
+	
+		//an attribute
+		String lastname;
+	}
+	
+	//comment for enum A.G
+	enum G{
+		X,Y,Z;
+	}
+	
+	//Comment for Interface C from A1
+	interface C extends I1;
+	
+   /*
+    * A nice Class D
+    */
+	class D implements C;
+	
+	class E extends A{
+		/* Test Attribute */
+	  String test;
+	}
+	
+	association  A <- C; 
+	
+	//this is an association
+	association assoc1 [1] D [[test]] (typeD) -> (typeE)  E ;
+}

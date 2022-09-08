@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package duplicateAttributes;
+classdiagram B {
+	class Person {
+		String name;
+	}
+}

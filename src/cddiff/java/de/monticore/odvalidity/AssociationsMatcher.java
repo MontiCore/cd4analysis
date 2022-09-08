@@ -7,7 +7,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.cd2alloy.CD2AlloyQNameHelper;
+import de.monticore.cddiff.CDQNameHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODNamedObject;
@@ -157,7 +157,7 @@ public class AssociationsMatcher {
       targetRole = targetSide.getCDRole().getName();
     }
     else {
-      targetRole = CD2AlloyQNameHelper.processQName2RoleName(targetType);
+      targetRole = CDQNameHelper.processQName2RoleName(targetType);
     }
     if (outgoingLinks.stream()
         .anyMatch(link -> link.getODLinkRightSide().getRole().equals(targetRole)
@@ -321,14 +321,14 @@ public class AssociationsMatcher {
       leftRole = association.getLeft().getCDRole().getName();
     }
     else {
-      leftRole = CD2AlloyQNameHelper.processQName2RoleName(leftType);
+      leftRole = CDQNameHelper.processQName2RoleName(leftType);
     }
 
     if (association.getRight().isPresentCDRole()) {
       rightRole = association.getRight().getCDRole().getName();
     }
     else {
-      rightRole = CD2AlloyQNameHelper.processQName2RoleName(rightType);
+      rightRole = CDQNameHelper.processQName2RoleName(rightType);
     }
 
     if (association.getCDAssocDir().isDefinitiveNavigableRight() && !association.getCDAssocDir()

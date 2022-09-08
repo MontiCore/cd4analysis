@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package NameConflictNonHeteorogenous;
+classdiagram B {
+	class Color {
+		String name;
+	}	
+}

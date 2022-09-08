@@ -38,7 +38,6 @@ public class WitnessTest extends CDDiffTestBasis {
     // Extract solution
     AlloyDiffSolution s = optS.get();
     List<ASTODArtifact> ods = s.generateODs();
-    s.generateSolutionsToPath(Path.of("target/TEMP"));
 
     // Check for each od in ods if od is an instance of cd1 and not cd2
     OD2CDMatcher matcher = new OD2CDMatcher();

@@ -2,11 +2,9 @@ package de.monticore.cddiff;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.cd2alloy.CD2AlloyQNameHelper;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -149,7 +147,7 @@ public class JoinLinksTrafo {
     if (assocSide.isPresentCDRole()){
       return assocSide.getCDRole().getName();
     }
-    return CD2AlloyQNameHelper.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
+    return CDQNameHelper.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
   }
 
 
