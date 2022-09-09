@@ -206,7 +206,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       // by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
       List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
-          compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
+              compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
       List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
       List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
       DiffAssocMapInCompareSG.forEach(e -> {
@@ -270,24 +270,44 @@ public class CDWrapper2CDSyntaxDiffGenerator {
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       isInCompareSG = true;
     } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
-      if ((intersectedBaseCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses()
-          .equals(intersectedCompareCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses()))
-          && (intersectedBaseCDAssociationWrapper.getCDWrapperRightClass().getSuperclasses()
-          .equals(intersectedCompareCDAssociationWrapper.getCDWrapperRightClass().getSuperclasses()))) {
-        isInCompareSG = true;
+      if (!isAssocNameExchanged) {
+        if (checkClassSet4MultiInstance(
+                intersectedBaseCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses(),
+                intersectedCompareCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses()) &&
+            checkClassSet4MultiInstance(
+                intersectedBaseCDAssociationWrapper.getCDWrapperRightClass().getSuperclasses(),
+                intersectedCompareCDAssociationWrapper.getCDWrapperRightClass().getSuperclasses())) {
+          isInCompareSG = true;
+        }
+      } else {
+        if (checkClassSet4MultiInstance(
+                intersectedBaseCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses(),
+                intersectedCompareCDAssociationWrapper.getCDWrapperRightClass().getSuperclasses()) &&
+            checkClassSet4MultiInstance(
+                intersectedBaseCDAssociationWrapper.getCDWrapperRightClass().getSuperclasses(),
+                intersectedCompareCDAssociationWrapper.getCDWrapperLeftClass().getSuperclasses())) {
+          isInCompareSG = true;
+        }
       }
     }
 
-    // Except the duplication witnesses in MULTI_INSTANCE_CLOSED_WORLD
-    // when the left class or right class (including its superclasses)
-    // in association have syntax difference.
-    if (isInCompareSG) {
+    if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       createCDAssociationDiff(baseCDW,
           compareCDW,
           intersectedBaseCDAssociationWrapper,
           Optional.of(intersectedCompareCDAssociationWrapper),
           isInCompareSG,
           isAssocNameExchanged);
+    } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD){
+      if (intersectedBaseCDAssociationWrapper.getCDWrapperLeftClass().getSubclasses().size() == 1 &&
+          intersectedBaseCDAssociationWrapper.getCDWrapperRightClass().getSubclasses().size() == 1) {
+        createCDAssociationDiff(baseCDW,
+            compareCDW,
+            intersectedBaseCDAssociationWrapper,
+            Optional.of(intersectedCompareCDAssociationWrapper),
+            isInCompareSG,
+            isAssocNameExchanged);
+      }
     }
   }
 

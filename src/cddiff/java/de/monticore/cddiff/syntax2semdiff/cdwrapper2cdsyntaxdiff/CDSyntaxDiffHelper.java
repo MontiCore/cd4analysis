@@ -173,10 +173,11 @@ public class CDSyntaxDiffHelper {
               baseCDAssociationWrapper, baseCDW);
 
       // get all associations including reversed association in CompareSG
-      // by matching [leftClass], [rightClass]
+      // by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
       List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
-          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleNameAndCardinality(
-              compareCDW.getCDAssociationWrapperGroup(), intersectedBaseCDAssociationWrapper);
+          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
+              compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
+
       List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
       List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
       DiffAssocMapInCompareSG.forEach(e -> {

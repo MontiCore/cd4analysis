@@ -1023,6 +1023,27 @@ public class CDWrapperHelper {
     return reversedAssoc;
   }
 
+  /**
+   * check superclasses set and subclasses set for multi-instance
+   */
+  public static boolean checkClassSet4MultiInstance(
+      Set<String> baseClassSet,
+      Set<String> compareClassSet) {
+
+    Set<String> modifiedBaseClassSet = new HashSet<>();
+    Set<String> modifiedCompareClassSet = new HashSet<>();
+
+    baseClassSet.forEach(e -> {
+      modifiedBaseClassSet.add(e.split("_")[1]);
+    });
+
+    compareClassSet.forEach(e -> {
+      modifiedCompareClassSet.add(e.split("_")[1]);
+    });
+
+    return modifiedBaseClassSet.equals(modifiedCompareClassSet);
+  }
+
   /********************************************************************
    ************************    CD Status    ***************************
    *******************************************************************/

@@ -421,6 +421,9 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     }
 
     Assert.assertTrue(ods.size() > 0);
+
+    Assert.assertTrue(ods.stream()
+        .anyMatch(e -> e.getObjectDiagram().getName().contains("freed")));
   }
 
   @Test
@@ -439,6 +442,38 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     }
 
     Assert.assertEquals(ods.size(), 1);
+  }
+
+  @Test
+  public void testNoOpenWorldDiff() {
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
+        + "Combination/Employees_object2A.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
+        + "Combination/Employees_object2B.cd";
+    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+    List<ASTODArtifact> ods = JavaCDDiff.computeSemDiff(ast1, ast2, cdSemantics);
+
+    Assert.assertEquals(ods.size(), 0);
+  }
+
+  @Test
+  public void testValidityOfOW2CWReduction() {
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
+        + "Combination/Employees_object1A.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/"
+        + "Combination/Employees_object1B.cd";
+    CDSemantics cdSemantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+    List<ASTODArtifact> ods = JavaCDDiff.computeSemDiff(ast1, ast2, cdSemantics);
+
+    OD2CDMatcher matcher = new OD2CDMatcher();
+    for (ASTODArtifact od : ods) {
+      Assert.assertTrue(matcher.checkODValidity(cdSemantics, od, ast1));
+      Assert.assertFalse(matcher.checkODValidity(cdSemantics, od, ast2));
+    }
   }
 
   /********************************************************************
