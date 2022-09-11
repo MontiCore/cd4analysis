@@ -157,6 +157,7 @@ dependencies {
   // dependencies for cddiff
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:6"
+  implementation 'org.eclipse.jgit:org.eclipse.jgit:2.2.0.201212191850-r'
   cddiffImplementation(sourceSets.main.output.classesDirs)
 
   cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"

@@ -38,7 +38,7 @@ public class CDAssociationDiff extends AbstractDiffType {
       ppName2, ppType2, ppDir2, ppOrderLeft2, ppModifierLeft2, ppCardLeft2, ppTypeLeft2,
       ppQualifierLeft2, ppRoleLeft2, ppOrderRight2, ppModifierRight2, ppCardRight2, ppTypeRight2,
       ppQualifierRight2, ppRoleRight2, assoCD1, assoCD2, assoCD1NC, assoCD2NC;
-
+  boolean directionChanged = false;
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   /**
    * Constructor of the association diff type
@@ -74,6 +74,10 @@ public class CDAssociationDiff extends AbstractDiffType {
     double size = diffList.size();
 
     size += addWeightToDiffSize(diffList);
+    // Reduce diff size if the direction was reversed
+    if (directionChanged){
+      size -= 1;
+    }
 
     return size;
   }
@@ -181,28 +185,6 @@ public class CDAssociationDiff extends AbstractDiffType {
       && pp.prettyprint(cd2Asso.getModifier()).length() < 1)){
       diffs.add(setModifier(cd1Asso.getModifier(), cd2Asso.getModifier()));
     }
-    /*
-    // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Asso.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Asso.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> assoModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-    if (assoModifier.isPresent()) {
-      diffs.add(assoModifier);
-      if (assoModifier.getInterpretation().isPresent()) {
-        interpretation.append("Modifier")
-          .append(": ")
-          .append(assoModifier.getInterpretation().get())
-          .append(", ");
-      }
-    }
-    if (! (pp.prettyprint(cd1Modi.get()).length() < 1)){
-      ppModifier1 = getColorCode(assoModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    }
-    if (! (pp.prettyprint(cd2Modi.get()).length() < 1)){
-      ppModifier2 = getColorCode(assoModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-    }
-
-     */
 
     // Association Type, non-optional
     Optional<ASTCDAssocType> cd1AssoType = Optional.of(cd1Asso.getCDAssocType());
@@ -239,28 +221,44 @@ public class CDAssociationDiff extends AbstractDiffType {
       }
     }
 
+    // Check if direction '->' was changed to '<-' or '<-' to '->'.
+    // If yes then add weight for calculating the smallest diff for each side combination.
+    int weightDirection = 0;
+    if ( (cd1AssoDir.get().isDefinitiveNavigableRight() && !cd1AssoDir.get().isDefinitiveNavigableLeft())
+      && (!cd2AssoDir.get().isDefinitiveNavigableRight() && cd2AssoDir.get().isDefinitiveNavigableLeft())
+      ||(!cd1AssoDir.get().isDefinitiveNavigableRight() && cd1AssoDir.get().isDefinitiveNavigableLeft())
+      && (cd2AssoDir.get().isDefinitiveNavigableRight() && !cd2AssoDir.get().isDefinitiveNavigableLeft())){
+      directionChanged = true;
+      weightDirection = 1;
+    }
+
     tmpOriginalDir.addAll(getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getRight(), false));
 
     // Reversed direction (exchange the input and use the reversed direction, only for directed)
     List<FieldDiff<? extends ASTNode, ? extends ASTNode>> tmpReverseDir = new ArrayList<>();
     tmpReverseDir.addAll(getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getRight(), false));
 
-    // Todo: Add reversed AssoDir
-
     tmpReverseDir.addAll(getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getLeft(), false));
 
-    if (tmpOriginalDir.size() < tmpReverseDir.size()) {
+    if ((tmpOriginalDir.size() + weightDirection) < tmpReverseDir.size()) {
       diffs.addAll(tmpOriginalDir);
       getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getLeft(), true);
       ppDir1 = getColorCode(assoDir1) + pp.prettyprint(cd1AssoDir.get()) + RESET;
       ppDir2 = getColorCode(assoDir1) + pp.prettyprint(cd2AssoDir.get()) + RESET;
       getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getRight(), true);
+      directionChanged = false;
     }
     else {
       diffs.addAll(tmpReverseDir);
       getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getRight(), true);
-      //ppDir1 = getColorCode(assoDir1) + pp.prettyprint(cd1AssoDir.get() + RESET);
-      //ppDir2 = getColorCode(assoDir1) + pp.prettyprint(cd2AssoDir.get() + RESET);
+      if (directionChanged){
+        ppDir1 = pp.prettyprint(cd1AssoDir.get());
+        ppDir2 = pp.prettyprint(cd2AssoDir.get());
+      }else {
+        ppDir1 = getColorCode(assoDir1) + pp.prettyprint(cd1AssoDir.get()) + RESET;
+        ppDir2 = getColorCode(assoDir1) + pp.prettyprint(cd2AssoDir.get()) + RESET;
+      }
+
       getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getLeft(), true);
     }
 

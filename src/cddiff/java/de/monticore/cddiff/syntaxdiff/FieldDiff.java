@@ -113,9 +113,11 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
     if (cd1Value.isPresent()) {
       if (cd1Value.get() instanceof ASTModifier) {
         ASTModifier cd1 = (ASTModifier) cd1Value.get();
-        if (cd2Value.isPresent()) {
+        if (cd2Value.isPresent() && cd2Value.get() instanceof ASTModifier) {
           ASTModifier cd2 = (ASTModifier) cd2Value.get();
-          if (cd1.isPublic() && cd2.isPublic()) {
+          if ( (cd1.isPublic() && cd2.isPublic())
+            || (cd1.isProtected() && cd2.isProtected())
+            || (cd1.isPrivate() && cd2.isPrivate())) {
             this.interpretation = Interpretation.EQUAL;
           }
           else if (cd1.isPublic() && (cd2.isPrivate() || cd2.isProtected())) {
@@ -174,7 +176,7 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
           }
         }
         else {
-          // Cardninality was deleted
+          // Cardinality was deleted
           if (((ASTCDCardinality) cd1Value.get()).toCardinality().isNoUpperLimit()
               && cd1Lower == 0) {
             // [0..*] == [*]

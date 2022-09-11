@@ -13,10 +13,10 @@ import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.umlmodifier._ast.ASTModifier;
-import org.checkerframework.checker.nullness.Opt;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -215,14 +215,18 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
 
     // Diff size of attributes (amounts to max ~ 1)
     for (ElementDiff<ASTCDAttribute> i : matchedAttributesList) {
-      if (i.getCd1Element().isPresentInitial()) {
-        size += i.getDiffSize() / 4.0;
+      int count = 2;
+      if (i.getCd1Element().isPresentInitial() || i.getCd2Element().isPresentInitial()) {
+        for (FieldDiff<? extends ASTNode, ? extends ASTNode> x: i.getDiffList()){
+          if ((x.getCd1Value().isPresent() && x.getCd1Value().get() instanceof ASTExpression)
+            || (x.getCd2Value().isPresent() && x.getCd2Value().get() instanceof ASTExpression)){
+            count += 1;
+          }
+        }
       }
-      else {
-        size += i.getDiffSize() / 3.0;
-      }
+      size += i.getDiffSize() / count;
     }
-    size += deletedAttributes.size() + addedAttributes.size();
+    size += (deletedAttributes.size() + addedAttributes.size())/2.0;
 
     //Todo: Add Parameter Diff to size calculation
     //Diff size of methods
@@ -393,13 +397,13 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
         cd2Imple);
 
     cd1Imple.ifPresent(
-        inter -> ppInter1 = getColorCode(interfaceDiff) + pp.prettyprint(inter) + RESET);
+        inter -> ppInter1 = getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
     cd2Imple.ifPresent(
-        inter -> ppInter2 = getColorCode(interfaceDiff) + pp.prettyprint(inter) + RESET);
+        inter -> ppInter2 = getColorCode(interfaceDiff) + " implements " + pp.prettyprint(inter) + RESET);
     cd1Imple.ifPresent(
-      inter -> ppInter1NC = pp.prettyprint(inter));
+      inter -> ppInter1NC = " implements " + pp.prettyprint(inter));
     cd2Imple.ifPresent(
-      inter -> ppInter2NC = pp.prettyprint(inter));
+      inter -> ppInter2NC = " implements " + pp.prettyprint(inter));
 
     if (interfaceDiff.isPresent()) {
       diffList.add(interfaceDiff);
@@ -453,13 +457,13 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
         cd2Imple);
 
     cd1Imple.ifPresent(
-      inter -> ppInter1 = getColorCode(interfaceDiff) + pp.prettyprint(inter) + RESET);
+      inter -> ppInter1 = getColorCode(interfaceDiff) + " implements " +  pp.prettyprint(inter) + RESET);
     cd2Imple.ifPresent(
-      inter -> ppInter2 = getColorCode(interfaceDiff) + pp.prettyprint(inter) + RESET);
+      inter -> ppInter2 = getColorCode(interfaceDiff) + " implements " +  pp.prettyprint(inter) + RESET);
     cd1Imple.ifPresent(
-      inter -> ppInter1NC = pp.prettyprint(inter));
+      inter -> ppInter1NC = " implements " + pp.prettyprint(inter));
     cd2Imple.ifPresent(
-      inter -> ppInter2NC = pp.prettyprint(inter));
+      inter -> ppInter2NC = " implements " + pp.prettyprint(inter));
 
     if (interfaceDiff.isPresent()) {
       diffList.add(interfaceDiff);
@@ -554,6 +558,12 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
         }
         if (!found){
           attributeList.add(inheritedAttribute);
+          if (!interpretationList.contains(SyntaxDiff.Interpretation.ATTRIBUTE_INHERITED)){
+            interpretationList.add(SyntaxDiff.Interpretation.ATTRIBUTE_INHERITED);
+            interpretation.append(SyntaxDiff.Interpretation.ATTRIBUTE_INHERITED)
+              .append(" ");
+          }
+
         }
       }
     }
@@ -566,7 +576,6 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
    * @param methodeList List of methods from the element, which should be expanded
    * @return List of original attributes + inherited without conflicts
    */
-  //Todo: Add check for signature
   private List<ASTCDMethod> addInheritedMethods (Set<ASTCDType> superClasses, List<ASTCDMethod> methodeList){
     List<ASTCDMethod> output = new ArrayList<>(methodeList);
     for (ASTCDType x : superClasses){
@@ -577,14 +586,26 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
         boolean found = false;
         for (ASTCDMethod localMethod : output){
           if (localMethod.getName().equals(name)
-            && !(inheritedMethod.getCDParameterList().size() == localMethod.getCDParameterList().size())){
-            //Todo: Add check for signature when size is equal
-            found = true;
-            break;
+            && inheritedMethod.getCDParameterList().size() == localMethod.getCDParameterList().size()){
+            int counter = 0;
+            for (int i = 0; i < inheritedMethod.getCDParameterList().size(); i++){
+              if (inheritedMethod.getCDParameterList().get(i).getMCType()
+                .deepEquals(localMethod.getCDParameterList().get(i).getMCType())){
+                counter += 1;
+              }
+            }
+            if (counter == inheritedMethod.getCDParameterList().size()){
+              found = true;
+            }
           }
         }
         if (!found){
           output.add(inheritedMethod);
+          if (!interpretationList.contains(SyntaxDiff.Interpretation.METHOD_INHERITED)){
+            interpretationList.add(SyntaxDiff.Interpretation.METHOD_INHERITED);
+            interpretation.append(SyntaxDiff.Interpretation.METHOD_INHERITED)
+              .append(" ");
+          }
         }
       }
     }
@@ -699,11 +720,11 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
       }
       for (ASTCDEnumConstant x : getDeletedEnumConstants()) {
         StringBuilder delEnumConstant = new StringBuilder();
-        String deletedEnumConstant = bodyOffsetDel + pp.prettyprint(x);
+        String deletedEnumConstant = pp.prettyprint(x);
         if (deletedEnumConstant.contains("\n")) {
           deletedEnumConstant = deletedEnumConstant.split("\n")[0];
         }
-        matchDelNC.put(delEnumConstant.toString(), Integer.valueOf(
+        matchDelNC.put(bodyOffsetDel + deletedEnumConstant, Integer.valueOf(
           x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
 
         delEnumConstant.append(COLOR_DELETE).append(deletedEnumConstant).append(RESET);
@@ -712,11 +733,11 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
       }
       for (ASTCDEnumConstant x : addedEnumConstants) {
         StringBuilder addEnumConst = new StringBuilder();
-        String addedEnumConstant = bodyOffsetAdd + pp.prettyprint(x);
+        String addedEnumConstant = pp.prettyprint(x);
         if (addedEnumConstant.contains("\n")) {
           addedEnumConstant = addedEnumConstant.split("\n")[0];
         }
-        addNC.put(addEnumConst.toString(), Integer.valueOf(
+        addNC.put(bodyOffsetAdd + addedEnumConstant, Integer.valueOf(
           x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
 
         addEnumConst.append(COLOR_ADD).append(addedEnumConstant).append(RESET);
@@ -763,11 +784,11 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
 
     for (ASTCDMethod x : deletedMethods) {
       StringBuilder delMethods = new StringBuilder();
-      String deletedMethode = bodyOffsetDel + pp.prettyprint((ASTCDBasisNode) x);
+      String deletedMethode = pp.prettyprint((ASTCDBasisNode) x);
       if (deletedMethode.contains("\n")) {
         deletedMethode = deletedMethode.split("\n")[0];
       }
-      matchDelNC.put(deletedMethode, Integer.valueOf(
+      matchDelNC.put(bodyOffsetDel + deletedMethode, Integer.valueOf(
         x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
 
       delMethods.append(COLOR_DELETE).append(deletedMethode).append(RESET);
@@ -776,11 +797,11 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
     }
     for (ASTCDAttribute x : deletedAttributes) {
       StringBuilder delAttri = new StringBuilder();
-      String deletedAttribute = bodyOffsetDel + pp.prettyprint(x);
+      String deletedAttribute = pp.prettyprint(x);
       if (deletedAttribute.contains("\n")) {
         deletedAttribute = deletedAttribute.split("\n")[0];
       }
-      matchDelNC.put(deletedAttribute, Integer.valueOf(
+      matchDelNC.put(bodyOffsetDel + deletedAttribute, Integer.valueOf(
         x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
 
       delAttri.append(COLOR_DELETE).append(deletedAttribute).append(RESET);
@@ -790,11 +811,11 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
 
     for (ASTCDMethod x : addedMethode) {
       StringBuilder addMeth = new StringBuilder();
-      String addedMethode = bodyOffsetAdd + pp.prettyprint((ASTCDBasisNode) x);
+      String addedMethode = pp.prettyprint((ASTCDBasisNode) x);
       if (addedMethode.contains("\n")) {
         addedMethode = addedMethode.split("\n")[0];
       }
-      addNC.put(addedMethode, Integer.valueOf(
+      addNC.put(bodyOffsetAdd + addedMethode, Integer.valueOf(
         x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
 
       addMeth.append(COLOR_ADD).append(addedMethode).append(RESET);
@@ -803,11 +824,11 @@ public class CDTypeDiff<ASTCDType1 extends ASTCDType, ASTCDType2 extends ASTCDTy
     }
     for (ASTCDAttribute x : addedAttributes) {
       StringBuilder addAttri = new StringBuilder();
-      String addedAttribute = bodyOffsetAdd + pp.prettyprint(x);
+      String addedAttribute = pp.prettyprint(x);
       if (addedAttribute.contains("\n")) {
         addedAttribute = addedAttribute.split("\n")[0];
       }
-      addNC.put(addedAttribute, Integer.valueOf(
+      addNC.put(bodyOffsetAdd + addedAttribute, Integer.valueOf(
         x.get_SourcePositionStart().getLine() + "" + x.get_SourcePositionStart().getColumn()));
 
       addAttri.append(COLOR_ADD).append(addedAttribute).append(RESET);

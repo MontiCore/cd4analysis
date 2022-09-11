@@ -4,6 +4,7 @@ package de.monticore;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.ast.Comment;
+import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
@@ -50,6 +51,17 @@ import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.ObjectLoader;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.storage.file.FileRepository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.treewalk.TreeWalk;
+import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -379,6 +391,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
+        if (cmd.hasOption("syntaxdiff")){
+          return true;
+        }
         printHelp((CDToolOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required",
             "[i, stdin]"));
@@ -415,6 +430,21 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       Log.error("0xCD0E1 Failed to parse from stdin", e);
     }
     // should never be reached (unless failquick is off)
+    return null;
+  }
+  public ASTCDCompilationUnit parseModelFromString(String model) {
+    CD4CodeParser parser = new CD4CodeParser();
+    Optional<ASTCDCompilationUnit> optAutomaton;
+    try {
+      optAutomaton = parser.parse_String(model);
+      //assertFalse(parser.hasErrors());
+      if(!parser.hasErrors() && optAutomaton.isPresent()){
+        return optAutomaton.get();
+      }
+    }
+    catch (Exception e) {
+      Log.error("0xCD0E1 Failed to parse from stdin", e);
+    }
     return null;
   }
 
@@ -750,22 +780,52 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   }
 
   protected void computeSyntaxDiff() throws IOException {
-    // parse the first CD
-    ASTCDCompilationUnit ast1;
-    String pathCD1;
+    String commitID1 = cmd.getOptionValue("cd1commit");
+    String commitID2 = cmd.getOptionValue("cd2commit");
+
+    String[] path = cmd.getOptionValues("syntaxdiff");
+    String pathCD1 = path[0];
+    String pathCD2 = path[1];
+    /*
     if (!modelFile.isEmpty()) {
-      ast1 = parse(modelFile);
+      //ast1 = parse(modelFile);
       pathCD1 = modelFile;
     }
     else {
-      ast1 = parse(modelReader);
+      //ast1 = parse(modelReader);
       pathCD1 = modelReader.toString();
     }
 
-    // parse the second CD
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syntaxdiff"));
+     */
 
-    String pathCD2 = cmd.getOptionValue("syntaxdiff");
+    // parse the model
+    ASTCDCompilationUnit ast1;
+    ASTCDCompilationUnit ast2;
+
+    if (commitID1 != null){
+      String tmp1 = findFileInCommit(commitID1, pathCD1);
+      if (!(tmp1.equals(""))){
+        ast1 = parseModelFromString(tmp1);
+
+      }else {
+        throw new IOException();
+      }
+    }else {
+      ast1 = parse(pathCD1);
+    }
+
+    if (commitID2 != null){
+      String tmp2 = findFileInCommit(commitID2, pathCD2);
+      if (!(tmp2.equals(""))){
+        ast2 = parseModelFromString(tmp2);
+
+      }else {
+        throw new IOException();
+      }
+    }else {
+      ast2 = parse(pathCD2);
+    }
+
 
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(ast1);
@@ -775,8 +835,18 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
 
     if (cmd.hasOption("showpath")){
-      ast1.add_PreComment(0, (new Comment(pathCD1)));
-      ast2.add_PreComment(0, (new Comment(pathCD2)));
+      if (commitID1 != null){
+        ast1.add_PreComment(0, (new Comment(commitID1 + ":" + pathCD1)));
+      }else {
+        ast1.add_PreComment(0, (new Comment(pathCD1)));
+      }
+      if (commitID2 != null){
+        ast2.add_PreComment(0, (new Comment(commitID2 + ":" + pathCD2)));
+      }else {
+        ast2.add_PreComment(0, (new Comment(pathCD2)));
+      }
+
+
     }
     SyntaxDiff syntaxDiff = new SyntaxDiff(ast1,ast2);
 
@@ -811,6 +881,46 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       syntaxDiff.printNoColour();
     }
   }
+
+  /**
+   * This method search for a file provided by a relative path in a given git commit.
+   * @param commitSha Short ID of the commit (first 8 characters)
+   * @param path Relative path inside the repository
+   * @return Either the file content or empty string
+   */
+  public String findFileInCommit(String commitSha, String path) throws IOException {
+    FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
+    repositoryBuilder.readEnvironment().findGitDir();
+
+    if (repositoryBuilder.getGitDir() != null) {
+      Repository repository = new FileRepository(repositoryBuilder.getGitDir());
+      RevWalk revWalk = new RevWalk(repository);
+      ObjectId commitId = repository.resolve(commitSha);
+      RevCommit commit = revWalk.parseCommit(commitId);
+      RevTree tree = commit.getTree();
+      TreeWalk treeWalk = new TreeWalk(repository);
+      treeWalk.addTree(tree);
+      treeWalk.setRecursive(true);
+
+      ObjectId entryId = null;
+
+      // Iterate through all files in current commit and check for relative path
+      while (treeWalk.next()) {
+        if (treeWalk.getPathString().equals(path)) {
+          entryId = treeWalk.getObjectId(0);
+          break;
+        }
+      }
+      // Found the file, return its content
+      if (entryId != null){
+        ObjectLoader loader = repository.open(entryId);
+        return new String(loader.getBytes());
+      }
+    }
+    // No file found for given path + commit
+    return "";
+  }
+
 
   /**
    * todo: find more appropriate location for this method

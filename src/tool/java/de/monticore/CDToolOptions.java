@@ -332,7 +332,7 @@ public class CDToolOptions {
       .hasArg()
       .type(String.class)
       .argName("file")
-      .numberOfArgs(1)
+      .numberOfArgs(2)
       .desc(
         "Syntax based analysis of differences between class diagrams.")
       .build());
@@ -359,7 +359,23 @@ public class CDToolOptions {
       .build());
 
     options.addOption(Option.builder()
-      .longOpt("showPath")
+      .longOpt("showpath")
+      .desc("Each print contains the full path of the file, git commit hash included "
+        + "without this option only the file name is printed")
+      .build());
+    options.addOption(Option.builder()
+      .longOpt("cd1commit")
+      .hasArg()
+      .type(String.class)
+      .numberOfArgs(1)
+      .desc("Each print contains the full path of the file, git commit hash included "
+        + "without this option only the file name is printed")
+      .build());
+    options.addOption(Option.builder()
+      .longOpt("cd2commit")
+      .hasArg()
+      .type(String.class)
+      .numberOfArgs(1)
       .desc("Each print contains the full path of the file, git commit hash included "
         + "without this option only the file name is printed")
       .build());

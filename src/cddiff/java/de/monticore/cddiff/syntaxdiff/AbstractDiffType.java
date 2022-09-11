@@ -3,6 +3,7 @@ package de.monticore.cddiff.syntaxdiff;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDMember;
@@ -39,6 +40,9 @@ public abstract class AbstractDiffType {
   public StringBuilder getInterpretation() {
     return interpretation;
   }
+  public void setInterpretation(StringBuilder builder) {
+    this.interpretation = builder;
+  }
 
   public int getBreakingChange() {
     return breakingChange;
@@ -48,10 +52,16 @@ public abstract class AbstractDiffType {
     return interpretationList;
   }
 
+  public void setInterpretationList(List<SyntaxDiff.Interpretation> newInterpretationList){
+    this.interpretationList = newInterpretationList;
+  }
+
   public double getDiffSize() {
     return diffSize;
   }
-
+  public void addDiffSize(int value) {
+    this.diffSize += value;
+  }
   public List<FieldDiff<? extends ASTNode, ? extends ASTNode>> getDiffList() {
     return diffList;
   }
@@ -174,7 +184,8 @@ public abstract class AbstractDiffType {
         ASTNode type = diff.getCd1Value().get();
 
         // CDMember / Fields
-        if (type instanceof ASTCDAttribute || type instanceof ASTCDConstructor || type instanceof ASTCDMethod) {
+        if (type instanceof ASTCDAttribute || type instanceof ASTCDConstructor || type instanceof ASTCDMethod
+          || type instanceof ASTCDParameter) {
           size += 1;
         } else
 
@@ -232,6 +243,9 @@ public abstract class AbstractDiffType {
        if (!(field == null)) {
         output.append(field).append(" ");
       }
+    }
+    if (!stringList.isEmpty()){
+      return output.substring(0, output.length()-1);
     }
     return output.toString();
   }
