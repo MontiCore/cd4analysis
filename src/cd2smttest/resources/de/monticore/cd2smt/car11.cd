@@ -1,7 +1,7 @@
  classdiagram STTest {
     class Car {
       double price;
-      java.lang.String  manufacturer;
+      String  manufacturer;
       int numberOfWheel;
       boolean isExpensive ;
     }
