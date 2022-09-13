@@ -314,71 +314,6 @@ public class CDWrapperHelper {
 
   /**
    * calculate the intersection set of cardinality of given CDAssociationWrapper by its relevant
-   * CDRefSetAssociationWrappers only for A -> B and A <- B in the same CD
-   */
-  public static CDAssociationWrapper intersectCDAssociationWrapperCardinalityByCDAssociationWrapperOnlyWithLeftToRightAndRightToLeft(
-      CDAssociationWrapper originalAssoc, CDWrapper cdw) {
-    CDAssociationWrapper resultAssoc;
-    try {
-      resultAssoc = originalAssoc.clone();
-    }
-    catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
-
-    if (originalAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT
-        || originalAssoc.getCDAssociationWrapperDirection()
-        == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
-      List<CDAssociationWrapper> CDAssociationWrapperList = cdw.getCDAssociationWrapperGroup()
-          .values()
-          .stream()
-          .filter(e ->
-              // A <- B, A -> B
-              (e.getLeftOriginalClassName().equals(originalAssoc.getLeftOriginalClassName())
-                  && e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-                  && e.getCDAssociationWrapperDirection().equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection()))
-                  && e.getCDWrapperRightClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-                  && e.getRightOriginalClassName().equals(originalAssoc.getRightOriginalClassName())) ||
-              // A <- B, B <- A
-              (e.getLeftOriginalClassName().equals(originalAssoc.getRightOriginalClassName())
-                  && e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-                  && e.getCDAssociationWrapperDirection().equals(originalAssoc.getCDAssociationWrapperDirection())
-                  && e.getCDWrapperRightClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-                  && e.getRightOriginalClassName().equals(originalAssoc.getLeftOriginalClassName())))
-          .collect(Collectors.toList());
-
-      AtomicReference<CDWrapper.CDAssociationWrapperCardinality> finalLeftCardinality =
-          new AtomicReference<>(
-          originalAssoc.getCDWrapperLeftClassCardinality());
-      AtomicReference<CDWrapper.CDAssociationWrapperCardinality> finalRightCardinality =
-          new AtomicReference<>(
-          originalAssoc.getCDWrapperRightClassCardinality());
-      CDAssociationWrapperList.forEach(e -> {
-        if (e.getCDAssociationWrapperDirection().equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection()))) {
-          // A <- B, A -> B
-          finalLeftCardinality.set(cDAssociationWrapperCardinalityHelper(finalLeftCardinality.get(),
-              e.getCDWrapperLeftClassCardinality()));
-          finalRightCardinality.set(cDAssociationWrapperCardinalityHelper(finalRightCardinality.get(),
-              e.getCDWrapperRightClassCardinality()));
-        }
-        else {
-          // A <- B, B <- A
-          finalLeftCardinality.set(cDAssociationWrapperCardinalityHelper(finalLeftCardinality.get(),
-              e.getCDWrapperRightClassCardinality()));
-          finalRightCardinality.set(cDAssociationWrapperCardinalityHelper(finalRightCardinality.get(),
-              e.getCDWrapperLeftClassCardinality()));
-        }
-      });
-
-      resultAssoc.setCDWrapperLeftClassCardinality(finalLeftCardinality.get());
-      resultAssoc.setCDWrapperRightClassCardinality(finalRightCardinality.get());
-    }
-
-    return resultAssoc;
-  }
-
-  /**
-   * calculate the intersection set of cardinality of given CDAssociationWrapper by its relevant
    * CDRefSetAssociationWrappers
    */
   public static CDAssociationWrapper intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap(
@@ -628,34 +563,6 @@ public class CDWrapperHelper {
     return result;
   }
 
-  /**
-   * Fuzzy search for CDAssociationWrapper without matching direction, role name and cardinality
-   *
-   * @Return: List<CDAssociationWrapperPack>
-   *   [{"cDAssociationWrapper" : CDAssociationWrapper
-   *     "isReverse"            : boolean             }]
-   */
-  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleNameAndCardinality(
-      Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
-    List<CDAssociationWrapperPack> result = new ArrayList<>();
-    if (map == null) {
-      return null;
-    }
-    else {
-      map.values().forEach(existAssoc -> {
-        if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
-            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
-          result.add(new CDAssociationWrapperPack(existAssoc, false));
-        }
-        else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
-            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
-          result.add(new CDAssociationWrapperPack(existAssoc, true));
-        }
-      });
-    }
-    return result;
-  }
-
   /********************************************************************
    ******************** Solution for Inheritance **********************
    *******************************************************************/
@@ -814,30 +721,6 @@ public class CDWrapperHelper {
     LinkedHashSet<String> result = new LinkedHashSet<>();
     result.addAll(getSuperClassSet(inheritanceGraph, cDTypeWrapperName));
     result.addAll(getInheritedClassSet(inheritanceGraph, cDTypeWrapperName));
-    return result;
-  }
-
-  /**
-   * return all superclasses about given CDTypeWrapper
-   */
-  public static Set<CDTypeWrapper> getAllSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
-      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
-    Set<CDTypeWrapper> result = new LinkedHashSet<>();
-    inheritanceGraph.successors(cDTypeWrapper.getName()).forEach(e -> {
-      result.add(cDTypeWrapperGroup.get(e));
-    });
-    return result;
-  }
-
-  /**
-   * return all subclasses about given CDTypeWrapper
-   */
-  public static Set<CDTypeWrapper> getAllSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
-      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
-    Set<CDTypeWrapper> result = new LinkedHashSet<>();
-    inheritanceGraph.predecessors(cDTypeWrapper.getName()).forEach(e -> {
-      result.add(cDTypeWrapperGroup.get(e));
-    });
     return result;
   }
 
@@ -1086,9 +969,6 @@ public class CDWrapperHelper {
         result.add(cdAssociationWrapper.getCDWrapperLeftClass());
         break;
       case BIDIRECTIONAL:
-        result.add(cdAssociationWrapper.getCDWrapperLeftClass());
-        result.add(cdAssociationWrapper.getCDWrapperRightClass());
-        break;
       default:
         result.add(cdAssociationWrapper.getCDWrapperLeftClass());
         result.add(cdAssociationWrapper.getCDWrapperRightClass());
