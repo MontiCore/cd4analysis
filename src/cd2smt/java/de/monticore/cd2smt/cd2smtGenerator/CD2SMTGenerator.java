@@ -88,7 +88,7 @@ public class CD2SMTGenerator {
     for (ASTCDAttribute myAttribute : myClass.getCDAttributeList()) {
       String attribName = SMTNameHelper.printAttributeNameSMT(myClass, myAttribute);
       FuncDecl<Sort> attributeFunc = cdContext.getContext().mkFuncDecl(attribName, classSort,
-       CDHelper.parseAttribType2SMT(cdContext.getContext(), myAttribute));
+       CDHelper.parseAttribType2SMT(cdContext.getContext(), myAttribute).get());
       smtClass.getAttributes().add(attributeFunc);
     }
     cdContext.getSmtClasses().put(myClass, smtClass);
