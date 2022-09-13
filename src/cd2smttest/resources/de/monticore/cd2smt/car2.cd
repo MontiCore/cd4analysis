@@ -2,14 +2,14 @@ classdiagram STTest {
 
   class Car {
     boolean isExpensive ;
-    java.lang.String name;
+    String name;
     int numberOfWheel ;
     double price ;
   }
 
  class Wheel   {
     double price ;
-    java.lang.String manufacturer ;
+    String manufacturer ;
   }
 
 }
