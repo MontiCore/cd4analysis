@@ -574,40 +574,83 @@ public class CDSyntaxDiff2ODGeneratorTest extends CDDiffTestBasis {
     System.out.println(res);
   }
 
+
   @Test
   public void testRunningTime4GenerateODs(){
-    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Combination/Holiday1A.cd";
-    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Combination/Holiday1B.cd";
+    String filePath1_small = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff"
+        + "/GenerateOD/Combination/small1A.cd";
+    String filePath2_small = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff"
+        + "/GenerateOD/Combination/small1B.cd";
+
+    String filePath1_mid = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff"
+        + "/GenerateOD/Combination/Employees1A.cd";
+    String filePath2_mid = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff"
+        + "/GenerateOD/Combination/Employees1B.cd";
+
+    String filePath1_large = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff"
+        + "/GenerateOD/Combination/Holiday1A.cd";
+    String filePath2_large = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff"
+        + "/GenerateOD/Combination/Holiday1B.cd";
+
     String output = "./target/test-running-time/";
-    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
-    ASTCDCompilationUnit ast1_old = parseModel(filePath1);
-    ASTCDCompilationUnit ast2_old = parseModel(filePath2);
-    ASTCDCompilationUnit ast1_new = parseModel(filePath1);
-    ASTCDCompilationUnit ast2_new = parseModel(filePath2);
-    assertNotNull(ast1_old);
-    assertNotNull(ast2_old);
-    assertNotNull(ast1_new);
-    assertNotNull(ast2_new);
 
-    // old method
-    long startTime_old = System.currentTimeMillis();   // start time
-    ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
-    Optional<AlloyDiffSolution> optS =
-        AlloyCDDiff.cddiff(ast1_old, ast2_old, 2, cdSemantics, output);
-    List<ASTODArtifact> ods_old = optS.get().generateODs();
-    long endTime_old = System.currentTimeMillis(); // end time
+    String filePath1 = null;
+    String filePath2 = null;
+    for (int i = 1; i <= 3; i++) {
+      if (i == 1) {
+        filePath1 = filePath1_small;
+        filePath2 = filePath2_small;
+        System.out.println("*******  Test for Small  *******");
+      } else if (i == 2) {
+        filePath1 = filePath1_mid;
+        filePath2 = filePath2_mid;
+        System.out.println("*******  Test for Middle  *******");
+      } else if (i == 3) {
+        filePath1 = filePath1_large;
+        filePath2 = filePath2_large;
+        System.out.println("*******  Test for Large  *******");
+      }
 
-    // new method
-    long startTime_new = System.currentTimeMillis();   // start time
-    List<ASTODArtifact> ods_new = JavaCDDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
-    long endTime_new = System.currentTimeMillis(); // end time
+      CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+      ASTCDCompilationUnit ast1_old = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_old = parseModel(filePath2);
+      ASTCDCompilationUnit ast1_new = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_new = parseModel(filePath2);
+      assertNotNull(ast1_old);
+      assertNotNull(ast2_old);
+      assertNotNull(ast1_new);
+      assertNotNull(ast2_new);
 
-    System.out.println("old witness size: " + ods_old.size());
-    System.out.println("Running Time of old method: " + (endTime_old - startTime_old) + "ms");
-    System.out.println("new witness size: " + ods_new.size());
-    System.out.println("Running Time of new method: " + (endTime_new - startTime_new) + "ms");
+      // old method
+      long startTime_old = System.currentTimeMillis();   // start time
+      ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
+      Optional<AlloyDiffSolution> optS =
+          AlloyCDDiff.cddiff(ast1_old, ast2_old, 2, cdSemantics, output);
+      List<ASTODArtifact> ods_old = optS.get().generateODs();
+      long endTime_old = System.currentTimeMillis(); // end time
+
+      // new method
+      long startTime_new = System.currentTimeMillis();   // start time
+      List<ASTODArtifact> ods_new = JavaCDDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      long endTime_new = System.currentTimeMillis(); // end time
+
+      System.out.println("old witness size: " + ods_old.size());
+      System.out.println("Running Time of old method: " + (endTime_old - startTime_old) + "ms");
+      System.out.println("new witness size: " + ods_new.size());
+      System.out.println("Running Time of new method: " + (endTime_new - startTime_new) + "ms");
+    }
+  }
+
+  @Test
+  public void testSyntaxDiff2SemanticDiff1() {
+    ast1 = parseModel(
+        "doc/Employees1.cd");
+
+    ast2 = parseModel(
+        "doc/Employees2.cd");
+
+    String res = JavaCDDiff.printSemDiff(ast1, ast2, CDSemantics.SIMPLE_CLOSED_WORLD);
+    System.out.println(res);
   }
 
 }
