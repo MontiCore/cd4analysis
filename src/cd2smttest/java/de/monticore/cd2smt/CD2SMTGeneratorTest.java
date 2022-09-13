@@ -28,7 +28,6 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   public void testDeclare_empty_class() {
     CDContext cdContext = buildCDContext("car1.cd");
     Assert.assertEquals(cdContext.getSmtClasses().size(), 1);
-
     for (Map.Entry<ASTCDClass, SMTClass> entry : cdContext.getSmtClasses().entrySet()) {
       Assert.assertEquals(entry.getValue().getAttributes().size(), 0);
     }

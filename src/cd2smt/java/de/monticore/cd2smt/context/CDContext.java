@@ -3,6 +3,7 @@ package de.monticore.cd2smt.context;
 import de.monticore.cd2smt.Helper.SMTNameHelper;
 import com.microsoft.z3.*;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.prettyprint.IndentPrinter;
@@ -103,8 +104,33 @@ public class CDContext {
         return entry;
       }
     }
-    Log.error("attribute" + attr + "not found in the smtclass" + smtClass.getASTCDClass().getName());
+    Log.error("attribute " + attr + "not found in the smtclass " + smtClass.getASTCDClass().getName());
     return null ;
+  }
+
+  public SMTAssociation getAssocFunc(SMTClass smtClass, String otherRole ){
+    assert smtClass != null ;
+    for (Map.Entry<ASTCDAssociation, SMTAssociation> entry : smtClass.getSMTAssociations().entrySet()){
+      if (entry.getKey().getRight().getCDRole().getName().equals(otherRole) &&
+        !entry.getKey().getRight().getName().equals(smtClass.getASTCDClass().getName())) {
+        return entry.getValue();
+      }
+      if (entry.getKey().getLeft().getCDRole().getName().equals(otherRole) &&
+        !entry.getKey().getLeft().getName().equals(smtClass.getASTCDClass().getName())) {
+        return entry.getValue();
+      }
+    }
+    Log.error("No Associations  Founds for the role  " + otherRole + " in the smt class " + smtClass.getASTCDClass().getName());
+    return null ;
+  }
+
+  public boolean containsAttribute(SMTClass smtClass, String AttrName ){
+    for (ASTCDAttribute attribute: smtClass.getASTCDClass().getCDAttributeList()){
+      if (attribute.getName().equals(AttrName)){
+        return  true ;
+      }
+    }
+    return false ;
   }
 
 }
