@@ -1,5 +1,6 @@
 package de.monticore.cd2smt;
 
+import com.microsoft.z3.Context;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class PrintODTest extends CDDiffTestBasis {
@@ -37,7 +40,9 @@ public class PrintODTest extends CDDiffTestBasis {
   public void printOD(String CDFileName, String targetNumber) {
     ASTCDCompilationUnit ast = parseModel(Paths.get(RELATIVE_MODEL_PATH, CDFileName).toString());
     CD2ODGenerator cd2ODGenerator = new CD2ODGenerator();
-    Optional<ASTODArtifact> optOd = cd2ODGenerator.cd2od(ast);
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    Optional<ASTODArtifact> optOd = cd2ODGenerator.cd2od(ast,new Context());
     Assertions.assertTrue(optOd.isPresent());
 
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH, optOd.get().getObjectDiagram().getName() + targetNumber + ".od");

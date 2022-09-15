@@ -70,7 +70,9 @@ public class CDContext {
     this.context = context ;
     smtClasses = new HashMap<>();
     smtAssociations = new HashMap<>();
-
+    classConstrs = new ArrayList<>();
+    assocConstr = new ArrayList<>();
+    inherConstr = new ArrayList<>();
   }
 
   public List<ASTCDClass> getSubclassList(ASTCDDefinition cd, ASTCDClass myClass) {
