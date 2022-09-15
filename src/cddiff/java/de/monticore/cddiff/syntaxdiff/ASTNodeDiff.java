@@ -5,8 +5,8 @@ import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.cddiff.syntaxdiff.SyntaxDiff.Op;
-import de.monticore.cddiff.syntaxdiff.SyntaxDiff.Interpretation;
+import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff.Op;
+import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff.Interpretation;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * Diff Type for Fields Use the constructor to create a diff between two given fields This diff type
  * contains information extracted from the provided fields, especially the type of change
  */
-public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
+public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IASTNodeDiff<T1, T2> {
 
   protected Interpretation interpretation;
 
@@ -27,10 +27,12 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
 
   protected final Optional<T2> cd2Value;
 
+  @Override
   public boolean isPresent() {
     return getOperation().isPresent();
   }
 
+  @Override
   public Optional<Interpretation> getInterpretation() {
     if (interpretation == null) {
       return Optional.empty();
@@ -40,6 +42,7 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
     }
   }
 
+  @Override
   public Optional<Op> getOperation() {
     if (operation == null) {
       return Optional.empty();
@@ -49,10 +52,12 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
     }
   }
 
+  @Override
   public Optional<T1> getCd1Value() {
     return cd1Value;
   }
 
+  @Override
   public Optional<T2> getCd2Value() {
     return cd2Value;
   }
@@ -63,7 +68,7 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
    * @param cd1Value Field from the original model
    * @param cd2Value Field from the target(new) model
    */
-  public FieldDiff(Optional<T1> cd1Value, Optional<T2> cd2Value) {
+  public ASTNodeDiff(Optional<T1> cd1Value, Optional<T2> cd2Value) {
     this.cd1Value = cd1Value;
     this.cd2Value = cd2Value;
     this.operation = setOp();
@@ -71,7 +76,7 @@ public class FieldDiff<T1 extends ASTNode, T2 extends ASTNode> {
     setInterpretation();
   }
 
-  public FieldDiff(Op op, Optional<T1> cd1Value, Optional<T2> cd2Value) {
+  public ASTNodeDiff(Op op, Optional<T1> cd1Value, Optional<T2> cd2Value) {
     this.cd1Value = cd1Value;
     this.cd2Value = cd2Value;
     this.operation = op;

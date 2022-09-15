@@ -37,7 +37,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.syntax2semdiff.JavaCDDiff;
-import de.monticore.cddiff.syntaxdiff.SyntaxDiff;
+import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
@@ -51,7 +51,6 @@ import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.Repository;
@@ -61,7 +60,6 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -848,7 +846,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
 
     }
-    SyntaxDiff syntaxDiff = new SyntaxDiff(ast1,ast2);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1,ast2);
 
     if (cmd.hasOption("semdiff")){
       syntaxDiff.createSemDiff(outputPath);
