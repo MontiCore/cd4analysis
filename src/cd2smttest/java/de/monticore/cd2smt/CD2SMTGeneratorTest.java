@@ -1,5 +1,6 @@
 package de.monticore.cd2smt;
 
+import com.microsoft.z3.Context;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -12,16 +13,21 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.file.Paths;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
+  //setup
 
   CDContext buildCDContext(String fileName) {
     ASTCDCompilationUnit cpt2 = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
     CD2SMTGenerator cd2ODGenerator = new CD2SMTGenerator();
-    return cd2ODGenerator.cd2smt(cpt2);
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    return cd2ODGenerator.cd2smt(cpt2, new Context(cfg));
   }
 
   @Test

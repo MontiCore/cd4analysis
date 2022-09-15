@@ -78,6 +78,6 @@ public class SMTClass {
   public SMTClass() {
     smtAssociations = new HashMap<>();
     attributes = new ArrayList<>();
-      subClassConstrList = new HashMap<>();
-    }
+    subClassConstrList = new HashMap<>();
+  }
 }

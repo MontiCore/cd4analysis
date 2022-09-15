@@ -19,8 +19,10 @@ public class ODContext {
     return objectMap;
   }
 
-
   public ODContext (CDContext cdContext, ASTCDDefinition cd) {
+    this(cdContext,cd,false);
+  }
+  public ODContext (CDContext cdContext, ASTCDDefinition cd, Boolean partial) {
     objectMap = new HashMap<>();
     List<Expr<? extends Sort>> objToDelete = new ArrayList<>();
 
@@ -41,7 +43,10 @@ public class ODContext {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
         SMTObject obj = new SMTObject(smtExpr);
         for (FuncDecl<Sort> func : cdContext.getSmtClasses().get(CDHelper.getClass(mySort.toString().split("_")[0], cd)).getAttributes()) {
-          obj.addAttribute(func, model.eval(func.apply(smtExpr), true));
+          Expr<Sort> attr =  model.eval(func.apply(smtExpr), !partial);
+          if (attr.getNumArgs() == 0){
+            obj.addAttribute(func,attr);
+          }
         }
         addObject(smtExpr, obj);
       }
@@ -99,6 +104,5 @@ public class ODContext {
       }
 
   }
-
 
 }
