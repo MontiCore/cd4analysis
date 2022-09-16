@@ -1,0 +1,98 @@
+classdiagram CD2 {
+
+  enum EnumA {enumA1, enumA2;}
+
+  abstract class A {
+    String testA;
+  }
+
+  class A1 extends A {
+    EnumA testA1;
+  }
+
+  class A2 {
+  }
+
+  class A3 extends A2 {
+  }
+
+  class A4 {
+    Integer testA4;
+  }
+
+  class A5 extends A3 {
+    Double testA5;
+  }
+
+  class A6 extends A {
+    String testA6;
+  }
+
+  association [1] A <-> A1 [1..*];
+
+  association [*] A1 -> A2 [0..1];
+
+  association [1] A2 -> A1 [*];
+
+  association [*] A2 <-> A3 [1..*];
+
+  association [*] A2 <- A5 [0..1];
+
+  association [1] A4 -> (a) A5 [1..*];
+
+  association [1] A4 -> (a) A2 [1..*];
+
+  association [1] A6 -> A1 [1..*];
+
+  enum EnumB {enumB1, enumB2;}
+
+  abstract class B {
+    String testB;
+  }
+
+  class B1 extends B {
+    EnumB testB1;
+  }
+
+  class B2 {
+  }
+
+  class B3 extends B2 {
+  }
+
+  class B4 {
+    Integer testB4;
+  }
+
+  class B5 extends B3 {
+    Double testB5;
+  }
+
+  class B6 extends B {
+    String testB6;
+  }
+
+  association [1] B <-> B1 [1..*];
+
+  association [*] B1 -> B2 [0..1];
+
+  association [1] B2 -> B1 [*];
+
+  association [*] B2 <-> B3 [1..*];
+
+  association [*] B2 <- B5 [0..1];
+
+  association [1] B4 -> (a) B5 [1..*];
+
+  association [1] B4 -> (a) B2 [1..*];
+
+  association [1] B6 -> B1 [1..*];
+
+  // link
+  association [*] B1 <- A1 [1..*];
+
+  association [0..1] B3 <-> A3 [*];
+
+  association [1] B5 <-> A5 [0..1];
+}
+
