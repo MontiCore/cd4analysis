@@ -270,13 +270,18 @@ public class CDToolOptions {
       .hasArg()
       .type(String.class)
       .argName("file")
-      .numberOfArgs(1)
+      .numberOfArgs(2)
       .desc(
-        "Reads `<file>` as the second CD and compares it semantically with the first CD "
-          + "specified by the `-i` option. Output: object diagrams (witnesses) that are "
-          + "valid in the first CD, but invalid in the second CD. This is a semantic based,"
-          + " asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php")
+        "Input: 2 .cd-files. Output: object diagrams (witnesses) that are valid in the first CD, "
+            + "but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: "
+            + "https://www.se-rwth.de/topics/Semantics.php")
       .build());
+
+    options.addOption(Option.builder()
+        .longOpt("rule-based")
+        .desc("Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to "
+            + "compute the diff witnesses. Improved performance.")
+        .build());
 
     options.addOption(Option.builder()
         .longOpt("jsemdiff")
