@@ -193,7 +193,7 @@ public class CDDiffUtil {
       }
     }
     // No file found for given path + commit
-    return "";
+    return path;
   }
 
   public static ASTCDCompilationUnit parseModelFromString(String model) {

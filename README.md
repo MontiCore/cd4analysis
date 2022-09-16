@@ -132,14 +132,15 @@ The possible options are:
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help; other options are ignored. |
 | `--json` | Writes a "Schema.json" to the output directory. |
-| `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory, unless `--stdin` is used). |
+| `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory for anything but `--semdiff` and `--syntaxdiff`, unless `--stdin` is used instead). |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
-| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff`  (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
+| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
 | `-pp,--prettyprint <file>` | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
+| `--rule-based` | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
-| `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
+| `--semdiff <files>` | Parses 2 CD-files and outputs object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
 | `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
 | `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. Default: `true`; `-t` toggles it to `--usebuiltintypes false`. |
 
