@@ -1,0 +1,8 @@
+classdiagram ABC6{
+  class A;
+  class B;
+  class C;
+
+  association [1..*] A -> (r) B [1..*];
+  association [1] A -> (r) C [*];
+}

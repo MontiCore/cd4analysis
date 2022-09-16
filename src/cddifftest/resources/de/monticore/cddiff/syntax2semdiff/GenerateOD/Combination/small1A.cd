@@ -1,0 +1,15 @@
+import java.util.Date;
+
+classdiagram Employees1 {
+  enum PositionKind{fullTime, partTime;}
+
+  class Employee {
+	  PositionKind kind;
+  }
+
+  class Task {
+    Date startDate;
+  }
+
+  association [1] Employee  --  Task [*];
+}

@@ -46,6 +46,8 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntax
  *    1. direction
  *    2. left cardinality
  *    3. right cardinality
+ *    4. special left cardinality
+ *    5. special right cardinality
  */
 public class CDAssociationDiff {
   protected final UUID cDDiffId;

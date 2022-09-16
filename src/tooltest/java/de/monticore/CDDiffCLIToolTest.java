@@ -384,7 +384,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
     //TODO: fix for --jsemdiff
     //when CD4CodeTool is used to compute the semantic difference
-    String[] args = { "-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
+    String[] args = { "-i", cd1, "--jsemdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
         "20", "--open-world" };
     CD4CodeTool.main(args);
 

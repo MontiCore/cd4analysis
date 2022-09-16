@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * For each CD a corresponding CDWrapper will be generated.
@@ -48,6 +49,10 @@ public class CDWrapper {
     ONE, ZERO_TO_ONE, ONE_TO_MORE, MORE
   }
 
+  public enum CDStatus {
+    OPEN, LOCKED, CONFLICTING
+  }
+
   public CDWrapper() {
   }
 
@@ -71,12 +76,24 @@ public class CDWrapper {
     return cDTypeWrapperGroup;
   }
 
+  public Map<String, CDTypeWrapper> getCDTypeWrapperGroupOnlyWithStatusOPEN() {
+    return cDTypeWrapperGroup.entrySet().stream()
+        .filter(map -> map.getValue().getStatus() == CDStatus.OPEN)
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+  }
+
   public void setCDTypeWrapperGroup(Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
     this.cDTypeWrapperGroup = cDTypeWrapperGroup;
   }
 
   public Map<String, CDAssociationWrapper> getCDAssociationWrapperGroup() {
     return cDAssociationWrapperGroup;
+  }
+
+  public Map<String, CDAssociationWrapper> getCDAssociationWrapperGroupOnlyWithStatusOPEN() {
+    return cDAssociationWrapperGroup.entrySet().stream()
+        .filter(map -> map.getValue().getStatus() == CDStatus.OPEN)
+        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
   }
 
   public void setCDAssociationWrapperGroup(

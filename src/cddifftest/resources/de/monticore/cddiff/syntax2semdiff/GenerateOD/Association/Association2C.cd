@@ -1,0 +1,7 @@
+classdiagram ABC3{
+  class A;
+  class B;
+  class C;
+
+  association A -> (r) C [*];
+}

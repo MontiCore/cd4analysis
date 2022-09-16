@@ -314,71 +314,6 @@ public class CDWrapperHelper {
 
   /**
    * calculate the intersection set of cardinality of given CDAssociationWrapper by its relevant
-   * CDRefSetAssociationWrappers only for A -> B and A <- B in the same CD
-   */
-  public static CDAssociationWrapper intersectCDAssociationWrapperCardinalityByCDAssociationWrapperOnlyWithLeftToRightAndRightToLeft(
-      CDAssociationWrapper originalAssoc, CDWrapper cdw) {
-    CDAssociationWrapper resultAssoc;
-    try {
-      resultAssoc = originalAssoc.clone();
-    }
-    catch (CloneNotSupportedException e) {
-      throw new RuntimeException(e);
-    }
-
-    if (originalAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT
-        || originalAssoc.getCDAssociationWrapperDirection()
-        == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
-      List<CDAssociationWrapper> CDAssociationWrapperList = cdw.getCDAssociationWrapperGroup()
-          .values()
-          .stream()
-          .filter(e ->
-              // A <- B, A -> B
-              (e.getLeftOriginalClassName().equals(originalAssoc.getLeftOriginalClassName())
-                  && e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-                  && e.getCDAssociationWrapperDirection().equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection()))
-                  && e.getCDWrapperRightClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-                  && e.getRightOriginalClassName().equals(originalAssoc.getRightOriginalClassName())) ||
-              // A <- B, B <- A
-              (e.getLeftOriginalClassName().equals(originalAssoc.getRightOriginalClassName())
-                  && e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
-                  && e.getCDAssociationWrapperDirection().equals(originalAssoc.getCDAssociationWrapperDirection())
-                  && e.getCDWrapperRightClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
-                  && e.getRightOriginalClassName().equals(originalAssoc.getLeftOriginalClassName())))
-          .collect(Collectors.toList());
-
-      AtomicReference<CDWrapper.CDAssociationWrapperCardinality> finalLeftCardinality =
-          new AtomicReference<>(
-          originalAssoc.getCDWrapperLeftClassCardinality());
-      AtomicReference<CDWrapper.CDAssociationWrapperCardinality> finalRightCardinality =
-          new AtomicReference<>(
-          originalAssoc.getCDWrapperRightClassCardinality());
-      CDAssociationWrapperList.forEach(e -> {
-        if (e.getCDAssociationWrapperDirection().equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection()))) {
-          // A <- B, A -> B
-          finalLeftCardinality.set(cDAssociationWrapperCardinalityHelper(finalLeftCardinality.get(),
-              e.getCDWrapperLeftClassCardinality()));
-          finalRightCardinality.set(cDAssociationWrapperCardinalityHelper(finalRightCardinality.get(),
-              e.getCDWrapperRightClassCardinality()));
-        }
-        else {
-          // A <- B, B <- A
-          finalLeftCardinality.set(cDAssociationWrapperCardinalityHelper(finalLeftCardinality.get(),
-              e.getCDWrapperRightClassCardinality()));
-          finalRightCardinality.set(cDAssociationWrapperCardinalityHelper(finalRightCardinality.get(),
-              e.getCDWrapperLeftClassCardinality()));
-        }
-      });
-
-      resultAssoc.setCDWrapperLeftClassCardinality(finalLeftCardinality.get());
-      resultAssoc.setCDWrapperRightClassCardinality(finalRightCardinality.get());
-    }
-
-    return resultAssoc;
-  }
-
-  /**
-   * calculate the intersection set of cardinality of given CDAssociationWrapper by its relevant
    * CDRefSetAssociationWrappers
    */
   public static CDAssociationWrapper intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap(
@@ -525,13 +460,13 @@ public class CDWrapperHelper {
   }
 
   /**
-   * Fuzzy search for CDAssociationWrapper without matching direction
+   * Fuzzy search for CDAssociationWrapper without matching direction and cardinality
    *
    * @Return: List<CDAssociationWrapperPack>
    *   [{"cDAssociationWrapper" : CDAssociationWrapper
    *     "isReverse"            : boolean             }]
    */
-  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
       Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
     List<CDAssociationWrapperPack> result = new ArrayList<>();
     if (map == null) {
@@ -557,13 +492,13 @@ public class CDWrapperHelper {
   }
 
   /**
-   * Fuzzy search for CDAssociationWrapper without matching direction and role name
+   * Fuzzy search for CDAssociationWrapper without checking cardinality in compareCDW
    *
    * @Return: List<CDAssociationWrapperPack>
    *   [{"cDAssociationWrapper" : CDAssociationWrapper
    *     "isReverse"            : boolean             }]
    */
-  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndRoleName(
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutCardinality(
       Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
     List<CDAssociationWrapperPack> result = new ArrayList<>();
     if (map == null) {
@@ -572,11 +507,55 @@ public class CDWrapperHelper {
     else {
       map.values().forEach(existAssoc -> {
         if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(existAssoc.getCDAssociationWrapperDirection())
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
             && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
           result.add(new CDAssociationWrapperPack(existAssoc, false));
         }
         else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(reverseDirection(existAssoc.getCDAssociationWrapperDirection()))
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
             && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, true));
+        }
+      });
+    }
+    return result;
+  }
+
+  /**
+   * find the same CDAssociationWrapper in compareCDW
+   *
+   * @Return: List<CDAssociationWrapperPack>
+   *   [{"cDAssociationWrapper" : CDAssociationWrapper
+   *     "isReverse"            : boolean             }]
+   */
+  public static List<CDAssociationWrapperPack> findSameCDAssociationWrapperByCDAssociationWrapper(
+      Map<String, CDAssociationWrapper> map, CDAssociationWrapper currentAssoc) {
+    List<CDAssociationWrapperPack> result = new ArrayList<>();
+    if (map == null) {
+      return null;
+    }
+    else {
+      map.values().forEach(existAssoc -> {
+        if (currentAssoc.getCDWrapperLeftClassCardinality().equals(existAssoc.getCDWrapperLeftClassCardinality())
+            && currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(existAssoc.getCDAssociationWrapperDirection())
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getCDWrapperRightClassCardinality().equals(existAssoc.getCDWrapperRightClassCardinality())) {
+          result.add(new CDAssociationWrapperPack(existAssoc, false));
+        }
+        else if (currentAssoc.getCDWrapperLeftClassCardinality().equals(existAssoc.getCDWrapperRightClassCardinality())
+            && currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
+            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && currentAssoc.getCDAssociationWrapperDirection().equals(reverseDirection(existAssoc.getCDAssociationWrapperDirection()))
+            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
+            && currentAssoc.getCDWrapperRightClassCardinality().equals(existAssoc.getCDWrapperLeftClassCardinality())) {
           result.add(new CDAssociationWrapperPack(existAssoc, true));
         }
       });
@@ -734,31 +713,19 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all superclasses about given CDTypeWrapper expect abstract class and interface
+   * getting all super- and sub-CDTypeWrapper name by given CDTypeWrapper name
    */
-  public static Set<CDTypeWrapper> getAllSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
-      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
-    Set<CDTypeWrapper> result = new LinkedHashSet<>();
-    inheritanceGraph.successors(cDTypeWrapper.getName()).forEach(e -> {
-      result.add(cDTypeWrapperGroup.get(e));
-    });
+  public static LinkedHashSet<String> getAllSuperClassAndSubClassSet(
+      MutableGraph<String> inheritanceGraph,
+      String cDTypeWrapperName) {
+    LinkedHashSet<String> result = new LinkedHashSet<>();
+    result.addAll(getSuperClassSet(inheritanceGraph, cDTypeWrapperName));
+    result.addAll(getInheritedClassSet(inheritanceGraph, cDTypeWrapperName));
     return result;
   }
 
   /**
-   * return all subclasses about given CDTypeWrapper expect abstract class and interface
-   */
-  public static Set<CDTypeWrapper> getAllSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
-      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
-    Set<CDTypeWrapper> result = new LinkedHashSet<>();
-    inheritanceGraph.predecessors(cDTypeWrapper.getName()).forEach(e -> {
-      result.add(cDTypeWrapperGroup.get(e));
-    });
-    return result;
-  }
-
-  /**
-   * return all simple super-classes about given CDTypeWrapper expect abstract class and interface
+   * return all simple super-classes about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -773,7 +740,7 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all simple subclasses about given CDTypeWrapper expect abstract class and interface
+   * return all simple subclasses about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -937,6 +904,325 @@ public class CDWrapperHelper {
     reversedAssoc.setCDWrapperRightClass(currentLeftClass);
 
     return reversedAssoc;
+  }
+
+  /**
+   * check superclasses set and subclasses set for multi-instance
+   */
+  public static boolean checkClassSet4MultiInstance(
+      Set<String> baseClassSet,
+      Set<String> compareClassSet) {
+
+    Set<String> modifiedBaseClassSet = new HashSet<>();
+    Set<String> modifiedCompareClassSet = new HashSet<>();
+
+    baseClassSet.forEach(e -> {
+      modifiedBaseClassSet.add(e.split("_")[1]);
+    });
+
+    compareClassSet.forEach(e -> {
+      modifiedCompareClassSet.add(e.split("_")[1]);
+    });
+
+    return modifiedBaseClassSet.equals(modifiedCompareClassSet);
+  }
+
+  /********************************************************************
+   ************************    CD Status    ***************************
+   *******************************************************************/
+
+  /**
+   * update CD status for CDTypeWrapper if its corresponding assoc has conflict
+   */
+  public static void updateCDStatus4CDTypeWrapper(CDTypeWrapper cdTypeWrapper) {
+    if (cdTypeWrapper.getCDWrapperKind() != CDWrapper.CDTypeWrapperKind.CDWRAPPER_ENUM) {
+      cdTypeWrapper.setStatus(CDWrapper.CDStatus.LOCKED);
+    }
+  }
+
+  /**
+   * update CD status for two CDTypeWrappers in CDAssociationWrapper if its these CDAssociationWrapper
+   * has conflict
+   */
+  public static void updateCDStatus4CDTypeWrapper(List<CDAssociationWrapperPack> cdAssociationWrapperPacks) {
+    cdAssociationWrapperPacks.forEach(e -> {
+      updateCDStatus4CDTypeWrapper(e.getCDAssociationWrapper().getCDWrapperLeftClass());
+      updateCDStatus4CDTypeWrapper(e.getCDAssociationWrapper().getCDWrapperRightClass());
+    });
+  }
+
+  /**
+   * update CD status for CDAssociationWrapper if it has conflict
+   */
+  public static void updateCDStatus4CDAssociationWrapper(List<CDAssociationWrapperPack> cdAssociationWrapperPacks) {
+    cdAssociationWrapperPacks.forEach(e ->
+        e.getCDAssociationWrapper().setStatus(CDWrapper.CDStatus.CONFLICTING));
+  }
+
+  public static Set<CDTypeWrapper> getTargetClass(CDAssociationWrapper cdAssociationWrapper) {
+    Set<CDTypeWrapper> result = new HashSet<>();
+    switch (cdAssociationWrapper.getCDAssociationWrapperDirection()) {
+      case LEFT_TO_RIGHT:
+        result.add(cdAssociationWrapper.getCDWrapperRightClass());
+        break;
+      case RIGHT_TO_LEFT:
+        result.add(cdAssociationWrapper.getCDWrapperLeftClass());
+        break;
+      case BIDIRECTIONAL:
+      default:
+        result.add(cdAssociationWrapper.getCDWrapperLeftClass());
+        result.add(cdAssociationWrapper.getCDWrapperRightClass());
+        break;
+    }
+    return result;
+  }
+
+  /**
+   * Fuzzy search for CDAssociationWrapper for checking conflict
+   *
+   * @Return: List<CDAssociationWrapperPack>
+   *   [{"cDAssociationWrapper" : CDAssociationWrapper
+   *     "isReverse"            : boolean             }]
+   */
+  public static List<CDAssociationWrapperPack> fuzzySearchCDAssociationWrapper4CheckingConflict(
+      Map<String, CDAssociationWrapper> map,
+      MutableGraph<String> inheritanceGraph,
+      CDAssociationWrapper baseAssoc) {
+    List<CDAssociationWrapperPack> result = new ArrayList<>();
+    Set<CDTypeWrapper> targetClassSet4BaseAssoc = getTargetClass(baseAssoc);
+    map.values().forEach(currentAssoc -> {
+
+      // calculate intersection set of all superclasses and subclasses
+      // for baseAssoc and currentAssoc
+      LinkedHashSet<String> originalIntersectionSet = getAllSuperClassAndSubClassSet(inheritanceGraph,
+          baseAssoc.getCDWrapperRightClass().getName());
+      originalIntersectionSet.retainAll(getAllSuperClassAndSubClassSet(inheritanceGraph,
+          currentAssoc.getCDWrapperRightClass().getName()));
+
+      LinkedHashSet<String> reversedIntersectionSet = getAllSuperClassAndSubClassSet(inheritanceGraph,
+              baseAssoc.getCDWrapperLeftClass().getName());
+      reversedIntersectionSet.retainAll(getAllSuperClassAndSubClassSet(inheritanceGraph,
+          currentAssoc.getCDWrapperRightClass().getName()));
+
+
+      if (currentAssoc.getLeftOriginalClassName().equals(baseAssoc.getLeftOriginalClassName()) &&
+          currentAssoc.getCDWrapperLeftClassRoleName().equals(baseAssoc.getCDWrapperLeftClassRoleName()) &&
+          currentAssoc.getCDAssociationWrapperDirection() == baseAssoc.getCDAssociationWrapperDirection() &&
+          currentAssoc.getCDWrapperRightClassRoleName().equals(baseAssoc.getCDWrapperRightClassRoleName()) &&
+          originalIntersectionSet.isEmpty()
+      ) {
+        // check target class
+        Set<CDTypeWrapper> targetClassSet4CurrentAssoc = getTargetClass(currentAssoc);
+        if (targetClassSet4BaseAssoc.size() > 1 || !targetClassSet4CurrentAssoc.equals(targetClassSet4BaseAssoc)) {
+          result.add(new CDAssociationWrapperPack(currentAssoc, false));
+        }
+      }
+      else if (currentAssoc.getLeftOriginalClassName().equals(baseAssoc.getRightOriginalClassName()) &&
+          currentAssoc.getCDWrapperLeftClassRoleName().equals(baseAssoc.getCDWrapperRightClassRoleName()) &&
+          currentAssoc.getCDAssociationWrapperDirection() == reverseDirection(baseAssoc.getCDAssociationWrapperDirection()) &&
+          currentAssoc.getCDWrapperRightClassRoleName().equals(baseAssoc.getCDWrapperLeftClassRoleName()) &&
+          reversedIntersectionSet.isEmpty()) {
+        // check target class
+        Set<CDTypeWrapper> targetClassSet4CurrentAssoc = getTargetClass(currentAssoc);
+        if (targetClassSet4BaseAssoc.size() > 1 || !targetClassSet4CurrentAssoc.equals(targetClassSet4BaseAssoc)) {
+          result.add(new CDAssociationWrapperPack(currentAssoc, true));
+        }
+      }
+    });
+    if (!result.isEmpty()) {
+      result.add(new CDAssociationWrapperPack(baseAssoc, false));
+    }
+    return result;
+  }
+
+  public static boolean checkConflictLeftCardinalityHelper(
+      List<CDAssociationWrapperPack> cdAssociationWrapperPacks,
+      boolean isReverse,
+      CDWrapper.CDAssociationWrapperCardinality cardinality1,
+      CDWrapper.CDAssociationWrapperCardinality cardinality2) {
+    if (!isReverse) {
+      return cdAssociationWrapperPacks
+          .stream()
+          .filter(e -> !e.isReverse())
+          .anyMatch(e ->
+              e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == cardinality1 ||
+                  e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == cardinality2);
+    } else {
+      return cdAssociationWrapperPacks
+          .stream()
+          .filter(e -> e.isReverse())
+          .anyMatch(e ->
+              e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == cardinality1 ||
+                  e.getCDAssociationWrapper().getCDWrapperLeftClassCardinality() == cardinality2);
+    }
+
+  }
+
+  public static boolean checkConflictRightCardinalityHelper(
+      List<CDAssociationWrapperPack> cdAssociationWrapperPacks,
+      boolean isReverse,
+      CDWrapper.CDAssociationWrapperCardinality cardinality1,
+      CDWrapper.CDAssociationWrapperCardinality cardinality2) {
+    if (!isReverse) {
+      return cdAssociationWrapperPacks
+          .stream()
+          .filter(e -> !e.isReverse())
+          .anyMatch(e ->
+              e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == cardinality1 ||
+                  e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == cardinality2);
+    } else {
+      return cdAssociationWrapperPacks
+          .stream()
+          .filter(e -> e.isReverse())
+          .anyMatch(e ->
+              e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == cardinality1 ||
+                  e.getCDAssociationWrapper().getCDWrapperRightClassCardinality() == cardinality2);
+    }
+  }
+
+  /**
+   * Helper for original and reversed directions that are "->" / "<->" / "--"
+   *
+   * CategoryOne: direction in "->" / "<->" / "--"
+   * option == true: the left cardinality of baseAssoc in [*, 0..1]
+   * option == false: the left cardinality of baseAssoc in [1, 1..*]
+   */
+  public static void checkConflictOriginalReversedDirectionHelper4CategoryOne(
+      List<CDAssociationWrapperPack> cdAssociationWrapperPacks,
+      CDAssociationWrapper  baseAssoc,
+      boolean option) {
+    // original
+    if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, false,
+        CDWrapper.CDAssociationWrapperCardinality.MORE,
+        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+      updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+    }
+    if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, false,
+        CDWrapper.CDAssociationWrapperCardinality.ONE,
+        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+      if (option) {
+        updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
+      }
+      else {
+        updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+      }
+    }
+
+    // reversed
+    if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, true,
+        CDWrapper.CDAssociationWrapperCardinality.MORE,
+        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+      updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+    }
+    if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, true,
+        CDWrapper.CDAssociationWrapperCardinality.ONE,
+        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+      if (option) {
+        updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
+      }
+      else {
+        updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+      }
+    }
+  }
+
+  /**
+   * Helper for original and reversed directions that are "<-"
+   *
+   * CategoryTwo: direction in "<-"
+   * option == true: the left cardinality of baseAssoc in [*, 0..1]
+   * option == false: the left cardinality of baseAssoc in [1, 1..*]
+   */
+  public static void checkConflictOriginalReversedDirectionHelper4CategoryTwo(
+      List<CDAssociationWrapperPack> cdAssociationWrapperPacks,
+      CDAssociationWrapper  baseAssoc,
+      boolean option) {
+    // original
+    if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, false,
+        CDWrapper.CDAssociationWrapperCardinality.MORE,
+        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+      updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+    }
+    if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, false,
+        CDWrapper.CDAssociationWrapperCardinality.ONE,
+        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+      if (option) {
+        updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
+      } else {
+        updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+      }
+    }
+
+    // reversed
+    if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, true,
+        CDWrapper.CDAssociationWrapperCardinality.MORE,
+        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+      updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
+    }
+    if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, true,
+        CDWrapper.CDAssociationWrapperCardinality.ONE,
+        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+      if (option) {
+        updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
+      } else {
+        updateCDStatus4CDTypeWrapper(cdAssociationWrapperPacks);
+      }
+    }
+  }
+
+  public static void checkConflict4CDAssociationWrapper(
+    Map<String, CDAssociationWrapper> cDAssociationWrapperGroup,
+    MutableGraph<String> inheritanceGraph) {
+    cDAssociationWrapperGroup.forEach((name, baseAssoc) -> {
+      List<CDAssociationWrapperPack> cdAssociationWrapperPacks =
+          fuzzySearchCDAssociationWrapper4CheckingConflict(cDAssociationWrapperGroup, inheritanceGraph, baseAssoc);
+
+      if (!cdAssociationWrapperPacks.isEmpty()) {
+
+        // Cardinality in [*, 0..1]
+        if (baseAssoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
+            baseAssoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE) {
+
+          // -> / <-> / --
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+            checkConflictOriginalReversedDirectionHelper4CategoryOne(
+                cdAssociationWrapperPacks,
+                baseAssoc,
+                true);
+          }
+
+          // <-
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+            checkConflictOriginalReversedDirectionHelper4CategoryTwo(
+                cdAssociationWrapperPacks,
+                baseAssoc,
+                true);
+          }
+        }
+        // Cardinality in [1, 1..*]
+        else {
+          // -> / <-> / --
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+            checkConflictOriginalReversedDirectionHelper4CategoryOne(
+                cdAssociationWrapperPacks,
+                baseAssoc,
+                false);
+          }
+
+          // <-
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+            checkConflictOriginalReversedDirectionHelper4CategoryTwo(
+                cdAssociationWrapperPacks,
+                baseAssoc,
+                false);
+          }
+        }
+      }
+    });
   }
 
 }
