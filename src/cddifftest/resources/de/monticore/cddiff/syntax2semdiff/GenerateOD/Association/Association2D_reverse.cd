@@ -1,0 +1,8 @@
+classdiagram ABC4R{
+  class A;
+  class B;
+  class C;
+
+  association A -> (r) B [1..*];
+  association [*] C (r) <- A;
+}

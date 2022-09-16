@@ -27,12 +27,9 @@ public class CD2SMTGenerator {
    * @param astCd the class diagram to declared
    * @return the context
    */
-  public CDContext cd2smt(ASTCDCompilationUnit astCd) {
-    //setup
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    cfg.put("proof", "true");
-    CDContext cdContext = new CDContext(new Context(cfg));
+  public CDContext cd2smt(ASTCDCompilationUnit astCd, Context ctx) {
+
+    CDContext cdContext = new CDContext(ctx);
 
     //set All Associations Role
     CDHelper.setAssociationsRoles(astCd);
@@ -48,7 +45,6 @@ public class CD2SMTGenerator {
 
 
     //add all constraints to the context
-    cdContext.setClassConstrs(buildClassConstraint(cdContext, astCd.getCDDefinition()));
     cdContext.setAssocConstr(buildAssocConstraints(cdContext, astCd.getCDDefinition()));
     cdContext.setInherConstr(buildInheritanceConstraints(cdContext, astCd.getCDDefinition()));
 
@@ -88,7 +84,7 @@ public class CD2SMTGenerator {
     for (ASTCDAttribute myAttribute : myClass.getCDAttributeList()) {
       String attribName = SMTNameHelper.printAttributeNameSMT(myClass, myAttribute);
       FuncDecl<Sort> attributeFunc = cdContext.getContext().mkFuncDecl(attribName, classSort,
-       CDHelper.parseAttribType2SMT(cdContext.getContext(), myAttribute));
+       CDHelper.parseAttribType2SMT(cdContext.getContext(), myAttribute).get());
       smtClass.getAttributes().add(attributeFunc);
     }
     cdContext.getSmtClasses().put(myClass, smtClass);

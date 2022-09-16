@@ -1,0 +1,7 @@
+classdiagram ABC5{
+  class A;
+  class B;
+  class C;
+
+  association [1..*] A -> (r) B [1..*];
+}

@@ -19,8 +19,10 @@ public class ODContext {
     return objectMap;
   }
 
-
   public ODContext (CDContext cdContext, ASTCDDefinition cd) {
+    this(cdContext,cd,false);
+  }
+  public ODContext (CDContext cdContext, ASTCDDefinition cd, Boolean partial) {
     objectMap = new HashMap<>();
     List<Expr<? extends Sort>> objToDelete = new ArrayList<>();
 
@@ -41,7 +43,10 @@ public class ODContext {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
         SMTObject obj = new SMTObject(smtExpr);
         for (FuncDecl<Sort> func : cdContext.getSmtClasses().get(CDHelper.getClass(mySort.toString().split("_")[0], cd)).getAttributes()) {
-          obj.addAttribute(func, model.eval(func.apply(smtExpr), true));
+          Expr<Sort> attr =  model.eval(func.apply(smtExpr), !partial);
+          if (attr.getNumArgs() == 0){
+            obj.addAttribute(func,attr);
+          }
         }
         addObject(smtExpr, obj);
       }
@@ -85,15 +90,19 @@ public class ODContext {
 
  public  static   Optional<Model> getModel (Context ctx, List < BoolExpr > constraints){
       Solver s = ctx.mkSolver();
-      for (BoolExpr expr : constraints)
+      for (BoolExpr expr : constraints){
         s.add(expr);
-      if (s.check() == Status.SATISFIABLE)
+      }
+       Status status = s.check();
+      if (status == Status.SATISFIABLE){
         return Optional.of(s.getModel());
-      else {
+      } else if (status == Status.UNKNOWN) {
+        Log.warn("timeout it was not possible to find a Model");
+        return  Optional.empty();
+      } else {
         return Optional.empty();
       }
 
   }
-
 
 }

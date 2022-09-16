@@ -105,7 +105,7 @@ public class SMT2ODGenerator {
         .setStereotypeAbsent()
         .setComplete("")
         .setODValue(OD4ReportMill.oDNameBuilder().setName(smtAttribute.getValue().toString()).build())
-        .setMCType(OD4ReportMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("java.lang.String")).build())
+        .setMCType(OD4ReportMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build())
         .build();
     } else {
       attribute = OD4ReportMill.oDAttributeBuilder()

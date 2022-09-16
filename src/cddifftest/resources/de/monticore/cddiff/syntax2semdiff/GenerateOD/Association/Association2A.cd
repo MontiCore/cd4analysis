@@ -1,0 +1,7 @@
+classdiagram ABC1{
+  class A;
+  class B;
+  class C;
+
+  association A -> (r) B;
+}

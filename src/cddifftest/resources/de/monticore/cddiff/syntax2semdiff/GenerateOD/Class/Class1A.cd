@@ -11,10 +11,10 @@ classdiagram CD1 {
 
   class B extends A {
     E myE;
-    List<String> myList;
-    Map<Integer, E> myMap;
-    Optional<E> myOpt;
-    Set<Boolean> mySet;
+//    List<String> myList;
+//    Map<Integer, E> myMap;
+//    Optional<E> myOpt;
+//    Set<Boolean> mySet;
   }
 
   class C;

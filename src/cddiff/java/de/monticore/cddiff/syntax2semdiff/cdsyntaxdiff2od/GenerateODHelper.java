@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
@@ -135,6 +136,43 @@ public class GenerateODHelper {
     return checkList;
   }
 
+  public static Map<CDRefSetAssociationWrapper, Integer> convertRefSetAssociationList2CheckList(
+      List<CDRefSetAssociationWrapper> refSetAssociationList,
+      CDAssociationDiff cDAssociationDiff) {
+
+    // special situation for LEFT_SPECIAL_CARDINALITY and RIGHT_SPECIAL_CARDINALITY
+    if (cDAssociationDiff.getCDDiffCategory() ==
+        CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED &&
+        (cDAssociationDiff.getWhichPartDiff().get() ==
+            CDSyntaxDiff.WhichPartDiff.LEFT_SPECIAL_CARDINALITY ||
+            cDAssociationDiff.getWhichPartDiff().get() ==
+                CDSyntaxDiff.WhichPartDiff.RIGHT_SPECIAL_CARDINALITY)) {
+      return convertRefSetAssociationList2CheckList(refSetAssociationList);
+    }
+
+    Map<CDRefSetAssociationWrapper, Integer> checkList = new HashMap<>();
+    refSetAssociationList.forEach(item -> {
+      List<CDRefSetAssociationWrapper> temp = new ArrayList<>();
+      if (!item.isPresentInCDRefSetAssociationWrapper(cDAssociationDiff.getOriginalElement())) {
+        temp = refSetAssociationList.stream()
+            .filter(e ->
+                e.getLeftRefSet().equals(item.getLeftRefSet()) &&
+                e.getLeftRoleName().equals(item.getLeftRoleName()) &&
+                e.getDirection().equals(reverseDirection(item.getDirection())) &&
+                e.getRightRoleName().equals(item.getRightRoleName()) &&
+                e.getRightRefSet().equals(item.getRightRefSet())
+            )
+            .collect(Collectors.toList());
+      }
+      if (temp.isEmpty()) {
+        checkList.put(item, 1);
+      } else {
+        checkList.put(item, 2);
+      }
+    });
+    return checkList;
+  }
+
   /**
    * according to CDAssociationWrapper to find all corresponding CDRefSetAssociationWrapper
    * including Inheritance CDRefSetAssociationWrapper
@@ -184,6 +222,37 @@ public class GenerateODHelper {
   }
 
   /**
+   * according to CDTypeWrapper to find all corresponding CDRefSetAssociationWrapper
+   * that is except current assoc
+   */
+  public static List<CDRefSetAssociationWrapper> findAllRelatedCDRefSetAssociationWrapperByCDTypeWrapperWithoutCurrentCDAssociationWrapper(
+      CDWrapper cdw,
+      CDTypeWrapper originalCDTypeWrapper,
+      CDAssociationWrapper currentAssoc) {
+
+    return cdw.getRefSetAssociationList()
+        .stream()
+        .filter(e ->
+            (e.getLeftRefSet()
+                .stream()
+                .map(CDTypeWrapper::getOriginalClassName)
+                .collect(Collectors.toSet())
+                .contains(originalCDTypeWrapper.getOriginalClassName())
+            && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE
+            && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ONE) ||
+            (e.getRightRefSet()
+                .stream()
+                .map(CDTypeWrapper::getOriginalClassName)
+                .collect(Collectors.toSet())
+                .contains(originalCDTypeWrapper.getOriginalClassName())
+            && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE
+            && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ONE)
+        )
+        .filter(e -> !e.isPresentInCDRefSetAssociationWrapper(currentAssoc))
+        .collect(Collectors.toList());
+  }
+
+  /**
    * according to CDAssociationWrapper to find direct corresponding CDRefSetAssociationWrapper
    */
   public static Set<CDRefSetAssociationWrapper> findDirectRelatedCDRefSetAssociationWrapperByCDAssociationWrapper(
@@ -222,14 +291,22 @@ public class GenerateODHelper {
     return resulSet;
   }
 
-  public static Map<CDRefSetAssociationWrapper, Integer> updateCounterInCheckList(
+  public static Map<CDRefSetAssociationWrapper, Integer> decreaseCounterInCheckList(
       List<CDRefSetAssociationWrapper> associationList,
       Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
     if (!associationList.isEmpty()) {
       associationList.forEach(e -> refLinkCheckList.put(e, refLinkCheckList.get(e) - 1));
     }
     return refLinkCheckList;
+  }
 
+  public static Map<CDRefSetAssociationWrapper, Integer> increaseCounterInCheckList(
+      List<CDRefSetAssociationWrapper> associationList,
+      Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
+    if (!associationList.isEmpty()) {
+      associationList.forEach(e -> refLinkCheckList.put(e, refLinkCheckList.get(e) + 1));
+    }
+    return refLinkCheckList;
   }
 
   /**
@@ -250,13 +327,19 @@ public class GenerateODHelper {
   }
 
   /**
-   * using in generateOD basic process if current Assoc = A -> B then check if exist A <- B in CD
-   * and if A <- B is created if it is created, this situation is not illegal otherwise this
-   * situation is illegal if current Assoc = A -> B then check if exist B -> A in CD and if B -> A
-   * is created if it is created, this situation is not illegal otherwise this situation is illegal
+   * using in generateOD basic process
+   *
+   * if current Assoc = A -> B then check if exist A <- B in CD and if A <- B is created
+   * if it is created, this situation is not illegal
+   * otherwise this situation is illegal
+   *
+   * if current Assoc = A -> B then check if exist B -> A in CD and if B -> A is created
+   * if it is created, this situation is not illegal
+   * otherwise this situation is illegal
    */
   public static boolean checkIllegalSituationOnly4CDAssociationWrapperWithLeftToRightAndRightToLeft(
-      CDWrapper cdw, CDAssociationWrapper currentAssoc,
+      CDWrapper cdw,
+      CDAssociationWrapper currentAssoc,
       Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
 
     if (currentAssoc.getCDAssociationWrapperDirection()
@@ -265,26 +348,32 @@ public class GenerateODHelper {
         == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
 
       List<CDAssociationWrapperPack> cDAssociationWrapperPacks =
-          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirection(
+          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
           cdw.getCDAssociationWrapperGroup(), currentAssoc);
 
-      return cDAssociationWrapperPacks.stream().filter(pack ->
-          // A -> B, A <- B
-          (!pack.isReverse() && pack.getCDAssociationWrapper()
-              .getCDAssociationWrapperDirection()
-              .equals(reverseDirection(currentAssoc.getCDAssociationWrapperDirection()))) ||
-              // A -> B, B -> A
-              (pack.isReverse() && pack.getCDAssociationWrapper()
-                  .getCDAssociationWrapperDirection()
-                  .equals(currentAssoc.getCDAssociationWrapperDirection()))).noneMatch(pack -> {
-        // check pack.getCDAssociationWrapper() whether is used ?
-        Set<CDRefSetAssociationWrapper> cDRefSetAssociationWrappers =
-            findDirectRelatedCDRefSetAssociationWrapperByCDAssociationWrapper(
-            pack.getCDAssociationWrapper(), refLinkCheckList);
-        return cDRefSetAssociationWrappers.stream()
-            .filter(e -> e.getOriginalElement().equals(pack.getCDAssociationWrapper()))
-            .allMatch(e -> refLinkCheckList.get(e) == 0);
-      });
+      return cDAssociationWrapperPacks
+          .stream()
+          .filter(pack ->
+            // A -> B, A <- B
+            (!pack.isReverse() &&
+                  pack.getCDAssociationWrapper()
+                      .getCDAssociationWrapperDirection()
+                      .equals(reverseDirection(currentAssoc.getCDAssociationWrapperDirection()))) ||
+            // A -> B, B -> A
+            (pack.isReverse() &&
+                pack.getCDAssociationWrapper()
+                    .getCDAssociationWrapperDirection()
+                    .equals(currentAssoc.getCDAssociationWrapperDirection())))
+          .noneMatch(pack -> {
+            // check pack.getCDAssociationWrapper() whether is used ?
+            Set<CDRefSetAssociationWrapper> cDRefSetAssociationWrappers =
+                findDirectRelatedCDRefSetAssociationWrapperByCDAssociationWrapper(
+                    pack.getCDAssociationWrapper(), refLinkCheckList);
+            return cDRefSetAssociationWrappers
+                .stream()
+                .filter(e -> e.getOriginalElement().equals(pack.getCDAssociationWrapper()))
+                .allMatch(e -> refLinkCheckList.get(e) == 0);
+          });
     }
     return true;
   }
