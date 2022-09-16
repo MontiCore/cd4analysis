@@ -58,10 +58,10 @@ public class BreakingChangeTest extends CDDiffTestBasis {
 
   @Test
   public void testScore(){
-    SyntaxDiff syntaxDiff = new SyntaxDiff(cd1,cd2);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(cd1,cd2);
     List<CDAssociationDiff> matchedAssos = syntaxDiff.getMatchedAssos();
 
-    Assert.assertTrue(matchedAssos.get(0).getInterpretationList().contains(SyntaxDiff.Interpretation.BREAKINGCHANGE));
-    Assert.assertFalse(matchedAssos.get(1).getInterpretationList().contains(SyntaxDiff.Interpretation.BREAKINGCHANGE));
+    Assert.assertTrue(matchedAssos.get(0).getInterpretationList().contains(CDSyntaxDiff.Interpretation.BREAKINGCHANGE));
+    Assert.assertFalse(matchedAssos.get(1).getInterpretationList().contains(CDSyntaxDiff.Interpretation.BREAKINGCHANGE));
   }
 }
