@@ -1,26 +1,22 @@
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 
 import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDRefSetAssociationWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODClassStackPack;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODNamedObjectPack;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODPack;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.CDTypeWrapperPack;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssociationDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeDiff;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.generateODSourcePosition;
 
 public class CDSyntaxDiff2ODGenerator {
 
@@ -42,16 +38,18 @@ public class CDSyntaxDiff2ODGenerator {
     int i = 1;
     while (!globalAssociationQueue.isEmpty()) {
       CDAssociationDiff currentCDAssociationDiff = globalAssociationQueue.pop();
-      if (currentCDAssociationDiff.getCDDiffKind() != CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC ||
-          (currentCDAssociationDiff.getCDDiffKind() == CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC &&
-              currentCDAssociationDiff.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING)) {
+      if (currentCDAssociationDiff.getCDDiffKind() != CDAssociationDiffKind.CDDIFF_INHERIT_ASC ||
+          (currentCDAssociationDiff.getCDDiffKind() == CDAssociationDiffKind.CDDIFF_INHERIT_ASC &&
+              currentCDAssociationDiff.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING)) {
         Optional<ASTODPack> optionalASTODPack =
             generateODByAssociation(cdw, currentCDAssociationDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           continue;
         }
         String odTitle = generateODTitle(currentCDAssociationDiff, i);
-        astodArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(), odTitle));
+        String odSourcePosition = generateODSourcePosition(currentCDAssociationDiff);
+        astodArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(),
+            odTitle, odSourcePosition));
         i++;
       }
     }
@@ -59,14 +57,16 @@ public class CDSyntaxDiff2ODGenerator {
     // solve globalClassQueue
     while (!globalClassQueue.isEmpty()) {
       CDTypeDiff currentCDTypeDiff = globalClassQueue.pop();
-      if (currentCDTypeDiff.getCDDiffKind() == CDSyntaxDiff.CDTypeDiffKind.CDDIFF_CLASS ||
-          currentCDTypeDiff.getCDDiffKind() == CDSyntaxDiff.CDTypeDiffKind.CDDIFF_ENUM) {
+      if (currentCDTypeDiff.getCDDiffKind() == CDTypeDiffKind.CDDIFF_CLASS ||
+          currentCDTypeDiff.getCDDiffKind() == CDTypeDiffKind.CDDIFF_ENUM) {
         Optional<ASTODPack> optionalASTODPack = generateODByClass(cdw, currentCDTypeDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           continue;
         }
         String odTitle = generateODTitle(currentCDTypeDiff, i);
-        astodArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(), odTitle));
+        String odSourcePosition = generateODSourcePosition(currentCDTypeDiff);
+        astodArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(),
+            odTitle, odSourcePosition));
         i++;
       }
     }
@@ -131,12 +131,12 @@ public class CDSyntaxDiff2ODGenerator {
       CDSemantics cdSemantics) {
 
     // get the necessary information
-    CDTypeWrapper cDTypeWrapper = cDTypeDiff.getOriginalElement();
+    CDTypeWrapper cDTypeWrapper = cDTypeDiff.getBaseElement();
     ASTODPack astodPack = new ASTODPack();
 
     // create ASTODElement list
     CDTypeWrapper usingCDTypeWrapper;
-    if (cDTypeWrapper.getCDWrapperKind() != CDWrapper.CDTypeWrapperKind.CDWRAPPER_ENUM) {
+    if (cDTypeWrapper.getCDWrapperKind() != CDTypeWrapperKind.CDWRAPPER_ENUM) {
       // simple class, abstract class, interface
       usingCDTypeWrapper = cDTypeWrapper;
     }
@@ -149,7 +149,7 @@ public class CDSyntaxDiff2ODGenerator {
     Optional<ASTODPack> optionalAstodPack;
 
     // if CDTypeDiffCategory is FREED, there is only one object instance in OD (no links)
-    if (cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.FREED) {
+    if (cDTypeDiff.getCDDiffCategory() == CDTypeDiffCategory.FREED) {
       optionalAstodPack = Optional.empty();
     } else {
       // call initGenerateODByClassHelper()
@@ -213,17 +213,20 @@ public class CDSyntaxDiff2ODGenerator {
     // guarantee non-inherited associations as first
     CDAssociationWrapperList.sort((assoc1, assoc2) -> {
       int o1 =
-          assoc1.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC ? 1 : 0;
+          assoc1.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC ? 1 : 0;
       int o2 =
-          assoc2.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC ? 1 : 0;
+          assoc2.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC ? 1 : 0;
       return o2 - o1;
     });
     ASTODPack astodPack = null;
     if (!CDAssociationWrapperList.isEmpty()) {
       // exist associations with current class
-      CDAssociationDiff cDAssociationDiff = CDSyntaxDiffHelper.createCDAssociationDiffHelper(
-          CDAssociationWrapperList.get(0), false, true,
-          CDSyntaxDiff.CDAssociationDiffCategory.DELETED);
+      CDAssociationDiff cDAssociationDiff =
+          CDSyntaxDiffHelper.createCDAssociationDiffHelper(CDAssociationWrapperList.get(0),
+              Optional.empty(),
+              false,
+              true,
+              CDAssociationDiffCategory.DELETED);
       astodPack = initGenerateODByAssociation(cdw,
           cDAssociationDiff,
           Optional.of(cDTypeDiff),
@@ -232,7 +235,7 @@ public class CDSyntaxDiff2ODGenerator {
           cdSemantics);
       List<CDRefSetAssociationWrapper> initCDRefSetAssociationWrapper =
           findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
-              cdw, cDAssociationDiff.getOriginalElement(), refLinkCheckList);
+              cdw, cDAssociationDiff.getBaseElement(), refLinkCheckList);
       decreaseCounterInCheckList(initCDRefSetAssociationWrapper, refLinkCheckList);
     }
 
@@ -257,12 +260,12 @@ public class CDSyntaxDiff2ODGenerator {
 
     Optional<CDTypeWrapper> specialCDTypeWrapper = Optional.empty();
     if (cDAssociationDiff.getWhichPartDiff().isPresent()) {
-      if (cDAssociationDiff.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.LEFT_SPECIAL_CARDINALITY) {
+      if (cDAssociationDiff.getWhichPartDiff().get() == WhichPartDiff.LEFT_SPECIAL_CARDINALITY) {
         specialCDTypeWrapper =
-            Optional.of(cDAssociationDiff.getOriginalElement().getCDWrapperRightClass());
-      } else if (cDAssociationDiff.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.RIGHT_SPECIAL_CARDINALITY) {
+            Optional.of(cDAssociationDiff.getBaseElement().getCDWrapperRightClass());
+      } else if (cDAssociationDiff.getWhichPartDiff().get() == WhichPartDiff.RIGHT_SPECIAL_CARDINALITY) {
         specialCDTypeWrapper =
-            Optional.of(cDAssociationDiff.getOriginalElement().getCDWrapperLeftClass());
+            Optional.of(cDAssociationDiff.getBaseElement().getCDWrapperLeftClass());
       }
     }
 
@@ -278,9 +281,9 @@ public class CDSyntaxDiff2ODGenerator {
     if (specialCDTypeWrapper.isPresent()) {
       CDAssociationWrapper otherCDAssociationWrapper =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
-              cdw.getCDAssociationWrapperGroup(), cDAssociationDiff.getOriginalElement())
+              cdw.getCDAssociationWrapperGroup(), cDAssociationDiff.getBaseElement())
               .stream()
-              .filter(e -> !e.getCDAssociationWrapper().getName().equals(cDAssociationDiff.getOriginalElement().getName()))
+              .filter(e -> !e.getCDAssociationWrapper().getName().equals(cDAssociationDiff.getBaseElement().getName()))
               .findFirst()
               .get()
               .getCDAssociationWrapper();
@@ -291,7 +294,7 @@ public class CDSyntaxDiff2ODGenerator {
     } else {
       initCDRefSetAssociationWrapper =
           findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(cdw,
-              cDAssociationDiff.getOriginalElement(), refLinkCheckList);
+              cDAssociationDiff.getBaseElement(), refLinkCheckList);
     }
     decreaseCounterInCheckList(initCDRefSetAssociationWrapper, refLinkCheckList);
 
@@ -323,7 +326,7 @@ public class CDSyntaxDiff2ODGenerator {
       Deque<ASTODClassStackPack> classStack4SourceClass,
       CDSemantics cdSemantics) {
 
-    CDAssociationWrapper currentDiffAssoc = cDAssociationDiff.getOriginalElement();
+    CDAssociationWrapper currentDiffAssoc = cDAssociationDiff.getBaseElement();
 
     // get the necessary information
     CDTypeWrapper leftCDTypeWrapper = currentDiffAssoc.getCDWrapperLeftClass();
@@ -394,7 +397,7 @@ public class CDSyntaxDiff2ODGenerator {
     List<ASTODNamedObject> rightElementList;
     if (optionalCDTypeDiff.isPresent()) {
       if (optionalCDTypeDiff.get()
-          .getOriginalElement()
+          .getBaseElement()
           .getCDWrapperLink4EnumClass()
           .contains(leftCDTypeWrapper.getName())) {
         leftElementList = createObjectList(cdw,
@@ -417,7 +420,7 @@ public class CDSyntaxDiff2ODGenerator {
             cdSemantics);
       }
       if (optionalCDTypeDiff.get()
-          .getOriginalElement()
+          .getBaseElement()
           .getCDWrapperLink4EnumClass()
           .contains(rightCDTypeWrapper.getName())) {
         rightElementList = createObjectList(cdw,
@@ -447,7 +450,7 @@ public class CDSyntaxDiff2ODGenerator {
           leftCardinalityCount,
           classStack4TargetClass,
           classStack4SourceClass,
-          cDAssociationDiff.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.SUBCLASS_DIFF ?
+          cDAssociationDiff.getCDDiffCategory() == CDAssociationDiffCategory.SUBCLASS_DIFF ?
               cDAssociationDiff.getLeftInstanceClass() : Optional.empty(),
           cdSemantics);
       rightElementList = createObjectList(cdw,
@@ -456,7 +459,7 @@ public class CDSyntaxDiff2ODGenerator {
           rightCardinalityCount,
           classStack4TargetClass,
           classStack4SourceClass,
-          cDAssociationDiff.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.SUBCLASS_DIFF ?
+          cDAssociationDiff.getCDDiffCategory() == CDAssociationDiffCategory.SUBCLASS_DIFF ?
               cDAssociationDiff.getRightInstanceClass() : Optional.empty(),
           cdSemantics);
     }

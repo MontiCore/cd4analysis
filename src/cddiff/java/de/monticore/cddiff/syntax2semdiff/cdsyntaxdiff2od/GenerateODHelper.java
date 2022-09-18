@@ -3,6 +3,7 @@ package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.od4data.OD4DataMill;
 import de.monticore.od4data.prettyprinter.OD4DataFullPrettyPrinter;
@@ -15,9 +16,6 @@ import de.monticore.odlink._ast.ASTODLinkDirection;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.*;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssociationDiff;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -142,18 +140,18 @@ public class GenerateODHelper {
 
     // special situation for LEFT_SPECIAL_CARDINALITY and RIGHT_SPECIAL_CARDINALITY
     if (cDAssociationDiff.getCDDiffCategory() ==
-        CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED &&
+        CDAssociationDiffCategory.CARDINALITY_CHANGED &&
         (cDAssociationDiff.getWhichPartDiff().get() ==
-            CDSyntaxDiff.WhichPartDiff.LEFT_SPECIAL_CARDINALITY ||
+            WhichPartDiff.LEFT_SPECIAL_CARDINALITY ||
             cDAssociationDiff.getWhichPartDiff().get() ==
-                CDSyntaxDiff.WhichPartDiff.RIGHT_SPECIAL_CARDINALITY)) {
+                WhichPartDiff.RIGHT_SPECIAL_CARDINALITY)) {
       return convertRefSetAssociationList2CheckList(refSetAssociationList);
     }
 
     Map<CDRefSetAssociationWrapper, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
       List<CDRefSetAssociationWrapper> temp = new ArrayList<>();
-      if (!item.isPresentInCDRefSetAssociationWrapper(cDAssociationDiff.getOriginalElement())) {
+      if (!item.isPresentInCDRefSetAssociationWrapper(cDAssociationDiff.getBaseElement())) {
         temp = refSetAssociationList.stream()
             .filter(e ->
                 e.getLeftRefSet().equals(item.getLeftRefSet()) &&
@@ -238,15 +236,15 @@ public class GenerateODHelper {
                 .map(CDTypeWrapper::getOriginalClassName)
                 .collect(Collectors.toSet())
                 .contains(originalCDTypeWrapper.getOriginalClassName())
-            && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE
-            && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ONE) ||
+            && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDAssociationWrapperCardinality.ZERO_TO_ONE
+            && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDAssociationWrapperCardinality.ONE) ||
             (e.getRightRefSet()
                 .stream()
                 .map(CDTypeWrapper::getOriginalClassName)
                 .collect(Collectors.toSet())
                 .contains(originalCDTypeWrapper.getOriginalClassName())
-            && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE
-            && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDWrapper.CDAssociationWrapperCardinality.ONE)
+            && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDAssociationWrapperCardinality.ZERO_TO_ONE
+            && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDAssociationWrapperCardinality.ONE)
         )
         .filter(e -> !e.isPresentInCDRefSetAssociationWrapper(currentAssoc))
         .collect(Collectors.toList());
@@ -343,9 +341,9 @@ public class GenerateODHelper {
       Map<CDRefSetAssociationWrapper, Integer> refLinkCheckList) {
 
     if (currentAssoc.getCDAssociationWrapperDirection()
-        == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT
+        == CDAssociationWrapperDirection.LEFT_TO_RIGHT
         || currentAssoc.getCDAssociationWrapperDirection()
-        == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+        == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
 
       List<CDAssociationWrapperPack> cDAssociationWrapperPacks =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
@@ -497,7 +495,7 @@ public class GenerateODHelper {
         // normal attribute
         String value;
         if (cDTypeDiff.isPresent()) {
-          if (cDTypeDiff.get().getCDDiffKind() == CDSyntaxDiff.CDTypeDiffKind.CDDIFF_ENUM) {
+          if (cDTypeDiff.get().getCDDiffKind() == CDTypeDiffKind.CDDIFF_ENUM) {
             value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), true);
           }
           else {
@@ -531,9 +529,9 @@ public class GenerateODHelper {
       newCDTypeWrapper = instanceClass.get();
     }
     else {
-      if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
+      if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
           || cDTypeWrapper.getCDWrapperKind()
-          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+          == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
         newCDTypeWrapper = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
             cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()).get(0);
       }
@@ -709,10 +707,10 @@ public class GenerateODHelper {
       if (assoc.getCDWrapperLeftClass()
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+          == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
         if (checkCardinality) {
-          if (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+          if (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
             result.add(assoc);
           }
         } else {
@@ -723,10 +721,10 @@ public class GenerateODHelper {
       if (assoc.getCDWrapperRightClass()
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
+          == CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
         if (checkCardinality) {
-          if (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+          if (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
             result.add(assoc);
           }
         } else {
@@ -735,18 +733,18 @@ public class GenerateODHelper {
       }
       // <->  --
       if (assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL
+          == CDAssociationWrapperDirection.BIDIRECTIONAL
           || assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+          == CDAssociationWrapperDirection.UNDEFINED) {
         if (checkCardinality) {
           if (assoc.getCDWrapperLeftClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
-              && (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-                  || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              && (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
+                  || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
             result.add(assoc);
           }
           if (assoc.getCDWrapperRightClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
-              && (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              && (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
             result.add(assoc);
           }
         } else {
@@ -775,10 +773,10 @@ public class GenerateODHelper {
       if (assoc.getCDWrapperRightClass()
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+          == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
         if (checkCardinality) {
-          if (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+          if (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
             result.add(assoc);
           }
         } else {
@@ -789,10 +787,10 @@ public class GenerateODHelper {
       if (assoc.getCDWrapperLeftClass()
           .getOriginalClassName()
           .equals(cDTypeWrapper.getOriginalClassName()) && assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
+          == CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
         if (checkCardinality) {
-          if (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+          if (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
             result.add(assoc);
           }
         } else {
@@ -801,18 +799,18 @@ public class GenerateODHelper {
       }
       // <->  --
       if (assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL
+          == CDAssociationWrapperDirection.BIDIRECTIONAL
           || assoc.getCDAssociationWrapperDirection()
-          == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+          == CDAssociationWrapperDirection.UNDEFINED) {
         if (checkCardinality) {
           if (assoc.getCDWrapperLeftClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
-              && (assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              && (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
             result.add(assoc);
           }
           if (assoc.getCDWrapperRightClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
-              && (assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              && (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
             result.add(assoc);
           }
         } else {
@@ -836,9 +834,9 @@ public class GenerateODHelper {
 
     // if this CDTypeWrapper is interface or abstract class,
     // check the subclass of this CDTypeWrapper whether is in objectList.
-    if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
+    if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
         || cDTypeWrapper.getCDWrapperKind()
-        == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+        == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
       List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
           cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> {
@@ -931,9 +929,9 @@ public class GenerateODHelper {
 
     // if this CDTypeWrapper is interface or abstract class,
     // check the subclass of this CDTypeWrapper whether is in objectList.
-    if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
+    if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
         || cDTypeWrapper.getCDWrapperKind()
-        == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+        == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
       List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
           cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> {
@@ -965,9 +963,9 @@ public class GenerateODHelper {
 
       // determine the class of new ASTODNamedObject
       CDTypeWrapper newCDTypeWrapper;
-      if (cDTypeWrapper.getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE
+      if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
           || cDTypeWrapper.getCDWrapperKind()
-          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+          == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
         List<CDTypeWrapper> CDTypeWrapperList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
             cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
         newCDTypeWrapper = CDTypeWrapperList.get(CDTypeWrapperList.size() - 1);
@@ -1055,11 +1053,29 @@ public class GenerateODHelper {
    * generate ASTODArtifact
    */
   public static ASTODArtifact generateASTODArtifact(List<ASTODElement> astodElementList,
-      String odTitle) {
+      String odTitle, String odSourcePosition) {
+    String baseCDSrcPos = odSourcePosition.split("__")[0];
+    String compareCDSrcPos = odSourcePosition.split("__")[1];
     // set ASTObjectDiagram
     ASTObjectDiagram objectDiagram = OD4DataMill.objectDiagramBuilder()
         .setName(odTitle.replaceAll("\\.","_"))
         .setODElementsList(astodElementList)
+        .setStereotype(OD4DataMill.stereotypeBuilder()
+            .addValues(OD4DataMill.stereoValueBuilder()
+                .setName("baseCD")
+                .setContent(baseCDSrcPos)
+                .setText(OD4DataMill.stringLiteralBuilder()
+                    .setSource(baseCDSrcPos)
+                    .build())
+                .build())
+            .addValues(OD4DataMill.stereoValueBuilder()
+                .setName("compareCD")
+                .setContent(compareCDSrcPos)
+                .setText(OD4DataMill.stringLiteralBuilder()
+                    .setSource(compareCDSrcPos)
+                    .build())
+                .build())
+            .build())
         .build();
 
     ASTODArtifact astodArtifact = OD4DataMill.oDArtifactBuilder()
@@ -1092,25 +1108,25 @@ public class GenerateODHelper {
   /**
    * generate OD title for semantic difference with association
    */
-  public static String generateODTitle(CDAssociationDiff association, int index) {
+  public static String generateODTitle(CDAssociationDiff cdAssociationDiff, int index) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
     stringBuilder.append(index);
     stringBuilder.append("_$");
 
     // set assoc name
-    stringBuilder.append(association.getName(true));
+    stringBuilder.append(cdAssociationDiff.getName(true));
     stringBuilder.append("$_$");
 
     // set assoc type
-    stringBuilder.append(association.getCDDiffCategory().toString().toLowerCase());
+    stringBuilder.append(cdAssociationDiff.getCDDiffCategory().toString().toLowerCase());
     stringBuilder.append("$");
 
     // set which part
-    if (association.getWhichPartDiff().isPresent()) {
-      if (association.getWhichPartDiff().get() != CDSyntaxDiff.WhichPartDiff.DIRECTION) {
+    if (cdAssociationDiff.getWhichPartDiff().isPresent()) {
+      if (cdAssociationDiff.getWhichPartDiff().get() != WhichPartDiff.DIRECTION) {
         stringBuilder.append("_$");
-        stringBuilder.append(association.getWhichPartDiff().get().toString().toLowerCase());
+        stringBuilder.append(cdAssociationDiff.getWhichPartDiff().get().toString().toLowerCase());
         stringBuilder.append("$");
       }
     }
@@ -1136,7 +1152,7 @@ public class GenerateODHelper {
     stringBuilder.append("$");
 
     // set which part
-    if (cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED) {
+    if (cDTypeDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
       if (cDTypeDiff.getWhichAttributesDiff().isPresent()) {
         stringBuilder.append("_");
         stringBuilder.append(cDTypeDiff.getWhichAttributesDiff()
@@ -1149,6 +1165,36 @@ public class GenerateODHelper {
       }
     }
 
+    return stringBuilder.toString();
+  }
+
+  /**
+   * generate SourcePosition for baseCD and compareCD
+   */
+  public static String generateODSourcePosition(CDTypeDiff cDTypeDiff) {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("<");
+    stringBuilder.append(cDTypeDiff.getBaseSourcePositionStr());
+    stringBuilder.append(">");
+    stringBuilder.append("__");
+    stringBuilder.append("<");
+    stringBuilder.append(cDTypeDiff.getCompareSourcePositionStr());
+    stringBuilder.append(">");
+    return stringBuilder.toString();
+  }
+
+  /**
+   * generate SourcePosition for baseCD and compareCD
+   */
+  public static String generateODSourcePosition(CDAssociationDiff cdAssociationDiff) {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("<");
+    stringBuilder.append(cdAssociationDiff.getBaseSourcePositionStr());
+    stringBuilder.append(">");
+    stringBuilder.append("__");
+    stringBuilder.append("<");
+    stringBuilder.append(cdAssociationDiff.getCompareSourcePositionStr());
+    stringBuilder.append(">");
     return stringBuilder.toString();
   }
 

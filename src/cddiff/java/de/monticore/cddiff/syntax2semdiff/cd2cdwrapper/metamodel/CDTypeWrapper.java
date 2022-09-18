@@ -3,6 +3,7 @@ package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
+import de.se_rwth.commons.SourcePosition;
 
 import java.util.*;
 
@@ -41,20 +42,20 @@ public class CDTypeWrapper implements Cloneable {
 
   protected Set<String> subclasses = new LinkedHashSet<>();
 
-  protected CDWrapper.CDStatus status;
+  protected CDStatus status;
 
   public CDTypeWrapper(ASTCDType originalElement) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
-    this.status = CDWrapper.CDStatus.OPEN;
+    this.status = CDStatus.OPEN;
   }
 
   public String getName() {
-    return getCDTypeWrapperKindStrHelper(getCDWrapperKind()) + "_" + this.originalElement.getSymbol()
-        .getFullName();
+    return getCDTypeWrapperKindStrHelper(getCDWrapperKind()) + "_"
+        + this.originalElement.getSymbol().getFullName();
   }
 
-  public CDWrapper.CDTypeWrapperKind getCDWrapperKind() {
+  public CDTypeWrapperKind getCDWrapperKind() {
     return distinguishASTCDTypeHelper(originalElement);
   }
 
@@ -119,12 +120,16 @@ public class CDTypeWrapper implements Cloneable {
     this.subclasses = subclasses;
   }
 
-  public CDWrapper.CDStatus getStatus() {
+  public CDStatus getStatus() {
     return status;
   }
 
-  public void setStatus(CDWrapper.CDStatus status) {
+  public void setStatus(CDStatus status) {
     this.status = status;
+  }
+
+  public SourcePosition getSourcePosition() {
+    return this.originalElement.get_SourcePositionStart();
   }
 
   @Override

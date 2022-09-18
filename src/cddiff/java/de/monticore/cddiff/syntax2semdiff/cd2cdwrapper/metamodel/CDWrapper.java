@@ -33,26 +33,6 @@ public class CDWrapper {
 
   protected MutableGraph<String> inheritanceGraph;
 
-  public enum CDTypeWrapperKind {
-    CDWRAPPER_CLASS, CDWRAPPER_ENUM, CDWRAPPER_ABSTRACT_CLASS, CDWRAPPER_INTERFACE
-  }
-
-  public enum CDAssociationWrapperKind {
-    CDWRAPPER_ASC, CDWRAPPER_INHERIT_ASC, CDWRAPPER_INHERIT_DISPLAY_ASC
-  }
-
-  public enum CDAssociationWrapperDirection {
-    LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, UNDEFINED
-  }
-
-  public enum CDAssociationWrapperCardinality {
-    ONE, ZERO_TO_ONE, ONE_TO_MORE, MORE
-  }
-
-  public enum CDStatus {
-    OPEN, LOCKED, CONFLICTING
-  }
-
   public CDWrapper() {
   }
 

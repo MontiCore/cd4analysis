@@ -1,13 +1,8 @@
 package de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff;
 
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperPack;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssociationDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeDiff;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,9 +87,17 @@ public class CDWrapper2CDSyntaxDiffGenerator {
     }
 
     if (compareCDTypeWrapper == null) {
-      createCDTypeDiff(baseCDTypeWrapper, Optional.empty(), isInCompareSG, false);
+      createCDTypeDiff(baseCDTypeWrapper,
+          Optional.empty(),
+          Optional.empty(),
+          isInCompareSG,
+          false);
     } else {
-      createCDTypeDiff(baseCDTypeWrapper, Optional.of(compareCDTypeWrapper), isInCompareSG, false);
+      createCDTypeDiff(baseCDTypeWrapper,
+          Optional.of(compareCDTypeWrapper),
+          Optional.empty(),
+          isInCompareSG,
+          false);
     }
 
   }
@@ -106,7 +109,8 @@ public class CDWrapper2CDSyntaxDiffGenerator {
    */
   public void createCDTypeDiff(
       CDTypeWrapper base,
-      Optional<CDTypeWrapper> optCompare,
+      Optional<CDTypeWrapper> optCompareClass,
+      Optional<CDAssociationWrapper> optCompareAssoc,
       boolean isInCompareSG,
       boolean isNotMatchedAssocInCompareCDW) {
 
@@ -114,22 +118,28 @@ public class CDWrapper2CDSyntaxDiffGenerator {
     if (isInCompareSG) {
 
       // calculate WhichAttributesDiffList
-      List<String> attributesDiffList = cDTypeDiffWhichAttributesDiffHelper(base, optCompare);
+      List<String> attributesDiffList = cDTypeDiffWhichAttributesDiffHelper(base, optCompareClass);
 
       // calculate boolean isContentDiff
       boolean isContentDiff = attributesDiffList.size() != 0;
 
       // calculate class category
-      CDSyntaxDiff.CDTypeDiffCategory category = cDTypeDiffCategoryHelper(base, optCompare.get(),
+      CDTypeDiffCategory category = cDTypeDiffCategoryHelper(base, optCompareClass.get(),
           isContentDiff);
 
       // create cDTypeDiff
-      CDTypeDiff cDTypeDiff = createCDTypeDiffHelper(base, isInCompareSG, isContentDiff, category,
-          attributesDiffList);
+      CDTypeDiff cDTypeDiff =
+          createCDTypeDiffHelper(base,
+              optCompareClass,
+              optCompareAssoc,
+              isInCompareSG,
+              isContentDiff,
+              category,
+              attributesDiffList);
 
       // distinguish cDTypeDiff by CompCategory
-      if (cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
-          || cDTypeDiff.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED) {
+      if (cDTypeDiff.getCDDiffCategory() == CDTypeDiffCategory.DELETED
+          || cDTypeDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
         cDTypeDiffResultQueueWithDiff.offer(cDTypeDiff);
       }
       else {
@@ -141,16 +151,20 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       if (isNotMatchedAssocInCompareCDW) {
         cDTypeDiffResultQueueWithDiff.offer(
             createCDTypeDiffHelper(base,
+                optCompareClass,
+                optCompareAssoc,
                 isInCompareSG,
                 true,
-                CDSyntaxDiff.CDTypeDiffCategory.FREED,
+                CDTypeDiffCategory.FREED,
                 cDTypeDiffWhichAttributesDiffHelper(base, Optional.empty())));
       } else {
         cDTypeDiffResultQueueWithDiff.offer(
             createCDTypeDiffHelper(base,
+                optCompareClass,
+                optCompareAssoc,
                 isInCompareSG,
                 true,
-                CDSyntaxDiff.CDTypeDiffCategory.DELETED,
+                CDTypeDiffCategory.DELETED,
                 cDTypeDiffWhichAttributesDiffHelper(base, Optional.empty())));
       }
     }
@@ -158,29 +172,37 @@ public class CDWrapper2CDSyntaxDiffGenerator {
 
   public void cDTypeDiffs4NotMatchedAssocInCompareCDW(CDWrapper baseCDW) {
     checkList4AssocInCompareCDW.forEach((assoc, flag) -> {
-      if (!flag && assoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
+      if (!flag && assoc.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC) {
 
         // left cardinality
         if (assoc.getCDWrapperLeftClassCardinality()
-            == CDWrapper.CDAssociationWrapperCardinality.ONE
+            == CDAssociationWrapperCardinality.ONE
             || assoc.getCDWrapperLeftClassCardinality()
-            == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            == CDAssociationWrapperCardinality.ONE_TO_MORE) {
           if (baseCDW.getCDTypeWrapperGroup().containsKey(assoc.getCDWrapperRightClass().getName())) {
             CDTypeWrapper baseCDTypeWrapper =
                 baseCDW.getCDTypeWrapperGroup().get(assoc.getCDWrapperRightClass().getName());
-            createCDTypeDiff(baseCDTypeWrapper, Optional.empty(), false, true);
+            createCDTypeDiff(baseCDTypeWrapper,
+                Optional.empty(),
+                Optional.of(assoc),
+                false,
+                true);
           }
         }
 
         // right cardinality
         if (assoc.getCDWrapperRightClassCardinality()
-            == CDWrapper.CDAssociationWrapperCardinality.ONE
+            == CDAssociationWrapperCardinality.ONE
             || assoc.getCDWrapperRightClassCardinality()
-            == CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            == CDAssociationWrapperCardinality.ONE_TO_MORE) {
           if (baseCDW.getCDTypeWrapperGroup().containsKey(assoc.getCDWrapperLeftClass().getName())) {
             CDTypeWrapper baseCDTypeWrapper =
                 baseCDW.getCDTypeWrapperGroup().get(assoc.getCDWrapperLeftClass().getName());
-            createCDTypeDiff(baseCDTypeWrapper, Optional.empty(), false, true);
+            createCDTypeDiff(baseCDTypeWrapper,
+                Optional.empty(),
+                Optional.of(assoc),
+                false,
+                true);
           }
         }
       }
@@ -326,11 +348,11 @@ public class CDWrapper2CDSyntaxDiffGenerator {
 
     if (isInCompareSG) {
       CDAssociationWrapper compare = optIntersectedCompare.get();
-      CDSyntaxDiff.CDAssociationDiffCategory categoryResult = null;
+      CDAssociationDiffCategory categoryResult = null;
       boolean mutexSemaphore = false;
 
       // STEP 1: check direction type
-      CDSyntaxDiff.CDAssociationDiffDirection directionResult = !isAssocNameExchanged ?
+      CDAssociationDiffDirection directionResult = !isAssocNameExchanged ?
           cDAssociationDiffDirectionHelper(base.getCDAssociationWrapperDirection(),
               compare.getCDAssociationWrapperDirection()) :
           cDAssociationDiffDirectionHelper(base.getCDAssociationWrapperDirection(),
@@ -355,14 +377,16 @@ public class CDWrapper2CDSyntaxDiffGenerator {
               (cdAssociationWrapperPackListInbaseCDW.size() == 2 && cdAssociationWrapperPackListInCompareCDW.size() == 1)) {
             cDAssociationDiffResultQueueWithDiff.offer(
                 createCDAssociationDiffHelper(base,
+                    Optional.of(compare),
                     isInCompareSG,
                     isDirectionChanged,
                     categoryResult,
-                    Optional.of(CDSyntaxDiff.WhichPartDiff.DIRECTION),
+                    Optional.of(WhichPartDiff.DIRECTION),
                     Optional.of(directionResult)));
           } else {
             cDAssociationDiffResultQueueWithoutDiff.offer(
                 createCDAssociationDiffHelper(base,
+                    Optional.of(compare),
                     isInCompareSG,
                     isDirectionChanged,
                     categoryResult));
@@ -371,6 +395,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
         default:
           cDAssociationDiffResultQueueWithoutDiff.offer(
               createCDAssociationDiffHelper(base,
+                  Optional.of(compare),
                   isInCompareSG,
                   isDirectionChanged,
                   categoryResult));
@@ -380,7 +405,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
 
       // STEP 2: check left cardinality
       if (!mutexSemaphore) {
-        CDSyntaxDiff.CDAssociationDiffCardinality leftCardinalityResult = !isAssocNameExchanged ?
+        CDAssociationDiffCardinality leftCardinalityResult = !isAssocNameExchanged ?
             cDAssociationDiffCardinalityHelper(base.getCDWrapperLeftClassCardinality(),
                 compare.getCDWrapperLeftClassCardinality()) :
             cDAssociationDiffCardinalityHelper(base.getCDWrapperLeftClassCardinality(),
@@ -412,38 +437,44 @@ public class CDWrapper2CDSyntaxDiffGenerator {
                     .get()
                     .getCDAssociationWrapper();
 
-                if ((base.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE ||
-                    base.getCDWrapperRightClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE) &&
+                if ((base.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ZERO_TO_ONE ||
+                    base.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE) &&
                     mappingCardinality(base.getCDWrapperLeftClassCardinality().toString()) != 1 &&
                     (mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality().toString()) == 1 &&
                         mappingCardinality(otherCDAssociationWrapper.getCDWrapperRightClassCardinality().toString()) == 1)) {
                   cDAssociationDiffResultQueueWithDiff.offer(
-                      createCDAssociationDiffHelper(base, isInCompareSG, isLeftCardinalityDiff,
-                          categoryResult,
-                          Optional.of(CDSyntaxDiff.WhichPartDiff.LEFT_SPECIAL_CARDINALITY),
-                          Optional.of(CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE)));
-                } else {
-                  cDAssociationDiffResultQueueWithDiff.offer(
                       createCDAssociationDiffHelper(base,
+                          Optional.of(compare),
                           isInCompareSG,
                           isLeftCardinalityDiff,
                           categoryResult,
-                          Optional.of(CDSyntaxDiff.WhichPartDiff.LEFT_CARDINALITY),
+                          Optional.of(WhichPartDiff.LEFT_SPECIAL_CARDINALITY),
+                          Optional.of(CDAssociationDiffCardinality.TWO_TO_MORE)));
+                } else {
+                  cDAssociationDiffResultQueueWithDiff.offer(
+                      createCDAssociationDiffHelper(base,
+                          Optional.of(compare),
+                          isInCompareSG,
+                          isLeftCardinalityDiff,
+                          categoryResult,
+                          Optional.of(WhichPartDiff.LEFT_CARDINALITY),
                           Optional.of(leftCardinalityResult)));
                 }
               } else {
                 cDAssociationDiffResultQueueWithDiff.offer(
                     createCDAssociationDiffHelper(base,
+                        Optional.of(compare),
                         isInCompareSG,
                         isLeftCardinalityDiff,
                         categoryResult,
-                        Optional.of(CDSyntaxDiff.WhichPartDiff.LEFT_CARDINALITY),
+                        Optional.of(WhichPartDiff.LEFT_CARDINALITY),
                         Optional.of(leftCardinalityResult)));
               }
 
             } else {
               cDAssociationDiffResultQueueWithoutDiff.offer(
                   createCDAssociationDiffHelper(base,
+                      Optional.of(compare),
                       isInCompareSG,
                       isLeftCardinalityDiff,
                       categoryResult));
@@ -452,6 +483,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
           default:
             cDAssociationDiffResultQueueWithoutDiff.offer(
                 createCDAssociationDiffHelper(base,
+                    Optional.of(compare),
                     isInCompareSG,
                     isLeftCardinalityDiff,
                     categoryResult));
@@ -462,7 +494,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
 
       // STEP 3: check right cardinality
       if (!mutexSemaphore) {
-        CDSyntaxDiff.CDAssociationDiffCardinality rightCardinalityResult = !isAssocNameExchanged ?
+        CDAssociationDiffCardinality rightCardinalityResult = !isAssocNameExchanged ?
             (cDAssociationDiffCardinalityHelper(base.getCDWrapperRightClassCardinality(),
                 compare.getCDWrapperRightClassCardinality())) :
             (cDAssociationDiffCardinalityHelper(base.getCDWrapperRightClassCardinality(),
@@ -495,38 +527,44 @@ public class CDWrapper2CDSyntaxDiffGenerator {
                     .get()
                     .getCDAssociationWrapper();
 
-                if ((base.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE ||
-                    base.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ONE) &&
+                if ((base.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ZERO_TO_ONE ||
+                    base.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE) &&
                     mappingCardinality(base.getCDWrapperRightClassCardinality().toString()) != 1 &&
                     (mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality().toString()) == 1 &&
                         mappingCardinality(otherCDAssociationWrapper.getCDWrapperRightClassCardinality().toString()) == 1)) {
                   cDAssociationDiffResultQueueWithDiff.offer(
-                      createCDAssociationDiffHelper(base, isInCompareSG, isRightCardinalityDiff,
-                          categoryResult,
-                          Optional.of(CDSyntaxDiff.WhichPartDiff.RIGHT_SPECIAL_CARDINALITY),
-                          Optional.of(CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE)));
-                } else {
-                  cDAssociationDiffResultQueueWithDiff.offer(
                       createCDAssociationDiffHelper(base,
+                          Optional.of(compare),
                           isInCompareSG,
                           isRightCardinalityDiff,
                           categoryResult,
-                          Optional.of(CDSyntaxDiff.WhichPartDiff.RIGHT_CARDINALITY),
+                          Optional.of(WhichPartDiff.RIGHT_SPECIAL_CARDINALITY),
+                          Optional.of(CDAssociationDiffCardinality.TWO_TO_MORE)));
+                } else {
+                  cDAssociationDiffResultQueueWithDiff.offer(
+                      createCDAssociationDiffHelper(base,
+                          Optional.of(compare),
+                          isInCompareSG,
+                          isRightCardinalityDiff,
+                          categoryResult,
+                          Optional.of(WhichPartDiff.RIGHT_CARDINALITY),
                           Optional.of(rightCardinalityResult)));
                 }
               } else {
                 cDAssociationDiffResultQueueWithDiff.offer(
                     createCDAssociationDiffHelper(base,
+                        Optional.of(compare),
                         isInCompareSG,
                         isRightCardinalityDiff,
                         categoryResult,
-                        Optional.of(CDSyntaxDiff.WhichPartDiff.RIGHT_CARDINALITY),
+                        Optional.of(WhichPartDiff.RIGHT_CARDINALITY),
                         Optional.of(rightCardinalityResult)));
               }
 
             } else {
               cDAssociationDiffResultQueueWithoutDiff.offer(
                   createCDAssociationDiffHelper(base,
+                      Optional.of(compare),
                       isInCompareSG,
                       isRightCardinalityDiff,
                       categoryResult));
@@ -535,6 +573,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
           default:
             cDAssociationDiffResultQueueWithoutDiff.offer(
                 createCDAssociationDiffHelper(base,
+                    Optional.of(compare),
                     isInCompareSG,
                     isRightCardinalityDiff,
                     categoryResult));
@@ -548,8 +587,8 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       Optional<CDTypeWrapper> rightInstanceClass = Optional.empty();
 
       // left
-      if (base.getCDWrapperLeftClass().getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS
-          || base.getCDWrapperLeftClass().getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE) {
+      if (base.getCDWrapperLeftClass().getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS
+          || base.getCDWrapperLeftClass().getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE) {
 
         Set<String> differenceSet = new LinkedHashSet<>();
         differenceSet.addAll(base.getCDWrapperLeftClass().getSubclasses());
@@ -561,7 +600,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
         if (!differenceSet.isEmpty()) {
           Set<String> differenceSetWithoutAbstractAndInterface = differenceSet.stream()
               .filter(cDTypeName -> baseCDW.getCDTypeWrapperGroup().get(cDTypeName).getCDWrapperKind()
-                  == CDWrapper.CDTypeWrapperKind.CDWRAPPER_CLASS)
+                  == CDTypeWrapperKind.CDWRAPPER_CLASS)
               .collect(Collectors.toSet());
 
           if (differenceSetWithoutAbstractAndInterface.size() > 0) {
@@ -574,8 +613,8 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       }
 
       // right
-      if (base.getCDWrapperRightClass().getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS
-          || base.getCDWrapperRightClass().getCDWrapperKind() == CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE) {
+      if (base.getCDWrapperRightClass().getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS
+          || base.getCDWrapperRightClass().getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE) {
 
         Set<String> differenceSet = new LinkedHashSet<>();
         differenceSet.addAll(base.getCDWrapperRightClass().getSubclasses());
@@ -587,7 +626,7 @@ public class CDWrapper2CDSyntaxDiffGenerator {
         if (!differenceSet.isEmpty()) {
           Set<String> differenceSetWithoutAbstractAndInterface = differenceSet.stream()
               .filter(cDTypeName -> baseCDW.getCDTypeWrapperGroup().get(cDTypeName).getCDWrapperKind()
-                  == CDWrapper.CDTypeWrapperKind.CDWRAPPER_CLASS)
+                  == CDTypeWrapperKind.CDWRAPPER_CLASS)
               .collect(Collectors.toSet());
 
           if (differenceSetWithoutAbstractAndInterface.size() > 0) {
@@ -607,9 +646,10 @@ public class CDWrapper2CDSyntaxDiffGenerator {
         if (cdAssociationWrapperPackList.isEmpty()) {
           cDAssociationDiffResultQueueWithDiff.offer(
               createCDAssociationDiffHelperWithInstanceClass(base,
+                  Optional.of(compare),
                   isInCompareSG,
                   true,
-                  CDSyntaxDiff.CDAssociationDiffCategory.SUBCLASS_DIFF,
+                  CDAssociationDiffCategory.SUBCLASS_DIFF,
                   leftInstanceClass,
                   rightInstanceClass));
         }
@@ -619,18 +659,20 @@ public class CDWrapper2CDSyntaxDiffGenerator {
       List<CDAssociationWrapperPack> cdAssociationWrapperPackList =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutCardinality(compareCDW.getCDAssociationWrapperGroup(), base);
       if (cdAssociationWrapperPackList.stream().anyMatch(e ->
-          e.getCDAssociationWrapper().getStatus() == CDWrapper.CDStatus.CONFLICTING)) {
+          e.getCDAssociationWrapper().getStatus() == CDStatus.CONFLICTING)) {
         cDAssociationDiffResultQueueWithDiff.offer(
             createCDAssociationDiffHelper(base,
+                Optional.empty(),
                 isInCompareSG,
                 true,
-                CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING));
+                CDAssociationDiffCategory.CONFLICTING));
       } else {
         cDAssociationDiffResultQueueWithDiff.offer(
             createCDAssociationDiffHelper(base,
+                Optional.empty(),
                 isInCompareSG,
                 true,
-                CDSyntaxDiff.CDAssociationDiffCategory.DELETED));
+                CDAssociationDiffCategory.DELETED));
       }
 
     }

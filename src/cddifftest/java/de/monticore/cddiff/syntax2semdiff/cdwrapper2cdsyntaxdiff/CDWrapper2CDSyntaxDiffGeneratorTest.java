@@ -5,7 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CD2CDWrapperGenerator;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,7 +56,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.EDITED
         && e.getWhichAttributesDiff().get().contains("e3")));
   }
 
@@ -74,7 +74,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.EDITED
         && e.getName(false).split("_")[1].contains("B")
         && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
@@ -93,12 +93,12 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 2);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
         && e.getName(false).split("_")[1].contains("A")
         && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.EDITED
         && e.getName(false).split("_")[1].contains("B")
         && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
@@ -117,12 +117,12 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 2);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
         && e.getName(false).split("_")[1].contains("A")
         && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.EDITED
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.EDITED
         && e.getName(false).split("_")[1].contains("B")
         && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
@@ -141,7 +141,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.SUBSET
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.SUBSET
         && e.getName(false).split("_")[1].contains("B")));
   }
 
@@ -159,11 +159,11 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.ORIGINAL
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.ORIGINAL
         && e.getName(false).split("_")[1].contains("A")));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.ORIGINAL
+      .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.ORIGINAL
         && e.getName(false).split("_")[1].contains("B")));
   }
 
@@ -191,7 +191,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.ORIGINAL
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.ORIGINAL
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -207,7 +207,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED_BUT_SAME_MEANING
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DIRECTION_CHANGED_BUT_SAME_MEANING
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -223,8 +223,8 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED
-        && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.DIRECTION));
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DIRECTION_CHANGED
+        && e.getWhichPartDiff().get() == WhichPartDiff.DIRECTION));
   }
 
   /**
@@ -239,7 +239,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_SUBSET
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DIRECTION_SUBSET
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -256,7 +256,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithoutDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DELETED
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -273,7 +273,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithoutDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DELETED
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -290,8 +290,8 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED
-        && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.DIRECTION));
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DIRECTION_CHANGED
+        && e.getWhichPartDiff().get() == WhichPartDiff.DIRECTION));
   }
 
   /**
@@ -307,8 +307,8 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED
-        && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.DIRECTION));
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DIRECTION_CHANGED
+        && e.getWhichPartDiff().get() == WhichPartDiff.DIRECTION));
   }
 
   /********************************************************************
@@ -328,7 +328,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.ORIGINAL
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.ORIGINAL
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -344,11 +344,11 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 0);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_SUBSET
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CARDINALITY_SUBSET
         && !e.getWhichPartDiff().isPresent()));
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithoutDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.ORIGINAL
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.ORIGINAL
         && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -364,14 +364,14 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 2);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED
-        && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.LEFT_CARDINALITY
-        && e.getCDDiffLeftClassCardinalityResult().get() == CDSyntaxDiff.CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE));
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CARDINALITY_CHANGED
+        && e.getWhichPartDiff().get() == WhichPartDiff.LEFT_CARDINALITY
+        && e.getCDDiffLeftClassCardinalityResult().get() == CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE));
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
-      .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED
-        && e.getWhichPartDiff().get() == CDSyntaxDiff.WhichPartDiff.RIGHT_CARDINALITY
-        && e.getCDDiffRightClassCardinalityResult().get() == CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE));
+      .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CARDINALITY_CHANGED
+        && e.getWhichPartDiff().get() == WhichPartDiff.RIGHT_CARDINALITY
+        && e.getCDDiffRightClassCardinalityResult().get() == CDAssociationDiffCardinality.TWO_TO_MORE));
   }
 
   /********************************************************************
@@ -388,7 +388,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -402,7 +402,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
   }
 
@@ -416,12 +416,12 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("A")));
   }
 
@@ -435,12 +435,12 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("A")));
   }
 
@@ -454,20 +454,20 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.CONFLICTING
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 3);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("A")));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("B")));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("C")));
   }
 
@@ -481,20 +481,20 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DELETED
             && !e.getWhichPartDiff().isPresent()));
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 3);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("A")));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("B")));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("C")));
   }
 
@@ -511,12 +511,12 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDTypeDiffResultQueueWithDiff().size(), 2);
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("A")
             && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
     Assert.assertTrue(cg.getCDTypeDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDTypeDiffCategory.DELETED
+        .anyMatch(e -> e.getCDDiffCategory() == CDTypeDiffCategory.DELETED
             && e.getName(false).split("_")[1].contains("B")
             && e.getWhichAttributesDiff().get().containsAll(List.of("str", "date", "element"))));
   }
@@ -533,7 +533,7 @@ public class CDWrapper2CDSyntaxDiffGeneratorTest extends CDDiffTestBasis {
     Assert.assertEquals(cg.getCDAssociationDiffResultQueueWithDiff().size(), 1);
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
         .stream()
-        .anyMatch(e -> e.getCDDiffCategory() == CDSyntaxDiff.CDAssociationDiffCategory.DELETED));
+        .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.DELETED));
   }
 
 }

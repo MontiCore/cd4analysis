@@ -7,13 +7,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperPack;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -297,7 +294,7 @@ public class CD2CDWrapperGenerator {
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     clonedCDAssociationWrapperGroup.forEach((currentAssocName, currentAssoc) -> {
-      if (currentAssoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
+      if (currentAssoc.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC) {
         List<CDAssociationWrapperPack> matchedAssocList =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
               cDAssociationWrapperGroup, currentAssoc);
@@ -312,22 +309,22 @@ public class CD2CDWrapperGenerator {
             if (!isReverse) {
               String directionResult = cDAssociationWrapperDirectionHelper(
                 existAssoc.getCDAssociationWrapperDirection(), newCDAssocWrapper.get().getCDAssociationWrapperDirection());
-              CDWrapper.CDAssociationWrapperCardinality leftCardinalityResult = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality leftCardinalityResult = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperLeftClassCardinality(), newCDAssocWrapper.get().getCDWrapperLeftClassCardinality());
-              CDWrapper.CDAssociationWrapperCardinality rightCardinalityResult = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality rightCardinalityResult = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperRightClassCardinality(), newCDAssocWrapper.get().getCDWrapperRightClassCardinality());
               switch (directionResult) {
                 case "current":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   newCDAssocWrapper.get().setCDWrapperLeftClassCardinality(leftCardinalityResult);
                   newCDAssocWrapper.get().setCDWrapperRightClassCardinality(rightCardinalityResult);
-                  newCDAssocWrapper.get().setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  newCDAssocWrapper.get().setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   break;
                 case "exist":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   existAssoc.setCDWrapperLeftClassCardinality(leftCardinalityResult);
                   existAssoc.setCDWrapperRightClassCardinality(rightCardinalityResult);
-                  existAssoc.setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  existAssoc.setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   newCDAssocWrapper.set(existAssoc);
                   break;
                 default:
@@ -336,22 +333,22 @@ public class CD2CDWrapperGenerator {
             } else {
               String directionResult4Current = cDAssociationWrapperDirectionHelper(
                 reverseDirection(existAssoc.getCDAssociationWrapperDirection()), newCDAssocWrapper.get().getCDAssociationWrapperDirection());
-              CDWrapper.CDAssociationWrapperCardinality leftCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality leftCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperRightClassCardinality(), newCDAssocWrapper.get().getCDWrapperLeftClassCardinality());
-              CDWrapper.CDAssociationWrapperCardinality rightCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality rightCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperLeftClassCardinality(), newCDAssocWrapper.get().getCDWrapperRightClassCardinality());
               switch (directionResult4Current) {
                 case "current":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   newCDAssocWrapper.get().setCDWrapperLeftClassCardinality(leftCardinalityResult4Current);
                   newCDAssocWrapper.get().setCDWrapperRightClassCardinality(rightCardinalityResult4Current);
-                  newCDAssocWrapper.get().setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  newCDAssocWrapper.get().setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   break;
                 case "exist":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   existAssoc.setCDWrapperLeftClassCardinality(rightCardinalityResult4Current);
                   existAssoc.setCDWrapperRightClassCardinality(leftCardinalityResult4Current);
-                  existAssoc.setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  existAssoc.setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   CDAssociationWrapper reversedAssoc = reverseCDAssociationWrapper(existAssoc, existAssoc.getEditedElement().getCDAssocDir());
                   newCDAssocWrapper.set(reversedAssoc);
                   break;

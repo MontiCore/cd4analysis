@@ -2,6 +2,7 @@ package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.se_rwth.commons.SourcePosition;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
@@ -28,18 +29,23 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
  */
 public class CDAssociationWrapper implements Cloneable {
   protected final ASTCDAssociation originalElement;
+
   protected ASTCDAssociation editedElement;
-  protected CDWrapper.CDAssociationWrapperKind cDWrapperKind;
+
+  protected CDAssociationWrapperKind cDWrapperKind;
+
   protected CDTypeWrapper cDWrapperLeftClass;
+
   protected CDTypeWrapper cDWrapperRightClass;
-  protected CDWrapper.CDStatus status;
+
+  protected CDStatus status;
 
   public CDAssociationWrapper(ASTCDAssociation originalElement, boolean isInherited) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
     this.cDWrapperKind = isInherited ?
-      CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC : CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC;
-    this.status = CDWrapper.CDStatus.OPEN;
+      CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC : CDAssociationWrapperKind.CDWRAPPER_ASC;
+    this.status = CDStatus.OPEN;
   }
 
   public String getName() {
@@ -51,15 +57,15 @@ public class CDAssociationWrapper implements Cloneable {
       + getCDWrapperRightClass().getOriginalClassName();
   }
 
-  public CDWrapper.CDAssociationWrapperKind getCDWrapperKind() {
+  public CDAssociationWrapperKind getCDWrapperKind() {
     return cDWrapperKind;
   }
 
-  public void setCDWrapperKind(CDWrapper.CDAssociationWrapperKind cDWrapperKind) {
+  public void setCDWrapperKind(CDAssociationWrapperKind cDWrapperKind) {
     this.cDWrapperKind = cDWrapperKind;
   }
 
-  public CDWrapper.CDAssociationWrapperDirection getCDAssociationWrapperDirection() {
+  public CDAssociationWrapperDirection getCDAssociationWrapperDirection() {
     return distinguishAssociationDirectionHelper(this.editedElement);
   }
 
@@ -87,12 +93,11 @@ public class CDAssociationWrapper implements Cloneable {
     return this.originalElement.getRightQualifiedName().getQName();
   }
 
-  public CDWrapper.CDAssociationWrapperCardinality getCDWrapperLeftClassCardinality() {
+  public CDAssociationWrapperCardinality getCDWrapperLeftClassCardinality() {
     return distinguishLeftAssociationCardinalityHelper(this.editedElement);
   }
 
-  public void setCDWrapperLeftClassCardinality(
-      CDWrapper.CDAssociationWrapperCardinality cardinalityResult) {
+  public void setCDWrapperLeftClassCardinality(CDAssociationWrapperCardinality cardinalityResult) {
     switch (cardinalityResult) {
       case ONE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
@@ -109,12 +114,12 @@ public class CDAssociationWrapper implements Cloneable {
     }
   }
 
-  public CDWrapper.CDAssociationWrapperCardinality getCDWrapperRightClassCardinality() {
+  public CDAssociationWrapperCardinality getCDWrapperRightClassCardinality() {
     return distinguishRightAssociationCardinalityHelper(this.editedElement);
   }
 
   public void setCDWrapperRightClassCardinality(
-      CDWrapper.CDAssociationWrapperCardinality cardinalityResult) {
+      CDAssociationWrapperCardinality cardinalityResult) {
     switch (cardinalityResult) {
       case ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
@@ -151,12 +156,16 @@ public class CDAssociationWrapper implements Cloneable {
     this.editedElement = editedElement;
   }
 
-  public CDWrapper.CDStatus getStatus() {
+  public CDStatus getStatus() {
     return status;
   }
 
-  public void setStatus(CDWrapper.CDStatus status) {
+  public void setStatus(CDStatus status) {
     this.status = status;
+  }
+
+  public SourcePosition getSourcePosition() {
+    return this.originalElement.get_SourcePositionStart();
   }
 
   @Override

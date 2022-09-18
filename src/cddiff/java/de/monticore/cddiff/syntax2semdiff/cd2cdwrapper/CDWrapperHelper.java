@@ -24,27 +24,27 @@ public class CDWrapperHelper {
   /**
    * get the corresponding CDTypeWrapper kind by ASTCDType
    */
-  public static CDWrapper.CDTypeWrapperKind distinguishASTCDTypeHelper(ASTCDType astcdType) {
+  public static CDTypeWrapperKind distinguishASTCDTypeHelper(ASTCDType astcdType) {
     if (astcdType instanceof ASTCDClass) {
       if (astcdType.getModifier().isAbstract()) {
-        return CDWrapper.CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS;
+        return CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS;
       }
       else {
-        return CDWrapper.CDTypeWrapperKind.CDWRAPPER_CLASS;
+        return CDTypeWrapperKind.CDWRAPPER_CLASS;
       }
     }
     else if (astcdType instanceof ASTCDEnum) {
-      return CDWrapper.CDTypeWrapperKind.CDWRAPPER_ENUM;
+      return CDTypeWrapperKind.CDWRAPPER_ENUM;
     }
     else {
-      return CDWrapper.CDTypeWrapperKind.CDWRAPPER_INTERFACE;
+      return CDTypeWrapperKind.CDWRAPPER_INTERFACE;
     }
   }
 
   /**
    * get the corresponding prefix of CDTypeWrapper name by cDTypeWrapperKind
    */
-  public static String getCDTypeWrapperKindStrHelper(CDWrapper.CDTypeWrapperKind cDTypeWrapperKind) {
+  public static String getCDTypeWrapperKindStrHelper(CDTypeWrapperKind cDTypeWrapperKind) {
     switch (cDTypeWrapperKind) {
       case CDWRAPPER_CLASS:
         return "CDWrapperClass";
@@ -85,60 +85,60 @@ public class CDWrapperHelper {
   /**
    * get the corresponding the direction kind of CDAssociationWrapper by ASTCDAssociation
    */
-  public static CDWrapper.CDAssociationWrapperDirection distinguishAssociationDirectionHelper(
+  public static CDAssociationWrapperDirection distinguishAssociationDirectionHelper(
       ASTCDAssociation astcdAssociation) {
     boolean left = astcdAssociation.getCDAssocDir().isDefinitiveNavigableLeft();
     boolean right = astcdAssociation.getCDAssocDir().isDefinitiveNavigableRight();
     boolean bidirectional = astcdAssociation.getCDAssocDir().isBidirectional();
     if (!left && right && !bidirectional) {
-      return CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT;
+      return CDAssociationWrapperDirection.LEFT_TO_RIGHT;
     }
     else if (left && !right && !bidirectional) {
-      return CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT;
+      return CDAssociationWrapperDirection.RIGHT_TO_LEFT;
     }
     else if (left && right && bidirectional) {
-      return CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL;
+      return CDAssociationWrapperDirection.BIDIRECTIONAL;
     }
     else {
-      return CDWrapper.CDAssociationWrapperDirection.UNDEFINED;
+      return CDAssociationWrapperDirection.UNDEFINED;
     }
   }
 
   /**
    * get the corresponding the left cardinality kind of CDAssociationWrapper by ASTCDAssociation
    */
-  public static CDWrapper.CDAssociationWrapperCardinality distinguishLeftAssociationCardinalityHelper(
+  public static CDAssociationWrapperCardinality distinguishLeftAssociationCardinalityHelper(
       ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getLeft().getCDCardinality().isOne()) {
-      return CDWrapper.CDAssociationWrapperCardinality.ONE;
+      return CDAssociationWrapperCardinality.ONE;
     }
     else if (astcdAssociation.getLeft().getCDCardinality().isOpt()) {
-      return CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE;
+      return CDAssociationWrapperCardinality.ZERO_TO_ONE;
     }
     else if (astcdAssociation.getLeft().getCDCardinality().isAtLeastOne()) {
-      return CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE;
+      return CDAssociationWrapperCardinality.ONE_TO_MORE;
     }
     else {
-      return CDWrapper.CDAssociationWrapperCardinality.MORE;
+      return CDAssociationWrapperCardinality.MORE;
     }
   }
 
   /**
    * get the corresponding the right cardinality kind of CDAssociationWrapper by ASTCDAssociation
    */
-  public static CDWrapper.CDAssociationWrapperCardinality distinguishRightAssociationCardinalityHelper(
+  public static CDAssociationWrapperCardinality distinguishRightAssociationCardinalityHelper(
       ASTCDAssociation astcdAssociation) {
     if (astcdAssociation.getRight().getCDCardinality().isOne()) {
-      return CDWrapper.CDAssociationWrapperCardinality.ONE;
+      return CDAssociationWrapperCardinality.ONE;
     }
     else if (astcdAssociation.getRight().getCDCardinality().isOpt()) {
-      return CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE;
+      return CDAssociationWrapperCardinality.ZERO_TO_ONE;
     }
     else if (astcdAssociation.getRight().getCDCardinality().isAtLeastOne()) {
-      return CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE;
+      return CDAssociationWrapperCardinality.ONE_TO_MORE;
     }
     else {
-      return CDWrapper.CDAssociationWrapperCardinality.MORE;
+      return CDAssociationWrapperCardinality.MORE;
     }
   }
 
@@ -173,13 +173,13 @@ public class CDWrapperHelper {
   /**
    * reverse LEFT_TO_RIGHT and RIGHT_TO_LEFT direction
    */
-  public static CDWrapper.CDAssociationWrapperDirection reverseDirection(
-      CDWrapper.CDAssociationWrapperDirection direction) {
+  public static CDAssociationWrapperDirection reverseDirection(
+      CDAssociationWrapperDirection direction) {
     switch (direction) {
       case LEFT_TO_RIGHT:
-        return CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT;
+        return CDAssociationWrapperDirection.RIGHT_TO_LEFT;
       case RIGHT_TO_LEFT:
-        return CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT;
+        return CDAssociationWrapperDirection.LEFT_TO_RIGHT;
       default:
         return direction;
     }
@@ -188,7 +188,7 @@ public class CDWrapperHelper {
   /**
    * format direction to String
    */
-  public static String formatDirection(CDWrapper.CDAssociationWrapperDirection direction) {
+  public static String formatDirection(CDAssociationWrapperDirection direction) {
     switch (direction) {
       case LEFT_TO_RIGHT:
         return "LeftToRight";
@@ -204,53 +204,53 @@ public class CDWrapperHelper {
   /**
    * calculate the intersection set for exist Cardinality with current Cardinality
    */
-  public static CDWrapper.CDAssociationWrapperCardinality cDAssociationWrapperCardinalityHelper(
-      CDWrapper.CDAssociationWrapperCardinality exist,
-      CDWrapper.CDAssociationWrapperCardinality current) {
+  public static CDAssociationWrapperCardinality cDAssociationWrapperCardinalityHelper(
+      CDAssociationWrapperCardinality exist,
+      CDAssociationWrapperCardinality current) {
     switch (exist) {
       case ONE:
         switch (current) {
           case ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           case ZERO_TO_ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           case ONE_TO_MORE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           default:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
         }
       case ZERO_TO_ONE:
         switch (current) {
           case ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           case ZERO_TO_ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE;
+            return CDAssociationWrapperCardinality.ZERO_TO_ONE;
           case ONE_TO_MORE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           default:
-            return CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE;
+            return CDAssociationWrapperCardinality.ZERO_TO_ONE;
         }
       case ONE_TO_MORE:
         switch (current) {
           case ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           case ZERO_TO_ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           case ONE_TO_MORE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE;
+            return CDAssociationWrapperCardinality.ONE_TO_MORE;
           default:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE;
+            return CDAssociationWrapperCardinality.ONE_TO_MORE;
         }
       default:
         switch (current) {
           case ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE;
+            return CDAssociationWrapperCardinality.ONE;
           case ZERO_TO_ONE:
-            return CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE;
+            return CDAssociationWrapperCardinality.ZERO_TO_ONE;
           case ONE_TO_MORE:
-            return CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE;
+            return CDAssociationWrapperCardinality.ONE_TO_MORE;
           default:
-            return CDWrapper.CDAssociationWrapperCardinality.MORE;
+            return CDAssociationWrapperCardinality.MORE;
         }
     }
   }
@@ -262,8 +262,8 @@ public class CDWrapperHelper {
    * using exist direction "both" means using both directions
    */
   public static String cDAssociationWrapperDirectionHelper(
-      CDWrapper.CDAssociationWrapperDirection exist,
-      CDWrapper.CDAssociationWrapperDirection current) {
+      CDAssociationWrapperDirection exist,
+      CDAssociationWrapperDirection current) {
     switch (exist) {
       case LEFT_TO_RIGHT:
         switch (current) {
@@ -326,10 +326,10 @@ public class CDWrapperHelper {
       throw new RuntimeException(e);
     }
 
-    AtomicReference<CDWrapper.CDAssociationWrapperCardinality> intersectedLeftCardinality =
+    AtomicReference<CDAssociationWrapperCardinality> intersectedLeftCardinality =
         new AtomicReference<>(
         originalAssoc.getCDWrapperLeftClassCardinality());
-    AtomicReference<CDWrapper.CDAssociationWrapperCardinality> intersectedRightCardinality =
+    AtomicReference<CDAssociationWrapperCardinality> intersectedRightCardinality =
         new AtomicReference<>(
         originalAssoc.getCDWrapperRightClassCardinality());
 
@@ -386,8 +386,8 @@ public class CDWrapperHelper {
   public static CDAssociationWrapperCardinalityPack intersectCDAssociationWrapperCardinalityHelper(
       CDAssociationWrapper originalAssoc, boolean isReversed,
       CDRefSetAssociationWrapper CDRefSetAssociationWrapper, CDWrapper cdw,
-      CDWrapper.CDAssociationWrapperCardinality existLeftCardinality,
-      CDWrapper.CDAssociationWrapperCardinality existRightCardinality) {
+      CDAssociationWrapperCardinality existLeftCardinality,
+      CDAssociationWrapperCardinality existRightCardinality) {
 
     Set<String> leftSuperClassSet;
     Set<String> rightSuperClassSet;
@@ -404,9 +404,9 @@ public class CDWrapperHelper {
           originalAssoc.getCDWrapperLeftClass().getName());
     }
 
-    AtomicReference<CDWrapper.CDAssociationWrapperCardinality> leftResult = new AtomicReference<>(
+    AtomicReference<CDAssociationWrapperCardinality> leftResult = new AtomicReference<>(
         existLeftCardinality);
-    AtomicReference<CDWrapper.CDAssociationWrapperCardinality> rightResult = new AtomicReference<>(
+    AtomicReference<CDAssociationWrapperCardinality> rightResult = new AtomicReference<>(
         existRightCardinality);
     Set<String> finalLeftSuperClassSet = leftSuperClassSet;
     Set<String> finalRightSuperClassSet = rightSuperClassSet;
@@ -732,7 +732,7 @@ public class CDWrapperHelper {
     List<CDTypeWrapper> result = new LinkedList<>();
     inheritanceGraph.successors(cDTypeWrapper.getName()).forEach(e -> {
       if (cDTypeWrapperGroup.get(e).getCDWrapperKind()
-          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_CLASS) {
+          == CDTypeWrapperKind.CDWRAPPER_CLASS) {
         result.add(cDTypeWrapperGroup.get(e));
       }
     });
@@ -747,7 +747,7 @@ public class CDWrapperHelper {
     List<CDTypeWrapper> result = new LinkedList<>();
     inheritanceGraph.predecessors(cDTypeWrapper.getName()).forEach(e -> {
       if (cDTypeWrapperGroup.get(e).getCDWrapperKind()
-          == CDWrapper.CDTypeWrapperKind.CDWRAPPER_CLASS) {
+          == CDTypeWrapperKind.CDWRAPPER_CLASS) {
         result.add(cDTypeWrapperGroup.get(e));
       }
     });
@@ -766,7 +766,7 @@ public class CDWrapperHelper {
 
     List<CDAssociationWrapper> originalCDAssocWrapperList = cDAssociationWrapperGroup.values()
         .stream()
-        .filter(e -> e.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC)
+        .filter(e -> e.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC)
         .collect(Collectors.toList());
 
     originalCDAssocWrapperList.forEach(originalAssoc -> {
@@ -776,7 +776,7 @@ public class CDWrapperHelper {
       rightRefSet.add(originalAssoc.getCDWrapperRightClass());
       String leftRoleName = originalAssoc.getCDWrapperLeftClassRoleName();
       String rightRoleName = originalAssoc.getCDWrapperRightClassRoleName();
-      CDWrapper.CDAssociationWrapperDirection direction = originalAssoc.getCDAssociationWrapperDirection();
+      CDAssociationWrapperDirection direction = originalAssoc.getCDAssociationWrapperDirection();
 
       List<CDAssociationWrapperPack> matchedAssocList =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithRoleNameAndDirection(
@@ -935,8 +935,8 @@ public class CDWrapperHelper {
    * update CD status for CDTypeWrapper if its corresponding assoc has conflict
    */
   public static void updateCDStatus4CDTypeWrapper(CDTypeWrapper cdTypeWrapper) {
-    if (cdTypeWrapper.getCDWrapperKind() != CDWrapper.CDTypeWrapperKind.CDWRAPPER_ENUM) {
-      cdTypeWrapper.setStatus(CDWrapper.CDStatus.LOCKED);
+    if (cdTypeWrapper.getCDWrapperKind() != CDTypeWrapperKind.CDWRAPPER_ENUM) {
+      cdTypeWrapper.setStatus(CDStatus.LOCKED);
     }
   }
 
@@ -956,7 +956,7 @@ public class CDWrapperHelper {
    */
   public static void updateCDStatus4CDAssociationWrapper(List<CDAssociationWrapperPack> cdAssociationWrapperPacks) {
     cdAssociationWrapperPacks.forEach(e ->
-        e.getCDAssociationWrapper().setStatus(CDWrapper.CDStatus.CONFLICTING));
+        e.getCDAssociationWrapper().setStatus(CDStatus.CONFLICTING));
   }
 
   public static Set<CDTypeWrapper> getTargetClass(CDAssociationWrapper cdAssociationWrapper) {
@@ -1038,8 +1038,8 @@ public class CDWrapperHelper {
   public static boolean checkConflictLeftCardinalityHelper(
       List<CDAssociationWrapperPack> cdAssociationWrapperPacks,
       boolean isReverse,
-      CDWrapper.CDAssociationWrapperCardinality cardinality1,
-      CDWrapper.CDAssociationWrapperCardinality cardinality2) {
+      CDAssociationWrapperCardinality cardinality1,
+      CDAssociationWrapperCardinality cardinality2) {
     if (!isReverse) {
       return cdAssociationWrapperPacks
           .stream()
@@ -1061,8 +1061,8 @@ public class CDWrapperHelper {
   public static boolean checkConflictRightCardinalityHelper(
       List<CDAssociationWrapperPack> cdAssociationWrapperPacks,
       boolean isReverse,
-      CDWrapper.CDAssociationWrapperCardinality cardinality1,
-      CDWrapper.CDAssociationWrapperCardinality cardinality2) {
+      CDAssociationWrapperCardinality cardinality1,
+      CDAssociationWrapperCardinality cardinality2) {
     if (!isReverse) {
       return cdAssociationWrapperPacks
           .stream()
@@ -1093,13 +1093,13 @@ public class CDWrapperHelper {
       boolean option) {
     // original
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, false,
-        CDWrapper.CDAssociationWrapperCardinality.MORE,
-        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MORE,
+        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, false,
-        CDWrapper.CDAssociationWrapperCardinality.ONE,
-        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.ONE,
+        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
       }
@@ -1110,13 +1110,13 @@ public class CDWrapperHelper {
 
     // reversed
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, true,
-        CDWrapper.CDAssociationWrapperCardinality.MORE,
-        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MORE,
+        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, true,
-        CDWrapper.CDAssociationWrapperCardinality.ONE,
-        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.ONE,
+        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
       }
@@ -1139,13 +1139,13 @@ public class CDWrapperHelper {
       boolean option) {
     // original
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, false,
-        CDWrapper.CDAssociationWrapperCardinality.MORE,
-        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MORE,
+        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, false,
-        CDWrapper.CDAssociationWrapperCardinality.ONE,
-        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.ONE,
+        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
       } else {
@@ -1155,13 +1155,13 @@ public class CDWrapperHelper {
 
     // reversed
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, true,
-        CDWrapper.CDAssociationWrapperCardinality.MORE,
-        CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MORE,
+        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, true,
-        CDWrapper.CDAssociationWrapperCardinality.ONE,
-        CDWrapper.CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.ONE,
+        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
       } else {
@@ -1180,13 +1180,13 @@ public class CDWrapperHelper {
       if (!cdAssociationWrapperPacks.isEmpty()) {
 
         // Cardinality in [*, 0..1]
-        if (baseAssoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.MORE ||
-            baseAssoc.getCDWrapperLeftClassCardinality() == CDWrapper.CDAssociationWrapperCardinality.ZERO_TO_ONE) {
+        if (baseAssoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.MORE ||
+            baseAssoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ZERO_TO_ONE) {
 
           // -> / <-> / --
-          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
-              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL ||
-              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.BIDIRECTIONAL ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.UNDEFINED) {
             checkConflictOriginalReversedDirectionHelper4CategoryOne(
                 cdAssociationWrapperPacks,
                 baseAssoc,
@@ -1194,7 +1194,7 @@ public class CDWrapperHelper {
           }
 
           // <-
-          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
             checkConflictOriginalReversedDirectionHelper4CategoryTwo(
                 cdAssociationWrapperPacks,
                 baseAssoc,
@@ -1204,9 +1204,9 @@ public class CDWrapperHelper {
         // Cardinality in [1, 1..*]
         else {
           // -> / <-> / --
-          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
-              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.BIDIRECTIONAL ||
-              baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.UNDEFINED) {
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.LEFT_TO_RIGHT ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.BIDIRECTIONAL ||
+              baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.UNDEFINED) {
             checkConflictOriginalReversedDirectionHelper4CategoryOne(
                 cdAssociationWrapperPacks,
                 baseAssoc,
@@ -1214,7 +1214,7 @@ public class CDWrapperHelper {
           }
 
           // <-
-          if (baseAssoc.getCDAssociationWrapperDirection() == CDWrapper.CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
+          if (baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
             checkConflictOriginalReversedDirectionHelper4CategoryTwo(
                 cdAssociationWrapperPacks,
                 baseAssoc,
