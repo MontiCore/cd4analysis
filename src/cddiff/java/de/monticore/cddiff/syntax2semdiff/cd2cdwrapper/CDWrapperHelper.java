@@ -728,11 +728,10 @@ public class CDWrapperHelper {
    * return all simple super-classes about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSuperClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
-      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
+      Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
     List<CDTypeWrapper> result = new LinkedList<>();
-    inheritanceGraph.successors(cDTypeWrapper.getName()).forEach(e -> {
-      if (cDTypeWrapperGroup.get(e).getCDWrapperKind()
-          == CDTypeWrapperKind.CDWRAPPER_CLASS) {
+    cDTypeWrapper.getSuperclasses().forEach(e -> {
+      if (cDTypeWrapperGroup.get(e).getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_CLASS) {
         result.add(cDTypeWrapperGroup.get(e));
       }
     });
@@ -740,14 +739,13 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all simple subclasses about given CDTypeWrapper except abstract class and interface
+   * return all simple sub-classes about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
-      MutableGraph<String> inheritanceGraph, Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
+      Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
     List<CDTypeWrapper> result = new LinkedList<>();
-    inheritanceGraph.predecessors(cDTypeWrapper.getName()).forEach(e -> {
-      if (cDTypeWrapperGroup.get(e).getCDWrapperKind()
-          == CDTypeWrapperKind.CDWRAPPER_CLASS) {
+    cDTypeWrapper.getSubclasses().forEach(e -> {
+      if (cDTypeWrapperGroup.get(e).getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_CLASS) {
         result.add(cDTypeWrapperGroup.get(e));
       }
     });

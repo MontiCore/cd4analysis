@@ -185,11 +185,11 @@ public class GenerateODHelper {
     CDTypeWrapperSet.add(originalAssoc.getCDWrapperLeftClass());
     CDTypeWrapperSet.addAll(
         getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperLeftClass(),
-            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()));
+            cdw.getCDTypeWrapperGroup()));
     CDTypeWrapperSet.add(originalAssoc.getCDWrapperRightClass());
     CDTypeWrapperSet.addAll(
         getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperRightClass(),
-            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()));
+            cdw.getCDTypeWrapperGroup()));
 
     // get all related Assocs of each class in CDTypeWrapperSet
     Map<String, CDAssociationWrapper> cDAssociationWrapperMap = new HashMap<>();
@@ -518,8 +518,11 @@ public class GenerateODHelper {
   /**
    * create an object
    */
-  public static CDWrapperObjectPack createObject(CDWrapper cdw, Optional<CDTypeDiff> cDTypeDiff,
-      CDTypeWrapper cDTypeWrapper, int index, Optional<CDTypeWrapper> instanceClass,
+  public static CDWrapperObjectPack createObject(CDWrapper cdw,
+      Optional<CDTypeDiff> cDTypeDiff,
+      CDTypeWrapper cDTypeWrapper,
+      int index,
+      Optional<CDTypeWrapper> instanceClass,
       CDSemantics cdSemantics) {
 
     // if this CDTypeWrapper is interface or abstract class, then find a simple class on
@@ -529,11 +532,10 @@ public class GenerateODHelper {
       newCDTypeWrapper = instanceClass.get();
     }
     else {
-      if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
-          || cDTypeWrapper.getCDWrapperKind()
-          == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
-        newCDTypeWrapper = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup()).get(0);
+      if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE ||
+          cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
+        newCDTypeWrapper =
+            getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup()).get(0);
       }
       else {
         newCDTypeWrapper = cDTypeWrapper;
@@ -597,9 +599,12 @@ public class GenerateODHelper {
    * create all objects that should be used in an OD
    */
   public static List<ASTODNamedObject> createObjectList(CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff, CDTypeWrapper offerCDTypeWrapper, int cardinalityCount,
+      Optional<CDTypeDiff> cDTypeDiff,
+      CDTypeWrapper offerCDTypeWrapper,
+      int cardinalityCount,
       Deque<ASTODClassStackPack> classStack4TargetClass,
-      Deque<ASTODClassStackPack> classStack4SourceClass, Optional<CDTypeWrapper> instanceClass,
+      Deque<ASTODClassStackPack> classStack4SourceClass,
+      Optional<CDTypeWrapper> instanceClass,
       CDSemantics cdSemantics) {
 
     List<ASTODNamedObject> astodNamedObjectList = new LinkedList<>();
@@ -837,8 +842,8 @@ public class GenerateODHelper {
     if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
         || cDTypeWrapper.getCDWrapperKind()
         == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
-      List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-          cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+      List<CDTypeWrapper> subClassList =
+          getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> {
         objectList.forEach(e -> {
           if (e.getName().split("_")[0].equals(
@@ -870,8 +875,8 @@ public class GenerateODHelper {
     // choose ASTODNamedObjects from ASTODPack
     List<ASTODNamedObject> objectList = astodPack.getNamedObjects();
 
-    List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+    List<CDTypeWrapper> subClassList =
+        getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
     subClassList.forEach(c -> {
       objectList.forEach(e -> {
         if (e.getName().split("_")[0].equals(
@@ -894,8 +899,8 @@ public class GenerateODHelper {
     // choose ASTODNamedObjects from ASTODPack
     List<ASTODNamedObject> objectList = astodPack.getNamedObjects();
 
-    List<CDTypeWrapper> superClassList = getAllSimpleSuperClasses4CDTypeWrapper(cDTypeWrapper,
-        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+    List<CDTypeWrapper> superClassList =
+        getAllSimpleSuperClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
     superClassList.forEach(c -> {
       objectList.forEach(e -> {
         if (e.getName().split("_")[0].equals(
@@ -932,8 +937,8 @@ public class GenerateODHelper {
     if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
         || cDTypeWrapper.getCDWrapperKind()
         == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
-      List<CDTypeWrapper> subClassList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-          cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+      List<CDTypeWrapper> subClassList =
+          getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> {
         objectList.forEach(e -> {
           if (e.getName().split("_")[0].equals(
@@ -966,8 +971,8 @@ public class GenerateODHelper {
       if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE
           || cDTypeWrapper.getCDWrapperKind()
           == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
-        List<CDTypeWrapper> CDTypeWrapperList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-            cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
+        List<CDTypeWrapper> CDTypeWrapperList =
+            getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
         newCDTypeWrapper = CDTypeWrapperList.get(CDTypeWrapperList.size() - 1);
       }
       else {

@@ -195,9 +195,8 @@ public class CDSyntaxDiff2ODGenerator {
       CDSemantics cdSemantics) {
 
     // get inheritance path of current CDTypeWrapper
-    List<CDTypeWrapper> CDTypeWrapperList = getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper,
-        cdw.getInheritanceGraph(), cdw.getCDTypeWrapperGroup());
-    CDTypeWrapperList.add(0, cDTypeWrapper);
+    List<CDTypeWrapper> CDTypeWrapperList =
+        getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
 
     // find possible associations about current CDTypeWrapper and its subclasses
     List<CDAssociationWrapper> CDAssociationWrapperList = new LinkedList<>();
