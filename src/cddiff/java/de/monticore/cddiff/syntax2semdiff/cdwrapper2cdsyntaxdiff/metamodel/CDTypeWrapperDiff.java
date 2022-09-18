@@ -4,11 +4,11 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 
 import java.util.*;
 
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper.getCDTypeDiffKindHelper;
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper.getCDTypeDiffKindStrHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDTypeDiffKindHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDTypeDiffKindStrHelper;
 
 /**
- * Each CDTypeWrapper in based CDWrapper will generate one corresponding CDTypeDiff
+ * Each CDTypeWrapper in based CDWrapper will generate one corresponding CDTypeWrapperDiff
  *
  * @attribute cDDiffId:
  *    unique cDDiff id
@@ -27,7 +27,7 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntax
  * @attribute whichAttributesDiff:
  *    mark which attribute has syntactic differences
  */
-public class CDTypeDiff {
+public class CDTypeWrapperDiff {
   protected final UUID cDDiffId;
 
   protected CDTypeWrapper originalElement;
@@ -36,12 +36,12 @@ public class CDTypeDiff {
 
   protected final boolean isContentDiff;
 
-  protected final CDSyntaxDiff.CDTypeDiffCategory cDDiffCategory;
+  protected final CDWrapperSyntaxDiff.CDTypeDiffCategory cDDiffCategory;
 
   protected Optional<List<String>> whichAttributesDiff;
 
-  public CDTypeDiff(CDTypeWrapper originalElement, boolean isInCompareCDW, boolean isContentDiff,
-      CDSyntaxDiff.CDTypeDiffCategory cDDiffCategory) {
+  public CDTypeWrapperDiff(CDTypeWrapper originalElement, boolean isInCompareCDW, boolean isContentDiff,
+      CDWrapperSyntaxDiff.CDTypeDiffCategory cDDiffCategory) {
     this.originalElement = originalElement;
     this.isInCompareCDW = isInCompareCDW;
     this.isContentDiff = isContentDiff;
@@ -58,7 +58,7 @@ public class CDTypeDiff {
         + this.originalElement.getOriginalClassName();
   }
 
-  public CDSyntaxDiff.CDTypeDiffKind getCDDiffKind() {
+  public CDWrapperSyntaxDiff.CDTypeDiffKind getCDDiffKind() {
     return getCDTypeDiffKindHelper(this.originalElement.getCDWrapperKind());
   }
 
@@ -70,7 +70,7 @@ public class CDTypeDiff {
     return isContentDiff;
   }
 
-  public CDSyntaxDiff.CDTypeDiffCategory getCDDiffCategory() {
+  public CDWrapperSyntaxDiff.CDTypeDiffCategory getCDDiffCategory() {
     return cDDiffCategory;
   }
 

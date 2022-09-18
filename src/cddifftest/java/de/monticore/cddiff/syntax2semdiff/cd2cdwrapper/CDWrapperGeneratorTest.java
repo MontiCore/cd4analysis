@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
-public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
+public class CDWrapperGeneratorTest extends CDDiffTestBasis {
 
   public CDWrapper generateCDWrapperTemp(String folder, String cdName) {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/CDWrapper/"
             + folder + "/" + cdName);
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    return cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    return cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
   }
 
   /********************************************************************
@@ -585,8 +585,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
             + "/Association2B.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A")
         .getStatus().equals(CDWrapper.CDStatus.OPEN));
@@ -609,8 +609,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
             + "/Association2B_inheritance.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A1")
         .getStatus().equals(CDWrapper.CDStatus.OPEN));
@@ -639,8 +639,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
             + "/Association2D.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A")
         .getStatus().equals(CDWrapper.CDStatus.LOCKED));
@@ -663,8 +663,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association/"
             + "Association2D_reverse.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A")
         .getStatus().equals(CDWrapper.CDStatus.LOCKED));
@@ -687,8 +687,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
             + "/Association2F.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A")
         .getStatus().equals(CDWrapper.CDStatus.LOCKED));
@@ -711,8 +711,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
             + "/Association2H.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A")
         .getStatus().equals(CDWrapper.CDStatus.LOCKED));
@@ -735,8 +735,8 @@ public class CD2CDWrapperGeneratorTest extends CDDiffTestBasis {
     ASTCDCompilationUnit cd = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
             + "/Association2G.cd");
-    CD2CDWrapperGenerator cd2CDWrapperGenerator = new CD2CDWrapperGenerator();
-    CDWrapper dg = cd2CDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
         .get("CDWrapperClass_A")
         .getStatus().equals(CDWrapper.CDStatus.OPEN));

@@ -4,16 +4,16 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWr
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperPack;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeDiff;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssociationDiff;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDAssocWrapperDiff;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeWrapperDiff;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
-public class CDSyntaxDiffHelper {
+public class CDWrapperSyntaxDiffHelper {
 
   /********************************************************************
    *********************    Start for Class    ************************
@@ -22,26 +22,26 @@ public class CDSyntaxDiffHelper {
   /**
    * get the corresponding CDDiff kind for class by cDTypeWrapperKind
    */
-  public static CDSyntaxDiff.CDTypeDiffKind getCDTypeDiffKindHelper(
+  public static CDWrapperSyntaxDiff.CDTypeDiffKind getCDTypeDiffKindHelper(
       CDWrapper.CDTypeWrapperKind cDTypeWrapperKind) {
     switch (cDTypeWrapperKind) {
       case CDWRAPPER_CLASS:
-        return CDSyntaxDiff.CDTypeDiffKind.CDDIFF_CLASS;
+        return CDWrapperSyntaxDiff.CDTypeDiffKind.CDDIFF_CLASS;
       case CDWRAPPER_ENUM:
-        return CDSyntaxDiff.CDTypeDiffKind.CDDIFF_ENUM;
+        return CDWrapperSyntaxDiff.CDTypeDiffKind.CDDIFF_ENUM;
       case CDWRAPPER_ABSTRACT_CLASS:
-        return CDSyntaxDiff.CDTypeDiffKind.CDDIFF_ABSTRACT_CLASS;
+        return CDWrapperSyntaxDiff.CDTypeDiffKind.CDDIFF_ABSTRACT_CLASS;
       case CDWRAPPER_INTERFACE:
-        return CDSyntaxDiff.CDTypeDiffKind.CDDIFF_INTERFACE;
+        return CDWrapperSyntaxDiff.CDTypeDiffKind.CDDIFF_INTERFACE;
       default:
         return null;
     }
   }
 
   /**
-   * get the corresponding prefix CDTypeDiff name by cDTypeDiffKind
+   * get the corresponding prefix CDTypeWrapperDiff name by cDTypeDiffKind
    */
-  public static String getCDTypeDiffKindStrHelper(CDSyntaxDiff.CDTypeDiffKind cDTypeDiffKind,
+  public static String getCDTypeDiffKindStrHelper(CDWrapperSyntaxDiff.CDTypeDiffKind cDTypeDiffKind,
       boolean is4Print) {
     switch (cDTypeDiffKind) {
       case CDDIFF_CLASS:
@@ -90,45 +90,45 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * return the CDTypeDiff category that helps to determine if there is a semantic difference
+   * return the CDTypeWrapperDiff category that helps to determine if there is a semantic difference
    */
-  public static CDSyntaxDiff.CDTypeDiffCategory cDTypeDiffCategoryHelper(CDTypeWrapper base,
+  public static CDWrapperSyntaxDiff.CDTypeDiffCategory cDTypeDiffCategoryHelper(CDTypeWrapper base,
       CDTypeWrapper compare, boolean isContentDiff) {
     // check whether attributes in BaseCDTypeWrapper are the subset of attributes in
     // Compare CDTypeWrapper
     if (!isContentDiff) {
       if (compare.getAttributes().keySet().containsAll(base.getAttributes().keySet())
           && compare.getAttributes().size() > base.getAttributes().size()) {
-        return CDSyntaxDiff.CDTypeDiffCategory.SUBSET;
+        return CDWrapperSyntaxDiff.CDTypeDiffCategory.SUBSET;
       }
       else {
-        return CDSyntaxDiff.CDTypeDiffCategory.ORIGINAL;
+        return CDWrapperSyntaxDiff.CDTypeDiffCategory.ORIGINAL;
       }
     }
     else {
-      return CDSyntaxDiff.CDTypeDiffCategory.EDITED;
+      return CDWrapperSyntaxDiff.CDTypeDiffCategory.EDITED;
     }
   }
 
   /**
-   * helper for creating CDTypeDiff without attributesDiffList
+   * helper for creating CDTypeWrapperDiff without attributesDiffList
    */
-  public static CDTypeDiff createCDTypeDiffHelper(CDTypeWrapper base, boolean isInCompareCDW,
-      boolean isContentDiff, CDSyntaxDiff.CDTypeDiffCategory category) {
-    CDTypeDiff cDTypeDiff = new CDTypeDiff(base, isInCompareCDW, isContentDiff, category);
-    cDTypeDiff.setWhichAttributesDiff(Optional.empty());
-    return cDTypeDiff;
+  public static CDTypeWrapperDiff createCDTypeDiffHelper(CDTypeWrapper base, boolean isInCompareCDW,
+      boolean isContentDiff, CDWrapperSyntaxDiff.CDTypeDiffCategory category) {
+    CDTypeWrapperDiff cDTypeWrapperDiff = new CDTypeWrapperDiff(base, isInCompareCDW, isContentDiff, category);
+    cDTypeWrapperDiff.setWhichAttributesDiff(Optional.empty());
+    return cDTypeWrapperDiff;
   }
 
   /**
-   * helper for creating CDTypeDiff with attributesDiffList
+   * helper for creating CDTypeWrapperDiff with attributesDiffList
    */
-  public static CDTypeDiff createCDTypeDiffHelper(CDTypeWrapper base, boolean isInCompareCDW,
-      boolean isContentDiff, CDSyntaxDiff.CDTypeDiffCategory category,
+  public static CDTypeWrapperDiff createCDTypeDiffHelper(CDTypeWrapper base, boolean isInCompareCDW,
+      boolean isContentDiff, CDWrapperSyntaxDiff.CDTypeDiffCategory category,
       List<String> attributesDiffList) {
-    CDTypeDiff cDTypeDiff = createCDTypeDiffHelper(base, isInCompareCDW, isContentDiff, category);
-    cDTypeDiff.setWhichAttributesDiff(Optional.of(attributesDiffList));
-    return cDTypeDiff;
+    CDTypeWrapperDiff cDTypeWrapperDiff = createCDTypeDiffHelper(base, isInCompareCDW, isContentDiff, category);
+    cDTypeWrapperDiff.setWhichAttributesDiff(Optional.of(attributesDiffList));
+    return cDTypeWrapperDiff;
   }
 
   /**
@@ -231,53 +231,53 @@ public class CDSyntaxDiffHelper {
    * return the result for cardinality of association after comparison
    * between base CDAssociationWrapper and compare CDAssociationWrapper
    */
-  public static CDSyntaxDiff.CDAssociationDiffCardinality cDAssociationDiffCardinalityHelper(
+  public static CDWrapperSyntaxDiff.CDAssociationDiffCardinality cDAssociationDiffCardinalityHelper(
       CDWrapper.CDAssociationWrapperCardinality baseCDAssociationWrapperCardinality,
       CDWrapper.CDAssociationWrapperCardinality compareCDAssociationWrapperCardinality) {
     switch (baseCDAssociationWrapperCardinality) {
       case ONE:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
           case ZERO_TO_ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
           case ONE_TO_MORE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
           default:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
         }
       case ZERO_TO_ONE:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.ZERO;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.ZERO;
           case ZERO_TO_ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
           case ONE_TO_MORE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.ZERO;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.ZERO;
           default:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
         }
       case ONE_TO_MORE:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE;
           case ZERO_TO_ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE;
           case ONE_TO_MORE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
           default:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
         }
       default:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE;
           case ZERO_TO_ONE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.TWO_TO_MORE;
           case ONE_TO_MORE:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.ZERO;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.ZERO;
           default:
-            return CDSyntaxDiff.CDAssociationDiffCardinality.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE;
         }
     }
   }
@@ -286,192 +286,192 @@ public class CDSyntaxDiffHelper {
    * return the result for direction of association after comparison
    * between base CDAssociationWrapper and compare CDAssociationWrapper
    */
-  public static CDSyntaxDiff.CDAssociationDiffDirection cDAssociationDiffDirectionHelper(
+  public static CDWrapperSyntaxDiff.CDAssociationDiffDirection cDAssociationDiffDirectionHelper(
       CDWrapper.CDAssociationWrapperDirection baseDirection,
       CDWrapper.CDAssociationWrapperDirection compareDirection) {
     switch (baseDirection) {
       case LEFT_TO_RIGHT:
         switch (compareDirection) {
           case LEFT_TO_RIGHT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
           case RIGHT_TO_LEFT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT;
           case BIDIRECTIONAL:
-            return CDSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT;
           default:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
         }
       case RIGHT_TO_LEFT:
         switch (compareDirection) {
           case LEFT_TO_RIGHT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.RIGHT_TO_LEFT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.RIGHT_TO_LEFT;
           case RIGHT_TO_LEFT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
           case BIDIRECTIONAL:
-            return CDSyntaxDiff.CDAssociationDiffDirection.RIGHT_TO_LEFT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.RIGHT_TO_LEFT;
           default:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
         }
       case BIDIRECTIONAL:
         switch (compareDirection) {
           case LEFT_TO_RIGHT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.BIDIRECTIONAL;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.BIDIRECTIONAL;
           case RIGHT_TO_LEFT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.BIDIRECTIONAL;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.BIDIRECTIONAL;
           case BIDIRECTIONAL:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
           default:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
         }
       default:
         switch (compareDirection) {
           case LEFT_TO_RIGHT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.RIGHT_TO_LEFT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.RIGHT_TO_LEFT;
           case RIGHT_TO_LEFT:
-            return CDSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT;
           case BIDIRECTIONAL:
-            return CDSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT;
           default:
-            return CDSyntaxDiff.CDAssociationDiffDirection.NONE;
+            return CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE;
         }
     }
   }
 
   /**
-   * return the CDAssociationDiff category that helps to determine if there is a semantic
+   * return the CDAssocWrapperDiff category that helps to determine if there is a semantic
    * difference for direction
    */
-  public static CDSyntaxDiff.CDAssociationDiffCategory cDAssociationDiffCategoryByDirectionHelper(
+  public static CDWrapperSyntaxDiff.CDAssociationDiffCategory cDAssociationDiffCategoryByDirectionHelper(
       boolean isDirectionChanged, boolean isAssocNameExchanged,
-      CDSyntaxDiff.CDAssociationDiffDirection directionResult) {
+      CDWrapperSyntaxDiff.CDAssociationDiffDirection directionResult) {
     if (isDirectionChanged) {
       // check directionResult
-      if (directionResult == CDSyntaxDiff.CDAssociationDiffDirection.NONE) {
-        return CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_SUBSET;
+      if (directionResult == CDWrapperSyntaxDiff.CDAssociationDiffDirection.NONE) {
+        return CDWrapperSyntaxDiff.CDAssociationDiffCategory.DIRECTION_SUBSET;
       }
-      return CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED;
+      return CDWrapperSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED;
     }
     else {
       if (isAssocNameExchanged) {
-        return CDSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED_BUT_SAME_MEANING;
+        return CDWrapperSyntaxDiff.CDAssociationDiffCategory.DIRECTION_CHANGED_BUT_SAME_MEANING;
       }
       else {
-        return CDSyntaxDiff.CDAssociationDiffCategory.ORIGINAL;
+        return CDWrapperSyntaxDiff.CDAssociationDiffCategory.ORIGINAL;
       }
     }
   }
 
   /**
-   * return the CDAssociationDiff category that helps to determine if there is a semantic
+   * return the CDAssocWrapperDiff category that helps to determine if there is a semantic
    * difference for cardinality
    */
-  public static CDSyntaxDiff.CDAssociationDiffCategory cDAssociationDiffCategoryByCardinalityHelper(
-      boolean isCardinalityDiff, CDSyntaxDiff.CDAssociationDiffCardinality cardinalityResult) {
+  public static CDWrapperSyntaxDiff.CDAssociationDiffCategory cDAssociationDiffCategoryByCardinalityHelper(
+      boolean isCardinalityDiff, CDWrapperSyntaxDiff.CDAssociationDiffCardinality cardinalityResult) {
     if (isCardinalityDiff) {
       // check cardinalityResult
-      if (cardinalityResult == CDSyntaxDiff.CDAssociationDiffCardinality.NONE) {
-        return CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_SUBSET;
+      if (cardinalityResult == CDWrapperSyntaxDiff.CDAssociationDiffCardinality.NONE) {
+        return CDWrapperSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_SUBSET;
       }
-      return CDSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED;
+      return CDWrapperSyntaxDiff.CDAssociationDiffCategory.CARDINALITY_CHANGED;
     }
     else {
-      return CDSyntaxDiff.CDAssociationDiffCategory.ORIGINAL;
+      return CDWrapperSyntaxDiff.CDAssociationDiffCategory.ORIGINAL;
     }
   }
 
   /**
    * get the corresponding CDDiff kind for association by cDAssociationWrapperKind
    */
-  public static CDSyntaxDiff.CDAssociationDiffKind getCDAssociationDiffKindHelper(
+  public static CDWrapperSyntaxDiff.CDAssociationDiffKind getCDAssociationDiffKindHelper(
       CDWrapper.CDAssociationWrapperKind cDAssociationWrapperKind) {
     switch (cDAssociationWrapperKind) {
       case CDWRAPPER_ASC:
-        return CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_ASC;
+        return CDWrapperSyntaxDiff.CDAssociationDiffKind.CDDIFF_ASC;
       case CDWRAPPER_INHERIT_ASC:
-        return CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC;
+        return CDWrapperSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_ASC;
       case CDWRAPPER_INHERIT_DISPLAY_ASC:
-        return CDSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_DISPLAY_ASC;
+        return CDWrapperSyntaxDiff.CDAssociationDiffKind.CDDIFF_INHERIT_DISPLAY_ASC;
       default:
         return null;
     }
   }
 
   /**
-   * helper for creating CDAssociationDiff without whichPartDiff and the result after comparison
+   * helper for creating CDAssocWrapperDiff without whichPartDiff and the result after comparison
    */
-  public static CDAssociationDiff createCDAssociationDiffHelper(
+  public static CDAssocWrapperDiff createCDAssociationDiffHelper(
       CDAssociationWrapper base,
       boolean isInCompareCDW,
       boolean isContentDiff,
-      CDSyntaxDiff.CDAssociationDiffCategory category) {
-    CDAssociationDiff cDAssociationDiff =
-        new CDAssociationDiff(base, isInCompareCDW, isContentDiff, category);
-    cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-    cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setWhichPartDiff(Optional.empty());
-    cDAssociationDiff.setLeftInstanceClass(Optional.empty());
-    cDAssociationDiff.setRightInstanceClass(Optional.empty());
-    return cDAssociationDiff;
+      CDWrapperSyntaxDiff.CDAssociationDiffCategory category) {
+    CDAssocWrapperDiff cDAssocWrapperDiff =
+        new CDAssocWrapperDiff(base, isInCompareCDW, isContentDiff, category);
+    cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setWhichPartDiff(Optional.empty());
+    cDAssocWrapperDiff.setLeftInstanceClass(Optional.empty());
+    cDAssocWrapperDiff.setRightInstanceClass(Optional.empty());
+    return cDAssocWrapperDiff;
   }
 
   /**
-   * helper for creating CDAssociationDiff with whichPartDiff and the result after comparison
+   * helper for creating CDAssocWrapperDiff with whichPartDiff and the result after comparison
    */
-  public static CDAssociationDiff createCDAssociationDiffHelper(
+  public static CDAssocWrapperDiff createCDAssociationDiffHelper(
       CDAssociationWrapper base,
       boolean isInCompareCDW,
       boolean isContentDiff,
-      CDSyntaxDiff.CDAssociationDiffCategory category,
-      Optional<CDSyntaxDiff.WhichPartDiff> whichPartDiff,
+      CDWrapperSyntaxDiff.CDAssociationDiffCategory category,
+      Optional<CDWrapperSyntaxDiff.WhichPartDiff> whichPartDiff,
       Optional<Object> compResult) {
-    CDAssociationDiff cDAssociationDiff = createCDAssociationDiffHelper(base, isInCompareCDW,
+    CDAssocWrapperDiff cDAssocWrapperDiff = createCDAssociationDiffHelper(base, isInCompareCDW,
         isContentDiff, category);
-    cDAssociationDiff.setWhichPartDiff(whichPartDiff);
+    cDAssocWrapperDiff.setWhichPartDiff(whichPartDiff);
 
     if (whichPartDiff.isPresent() && compResult.isPresent()) {
       switch (whichPartDiff.get()) {
         case DIRECTION:
-          cDAssociationDiff.setCDDiffDirectionResult(
-              Optional.of((CDSyntaxDiff.CDAssociationDiffDirection) compResult.get()));
-          cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-          cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffDirectionResult(
+              Optional.of((CDWrapperSyntaxDiff.CDAssociationDiffDirection) compResult.get()));
+          cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
           break;
         case LEFT_CARDINALITY:
         case RIGHT_SPECIAL_CARDINALITY:
-          cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-          cDAssociationDiff.setCDDiffLeftClassCardinalityResult(
-              Optional.of((CDSyntaxDiff.CDAssociationDiffCardinality) compResult.get()));
-          cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(
+              Optional.of((CDWrapperSyntaxDiff.CDAssociationDiffCardinality) compResult.get()));
+          cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
           break;
         case RIGHT_CARDINALITY:
         case LEFT_SPECIAL_CARDINALITY:
-          cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-          cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-          cDAssociationDiff.setCDDiffRightClassCardinalityResult(
-              Optional.of((CDSyntaxDiff.CDAssociationDiffCardinality) compResult.get()));
+          cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(
+              Optional.of((CDWrapperSyntaxDiff.CDAssociationDiffCardinality) compResult.get()));
           break;
       }
     }
-    return cDAssociationDiff;
+    return cDAssocWrapperDiff;
   }
 
-  public static CDAssociationDiff createCDAssociationDiffHelperWithInstanceClass(
+  public static CDAssocWrapperDiff createCDAssociationDiffHelperWithInstanceClass(
       CDAssociationWrapper base,
       boolean isInCompareCDW,
       boolean isContentDiff,
-      CDSyntaxDiff.CDAssociationDiffCategory category,
+      CDWrapperSyntaxDiff.CDAssociationDiffCategory category,
       Optional<CDTypeWrapper> leftInstanceClass,
       Optional<CDTypeWrapper> rightInstanceClass) {
-    CDAssociationDiff cDAssociationDiff =
-        new CDAssociationDiff(base, isInCompareCDW, isContentDiff, category);
-    cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-    cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setWhichPartDiff(Optional.empty());
-    cDAssociationDiff.setLeftInstanceClass(leftInstanceClass);
-    cDAssociationDiff.setRightInstanceClass(rightInstanceClass);
-    return cDAssociationDiff;
+    CDAssocWrapperDiff cDAssocWrapperDiff =
+        new CDAssocWrapperDiff(base, isInCompareCDW, isContentDiff, category);
+    cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setWhichPartDiff(Optional.empty());
+    cDAssocWrapperDiff.setLeftInstanceClass(leftInstanceClass);
+    cDAssocWrapperDiff.setRightInstanceClass(rightInstanceClass);
+    return cDAssocWrapperDiff;
   }
 
 }

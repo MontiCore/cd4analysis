@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
-public class CD2CDWrapperGenerator {
+public class CDWrapperGenerator {
   protected Map<String, CDTypeWrapper> cDTypeWrapperGroup = new HashMap<>();
   protected Map<String, CDAssociationWrapper> cDAssociationWrapperGroup = new HashMap<>();
   protected MutableGraph<String> inheritanceGraph = GraphBuilder.directed().build();
