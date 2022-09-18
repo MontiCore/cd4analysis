@@ -4,7 +4,7 @@ import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
       // clean-up
       try {
-        FileUtils.forceDelete(Paths.get(output).toFile());
+        PathUtils.delete(Paths.get(output));
       }
       catch (IOException e) {
         Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
@@ -102,7 +102,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
       // clean-up
       try {
-        FileUtils.forceDelete(Paths.get(output).toFile());
+        PathUtils.delete(Paths.get(output));
       }
       catch (IOException e) {
         Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
@@ -148,7 +148,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
     // clean-up
     try {
-      FileUtils.forceDelete(Paths.get(output).toFile());
+      PathUtils.delete(Paths.get(output));
     }
     catch (IOException e) {
       Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
@@ -183,7 +183,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         // clean-up
         try {
-          FileUtils.forceDelete(Paths.get(output).toFile());
+          PathUtils.delete(Paths.get(output));
         }
         catch (IOException e) {
           Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
@@ -222,7 +222,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         // clean-up
         try {
-          FileUtils.forceDelete(Paths.get(output).toFile());
+          PathUtils.delete(Paths.get(output));
         }
         catch (IOException e) {
           Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
@@ -262,7 +262,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         // clean-up
         try {
-          FileUtils.forceDelete(Paths.get(output).toFile());
+          PathUtils.delete(Paths.get(output));
         }
         catch (IOException e) {
           Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
@@ -300,7 +300,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         // clean-up
         try {
-          FileUtils.forceDelete(Paths.get(output).toFile());
+          PathUtils.delete(Paths.get(output));
         }
         catch (IOException e) {
           Log.warn(String.format("Could not delete %s due to %s", output, e.getMessage()));
