@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.*;
 
-public class CDSyntaxDiff2ODGenerator {
+public class CDSyntax2SemDiffODGenerator {
 
   /**
    * generate ODs by solving items with syntactic differences in globalClassQueue and

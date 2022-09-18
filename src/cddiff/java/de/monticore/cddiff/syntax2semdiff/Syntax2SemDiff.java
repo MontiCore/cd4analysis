@@ -6,7 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntaxDiff2ODGenerator;
+import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiffODGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
 import net.sourceforge.plantuml.Log;
@@ -34,7 +34,7 @@ public class Syntax2SemDiff {
     CDWrapperSyntaxDiff cg = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
 
     // generate ODs
-    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
     return odGenerator.generateObjectDiagrams(cdw1, cg, cdSemantics);
   }
 
