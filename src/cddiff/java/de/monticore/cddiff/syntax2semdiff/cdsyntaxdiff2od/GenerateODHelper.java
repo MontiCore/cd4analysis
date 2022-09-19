@@ -191,7 +191,7 @@ public class GenerateODHelper {
         getAllSimpleSubClasses4CDTypeWrapper(originalAssoc.getCDWrapperRightClass(),
             cdw.getCDTypeWrapperGroup()));
 
-    // get all related Assocs of each class in CDTypeWrapperSet
+    // get all related associations of each class in CDTypeWrapperSet
     Map<String, CDAssociationWrapper> cDAssociationWrapperMap = new HashMap<>();
     CDTypeWrapperSet.forEach(e -> cDAssociationWrapperMap.putAll(
         fuzzySearchCDAssociationWrapperByClassName(cdw.getCDAssociationWrapperGroup(),
@@ -380,7 +380,7 @@ public class GenerateODHelper {
    * create an attribute
    */
   public static ASTODAttribute createASTODAttribute(ASTCDAttribute astcdAttribute,
-      ASTODValue oDvalue) {
+      ASTODValue oDValue) {
     return OD4DataMill.oDAttributeBuilder()
         .setName(astcdAttribute.getName())
         .setModifier(OD4DataMill.modifierBuilder().build())
@@ -389,7 +389,7 @@ public class GenerateODHelper {
                 OD4DataMill.mCQualifiedNameBuilder().addParts(astcdAttribute.printType()).build())
             .build())
         .setComplete("=")
-        .setODValue(oDvalue)
+        .setODValue(oDValue)
         .build();
   }
 
@@ -422,7 +422,7 @@ public class GenerateODHelper {
    */
   public static List<ASTODAttribute> createASTODAttributeList(CDWrapper cdw,
       Optional<CDTypeWrapperDiff> cDTypeDiff, CDTypeWrapper cDTypeWrapper) {
-    List<ASTODAttribute> astodAttributeList = new ArrayList<>();
+    List<ASTODAttribute> astODAttributeList = new ArrayList<>();
     for (ASTCDAttribute astcdAttribute : cdw.getCDTypeWrapperGroup()
         .get(cDTypeWrapper.getName())
         .getEditedElement()
@@ -433,13 +433,13 @@ public class GenerateODHelper {
         Matcher listMatcher = Pattern.compile("List<(.*)>").matcher(astcdAttribute.printType());
         if (listMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, listMatcher.group(1), false);
-          ASTODList oDvalue = OD4DataMill.oDListBuilder()
+          ASTODList oDValue = OD4DataMill.oDListBuilder()
               .addODValue(OD4DataMill.oDSimpleAttributeValueBuilder()
                   .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
                   .build())
               .addODValue(OD4DataMill.oDAbsentBuilder().build())
               .build();
-          astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
+          astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
       }
@@ -448,10 +448,10 @@ public class GenerateODHelper {
         Matcher setMatcher = Pattern.compile("Set<(.*)>").matcher(astcdAttribute.printType());
         if (setMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, "Set_" + setMatcher.group(1), false);
-          ASTODSimpleAttributeValue oDvalue = OD4DataMill.oDSimpleAttributeValueBuilder()
+          ASTODSimpleAttributeValue oDValue = OD4DataMill.oDSimpleAttributeValueBuilder()
               .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
               .build();
-          astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
+          astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
       }
@@ -460,10 +460,10 @@ public class GenerateODHelper {
         Matcher optMatcher = Pattern.compile("Optional<(.*)>").matcher(astcdAttribute.printType());
         if (optMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, optMatcher.group(1), false);
-          ASTODSimpleAttributeValue oDvalue = OD4DataMill.oDSimpleAttributeValueBuilder()
+          ASTODSimpleAttributeValue oDValue = OD4DataMill.oDSimpleAttributeValueBuilder()
               .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
               .build();
-          astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
+          astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
       }
@@ -473,7 +473,7 @@ public class GenerateODHelper {
         if (mapMatcher.find()) {
           String kValue = createValue(cdw, cDTypeDiff, mapMatcher.group(1), false);
           String vValue = createValue(cdw, cDTypeDiff, mapMatcher.group(2), false);
-          ASTODMap oDvalue = OD4DataMill.oDMapBuilder()
+          ASTODMap oDValue = OD4DataMill.oDMapBuilder()
               .addODMapElement(OD4DataMill.oDMapElementBuilder()
                   .setKey(OD4DataMill.oDSimpleAttributeValueBuilder()
                       .setExpression(OD4DataMill.nameExpressionBuilder().setName(kValue).build())
@@ -487,7 +487,7 @@ public class GenerateODHelper {
                   .setVal(OD4DataMill.oDAbsentBuilder().build())
                   .build())
               .build();
-          astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
+          astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
 
       }
@@ -505,14 +505,14 @@ public class GenerateODHelper {
         else {
           value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), false);
         }
-        ASTODSimpleAttributeValue oDvalue = OD4DataMill.oDSimpleAttributeValueBuilder()
+        ASTODSimpleAttributeValue oDValue = OD4DataMill.oDSimpleAttributeValueBuilder()
             .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
             .build();
-        astodAttributeList.add(createASTODAttribute(astcdAttribute, oDvalue));
+        astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
       }
     }
 
-    return astodAttributeList;
+    return astODAttributeList;
   }
 
   /**
@@ -543,7 +543,7 @@ public class GenerateODHelper {
     }
 
     // set attributes
-    List<ASTODAttribute> astodAttributeList = createASTODAttributeList(cdw, cDTypeDiff,
+    List<ASTODAttribute> astODAttributeList = createASTODAttributeList(cdw, cDTypeDiff,
         newCDTypeWrapper);
 
     // set objects
@@ -559,7 +559,7 @@ public class GenerateODHelper {
               .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
                   newCDTypeWrapper.getOriginalClassName()))
               .build())
-          .setODAttributesList(astodAttributeList)
+          .setODAttributesList(astODAttributeList)
           .build();
     }
     else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
@@ -588,7 +588,7 @@ public class GenerateODHelper {
               .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
                   newCDTypeWrapper.getOriginalClassName()))
               .build())
-          .setODAttributesList(astodAttributeList)
+          .setODAttributesList(astODAttributeList)
           .build();
     }
 
@@ -607,7 +607,7 @@ public class GenerateODHelper {
       Optional<CDTypeWrapper> instanceClass,
       CDSemantics cdSemantics) {
 
-    List<ASTODNamedObject> astodNamedObjectList = new LinkedList<>();
+    List<ASTODNamedObject> astODNamedObjectList = new LinkedList<>();
     List<ASTODNamedObject> tempList = new LinkedList<>();
     CDTypeWrapper actualCDTypeWrapper = offerCDTypeWrapper;
     for (int i = 0; i < cardinalityCount; i++) {
@@ -615,12 +615,12 @@ public class GenerateODHelper {
       CDWrapperObjectPack objectPack = createObject(cdw, cDTypeDiff, offerCDTypeWrapper, i,
           instanceClass, cdSemantics);
       actualCDTypeWrapper = objectPack.getCDTypeWrapper();
-      astodNamedObjectList.add(objectPack.getNamedObject());
+      astODNamedObjectList.add(objectPack.getNamedObject());
       tempList.add(objectPack.getNamedObject());
     }
     classStack4TargetClass.push(new ASTODClassStackPack(tempList, actualCDTypeWrapper));
     classStack4SourceClass.push(new ASTODClassStackPack(tempList, actualCDTypeWrapper));
-    return astodNamedObjectList;
+    return astODNamedObjectList;
   }
 
   /**
@@ -991,7 +991,8 @@ public class GenerateODHelper {
 
   /**
    * get the other side class in CDAssociationWrapper if the given CDAssociationWrapper is
-   * self-loop, that is no problem. return the found the other side class and it's positon side.
+   * self-loop, that is no problem.
+   * return the found other side class, and it's position side.
    *
    * @return:
    * CDTypeWrapperPack {
@@ -1057,14 +1058,14 @@ public class GenerateODHelper {
   /**
    * generate ASTODArtifact
    */
-  public static ASTODArtifact generateASTODArtifact(List<ASTODElement> astodElementList,
+  public static ASTODArtifact generateASTODArtifact(List<ASTODElement> astODElementList,
       String odTitle, String odSourcePosition) {
     String baseCDSrcPos = odSourcePosition.split("__")[0];
     String compareCDSrcPos = odSourcePosition.split("__")[1];
     // set ASTObjectDiagram
     ASTObjectDiagram objectDiagram = OD4DataMill.objectDiagramBuilder()
         .setName(odTitle.replaceAll("\\.","_"))
-        .setODElementsList(astodElementList)
+        .setODElementsList(astODElementList)
         .setStereotype(OD4DataMill.stereotypeBuilder()
             .addValues(OD4DataMill.stereoValueBuilder()
                 .setName("baseCD")
@@ -1101,10 +1102,10 @@ public class GenerateODHelper {
   /**
    * using pretty printer to print OD
    */
-  public static List<String> printOD(List<ASTODArtifact> astodArtifacts) {
+  public static List<String> printOD(List<ASTODArtifact> astODArtifacts) {
     // pretty print the AST
     List<String> result = new ArrayList<>();
-    for (ASTODArtifact od : astodArtifacts) {
+    for (ASTODArtifact od : astODArtifacts) {
       result.add(new OD4DataFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
     }
     return result;

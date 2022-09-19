@@ -739,7 +739,7 @@ public class CDWrapperHelper {
   }
 
   /**
-   * return all simple sub-classes about given CDTypeWrapper except abstract class and interface
+   * return all simple subclasses about given CDTypeWrapper except abstract class and interface
    */
   public static List<CDTypeWrapper> getAllSimpleSubClasses4CDTypeWrapper(CDTypeWrapper cDTypeWrapper,
       Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -861,7 +861,7 @@ public class CDWrapperHelper {
     return astcdAssociation;
   }
   /**
-   * If an association has no cardinality that means its underspecified and for (static) semdiff:
+   * If an association has no cardinality that means its underspecified and for (static) SemDiff:
    * no cardinality == [*]
    */
   public static ASTCDAssociation generateASTCDAssociationCardinality(

@@ -17,7 +17,7 @@ public class CDWrapperSyntaxDiffGenerator {
 
   protected Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithDiff = new LinkedList<>();
 
-  protected Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithoutDiff = new LinkedList<>();
+  protected Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithoutDiff = new LinkedList<>();
 
   protected Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithoutDiff = new LinkedList<>();
 
@@ -45,7 +45,7 @@ public class CDWrapperSyntaxDiffGenerator {
     cDSyntaxDiff.setCompareCDW(compareCDW);
     cDSyntaxDiff.setCDTypeDiffResultQueueWithDiff(cDTypeWrapperDiffResultQueueWithDiff);
     cDSyntaxDiff.setCDAssociationDiffResultQueueWithDiff(cDAssocWrapperDiffResultQueueWithDiff);
-    cDSyntaxDiff.setCDTypeDiffResultQueueWithoutDiff(cDTypeWrappeDiffResultQueueWithoutDiff);
+    cDSyntaxDiff.setCDTypeDiffResultQueueWithoutDiff(cDTypeWrapperDiffResultQueueWithoutDiff);
     cDSyntaxDiff.setCDAssociationDiffResultQueueWithoutDiff(cDAssocWrapperDiffResultQueueWithoutDiff);
     return cDSyntaxDiff;
   }
@@ -104,8 +104,8 @@ public class CDWrapperSyntaxDiffGenerator {
 
   /**
    * generate CDTypeWrapperDiff object and
-   * put into cDTypeWrappeDiffResultQueueWithDiff if exists semantic difference,
-   * put into cDTypeWrappeDiffResultQueueWithoutDiff if exists no semantic difference
+   * put into cDTypeWrapperDiffResultQueueWithDiff if exists semantic difference,
+   * put into cDTypeWrapperDiffResultQueueWithoutDiff if exists no semantic difference
    */
   public void createCDTypeDiff(
       CDTypeWrapper base,
@@ -143,7 +143,7 @@ public class CDWrapperSyntaxDiffGenerator {
         cDTypeWrapperDiffResultQueueWithDiff.offer(cDTypeWrapperDiff);
       }
       else {
-        cDTypeWrappeDiffResultQueueWithoutDiff.offer(cDTypeWrapperDiff);
+        cDTypeWrapperDiffResultQueueWithoutDiff.offer(cDTypeWrapperDiff);
       }
 
     }
@@ -215,7 +215,7 @@ public class CDWrapperSyntaxDiffGenerator {
    *******************************************************************/
 
   /**
-   * create CompAssociaion for each CDAssociationWrapper in base CDWrapper
+   * create CompAssociation for each CDAssociationWrapper in base CDWrapper
    */
   public void cDAssociationDiffs(CDWrapper baseCDW, CDWrapper compareCDW, CDSemantics cdSemantics) {
     baseCDW.getCDAssociationWrapperGroup().forEach((assocName, baseCDAssociationWrapper) -> {
@@ -369,12 +369,12 @@ public class CDWrapperSyntaxDiffGenerator {
 
           // When there are both "->" and "<-" for same class, role name and cardinality in
           // compareCDW is to avoid a misjudgment.
-          List<CDAssociationWrapperPack> cdAssociationWrapperPackListInbaseCDW =
+          List<CDAssociationWrapperPack> cdAssociationWrapperPackListInBaseCDW =
               fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(baseCDW.getCDAssociationWrapperGroup(), base);
           List<CDAssociationWrapperPack> cdAssociationWrapperPackListInCompareCDW =
               fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(compareCDW.getCDAssociationWrapperGroup(), base);
-          if (cdAssociationWrapperPackListInbaseCDW.size() == 1 ||
-              (cdAssociationWrapperPackListInbaseCDW.size() == 2 && cdAssociationWrapperPackListInCompareCDW.size() == 1)) {
+          if (cdAssociationWrapperPackListInBaseCDW.size() == 1 ||
+              (cdAssociationWrapperPackListInBaseCDW.size() == 2 && cdAssociationWrapperPackListInCompareCDW.size() == 1)) {
             cDAssocWrapperDiffResultQueueWithDiff.offer(
                 createCDAssociationDiffHelper(base,
                     Optional.of(compare),

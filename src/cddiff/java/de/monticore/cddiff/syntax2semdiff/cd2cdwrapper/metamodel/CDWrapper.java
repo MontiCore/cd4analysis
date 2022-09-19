@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @attribute cDTypeWrapperGroup: store generated CDTypeWrapper
  * @attribute cDAssociationWrapperGroup: store generated CDAssociationWrapper
  * @attribute refSetAssociationList: store generated CDRefSetAssociationWrapper
- * @attribute inheritanceGraph: store all inheritance informations that presents all the parents and
+ * @attribute inheritanceGraph: store all inheritance information that presents all the parents and
  * children of a class.
  */
 public class CDWrapper {

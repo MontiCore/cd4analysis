@@ -11,7 +11,7 @@ import java.util.Deque;
  * We should create two CDWrapperSyntaxDiff:
  *    1. baseCDW = A, compareCDW= B
  *    1. baseCDW = B, compareCDW = A
- * If there are no objects in cDTypeWrappeDiffResultQueueWithDiff and
+ * If there are no objects in cDTypeWrapperDiffResultQueueWithDiff and
  * cDAssocWrapperDiffResultQueueWithDiff of above two CDSyntaxDiffs,
  * then we can say there is no semantic difference between CD A and CD B,
  * otherwise there are semantic differences between CD A and CD B.
@@ -20,11 +20,11 @@ import java.util.Deque;
  *    the based CDWrapper
  * @attribute compareCDW:
  *    the compared CDWrapper
- * @attribute cDTypeWrappeDiffResultQueueWithDiff:
+ * @attribute cDTypeWrapperDiffResultQueueWithDiff:
  *    store the CDTypeWrapperDiff that has semantic difference
  * @attribute cDAssocWrapperDiffResultQueueWithDiff:
  *    store the CDAssocWrapperDiff that has semantic difference
- * @attribute cDTypeWrappeDiffResultQueueWithoutDiff:
+ * @attribute cDTypeWrapperDiffResultQueueWithoutDiff:
  *    store the CDTypeWrapperDiff that has no semantic difference
  * @attribute cDAssocWrapperDiffResultQueueWithoutDiff:
  *    store the CDAssocWrapperDiff that has no semantic difference
@@ -34,11 +34,11 @@ public class CDWrapperSyntaxDiff {
 
   protected CDWrapper compareCDW;
 
-  protected Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithDiff;
+  protected Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithDiff;
 
   protected Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithDiff;
 
-  protected Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithoutDiff;
+  protected Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithoutDiff;
 
   protected Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithoutDiff;
 
@@ -48,15 +48,15 @@ public class CDWrapperSyntaxDiff {
   }
 
   public CDWrapperSyntaxDiff(CDWrapper baseCDW, CDWrapper compareCDW,
-      Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithDiff,
+      Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithDiff,
       Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithDiff,
-      Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithoutDiff,
+      Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithoutDiff,
       Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithoutDiff) {
     this.baseCDW = baseCDW;
     this.compareCDW = compareCDW;
-    this.cDTypeWrappeDiffResultQueueWithDiff = cDTypeWrappeDiffResultQueueWithDiff;
+    this.cDTypeWrapperDiffResultQueueWithDiff = cDTypeWrapperDiffResultQueueWithDiff;
     this.cDAssocWrapperDiffResultQueueWithDiff = cDAssocWrapperDiffResultQueueWithDiff;
-    this.cDTypeWrappeDiffResultQueueWithoutDiff = cDTypeWrappeDiffResultQueueWithoutDiff;
+    this.cDTypeWrapperDiffResultQueueWithoutDiff = cDTypeWrapperDiffResultQueueWithoutDiff;
     this.cDAssocWrapperDiffResultQueueWithoutDiff = cDAssocWrapperDiffResultQueueWithoutDiff;
   }
 
@@ -77,11 +77,11 @@ public class CDWrapperSyntaxDiff {
   }
 
   public Deque<CDTypeWrapperDiff> getCDTypeDiffResultQueueWithDiff() {
-    return cDTypeWrappeDiffResultQueueWithDiff;
+    return cDTypeWrapperDiffResultQueueWithDiff;
   }
 
-  public void setCDTypeDiffResultQueueWithDiff(Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithDiff) {
-    this.cDTypeWrappeDiffResultQueueWithDiff = cDTypeWrappeDiffResultQueueWithDiff;
+  public void setCDTypeDiffResultQueueWithDiff(Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithDiff) {
+    this.cDTypeWrapperDiffResultQueueWithDiff = cDTypeWrapperDiffResultQueueWithDiff;
   }
 
   public Deque<CDAssocWrapperDiff> getCDAssociationDiffResultQueueWithDiff() {
@@ -94,12 +94,12 @@ public class CDWrapperSyntaxDiff {
   }
 
   public Deque<CDTypeWrapperDiff> getCDTypeDiffResultQueueWithoutDiff() {
-    return cDTypeWrappeDiffResultQueueWithoutDiff;
+    return cDTypeWrapperDiffResultQueueWithoutDiff;
   }
 
   public void setCDTypeDiffResultQueueWithoutDiff(
-      Deque<CDTypeWrapperDiff> cDTypeWrappeDiffResultQueueWithoutDiff) {
-    this.cDTypeWrappeDiffResultQueueWithoutDiff = cDTypeWrappeDiffResultQueueWithoutDiff;
+      Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithoutDiff) {
+    this.cDTypeWrapperDiffResultQueueWithoutDiff = cDTypeWrapperDiffResultQueueWithoutDiff;
   }
 
   public Deque<CDAssocWrapperDiff> getCDAssociationDiffResultQueueWithoutDiff() {
