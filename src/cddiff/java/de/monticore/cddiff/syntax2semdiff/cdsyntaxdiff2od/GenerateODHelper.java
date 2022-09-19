@@ -54,18 +54,31 @@ public class GenerateODHelper {
    * mapping the type of compare direction into integer it's easy to determine which the direction
    * should be used in OD
    */
-  public static int mappingDirection(String str) {
-    switch (str) {
-      case "LEFT_TO_RIGHT":
+  public static int mappingDirection(CDAssociationWrapperDirection direction) {
+    switch (direction) {
+      case LEFT_TO_RIGHT:
         return 1;
-      case "RIGHT_TO_LEFT":
+      case RIGHT_TO_LEFT:
         return 2;
-      case "BIDIRECTIONAL":
+      case BIDIRECTIONAL:
         return 3;
-      case "LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT":
+      case UNDEFINED:
+        return 3;
+      default:
+        return 0;
+    }
+  }
+
+  public static int mappingDirection(CDAssociationDiffDirection direction) {
+    switch (direction) {
+      case LEFT_TO_RIGHT:
         return 1;
-      case "UNDEFINED":
+      case RIGHT_TO_LEFT:
+        return 2;
+      case BIDIRECTIONAL:
         return 3;
+      case LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT:
+        return 1;
       default:
         return 0;
     }
@@ -75,21 +88,28 @@ public class GenerateODHelper {
    * mapping the type of compare cardinality into integer in general step it's easy to determine how
    * many objects of current association should be created in OD
    */
-  public static int mappingCardinality(String str) {
-    switch (str) {
-      case "ONE":
+  public static int mappingCardinality(CDAssociationWrapperCardinality cardinality) {
+    switch (cardinality) {
+      case ONE:
         return 1;
-      case "ZERO_TO_ONE":
+      case ZERO_TO_ONE:
         return 0;
-      case "ONE_TO_MORE":
+      case ONE_TO_MORE:
         return 1;
-      case "MORE":
+      case MORE:
         return 0;
-      case "ZERO":
+      default:
         return 0;
-      case "TWO_TO_MORE":
+    }
+  }
+
+  public static int mappingCardinality(CDAssociationDiffCardinality cardinality) {
+    switch (cardinality) {
+      case ZERO:
+        return 0;
+      case TWO_TO_MORE:
         return 2;
-      case "ZERO_AND_TWO_TO_MORE":
+      case ZERO_AND_TWO_TO_MORE:
         return 0;
       default:
         return 0;
@@ -100,21 +120,28 @@ public class GenerateODHelper {
    * mapping the type of compare cardinality into integer in initial step it's easy to determine how
    * many objects of current association should be created in OD
    */
-  public static int mappingCardinality4Initial(String str) {
-    switch (str) {
-      case "ONE":
+  public static int mappingCardinality4Initial(CDAssociationWrapperCardinality cardinality) {
+    switch (cardinality) {
+      case ONE:
         return 1;
-      case "ZERO_TO_ONE":
+      case ZERO_TO_ONE:
         return 1;
-      case "ONE_TO_MORE":
+      case ONE_TO_MORE:
         return 1;
-      case "MORE":
+      case MORE:
         return 1;
-      case "ZERO":
+      default:
         return 0;
-      case "TWO_TO_MORE":
+    }
+  }
+
+  public static int mappingCardinality4Initial(CDAssociationDiffCardinality cardinality) {
+    switch (cardinality) {
+      case ZERO:
+        return 0;
+      case TWO_TO_MORE:
         return 2;
-      case "ZERO_AND_TWO_TO_MORE":
+      case ZERO_AND_TWO_TO_MORE:
         return 2;
       default:
         return 0;
@@ -202,13 +229,13 @@ public class GenerateODHelper {
       if ((e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
           && e.getCDWrapperRightClassRoleName()
           .equals(originalAssoc.getCDWrapperRightClassRoleName()) && (
-          mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+          mappingDirection(originalAssoc.getCDAssociationWrapperDirection()) == 3
               || e.getCDAssociationWrapperDirection()
               .equals(originalAssoc.getCDAssociationWrapperDirection()))) ||
           (e.getCDWrapperLeftClassRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
               && e.getCDWrapperRightClassRoleName()
               .equals(originalAssoc.getCDWrapperLeftClassRoleName())) && (
-              mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+              mappingDirection(originalAssoc.getCDAssociationWrapperDirection()) == 3
                   || e.getCDAssociationWrapperDirection()
                   .equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection())))) {
         resulSet.addAll(
@@ -261,7 +288,7 @@ public class GenerateODHelper {
     refLinkCheckList.keySet().forEach(item -> {
       if (item.getLeftRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName())
           && item.getRightRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName()) && (
-          mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+          mappingDirection(originalAssoc.getCDAssociationWrapperDirection()) == 3
               || item.getDirection().equals(originalAssoc.getCDAssociationWrapperDirection()))
           && item.getLeftRefSet()
           .stream()
@@ -273,7 +300,7 @@ public class GenerateODHelper {
       }
       else if (item.getLeftRoleName().equals(originalAssoc.getCDWrapperRightClassRoleName())
           && item.getRightRoleName().equals(originalAssoc.getCDWrapperLeftClassRoleName()) && (
-          mappingDirection(originalAssoc.getCDAssociationWrapperDirection().toString()) == 3
+          mappingDirection(originalAssoc.getCDAssociationWrapperDirection()) == 3
               || item.getDirection()
               .equals(reverseDirection(originalAssoc.getCDAssociationWrapperDirection())))
           && item.getLeftRefSet()

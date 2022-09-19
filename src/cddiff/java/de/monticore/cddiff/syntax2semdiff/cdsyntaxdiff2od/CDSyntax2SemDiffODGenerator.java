@@ -343,51 +343,51 @@ public class CDSyntax2SemDiffODGenerator {
       case CONFLICTING:
       case SUBCLASS_DIFF:
         directionType = mappingDirection(
-            currentDiffAssoc.getCDAssociationWrapperDirection().toString());
+            currentDiffAssoc.getCDAssociationWrapperDirection());
         leftCardinalityCount = mappingCardinality4Initial(
-            currentDiffAssoc.getCDWrapperLeftClassCardinality().toString());
+            currentDiffAssoc.getCDWrapperLeftClassCardinality());
         rightCardinalityCount = mappingCardinality4Initial(
-            currentDiffAssoc.getCDWrapperRightClassCardinality().toString());
+            currentDiffAssoc.getCDWrapperRightClassCardinality());
         break;
       case DIRECTION_CHANGED:
         directionType = mappingDirection(
-            cDAssocWrapperDiff.getCDDiffDirectionResult().get().toString());
+            cDAssocWrapperDiff.getCDDiffDirectionResult().get());
         leftCardinalityCount = mappingCardinality4Initial(
-            currentDiffAssoc.getCDWrapperLeftClassCardinality().toString());
+            currentDiffAssoc.getCDWrapperLeftClassCardinality());
         rightCardinalityCount = mappingCardinality4Initial(
-            currentDiffAssoc.getCDWrapperRightClassCardinality().toString());
+            currentDiffAssoc.getCDWrapperRightClassCardinality());
         break;
       case CARDINALITY_CHANGED:
         directionType = mappingDirection(
-            currentDiffAssoc.getCDAssociationWrapperDirection().toString());
+            currentDiffAssoc.getCDAssociationWrapperDirection());
         switch (cDAssocWrapperDiff.getWhichPartDiff().get()) {
           case LEFT_CARDINALITY:
             leftCardinalityCount = mappingCardinality4Initial(
-                cDAssocWrapperDiff.getCDDiffLeftClassCardinalityResult().get().toString());
+                cDAssocWrapperDiff.getCDDiffLeftClassCardinalityResult().get());
             rightCardinalityCount = mappingCardinality4Initial(
-                currentDiffAssoc.getCDWrapperRightClassCardinality().toString());
+                currentDiffAssoc.getCDWrapperRightClassCardinality());
             break;
           case RIGHT_CARDINALITY:
             leftCardinalityCount = mappingCardinality4Initial(
-                currentDiffAssoc.getCDWrapperLeftClassCardinality().toString());
+                currentDiffAssoc.getCDWrapperLeftClassCardinality());
             rightCardinalityCount = mappingCardinality4Initial(
-                cDAssocWrapperDiff.getCDDiffRightClassCardinalityResult().get().toString());
+                cDAssocWrapperDiff.getCDDiffRightClassCardinalityResult().get());
             break;
           case LEFT_SPECIAL_CARDINALITY:
             directionType = mappingDirection(
-                reverseDirection(currentDiffAssoc.getCDAssociationWrapperDirection()).toString());
+                reverseDirection(currentDiffAssoc.getCDAssociationWrapperDirection()));
             leftCardinalityCount = mappingCardinality4Initial(
-                currentDiffAssoc.getCDWrapperLeftClassCardinality().toString());
+                currentDiffAssoc.getCDWrapperLeftClassCardinality());
             rightCardinalityCount = mappingCardinality4Initial(
-                cDAssocWrapperDiff.getCDDiffRightClassCardinalityResult().get().toString());
+                cDAssocWrapperDiff.getCDDiffRightClassCardinalityResult().get());
             break;
           case RIGHT_SPECIAL_CARDINALITY:
             directionType = mappingDirection(
-                reverseDirection(currentDiffAssoc.getCDAssociationWrapperDirection()).toString());
+                reverseDirection(currentDiffAssoc.getCDAssociationWrapperDirection()));
             leftCardinalityCount = mappingCardinality4Initial(
-                cDAssocWrapperDiff.getCDDiffLeftClassCardinalityResult().get().toString());
+                cDAssocWrapperDiff.getCDDiffLeftClassCardinalityResult().get());
             rightCardinalityCount = mappingCardinality4Initial(
-                currentDiffAssoc.getCDWrapperRightClassCardinality().toString());
+                currentDiffAssoc.getCDWrapperRightClassCardinality());
             break;
         }
         break;
@@ -578,7 +578,7 @@ public class CDSyntax2SemDiffODGenerator {
                 return Optional.empty();
               }
               isPresentOtherSideCardinality = mappingCardinality(
-                  currentCDAssociationWrapper.getCDWrapperLeftClassCardinality().toString()) > 0;
+                  currentCDAssociationWrapper.getCDWrapperLeftClassCardinality()) > 0;
             }
           }
           else {
@@ -596,11 +596,11 @@ public class CDSyntax2SemDiffODGenerator {
                 return Optional.empty();
               }
               isPresentOtherSideCardinality = mappingCardinality(
-                  currentCDAssociationWrapper.getCDWrapperRightClassCardinality().toString()) > 0;
+                  currentCDAssociationWrapper.getCDWrapperRightClassCardinality()) > 0;
             }
           }
           if (mappingDirection(
-              currentCDAssociationWrapper.getCDAssociationWrapperDirection().toString()) == 3) {
+              currentCDAssociationWrapper.getCDAssociationWrapperDirection()) == 3) {
             directionType = 3;
           }
 

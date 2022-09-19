@@ -439,9 +439,9 @@ public class CDWrapperSyntaxDiffGenerator {
 
                 if ((base.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ZERO_TO_ONE ||
                     base.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE) &&
-                    mappingCardinality(base.getCDWrapperLeftClassCardinality().toString()) != 1 &&
-                    (mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality().toString()) == 1 &&
-                        mappingCardinality(otherCDAssociationWrapper.getCDWrapperRightClassCardinality().toString()) == 1)) {
+                    mappingCardinality(base.getCDWrapperLeftClassCardinality()) != 1 &&
+                    (mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality()) == 1 &&
+                        mappingCardinality(otherCDAssociationWrapper.getCDWrapperRightClassCardinality()) == 1)) {
                   cDAssocWrapperDiffResultQueueWithDiff.offer(
                       createCDAssociationDiffHelper(base,
                           Optional.of(compare),
@@ -529,9 +529,9 @@ public class CDWrapperSyntaxDiffGenerator {
 
                 if ((base.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ZERO_TO_ONE ||
                     base.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE) &&
-                    mappingCardinality(base.getCDWrapperRightClassCardinality().toString()) != 1 &&
-                    (mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality().toString()) == 1 &&
-                        mappingCardinality(otherCDAssociationWrapper.getCDWrapperRightClassCardinality().toString()) == 1)) {
+                    mappingCardinality(base.getCDWrapperRightClassCardinality()) != 1 &&
+                    (mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality()) == 1 &&
+                        mappingCardinality(otherCDAssociationWrapper.getCDWrapperRightClassCardinality()) == 1)) {
                   cDAssocWrapperDiffResultQueueWithDiff.offer(
                       createCDAssociationDiffHelper(base,
                           Optional.of(compare),
