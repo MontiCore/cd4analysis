@@ -140,7 +140,7 @@ public class CDWrapperSyntaxDiffGenerator {
       // distinguish cDTypeWrapperDiff by CompCategory
       if (cDTypeWrapperDiff.getCDDiffCategory() == CDTypeDiffCategory.DELETED
           || cDTypeWrapperDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
-        cDTypeDiffResultQueueWithDiff.offer(cDTypeWrapperDiff);
+        cDTypeWrapperDiffResultQueueWithDiff.offer(cDTypeWrapperDiff);
       }
       else {
         cDTypeWrappeDiffResultQueueWithoutDiff.offer(cDTypeWrapperDiff);

@@ -1176,14 +1176,14 @@ public class GenerateODHelper {
   /**
    * generate SourcePosition for baseCD and compareCD
    */
-  public static String generateODSourcePosition(CDTypeDiff cDTypeDiff) {
+  public static String generateODSourcePosition(CDTypeWrapperDiff cdTypeWrapperDiff) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("<");
-    stringBuilder.append(cDTypeDiff.getBaseSourcePositionStr());
+    stringBuilder.append(cdTypeWrapperDiff.getBaseSourcePositionStr());
     stringBuilder.append(">");
     stringBuilder.append("__");
     stringBuilder.append("<");
-    stringBuilder.append(cDTypeDiff.getCompareSourcePositionStr());
+    stringBuilder.append(cdTypeWrapperDiff.getCompareSourcePositionStr());
     stringBuilder.append(">");
     return stringBuilder.toString();
   }
@@ -1191,14 +1191,14 @@ public class GenerateODHelper {
   /**
    * generate SourcePosition for baseCD and compareCD
    */
-  public static String generateODSourcePosition(CDAssociationDiff cdAssociationDiff) {
+  public static String generateODSourcePosition(CDAssocWrapperDiff cdAssocWrapperDiff) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("<");
-    stringBuilder.append(cdAssociationDiff.getBaseSourcePositionStr());
+    stringBuilder.append(cdAssocWrapperDiff.getBaseSourcePositionStr());
     stringBuilder.append(">");
     stringBuilder.append("__");
     stringBuilder.append("<");
-    stringBuilder.append(cdAssociationDiff.getCompareSourcePositionStr());
+    stringBuilder.append(cdAssocWrapperDiff.getCompareSourcePositionStr());
     stringBuilder.append(">");
     return stringBuilder.toString();
   }

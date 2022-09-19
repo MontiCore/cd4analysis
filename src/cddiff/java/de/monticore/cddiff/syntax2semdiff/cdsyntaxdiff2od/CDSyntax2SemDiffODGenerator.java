@@ -39,12 +39,12 @@ public class CDSyntax2SemDiffODGenerator {
     // solve globalAssociationQueue
     int i = 1;
     while (!globalAssociationQueue.isEmpty()) {
-      CDAssociationDiff currentCDAssociationDiff = globalAssociationQueue.pop();
+      CDAssocWrapperDiff currentCDAssociationDiff = globalAssociationQueue.pop();
       if (currentCDAssociationDiff.getCDDiffKind() != CDAssociationDiffKind.CDDIFF_INHERIT_ASC ||
           (currentCDAssociationDiff.getCDDiffKind() == CDAssociationDiffKind.CDDIFF_INHERIT_ASC &&
               currentCDAssociationDiff.getCDDiffCategory() == CDAssociationDiffCategory.CONFLICTING)) {
         Optional<ASTODPack> optionalASTODPack =
-            generateODByAssociation(cdw, currentCDAssocWrapperDiff, cdSemantics);
+            generateODByAssociation(cdw, currentCDAssociationDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           continue;
         }
@@ -58,7 +58,7 @@ public class CDSyntax2SemDiffODGenerator {
 
     // solve globalClassQueue
     while (!globalClassQueue.isEmpty()) {
-      CDTypeDiff currentCDTypeDiff = globalClassQueue.pop();
+      CDTypeWrapperDiff currentCDTypeDiff = globalClassQueue.pop();
       if (currentCDTypeDiff.getCDDiffKind() == CDTypeDiffKind.CDDIFF_CLASS ||
           currentCDTypeDiff.getCDDiffKind() == CDTypeDiffKind.CDDIFF_ENUM) {
         Optional<ASTODPack> optionalASTODPack = generateODByClass(cdw, currentCDTypeDiff, cdSemantics);
@@ -133,7 +133,7 @@ public class CDSyntax2SemDiffODGenerator {
       CDSemantics cdSemantics) {
 
     // get the necessary information
-    CDTypeWrapper cDTypeWrapper = cDTypeWrapperDiff.getOriginalElement();
+    CDTypeWrapper cDTypeWrapper = cDTypeWrapperDiff.getBaseElement();
     ASTODPack astodPack = new ASTODPack();
 
     // create ASTODElement list
@@ -236,7 +236,7 @@ public class CDSyntax2SemDiffODGenerator {
           cdSemantics);
       List<CDRefSetAssociationWrapper> initCDRefSetAssociationWrapper =
           findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
-              cdw, cDAssocWrapperDiff.getOriginalElement(), refLinkCheckList);
+              cdw, cDAssocWrapperDiff.getBaseElement(), refLinkCheckList);
       decreaseCounterInCheckList(initCDRefSetAssociationWrapper, refLinkCheckList);
     }
 

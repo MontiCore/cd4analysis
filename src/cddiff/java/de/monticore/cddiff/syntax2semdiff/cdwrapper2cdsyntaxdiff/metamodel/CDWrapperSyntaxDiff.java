@@ -42,36 +42,6 @@ public class CDWrapperSyntaxDiff {
 
   protected Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithoutDiff;
 
-  public enum CDTypeDiffKind {
-    CDDIFF_CLASS, CDDIFF_ENUM, CDDIFF_ABSTRACT_CLASS, CDDIFF_INTERFACE
-  }
-
-  public enum CDAssociationDiffKind {
-    CDDIFF_ASC, CDDIFF_INHERIT_ASC, CDDIFF_INHERIT_DISPLAY_ASC
-  }
-
-  public enum CDTypeDiffCategory {
-    ORIGINAL, EDITED, DELETED, SUBSET, FREED
-  }
-
-  public enum CDAssociationDiffCategory {
-    ORIGINAL, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_SUBSET,
-    DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED, SUBCLASS_DIFF, CONFLICTING
-  }
-
-  public enum CDAssociationDiffDirection {
-    NONE, LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT
-  }
-
-  public enum CDAssociationDiffCardinality {
-    NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
-  }
-
-  public enum WhichPartDiff {
-    DIRECTION, LEFT_CARDINALITY, RIGHT_CARDINALITY,
-    LEFT_SPECIAL_CARDINALITY, RIGHT_SPECIAL_CARDINALITY
-  }
-
   public CDWrapperSyntaxDiff(CDWrapper baseCDW, CDWrapper compareCDW) {
     this.baseCDW = baseCDW;
     this.compareCDW = compareCDW;
