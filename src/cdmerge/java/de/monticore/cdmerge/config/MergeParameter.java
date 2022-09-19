@@ -161,6 +161,13 @@ public enum MergeParameter {
   WARNINGS_AS_ERRORS("warningsAsErrors", "wa", MergeParameter.OFF, true),
 
   /**
+   * Instead of specifying input files, CDs are added as ASTCDCompilationUnit via CDMerge
+   * .addInputAST
+   */
+  AST_BASED("astBased", "asts", MergeParameter.OFF, true),
+
+
+  /**
    * Used For Testing purposes only. The Merge Tool will be setup up with no input models configured
    * up front
    */
@@ -251,7 +258,7 @@ public enum MergeParameter {
       return this.defaultValue.equals(ON);
     }
     throw new UnsupportedOperationException(
-        "The Parameter " + this.toString() + " is not a boolean Value");
+        "The Parameter " + this + " is not a boolean Value");
   }
 
   /**
@@ -266,7 +273,7 @@ public enum MergeParameter {
   /**
    * Returns the Parameter by the provided command line name
    *
-   * @param cliParameter
+   * @param cliParameter name of the parameter
    * @return - the parameter or empty if non matching parameter was found
    */
   public static Optional<MergeParameter> getByCLIParameter(String cliParameter) {

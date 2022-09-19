@@ -6,8 +6,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
+import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
@@ -18,6 +20,7 @@ import de.monticore.cdmerge.refactor.RemoveRedundantInterfaces;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.cdmerge.validation.AssociationChecker;
 import de.monticore.cdmerge.validation.AttributeChecker;
+import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
 import de.monticore.cdmerge.validation.ModelValidatorBase;
 import de.monticore.cdmerge.validation.ModelValidatorBase.ModelValidatorBuilder;
 import de.se_rwth.commons.logging.Log;
@@ -57,9 +60,11 @@ public class CDMergeConfig {
 
     private static final String INPUT_SEPARATOR = ",";
 
-    private final Map<MergeParameter, String> _parameters = new HashMap<MergeParameter, String>();
+    private final Map<MergeParameter, String> _parameters = new HashMap<>();
 
     private List<String> _inputFiles;
+
+    private List<ASTCDCompilationUnit> _inputCDs;
 
     private List<ModelValidatorBuilder> _modelValidators;
 
@@ -75,9 +80,10 @@ public class CDMergeConfig {
 
     public Builder(final boolean isCLI) {
       this.CLI_Mode = isCLI;
-      this._inputFiles = new ArrayList<String>();
-      this._modelRefactorings = new ArrayList<ModelRefactoringBase.ModelRefactoringBuilder>();
-      this._modelValidators = new ArrayList<ModelValidatorBase.ModelValidatorBuilder>();
+      this._inputFiles = new ArrayList<>();
+      this._inputCDs = new ArrayList<>();
+      this._modelRefactorings = new ArrayList<>();
+      this._modelValidators = new ArrayList<>();
     }
 
     /**
@@ -123,6 +129,11 @@ public class CDMergeConfig {
       return this;
     }
 
+    public Builder addInputAST(ASTCDCompilationUnit ast){
+      this._inputCDs.add(ast);
+      return this;
+    }
+
     /**
      * Returns a copy of the configured parameters
      */
@@ -132,8 +143,6 @@ public class CDMergeConfig {
 
     /**
      * Returns true if the Parameter is specified
-     *
-     * @return
      */
     public boolean isDefinedParameter(MergeParameter param) {
       return this._parameters.keySet().contains(param);
@@ -189,7 +198,8 @@ public class CDMergeConfig {
 
       checkParameterConsistency();
 
-      if (!_parameters.get(MergeParameter.NO_INPUT_MODELS).equals(MergeParameter.ON)) {
+      if (!_parameters.get(MergeParameter.NO_INPUT_MODELS).equals(MergeParameter.ON)
+          && !_parameters.get(MergeParameter.AST_BASED).equals(MergeParameter.ON)) {
         if (this._inputFiles.size() == 0) {
 
           // Collect the input models either via explicit files oder
@@ -198,7 +208,7 @@ public class CDMergeConfig {
           String[] inputModels = _parameters.get(MergeParameter.INPUT_MODELS)
               .split(INPUT_SEPARATOR);
           if (inputModels.length >= 2) {
-            _inputFiles = new ArrayList<String>();
+            _inputFiles = new ArrayList<>();
             for (String modelFile : inputModels) {
               if (!Files.exists(Paths.get(modelFile).toAbsolutePath())) {
                 log.finer("No valid class diagramm found for input file " + modelFile
@@ -276,7 +286,7 @@ public class CDMergeConfig {
      * @return list of loaded input CDs
      */
     public List<String> resolveInputCDsFilesFromPath(String modelPath) {
-      List<String> resolvedCDs = new ArrayList<String>();
+      List<String> resolvedCDs = new ArrayList<>();
       Collection<File> files = de.se_rwth.commons.Directories.listFilesRecursivly(
           new File(modelPath), "*.cd");
       if (files != null && !files.isEmpty()) {
@@ -328,19 +338,22 @@ public class CDMergeConfig {
    */
   private CDMergeConfig(Builder builder) {
     parameters = builder.getMergeParameters();
-    this.modelRefactorings = new ArrayList<ModelRefactoringBase.ModelRefactoringBuilder>();
+    this.modelRefactorings = new ArrayList<>();
     this.modelRefactorings.addAll(builder._modelRefactorings);
-    this.modelValidators = new ArrayList<ModelValidatorBase.ModelValidatorBuilder>();
+    this.modelValidators = new ArrayList<>();
     this.modelValidators.addAll(builder._modelValidators);
     MCLoggerWrapper.init(getMinimalLogable(), isMCLogSilent());
     precedences = builder._precedences;
-    if (!isEnabled(MergeParameter.NO_INPUT_MODELS)) {
+    if (!isEnabled(MergeParameter.NO_INPUT_MODELS)
+        && !isEnabled(MergeParameter.AST_BASED)) {
       try {
         loadCDs(builder._inputFiles);
       }
       catch (IOException ex) {
         throw new RuntimeException("Unable to load input models " + ex.getMessage());
       }
+    } else if (isEnabled(MergeParameter.AST_BASED)) {
+      processCDs(builder._inputCDs);
     }
     this.CLI_MODE = builder.CLI_Mode;
   }
@@ -352,10 +365,31 @@ public class CDMergeConfig {
     Optional<ASTCDCompilationUnit> cd;
     for (Path file : inputFiles) {
       cd = parseCDFile(file.toAbsolutePath().toString());
-      if (!cd.isPresent()) {
+      if (cd.isEmpty()) {
         throw new RuntimeException("No valid classdiagram found in " + file);
       }
       this.inputCDs.add(cd.get());
+    }
+  }
+
+  public void processCDs(List<ASTCDCompilationUnit> inputCDs){
+    this.inputCDs= new ArrayList<>();
+    for (ASTCDCompilationUnit inputCD : inputCDs){
+      CD4AnalysisMill.reset();
+      CD4AnalysisMill.init();
+      final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
+      globalScope.clear();
+      BuiltInTypes.addBuiltInTypes(globalScope);
+
+      CDUtils.RefreshSymbolTable(inputCD);
+      // Ensure every CDElement is in a package and perform default AST Trafos
+      final CD4AnalysisAfterParseTrafo afterParseTrafo = new CD4AnalysisAfterParseTrafo();
+      afterParseTrafo.transform(inputCD);
+
+      CD4AnalysisCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
+      checker.checkAll(inputCD);
+
+      this.inputCDs.add(inputCD);
     }
   }
 
@@ -373,7 +407,7 @@ public class CDMergeConfig {
         throw new RuntimeException(
             "Issues while processing input model: " + file + " Reason: " + e.getMessage(), e);
       }
-      if (!cd.isPresent()) {
+      if (cd.isEmpty()) {
         throw new RuntimeException("No valid class diagram found in " + file);
       }
       this.inputCDs.add(cd.get());
@@ -520,7 +554,7 @@ public class CDMergeConfig {
       return this.parameters.get(param).equals(MergeParameter.ON);
     }
     else {
-      throw new UnsupportedOperationException("The specified parameter '" + param.toString()
+      throw new UnsupportedOperationException("The specified parameter '" + param
           + "' is a non booelan parameter! Call String getValue() instead!");
     }
   }
