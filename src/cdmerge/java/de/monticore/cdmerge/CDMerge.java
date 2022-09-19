@@ -47,7 +47,9 @@ public class CDMerge {
 
   private static CDMergeConfig getConfig(List<ASTCDCompilationUnit> inputModels) {
     CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(
-            MergeParameter.CHECK_ONLY).withParam(MergeParameter.AST_BASED)
+            MergeParameter.CHECK_ONLY)
+        .withParam(MergeParameter.AST_BASED)
+        .withParam(MergeParameter.LOG_SILENT)
         .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
 
     for (ASTCDCompilationUnit cd : inputModels) {
