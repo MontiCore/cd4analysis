@@ -12,7 +12,9 @@ public class CDAttributeTypeExists
 
   @Override
   public void check(ASTCDAttribute node) {
-    //noinspection ResultOfMethodCallIgnored
-    node.getSymbol().getType().getTypeInfo();
+    if(node.isPresentSymbol() && node.getSymbol().getType() != null) {
+      //noinspection ResultOfMethodCallIgnored
+      node.getSymbol().getType().getTypeInfo();
+    }
   }
 }
