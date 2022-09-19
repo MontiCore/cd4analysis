@@ -8,8 +8,8 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import net.sourceforge.plantuml.Log;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -49,7 +49,7 @@ public class CDMerge {
 
       optAST = new MergeTool(getConfig(cdPaths)).mergeCDs().getMergedCD();
 
-      FileUtils.forceDelete(new File("target/temp-merge-dir"));
+      PathUtils.delete(Paths.get(TEMP_DIR));
 
       if (optAST.isPresent()) {
         return optAST.get();

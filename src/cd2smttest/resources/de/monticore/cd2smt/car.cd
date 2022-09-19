@@ -11,7 +11,7 @@
 
     class Car  extends Element{
       double price;
-      java.lang.String  manufacturer;
+      String  manufacturer;
     }
 
     class Motor extends Element{
@@ -19,7 +19,7 @@
     }
 
     class Driver{
-     java.lang.String name ;
+     String name ;
      int age;
     }
 
@@ -29,7 +29,7 @@
 
     class Element{
       double weight;
-      java.lang.String name;
+      String name;
     }
 
     class Colour;

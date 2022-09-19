@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
 
-public class CDSyntaxDiffHelper {
+public class CDWrapperSyntaxDiffHelper {
 
   /********************************************************************
    *********************    Start for Class    ************************
@@ -34,7 +34,7 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * get the corresponding prefix CDTypeDiff name by cDTypeDiffKind
+   * get the corresponding prefix CDTypeWrapperDiff name by cDTypeDiffKind
    */
   public static String getCDTypeDiffKindStrHelper(CDTypeDiffKind cDTypeDiffKind,
       boolean is4Print) {
@@ -85,7 +85,7 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * return the CDTypeDiff category that helps to determine if there is a semantic difference
+   * return the CDTypeWrapperDiff category that helps to determine if there is a semantic difference
    */
   public static CDTypeDiffCategory cDTypeDiffCategoryHelper(CDTypeWrapper base,
       CDTypeWrapper compare, boolean isContentDiff) {
@@ -106,34 +106,33 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * helper for creating CDTypeDiff without attributesDiffList
+   * helper for creating CDTypeWrapperDiff without attributesDiffList
    */
-  public static CDTypeDiff createCDTypeDiffHelper(CDTypeWrapper base,
+  public static CDTypeWrapperDiff createCDTypeDiffHelper(CDTypeWrapper base,
       Optional<CDTypeWrapper> optCompareClass,
       Optional<CDAssociationWrapper> optCompareAssoc,
       boolean isInCompareCDW,
-      boolean isContentDiff, CDTypeDiffCategory category) {
-    CDTypeDiff cDTypeDiff =
-        new CDTypeDiff(base, optCompareClass, optCompareAssoc, isInCompareCDW, isContentDiff,
-            category);
-    cDTypeDiff.setWhichAttributesDiff(Optional.empty());
-    return cDTypeDiff;
+      boolean isContentDiff,
+      CDTypeDiffCategory category) {
+    CDTypeWrapperDiff cDTypeWrapperDiff =
+        new CDTypeWrapperDiff(base, optCompareClass, optCompareAssoc, isInCompareCDW, isContentDiff, category);
+    cDTypeWrapperDiff.setWhichAttributesDiff(Optional.empty());
+    return cDTypeWrapperDiff;
   }
 
   /**
-   * helper for creating CDTypeDiff with attributesDiffList
+   * helper for creating CDTypeWrapperDiff with attributesDiffList
    */
-  public static CDTypeDiff createCDTypeDiffHelper(CDTypeWrapper base,
+  public static CDTypeWrapperDiff createCDTypeDiffHelper(CDTypeWrapper base,
       Optional<CDTypeWrapper> optCompareClass,
       Optional<CDAssociationWrapper> optCompareAssoc,
       boolean isInCompareCDW,
       boolean isContentDiff, CDTypeDiffCategory category,
       List<String> attributesDiffList) {
-    CDTypeDiff cDTypeDiff =
-        createCDTypeDiffHelper(base, optCompareClass, optCompareAssoc, isInCompareCDW,
-            isContentDiff, category);
-    cDTypeDiff.setWhichAttributesDiff(Optional.of(attributesDiffList));
-    return cDTypeDiff;
+    CDTypeWrapperDiff cDTypeWrapperDiff =
+        createCDTypeDiffHelper(base, optCompareClass, optCompareAssoc, isInCompareCDW, isContentDiff, category);
+    cDTypeWrapperDiff.setWhichAttributesDiff(Optional.of(attributesDiffList));
+    return cDTypeWrapperDiff;
   }
 
   /**
@@ -343,7 +342,7 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * return the CDAssociationDiff category that helps to determine if there is a semantic
+   * return the CDAssocWrapperDiff category that helps to determine if there is a semantic
    * difference for direction
    */
   public static CDAssociationDiffCategory cDAssociationDiffCategoryByDirectionHelper(
@@ -367,7 +366,7 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * return the CDAssociationDiff category that helps to determine if there is a semantic
+   * return the CDAssocWrapperDiff category that helps to determine if there is a semantic
    * difference for cardinality
    */
   public static CDAssociationDiffCategory cDAssociationDiffCategoryByCardinalityHelper(
@@ -402,29 +401,29 @@ public class CDSyntaxDiffHelper {
   }
 
   /**
-   * helper for creating CDAssociationDiff without whichPartDiff and the result after comparison
+   * helper for creating CDAssocWrapperDiff without whichPartDiff and the result after comparison
    */
-  public static CDAssociationDiff createCDAssociationDiffHelper(
+  public static CDAssocWrapperDiff createCDAssociationDiffHelper(
       CDAssociationWrapper base,
       Optional<CDAssociationWrapper> optCompare,
       boolean isInCompareCDW,
       boolean isContentDiff,
       CDAssociationDiffCategory category) {
-    CDAssociationDiff cDAssociationDiff =
-        new CDAssociationDiff(base, optCompare, isInCompareCDW, isContentDiff, category);
-    cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-    cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setWhichPartDiff(Optional.empty());
-    cDAssociationDiff.setLeftInstanceClass(Optional.empty());
-    cDAssociationDiff.setRightInstanceClass(Optional.empty());
-    return cDAssociationDiff;
+    CDAssocWrapperDiff cDAssocWrapperDiff =
+        new CDAssocWrapperDiff(base, optCompare, isInCompareCDW, isContentDiff, category);
+    cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setWhichPartDiff(Optional.empty());
+    cDAssocWrapperDiff.setLeftInstanceClass(Optional.empty());
+    cDAssocWrapperDiff.setRightInstanceClass(Optional.empty());
+    return cDAssocWrapperDiff;
   }
 
   /**
-   * helper for creating CDAssociationDiff with whichPartDiff and the result after comparison
+   * helper for creating CDAssocWrapperDiff with whichPartDiff and the result after comparison
    */
-  public static CDAssociationDiff createCDAssociationDiffHelper(
+  public static CDAssocWrapperDiff createCDAssociationDiffHelper(
       CDAssociationWrapper base,
       Optional<CDAssociationWrapper> optCompare,
       boolean isInCompareCDW,
@@ -432,38 +431,38 @@ public class CDSyntaxDiffHelper {
       CDAssociationDiffCategory category,
       Optional<WhichPartDiff> whichPartDiff,
       Optional<Object> compResult) {
-    CDAssociationDiff cDAssociationDiff =
+    CDAssocWrapperDiff cDAssocWrapperDiff =
         createCDAssociationDiffHelper(base, optCompare, isInCompareCDW, isContentDiff, category);
-    cDAssociationDiff.setWhichPartDiff(whichPartDiff);
+    cDAssocWrapperDiff.setWhichPartDiff(whichPartDiff);
 
     if (whichPartDiff.isPresent() && compResult.isPresent()) {
       switch (whichPartDiff.get()) {
         case DIRECTION:
-          cDAssociationDiff.setCDDiffDirectionResult(
+          cDAssocWrapperDiff.setCDDiffDirectionResult(
               Optional.of((CDAssociationDiffDirection) compResult.get()));
-          cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-          cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
           break;
         case LEFT_CARDINALITY:
         case RIGHT_SPECIAL_CARDINALITY:
-          cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-          cDAssociationDiff.setCDDiffLeftClassCardinalityResult(
+          cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(
               Optional.of((CDAssociationDiffCardinality) compResult.get()));
-          cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
           break;
         case RIGHT_CARDINALITY:
         case LEFT_SPECIAL_CARDINALITY:
-          cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-          cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-          cDAssociationDiff.setCDDiffRightClassCardinalityResult(
+          cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+          cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(
               Optional.of((CDAssociationDiffCardinality) compResult.get()));
           break;
       }
     }
-    return cDAssociationDiff;
+    return cDAssocWrapperDiff;
   }
 
-  public static CDAssociationDiff createCDAssociationDiffHelperWithInstanceClass(
+  public static CDAssocWrapperDiff createCDAssociationDiffHelperWithInstanceClass(
       CDAssociationWrapper base,
       Optional<CDAssociationWrapper> optCompare,
       boolean isInCompareCDW,
@@ -471,15 +470,15 @@ public class CDSyntaxDiffHelper {
       CDAssociationDiffCategory category,
       Optional<CDTypeWrapper> leftInstanceClass,
       Optional<CDTypeWrapper> rightInstanceClass) {
-    CDAssociationDiff cDAssociationDiff =
-        new CDAssociationDiff(base, optCompare, isInCompareCDW, isContentDiff, category);
-    cDAssociationDiff.setCDDiffDirectionResult(Optional.empty());
-    cDAssociationDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
-    cDAssociationDiff.setWhichPartDiff(Optional.empty());
-    cDAssociationDiff.setLeftInstanceClass(leftInstanceClass);
-    cDAssociationDiff.setRightInstanceClass(rightInstanceClass);
-    return cDAssociationDiff;
+    CDAssocWrapperDiff cDAssocWrapperDiff =
+        new CDAssocWrapperDiff(base, optCompare, isInCompareCDW, isContentDiff, category);
+    cDAssocWrapperDiff.setCDDiffDirectionResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffLeftClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setCDDiffRightClassCardinalityResult(Optional.empty());
+    cDAssocWrapperDiff.setWhichPartDiff(Optional.empty());
+    cDAssocWrapperDiff.setLeftInstanceClass(leftInstanceClass);
+    cDAssocWrapperDiff.setRightInstanceClass(rightInstanceClass);
+    return cDAssocWrapperDiff;
   }
 
 }

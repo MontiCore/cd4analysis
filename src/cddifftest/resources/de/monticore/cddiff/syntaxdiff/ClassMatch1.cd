@@ -13,7 +13,9 @@ classdiagram ClassMatch1 {
     List<String> nameList;
   }
   class NoChanges;
-  class DeletedClass;
+  class DeletedClass{
+    String name;
+  }
 
   association MatchAttributeChange -- NoChanges;
   association NoChanges -- DeletedClass;

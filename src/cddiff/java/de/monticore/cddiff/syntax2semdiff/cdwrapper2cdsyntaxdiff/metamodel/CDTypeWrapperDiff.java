@@ -5,11 +5,11 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 
 import java.util.*;
 
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper.getCDTypeDiffKindHelper;
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper.getCDTypeDiffKindStrHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDTypeDiffKindHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDTypeDiffKindStrHelper;
 
 /**
- * Each CDTypeWrapper in based CDWrapper will generate one corresponding CDTypeDiff
+ * Each CDTypeWrapper in based CDWrapper will generate one corresponding CDTypeWrapperDiff
  *
  * @attribute cDDiffId:
  *    unique cDDiff id
@@ -28,7 +28,7 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntax
  * @attribute whichAttributesDiff:
  *    mark which attribute has syntactic differences
  */
-public class CDTypeDiff {
+public class CDTypeWrapperDiff {
   protected final UUID cDDiffId;
 
   protected CDTypeWrapper baseElement;
@@ -45,7 +45,7 @@ public class CDTypeDiff {
 
   protected Optional<List<String>> whichAttributesDiff;
 
-  public CDTypeDiff(CDTypeWrapper baseElement,
+  public CDTypeWrapperDiff(CDTypeWrapper baseElement,
       Optional<CDTypeWrapper> optCompareClass,
       Optional<CDAssociationWrapper> optCompareAssoc,
       boolean isInCompareCDW,

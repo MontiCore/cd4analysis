@@ -3,9 +3,7 @@ package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.monticore.cd.codegen.TopDecorator;
-import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
+import de.monticore.ast.Comment;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -34,23 +32,20 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
-import de.monticore.cddiff.syntax2semdiff.JavaCDDiff;
+import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -106,6 +101,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   protected CommandLine cmd;
 
+  protected boolean onlyDiff;
+
   @Override
   public void run(String[] args) {
     try {
@@ -117,9 +114,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        if (cmd.hasOption("jsemdiff")) {
-          computeJavaSemDiff();
+        if (cmd.hasOption("syntaxdiff")) {
+          computeSyntaxDiff();
           CD4CodeMill.globalScope().clear();
+        }
+
+        if (onlyDiff){
+          return;
         }
 
         if (!modelFile.isEmpty()) {
@@ -371,11 +372,17 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
+        if (cmd.hasOption("syntaxdiff") || cmd.hasOption("semdiff")){
+          onlyDiff = true;
+          return true;
+        }
         printHelp((CDToolOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required",
             "[i, stdin]"));
         return false;
       }
+
+      onlyDiff = false;
 
       if (cmd.hasOption("i")) {
         modelFile = cmd.getOptionValue("i");
@@ -409,6 +416,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // should never be reached (unless failquick is off)
     return null;
   }
+
 
   public void completeSymbolTable() {
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
@@ -616,157 +624,141 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     System.out.println("Further details: https://www.se-rwth.de/topics/");
   }
 
-
-  protected void computeJavaSemDiff() throws IOException {
-    // parse the first CD
-    ASTCDCompilationUnit ast1;
-
-    if (!modelFile.isEmpty()) {
-      ast1 = parse(modelFile);
-    }
-    else {
-      ast1 = parse(modelReader);
-    }
-
-    // parse the second CD
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("jsemdiff"));
-
-    CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
-
-    // determine if open-world should be applied
-    if (cmd.hasOption("open-world")) {
-
-      CD4CodeMill.globalScope().clear();
-      ReductionTrafo trafo = new ReductionTrafo();
-      trafo.transform(ast1, ast2);
-
-      if (cmd.hasOption("o")) {
-        saveDiffCDs2File(ast1, ast2, outputPath);
-      }
-      semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
-    }
-
-    if (cmd.hasOption("o")){
-      JavaCDDiff.printODs2Dir(JavaCDDiff.computeSemDiff(ast1,ast2,semantics),outputPath);
-    } else {
-      JavaCDDiff.printSemDiff(ast1,ast2,semantics);
-    }
-  }
-
   protected void computeSemDiff() throws NumberFormatException, IOException {
 
-    // parse the first CD
+    String commitID1 = cmd.getOptionValue("cd1commit");
+    String commitID2 = cmd.getOptionValue("cd2commit");
+
+    String[] path = cmd.getOptionValues("semdiff");
+    String pathCD1 = path[0];
+    String pathCD2 = path[1];
+
+    // parse the .cd-files
     ASTCDCompilationUnit ast1;
+    ASTCDCompilationUnit ast2;
 
-    if (!modelFile.isEmpty()) {
-      ast1 = parse(modelFile);
-    }
-    else {
-      ast1 = parse(modelReader);
-    }
-
-    // parse the second CD
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
-
-    CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
-
-    // determine if open-world should be applied
-    if (cmd.hasOption("open-world")) {
-
-      // determine which method should be used to compute the diff-witnesses
-      if (cmd.getOptionValue("open-world", "reduction-based").equals("reduction-based")) {
-        CD4CodeMill.globalScope().clear();
-        ReductionTrafo trafo = new ReductionTrafo();
-        trafo.transform(ast1, ast2);
-
-        saveDiffCDs2File(ast1, ast2, outputPath);
-        semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
-      }
-      else if (cmd.getOptionValue("open-world", "reduction-based").equals("alloy-based")) {
-
-        semantics = CDSemantics.MULTI_INSTANCE_OPEN_WORLD;
-
-        // handle unspecified association directions for open-world
-        ReductionTrafo.handleAssocDirections(ast1, ast2);
-
-        // add subclasses to interfaces and abstract classes
-        ReductionTrafo.addSubClasses4Diff(ast1);
-        ReductionTrafo.addSubClasses4Diff(ast2);
-
-        // add dummy-class for associations
-        String dummyClassName = "Dummy4Diff";
-        ReductionTrafo.addDummyClass4Associations(ast1,dummyClassName);
-        ReductionTrafo.addDummyClass4Associations(ast2,dummyClassName);
-      }
-    }
-    else {
-      //handle unspecified association directions for closed-world
-      ReductionTrafo.handleAssocDirections(ast1, ast2);
-    }
-    // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
-    int diffsize;
-    if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
-      diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", "20"));
-    }
-    else {
-      int cd1size = ast1.getCDDefinition().getCDClassesList().size() + ast1.getCDDefinition()
-          .getCDInterfacesList()
-          .size();
-
-      int cd2size = ast2.getCDDefinition().getCDClassesList().size() + ast2.getCDDefinition()
-          .getCDInterfacesList()
-          .size();
-
-      diffsize = Math.max(20, 2 * Math.max(cd1size, cd2size));
+    if (commitID1 != null){
+      String tmp1 = CDDiffUtil.findFileInCommit(commitID1, pathCD1);
+      ast1 = CDDiffUtil.parseModelFromString(tmp1);
+    }else {
+      ast1 = parse(pathCD1);
     }
 
-    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
+    if (commitID2 != null){
+      String tmp2 = CDDiffUtil.findFileInCommit(commitID2, pathCD2);
+      ast2 = CDDiffUtil.parseModelFromString(tmp2);
+    }else {
+      ast2 = parse(pathCD2);
+    }
 
-    // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(ast1, ast2, diffsize, semantics,
-        outputPath);
-
-    // test if solution is present
-    if (optS.isEmpty()) {
-      Log.error("0xCDD01: Could not compute semdiff.");
+    if (ast1 == null || ast2 == null){
+      Log.error("0xCDD14: Failed to load CDs for `--semdiff`.");
       return;
     }
-    AlloyDiffSolution sol = optS.get();
 
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(difflimit);
-    sol.setLimited(true);
+    // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
+    int diffsize = CDDiffUtil.getDefaultDiffsize(ast1, ast2);
+    String defaultVal = Integer.toString(diffsize);
+    if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
+      diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", defaultVal));
+    }
+    int difflimit = Integer.parseInt(cmd.getOptionValue("difflimit", "1"));
 
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
+    boolean openWorld = cmd.hasOption("open-world");
+
+    if (cmd.hasOption("rule-based")){
+      CDDiffUtil.computeSemDiff(ast1,ast2,outputPath,openWorld,cmd.hasOption("o"));
+    } else {
+      boolean reductionBased = !(cmd.hasOption("open-world") && cmd.getOptionValue("open-world",
+          "reduction-based").equals("alloy-based"));
+      CDDiffUtil.computeSemDiff(ast1,ast2,outputPath,diffsize,difflimit,openWorld,reductionBased);
+    }
   }
 
-  /**
-   * todo: find more appropriate location for this method
-   */
-  protected void saveDiffCDs2File(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
-      String outputPath) throws IOException {
-    CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
-    ast1.accept(pprinter.getTraverser());
-    String cd1 = pprinter.getPrinter().getContent();
+  protected void computeSyntaxDiff() throws IOException {
+    String commitID1 = cmd.getOptionValue("cd1commit");
+    String commitID2 = cmd.getOptionValue("cd2commit");
 
-    pprinter = new CD4CodeFullPrettyPrinter();
-    ast2.accept(pprinter.getTraverser());
-    String cd2 = pprinter.getPrinter().getContent();
+    String[] path = cmd.getOptionValues("syntaxdiff");
+    String pathCD1 = path[0];
+    String pathCD2 = path[1];
 
-    String suffix1 = "";
-    String suffix2 = "";
-    if (ast1.getCDDefinition().getName().equals(ast2.getCDDefinition().getName())) {
-      suffix1 = "_new";
-      suffix2 = "_old";
+    // parse the .cd-files
+    ASTCDCompilationUnit ast1;
+    ASTCDCompilationUnit ast2;
+
+    if (commitID1 != null){
+      String tmp1 = CDDiffUtil.findFileInCommit(commitID1, pathCD1);
+      ast1 = CDDiffUtil.parseModelFromString(tmp1);
+    }else {
+      ast1 = parse(pathCD1);
     }
 
-    Path outputFile1 = Paths.get(outputPath, ast1.getCDDefinition().getName() + suffix1 + ".cd");
-    Path outputFile2 = Paths.get(outputPath, ast2.getCDDefinition().getName() + suffix2 + ".cd");
+    if (commitID2 != null){
+      String tmp2 = CDDiffUtil.findFileInCommit(commitID2, pathCD2);
+      ast2 = CDDiffUtil.parseModelFromString(tmp2);
+    }else {
+      ast2 = parse(pathCD2);
+    }
 
-    // Write results into a file
-    FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
-    FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
+    if (ast1 == null || ast2 == null){
+      Log.error("0xCDD15: Failed to load CDs for `--syntaxdiff`.");
+      return;
+    }
+
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    new CD4CodeDirectCompositionTrafo().transform(ast1);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
+
+
+    if (cmd.hasOption("showpath")){
+      if (commitID1 != null){
+        ast1.add_PreComment(0, (new Comment(commitID1 + ":" + pathCD1)));
+      }else {
+        ast1.add_PreComment(0, (new Comment(pathCD1)));
+      }
+      if (commitID2 != null){
+        ast2.add_PreComment(0, (new Comment(commitID2 + ":" + pathCD2)));
+      }else {
+        ast2.add_PreComment(0, (new Comment(pathCD2)));
+      }
+
+
+    }
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1,ast2);
+
+    if (cmd.hasOption("andSemDiff")){
+      syntaxDiff.createSemDiff(outputPath);
+    }
+
+    if (cmd.hasOption("diffreport")){
+      syntaxDiff.createJsonReport(outputPath);
+    }
+
+    String printType = cmd.getOptionValue("print", "diff");
+    if (printType.equals("diff")){
+      syntaxDiff.print();
+    }
+    if (printType.equals("cd1")){
+      syntaxDiff.printCD1();
+    }
+    if (printType.equals("cd2")){
+      syntaxDiff.printCD2();
+    }
+    if (printType.equals("both")){
+      syntaxDiff.printCD1();
+      syntaxDiff.printCD2();
+    }
+    if (printType.equals("all")){
+      syntaxDiff.print();
+      syntaxDiff.printCD1();
+      syntaxDiff.printCD2();
+    }
+    if (printType.equals("nocolor")){
+      syntaxDiff.printNoColour();
+    }
   }
 
   /**

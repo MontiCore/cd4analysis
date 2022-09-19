@@ -13,7 +13,9 @@ classdiagram ClassMatch2 {
     List<String> nameList;
   }
   class NoChanges;
-  class AddedClass;
+  class AddedClass{
+    int test;
+  }
 
   association MatchAttributeChange -- NoChanges [*];
   association NoChanges -> AddedClass;

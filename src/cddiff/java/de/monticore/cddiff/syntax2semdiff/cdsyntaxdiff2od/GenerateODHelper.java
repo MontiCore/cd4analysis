@@ -136,14 +136,14 @@ public class GenerateODHelper {
 
   public static Map<CDRefSetAssociationWrapper, Integer> convertRefSetAssociationList2CheckList(
       List<CDRefSetAssociationWrapper> refSetAssociationList,
-      CDAssociationDiff cDAssociationDiff) {
+      CDAssocWrapperDiff cDAssocWrapperDiff) {
 
     // special situation for LEFT_SPECIAL_CARDINALITY and RIGHT_SPECIAL_CARDINALITY
-    if (cDAssociationDiff.getCDDiffCategory() ==
+    if (cDAssocWrapperDiff.getCDDiffCategory() ==
         CDAssociationDiffCategory.CARDINALITY_CHANGED &&
-        (cDAssociationDiff.getWhichPartDiff().get() ==
+        (cDAssocWrapperDiff.getWhichPartDiff().get() ==
             WhichPartDiff.LEFT_SPECIAL_CARDINALITY ||
-            cDAssociationDiff.getWhichPartDiff().get() ==
+            cDAssocWrapperDiff.getWhichPartDiff().get() ==
                 WhichPartDiff.RIGHT_SPECIAL_CARDINALITY)) {
       return convertRefSetAssociationList2CheckList(refSetAssociationList);
     }
@@ -151,7 +151,7 @@ public class GenerateODHelper {
     Map<CDRefSetAssociationWrapper, Integer> checkList = new HashMap<>();
     refSetAssociationList.forEach(item -> {
       List<CDRefSetAssociationWrapper> temp = new ArrayList<>();
-      if (!item.isPresentInCDRefSetAssociationWrapper(cDAssociationDiff.getBaseElement())) {
+      if (!item.isPresentInCDRefSetAssociationWrapper(cDAssocWrapperDiff.getBaseElement())) {
         temp = refSetAssociationList.stream()
             .filter(e ->
                 e.getLeftRefSet().equals(item.getLeftRefSet()) &&
@@ -396,7 +396,7 @@ public class GenerateODHelper {
   /**
    * create value for attribute
    */
-  public static String createValue(CDWrapper cdw, Optional<CDTypeDiff> cDTypeDiff, String type,
+  public static String createValue(CDWrapper cdw, Optional<CDTypeWrapperDiff> cDTypeDiff, String type,
       Boolean isEnumClass) {
     String result;
     String cDTypeWrapperKey = "CDWrapperEnum_" + type;
@@ -421,7 +421,7 @@ public class GenerateODHelper {
    * collection
    */
   public static List<ASTODAttribute> createASTODAttributeList(CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff, CDTypeWrapper cDTypeWrapper) {
+      Optional<CDTypeWrapperDiff> cDTypeDiff, CDTypeWrapper cDTypeWrapper) {
     List<ASTODAttribute> astodAttributeList = new ArrayList<>();
     for (ASTCDAttribute astcdAttribute : cdw.getCDTypeWrapperGroup()
         .get(cDTypeWrapper.getName())
@@ -519,7 +519,7 @@ public class GenerateODHelper {
    * create an object
    */
   public static CDWrapperObjectPack createObject(CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff,
+      Optional<CDTypeWrapperDiff> cDTypeDiff,
       CDTypeWrapper cDTypeWrapper,
       int index,
       Optional<CDTypeWrapper> instanceClass,
@@ -599,7 +599,7 @@ public class GenerateODHelper {
    * create all objects that should be used in an OD
    */
   public static List<ASTODNamedObject> createObjectList(CDWrapper cdw,
-      Optional<CDTypeDiff> cDTypeDiff,
+      Optional<CDTypeWrapperDiff> cDTypeDiff,
       CDTypeWrapper offerCDTypeWrapper,
       int cardinalityCount,
       Deque<ASTODClassStackPack> classStack4TargetClass,
@@ -1113,25 +1113,25 @@ public class GenerateODHelper {
   /**
    * generate OD title for semantic difference with association
    */
-  public static String generateODTitle(CDAssociationDiff cdAssociationDiff, int index) {
+  public static String generateODTitle(CDAssocWrapperDiff association, int index) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
     stringBuilder.append(index);
     stringBuilder.append("_$");
 
     // set assoc name
-    stringBuilder.append(cdAssociationDiff.getName(true));
+    stringBuilder.append(association.getName(true));
     stringBuilder.append("$_$");
 
     // set assoc type
-    stringBuilder.append(cdAssociationDiff.getCDDiffCategory().toString().toLowerCase());
+    stringBuilder.append(association.getCDDiffCategory().toString().toLowerCase());
     stringBuilder.append("$");
 
     // set which part
-    if (cdAssociationDiff.getWhichPartDiff().isPresent()) {
-      if (cdAssociationDiff.getWhichPartDiff().get() != WhichPartDiff.DIRECTION) {
+    if (association.getWhichPartDiff().isPresent()) {
+      if (association.getWhichPartDiff().get() != WhichPartDiff.DIRECTION) {
         stringBuilder.append("_$");
-        stringBuilder.append(cdAssociationDiff.getWhichPartDiff().get().toString().toLowerCase());
+        stringBuilder.append(association.getWhichPartDiff().get().toString().toLowerCase());
         stringBuilder.append("$");
       }
     }
@@ -1142,25 +1142,25 @@ public class GenerateODHelper {
   /**
    * generate OD title for semantic difference with class
    */
-  public static String generateODTitle(CDTypeDiff cDTypeDiff, int index) {
+  public static String generateODTitle(CDTypeWrapperDiff cDTypeWrapperDiff, int index) {
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append("OD_");
     stringBuilder.append(index);
     stringBuilder.append("_$");
 
     // set assoc name
-    stringBuilder.append(cDTypeDiff.getName(true));
+    stringBuilder.append(cDTypeWrapperDiff.getName(true));
     stringBuilder.append("$_$");
 
     // set assoc type
-    stringBuilder.append(cDTypeDiff.getCDDiffCategory().toString().toLowerCase());
+    stringBuilder.append(cDTypeWrapperDiff.getCDDiffCategory().toString().toLowerCase());
     stringBuilder.append("$");
 
     // set which part
-    if (cDTypeDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
-      if (cDTypeDiff.getWhichAttributesDiff().isPresent()) {
+    if (cDTypeWrapperDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
+      if (cDTypeWrapperDiff.getWhichAttributesDiff().isPresent()) {
         stringBuilder.append("_");
-        stringBuilder.append(cDTypeDiff.getWhichAttributesDiff()
+        stringBuilder.append(cDTypeWrapperDiff.getWhichAttributesDiff()
             .get()
             .toString()
             .replace(" ", "")

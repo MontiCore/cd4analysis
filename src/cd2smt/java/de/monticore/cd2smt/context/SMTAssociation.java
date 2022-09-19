@@ -36,7 +36,11 @@ public class SMTAssociation {
     //set the name of the Association
     if (association.isPresentName()) {
       this.name = association.getName();
+
     }
+
+    this.left.getSMTAssociations().put(association,this);
+    this.right.getSMTAssociations().put(association,this);
 
 
     //set the Association function

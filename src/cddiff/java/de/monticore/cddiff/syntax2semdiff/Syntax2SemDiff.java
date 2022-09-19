@@ -3,12 +3,12 @@ package de.monticore.cddiff.syntax2semdiff;
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CD2CDWrapperGenerator;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntaxDiff2ODGenerator;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapper2CDSyntaxDiffGenerator;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDSyntaxDiff;
+import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiffODGenerator;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffGenerator;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
 import net.sourceforge.plantuml.Log;
 
 import java.io.File;
@@ -16,25 +16,25 @@ import java.util.List;
 
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.printOD;
 
-public class JavaCDDiff {
+public class Syntax2SemDiff {
   public static List<ASTODArtifact> computeSemDiff(
       ASTCDCompilationUnit ast1,
       ASTCDCompilationUnit ast2,
       CDSemantics cdSemantics) {
 
     // generate CDWrapper
-    CD2CDWrapperGenerator cd1Generator = new CD2CDWrapperGenerator();
-    CD2CDWrapperGenerator cd2Generator = new CD2CDWrapperGenerator();
+    CDWrapperGenerator cd1Generator = new CDWrapperGenerator();
+    CDWrapperGenerator cd2Generator = new CDWrapperGenerator();
     CDWrapper cdw1 = cd1Generator.generateCDWrapper(ast1, cdSemantics);
     CDWrapper cdw2 = cd2Generator.generateCDWrapper(ast2, cdSemantics);
 
     // calculate syntax diff
-    CDWrapper2CDSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
-        new CDWrapper2CDSyntaxDiffGenerator();
-    CDSyntaxDiff cg = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
+    CDWrapperSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
+        new CDWrapperSyntaxDiffGenerator();
+    CDWrapperSyntaxDiff cg = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
 
     // generate ODs
-    CDSyntaxDiff2ODGenerator odGenerator = new CDSyntaxDiff2ODGenerator();
+    CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
     return odGenerator.generateObjectDiagrams(cdw1, cg, cdSemantics);
   }
 

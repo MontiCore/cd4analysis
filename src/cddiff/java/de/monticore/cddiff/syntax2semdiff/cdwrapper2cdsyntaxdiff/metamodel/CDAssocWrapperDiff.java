@@ -6,7 +6,7 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntaxDiffHelper.getCDAssociationDiffKindHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDAssociationDiffKindHelper;
 
 /**
  * Each CDAssociationWrapper in based CDWrapper will generate three corresponding CompAssociations
@@ -49,7 +49,7 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDSyntax
  *        4. special left cardinality
  *        5. special right cardinality
  */
-public class CDAssociationDiff {
+public class CDAssocWrapperDiff {
   protected final UUID cDDiffId;
 
   protected final CDAssociationWrapper baseElement;
@@ -74,7 +74,7 @@ public class CDAssociationDiff {
 
   protected Optional<CDTypeWrapper> rightInstanceClass;
 
-  public CDAssociationDiff(CDAssociationWrapper baseElement,
+  public CDAssocWrapperDiff(CDAssociationWrapper baseElement,
       Optional<CDAssociationWrapper> optCompareAssoc,
       boolean isInCompareCDW,
       boolean isContentDiff,

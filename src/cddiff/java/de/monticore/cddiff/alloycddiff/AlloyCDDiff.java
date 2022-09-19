@@ -6,7 +6,7 @@ import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloySolutionHandler;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -49,7 +49,7 @@ public class AlloyCDDiff {
 
     // clean-up
     try {
-      FileUtils.forceDelete(outputDirectory.toFile());
+      PathUtils.delete(outputDirectory);
     }
     catch (IOException e) {
       Log.warn(String.format("Could not delete %s due to %s", outputDirectory.getFileName(),
