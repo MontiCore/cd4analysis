@@ -203,9 +203,8 @@ public class CDToolOptions {
         .argName("file")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc(
-            "Prints the input CDs to stdout or to the specified file (optional). The output "
-                + "directory is specified by `-o`.")
+        .desc("Prints the input CDs to stdout or to the specified file (optional). The output "
+            + "directory is specified by `-o`.")
         .build());
 
     if (showPlantUML) {
@@ -296,8 +295,7 @@ public class CDToolOptions {
         .desc(
             "Parses 2 CD-files and outputs object diagrams (witnesses) that are valid in the first "
                 + "CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. "
-                + "Details: "
-                + "https://www.se-rwth.de/topics/Semantics.php")
+                + "Details: " + "https://www.se-rwth.de/topics/Semantics.php")
         .build());
 
     options.addOption(Option.builder()
@@ -362,11 +360,10 @@ public class CDToolOptions {
         .argName("printType")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc(
-            "Specifies print options: (default) diff, nocolor, cd1, cd2, both, all diff will "
-                + "print a coloured version of all diffs and matchs nocolor print an alternative "
-                + "with +, -, ~ indicators cd1, cd2, both will provide coloured version of the "
-                + "provided models all provides diff, cd1, cd2")
+        .desc("Specifies print options: (default) diff, nocolor, cd1, cd2, both, all diff will "
+            + "print a coloured version of all diffs and matchs nocolor print an alternative "
+            + "with +, -, ~ indicators cd1, cd2, both will provide coloured version of the "
+            + "provided models all provides diff, cd1, cd2")
         .build());
 
     options.addOption(Option.builder()
@@ -405,7 +402,7 @@ public class CDToolOptions {
   /**
    * adds options for CDMerge
    */
-  public void initMergeOptions(){
+  public void initMergeOptions() {
     options.addOption(Option.builder()
         .longOpt("merge")
         .hasArg()
@@ -413,8 +410,8 @@ public class CDToolOptions {
         .argName("files")
         .numberOfArgs(2)
         .desc(
-            "Parses 2 CD-files, performs a semantically sound merge (iff possible) and outputs a "
-                + "`merged.cd` file")
+            "Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs "
+                + "`Merge.cd` file if `-o` is used, otherwise prints the result to stdout.")
         .build());
   }
 

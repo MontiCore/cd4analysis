@@ -35,7 +35,7 @@ public class CDMergeUtil {
       List<MergeParameter> mergeParameters) {
     CDMergeConfig.Builder builder = new CDMergeConfig.Builder(true).withParam(
             MergeParameter.CHECK_ONLY)
-        .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
+        .withParam(MergeParameter.OUTPUT_NAME, "Merge")
         .withParam(MergeParameter.LOG_SILENT);
 
     mergeParameters.forEach(builder::withParam);

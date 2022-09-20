@@ -50,7 +50,7 @@ public class CDMerge {
             MergeParameter.CHECK_ONLY)
         .withParam(MergeParameter.AST_BASED)
         .withParam(MergeParameter.LOG_SILENT)
-        .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+        .withParam(MergeParameter.OUTPUT_NAME, "Merge");
 
     for (ASTCDCompilationUnit cd : inputModels) {
       Preconditions.checkNotNull(cd);

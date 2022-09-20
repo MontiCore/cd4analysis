@@ -94,6 +94,7 @@ for
 * loading symbols from symbol files, 
 * transforming CDs into a graphical svg format, and
 * computing the semantic difference of 2 CDs.
+* merging 2 CDs (iff the result is semantically sound)
 
 The requirements for building and using the CD tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
@@ -133,7 +134,7 @@ The possible options are:
 | `-h,--help` | Prints short help; other options are ignored. |
 | `--json` | Writes a "Schema.json" to the output directory. |
 | `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory for anything but `--semdiff` and `--merge`, unless `--stdin` is used instead). |
-| `--merge <file> <file>` | Parses 2 CD-files, performs a semantically sound merge (iff possible) and outputs `merged.cd` file. |
+| `--merge <file> <file>` | Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs `merged.cd` file if `-o` is used, otherwise prints the result to stdout. |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
 | `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
@@ -440,26 +441,38 @@ differencing:
 
 https://www.se-rwth.de/topics/Semantics.php
 
-The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
-diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`.
-
-Since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
-those witnesses. The default maximum number of objects per witness is 10. This number can 
-be changed via the option `--diffsize`.
+The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 
+and CD2 specified by `--semdiff CD1.cd CD2.cd`.
 
 For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
 `src`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd --semdiff scr/Employees2.cd --diffsize 2
+java -jar MCCD.jar --semdiff src/Employees1.cd scr/Employees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
-that are generated in the output directory; the default is to generate at most 1 diff-witness. Once again, `-o` can be used to specify the output directory; the default is `.`:
+that are generated in the output directory; the default is to generate at most 1 diff-witness. 
+Once again, `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 5 --difflimit 20 -o out
+java -jar MCCD.jar --semdiff src/Employees1.cd  src/Employees2.cd --diffsize 5 --difflimit 20 -o out
 ```
+
+### Step 9: Merging Two Class Diagram
+
+The option `--merge` can be used to merge two class diagrams CD1 and CD2 into a single class 
+diagram. This is only possible iff the two class diagrams CD1 and CD2 are semantically compatible.
+The resulting class diagram is stored in a file `Merge.cd` iff an output directory is specified via
+`-o`, otherwise it is pretty-printed to stdout.
+
+For the following examples, download the files [Person1.cd](doc/Person1.cd) and [Person2.cd](doc/Person2.cd) and save them in
+`src`:
+
+```shell
+java -jar MCCD.jar --merge src/Person1.cd  src/Person2.cd
+```
+
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [ToolDownload]: https://monticore.de/download/MCCD.jar

@@ -782,8 +782,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
       mergeResult.accept(pp.getTraverser());
       Path outputFile = Paths.get(outputPath, mergeResult.getCDDefinition().getName() + ".cd");
-      FileUtils.writeStringToFile(outputFile.toFile(), pp.prettyprint(mergeResult),
+      String content = pp.prettyprint(mergeResult);
+      if (cmd.hasOption("o")){
+        FileUtils.writeStringToFile(outputFile.toFile(), pp.prettyprint(mergeResult),
           Charset.defaultCharset());
+      } else {
+        System.out.println(content);
+      }
     }
     else {
       Log.error("0xCDD16 Could not merge CDs.");

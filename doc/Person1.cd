@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package Person;
+classdiagram Person1 {
+	class Person {
+		int id;
+		String name;
+	}	
+	class House;
+	class Office {
+		String address;
+	}	
+	class Customer extends Person;
+	association employment Office -> Person [*];
+	association Person -- (home) House;
+}
