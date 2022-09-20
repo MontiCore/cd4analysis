@@ -120,8 +120,10 @@ configurations {
   coevolutiontestImplementation.extendsFrom(cddifftestImplementation)
 
   toolImplementation.extendsFrom(cddiffImplementation)
+  toolImplementation.extendsFrom(cdmergeImplementation)
   tooltestImplementation.extendsFrom(toolImplementation)
   tooltestImplementation.extendsFrom(cddifftestImplementation)
+  tooltestImplementation.extendsFrom(cdmergetestImplementation)
   grammar
   cli
 }
@@ -160,8 +162,8 @@ dependencies {
   implementation 'org.eclipse.jgit:org.eclipse.jgit:2.2.0.201212191850-r'
   cddiffImplementation(sourceSets.main.output.classesDirs)
 
-  cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
-  cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
+  //cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
+  //cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
   cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
   cddifftestImplementation(sourceSets.test.output.classesDirs)
 
@@ -190,6 +192,7 @@ dependencies {
   coevolutiontestImplementation(sourceSets.cddifftest.output.classesDirs)
 
   toolImplementation(sourceSets.cddiff.output.classesDirs)
+  toolImplementation(sourceSets.cdmerge.output.classesDirs)
   tooltestImplementation(sourceSets.tool.output.classesDirs)
 }
 

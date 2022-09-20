@@ -55,6 +55,7 @@ public class CDToolOptions {
     initPlantUML();
     initSemDiffOptions();
     initSyntaxDiffOptions();
+    initMergeOptions();
   }
 
   protected void initCheck() {
@@ -398,6 +399,22 @@ public class CDToolOptions {
         .numberOfArgs(1)
         .desc("Each print contains the full path of the file, git commit hash included "
             + "without this option only the file name is printed")
+        .build());
+  }
+
+  /**
+   * adds options for CDMerge
+   */
+  public void initMergeOptions(){
+    options.addOption(Option.builder()
+        .longOpt("merge")
+        .hasArg()
+        .type(String.class)
+        .argName("files")
+        .numberOfArgs(2)
+        .desc(
+            "Parses 2 CD-files, performs a semantically sound merge (iff possible) and outputs a "
+                + "`merged.cd` file")
         .build());
   }
 
