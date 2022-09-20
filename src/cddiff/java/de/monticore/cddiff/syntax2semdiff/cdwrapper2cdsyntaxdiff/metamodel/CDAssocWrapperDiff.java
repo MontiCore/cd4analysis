@@ -10,71 +10,77 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrappe
 
 /**
  * Each CDAssociationWrapper in based CDWrapper will generate three corresponding CompAssociations
- * 1. for direction
- * 2. for left cardinality
- * 3. for right cardinality
- *
- * @attribute cDDiffId:
- * unique CDDiff id
- * @attribute originalElement:
- * original CDAssociationWrapper
- * @attribute isInCompareCDW:
- * whether this CDAssociationWrapper exists in compared CDWrapper (only check
- * CDAssociationWrapper name)
- * @attribute isContentDiff:
- * if this CDAssociationWrapper exists in compared CDWrapper (only check CDAssociationWrapper name),
- * then check whether the content of those two CDAssociationWrappers are different:
  *    1. for direction
  *    2. for left cardinality
  *    3. for right cardinality
+ *
+ * @attribute cDDiffId:
+ *    unique CDDiff id
+ * @attribute baseElement:
+ *    base original CDAssociationWrapper
+ * @attribute isInCompareCDW:
+ *    whether this CDAssociationWrapper exists in compared CDWrapper (only check
+ *    CDAssociationWrapper name)
+ * @attribute isContentDiff:
+ *    if this CDAssociationWrapper exists in compared CDWrapper (only check CDAssociationWrapper name),
+ *    then check whether the content of those two CDAssociationWrappers are different:
+ *        1. for direction
+ *        2. for left cardinality
+ *        3. for right cardinality
  * @attribute cDDiffCategory:
- * - has semantic difference:
- *    DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED, SUBCLASS_DIFF
- * - has no semantic difference:
- *    ORIGINAL, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_SUBSET
+ *    - has semantic difference:
+ *        DELETED, DIRECTION_CHANGED, CARDINALITY_CHANGED, SUBCLASS_DIFF
+ *    - has no semantic difference:
+ *        ORIGINAL, DIRECTION_CHANGED_BUT_SAME_MEANING, DIRECTION_SUBSET, CARDINALITY_SUBSET
  * @attribute cDDiffDirectionResult:
- * The result after comparison:
- *    NONE, LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT
+ *    The result after comparison:
+ *        NONE, LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT
  * @attribute cDDiffLeftClassCardinalityResult:
- * The result after comparison:
- *    NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
+ *    The result after comparison:
+ *        NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
  * @attribute cDDiffRightClassCardinalityResult:
- * The result after comparison:
- *    NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
+ *    The result after comparison:
+ *        NONE, ZERO, TWO_TO_MORE, ZERO_AND_TWO_TO_MORE
  * @attribute whichPartDiff:
- * mark which part has syntactic differences:
- *    1. direction
- *    2. left cardinality
- *    3. right cardinality
- *    4. special left cardinality
- *    5. special right cardinality
+ *    mark which part has syntactic differences:
+ *        1. direction
+ *        2. left cardinality
+ *        3. right cardinality
+ *        4. special left cardinality
+ *        5. special right cardinality
  */
 public class CDAssocWrapperDiff {
   protected final UUID cDDiffId;
 
-  protected final CDAssociationWrapper originalElement;
+  protected final CDAssociationWrapper baseElement;
+
+  protected Optional<CDAssociationWrapper> optCompareAssoc;
 
   protected final boolean isInCompareCDW;
 
   protected final boolean isContentDiff;
 
-  protected final CDWrapperSyntaxDiff.CDAssociationDiffCategory cDDiffCategory;
+  protected final CDAssociationDiffCategory cDDiffCategory;
 
-  protected Optional<CDWrapperSyntaxDiff.CDAssociationDiffDirection> cDDiffDirectionResult;
+  protected Optional<CDAssociationDiffDirection> cDDiffDirectionResult;
 
-  protected Optional<CDWrapperSyntaxDiff.CDAssociationDiffCardinality> cDDiffLeftClassCardinalityResult;
+  protected Optional<CDAssociationDiffCardinality> cDDiffLeftClassCardinalityResult;
 
-  protected Optional<CDWrapperSyntaxDiff.CDAssociationDiffCardinality> cDDiffRightClassCardinalityResult;
+  protected Optional<CDAssociationDiffCardinality> cDDiffRightClassCardinalityResult;
 
-  protected Optional<CDWrapperSyntaxDiff.WhichPartDiff> whichPartDiff;
+  protected Optional<WhichPartDiff> whichPartDiff;
 
   protected Optional<CDTypeWrapper> leftInstanceClass;
 
   protected Optional<CDTypeWrapper> rightInstanceClass;
 
-  public CDAssocWrapperDiff(CDAssociationWrapper originalElement, boolean isInCompareCDW,
-      boolean isContentDiff, CDWrapperSyntaxDiff.CDAssociationDiffCategory cDDiffCategory) {
-    this.originalElement = originalElement;
+  public CDAssocWrapperDiff(CDAssociationWrapper baseElement,
+      Optional<CDAssociationWrapper> optCompareAssoc,
+      boolean isInCompareCDW,
+      boolean isContentDiff,
+      CDAssociationDiffCategory cDDiffCategory) {
+    this.baseElement = baseElement;
+    this.optCompareAssoc = optCompareAssoc;
     this.isInCompareCDW = isInCompareCDW;
     this.isContentDiff = isContentDiff;
     this.cDDiffCategory = cDDiffCategory;
@@ -87,12 +93,12 @@ public class CDAssocWrapperDiff {
 
   public String getName(boolean is4Print) {
     String prefix = is4Print ? "Association_" : "CDDiffAssociation_";
-    return prefix + this.originalElement.getName()
-        .substring(this.originalElement.getName().indexOf("_") + 1);
+    return prefix + this.baseElement.getName()
+        .substring(this.baseElement.getName().indexOf("_") + 1);
   }
 
-  public CDWrapperSyntaxDiff.CDAssociationDiffKind getCDDiffKind() {
-    return getCDAssociationDiffKindHelper(this.originalElement.getCDWrapperKind());
+  public CDAssociationDiffKind getCDDiffKind() {
+    return getCDAssociationDiffKindHelper(this.baseElement.getCDWrapperKind());
   }
 
   public boolean isInCompareCDW() {
@@ -103,47 +109,47 @@ public class CDAssocWrapperDiff {
     return isContentDiff;
   }
 
-  public CDWrapperSyntaxDiff.CDAssociationDiffCategory getCDDiffCategory() {
+  public CDAssociationDiffCategory getCDDiffCategory() {
     return cDDiffCategory;
   }
 
-  public Optional<CDWrapperSyntaxDiff.CDAssociationDiffDirection> getCDDiffDirectionResult() {
+  public Optional<CDAssociationDiffDirection> getCDDiffDirectionResult() {
     return cDDiffDirectionResult;
   }
 
   public void setCDDiffDirectionResult(
-      Optional<CDWrapperSyntaxDiff.CDAssociationDiffDirection> cDDiffDirectionResult) {
+      Optional<CDAssociationDiffDirection> cDDiffDirectionResult) {
     this.cDDiffDirectionResult = cDDiffDirectionResult;
   }
 
-  public Optional<CDWrapperSyntaxDiff.CDAssociationDiffCardinality> getCDDiffLeftClassCardinalityResult() {
+  public Optional<CDAssociationDiffCardinality> getCDDiffLeftClassCardinalityResult() {
     return cDDiffLeftClassCardinalityResult;
   }
 
   public void setCDDiffLeftClassCardinalityResult(
-      Optional<CDWrapperSyntaxDiff.CDAssociationDiffCardinality> cDDiffLeftClassCardinalityResult) {
+      Optional<CDAssociationDiffCardinality> cDDiffLeftClassCardinalityResult) {
     this.cDDiffLeftClassCardinalityResult = cDDiffLeftClassCardinalityResult;
   }
 
-  public Optional<CDWrapperSyntaxDiff.CDAssociationDiffCardinality> getCDDiffRightClassCardinalityResult() {
+  public Optional<CDAssociationDiffCardinality> getCDDiffRightClassCardinalityResult() {
     return cDDiffRightClassCardinalityResult;
   }
 
   public void setCDDiffRightClassCardinalityResult(
-      Optional<CDWrapperSyntaxDiff.CDAssociationDiffCardinality> cDDiffRightClassCardinalityResult) {
+      Optional<CDAssociationDiffCardinality> cDDiffRightClassCardinalityResult) {
     this.cDDiffRightClassCardinalityResult = cDDiffRightClassCardinalityResult;
   }
 
-  public Optional<CDWrapperSyntaxDiff.WhichPartDiff> getWhichPartDiff() {
+  public Optional<WhichPartDiff> getWhichPartDiff() {
     return whichPartDiff;
   }
 
-  public void setWhichPartDiff(Optional<CDWrapperSyntaxDiff.WhichPartDiff> whichPartDiff) {
+  public void setWhichPartDiff(Optional<WhichPartDiff> whichPartDiff) {
     this.whichPartDiff = whichPartDiff;
   }
 
-  public CDAssociationWrapper getOriginalElement() {
-    return originalElement;
+  public CDAssociationWrapper getBaseElement() {
+    return baseElement;
   }
 
   public Optional<CDTypeWrapper> getLeftInstanceClass() {
@@ -160,6 +166,33 @@ public class CDAssocWrapperDiff {
 
   public void setRightInstanceClass(Optional<CDTypeWrapper> rightInstanceClass) {
     this.rightInstanceClass = rightInstanceClass;
+  }
+
+  public String getBaseSourcePositionStr() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("l.");
+    stringBuilder.append(baseElement.getSourcePosition().getLine());
+    stringBuilder.append(", ");
+    stringBuilder.append("c.");
+    stringBuilder.append(baseElement.getSourcePosition().getColumn());
+    return stringBuilder.toString();
+  }
+
+  public String getCompareSourcePositionStr() {
+    if (this.cDDiffCategory == CDAssociationDiffCategory.DIRECTION_CHANGED ||
+        this.cDDiffCategory == CDAssociationDiffCategory.CARDINALITY_CHANGED ||
+        this.cDDiffCategory == CDAssociationDiffCategory.SUBCLASS_DIFF) {
+      if (optCompareAssoc.isPresent()) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("l.");
+        stringBuilder.append(optCompareAssoc.get().getSourcePosition().getLine());
+        stringBuilder.append(", ");
+        stringBuilder.append("c.");
+        stringBuilder.append(optCompareAssoc.get().getSourcePosition().getColumn());
+        return stringBuilder.toString();
+      }
+    }
+    return "NULL";
   }
 
 }

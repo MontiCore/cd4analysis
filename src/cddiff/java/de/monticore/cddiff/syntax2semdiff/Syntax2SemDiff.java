@@ -29,9 +29,9 @@ public class Syntax2SemDiff {
     CDWrapper cdw2 = cd2Generator.generateCDWrapper(ast2, cdSemantics);
 
     // calculate syntax diff
-    CDWrapperSyntaxDiffGenerator cdw2cddiffGenerator4CDW1WithCDW2 =
+    CDWrapperSyntaxDiffGenerator cdw2CDDiffGenerator4CDW1WithCDW2 =
         new CDWrapperSyntaxDiffGenerator();
-    CDWrapperSyntaxDiff cg = cdw2cddiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
+    CDWrapperSyntaxDiff cg = cdw2CDDiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
 
     // generate ODs
     CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
@@ -93,8 +93,8 @@ public class Syntax2SemDiff {
     try {
       File out = new File(outputDirectory);
       for (ASTODArtifact od : ods) {
-        String odDescr = printOD(od);
-        Alloy2ODGenerator.saveOD(odDescr,od.getObjectDiagram().getName(),out);
+        String odDesc = printOD(od);
+        Alloy2ODGenerator.saveOD(odDesc,od.getObjectDiagram().getName(),out);
       }
     } catch (Exception e){
       e.printStackTrace();

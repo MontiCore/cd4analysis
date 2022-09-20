@@ -7,13 +7,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapperPack;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,11 +58,11 @@ public class CDWrapperGenerator {
    * create CDTypeWrapper object for class and abstract class in AST
    */
   public void createCDTypeWrapperForSimpleClassAndAbstractClass(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
-    List<ASTCDClass> astcdClassList = cd.getCDDefinition().getCDClassesList();
-    List<ASTCDEnum> astcdEnumList = cd.getCDDefinition().getCDEnumsList();
+    List<ASTCDClass> astCDClassList = cd.getCDDefinition().getCDClassesList();
+    List<ASTCDEnum> astCDEnumList = cd.getCDDefinition().getCDEnumsList();
 
-    for (ASTCDType astcdType : astcdClassList) {
-      CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astcdEnumList);
+    for (ASTCDType astcdType : astCDClassList) {
+      CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astCDEnumList);
       cDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
     }
   }
@@ -74,11 +71,11 @@ public class CDWrapperGenerator {
    * create CDTypeWrapper object for interface in AST
    */
   public void createCDTypeWrapperForInterface(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
-    List<ASTCDInterface> astcdInterfaceList = cd.getCDDefinition().getCDInterfacesList();
-    List<ASTCDEnum> astcdEnumList = cd.getCDDefinition().getCDEnumsList();
+    List<ASTCDInterface> astCDInterfaceList = cd.getCDDefinition().getCDInterfacesList();
+    List<ASTCDEnum> astCDEnumList = cd.getCDDefinition().getCDEnumsList();
 
-    for (ASTCDType astcdType : astcdInterfaceList) {
-      CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astcdEnumList);
+    for (ASTCDType astcdType : astCDInterfaceList) {
+      CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astCDEnumList);
       cDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
     }
   }
@@ -87,10 +84,10 @@ public class CDWrapperGenerator {
    * create CDTypeWrapper object for enum in AST
    */
   public void createCDTypeWrapperForEnum(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
-    List<ASTCDEnum> astcdEnumList = cd.getCDDefinition().getCDEnumsList();
+    List<ASTCDEnum> astCDEnumList = cd.getCDDefinition().getCDEnumsList();
 
-    for (ASTCDType astcdType : astcdEnumList) {
-      CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astcdEnumList);
+    for (ASTCDType astcdType : astCDEnumList) {
+      CDTypeWrapper cDTypeWrapper = createCDTypeWrapperHelper(astcdType, scope, astCDEnumList);
       cDTypeWrapperGroup.put(cDTypeWrapper.getName(), cDTypeWrapper);
     }
   }
@@ -99,7 +96,7 @@ public class CDWrapperGenerator {
   /**
    * all creating CDTypeWrapper functions are based on this helper
    */
-  public CDTypeWrapper createCDTypeWrapperHelper(ASTCDType astcdType, ICD4CodeArtifactScope scope, List<ASTCDEnum> astcdEnumList) {
+  public CDTypeWrapper createCDTypeWrapperHelper(ASTCDType astcdType, ICD4CodeArtifactScope scope, List<ASTCDEnum> astCDEnumList) {
     CDTypeWrapper cDTypeWrapper = new CDTypeWrapper(astcdType);
 
     if (!(astcdType instanceof ASTCDEnum)) {
@@ -111,7 +108,7 @@ public class CDWrapperGenerator {
 
       // add attributes
       for (ASTCDAttribute astcdAttribute : astcdType.getCDAttributeList()) {
-        if (astcdEnumList.stream().anyMatch(s -> s.getName().equals(astcdAttribute.printType()))) {
+        if (astCDEnumList.stream().anyMatch(s -> s.getName().equals(astcdAttribute.printType()))) {
           cDTypeWrapper.addAttribute(astcdAttribute);
           creatEnumClassMapHelper("CDWrapperEnum_" + astcdAttribute.printType(), cDTypeWrapper.getName());
         } else {
@@ -170,8 +167,8 @@ public class CDWrapperGenerator {
    * create CDAssociationWrapper object for association in AST
    */
   public void createCDAssociationWrapper(ASTCDCompilationUnit cd) {
-    List<ASTCDAssociation> astcdAssociationList = cd.getCDDefinition().getCDAssociationsList();
-    for (ASTCDAssociation astcdAssociation : astcdAssociationList) {
+    List<ASTCDAssociation> astCDAssociationList = cd.getCDDefinition().getCDAssociationsList();
+    for (ASTCDAssociation astcdAssociation : astCDAssociationList) {
       createCDAssociationWrapperHelper(astcdAssociation, false);
     }
   }
@@ -297,7 +294,7 @@ public class CDWrapperGenerator {
       .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     clonedCDAssociationWrapperGroup.forEach((currentAssocName, currentAssoc) -> {
-      if (currentAssoc.getCDWrapperKind() == CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC) {
+      if (currentAssoc.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC) {
         List<CDAssociationWrapperPack> matchedAssocList =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
               cDAssociationWrapperGroup, currentAssoc);
@@ -312,22 +309,22 @@ public class CDWrapperGenerator {
             if (!isReverse) {
               String directionResult = cDAssociationWrapperDirectionHelper(
                 existAssoc.getCDAssociationWrapperDirection(), newCDAssocWrapper.get().getCDAssociationWrapperDirection());
-              CDWrapper.CDAssociationWrapperCardinality leftCardinalityResult = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality leftCardinalityResult = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperLeftClassCardinality(), newCDAssocWrapper.get().getCDWrapperLeftClassCardinality());
-              CDWrapper.CDAssociationWrapperCardinality rightCardinalityResult = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality rightCardinalityResult = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperRightClassCardinality(), newCDAssocWrapper.get().getCDWrapperRightClassCardinality());
               switch (directionResult) {
                 case "current":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   newCDAssocWrapper.get().setCDWrapperLeftClassCardinality(leftCardinalityResult);
                   newCDAssocWrapper.get().setCDWrapperRightClassCardinality(rightCardinalityResult);
-                  newCDAssocWrapper.get().setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  newCDAssocWrapper.get().setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   break;
                 case "exist":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   existAssoc.setCDWrapperLeftClassCardinality(leftCardinalityResult);
                   existAssoc.setCDWrapperRightClassCardinality(rightCardinalityResult);
-                  existAssoc.setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  existAssoc.setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   newCDAssocWrapper.set(existAssoc);
                   break;
                 default:
@@ -336,22 +333,22 @@ public class CDWrapperGenerator {
             } else {
               String directionResult4Current = cDAssociationWrapperDirectionHelper(
                 reverseDirection(existAssoc.getCDAssociationWrapperDirection()), newCDAssocWrapper.get().getCDAssociationWrapperDirection());
-              CDWrapper.CDAssociationWrapperCardinality leftCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality leftCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperRightClassCardinality(), newCDAssocWrapper.get().getCDWrapperLeftClassCardinality());
-              CDWrapper.CDAssociationWrapperCardinality rightCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
+              CDAssociationWrapperCardinality rightCardinalityResult4Current = cDAssociationWrapperCardinalityHelper(
                 existAssoc.getCDWrapperLeftClassCardinality(), newCDAssocWrapper.get().getCDWrapperRightClassCardinality());
               switch (directionResult4Current) {
                 case "current":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   newCDAssocWrapper.get().setCDWrapperLeftClassCardinality(leftCardinalityResult4Current);
                   newCDAssocWrapper.get().setCDWrapperRightClassCardinality(rightCardinalityResult4Current);
-                  newCDAssocWrapper.get().setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  newCDAssocWrapper.get().setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   break;
                 case "exist":
                   cDAssociationWrapperGroup.remove(existAssoc.getName());
                   existAssoc.setCDWrapperLeftClassCardinality(rightCardinalityResult4Current);
                   existAssoc.setCDWrapperRightClassCardinality(leftCardinalityResult4Current);
-                  existAssoc.setCDWrapperKind(CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC);
+                  existAssoc.setCDWrapperKind(CDAssociationWrapperKind.CDWRAPPER_ASC);
                   CDAssociationWrapper reversedAssoc = reverseCDAssociationWrapper(existAssoc, existAssoc.getEditedElement().getCDAssocDir());
                   newCDAssocWrapper.set(reversedAssoc);
                   break;

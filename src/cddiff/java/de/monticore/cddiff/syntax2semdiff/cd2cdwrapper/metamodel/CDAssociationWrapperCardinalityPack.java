@@ -1,22 +1,22 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 public class CDAssociationWrapperCardinalityPack {
-  private CDWrapper.CDAssociationWrapperCardinality leftCardinality;
+  private CDAssociationWrapperCardinality leftCardinality;
 
-  private CDWrapper.CDAssociationWrapperCardinality rightCardinality;
+  private CDAssociationWrapperCardinality rightCardinality;
 
   public CDAssociationWrapperCardinalityPack(
-      CDWrapper.CDAssociationWrapperCardinality leftCardinality,
-      CDWrapper.CDAssociationWrapperCardinality rightCardinality) {
+      CDAssociationWrapperCardinality leftCardinality,
+      CDAssociationWrapperCardinality rightCardinality) {
     this.leftCardinality = leftCardinality;
     this.rightCardinality = rightCardinality;
   }
 
-  public CDWrapper.CDAssociationWrapperCardinality getLeftCardinality() {
+  public CDAssociationWrapperCardinality getLeftCardinality() {
     return leftCardinality;
   }
 
-  public CDWrapper.CDAssociationWrapperCardinality getRightCardinality() {
+  public CDAssociationWrapperCardinality getRightCardinality() {
     return rightCardinality;
   }
 

@@ -28,7 +28,7 @@ public class CDRefSetAssociationWrapper {
 
   protected String leftRoleName;
 
-  protected CDWrapper.CDAssociationWrapperDirection direction;
+  protected CDAssociationWrapperDirection direction;
 
   protected String rightRoleName;
 
@@ -40,7 +40,7 @@ public class CDRefSetAssociationWrapper {
   }
 
   public CDRefSetAssociationWrapper(Set<CDTypeWrapper> leftRefSet, String leftRoleName,
-      CDWrapper.CDAssociationWrapperDirection direction, String rightRoleName,
+      CDAssociationWrapperDirection direction, String rightRoleName,
       Set<CDTypeWrapper> rightRefSet, CDAssociationWrapper originalElement) {
     this.leftRefSet = leftRefSet;
     this.leftRoleName = leftRoleName;
@@ -66,11 +66,11 @@ public class CDRefSetAssociationWrapper {
     this.leftRoleName = leftRoleName;
   }
 
-  public CDWrapper.CDAssociationWrapperDirection getDirection() {
+  public CDAssociationWrapperDirection getDirection() {
     return direction;
   }
 
-  public void setDirection(CDWrapper.CDAssociationWrapperDirection direction) {
+  public void setDirection(CDAssociationWrapperDirection direction) {
     this.direction = direction;
   }
 

@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel;
 
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 
 import java.util.*;
@@ -12,8 +13,8 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrappe
  *
  * @attribute cDDiffId:
  *    unique cDDiff id
- * @attribute originalElement:
- *    original CDTypeWrapper
+ * @attribute baseElement:
+ *    base original CDTypeWrapper
  * @attribute isInCompareCDW:
  *    whether this CDTypeWrapper exists in compared CDWrapper (only check CDTypeWrapper name)
  * @attribute isContentDiff:
@@ -30,19 +31,29 @@ import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrappe
 public class CDTypeWrapperDiff {
   protected final UUID cDDiffId;
 
-  protected CDTypeWrapper originalElement;
+  protected CDTypeWrapper baseElement;
+
+  protected Optional<CDTypeWrapper> optCompareClass;
+
+  protected Optional<CDAssociationWrapper> optCompareAssoc;
 
   protected final boolean isInCompareCDW;
 
   protected final boolean isContentDiff;
 
-  protected final CDWrapperSyntaxDiff.CDTypeDiffCategory cDDiffCategory;
+  protected final CDTypeDiffCategory cDDiffCategory;
 
   protected Optional<List<String>> whichAttributesDiff;
 
-  public CDTypeWrapperDiff(CDTypeWrapper originalElement, boolean isInCompareCDW, boolean isContentDiff,
-      CDWrapperSyntaxDiff.CDTypeDiffCategory cDDiffCategory) {
-    this.originalElement = originalElement;
+  public CDTypeWrapperDiff(CDTypeWrapper baseElement,
+      Optional<CDTypeWrapper> optCompareClass,
+      Optional<CDAssociationWrapper> optCompareAssoc,
+      boolean isInCompareCDW,
+      boolean isContentDiff,
+      CDTypeDiffCategory cDDiffCategory) {
+    this.baseElement = baseElement;
+    this.optCompareClass = optCompareClass;
+    this.optCompareAssoc = optCompareAssoc;
     this.isInCompareCDW = isInCompareCDW;
     this.isContentDiff = isContentDiff;
     this.cDDiffCategory = cDDiffCategory;
@@ -55,11 +66,11 @@ public class CDTypeWrapperDiff {
 
   public String getName(boolean is4Print) {
     return getCDTypeDiffKindStrHelper(getCDDiffKind(), is4Print) + "_"
-        + this.originalElement.getOriginalClassName();
+        + this.baseElement.getOriginalClassName();
   }
 
-  public CDWrapperSyntaxDiff.CDTypeDiffKind getCDDiffKind() {
-    return getCDTypeDiffKindHelper(this.originalElement.getCDWrapperKind());
+  public CDTypeDiffKind getCDDiffKind() {
+    return getCDTypeDiffKindHelper(this.baseElement.getCDWrapperKind());
   }
 
   public boolean isInCompareCDW() {
@@ -70,7 +81,7 @@ public class CDTypeWrapperDiff {
     return isContentDiff;
   }
 
-  public CDWrapperSyntaxDiff.CDTypeDiffCategory getCDDiffCategory() {
+  public CDTypeDiffCategory getCDDiffCategory() {
     return cDDiffCategory;
   }
 
@@ -82,8 +93,41 @@ public class CDTypeWrapperDiff {
     this.whichAttributesDiff = whichAttributesDiff;
   }
 
-  public CDTypeWrapper getOriginalElement() {
-    return originalElement;
+  public CDTypeWrapper getBaseElement() {
+    return baseElement;
+  }
+
+  public String getBaseSourcePositionStr() {
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("l.");
+    stringBuilder.append(baseElement.getSourcePosition().getLine());
+    stringBuilder.append(", ");
+    stringBuilder.append("c.");
+    stringBuilder.append(baseElement.getSourcePosition().getColumn());
+    return stringBuilder.toString();
+  }
+  public String getCompareSourcePositionStr() {
+    if (this.cDDiffCategory != CDTypeDiffCategory.DELETED) {
+      if (optCompareClass.isPresent()) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("l.");
+        stringBuilder.append(optCompareClass.get().getSourcePosition().getLine());
+        stringBuilder.append(", ");
+        stringBuilder.append("c.");
+        stringBuilder.append(optCompareClass.get().getSourcePosition().getColumn());
+        return stringBuilder.toString();
+      }
+      if (optCompareAssoc.isPresent()) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("l.");
+        stringBuilder.append(optCompareAssoc.get().getSourcePosition().getLine());
+        stringBuilder.append(", ");
+        stringBuilder.append("c.");
+        stringBuilder.append(optCompareAssoc.get().getSourcePosition().getColumn());
+        return stringBuilder.toString();
+      }
+    }
+    return "NULL";
   }
 
 }
