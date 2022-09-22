@@ -17,7 +17,6 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symboltable.resolving.ResolvedSeveralEntriesForSymbolException;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
@@ -218,24 +217,6 @@ public class CDBasisSTCompleterTest {
 
     assertEquals(1, Log.getErrorCount());
     assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xA0324"));
-  }
-
-  @Test
-  public void symbolTableCompleterTypeAmbiguousTest() {
-    String artifact = SYMBOL_PATH + "de/monticore/cdbasis/symboltable/IncorrectTypeAmbiguous.cd";
-    ASTCDCompilationUnit ast = loadModel(artifact);
-    createSymbolTableFromAST(ast);
-
-    ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
-    List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
-
-    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(imports, packageDecl);
-    try{
-      ast.accept(c.getTraverser());
-      fail();
-    }catch(ResolvedSeveralEntriesForSymbolException e){
-      assertTrue(e.getMessage().startsWith("0xA4095"));
-    }
   }
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {
