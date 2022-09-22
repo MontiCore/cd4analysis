@@ -1,0 +1,12 @@
+classdiagram CD2 {
+
+	abstract class A {
+	  int id;
+	}
+
+  class B extends A{
+    String id;
+  }
+
+  association [*] A -> B [1..*];
+}

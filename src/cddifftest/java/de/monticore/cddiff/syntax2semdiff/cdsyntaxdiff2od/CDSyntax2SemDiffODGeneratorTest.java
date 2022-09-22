@@ -484,11 +484,11 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
    *******************************************************************/
 
   @Test
-  public void testConflict1() {
+  public void testAssocConflict1() {
     String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2A.cd";
+        + "/Conflict/Association2A.cd";
     String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2B.cd";
+        + "/Conflict/Association2B.cd";
     CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
@@ -502,11 +502,25 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void testConflict1Inheritance() {
+  public void testAssocConflict1Reversed() {
     String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2A_inheritance.cd";
+        + "/Conflict/Association2B.cd";
     String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2B_inheritance.cd";
+        + "/Conflict/Association2A.cd";
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+    List<ASTODArtifact> ods = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
+
+    Assert.assertEquals(ods.size(), 0);
+  }
+
+  @Test
+  public void testAssocConflict1Inheritance() {
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Conflict/Association2A_inheritance.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Conflict/Association2B_inheritance.cd";
     CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
@@ -522,11 +536,11 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void testConflict2() {
+  public void testAssocConflict2() {
     String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2C.cd";
+        + "/Conflict/Association2C.cd";
     String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2D.cd";
+        + "/Conflict/Association2D.cd";
     CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
@@ -540,11 +554,11 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
-  public void testConflict3() {
+  public void testAssocConflict3() {
     String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2E.cd";
+        + "/Conflict/Association2E.cd";
     String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-        + "/Association/Association2F.cd";
+        + "/Conflict/Association2F.cd";
     CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
     ASTCDCompilationUnit ast1 = parseModel(filePath1);
     ASTCDCompilationUnit ast2 = parseModel(filePath2);
@@ -555,6 +569,20 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
       Assert.assertTrue(matcher.checkODValidity(cdSemantics, od, ast1));
       Assert.assertFalse(matcher.checkODValidity(cdSemantics, od, ast2));
     }
+  }
+
+  @Test
+  public void testAttributesConflict() {
+    String filePath1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Conflict/Class2A.cd";
+    String filePath2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Conflict/Class2B.cd";
+    CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+    ASTCDCompilationUnit ast1 = parseModel(filePath1);
+    ASTCDCompilationUnit ast2 = parseModel(filePath2);
+    List<ASTODArtifact> ods = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
+
+    Assert.assertEquals(ods.size(), 0);
   }
 
 

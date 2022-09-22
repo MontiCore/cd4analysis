@@ -59,7 +59,7 @@ public class CDWrapperSyntaxDiffGenerator {
    */
   public void cDTypeDiffs(CDWrapper baseCDW, CDWrapper compareCDW, CDSemantics cdSemantics) {
     // general CDType
-    baseCDW.getCDTypeWrapperGroup().forEach((className, baseCDTypeWrapper) ->
+    baseCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().forEach((className, baseCDTypeWrapper) ->
         cDTypeDiffsHelper4CDSemantics(baseCDW, compareCDW, baseCDTypeWrapper, cdSemantics));
   }
 
@@ -73,13 +73,21 @@ public class CDWrapperSyntaxDiffGenerator {
       CDSemantics cdSemantics) {
 
     boolean isInCompareSG = false;
-    CDTypeWrapper compareCDTypeWrapper =
-        compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().get(baseCDTypeWrapper.getName());
+    CDTypeWrapper compareCDTypeWrapper = null;
+
+    Map<String, CDTypeWrapper> mapT = compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN();
+    System.out.println(mapT);
 
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       isInCompareSG = compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().containsKey(baseCDTypeWrapper.getName());
+      if (isInCompareSG) {
+        compareCDTypeWrapper =
+            compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().get(baseCDTypeWrapper.getName());
+      }
     } else if (cdSemantics == CDSemantics.MULTI_INSTANCE_CLOSED_WORLD) {
       if (compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().containsKey(baseCDTypeWrapper.getName())) {
+        compareCDTypeWrapper =
+            compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN().get(baseCDTypeWrapper.getName());
         if (checkEquivalence4Superclasses(baseCDTypeWrapper.getSuperclasses(), compareCDTypeWrapper.getSuperclasses())) {
           isInCompareSG = true;
         }

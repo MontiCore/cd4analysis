@@ -581,8 +581,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testConflict1() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
-            + "/Association2B.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2B.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -605,8 +605,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testConflict1_Inheritance() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
-            + "/Association2B_inheritance.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2B_inheritance.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -635,8 +635,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testConflict2() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
-            + "/Association2D.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2D.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -659,8 +659,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testConflict2_Reverse() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association/"
-            + "Association2D_reverse.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2D_reverse.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -683,8 +683,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testConflict3() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
-            + "/Association2F.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2F.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -707,8 +707,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testConflict4() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
-            + "/Association2H.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2H.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -731,8 +731,8 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testNoConflict() {
     ASTCDCompilationUnit cd = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Association"
-            + "/Association2G.cd");
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Association2G.cd");
     CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
     CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
     Assert.assertTrue(dg.getCDTypeWrapperGroup()
@@ -750,6 +750,30 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_RightToLeft_r_C")
         .getStatus().equals(CDStatus.OPEN));
+  }
+
+  @Test
+  public void testAttributeConflict() {
+    ASTCDCompilationUnit cd = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+            + "/Conflict/Class2A.cd");
+    CDWrapperGenerator cDWrapperGenerator = new CDWrapperGenerator();
+    CDWrapper dg = cDWrapperGenerator.generateCDWrapper(cd, CDSemantics.SIMPLE_CLOSED_WORLD);
+    Assert.assertTrue(dg.getCDTypeWrapperGroup()
+        .get("CDWrapperInterface_I")
+        .getStatus().equals(CDStatus.OPEN));
+    Assert.assertTrue(dg.getCDTypeWrapperGroup()
+        .get("CDWrapperAbstractClass_A")
+        .getStatus().equals(CDStatus.OPEN));
+    Assert.assertTrue(dg.getCDTypeWrapperGroup()
+        .get("CDWrapperClass_B")
+        .getStatus().equals(CDStatus.LOCKED));
+    Assert.assertTrue(dg.getCDAssociationWrapperGroup()
+        .get("CDAssociationWrapper_B_a_LeftToRight_b_B")
+        .getStatus().equals(CDStatus.LOCKED));
+    Assert.assertTrue(dg.getCDAssociationWrapperGroup()
+        .get("CDAssociationWrapper_A_a_LeftToRight_b_B")
+        .getStatus().equals(CDStatus.LOCKED));
   }
 
 }

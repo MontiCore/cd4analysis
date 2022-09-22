@@ -38,7 +38,8 @@ public class CDWrapperGenerator {
     solveInheritance();
     solveSuperclassesAndSubclasses();
     solveOverlap();
-    checkConflict4CDAssociationWrapper(cDAssociationWrapperGroup, inheritanceGraph);
+    solveAttributesConflict();
+    solveAssociationConflict();
 
     CDWrapper.setModel(cd);
     CDWrapper.setType(type);
@@ -369,6 +370,23 @@ public class CDWrapperGenerator {
       cDTypeWrapper.setSuperclasses(getSuperClassSet(inheritanceGraph, cDTypeWrapperName));
       cDTypeWrapper.setSubclasses(getInheritedClassSet(inheritanceGraph, cDTypeWrapperName));
     });
+  }
+
+  private void solveAttributesConflict() {
+    cDTypeWrapperGroup.forEach((cDTypeWrapperName, cDTypeWrapper) -> {
+      if (!cDTypeWrapper.isOpen()) {
+        cDTypeWrapper.getSubclasses().forEach(subCDTypeWrapperName ->
+            fuzzySearchCDAssociationWrapperByClassName(cDAssociationWrapperGroup,
+                subCDTypeWrapperName.split("_")[1])
+                .values()
+                .forEach(cdAssociationWrapper ->
+                    cdAssociationWrapper.setStatus(CDStatus.LOCKED)));
+      }
+    });
+  }
+
+  private void solveAssociationConflict() {
+    checkConflict4CDAssociationWrapper(cDAssociationWrapperGroup, inheritanceGraph);
   }
 
 }

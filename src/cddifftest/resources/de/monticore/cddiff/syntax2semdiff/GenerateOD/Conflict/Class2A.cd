@@ -1,0 +1,16 @@
+classdiagram CD1 {
+
+	interface I {
+	  String id;
+	}
+
+	abstract class A implements I {
+	  String a1;
+	}
+
+  class B extends A {
+    int id;
+  }
+
+  association [*] A -> B [1..*];
+}

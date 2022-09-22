@@ -88,11 +88,19 @@ public class CDTypeWrapper implements Cloneable {
   }
 
   public void addAttribute(ASTCDAttribute astcdAttribute) {
-    if (!this.editedElement.getCDAttributeList()
+    if (this.editedElement.getCDAttributeList()
         .stream()
-        .anyMatch(e -> e.getName().equals(astcdAttribute.getName()) && e.printType()
-            .equals(astcdAttribute.printType()))) {
+        .noneMatch(e -> e.getName().equals(astcdAttribute.getName()) &&
+            e.printType().equals(astcdAttribute.printType()))) {
       this.editedElement.addCDMember(astcdAttribute);
+    }
+
+    // attributes conflict
+    if (this.editedElement.getCDAttributeList()
+        .stream()
+        .anyMatch(e -> e.getName().equals(astcdAttribute.getName()) &&
+            !e.printType().equals(astcdAttribute.printType()))) {
+      this.status = CDStatus.LOCKED;
     }
   }
 
@@ -130,6 +138,10 @@ public class CDTypeWrapper implements Cloneable {
 
   public SourcePosition getSourcePosition() {
     return this.originalElement.get_SourcePositionStart();
+  }
+
+  public boolean isOpen() {
+    return status == CDStatus.OPEN;
   }
 
   @Override

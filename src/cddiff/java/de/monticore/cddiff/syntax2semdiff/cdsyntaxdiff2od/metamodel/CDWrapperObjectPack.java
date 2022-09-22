@@ -8,6 +8,9 @@ public class CDWrapperObjectPack {
 
   private CDTypeWrapper cDTypeWrapper;
 
+  public CDWrapperObjectPack() {
+  }
+
   public CDWrapperObjectPack(ASTODNamedObject namedObject, CDTypeWrapper cDTypeWrapper) {
     this.namedObject = namedObject;
     this.cDTypeWrapper = cDTypeWrapper;
@@ -19,6 +22,10 @@ public class CDWrapperObjectPack {
 
   public CDTypeWrapper getCDTypeWrapper() {
     return cDTypeWrapper;
+  }
+
+  public boolean isEmpty() {
+    return namedObject == null && cDTypeWrapper == null;
   }
 
 }

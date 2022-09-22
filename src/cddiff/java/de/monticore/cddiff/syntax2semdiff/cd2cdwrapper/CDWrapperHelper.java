@@ -606,7 +606,7 @@ public class CDWrapperHelper {
    */
   public static Map<String, CDAssociationWrapper> fuzzySearchCDAssociationWrapperByClassName(
       Map<String, CDAssociationWrapper> map, String className) {
-    Map<String, CDAssociationWrapper> result = new HashMap<>();
+    Map<String, CDAssociationWrapper> result;
     if (map == null) {
       return null;
     }
@@ -614,9 +614,9 @@ public class CDWrapperHelper {
       result = map.values()
           .stream()
           .filter(
-              e -> (e.getLeftOriginalClassName().equals(className) || e.getRightOriginalClassName()
-                  .equals(className)))
-          .collect(Collectors.toMap(e -> (String) e.getName(), e -> e));
+              e -> (e.getLeftOriginalClassName().equals(className) ||
+                  e.getRightOriginalClassName().equals(className)))
+          .collect(Collectors.toMap(CDAssociationWrapper::getName, e -> e));
     }
     return result;
   }
@@ -753,6 +753,19 @@ public class CDWrapperHelper {
   }
 
   /**
+   * return all simple subclasses about given CDTypeWrapper with OPEN status
+   * except abstract class and interface
+   */
+  public static List<CDTypeWrapper> getAllSimpleSubClasses4CDTypeWrapperWithStatusOpen(
+      CDTypeWrapper cDTypeWrapper,
+      Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
+    return getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cDTypeWrapperGroup)
+        .stream()
+        .filter(CDTypeWrapper::isOpen)
+        .collect(Collectors.toList());
+  }
+
+  /**
    * generate the list of CDRefSetAssociationWrapper each original association has one
    * CDRefSetAssociationWrapper object
    */
@@ -860,6 +873,7 @@ public class CDWrapperHelper {
     }
     return astcdAssociation;
   }
+
   /**
    * If an association has no cardinality that means its underspecified and for (static) SemDiff:
    * no cardinality == [*]
@@ -924,6 +938,7 @@ public class CDWrapperHelper {
 
     return modifiedBaseClassSet.equals(modifiedCompareClassSet);
   }
+
 
   /********************************************************************
    ************************    CD Status    ***************************
