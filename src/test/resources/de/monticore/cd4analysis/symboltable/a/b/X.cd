@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+package a.b;
+
+classdiagram X {
+  package c.d {
+    class Y { }
+  }
+}
