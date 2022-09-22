@@ -1,0 +1,11 @@
+classdiagram CD2 {
+
+	interface I {
+	  String id;
+	}
+
+	abstract class A implements I {
+	  String a1;
+	}
+
+}

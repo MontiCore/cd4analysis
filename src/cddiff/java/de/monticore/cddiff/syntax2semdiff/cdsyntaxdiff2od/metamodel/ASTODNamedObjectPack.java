@@ -9,6 +9,9 @@ public class ASTODNamedObjectPack {
 
   private boolean isInList;
 
+  public ASTODNamedObjectPack() {
+  }
+
   public ASTODNamedObjectPack(List<ASTODNamedObject> namedObjects, boolean isInList) {
     this.namedObjects = namedObjects;
     this.isInList = isInList;
@@ -28,6 +31,10 @@ public class ASTODNamedObjectPack {
 
   public void setInList(boolean inList) {
     isInList = inList;
+  }
+
+  public boolean isEmpty() {
+    return namedObjects.isEmpty();
   }
 
 }

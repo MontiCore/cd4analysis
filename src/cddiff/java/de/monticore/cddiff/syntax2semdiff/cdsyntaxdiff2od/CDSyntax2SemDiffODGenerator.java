@@ -61,7 +61,8 @@ public class CDSyntax2SemDiffODGenerator {
       CDTypeWrapperDiff currentCDTypeDiff = globalClassQueue.pop();
       if (currentCDTypeDiff.getCDDiffKind() == CDTypeDiffKind.CDDIFF_CLASS ||
           currentCDTypeDiff.getCDDiffKind() == CDTypeDiffKind.CDDIFF_ENUM) {
-        Optional<ASTODPack> optionalASTODPack = generateODByClass(cdw, currentCDTypeDiff, cdSemantics);
+        Optional<ASTODPack> optionalASTODPack =
+            generateODByClass(cdw, currentCDTypeDiff, cdSemantics);
         if (optionalASTODPack.isEmpty()) {
           continue;
         }
@@ -99,6 +100,11 @@ public class CDSyntax2SemDiffODGenerator {
         classStack4SourceClass,
         refLinkCheckList,
         cdSemantics);
+
+    // Guaranteed CDTypeWrapper status is OPEN
+    if (astodPack.isEmpty()) {
+      return Optional.empty();
+    }
 
     // using basic process
     return usingGenerateODBasicProcess(cdw,
@@ -165,15 +171,21 @@ public class CDSyntax2SemDiffODGenerator {
     }
 
     if (optionalAstODPack.isEmpty()) {
-      astodPack.extendNamedObjects(
-          createObjectList(cdw,
-              Optional.of(cDTypeWrapperDiff),
-              usingCDTypeWrapper,
-              1,
-              classStack4TargetClass,
-              classStack4SourceClass,
-              Optional.empty(),
-              cdSemantics));
+      List<ASTODNamedObject> astodNamedObjectList = createObjectList(cdw,
+          Optional.of(cDTypeWrapperDiff),
+          usingCDTypeWrapper,
+          1,
+          classStack4TargetClass,
+          classStack4SourceClass,
+          Optional.empty(),
+          cdSemantics);
+
+      // Guaranteed CDTypeWrapper status is OPEN
+      if (astodNamedObjectList.isEmpty()) {
+        return new ASTODPack();
+      }
+
+      astodPack.extendNamedObjects(astodNamedObjectList);
     }
     else {
       astodPack.extendNamedObjects(optionalAstODPack.get().getNamedObjects());
@@ -219,6 +231,15 @@ public class CDSyntax2SemDiffODGenerator {
           assoc2.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC ? 1 : 0;
       return o2 - o1;
     });
+
+    // Guaranteed CDAssociationWrapper status is OPEN
+    CDAssociationWrapperList = CDAssociationWrapperList
+        .stream()
+        .filter(CDAssociationWrapper::isOpen)
+        .filter(cdAssociationWrapper -> cdAssociationWrapper.getCDWrapperLeftClass().isOpen())
+        .filter(cdAssociationWrapper -> cdAssociationWrapper.getCDWrapperRightClass().isOpen())
+        .collect(Collectors.toList());
+
     ASTODPack astodPack = null;
     if (!CDAssociationWrapperList.isEmpty()) {
       // exist associations with current class
@@ -234,12 +255,17 @@ public class CDSyntax2SemDiffODGenerator {
           classStack4TargetClass,
           classStack4SourceClass,
           cdSemantics);
+
+      // Guaranteed CDTypeWrapper status is OPEN
+      if (astodPack.isEmpty()) {
+        return Optional.empty();
+      }
+
       List<CDRefSetAssociationWrapper> initCDRefSetAssociationWrapper =
           findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(
               cdw, cDAssocWrapperDiff.getBaseElement(), refLinkCheckList);
       decreaseCounterInCheckList(initCDRefSetAssociationWrapper, refLinkCheckList);
     }
-
 
     return astodPack == null ? Optional.empty() : Optional.of(astodPack);
   }
@@ -278,16 +304,29 @@ public class CDSyntax2SemDiffODGenerator {
         classStack4SourceClass,
         cdSemantics);
 
+    // Guaranteed CDTypeWrapper status is OPEN
+    if (astodPack.isEmpty()) {
+      return Optional.empty();
+    }
+
     List<CDRefSetAssociationWrapper> initCDRefSetAssociationWrapper;
     if (specialCDTypeWrapper.isPresent()) {
-      CDAssociationWrapper otherCDAssociationWrapper =
+
+      Optional<CDAssociationWrapperPack> optionalCDAssociationWrapperPack =
           fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
-              cdw.getCDAssociationWrapperGroup(), cDAssocWrapperDiff.getBaseElement())
-              .stream()
-              .filter(e -> !e.getCDAssociationWrapper().getName().equals(cDAssocWrapperDiff.getBaseElement().getName()))
-              .findFirst()
-              .get()
-              .getCDAssociationWrapper();
+          cdw.getCDAssociationWrapperGroup(), cDAssocWrapperDiff.getBaseElement())
+          .stream()
+          .filter(e -> !e.getCDAssociationWrapper().getName().equals(cDAssocWrapperDiff.getBaseElement().getName()))
+          .filter(cdAssociationWrapperPack -> cdAssociationWrapperPack.getCDAssociationWrapper().isOpen())
+          .findFirst();
+
+      // Guaranteed CDAssociationWrapper status is OPEN
+      if (optionalCDAssociationWrapperPack.isEmpty()) {
+        return Optional.empty();
+      }
+
+      CDAssociationWrapper otherCDAssociationWrapper =
+          optionalCDAssociationWrapperPack.get().getCDAssociationWrapper();
 
       initCDRefSetAssociationWrapper =
           findAllRelatedCDRefSetAssociationWrapperIncludingInheritanceByCDAssociationWrapper(cdw,
@@ -328,6 +367,10 @@ public class CDSyntax2SemDiffODGenerator {
       CDSemantics cdSemantics) {
 
     CDAssociationWrapper currentDiffAssoc = cDAssocWrapperDiff.getBaseElement();
+
+    if (!currentDiffAssoc.isOpen()) {
+      return new ASTODPack();
+    }
 
     // get the necessary information
     CDTypeWrapper leftCDTypeWrapper = currentDiffAssoc.getCDWrapperLeftClass();
@@ -464,6 +507,16 @@ public class CDSyntax2SemDiffODGenerator {
               cDAssocWrapperDiff.getRightInstanceClass() : Optional.empty(),
           cdSemantics);
     }
+
+    // Guaranteed CDTypeWrapper status is OPEN
+    if (leftElementList.isEmpty() && leftCardinalityCount != 0) {
+      return new ASTODPack();
+    }
+    // Guaranteed CDTypeWrapper status is OPEN
+    if (rightElementList.isEmpty() && rightCardinalityCount != 0) {
+      return new ASTODPack();
+    }
+
     List<ASTODLink> linkElementList = createLinkList(leftElementList,
         rightElementList,
         leftRoleName,
@@ -539,6 +592,12 @@ public class CDSyntax2SemDiffODGenerator {
       ASTODClassStackPack cDTypeWrapperPack = classStack.pop();
       List<ASTODNamedObject> objectList = cDTypeWrapperPack.getNamedObjects();
       currentCDTypeWrapper = cDTypeWrapperPack.getCDTypeWrapper();
+
+      // Guaranteed CDTypeWrapper status is OPEN
+      if (!currentCDTypeWrapper.isOpen()) {
+        return Optional.empty();
+      }
+
       if (opt4StartClassKind.equals("target")) {
         findAllCDAssociationWrapperByTargetClass(cdw, currentCDTypeWrapper, false).forEach(associationStack::push);
       }
@@ -548,6 +607,12 @@ public class CDSyntax2SemDiffODGenerator {
 
       while (!associationStack.isEmpty()) {
         CDAssociationWrapper currentCDAssociationWrapper = associationStack.pop();
+
+        // Guaranteed CDAssociationWrapper status is OPEN
+        if (!currentCDAssociationWrapper.isOpen()) {
+          return Optional.empty();
+        }
+
         if (!checkRelatedCDRefSetAssociationWrapperIsUsed(cdw, currentCDAssociationWrapper, refLinkCheckList)) {
 
           // get the information of currentSideClass and otherSideClass
@@ -610,6 +675,12 @@ public class CDSyntax2SemDiffODGenerator {
             // get otherSideObject
             ASTODNamedObjectPack astodNamedObjectPack =
                 getObjectInASTODElementListByCDTypeWrapper(cdw, otherSideClass, astodPack, cdSemantics);
+
+            // Guaranteed CDTypeWrapper status is OPEN
+            if (astodNamedObjectPack.isEmpty()) {
+              return Optional.empty();
+            }
+
             List<ASTODNamedObject> otherSideObjectList = astodNamedObjectPack.getNamedObjects();
 
             // determining illegal situations

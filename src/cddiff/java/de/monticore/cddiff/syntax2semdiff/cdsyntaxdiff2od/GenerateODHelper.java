@@ -423,7 +423,9 @@ public class GenerateODHelper {
   /**
    * create value for attribute
    */
-  public static String createValue(CDWrapper cdw, Optional<CDTypeWrapperDiff> cDTypeDiff, String type,
+  public static String createValue(CDWrapper cdw,
+      Optional<CDTypeWrapperDiff> cDTypeDiff,
+      String type,
       Boolean isEnumClass) {
     String result;
     String cDTypeWrapperKey = "CDWrapperEnum_" + type;
@@ -432,9 +434,8 @@ public class GenerateODHelper {
         result = cDTypeDiff.get().getWhichAttributesDiff().get().get(0);
       }
       else {
-        result = ((ASTCDEnum) cdw.getCDTypeWrapperGroup()
-            .get(cDTypeWrapperKey)
-            .getEditedElement()).getCDEnumConstantList().get(0).getName();
+        result = ((ASTCDEnum) cdw.getCDTypeWrapperGroup().get(cDTypeWrapperKey).getEditedElement())
+            .getCDEnumConstantList().get(0).getName();
       }
     }
     else {
@@ -561,10 +562,23 @@ public class GenerateODHelper {
     else {
       if (cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_INTERFACE ||
           cDTypeWrapper.getCDWrapperKind() == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
-        newCDTypeWrapper =
-            getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup()).get(0);
+        List<CDTypeWrapper> cdTypeWrapperList =
+            getAllSimpleSubClasses4CDTypeWrapperWithStatusOpen(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
+
+        // Guaranteed CDTypeWrapper status is OPEN
+        if (cdTypeWrapperList.isEmpty()) {
+          return new CDWrapperObjectPack();
+        }
+
+        newCDTypeWrapper = cdTypeWrapperList.get(0);
+
       }
       else {
+        // Guaranteed CDTypeWrapper status is OPEN
+        if (!cDTypeWrapper.isOpen()) {
+          return new CDWrapperObjectPack();
+        }
+
         newCDTypeWrapper = cDTypeWrapper;
       }
     }
@@ -626,7 +640,7 @@ public class GenerateODHelper {
    * create all objects that should be used in an OD
    */
   public static List<ASTODNamedObject> createObjectList(CDWrapper cdw,
-      Optional<CDTypeWrapperDiff> cDTypeDiff,
+      Optional<CDTypeWrapperDiff> cdTypeWrapperDiff,
       CDTypeWrapper offerCDTypeWrapper,
       int cardinalityCount,
       Deque<ASTODClassStackPack> classStack4TargetClass,
@@ -639,8 +653,14 @@ public class GenerateODHelper {
     CDTypeWrapper actualCDTypeWrapper = offerCDTypeWrapper;
     for (int i = 0; i < cardinalityCount; i++) {
       // set objects
-      CDWrapperObjectPack objectPack = createObject(cdw, cDTypeDiff, offerCDTypeWrapper, i,
+      CDWrapperObjectPack objectPack = createObject(cdw, cdTypeWrapperDiff, offerCDTypeWrapper, i,
           instanceClass, cdSemantics);
+
+      // Guaranteed CDTypeWrapper status is OPEN
+      if (objectPack.isEmpty()) {
+        return new LinkedList<>();
+      }
+
       actualCDTypeWrapper = objectPack.getCDTypeWrapper();
       astODNamedObjectList.add(objectPack.getNamedObject());
       tempList.add(objectPack.getNamedObject());
@@ -675,7 +695,9 @@ public class GenerateODHelper {
    * create link for one object to two objects
    */
   public static List<ASTODLink> createLinkList(List<ASTODNamedObject> leftElementList,
-      List<ASTODNamedObject> rightElementList, String leftRoleName, String rightRoleName,
+      List<ASTODNamedObject> rightElementList,
+      String leftRoleName,
+      String rightRoleName,
       int directionType) {
     List<ASTODLink> linkElementList = new LinkedList<>();
     if (leftElementList.size() != 0 && rightElementList.size() != 0) {
@@ -999,7 +1021,13 @@ public class GenerateODHelper {
           || cDTypeWrapper.getCDWrapperKind()
           == CDTypeWrapperKind.CDWRAPPER_ABSTRACT_CLASS) {
         List<CDTypeWrapper> CDTypeWrapperList =
-            getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
+            getAllSimpleSubClasses4CDTypeWrapperWithStatusOpen(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
+
+        // Guaranteed CDTypeWrapper status is OPEN
+        if (CDTypeWrapperList.isEmpty()) {
+          return new ASTODNamedObjectPack();
+        }
+
         newCDTypeWrapper = CDTypeWrapperList.get(CDTypeWrapperList.size() - 1);
       }
       else {
@@ -1007,9 +1035,16 @@ public class GenerateODHelper {
       }
       // put new object into resultList
       List<ASTODNamedObject> tempList = resultList.get();
-      tempList.add(createObject(cdw, Optional.empty(), newCDTypeWrapper, 0, Optional.empty(),
-          cdSemantics).getNamedObject());
 
+      CDWrapperObjectPack cdWrapperObjectPack =
+          createObject(cdw, Optional.empty(), newCDTypeWrapper, 0, Optional.empty(), cdSemantics);
+
+      // Guaranteed CDTypeWrapper status is OPEN
+      if (cdWrapperObjectPack.isEmpty()) {
+        return new ASTODNamedObjectPack();
+      }
+
+      tempList.add(cdWrapperObjectPack.getNamedObject());
       resultList.set(tempList);
     }
 

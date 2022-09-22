@@ -1,0 +1,12 @@
+classdiagram CD1 {
+
+	abstract class A {
+	  int id;
+	}
+
+  class B {
+    int id;
+  }
+
+  association [*] A -> B [1..*];
+}

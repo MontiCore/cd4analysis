@@ -168,6 +168,10 @@ public class CDAssociationWrapper implements Cloneable {
     return this.originalElement.get_SourcePositionStart();
   }
 
+  public boolean isOpen() {
+    return status == CDStatus.OPEN;
+  }
+
   @Override
   public CDAssociationWrapper clone() throws CloneNotSupportedException {
     CDAssociationWrapper cloned = (CDAssociationWrapper) super.clone();
