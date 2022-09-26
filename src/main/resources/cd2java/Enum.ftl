@@ -21,7 +21,7 @@ ${cdPrinter.printSimpleModifier(ast.getModifier())}  enum ${ast.getName()}
 
 <#list ast.getCDEnumConstantList() as enumConst>
     ${enumConst.getName()}
-    <#if enumConst.isPresentArguments()>
+    <#if enumConst.isPresentArguments()!>
         <#t>(
         <#list enumConst.getArguments().getExpressionList() as expr>
             <#t>${cdPrinter.printExpression(expr)}<#if !expr?is_last>,</#if>

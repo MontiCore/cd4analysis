@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import de.monticore.cd.codegen.methods.AccessorDecorator;
-import de.monticore.cd.codegen.methods.MethodDecorator;
 import de.monticore.cd.codegen.methods.MutatorDecorator;
 import de.monticore.cd.typescalculator.CDTypesCalculator;
 import de.monticore.cd4code.CD4CodeMill;
@@ -16,7 +15,9 @@ import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cd4codebasis._cocos.CD4CodeBasisASTCDMethodSignatureCoCo;
 import de.monticore.cd4codebasis.cocos.ebnf.CDMethodSignatureParameterNamesUnique;
-import de.monticore.cdbasis._ast.*;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._cocos.CDBasisASTCDAttributeCoCo;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.generating.GeneratorSetup;
@@ -348,8 +349,13 @@ public class CD4C {
     s.add(t.astcdImport.get());
   }
 
-  public Collection<ASTMCImportStatement> getImportList(ASTCDType clazz) {
-    return importMap.getOrDefault(clazz, Sets.newHashSet());
+  public List<ASTMCImportStatement> getImportList(ASTCDType clazz) {
+    return importMap.getOrDefault(clazz, Sets.newHashSet()).stream().sorted(new Comparator<ASTMCImportStatement>() {
+      @Override
+      public int compare(ASTMCImportStatement o1, ASTMCImportStatement o2) {
+        return o1.printType().compareTo(o2.printType());
+      }
+    }).collect(Collectors.toList());
   }
 
   /***************************************************************************/
