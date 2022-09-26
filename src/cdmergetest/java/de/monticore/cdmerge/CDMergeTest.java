@@ -6,25 +6,28 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class CDMergeTest extends BaseTest{
+public class CDMergeTest extends BaseTest {
   @Test
-  public void testMerge(){
+  public void testMerge() {
 
     final String srcDir = "src/cdmergetest/resources/class_diagrams/CDMergeTest/";
 
-    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
-    inputSet.add(parseModel(srcDir + "A.cd"));
-    inputSet.add(parseModel(srcDir + "B.cd"));
-    inputSet.add(parseModel(srcDir + "C.cd"));
+    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    try {
+      inputSet.add(loadModel(srcDir + "A.cd"));
+      inputSet.add(loadModel(srcDir + "B.cd"));
+      inputSet.add(loadModel(srcDir + "C.cd"));
+    } catch (IOException e) {
+      fail("IO exception whie accessing input models: " + e.getMessage());
+    }
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet);
 
@@ -36,23 +39,5 @@ public class CDMergeTest extends BaseTest{
 
   }
 
-  protected ASTCDCompilationUnit parseModel(String modelFile) {
-    Path model = Paths.get(modelFile);
-    CD4AnalysisParser parser = new CD4AnalysisParser();
-    Optional<ASTCDCompilationUnit> optAutomaton;
-    try {
-      optAutomaton = parser.parse(model.toString());
-      //assertFalse(parser.hasErrors());
-      assertTrue(optAutomaton.isPresent());
-
-      return optAutomaton.get();
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
-    }
-
-    return null;
-  }
 
 }
