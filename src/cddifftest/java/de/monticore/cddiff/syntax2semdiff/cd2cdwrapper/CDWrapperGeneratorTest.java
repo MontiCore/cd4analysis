@@ -13,7 +13,7 @@ import org.junit.Test;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
 
 public class CDWrapperGeneratorTest extends CDDiffTestBasis {
 

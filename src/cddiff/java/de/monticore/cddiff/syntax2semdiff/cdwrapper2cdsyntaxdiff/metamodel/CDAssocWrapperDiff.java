@@ -6,7 +6,7 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 import java.util.Optional;
 import java.util.UUID;
 
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDAssociationDiffKindHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiff4AssocHelper.getCDAssociationDiffKindHelper;
 
 /**
  * Each CDAssociationWrapper in based CDWrapper will generate three corresponding CompAssociations

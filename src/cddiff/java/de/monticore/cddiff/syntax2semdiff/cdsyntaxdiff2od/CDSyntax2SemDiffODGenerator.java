@@ -8,17 +8,19 @@ import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODClassStackPack;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODNamedObjectPack;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODPack;
-import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.CDTypeWrapperPack;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper;
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapperPack;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiff4AssocHelper;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDTypeWrapperDiff;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.*;
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.generateODSourcePosition;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4InheritanceHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4SearchHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4GenerateODHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.*;
 
 public class CDSyntax2SemDiffODGenerator {
 
@@ -244,7 +246,7 @@ public class CDSyntax2SemDiffODGenerator {
     if (!CDAssociationWrapperList.isEmpty()) {
       // exist associations with current class
       CDAssocWrapperDiff cDAssocWrapperDiff =
-          CDWrapperSyntaxDiffHelper.createCDAssociationDiffHelper(CDAssociationWrapperList.get(0),
+          CDWrapperSyntaxDiff4AssocHelper.createCDAssociationDiffHelper(CDAssociationWrapperList.get(0),
               Optional.empty(),
               false,
               true,

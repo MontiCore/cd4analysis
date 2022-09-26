@@ -2,9 +2,10 @@ package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cddiff.CDQNameHelper;
 import de.se_rwth.commons.SourcePosition;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
 
 /**
  * The association in AST will be converted to the corresponding CDAssociationWrapper

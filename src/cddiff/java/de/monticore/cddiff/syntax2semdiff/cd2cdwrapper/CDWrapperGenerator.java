@@ -16,7 +16,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4TypeHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4InheritanceHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4SearchHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4ConflictHelper.*;
 
 public class CDWrapperGenerator {
   protected Map<String, CDTypeWrapper> cDTypeWrapperGroup = new HashMap<>();
@@ -58,7 +62,8 @@ public class CDWrapperGenerator {
   /**
    * create CDTypeWrapper object for class and abstract class in AST
    */
-  public void createCDTypeWrapperForSimpleClassAndAbstractClass(ASTCDCompilationUnit cd, ICD4CodeArtifactScope scope) {
+  public void createCDTypeWrapperForSimpleClassAndAbstractClass(ASTCDCompilationUnit cd,
+      ICD4CodeArtifactScope scope) {
     List<ASTCDClass> astCDClassList = cd.getCDDefinition().getCDClassesList();
     List<ASTCDEnum> astCDEnumList = cd.getCDDefinition().getCDEnumsList();
 
@@ -140,12 +145,14 @@ public class CDWrapperGenerator {
    * childClass -> parentClass
    */
   public void createInheritanceGraph(ASTCDType child, Collection<ASTCDType> directSuperList) {
-    String childClass =
-      getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(child)) + "_" + child.getSymbol().getFullName();
+    String childClass = getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(child))
+        + "_"
+        + child.getSymbol().getFullName();
     inheritanceGraph.addNode(childClass);
     directSuperList.forEach(parent -> {
-      String parentClass =
-        getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(parent)) + "_" + parent.getSymbol().getFullName();
+      String parentClass = getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(parent))
+          + "_"
+          + parent.getSymbol().getFullName();
       inheritanceGraph.putEdge(childClass, parentClass);
     });
   }
@@ -155,8 +162,9 @@ public class CDWrapperGenerator {
    * add Enum class
    */
   public void createInheritanceGraph(ASTCDType astcdType) {
-    String enumClass =
-        getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(astcdType)) + "_" + astcdType.getSymbol().getFullName();
+    String enumClass = getCDTypeWrapperKindStrHelper(distinguishASTCDTypeHelper(astcdType))
+        + "_"
+        + astcdType.getSymbol().getFullName();
     inheritanceGraph.addNode(enumClass);
   }
 
@@ -179,19 +187,15 @@ public class CDWrapperGenerator {
    */
   public void createCDAssociationWrapperHelper(ASTCDAssociation astcdAssociation, Boolean isInherited) {
     // add role name if the original ASTCDAssociation has no role name for one side or both side
-    astcdAssociation = generateASTCDAssociationRoleName(astcdAssociation);
-    astcdAssociation = generateASTCDAssociationCardinality(astcdAssociation);
+    generateASTCDAssociationRoleName(astcdAssociation);
+    generateASTCDAssociationCardinality(astcdAssociation);
     CDAssociationWrapper currentAssoc = new CDAssociationWrapper(astcdAssociation, isInherited);
     currentAssoc.setCDWrapperLeftClass(
-      findCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getLeftOriginalClassName()));
+      getCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getLeftOriginalClassName()));
     currentAssoc.setCDWrapperRightClass(
-      findCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getRightOriginalClassName()));
+      getCDTypeWrapper4OriginalClassName(cDTypeWrapperGroup, currentAssoc.getRightOriginalClassName()));
     cDAssociationWrapperGroup.put(currentAssoc.getName(), currentAssoc);
   }
-
-  /********************************************************************
-   ******************** Solution for Inheritance **********************
-   *******************************************************************/
 
   /**
    * solve the inheritance problem:
@@ -200,10 +204,11 @@ public class CDWrapperGenerator {
    */
   private void solveInheritance() {
     List<List<String>> waitList = new ArrayList<>();
-    CDWrapperHelper CDWrapperHelper = new CDWrapperHelper();
+    CDWrapper4InheritanceHelper cdWrapper4InheritanceHelper = new CDWrapper4InheritanceHelper();
     getAllBottomCDTypeWrapperNode(inheritanceGraph).forEach(cDTypeWrapperName ->
       waitList.addAll(
-        CDWrapperHelper.getAllInheritancePath4CDTypeWrapper(cDTypeWrapperGroup.get(cDTypeWrapperName), inheritanceGraph)));
+          cdWrapper4InheritanceHelper.getAllInheritancePath4CDTypeWrapper(
+              cDTypeWrapperGroup.get(cDTypeWrapperName), inheritanceGraph)));
     waitList.forEach(path -> {
       if (path.size() > 1) {
 
@@ -281,18 +286,15 @@ public class CDWrapperGenerator {
     });
   }
 
-  /********************************************************************
-   ********************   Solution for Overlap   **********************
-   *******************************************************************/
-
   /**
    * solve the duplicate association with overlap part
    */
   private void solveOverlap() {
 
-    Map<String, CDAssociationWrapper> clonedCDAssociationWrapperGroup = cDAssociationWrapperGroup.entrySet()
-      .stream()
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    Map<String, CDAssociationWrapper> clonedCDAssociationWrapperGroup =
+        cDAssociationWrapperGroup.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
     clonedCDAssociationWrapperGroup.forEach((currentAssocName, currentAssoc) -> {
       if (currentAssoc.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC) {

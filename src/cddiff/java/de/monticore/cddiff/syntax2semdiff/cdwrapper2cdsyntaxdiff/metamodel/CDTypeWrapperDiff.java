@@ -5,8 +5,7 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 
 import java.util.*;
 
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDTypeDiffKindHelper;
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffHelper.getCDTypeDiffKindStrHelper;
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiff4TypeHelper.*;
 
 /**
  * Each CDTypeWrapper in based CDWrapper will generate one corresponding CDTypeWrapperDiff

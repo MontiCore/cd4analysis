@@ -1,9 +1,9 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 public class CDAssociationWrapperCardinalityPack {
-  private CDAssociationWrapperCardinality leftCardinality;
+  private final CDAssociationWrapperCardinality leftCardinality;
 
-  private CDAssociationWrapperCardinality rightCardinality;
+  private final CDAssociationWrapperCardinality rightCardinality;
 
   public CDAssociationWrapperCardinalityPack(
       CDAssociationWrapperCardinality leftCardinality,

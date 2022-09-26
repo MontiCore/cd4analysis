@@ -59,7 +59,7 @@ public class CDWrapper {
   public Map<String, CDTypeWrapper> getCDTypeWrapperGroupOnlyWithStatusOPEN() {
     return cDTypeWrapperGroup.entrySet().stream()
         .filter(map -> map.getValue().getStatus() == CDStatus.OPEN)
-        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   public void setCDTypeWrapperGroup(Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
@@ -73,7 +73,7 @@ public class CDWrapper {
   public Map<String, CDAssociationWrapper> getCDAssociationWrapperGroupOnlyWithStatusOPEN() {
     return cDAssociationWrapperGroup.entrySet().stream()
         .filter(map -> map.getValue().getStatus() == CDStatus.OPEN)
-        .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   public void setCDAssociationWrapperGroup(
