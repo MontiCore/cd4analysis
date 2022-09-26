@@ -171,7 +171,7 @@ public class CliMergeTool {
       }
       outStream.println("== FAILURE REASON ==");
       outStream.println(e.getMessage());
-      outStream.println("Check the execution log for occured merging problems.");
+      outStream.println("Check the execution log for occurred merging problems.");
     }
   }
 

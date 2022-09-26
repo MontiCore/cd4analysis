@@ -1,12 +1,20 @@
 package de.monticore.cdmerge;
 
 import com.google.common.base.Preconditions;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
+import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import net.sourceforge.plantuml.Log;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -14,11 +22,11 @@ import java.util.Set;
 
 public class CDMerge {
 
-  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs) {
+  private final static String TEMP_DIR = "target/temp-merge-dir";
+
+  public static ASTCDCompilationUnit merge(List<ASTCDCompilationUnit> inputs) {
 
     Optional<ASTCDCompilationUnit> optAST;
-
-    List<ASTCDCompilationUnit> inputList = new ArrayList<>(inputs);
 
     if (inputs.size() < 2) {
       optAST = inputs.stream().findAny();
@@ -30,32 +38,29 @@ public class CDMerge {
     }
 
     try {
-      optAST = new MergeTool(getConfig(inputList)).mergeCDs().getMergedCD();
 
-      if (optAST.isPresent()) {
-        return optAST.get();
+
+      MergeResult merged = null;
+      MergeTool cdMergeTool = new MergeTool(getConfig());
+
+          merged = cdMergeTool.mergeCDs(inputs);
+
+        if (merged.mergeSuccess() && merged.getMergedCD().isPresent()){
+          return merged.getMergedCD().get();
+        }
+
       }
-
-    }
     catch (MergingException e) {
-      Log.error(e.getMessage());
+        Log.error(e.getMessage());
+        return null;
+      }
+      Log.error("Unknown Error");
       return null;
     }
-    Log.error("Unknown Error");
-    return null;
-  }
 
-  private static CDMergeConfig getConfig(List<ASTCDCompilationUnit> inputModels) {
-    CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(
-            MergeParameter.CHECK_ONLY)
-        .withParam(MergeParameter.AST_BASED)
-        .withParam(MergeParameter.LOG_SILENT)
-        .withParam(MergeParameter.OUTPUT_NAME, "Merge");
 
-    for (ASTCDCompilationUnit cd : inputModels) {
-      Preconditions.checkNotNull(cd);
-      builder.addInputAST(cd);
-    }
+  private static CDMergeConfig getConfig() {
+    CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(MergeParameter.AST_BASED);
     return builder.build();
   }
 

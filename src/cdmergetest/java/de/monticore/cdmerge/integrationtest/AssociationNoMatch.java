@@ -11,6 +11,7 @@ import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -30,8 +31,8 @@ public class AssociationNoMatch extends BaseTest {
   private static final String EXPECTED = "src/cdmergetest/resources/class_diagrams/Association"
       + "/noMatch/mergedCD.cd";
 
-  @Ignore
-  public void testAssociationNoMatch() throws IOException, MergingException {
+   @Test
+    public void testAssociationNoMatch() throws IOException, MergingException {
     List<String> inputModels = new ArrayList<>();
     inputModels.add(INPUT_MODEL_1);
     inputModels.add(INPUT_MODEL_2);
@@ -43,11 +44,9 @@ public class AssociationNoMatch extends BaseTest {
       if (result.getMaxErrorLevel().ordinal() < ErrorLevel.WARNING.ordinal()) {
         fail("Warnings expected due to ambiguous association roles");
       }
-      System.out.println("[HERE]");
-      System.out.println(result.getLog(ErrorLevel.WARNING));
-      System.out.println("[HERE]");
+
       if (!result.getLog(ErrorLevel.WARNING)
-          .hasLogWithMessageContaining("Navigation over .+ is ambiguous")) {
+          .hasLogWithMessageContaining(".*Navigation over .* is ambiguous.*")) {
         fail("Warnings expected due to ambiguous association roles");
       }
     }

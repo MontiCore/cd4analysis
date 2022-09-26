@@ -146,9 +146,9 @@ public enum MergeParameter {
   SAVE_INTERMEDIATE_RESULT_TO_FILE("saveIntermediateToFile", "savint", MergeParameter.OFF, true),
 
   /**
-   * Prints the result merged diagram to the file. Default: ON
+   * Prints the result merged diagram to the file. Default: OFF
    */
-  SAVE_RESULT_TO_FILE("saveResultToFile", "f", MergeParameter.ON, true),
+  SAVE_RESULT_TO_FILE("saveResultToFile", "f", MergeParameter.OFF, true),
 
   /**
    * Combination of the parameters MERGE_ONLY_NAMED_ASSOCIATIONS, WARNING_AS_ERRORS Default: OFF

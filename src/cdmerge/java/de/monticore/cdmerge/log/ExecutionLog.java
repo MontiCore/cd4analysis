@@ -204,7 +204,7 @@ public class ExecutionLog {
    */
   public List<LogEntry> getLogsWithMessageContaining(String rxMessagePart) {
     return ImmutableList.copyOf(theLog.stream()
-        .filter(log -> rxMessagePart.matches((log.getMessage())))
+        .filter(log -> log.getMessage().matches(rxMessagePart))
         .sorted(LogEntry::compareTo)
         .collect(Collectors.toList()));
   }
@@ -217,7 +217,7 @@ public class ExecutionLog {
    */
   public boolean hasLogWithMessageContaining(String rxMessagePart) {
 
-    return theLog.stream().anyMatch(log -> rxMessagePart.matches((log.getMessage())));
+    return theLog.stream().anyMatch(log -> log.getMessage().matches(rxMessagePart));
   }
 
   /**
