@@ -2,6 +2,8 @@ package de.monticore.cd2smt.context;
 
 import de.monticore.cd2smt.Helper.SMTNameHelper;
 import com.microsoft.z3.*;
+import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
+import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -10,35 +12,44 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CDContext {
 
 
   private final Map<ASTCDAssociation, SMTAssociation> smtAssociations;
   private final Map<ASTCDClass, SMTClass> smtClasses;
-  private Context context;
+  private final Context context;
 
-  private List<BoolExpr> classConstrs;
-  private List<BoolExpr> assocConstr;
-  private List<BoolExpr> inherConstr;
+  private   List<Pair<String,BoolExpr>> oclConstraints;
+  private  List<Pair<String,BoolExpr>> associationConstraints;
+  private   List<Pair<String,BoolExpr>> inheritanceConstraints;
 
 
   public Context getContext() {
     return context;
   }
 
-  public List<BoolExpr> getAssocConstr() {
-    return assocConstr;
+  public List<Pair<String, BoolExpr>> getAssociationConstraints() {
+    return associationConstraints;
   }
 
-  public List<BoolExpr> getClassConstrs() {
-    return classConstrs;
+  public List<Pair<String, BoolExpr>> getInheritanceConstraints() {
+    return inheritanceConstraints;
+  }
+  public void setAssociationConstraints( List<Pair<String,BoolExpr>> associationConstraints){
+    this.associationConstraints = associationConstraints;
   }
 
-  public List<BoolExpr> getInherConstr() {
-    return inherConstr;
+  public void setInheritanceConstraints(List<Pair<String,BoolExpr>> inheritanceConstraints) {
+    this.inheritanceConstraints = inheritanceConstraints;
+  }
+
+  public List<Pair<String,BoolExpr>> getOclConstraints() {
+    return oclConstraints;
   }
 
   public Map<ASTCDAssociation, SMTAssociation> getSMTAssociations() {
@@ -49,30 +60,18 @@ public class CDContext {
     return smtClasses;
   }
 
-  public void setAssocConstr(List<BoolExpr> assocConstr) {
-    this.assocConstr = assocConstr;
+  public void setOclConstraints(List<Pair<String,BoolExpr>> oclConstraints) {
+    this.oclConstraints = oclConstraints;
   }
-
-
-
-  public void setClassConstrs(List<BoolExpr> classConstrs) {
-    this.classConstrs = classConstrs;
-  }
-
-
-  public void setInherConstr(List<BoolExpr> inherConstr) {
-    this.inherConstr = inherConstr;
-  }
-
 
 
   public CDContext(Context context) {
     this.context = context ;
     smtClasses = new HashMap<>();
     smtAssociations = new HashMap<>();
-    classConstrs = new ArrayList<>();
-    assocConstr = new ArrayList<>();
-    inherConstr = new ArrayList<>();
+    oclConstraints= new ArrayList<>();
+    associationConstraints = new ArrayList<>();
+    inheritanceConstraints = new ArrayList<>();
   }
 
   public List<ASTCDClass> getSubclassList(ASTCDDefinition cd, ASTCDClass myClass) {
@@ -133,6 +132,26 @@ public class CDContext {
       }
     }
     return false ;
+  }
+
+  public  Optional<Model> getModel (Context ctx, List<Pair<String,BoolExpr>> constraints){
+    Solver s = ctx.mkSolver();
+    int i = 0;  // Names must be unique, hence we have a counter
+    for (Pair<String,BoolExpr> expr : constraints){
+      s.assertAndTrack(expr.getRight(), ctx.mkBoolConst("inv____" + expr.getLeft() + "____" + i));
+      i++;
+    }
+    if (s.check() == Status.SATISFIABLE)
+      return Optional.of(s.getModel());
+    else {
+      Log.warn("Found no instance. The following invariants lead to a contradiction: \n\t" +
+        Arrays.stream(s.getUnsatCore())
+          .map(AST::getSExpr)
+          .map(name -> name.split("____")[1])
+          .collect(Collectors.toSet()));
+      return Optional.empty();
+    }
+
   }
 
 }

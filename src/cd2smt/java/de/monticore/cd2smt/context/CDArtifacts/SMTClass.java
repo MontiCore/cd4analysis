@@ -1,4 +1,4 @@
-package de.monticore.cd2smt.context;
+package de.monticore.cd2smt.context.CDArtifacts;
 
 import com.microsoft.z3.*;
 import de.monticore.cdassociation._ast.ASTCDAssociation;

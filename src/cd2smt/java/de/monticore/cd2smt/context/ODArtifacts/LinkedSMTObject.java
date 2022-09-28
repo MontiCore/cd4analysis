@@ -1,5 +1,8 @@
-package de.monticore.cd2smt.context;
+package de.monticore.cd2smt.context.ODArtifacts;
 
+
+import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
+import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
 
 public class LinkedSMTObject {
   public LinkedSMTObject(SMTObject linkedObject, SMTAssociation smtAssociation, boolean isLeft){

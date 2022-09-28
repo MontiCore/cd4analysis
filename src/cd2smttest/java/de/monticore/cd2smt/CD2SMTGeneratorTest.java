@@ -5,7 +5,7 @@ import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.context.SMTClass;
+import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;

@@ -1,6 +1,6 @@
 package de.monticore.cd2smt.Helper;
 
-import de.monticore.cd2smt.context.SMTObject;
+import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
