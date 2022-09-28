@@ -41,10 +41,14 @@ public class ListAccessorDecorator extends ListMethodDecorator {
   @Override
   public List<ASTCDMethod> decorate(ASTCDAttribute ast) {
     List<ASTCDMethod> methods = super.decorate(ast);
-    methods.add(createGetListMethod(ast));
+    ASTCDMethod method = createGetListMethod(ast);
+    if (ast.getModifier().isDerived()) {
+      methods.clear();
+      method.getModifier().setAbstract(true);
+    }
+    methods.add(method);
     return methods;
   }
-
 
   protected ASTCDMethod createGetListMethod(ASTCDAttribute ast) {
     String signature = String.format(GET_LIST, attributeType, capitalizedAttributeNameWithOutS);

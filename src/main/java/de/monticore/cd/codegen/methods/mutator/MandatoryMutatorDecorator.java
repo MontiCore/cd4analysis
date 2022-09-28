@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.mutator;
 
+import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.methods.AbstractMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -25,6 +26,9 @@ public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
 
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
+    if (ast.getModifier().isDerived()) {
+      return Lists.newArrayList();
+    }
     return new ArrayList<>(Arrays.asList(createSetter(ast)));
   }
 
