@@ -50,4 +50,12 @@ public class MandatoryMutatorDecoratorTest {
     assertEquals("a", parameter.getName());
   }
 
+  @Test
+  public void testDerivedAttr() {
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    attribute.getModifier().setDerived(true);
+    MandatoryMutatorDecorator mandatoryMutatorDecorator = new MandatoryMutatorDecorator(glex);
+    List<ASTCDMethod> methList = mandatoryMutatorDecorator.decorate(attribute);
+    assertEquals(0, methList.size());
+  }
 }

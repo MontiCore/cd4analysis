@@ -43,6 +43,7 @@ public class MandatoryAccessorDecorator extends AbstractMethodDecorator {
     ASTMCType type = ast.getMCType().deepClone();
     ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), type, name);
     this.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint("methods.Get", ast));
+    method.getModifier().setAbstract(ast.getModifier().isDerived());
     return method;
   }
 }

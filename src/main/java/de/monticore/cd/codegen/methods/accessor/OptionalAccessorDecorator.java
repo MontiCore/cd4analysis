@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.accessor;
 
+import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.methods.AbstractMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -9,8 +10,6 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
@@ -31,9 +30,12 @@ public class OptionalAccessorDecorator extends AbstractMethodDecorator {
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
     nativeAttributeName = getNativeAttributeName(ast);
-    ASTCDMethod get = createGetMethod(ast);
-    ASTCDMethod isPresent = createIsPresentMethod(ast);
-    return new ArrayList<>(Arrays.asList(get, isPresent));
+    List<ASTCDMethod> returnList = Lists.newArrayList();
+    returnList.add(createGetMethod(ast));
+    if (!ast.getModifier().isDerived()) {
+      returnList.add(createIsPresentMethod(ast));
+    }
+    return returnList;
   }
 
   protected String getNativeAttributeName(ASTCDAttribute astcdAttribute) {
@@ -46,6 +48,7 @@ public class OptionalAccessorDecorator extends AbstractMethodDecorator {
     ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), type, name);
     String generatedErrorCode = service.getGeneratedErrorCode(ast.getName() + ast.printType());
     this.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint("methods.opt.Get4Opt", ast, nativeAttributeName, generatedErrorCode));
+    method.getModifier().setAbstract(ast.getModifier().isDerived());
     return method;
   }
 

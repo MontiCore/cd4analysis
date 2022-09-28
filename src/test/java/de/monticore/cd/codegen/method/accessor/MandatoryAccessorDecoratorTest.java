@@ -57,4 +57,14 @@ public class MandatoryAccessorDecoratorTest {
     assertDeepEquals(String.class, method.getMCReturnType().getMCType());
     assertDeepEquals(PUBLIC, method.getModifier());
   }
+
+  @Test
+  public void testDerivedAttr() {
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    attribute.getModifier().setDerived(true);
+    MandatoryAccessorDecorator mandatoryAccessorDecorator = new MandatoryAccessorDecorator(glex);
+    List<ASTCDMethod> methList = mandatoryAccessorDecorator.decorate(attribute);
+    assertEquals(1, methList.size());
+    assertTrue(methList.get(0).getModifier().isAbstract());
+  }
 }

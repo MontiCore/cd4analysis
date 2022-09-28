@@ -66,4 +66,15 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
     assertDeepEquals(PUBLIC, method.getModifier());
     assertTrue(method.getCDParameterList().isEmpty());
   }
+
+  @Test
+  public void testDerivedAttr() {
+    ASTMCType optType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
+    attribute.getModifier().setDerived(true);
+    OptionalAccessorDecorator optionalAccessorDecorator = new OptionalAccessorDecorator(glex);
+    List<ASTCDMethod> methList = optionalAccessorDecorator.decorate(attribute);
+    assertEquals(1, methList.size());
+    assertTrue(methList.get(0).getModifier().isAbstract());
+  }
 }
