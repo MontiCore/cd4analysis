@@ -1,4 +1,4 @@
-package de.monticore.cd2smt.context;
+package de.monticore.cd2smt.context.ODArtifacts;
 
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
@@ -13,9 +13,9 @@ public class SMTObject {
 
     private SMTObject superClass;
     private final Map<FuncDecl<? extends Sort>, Expr<Sort>>   attributes = new HashMap<>();
-    private final List< LinkedSMTObject> linkedObjects;
+    private final List<LinkedSMTObject> linkedObjects;
 
-    SMTObject(Expr<? extends  Sort> smtExpr) {
+    public SMTObject(Expr<? extends Sort> smtExpr) {
       this.smtExpr = smtExpr;
       linkedObjects = new ArrayList<>();
     }

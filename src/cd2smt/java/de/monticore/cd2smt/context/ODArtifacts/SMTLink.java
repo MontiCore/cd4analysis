@@ -1,7 +1,10 @@
-package de.monticore.cd2smt.context;
+package de.monticore.cd2smt.context.ODArtifacts;
+
+import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
+import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
 
 public class SMTLink {
- private final SMTAssociation  smtAssociation;
+ private final SMTAssociation smtAssociation;
  private final SMTObject leftObject;
  private final SMTObject rightObject;
 
