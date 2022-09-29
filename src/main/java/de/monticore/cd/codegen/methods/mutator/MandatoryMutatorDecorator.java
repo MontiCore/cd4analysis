@@ -26,7 +26,7 @@ public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
 
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
-    if (ast.getModifier().isDerived()) {
+    if (ast.getModifier().isDerived() || ast.getModifier().isReadonly()) {
       return Lists.newArrayList();
     }
     return new ArrayList<>(Arrays.asList(createSetter(ast)));
