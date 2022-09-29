@@ -31,7 +31,7 @@ public class OptionalMutatorDecorator extends AbstractMethodDecorator {
 
   @Override
   public List<ASTCDMethod> decorate(final ASTCDAttribute ast) {
-    if (ast.getModifier().isDerived()) {
+    if (ast.getModifier().isDerived() || ast.getModifier().isReadonly()) {
       return Lists.newArrayList();
     }
     List<ASTCDMethod> methodList = new ArrayList<>();
