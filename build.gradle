@@ -498,7 +498,7 @@ if(("false").equals(getProperty('publishMain'))) {
     from sourceSets.tool.runtimeClasspath
     archiveClassifier = "mc-tool"
   }
-  jar.dependsOn(shadowJar)
+  assemble.dependsOn(shadowJar)
 }
 
 
