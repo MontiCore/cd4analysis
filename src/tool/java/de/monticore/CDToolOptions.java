@@ -65,13 +65,12 @@ public class CDToolOptions {
         .type(String.class)
         .argName("file")
         .numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as a CD (mandatory for anything but "
-            + "`--semdiff` and `--syntaxdiff`, unless `--stdin` is used instead).")
+        .desc("Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.")
         .build());
 
     options.addOption(Option.builder()
         .longOpt("stdin")
-        .desc("Reads the input CD from stdin instead of argument `-i`.")
+        .desc("Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.")
         .build());
 
     options.addOption(Option.builder()
@@ -143,8 +142,7 @@ public class CDToolOptions {
         .argName("boolean")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Configures if built-in-types should be considered. Default: `true`; `-t` toggles "
-            + "it to `--usebuiltintypes false`.")
+        .desc("Configures if built-in-types should be considered. If this option is not used, built-in-types will be considered by default, if this option is used without arguments the value is toggled to `-t false`.")
         .build());
 
     options.addOption(Option.builder("d")

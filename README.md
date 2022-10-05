@@ -26,6 +26,11 @@ The CD languages are mainly intended for
 1. Finally CDs can also be used as reported results from any other 
    generation or analysis process.
 
+## Downloads
+* [Download Link for the CD Tool](https://monticore.de/download/MCCD.jar)
+* [Example Models](src/test/resources/de/monticore/cd4analysis)
+* [Download Page for all of our public MontiCore Tools](https://monticore.github.io/monticore/docs/Download/)
+
 ## An Example Model
 
 The following example CD [`MyLife`](doc/MyLife.cd) illustrates the textual 
@@ -133,7 +138,7 @@ The possible options are:
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help; other options are ignored. |
 | `--json` | Writes a "Schema.json" to the output directory. |
-| `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory for anything but `--semdiff` and `--merge`, unless `--stdin` is used instead). |
+| `-i,--input <file>` | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`. |
 | `--merge <file> <file>` | Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs `merged.cd` file if `-o` is used, otherwise prints the result to stdout. |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
 | `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
@@ -143,8 +148,8 @@ The possible options are:
 | `--rule-based` | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
 | `--semdiff <file> <file>` | Parses 2 CD-files and outputs object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
-| `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
-| `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. Default: `true`; `-t` toggles it to `--usebuiltintypes false`. |
+| `--stdin` | Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.  |
+| `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. If this option is not used, built-in-types will be considered by default, if this option is used without arguments the value is toggled to `-t false`. |
 
 ### Building the Tool from the Sources (if desired)
  
@@ -478,7 +483,7 @@ java -jar MCCD.jar --merge src/Person1.cd  src/Person2.cd
 [ToolDownload]: https://monticore.de/download/MCCD.jar
 
 ## Further Information
-
+* [Other MontiCore Tools](https://monticore.github.io/monticore/docs/Download/)
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
 * [MontiCore documentation](https://www.monticore.de/)
 * [**List of Languages**](https://github.com/MontiCore/monticore/blob/HEAD/docs/Languages.md)
