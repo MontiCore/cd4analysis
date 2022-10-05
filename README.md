@@ -27,9 +27,9 @@ The CD languages are mainly intended for
    generation or analysis process.
 
 ## Downloads
-* [Download Link for the CD Tool](https://monticore.de/download/MCCD.jar)
-* [Example Models](src/test/resources/de/monticore/cd4analysis)
-* [Download Page for all of our public MontiCore Tools](https://monticore.github.io/monticore/docs/Download/)
+* [Download Link for the CD Tool][ToolDownload]
+* [Example Models][ExampleModels]
+* [Download Page for all of our public MontiCore Tools][MCDownloadPage]
 
 ## An Example Model
 
@@ -481,9 +481,10 @@ java -jar MCCD.jar --merge src/Person1.cd  src/Person2.cd
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [ToolDownload]: https://monticore.de/download/MCCD.jar
+[MCDownloadPage]: https://monticore.github.io/monticore/docs/Download/
 
 ## Further Information
-* [Other MontiCore Tools](https://monticore.github.io/monticore/docs/Download/)
+* [Other MontiCore Tools][MCDownloadPage]
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
 * [MontiCore documentation](https://www.monticore.de/)
 * [**List of Languages**](https://github.com/MontiCore/monticore/blob/HEAD/docs/Languages.md)
