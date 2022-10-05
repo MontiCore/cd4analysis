@@ -14,7 +14,7 @@ import net.sourceforge.plantuml.Log;
 import java.io.File;
 import java.util.List;
 
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.printOD;
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.*;
 
 public class Syntax2SemDiff {
   public static List<ASTODArtifact> computeSemDiff(

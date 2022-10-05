@@ -20,7 +20,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.GenerateODHelper.printOD;
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.*;
 import static org.junit.Assert.assertNotNull;
 
 public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {

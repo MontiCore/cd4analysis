@@ -1,4 +1,4 @@
-package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel;
+package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 

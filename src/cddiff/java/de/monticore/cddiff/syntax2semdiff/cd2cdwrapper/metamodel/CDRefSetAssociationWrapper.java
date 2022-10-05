@@ -3,7 +3,7 @@ package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.reverseDirection;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
 
 /**
  *  CDRefSetAssociationWrapper is to solve the next problem in CD:

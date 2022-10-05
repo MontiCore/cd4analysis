@@ -7,8 +7,7 @@ import de.se_rwth.commons.SourcePosition;
 
 import java.util.*;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.distinguishASTCDTypeHelper;
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.getCDTypeWrapperKindStrHelper;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4TypeHelper.*;
 
 /**
  * The class, abstract class, interface and enum in AST will be converted to the corresponding
