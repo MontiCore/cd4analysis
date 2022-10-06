@@ -9,7 +9,8 @@
 This introduction is 
 intended for *modelers* who use the class diagram (CD)
 languages. We also provide a 
-[detailed documentation of CD languages](src/main/grammars/de/monticore/cd4analysis.md) 
+[detailed documentation of CD 
+languages](src/main/grammars/de/monticore/cd4analysis.md) 
 for *language engineers* using or
 extending one of the CD languages.
 
@@ -141,7 +142,7 @@ The possible options are:
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
 | `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
 | `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
-| `-t,--usebuiltintypes <boolean>` | Configures if built-in-types should be considered. Default: `true`; `-t` toggles it to `--usebuiltintypes false`. |
+| `-t,--usebuiltintypes <boolean>` | Configures availability of built-in-types. Default: `true`; `-t` and `--usebuiltintypes false` mean no builtin types. |
 
 ### Building the Tool from the Sources (if desired)
  
