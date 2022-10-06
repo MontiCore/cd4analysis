@@ -169,7 +169,8 @@ Change the directory to the root directory of the cloned sources:
 cd cd4analysis
 ```
 Then build the source files with gradle (if `gradle` is not 
-recognized as a command in your shell, please install [Gradle](https://gradle.org/releases/)).
+recognized as a command in your shell, please install 
+[Gradle](https://gradle.org/releases/)).
 To this effect, execute the following two commands:
 ```shell
 gradle build
@@ -447,10 +448,13 @@ differencing:
 
 https://www.se-rwth.de/topics/Semantics.php
 
-The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 
+The option `--semdiff` computes the semantic difference 
+semdiff(CD1,CD2) of two class diagrams CD1 
 and CD2 specified by `--semdiff CD1.cd CD2.cd`.
 
-For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
+For the following examples, download the files 
+[Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) 
+and save them in
 `src`:
 
 ```shell
@@ -458,7 +462,8 @@ java -jar MCCD.jar --semdiff src/Employees1.cd scr/Employees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
-that are generated in the output directory; the default is to generate at most 1 diff-witness. 
+that are generated in the output directory; the default is to generate 
+at most onw diff-witness. 
 Once again, `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
@@ -467,13 +472,18 @@ java -jar MCCD.jar --semdiff src/Employees1.cd  src/Employees2.cd --diffsize 5 -
 
 ### Step 9: Merging Two Class Diagram
 
-The option `--merge` can be used to merge two class diagrams CD1 and CD2 into a single class 
-diagram. This is only possible iff the two class diagrams CD1 and CD2 are semantically compatible.
-The resulting class diagram is stored in a file `Merge.cd` iff an output directory is specified via
+The option `--merge` is used to merge two class diagrams CD1 and 
+CD2 into a single class 
+diagram CD3, when the two source class diagrams CD1 and 
+CD2 are semantically compatible.
+The resulting class diagram CD3 is stored 
+in a file `Merge.cd` iff an 
+output directory is specified via
 `-o`, otherwise it is pretty-printed to stdout.
 
-For the following examples, download the files [Person1.cd](doc/Person1.cd) and [Person2.cd](doc/Person2.cd) and save them in
-`src`:
+For the following examples, download the files 
+[Person1.cd](doc/Person1.cd) and [Person2.cd](doc/Person2.cd) and 
+save them in `src`:
 
 ```shell
 java -jar MCCD.jar --merge src/Person1.cd  src/Person2.cd
