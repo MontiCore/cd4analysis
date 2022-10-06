@@ -1,9 +1,9 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 public class CDAssociationWrapperPack {
-  private CDAssociationWrapper cDAssociationWrapper;
+  private final CDAssociationWrapper cDAssociationWrapper;
 
-  private boolean isReverse;
+  private final boolean isReverse;
 
   public CDAssociationWrapperPack(CDAssociationWrapper cDAssociationWrapper, boolean isReverse) {
     this.cDAssociationWrapper = cDAssociationWrapper;

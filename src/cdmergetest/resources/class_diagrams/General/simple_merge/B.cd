@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package CDMergerTest.simple_merge;
+
+import java.util.Set;
+
+classdiagram B {
+	class Person {
+		int id;
+		String name;
+	}
+	class Office {
+		String workPlace;
+	}	
+	class Factory;
+	class Employee extends Person;
+	class Contract;
+	interface Working;
+	association employment Office -> (hired) Employee;
+	association acting Employee <-> Working;
+	composition Factory -> Employee [1..*];
+	association Employee <- Contract;
+	association Person [[workPlace]] (worker) -> Office [0..1];
+}

@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testDerived;
+classdiagram A {
+	class CA;
+	class CB;
+	class CC;
+	class CD;
+		
+		
+	association aa CA <->  CA;
+	
+	derived association ab CA -- CB;
+	
+	derived association ac CA -> CC;
+	
+	association bc CB -> CC;
+	
+	
+	
+	
+	
+}

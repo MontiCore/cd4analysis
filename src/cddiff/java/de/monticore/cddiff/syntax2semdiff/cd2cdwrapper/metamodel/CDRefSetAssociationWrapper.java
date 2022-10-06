@@ -1,6 +1,9 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
 
 /**
  *  CDRefSetAssociationWrapper is to solve the next problem in CD:
@@ -25,7 +28,7 @@ public class CDRefSetAssociationWrapper {
 
   protected String leftRoleName;
 
-  protected CDWrapper.CDAssociationWrapperDirection direction;
+  protected CDAssociationWrapperDirection direction;
 
   protected String rightRoleName;
 
@@ -37,7 +40,7 @@ public class CDRefSetAssociationWrapper {
   }
 
   public CDRefSetAssociationWrapper(Set<CDTypeWrapper> leftRefSet, String leftRoleName,
-      CDWrapper.CDAssociationWrapperDirection direction, String rightRoleName,
+      CDAssociationWrapperDirection direction, String rightRoleName,
       Set<CDTypeWrapper> rightRefSet, CDAssociationWrapper originalElement) {
     this.leftRefSet = leftRefSet;
     this.leftRoleName = leftRoleName;
@@ -63,11 +66,11 @@ public class CDRefSetAssociationWrapper {
     this.leftRoleName = leftRoleName;
   }
 
-  public CDWrapper.CDAssociationWrapperDirection getDirection() {
+  public CDAssociationWrapperDirection getDirection() {
     return direction;
   }
 
-  public void setDirection(CDWrapper.CDAssociationWrapperDirection direction) {
+  public void setDirection(CDAssociationWrapperDirection direction) {
     this.direction = direction;
   }
 
@@ -93,6 +96,30 @@ public class CDRefSetAssociationWrapper {
 
   public void setOriginalElement(CDAssociationWrapper originalElement) {
     this.originalElement = originalElement;
+  }
+
+  public boolean isPresentInCDRefSetAssociationWrapper(CDAssociationWrapper originalElement) {
+    if (
+        // original
+        (this.getLeftRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getLeftOriginalClassName()) &&
+        this.getLeftRoleName().equals(originalElement.getCDWrapperLeftClassRoleName()) &&
+        this.getDirection().equals(originalElement.getCDAssociationWrapperDirection()) &&
+        this.getRightRoleName().equals(originalElement.getCDWrapperRightClassRoleName()) &&
+        this.getRightRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getRightOriginalClassName())) ||
+        // reversed
+        (this.getLeftRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getRightOriginalClassName()) &&
+        this.getLeftRoleName().equals(originalElement.getCDWrapperRightClassRoleName()) &&
+        this.getDirection().equals(reverseDirection(originalElement.getCDAssociationWrapperDirection())) &&
+        this.getRightRoleName().equals(originalElement.getCDWrapperLeftClassRoleName()) &&
+        this.getRightRefSet().stream().map(CDTypeWrapper::getOriginalClassName).collect(Collectors.toSet())
+            .contains(originalElement.getLeftOriginalClassName()))) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

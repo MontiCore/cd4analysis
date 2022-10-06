@@ -6,11 +6,11 @@ import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.se_rwth.artifacts.lang.matcher.CDDiffOD2CDMatcher;
+import de.monticore.odvalidity.OD2CDMatcher;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,14 +40,15 @@ public class WitnessTest extends CDDiffTestBasis {
     List<ASTODArtifact> ods = s.generateODs();
 
     // Check for each od in ods if od is an instance of cd1 and not cd2
-    CDDiffOD2CDMatcher matcher = new CDDiffOD2CDMatcher();
+    OD2CDMatcher matcher = new OD2CDMatcher();
 
-    ASTCDDefinition cd1 = astV1.getCDDefinition();
-    ASTCDDefinition cd2 = astV2.getCDDefinition();
-
+    //TODO: Fix matcher
+    int i=0;
     for (ASTODArtifact od : ods) {
-      assertTrue(matcher.checkODConsistency(cd1, od.getObjectDiagram()));
-      assertFalse(matcher.checkODConsistency(cd2, od.getObjectDiagram()));
+      od.getObjectDiagram().setName("witness"+i);
+      assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, od, astV1));
+      assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, od, astV2));
+      i++;
     }
 
   }

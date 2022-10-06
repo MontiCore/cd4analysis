@@ -27,6 +27,11 @@ The CD languages are mainly intended for
 1. Finally CDs can also be used as reported results from any other 
    generation or analysis process.
 
+## Downloads
+* [Download Link for the CD Tool][ToolDownload]
+* [Example Models][ExampleModels]
+* [Download Page for all of our public MontiCore Tools][MCDownloadPage]
+
 ## An Example Model
 
 The following example CD [`MyLife`](doc/MyLife.cd) illustrates the textual 
@@ -95,6 +100,7 @@ for
 * loading symbols from symbol files, 
 * transforming CDs into a graphical svg format, and
 * computing the semantic difference of 2 CDs.
+* merging 2 CDs (iff the result is semantically sound)
 
 The requirements for building and using the CD tool are that Java 8, Git, 
 and Gradle are installed and available for use e.g. in Bash. 
@@ -133,16 +139,18 @@ The possible options are:
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help; other options are ignored. |
 | `--json` | Writes a "Schema.json" to the output directory. |
-| `-i,--input <file>` | Reads the source file and parses the contents as a CD (mandatory, unless `--stdin` is used). |
+| `-i,--input <file>` | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`. |
+| `--merge <file> <file>` | Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs `merged.cd` file if `-o` is used, otherwise prints the result to stdout. |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
-| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff`  (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
+| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
 | `-pp,--prettyprint <file>` | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
+| `--rule-based` | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
 | `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
 | `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
-| `-t,--usebuiltintypes <boolean>` | Configures availability of built-in-types. Default: `true`; `-t` and `--usebuiltintypes false` mean no builtin types. |
+| `-t,--usebuiltintypes <boolean>` | Switch of built-in-types. Default: on; `-t` and `--usebuiltintypes false` mean no builtin types. |
 
 ### Building the Tool from the Sources (if desired)
  
@@ -439,32 +447,45 @@ differencing:
 
 https://www.se-rwth.de/topics/Semantics.php
 
-The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of the class 
-diagram CD1 specified by `-i` and the class diagram CD2 specified by `--semdiff`.
-
-Since semdiff(CD1,CD2) might contain infinitely many diff-witnesses, we limit the size of 
-those witnesses. The default maximum number of objects per witness is 10. This number can 
-be changed via the option `--diffsize`.
+The option `--semdiff` computes the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 
+and CD2 specified by `--semdiff CD1.cd CD2.cd`.
 
 For the following examples, download the files [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) and save them in
 `src`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd --semdiff scr/Employees2.cd --diffsize 2
+java -jar MCCD.jar --semdiff src/Employees1.cd scr/Employees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
-that are generated in the output directory; the default is to generate at most 1 diff-witness. Once again, `-o` can be used to specify the output directory; the default is `.`:
+that are generated in the output directory; the default is to generate at most 1 diff-witness. 
+Once again, `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd --semdiff src/Employees2.cd --diffsize 5 --difflimit 20 -o out
+java -jar MCCD.jar --semdiff src/Employees1.cd  src/Employees2.cd --diffsize 5 --difflimit 20 -o out
 ```
+
+### Step 9: Merging Two Class Diagram
+
+The option `--merge` can be used to merge two class diagrams CD1 and CD2 into a single class 
+diagram. This is only possible iff the two class diagrams CD1 and CD2 are semantically compatible.
+The resulting class diagram is stored in a file `Merge.cd` iff an output directory is specified via
+`-o`, otherwise it is pretty-printed to stdout.
+
+For the following examples, download the files [Person1.cd](doc/Person1.cd) and [Person2.cd](doc/Person2.cd) and save them in
+`src`:
+
+```shell
+java -jar MCCD.jar --merge src/Person1.cd  src/Person2.cd
+```
+
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis
 [ToolDownload]: https://monticore.de/download/MCCD.jar
+[MCDownloadPage]: https://monticore.github.io/monticore/docs/Download/
 
 ## Further Information
-
+* [Other MontiCore Tools][MCDownloadPage]
 * [Project root: MontiCore @github](https://github.com/MontiCore/monticore)
 * [MontiCore documentation](https://www.monticore.de/)
 * [**List of Languages**](https://github.com/MontiCore/monticore/blob/HEAD/docs/Languages.md)

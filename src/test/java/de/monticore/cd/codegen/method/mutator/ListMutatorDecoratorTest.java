@@ -239,4 +239,14 @@ public class ListMutatorDecoratorTest {
     assertDeepEquals("Comparator<? super String>", parameter.getMCType());
     assertEquals("comparator", parameter.getName());
   }
+
+  @Test
+  public void testDerivedAttr() {
+    ASTMCType listType = MCTypeFacade.getInstance().createListTypeOf(String.class);
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
+    attribute.getModifier().setDerived(true);
+    ListMutatorDecorator listMutatorDecorator = new ListMutatorDecorator(glex);
+    List<ASTCDMethod> methList = listMutatorDecorator.decorate(attribute);
+    assertEquals(0, methList.size());
+  }
 }

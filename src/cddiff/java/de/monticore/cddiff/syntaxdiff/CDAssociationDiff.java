@@ -19,7 +19,7 @@ import java.util.Optional;
  * diff type contains information extracted from the provided associations, especially all field
  * changes
  */
-public class CDAssociationDiff extends AbstractDiffType {
+public class CDAssociationDiff extends CDElementDiff {
   protected final ASTCDAssociation cd1Element;
 
   protected final ASTCDAssociation cd2Element;
@@ -37,8 +37,8 @@ public class CDAssociationDiff extends AbstractDiffType {
       ppCardRight1, ppTypeRight1, ppQualifierRight1, ppRoleRight1, ppStereo2, ppModifier2,
       ppName2, ppType2, ppDir2, ppOrderLeft2, ppModifierLeft2, ppCardLeft2, ppTypeLeft2,
       ppQualifierLeft2, ppRoleLeft2, ppOrderRight2, ppModifierRight2, ppCardRight2, ppTypeRight2,
-      ppQualifierRight2, ppRoleRight2, assoCD1, assoCD2;
-
+      ppQualifierRight2, ppRoleRight2, assoCD1, assoCD2, assoCD1NC, assoCD2NC;
+  boolean directionChanged = false;
   private final CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
   /**
    * Constructor of the association diff type
@@ -55,7 +55,7 @@ public class CDAssociationDiff extends AbstractDiffType {
 
     this.diffSize = calculateDiffSize();
     setStrings();
-    for (FieldDiff<? extends ASTNode, ? extends ASTNode> diff : diffList) {
+    for (ASTNodeDiff<? extends ASTNode, ? extends ASTNode> diff : diffList) {
       if (diff.isPresent() && diff.getInterpretation().isPresent()) {
         interpretationList.add(diff.getInterpretation().get());
       }
@@ -74,6 +74,10 @@ public class CDAssociationDiff extends AbstractDiffType {
     double size = diffList.size();
 
     size += addWeightToDiffSize(diffList);
+    // Reduce diff size if the direction was reversed
+    if (directionChanged){
+      size -= 1;
+    }
 
     return size;
   }
@@ -84,7 +88,7 @@ public class CDAssociationDiff extends AbstractDiffType {
    */
   private void setBreakingChange(){
     // Check if Rolename was changed in Navigation direction
-    for (FieldDiff<? extends ASTNode,? extends ASTNode> diff : diffList){
+    for (ASTNodeDiff<? extends ASTNode,? extends ASTNode> diff : diffList){
       ASTCDAssocDir asso1Dir = getCd1Element().getCDAssocDir();
       ASTCDAssocDir asso2Dir = getCd2Element().getCDAssocDir();
       if (diff.isPresent() && diff.getCd1Value().isPresent() && diff.getCd1Value().get() instanceof ASTCDRole){
@@ -99,10 +103,10 @@ public class CDAssociationDiff extends AbstractDiffType {
           && asso2Dir.isDefinitiveNavigableRight())){
           // Role was either deleted or changed in navigation direction
           breakingChange += 1;
-          interpretationList.add(SyntaxDiff.Interpretation.BREAKINGCHANGE);
+          interpretationList.add(CDSyntaxDiff.Interpretation.BREAKINGCHANGE);
           interpretation.append("Rolename changed in navigation direction")
             .append(": ")
-            .append(SyntaxDiff.Interpretation.BREAKINGCHANGE)
+            .append(CDSyntaxDiff.Interpretation.BREAKINGCHANGE)
             .append(", ");
         }
       } else if (diff.isPresent() && diff.getCd2Value().isPresent() && diff.getCd2Value().get() instanceof ASTCDRole){
@@ -117,10 +121,10 @@ public class CDAssociationDiff extends AbstractDiffType {
           && asso2Dir.isDefinitiveNavigableRight())){
           // Role was either deleted or changed in navigation direction
           breakingChange += 1;
-          interpretationList.add(SyntaxDiff.Interpretation.BREAKINGCHANGE);
+          interpretationList.add(CDSyntaxDiff.Interpretation.BREAKINGCHANGE);
           interpretation.append("Rolename changed in navigation direction")
             .append(": ")
-            .append(SyntaxDiff.Interpretation.BREAKINGCHANGE)
+            .append(CDSyntaxDiff.Interpretation.BREAKINGCHANGE)
             .append(", ");
         }
       }
@@ -133,8 +137,18 @@ public class CDAssociationDiff extends AbstractDiffType {
    * @param cd2Asso Association from the target(new) model
    */
   private void assoDiff(ASTCDAssociation cd1Asso, ASTCDAssociation cd2Asso) {
+    this.assoCD1NC = pp.prettyprint((ASTCDAssociationNode) cd1Asso);
+    this.assoCD2NC = pp.prettyprint((ASTCDAssociationNode) cd2Asso);
 
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
+    if (assoCD1NC.contains("\n")) {
+      assoCD1NC = assoCD1NC.split("\n")[0];
+    }
+    if (assoCD2NC.contains("\n")) {
+      assoCD2NC = assoCD2NC.split("\n")[0];
+    }
+
+
+    List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
     interpretation.append("Interpretation: ");
 
     // Stereotype, optional
@@ -150,7 +164,7 @@ public class CDAssociationDiff extends AbstractDiffType {
     else
       cd2Stereo = Optional.empty();
 
-    FieldDiff<ASTStereotype, ASTStereotype> assoStereo = new FieldDiff<>(cd1Stereo, cd2Stereo);
+    ASTNodeDiff<ASTStereotype, ASTStereotype> assoStereo = new ASTNodeDiff<>(cd1Stereo, cd2Stereo);
     if (assoStereo.isPresent()) {
       diffs.add(assoStereo);
       if (assoStereo.getInterpretation().isPresent()) {
@@ -171,33 +185,11 @@ public class CDAssociationDiff extends AbstractDiffType {
       && pp.prettyprint(cd2Asso.getModifier()).length() < 1)){
       diffs.add(setModifier(cd1Asso.getModifier(), cd2Asso.getModifier()));
     }
-    /*
-    // Modifier, non-optional
-    Optional<ASTModifier> cd1Modi = Optional.of(cd1Asso.getModifier());
-    Optional<ASTModifier> cd2Modi = Optional.of(cd2Asso.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> assoModifier = new FieldDiff<>(cd1Modi, cd2Modi);
-    if (assoModifier.isPresent()) {
-      diffs.add(assoModifier);
-      if (assoModifier.getInterpretation().isPresent()) {
-        interpretation.append("Modifier")
-          .append(": ")
-          .append(assoModifier.getInterpretation().get())
-          .append(", ");
-      }
-    }
-    if (! (pp.prettyprint(cd1Modi.get()).length() < 1)){
-      ppModifier1 = getColorCode(assoModifier) + pp.prettyprint(cd1Modi.get()) + RESET;
-    }
-    if (! (pp.prettyprint(cd2Modi.get()).length() < 1)){
-      ppModifier2 = getColorCode(assoModifier) + pp.prettyprint(cd2Modi.get()) + RESET;
-    }
-
-     */
 
     // Association Type, non-optional
     Optional<ASTCDAssocType> cd1AssoType = Optional.of(cd1Asso.getCDAssocType());
     Optional<ASTCDAssocType> cd2AssoType = Optional.of(cd2Asso.getCDAssocType());
-    FieldDiff<ASTCDAssocType, ASTCDAssocType> assoType = new FieldDiff<>(cd1AssoType, cd2AssoType);
+    ASTNodeDiff<ASTCDAssocType, ASTCDAssocType> assoType = new ASTNodeDiff<>(cd1AssoType, cd2AssoType);
     if (assoType.isPresent()) {
       diffs.add(assoType);
       if (assoType.getInterpretation().isPresent()) {
@@ -212,13 +204,13 @@ public class CDAssociationDiff extends AbstractDiffType {
 
     // for each association the sides can be exchanged (Direction must be changed appropriately)
     // Original direction (is prioritised for equal results)
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> tmpOriginalDir = new ArrayList<>(
+    List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> tmpOriginalDir = new ArrayList<>(
         getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getLeft(), false));
 
     // Association Direction, non-optional
     Optional<ASTCDAssocDir> cd1AssoDir = Optional.of(cd1Asso.getCDAssocDir());
     Optional<ASTCDAssocDir> cd2AssoDir = Optional.of(cd2Asso.getCDAssocDir());
-    FieldDiff<ASTCDAssocDir, ASTCDAssocDir> assoDir1 = new FieldDiff<>(cd1AssoDir, cd2AssoDir);
+    ASTNodeDiff<ASTCDAssocDir, ASTCDAssocDir> assoDir1 = new ASTNodeDiff<>(cd1AssoDir, cd2AssoDir);
     if (assoDir1.isPresent()) {
       diffs.add(assoDir1);
       if (assoDir1.getInterpretation().isPresent()) {
@@ -229,28 +221,44 @@ public class CDAssociationDiff extends AbstractDiffType {
       }
     }
 
+    // Check if direction '->' was changed to '<-' or '<-' to '->'.
+    // If yes then add weight for calculating the smallest diff for each side combination.
+    int weightDirection = 0;
+    if ( (cd1AssoDir.get().isDefinitiveNavigableRight() && !cd1AssoDir.get().isDefinitiveNavigableLeft())
+      && (!cd2AssoDir.get().isDefinitiveNavigableRight() && cd2AssoDir.get().isDefinitiveNavigableLeft())
+      ||(!cd1AssoDir.get().isDefinitiveNavigableRight() && cd1AssoDir.get().isDefinitiveNavigableLeft())
+      && (cd2AssoDir.get().isDefinitiveNavigableRight() && !cd2AssoDir.get().isDefinitiveNavigableLeft())){
+      directionChanged = true;
+      weightDirection = 1;
+    }
+
     tmpOriginalDir.addAll(getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getRight(), false));
 
     // Reversed direction (exchange the input and use the reversed direction, only for directed)
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> tmpReverseDir = new ArrayList<>();
+    List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> tmpReverseDir = new ArrayList<>();
     tmpReverseDir.addAll(getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getRight(), false));
-
-    // Todo: Add reversed AssoDir
 
     tmpReverseDir.addAll(getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getLeft(), false));
 
-    if (tmpOriginalDir.size() < tmpReverseDir.size()) {
+    if ((tmpOriginalDir.size() + weightDirection) < tmpReverseDir.size()) {
       diffs.addAll(tmpOriginalDir);
       getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getLeft(), true);
       ppDir1 = getColorCode(assoDir1) + pp.prettyprint(cd1AssoDir.get()) + RESET;
       ppDir2 = getColorCode(assoDir1) + pp.prettyprint(cd2AssoDir.get()) + RESET;
       getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getRight(), true);
+      directionChanged = false;
     }
     else {
       diffs.addAll(tmpReverseDir);
       getAssocSideDiff(cd1Asso.getLeft(), cd2Asso.getRight(), true);
-      //ppDir1 = getColorCode(assoDir1) + pp.prettyprint(cd1AssoDir.get() + RESET);
-      //ppDir2 = getColorCode(assoDir1) + pp.prettyprint(cd2AssoDir.get() + RESET);
+      if (directionChanged){
+        ppDir1 = pp.prettyprint(cd1AssoDir.get());
+        ppDir2 = pp.prettyprint(cd2AssoDir.get());
+      }else {
+        ppDir1 = getColorCode(assoDir1) + pp.prettyprint(cd1AssoDir.get()) + RESET;
+        ppDir2 = getColorCode(assoDir1) + pp.prettyprint(cd2AssoDir.get()) + RESET;
+      }
+
       getAssocSideDiff(cd1Asso.getRight(), cd2Asso.getLeft(), true);
     }
 
@@ -265,9 +273,9 @@ public class CDAssociationDiff extends AbstractDiffType {
    * @param cd2Side Association side from the target(new) model
    * @return List of FieldDiffs which are merged into the difflist of the main method
    */
-  private List<FieldDiff<? extends ASTNode, ? extends ASTNode>> getAssocSideDiff(
+  private List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> getAssocSideDiff(
       ASTCDAssocSide cd1Side, ASTCDAssocSide cd2Side, boolean setPP) {
-    List<FieldDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
+    List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
 
     // Ordered, optional
     Optional<ASTCDOrdered> cd1Ordered = (cd1Side.isPresentCDOrdered()) ?
@@ -276,7 +284,7 @@ public class CDAssociationDiff extends AbstractDiffType {
     Optional<ASTCDOrdered> cd2Ordered = (cd2Side.isPresentCDOrdered()) ?
         Optional.of(cd2Side.getCDOrdered()) :
         Optional.empty();
-    FieldDiff<ASTCDOrdered, ASTCDOrdered> assoOrdered = new FieldDiff<>(cd1Ordered, cd2Ordered);
+    ASTNodeDiff<ASTCDOrdered, ASTCDOrdered> assoOrdered = new ASTNodeDiff<>(cd1Ordered, cd2Ordered);
     if (assoOrdered.isPresent()) {
       diffs.add(assoOrdered);
       if (assoOrdered.getInterpretation().isPresent() && setPP) {
@@ -301,7 +309,7 @@ public class CDAssociationDiff extends AbstractDiffType {
      */
     Optional<ASTModifier> cd1Modi = Optional.of(cd1Side.getModifier());
     Optional<ASTModifier> cd2Modi = Optional.of(cd2Side.getModifier());
-    FieldDiff<ASTModifier, ASTModifier> assoModifier = new FieldDiff<>(cd1Modi, cd2Modi);
+    ASTNodeDiff<ASTModifier, ASTModifier> assoModifier = new ASTNodeDiff<>(cd1Modi, cd2Modi);
     if (assoModifier.isPresent()) {
       if (!(pp.prettyprint(cd1Side.getModifier()).length() < 1 && pp.prettyprint(cd2Side.getModifier()).length() < 1)){
         diffs.add(assoModifier);
@@ -322,7 +330,7 @@ public class CDAssociationDiff extends AbstractDiffType {
     Optional<ASTCDCardinality> cd2Card = (cd2Side.isPresentCDCardinality()) ?
         Optional.of(cd2Side.getCDCardinality()) :
         Optional.empty();
-    FieldDiff<ASTCDCardinality, ASTCDCardinality> assoCard = new FieldDiff<>(cd1Card, cd2Card);
+    ASTNodeDiff<ASTCDCardinality, ASTCDCardinality> assoCard = new ASTNodeDiff<>(cd1Card, cd2Card);
     if (assoCard.isPresent()) {
       diffs.add(assoCard);
       if (assoCard.getInterpretation().isPresent() && setPP) {
@@ -339,7 +347,7 @@ public class CDAssociationDiff extends AbstractDiffType {
         cd1Side.getMCQualifiedType().getMCQualifiedName());
     Optional<ASTMCQualifiedName> cd2Type = Optional.of(
         cd2Side.getMCQualifiedType().getMCQualifiedName());
-    FieldDiff<ASTMCQualifiedName, ASTMCQualifiedName> type = new FieldDiff<>(cd1Type, cd2Type);
+    ASTNodeDiff<ASTMCQualifiedName, ASTMCQualifiedName> type = new ASTNodeDiff<>(cd1Type, cd2Type);
 
     if (type.isPresent()) {
       diffs.add(type);
@@ -359,7 +367,7 @@ public class CDAssociationDiff extends AbstractDiffType {
     Optional<ASTCDQualifier> cd2Quali = (cd2Side.isPresentCDQualifier()) ?
         Optional.of(cd2Side.getCDQualifier()) :
         Optional.empty();
-    FieldDiff<ASTCDQualifier, ASTCDQualifier> assoQuali = new FieldDiff<>(cd1Quali, cd2Quali);
+    ASTNodeDiff<ASTCDQualifier, ASTCDQualifier> assoQuali = new ASTNodeDiff<>(cd1Quali, cd2Quali);
     if (assoQuali.isPresent()) {
       diffs.add(assoQuali);
       if (assoQuali.getInterpretation().isPresent() && setPP) {
@@ -378,7 +386,7 @@ public class CDAssociationDiff extends AbstractDiffType {
     Optional<ASTCDRole> cd2Role = (cd2Side.isPresentCDRole()) ?
         Optional.of(cd2Side.getCDRole()) :
         Optional.empty();
-    FieldDiff<ASTCDRole, ASTCDRole> assoRole = new FieldDiff<>(cd1Role, cd2Role);
+    ASTNodeDiff<ASTCDRole, ASTCDRole> assoRole = new ASTNodeDiff<>(cd1Role, cd2Role);
     if (assoRole.isPresent()) {
       diffs.add(assoRole);
       if (assoRole.getInterpretation().isPresent() && setPP) {
@@ -455,11 +463,11 @@ public class CDAssociationDiff extends AbstractDiffType {
    * Help function to reduce code reusing. Create a modifier diff and sets print and interpretation strings.
    * @param cd1Modi Modifier of the first model
    * @param cd2Modi Modifier of the second model
-   * @return FieldDiff of type ASTModifier
+   * @return ASTNodeDiff of type ASTModifier
    */
 
-  protected FieldDiff<ASTModifier, ASTModifier> setModifier (ASTModifier cd1Modi, ASTModifier cd2Modi){
-    FieldDiff<ASTModifier, ASTModifier> modifier = new FieldDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
+  protected ASTNodeDiff<ASTModifier, ASTModifier> setModifier (ASTModifier cd1Modi, ASTModifier cd2Modi){
+    ASTNodeDiff<ASTModifier, ASTModifier> modifier = new ASTNodeDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
 
     if (! (pp.prettyprint(cd1Modi).length() < 1)){
       ppModifier1 = getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
@@ -504,7 +512,7 @@ public class CDAssociationDiff extends AbstractDiffType {
   }
 
   @Override
-  protected String combineWithoutNulls(List<String> stringList) {
+  public String combineWithoutNulls(List<String> stringList) {
     return super.combineWithoutNulls(stringList) + ";";
   }
   /**
@@ -516,6 +524,14 @@ public class CDAssociationDiff extends AbstractDiffType {
 
   public String printCD2() {
     return assoCD2;
+  }
+
+  public String printCD1NC() {
+    return assoCD1NC;
+  }
+
+  public String printCD2NC() {
+    return assoCD2NC;
   }
 
 }

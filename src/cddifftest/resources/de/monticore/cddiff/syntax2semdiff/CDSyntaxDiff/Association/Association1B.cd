@@ -1,7 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-classdiagram cd1 {
-  abstract class AStar;
-  class B extends AStar;
-  class C;
-  association [1] C <- B [1..*];
-}

@@ -2,8 +2,10 @@ package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cddiff.CDQNameHelper;
+import de.se_rwth.commons.SourcePosition;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
 
 /**
  * The association in AST will be converted to the corresponding CDAssociationWrapper
@@ -23,19 +25,28 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperHelper.*;
  *    linked left CDTypeWrapper
  * @attribute cDWrapperRightClass:
  *    linked right CDTypeWrapper
+ * @attribute status:
+ *    OPEN, CONFLICTING
  */
 public class CDAssociationWrapper implements Cloneable {
   protected final ASTCDAssociation originalElement;
+
   protected ASTCDAssociation editedElement;
-  protected CDWrapper.CDAssociationWrapperKind cDWrapperKind;
+
+  protected CDAssociationWrapperKind cDWrapperKind;
+
   protected CDTypeWrapper cDWrapperLeftClass;
+
   protected CDTypeWrapper cDWrapperRightClass;
+
+  protected CDStatus status;
 
   public CDAssociationWrapper(ASTCDAssociation originalElement, boolean isInherited) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
     this.cDWrapperKind = isInherited ?
-      CDWrapper.CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC : CDWrapper.CDAssociationWrapperKind.CDWRAPPER_ASC;
+      CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC : CDAssociationWrapperKind.CDWRAPPER_ASC;
+    this.status = CDStatus.OPEN;
   }
 
   public String getName() {
@@ -47,15 +58,15 @@ public class CDAssociationWrapper implements Cloneable {
       + getCDWrapperRightClass().getOriginalClassName();
   }
 
-  public CDWrapper.CDAssociationWrapperKind getCDWrapperKind() {
+  public CDAssociationWrapperKind getCDWrapperKind() {
     return cDWrapperKind;
   }
 
-  public void setCDWrapperKind(CDWrapper.CDAssociationWrapperKind cDWrapperKind) {
+  public void setCDWrapperKind(CDAssociationWrapperKind cDWrapperKind) {
     this.cDWrapperKind = cDWrapperKind;
   }
 
-  public CDWrapper.CDAssociationWrapperDirection getCDAssociationWrapperDirection() {
+  public CDAssociationWrapperDirection getCDAssociationWrapperDirection() {
     return distinguishAssociationDirectionHelper(this.editedElement);
   }
 
@@ -83,12 +94,11 @@ public class CDAssociationWrapper implements Cloneable {
     return this.originalElement.getRightQualifiedName().getQName();
   }
 
-  public CDWrapper.CDAssociationWrapperCardinality getCDWrapperLeftClassCardinality() {
+  public CDAssociationWrapperCardinality getCDWrapperLeftClassCardinality() {
     return distinguishLeftAssociationCardinalityHelper(this.editedElement);
   }
 
-  public void setCDWrapperLeftClassCardinality(
-      CDWrapper.CDAssociationWrapperCardinality cardinalityResult) {
+  public void setCDWrapperLeftClassCardinality(CDAssociationWrapperCardinality cardinalityResult) {
     switch (cardinalityResult) {
       case ONE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
@@ -105,12 +115,12 @@ public class CDAssociationWrapper implements Cloneable {
     }
   }
 
-  public CDWrapper.CDAssociationWrapperCardinality getCDWrapperRightClassCardinality() {
+  public CDAssociationWrapperCardinality getCDWrapperRightClassCardinality() {
     return distinguishRightAssociationCardinalityHelper(this.editedElement);
   }
 
   public void setCDWrapperRightClassCardinality(
-      CDWrapper.CDAssociationWrapperCardinality cardinalityResult) {
+      CDAssociationWrapperCardinality cardinalityResult) {
     switch (cardinalityResult) {
       case ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
@@ -145,6 +155,22 @@ public class CDAssociationWrapper implements Cloneable {
 
   public void setEditedElement(ASTCDAssociation editedElement) {
     this.editedElement = editedElement;
+  }
+
+  public CDStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(CDStatus status) {
+    this.status = status;
+  }
+
+  public SourcePosition getSourcePosition() {
+    return this.originalElement.get_SourcePositionStart();
+  }
+
+  public boolean isOpen() {
+    return status == CDStatus.OPEN;
   }
 
   @Override

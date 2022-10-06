@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package mergeEnum;
+classdiagram mergedCD {
+
+	enum Color { RED, GREEN, BLUE, BLACK; }
+	enum RelationType { FRIEND, FAMILY, OTHER; }
+	enum Rating { VERYBAD, BAD, AVERAGE, GOOD, VERYGOOD; }
+	
+}

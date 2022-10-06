@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+package notAssociative;
+classdiagram ABC {
+	class Contract;
+	class Person;
+	
+	association employment Person -> (workContract) Contract [1];
+	
+	association  Contract -> (signee) Person [1..*];
+	
+	association  Contract -> (supervisor) Person [1];
+}

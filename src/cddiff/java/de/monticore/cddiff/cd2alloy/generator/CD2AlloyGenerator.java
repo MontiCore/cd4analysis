@@ -2,7 +2,7 @@
 package de.monticore.cddiff.cd2alloy.generator;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cddiff.cd2alloy.CD2AlloyQNameHelper;
+import de.monticore.cddiff.CDQNameHelper;
 import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
@@ -157,7 +157,7 @@ public class CD2AlloyGenerator {
     // Union of all type names
     Set<String> typeNameUnion = new HashSet<>();
     for (ASTCDType astcdType : typeUnion) {
-      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
+      typeNameUnion.add(CDQNameHelper.processQName(astcdType.getSymbol().getFullName()));
     }
 
     // Output generation
@@ -229,14 +229,14 @@ public class CD2AlloyGenerator {
       }
       else {
         // Preprocess parts of reference names and add them as role name
-        leftRole = CD2AlloyQNameHelper.partHandler(association.getLeftReferenceName(), true);
+        leftRole = CDQNameHelper.partHandler(association.getLeftReferenceName(), true);
       }
       if (association.getRight().isPresentCDRole()) {
         rightRole = association.getRight().getCDRole().getName();
       }
       else {
         // Preprocess parts of reference names and add them as role name
-        rightRole = CD2AlloyQNameHelper.partHandler(association.getRightReferenceName(), true);
+        rightRole = CDQNameHelper.partHandler(association.getRightReferenceName(), true);
       }
 
       if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
@@ -286,7 +286,7 @@ public class CD2AlloyGenerator {
     // Union of all class Names
     Set<String> classNameUnion = new HashSet<>();
     for (ASTCDClass astcdClass : classUnion) {
-      classNameUnion.add(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()));
+      classNameUnion.add(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()));
     }
 
     // Union of all attributes in all classes
@@ -307,7 +307,7 @@ public class CD2AlloyGenerator {
     Set<String> interfaceNameUnion = new HashSet<>();
     for (ASTCDInterface astcdInterface : interfaceUnion) {
       interfaceNameUnion.add(
-          CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()));
+          CDQNameHelper.processQName(astcdInterface.getSymbol().getFullName()));
     }
     // Union of all Enums
     Set<ASTCDEnum> enumUnion = new HashSet<>();
@@ -319,7 +319,7 @@ public class CD2AlloyGenerator {
     // Union of all Enum Names
     Set<String> enumNameUnion = new HashSet<>();
     for (ASTCDEnum astcdEnum : enumUnion) {
-      enumNameUnion.add(CD2AlloyQNameHelper.processQName(astcdEnum.getSymbol().getFullName()));
+      enumNameUnion.add(CDQNameHelper.processQName(astcdEnum.getSymbol().getFullName()));
     }
 
     // Union of all Class or Interface Type Names
@@ -364,7 +364,7 @@ public class CD2AlloyGenerator {
     for (ASTCDEnum e : enumUnion) {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
-        enumTypeNameUnion.add(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()) + "_"
+        enumTypeNameUnion.add(CDQNameHelper.processQName(e.getSymbol().getFullName()) + "_"
             + astcdEnumConstant.getName());
       }
     }
@@ -398,7 +398,7 @@ public class CD2AlloyGenerator {
     // Union of all class Names
     Set<String> classNameUnion = new HashSet<>();
     for (ASTCDType astcdType : typeUnion) {
-      classNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
+      classNameUnion.add(CDQNameHelper.processQName(astcdType.getSymbol().getFullName()));
     }
 
     // Output generation
@@ -412,20 +412,20 @@ public class CD2AlloyGenerator {
     // Union of all type names
     Set<String> typeNameUnion = new HashSet<>();
     for (ASTCDType astcdType : typeUnion) {
-      typeNameUnion.add(CD2AlloyQNameHelper.processQName(astcdType.getSymbol().getFullName()));
+      typeNameUnion.add(CDQNameHelper.processQName(astcdType.getSymbol().getFullName()));
     }
     commonSigs.append("fact{");
 
     for (String typeName : typeNameUnion) {
       commonSigs.append("all c: ")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(CDQNameHelper.processQName(typeName))
           .append(" | c.type=Type_")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(CDQNameHelper.processQName(typeName))
           .append(System.lineSeparator())
           .append("Type_")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(CDQNameHelper.processQName(typeName))
           .append(" in Type_")
-          .append(CD2AlloyQNameHelper.processQName(typeName))
+          .append(CDQNameHelper.processQName(typeName))
           .append(".super")
           .append(System.lineSeparator());
     }
@@ -491,14 +491,14 @@ public class CD2AlloyGenerator {
       // Output F1
       // Functions + Names
       classFunctions.append("fun ")
-          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
           .append(": set Obj { ");
 
       // All subclasses connected with a '+'
       for (ASTCDClass sub : subs) {
-        classFunctions.append(CD2AlloyQNameHelper.processQName(sub.getSymbol().getFullName()));
+        classFunctions.append(CDQNameHelper.processQName(sub.getSymbol().getFullName()));
         classFunctions.append(" + ");
       }
       // Remove last '+'
@@ -559,7 +559,7 @@ public class CD2AlloyGenerator {
     Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
     for (ASTCDInterface astcdInterface : interfaces) {
       classFunctions.append("fun ")
-          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
           .append(": set Obj { ");
@@ -580,7 +580,7 @@ public class CD2AlloyGenerator {
       // Output
       if (impls.size() > 0) {
         for (ASTCDClass impl : impls) {
-          classFunctions.append(CD2AlloyQNameHelper.processQName(impl.getSymbol().getFullName()));
+          classFunctions.append(CDQNameHelper.processQName(impl.getSymbol().getFullName()));
           classFunctions.append(" + ");
         }
         // Remove last '+'
@@ -685,7 +685,7 @@ public class CD2AlloyGenerator {
         .append(System.lineSeparator());
     for (ASTCDEnum e : enums) {
       classFunctions.append("fun ")
-          .append(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(e.getSymbol().getFullName()))
           .append("EnumCD")
           .append(cdDefinition.getName())
           .append(": set EnumVal { ");
@@ -698,7 +698,7 @@ public class CD2AlloyGenerator {
 
         for (ASTCDEnumConstant enumVal : enumVals) {
           classFunctions.append("enum_")
-              .append(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))
+              .append(CDQNameHelper.processQName(e.getSymbol().getFullName()))
               .append("_")
               .append(enumVal.getName());
           classFunctions.append(" + ");
@@ -816,7 +816,7 @@ public class CD2AlloyGenerator {
 
     // Is type an enum?
     for (ASTCDEnum e : cdDefinition.getCDEnumsList()) {
-      if (type.equals(CD2AlloyQNameHelper.processQName(e.getSymbol().getFullName()))) {
+      if (type.equals(CDQNameHelper.processQName(e.getSymbol().getFullName()))) {
         result.append(type).append("EnumCD").append(cdDefinition.getName());
         return result.toString();
       }
@@ -824,7 +824,7 @@ public class CD2AlloyGenerator {
 
     // Is type a class?
     for (ASTCDClass c : cdDefinition.getCDClassesList()) {
-      if (type.equals(CD2AlloyQNameHelper.processQName(c.getSymbol().getFullName()))) {
+      if (type.equals(CDQNameHelper.processQName(c.getSymbol().getFullName()))) {
         result.append(type).append("SubsCD").append(cdDefinition.getName());
         return result.toString();
       }
@@ -832,7 +832,7 @@ public class CD2AlloyGenerator {
 
     // Is type an interface?
     for (ASTCDInterface i : cdDefinition.getCDInterfacesList()) {
-      if (type.equals(CD2AlloyQNameHelper.processQName(i.getSymbol().getFullName()))) {
+      if (type.equals(CDQNameHelper.processQName(i.getSymbol().getFullName()))) {
         result.append(type).append("SubsCD").append(cdDefinition.getName());
         return result.toString();
       }
@@ -866,13 +866,13 @@ public class CD2AlloyGenerator {
       // Output P0
       // Functions + Names
       classFunctions.append("ObjTypes[")
-          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
           .append(",(");
 
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
         classFunctions.append("Type_")
-            .append(CD2AlloyQNameHelper.processQName(superType.getSymbol().getFullName()))
+            .append(CDQNameHelper.processQName(superType.getSymbol().getFullName()))
             .append(" + ");
       }
       // Remove last '+'
@@ -913,7 +913,7 @@ public class CD2AlloyGenerator {
       // Generate Alloy predicate
       for (ASTCDAttribute astcdAttribute : attributeUnion) {
         predicate.append("ObjAttrib[")
-            .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+            .append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
             .append(", ");
         predicate.append(astcdAttribute.getName()).append(", ");
         predicate.append(
@@ -953,11 +953,11 @@ public class CD2AlloyGenerator {
       Set<String> superNames = new HashSet<>();
       for (ASTCDClass superclass : superClasses(astcdClass, cdClasses)) {
         // Add all names of super classes
-        superNames.add(CD2AlloyQNameHelper.processQName(superclass.getSymbol().getFullName()));
+        superNames.add(CDQNameHelper.processQName(superclass.getSymbol().getFullName()));
 
         // Add all names of implemented interfaces by this class
         for (ASTCDInterface i : interfaces(superclass, cdInterfaces)) {
-          superNames.add(CD2AlloyQNameHelper.processQName(i.getSymbol().getFullName()));
+          superNames.add(CDQNameHelper.processQName(i.getSymbol().getFullName()));
         }
       }
 
@@ -993,7 +993,7 @@ public class CD2AlloyGenerator {
             // TODO: Nur ein test
             if (superNames.contains(lrName)) {
               // Preprocess parts of reference names and add them as role name
-              String name = CD2AlloyQNameHelper.partHandler(a.getLeftReferenceName(), true);
+              String name = CDQNameHelper.partHandler(a.getLeftReferenceName(), true);
               fields.add(name);
             }
           }
@@ -1014,7 +1014,7 @@ public class CD2AlloyGenerator {
             // TODO: Nur ein test
             if (superNames.contains(rrName)) {
               // Preprocess parts of reference names and add them as role name
-              String name = CD2AlloyQNameHelper.partHandler(a.getRightReferenceName(), true);
+              String name = CDQNameHelper.partHandler(a.getRightReferenceName(), true);
               fields.add(name);
             }
           }
@@ -1023,7 +1023,7 @@ public class CD2AlloyGenerator {
 
       // Output
       predicate.append("ObjFNames[")
-          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
           .append(", ");
       if (fields.size() > 0) {
         for (String field : fields) {
@@ -1078,21 +1078,21 @@ public class CD2AlloyGenerator {
     // Alloy predicate for abstract classes
     for (ASTCDClass astcdClass : abstractClasses) {
       predicate.append("no ")
-          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
 
     // Alloy predicate for interfaces
     for (ASTCDInterface astcdInterface : cd.getCDDefinition().getCDInterfacesList()) {
       predicate.append("no ")
-          .append(CD2AlloyQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdInterface.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
 
     // Alloy predicates for singleton classes
     for (ASTCDClass astcdClass : singletonClasses) {
       predicate.append("one ")
-          .append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
+          .append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
 
@@ -1119,7 +1119,7 @@ public class CD2AlloyGenerator {
     predicate.append("Obj = (");
     if (cdClasses.size() > 0) {
       for (ASTCDClass astcdClass : cdClasses) {
-        predicate.append(CD2AlloyQNameHelper.processQName(astcdClass.getSymbol().getFullName()));
+        predicate.append(CDQNameHelper.processQName(astcdClass.getSymbol().getFullName()));
         predicate.append(" + ");
       }
       // Remove last '+'
@@ -1158,7 +1158,7 @@ public class CD2AlloyGenerator {
         predicate.append("BidiAssoc[");
 
         predicate.append(
-            executeRuleH1(CD2AlloyQNameHelper.partHandler(leftReferenceNames, false), cd));
+            executeRuleH1(CDQNameHelper.partHandler(leftReferenceNames, false), cd));
         predicate.append(",");
 
         if (a.getRight().isPresentCDRole()) {
@@ -1166,13 +1166,13 @@ public class CD2AlloyGenerator {
         }
         else {
           // Preprocess parts of reference names and add them as role name
-          String name = CD2AlloyQNameHelper.partHandler(a.getRightReferenceName(), true);
+          String name = CDQNameHelper.partHandler(a.getRightReferenceName(), true);
           predicate.append(name);
         }
         predicate.append(",");
 
         predicate.append(
-            executeRuleH1(CD2AlloyQNameHelper.partHandler(rightReferenceNames, false), cd));
+            executeRuleH1(CDQNameHelper.partHandler(rightReferenceNames, false), cd));
         predicate.append(",");
 
         if (a.getLeft().isPresentCDRole()) {
@@ -1180,7 +1180,7 @@ public class CD2AlloyGenerator {
         }
         else {
           // Preprocess parts of reference names and add them as role name
-          String name = CD2AlloyQNameHelper.partHandler(a.getLeftReferenceName(), true);
+          String name = CDQNameHelper.partHandler(a.getLeftReferenceName(), true);
           predicate.append(name);
         }
         predicate.append("]").append(System.lineSeparator());
@@ -1395,7 +1395,7 @@ public class CD2AlloyGenerator {
           roleName = association.getLeft().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(secondReferenceName, true);
+          roleName = CDQNameHelper.partHandler(secondReferenceName, true);
         }
         break;
       }
@@ -1417,7 +1417,7 @@ public class CD2AlloyGenerator {
           roleName = association.getLeft().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(firstReferenceName, true);
+          roleName = CDQNameHelper.partHandler(firstReferenceName, true);
         }
         break;
       }
@@ -1440,7 +1440,7 @@ public class CD2AlloyGenerator {
           roleName = association.getRight().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(secondReferenceName, true);
+          roleName = CDQNameHelper.partHandler(secondReferenceName, true);
         }
         break;
       }
@@ -1462,7 +1462,7 @@ public class CD2AlloyGenerator {
           roleName = association.getRight().getCDRole().getName();
         }
         else {
-          roleName = CD2AlloyQNameHelper.partHandler(firstReferenceName, true);
+          roleName = CDQNameHelper.partHandler(firstReferenceName, true);
         }
         break;
       }
@@ -1479,14 +1479,14 @@ public class CD2AlloyGenerator {
       predicate.append("ObjLU").append(infix).append("[");
     }
 
-    predicate.append(executeRuleH1(CD2AlloyQNameHelper.partHandler(firstReferenceName, false), cd));
+    predicate.append(executeRuleH1(CDQNameHelper.partHandler(firstReferenceName, false), cd));
     predicate.append(", ");
 
     predicate.append(roleName);
     predicate.append(", ");
 
     predicate.append(
-        executeRuleH1(CD2AlloyQNameHelper.partHandler(secondReferenceName, false), cd));
+        executeRuleH1(CDQNameHelper.partHandler(secondReferenceName, false), cd));
     predicate.append(", ");
 
     // Write cardinalities

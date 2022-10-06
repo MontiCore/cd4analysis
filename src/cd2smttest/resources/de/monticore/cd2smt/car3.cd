@@ -1,0 +1,18 @@
+classdiagram STTest {
+
+   class BigBigCar  extends BigCar{
+       boolean isBigBig ;
+
+     }
+   class BigCar extends Car{
+       boolean isBig;
+
+     }
+
+  class Car {
+    boolean isExpensive ;
+    String name;
+    int numberOfWheel ;
+    double price ;
+  }
+}

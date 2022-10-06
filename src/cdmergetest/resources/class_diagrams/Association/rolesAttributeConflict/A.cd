@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package rolesAttributeConflict;
+classdiagram A {
+	
+	class Office;
+	class Person;
+	
+	association Office -> (worker) Person;
+	
+}

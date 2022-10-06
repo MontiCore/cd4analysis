@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * For each CD a corresponding CDWrapper will be generated.
@@ -16,7 +17,7 @@ import java.util.Map;
  * @attribute cDTypeWrapperGroup: store generated CDTypeWrapper
  * @attribute cDAssociationWrapperGroup: store generated CDAssociationWrapper
  * @attribute refSetAssociationList: store generated CDRefSetAssociationWrapper
- * @attribute inheritanceGraph: store all inheritance informations that presents all the parents and
+ * @attribute inheritanceGraph: store all inheritance information that presents all the parents and
  * children of a class.
  */
 public class CDWrapper {
@@ -31,22 +32,6 @@ public class CDWrapper {
   protected List<CDRefSetAssociationWrapper> refSetAssociationList = new ArrayList<>();
 
   protected MutableGraph<String> inheritanceGraph;
-
-  public enum CDTypeWrapperKind {
-    CDWRAPPER_CLASS, CDWRAPPER_ENUM, CDWRAPPER_ABSTRACT_CLASS, CDWRAPPER_INTERFACE
-  }
-
-  public enum CDAssociationWrapperKind {
-    CDWRAPPER_ASC, CDWRAPPER_INHERIT_ASC, CDWRAPPER_INHERIT_DISPLAY_ASC
-  }
-
-  public enum CDAssociationWrapperDirection {
-    LEFT_TO_RIGHT, RIGHT_TO_LEFT, BIDIRECTIONAL, UNDEFINED
-  }
-
-  public enum CDAssociationWrapperCardinality {
-    ONE, ZERO_TO_ONE, ONE_TO_MORE, MORE
-  }
 
   public CDWrapper() {
   }
@@ -71,12 +56,24 @@ public class CDWrapper {
     return cDTypeWrapperGroup;
   }
 
+  public Map<String, CDTypeWrapper> getCDTypeWrapperGroupOnlyWithStatusOPEN() {
+    return cDTypeWrapperGroup.entrySet().stream()
+        .filter(map -> map.getValue().getStatus() == CDStatus.OPEN)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
   public void setCDTypeWrapperGroup(Map<String, CDTypeWrapper> cDTypeWrapperGroup) {
     this.cDTypeWrapperGroup = cDTypeWrapperGroup;
   }
 
   public Map<String, CDAssociationWrapper> getCDAssociationWrapperGroup() {
     return cDAssociationWrapperGroup;
+  }
+
+  public Map<String, CDAssociationWrapper> getCDAssociationWrapperGroupOnlyWithStatusOPEN() {
+    return cDAssociationWrapperGroup.entrySet().stream()
+        .filter(map -> map.getValue().getStatus() == CDStatus.OPEN)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   public void setCDAssociationWrapperGroup(

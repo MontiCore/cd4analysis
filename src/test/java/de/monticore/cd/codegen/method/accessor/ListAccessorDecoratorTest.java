@@ -241,4 +241,16 @@ public class ListAccessorDecoratorTest {
     assertInt(parameter.getMCType());
     assertEquals("end", parameter.getName());
   }
+
+  @Test
+  public void testDerivedAttr() {
+    ASTMCType listType = MCTypeFacade.getInstance().createListTypeOf(String.class);
+    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
+    attribute.getModifier().setDerived(true);
+    ListAccessorDecorator listAccessorDecorator = new ListAccessorDecorator(glex);
+    List<ASTCDMethod> methList = listAccessorDecorator.decorate(attribute);
+    assertEquals(1, methList.size());
+    assertTrue(methList.get(0).getModifier().isAbstract());
+  }
+
 }

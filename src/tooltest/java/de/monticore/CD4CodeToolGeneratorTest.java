@@ -52,6 +52,17 @@ public class CD4CodeToolGeneratorTest extends CD4CodeTestBasis {
     de.monticore.CD4CodeTool.main(input);
   }
 
+  @Test
+  public void testLanguageTeaserTopMechanism() throws RecognitionException {
+    String[] input = {
+      "-i", "src/test/resources/de/monticore/cd4code/generator/Auction.cd",
+      "-ct", "cd2java.CD2Java",
+      "--gen",
+      "-hwc", "src/tooltest/resources",
+      "-o", "target/generated/auctionTOP"
+    };
+    de.monticore.CD4CodeTool.main(input);
+  }
 
   @Test
   public void testLanguageTeaserTemplatePathAndDifferentConfigTemplate() throws RecognitionException, IOException {

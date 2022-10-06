@@ -1,0 +1,54 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.util.Date;
+
+classdiagram Employees7 {
+  enum PositionKind {
+    fullTime,
+    partTime;
+  }
+
+
+  package ins {
+    class Insurance implements Object;
+    class Employee implements Object;
+    class Manager implements Object;
+    class Insurable implements Object;
+  }
+
+
+
+
+
+  package emp {
+    class Employee implements Object {
+      PositionKind kind;
+    }
+  }
+
+  class Task implements Object {
+    Date startDate;
+  }
+
+  package room {
+    class Room implements Object;
+  }
+
+
+
+  association todo [1] emp.Employee  <-> Task [*] ;
+
+  class Person implements Object;
+
+
+
+  interface Object;
+
+  class ObjectSub4Diff implements Object;
+
+  association  emp.Employee  -> (managedBy) Object ;
+
+  association  Task  -> (employee) Object ;
+
+  association  emp.Employee  -> (task) Object ;
+
+}

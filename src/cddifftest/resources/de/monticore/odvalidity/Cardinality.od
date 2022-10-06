@@ -37,6 +37,6 @@ objectdiagram Cardinality {
     d1:D{
     };
 
-    aggregation c1 (c) <- (d) d1;
-    link c2 (rightBi) <-> (leftBi) a1, a2;
+    link c1, c2 (c) <- (d) d1;
+    link c2 (rightBi) <-> (leftBi) a1, a2, a3, a4;
 }

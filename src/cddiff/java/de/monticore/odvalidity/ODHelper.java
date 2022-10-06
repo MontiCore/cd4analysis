@@ -11,8 +11,18 @@ public class ODHelper {
   public static List<ASTODObject> getAllObjects(ASTObjectDiagram od) {
     List<ASTODObject> objectList = new ArrayList<>();
     for (ASTODElement element : od.getODElementList()) {
-      if (element instanceof ASTODNamedObject || element instanceof ASTODAnonymousObject) {
+      if (element instanceof ASTODObject) {
         objectList.add((ASTODObject) element);
+      }
+    }
+    return objectList;
+  }
+
+  public static List<ASTODNamedObject> getAllNamedObjects(ASTObjectDiagram od) {
+    List<ASTODNamedObject> objectList = new ArrayList<>();
+    for (ASTODElement element : od.getODElementList()) {
+      if (element instanceof ASTODNamedObject) {
+        objectList.add((ASTODNamedObject) element);
       }
     }
     return objectList;

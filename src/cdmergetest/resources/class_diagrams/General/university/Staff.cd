@@ -1,0 +1,63 @@
+/* (c) https://github.com/MontiCore/monticore */
+package university;
+import java.example.types.*;
+classdiagram Staff{
+
+	interface Human;
+	interface Employable;
+
+	class Person implements Human {
+		String lastname;
+	}
+	
+	
+	class Department{
+		String name;
+	}
+	
+	
+	
+	class Faculty extends Department{
+		int facultyNumber;
+	}
+	
+
+
+	class Employee extends Person implements Employable{
+		int emplNumber;
+	    String email;
+	}
+	association Person -> Building;
+	association Department -> (head) Employee;
+	association employment [*] Employee (staff) <-> Department [1];
+	
+	class Professor extends Employee{
+		String researchArea;
+	}
+    
+    association [1] Department -> (dean) Professor[1];
+	
+	enum StaffFunction{
+		LECTURER,
+		SCIENTIFIC,
+		SECRETARY,
+		TECHNICIAN,
+		STUDENT,
+		OTHER;	
+	}
+	
+	class Room{
+		int roomNumber;
+	}
+	
+	class Building{
+		String address;
+	}
+	association Employee -> (office) Room [1];
+	
+	association Building <-> Room [*];
+
+	association Faculty -> Room;
+		
+	association Room -> Person [1];
+}

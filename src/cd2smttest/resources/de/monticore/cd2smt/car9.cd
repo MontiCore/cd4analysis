@@ -1,0 +1,18 @@
+classdiagram STTest {
+
+   class BigBigCar  extends BigCar;
+
+   class BigCar extends Car;
+
+   class Car ;
+
+   class Motor;
+
+   class Driver;
+
+   class BigWheel;
+
+  association [1] Car(car)      --  (motor)    Motor[1];
+  association [1] Car           --             Driver[1];
+  association [1] BigCar        --             BigWheel[1];
+}

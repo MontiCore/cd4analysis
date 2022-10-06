@@ -1,6 +1,9 @@
 package de.monticore.cd2smt.context;
 
+import de.monticore.cd2smt.Helper.SMTNameHelper;
 import com.microsoft.z3.*;
+import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
+import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -8,73 +11,67 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CDContext {
 
 
-  private Map<ASTCDAssociation, FuncDecl<BoolSort>> assocFunctions;
-  private Map<ASTCDClass, SMTClass> smtClasses;
-  private Context context;
+  private final Map<ASTCDAssociation, SMTAssociation> smtAssociations;
+  private final Map<ASTCDClass, SMTClass> smtClasses;
+  private final Context context;
 
-  private List<BoolExpr> classConstrs ;
-  private List<BoolExpr>  assocConstr  ;
-  private List<BoolExpr> inherConstr ;
+  private   List<Pair<String,BoolExpr>> oclConstraints;
+  private  List<Pair<String,BoolExpr>> associationConstraints;
+  private   List<Pair<String,BoolExpr>> inheritanceConstraints;
+
 
   public Context getContext() {
     return context;
   }
 
-  public List<BoolExpr> getAssocConstr() {
-    return assocConstr;
+  public List<Pair<String, BoolExpr>> getAssociationConstraints() {
+    return associationConstraints;
   }
 
-  public List<BoolExpr> getClassConstrs() {
-    return classConstrs;
+  public List<Pair<String, BoolExpr>> getInheritanceConstraints() {
+    return inheritanceConstraints;
+  }
+  public void setAssociationConstraints( List<Pair<String,BoolExpr>> associationConstraints){
+    this.associationConstraints = associationConstraints;
   }
 
-  public List<BoolExpr> getInherConstr() {
-    return inherConstr;
+  public void setInheritanceConstraints(List<Pair<String,BoolExpr>> inheritanceConstraints) {
+    this.inheritanceConstraints = inheritanceConstraints;
   }
 
-  public Map<ASTCDAssociation, FuncDecl<BoolSort>> getAssocFunctions() {
-    return assocFunctions;
+  public List<Pair<String,BoolExpr>> getOclConstraints() {
+    return oclConstraints;
+  }
+
+  public Map<ASTCDAssociation, SMTAssociation> getSMTAssociations() {
+    return smtAssociations;
   }
 
   public Map<ASTCDClass, SMTClass> getSmtClasses() {
     return smtClasses;
   }
 
-  public void setAssocConstr(List<BoolExpr> assocConstr) {
-    this.assocConstr = assocConstr;
+  public void setOclConstraints(List<Pair<String,BoolExpr>> oclConstraints) {
+    this.oclConstraints = oclConstraints;
   }
 
-  public void setAssocFunctions(Map<ASTCDAssociation, FuncDecl<BoolSort>> assocFunctions) {
-    this.assocFunctions = assocFunctions;
-  }
 
-  public void setClassConstrs(List<BoolExpr> classConstrs) {
-    this.classConstrs = classConstrs;
-  }
-
-  public void setContext(Context context) {
-    this.context = context;
-  }
-
-  public void setInherConstr(List<BoolExpr> inherConstr) {
-    this.inherConstr = inherConstr;
-  }
-
-  public void setSmtClasses(Map<ASTCDClass, SMTClass> smtClasses) {
-    this.smtClasses = smtClasses;
-  }
-
-  public CDContext() {
+  public CDContext(Context context) {
+    this.context = context ;
     smtClasses = new HashMap<>();
-    assocFunctions = new HashMap<>();
-
-
+    smtAssociations = new HashMap<>();
+    oclConstraints= new ArrayList<>();
+    associationConstraints = new ArrayList<>();
+    inheritanceConstraints = new ArrayList<>();
   }
 
   public List<ASTCDClass> getSubclassList(ASTCDDefinition cd, ASTCDClass myClass) {
@@ -88,62 +85,73 @@ public class CDContext {
     return subclasses;
   }
 
-
-  public String printAttributeNameSMT(ASTCDClass myClass, ASTCDAttribute myAttribute) {
-    return fCharToLowerCase(myClass.getName()) + "_attrib_" + myAttribute.getName();
-  }
-
-  public String printSubclassFuncName(ASTCDClass myClass) {
-    return fCharToLowerCase(myClass.getName()) + "_get_subclass";
-  }
-
-  public String printSMTClassName(ASTCDClass myClass) {
-    return myClass.getName() + "_obj";
-  }
-
-  public String printSMTAssociationName(ASTCDAssociation myAssociation) {
-    String right = myAssociation.getRight().getName();
-    String left = myAssociation.getLeft().getName();
-    return fCharToLowerCase(left) + "_" + fCharToLowerCase(right) + "_assoc";
-  }
-
-  public String fCharToLowerCase(String str) {
-    return Character.toLowerCase(str.charAt(0)) + str.substring(1);
-  }
-
-  public Sort parseAttribType2SMT(Context ctx, ASTCDAttribute myAttribute) {
-    String att = myAttribute.printType();
-    switch (att) {
-      case "boolean":
-        return ctx.mkBoolSort();
-      case "int":
-        return ctx.mkIntSort();
-      case "double":
-        return ctx.mkRealSort();
-      case "java.lang.String":
-        return ctx.mkStringSort();
-      default:
-        System.out.println("type not support \n interpret like a String");
-        return ctx.mkStringSort();
+  public Optional <SMTClass> getSMTClass(String className){
+    for (Map.Entry<ASTCDClass,SMTClass> entry : smtClasses.entrySet()){
+      if (entry.getKey().getName().equals(className)){
+        return Optional.of(entry.getValue()) ;
+      }
     }
+    return Optional.empty() ;
+  }
+  public Optional <SMTClass> getSMTClass(Expr<?extends  Sort> obj){
+    String className = obj.getSort().toString().split("_")[0] ;
+    return  getSMTClass(className) ;
   }
 
-  public Optional<List<ASTCDAttribute>> getAttributeList(String className, ASTCDDefinition cd) {
-    List<ASTCDAttribute> attributes = new LinkedList<>();
-    for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className))
-        attributes = myClass.getCDAttributeList();
+  public FuncDecl<?extends Sort> getAttributeFunc(SMTClass smtClass, String attr ){
+    assert smtClass != null ;
+    for (FuncDecl<? extends Sort> entry : smtClass.getAttributes()){
+      if (entry.getName().toString().equals(SMTNameHelper.printAttributeNameSMT(smtClass.getASTCDClass(), attr))) {
+        return entry;
+      }
     }
-    return Optional.of(attributes);
+    Log.error("attribute " + attr + "not found in the smtclass " + smtClass.getASTCDClass().getName());
+    return null ;
   }
 
-  public Optional<ASTCDClass> getClass(String className, ASTCDDefinition cd) {
-    ASTCDClass res = new ASTCDClass();
-    for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className))
-        res = myClass;
+  public SMTAssociation getAssocFunc(SMTClass smtClass, String otherRole ){
+    assert smtClass != null ;
+    for (Map.Entry<ASTCDAssociation, SMTAssociation> entry : smtClass.getSMTAssociations().entrySet()){
+      if (entry.getKey().getRight().getCDRole().getName().equals(otherRole) &&
+        !entry.getKey().getRight().getName().equals(smtClass.getASTCDClass().getName())) {
+        return entry.getValue();
+      }
+      if (entry.getKey().getLeft().getCDRole().getName().equals(otherRole) &&
+        !entry.getKey().getLeft().getName().equals(smtClass.getASTCDClass().getName())) {
+        return entry.getValue();
+      }
     }
-    return Optional.of(res);
+    Log.error("No Associations  Founds for the role  " + otherRole + " in the smt class " + smtClass.getASTCDClass().getName());
+    return null ;
+  }
+
+  public boolean containsAttribute(SMTClass smtClass, String AttrName ){
+    for (ASTCDAttribute attribute: smtClass.getASTCDClass().getCDAttributeList()){
+      if (attribute.getName().equals(AttrName)){
+        return  true ;
+      }
+    }
+    return false ;
+  }
+
+  public  Optional<Model> getModel (Context ctx, List<Pair<String,BoolExpr>> constraints){
+    Solver s = ctx.mkSolver();
+    int i = 0;  // Names must be unique, hence we have a counter
+    for (Pair<String,BoolExpr> expr : constraints){
+      s.assertAndTrack(expr.getRight(), ctx.mkBoolConst("inv____" + expr.getLeft() + "____" + i));
+      i++;
+    }
+    if (s.check() == Status.SATISFIABLE)
+      return Optional.of(s.getModel());
+    else {
+      Log.warn("Found no instance. The following invariants lead to a contradiction: \n\t" +
+        Arrays.stream(s.getUnsatCore())
+          .map(AST::getSExpr)
+          .map(name -> name.split("____")[1])
+          .collect(Collectors.toSet()));
+      return Optional.empty();
+    }
+
   }
 
 }

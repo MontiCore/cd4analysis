@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package ambiguousRole;
+classdiagram A {
+
+	class Contractor;
+	class Contract;
+	
+	//CoCo checks only for associations without name, however this conflict should be detected even for named associations
+	// There should be a warning if -> navigation (DESIGN issue)
+	association  [*] Contractor <-> (workContract) Contract [1];
+}

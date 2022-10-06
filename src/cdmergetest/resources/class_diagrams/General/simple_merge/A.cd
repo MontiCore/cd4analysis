@@ -1,0 +1,23 @@
+/* (c) https://github.com/MontiCore/monticore */
+package CDMergerTest.simple_merge;
+
+import java.util.List;
+
+classdiagram A {
+	class Office;
+	class Person {
+		String name;
+	}	
+	class Employee extends Person;
+	interface Working;
+	class Customer;
+	class Contract;
+	class Law;
+	composition Office -> Employee [*];
+	association /acting Employee -> Working;
+	association serves Employee -> Customer;
+	association signature Employee -> Contract;
+	association Contract <-> Law;
+	composition Office -> (worker) Person [1..*];
+	
+}

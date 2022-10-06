@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package Person;
+classdiagram Person2 {
+	class Employee extends Person {
+		int height;
+	}	
+	class Person {
+		int id;
+	}	
+	class House{
+	  Color color;
+	}
+	association Person (resident) -- House;
+	enum Color { RED, GREEN, BLUE; }
+}

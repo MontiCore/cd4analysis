@@ -1,0 +1,15 @@
+classdiagram STTest {
+
+  class Car {
+    boolean isExpensive ;
+    String name;
+    int numberOfWheel ;
+    double price ;
+  }
+
+ class Wheel   {
+    double price ;
+    String manufacturer ;
+  }
+
+}

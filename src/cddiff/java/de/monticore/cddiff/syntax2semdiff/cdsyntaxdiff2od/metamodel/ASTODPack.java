@@ -58,15 +58,20 @@ public class ASTODPack {
   }
 
   public List<ASTODElement> getASTODElementList() {
+    // remove objects duplicate
+    Map<String, ASTODNamedObject> objectsMap = new HashMap<>();
+    this.namedObjects.forEach(e ->
+        objectsMap.put(new OD4DataFullPrettyPrinter(new IndentPrinter()).prettyprint(e), e));
+
     // remove links duplicate
     Map<String, ASTODLink> linksMap = new HashMap<>();
     this.links.forEach(e ->
         linksMap.put(new OD4DataFullPrettyPrinter(new IndentPrinter()).prettyprint(e), e));
 
-    List<ASTODElement> astodElementList = new ArrayList<>();
-    astodElementList.addAll(this.namedObjects);
-    astodElementList.addAll(linksMap.values());
-    return astodElementList;
+    List<ASTODElement> astODElementList = new ArrayList<>();
+    astODElementList.addAll(objectsMap.values());
+    astODElementList.addAll(linksMap.values());
+    return astODElementList;
   }
 
 }

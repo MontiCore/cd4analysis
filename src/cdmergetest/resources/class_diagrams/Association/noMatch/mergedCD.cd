@@ -1,0 +1,38 @@
+/* (c) https://github.com/MontiCore/monticore */
+package noMatch;
+classdiagram mergedCD {
+
+	class CA;
+	class CB;
+	class CC;
+	class CD;
+		
+	association ab1 [1] CA <->  CB [1];
+	
+	association ab2 CA -- CB;
+	
+	association  CA <-> (role1) CC;
+	
+	association ac2 CA --  CC;
+	
+	association ad CA  <->  CD;
+	
+	association aa CA <->  CA;
+	
+	association b2 CA -- CB;
+	
+	association a2 CA -- (role2) CC;
+	
+	association CA (role1) -- (role2) CD;
+	
+	association CA  <->  CD;
+	
+	association CC (role1) <->  (role2) CD;
+		
+	association cd1 CC (role1) <-   CD;
+	
+	association cd2 CC  ->  (role2) CD;
+	
+	
+	
+}
