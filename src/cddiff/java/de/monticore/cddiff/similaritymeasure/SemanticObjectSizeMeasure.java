@@ -43,7 +43,7 @@ public class SemanticObjectSizeMeasure {
   public double sizeDifference(ASTCDCompilationUnit x, ASTCDCompilationUnit y, int k) {
     double result = 0;
 
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(x, y, k);
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(x, y, k);
 
     if (optS.isPresent()) {
       AlloyDiffSolution S = optS.get();

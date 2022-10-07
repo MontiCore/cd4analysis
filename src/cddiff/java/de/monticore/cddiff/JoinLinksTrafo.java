@@ -2,6 +2,7 @@ package de.monticore.cddiff;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -10,9 +11,7 @@ import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
-import de.monticore.odlink._ast.ASTODLeftToRightDir;
-import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.odlink._ast.ASTODRightToLeftDir;
+import de.monticore.odlink._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import net.sourceforge.plantuml.Log;
@@ -56,6 +55,7 @@ public class JoinLinksTrafo {
       if (matchLink2Assoc(link, assoc, od)) {
         if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
+          setMissingRoleName(link.getODLinkLeftSide(),assoc.getLeft());
         }
         else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           od.getObjectDiagram().removeODElement(link);
@@ -64,10 +64,21 @@ public class JoinLinksTrafo {
       else if (matchLink2AssocInReverse(link, assoc, od)) {
         if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
+          setMissingRoleName(link.getODLinkRightSide(),assoc.getLeft());
         }
         else if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           od.getObjectDiagram().removeODElement(link);
         }
+      }
+    }
+  }
+
+  private void setMissingRoleName(ASTODLinkSide linkSide, ASTCDAssocSide assocSide) {
+    if (!linkSide.isPresentRole()){
+      if (assocSide.isPresentCDRole()){
+        linkSide.setRole(assocSide.getCDRole().getName());
+      } else {
+        linkSide.setRole(CDQNameHelper.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName()));
       }
     }
   }

@@ -683,7 +683,7 @@ public class CDSyntaxDiff {
         .getCDInterfacesList()
         .size();
     int diffsizeSem = Math.max(20, 2 * Math.max(cd1size, cd2size));
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(cd1, cd2, diffsizeSem,
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(cd1, cd2, diffsizeSem,
         CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputPath);
 
     // test if solution is present

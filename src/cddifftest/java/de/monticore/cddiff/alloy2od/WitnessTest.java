@@ -10,7 +10,6 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import org.junit.Test;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class WitnessTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(astV1, astV2, 7);
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 7);
 
     // Test if generation was successful
     assertTrue(optS.isPresent());
@@ -63,7 +62,7 @@ public class WitnessTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
     assertNotNull(astV2);
 
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(astV1, astV2, 7,
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 7,
         CDSemantics.MULTI_INSTANCE_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful
@@ -91,7 +90,7 @@ public class WitnessTest extends CDDiffTestBasis {
         "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
     assertNotNull(astV2);
 
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(astV1, astV2, 7,
+    Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 7,
         CDSemantics.MULTI_INSTANCE_OPEN_WORLD, "target/generated/cddiff-test/");
 
     // Test if generation was successful

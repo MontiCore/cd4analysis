@@ -641,16 +641,16 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ASTCDCompilationUnit ast2;
 
     if (commitID1 != null) {
-      String tmp1 = CDDiffUtil.findFileInCommit(commitID1, pathCD1);
-      ast1 = CDDiffUtil.parseModelFromString(tmp1);
+      String tmp1 = CDToolUtils4Diff.findFileInCommit(commitID1, pathCD1);
+      ast1 = CDToolUtils4Diff.parseModelFromString(tmp1);
     }
     else {
       ast1 = parse(pathCD1);
     }
 
     if (commitID2 != null) {
-      String tmp2 = CDDiffUtil.findFileInCommit(commitID2, pathCD2);
-      ast2 = CDDiffUtil.parseModelFromString(tmp2);
+      String tmp2 = CDToolUtils4Diff.findFileInCommit(commitID2, pathCD2);
+      ast2 = CDToolUtils4Diff.parseModelFromString(tmp2);
     }
     else {
       ast2 = parse(pathCD2);
@@ -662,7 +662,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
 
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
-    int diffsize = CDDiffUtil.getDefaultDiffsize(ast1, ast2);
+    int diffsize = CDToolUtils4Diff.getDefaultDiffsize(ast1, ast2);
     String defaultVal = Integer.toString(diffsize);
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
       diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", defaultVal));
@@ -672,13 +672,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     boolean openWorld = cmd.hasOption("open-world");
 
     if (cmd.hasOption("rule-based")) {
-      CDDiffUtil.computeSemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
+      CDToolUtils4Diff.computeSyntax2SemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
     }
     else {
       boolean reductionBased = !(cmd.hasOption("open-world") && cmd.getOptionValue("open-world",
           "reduction-based").equals("alloy-based"));
-      CDDiffUtil.computeSemDiff(ast1, ast2, outputPath, diffsize, difflimit, openWorld,
-          reductionBased);
+      CDToolUtils4Diff.computeAlloySemDiff(ast1, ast2, outputPath, diffsize, difflimit, openWorld,
+          reductionBased, cmd.hasOption("o"));
     }
   }
 
@@ -695,16 +695,16 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ASTCDCompilationUnit ast2;
 
     if (commitID1 != null) {
-      String tmp1 = CDDiffUtil.findFileInCommit(commitID1, pathCD1);
-      ast1 = CDDiffUtil.parseModelFromString(tmp1);
+      String tmp1 = CDToolUtils4Diff.findFileInCommit(commitID1, pathCD1);
+      ast1 = CDToolUtils4Diff.parseModelFromString(tmp1);
     }
     else {
       ast1 = parse(pathCD1);
     }
 
     if (commitID2 != null) {
-      String tmp2 = CDDiffUtil.findFileInCommit(commitID2, pathCD2);
-      ast2 = CDDiffUtil.parseModelFromString(tmp2);
+      String tmp2 = CDToolUtils4Diff.findFileInCommit(commitID2, pathCD2);
+      ast2 = CDToolUtils4Diff.parseModelFromString(tmp2);
     }
     else {
       ast2 = parse(pathCD2);
@@ -776,7 +776,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   public void mergeCDs() throws IOException {
     String[] path = cmd.getOptionValues("merge");
 
-    ASTCDCompilationUnit mergeResult = CDMergeUtil.merge(Arrays.asList(path), new ArrayList<>());
+    ASTCDCompilationUnit mergeResult = CDToolUtils4Merge.merge(Arrays.asList(path), new ArrayList<>());
 
     if (mergeResult != null) {
       CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();

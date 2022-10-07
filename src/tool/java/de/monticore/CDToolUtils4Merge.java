@@ -11,7 +11,7 @@ import net.sourceforge.plantuml.Log;
 import java.util.List;
 import java.util.Optional;
 
-public class CDMergeUtil {
+public class CDToolUtils4Merge {
 
   public static ASTCDCompilationUnit merge(List<String> inputs,
       List<MergeParameter> mergeParameters) {

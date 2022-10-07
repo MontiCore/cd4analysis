@@ -10,8 +10,8 @@ import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.ASTODClassSt
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel.CDWrapperObjectPack;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
-import de.monticore.od4data.OD4DataMill;
-import de.monticore.od4data.prettyprinter.OD4DataFullPrettyPrinter;
+import de.monticore.od4report.OD4ReportMill;
+import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odattribute._ast.ASTODList;
 import de.monticore.odattribute._ast.ASTODMap;
 import de.monticore.odbasis._ast.*;
@@ -78,12 +78,12 @@ public class CDSyntax2SemDiff4ASTODHelper {
    */
   public static ASTODAttribute createASTODAttribute(ASTCDAttribute astcdAttribute,
       ASTODValue oDValue) {
-    return OD4DataMill.oDAttributeBuilder()
+    return OD4ReportMill.oDAttributeBuilder()
         .setName(astcdAttribute.getName())
-        .setModifier(OD4DataMill.modifierBuilder().build())
-        .setMCType(OD4DataMill.mCQualifiedTypeBuilder()
+        .setModifier(OD4ReportMill.modifierBuilder().build())
+        .setMCType(OD4ReportMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(
-                OD4DataMill.mCQualifiedNameBuilder().addParts(astcdAttribute.printType()).build())
+                OD4ReportMill.mCQualifiedNameBuilder().addParts(astcdAttribute.printType()).build())
             .build())
         .setComplete("=")
         .setODValue(oDValue)
@@ -107,11 +107,11 @@ public class CDSyntax2SemDiff4ASTODHelper {
         Matcher listMatcher = Pattern.compile("List<(.*)>").matcher(astcdAttribute.printType());
         if (listMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, listMatcher.group(1), false);
-          ASTODList oDValue = OD4DataMill.oDListBuilder()
-              .addODValue(OD4DataMill.oDSimpleAttributeValueBuilder()
-                  .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+          ASTODList oDValue = OD4ReportMill.oDListBuilder()
+              .addODValue(OD4ReportMill.oDSimpleAttributeValueBuilder()
+                  .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
                   .build())
-              .addODValue(OD4DataMill.oDAbsentBuilder().build())
+              .addODValue(OD4ReportMill.oDAbsentBuilder().build())
               .build();
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
@@ -122,8 +122,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
         Matcher setMatcher = Pattern.compile("Set<(.*)>").matcher(astcdAttribute.printType());
         if (setMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, "Set_" + setMatcher.group(1), false);
-          ASTODSimpleAttributeValue oDValue = OD4DataMill.oDSimpleAttributeValueBuilder()
-              .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+          ASTODSimpleAttributeValue oDValue = OD4ReportMill.oDSimpleAttributeValueBuilder()
+              .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
               .build();
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
@@ -134,8 +134,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
         Matcher optMatcher = Pattern.compile("Optional<(.*)>").matcher(astcdAttribute.printType());
         if (optMatcher.find()) {
           String value = createValue(cdw, cDTypeDiff, optMatcher.group(1), false);
-          ASTODSimpleAttributeValue oDValue = OD4DataMill.oDSimpleAttributeValueBuilder()
-              .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+          ASTODSimpleAttributeValue oDValue = OD4ReportMill.oDSimpleAttributeValueBuilder()
+              .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
               .build();
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
         }
@@ -147,18 +147,18 @@ public class CDSyntax2SemDiff4ASTODHelper {
         if (mapMatcher.find()) {
           String kValue = createValue(cdw, cDTypeDiff, mapMatcher.group(1), false);
           String vValue = createValue(cdw, cDTypeDiff, mapMatcher.group(2), false);
-          ASTODMap oDValue = OD4DataMill.oDMapBuilder()
-              .addODMapElement(OD4DataMill.oDMapElementBuilder()
-                  .setKey(OD4DataMill.oDSimpleAttributeValueBuilder()
-                      .setExpression(OD4DataMill.nameExpressionBuilder().setName(kValue).build())
+          ASTODMap oDValue = OD4ReportMill.oDMapBuilder()
+              .addODMapElement(OD4ReportMill.oDMapElementBuilder()
+                  .setKey(OD4ReportMill.oDSimpleAttributeValueBuilder()
+                      .setExpression(OD4ReportMill.nameExpressionBuilder().setName(kValue).build())
                       .build())
-                  .setVal(OD4DataMill.oDSimpleAttributeValueBuilder()
-                      .setExpression(OD4DataMill.nameExpressionBuilder().setName(vValue).build())
+                  .setVal(OD4ReportMill.oDSimpleAttributeValueBuilder()
+                      .setExpression(OD4ReportMill.nameExpressionBuilder().setName(vValue).build())
                       .build())
                   .build())
-              .addODMapElement(OD4DataMill.oDMapElementBuilder()
-                  .setKey(OD4DataMill.oDAbsentBuilder().build())
-                  .setVal(OD4DataMill.oDAbsentBuilder().build())
+              .addODMapElement(OD4ReportMill.oDMapElementBuilder()
+                  .setKey(OD4ReportMill.oDAbsentBuilder().build())
+                  .setVal(OD4ReportMill.oDAbsentBuilder().build())
                   .build())
               .build();
           astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
@@ -179,8 +179,8 @@ public class CDSyntax2SemDiff4ASTODHelper {
         else {
           value = createValue(cdw, cDTypeDiff, astcdAttribute.printType(), false);
         }
-        ASTODSimpleAttributeValue oDValue = OD4DataMill.oDSimpleAttributeValueBuilder()
-            .setExpression(OD4DataMill.nameExpressionBuilder().setName(value).build())
+        ASTODSimpleAttributeValue oDValue = OD4ReportMill.oDSimpleAttributeValueBuilder()
+            .setExpression(OD4ReportMill.nameExpressionBuilder().setName(value).build())
             .build();
         astODAttributeList.add(createASTODAttribute(astcdAttribute, oDValue));
       }
@@ -237,12 +237,12 @@ public class CDSyntax2SemDiff4ASTODHelper {
     ASTODNamedObject astodNamedObject = null;
 
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
-      astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
+      astodNamedObject = OD4ReportMill.oDNamedObjectBuilder()
           .setName(
               toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName().replaceAll(
                   "\\.","_")) + "__" + index)
-          .setModifier(OD4DataMill.modifierBuilder().build())
-          .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
+          .setModifier(OD4ReportMill.modifierBuilder().build())
+          .setMCObjectType(OD4ReportMill.mCQualifiedTypeBuilder()
               .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
                   newCDTypeWrapper.getOriginalClassName()))
               .build())
@@ -254,22 +254,22 @@ public class CDSyntax2SemDiff4ASTODHelper {
       newCDTypeWrapper.getSuperclasses().forEach(e -> classList.add(e.split("_")[1]));
       String multiLabel = "instanceof";
 
-      astodNamedObject = OD4DataMill.oDNamedObjectBuilder()
+      astodNamedObject = OD4ReportMill.oDNamedObjectBuilder()
           .setName(
               toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName().replaceAll(
                   "\\.","_")) + "__" + index)
-          .setModifier(OD4DataMill.modifierBuilder()
-              .setStereotype(OD4DataMill.stereotypeBuilder()
-                  .addValues(OD4DataMill.stereoValueBuilder()
+          .setModifier(OD4ReportMill.modifierBuilder()
+              .setStereotype(OD4ReportMill.stereotypeBuilder()
+                  .addValues(OD4ReportMill.stereoValueBuilder()
                       .setName(multiLabel)
                       .setContent(String.join(", ", classList))
-                      .setText(OD4DataMill.stringLiteralBuilder()
+                      .setText(OD4ReportMill.stringLiteralBuilder()
                           .setSource(String.join(", ", classList))
                           .build())
                       .build())
                   .build())
               .build())
-          .setMCObjectType(OD4DataMill.mCQualifiedTypeBuilder()
+          .setMCObjectType(OD4ReportMill.mCQualifiedTypeBuilder()
               .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(
                   newCDTypeWrapper.getOriginalClassName()))
               .build())
@@ -319,17 +319,17 @@ public class CDSyntax2SemDiff4ASTODHelper {
    */
   public static ASTODLink createLink(ASTODNamedObject left, ASTODNamedObject right,
       String leftRoleName, String rightRoleName, ASTODLinkDirection astodLinkDirection) {
-    return OD4DataMill.oDLinkBuilder()
+    return OD4ReportMill.oDLinkBuilder()
         .setLink(true)
-        .setODLinkLeftSide(OD4DataMill.oDLinkLeftSideBuilder()
-            .setModifier(OD4DataMill.modifierBuilder().build())
-            .addReferenceNames(0, OD4DataMill.oDNameBuilder().setName(left.getName()).build())
+        .setODLinkLeftSide(OD4ReportMill.oDLinkLeftSideBuilder()
+            .setModifier(OD4ReportMill.modifierBuilder().build())
+            .addReferenceNames(0, OD4ReportMill.oDNameBuilder().setName(left.getName()).build())
             .setRole(leftRoleName)
             .build())
         .setODLinkDirection(astodLinkDirection)
-        .setODLinkRightSide(OD4DataMill.oDLinkRightSideBuilder()
-            .setModifier(OD4DataMill.modifierBuilder().build())
-            .addReferenceNames(0, OD4DataMill.oDNameBuilder().setName(right.getName()).build())
+        .setODLinkRightSide(OD4ReportMill.oDLinkRightSideBuilder()
+            .setModifier(OD4ReportMill.modifierBuilder().build())
+            .addReferenceNames(0, OD4ReportMill.oDNameBuilder().setName(right.getName()).build())
             .setRole(rightRoleName)
             .build())
         .build();
@@ -484,28 +484,28 @@ public class CDSyntax2SemDiff4ASTODHelper {
     String baseCDSrcPos = odSourcePosition.split("__")[0];
     String compareCDSrcPos = odSourcePosition.split("__")[1];
     // set ASTObjectDiagram
-    ASTObjectDiagram objectDiagram = OD4DataMill.objectDiagramBuilder()
+    ASTObjectDiagram objectDiagram = OD4ReportMill.objectDiagramBuilder()
         .setName(odTitle.replaceAll("\\.","_"))
         .setODElementsList(astODElementList)
-        .setStereotype(OD4DataMill.stereotypeBuilder()
-            .addValues(OD4DataMill.stereoValueBuilder()
+        .setStereotype(OD4ReportMill.stereotypeBuilder()
+            .addValues(OD4ReportMill.stereoValueBuilder()
                 .setName("baseCD")
                 .setContent(baseCDSrcPos)
-                .setText(OD4DataMill.stringLiteralBuilder()
+                .setText(OD4ReportMill.stringLiteralBuilder()
                     .setSource(baseCDSrcPos)
                     .build())
                 .build())
-            .addValues(OD4DataMill.stereoValueBuilder()
+            .addValues(OD4ReportMill.stereoValueBuilder()
                 .setName("compareCD")
                 .setContent(compareCDSrcPos)
-                .setText(OD4DataMill.stringLiteralBuilder()
+                .setText(OD4ReportMill.stringLiteralBuilder()
                     .setSource(compareCDSrcPos)
                     .build())
                 .build())
             .build())
         .build();
 
-    return OD4DataMill.oDArtifactBuilder()
+    return OD4ReportMill.oDArtifactBuilder()
         .setObjectDiagram(objectDiagram)
         .build();
   }
@@ -515,17 +515,17 @@ public class CDSyntax2SemDiff4ASTODHelper {
    */
   public static String printOD(ASTODArtifact astodArtifact) {
     // pretty print the AST
-    return new OD4DataFullPrettyPrinter(new IndentPrinter()).prettyprint(astodArtifact);
+    return new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(astodArtifact);
   }
 
   /**
    * using pretty printer to print OD
    */
-  public static List<String> printOD(List<ASTODArtifact> astODArtifacts) {
+  public static List<String> printODs(List<ASTODArtifact> astODArtifacts) {
     // pretty print the AST
     List<String> result = new ArrayList<>();
     for (ASTODArtifact od : astODArtifacts) {
-      result.add(new OD4DataFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
+      result.add(new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od));
     }
     return result;
   }
