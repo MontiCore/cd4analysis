@@ -55,7 +55,9 @@ public class JoinLinksTrafo {
       if (matchLink2Assoc(link, assoc, od)) {
         if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
-          setMissingRoleName(link.getODLinkLeftSide(),assoc.getLeft());
+          if (!link.getODLinkLeftSide().isPresentRole()) {
+            link.getODLinkLeftSide().setRole(inferRole(assoc.getLeft()));
+          }
         }
         else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           od.getObjectDiagram().removeODElement(link);
@@ -64,21 +66,13 @@ public class JoinLinksTrafo {
       else if (matchLink2AssocInReverse(link, assoc, od)) {
         if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
-          setMissingRoleName(link.getODLinkRightSide(),assoc.getLeft());
+          if (!link.getODLinkRightSide().isPresentRole()) {
+            link.getODLinkRightSide().setRole(inferRole(assoc.getLeft()));
+          }
         }
         else if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           od.getObjectDiagram().removeODElement(link);
         }
-      }
-    }
-  }
-
-  private void setMissingRoleName(ASTODLinkSide linkSide, ASTCDAssocSide assocSide) {
-    if (!linkSide.isPresentRole()){
-      if (assocSide.isPresentCDRole()){
-        linkSide.setRole(assocSide.getCDRole().getName());
-      } else {
-        linkSide.setRole(CDQNameHelper.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName()));
       }
     }
   }
@@ -104,10 +98,10 @@ public class JoinLinksTrafo {
       return false;
     }
 
-    return ((link.getODLinkLeftSide().isPresentRole() && link.getODLinkLeftSide()
+    return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
         .getRole()
         .equals(inferRole(assoc.getLeft())))
-        || (link.getODLinkRightSide().isPresentRole() && link.getODLinkRightSide()
+        && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
         .getRole()
         .equals(inferRole(assoc.getRight()))));
   }
@@ -135,10 +129,10 @@ public class JoinLinksTrafo {
       return false;
     }
 
-    return ((link.getODLinkLeftSide().isPresentRole() && link.getODLinkLeftSide()
+    return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
         .getRole()
         .equals(inferRole(assoc.getRight())))
-        || (link.getODLinkRightSide().isPresentRole() && link.getODLinkRightSide()
+        && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
         .getRole()
         .equals(inferRole(assoc.getLeft()))));
   }
