@@ -633,28 +633,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     String commitID2 = cmd.getOptionValue("cd2commit");
 
     String[] path = cmd.getOptionValues("semdiff");
-    String pathCD1 = path[0];
-    String pathCD2 = path[1];
 
     // parse the .cd-files
-    ASTCDCompilationUnit ast1;
-    ASTCDCompilationUnit ast2;
-
-    if (commitID1 != null) {
-      String tmp1 = CDToolUtils4Diff.findFileInCommit(commitID1, pathCD1);
-      ast1 = CDToolUtils4Diff.parseModelFromString(tmp1);
-    }
-    else {
-      ast1 = parse(pathCD1);
-    }
-
-    if (commitID2 != null) {
-      String tmp2 = CDToolUtils4Diff.findFileInCommit(commitID2, pathCD2);
-      ast2 = CDToolUtils4Diff.parseModelFromString(tmp2);
-    }
-    else {
-      ast2 = parse(pathCD2);
-    }
+    ASTCDCompilationUnit ast1 = parse(path[0]);
+    ASTCDCompilationUnit ast2 = parse(path[1]);
 
     if (ast1 == null || ast2 == null) {
       Log.error("0xCDD14: Failed to load CDs for `--semdiff`.");
@@ -682,33 +664,13 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
-  protected void computeSyntaxDiff() throws IOException {
-    String commitID1 = cmd.getOptionValue("cd1commit");
-    String commitID2 = cmd.getOptionValue("cd2commit");
+  protected void computeSyntaxDiff(){
 
     String[] path = cmd.getOptionValues("syntaxdiff");
-    String pathCD1 = path[0];
-    String pathCD2 = path[1];
 
     // parse the .cd-files
-    ASTCDCompilationUnit ast1;
-    ASTCDCompilationUnit ast2;
-
-    if (commitID1 != null) {
-      String tmp1 = CDToolUtils4Diff.findFileInCommit(commitID1, pathCD1);
-      ast1 = CDToolUtils4Diff.parseModelFromString(tmp1);
-    }
-    else {
-      ast1 = parse(pathCD1);
-    }
-
-    if (commitID2 != null) {
-      String tmp2 = CDToolUtils4Diff.findFileInCommit(commitID2, pathCD2);
-      ast2 = CDToolUtils4Diff.parseModelFromString(tmp2);
-    }
-    else {
-      ast2 = parse(pathCD2);
-    }
+    ASTCDCompilationUnit ast1 = parse(path[0]);
+    ASTCDCompilationUnit ast2 = parse(path[1]);
 
     if (ast1 == null || ast2 == null) {
       Log.error("0xCDD15: Failed to load CDs for `--syntaxdiff`.");
@@ -722,20 +684,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
 
     if (cmd.hasOption("showpath")) {
-      if (commitID1 != null) {
-        ast1.add_PreComment(0, (new Comment(commitID1 + ":" + pathCD1)));
-      }
-      else {
-        ast1.add_PreComment(0, (new Comment(pathCD1)));
-      }
-      if (commitID2 != null) {
-        ast2.add_PreComment(0, (new Comment(commitID2 + ":" + pathCD2)));
-      }
-      else {
-        ast2.add_PreComment(0, (new Comment(pathCD2)));
-      }
-
+      ast1.add_PreComment(0, (new Comment(path[0])));
+      ast2.add_PreComment(0, (new Comment(path[1])));
     }
+
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
 
     if (cmd.hasOption("andSemDiff")) {

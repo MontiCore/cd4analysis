@@ -9,15 +9,6 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
-import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.storage.file.FileRepository;
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.treewalk.TreeWalk;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -142,46 +133,6 @@ public class CDToolUtils4Diff {
     // Write results into a file
     FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
-  }
-
-  /**
-   * This method search for a file provided by a relative path in a given git commit.
-   *
-   * @param commitSha Short ID of the commit (first 8 characters)
-   * @param path      Relative path inside the repository
-   * @return Either the file content or empty string
-   */
-  public static String findFileInCommit(String commitSha, String path) throws IOException {
-    FileRepositoryBuilder repositoryBuilder = new FileRepositoryBuilder();
-    repositoryBuilder.readEnvironment().findGitDir();
-
-    if (repositoryBuilder.getGitDir() != null) {
-      Repository repository = new FileRepository(repositoryBuilder.getGitDir());
-      RevWalk revWalk = new RevWalk(repository);
-      ObjectId commitId = repository.resolve(commitSha);
-      RevCommit commit = revWalk.parseCommit(commitId);
-      RevTree tree = commit.getTree();
-      TreeWalk treeWalk = new TreeWalk(repository);
-      treeWalk.addTree(tree);
-      treeWalk.setRecursive(true);
-
-      ObjectId entryId = null;
-
-      // Iterate through all files in current commit and check for relative path
-      while (treeWalk.next()) {
-        if (treeWalk.getPathString().equals(path)) {
-          entryId = treeWalk.getObjectId(0);
-          break;
-        }
-      }
-      // Found the file, return its content
-      if (entryId != null) {
-        ObjectLoader loader = repository.open(entryId);
-        return new String(loader.getBytes());
-      }
-    }
-    // No file found for given path + commit
-    return path;
   }
 
   public static ASTCDCompilationUnit parseModelFromString(String model) {
