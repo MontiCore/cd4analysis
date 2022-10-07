@@ -127,7 +127,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           return;
         }
 
-        if (!modelFile.isEmpty()) {
+        if (modelFile != null) {
           ast = parse(modelFile);
         }
         else {
