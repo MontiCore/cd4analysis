@@ -32,12 +32,22 @@ public class CDQNameHelper {
     return completeName.toString();
   }
 
+  /**
+   * This helper functions processes a qualified name such that it can be used in Alloy
+   * @return The processed name
+   */
   public static String processQName(String qname) {
     List<String> nameList = new ArrayList<>();
     Collections.addAll(nameList, qname.split("\\."));
     return partHandler(nameList, false);
   }
 
+  /**
+   * The default role-name for a referenced type is the (simple) type-name with the first letter
+   * in lower case.
+   * @param qname is the qualified name of the referenced type
+   * @return default role-name
+   */
   public static String processQName2RoleName(String qname) {
     List<String> nameList = new ArrayList<>();
     Collections.addAll(nameList, qname.split("\\."));

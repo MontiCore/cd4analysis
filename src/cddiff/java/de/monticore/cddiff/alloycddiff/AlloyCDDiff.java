@@ -5,6 +5,7 @@ import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffRunner;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloySolutionHandler;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.file.PathUtils;
 
@@ -19,12 +20,12 @@ import java.util.Optional;
  */
 public class AlloyCDDiff {
 
-  public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
+  public static Optional<AlloyDiffSolution> getAlloyDiffSolution(ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2, int k) {
-    return cddiff(cd1, cd2, k, CDSemantics.SIMPLE_CLOSED_WORLD, "target/generated/cddiff-test/");
+    return getAlloyDiffSolution(cd1, cd2, k, CDSemantics.SIMPLE_CLOSED_WORLD, "target/generated/cddiff-test/");
   }
 
-  public static Optional<AlloyDiffSolution> cddiff(ASTCDCompilationUnit cd1,
+  public static Optional<AlloyDiffSolution> getAlloyDiffSolution(ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2, int k, CDSemantics semantics, String outputPathName) {
     // Initialize result
     Optional<AlloyDiffSolution> result = Optional.empty();

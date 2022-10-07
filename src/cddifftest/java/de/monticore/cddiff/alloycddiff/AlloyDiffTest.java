@@ -87,7 +87,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     // Compute diff solutions
 
     // Generate first solution
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV1, astV2, 5);
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 5);
     // Test first solution
     //    testSolution(optS1, 5);
     // Write solution to location
@@ -98,7 +98,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
     // Generate second solution
-    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.cddiff(astV1, astV2, 2);
+    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 2);
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
@@ -119,7 +119,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     System.out.println(optS2.get().getNumberOfSatSolutions());
 
     // Generate third solution
-    Optional<AlloyDiffSolution> optS3 = AlloyCDDiff.cddiff(astV2, astV1, 2);
+    Optional<AlloyDiffSolution> optS3 = AlloyCDDiff.getAlloyDiffSolution(astV2, astV1, 2);
     // Test third solution
     testSolution(optS3, 2);
     // Write solution to location
@@ -149,7 +149,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     // Compute diff solutions
 
     // Generate first solution
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV1, astV2, 5);
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 5);
     // Test first solution
     //    testSolution(optS1, 5);
     // Write solution to location
@@ -160,7 +160,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
     // Generate second solution
-    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.cddiff(astV1, astV2, 2);
+    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 2);
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
@@ -181,7 +181,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     System.out.println(optS2.get().getNumberOfSatSolutions());
 
     // Generate third solution
-    Optional<AlloyDiffSolution> optS3 = AlloyCDDiff.cddiff(astV2, astV1, 2);
+    Optional<AlloyDiffSolution> optS3 = AlloyCDDiff.getAlloyDiffSolution(astV2, astV1, 2);
     // Test third solution
     testSolution(optS3, 2);
     // Write solution to location
@@ -213,7 +213,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     // equal?!
     // Possible Solution: "Syntactic" preprocessing. (Which classes, attributes
     // Generate firs solution
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV1, astV2, 2);
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 2);
     // Test first solution
     testSolution(optS1, 2);
     // Write solution to location
@@ -224,7 +224,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
     // Generate second solution
-    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.cddiff(astV2, astV1, 2);
+    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.getAlloyDiffSolution(astV2, astV1, 2);
     // Test second solution
     testSolution(optS2, 2);
     // Write solution to location
@@ -235,7 +235,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
 
     // Test with same input
-    Optional<AlloyDiffSolution> optS3 = AlloyCDDiff.cddiff(astV1, astV1, 2);
+    Optional<AlloyDiffSolution> optS3 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV1, 2);
     // Test second solution
     testSolution(optS3, 2);
     // Write solution to location
@@ -266,7 +266,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     asts.add(astV2);
 
     // Run alloy
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV1, astV2, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
         "target" + "/generated/cddiff-test");
     // Test first solution
     testSolution(optS1, 2);
@@ -278,7 +278,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
     // Generate second solution
-    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.cddiff(astV2, astV1, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
+    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.getAlloyDiffSolution(astV2, astV1, 1, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
         "target" + "/generated/cddiff-test");
     // Test second solution
     testSolution(optS2, 2);
@@ -308,7 +308,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
 
     // Run alloy
     // Should find nothing
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV1, astV2, 2);
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 2);
     // Test first solution
     testSolution(optS1, 2);
 
@@ -339,7 +339,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
 
     // Run alloy
     // Should find nothing
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV2, astV1, 2);
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV2, astV1, 2);
     // Test first solution
     testSolution(optS1, 2);
 
@@ -347,7 +347,7 @@ public class AlloyDiffTest extends CDDiffTestBasis {
     optS1.ifPresent(
         alloyDiffSolution -> assertEquals(0, alloyDiffSolution.getNumberOfSatSolutions()));
 
-    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.cddiff(astV3, astV1, 2);
+    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.getAlloyDiffSolution(astV3, astV1, 2);
     assertTrue(optS2.isPresent());
     // Write solution to location
     Path outputDirectoryS3 = Paths.get(

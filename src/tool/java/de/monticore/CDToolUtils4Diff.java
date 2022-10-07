@@ -4,11 +4,9 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
+import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.lib.ObjectId;
@@ -27,11 +25,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-public class CDDiffUtil {
+public class CDToolUtils4Diff {
 
-  protected static void computeSemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
-      String outputPath, boolean openWorld, boolean toDir) throws NumberFormatException,
-      IOException {
+  protected static void computeSyntax2SemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
+      String outputPath, boolean openWorld, boolean toDir)
+      throws NumberFormatException, IOException {
     CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
 
     // determine if open-world should be applied
@@ -42,24 +40,23 @@ public class CDDiffUtil {
       trafo.transform(ast1, ast2);
 
       if (toDir) {
-        CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
+        CDToolUtils4Diff.saveDiffCDs2File(ast1, ast2, outputPath);
       }
       semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
     }
 
-    if (toDir){
-      Syntax2SemDiff.printODs2Dir(Syntax2SemDiff.computeSemDiff(ast1,ast2,semantics),outputPath);
-    } else {
-      Syntax2SemDiff.printSemDiff(ast1,ast2,semantics);
+    if (toDir) {
+      CDDiff.printODs2Dir(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics), outputPath);
+    }
+    else {
+      CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics));
     }
 
   }
 
-  protected static void computeSemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
-      String outputPath, int diffsize, int difflimit,
-      boolean openWorld, boolean reductionBased) throws NumberFormatException,
-      IOException {
-
+  protected static void computeAlloySemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
+      String outputPath, int diffsize, int difflimit, boolean openWorld, boolean reductionBased,
+      boolean toDir) throws NumberFormatException, IOException {
 
     CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
 
@@ -72,7 +69,7 @@ public class CDDiffUtil {
         ReductionTrafo trafo = new ReductionTrafo();
         trafo.transform(ast1, ast2);
 
-        CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
+        CDToolUtils4Diff.saveDiffCDs2File(ast1, ast2, outputPath);
         semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
       }
       else {
@@ -88,8 +85,8 @@ public class CDDiffUtil {
 
         // add dummy-class for associations
         String dummyClassName = "Dummy4Diff";
-        ReductionTrafo.addDummyClass4Associations(ast1,dummyClassName);
-        ReductionTrafo.addDummyClass4Associations(ast2,dummyClassName);
+        ReductionTrafo.addDummyClass4Associations(ast1, dummyClassName);
+        ReductionTrafo.addDummyClass4Associations(ast2, dummyClassName);
       }
     }
     else {
@@ -97,24 +94,15 @@ public class CDDiffUtil {
       ReductionTrafo.handleAssocDirections(ast1, ast2);
     }
 
-
-    // compute semDiff(ast,ast2)
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.cddiff(ast1, ast2, diffsize, semantics,
-        outputPath);
-
-    // test if solution is present
-    if (optS.isEmpty()) {
-      Log.error("0xCDD01: Could not compute semdiff.");
-      return;
+    if (toDir) {
+      CDDiff.printODs2Dir(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics,
+              outputPath),
+          outputPath);
     }
-    AlloyDiffSolution sol = optS.get();
-
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(difflimit);
-    sol.setLimited(true);
-
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
+    else {
+      CDDiff.printWitnesses2stdout(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics,
+          outputPath));
+    }
   }
 
   protected static int getDefaultDiffsize(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2) {
@@ -156,11 +144,11 @@ public class CDDiffUtil {
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
-
   /**
    * This method search for a file provided by a relative path in a given git commit.
+   *
    * @param commitSha Short ID of the commit (first 8 characters)
-   * @param path Relative path inside the repository
+   * @param path      Relative path inside the repository
    * @return Either the file content or empty string
    */
   public static String findFileInCommit(String commitSha, String path) throws IOException {
@@ -187,7 +175,7 @@ public class CDDiffUtil {
         }
       }
       // Found the file, return its content
-      if (entryId != null){
+      if (entryId != null) {
         ObjectLoader loader = repository.open(entryId);
         return new String(loader.getBytes());
       }
@@ -202,7 +190,7 @@ public class CDDiffUtil {
     try {
       opt = parser.parse_String(model);
       //assertFalse(parser.hasErrors());
-      if(!parser.hasErrors() && opt.isPresent()){
+      if (!parser.hasErrors() && opt.isPresent()) {
         return opt.get();
       }
     }
@@ -211,4 +199,5 @@ public class CDDiffUtil {
     }
     return null;
   }
+
 }

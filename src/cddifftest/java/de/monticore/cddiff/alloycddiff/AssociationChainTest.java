@@ -75,7 +75,7 @@ public class AssociationChainTest extends CDDiffTestBasis {
     // Compute diff solutions
 
     // Generate first solution
-    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.cddiff(astV1, astV2, 1);
+    Optional<AlloyDiffSolution> optS1 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 1);
     // Test first solution
     testSolution(optS1, 1);
     // Write solution to location
@@ -89,7 +89,7 @@ public class AssociationChainTest extends CDDiffTestBasis {
     optS1.get().generateSolutionsToPath(outputDirectoryS1);
 
     // Generate second solution
-    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.cddiff(astV1, astV2, 2);
+    Optional<AlloyDiffSolution> optS2 = AlloyCDDiff.getAlloyDiffSolution(astV1, astV2, 2);
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location
@@ -103,7 +103,7 @@ public class AssociationChainTest extends CDDiffTestBasis {
     optS2.get().generateSolutionsToPath(outputDirectoryS2);
 
     // Generate inversion of second solution
-    optS2 = AlloyCDDiff.cddiff(astV2, astV1, 2);
+    optS2 = AlloyCDDiff.getAlloyDiffSolution(astV2, astV1, 2);
     // Test first solution
     testSolution(optS2, 2);
     // Write solution to location

@@ -20,7 +20,6 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.*;
 import static org.junit.Assert.assertNotNull;
 
 public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
@@ -58,7 +57,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   }
 
   public void printODs(List<ASTODArtifact> ods) {
-    List<String> resultList = printOD(ods);
+    List<String> resultList = CDSyntax2SemDiff4ASTODHelper.printODs(ods);
     for (String s : resultList) {
       System.out.println(s);
     }
@@ -681,7 +680,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
       long startTime_old = System.currentTimeMillis();   // start time
       ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
       Optional<AlloyDiffSolution> optS =
-          AlloyCDDiff.cddiff(ast1_old, ast2_old, 2, cdSemantics, output);
+          AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
       List<ASTODArtifact> ods_old = optS.get().generateODs();
       long endTime_old = System.currentTimeMillis(); // end time
 
@@ -775,7 +774,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
       long startTime_old = System.currentTimeMillis();   // start time
       ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
       Optional<AlloyDiffSolution> optS =
-          AlloyCDDiff.cddiff(ast1_old, ast2_old, 2, cdSemantics, output);
+          AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
       List<ASTODArtifact> ods_old = optS.get().generateODs();
       long endTime_old = System.currentTimeMillis(); // end time
 
