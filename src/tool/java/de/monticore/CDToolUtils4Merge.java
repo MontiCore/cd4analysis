@@ -13,12 +13,12 @@ import java.util.Optional;
 
 public class CDToolUtils4Merge {
 
-  public static ASTCDCompilationUnit merge(List<String> inputs,
+  public static ASTCDCompilationUnit merge(List<String> inputs, String cdName,
       List<MergeParameter> mergeParameters) {
 
     Optional<ASTCDCompilationUnit> optAST;
     try {
-      optAST = new MergeTool(getConfig(inputs, mergeParameters)).mergeCDs().getMergedCD();
+      optAST = new MergeTool(getConfig(inputs, cdName, mergeParameters)).mergeCDs().getMergedCD();
       if (optAST.isPresent()) {
         return optAST.get();
       }
@@ -31,11 +31,11 @@ public class CDToolUtils4Merge {
     return null;
   }
 
-  private static CDMergeConfig getConfig(List<String> inputModels,
+  private static CDMergeConfig getConfig(List<String> inputModels, String cdName,
       List<MergeParameter> mergeParameters) {
     CDMergeConfig.Builder builder = new CDMergeConfig.Builder(true).withParam(
             MergeParameter.CHECK_ONLY)
-        .withParam(MergeParameter.OUTPUT_NAME, "Merge")
+        .withParam(MergeParameter.OUTPUT_NAME, cdName)
         .withParam(MergeParameter.LOG_SILENT);
 
     mergeParameters.forEach(builder::withParam);
