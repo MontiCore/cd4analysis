@@ -40,7 +40,8 @@ public class CDToolUtils4Diff {
       CDDiff.printODs2Dir(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics), outputPath);
     }
     else {
-      CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics));
+      Log.print(
+          CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics)));
     }
 
   }
@@ -86,13 +87,12 @@ public class CDToolUtils4Diff {
     }
 
     if (toDir) {
-      CDDiff.printODs2Dir(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics,
-              outputPath),
+      CDDiff.printODs2Dir(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics),
           outputPath);
     }
     else {
-      CDDiff.printWitnesses2stdout(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics,
-          outputPath));
+      Log.print(CDDiff.printWitnesses2stdout(
+          CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics)));
     }
   }
 

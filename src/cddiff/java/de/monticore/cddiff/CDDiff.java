@@ -24,12 +24,11 @@ import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDif
 public class CDDiff {
 
   public static List<ASTODArtifact> computeAlloySemDiff(ASTCDCompilationUnit cd1,
-      ASTCDCompilationUnit cd2, int diffsize, int difflimit, CDSemantics semantics,
-      String outputPathName) {
+      ASTCDCompilationUnit cd2, int diffsize, int difflimit, CDSemantics semantics) {
 
     // compute AlloyDiffSolution for semdiff(cd1,cd2)
     Optional<AlloyDiffSolution> optSol = AlloyCDDiff.getAlloyDiffSolution(cd1, cd2, diffsize,
-        semantics, outputPathName);
+        semantics);
 
     // test if solution is present
     if (optSol.isEmpty()) {
