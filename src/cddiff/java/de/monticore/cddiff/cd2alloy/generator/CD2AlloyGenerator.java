@@ -1594,14 +1594,13 @@ public class CD2AlloyGenerator {
 
     for (ASTCDCompilationUnit ast : asts) {
       // build symbol table
-      CD4CodeMill.globalScope().clear();
+      //CD4CodeMill.globalScope().clear();
       BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
       new CD4CodeDirectCompositionTrafo().transform(ast);
       CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
       CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
       CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(
-          ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(ast);
       ast.accept(c.getTraverser());
       cocos.checkAll(ast);
     }

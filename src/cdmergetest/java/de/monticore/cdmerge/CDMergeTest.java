@@ -1,17 +1,13 @@
 package de.monticore.cdmerge;
 
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class CDMergeTest extends BaseTest {
@@ -20,7 +16,7 @@ public class CDMergeTest extends BaseTest {
 
     final String srcDir = "src/cdmergetest/resources/class_diagrams/CDMergeTest/";
 
-    List<ASTCDCompilationUnit> inputSet = new ArrayList<>();
+    Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
     try {
       inputSet.add(loadModel(srcDir + "A.cd"));
       inputSet.add(loadModel(srcDir + "B.cd"));
