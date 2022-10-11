@@ -61,4 +61,26 @@ public class AlloyCDDiff {
     return result;
   }
 
+  public static Optional<AlloyDiffSolution> getAlloyDiffSolution(ASTCDCompilationUnit cd1,
+      ASTCDCompilationUnit cd2, int k, CDSemantics semantics) {
+    // Initialize result
+    Optional<AlloyDiffSolution> result = Optional.empty();
+
+    // Generate the module
+    String module = DiffModuleGenerator.generateDiffPredicate(cd1, cd2, k, semantics);
+
+    // Run alloy on module
+    AlloyDiffRunner diffRunner = new AlloyDiffRunner();
+    List<AlloySolutionHandler> results = diffRunner.runAlloy(module);
+
+    // Test parameters of solution
+    if (results.size() == 1) {
+      // If correct extract solution object
+      result = Optional.of((AlloyDiffSolution) results.get(0));
+    }
+
+
+    return result;
+  }
+
 }

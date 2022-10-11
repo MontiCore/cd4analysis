@@ -728,7 +728,16 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   public void mergeCDs() throws IOException {
     String[] path = cmd.getOptionValues("merge");
 
-    ASTCDCompilationUnit mergeResult = CDToolUtils4Merge.merge(Arrays.asList(path), new ArrayList<>());
+    String cdName = "Merge.cd";
+    if (cmd.hasOption("o") && outputPath.endsWith(".cd")){
+      cdName = Path.of(outputPath).getFileName().toString();
+      outputPath = outputPath.replace(cdName,"");
+    }
+
+    cdName = cdName.substring(0, cdName.length() - 3);
+
+    ASTCDCompilationUnit mergeResult = CDToolUtils4Merge.merge(Arrays.asList(path),
+     cdName, new ArrayList<>());
 
     if (mergeResult != null) {
       CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();

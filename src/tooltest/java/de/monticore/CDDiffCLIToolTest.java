@@ -87,11 +87,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
       //no corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
-
-      if (odFiles == null) {
+      if (odFiles == null){
+        assertEquals(0,Log.getErrorCount());
         return;
       }
-
       List<String> odFilePaths = new LinkedList<>();
       for (File odFile : odFiles) {
         if (odFile.getName().endsWith(".od")) {
@@ -171,8 +170,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         //some corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
-        assertNotNull(odFiles);
-
+        if (odFiles == null){
+          assertEquals(0,Log.getErrorCount());
+          return;
+        }
         List<String> odFilePaths = new LinkedList<>();
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
@@ -210,8 +211,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         //no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
-        assertNotNull(odFiles);
-
+        if (odFiles == null){
+          assertEquals(0,Log.getErrorCount());
+          return;
+        }
         List<String> odFilePaths = new LinkedList<>();
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
@@ -250,8 +253,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         //no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
-        assertNotNull(odFiles);
-
+        if (odFiles == null){
+          assertEquals(0,Log.getErrorCount());
+          return;
+        }
         List<String> odFilePaths = new LinkedList<>();
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
@@ -288,8 +293,10 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
         //no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
-        assertNotNull(odFiles);
-
+        if (odFiles == null){
+          assertEquals(0,Log.getErrorCount());
+          return;
+        }
         List<String> odFilePaths = new LinkedList<>();
         for (File odFile : odFiles) {
           if (odFile.getName().endsWith(".od")) {
