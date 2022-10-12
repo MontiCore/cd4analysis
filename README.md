@@ -137,10 +137,10 @@ The possible options are:
 |  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help; other options are ignored. |
-| `-i,--input <file>` | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`. |
+| `-i,--input <file>` | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for all further operations. |
 | `--json` | Writes a "Schema.json" to the output directory. |
 | `-nt,--nobuiltintypes` | If this option is used, built-in-types will not be considered. |
-| `--merge <file> <file>` | Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs `merged.cd` file if `-o` is used, otherwise prints the result to stdout. |
+| `--merge <file>` | Parses the file as a second CD and merges it with the input CD (iff semantically sound). The result is stored in memory. |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
 | `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
 | `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
@@ -148,8 +148,8 @@ The possible options are:
 | `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
 | `--rule-based` | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
-| `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
-| `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
+| `--semdiff <file>` | Parses the file as a second CD and compares it semantically with the first CD that is currently in memory. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
+| `--stdin` | Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for all further operations. |
 
 ### Building the Tool from the Sources (if desired)
  
@@ -447,9 +447,8 @@ differencing:
 
 https://www.se-rwth.de/topics/Semantics.php
 
-The option `--semdiff` computes the semantic difference 
-semdiff(CD1,CD2) of two class diagrams CD1 
-and CD2 specified by `--semdiff CD1.cd CD2.cd`.
+The option `--semdiff` computes the semantic difference of the current CD in memory
+and the CD specified by the argument.
 
 For the following examples, download the files 
 [Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) 
@@ -457,35 +456,29 @@ and save them in
 `src`:
 
 ```shell
-java -jar MCCD.jar --semdiff src/Employees1.cd scr/Employees2.cd
+java -jar MCCD.jar -i src/Employees1.cd --semdiff scr/Employees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
-that are generated in the output directory; the default is to generate 
-at most onw diff-witness. 
+that are generated in the output directory; the default is to generate one diff-witness. 
 Once again, `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar MCCD.jar --semdiff src/Employees1.cd  src/Employees2.cd --diffsize 5 --difflimit 20 -o out
+java -jar MCCD.jar -i src/Employees1.cd  --semdiff src/Employees2.cd --difflimit 20 -o target/out
 ```
 
 ### Step 9: Merging Two Class Diagram
 
-The option `--merge` is used to merge two class diagrams CD1 and 
-CD2 into a single class 
-diagram CD3, when the two source class diagrams CD1 and 
-CD2 are semantically compatible.
-The resulting class diagram CD3 is stored 
-in a file `Merge.cd` iff an 
-output directory is specified via
-`-o`, otherwise it is pretty-printed to stdout.
+The option `--merge` merges the input-CD with the CD specified by the argument 
+iff the two are semantically compatible.
+The result is stored in memory as the current CD.
 
 For the following examples, download the files 
 [Person1.cd](doc/Person1.cd) and [Person2.cd](doc/Person2.cd) and 
 save them in `src`:
 
 ```shell
-java -jar MCCD.jar --merge src/Person1.cd  src/Person2.cd
+java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o target/out -pp
 ```
 
 

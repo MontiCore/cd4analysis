@@ -1,6 +1,6 @@
 package de.monticore;
 
-import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cd.OutTestBasis;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
@@ -16,14 +16,23 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CDDiffCLIToolTest extends CD4CodeTestBasis {
+public class CDDiffCLIToolTest extends OutTestBasis {
 
   final String[] owDiffOptions = { "alloy-based", "reduction-based" };
 
   final String[] cwDiffOptions = { "", "--rule-based" };
 
   @Test
-  public void testDiff() {
+  public void testMerge() {
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    CD4CodeTool.main(new String[] { "-i", cd1, "--syntaxdiff", cd2});
+
+    //assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertTrue(getErr(), getErr().isEmpty());
+  }
+  @Test
+  public void testSemDiff() {
     // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
@@ -71,7 +80,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testNoDiff() {
+  public void testNoSemDiff() {
     // given 2 CDs that are semantically equivalent
     final String cd1 =
         "src/cddifftest/resources/de/monticore/cddiff/SimilarManagers/cdSimilarManagerv1" + ".cd";
@@ -88,7 +97,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       //no corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
       if (odFiles == null){
-        assertEquals(0,Log.getErrorCount());
+        assertTrue(getErr(), getErr().isEmpty());
         return;
       }
       List<String> odFilePaths = new LinkedList<>();
@@ -111,7 +120,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testDefaultDiff() {
+  public void testDefaultSemDiff() {
     // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
@@ -171,7 +180,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
         //some corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
         if (odFiles == null){
-          assertEquals(0,Log.getErrorCount());
+          assertTrue(getErr(), getErr().isEmpty());
           return;
         }
         List<String> odFilePaths = new LinkedList<>();
@@ -212,7 +221,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
         //no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
         if (odFiles == null){
-          assertEquals(0,Log.getErrorCount());
+          assertTrue(getErr(), getErr().isEmpty());
           return;
         }
         List<String> odFilePaths = new LinkedList<>();
@@ -254,7 +263,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
         //no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
         if (odFiles == null){
-          assertEquals(0,Log.getErrorCount());
+          assertTrue(getErr(), getErr().isEmpty());
           return;
         }
         List<String> odFilePaths = new LinkedList<>();
@@ -294,7 +303,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
         //no corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
         if (odFiles == null){
-          assertEquals(0,Log.getErrorCount());
+          assertTrue(getErr(), getErr().isEmpty());
           return;
         }
         List<String> odFilePaths = new LinkedList<>();
@@ -318,7 +327,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
   }
 
   @Test
-  public void testValidityOfCDDiffWithPackages() {
+  public void testValidityOfSemDiffWithPackages() {
 
     // given 2 CDs that are not semantically equivalent
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees4.cd";

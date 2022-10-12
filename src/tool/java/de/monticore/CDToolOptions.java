@@ -67,14 +67,14 @@ public class CDToolOptions {
         .numberOfArgs(1)
         .desc("Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can "
             + "be used to read the input CD from stdin. Using one of the two options is "
-            + "mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.")
+            + "mandatory for all further operations.")
         .build());
 
     options.addOption(Option.builder()
         .longOpt("stdin")
-        .desc("Reads the input CD from stdin instead of the source file specified by `-i`. Using "
-            + "one of the two options is mandatory for most operations; exceptions are `-h`, "
-            + "`--semdiff` and `--merge`.")
+        .desc(
+            "Reads the input CD from stdin instead of the source file specified by `-i`. Using "
+                + "one of the two options is mandatory for all further operations.")
         .build());
 
     options.addOption(Option.builder()
@@ -289,11 +289,10 @@ public class CDToolOptions {
         .type(String.class)
         .argName("file")
         .numberOfArgs(1)
-        .desc(
-            "Computes the semantic difference of the current CD in memory with that of a second CD."
-                + " Outputs object structures (witnesses) that are valid in the current CD but "
-                + "invalid in the second CD. This is a semantics-based, asymmetric diff. "
-                + "Details: " + "https://www.se-rwth.de/topics/Semantics.php")
+        .desc("Parses the file as a second CD and compares it semantically with the first CD that "
+            + "is currently in memory. Output: object diagrams (witnesses) that are valid in "
+            + "the first CD, but invalid in the second CD. This is a semantics-based, "
+            + "asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php")
         .build());
 
     options.addOption(Option.builder()
@@ -340,6 +339,7 @@ public class CDToolOptions {
    * adds options for syntax diff access
    */
   public void initSyntaxDiffOptions() {
+
     options.addOption(Option.builder()
         .longOpt("syntaxdiff")
         .hasArg()
@@ -378,7 +378,8 @@ public class CDToolOptions {
         .type(String.class)
         .argName("file")
         .numberOfArgs(1)
-        .desc("Merges the input CD with a second CD. The result replaces the input CD in memory.")
+        .desc("Parses the file as a second CD and merges it with the input CD (iff semantically "
+            + "sound). The result is stored in memory.")
         .build());
   }
 

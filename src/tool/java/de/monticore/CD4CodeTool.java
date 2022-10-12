@@ -35,6 +35,7 @@ import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
+import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -115,7 +116,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
         if (cmd.hasOption("merge")) {
           mergeCDs();
-          CD4CodeMill.globalScope().clear();
+          init();
         }
 
         if (cmd.hasOption("semdiff")) {
@@ -625,9 +626,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // remove the default package if present
     CDToolUtils4Diff.removeDefaultPackage(ast1.getCDDefinition());
 
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-    ast1.accept(pp.getTraverser());
-    Log.print(pp.prettyprint(ast));
 
     // parse the second .cd-file
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
@@ -666,7 +664,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // remove the default package if present
     CDToolUtils4Diff.removeDefaultPackage(ast1.getCDDefinition());
 
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("sytaxdiff"));
+
+    // parse the second .cd-file
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syntaxdiff"));
 
     if (ast2 == null) {
       Log.error("0xCDD15: Failed to load CDs for `--syntaxdiff`.");
@@ -708,13 +708,15 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   /**
    * perform merge of 2 CDs
    */
-  public void mergeCDs() {
+  public void mergeCDs() throws IOException {
     Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
-    mergeSet.add(ast.deepClone());
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
+    ast.accept(pp.getTraverser());
+    pp.prettyprint(ast);
 
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("merge"));
+    mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast)).get());
 
-    mergeSet.add(ast2.deepClone());
+    mergeSet.add(CDUtils.parseCDFile(cmd.getOptionValue("merge"), false).get());
 
     String cdName = "Merge.cd";
     if (cmd.hasOption("pp") && cmd.getOptionValue("pp") != null && cmd.getOptionValue("pp")
