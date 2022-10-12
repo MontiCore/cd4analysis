@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package Person;
+package person;
 classdiagram Person2 {
 	class Employee extends Person {
 		int height;

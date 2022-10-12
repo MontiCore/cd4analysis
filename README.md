@@ -123,8 +123,7 @@ These two are examples for calling the tool (download and use the files
 
 ```shell
 java -jar MCCD.jar -i MyBasics.cd -s
-java -jar MCCD.jar -i MyLife.cd -o target/out -s
-java -jar MCCD.jar -i MyLife.cd -pp MyLife.out.cd
+java -jar MCCD.jar -i MyLife.cd -o target/out -pp MyLife.cd
 ```
 
 The possible options are:
