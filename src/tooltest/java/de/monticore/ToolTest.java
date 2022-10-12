@@ -46,7 +46,7 @@ public class ToolTest extends OutTestBasis {
     assertTrue(file.exists());
     final String fileName = file.toString();
 
-    CD4CodeTool.main(new String[] { "-i", fileName, "-t", "false", "-f", "false" });
+    CD4CodeTool.main(new String[] { "-i", fileName, "-nt", "-f", "false" });
 
     //assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertTrue(getErr(), getErr().isEmpty());

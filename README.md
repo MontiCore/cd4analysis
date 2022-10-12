@@ -122,8 +122,8 @@ These two are examples for calling the tool (download and use the files
 [MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
 
 ```shell
-java -jar MCCD.jar -i MyBasics.cd -t true -s
-java -jar MCCD.jar -i MyLife.cd -o target/out -t true -s
+java -jar MCCD.jar -i MyBasics.cd -s
+java -jar MCCD.jar -i MyLife.cd -o target/out -s
 java -jar MCCD.jar -i MyLife.cd -pp MyLife.out.cd
 ```
 
@@ -138,8 +138,9 @@ The possible options are:
 |  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
 | `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
 | `-h,--help` | Prints short help; other options are ignored. |
-| `--json` | Writes a "Schema.json" to the output directory. |
 | `-i,--input <file>` | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`. |
+| `--json` | Writes a "Schema.json" to the output directory. |
+| `-nt,--nobuiltintypes` | If this option is used, built-in-types will not be considered. |
 | `--merge <file> <file>` | Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs `merged.cd` file if `-o` is used, otherwise prints the result to stdout. |
 | `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
 | `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
@@ -150,7 +151,6 @@ The possible options are:
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
 | `--semdiff <file>` | Reads `<file>` as the second CD and compares it semantically with the first CD specified by the `-i` option. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantic based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
 | `--stdin` | Reads the input CD from stdin instead of argument `-i`. |
-| `-t,--usebuiltintypes <boolean>` | Switch of built-in-types. Default: on; `-t` and `--usebuiltintypes false` mean no builtin types. |
 
 ### Building the Tool from the Sources (if desired)
  

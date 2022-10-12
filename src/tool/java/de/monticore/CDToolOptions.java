@@ -135,14 +135,9 @@ public class CDToolOptions {
             + "\"report.{CDName}\".")
         .build());
 
-    options.addOption(Option.builder("t")
-        .longOpt("usebuiltintypes")
-        .hasArg()
-        .type(Boolean.class)
-        .argName("boolean")
-        .optionalArg(true)
-        .numberOfArgs(1)
-        .desc("Configures if built-in-types should be considered. If this option is not used, built-in-types will be considered by default, if this option is used without arguments the value is toggled to `-t false`.")
+    options.addOption(Option.builder("nt")
+        .longOpt("nobuiltintypes")
+        .desc("If this option is used, built-in-types will not be considered.")
         .build());
 
     options.addOption(Option.builder("d")

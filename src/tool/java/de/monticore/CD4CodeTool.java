@@ -170,8 +170,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           new CD4CodeDirectCompositionTrafo().transform(ast);
         }
 
-        boolean useBuiltInTypes =
-            !cmd.hasOption("t") || Boolean.parseBoolean(cmd.getOptionValue("t", "false"));
+        boolean useBuiltInTypes = !cmd.hasOption("nt");
 
         // create a symbol table with provided model paths
         String[] modelPath = { "." };
