@@ -1,13 +1,5 @@
 classdiagram STTest {
 
-   class BigBigCar  extends BigCar{
-       boolean isBigBig ;
-    }
-
-   class BigCar extends Car{
-       boolean isBig;
-   }
-
   class Car extends CarAbstract implements CarInterface, CarInterface2{
     boolean isExpensive ;
     String name;
@@ -19,17 +11,35 @@ classdiagram STTest {
      double price ;
   }
 
+  class Dummy1{
+    boolean isDummy1;
+  }
+
+  class Dummy2{
+      boolean isDummy2;
+  }
+
+  class Dummy3{
+        boolean isDummy3;
+    }
+
   interface CarInterface extends AutoInterface1 , AutoInterface2{
      boolean implementCarInterface ;
   }
+
   interface CarInterface2 {
        boolean implementCarInterface2 ;
-    }
+  }
+
   interface AutoInterface1{
        boolean extendsAutoInterface1 ;
   }
+
   interface AutoInterface2{
          boolean extendsAutoInterface2 ;
-    }
+  }
 
+  association [1] AutoInterface1      --      Dummy1[1];
+  association [1] AutoInterface2      --      Dummy2[1];
+   association [1] CarInterface2      --      Dummy3[1];
 }

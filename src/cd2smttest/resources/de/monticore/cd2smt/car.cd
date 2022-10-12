@@ -1,10 +1,6 @@
 
  classdiagram STTest {
 
-    class BigBigCar  extends BigCar{
-      boolean isBigBig;
-    }
-
     class BigCar extends Car {
       boolean  isBig;
     }

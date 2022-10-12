@@ -8,34 +8,80 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.cdbasis._ast.ASTCDClass;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report.OD4ReportMill;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 
 
 public class CDHelper {
  public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
-
-  public static ASTCDClass getClass(String className, ASTCDDefinition cd) {
-    ASTCDClass res = null;
-    for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className)){
-        res = myClass;
+  public static List<ASTCDClass> getSubclassList(ASTCDDefinition cd, ASTCDType astcdType) {
+    List<ASTCDClass> subclasses = new LinkedList<>();
+    for (ASTCDClass entry : cd.getCDClassesList()) {
+      for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
+        if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdType.getName()))
+          subclasses.add(entry);
+      }
+      for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
+        if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdType.getName()))
+          subclasses.add(entry);
       }
     }
-    if (res == null){
-      Log.error("class" + className + "not found in classdiagram" + cd.getName());
+    return subclasses;
+  }
+  public static List<ASTCDInterface> getSubInterfaceList(ASTCDDefinition cd, ASTCDInterface astcdInterface) {
+    List<ASTCDInterface> subInterfaces= new LinkedList<>();
+    for (ASTCDInterface entry : cd.getCDInterfacesList()) {
+      for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
+        if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdInterface.getName()))
+          subInterfaces.add(entry);
+      }
     }
-    return  res;
+    return subInterfaces;
+  }
+  public static ASTCDType getASTCDType(String className, ASTCDDefinition cd) {
+    for (ASTCDClass myClass : cd.getCDClassesList()) {
+      if (myClass.getName().equals(className)){
+        return myClass;
+      }
+    }
+    for (ASTCDInterface astcdInterface: cd.getCDInterfacesList()) {
+      if (astcdInterface.getName().equals(className)){
+        return astcdInterface;
+      }
+    }
+    Log.error(" class " + className + " not found in classdiagram " + cd.getName());
+    return  null;
+  }
+  public static ASTCDClass getClass(String className, ASTCDDefinition cd) {
+    for (ASTCDClass myClass : cd.getCDClassesList()) {
+      if (myClass.getName().equals(className)){
+        return myClass;
+      }
+    }
+      Log.error(" class " + className + " not found in classdiagram " + cd.getName());
+    return  null;
+  }
+  public static ASTCDInterface getInterface(String className, ASTCDDefinition cd) {
+    for (ASTCDInterface astcdInterface: cd.getCDInterfacesList()) {
+      if (astcdInterface.getName().equals(className)){
+        return astcdInterface;
+      }
+    }
+    Log.error(" Interface " + className + " not found in classdiagram " + cd.getName());
+    return  null;
   }
 
   public static void createCDSymTab(ASTCDCompilationUnit ast) {

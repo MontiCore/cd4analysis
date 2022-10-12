@@ -2,17 +2,17 @@ package de.monticore.cd2smt.context.ODArtifacts;
 
 
 import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
-import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
+
 
 public class LinkedSMTObject {
-  public LinkedSMTObject(SMTObject linkedObject, SMTAssociation smtAssociation, boolean isLeft){
-    this.isLeft = isLeft;
-    this.linkedObject = linkedObject ;
-    this.smtAssociation = smtAssociation ;
-  }
- protected   SMTObject linkedObject;
+  protected SMTObject linkedObject;
   protected SMTAssociation smtAssociation;
-   protected boolean isLeft;
+  protected boolean isLeft;
+  public LinkedSMTObject(SMTObject linkedObject, SMTAssociation smtAssociation, boolean isLeft) {
+    this.isLeft = isLeft;
+    this.linkedObject = linkedObject;
+    this.smtAssociation = smtAssociation;
+  }
 
   public SMTObject getLinkedObject() {
     return linkedObject;
@@ -22,11 +22,11 @@ public class LinkedSMTObject {
     return smtAssociation;
   }
 
-public   boolean isLeft(){
-    return  isLeft;
+  public boolean isLeft() {
+    return isLeft;
   }
 
- public boolean isRight(){
+  public boolean isRight() {
     return !isLeft;
   }
 }
