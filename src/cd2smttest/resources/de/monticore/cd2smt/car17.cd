@@ -1,0 +1,11 @@
+classdiagram STTest {
+
+   interface AutoInterface;
+   interface ColorInterface;
+
+   class Color implements ColorInterface;
+   class Auto implements AutoInterface ;
+
+   association [1] AutoInterface      --      ColorInterface[1];
+
+}

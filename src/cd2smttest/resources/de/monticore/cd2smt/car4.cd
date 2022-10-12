@@ -1,5 +1,5 @@
 classdiagram STTest {
- class BigCar {
+ class Car {
     boolean isExpensive ;
     String name;
     int numberOfWheel ;
@@ -14,6 +14,6 @@ classdiagram STTest {
   String name ;
  }
 
-  association [1] BigCar(car)      --  (motor) Motor[1];
-  association [1] Driver        --          BigCar[1];
+  association [1] Car(car)      --  (motor) Motor[1];
+  association [1] Driver        --          Car[1];
 }

@@ -2,22 +2,25 @@ package de.monticore.cd2smt.smt2odgenerator;
 
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
-import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2smt.Helper.CDHelper;
+import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.ODHelper;
 import de.monticore.cd2smt.Helper.SMTNameHelper;
-import de.monticore.cd2smt.context.*;
 import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
+import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
+import de.monticore.cd2smt.context.CDArtifacts.SMTInterface;
+import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.context.ODArtifacts.LinkedSMTObject;
 import de.monticore.cd2smt.context.ODArtifacts.SMTLink;
 import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.od4report.OD4ReportMill;
-import de.monticore.odbasis._ast.*;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODAttribute;
+import de.monticore.odbasis._ast.ASTODElement;
+import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
-
 
 
 public class SMT2ODGenerator {
@@ -31,30 +34,35 @@ public class SMT2ODGenerator {
     return objectMap;
   }
 
-  public Optional <ASTODArtifact> buildOd(CDContext cdContext, ASTCDDefinition cd, String ODName) {
-    return buildOd(cdContext, cd, ODName, false);
+
+  public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName) {
+    return buildOd(cdContext, ODName, new ArrayList<>(), false);
   }
 
-  public Optional< ASTODArtifact> buildOd(CDContext cdContext, ASTCDDefinition cd) {
-    return buildOd(cdContext, cd, "SMTOD");
+  public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> oclConstraints) {
+    return buildOd(cdContext, ODName, oclConstraints, false);
   }
 
-  public Optional <ASTODArtifact> buildOd(CDContext cdContext, ASTCDDefinition cd, String ODName, boolean partial) {
-    OD4ReportMill.init();
+  public Optional<ASTODArtifact> buildOd(CDContext cdContext) {
+    return buildOd(cdContext, "SMTOD");
+  }
 
+  public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> oclConstraints, boolean partial) {
     //get All Constraints
-    List<Pair<String, BoolExpr>> constraints = new ArrayList<>();
-    constraints.addAll(cdContext.getOclConstraints());
+    List<Identifiable<BoolExpr>> constraints = new ArrayList<>();
+    constraints.addAll(oclConstraints);
     constraints.addAll(cdContext.getAssociationConstraints());
     constraints.addAll(cdContext.getInheritanceConstraints());
 
     //get Model
-    Optional<Model> modelOpt = cdContext.getModel(cdContext.getContext(), constraints);
-    if (modelOpt.isEmpty()){
-      return  Optional.empty();
-    }
+    Solver solver = cdContext.makeSolver(cdContext.getContext(), constraints);
 
-    Map<Expr<Sort>, SMTObject> objectMap = buildObjectMap(cdContext, modelOpt.get(),cd, partial);
+    if (solver.check() != Status.SATISFIABLE) {
+      return Optional.empty();
+    }
+    Model model = solver.getModel();
+
+    buildObjectMap(cdContext, model, partial);
 
     List<ASTODElement> elementList = new ArrayList<>();
     //add all Objects
@@ -63,98 +71,59 @@ public class SMT2ODGenerator {
     }
 
     // add all links
-    for (SMTLink smtLink : buildLinkSet(objectMap)) {
+    for (SMTLink smtLink : buildLinkSet(objectMap, model)) {
       elementList.add(buildLink(smtLink));
     }
 
-    return Optional.of( OD4ReportMill.oDArtifactBuilder()
-      .setObjectDiagram(OD4ReportMill.objectDiagramBuilder()
-        .setName(ODName)
-        .setStereotypeAbsent()
-        .setODElementsList(elementList)
-        .build())
-      .build());
+    return Optional.of(ODHelper.buildOD(ODName, elementList));
   }
 
 
-  ASTODNamedObject buildObject(SMTObject obj) {
-    OD4ReportMill.init();
+  protected ASTODNamedObject buildObject(SMTObject obj) {
     List<ASTODAttribute> attributeList = new ArrayList<>();
-    if (obj.isPresentSuperclass()) {
-      attributeList = getAllObjectAttribute(obj.getSuperClass(), attributeList);
-    }
-    attributeList.addAll(buildAttributeList(obj));
+    attributeList = getAllSuperInstanceAttribute(obj, attributeList);
 
-    return OD4ReportMill.oDNamedObjectBuilder()
-      .setName(obj.getSmtExpr().toString().replace("!val!", ""))
-      .setMCObjectType(OD4ReportMill.mCQualifiedTypeBuilder()
-        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(SMTNameHelper.printObjectName(obj)))
-        .build())
-      .setModifier(OD4ReportMill.modifierBuilder().setStereotypeAbsent().build())
-      .setODAttributesList(attributeList)
-      .build();
+    return ODHelper.buildObject(obj.getSmtExpr().toString().replace("!val!", ""),
+      SMTNameHelper.printObjectType(obj),
+      attributeList);
+  }
+
+  protected List<ASTODAttribute> getAllSuperInstanceAttribute(SMTObject obj, List<ASTODAttribute> attributeList) {
+    attributeList.addAll(buildAttributeList(obj));
+    if (obj.isPresentSuperclass()) {
+      getAllSuperInstanceAttribute(obj.getSuperClass(), attributeList);
+    }
+    if (obj.isPresentSuperInterface()) {
+      obj.getSuperInterfaceList().forEach(s -> getAllSuperInstanceAttribute(s, attributeList));
+    }
+    return attributeList;
   }
 
   protected ASTODLink buildLink(SMTLink smtLink) {
-    OD4ReportMill.init();
-
-    List<ASTODName> leftRefList = new ArrayList<>();
-
-    List<ASTODName> rightRefList = new ArrayList<>();
-
-    leftRefList.add(OD4ReportMill.oDNameBuilder().setName(buildObject(smtLink.getLeftObject()).getName()).build());
-
-    rightRefList.add(OD4ReportMill.oDNameBuilder().setName(buildObject(smtLink.getRightObject()).getName()).build());
-
-    return OD4ReportMill.oDLinkBuilder()
-      .setLink(true)
-      .setODLinkDirection(OD4ReportMill.oDUnspecifiedDirBuilder().build())
-      .setODLinkLeftSide(OD4ReportMill.oDLinkLeftSideBuilder()
-        .setODLinkQualifierAbsent()
-        .setModifier(OD4ReportMill.modifierBuilder().setStereotypeAbsent().build())
-        .setRole(smtLink.getSmtAssociation().getLeftRole())
-        .setReferenceNamesList(leftRefList)
-        .build())
-      .setODLinkRightSide(OD4ReportMill.oDLinkRightSideBuilder()
-        .setODLinkQualifierAbsent()
-        .setModifier(OD4ReportMill.modifierBuilder().setStereotypeAbsent().build())
-        .setRole(smtLink.getSmtAssociation().getRightRole())
-        .setReferenceNamesList(rightRefList)
-        .build())
-      .setStereotypeAbsent()
-      .setNameAbsent()
-      .build();
+    return ODHelper.buildLink(buildObject(smtLink.getLeftObject()).getName(), buildObject(smtLink.getRightObject()).getName(),
+      smtLink.getSmtAssociation().getLeftRole(), smtLink.getSmtAssociation().getRightRole());
   }
+
 
   protected ASTODAttribute buildAttribute(Map.Entry<FuncDecl<? extends Sort>, Expr<Sort>> smtAttribute) {
-    return  OD4ReportMill.oDAttributeBuilder()
-      .setName(smtAttribute.getKey().getName().toString().split("_attrib_")[1])
-      .setModifier(OD4ReportMill.modifierBuilder().setStereotypeAbsent().build())
-      .setStereotypeAbsent()
-      .setComplete("")
-      .setODValue(OD4ReportMill.oDNameBuilder().setName(smtAttribute.getValue().toString()).build())
-      .setMCType(CDHelper.sort2MCType(smtAttribute.getValue().getSort())).build();
+    return ODHelper.buildAttribute(smtAttribute.getKey().getName().toString().split("_attrib_")[1],
+      CDHelper.sort2MCType(smtAttribute.getValue().getSort()), smtAttribute.getValue().toString());
   }
 
-  protected List<LinkedSMTObject> buildLinkSet(SMTObject obj, List<LinkedSMTObject> linkedObjects) {
+
+  protected List<LinkedSMTObject> getSuperInstanceLinks(SMTObject obj, List<LinkedSMTObject> linkedObjects) {
     linkedObjects.addAll(obj.getLinkedObjects());
-    if (!obj.isPresentSuperclass()) {
-      return linkedObjects;
+    if (obj.isPresentSuperclass()) {
+      getSuperInstanceLinks(obj.getSuperClass(), linkedObjects);
     }
-    return buildLinkSet(obj.getSuperClass(), linkedObjects);
+    if (obj.isPresentSuperInterface()) {
+      obj.getSuperInterfaceList().forEach(s -> getSuperInstanceLinks(s, linkedObjects));
+    }
+    return linkedObjects;
   }
 
-
-  protected List<ASTODAttribute> getAllObjectAttribute(SMTObject obj, List<ASTODAttribute> attribList) {
-    attribList.addAll(buildAttributeList(obj));
-    if (!obj.isPresentSuperclass()) {
-      return attribList;
-    }
-    return getAllObjectAttribute(obj.getSuperClass(), attribList);
-  }
 
   protected List<ASTODAttribute> buildAttributeList(SMTObject obj) {
-    OD4ReportMill.init();
     List<ASTODAttribute> attributeList = new ArrayList<>();
     for (Map.Entry<FuncDecl<? extends Sort>, Expr<Sort>> entry : obj.getAttributes().entrySet()) {
       attributeList.add(buildAttribute(entry));
@@ -162,27 +131,54 @@ public class SMT2ODGenerator {
     return attributeList;
   }
 
-  protected Set<SMTLink> buildLinkSet(Map<Expr<Sort>, SMTObject> objectMap) {
+  protected Set<SMTLink> buildLinkSet(Map<Expr<Sort>, SMTObject> objectMap, Model model) {
     Set<SMTLink> links = new HashSet<>();
+    //inherit links of sub instances
     for (SMTObject obj : objectMap.values()) {
-      for (LinkedSMTObject linkedObj : buildLinkSet(obj, new ArrayList<>())) {
+      for (LinkedSMTObject linkedObj : getSuperInstanceLinks(obj, new ArrayList<>())) {
         if (objectMap.containsKey(linkedObj.getLinkedObject().getSmtExpr()) && linkedObj.isLeft()) {
           links.add(new SMTLink(linkedObj.getLinkedObject(), obj, linkedObj.getAssociation()));
         }
-        if (objectMap.containsKey(linkedObj.getLinkedObject().getSmtExpr()) && linkedObj.isRight()) {
-          links.add(new SMTLink(obj, linkedObj.getLinkedObject(), linkedObj.getAssociation()));
+      }
+    }
+    //linked class whose superclasses are linked
+    for (SMTObject obj1 : objectMap.values()) {
+      for (SMTObject obj2 : objectMap.values()) {
+        Optional<SMTLink> isLink = haveLinkedSuperInstances(obj1, obj2, model);
+        if (isLink.isPresent() && !SMTLink.containsLink(links, isLink.get())) {
+          links.add(isLink.get());
         }
       }
     }
+
     return links;
   }
 
+  protected Optional<SMTLink> haveLinkedSuperInstances(SMTObject leftObj, SMTObject rightObj, Model model) {
+    for (LinkedSMTObject left : getSuperInstanceLinks(leftObj, new ArrayList<>())) {
+      for (LinkedSMTObject right : getSuperInstanceLinks(rightObj, new ArrayList<>())) {
+        if (left.getAssociation().equals(right.getAssociation()) && left.isLeft() && right.isRight()) {
+          if (model.evaluate(left.getAssociation().getAssocFunc().apply(left.getLinkedObject().getSmtExpr(),
+            right.getLinkedObject().getSmtExpr()), true).getBoolValue() == Z3_lbool.Z3_L_TRUE) {
+            return Optional.of(new SMTLink(rightObj, leftObj, right.getAssociation()));
+          }
+        }
+      }
+    }
+    return Optional.empty();
+  }
 
-  protected void getAllUniverseObject(Model model, CDContext cdContext, ASTCDDefinition cd, boolean partial) {
+  protected List<Expr<? extends Sort>> getAllUniverseObject(Model model, CDContext cdContext, boolean partial) {
+    //interfaces , abstract and superInstance must be deleted
+    List<Expr<? extends Sort>> objToDelete = new ArrayList<>();
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
-        SMTObject obj = new SMTObject(smtExpr);
-        for (FuncDecl<Sort> func : cdContext.getSmtClasses().get(CDHelper.getClass(mySort.toString().split("_")[0], cd)).getAttributes()) {
+        SMTCDType smtcdType = cdContext.getSMTCDType(mySort.toString().split("_")[0]).get();
+        if (smtcdType instanceof SMTInterface) {
+          objToDelete.add(smtExpr);
+        }
+        SMTObject obj = new SMTObject(smtExpr, smtcdType);
+        for (FuncDecl<Sort> func : smtcdType.getAttributes()) {
           Expr<Sort> attr = model.eval(func.apply(smtExpr), !partial);
           if (attr.getNumArgs() == 0) {
             obj.addAttribute(func, attr);
@@ -191,6 +187,7 @@ public class SMT2ODGenerator {
         objectMap.put(smtExpr, obj);
       }
     }
+    return objToDelete;
   }
 
   protected void getLinkedObject(Model model, CDContext cdContext) {
@@ -203,6 +200,7 @@ public class SMT2ODGenerator {
           if ((leftObj.hasSort(leftSort)) && (rightObj.hasSort(rightSort))) {
             if ((model.eval(assoc.getAssocFunc().apply(leftObj.getSmtExpr(), rightObj.getSmtExpr()), true).getBoolValue() == Z3_lbool.Z3_L_TRUE)) {
               leftObj.getLinkedObjects().add(new LinkedSMTObject(rightObj, assoc, false));
+              rightObj.getLinkedObjects().add(new LinkedSMTObject(leftObj, assoc, true));
             }
           }
         }
@@ -210,34 +208,39 @@ public class SMT2ODGenerator {
     }
   }
 
-  protected List<Expr<? extends Sort>> getSuperInstances(Model model, CDContext cdContext, ASTCDDefinition cd) {
+  protected List<Expr<? extends Sort>> getSuperInstances(Model model, CDContext cdContext) {
     List<Expr<? extends Sort>> objToDelete = new ArrayList<>();
     for (SMTObject obj : objectMap.values()) {
-      FuncDecl<UninterpretedSort> convertTo = cdContext.getSmtClasses().
-        get(CDHelper.getClass(obj.getSmtExpr().getSort().toString().
-          split("_")[0], cd)).getConvert2Superclass();
-      if (convertTo != null) {
-        Expr<? extends Sort> subObj = model.eval(convertTo.apply(obj.getSmtExpr()), true);
-        obj.setSuperClass(objectMap.get(subObj));
-        objToDelete.add(subObj);
+      FuncDecl<UninterpretedSort> convertToSuperClass = cdContext.getSMTCDType(obj.getSmtExpr().getSort().toString().split("_")[0]).get().getConvert2Superclass();
+      if (convertToSuperClass != null) {
+        Expr<? extends Sort> superObj = model.eval(convertToSuperClass.apply(obj.getSmtExpr()), true);
+        obj.setSuperClass(objectMap.get(superObj));
+        objToDelete.add(superObj);
+      }
+
+      Map<ASTCDInterface, FuncDecl<UninterpretedSort>> convert2SuperInterfaceList = cdContext.getSMTCDType(SMTNameHelper.buildClassName(obj)).get().getConvert2SuperInterface();
+      for (FuncDecl<UninterpretedSort> convert2SuperInterface : convert2SuperInterfaceList.values()) {
+        Expr<? extends Sort> superObj = model.eval(convert2SuperInterface.apply(obj.getSmtExpr()), true);
+        obj.addSuperInterfaceList(objectMap.get(superObj));
+        objToDelete.add(superObj);
       }
     }
     return objToDelete;
   }
 
-  protected  Map<Expr<Sort>, SMTObject> buildObjectMap(CDContext cdContext,Model model, ASTCDDefinition cd, Boolean partial) {
+  protected void buildObjectMap(CDContext cdContext, Model model, Boolean partial) {
     //get all objects
-    getAllUniverseObject(model, cdContext, cd, partial);
+    List<Expr<? extends Sort>> objToDelete = getAllUniverseObject(model, cdContext, partial);
 
     //get link between Objects
     getLinkedObject(model, cdContext);
 
     //get the superclass instances
-    List<Expr<? extends Sort>> objToDelete = getSuperInstances(model, cdContext, cd);
+    objToDelete.addAll(getSuperInstances(model, cdContext));
 
-    ////remove the subclass instances and their links
+    ////remove the subclass instances and their links and Interface  objects
     objToDelete.forEach(o -> objectMap.remove(o));
-    return objectMap;
+
   }
 
 }

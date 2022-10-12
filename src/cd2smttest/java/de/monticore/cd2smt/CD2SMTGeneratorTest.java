@@ -4,10 +4,11 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
-import de.monticore.cdbasis._ast.ASTCDClass;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,8 +34,8 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   @Test
   public void testDeclare_empty_class() {
     CDContext cdContext = buildCDContext("car1.cd");
-    Assert.assertEquals(cdContext.getSmtClasses().size(), 1);
-    for (Map.Entry<ASTCDClass, SMTClass> entry : cdContext.getSmtClasses().entrySet()) {
+    Assert.assertEquals(cdContext.getSmtCDTypes().size(), 1);
+    for (Map.Entry<ASTCDType, SMTCDType> entry : cdContext.getSmtCDTypes().entrySet()) {
       Assert.assertEquals(entry.getValue().getAttributes().size(), 0);
     }
   }
@@ -44,14 +45,14 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
 
     CDContext cdContext = buildCDContext("car11.cd");
 
-    Assert.assertEquals(cdContext.getSmtClasses().size(), 1);
+    Assert.assertEquals(cdContext.getSmtCDTypes().size(), 1);
 
-    Set<Map.Entry<ASTCDClass, SMTClass>> classes = cdContext.getSmtClasses().entrySet();
+    Set<Map.Entry<ASTCDType, SMTCDType>> classes = cdContext.getSmtCDTypes().entrySet();
     int is = 0;
     int rs = 0;
     int bs = 0;
     int ss = 0;
-    for (Map.Entry<ASTCDClass, SMTClass> entry : classes) {
+    for (Map.Entry<ASTCDType, SMTCDType> entry : classes) {
       Assert.assertEquals(entry.getValue().getAttributes().size(), 4);
       for (FuncDecl<Sort> attr : entry.getValue().getAttributes()) {
         if ((attr.getRange().equals(cdContext.getContext().mkRealSort()))) {
@@ -78,7 +79,7 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   @Test
   public void TestAssocDeclaration() {
     CDContext cdContext = buildCDContext("car12.cd");
-    Assert.assertEquals(cdContext.getSmtClasses().size(), 3);
+    Assert.assertEquals(cdContext.getSmtCDTypes().size(), 3);
     Assert.assertEquals(cdContext.getSMTAssociations().size(), 2);
   }
 

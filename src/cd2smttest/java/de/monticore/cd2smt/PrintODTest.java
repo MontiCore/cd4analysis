@@ -16,6 +16,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 
 public class PrintODTest extends CDDiffTestBasis {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
@@ -48,8 +50,8 @@ public class PrintODTest extends CDDiffTestBasis {
     CDContext cdContext = cd2SMTGenerator.cd2smt(ast,new Context(cfg));
 
     SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-    Optional<ASTODArtifact>  optOd = smt2ODGenerator.buildOd(cdContext, ast.getCDDefinition());
-    Assertions.assertTrue(optOd.isPresent());
+   Optional<ASTODArtifact> optOd = smt2ODGenerator.buildOd(cdContext);
+   assert optOd.isPresent();
 
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH, optOd.get().getObjectDiagram().getName() + targetNumber + ".od");
     try {
@@ -115,6 +117,33 @@ public class PrintODTest extends CDDiffTestBasis {
   public void test_inheritance_of_association_complete() {
     printOD("car10.cd", "10");
   }
+  @Test
+  public void test_class_inherit_assoc_of_many_interfaces() {
+    printOD( "car14.cd", "14");
+  }
+  @Test
+  public void test_interf_inherit_assoc_of_many_interfaces() {
+    printOD( "car15.cd", "15");
+  }
+  @Test
+  public void test_class_inherit_assoc_of_class_and_interf() {
+    printOD( "car16.cd", "16");
+  }
+
+  @Test
+  public void test_inhr_assoc_both_sides() {
+    printOD( "car17.cd", "17");
+  }
+
+  @Test
+  public void test_inhr_assoc_both_sides_complex() {
+    printOD( "car18.cd", "18");
+  }
+  @Test
+  public void test_interf_inhr_assoc_and_attribut() {
+    printOD( "car19.cd", "19");
+  }
+
 
   @Test
   public void test_all() {

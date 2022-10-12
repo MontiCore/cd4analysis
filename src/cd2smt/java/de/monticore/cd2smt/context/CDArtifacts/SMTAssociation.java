@@ -12,10 +12,10 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 
 public class SMTAssociation {
-  private  SMTClass left;
+  private  SMTCDType left;
   private  String leftRole;
   private  String rightRole;
-  private  SMTClass right;
+  private  SMTCDType right;
   private  FuncDecl<BoolSort> assocFunc;
   private String name;
 
@@ -30,11 +30,11 @@ public class SMTAssociation {
     return name != null;
   }
 
-  public SMTClass getLeft() {
+  public SMTCDType getLeft() {
     return left;
   }
 
-  public SMTClass getRight() {
+  public SMTCDType getRight() {
     return right;
   }
 
@@ -62,7 +62,7 @@ public class SMTAssociation {
     this.assocFunc = assocFunc;
   }
 
-  public void setLeft(SMTClass left) {
+  public void setLeft(SMTCDType left) {
     this.left = left;
   }
 
@@ -70,7 +70,7 @@ public class SMTAssociation {
     this.name = name;
   }
 
-  public void setRight(SMTClass right) {
+  public void setRight(SMTCDType right) {
     this.right = right;
   }
 }
