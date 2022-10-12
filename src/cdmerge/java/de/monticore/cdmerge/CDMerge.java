@@ -1,24 +1,25 @@
 package de.monticore.cdmerge;
 
 import com.google.common.base.Preconditions;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import net.sourceforge.plantuml.Log;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class CDMerge {
 
-  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs) {
+  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs){
+    return merge(inputs,"Merge",new HashSet<>());
+  }
+
+  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs, String name,
+      Set<MergeParameter> mergeParameters) {
 
     Optional<ASTCDCompilationUnit> optAST;
-
-    List<ASTCDCompilationUnit> inputList = new ArrayList<>(inputs);
 
     if (inputs.size() < 2) {
       optAST = inputs.stream().findAny();
@@ -30,7 +31,7 @@ public class CDMerge {
     }
 
     try {
-      optAST = new MergeTool(getConfig(inputList)).mergeCDs().getMergedCD();
+      optAST = new MergeTool(getConfig(inputs, name, mergeParameters)).mergeCDs().getMergedCD();
 
       if (optAST.isPresent()) {
         return optAST.get();
@@ -45,12 +46,15 @@ public class CDMerge {
     return null;
   }
 
-  private static CDMergeConfig getConfig(List<ASTCDCompilationUnit> inputModels) {
+  private static CDMergeConfig getConfig(Set<ASTCDCompilationUnit> inputModels, String name,
+      Set<MergeParameter> mergeParameters) {
     CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(
             MergeParameter.CHECK_ONLY)
         .withParam(MergeParameter.AST_BASED)
         .withParam(MergeParameter.LOG_SILENT)
-        .withParam(MergeParameter.OUTPUT_NAME, "Merge");
+        .withParam(MergeParameter.OUTPUT_NAME, name);
+
+    mergeParameters.forEach(builder::withParam);
 
     for (ASTCDCompilationUnit cd : inputModels) {
       Preconditions.checkNotNull(cd);

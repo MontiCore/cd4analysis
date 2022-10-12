@@ -3,9 +3,6 @@ package de.monticore.cddiff.syntaxdiff;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.ast.ASTNode;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -16,13 +13,11 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
-import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -68,9 +63,6 @@ public class CDSyntaxDiff {
     RESTRICT_INTERVAL, EXPAND_INTERVAL, EQUAL_INTERVAL, BREAKINGCHANGE, ASSOCIATION_INHERITED,
     ATTRIBUTE_INHERITED, METHOD_INHERITED
   }
-  protected String pathCD1;
-
-  protected String pathCD2;
 
   protected StringBuilder outPutAll;
 
@@ -142,21 +134,6 @@ public class CDSyntaxDiff {
     return matchedEnumList;
   }
 
-  public String getPathCD1() {
-    return pathCD1;
-  }
-
-  public String getPathCD2() {
-    return pathCD2;
-  }
-  public void createSemDiff(String outputPath){
-    // Create at most one diff witness for the given class diagrams
-    computeSemDiff(cd2.deepClone(), cd1.deepClone(), outputPath);
-  }
-  public void createJsonReport(String outputPath){
-    // Todo: Add json file creator
-  }
-
 
   /**
    * Constructor for the syntax diff. Creates an object which contain all analysable information regarding the syntax of
@@ -168,21 +145,6 @@ public class CDSyntaxDiff {
 
     this.cd1 = cd1;
     this.cd2 = cd2;
-
-    if (!cd1.isEmpty_PreComments()){
-      pathCD1 = cd1.get_PreComment(0).toString();
-      cd1.clear_PreComments();
-    } else {
-      pathCD1 = cd1.getCDDefinition().getName();
-    }
-
-    if (!cd2.isEmpty_PreComments()){
-      pathCD2 = cd2.get_PreComment(0).toString();
-      cd2.clear_PreComments();
-    } else {
-      pathCD2 = cd2.getCDDefinition().getName();
-    }
-
 
 
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter(new IndentPrinter());
@@ -275,9 +237,9 @@ public class CDSyntaxDiff {
 
     initial.append(System.lineSeparator())
         .append("In the following the syntax diff between ")
-        .append(pathCD1)
+        .append(cd1.getCDDefinition().getName())
         .append(" and ")
-        .append(pathCD2)
+        .append(cd2.getCDDefinition().getName())
         .append(" is created")
         .append(System.lineSeparator())
         .append(System.lineSeparator());
@@ -342,11 +304,11 @@ public class CDSyntaxDiff {
 
     if (!deletedClasses.isEmpty()) {
       classPrints.append("Line Deleted Classes from CD1 (")
-        .append(pathCD1)
+        .append(cd1.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
       classPrintsNC.append("Line Deleted Classes from CD1 (")
-          .append(pathCD1)
+          .append(cd1.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
 
@@ -366,11 +328,11 @@ public class CDSyntaxDiff {
 
     if (!addedClasses.isEmpty()) {
       classPrints.append("Line Added Classes to CD2 (")
-          .append(pathCD2)
+          .append(cd2.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       classPrintsNC.append("Line Added Classes to CD2 (")
-        .append(pathCD2)
+        .append(cd2.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -390,11 +352,11 @@ public class CDSyntaxDiff {
 
     if (!deletedEnum.isEmpty()) {
       enumPrints.append("Line Deleted Enums from CD1 (")
-          .append(pathCD1)
+          .append(cd1.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       enumPrintsNC.append("Line Deleted Enums from CD1 (")
-        .append(pathCD1)
+        .append(cd1.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -414,11 +376,11 @@ public class CDSyntaxDiff {
 
     if (!addedEnum.isEmpty()) {
       enumPrints.append("Line Added Enums to CD2 (")
-          .append(pathCD2)
+          .append(cd2.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       enumPrintsNC.append("Line Added Enums to CD2 (")
-        .append(pathCD2)
+        .append(cd2.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -438,11 +400,11 @@ public class CDSyntaxDiff {
 
     if (!deletedAssos.isEmpty()) {
       assoPrints.append("Line Deleted Associations from CD1 (")
-          .append(pathCD1)
+          .append(cd1.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       assoPrintsNC.append("Line Deleted Associations from CD1 (")
-        .append(pathCD1)
+        .append(cd1.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -462,11 +424,11 @@ public class CDSyntaxDiff {
 
     if (!addedAssos.isEmpty()) {
       assoPrints.append("Line Added Associations to CD2 (")
-          .append(pathCD2)
+          .append(cd2.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       assoPrintsNC.append("Line Added Associations to CD2 (")
-        .append(pathCD2)
+        .append(cd2.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -486,11 +448,11 @@ public class CDSyntaxDiff {
 
     if (!deletedInterfaces.isEmpty()) {
       interfacePrints.append("Line Deleted Interface from CD1 (")
-          .append(pathCD1)
+          .append(cd1.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       interfacePrintsNC.append("Line Deleted Interface from CD1 (")
-        .append(pathCD1)
+        .append(cd1.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -511,12 +473,12 @@ public class CDSyntaxDiff {
     if (!addedInterfaces.isEmpty()) {
       interfacePrints.append("CD2: ")
           .append("Line Added Interface to CD2 (")
-          .append(pathCD2)
+          .append(cd2.getCDDefinition().getName())
           .append(") :")
           .append(System.lineSeparator());
       interfacePrintsNC.append("CD2: ")
         .append("Line Added Interface to CD2 (")
-        .append(pathCD2)
+        .append(cd2.getCDDefinition().getName())
         .append(") :")
         .append(System.lineSeparator());
 
@@ -545,18 +507,18 @@ public class CDSyntaxDiff {
         .append(assoPrints);
     */
 
-    Collections.sort(onlyCD1Sort, Comparator.comparing(p -> +p.getLeft()));
+    onlyCD1Sort.sort(Comparator.comparing(p -> +p.getLeft()));
     StringBuilder outPutCD1 = new StringBuilder();
-    outPutCD1.append("classdiagram ").append(pathCD1).append(" {");
+    outPutCD1.append("classdiagram ").append(cd1.getCDDefinition().getName()).append(" {");
     for (Pair<Integer, String> x : onlyCD1Sort){
       outPutCD1.append(System.lineSeparator()).append(x.getValue());
     }
     outPutCD1.append(System.lineSeparator()).append("}");
     this.cd1Colored = outPutCD1;
 
-    Collections.sort(onlyCD2Sort, Comparator.comparing(p -> +p.getLeft()));
+    onlyCD2Sort.sort(Comparator.comparing(p -> +p.getLeft()));
     StringBuilder outPutCD2 = new StringBuilder();
-    outPutCD2.append("classdiagram ").append(pathCD2).append(" {");
+    outPutCD2.append("classdiagram ").append(cd2.getCDDefinition().getName()).append(" {");
     for (Pair<Integer, String> x : onlyCD2Sort){
       outPutCD2.append(System.lineSeparator()).append(x.getValue());
     }
@@ -564,8 +526,8 @@ public class CDSyntaxDiff {
     this.cd2Colored = outPutCD2;
 
     // Sort by breaking score which indicates the impact of the recognized change
-    Collections.sort(breakingSort, Comparator.comparing(p -> -p.getLeft()));
-    Collections.sort(breakingSortNC, Comparator.comparing(p -> -p.getLeft()));
+    breakingSort.sort(Comparator.comparing(p -> -p.getLeft()));
+    breakingSortNC.sort(Comparator.comparing(p -> -p.getLeft()));
 
     for (Pair<Integer, String> x : breakingSort){
       outPutAll.append(x.getValue());
@@ -590,7 +552,7 @@ public class CDSyntaxDiff {
     StringBuilder tmp = new StringBuilder();
     // Header for first element
     tmp.append("CD1 (")
-        .append(pathCD1)
+        .append(cd1.getCDDefinition().getName())
         .append(") Line: ")
         .append(x.getCd1Element().get_SourcePositionStart().getLine())
         .append("-")
@@ -606,7 +568,7 @@ public class CDSyntaxDiff {
     // Header for second element
     tmp.append(System.lineSeparator())
         .append("CD2 (")
-        .append(pathCD2)
+        .append(cd2.getCDDefinition().getName())
         .append(") Line: ")
         .append(x.getCd2Element().get_SourcePositionStart().getLine())
         .append("-")
@@ -630,9 +592,9 @@ public class CDSyntaxDiff {
     StringBuilder tmp = new StringBuilder();
     // Header
     tmp.append("CD1 (")
-      .append(pathCD1)
+      .append(cd1.getCDDefinition().getName())
       .append(") and CD2 (")
-      .append(pathCD2)
+      .append(cd2.getCDDefinition().getName())
       .append(")")
       .append(System.lineSeparator())
       .append("CD1: ")
@@ -663,41 +625,6 @@ public class CDSyntaxDiff {
       .append(System.lineSeparator())
       .append(System.lineSeparator());
     return tmp;
-  }
-
-  /**
-   * Computes at most one diff witness for the provided class diagrams
-   * @param cd1 New class diagram
-   * @param cd2 Old class diagram
-   */
-  private void computeSemDiff(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, String outputPath) {
-
-    ReductionTrafo trafo = new ReductionTrafo();
-    trafo.transform(cd1, cd2);
-
-    int cd1size = cd1.getCDDefinition().getCDClassesList().size() + cd1.getCDDefinition()
-        .getCDInterfacesList()
-        .size();
-
-    int cd2size = cd2.getCDDefinition().getCDClassesList().size() + cd2.getCDDefinition()
-        .getCDInterfacesList()
-        .size();
-    int diffsizeSem = Math.max(20, 2 * Math.max(cd1size, cd2size));
-    Optional<AlloyDiffSolution> optS = AlloyCDDiff.getAlloyDiffSolution(cd1, cd2, diffsizeSem,
-        CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputPath);
-
-    // test if solution is present
-    if (!optS.isPresent()) {
-      return;
-    }
-    AlloyDiffSolution sol = optS.get();
-
-    // limit number of generated diff-witnesses
-    sol.setSolutionLimit(1);
-    sol.setLimited(true);
-
-    // generate diff-witnesses in outputPath
-    sol.generateSolutionsToPath(Paths.get(outputPath));
   }
 
   public void print() {

@@ -31,7 +31,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
     for (String cwDiffOption : cwDiffOptions) {
       // when CD4CodeTool is used to compute the semantic difference
-      String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+      String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
           "20", cwDiffOption };
       CD4CodeTool.main(args);
 
@@ -81,7 +81,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
     for (String cwDiffOption : cwDiffOptions) {
       //when CD4CodeTool is used to compute the semantic difference
-      String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output,
+      String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
           "--difflimit", "20", cwDiffOption };
       CD4CodeTool.main(args);
 
@@ -118,7 +118,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     final String output = "./target/generated/cddiff-test/CLITestWithDefaultDiff";
 
     //when CD4CodeTool is used to compute the semantic difference
-    String[] args = {"--semdiff", cd1, cd2, "-o", output };
+    String[] args = {"-i", cd1, "--semdiff", cd2, "-o", output };
     CD4CodeTool.main(args);
 
     // then corresponding .od files are generated
@@ -164,7 +164,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     for (String cwDiffOption : cwDiffOptions) {
       for (String owDiffOption : owDiffOptions) {
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
             "20", "--open-world", owDiffOption , cwDiffOption};
         CD4CodeTool.main(args);
 
@@ -205,7 +205,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       for (String owDiffOption : owDiffOptions) {
 
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
             "20", "--open-world", owDiffOption, cwDiffOption };
         CD4CodeTool.main(args);
 
@@ -247,7 +247,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
     for (String cwDiffOption : cwDiffOptions) {
       for (String owDiffOption : owDiffOptions) {
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
             "20", "--open-world", owDiffOption, cwDiffOption};
         CD4CodeTool.main(args);
 
@@ -287,7 +287,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
       for (String owDiffOption : owDiffOptions) {
 
         //when CD4CodeTool is used to compute the semantic difference
-        String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+        String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
             "20", "--open-world", owDiffOption, cwDiffOption};
         CD4CodeTool.main(args);
 
@@ -327,7 +327,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
     for (String cwDiffOption : cwDiffOptions) {
       //when CD4CodeTool is used to compute the semantic difference
-      String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output, "--difflimit",
+      String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output, "--difflimit",
           "20", cwDiffOption};
       CD4CodeTool.main(args);
 
@@ -358,7 +358,7 @@ public class CDDiffCLIToolTest extends CD4CodeTestBasis {
 
     for (String cwDiffOption : cwDiffOptions) {
       //when CD4CodeTool is used to compute the semantic difference
-      String[] args = {"--semdiff", cd1, cd2, "--diffsize", "21", "-o", output,
+      String[] args = {"-i", cd1, "--semdiff", cd2, "--diffsize", "21", "-o", output,
           "--difflimit", "20", "--open-world", "reduction-based", cwDiffOption};
       CD4CodeTool.main(args);
 

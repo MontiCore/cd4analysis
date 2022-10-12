@@ -65,12 +65,16 @@ public class CDToolOptions {
         .type(String.class)
         .argName("file")
         .numberOfArgs(1)
-        .desc("Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.")
+        .desc("Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can "
+            + "be used to read the input CD from stdin. Using one of the two options is "
+            + "mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.")
         .build());
 
     options.addOption(Option.builder()
         .longOpt("stdin")
-        .desc("Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for most operations; exceptions are `-h`, `--semdiff` and `--merge`.")
+        .desc("Reads the input CD from stdin instead of the source file specified by `-i`. Using "
+            + "one of the two options is mandatory for most operations; exceptions are `-h`, "
+            + "`--semdiff` and `--merge`.")
         .build());
 
     options.addOption(Option.builder()
@@ -284,10 +288,11 @@ public class CDToolOptions {
         .hasArg()
         .type(String.class)
         .argName("file")
-        .numberOfArgs(2)
+        .numberOfArgs(1)
         .desc(
-            "Parses 2 CD-files and outputs object diagrams (witnesses) that are valid in the first "
-                + "CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. "
+            "Computes the semantic difference of the current CD in memory with that of a second CD."
+                + " Outputs object structures (witnesses) that are valid in the current CD but "
+                + "invalid in the second CD. This is a semantics-based, asymmetric diff. "
                 + "Details: " + "https://www.se-rwth.de/topics/Semantics.php")
         .build());
 
@@ -339,11 +344,12 @@ public class CDToolOptions {
         .longOpt("syntaxdiff")
         .hasArg()
         .type(String.class)
-        .argName("files")
-        .numberOfArgs(2)
-        .desc(
-            "Parses 2 CD-files and performs a syntactical difference analysis between the first CD "
-                + "(old) and the second CD (new).")
+        .argName("file")
+        .numberOfArgs(1)
+        .desc("Performs a syntactical difference analysis on the current CD in memory (old) and a "
+            + "second CD (new) and prints the result to stdout. Default: outputs the "
+            + "matched CD-elements with color-coded diffs (red for deleted, yellow for changed, "
+            + "and green for newly added elements).")
         .build());
 
     options.addOption(Option.builder()
@@ -353,43 +359,13 @@ public class CDToolOptions {
         .argName("printType")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Specifies print options: (default) diff, nocolor, cd1, cd2, both, all diff will "
-            + "print a coloured version of all diffs and matchs nocolor print an alternative "
-            + "with +, -, ~ indicators cd1, cd2, both will provide coloured version of the "
-            + "provided models all provides diff, cd1, cd2")
+        .desc("Specifies the print option: `diff` (default) prints the matched CD-elements with "
+            + "color-coded diffs (red for deleted, yellow for changed, and green for newly added "
+            + "elements). `cd1` will print only the old CD with color-coded diffs and `cd2` only "
+            + "the new CD. `all` combines all of the previous options. `nocolor` prints the "
+            + "matched CD-elements with lines marked as - (deleted), ~ (changed), + (added)")
         .build());
 
-    options.addOption(Option.builder()
-        .longOpt("diffreport")
-        .desc("Creates a json report file in the output directory.")
-        .build());
-
-    options.addOption(Option.builder()
-        .longOpt("andSemDiff")
-        .desc("Also performs an open-world semdiff(cd2\\cd1) with default configuration.")
-        .build());
-
-    options.addOption(Option.builder()
-        .longOpt("showpath")
-        .desc("Each print contains the full path of the file, git commit hash included "
-            + "without this option only the file name is printed")
-        .build());
-    options.addOption(Option.builder()
-        .longOpt("cd1commit")
-        .hasArg()
-        .type(String.class)
-        .numberOfArgs(1)
-        .desc("Each print contains the full path of the file, git commit hash included "
-            + "without this option only the file name is printed")
-        .build());
-    options.addOption(Option.builder()
-        .longOpt("cd2commit")
-        .hasArg()
-        .type(String.class)
-        .numberOfArgs(1)
-        .desc("Each print contains the full path of the file, git commit hash included "
-            + "without this option only the file name is printed")
-        .build());
   }
 
   /**
@@ -400,11 +376,9 @@ public class CDToolOptions {
         .longOpt("merge")
         .hasArg()
         .type(String.class)
-        .argName("files")
-        .numberOfArgs(2)
-        .desc(
-            "Parses 2 CD-files and performs a semantically sound merge (iff possible); outputs "
-                + "`Merge.cd` file if `-o` is used, otherwise prints the result to stdout.")
+        .argName("file")
+        .numberOfArgs(1)
+        .desc("Merges the input CD with a second CD. The result replaces the input CD in memory.")
         .build());
   }
 
