@@ -2,7 +2,6 @@
 package de.monticore;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import de.monticore.ast.Comment;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
@@ -35,6 +34,8 @@ import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdmerge.CDMerge;
+import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -44,10 +45,8 @@ import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -108,6 +107,18 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       if (handleArgs(args)) {
         init();
 
+        if (modelFile != null) {
+          ast = parse(modelFile);
+        }
+        else {
+          ast = parse(modelReader);
+        }
+
+        if (cmd.hasOption("merge")) {
+          mergeCDs();
+          init();
+        }
+
         if (cmd.hasOption("semdiff")) {
           computeSemDiff();
           CD4CodeMill.globalScope().clear();
@@ -118,21 +129,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        if (cmd.hasOption("merge")) {
-          mergeCDs();
-          CD4CodeMill.globalScope().clear();
-        }
-
-        if (stopRunEarly) {
-          return;
-        }
-
-        if (modelFile != null) {
-          ast = parse(modelFile);
-        }
-        else {
-          ast = parse(modelReader);
-        }
         new CD4CodeAfterParseTrafo().transform(ast);
         modelName = ast.getCDDefinition().getName();
 
@@ -375,10 +371,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
-        if (cmd.hasOption("syntaxdiff") || cmd.hasOption("semdiff") || cmd.hasOption("merge")) {
-          stopRunEarly = true;
-          return true;
-        }
         printHelp((CDToolOptions.SubCommand) null);
         Log.error(String.format("0xCD014: option '%s' is missing, but an input is required",
             "[i, stdin]"));
@@ -628,16 +620,17 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
   protected void computeSemDiff() throws NumberFormatException, IOException {
 
-    String commitID1 = cmd.getOptionValue("cd1commit");
-    String commitID2 = cmd.getOptionValue("cd2commit");
+    // clone the current CD
+    ASTCDCompilationUnit ast1 = ast.deepClone();
 
-    String[] path = cmd.getOptionValues("semdiff");
+    // remove the default package if present
+    CDToolUtils4Diff.removeDefaultPackage(ast1.getCDDefinition());
 
-    // parse the .cd-files
-    ASTCDCompilationUnit ast1 = parse(path[0]);
-    ASTCDCompilationUnit ast2 = parse(path[1]);
 
-    if (ast1 == null || ast2 == null) {
+    // parse the second .cd-file
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
+
+    if (ast2 == null) {
       Log.error("0xCDD14: Failed to load CDs for `--semdiff`.");
       return;
     }
@@ -663,15 +656,19 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
-  protected void computeSyntaxDiff(){
+  protected void computeSyntaxDiff() {
 
-    String[] path = cmd.getOptionValues("syntaxdiff");
+    // clone the current CD
+    ASTCDCompilationUnit ast1 = ast.deepClone();
 
-    // parse the .cd-files
-    ASTCDCompilationUnit ast1 = parse(path[0]);
-    ASTCDCompilationUnit ast2 = parse(path[1]);
+    // remove the default package if present
+    CDToolUtils4Diff.removeDefaultPackage(ast1.getCDDefinition());
 
-    if (ast1 == null || ast2 == null) {
+
+    // parse the second .cd-file
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syntaxdiff"));
+
+    if (ast2 == null) {
       Log.error("0xCDD15: Failed to load CDs for `--syntaxdiff`.");
       return;
     }
@@ -682,20 +679,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast2);
 
-    if (cmd.hasOption("showpath")) {
-      ast1.add_PreComment(0, (new Comment(path[0])));
-      ast2.add_PreComment(0, (new Comment(path[1])));
-    }
-
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
-
-    if (cmd.hasOption("andSemDiff")) {
-      syntaxDiff.createSemDiff(outputPath);
-    }
-
-    if (cmd.hasOption("diffreport")) {
-      syntaxDiff.createJsonReport(outputPath);
-    }
 
     String printType = cmd.getOptionValue("print", "diff");
     if (printType.equals("diff")) {
@@ -725,30 +709,26 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
    * perform merge of 2 CDs
    */
   public void mergeCDs() throws IOException {
-    String[] path = cmd.getOptionValues("merge");
+    Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
+    ast.accept(pp.getTraverser());
+    pp.prettyprint(ast);
+
+    mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast)).get());
+
+    mergeSet.add(CDUtils.parseCDFile(cmd.getOptionValue("merge"), false).get());
 
     String cdName = "Merge.cd";
-    if (cmd.hasOption("o") && outputPath.endsWith(".cd")){
-      cdName = Path.of(outputPath).getFileName().toString();
-      outputPath = outputPath.replace(cdName,"");
+    if (cmd.hasOption("pp") && cmd.getOptionValue("pp") != null && cmd.getOptionValue("pp")
+        .endsWith(".cd")) {
+      cdName = Path.of(cmd.getOptionValue("pp")).getFileName().toString();
     }
-
     cdName = cdName.substring(0, cdName.length() - 3);
 
-    ASTCDCompilationUnit mergeResult = CDToolUtils4Merge.merge(Arrays.asList(path),
-     cdName, new ArrayList<>());
+    ASTCDCompilationUnit mergeResult = CDMerge.merge(mergeSet, cdName, new HashSet<>());
 
     if (mergeResult != null) {
-      CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-      mergeResult.accept(pp.getTraverser());
-      Path outputFile = Paths.get(outputPath, mergeResult.getCDDefinition().getName() + ".cd");
-      String content = pp.prettyprint(mergeResult);
-      if (cmd.hasOption("o")){
-        FileUtils.writeStringToFile(outputFile.toFile(), pp.prettyprint(mergeResult),
-          Charset.defaultCharset());
-      } else {
-        System.out.println(content);
-      }
+      ast = mergeResult;
     }
     else {
       Log.error("0xCDD16 Could not merge CDs.");

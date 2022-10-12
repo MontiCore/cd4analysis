@@ -22,7 +22,7 @@ public class CDMergeTest extends BaseTest {
       inputSet.add(loadModel(srcDir + "B.cd"));
       inputSet.add(loadModel(srcDir + "C.cd"));
     } catch (IOException e) {
-      fail("IO exception whie accessing input models: " + e.getMessage());
+      fail("IO exception while accessing input models: " + e.getMessage());
     }
 
     ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet);

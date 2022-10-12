@@ -19,6 +19,16 @@ public class ToolTest extends OutTestBasis {
   public ExpectedException thrown = ExpectedException.none();
 
   @Test
+  public void testMerge() {
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    CD4CodeTool.main(new String[] { "-i", cd1, "--merge", cd2});
+
+    //assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertTrue(getErr(), getErr().isEmpty());
+  }
+
+  @Test
   public void testTool() throws IOException, ParseException {
     final File file = new File(getFilePath("cd/Complete.cd"));
     assertTrue(file.exists());

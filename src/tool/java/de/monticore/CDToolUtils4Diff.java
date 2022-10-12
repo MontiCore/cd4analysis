@@ -4,6 +4,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
@@ -135,20 +136,11 @@ public class CDToolUtils4Diff {
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
-  public static ASTCDCompilationUnit parseModelFromString(String model) {
-    CD4CodeParser parser = new CD4CodeParser();
-    Optional<ASTCDCompilationUnit> opt;
-    try {
-      opt = parser.parse_String(model);
-      //assertFalse(parser.hasErrors());
-      if (!parser.hasErrors() && opt.isPresent()) {
-        return opt.get();
-      }
-    }
-    catch (Exception e) {
-      Log.error("0xCDD13 Failed to parse model from String", e);
-    }
-    return null;
+  public static void removeDefaultPackage(ASTCDDefinition cd) {
+    cd.getDefaultPackage().ifPresent(dp -> {
+      cd.getCDElementList().addAll(dp.getCDElementList());
+      cd.getCDElementList().remove(dp);
+    });
   }
 
 }
