@@ -3,12 +3,10 @@
 import java.util.Date;
 
 classdiagram Employees2 {
-    package p {
-      enum PositionKind{fullTime, partTime, external;}
-    }
+  enum PositionKind{fullTime, partTime, external;}
 
   class Employee {
-    p.PositionKind kind;
+    PositionKind kind;
   }
 
   class Task {
