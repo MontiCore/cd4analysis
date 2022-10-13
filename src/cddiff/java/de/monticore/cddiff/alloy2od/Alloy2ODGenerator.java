@@ -392,8 +392,11 @@ public class Alloy2ODGenerator {
       // Generate Module
       Optional<ASTODArtifact> optOd = generateOD(module, currentSolution);
 
-      // Add to result if present
-      optOd.ifPresent(ods::add);
+      // Rename and add to result if present
+      if (optOd.isPresent()) {
+        optOd.get().getObjectDiagram().setName("witness_" + number);
+        ods.add(optOd.get());
+      }
 
       // Increase loop variables
       try {
@@ -466,8 +469,8 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove enum_ and $number from val
-    String type = val.replaceAll("enum_", "");
-    type = type.replaceAll("_.*", "");
+    String type = val.replaceAll("enum_", "").replaceAll("_", ".").replaceAll("[$]\\d*", "");
+    //type = type.replaceAll("_.*", "");
 
     // Get name from fName by removing $number from fName
     String name = fName.replaceAll("[$]\\d*", "");
@@ -475,6 +478,8 @@ public class Alloy2ODGenerator {
     // Get value from val by removing "*_*_" part and $number from fName
     String value = val.replaceAll("[$]\\d*", "");
     value = value.replaceAll(".*_", "");
+
+    type = type.substring(0, type.length() - value.length() - 1);
 
     // Generate output
     od.append(type);
@@ -494,9 +499,12 @@ public class Alloy2ODGenerator {
   private static String executeRulePrim(String val, String fName) {
     StringBuilder od = new StringBuilder();
 
-    // Remove type_ and $number from val
-    String type = val.replaceAll("_of__", "<").replaceAll("__", ">").replaceAll(".*_", "");
-    type = type.replaceAll("[$]\\d*", "");
+    // Get attribute type by replacing alloy-specific elements
+    String type = val.replaceAll("_of__", "<")
+        .replaceAll("__", ">")
+        .replaceAll("type_", "")
+        .replaceAll("[$]\\d*", "")
+        .replaceAll("_", ".");
 
     // Get name from fName by removing $number from fName
     String name = fName.replaceAll("[$]\\d*", "");
@@ -547,9 +555,7 @@ public class Alloy2ODGenerator {
       if (o.atom(0).equals(t.atom(0))) {
         for (A4Tuple superType : superTypes) {
           if (t.atom(1).equals(superType.atom(0))) {
-            typeDecl.append(superType.atom(1)
-                .replaceAll("Type_", ", ")
-                .replaceAll("[$]\\d*", ""));
+            typeDecl.append(superType.atom(1).replaceAll("Type_", ", ").replaceAll("[$]\\d*", ""));
           }
         }
       }
