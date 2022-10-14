@@ -1,0 +1,24 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Family {
+
+  class Person {
+    public String fullName;
+    int age;
+  }
+
+  association marriage [1] Person (marriedTo) <-> (marriedTo) Person [1];
+
+  association [1] Person (owner) -> (owns) Car [*];
+
+  abstract class Car {
+    Color color;
+  }
+
+  class BMW extends Car;
+
+  enum Color {
+    BLUE, RED, WHITE, BLACK;
+  }
+
+}

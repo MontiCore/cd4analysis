@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Monitors1 {
+  abstract class TransmitInterface{
+    List<char> specifications;
+    public void testMethode();
+    protected long deletedMethode();
+  }
+  interface SmallMonitor{
+    String height;
+    String width;
+  }
+  class LargeMonitor {
+    int height = 1;
+    long test;
+    String width = "200";
+    List<String> specifications;
+
+  }
+  class BigMonitor;
+
+
+  class HDMI extends TransmitInterface;
+  class DVI extends TransmitInterface;
+  association {ordered} [*] HDMI [String] (has) -- (test) SmallMonitor;
+  association {ordered} [*] HDMI [String] (has) -> (test) BigMonitor;
+}

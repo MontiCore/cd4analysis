@@ -1,0 +1,56 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package university.main;
+
+import java.util.Date;
+
+classdiagram University {
+
+  enum Subject {
+    ENGINEERING, COMPUTERSCIENCE, MATH, PHYSICS, CHEMISTRY,
+    BIOLOGY, MEDICINE, ARCHITECTURE, PHILOSOPHY, ART, LITERATURE;
+  }
+
+  public interface Lecturer;
+
+  abstract class Person {
+    public String fullName;
+    String address;
+    Date dateOfBirth;
+  }
+
+  class Course {
+    Subject subject;
+  }
+
+  class Lecture {
+    int credits;
+  }
+
+  class Student extends Person {
+    int studentID;
+    public int getCredits(Course course);
+  }
+
+  package university.staff {
+    class Employee extends Person {
+      int employeeID;
+    }
+
+    class Professor extends Person implements Lecturer;
+
+    class Chair{
+      String id;
+      String researchArea;
+    }
+
+    association [1] Professor (head) <-> (heads) Chair [0..1];
+    association [1..*] Employee <-> (worksAt) Chair [0..1];
+  }
+
+  association [1] Lecturer (heldBy) <-> (holds) Lecture;
+  association Student (attendees) <-> (attends) Lecture;
+  association [*] Course -> (curriculum) Lecture [1..*];
+  association [1..*] Student <-> (studies) Course [1..*];
+
+}

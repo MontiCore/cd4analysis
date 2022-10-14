@@ -482,7 +482,7 @@ java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o target/out -pp
 ```
 
 
-[ExampleModels]: src/test/resources/de/monticore/cd4analysis
+[ExampleModels]: src/test/resources/de/monticore/cd4analysis/examples
 [ToolDownload]: https://monticore.de/download/MCCD.jar
 [MCDownloadPage]: https://monticore.github.io/monticore/docs/Download/
 
