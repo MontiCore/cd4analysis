@@ -1,8 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 
+package driving;
 import java.util.Date;
 
-classdiagram Driving1 {
+classdiagram Driving2 {
 
   class Person {
     String fullName;
@@ -10,19 +11,22 @@ classdiagram Driving1 {
   }
 
   abstract class Vehicle {
-    String licensePlate
+    String licensePlate;
     public boolean equals(Vehicle vehicle);
   }
 
   class Car extends Vehicle {
+    String productionYear;
     int kilometers;
+    public int getMeters(int kmeters);
   }
 
   class Truck extends Vehicle {
+    int productionYear;
     long kilometers;
   }
 
-  association [*] Person -> (drives) Vehicle [*];
+  association [1] Person -> (drives) Car [1];
   association [1] Person (owns) <-> (owner) Vehicle [*];
 
 }
