@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
+package driving;
 import java.util.Date;
 
 classdiagram Driving1 {
@@ -11,11 +12,17 @@ classdiagram Driving1 {
 
   class Car {
     String licensePlate;
+    int productionYear;
     long kilometers;
     public boolean equals(Car car);
+    public long getMeters(long kmeters);
   }
 
-  association [*] Person -> (drives) Car [*];
-  association [*] Person (owns) <-> (owner) Vehicle [*];
+  class Truck {
+    long kilometers;
+    int productionYear;
+  }
+
+association [1] Person -> (drives) Car [*];
 
 }
