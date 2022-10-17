@@ -2,11 +2,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 /* (c) https://github.com/MontiCore/monticore */
-/*buildscript {
-  dependencies {
-    classpath "de.monticore:monticore-runtime:${project.properties['mc_version']}"
-  }
-}*/
 
 plugins {
   id "java"
@@ -15,7 +10,6 @@ plugins {
   id "com.github.johnrengelman.shadow" version "6.0.0" apply false
   id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
-  id "com.dorongold.task-tree" version "2.1.0"
 }
 
 def var_path = "de.monticore"
@@ -37,12 +31,12 @@ ext {
   testGrammarDir = "src/test/grammars"
   testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
   findbugs_version = "3.0.2"
-  guava_version = "25.1-jre"
+  guava_version = "31.1-jre"
   antlr_version = "4.7-1"
   plantuml_version = "1.2020.15"
-  jackson_version = "2.13.0"
-  junit_version = "4.13"
-  commons_cli_version = "1.4"
+  jackson_version = "2.13.4"
+  junit_version = "5.9.0"
+  commons_cli_version = "1.5.0"
   commons_lang_version = "3.11"
   jupiter_version = "5.6.0"
   antlr_version = '4.7.1'
@@ -129,9 +123,7 @@ configurations {
 }
 
 dependencies {
-  implementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    grammar("$var_path:monticore-grammar:$mc_version") {
+  grammar("$var_path:monticore-grammar:$mc_version") {
     capabilities {
       requireCapability("$var_path:monticore-grammar-grammars")
     }
@@ -141,34 +133,30 @@ dependencies {
   implementation "$var_path:class2mc:${project.properties['mc_version']}"
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
-  implementation group: 'org.antlr', name: 'antlr4-runtime', version: antlr_version
   implementation "com.google.guava:guava:$guava_version"
   implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
   implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
-  implementation "org.freemarker:freemarker:$freemarker_version"
-  testImplementation "org.antlr:antlr4-runtime:$antlr_version"
-  testImplementation "junit:junit:$junit_version"
-  testImplementation "com.github.javaparser:javaparser-symbol-solver-core:$javaparser_version"
+  testImplementation "org.freemarker:freemarker:$freemarker_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+  testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
   testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   testImplementation "org.mockito:mockito-core:$mockito_version"
+  testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
   }
 
   // dependencies for cddiff
   cddiffImplementation "de.monticore.lang:od:$mc_version"
   cddiffImplementation "edu.mit.alloy:alloy:6"
-  //cddiffimplementation 'org.eclipse.jgit:org.eclipse.jgit:2.2.0.201212191850-r'
   cddiffImplementation(sourceSets.main.output.classesDirs)
 
-  //cddifftestImplementation "de.se-rwth.artifacts:artifact-cd-matcher:$mc_version"
-  //cddifftestImplementation "de.se-rwth.artifacts:artifact-commons:$mc_version"
   cddifftestImplementation(sourceSets.cddiff.output.classesDirs)
   cddifftestImplementation(sourceSets.test.output.classesDirs)
 
   // dependencies for cdmerge
-  cdmergeImplementation "org.apache.commons:commons-collections4:$apache_commons_version"
   cdmergeImplementation(sourceSets.main.output.classesDirs)
 
 
@@ -177,9 +165,7 @@ dependencies {
 
   //dependencies for cd2smt
   cd2smtImplementation(sourceSets.cddiff.output.classesDirs)
-  cd2smtImplementation 'tools.aqua:z3-turnkey:4.8.17'
-  // cd2smtImplementation "org.sosy-lab:java-smt:3.12.0"
-  // cd2smtImplementation 'org.sosy-lab:smtinterpol:2.5:g108647d8'
+  cd2smtImplementation 'tools.aqua:z3-turnkey:4.11.2'
 
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
   cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
@@ -408,7 +394,7 @@ tasks.withType(Test) {
 }
 
 tasks.withType(Test) {
-  useJUnit()
+  useJUnitPlatform()
   testLogging {
     // controls whether test output is shown
     showExceptions true
