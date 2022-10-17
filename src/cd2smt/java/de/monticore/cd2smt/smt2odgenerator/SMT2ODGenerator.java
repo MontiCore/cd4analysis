@@ -36,30 +36,29 @@ public class SMT2ODGenerator {
 
 
   public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName) {
-    return buildOd(cdContext, ODName, new ArrayList<>(), false);
-  }
-
-  public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> oclConstraints) {
-    return buildOd(cdContext, ODName, oclConstraints, false);
+    return buildOd(cdContext, ODName, false);
   }
 
   public Optional<ASTODArtifact> buildOd(CDContext cdContext) {
     return buildOd(cdContext, "SMTOD");
   }
 
-  public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> oclConstraints, boolean partial) {
+  public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, boolean partial) {
     //get All Constraints
     List<Identifiable<BoolExpr>> constraints = new ArrayList<>();
-    constraints.addAll(oclConstraints);
     constraints.addAll(cdContext.getAssociationConstraints());
     constraints.addAll(cdContext.getInheritanceConstraints());
 
     //get Model
-    Solver solver = cdContext.makeSolver(cdContext.getContext(), constraints);
+    Solver solver = CDContext.makeSolver(cdContext.getContext(), constraints);
 
     if (solver.check() != Status.SATISFIABLE) {
       return Optional.empty();
     }
+    return buildOdFromSolver(solver,cdContext,ODName,partial);
+  }
+  public Optional<ASTODArtifact> buildOdFromSolver( Solver solver,CDContext cdContext, String ODName, boolean partial) {
+    //get Model
     Model model = solver.getModel();
 
     buildObjectMap(cdContext, model, partial);

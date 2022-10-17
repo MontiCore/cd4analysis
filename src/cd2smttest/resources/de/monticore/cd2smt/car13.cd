@@ -1,0 +1,27 @@
+classdiagram STTest {
+
+  /* class BigBigCar  extends BigCar;
+   class BigCar extends Car;
+
+  class Car extends CarAbstract implements CarInterface1, CarInterface2;
+
+  class CarAbstract;
+
+  interface CarInterface1 extends AutoInterface1 , AutoInterface2;
+
+  interface CarInterface2;
+
+  interface AutoInterface1;
+
+  interface AutoInterface2;
+
+  */
+   class Dummy;
+
+   interface CarInterface1;
+
+  class Car implements CarInterface1;
+
+  association [1] CarInterface1      --      Dummy[1];
+
+}
