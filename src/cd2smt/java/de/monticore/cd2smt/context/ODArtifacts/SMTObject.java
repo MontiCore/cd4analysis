@@ -30,6 +30,7 @@ public class SMTObject {
   public boolean isPresentSuperInterface(){
     return this.superInterfaceList.size() > 0;
   }
+
     public void addAttribute(FuncDecl<? extends  Sort> name, Expr<Sort> value) {
       attributes.put(name, value);
     }

@@ -113,7 +113,7 @@ public class CDContext {
     return false;
   }
 
-  public Solver makeSolver(Context ctx, List<Identifiable<BoolExpr>> constraints) {
+  public static Solver makeSolver(Context ctx, List<Identifiable<BoolExpr>> constraints) {
     Solver solver = ctx.mkSolver();
     constraints.forEach(c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
     return solver;
