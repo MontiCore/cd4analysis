@@ -90,14 +90,12 @@ public class CDContext {
 
   public SMTAssociation getAssocFunc(SMTCDType smtcdType, String otherRole) {
     assert smtcdType != null;
-    for (Map.Entry<ASTCDAssociation, SMTAssociation> entry : smtcdType.getSMTAssociations().entrySet()) {
-      if (entry.getKey().getRight().getCDRole().getName().equals(otherRole) &&
-        !entry.getKey().getRight().getName().equals(smtcdType.getASTCDType().getName())) {
-        return entry.getValue();
+    for ( SMTAssociation entry : smtcdType.getSMTAssociations().values()) {
+      if (entry.getLeft().getSort().equals(smtcdType.getSort())&& entry.getRightRole().equals(otherRole) ) {
+        return entry;
       }
-      if (entry.getKey().getLeft().getCDRole().getName().equals(otherRole) &&
-        !entry.getKey().getLeft().getName().equals(smtcdType.getASTCDType().getName())) {
-        return entry.getValue();
+      if (entry.getRight().getSort().equals(smtcdType.getSort()) && entry.getLeftRole().equals(otherRole)) {
+        return entry;
       }
     }
     Log.error("No Associations  Founds for the role  " + otherRole + " in the smt class " + smtcdType.getASTCDType().getName());

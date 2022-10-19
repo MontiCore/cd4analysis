@@ -146,8 +146,8 @@ public class CD2SMTGenerator {
     SMTAssociation smtAssociation = new SMTAssociation();
     String assocName = SMTNameHelper.printSMTAssociationName(myAssociation);
     //get the link and the right class of the Association
-    ASTCDType leftClass = CDHelper.getASTCDType(myAssociation.getRightQualifiedName().getQName(), cd);
-    ASTCDType rightClass = CDHelper.getASTCDType(myAssociation.getLeftQualifiedName().getQName(), cd);
+    ASTCDType leftClass = CDHelper.getASTCDType(myAssociation.getLeftQualifiedName().getQName(), cd);
+    ASTCDType rightClass = CDHelper.getASTCDType(myAssociation.getRightQualifiedName().getQName(), cd);
 
     //set the name and the role
     smtAssociation.setLeftRole(myAssociation.getLeft().getCDRole().getName());
@@ -167,8 +167,8 @@ public class CD2SMTGenerator {
     smtAssociation.getRight().getSMTAssociations().put(myAssociation, smtAssociation);
 
     //set the Association function
-    Sort rightSortSMT = cdContext.getSmtCDTypes().get(leftClass).getSort();
-    Sort leftSortSMT = cdContext.getSmtCDTypes().get(rightClass).getSort();
+    Sort rightSortSMT = cdContext.getSmtCDTypes().get(rightClass).getSort();
+    Sort leftSortSMT = cdContext.getSmtCDTypes().get(leftClass).getSort();
     smtAssociation.setAssocFunc(cdContext.getContext().mkFuncDecl(assocName,
       new Sort[]{leftSortSMT, rightSortSMT}, cdContext.getContext().getBoolSort()));
 
