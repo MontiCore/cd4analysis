@@ -2,7 +2,7 @@ package de.monticore.cd2smt.cd2smtGenerator;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.SMTNameHelper;
 import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
 import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
@@ -199,8 +199,8 @@ public class CD2SMTGenerator {
       0, null, null, null, null);
   }
 
-  List<Identifiable<BoolExpr>> buildAssocConstraints(CDContext cdContext, ASTCDDefinition cd) {
-    List<Identifiable<BoolExpr>> constraints = new LinkedList<>();
+  List<IdentifiableBoolExpr> buildAssocConstraints(CDContext cdContext, ASTCDDefinition cd) {
+    List<IdentifiableBoolExpr> constraints = new LinkedList<>();
 
     for (ASTCDAssociation myAssoc : cd.getCDAssociationsList()) {
       //get the sort for the left and right objects
@@ -227,11 +227,11 @@ public class CD2SMTGenerator {
         SourcePosition cardSrcPos = myAssoc.getRight().getCDCardinality().get_SourcePositionStart();
 
         if (myAssoc.getRight().getCDCardinality().isAtLeastOne()) {
-          constraints.add(Identifiable.buildBoolExprIdentifiable(atLeastOne, cardSrcPos, Optional.of("Cardinality_right")));
+          constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(atLeastOne, cardSrcPos, Optional.of("Cardinality_right")));
         } else if (myAssoc.getRight().getCDCardinality().isOpt()) {
-          constraints.add(Identifiable.buildBoolExprIdentifiable(optional, cardSrcPos, Optional.of("Cardinality_right")));
+          constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(optional, cardSrcPos, Optional.of("Cardinality_right")));
         } else if (myAssoc.getRight().getCDCardinality().isOne()) {
-          constraints.add(Identifiable.buildBoolExprIdentifiable(cdContext.getContext().mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_right")));
+          constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(cdContext.getContext().mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_right")));
         }
       }
 
@@ -244,11 +244,11 @@ public class CD2SMTGenerator {
         SourcePosition cardSrcPos = myAssoc.getLeft().getCDCardinality().get_SourcePositionStart();
 
         if (myAssoc.getLeft().getCDCardinality().isAtLeastOne()) {
-          constraints.add(Identifiable.buildBoolExprIdentifiable(atLeastOne, cardSrcPos, Optional.of("Cardinality_left")));
+          constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(atLeastOne, cardSrcPos, Optional.of("Cardinality_left")));
         } else if (myAssoc.getLeft().getCDCardinality().isOpt()) {
-          constraints.add(Identifiable.buildBoolExprIdentifiable(optional, cardSrcPos, Optional.of("Cardinality_left")));
+          constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(optional, cardSrcPos, Optional.of("Cardinality_left")));
         } else if (myAssoc.getLeft().getCDCardinality().isOne()) {
-          constraints.add(Identifiable.buildBoolExprIdentifiable(cdContext.getContext().mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_left")));
+          constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(cdContext.getContext().mkAnd(atLeastOne, optional), cardSrcPos, Optional.of("Cardinality_left")));
         }
 
       }
@@ -257,8 +257,8 @@ public class CD2SMTGenerator {
   }
 
   //-----------------------------------inheritance----------------------------------------------------------------------
-  List<Identifiable<BoolExpr>> buildInheritanceConstraints(CDContext cdContext, ASTCDDefinition cd) {
-    List<Identifiable<BoolExpr>> constraints = new LinkedList<>();
+  List<IdentifiableBoolExpr> buildInheritanceConstraints(CDContext cdContext, ASTCDDefinition cd) {
+    List<IdentifiableBoolExpr> constraints = new LinkedList<>();
 
     for (ASTCDClass myClass : cd.getCDClassesList()) {
 
@@ -297,8 +297,8 @@ public class CD2SMTGenerator {
     return constraints;
   }
 
-  protected List<Identifiable<BoolExpr>> mkConstrExistSubclass4Interf(ASTCDDefinition cd, CDContext cdContext) {
-    List<Identifiable<BoolExpr>> constraints = new ArrayList<>();
+  protected List<IdentifiableBoolExpr> mkConstrExistSubclass4Interf(ASTCDDefinition cd, CDContext cdContext) {
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
     for (ASTCDInterface myInterface : cd.getCDInterfacesList()) {
       //make constraint for existence of super Instance of each Interface instance
       Expr<? extends Sort> interfObj = cdContext.getContext().mkConst(myInterface.getName(), cdContext.getSmtCDTypes().get(myInterface).getSort());
@@ -315,14 +315,14 @@ public class CD2SMTGenerator {
 
       BoolExpr superInstanceConstraint = cdContext.getContext().mkForall(new Expr[]{interfObj}, helpConstr,
         0, null, null, null, null);
-      constraints.add(Identifiable.buildBoolExprIdentifiable(superInstanceConstraint, myInterface
+      constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(superInstanceConstraint, myInterface
         .get_SourcePositionStart(), Optional.of(myInterface.getName() + "Exist_super")));
     }
     return constraints;
   }
 
-  List<Identifiable<BoolExpr>> buildCDTypeInheritanceConstraint(CDContext cdContext, ASTCDType subType, SMTCDType smtSubType, ASTCDType SuperType, SMTCDType smtSuperType) {
-    List<Identifiable<BoolExpr>> constraints = new LinkedList<>();
+  List<IdentifiableBoolExpr> buildCDTypeInheritanceConstraint(CDContext cdContext, ASTCDType subType, SMTCDType smtSubType, ASTCDType SuperType, SMTCDType smtSuperType) {
+    List<IdentifiableBoolExpr> constraints = new LinkedList<>();
 
     SourcePosition srcPos = subType.get_SourcePositionStart();
     assert srcPos.getFileName().isPresent();
@@ -345,7 +345,7 @@ public class CD2SMTGenerator {
           cdContext.getContext().mkEq(cdContext.getContext().mkApp(convert2Super, subclassObj), superClassObj), 0, null,
           null, null, null), 0,
       null, null, null, null);
-    constraints.add(Identifiable.buildBoolExprIdentifiable(constrConvert, srcPos, Optional.of(subType.getName() + "_inheritance_convert")));
+    constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(constrConvert, srcPos, Optional.of(subType.getName() + "_inheritance_convert")));
 
     //the conversion must be a bijection
     Expr<Sort> b1 = cdContext.getContext().mkConst("b1", smtSubType.getSort());
@@ -355,7 +355,7 @@ public class CD2SMTGenerator {
           cdContext.getContext().mkApp(convert2Super, b2)), cdContext
           .getContext().mkEq(b1, b2)),
       0, null, null, null, null);
-    constraints.add(Identifiable.buildBoolExprIdentifiable(bijection, srcPos, Optional.of(subType.getName() + "_inheritance_bijection")));
+    constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(bijection, srcPos, Optional.of(subType.getName() + "_inheritance_bijection")));
 
     if (smtSuperType.getSubClassConstructorList().size() > 0) {
       //type Constraint
@@ -366,7 +366,7 @@ public class CD2SMTGenerator {
             cdContext.getContext().mkApp(convert2Super, b1)), sort),
         0, null, null, null, null);
       //add the constraints to the list
-      constraints.add(Identifiable.buildBoolExprIdentifiable(typeConstr, srcPos, Optional.of(subType.getName() + "_inheritance_type_constr")));
+      constraints.add(IdentifiableBoolExpr.buildBoolExprIdentifiable(typeConstr, srcPos, Optional.of(subType.getName() + "_inheritance_type_constr")));
     }
     return constraints;
   }
