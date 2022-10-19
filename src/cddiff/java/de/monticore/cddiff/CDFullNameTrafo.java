@@ -37,6 +37,8 @@ public class CDFullNameTrafo {
         .getCDInterfacesList()
         .forEach(cdInterface -> cdInterface.getCDAttributeList()
             .forEach(attribute -> qualifyAttributeType(attribute, artifactScope)));
+
+    CD4CodeMill.globalScope().removeSubScope(artifactScope);
   }
 
   protected void qualifyAssocReferenceTypes(ASTCDAssociation association,
