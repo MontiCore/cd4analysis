@@ -3,7 +3,7 @@ package de.monticore.cd2smt.smt2odgenerator;
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.ODHelper;
 import de.monticore.cd2smt.Helper.SMTNameHelper;
 import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
@@ -45,7 +45,7 @@ public class SMT2ODGenerator {
 
   public Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, boolean partial) {
     //get All Constraints
-    List<Identifiable<BoolExpr>> constraints = new ArrayList<>();
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
     constraints.addAll(cdContext.getAssociationConstraints());
     constraints.addAll(cdContext.getInheritanceConstraints());
 

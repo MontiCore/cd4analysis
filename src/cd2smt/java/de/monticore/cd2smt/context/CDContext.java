@@ -1,7 +1,7 @@
 package de.monticore.cd2smt.context;
 
 import com.microsoft.z3.*;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.SMTNameHelper;
 import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
 import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
@@ -19,8 +19,8 @@ public class CDContext {
   private final Map<ASTCDAssociation, SMTAssociation> smtAssociations;
   private final Map<ASTCDType, SMTCDType> smtCDTypes;
   private final Context context;
-  private final List<Identifiable<BoolExpr>> associationConstraints;
-  private final List<Identifiable<BoolExpr>> inheritanceConstraints;
+  private final List<IdentifiableBoolExpr> associationConstraints;
+  private final List<IdentifiableBoolExpr> inheritanceConstraints;
 
 
   public CDContext(Context context) {
@@ -35,11 +35,11 @@ public class CDContext {
     return context;
   }
 
-  public List<Identifiable<BoolExpr>> getAssociationConstraints() {
+  public List<IdentifiableBoolExpr> getAssociationConstraints() {
     return associationConstraints;
   }
 
-  public List<Identifiable<BoolExpr>> getInheritanceConstraints() {
+  public List<IdentifiableBoolExpr> getInheritanceConstraints() {
     return inheritanceConstraints;
   }
 
@@ -51,11 +51,11 @@ public class CDContext {
     return smtCDTypes;
   }
 
-  public void addInheritanceConstr(Identifiable<BoolExpr> constraint) {
+  public void addInheritanceConstr(IdentifiableBoolExpr constraint) {
     this.inheritanceConstraints.add(constraint);
   }
 
-  public void addAssociationConstraints(Identifiable<BoolExpr> constraint) {
+  public void addAssociationConstraints(IdentifiableBoolExpr constraint) {
     this.associationConstraints.add(constraint);
   }
 
@@ -113,7 +113,7 @@ public class CDContext {
     return false;
   }
 
-  public static Solver makeSolver(Context ctx, List<Identifiable<BoolExpr>> constraints) {
+  public static Solver makeSolver(Context ctx, List<IdentifiableBoolExpr> constraints) {
     Solver solver = ctx.mkSolver();
     constraints.forEach(c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
     return solver;
