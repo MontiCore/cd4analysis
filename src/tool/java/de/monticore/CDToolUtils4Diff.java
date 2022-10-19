@@ -136,11 +136,13 @@ public class CDToolUtils4Diff {
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
+  /*
   public static void removeDefaultPackage(ASTCDDefinition cd) {
     cd.getDefaultPackage().ifPresent(dp -> {
       cd.getCDElementList().addAll(dp.getCDElementList());
       cd.getCDElementList().remove(dp);
     });
   }
+   */
 
 }
