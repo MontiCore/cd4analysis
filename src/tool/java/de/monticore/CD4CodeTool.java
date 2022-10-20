@@ -31,6 +31,7 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -623,10 +624,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
 
-    // remove the default package if present
-    CDToolUtils4Diff.removeDefaultPackage(ast1.getCDDefinition());
-
-
     // parse the second .cd-file
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("semdiff"));
 
@@ -634,6 +631,14 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       Log.error("0xCDD14: Failed to load CDs for `--semdiff`.");
       return;
     }
+
+    // use fully qualified names for attributes and associations
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    new CDFullNameTrafo().transform(ast1);
+    new CDFullNameTrafo().transform(ast2);
+
+    ast1 = ast1.deepClone();
+    ast2 = ast2.deepClone();
 
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize = CDToolUtils4Diff.getDefaultDiffsize(ast1, ast2);
@@ -661,10 +666,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     // clone the current CD
     ASTCDCompilationUnit ast1 = ast.deepClone();
 
-    // remove the default package if present
-    CDToolUtils4Diff.removeDefaultPackage(ast1.getCDDefinition());
-
-
     // parse the second .cd-file
     ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("syntaxdiff"));
 
@@ -672,6 +673,16 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       Log.error("0xCDD15: Failed to load CDs for `--syntaxdiff`.");
       return;
     }
+
+
+    // use fully qualified names for attributes and associations
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    new CDFullNameTrafo().transform(ast1);
+    new CDFullNameTrafo().transform(ast2);
+
+
+    ast1 = ast1.deepClone();
+    ast2 = ast2.deepClone();
 
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(ast1);

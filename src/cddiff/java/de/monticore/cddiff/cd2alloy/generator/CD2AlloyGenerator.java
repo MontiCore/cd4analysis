@@ -16,7 +16,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
@@ -530,15 +530,19 @@ public class CD2AlloyGenerator {
       superclasses.add(currentClass);
 
       String superName;
-      for (SymTypeExpression typeExp : currentClass.getSymbol().getSuperClassesOnly()) {
-        superName = typeExp.getTypeInfo().getFullName();
+      if (currentClass.isPresentCDExtendUsage()) {
+        for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
+          assert objectType.getDefiningSymbol().isPresent();
+          superName = objectType.getDefiningSymbol().get().getFullName();
+          Log.println("[TEST]" + currentClass.getSymbol().getFullName() + "=?" + superName);
 
-        for (ASTCDClass astClass : classes) {
-          if (superName.equals(astClass.getSymbol().getFullName())) {
-            toProcess.add(astClass);
+          for (ASTCDClass astClass : classes) {
+            if (superName.equals(astClass.getSymbol().getFullName())) {
+              toProcess.add(astClass);
+            }
           }
-        }
 
+        }
       }
     }
 
@@ -610,8 +614,9 @@ public class CD2AlloyGenerator {
     // Add all interfaces of the superclass to the processing List
 
     String interfaceName;
-    for (SymTypeExpression typeExp : superClass.getSymbol().getInterfaceList()) {
-      interfaceName = typeExp.getTypeInfo().getFullName();
+    for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
+      assert objectType.getDefiningSymbol().isPresent();
+      interfaceName = objectType.getDefiningSymbol().get().getFullName();
 
       for (ASTCDInterface allowedInterface : allowedInterfaces) {
         if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
@@ -630,8 +635,9 @@ public class CD2AlloyGenerator {
 
       // Add all interfaces implemented by the current interface to the
       // processing list
-      for (SymTypeExpression typeExp : currentInterface.getSymbol().getInterfaceList()) {
-        interfaceName = typeExp.getTypeInfo().getFullName();
+      for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
+        assert objectType.getDefiningSymbol().isPresent();
+        interfaceName = objectType.getDefiningSymbol().get().getFullName();
 
         for (ASTCDInterface allowedInterface : allowedInterfaces) {
           if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {

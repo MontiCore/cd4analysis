@@ -1,13 +1,14 @@
 package de.monticore;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cddiff.CDDiff;
+import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
+import de.monticore.od4report._parser.OD4ReportParser;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
 
@@ -136,11 +137,28 @@ public class CDToolUtils4Diff {
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
-  public static void removeDefaultPackage(ASTCDDefinition cd) {
-    cd.getDefaultPackage().ifPresent(dp -> {
-      cd.getCDElementList().addAll(dp.getCDElementList());
-      cd.getCDElementList().remove(dp);
-    });
+
+  public static ASTCDCompilationUnit loadCD(String modelPath) {
+    ASTCDCompilationUnit cd = new CD4CodeTool().parse(modelPath);
+    new CDFullNameTrafo().transform(cd);
+    return cd;
   }
 
+  protected static ASTODArtifact loadODModel(String modelPath) {
+    try {
+      OD4ReportParser parser = new OD4ReportParser();
+      Optional<ASTODArtifact> optOD = parser.parse(modelPath);
+      if (parser.hasErrors()) {
+        Log.error("Model parsed with errors. Model path: " + modelPath);
+      }
+      else if (optOD.isPresent()) {
+        return optOD.get();
+      }
+    }
+    catch (IOException e) {
+      Log.error("Could not parse CD model.");
+      e.printStackTrace();
+    }
+    return null;
+  }
 }

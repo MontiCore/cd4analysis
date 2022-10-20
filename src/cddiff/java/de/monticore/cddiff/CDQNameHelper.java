@@ -1,5 +1,7 @@
 package de.monticore.cddiff;
 
+import de.monticore.cdassociation._ast.ASTCDAssocSide;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +54,13 @@ public class CDQNameHelper {
     List<String> nameList = new ArrayList<>();
     Collections.addAll(nameList, qname.split("\\."));
     return partHandler(nameList, true);
+  }
+
+  public static String inferRole(ASTCDAssocSide assocSide) {
+    if (assocSide.isPresentCDRole()){
+      return assocSide.getCDRole().getName();
+    }
+    return CDQNameHelper.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
   }
 
 }

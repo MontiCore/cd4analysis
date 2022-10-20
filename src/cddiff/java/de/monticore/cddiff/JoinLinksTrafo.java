@@ -56,7 +56,7 @@ public class JoinLinksTrafo {
         if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
           if (!link.getODLinkLeftSide().isPresentRole()) {
-            link.getODLinkLeftSide().setRole(inferRole(assoc.getLeft()));
+            link.getODLinkLeftSide().setRole(CDQNameHelper.inferRole(assoc.getLeft()));
           }
         }
         else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
@@ -67,7 +67,7 @@ public class JoinLinksTrafo {
         if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
           if (!link.getODLinkRightSide().isPresentRole()) {
-            link.getODLinkRightSide().setRole(inferRole(assoc.getLeft()));
+            link.getODLinkRightSide().setRole(CDQNameHelper.inferRole(assoc.getLeft()));
           }
         }
         else if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
@@ -100,10 +100,10 @@ public class JoinLinksTrafo {
 
     return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
         .getRole()
-        .equals(inferRole(assoc.getLeft())))
+        .equals(CDQNameHelper.inferRole(assoc.getLeft())))
         && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
         .getRole()
-        .equals(inferRole(assoc.getRight()))));
+        .equals(CDQNameHelper.inferRole(assoc.getRight()))));
   }
 
 
@@ -131,10 +131,10 @@ public class JoinLinksTrafo {
 
     return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
         .getRole()
-        .equals(inferRole(assoc.getRight())))
+        .equals(CDQNameHelper.inferRole(assoc.getRight())))
         && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
         .getRole()
-        .equals(inferRole(assoc.getLeft()))));
+        .equals(CDQNameHelper.inferRole(assoc.getLeft()))));
   }
 
   protected Optional<ASTODNamedObject> findObjectInOD(String name, ASTODArtifact od) {
@@ -148,12 +148,7 @@ public class JoinLinksTrafo {
   }
 
 
-  protected String inferRole(ASTCDAssocSide assocSide) {
-    if (assocSide.isPresentCDRole()){
-      return assocSide.getCDRole().getName();
-    }
-    return CDQNameHelper.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
-  }
+
 
 
 }
