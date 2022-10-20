@@ -640,14 +640,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ast1 = ast1.deepClone();
     ast2 = ast2.deepClone();
 
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-    ast1.accept(pp.getTraverser());
-    System.out.println(pp.prettyprint(ast1));
-
-    pp = new CD4CodeFullPrettyPrinter();
-    ast1.accept(pp.getTraverser());
-    System.out.println(pp.prettyprint(ast2));
-
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
     int diffsize = CDToolUtils4Diff.getDefaultDiffsize(ast1, ast2);
     String defaultVal = Integer.toString(diffsize);

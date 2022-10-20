@@ -38,15 +38,19 @@ public class OD2CDMatcher {
       ASTCDCompilationUnit baseCD = base.get();
       ASTCDCompilationUnit compareCD = compare.get();
       ASTODArtifact od = odOpt.get();
-
-      if(Semantic.isMultiInstance(semantics)){
-        return new MultiInstanceMatcher(this).isDiffWitness( semantics, baseCD, compareCD, od);
-      } else {
-        return checkODValidity(semantics, od, baseCD) && !checkODValidity(semantics, od, compareCD);
-      }
+      return checkIfDiffWitness(semantics, baseCD, compareCD, od);
     } else {
       Log.error("A model file could not be loaded.");
       return false;
+    }
+  }
+
+  public boolean checkIfDiffWitness(CDSemantics semantics, ASTCDCompilationUnit baseCD,
+      ASTCDCompilationUnit compareCD, ASTODArtifact od ){
+    if(Semantic.isMultiInstance(semantics)){
+      return new MultiInstanceMatcher(this).isDiffWitness( semantics, baseCD, compareCD, od);
+    } else {
+      return checkODValidity(semantics, od, baseCD) && !checkODValidity(semantics, od, compareCD);
     }
   }
 
