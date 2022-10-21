@@ -13,6 +13,7 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
+import de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -692,26 +693,27 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(ast1, ast2);
 
-    String printType = cmd.getOptionValue("print", "diff");
-    if (printType.equals("diff")) {
+    String printOption = cmd.getOptionValue("show", "diff");
+    if (printOption.equals("diff")) {
       syntaxDiff.print();
     }
-    if (printType.equals("cd1")) {
+    if (printOption.equals("cd1")) {
       syntaxDiff.printCD1();
     }
-    if (printType.equals("cd2")) {
+    if (printOption.equals("cd2")) {
       syntaxDiff.printCD2();
     }
-    if (printType.equals("both")) {
+    if (printOption.equals("both")) {
       syntaxDiff.printCD1();
       syntaxDiff.printCD2();
     }
-    if (printType.equals("all")) {
+    if (printOption.equals("all")) {
       syntaxDiff.print();
       syntaxDiff.printCD1();
+      System.out.println(System.lineSeparator());
       syntaxDiff.printCD2();
     }
-    if (printType.equals("nocolor")) {
+    if (printOption.equals("nocolor")) {
       syntaxDiff.printNoColour();
     }
   }
@@ -719,15 +721,23 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   /**
    * perform merge of 2 CDs
    */
-  public void mergeCDs() throws IOException {
+  public void mergeCDs() {
     Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
+
+    // prepare CD1
+    new CD4CodeAfterParseTrafo().transform(ast);
+    new CD4CodeDirectCompositionTrafo().transform(ast);
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
     ast.accept(pp.getTraverser());
-    pp.prettyprint(ast);
-
     mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast)).get());
 
-    mergeSet.add(CDUtils.parseCDFile(cmd.getOptionValue("merge"), false).get());
+    // prepare CD2
+    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("merge"));
+    new CD4CodeAfterParseTrafo().transform(ast2);
+    new CD4CodeDirectCompositionTrafo().transform(ast2);
+    pp = new CD4CodeFullPrettyPrinter();
+    ast2.accept(pp.getTraverser());
+    mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast2)).get());
 
     String cdName = "Merge.cd";
     if (cmd.hasOption("pp") && cmd.getOptionValue("pp") != null && cmd.getOptionValue("pp")

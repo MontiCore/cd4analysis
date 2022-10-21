@@ -15,16 +15,16 @@ for *language engineers* using or
 extending one of the CD languages.
 
 The CD languages are mainly intended for  
-1. Analysis modeling (i.e. structures of the system context 
+1. analysis modeling (i.e. structures of the system context 
    as well as data structures of the system),
-1. Code modeling (implementation) oriented, including method signatures,
-1. Generating code, data tables, transport functions and more.
-1. It is also possible to use CDs only as intermediate structure
+2. (implementation-oriented) code modeling, including method signatures,
+3. generating code, data tables, transport functions and more.
+4. It is also possible to use CDs only as intermediate structures
    to map from one or more other DSLs into an object-oriented 
    target language, such as Java or C++. 
-   (E.g. the MontiCore generator maps grammars to CDs before generating code
+   (e.g., the MontiCore generator maps grammars to CDs before generating code
    from there).
-1. Finally CDs can also be used as reported results from any other 
+5. Finally, CDs can also be used as reported results from any other 
    generation or analysis process.
 
 ## Downloads
@@ -64,53 +64,49 @@ classdiagram MyLife {
   association [0..1] Person (parent) <-> (child) monticore.Person [*];
 }
 ```
+This example CD contains the following information:
+- The CD is contained in the package `monticore` and is called `MyLife`.
+- The package `monticore` also serves as the default package for all classes in the CD.
+- The CD defines four (4) classes `Person`,`PhoneNumber`, `Student`, and `Grade`.
+- `Person` is an abstract class, and therefore cannot be instantiated directly.
+- `Student` and `Grade` are contained in the package `uni`. Packages can be used to structure the classes contained in a CD.
+- The class `Student` extends the class `Person` (like in Java, implementation of interfaces
+  are also possible).
+- Each class may contain attributes, which have a type and name.
+- The CD uses available default types (which are basic types from Java), imported types 
+  (like `Date`), and predefined forms of generic types (e.g., `List<.>`),
+- It also contains associations and compositions that are defined between two classes.
+- An association can have a name, navigation information (e.g., `<->`), a role name on each
+  side, multiplicity constraints (e.g., `[0..1]`) and certain predefined 
+  tags/stereotypes (e.g., `{ordered}`),
+- Associations and attributes may also reference qualified types (e.g., `[java.lang.String]`).
 
-The CD is contained in the package `monticore` and is called `MyLife`.
-The example CD shows
-- the definition of the two classes `Person` and `Student`,
-- the abstract class `Person`,
-- the class `Student` extending the class `Person` (like in Java); interfaces
-  are also be possible,
-- classes containing attributes, which have a type and a name,
-- available default types, which are basic types (from Java), imported types 
-  (like `Date`), and predefined forms of generic types (like 
-  `List<.>`),
-- associations and compositions that are defined between two classes and
-  can have a name, a navigation information (e.g. `<->`), role names on both
-  sides, multiplicities (like `[0..1]`) and certain predefined 
-  tags/stereotypes 
-  (like `{ordered}`),
-- that both, association and compositions, can be qualified for example by 
-  `[java.lang.String]`, and
-- that packages can be used to structure the classes contained in the model.
+More examples can be found [here][ExampleModels].
 
-Further examples can be found [here][ExampleModels].
-
-The CD language infrastructure can be used as tool from shell as well 
-as within gradle or just as framework with dirct Java API access.
+The CD language infrastructure can be used as a command-line tool from shell or gradle, 
+as well as a framework with dirct Java API access.
 
 ## Command Line Interface Tool
  
 The tool provides typical functionality used when
-processing models. It provides functionality
-for 
-* parsing including coco-checking and creating symbol tables, 
+processing models, including:
+* parsing with coco-checking and symbol table creation, 
 * pretty-printing, 
 * storing symbols in symbol files, 
 * loading symbols from symbol files, 
-* transforming CDs into a graphical svg format, and
-* computing the semantic difference of 2 CDs.
+* transforming a CD into a graphical svg format
+* computing the semantic difference of 2 CDs, and
 * merging 2 CDs (iff the result is semantically sound)
 
-The requirements for building and using the CD tool are that Java 8, Git, 
-and Gradle are installed and available for use e.g. in Bash. 
+The requirements for building and using the CD tool are that Java 11, Git, 
+and Gradle are installed and available for use (e.g., in bash). 
 
 ### Downloading the Latest Version of the Tool
 
 A ready to use version of the tool can be downloaded in the form of an
 executable JAR file.
 You can use [**this download link**][ToolDownload] for downloading the tool. 
-Or you can use `wget` to download the latest version in your working directory:
+Alternatively, the `wget` command can be used to download the latest version into your working directory:
 ```shell
 wget "https://monticore.de/download/MCCD.jar" -O MCCD.jar
 ``` 
@@ -118,13 +114,16 @@ wget "https://monticore.de/download/MCCD.jar" -O MCCD.jar
 ### Actions and Parameters of the Tool
 
 The tool provides quite a number of executable actions and configurable parameters. 
-These two are examples for calling the tool (download and use the files
-[MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd)):
+These commands are examples for calling the tool:
 
 ```shell
-java -jar MCCD.jar -i MyBasics.cd -s
-java -jar MCCD.jar -i MyLife.cd -o target/out -pp MyLife.cd
+java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
+java -jar MCCD.jar -i src/MyLife --path symbols -pp 
+java -jar MCCd.jar -i src/MyLife --path symbols -o out --gen
 ```
+
+To try them out for yourself download and put the files
+[MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. The first command needs to be executed before the second and the third.
 
 The possible options are:
 | Option                     | Explanation |
@@ -149,14 +148,15 @@ The possible options are:
 | `--rule-based` | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
 | `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
 | `--semdiff <file>` | Parses the file as a second CD and compares it semantically with the first CD that is currently in memory. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
+| `--show <printoption>` | Specifies the print option for `--syntaxdiff`: `diff` (default) prints the matched CD-elements with color-coded diffs (red for deleted, yellow for changed, and green for newly added elements). `cd1` will print only the old CD with color-coded diffs and `cd2` only the new CD. `all` combines all the previous options. `nocolor` prints the matched CD-elements with lines marked as - (deleted), ~ (changed), + (added). |
 | `--stdin` | Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for all further operations. |
+| `--syntaxdiff <file>` | Performs a syntactical difference analysis on the current CD in memory (old) and a second CD (new) and prints the result to stdout. Default: outputs the matched CD-elements with color-coded diffs (red for deleted, yellow for changed, and green for newly added elements) to stdout. |
 
 ### Building the Tool from the Sources (if desired)
  
 As alternative to a download, 
 it is possible to build an executable JAR of the tool from the source files
-located in GitHub. The following describes the process for building the tool
-from the source files using Bash. For building an executable Jar of the tool with
+located in GitHub. In order to build an executable Jar of the tool with
 Bash from the source files available in GitHub, execute the following commands.
 
 First, clone the repository:
@@ -183,27 +183,32 @@ the directory `target/libs`.
 The following small tutorial should help to get an idea 
 of how to use the CD tool given in `MCCD.jar`.
 
-### First Steps
+### Step 1:
 
-This prints usage information, if executing the tool with the 
-following command and no parameters:
+Executing the tool with the following command and no 
+options prints information on the available options:
 ```shell
 java -jar MCCD.jar
 ```
+You may also use the option `-h, --help` for the same result:
+```shell
+java -jar MCCD.jar -h
+```
 
-To work properly, the tool needs the mandatory argument `-i,--input <file>`,
-which takes a file containing CD models as input.
-If no further options are specified, the tool processes the model,
-but does not produce any further output.
-That means it parses the model, builds its 
+For any other action, the tool requires either the option `-i,--input <file>`,
+which reads a file containing a CD model as input, or `--stdin`, 
+which parses the input CD from `stdin` instead.
+If no additional options are specified, the tool processes the model,
+but does not produce any further output, except for error messages or 
+a message indicating success. Note that processing means that the tool parses the model, builds its 
 symbol table, and then checks whether the model satisfies all context 
-conditions. Only errors or success are printed.
+conditions.
 
-For trying this out, copy the `MCCD.jar` into a directory of your 
+If you want to try this out yourself, copy the `MCCD.jar` into a directory of your 
 choice. Then create a text file `src/MyExample.cd` 
 ([also available here](doc/MyExample.cd)) in a `src` subdirectory of the
 directory where `MCCD.jar` is located containing e.g. the following simple CD 
-(please note that, like in Java, filename and modelname in the file have to be
+(please note that, like in Java, filename and model name in the file have to be
 the same):
 
 ```
@@ -231,7 +236,7 @@ Successfully checked the CoCos for class diagram MyExample
 ```
 
 The contents of the input CD artifact can also be piped to the tool.
-For trying this out, execute the following command:
+For this, execute the following command:
 
 ```shell
 cat src/MyExample.cd | java -jar MCCD.jar --stdin
@@ -242,18 +247,17 @@ The output is the same as for the previous command.
 
 The tool provides a pretty-printer for the CD language.
 A pretty-printer can be used, e.g., to fix the formatting of files containing 
-CDs, but has its main application to print internally constructed 
+CDs, but has its main application in printing internally constructed 
 or transformed CDs.
 
 To execute the pretty-printer, the `-pp,--prettyprint` option can be used.
-Using the option without any arguments pretty-prints the models contained in the
-input files to the console (stdout):
+Using the option without any arguments pretty-prints the model contained in the
+input file to the console (stdout):
 
 ```shell
 java -jar MCCD.jar -i src/MyExample.cd -pp
 ```
-The command prints the pretty-printed model contained in the input file to the 
-console:
+After executing the command, the following output should appear on your console:
 ```
 import java.lang.String;
 
@@ -277,13 +281,13 @@ java -jar MCCD.jar -i src/MyExample.cd -pp target/PPExample.cd
 
 ### Step 3: Storing Symbols
 
-When the symbols of the `src/MyExample.cd` model shall be available elsewhere,
+If the symbols of the `src/MyExample.cd` model should be available elsewhere,
 they can be stored.
 The symbol file will contain information about the classes and associations
 defined in the CD.
-It can be imported by other models for using the introduced symbols.
+It can be imported by other models in order to use these symbols.
 
-Using the `-s,--symboltable <file>` option builds the symbol table of the input
+Using the option `-s,--symboltable <file>` builds the symbol table of the input
 model and stores it in the file path given as argument.
 Providing the file path is optional.
 If no file path is provided, the tool stores the symbol table of the
@@ -306,8 +310,8 @@ Creation of symbol table src/MyExample.cdsym successful
 The symbol file contains a JSON representation of the symbols defined in the CD,
 which are type, association, interface, attribute and method symbols.
 
-For storing the symbol file of `src/MyExample.cd` in the file 
-`symbols/MyExample.cdsym`, for example, execute the following command:
+E.g., for storing the symbols of `src/MyExample.cd` in the file 
+`symbols/MyExample.cdsym`, execute the following command:
 ```shell
 java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
 ```
@@ -316,7 +320,7 @@ java -jar MCCD.jar -i src/MyExample.cd -s symbols/MyExample.cdsym
 
 By default, the CD tool stores exactly the symbols that have been explicitly 
 defined. This is the typical modeling approach. However, code generation 
-typically maps the `CDRoleSymbol`s defined in an association to attributes and 
+usually maps the `CDRoleSymbol`s defined in an association to attributes and 
 thus implicitly adds `FieldSymbol`s into the classes that host an association. 
 These additional symbols can be made available in the symbol file in the two 
 following forms: 
@@ -348,8 +352,7 @@ We import a symbol file defining type symbols that are used by a CD.
 
 Let us now consider the example `MyLife` from above.
 Please, copy the file [`MyLife.cd`](doc/MyLife.cd) and save it 
-in a file `src/monticore/MyLife.cd`. The directory `monticore` is needed 
-because of the package definition in line 1.
+in a file `src/monticore/MyLife.cd`.
 
 Execute the following command for processing the file `MyLife.cd`:
 ```shell
@@ -366,9 +369,7 @@ the model:
 
 The missing class `Address` is currently not imported.
 `MyLife` already has an `import` statement to another class diagram 
-included, but this class diagram doesn't yet exist. E.g. the following
-minimal diagram can be stored as well
-([also available here](doc/MyBasics.cd)):
+included ([available here](doc/MyBasics.cd)):
 
 (content of src/MyBasics.cd)
 ```
@@ -430,14 +431,22 @@ to be in a default package. This default is calculated as follows:
 By using the option `--gen`, we can generate .java-files corresponding to the
 input class diagram:
 ```shell
-java -jar java -jar MCCD.jar -i src/MyExample.cd --gen
+java -jar MCCD.jar -i src/MyExample.cd --gen
 ```
 With option `-o` we can specify the output directory; the default is `.`:
 ```shell
-java -jar java -jar MCCD.jar -i src/MyExample.cd --gen -o out
+java -jar MCCD.jar -i src/MyExample.cd --gen -o out
+```
+Note that the option `--fieldfromrole` must be used with the appropriate
+argument in order to generate attributes for associations contained in the input CD. 
+Use the following commands in order to generate .java-files for `MyLife`:
+
+```shell
+java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
+java -jar MCCD.jar -i src/MyLife.cd --path symbols -o out --gen --fieldfromrole navigable
 ```
 
-### Step 8: Computing the Semantic Difference of Two Class Diagrams
+### Step 8: The Semantic Difference of Two Class Diagrams
 
 We define the semantic difference semdiff(CD1,CD2) of two class diagrams CD1 and
 CD2 as the set of all object diagrams that are valid in CD1 but invalid in CD2. 
@@ -447,7 +456,7 @@ differencing:
 
 https://www.se-rwth.de/topics/Semantics.php
 
-The option `--semdiff` computes the semantic difference of the current CD in memory
+The option `--semdiff <file>` computes the semantic difference of the current CD in memory
 and the CD specified by the argument.
 
 For the following examples, download the files 
@@ -461,15 +470,17 @@ java -jar MCCD.jar -i src/Employees1.cd --semdiff scr/Employees2.cd
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
 that are generated in the output directory; the default is to generate one diff-witness. 
-Once again, `-o` can be used to specify the output directory; the default is `.`:
+Once again, the option `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd  --semdiff src/Employees2.cd --difflimit 20 -o target/out
+java -jar MCCD.jar -i src/Employees1.cd  --semdiff src/Employees2.cd --difflimit 20 -o out
 ```
+
+Note that `--semdiff` does not use symbols from symbol files.
 
 ### Step 9: Merging Two Class Diagram
 
-The option `--merge` merges the input-CD with the CD specified by the argument 
+The option `--merge <file>` merges the input-CD with the CD specified by the argument 
 iff the two are semantically compatible.
 The result is stored in memory as the current CD.
 
@@ -478,9 +489,16 @@ For the following examples, download the files
 save them in `src`:
 
 ```shell
-java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o target/out -pp
+java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o out -pp
 ```
 
+If `-pp` is used in conjunction with `--merge`, the name of the merged CD always corresponds to the name of the file (without the suffix `.cd`):
+
+```shell
+java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o out -pp Person.cd
+```
+
+Note that `--merge` does not use symbols from symbol files.
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis/examples
 [ToolDownload]: https://monticore.de/download/MCCD.jar

@@ -12,7 +12,6 @@ classdiagram MyLife {
     List<String> nickNames;
   }
   class PhoneNumber;
-  class Address;
   package uni {
     class Student extends Person {
       StudentStatus status;

@@ -46,7 +46,7 @@ public class CDDiffCLIToolTest {
   public void testSyntaxDiff() {
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
-    CD4CodeTool.main(new String[] { "-i", cd1, "--syntaxdiff", cd2});
+    CD4CodeTool.main(new String[] { "-i", cd1, "--syntaxdiff", cd2, "--show", "all"});
 
     //assertEquals("Parsing and CoCo check successful!\r\n", getOut());
     assertEquals(Log.getErrorCount(),0);

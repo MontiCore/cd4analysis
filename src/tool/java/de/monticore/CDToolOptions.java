@@ -72,9 +72,8 @@ public class CDToolOptions {
 
     options.addOption(Option.builder()
         .longOpt("stdin")
-        .desc(
-            "Reads the input CD from stdin instead of the source file specified by `-i`. Using "
-                + "one of the two options is mandatory for all further operations.")
+        .desc("Reads the input CD from stdin instead of the source file specified by `-i`. Using "
+            + "one of the two options is mandatory for all further operations.")
         .build());
 
     options.addOption(Option.builder()
@@ -353,17 +352,19 @@ public class CDToolOptions {
         .build());
 
     options.addOption(Option.builder()
-        .longOpt("print")
+        .longOpt("show")
         .hasArg()
         .type(String.class)
-        .argName("printType")
+        .argName("printoption")
         .optionalArg(true)
         .numberOfArgs(1)
-        .desc("Specifies the print option: `diff` (default) prints the matched CD-elements with "
-            + "color-coded diffs (red for deleted, yellow for changed, and green for newly added "
-            + "elements). `cd1` will print only the old CD with color-coded diffs and `cd2` only "
-            + "the new CD. `all` combines all of the previous options. `nocolor` prints the "
-            + "matched CD-elements with lines marked as - (deleted), ~ (changed), + (added)")
+        .desc(
+            "Specifies the print option for `--syntaxdiff`: `diff` (default) prints the matched "
+                + "CD-elements with color-coded diffs (red for deleted, yellow for changed, and "
+                + "green for newly added elements). `cd1` will print only the old CD with "
+                + "color-coded diffs and `cd2` only the new CD. `all` combines all the previous "
+                + "options. `nocolor` prints the matched CD-elements with lines marked as - "
+                + "(deleted), ~ (changed), + (added).")
         .build());
 
   }
