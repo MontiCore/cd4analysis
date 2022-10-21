@@ -13,7 +13,6 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
-import de.monticore.cd4analysis.trafo.CD4AnalysisDirectCompositionTrafo;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -32,6 +31,7 @@ import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.trafo.CDBasisDefaultPackageTrafo;
+import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.CDFullNameTrafo;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -642,7 +642,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ast2 = ast2.deepClone();
 
     // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
-    int diffsize = CDToolUtils4Diff.getDefaultDiffsize(ast1, ast2);
+    int diffsize = CDDiff.getDefaultDiffsize(ast1, ast2);
     String defaultVal = Integer.toString(diffsize);
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {
       diffsize = Integer.parseInt(cmd.getOptionValue("diffsize", defaultVal));
@@ -652,12 +652,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     boolean openWorld = cmd.hasOption("open-world");
 
     if (cmd.hasOption("rule-based")) {
-      CDToolUtils4Diff.computeSyntax2SemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
+      CDDiff.computeSyntax2SemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
     }
     else {
       boolean reductionBased = !(cmd.hasOption("open-world") && cmd.getOptionValue("open-world",
           "reduction-based").equals("alloy-based"));
-      CDToolUtils4Diff.computeAlloySemDiff(ast1, ast2, outputPath, diffsize, difflimit, openWorld,
+      CDDiff.computeAlloySemDiff(ast1, ast2, outputPath, diffsize, difflimit, openWorld,
           reductionBased, cmd.hasOption("o"));
     }
   }

@@ -5,7 +5,7 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._auxiliary.MCBasicTypesMillForCD4Analysis;
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cddiff.CDQNameHelper;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
 
 import java.util.*;
@@ -257,13 +257,13 @@ public class CDWrapper4AssocHelper {
       ASTCDAssociation astcdAssociation) {
     if (!astcdAssociation.getLeft().isPresentCDRole()) {
       String leftRoleName =
-          CDQNameHelper.partHandler(astcdAssociation.getLeftReferenceName(), true);
+          CDDiffUtil.partHandler(astcdAssociation.getLeftReferenceName(), true);
       astcdAssociation.getLeft()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(leftRoleName).build());
     }
     if (!astcdAssociation.getRight().isPresentCDRole()) {
       String rightRoleName =
-          CDQNameHelper.partHandler(astcdAssociation.getRightReferenceName(), true);
+          CDDiffUtil.partHandler(astcdAssociation.getRightReferenceName(), true);
       astcdAssociation.getRight()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(rightRoleName).build());
     }

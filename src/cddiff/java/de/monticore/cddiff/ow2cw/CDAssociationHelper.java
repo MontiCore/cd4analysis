@@ -5,7 +5,7 @@ import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDQNameHelper;
+import de.monticore.cddiff.CDDiffUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -261,7 +261,7 @@ public class CDAssociationHelper {
     }
     else {
       roleName1 =
-          CDQNameHelper.processQName2RoleName(side1.getMCQualifiedType().getMCQualifiedName().getQName());
+          CDDiffUtil.processQName2RoleName(side1.getMCQualifiedType().getMCQualifiedName().getQName());
     }
 
     if (side2.isPresentCDRole()) {
@@ -269,7 +269,7 @@ public class CDAssociationHelper {
     }
     else {
       roleName2 =
-          CDQNameHelper.processQName2RoleName(side2.getMCQualifiedType().getMCQualifiedName().getQName());
+          CDDiffUtil.processQName2RoleName(side2.getMCQualifiedType().getMCQualifiedName().getQName());
     }
 
     return roleName1.equals(roleName2);

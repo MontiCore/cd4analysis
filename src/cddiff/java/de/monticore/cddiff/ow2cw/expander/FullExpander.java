@@ -1,6 +1,6 @@
 package de.monticore.cddiff.ow2cw.expander;
 
-import de.monticore.cddiff.CDQNameHelper;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -149,7 +149,7 @@ public class FullExpander implements CDExpander {
           roleName = original.getRight().getCDRole().getName();
         }
         else {
-          roleName = CDQNameHelper.processQName2RoleName(
+          roleName = CDDiffUtil.processQName2RoleName(
               original.getRightQualifiedName().getQName());
         }
 
@@ -164,7 +164,7 @@ public class FullExpander implements CDExpander {
           roleName = original.getLeft().getCDRole().getName();
         }
         else {
-          roleName = CDQNameHelper.processQName2RoleName(
+          roleName = CDDiffUtil.processQName2RoleName(
               original.getLeftQualifiedName().getQName());
         }
 

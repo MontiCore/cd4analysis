@@ -2,8 +2,6 @@ package de.monticore.cddiff;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
-import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.ow2cw.CDInheritanceHelper;
@@ -11,7 +9,9 @@ import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
-import de.monticore.odlink._ast.*;
+import de.monticore.odlink._ast.ASTODLeftToRightDir;
+import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import net.sourceforge.plantuml.Log;
@@ -56,7 +56,7 @@ public class JoinLinksTrafo {
         if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
           if (!link.getODLinkLeftSide().isPresentRole()) {
-            link.getODLinkLeftSide().setRole(CDQNameHelper.inferRole(assoc.getLeft()));
+            link.getODLinkLeftSide().setRole(CDDiffUtil.inferRole(assoc.getLeft()));
           }
         }
         else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
@@ -67,7 +67,7 @@ public class JoinLinksTrafo {
         if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
           if (!link.getODLinkRightSide().isPresentRole()) {
-            link.getODLinkRightSide().setRole(CDQNameHelper.inferRole(assoc.getLeft()));
+            link.getODLinkRightSide().setRole(CDDiffUtil.inferRole(assoc.getLeft()));
           }
         }
         else if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
@@ -100,10 +100,10 @@ public class JoinLinksTrafo {
 
     return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
         .getRole()
-        .equals(CDQNameHelper.inferRole(assoc.getLeft())))
+        .equals(CDDiffUtil.inferRole(assoc.getLeft())))
         && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
         .getRole()
-        .equals(CDQNameHelper.inferRole(assoc.getRight()))));
+        .equals(CDDiffUtil.inferRole(assoc.getRight()))));
   }
 
 
@@ -131,10 +131,10 @@ public class JoinLinksTrafo {
 
     return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
         .getRole()
-        .equals(CDQNameHelper.inferRole(assoc.getRight())))
+        .equals(CDDiffUtil.inferRole(assoc.getRight())))
         && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
         .getRole()
-        .equals(CDQNameHelper.inferRole(assoc.getLeft()))));
+        .equals(CDDiffUtil.inferRole(assoc.getLeft()))));
   }
 
   protected Optional<ASTODNamedObject> findObjectInOD(String name, ASTODArtifact od) {

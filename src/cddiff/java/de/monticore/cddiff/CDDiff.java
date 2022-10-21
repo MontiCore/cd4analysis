@@ -1,10 +1,12 @@
 package de.monticore.cddiff;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
+import de.monticore.cddiff.ow2cw.ReductionTrafo;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperGenerator;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiffODGenerator;
@@ -15,6 +17,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +25,98 @@ import java.util.Optional;
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.printOD;
 
 public class CDDiff {
+
+  public static void computeSyntax2SemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
+      String outputPath, boolean openWorld, boolean toDir)
+      throws NumberFormatException, IOException {
+    CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+
+    // determine if open-world should be applied
+    if (openWorld) {
+
+      CD4CodeMill.globalScope().clear();
+      ReductionTrafo trafo = new ReductionTrafo();
+      trafo.transform(ast1, ast2);
+
+      if (toDir) {
+        CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
+      }
+      semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+    }
+
+    if (toDir) {
+      CDDiff.printODs2Dir(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics), outputPath);
+    }
+    else {
+      Log.print(
+          CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics)));
+    }
+
+  }
+
+  public static void computeAlloySemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
+      String outputPath, int diffsize, int difflimit, boolean openWorld, boolean reductionBased,
+      boolean toDir) throws NumberFormatException, IOException {
+
+    CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+
+    // determine if open-world should be applied
+    if (openWorld) {
+
+      // determine which method should be used to compute the diff-witnesses
+      if (reductionBased) {
+        CD4CodeMill.globalScope().clear();
+        ReductionTrafo trafo = new ReductionTrafo();
+        trafo.transform(ast1, ast2);
+
+        CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
+        semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
+      }
+      else {
+
+        semantics = CDSemantics.MULTI_INSTANCE_OPEN_WORLD;
+
+        // handle unspecified association directions for open-world
+        ReductionTrafo.handleAssocDirections(ast1, ast2);
+
+        // add subclasses to interfaces and abstract classes
+        ReductionTrafo.addSubClasses4Diff(ast1);
+        ReductionTrafo.addSubClasses4Diff(ast2);
+
+        // add dummy-class for associations
+        String dummyClassName = "Dummy4Diff";
+        ReductionTrafo.addDummyClass4Associations(ast1, dummyClassName);
+        ReductionTrafo.addDummyClass4Associations(ast2, dummyClassName);
+      }
+    }
+    else {
+      //handle unspecified association directions for closed-world
+      ReductionTrafo.handleAssocDirections(ast1, ast2);
+    }
+
+    if (toDir) {
+      CDDiff.printODs2Dir(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics),
+          outputPath);
+    }
+    else {
+      Log.print(CDDiff.printWitnesses2stdout(
+          CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics)));
+    }
+  }
+
+  public static int getDefaultDiffsize(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2) {
+    int diffsize;
+    int cd1size = ast1.getCDDefinition().getCDClassesList().size() + ast1.getCDDefinition()
+        .getCDInterfacesList()
+        .size();
+
+    int cd2size = ast2.getCDDefinition().getCDClassesList().size() + ast2.getCDDefinition()
+        .getCDInterfacesList()
+        .size();
+
+    diffsize = Math.max(20, 2 * Math.max(cd1size, cd2size));
+    return diffsize;
+  }
 
   public static List<ASTODArtifact> computeAlloySemDiff(ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2, int diffsize, int difflimit, CDSemantics semantics) {

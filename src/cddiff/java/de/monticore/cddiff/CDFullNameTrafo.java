@@ -29,11 +29,11 @@ public class CDFullNameTrafo {
     cd.getCDDefinition().getCDAssociationsList().forEach(assoc -> {
       assoc.getLeft()
           .setCDRole(CDAssociationMill.cDRoleBuilder()
-              .setName(CDQNameHelper.inferRole(assoc.getLeft()))
+              .setName(CDDiffUtil.inferRole(assoc.getLeft()))
               .build());
       assoc.getRight()
           .setCDRole(CDAssociationMill.cDRoleBuilder()
-              .setName(CDQNameHelper.inferRole(assoc.getRight()))
+              .setName(CDDiffUtil.inferRole(assoc.getRight()))
               .build());
     });
     ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
