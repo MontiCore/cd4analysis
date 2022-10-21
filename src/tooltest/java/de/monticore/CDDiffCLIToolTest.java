@@ -30,6 +30,19 @@ public class CDDiffCLIToolTest {
   }
 
   @Test
+  public void testChain() {
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";
+    final String output = "./target/generated/chain";
+    String[] args = {"-i", cd1, "--merge", cd2, "--semdiff", cd2, "-o", output, "-pp",
+        "Employees12.cd"};
+    CD4CodeTool.main(args);
+
+    //assertEquals("Parsing and CoCo check successful!\r\n", getOut());
+    assertEquals(Log.getErrorCount(),0);
+  }
+
+  @Test
   public void testSyntaxDiff() {
     final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd";
     final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd";

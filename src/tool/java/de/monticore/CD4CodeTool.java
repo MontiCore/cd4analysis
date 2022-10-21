@@ -46,8 +46,10 @@ import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,7 +74,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   protected static final String FILE_EXISTS_INFO =
       "File '%s' already exists and will be " + "overwritten\n";
 
-  protected static final String DIR_CREATION_ERROR = "Directory '%s' could not be created\n";
+  protected static final String FILE_CREATION_ERROR = "File '%s' could not be created\n";
 
   protected static final String STEXPORT_SUCCESSFUL = "Creation of symbol file %s successful\n";
 
@@ -534,18 +536,16 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       if (file.exists()) {
         System.out.printf(FILE_EXISTS_INFO, unifyPath(file.getPath()));
       }
-      else if (!file.getParentFile().mkdirs()) {
-        System.out.printf(DIR_CREATION_ERROR, unifyPath(file.getAbsolutePath()));
-        return;
+      try {
+        // Write results into a file
+        FileUtils.writeStringToFile(file, cd4CodeFullPrettyPrinter.getPrinter().getContent(),
+            Charset.defaultCharset());
       }
-
-      try (PrintWriter out = new PrintWriter(new FileOutputStream(file), true)) {
-        out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
-      }
-      catch (FileNotFoundException e) {
+      catch (IOException e) {
         System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
+        System.out.printf(FILE_CREATION_ERROR, file.getAbsolutePath());
       }
-      System.out.printf(PRETTYPRINT_SUCCESSFUL, unifyPath(file.toPath()));
+      System.out.printf(PRETTYPRINT_SUCCESSFUL, file.getAbsolutePath());
     }
   }
 

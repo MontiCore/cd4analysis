@@ -534,7 +534,6 @@ public class CD2AlloyGenerator {
         for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
           assert objectType.getDefiningSymbol().isPresent();
           superName = objectType.getDefiningSymbol().get().getFullName();
-          Log.println("[TEST]" + currentClass.getSymbol().getFullName() + "=?" + superName);
 
           for (ASTCDClass astClass : classes) {
             if (superName.equals(astClass.getSymbol().getFullName())) {
