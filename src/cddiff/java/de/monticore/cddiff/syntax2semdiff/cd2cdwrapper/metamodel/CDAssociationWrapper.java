@@ -102,13 +102,13 @@ public class CDAssociationWrapper implements Cloneable {
       case ONE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
         break;
-      case ZERO_TO_ONE:
+      case OPTIONAL:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
         break;
-      case ONE_TO_MORE:
+      case AT_LEAST_ONE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
         break;
-      case MORE:
+      case MULTIPLE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
         break;
     }
@@ -124,13 +124,13 @@ public class CDAssociationWrapper implements Cloneable {
       case ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
         break;
-      case ZERO_TO_ONE:
+      case OPTIONAL:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
         break;
-      case ONE_TO_MORE:
+      case AT_LEAST_ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
         break;
-      case MORE:
+      case MULTIPLE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
         break;
     }

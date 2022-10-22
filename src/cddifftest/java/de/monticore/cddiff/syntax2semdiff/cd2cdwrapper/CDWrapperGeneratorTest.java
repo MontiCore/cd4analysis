@@ -520,15 +520,15 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
         .equals(CDAssociationWrapperCardinality.ONE) && dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_RightToLeft_b_B")
         .getCDWrapperRightClassCardinality()
-        .equals(CDAssociationWrapperCardinality.MORE));
+        .equals(CDAssociationWrapperCardinality.MULTIPLE));
     Assert.assertTrue(dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_LeftToRight_b_B")
         .getCDWrapperLeftClassCardinality()
-        .equals(CDAssociationWrapperCardinality.ZERO_TO_ONE)
+        .equals(CDAssociationWrapperCardinality.OPTIONAL)
         && dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_LeftToRight_b_B")
         .getCDWrapperRightClassCardinality()
-        .equals(CDAssociationWrapperCardinality.ONE_TO_MORE));
+        .equals(CDAssociationWrapperCardinality.AT_LEAST_ONE));
   }
 
   /**
@@ -552,7 +552,7 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
         .equals(CDAssociationWrapperCardinality.ONE) && dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_Bidirectional_b_B")
         .getCDWrapperRightClassCardinality()
-        .equals(CDAssociationWrapperCardinality.ONE_TO_MORE));
+        .equals(CDAssociationWrapperCardinality.AT_LEAST_ONE));
   }
 
   /**
@@ -571,7 +571,7 @@ public class CDWrapperGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_Bidirectional_b_B")
         .getCDWrapperLeftClassCardinality()
-        .equals(CDAssociationWrapperCardinality.MORE)
+        .equals(CDAssociationWrapperCardinality.MULTIPLE)
         && dg.getCDAssociationWrapperGroup()
         .get("CDAssociationWrapper_A_a_Bidirectional_b_B")
         .getCDWrapperRightClassCardinality()

@@ -1,0 +1,8 @@
+classdiagram VehicleB {
+	enum Fuel {Gas, Diesel, Electricity;}
+	class Driver;
+  class Car {
+    Fuel energy;
+  }
+  association [1] Driver (belongsTo) <- (drives) Car [*];
+}

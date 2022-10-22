@@ -48,13 +48,13 @@ public class CDWrapper4AssocHelper {
       return CDAssociationWrapperCardinality.ONE;
     }
     else if (astcdAssociation.getLeft().getCDCardinality().isOpt()) {
-      return CDAssociationWrapperCardinality.ZERO_TO_ONE;
+      return CDAssociationWrapperCardinality.OPTIONAL;
     }
     else if (astcdAssociation.getLeft().getCDCardinality().isAtLeastOne()) {
-      return CDAssociationWrapperCardinality.ONE_TO_MORE;
+      return CDAssociationWrapperCardinality.AT_LEAST_ONE;
     }
     else {
-      return CDAssociationWrapperCardinality.MORE;
+      return CDAssociationWrapperCardinality.MULTIPLE;
     }
   }
 
@@ -67,13 +67,13 @@ public class CDWrapper4AssocHelper {
       return CDAssociationWrapperCardinality.ONE;
     }
     else if (astcdAssociation.getRight().getCDCardinality().isOpt()) {
-      return CDAssociationWrapperCardinality.ZERO_TO_ONE;
+      return CDAssociationWrapperCardinality.OPTIONAL;
     }
     else if (astcdAssociation.getRight().getCDCardinality().isAtLeastOne()) {
-      return CDAssociationWrapperCardinality.ONE_TO_MORE;
+      return CDAssociationWrapperCardinality.AT_LEAST_ONE;
     }
     else {
-      return CDAssociationWrapperCardinality.MORE;
+      return CDAssociationWrapperCardinality.MULTIPLE;
     }
   }
 
@@ -146,45 +146,45 @@ public class CDWrapper4AssocHelper {
         switch (current) {
           case ONE:
             return CDAssociationWrapperCardinality.ONE;
-          case ZERO_TO_ONE:
+          case OPTIONAL:
             return CDAssociationWrapperCardinality.ONE;
-          case ONE_TO_MORE:
+          case AT_LEAST_ONE:
             return CDAssociationWrapperCardinality.ONE;
           default:
             return CDAssociationWrapperCardinality.ONE;
         }
-      case ZERO_TO_ONE:
+      case OPTIONAL:
         switch (current) {
           case ONE:
             return CDAssociationWrapperCardinality.ONE;
-          case ZERO_TO_ONE:
-            return CDAssociationWrapperCardinality.ZERO_TO_ONE;
-          case ONE_TO_MORE:
+          case OPTIONAL:
+            return CDAssociationWrapperCardinality.OPTIONAL;
+          case AT_LEAST_ONE:
             return CDAssociationWrapperCardinality.ONE;
           default:
-            return CDAssociationWrapperCardinality.ZERO_TO_ONE;
+            return CDAssociationWrapperCardinality.OPTIONAL;
         }
-      case ONE_TO_MORE:
+      case AT_LEAST_ONE:
         switch (current) {
           case ONE:
             return CDAssociationWrapperCardinality.ONE;
-          case ZERO_TO_ONE:
+          case OPTIONAL:
             return CDAssociationWrapperCardinality.ONE;
-          case ONE_TO_MORE:
-            return CDAssociationWrapperCardinality.ONE_TO_MORE;
+          case AT_LEAST_ONE:
+            return CDAssociationWrapperCardinality.AT_LEAST_ONE;
           default:
-            return CDAssociationWrapperCardinality.ONE_TO_MORE;
+            return CDAssociationWrapperCardinality.AT_LEAST_ONE;
         }
       default:
         switch (current) {
           case ONE:
             return CDAssociationWrapperCardinality.ONE;
-          case ZERO_TO_ONE:
-            return CDAssociationWrapperCardinality.ZERO_TO_ONE;
-          case ONE_TO_MORE:
-            return CDAssociationWrapperCardinality.ONE_TO_MORE;
+          case OPTIONAL:
+            return CDAssociationWrapperCardinality.OPTIONAL;
+          case AT_LEAST_ONE:
+            return CDAssociationWrapperCardinality.AT_LEAST_ONE;
           default:
-            return CDAssociationWrapperCardinality.MORE;
+            return CDAssociationWrapperCardinality.MULTIPLE;
         }
     }
   }

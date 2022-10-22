@@ -74,13 +74,13 @@ public class CDWrapper4ConflictHelper {
       boolean option) {
     // original
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, false,
-        CDAssociationWrapperCardinality.MORE,
-        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MULTIPLE,
+        CDAssociationWrapperCardinality.OPTIONAL)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, false,
         CDAssociationWrapperCardinality.ONE,
-        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
       }
@@ -91,13 +91,13 @@ public class CDWrapper4ConflictHelper {
 
     // reversed
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, true,
-        CDAssociationWrapperCardinality.MORE,
-        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MULTIPLE,
+        CDAssociationWrapperCardinality.OPTIONAL)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, true,
         CDAssociationWrapperCardinality.ONE,
-        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperLeftClass());
       }
@@ -120,13 +120,13 @@ public class CDWrapper4ConflictHelper {
       boolean option) {
     // original
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, false,
-        CDAssociationWrapperCardinality.MORE,
-        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MULTIPLE,
+        CDAssociationWrapperCardinality.OPTIONAL)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictLeftCardinalityHelper(cdAssociationWrapperPacks, false,
         CDAssociationWrapperCardinality.ONE,
-        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
       } else {
@@ -136,13 +136,13 @@ public class CDWrapper4ConflictHelper {
 
     // reversed
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, true,
-        CDAssociationWrapperCardinality.MORE,
-        CDAssociationWrapperCardinality.ZERO_TO_ONE)) {
+        CDAssociationWrapperCardinality.MULTIPLE,
+        CDAssociationWrapperCardinality.OPTIONAL)) {
       updateCDStatus4CDAssociationWrapper(cdAssociationWrapperPacks);
     }
     if (checkConflictRightCardinalityHelper(cdAssociationWrapperPacks, true,
         CDAssociationWrapperCardinality.ONE,
-        CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+        CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
       if (option) {
         updateCDStatus4CDTypeWrapper(baseAssoc.getCDWrapperRightClass());
       } else {
@@ -161,8 +161,9 @@ public class CDWrapper4ConflictHelper {
       if (!cdAssociationWrapperPacks.isEmpty()) {
 
         // Cardinality in [*, 0..1]
-        if (baseAssoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.MORE ||
-            baseAssoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ZERO_TO_ONE) {
+        if (baseAssoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.MULTIPLE
+            ||
+            baseAssoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.OPTIONAL) {
 
           // -> / <-> / --
           if (baseAssoc.getCDAssociationWrapperDirection() == CDAssociationWrapperDirection.LEFT_TO_RIGHT ||

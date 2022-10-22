@@ -385,12 +385,12 @@ public class CDWrapperSyntaxDiffGeneratorTest extends CDDiffTestBasis {
       .stream()
       .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CARDINALITY_CHANGED
         && e.getWhichPartDiff().get() == WhichPartDiff.LEFT_CARDINALITY
-        && e.getCDDiffLeftClassCardinalityResult().get() == CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE));
+        && e.getCDDiffLeftClassCardinalityResult().get() == CDAssociationDiffCardinality.ZERO_OR_AT_LEAST_TWO));
     Assert.assertTrue(cg.getCDAssociationDiffResultQueueWithDiff()
       .stream()
       .anyMatch(e -> e.getCDDiffCategory() == CDAssociationDiffCategory.CARDINALITY_CHANGED
         && e.getWhichPartDiff().get() == WhichPartDiff.RIGHT_CARDINALITY
-        && e.getCDDiffRightClassCardinalityResult().get() == CDAssociationDiffCardinality.TWO_TO_MORE));
+        && e.getCDDiffRightClassCardinalityResult().get() == CDAssociationDiffCardinality.AT_LEAST_TWO));
   }
 
   /********************************************************************

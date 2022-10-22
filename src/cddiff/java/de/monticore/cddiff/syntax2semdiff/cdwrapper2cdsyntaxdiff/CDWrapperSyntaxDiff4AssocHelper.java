@@ -103,31 +103,31 @@ public class CDWrapperSyntaxDiff4AssocHelper {
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
             return CDAssociationDiffCardinality.NONE;
-          case ZERO_TO_ONE:
+          case OPTIONAL:
             return CDAssociationDiffCardinality.NONE;
-          case ONE_TO_MORE:
+          case AT_LEAST_ONE:
             return CDAssociationDiffCardinality.NONE;
           default:
             return CDAssociationDiffCardinality.NONE;
         }
-      case ZERO_TO_ONE:
+      case OPTIONAL:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
             return CDAssociationDiffCardinality.ZERO;
-          case ZERO_TO_ONE:
+          case OPTIONAL:
             return CDAssociationDiffCardinality.NONE;
-          case ONE_TO_MORE:
+          case AT_LEAST_ONE:
             return CDAssociationDiffCardinality.ZERO;
           default:
             return CDAssociationDiffCardinality.NONE;
         }
-      case ONE_TO_MORE:
+      case AT_LEAST_ONE:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
-            return CDAssociationDiffCardinality.TWO_TO_MORE;
-          case ZERO_TO_ONE:
-            return CDAssociationDiffCardinality.TWO_TO_MORE;
-          case ONE_TO_MORE:
+            return CDAssociationDiffCardinality.AT_LEAST_TWO;
+          case OPTIONAL:
+            return CDAssociationDiffCardinality.AT_LEAST_TWO;
+          case AT_LEAST_ONE:
             return CDAssociationDiffCardinality.NONE;
           default:
             return CDAssociationDiffCardinality.NONE;
@@ -135,10 +135,10 @@ public class CDWrapperSyntaxDiff4AssocHelper {
       default:
         switch (compareCDAssociationWrapperCardinality) {
           case ONE:
-            return CDAssociationDiffCardinality.ZERO_AND_TWO_TO_MORE;
-          case ZERO_TO_ONE:
-            return CDAssociationDiffCardinality.TWO_TO_MORE;
-          case ONE_TO_MORE:
+            return CDAssociationDiffCardinality.ZERO_OR_AT_LEAST_TWO;
+          case OPTIONAL:
+            return CDAssociationDiffCardinality.AT_LEAST_TWO;
+          case AT_LEAST_ONE:
             return CDAssociationDiffCardinality.ZERO;
           default:
             return CDAssociationDiffCardinality.NONE;

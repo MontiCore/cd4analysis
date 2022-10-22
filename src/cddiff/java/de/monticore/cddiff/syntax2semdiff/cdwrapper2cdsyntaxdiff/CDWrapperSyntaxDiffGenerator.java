@@ -189,7 +189,7 @@ public class CDWrapperSyntaxDiffGenerator {
         if (assoc.getCDWrapperLeftClassCardinality()
             == CDAssociationWrapperCardinality.ONE
             || assoc.getCDWrapperLeftClassCardinality()
-            == CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            == CDAssociationWrapperCardinality.AT_LEAST_ONE) {
           if (baseCDW.getCDTypeWrapperGroup().containsKey(assoc.getCDWrapperRightClass().getName())) {
             CDTypeWrapper baseCDTypeWrapper =
                 baseCDW.getCDTypeWrapperGroup().get(assoc.getCDWrapperRightClass().getName());
@@ -205,7 +205,7 @@ public class CDWrapperSyntaxDiffGenerator {
         if (assoc.getCDWrapperRightClassCardinality()
             == CDAssociationWrapperCardinality.ONE
             || assoc.getCDWrapperRightClassCardinality()
-            == CDAssociationWrapperCardinality.ONE_TO_MORE) {
+            == CDAssociationWrapperCardinality.AT_LEAST_ONE) {
           if (baseCDW.getCDTypeWrapperGroup().containsKey(assoc.getCDWrapperLeftClass().getName())) {
             CDTypeWrapper baseCDTypeWrapper =
                 baseCDW.getCDTypeWrapperGroup().get(assoc.getCDWrapperLeftClass().getName());
@@ -439,7 +439,7 @@ public class CDWrapperSyntaxDiffGenerator {
                   .getCDAssociationWrapper();
 
               if ((base.getCDWrapperRightClassCardinality()
-                  == CDAssociationWrapperCardinality.ZERO_TO_ONE
+                  == CDAssociationWrapperCardinality.OPTIONAL
                   || base.getCDWrapperRightClassCardinality()
                   == CDAssociationWrapperCardinality.ONE)
                   && mappingCardinality(base.getCDWrapperLeftClassCardinality()) != 1 && (
@@ -450,7 +450,7 @@ public class CDWrapperSyntaxDiffGenerator {
                     createCDAssociationDiffHelper(base, Optional.of(compare), isInCompareSG,
                         isLeftCardinalityDiff, categoryResult,
                         Optional.of(WhichPartDiff.LEFT_SPECIAL_CARDINALITY),
-                        Optional.of(CDAssociationDiffCardinality.TWO_TO_MORE)));
+                        Optional.of(CDAssociationDiffCardinality.AT_LEAST_TWO)));
               }
               else {
                 cDAssocWrapperDiffResultQueueWithDiff.offer(
@@ -519,7 +519,7 @@ public class CDWrapperSyntaxDiffGenerator {
                   .getCDAssociationWrapper();
 
               if ((base.getCDWrapperLeftClassCardinality()
-                  == CDAssociationWrapperCardinality.ZERO_TO_ONE
+                  == CDAssociationWrapperCardinality.OPTIONAL
                   || base.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE)
                   && mappingCardinality(base.getCDWrapperRightClassCardinality()) != 1 && (
                   mappingCardinality(otherCDAssociationWrapper.getCDWrapperLeftClassCardinality())
@@ -529,7 +529,7 @@ public class CDWrapperSyntaxDiffGenerator {
                     createCDAssociationDiffHelper(base, Optional.of(compare), isInCompareSG,
                         isRightCardinalityDiff, categoryResult,
                         Optional.of(WhichPartDiff.RIGHT_SPECIAL_CARDINALITY),
-                        Optional.of(CDAssociationDiffCardinality.TWO_TO_MORE)));
+                        Optional.of(CDAssociationDiffCardinality.AT_LEAST_TWO)));
               }
               else {
                 cDAssocWrapperDiffResultQueueWithDiff.offer(

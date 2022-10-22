@@ -423,7 +423,7 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
     Assert.assertTrue(ods.size() > 0);
 
     Assert.assertTrue(ods.stream()
-        .anyMatch(e -> e.getObjectDiagram().getName().contains("freed")));
+        .anyMatch(e -> e.getObjectDiagram().getStereotype().getValue("syntaxDiffCategory").contains("freed")));
   }
 
   @Test
@@ -603,6 +603,34 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
+  public void testCarExampleSimpleClosedWorld() {
+    ast1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+            + "/Car1A.cd");
+
+    ast2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+            + "/Car1B.cd");
+
+    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.SIMPLE_CLOSED_WORLD);
+    System.out.println(res);
+  }
+
+  @Test
+  public void testVehicleExampleMultiInstanceClosedWorld() {
+    ast1 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+            + "/Vehicle1A.cd");
+
+    ast2 = parseModel(
+        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
+            + "/Vehicle1B.cd");
+
+    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    System.out.println(res);
+  }
+
+  @Test
   @Ignore
   public void testRuntime4Performance(){
     String filePath1_20 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
@@ -758,6 +786,91 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
         filePath1 = filePath1_120;
         filePath2 = filePath2_120;
         System.out.println("*******  Test for 120  *******");
+      }
+
+      CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
+      ASTCDCompilationUnit ast1_old = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_old = parseModel(filePath2);
+      ASTCDCompilationUnit ast1_new = parseModel(filePath1);
+      ASTCDCompilationUnit ast2_new = parseModel(filePath2);
+      assertNotNull(ast1_old);
+      assertNotNull(ast2_old);
+      assertNotNull(ast1_new);
+      assertNotNull(ast2_new);
+
+      // old method
+      long startTime_old = System.currentTimeMillis();   // start time
+      ReductionTrafo.handleAssocDirections(ast1_old, ast2_old);
+      Optional<AlloyDiffSolution> optS =
+          AlloyCDDiff.getAlloyDiffSolution(ast1_old, ast2_old, 2, cdSemantics, output);
+      List<ASTODArtifact> ods_old = optS.get().generateODs();
+      long endTime_old = System.currentTimeMillis(); // end time
+
+      // new method
+      long startTime_new = System.currentTimeMillis();   // start time
+      List<ASTODArtifact> ods_new = Syntax2SemDiff.computeSemDiff(ast1_new, ast2_new, cdSemantics);
+      long endTime_new = System.currentTimeMillis(); // end time
+
+      System.out.println("old witness size: " + ods_old.size());
+      System.out.println("Runtime of old method: " + (endTime_old - startTime_old) + "ms");
+      System.out.println("new witness size: " + ods_new.size());
+      System.out.println("Runtime of new method: " + (endTime_new - startTime_new) + "ms");
+    }
+  }
+
+  @Test
+  @Ignore
+  public void testRunTime4Performance100(){
+    String filePath1_1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100A_1.cd";
+    String filePath2_1 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100B_1.cd";
+
+    String filePath1_2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100A_2.cd";
+    String filePath2_2 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100B_2.cd";
+
+    String filePath1_3 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100A_3.cd";
+    String filePath2_3 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100B_3.cd";
+
+    String filePath1_4 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100A_4.cd";
+    String filePath2_4 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100B_4.cd";
+
+    String filePath1_5 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100A_5.cd";
+    String filePath2_5 = "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
+        + "/Performance/100B_5.cd";
+
+    String output = "./target/runtime-test/";
+
+    String filePath1 = null;
+    String filePath2 = null;
+    for (int i = 1; i <= 5; i++) {
+      if (i == 1) {
+        filePath1 = filePath1_1;
+        filePath2 = filePath2_1;
+        System.out.println("*******  Test for 1  *******");
+      } else if (i == 2) {
+        filePath1 = filePath1_2;
+        filePath2 = filePath2_2;
+        System.out.println("*******  Test for 2  *******");
+      } else if (i == 3) {
+        filePath1 = filePath1_3;
+        filePath2 = filePath2_3;
+        System.out.println("*******  Test for 3  *******");
+      } else if (i == 4) {
+        filePath1 = filePath1_4;
+        filePath2 = filePath2_4;
+        System.out.println("*******  Test for 4  *******");
+      } else if (i == 5) {
+        filePath1 = filePath1_5;
+        filePath2 = filePath2_5;
+        System.out.println("*******  Test for 5  *******");
       }
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
