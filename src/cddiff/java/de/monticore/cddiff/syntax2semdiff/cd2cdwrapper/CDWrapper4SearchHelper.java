@@ -291,14 +291,14 @@ public class CDWrapper4SearchHelper {
                 .map(CDTypeWrapper::getOriginalClassName)
                 .collect(Collectors.toSet())
                 .contains(originalCDTypeWrapper.getOriginalClassName())
-                && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDAssociationWrapperCardinality.ZERO_TO_ONE
+                && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDAssociationWrapperCardinality.OPTIONAL
                 && e.getOriginalElement().getCDWrapperLeftClassCardinality() != CDAssociationWrapperCardinality.ONE) ||
                 (e.getRightRefSet()
                     .stream()
                     .map(CDTypeWrapper::getOriginalClassName)
                     .collect(Collectors.toSet())
                     .contains(originalCDTypeWrapper.getOriginalClassName())
-                    && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDAssociationWrapperCardinality.ZERO_TO_ONE
+                    && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDAssociationWrapperCardinality.OPTIONAL
                     && e.getOriginalElement().getCDWrapperRightClassCardinality() != CDAssociationWrapperCardinality.ONE)
         )
         .filter(e -> !e.isPresentInCDRefSetAssociationWrapper(currentAssoc))
@@ -363,7 +363,7 @@ public class CDWrapper4SearchHelper {
           == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
         if (checkCardinality) {
           if (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE) {
             result.add(assoc);
           }
         } else {
@@ -377,7 +377,7 @@ public class CDWrapper4SearchHelper {
           == CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
         if (checkCardinality) {
           if (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE) {
             result.add(assoc);
           }
         } else {
@@ -392,12 +392,12 @@ public class CDWrapper4SearchHelper {
         if (checkCardinality) {
           if (assoc.getCDWrapperLeftClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
               && (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
             result.add(assoc);
           }
           if (assoc.getCDWrapperRightClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
               && (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
             result.add(assoc);
           }
         } else {
@@ -429,7 +429,7 @@ public class CDWrapper4SearchHelper {
           == CDAssociationWrapperDirection.RIGHT_TO_LEFT) {
         if (checkCardinality) {
           if (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE) {
             result.add(assoc);
           }
         } else {
@@ -443,7 +443,7 @@ public class CDWrapper4SearchHelper {
           == CDAssociationWrapperDirection.LEFT_TO_RIGHT) {
         if (checkCardinality) {
           if (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE) {
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE) {
             result.add(assoc);
           }
         } else {
@@ -458,12 +458,12 @@ public class CDWrapper4SearchHelper {
         if (checkCardinality) {
           if (assoc.getCDWrapperLeftClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
               && (assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              || assoc.getCDWrapperRightClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
             result.add(assoc);
           }
           if (assoc.getCDWrapperRightClass().getOriginalClassName().equals(cDTypeWrapper.getOriginalClassName())
               && (assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE
-              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.ONE_TO_MORE)) {
+              || assoc.getCDWrapperLeftClassCardinality() == CDAssociationWrapperCardinality.AT_LEAST_ONE)) {
             result.add(assoc);
           }
         } else {

@@ -61,11 +61,11 @@ public class CDSyntax2SemDiff4GenerateODHelper {
     switch (cardinality) {
       case ONE:
         return 1;
-      case ZERO_TO_ONE:
+      case OPTIONAL:
         return 0;
-      case ONE_TO_MORE:
+      case AT_LEAST_ONE:
         return 1;
-      case MORE:
+      case MULTIPLE:
         return 0;
       default:
         return 0;
@@ -76,9 +76,9 @@ public class CDSyntax2SemDiff4GenerateODHelper {
     switch (cardinality) {
       case ZERO:
         return 0;
-      case TWO_TO_MORE:
+      case AT_LEAST_TWO:
         return 2;
-      case ZERO_AND_TWO_TO_MORE:
+      case ZERO_OR_AT_LEAST_TWO:
         return 0;
       default:
         return 0;
@@ -93,11 +93,11 @@ public class CDSyntax2SemDiff4GenerateODHelper {
     switch (cardinality) {
       case ONE:
         return 1;
-      case ZERO_TO_ONE:
+      case OPTIONAL:
         return 1;
-      case ONE_TO_MORE:
+      case AT_LEAST_ONE:
         return 1;
-      case MORE:
+      case MULTIPLE:
         return 1;
       default:
         return 0;
@@ -108,9 +108,9 @@ public class CDSyntax2SemDiff4GenerateODHelper {
     switch (cardinality) {
       case ZERO:
         return 0;
-      case TWO_TO_MORE:
+      case AT_LEAST_TWO:
         return 2;
-      case ZERO_AND_TWO_TO_MORE:
+      case ZERO_OR_AT_LEAST_TWO:
         return 2;
       default:
         return 0;

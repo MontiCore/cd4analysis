@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.formatDirection;
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4InheritanceHelper.*;
 
 public class CDSyntax2SemDiff4ASTODHelper {
@@ -388,26 +389,18 @@ public class CDSyntax2SemDiff4ASTODHelper {
    */
   public static String generateODTitle(CDAssocWrapperDiff association, int index) {
     StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append("OD_");
-    stringBuilder.append(index);
-    stringBuilder.append("_$");
+    stringBuilder.append("Diff_").append(index).append("__").append("association").append("__");
 
     // set assoc name
-    stringBuilder.append(association.getName(true));
-    stringBuilder.append("$_$");
-
-    // set assoc type
-    stringBuilder.append(association.getCDDiffCategory().toString().toLowerCase());
-    stringBuilder.append("$");
-
-    // set which part
-    if (association.getWhichPartDiff().isPresent()) {
-      if (association.getWhichPartDiff().get() != WhichPartDiff.DIRECTION) {
-        stringBuilder.append("_$");
-        stringBuilder.append(association.getWhichPartDiff().get().toString().toLowerCase());
-        stringBuilder.append("$");
-      }
-    }
+    stringBuilder.append(association.getBaseElement().getCDWrapperLeftClass().getOriginalClassName())
+        .append("__");
+    stringBuilder.append("$").append(association.getBaseElement().getCDWrapperLeftClassRoleName()).append("$")
+        .append("__");
+    stringBuilder.append(formatDirection(association.getBaseElement().getCDAssociationWrapperDirection()))
+        .append("__");
+    stringBuilder.append("$").append(association.getBaseElement().getCDWrapperRightClassRoleName()).append("$")
+        .append("__");
+    stringBuilder.append(association.getBaseElement().getCDWrapperRightClass().getOriginalClassName());
 
     return stringBuilder.toString();
   }
@@ -417,17 +410,15 @@ public class CDSyntax2SemDiff4ASTODHelper {
    */
   public static String generateODTitle(CDTypeWrapperDiff cDTypeWrapperDiff, int index) {
     StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append("OD_");
-    stringBuilder.append(index);
-    stringBuilder.append("_$");
+    stringBuilder.append("Diff_").append(index).append("__");
 
+    if (cDTypeWrapperDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
+      stringBuilder.append("attribute").append("__");
+    } else {
+      stringBuilder.append("class").append("__");
+    }
     // set assoc name
-    stringBuilder.append(cDTypeWrapperDiff.getName(true));
-    stringBuilder.append("$_$");
-
-    // set assoc type
-    stringBuilder.append(cDTypeWrapperDiff.getCDDiffCategory().toString().toLowerCase());
-    stringBuilder.append("$");
+    stringBuilder.append(cDTypeWrapperDiff.getName(true).split("_")[1]);
 
     // set which part
     if (cDTypeWrapperDiff.getCDDiffCategory() == CDTypeDiffCategory.EDITED) {
@@ -438,8 +429,34 @@ public class CDSyntax2SemDiff4ASTODHelper {
             .toString()
             .replace(" ", "")
             .replace(",", "_")
-            .replace("[", "$")
-            .replace("]", "$"));
+            .replace("[", "")
+            .replace("]", ""));
+      }
+    }
+
+    return stringBuilder.toString();
+  }
+
+  /**
+   * generate the label of DiffCategory
+   */
+  public static String generateODDiffLabel(CDTypeWrapperDiff cdTypeWrapperDiff) {
+    return cdTypeWrapperDiff.getCDDiffCategory().toString().toLowerCase();
+  }
+
+  /**
+   * generate the label of DiffCategory
+   */
+  public static String generateODDiffLabel(CDAssocWrapperDiff cdAssocWrapperDiff) {
+    StringBuilder stringBuilder = new StringBuilder();
+    // set assoc type
+    stringBuilder.append(cdAssocWrapperDiff.getCDDiffCategory().toString().toLowerCase());
+
+    // set which part
+    if (cdAssocWrapperDiff.getWhichPartDiff().isPresent()) {
+      if (cdAssocWrapperDiff.getWhichPartDiff().get() != WhichPartDiff.DIRECTION) {
+        stringBuilder.append("__");
+        stringBuilder.append(cdAssocWrapperDiff.getWhichPartDiff().get().toString().toLowerCase());
       }
     }
 
@@ -480,7 +497,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
    * generate ASTODArtifact
    */
   public static ASTODArtifact generateASTODArtifact(List<ASTODElement> astODElementList,
-      String odTitle, String odSourcePosition) {
+      String odTitle, String odSourcePosition, String odDiffLable) {
     String baseCDSrcPos = odSourcePosition.split("__")[0];
     String compareCDSrcPos = odSourcePosition.split("__")[1];
     // set ASTObjectDiagram
@@ -500,6 +517,13 @@ public class CDSyntax2SemDiff4ASTODHelper {
                 .setContent(compareCDSrcPos)
                 .setText(OD4ReportMill.stringLiteralBuilder()
                     .setSource(compareCDSrcPos)
+                    .build())
+                .build())
+            .addValues(OD4ReportMill.stereoValueBuilder()
+                .setName("syntaxDiffCategory")
+                .setContent(odDiffLable)
+                .setText(OD4ReportMill.stringLiteralBuilder()
+                    .setSource(odDiffLable)
                     .build())
                 .build())
             .build())

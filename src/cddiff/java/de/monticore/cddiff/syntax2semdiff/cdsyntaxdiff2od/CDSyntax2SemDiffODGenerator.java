@@ -52,8 +52,9 @@ public class CDSyntax2SemDiffODGenerator {
         }
         String odTitle = generateODTitle(currentCDAssociationDiff, i);
         String odSourcePosition = generateODSourcePosition(currentCDAssociationDiff);
+        String odDiffLabel = generateODDiffLabel(currentCDAssociationDiff);
         astODArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(),
-            odTitle, odSourcePosition));
+            odTitle, odSourcePosition, odDiffLabel));
         i++;
       }
     }
@@ -70,8 +71,9 @@ public class CDSyntax2SemDiffODGenerator {
         }
         String odTitle = generateODTitle(currentCDTypeDiff, i);
         String odSourcePosition = generateODSourcePosition(currentCDTypeDiff);
+        String odDiffLabel = generateODDiffLabel(currentCDTypeDiff);
         astODArtifacts.add(generateASTODArtifact(optionalASTODPack.get().getASTODElementList(),
-            odTitle, odSourcePosition));
+            odTitle, odSourcePosition, odDiffLabel));
         i++;
       }
     }
