@@ -14,7 +14,7 @@ import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
-import net.sourceforge.plantuml.Log;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
 import java.util.Optional;

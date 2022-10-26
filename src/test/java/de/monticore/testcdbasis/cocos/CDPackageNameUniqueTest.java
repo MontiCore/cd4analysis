@@ -3,11 +3,8 @@ package de.monticore.testcdbasis.cocos;
 
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.cocos.ebnf.CDAttributeNameLowerCaseIfNotStatic;
 import de.monticore.cdbasis.cocos.ebnf.CDPackageNameUnique;
-import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
-import net.sourceforge.plantuml.sprite.SpriteUtils;
 import org.junit.After;
 import org.junit.Test;
 

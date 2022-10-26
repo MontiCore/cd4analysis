@@ -1,12 +1,11 @@
 package de.monticore.cdmerge;
 
 import com.google.common.base.Preconditions;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
-import net.sourceforge.plantuml.Log;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 

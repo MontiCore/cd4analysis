@@ -9,7 +9,7 @@ import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiffODGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
-import net.sourceforge.plantuml.Log;
+import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
 import java.util.List;
