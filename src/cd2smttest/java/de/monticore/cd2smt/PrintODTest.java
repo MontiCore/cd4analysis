@@ -1,9 +1,9 @@
 package de.monticore.cd2smt;
 
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Solver;
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
@@ -16,11 +16,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,15 +43,16 @@ public class PrintODTest extends CDDiffTestBasis {
   }
 
   public void printOD(String CDFileName, String targetNumber) {
-    ASTCDCompilationUnit ast = parseModel(Paths.get(RELATIVE_MODEL_PATH, CDFileName).toString());
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
-    CDContext cdContext = cd2SMTGenerator.cd2smt(ast,new Context(cfg));
+    ASTCDCompilationUnit ast = parseModel(Paths.get(RELATIVE_MODEL_PATH, CDFileName).toString());
+    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
-    SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-   Optional<ASTODArtifact> optOd = smt2ODGenerator.buildOd(cdContext);
-   assert optOd.isPresent();
+    cd2SMTGenerator.cd2smt(ast, new Context(cfg));
+    Solver solver = cd2SMTGenerator.makeSolver(new ArrayList<>());
+    Assertions.assertSame(solver.check(), Status.SATISFIABLE);
+    Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(solver.getModel(), false, "MyOD");
+    assert optOd.isPresent();
 
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH, optOd.get().getObjectDiagram().getName() + targetNumber + ".od");
     try {
@@ -117,31 +118,35 @@ public class PrintODTest extends CDDiffTestBasis {
   public void test_inheritance_of_association_complete() {
     printOD("car10.cd", "10");
   }
+
   @Test
   public void test_class_inherit_assoc_of_many_interfaces() {
-    printOD( "car14.cd", "14");
+    printOD("car14.cd", "14");
   }
+
   @Test
   public void test_interf_inherit_assoc_of_many_interfaces() {
-    printOD( "car15.cd", "15");
+    printOD("car15.cd", "15");
   }
+
   @Test
   public void test_class_inherit_assoc_of_class_and_interf() {
-    printOD( "car16.cd", "16");
+    printOD("car16.cd", "16");
   }
 
   @Test
   public void test_inhr_assoc_both_sides() {
-    printOD( "car17.cd", "17");
+    printOD("car17.cd", "17");
   }
 
   @Test
   public void test_inhr_assoc_both_sides_complex() {
-    printOD( "car18.cd", "18");
+    printOD("car18.cd", "18");
   }
+
   @Test
   public void test_interf_inhr_assoc_and_attribut() {
-    printOD( "car19.cd", "19");
+    printOD("car19.cd", "19");
   }
 
 

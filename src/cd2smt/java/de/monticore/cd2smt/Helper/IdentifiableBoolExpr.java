@@ -27,13 +27,14 @@ public class IdentifiableBoolExpr {
     counter++;
   }
 
-  private static IdentifiableBoolExpr buildBoolExprIdentifiable(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName,boolean wasNegated) {
+  private static IdentifiableBoolExpr buildIdentifiable(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName, boolean wasNegated) {
     IdentifiableBoolExpr identifiableBoolexpr = new IdentifiableBoolExpr(value, sourcePosition, invariantName, wasNegated);
     constraintMap.put(identifiableBoolexpr.getId(), identifiableBoolexpr);
     return identifiableBoolexpr;
   }
-  public static IdentifiableBoolExpr buildBoolExprIdentifiable(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName) {
-    return  buildBoolExprIdentifiable(value, sourcePosition, invariantName, false);
+
+  public static IdentifiableBoolExpr buildIdentifiable(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName) {
+    return buildIdentifiable(value, sourcePosition, invariantName, false);
   }
 
   public static IdentifiableBoolExpr getBoolExprIdentifiable(int id) {
@@ -70,7 +71,7 @@ public class IdentifiableBoolExpr {
   }
 
   public IdentifiableBoolExpr negate(Context ctx) {
-  return   buildBoolExprIdentifiable(ctx.mkNot(this.getValue()),this.sourcePosition,this.invariantName,true);
+    return buildIdentifiable(ctx.mkNot(this.getValue()), this.sourcePosition, this.invariantName, true);
   }
 
 }
