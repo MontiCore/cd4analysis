@@ -6,6 +6,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.*;
@@ -18,15 +19,12 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 public class CDHelper {
- public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
+  public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
+
   public static List<ASTCDClass> getSubclassList(ASTCDDefinition cd, ASTCDType astcdType) {
     List<ASTCDClass> subclasses = new LinkedList<>();
     for (ASTCDClass entry : cd.getCDClassesList()) {
@@ -41,8 +39,9 @@ public class CDHelper {
     }
     return subclasses;
   }
+
   public static List<ASTCDInterface> getSubInterfaceList(ASTCDDefinition cd, ASTCDInterface astcdInterface) {
-    List<ASTCDInterface> subInterfaces= new LinkedList<>();
+    List<ASTCDInterface> subInterfaces = new LinkedList<>();
     for (ASTCDInterface entry : cd.getCDInterfacesList()) {
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
         if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdInterface.getName()))
@@ -51,37 +50,40 @@ public class CDHelper {
     }
     return subInterfaces;
   }
+
   public static ASTCDType getASTCDType(String className, ASTCDDefinition cd) {
     for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className)){
+      if (myClass.getName().equals(className)) {
         return myClass;
       }
     }
-    for (ASTCDInterface astcdInterface: cd.getCDInterfacesList()) {
-      if (astcdInterface.getName().equals(className)){
+    for (ASTCDInterface astcdInterface : cd.getCDInterfacesList()) {
+      if (astcdInterface.getName().equals(className)) {
         return astcdInterface;
       }
     }
     Log.error(" class " + className + " not found in classdiagram " + cd.getName());
-    return  null;
+    return null;
   }
+
   public static ASTCDClass getClass(String className, ASTCDDefinition cd) {
     for (ASTCDClass myClass : cd.getCDClassesList()) {
-      if (myClass.getName().equals(className)){
+      if (myClass.getName().equals(className)) {
         return myClass;
       }
     }
-      Log.error(" class " + className + " not found in classdiagram " + cd.getName());
-    return  null;
+    Log.error(" class " + className + " not found in classdiagram " + cd.getName());
+    return null;
   }
+
   public static ASTCDInterface getInterface(String className, ASTCDDefinition cd) {
-    for (ASTCDInterface astcdInterface: cd.getCDInterfacesList()) {
-      if (astcdInterface.getName().equals(className)){
+    for (ASTCDInterface astcdInterface : cd.getCDInterfacesList()) {
+      if (astcdInterface.getName().equals(className)) {
         return astcdInterface;
       }
     }
     Log.error(" Interface " + className + " not found in classdiagram " + cd.getName());
-    return  null;
+    return null;
   }
 
   public static void createCDSymTab(ASTCDCompilationUnit ast) {
@@ -93,15 +95,15 @@ public class CDHelper {
 
   }
 
-  public static void setAssociationsRoles(ASTCDCompilationUnit ast){
+  public static void setAssociationsRoles(ASTCDCompilationUnit ast) {
     // transformations that need an already created symbol table
-     createCDSymTab(ast);
-      final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
-        new CDAssociationRoleNameTrafo();
-      final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
-      traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
-      traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
-      cdAssociationRoleNameTrafo.transform(ast);
+    createCDSymTab(ast);
+    final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
+      new CDAssociationRoleNameTrafo();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
+    traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
+    cdAssociationRoleNameTrafo.transform(ast);
 
   }
 
@@ -128,20 +130,48 @@ public class CDHelper {
     return res;
   }
 
- public static ASTMCType sort2MCType(Sort mySort) {
-    if (!javaTypeMap.containsKey(mySort.toString())){
+  public static ASTMCType sort2MCType(Sort mySort) {
+    if (!javaTypeMap.containsKey(mySort.toString())) {
       Log.error("the type" + mySort + "is not supported for attributes");
     }
     return javaTypeMap.get(mySort.toString());
   }
 
 
-  protected static Map<String, ASTMCType> buildJavaTypeMap(){
+  protected static Map<String, ASTMCType> buildJavaTypeMap() {
     Map<String, ASTMCType> typeMap = new HashMap<>();
     typeMap.put("Int", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build());
     typeMap.put("Real", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build());
-    typeMap.put("Bool",OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build());
-    typeMap.put("String",OD4ReportMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build());
+    typeMap.put("Bool", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build());
+    typeMap.put("String", OD4ReportMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build());
     return typeMap;
   }
+
+  public static ASTCDAssociation getAssociation(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
+    ASTCDType leftType;
+    ASTCDType rightType;
+    String leftRole;
+    String rightRole;
+    for (ASTCDAssociation association : cd.getCDAssociationsList()) {
+      leftType = CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), cd);
+      rightType = CDHelper.getASTCDType(association.getRightQualifiedName().getQName(), cd);
+      leftRole = association.getLeft().getCDRole().getName();
+      rightRole = association.getRight().getCDRole().getName();
+
+      if (astcdType.equals(leftType) && otherRole.equals(rightRole) || astcdType.equals(rightType) && otherRole.equals(leftRole)) {
+        return association;
+      }
+    }
+    Log.error("Association with the other-role " + otherRole + " not found for the ASTCDType" + astcdType.getName());
+    return null;
+  }
+
+  public static ASTCDAttribute getAttribute(ASTCDType astcdType, String attrName) {
+    Optional<ASTCDAttribute> attr = astcdType.getCDAttributeList().stream().filter(a -> a.getName().equals(attrName)).findAny();
+    if (attr.isEmpty()) {
+      Log.error("attribute " + attrName + " not found in class " + astcdType.getName());
+    }
+    return attr.get();
+  }
+
 }
