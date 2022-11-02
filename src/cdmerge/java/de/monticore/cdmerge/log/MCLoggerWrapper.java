@@ -56,18 +56,19 @@ public class MCLoggerWrapper extends Log {
   }
 
   @Override
+  //We don't do MC trace logs
   protected boolean doIsTraceEnabled(String logName) {
-    return this.minLogLevel.ordinal() >= ErrorLevel.FINE.ordinal();
+    return false;
   }
 
   @Override
   protected boolean doIsDebugEnabled(String logName) {
-    return this.minLogLevel.ordinal() >= ErrorLevel.DEBUG.ordinal();
+    return this.minLogLevel.ordinal() <= ErrorLevel.DEBUG.ordinal();
   }
 
   @Override
   protected boolean doIsInfoEnabled(String logName) {
-    return this.minLogLevel.ordinal() >= ErrorLevel.INFO.ordinal();
+    return this.minLogLevel.ordinal() <= ErrorLevel.INFO.ordinal();
   }
 
   @Override
