@@ -37,8 +37,7 @@ public enum MergeParameter {
 
   /**
    * Blank separated list of input paths for each source model. Each Will be combined with model
-   * path if specified
-   * Default: REQUIRED
+   * path if specified Default: REQUIRED
    */
   INPUT_MODELS("inputModels", "m", "", false),
 
@@ -99,7 +98,7 @@ public enum MergeParameter {
   LOG_VERBOSE("verbose", "v", MergeParameter.OFF, true),
 
   /**
-   * Only Reports/Logs Level WARNING and ERROR Default: OFF
+   * Only Reports/Logs Level ERROR Default: OFF
    */
   LOG_SILENT("silent", "ls", MergeParameter.OFF, true),
 
@@ -165,7 +164,6 @@ public enum MergeParameter {
    * .addInputAST
    */
   AST_BASED("astBased", "asts", MergeParameter.OFF, true),
-
 
   /**
    * Used For Testing purposes only. The Merge Tool will be setup up with no input models configured
@@ -257,8 +255,7 @@ public enum MergeParameter {
     if (this.onlyBoolean) {
       return this.defaultValue.equals(ON);
     }
-    throw new UnsupportedOperationException(
-        "The Parameter " + this + " is not a boolean Value");
+    throw new UnsupportedOperationException("The Parameter " + this + " is not a boolean Value");
   }
 
   /**

@@ -14,14 +14,12 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
 import de.monticore.cdmerge.refactor.CleanAttributesInheritedFromSuperclass;
-import de.monticore.cdmerge.refactor.ModelRefactoringBase;
 import de.monticore.cdmerge.refactor.ModelRefactoringBase.ModelRefactoringBuilder;
 import de.monticore.cdmerge.refactor.RemoveRedundantInterfaces;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.cdmerge.validation.AssociationChecker;
 import de.monticore.cdmerge.validation.AttributeChecker;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
-import de.monticore.cdmerge.validation.ModelValidatorBase;
 import de.monticore.cdmerge.validation.ModelValidatorBase.ModelValidatorBuilder;
 import de.se_rwth.commons.logging.Log;
 
@@ -32,15 +30,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Handles all user-specified configurations for the composition of classdiagrams
  */
 public class CDMergeConfig {
-
-  private static Logger log = Logger.getLogger("CDMergeConfig");
 
   private final ImmutableMap<MergeParameter, String> parameters;
 
@@ -103,10 +97,8 @@ public class CDMergeConfig {
     }
 
     /**
-     * Adds a parameter with the provided value. If the parameter was already present, the
-     * new value
-     * will be concatenated with "," to the old Value. Supports chaining by returning the
-     * builder
+     * Adds a parameter with the provided value. If the parameter was already present, the new value
+     * will be concatenated with "," to the old Value. Supports chaining by returning the builder
      *
      * @param param - the parameter to add to this config
      * @param value - the parameters value
@@ -129,7 +121,7 @@ public class CDMergeConfig {
       return this;
     }
 
-    public Builder addInputAST(ASTCDCompilationUnit ast){
+    public Builder addInputAST(ASTCDCompilationUnit ast) {
       this._inputCDs.add(ast);
       return this;
     }
@@ -187,13 +179,17 @@ public class CDMergeConfig {
       // Quick Logger settings for this class as the MergeTool Log
       // Framework is not used here
       if (_parameters.get(MergeParameter.LOG_DEBUG).equals(MergeParameter.ON)) {
-        log.setLevel(Level.FINE);
+        MCLoggerWrapper.initDEBUG();
       }
       else if (_parameters.get(MergeParameter.LOG_VERBOSE).equals(MergeParameter.ON)) {
-        log.setLevel(Level.INFO);
+        MCLoggerWrapper.initDEBUG();
+        ;
+      }
+      else if (_parameters.get(MergeParameter.LOG_SILENT).equals(MergeParameter.ON)) {
+        MCLoggerWrapper.initWARN();
       }
       else {
-        log.setLevel(Level.WARNING);
+        MCLoggerWrapper.init();
       }
 
       checkParameterConsistency();
@@ -211,17 +207,17 @@ public class CDMergeConfig {
             _inputFiles = new ArrayList<>();
             for (String modelFile : inputModels) {
               if (!Files.exists(Paths.get(modelFile).toAbsolutePath())) {
-                log.finer("No valid class diagramm found for input file " + modelFile
-                    + " will check Modelpath, too");
+                Log.trace("No valid class diagramm found for input file " + modelFile
+                    + " will check Modelpath, too", "CDMerge");
                 modelFile = Paths.get(_parameters.get(MergeParameter.MODEL_PATH), modelFile)
                     .toAbsolutePath()
                     .toString();
                 if (!Files.exists(Paths.get(modelFile))) {
-                  log.severe("No valid class diagramm found for specified location " + modelFile);
+                  Log.error("No valid class diagramm found for specified location " + modelFile);
                   continue;
                 }
                 else {
-                  log.fine("Found cd in input file " + modelFile);
+                  Log.trace("Found cd in input file " + modelFile, "CDMerge");
                   _inputFiles.add(modelFile);
                 }
               }
@@ -344,15 +340,15 @@ public class CDMergeConfig {
     this.modelValidators.addAll(builder._modelValidators);
     MCLoggerWrapper.init(getMinimalLogable(), isMCLogSilent());
     precedences = builder._precedences;
-    if (!isEnabled(MergeParameter.NO_INPUT_MODELS)
-        && !isEnabled(MergeParameter.AST_BASED)) {
+    if (!isEnabled(MergeParameter.NO_INPUT_MODELS) && !isEnabled(MergeParameter.AST_BASED)) {
       try {
         loadCDs(builder._inputFiles);
       }
       catch (IOException ex) {
         throw new RuntimeException("Unable to load input models " + ex.getMessage());
       }
-    } else if (isEnabled(MergeParameter.AST_BASED)) {
+    }
+    else if (isEnabled(MergeParameter.AST_BASED)) {
       processCDs(builder._inputCDs);
     }
     this.CLI_MODE = builder.CLI_Mode;
@@ -372,9 +368,9 @@ public class CDMergeConfig {
     }
   }
 
-  public void processCDs(List<ASTCDCompilationUnit> inputCDs){
-    this.inputCDs= new ArrayList<>();
-    for (ASTCDCompilationUnit inputCD : inputCDs){
+  public void processCDs(List<ASTCDCompilationUnit> inputCDs) {
+    this.inputCDs = new ArrayList<>();
+    for (ASTCDCompilationUnit inputCD : inputCDs) {
       CD4AnalysisMill.reset();
       CD4AnalysisMill.init();
       final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
@@ -461,7 +457,7 @@ public class CDMergeConfig {
   }
 
   public boolean isVerbose() {
-    return this.parameters.get(MergeParameter.LOG_VERBOSE).equals(MergeParameter.ON) || isDebug();
+    return this.parameters.get(MergeParameter.LOG_VERBOSE).equals(MergeParameter.ON);
   }
 
   public boolean isDebug() {
@@ -477,7 +473,8 @@ public class CDMergeConfig {
   }
 
   public boolean isMCLogSilent() {
-    return this.parameters.get(MergeParameter.MS_LOGGER_SILENT).equals(MergeParameter.ON);
+    return this.parameters.get(MergeParameter.MS_LOGGER_SILENT).equals(MergeParameter.ON)
+        || this.parameters.get(MergeParameter.LOG_SILENT).equals(MergeParameter.ON);
   }
 
   public boolean disabledCheckCoCo() {
@@ -571,21 +568,22 @@ public class CDMergeConfig {
   }
 
   /**
-   * Returns the minimal logable level
+   * Returns the minimal logable level.
    *
    * @return - the minimal log level
    */
   public ErrorLevel getMinimalLogable() {
-    if (isDebug()) {
-      return ErrorLevel.DEBUG;
+
+    if (isSilent()) {
+      return ErrorLevel.ERROR;
     }
     else if (isVerbose()) {
       return ErrorLevel.FINE;
     }
-    else if (isSilent()) {
-      return ErrorLevel.WARNING;
+    else if (isDebug()) {
+      return ErrorLevel.DEBUG;
     }
-    return ErrorLevel.INFO;
+    return ErrorLevel.WARNING;
   }
 
   public boolean isTraceEnabled() {

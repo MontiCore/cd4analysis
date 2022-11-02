@@ -6,7 +6,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.fail;
 
@@ -15,13 +16,13 @@ public class CDMergeTest extends BaseTest {
   public void testMerge() {
 
     final String srcDir = "src/cdmergetest/resources/class_diagrams/CDMergeTest/";
-
     Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
     try {
       inputSet.add(loadModel(srcDir + "A.cd"));
       inputSet.add(loadModel(srcDir + "B.cd"));
       inputSet.add(loadModel(srcDir + "C.cd"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
 
@@ -32,8 +33,6 @@ public class CDMergeTest extends BaseTest {
     mergedCD.accept(pp.getTraverser());
     System.out.println(pp.prettyprint(mergedCD));
 
-
   }
-
 
 }

@@ -93,8 +93,7 @@ public class CDUtils {
    *
    * @param name  the name of the attribute to be resolved
    * @param clazz class to be searched in
-   * @return the found attribute's ASTNode or empty if the class does not contain this
-   * attribute or
+   * @return the found attribute's ASTNode or empty if the class does not contain this attribute or
    * the class doesn't exist
    */
   public static Optional<ASTCDAttribute> getAttributeFromClass(final String name,
@@ -470,7 +469,9 @@ public class CDUtils {
 
     // Resolve the symboltable
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(cd);
+
     final CD4AnalysisTraverser completer = new CD4AnalysisSymbolTableCompleter(cd).getTraverser();
+
     cd.accept(completer);
   }
 
@@ -607,8 +608,7 @@ public class CDUtils {
   }
 
   /**
-   * Checks if the role-name on the right-hand side of the association is explicitly defined or
-   * was
+   * Checks if the role-name on the right-hand side of the association is explicitly defined or was
    * derived from association name or referred type
    *
    * @param association the association to check the right role side

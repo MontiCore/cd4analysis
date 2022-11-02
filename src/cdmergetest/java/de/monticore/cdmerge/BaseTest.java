@@ -31,8 +31,7 @@ public class BaseTest {
   private final static boolean PRINTOUT_CD = true;
 
   /**
-   * Simple switch to print detailled merge log from tests always to Standard Output for
-   * inspection,
+   * Simple switch to print detailled merge log from tests always to Standard Output for inspection,
    * default false
    */
   private final static boolean PRINTOUT_TRACE = false;
@@ -45,7 +44,7 @@ public class BaseTest {
 
   @BeforeClass
   public static void init() {
-
+    MCLoggerWrapper.init(ErrorLevel.WARNING, true);
   }
 
   public BaseTest() {
@@ -54,7 +53,6 @@ public class BaseTest {
 
   @Before
   public void initBefore() {
-    MCLoggerWrapper.init(ErrorLevel.WARNING, true);
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
     globalScope = CD4AnalysisMill.globalScope();

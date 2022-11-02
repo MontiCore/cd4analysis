@@ -19,17 +19,17 @@ public class ExecutionLog {
 
   private List<LogEntry> theLog;
 
-  private ErrorLevel maxOccuredErrorLevel;
+  private ErrorLevel maxOccuredErrorLevel = ErrorLevel.DEBUG;
 
-  private ErrorLevel minLogable;
+  private ErrorLevel minLogable = ErrorLevel.WARNING;
 
-  private boolean failFast;
+  private boolean failFast = false;
 
-  private boolean failOnWarning;
+  private boolean failOnWarning = false;
 
-  private boolean traceEnabled;
+  private boolean traceEnabled = false;
 
-  private boolean propagateLog;
+  private boolean propagateLog = false;
 
   /**
    * Creates a new MergeExecutionLog with specified minimum log level.
@@ -47,7 +47,11 @@ public class ExecutionLog {
    * Creates a new MergeExecutionLog with default logable level INFO
    */
   public ExecutionLog() {
-    reset(ErrorLevel.INFO);
+    reset(ErrorLevel.WARNING);
+    this.failFast = false;
+    this.failOnWarning = false;
+    this.traceEnabled = false;
+    this.propagateLog = false;
   }
 
   public void SetPropagateLog(boolean enablePropagateLog) {
@@ -306,42 +310,40 @@ public class ExecutionLog {
   }
 
   private synchronized void log(LogEntry logEntry) {
-    if (logEntry.getLevel().compareTo(this.minLogable) >= 0) {
-      this.theLog.add(logEntry);
-      checkReportToCLI(logEntry);
-      if (isEnabledPropagateLog() && isLogable(logEntry)) {
-        switch (logEntry.getLevel()) {
-          case DEBUG:
-            Log.debug(logEntry.getPhase().name() + " " + logEntry.getMessage(),
-                logEntry.getLevel().toString());
-            break;
-          case DESIGN_ISSUE:
-            Log.debug(logEntry.getPhase().name() + " " + logEntry.getMessage(),
-                logEntry.getLevel().toString());
-            break;
-          case ERROR:
-            Log.error(logEntry.getPhase().name() + " " + logEntry.getMessage());
-            break;
-          case FINE:
-            Log.trace(logEntry.getPhase().name() + " " + logEntry.getMessage(),
-                logEntry.getLevel().toString());
-            break;
-          case INFO:
-            Log.info(logEntry.getPhase().name() + " " + logEntry.getMessage(),
-                logEntry.getLevel().toString());
-            break;
-          case WARNING:
-            Log.warn(logEntry.getPhase().name() + " " + logEntry.getMessage());
-            break;
-          default:
-            Log.warn(logEntry.getPhase().name() + " " + logEntry.getMessage());
-            break;
-        }
+    //We always add all logs to the internal log, not considering min log level
+    this.theLog.add(logEntry);
+    checkReportToCLI(logEntry);
+    if (isLogable(logEntry) && isEnabledPropagateLog()) {
+      switch (logEntry.getLevel()) {
+        case DEBUG:
+        case DESIGN_ISSUE:
+          if (Log.isDebugEnabled("CDMerge")) {
+            Log.debug(logEntry.getPhase().name() + " " + logEntry.getMessage(), "CDMerge");
+          }
+          break;
+        case ERROR:
+          Log.error(logEntry.getPhase().name() + " " + logEntry.getMessage());
+          break;
+        case FINE:
+          if (Log.isTraceEnabled("CDMerge")) {
+            Log.trace(logEntry.getPhase().name() + " " + logEntry.getMessage(), "CDMerge");
+          }
+          break;
+        case INFO:
+          if (Log.isInfoEnabled("CDMerge")) {
+            Log.info(logEntry.getPhase().name() + " " + logEntry.getMessage(), "CDMerge");
+          }
+          break;
+        case WARNING:
+          Log.warn(logEntry.getPhase().name() + " " + logEntry.getMessage());
+          break;
+        default:
+          Log.warn(logEntry.getPhase().name() + " " + logEntry.getMessage());
+          break;
       }
-      checkRaiseMaxErrorLevel(logEntry.getLevel());
-      checkFailFast(logEntry);
     }
-
+    checkRaiseMaxErrorLevel(logEntry.getLevel());
+    checkFailFast(logEntry);
   }
 
   private void checkRaiseMaxErrorLevel(ErrorLevel level) {
@@ -388,7 +390,7 @@ public class ExecutionLog {
   }
 
   private void checkReportToCLI(LogEntry logEntry) {
-    if (this.traceEnabled && (logEntry.getLevel().compareTo(this.getMinimumLogableLevel()) >= 0)) {
+    if (this.traceEnabled && (isLogable(logEntry))) {
       System.out.println(logEntry);
     }
   }
