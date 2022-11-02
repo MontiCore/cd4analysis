@@ -1,0 +1,9 @@
+classdiagram VehicleA {
+	enum Fuel {Gas, Diesel, Electricity;}
+	class Driver;
+	abstract class Vehicle {
+	  Fuel energy;
+	}
+	class Car extends Vehicle;
+  association [1] Driver (belongsTo) <- (drives) Vehicle [*];
+}
