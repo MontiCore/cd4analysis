@@ -606,11 +606,11 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   public void testCarExampleSimpleClosedWorld() {
     ast1 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
-            + "/Car1A.cd");
+            + "/Vehicle1A.cd");
 
     ast2 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
-            + "/Car1B.cd");
+            + "/Vehicle1B.cd");
 
     String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.SIMPLE_CLOSED_WORLD);
     System.out.println(res);
@@ -620,11 +620,11 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   public void testVehicleExampleMultiInstanceClosedWorld() {
     ast1 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
-            + "/Vehicle1A.cd");
+            + "/Vehicle2A.cd");
 
     ast2 = parseModel(
         "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD/Combination"
-            + "/Vehicle1B.cd");
+            + "/Vehicle2B.cd");
 
     String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
     System.out.println(res);
