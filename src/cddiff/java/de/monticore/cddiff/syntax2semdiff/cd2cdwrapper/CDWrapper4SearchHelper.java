@@ -29,14 +29,14 @@ public class CDWrapper4SearchHelper {
     else {
       map.values().forEach(existAssoc -> {
         if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getLeftOriginalClassName())
-            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
-            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
+            && (currentAssoc.getCDAssociationWrapperDirection().equals(CDAssociationWrapperDirection.LEFT_TO_RIGHT) || currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName()))
+            && (currentAssoc.getCDAssociationWrapperDirection().equals(CDAssociationWrapperDirection.RIGHT_TO_LEFT) || currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName()))
             && currentAssoc.getRightOriginalClassName().equals(existAssoc.getRightOriginalClassName())) {
           result.add(new CDAssociationWrapperPack(existAssoc, false));
         }
         else if (currentAssoc.getLeftOriginalClassName().equals(existAssoc.getRightOriginalClassName())
-            && currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName())
-            && currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName())
+            && (currentAssoc.getCDAssociationWrapperDirection().equals(CDAssociationWrapperDirection.LEFT_TO_RIGHT) || currentAssoc.getCDWrapperLeftClassRoleName().equals(existAssoc.getCDWrapperRightClassRoleName()))
+            && (currentAssoc.getCDAssociationWrapperDirection().equals(CDAssociationWrapperDirection.RIGHT_TO_LEFT) || currentAssoc.getCDWrapperRightClassRoleName().equals(existAssoc.getCDWrapperLeftClassRoleName()))
             && currentAssoc.getRightOriginalClassName().equals(existAssoc.getLeftOriginalClassName())) {
           result.add(new CDAssociationWrapperPack(existAssoc, true));
         }

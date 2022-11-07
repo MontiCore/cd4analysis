@@ -318,14 +318,13 @@ public class CDSyntax2SemDiff4ASTODHelper {
   /**
    * create a link between two created objects
    */
-  public static ASTODLink createLink(ASTODNamedObject left, ASTODNamedObject right,
-      String leftRoleName, String rightRoleName, ASTODLinkDirection astodLinkDirection) {
+  public static ASTODLink createLink(ASTODNamedObject left, ASTODNamedObject right, String rightRoleName, ASTODLinkDirection astodLinkDirection) {
     return OD4ReportMill.oDLinkBuilder()
         .setLink(true)
         .setODLinkLeftSide(OD4ReportMill.oDLinkLeftSideBuilder()
             .setModifier(OD4ReportMill.modifierBuilder().build())
             .addReferenceNames(0, OD4ReportMill.oDNameBuilder().setName(left.getName()).build())
-            .setRole(leftRoleName)
+            .setRoleAbsent()
             .build())
         .setODLinkDirection(astodLinkDirection)
         .setODLinkRightSide(OD4ReportMill.oDLinkRightSideBuilder()
@@ -350,23 +349,23 @@ public class CDSyntax2SemDiff4ASTODHelper {
         case 1:
           leftElementList.forEach(left -> rightElementList.forEach(right -> {
             // set link
-            linkElementList.add(createLink(left, right, leftRoleName, rightRoleName,
+            linkElementList.add(createLink(left, right, rightRoleName,
                 ODLinkMill.oDLeftToRightDirBuilder().build()));
           }));
           break;
         case 2:
           leftElementList.forEach(left -> rightElementList.forEach(right -> {
             // set link
-            linkElementList.add(createLink(right, left, rightRoleName, leftRoleName,
+            linkElementList.add(createLink(right, left, leftRoleName,
                 ODLinkMill.oDLeftToRightDirBuilder().build()));
           }));
           break;
         case 3:
           leftElementList.forEach(left -> rightElementList.forEach(right -> {
             // set link
-            linkElementList.add(createLink(left, right, leftRoleName, rightRoleName,
+            linkElementList.add(createLink(left, right, rightRoleName,
                 ODLinkMill.oDLeftToRightDirBuilder().build()));
-            linkElementList.add(createLink(right, left, rightRoleName, leftRoleName,
+            linkElementList.add(createLink(right, left, leftRoleName,
                 ODLinkMill.oDLeftToRightDirBuilder().build()));
           }));
           break;
