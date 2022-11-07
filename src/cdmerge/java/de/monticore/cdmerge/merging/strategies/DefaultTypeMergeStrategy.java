@@ -2,7 +2,7 @@
 package de.monticore.cdmerge.merging.strategies;
 
 import de.monticore.ast.Comment;
-import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -49,7 +49,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
         "Merging " + getBlackBoard().getCurrentCD1Name() + "." + classFromCd1.getName() + " with "
             + getBlackBoard().getCurrentCD2Name() + "." + classFromCd2.getName());
 
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
     // ================
     // === Modifier ===
     // ================
@@ -79,7 +79,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // classes -> ignore
 
     // We always assume that we merge classes with the same name
-    ASTCDClass mergedClass = CD4AnalysisMill.cDClassBuilder()
+    ASTCDClass mergedClass = CD4CodeMill.cDClassBuilder()
         .setName(classFromCd1.getName())
         .setModifier(modifier)
         .build();
@@ -109,7 +109,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // ==============================
     // === Implemented Interfaces ===
     // ==============================
-    ASTCDInterfaceUsage interfaces = CD4AnalysisMill.cDInterfaceUsageBuilder().build();
+    ASTCDInterfaceUsage interfaces = CD4CodeMill.cDInterfaceUsageBuilder().build();
     interfaces.addAllInterface(
         mergeSuperInterfaces(classFromCd1.getInterfaceList(), classFromCd2.getInterfaceList()));
     if (interfaces.sizeInterface() > 0) {
@@ -134,7 +134,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
         // can pick the most specific of them
         Optional<ASTMCObjectType> superclass = determineSuperclass(classFromCd1, classFromCd2);
         if (superclass.isPresent()) {
-          ASTCDExtendUsage extend = CD4AnalysisMill.cDExtendUsageBuilder().build();
+          ASTCDExtendUsage extend = CD4CodeMill.cDExtendUsageBuilder().build();
           extend.addSuperclass(superclass.get());
           mergedClass.setCDExtendUsage(extend);
         }
@@ -254,14 +254,14 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
   @Override
   public ASTCDInterface merge(ASTCDInterface interface1, ASTCDInterface interface2) {
 
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
     Optional<ASTModifier> mergedModifier = mergeModifier(interface1.getModifier(),
         interface2.getModifier());
     if (mergedModifier.isPresent()) {
       modifier = mergedModifier.get();
     }
 
-    ASTCDInterface mergedInterface = CD4AnalysisMill.cDInterfaceBuilder()
+    ASTCDInterface mergedInterface = CD4CodeMill.cDInterfaceBuilder()
         .setName(interface1.getName())
         .setModifier(modifier)
         .build();
@@ -287,7 +287,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // ==============================
     // === Implemented Interfaces ===
     // ==============================
-    ASTCDExtendUsage extend = CD4AnalysisMill.cDExtendUsageBuilder().build();
+    ASTCDExtendUsage extend = CD4CodeMill.cDExtendUsageBuilder().build();
     extend.addAllSuperclass(
         mergeSuperInterfaces(interface1.getInterfaceList(), interface2.getInterfaceList()));
     if (extend.getSuperclassList().size() > 0) {
@@ -312,7 +312,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // The names should already match
     ASTCDClass mergedClass = clazz.deepClone();
 
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
     Optional<ASTModifier> mergedModifier = mergeModifier(clazz.getModifier(), iface.getModifier());
     if (mergedModifier.isPresent()) {
       modifier = mergedModifier.get();
@@ -320,7 +320,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
 
     mergedClass.setModifier(modifier);
 
-    ASTCDInterfaceUsage ifaces = CD4AnalysisMill.cDInterfaceUsageBuilder().build();
+    ASTCDInterfaceUsage ifaces = CD4CodeMill.cDInterfaceUsageBuilder().build();
     ifaces.addAllInterface(
         mergeSuperInterfaces(clazz.getInterfaceList(), iface.getInterfaceList()));
     if (ifaces.getInterfaceList().size() > 0) {
@@ -343,7 +343,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // The names should already match
     ASTCDClass mergedClass = clazz.deepClone();
 
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
     Optional<ASTModifier> mergedModifier = mergeModifier(clazz.getModifier(), en.getModifier());
     if (mergedModifier.isPresent()) {
       modifier = mergedModifier.get();
@@ -352,11 +352,11 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     mergedClass.setModifier(modifier);
 
     // Create a public final static String ... attribute for each constant;
-    ASTCDAttributeBuilder attrBuilder = CD4AnalysisMill.cDAttributeBuilder();
+    ASTCDAttributeBuilder attrBuilder = CD4CodeMill.cDAttributeBuilder();
 
     MCTypeFacade typeFacade = MCTypeFacade.getInstance();
 
-    ASTModifierBuilder enumConstantModifier = CD4AnalysisMill.modifierBuilder()
+    ASTModifierBuilder enumConstantModifier = CD4CodeMill.modifierBuilder()
         .setPublic(true)
         .setFinal(true)
         .setStatic(true);
@@ -381,7 +381,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
 
     // The names should already match
     ASTCDEnum mergedEnum = en.deepClone();
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
     Optional<ASTModifier> mergedModifier = mergeModifier(inface.getModifier(), en.getModifier());
     if (mergedModifier.isPresent()) {
       modifier = mergedModifier.get();
@@ -390,7 +390,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     mergedEnum.setModifier(modifier);
     if (inface.getInterfaceList().size() > 0) {
       if (mergedEnum.getInterfaceList().size() == 0) {
-        mergedEnum.setCDInterfaceUsage(CD4AnalysisMill.cDInterfaceUsageBuilder()
+        mergedEnum.setCDInterfaceUsage(CD4CodeMill.cDInterfaceUsageBuilder()
             .setInterfaceList(inface.getInterfaceList())
             .build());
       }
@@ -430,12 +430,12 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
      * TODO: Add modifier "local"
      */
 
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
     Optional<ASTModifier> mergedModifier = mergeModifier(enum1.getModifier(), enum2.getModifier());
     if (mergedModifier.isPresent()) {
       modifier = mergedModifier.get();
     }
-    ASTCDEnum mergedEnum = CD4AnalysisMill.cDEnumBuilder()
+    ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
         .setName(enum1.getName())
         .setModifier(modifier)
         .build();

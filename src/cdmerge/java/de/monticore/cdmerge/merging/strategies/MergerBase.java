@@ -2,7 +2,7 @@
 package de.monticore.cdmerge.merging.strategies;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
@@ -91,7 +91,7 @@ public abstract class MergerBase {
   }
 
   protected Optional<ASTModifier> mergeModifier(ASTModifier modifier1, ASTModifier modifier2) {
-    ASTModifier modifier = CD4AnalysisMill.modifierBuilder().build();
+    ASTModifier modifier = CD4CodeMill.modifierBuilder().build();
 
     // This should not happen in regular cases as default match ignores local
     // CDElements

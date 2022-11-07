@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.exceptions.MergingException;
@@ -36,7 +36,7 @@ public class ASTCDElementCollectorTest extends BaseTest {
 
     // Get PrettyPrinter
     IndentPrinter printer = new IndentPrinter();
-    CD4AnalysisFullPrettyPrinter visitor = new CD4AnalysisFullPrettyPrinter(printer);
+    CD4CodeFullPrettyPrinter visitor = new CD4CodeFullPrettyPrinter(printer);
 
     String oldCD = visitor.prettyprint(cd);
 

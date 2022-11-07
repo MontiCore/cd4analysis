@@ -2,15 +2,15 @@ package de.monticore.cdmerge.util;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
-import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._ast.ASTCD4CodeNode;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.*;
@@ -41,19 +41,19 @@ import java.util.StringJoiner;
  */
 public class CDUtils {
 
-  private static final CD4AnalysisFullPrettyPrinter commentsEnabledPrettyPrinter;
+  private static final CD4CodeFullPrettyPrinter commentsEnabledPrettyPrinter;
 
-  private static final CD4AnalysisFullPrettyPrinter inlinePrettyPrinter;
+  private static final CD4CodeFullPrettyPrinter inlinePrettyPrinter;
 
-  private static CD4AnalysisParser parser;
+  private static CD4CodeParser parser;
 
   static {
-    commentsEnabledPrettyPrinter = new CD4AnalysisFullPrettyPrinter();
+    commentsEnabledPrettyPrinter = new CD4CodeFullPrettyPrinter();
     commentsEnabledPrettyPrinter.setPrintComments(true);
     StringBuilder sb = new StringBuilder();
-    inlinePrettyPrinter = new CD4AnalysisFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    CD4AnalysisMill.reset();
-    CD4AnalysisMill.init();
+    inlinePrettyPrinter = new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
   }
 
   /**
@@ -182,7 +182,7 @@ public class CDUtils {
 
   public static String getName(ASTMCObjectType referernceType) {
     StringBuilder sb = new StringBuilder();
-    CD4AnalysisFullPrettyPrinter prettyPrinter = new CD4AnalysisFullPrettyPrinter(
+    CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(
         new NoLineBreakIndentPrinter(sb));
     referernceType.accept(prettyPrinter.getTraverser());
     return prettyPrinter.getPrinter().getContent();
@@ -249,7 +249,7 @@ public class CDUtils {
       return "";
     }
     StringBuilder sb = new StringBuilder();
-    CD4AnalysisFullPrettyPrinter prettyPrinter = new CD4AnalysisFullPrettyPrinter(
+    CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(
         new NoLineBreakIndentPrinter(sb));
     type.accept(prettyPrinter.getTraverser());
     return prettyPrinter.getPrinter().getContent();
@@ -258,7 +258,7 @@ public class CDUtils {
   /**
    * Used for log outputs
    */
-  public static String prettyPrint(ASTCD4AnalysisNode node) {
+  public static String prettyPrint(ASTCD4CodeNode node) {
     return commentsEnabledPrettyPrinter.prettyprint(node);
   }
 
@@ -278,7 +278,7 @@ public class CDUtils {
   /**
    * Used for log outputs, produces inline model code
    */
-  public static String prettyPrintInline(ASTCD4AnalysisNode node) {
+  public static String prettyPrintInline(ASTCD4CodeNode node) {
 
     return inlinePrettyPrinter.prettyprint(node);
   }
@@ -289,7 +289,7 @@ public class CDUtils {
 
   public static String prettyPrintInline(ASTCDBasisNode node) {
     StringBuilder sb = new StringBuilder();
-    CD4AnalysisFullPrettyPrinter prettyPrinter = new CD4AnalysisFullPrettyPrinter(
+    CD4CodeFullPrettyPrinter prettyPrinter = new CD4CodeFullPrettyPrinter(
         new NoLineBreakIndentPrinter(sb));
     return prettyPrinter.prettyprint(node);
   }
@@ -304,8 +304,8 @@ public class CDUtils {
     if (node instanceof ASTCDInterfaceAndEnumNode) {
       return prettyPrintInline((ASTCDInterfaceAndEnumNode) node);
     }
-    if (node instanceof ASTCD4AnalysisNode) {
-      return prettyPrintInline((ASTCD4AnalysisNode) node);
+    if (node instanceof ASTCD4CodeNode) {
+      return prettyPrintInline((ASTCD4CodeNode) node);
     }
     if (node instanceof ASTCDBasisNode) {
       return prettyPrintInline((ASTCDBasisNode) node);
@@ -374,15 +374,15 @@ public class CDUtils {
     }
   }
 
-  private static CD4AnalysisParser getParser() {
+  private static CD4CodeParser getParser() {
     if (parser == null) {
-      parser = CD4AnalysisMill.parser();
+      parser = CD4CodeMill.parser();
     }
     return parser;
   }
 
   /**
-   * Parses a CD4Analysis model from file, without performing any CoCo checks.
+   * Parses a CD4Code model from file, without performing any CoCo checks.
    *
    * @param modelfile The model
    * @return the AST if parsing was successful
@@ -393,7 +393,7 @@ public class CDUtils {
   }
 
   /**
-   * Parses a CD4Analysis model from file, will resolve Local symbol
+   * Parses a CD4Code model from file, will resolve Local symbol
    *
    * @param checkCoCos Activate coco checks
    * @return the AST if parsing was successful
@@ -439,12 +439,12 @@ public class CDUtils {
       //Always ensure clean Symboltable for each model
       RefreshSymbolTable(cd);
       // Ensure every CDElement is in a package and perform default AST Trafos
-      final CD4AnalysisAfterParseTrafo afterParseTrafo = new CD4AnalysisAfterParseTrafo();
+      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
       afterParseTrafo.transform(cd);
 
       if (checkCoCos) {
         if (checkCoCos) {
-          CD4AnalysisCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
+          CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
           checker.checkAll(cd);
         }
       }
@@ -462,15 +462,15 @@ public class CDUtils {
   }
 
   public static void RefreshSymbolTable(ASTCDCompilationUnit cd) {
-    final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
+    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     //We parse CDs that contain identical symbols so we need a fresh symbol table for each parse
     globalScope.clear();
     BuiltInTypes.addBuiltInTypes(globalScope);
 
     // Resolve the symboltable
-    CD4AnalysisMill.scopesGenitorDelegator().createFromAST(cd);
+    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
 
-    final CD4AnalysisTraverser completer = new CD4AnalysisSymbolTableCompleter(cd).getTraverser();
+    final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
 
     cd.accept(completer);
   }

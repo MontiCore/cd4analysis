@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * Utility methods for browsing through the CD-AST, finding nodes, types etc. uses own inventories
  * as well as resolving mechanisms from symboltable. The intention is to serve as a facade to wrap
- * concrete implementation of the CD4Analysis Symboltable
+ * concrete implementation of the CD4Code Symboltable
  */
 public class ASTCDHelper {
 

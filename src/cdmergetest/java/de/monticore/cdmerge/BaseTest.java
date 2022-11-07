@@ -2,10 +2,10 @@
 package de.monticore.cdmerge;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
-import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
@@ -38,9 +38,9 @@ public class BaseTest {
 
   protected final static String MODEL_PATH = "src/cdmergetest/resources/class_diagrams";
 
-  protected final CD4AnalysisParser parser;
+  protected final CD4CodeParser parser;
 
-  protected ICD4AnalysisGlobalScope globalScope;
+  protected ICD4CodeGlobalScope globalScope;
 
   @BeforeClass
   public static void init() {
@@ -48,14 +48,14 @@ public class BaseTest {
   }
 
   public BaseTest() {
-    parser = new CD4AnalysisParser();
+    parser = new CD4CodeParser();
   }
 
   @Before
   public void initBefore() {
-    CD4AnalysisMill.reset();
-    CD4AnalysisMill.init();
-    globalScope = CD4AnalysisMill.globalScope();
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    globalScope = CD4CodeMill.globalScope();
     BuiltInTypes.addBuiltInTypes(globalScope);
   }
 
@@ -87,7 +87,7 @@ public class BaseTest {
 
   protected String prettyPrint(ASTCDCompilationUnit cd) {
     IndentPrinter i = new IndentPrinter();
-    CD4AnalysisFullPrettyPrinter prettyprinter = new CD4AnalysisFullPrettyPrinter(i);
+    CD4CodeFullPrettyPrinter prettyprinter = new CD4CodeFullPrettyPrinter(i);
     return prettyprinter.prettyprint(cd);
   }
 

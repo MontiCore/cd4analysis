@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.merging.strategies;
 
-import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdmerge.log.ErrorLevel;
@@ -40,7 +40,7 @@ public class DefaultAssociationMergeStrategy extends MergerBase
     }
     association2 = alignedAssoc2.get();
 
-    ASTCDAssociationBuilder mergedAssociationBuilder = CD4AnalysisMill.cDAssociationBuilder();
+    ASTCDAssociationBuilder mergedAssociationBuilder = CD4CodeMill.cDAssociationBuilder();
 
     // ============
     // === NAME ===
@@ -67,10 +67,10 @@ public class DefaultAssociationMergeStrategy extends MergerBase
     // ===================
     if (association1.getCDAssocType().isComposition() || association2.getCDAssocType()
         .isComposition()) {
-      mergedAssociationBuilder.setCDAssocType(CD4AnalysisMill.cDAssocTypeCompBuilder().build());
+      mergedAssociationBuilder.setCDAssocType(CD4CodeMill.cDAssocTypeCompBuilder().build());
     }
     else {
-      mergedAssociationBuilder.setCDAssocType(CD4AnalysisMill.cDAssocTypeAssocBuilder().build());
+      mergedAssociationBuilder.setCDAssocType(CD4CodeMill.cDAssocTypeAssocBuilder().build());
     }
 
     // ===============
@@ -96,11 +96,11 @@ public class DefaultAssociationMergeStrategy extends MergerBase
     ASTCDAssocSide assoc1Right = association1.getRight();
     ASTCDAssocSide assoc2Left = association2.getLeft();
     ASTCDAssocSide assoc2Right = association2.getRight();
-    ASTCDAssocLeftSide mergedLeft = CD4AnalysisMill.cDAssocLeftSideBuilder()
+    ASTCDAssocLeftSide mergedLeft = CD4CodeMill.cDAssocLeftSideBuilder()
         .setModifier(new ASTModifierBuilder().build())
         .setMCQualifiedType(assoc1Left.getMCQualifiedType())
         .build();
-    ASTCDAssocRightSide mergedRight = CD4AnalysisMill.cDAssocRightSideBuilder()
+    ASTCDAssocRightSide mergedRight = CD4CodeMill.cDAssocRightSideBuilder()
         .setModifier(new ASTModifierBuilder().build())
         .setMCQualifiedType(assoc1Right.getMCQualifiedType())
         .build();
@@ -115,21 +115,21 @@ public class DefaultAssociationMergeStrategy extends MergerBase
         association1.getCDAssocDir().isDefinitiveNavigableRight() && association2.getCDAssocDir()
             .isDefinitiveNavigableLeft())) {
       // A <-> B
-      mergedAssociationBuilder.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
+      mergedAssociationBuilder.setCDAssocDir(CD4CodeMill.cDBiDirBuilder().build());
     }
     else if (association1.getCDAssocDir().isDefinitiveNavigableLeft()
         || association2.getCDAssocDir().isDefinitiveNavigableLeft()) {
       // A <- B
-      mergedAssociationBuilder.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
+      mergedAssociationBuilder.setCDAssocDir(CD4CodeMill.cDRightToLeftDirBuilder().build());
     }
     else if (association1.getCDAssocDir().isDefinitiveNavigableRight()
         || association2.getCDAssocDir().isDefinitiveNavigableRight()) {
       // A -> B
-      mergedAssociationBuilder.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
+      mergedAssociationBuilder.setCDAssocDir(CD4CodeMill.cDLeftToRightDirBuilder().build());
     }
     else {
       // A -- B
-      mergedAssociationBuilder.setCDAssocDir(CD4AnalysisMill.cDUnspecifiedDirBuilder().build());
+      mergedAssociationBuilder.setCDAssocDir(CD4CodeMill.cDUnspecifiedDirBuilder().build());
     }
 
     // =============
@@ -170,10 +170,10 @@ public class DefaultAssociationMergeStrategy extends MergerBase
     // === ORDERED ===
     // ===============
     if (assoc1Left.isPresentCDOrdered() || assoc2Left.isPresentCDOrdered()) {
-      mergedLeft.setCDOrdered(CD4AnalysisMill.cDOrderedBuilder().build());
+      mergedLeft.setCDOrdered(CD4CodeMill.cDOrderedBuilder().build());
     }
     if (assoc1Right.isPresentCDOrdered() || assoc2Right.isPresentCDOrdered()) {
-      mergedRight.setCDOrdered(CD4AnalysisMill.cDOrderedBuilder().build());
+      mergedRight.setCDOrdered(CD4CodeMill.cDOrderedBuilder().build());
     }
 
     // ======================
