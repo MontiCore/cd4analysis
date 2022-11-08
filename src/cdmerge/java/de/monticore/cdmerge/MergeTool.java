@@ -3,9 +3,9 @@ package de.monticore.cdmerge;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.config.CDMergeConfig;
@@ -152,7 +152,7 @@ public class MergeTool {
   }
 
   /**
-   * Merges all classdiagrams which are provided as CD4Analysis AST instances
+   * Merges all classdiagrams which are provided as CD4Code AST instances
    *
    * @return the @see {@link MergeStepResult} containing the lists of all merged cds and their
    * corresponding execution log. The final result is the last element of the list.
@@ -288,7 +288,7 @@ public class MergeTool {
     for (int j = 0; j < results.size() - 1; j++) {
 
       try {
-        CD4AnalysisParser parser = new CD4AnalysisParser();
+        CD4CodeParser parser = new CD4CodeParser();
         cd1Opt = parser.parse_String(CDUtils.prettyPrint(results.get(j)));
         cd2Opt = parser.parse_String(CDUtils.prettyPrint(results.get(j + 1)));
         if (cd1Opt.isPresent() && cd2Opt.isPresent()) {
@@ -338,7 +338,7 @@ public class MergeTool {
   }
 
   /**
-   * Merges two classdiagrams which are provided as CD4Analysis AST instances
+   * Merges two classdiagrams which are provided as CD4Code AST instances
    *
    * @return the @see {@link MergeStepResult} containing the merged cd and the execution log
    * @throws ConfigurationException
@@ -444,13 +444,13 @@ public class MergeTool {
 
     this.postMergeRefactoring.execute(mergedCD);
 
-    new CD4AnalysisAfterParseTrafo().transform(mergedCD);
+    new CD4CodeAfterParseTrafo().transform(mergedCD);
     //TODO this is likley not needed. Maybe Provide a paramater if default CD4A TraFos should be
     // applied on merged CD
-    // CD4AnalysisMill.globalScope().clear();
-    //CD4AnalysisMill.scopesGenitorDelegator().createFromAST(mergedCD);
-    // new CD4AnalysisTrafo4Defaults().transform(mergedCD);
-    //  mergedCD.accept(new CD4AnalysisSymbolTableCompleter(mergedCD).getTraverser());
+    // CD4CodeMill.globalScope().clear();
+    //CD4CodeMill.scopesGenitorDelegator().createFromAST(mergedCD);
+    // new CD4CodeTrafo4Defaults().transform(mergedCD);
+    //  mergedCD.accept(new CD4CodeSymbolTableCompleter(mergedCD).getTraverser());
 
     mergeBlackBoard.addLog(ErrorLevel.FINE, "Refactoring completed.", MergePhase.MODEL_REFACTORING);
   }
@@ -483,16 +483,16 @@ public class MergeTool {
 
   private void checkCoCos(ASTCDCompilationUnit cd) {
     mergeBlackBoard.addLog(ErrorLevel.FINE,
-        "Checking CD4Analysis context conditions for merged class diagram.", MergePhase.VALIDATION);
+        "Checking CD4Code context conditions for merged class diagram.", MergePhase.VALIDATION);
     // Ensure that the CoCos won't terminate the program
 
     Log.enableFailQuick(false);
 
     Log.getFindings().clear();
-    //FIXME Workaround for faulty CoCos CD4AnalysisCoCoChecker checker = new
-    // CD4AnalysisCoCosDelegator().getCheckerForAllCoCos();
+    //FIXME Workaround for faulty CoCos CD4CodeCoCoChecker checker = new
+    // CD4CodeCoCosDelegator().getCheckerForAllCoCos();
     //We should check all default cocos here as this is the merge result
-    CD4AnalysisCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
+    CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
 
     // check for errors and register them in our log
     try {

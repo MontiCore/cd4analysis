@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.validation;
 
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis.typescalculator.FullDeriveFromCD4Analysis;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code.typescalculator.FullDeriveFromCD4Code;
 import de.monticore.cdassociation.cocos.ebnf.*;
 import de.monticore.cdbasis.cocos.ebnf.*;
 import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
@@ -15,16 +15,16 @@ import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
 @Deprecated
 public class CDMergeCD4ACoCos {
 
-  public CD4AnalysisCoCoChecker getCheckerForMergedCDs() {
-    CD4AnalysisCoCoChecker checker = new CD4AnalysisCoCoChecker();
+  public CD4CodeCoCoChecker getCheckerForMergedCDs() {
+    CD4CodeCoCoChecker checker = new CD4CodeCoCoChecker();
     addCoCos(checker);
     return checker;
   }
 
-  private void addCoCos(CD4AnalysisCoCoChecker checker) {
+  private void addCoCos(CD4CodeCoCoChecker checker) {
 
     //CD Basis - EBNF
-    checker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Analysis()));
+    checker.addCoCo(new CDAttributeInitialTypeCompatible(new FullDeriveFromCD4Code()));
     checker.addCoCo(new CDAttributeNameLowerCaseIfNotStatic());
     checker.addCoCo(new CDAttributeOverridden());
     //FIXME  disabled for now

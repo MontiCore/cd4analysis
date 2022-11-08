@@ -2,7 +2,7 @@
 package de.monticore.cdmerge.log;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
+import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cdassociation._ast.ASTCDAssociationNode;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -123,8 +123,8 @@ public class LogEntry implements Comparable<LogEntry> {
     else if (node instanceof ASTCDAssociationNode) {
       return CDUtils.prettyPrintInline((ASTCDAssociationNode) node);
     }
-    else if (node instanceof ASTCD4AnalysisNode) {
-      return CDUtils.prettyPrintInline((ASTCD4AnalysisNode) node);
+    else if (node instanceof ASTCD4CodeNode) {
+      return CDUtils.prettyPrintInline((ASTCD4CodeNode) node);
     }
     else if (node instanceof ASTCDBasisNode) {
       return CDUtils.prettyPrintInline((ASTCDBasisNode) node);

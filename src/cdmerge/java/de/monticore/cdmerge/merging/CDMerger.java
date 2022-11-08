@@ -1,6 +1,6 @@
 package de.monticore.cdmerge.merging;
 
-import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
+import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.log.ErrorLevel;
@@ -62,8 +62,8 @@ public abstract class CDMerger {
     getAssociationMerger().mergeAssociations(cd1, cd2, matchResult);
   }
 
-  protected abstract void mergeComments(ASTCD4AnalysisNode left, ASTCD4AnalysisNode right,
-      ASTCD4AnalysisNode merged);
+  protected abstract void mergeComments(ASTCD4CodeNode left, ASTCD4CodeNode right,
+      ASTCD4CodeNode merged);
 
   protected abstract void mergeComments(ASTCDBasisNode left, ASTCDBasisNode right,
       ASTCDBasisNode merged);

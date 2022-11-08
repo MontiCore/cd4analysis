@@ -2,7 +2,7 @@
 package de.monticore.cdmerge.merging.mergeresult;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -111,15 +111,15 @@ public class MergeBlackBoard {
    */
   public void initOrReset(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
       Optional<String> mergedCDName) {
-    //final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
+    //final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     //globalScope.clear();
-    //CD4AnalysisScopesGenitorDelegator scopesGenitorDelegator = CD4AnalysisMill
+    //CD4CodeScopesGenitorDelegator scopesGenitorDelegator = CD4CodeMill
     // .scopesGenitorDelegator();
 
     //scopesGenitorDelegator.createFromAST(cd1);
-    //cd1.accept(new CD4AnalysisSymbolTableCompleter(cd1).getTraverser());
+    //cd1.accept(new CD4CodeSymbolTableCompleter(cd1).getTraverser());
     //scopesGenitorDelegator.createFromAST(cd2);
-    //cd2.accept(new CD4AnalysisSymbolTableCompleter(cd2).getTraverser());
+    //cd2.accept(new CD4CodeSymbolTableCompleter(cd2).getTraverser());
 
     this.currentCDHelpers = new ArrayList<ASTCDHelper>();
     this.currentCDHelpers.add(new ASTCDHelper(cd1));
@@ -142,11 +142,11 @@ public class MergeBlackBoard {
         mergedCDName.get() :
         name1 + "_" + name2;
 
-    ASTCDDefinition emptyCDDef = CD4AnalysisMill.cDDefinitionBuilder()
+    ASTCDDefinition emptyCDDef = CD4CodeMill.cDDefinitionBuilder()
         .setName(resultName)
         .setModifier(new ASTModifierBuilder().build())
         .build();
-    this.mergedCD = CD4AnalysisMill.cDCompilationUnitBuilder().setCDDefinition(emptyCDDef).build();
+    this.mergedCD = CD4CodeMill.cDCompilationUnitBuilder().setCDDefinition(emptyCDDef).build();
 
     this.mergedCDupdated = false;
     this.mergeFinished = false;

@@ -13,7 +13,7 @@ import de.se_rwth.commons.logging.Log;
 public class AttributeModifierCoCo implements CDBasisASTCDAttributeCoCo {
 
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4AnalysisASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4analysis._ast.ASTCDAttribute)
+   * @see de.monticore.umlcd4a._cocos.CD4CodeASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4code._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {

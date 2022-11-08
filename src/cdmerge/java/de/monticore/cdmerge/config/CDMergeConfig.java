@@ -5,11 +5,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
-import de.monticore.cd4analysis.trafo.CD4AnalysisAfterParseTrafo;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MCLoggerWrapper;
@@ -44,7 +44,7 @@ public class CDMergeConfig {
 
   private final boolean CLI_MODE;
 
-  private CD4AnalysisParser parser;
+  private CD4CodeParser parser;
 
   private List<ModelValidatorBuilder> modelValidators;
 
@@ -371,18 +371,18 @@ public class CDMergeConfig {
   public void processCDs(List<ASTCDCompilationUnit> inputCDs) {
     this.inputCDs = new ArrayList<>();
     for (ASTCDCompilationUnit inputCD : inputCDs) {
-      CD4AnalysisMill.reset();
-      CD4AnalysisMill.init();
-      final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
+      CD4CodeMill.reset();
+      CD4CodeMill.init();
+      final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
       globalScope.clear();
       BuiltInTypes.addBuiltInTypes(globalScope);
 
       CDUtils.RefreshSymbolTable(inputCD);
       // Ensure every CDElement is in a package and perform default AST Trafos
-      final CD4AnalysisAfterParseTrafo afterParseTrafo = new CD4AnalysisAfterParseTrafo();
+      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
       afterParseTrafo.transform(inputCD);
 
-      CD4AnalysisCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
+      CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
       checker.checkAll(inputCD);
 
       this.inputCDs.add(inputCD);
@@ -419,9 +419,9 @@ public class CDMergeConfig {
 
   private Optional<ASTCDCompilationUnit> parseCDFile(String modelfile) {
     try {
-      CD4AnalysisMill.reset();
-      CD4AnalysisMill.init();
-      final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
+      CD4CodeMill.reset();
+      CD4CodeMill.init();
+      final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
       globalScope.clear();
       BuiltInTypes.addBuiltInTypes(globalScope);
       return CDUtils.parseCDFile(modelfile, true);

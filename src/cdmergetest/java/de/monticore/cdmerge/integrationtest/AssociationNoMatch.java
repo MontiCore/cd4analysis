@@ -10,7 +10,6 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;

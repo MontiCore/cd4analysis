@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import de.monticore.cd4analysis._visitor.CD4AnalysisTraverserImplementation;
+import de.monticore.cd4code._visitor.CD4CodeTraverserImplementation;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Collects the named elements of an CD AST and makes them accessible more easily
  */
-public class ASTCDElementCollector extends CD4AnalysisTraverserImplementation {
+public class ASTCDElementCollector extends CD4CodeTraverserImplementation {
 
   private List<String> ownPackage;
 
