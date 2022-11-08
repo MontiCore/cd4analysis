@@ -40,7 +40,7 @@ public class ASTCDElementCollectorTest extends BaseTest {
 
     String oldCD = visitor.prettyprint(cd);
 
-    testant.handle(cd);
+    testant.collect(cd);
 
     assertTrue(oldCD.equals(visitor.prettyprint(cd)));
   }
