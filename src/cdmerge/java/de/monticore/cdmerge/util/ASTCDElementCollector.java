@@ -1,13 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
-import de.monticore.cd4code._visitor.CD4CodeTraverserImplementation;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
+import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 
 import java.util.ArrayList;
@@ -18,7 +22,8 @@ import java.util.List;
 /**
  * Collects the named elements of an CD AST and makes them accessible more easily
  */
-public class ASTCDElementCollector extends CD4CodeTraverserImplementation {
+public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisitor2,
+    CDInterfaceAndEnumVisitor2 {
 
   private List<String> ownPackage;
 
@@ -26,10 +31,23 @@ public class ASTCDElementCollector extends CD4CodeTraverserImplementation {
 
   private ASTCDHelper helper;
 
+  protected CD4CodeTraverser traverser;
+
   public ASTCDElementCollector(ASTCDHelper helper) {
     this.helper = helper;
     this.ownPackage = new LinkedList<String>();
     this.imports = new LinkedList<String>();
+
+    this.traverser = CD4CodeMill.traverser();
+
+    this.traverser.add4CDBasis(this);
+    this.traverser.add4CDAssociation(this);
+    this.traverser.add4CDInterfaceAndEnum(this);
+
+  }
+
+  public void collect(ASTCDCompilationUnit  cd) {
+    cd.accept(traverser);
   }
 
   @Override

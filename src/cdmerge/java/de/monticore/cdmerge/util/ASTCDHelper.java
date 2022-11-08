@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
@@ -49,7 +51,7 @@ public class ASTCDHelper {
     this.cdFile = cd;
 
     // Start resolving all the stuff
-    new ASTCDElementCollector(this).handle(cd);
+    new ASTCDElementCollector(this).collect(cd);
 
     // We need to check consistent type hierarchy here, otherwise resolving of
     // super-classes will not terminate later
