@@ -363,7 +363,7 @@ After executing the command,
 the output states that a context condition is not satisfied by
 the model: 
 ```
-[ERROR] MyLife.cd:<18,9>: 0xA0324 The qualified type Address cannot be found
+[ERROR] MyLife.cd:<18,9>: 0xA0324 Cannot find symbol Address
 ...
 ```
 
@@ -439,11 +439,10 @@ java -jar MCCD.jar -i src/MyExample.cd --gen -o out
 ```
 Note that the option `--fieldfromrole` must be used with the appropriate
 argument in order to generate attributes for associations contained in the input CD. 
-Use the following commands in order to generate .java-files for `MyLife`:
+Use the following commands in order to generate .java-files for the CD `MyCars`([available here](doc/MyCars.cd)):
 
 ```shell
-java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
-java -jar MCCD.jar -i src/MyLife.cd --path symbols -o out --gen --fieldfromrole navigable
+java -jar MCCD.jar -i src/MyCars.cd -o out --gen --fieldfromrole navigable
 ```
 
 ### Step 8: The Semantic Difference of Two Class Diagrams
