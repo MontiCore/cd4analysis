@@ -2,6 +2,7 @@ package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapperKind;
@@ -28,27 +29,6 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHel
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4InheritanceHelper.*;
 
 public class CDSyntax2SemDiff4ASTODHelper {
-
-  /**
-   * change the first character of class name to lower case except the package name
-   */
-  public static String toLowerCaseFirstOne4ClassName(String s) {
-    if (s.contains(".")) {
-      int position = s.lastIndexOf('.');
-      String packageName = s.substring(0, position);
-      String className = s.substring(position + 1);
-      return packageName + "." + Character.toLowerCase(className.charAt(0)) + className.substring(
-          1);
-    }
-    else {
-      if (Character.isLowerCase(s.charAt(0))) {
-        return s;
-      }
-      else {
-        return Character.toLowerCase(s.charAt(0)) + s.substring(1);
-      }
-    }
-  }
 
   /**
    * create value for attribute
@@ -240,7 +220,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       astodNamedObject = OD4ReportMill.oDNamedObjectBuilder()
           .setName(
-              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName().replaceAll(
+              CDDiffUtil.processQName2RoleName(newCDTypeWrapper.getOriginalClassName().replaceAll(
                   "\\.","_")) + "__" + index)
           .setModifier(OD4ReportMill.modifierBuilder().build())
           .setMCObjectType(OD4ReportMill.mCQualifiedTypeBuilder()
@@ -257,7 +237,7 @@ public class CDSyntax2SemDiff4ASTODHelper {
 
       astodNamedObject = OD4ReportMill.oDNamedObjectBuilder()
           .setName(
-              toLowerCaseFirstOne4ClassName(newCDTypeWrapper.getOriginalClassName().replaceAll(
+              CDDiffUtil.processQName2RoleName(newCDTypeWrapper.getOriginalClassName().replaceAll(
                   "\\.","_")) + "__" + index)
           .setModifier(OD4ReportMill.modifierBuilder()
               .setStereotype(OD4ReportMill.stereotypeBuilder()

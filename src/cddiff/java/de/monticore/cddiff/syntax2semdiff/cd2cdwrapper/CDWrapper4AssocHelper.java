@@ -78,34 +78,6 @@ public class CDWrapper4AssocHelper {
   }
 
   /**
-   * get the left class role name in CDAssociationWrapper
-   * if it exists in ASTCDAssociation, then direct return the role name
-   * otherwise set the lower case of the left class qualified name as role name
-   */
-  public static String getLeftClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
-    if (astcdAssociation.getLeft().isPresentCDRole()) {
-      return astcdAssociation.getLeft().getCDRole().getName();
-    }
-    else {
-      return astcdAssociation.getLeftQualifiedName().getQName().toLowerCase();
-    }
-  }
-
-  /**
-   * get the right class role name in CDAssociationWrapper
-   * if it exists in ASTCDAssociation, then direct return the role name
-   * otherwise set the lower case of the right class qualified name as role name
-   */
-  public static String getRightClassRoleNameHelper(ASTCDAssociation astcdAssociation) {
-    if (astcdAssociation.getRight().isPresentCDRole()) {
-      return astcdAssociation.getRight().getCDRole().getName();
-    }
-    else {
-      return astcdAssociation.getRightQualifiedName().getQName().toLowerCase();
-    }
-  }
-
-  /**
    * reverse LEFT_TO_RIGHT and RIGHT_TO_LEFT direction
    */
   public static CDAssociationWrapperDirection reverseDirection(CDAssociationWrapperDirection direction) {

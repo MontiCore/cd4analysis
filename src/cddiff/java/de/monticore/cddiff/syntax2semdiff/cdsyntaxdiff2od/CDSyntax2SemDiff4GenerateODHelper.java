@@ -1,5 +1,6 @@
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
 import de.monticore.odbasis._ast.*;
@@ -15,7 +16,6 @@ import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHel
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4InheritanceHelper.*;
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4SearchHelper.*;
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.createObject;
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.toLowerCaseFirstOne4ClassName;
 
 public class CDSyntax2SemDiff4GenerateODHelper {
 
@@ -279,7 +279,7 @@ public class CDSyntax2SemDiff4GenerateODHelper {
           getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> objectList.forEach(e -> {
         if (e.getName().split("_")[0].equals(
-            toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+            CDDiffUtil.processQName2RoleName(c.getOriginalClassName()))) {
           isInList.set(true);
         }
       }));
@@ -287,7 +287,7 @@ public class CDSyntax2SemDiff4GenerateODHelper {
     else {
       objectList.forEach(e -> {
         if (e.getName().split("_")[0].equals(
-            toLowerCaseFirstOne4ClassName(cDTypeWrapper.getOriginalClassName()))) {
+            CDDiffUtil.processQName2RoleName(cDTypeWrapper.getOriginalClassName()))) {
           isInList.set(true);
         }
       });
@@ -310,7 +310,7 @@ public class CDSyntax2SemDiff4GenerateODHelper {
         getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
     subClassList.forEach(c -> objectList.forEach(e -> {
       if (e.getName().split("_")[0].equals(
-          toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+          CDDiffUtil.processQName2RoleName(c.getOriginalClassName()))) {
         isInList.set(true);
       }
     }));
@@ -332,7 +332,7 @@ public class CDSyntax2SemDiff4GenerateODHelper {
         getAllSimpleSuperClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
     superClassList.forEach(c -> objectList.forEach(e -> {
       if (e.getName().split("_")[0].equals(
-          toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+          CDDiffUtil.processQName2RoleName(c.getOriginalClassName()))) {
         isInList.set(true);
       }
     }));
@@ -367,7 +367,7 @@ public class CDSyntax2SemDiff4GenerateODHelper {
           getAllSimpleSubClasses4CDTypeWrapper(cDTypeWrapper, cdw.getCDTypeWrapperGroup());
       subClassList.forEach(c -> objectList.forEach(e -> {
         if (e.getName().split("_")[0].equals(
-            toLowerCaseFirstOne4ClassName(c.getOriginalClassName()))) {
+            CDDiffUtil.processQName2RoleName(c.getOriginalClassName()))) {
           List<ASTODNamedObject> tempList = resultList.get();
           tempList.add(e);
           resultList.set(tempList);
@@ -378,7 +378,7 @@ public class CDSyntax2SemDiff4GenerateODHelper {
     else {
       objectList.forEach(e -> {
         if (e.getName().split("_")[0].equals(
-            toLowerCaseFirstOne4ClassName(cDTypeWrapper.getOriginalClassName()))) {
+            CDDiffUtil.processQName2RoleName(cDTypeWrapper.getOriginalClassName()))) {
           List<ASTODNamedObject> tempList = resultList.get();
           tempList.add(e);
           resultList.set(tempList);

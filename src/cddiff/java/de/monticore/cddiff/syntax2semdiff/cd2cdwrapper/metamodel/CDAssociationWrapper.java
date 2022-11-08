@@ -2,6 +2,7 @@ package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.SourcePosition;
 
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
@@ -137,11 +138,11 @@ public class CDAssociationWrapper implements Cloneable {
   }
 
   public String getCDWrapperLeftClassRoleName() {
-    return getLeftClassRoleNameHelper(this.editedElement);
+    return CDDiffUtil.inferRole(this.editedElement.getLeft());
   }
 
   public String getCDWrapperRightClassRoleName() {
-    return getRightClassRoleNameHelper(this.editedElement);
+    return CDDiffUtil.inferRole(this.editedElement.getRight());
   }
 
   public ASTCDAssociation getOriginalElement() {
