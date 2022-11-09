@@ -82,12 +82,6 @@ sourceSets {
   cd2smttest {
     java {}
   }
-  coevolution {
-    java {}
-  }
-  coevolutiontest {
-    java {}
-  }
   tool {
     java {}
   }
@@ -108,10 +102,6 @@ configurations {
   cd2smtImplementation.extendsFrom(cddiffImplementation)
   cd2smttestImplementation.extendsFrom(cd2smtImplementation)
   cd2smttestImplementation.extendsFrom(cddifftestImplementation)
-
-  coevolutionImplementation.extendsFrom(cddiffImplementation)
-  coevolutiontestImplementation.extendsFrom(coevolutionImplementation)
-  coevolutiontestImplementation.extendsFrom(cddifftestImplementation)
 
   toolImplementation.extendsFrom(cddiffImplementation)
   toolImplementation.extendsFrom(cdmergeImplementation)
@@ -159,7 +149,6 @@ dependencies {
   // dependencies for cdmerge
   cdmergeImplementation(sourceSets.main.output.classesDirs)
 
-
   cdmergetestImplementation(sourceSets.cdmerge.output.classesDirs)
   cdmergetestImplementation(sourceSets.test.output.classesDirs)
 
@@ -169,13 +158,6 @@ dependencies {
 
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
   cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
-
-  //dependencies for coevolution
-  coevolutionImplementation(sourceSets.cddiff.output.classesDirs)
-  coevolutionImplementation 'fr.inria.gforge.spoon:spoon-core:10.2.0-beta-11'
-
-  coevolutiontestImplementation(sourceSets.coevolution.output.classesDirs)
-  coevolutiontestImplementation(sourceSets.cddifftest.output.classesDirs)
 
   toolImplementation(sourceSets.cddiff.output.classesDirs)
   toolImplementation(sourceSets.cdmerge.output.classesDirs)
@@ -358,13 +340,6 @@ task cd2smttest(type: Test) {
     shouldRunAfter test
 }
 
-task coevolutiontest(type: Test) {
-    description = "Runs Co-Evolution Tests"
-    group = "Verification"
-    testClassesDirs = sourceSets.coevolutiontest.output.classesDirs
-    classpath += sourceSets.coevolutiontest.runtimeClasspath
-    shouldRunAfter test
-}
 
 task tooltest(type: Test) {
   description = "Runs Tool Tests"
@@ -374,7 +349,7 @@ task tooltest(type: Test) {
   shouldRunAfter test
 }
 
-check.dependsOn cddifftest, cdmergetest, cd2smttest, coevolutiontest, tooltest
+check.dependsOn cddifftest, cdmergetest, cd2smttest, tooltest
 
 tasks.withType(JavaCompile) {
   options.encoding = "UTF-8"
@@ -456,11 +431,6 @@ task cd2smtJar(type: Jar) {
     archiveClassifier = "cd2smt"
 }
 
-// build test sources jar in addition
-task coevolutionJar(type: Jar) {
-    from sourceSets.coevolution.output + sourceSets.coevolution.allSource
-    archiveClassifier = "coevolution"
-}
 
 // build test sources jar in addition
 task toolJar(type: Jar) {
@@ -474,7 +444,7 @@ task mainJar(type: Jar) {
 }
 
 if(("false").equals(getProperty('publishMain'))) {
-  jar.dependsOn cddiffJar, cdmergeJar, cd2smtJar, coevolutionJar, toolJar
+  jar.dependsOn cddiffJar, cdmergeJar, cd2smtJar, toolJar
   apply plugin: "com.github.johnrengelman.shadow"
   shadowJar { // all in one jar
     archiveFileName = 'MCCD.jar'
@@ -528,7 +498,6 @@ artifacts {
   archives cddiffJar
   archives cdmergeJar
   archives cd2smtJar
-  archives coevolutionJar
   archives toolJar
   archives mainJar
 }
@@ -545,7 +514,6 @@ publishing {
         artifact cddiffJar
         artifact cdmergeJar
         artifact cd2smtJar
-        artifact coevolutionJar
         artifact toolJar
       }
     }else{
