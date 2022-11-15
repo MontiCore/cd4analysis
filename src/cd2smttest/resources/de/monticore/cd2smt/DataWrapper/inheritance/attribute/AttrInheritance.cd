@@ -1,0 +1,31 @@
+classdiagram STTest {
+
+   class BigBigCar  extends BigCar {
+      boolean isBigBigCar ;
+   }
+
+   interface BigCarInterface {
+      boolean isBigCarInterface ;
+   }
+   class BigCar extends Car implements BigCarInterface {
+         boolean isBigCar ;
+   }
+
+   class Car extends Vehicle implements CarInterface1 , CarInterface2{
+      boolean isCar ;
+   }
+
+    class Vehicle {
+         boolean isVehicle ;
+    }
+
+
+    interface  CarInterface1 {
+         boolean isCarInterface1 ;
+    }
+
+   interface  CarInterface2 {
+      boolean isCarInterface2 ;
+   }
+
+}

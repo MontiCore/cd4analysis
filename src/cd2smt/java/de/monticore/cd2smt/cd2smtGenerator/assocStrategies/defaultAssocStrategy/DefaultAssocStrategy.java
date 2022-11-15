@@ -30,7 +30,8 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
   @Override
   public BoolExpr evaluateLink(ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right) {
-    return (BoolExpr) associationsFuncMap.get(association).apply(left, right);
+    FuncDecl<BoolSort> assocFunc = associationsFuncMap.get(association);
+      return left.getSort().equals(assocFunc.getDomain()[0])  ?(BoolExpr) assocFunc.apply(left,right): (BoolExpr) assocFunc.apply(right,left)  ;
   }
 
   @Override

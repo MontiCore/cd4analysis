@@ -1,0 +1,17 @@
+classdiagram AssocInheritance {
+
+   class  Car implements CarInterface;
+   class  Person implements PersonInterface;
+
+   interface CarInterface ;
+   interface PersonInterface;
+
+   class Color;
+   class Auction ;
+
+   association [1] CarInterface      --    PersonInterface[1];
+   association [1] CarInterface      --    Color[1];
+   association [1] Auction           --    PersonInterface[1];
+
+
+}

@@ -20,6 +20,7 @@ import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class CDHelper {
@@ -147,22 +148,26 @@ public class CDHelper {
     return typeMap;
   }
 
-  public static ASTCDAssociation getAssociation(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
+  public static ASTCDAssociation getAssociation(ASTCDType objType, String otherRole, ASTCDDefinition cd) {
+    List<ASTCDType> objTypes = new ArrayList<>();
+    objTypes.add(objType);
+    getAllSuperType(objType, cd, objTypes);
     ASTCDType leftType;
     ASTCDType rightType;
     String leftRole;
     String rightRole;
+
     for (ASTCDAssociation association : cd.getCDAssociationsList()) {
       leftType = CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), cd);
       rightType = CDHelper.getASTCDType(association.getRightQualifiedName().getQName(), cd);
       leftRole = association.getLeft().getCDRole().getName();
       rightRole = association.getRight().getCDRole().getName();
 
-      if (astcdType.equals(leftType) && otherRole.equals(rightRole) || astcdType.equals(rightType) && otherRole.equals(leftRole)) {
+      if (objTypes.contains(leftType) && otherRole.equals(rightRole) || objTypes.contains(rightType) && otherRole.equals(leftRole)) {
         return association;
       }
     }
-    Log.error("Association with the other-role " + otherRole + " not found for the ASTCDType" + astcdType.getName());
+    Log.error("Association with the other-role " + otherRole + " not found for the ASTCDType" + objType.getName());
     return null;
   }
 
@@ -171,7 +176,39 @@ public class CDHelper {
     if (attr.isEmpty()) {
       Log.error("attribute " + attrName + " not found in class " + astcdType.getName());
     }
+    assert attr.isPresent();
     return attr.get();
   }
 
+  public static boolean containsAttribute(ASTCDType astcdType, String attributeName) {
+    for (ASTCDAttribute attribute1 : astcdType.getCDAttributeList()) {
+      if (attribute1.getName().equals(attributeName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  public static List<ASTCDType> getSuperTypeList(ASTCDType astcdType, ASTCDDefinition cd) {
+    List<ASTCDType> res = astcdType.getSuperclassList().stream().map(mcType -> getASTCDType(mcType
+      .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd)).collect(Collectors.toList());
+
+    res.addAll(astcdType.getInterfaceList().stream().map(mcType -> getASTCDType(mcType
+      .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd)).collect(Collectors.toList()));
+
+    return res;
+  }
+
+  public static void getAllSuperType(ASTCDType astcdType, ASTCDDefinition cd, List<ASTCDType> res) {
+    if (astcdType.getInterfaceList().isEmpty() && astcdType.getSuperclassList().isEmpty()) {
+      return ;
+    }
+    List<ASTCDType> superClassList = getSuperTypeList(astcdType, cd);
+    res.add(superClassList.get(0));
+    for (ASTCDType astcType1 : superClassList) {
+      res.add(astcType1);
+      getAllSuperType(astcType1, cd, res);
+    }
+  }
 }

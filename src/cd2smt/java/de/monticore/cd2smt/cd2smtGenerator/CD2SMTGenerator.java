@@ -34,12 +34,13 @@ import java.util.Set;
  */
 public class CD2SMTGenerator implements ClassData, AssociationsData, InheritanceData {
 
+  private ASTCDCompilationUnit astCd;
   private final ClassStrategy classStrategy = new DistinctSort();
   private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy();
   private final AssociationStrategy associationStrategy = new DefaultAssocStrategy();
+  private DataWrapper dataWrapper ;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
-  private ASTCDCompilationUnit astCd;
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
     Solver solver = ctx.mkSolver();
@@ -56,11 +57,11 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
    * @param astCd the class diagram to translate
    */
   public void cd2smt(ASTCDCompilationUnit astCd, Context ctx) {
+    CDHelper.setAssociationsRoles(astCd);
     this.ctx = ctx;
     this.astCd = astCd;
     //set All Associations Role
-    CDHelper.setAssociationsRoles(astCd);
-
+    dataWrapper = new DataWrapper(classStrategy, associationStrategy, inheritanceStrategy, astCd);
     classStrategy.cd2smt(astCd, ctx);
 
     inheritanceStrategy.cd2smt(astCd, ctx, classStrategy);
@@ -71,37 +72,37 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
 
   @Override
   public Sort getSort(ASTCDType astcdType) {
-    return classStrategy.getSort(astcdType);
+    return dataWrapper.getSort(astcdType);
   }
 
   @Override
   public Expr<? extends Sort> getSortFilter(ASTCDType astcdType) {
-    return classStrategy.getSortFilter(astcdType);
+    return dataWrapper.getSortFilter(astcdType);
   }
 
   @Override
-  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, ASTCDAttribute astCdAttribute, Expr<? extends Sort> cDTypeExpr) {
-    return classStrategy.getAttribute(astCdType, astCdAttribute, cDTypeExpr);
+  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
+    return dataWrapper.getAttribute(astCdType, attributeName, cDTypeExpr);
   }
 
   @Override
   public BoolExpr evaluateLink(ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right) {
-    return associationStrategy.evaluateLink(association, left, right);
+    return dataWrapper.evaluateLink(association, left, right);
   }
 
   @Override
   public Set<IdentifiableBoolExpr> getAssociationsConstraints() {
-    return associationStrategy.getAssociationsConstraints();
+    return dataWrapper.getAssociationsConstraints();
   }
 
   @Override
   public Expr<? extends Sort> getSuperInstance(ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
-    return inheritanceStrategy.getSuperInstance(objType, superType, objExpr);
+    return dataWrapper.getSuperInstance(objType, superType, objExpr);
   }
 
   @Override
   public Set<IdentifiableBoolExpr> getInheritanceConstraints() {
-    return inheritanceStrategy.getInheritanceConstraints();
+    return dataWrapper.getInheritanceConstraints();
   }
 
   public Context getContext() {
