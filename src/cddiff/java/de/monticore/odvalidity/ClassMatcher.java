@@ -49,7 +49,6 @@ public class ClassMatcher {
   public boolean checkAllObjectsInClassDiagram(ASTODArtifact od, ASTCDCompilationUnit cd,
       CDSemantics semantics) {
 
-    CD4CodeMill.init();
     this.od = od;
     this.cd = cd;
     this.scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);

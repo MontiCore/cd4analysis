@@ -176,7 +176,6 @@ public class CDDiff {
 
     StringBuilder result = new StringBuilder();
     result.append("\t *************************  Diff Witnesses  ************************* \n");
-    OD4ReportMill.init();
     for (ASTODArtifact od : witnesses) {
       result.append(printOD(od)).append(System.lineSeparator());
     }
@@ -187,7 +186,6 @@ public class CDDiff {
   public static void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory) {
     try {
       File out = new File(outputDirectory);
-      OD4ReportMill.init();
       for (ASTODArtifact od : ods) {
         String odDesc = printOD(od);
         Alloy2ODGenerator.saveOD(odDesc, od.getObjectDiagram().getName(), out);

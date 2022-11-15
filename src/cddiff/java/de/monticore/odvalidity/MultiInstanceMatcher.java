@@ -38,10 +38,6 @@ public class MultiInstanceMatcher {
   public boolean isDiffWitness(CDSemantics semantic, ASTCDCompilationUnit baseCD,
       ASTCDCompilationUnit compCD, ASTODArtifact odAll) {
 
-    CD4CodeMill.reset();
-    CD4CodeMill.globalScope().clear();
-    CD4CodeMill.init();
-    CD4CodeMill.globalScope().init();
 
     ASTObjectDiagram od = odAll.getObjectDiagram();
     List<ASTODObject> objectList = ODHelper.getAllObjects(od);
