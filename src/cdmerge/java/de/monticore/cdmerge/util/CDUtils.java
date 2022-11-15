@@ -52,8 +52,6 @@ public class CDUtils {
     commentsEnabledPrettyPrinter.setPrintComments(true);
     StringBuilder sb = new StringBuilder();
     inlinePrettyPrinter = new CD4CodeFullPrettyPrinter(new NoLineBreakIndentPrinter(sb));
-    CD4CodeMill.reset();
-    CD4CodeMill.init();
   }
 
   /**

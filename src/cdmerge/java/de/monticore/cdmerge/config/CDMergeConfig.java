@@ -371,8 +371,6 @@ public class CDMergeConfig {
   public void processCDs(List<ASTCDCompilationUnit> inputCDs) {
     this.inputCDs = new ArrayList<>();
     for (ASTCDCompilationUnit inputCD : inputCDs) {
-      CD4CodeMill.reset();
-      CD4CodeMill.init();
       final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
       globalScope.clear();
       BuiltInTypes.addBuiltInTypes(globalScope);
@@ -419,8 +417,6 @@ public class CDMergeConfig {
 
   private Optional<ASTCDCompilationUnit> parseCDFile(String modelfile) {
     try {
-      CD4CodeMill.reset();
-      CD4CodeMill.init();
       final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
       globalScope.clear();
       BuiltInTypes.addBuiltInTypes(globalScope);
