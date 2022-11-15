@@ -31,8 +31,8 @@ public class DistinctSort implements ClassStrategy {
   } //TODO:implement and introduce it
 
   @Override
-  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, ASTCDAttribute astCdAttribute, Expr<? extends Sort> cDTypeExpr) {
-    return smtTypesMap.get(astCdType).getAttribute(astCdAttribute).apply(cDTypeExpr);
+  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
+    return smtTypesMap.get(astCdType).getAttribute(CDHelper.getAttribute(astCdType,attributeName)).apply(cDTypeExpr);
   }
 
 

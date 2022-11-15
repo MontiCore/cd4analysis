@@ -46,7 +46,7 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
     ASTCDClass Class = astCD.getCDDefinition().getCDClassesList().get(0);
     Expr<? extends Sort> obj = context.mkConst("myObj", cd2SMTGenerator.getSort(Class));
     for (ASTCDAttribute attribute : Class.getCDAttributeList()) {
-      Expr<? extends Sort> attr = cd2SMTGenerator.getAttribute(Class, attribute, obj);
+      Expr<? extends Sort> attr = cd2SMTGenerator.getAttribute(Class, attribute.getName(), obj);
       Assert.assertNotNull(attr);
       switch (attribute.getName()) {
         case "price":
