@@ -1,9 +1,7 @@
 package de.monticore.cd2smt.ODArtifacts;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-
 import java.util.Set;
-
 
 public class SMTLink {
 
@@ -19,7 +17,9 @@ public class SMTLink {
 
   public static boolean containsLink(Set<SMTLink> linkList, SMTLink smtLink) {
     for (SMTLink smtLink1 : linkList) {
-      if (smtLink.leftObject.equals(smtLink1.getLeftObject()) && smtLink.rightObject.equals(smtLink1.getRightObject()) && smtLink.smtAssociation.equals(smtLink1.getAssociation())) {
+      if (smtLink.leftObject.equals(smtLink1.getLeftObject())
+          && smtLink.rightObject.equals(smtLink1.getRightObject())
+          && smtLink.smtAssociation.equals(smtLink1.getAssociation())) {
         return true;
       }
     }
@@ -37,5 +37,4 @@ public class SMTLink {
   public SMTObject getRightObject() {
     return rightObject;
   }
-
 }

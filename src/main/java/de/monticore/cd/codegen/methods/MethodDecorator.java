@@ -4,7 +4,6 @@ package de.monticore.cd.codegen.methods;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,8 @@ public class MethodDecorator extends AbstractMethodDecorator {
     this(glex, new AccessorDecorator(glex), new MutatorDecorator(glex));
   }
 
-  public MethodDecorator(final GlobalExtensionManagement glex,
+  public MethodDecorator(
+      final GlobalExtensionManagement glex,
       final AbstractMethodDecorator accessorDecorator,
       final AbstractMethodDecorator mutatorDecorator) {
     super(glex);

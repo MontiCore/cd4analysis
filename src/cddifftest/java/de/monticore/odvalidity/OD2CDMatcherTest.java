@@ -3,12 +3,11 @@ package de.monticore.odvalidity;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.se_rwth.commons.logging.Log;
+import java.io.File;
+import java.nio.file.Paths;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.nio.file.Paths;
 
 public class OD2CDMatcherTest {
 
@@ -39,9 +38,9 @@ public class OD2CDMatcherTest {
 
   @Test
   public void singleInstanceCheckClosedWorldTest() {
-    //TODO
-    Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cdModel1,
-        odModel1));
+    // TODO
+    Assert.assertFalse(
+        matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cdModel1, odModel1));
   }
 
   @Test
@@ -53,11 +52,9 @@ public class OD2CDMatcherTest {
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1,
-            odFile));
+        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
       }
     }
-
   }
 
   @Test
@@ -70,13 +67,10 @@ public class OD2CDMatcherTest {
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1,
-            odFile));
-        Assert.assertFalse(
-            matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
-
   }
 
   @Test
@@ -84,20 +78,15 @@ public class OD2CDMatcherTest {
     final File cd1 = new File(resources + "IntegrationTest/Combination/Employees1B.cd");
     final File cd2 = new File(resources + "IntegrationTest/Combination/Employees1A.cd");
 
-    File[] odFiles = Paths.get(resources + "IntegrationTest/Combination")
-        .toFile()
-        .listFiles();
+    File[] odFiles = Paths.get(resources + "IntegrationTest/Combination").toFile().listFiles();
     Assert.assertNotNull(odFiles);
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1,
-            odFile));
-        Assert.assertFalse(
-            matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
-
   }
 
   @Test
@@ -110,13 +99,10 @@ public class OD2CDMatcherTest {
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1,
-            odFile));
-        Assert.assertFalse(
-            matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
-
   }
 
   @Test
@@ -129,13 +115,9 @@ public class OD2CDMatcherTest {
 
     for (File odFile : odFiles) {
       if (odFile.getName().endsWith(".od")) {
-        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1,
-            odFile));
-        Assert.assertFalse(
-            matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
+        Assert.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd1, odFile));
+        Assert.assertFalse(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, cd2, odFile));
       }
     }
-
   }
-
 }

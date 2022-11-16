@@ -4,13 +4,12 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cdassociation._ast.ASTCDAssocDir;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff.Op;
 import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff.Interpretation;
+import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff.Op;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
 import java.util.Optional;
 
 /**
@@ -36,8 +35,7 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
   public Optional<Interpretation> getInterpretation() {
     if (interpretation == null) {
       return Optional.empty();
-    }
-    else {
+    } else {
       return Optional.of(interpretation);
     }
   }
@@ -46,8 +44,7 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
   public Optional<Op> getOperation() {
     if (operation == null) {
       return Optional.empty();
-    }
-    else {
+    } else {
       return Optional.of(operation);
     }
   }
@@ -88,31 +85,28 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
    * @return Operation to be set
    */
   protected Op setOp() {
-    if (cd1Value.isPresent() && cd2Value.isPresent() && !cd1Value.get()
-        .deepEquals(cd2Value.get())) {
+    if (cd1Value.isPresent()
+        && cd2Value.isPresent()
+        && !cd1Value.get().deepEquals(cd2Value.get())) {
       // Diff reason: Value changed
       return Op.CHANGE;
 
-    }
-    else if (cd1Value.isPresent() && !cd2Value.isPresent()) {
+    } else if (cd1Value.isPresent() && !cd2Value.isPresent()) {
       // Diff reason: Value deleted
       return Op.DELETE;
 
-    }
-    else if (!cd1Value.isPresent() && cd2Value.isPresent()) {
+    } else if (!cd1Value.isPresent() && cd2Value.isPresent()) {
       // Diff reason: Value added
       return Op.ADD;
 
-    }
-    else {
+    } else {
       // No Diff reason: is equal
       return null;
     }
   }
 
   /**
-   * Set the interpretation and pretty print for each field in this diff (if there is a value
-   * given)
+   * Set the interpretation and pretty print for each field in this diff (if there is a value given)
    */
   private void setInterpretation() {
     if (cd1Value.isPresent()) {
@@ -120,19 +114,16 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
         ASTModifier cd1 = (ASTModifier) cd1Value.get();
         if (cd2Value.isPresent() && cd2Value.get() instanceof ASTModifier) {
           ASTModifier cd2 = (ASTModifier) cd2Value.get();
-          if ( (cd1.isPublic() && cd2.isPublic())
-            || (cd1.isProtected() && cd2.isProtected())
-            || (cd1.isPrivate() && cd2.isPrivate())) {
+          if ((cd1.isPublic() && cd2.isPublic())
+              || (cd1.isProtected() && cd2.isProtected())
+              || (cd1.isPrivate() && cd2.isPrivate())) {
             this.interpretation = Interpretation.EQUAL;
-          }
-          else if (cd1.isPublic() && (cd2.isPrivate() || cd2.isProtected())) {
+          } else if (cd1.isPublic() && (cd2.isPrivate() || cd2.isProtected())) {
             this.interpretation = Interpretation.REFINEMENT;
-          }
-          else {
+          } else {
             this.interpretation = Interpretation.SCOPECHANGE;
           }
-        }
-        else {
+        } else {
           if (!cd1.isPublic()) {
             this.interpretation = Interpretation.EXPANSION;
           }
@@ -154,40 +145,32 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
               // Both upper bounds are infinite
               if (cd1Lower < cd2Lower) {
                 this.interpretation = Interpretation.RESTRICT_INTERVAL;
-              }
-              else {
+              } else {
                 this.interpretation = Interpretation.EXPAND_INTERVAL;
               }
-            }
-            else {
+            } else {
               if (((ASTCDCardinality) cd2Value.get()).toCardinality().isNoUpperLimit()) {
                 this.interpretation = Interpretation.EXPAND_INTERVAL;
-              }
-              else {
+              } else {
                 this.interpretation = Interpretation.RESTRICT_INTERVAL;
               }
             }
-          }
-          else {
+          } else {
             if ((cd1Upper - cd1Lower) < (cd2Upper - cd2Lower)) {
               this.interpretation = Interpretation.EXPAND_INTERVAL;
-            }
-            else if ((cd1Upper - cd1Lower) == (cd2Upper - cd2Lower)) {
+            } else if ((cd1Upper - cd1Lower) == (cd2Upper - cd2Lower)) {
               this.interpretation = Interpretation.EQUAL_INTERVAL;
-            }
-            else {
+            } else {
               this.interpretation = Interpretation.RESTRICT_INTERVAL;
             }
           }
-        }
-        else {
+        } else {
           // Cardinality was deleted
           if (((ASTCDCardinality) cd1Value.get()).toCardinality().isNoUpperLimit()
               && cd1Lower == 0) {
             // [0..*] == [*]
             this.interpretation = Interpretation.EQUAL_INTERVAL;
-          }
-          else {
+          } else {
             // [n..m] -> [*] (n != 0) or (m != inf)
             this.interpretation = Interpretation.EXPAND_INTERVAL;
           }
@@ -200,8 +183,7 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
         if (cd2Value.isPresent()) {
           // Role was changed
           this.interpretation = Interpretation.ROLECHANGE;
-        }
-        else {
+        } else {
           this.interpretation = Interpretation.DELETED;
         }
       }
@@ -214,48 +196,39 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
             if (!(cd2.isDefinitiveNavigableLeft() || cd2.isDefinitiveNavigableRight())) {
               // <-> to --
               this.interpretation = Interpretation.ABSTRACTION;
-            }
-            else if (!(cd2.isDefinitiveNavigableLeft() && cd2.isDefinitiveNavigableRight())) {
+            } else if (!(cd2.isDefinitiveNavigableLeft() && cd2.isDefinitiveNavigableRight())) {
               // <-> to -> or <-
               this.interpretation = Interpretation.RESTRICTION;
             }
-          }
-          else if (cd2.isBidirectional()) {
+          } else if (cd2.isBidirectional()) {
             if (cd1.isDefinitiveNavigableRight() || cd1.isDefinitiveNavigableLeft()) {
               // (-> or <-) to <->
               this.interpretation = Interpretation.EXPANSION;
-            }
-            else {
+            } else {
               // -- to <->
               this.interpretation = Interpretation.REFINEMENT;
             }
-          }
-          else if (cd1.isDefinitiveNavigableRight() && !cd2.isDefinitiveNavigableRight()) {
+          } else if (cd1.isDefinitiveNavigableRight() && !cd2.isDefinitiveNavigableRight()) {
             if (cd2.isDefinitiveNavigableLeft()) {
               // -> to <-
               this.interpretation = Interpretation.REVERSED;
-            }
-            else {
+            } else {
               // -> to --
               this.interpretation = Interpretation.ABSTRACTION;
             }
-          }
-          else if (cd1.isDefinitiveNavigableLeft() && !cd2.isDefinitiveNavigableLeft()) {
+          } else if (cd1.isDefinitiveNavigableLeft() && !cd2.isDefinitiveNavigableLeft()) {
             if (cd2.isDefinitiveNavigableRight()) {
-              //<- to ->
+              // <- to ->
               this.interpretation = Interpretation.REVERSED;
-            }
-            else {
+            } else {
               // <- to --
               this.interpretation = Interpretation.ABSTRACTION;
             }
 
-          }
-          else if (cd2.isDefinitiveNavigableRight() || cd2.isDefinitiveNavigableLeft()) {
+          } else if (cd2.isDefinitiveNavigableRight() || cd2.isDefinitiveNavigableLeft()) {
             // -- to (<- or ->)
             this.interpretation = Interpretation.REFINEMENT;
-          }
-          else {
+          } else {
             this.interpretation = Interpretation.EQUAL;
           }
         }
@@ -263,8 +236,7 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
       if (cd1Value.get() instanceof ASTExpression) {
         if (!cd2Value.isPresent()) {
           this.interpretation = Interpretation.DELETED;
-        }
-        else {
+        } else {
           this.interpretation = Interpretation.DEFAULTVALUECHANGED;
         }
       }
@@ -277,7 +249,6 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
             this.interpretation = Interpretation.EQUAL;
           }
         }
-
       }
       if (cd2Value.get() instanceof ASTCDCardinality) {
         // Default value is [*]
@@ -286,8 +257,7 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
         if (cd2Lower == 0 && cd2Upper == 0) {
           // [*] to [0..*]
           this.interpretation = Interpretation.EQUAL_INTERVAL;
-        }
-        else {
+        } else {
           // [*] to [n..m] (n != 0) or ( m != inf)
           this.interpretation = Interpretation.RESTRICT_INTERVAL;
         }
@@ -297,7 +267,7 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
       }
       if (cd2Value.get() instanceof ASTMCType) {
         this.interpretation = Interpretation.TYPECHANGE;
-        //Todo: check for Sub/Supertype
+        // Todo: check for Sub/Supertype
       }
       if (cd2Value.get() instanceof ASTExpression) {
         if (!cd1Value.isPresent()) {
@@ -306,5 +276,4 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
       }
     }
   }
-
 }

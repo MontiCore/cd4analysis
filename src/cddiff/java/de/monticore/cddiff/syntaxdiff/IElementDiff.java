@@ -1,11 +1,9 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
-
 import java.util.List;
 
 public interface IElementDiff {
-
 
   StringBuilder getInterpretation();
 

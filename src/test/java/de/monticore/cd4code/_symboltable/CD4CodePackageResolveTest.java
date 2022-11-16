@@ -1,7 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code._symboltable;
 
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
@@ -11,25 +13,17 @@ import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOSymbolsDeSer;
-import de.monticore.symbols.oosymbols._symboltable.OOSymbolsSymbols2Json;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
-
 
   @BeforeClass
   public static void beforeClass() throws Exception {
@@ -38,7 +32,8 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/Packages.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cd4code/parser/Packages.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
@@ -52,12 +47,14 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
   @Test
   public void resolveCDRole() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cdassociation/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cdassociation/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
-    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope artifactScope =
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
 
@@ -75,12 +72,14 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
 
   @Test
   public void resolveJavaTypes() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4code/parser/UseJavaTypes.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cd4code/parser/UseJavaTypes.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4CodeAfterParseTrafo().transform(node);
-    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope artifactScope =
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
     node.accept(new CD4CodeSymbolTableCompleter(node).getTraverser());
 
@@ -92,8 +91,10 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     assertTrue(fieldSymbol.isPresent());
     final SymTypeExpression type = fieldSymbol.get().getType();
     assertTrue(type.isGenericType());
-    assertEquals("java.util.List", ((SymTypeOfGenerics)type).getFullName());
-    assertEquals("java.lang.String", ((SymTypeOfGenerics)type).getArgumentList().get(0).getTypeInfo().getFullName());
+    assertEquals("java.util.List", ((SymTypeOfGenerics) type).getFullName());
+    assertEquals(
+        "java.lang.String",
+        ((SymTypeOfGenerics) type).getArgumentList().get(0).getTypeInfo().getFullName());
 
     final Optional<OOTypeSymbol> str1 = artifactScope.resolveOOType("java.lang.String");
     assertTrue(str1.isPresent());

@@ -4,7 +4,6 @@ package de.monticore.cd._parser;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDDirectComposition;
 import de.monticore.cdbasis._ast.ASTCDType;
-
 import java.util.*;
 
 public class CDAfterParseHelper {
@@ -18,10 +17,18 @@ public class CDAfterParseHelper {
   }
 
   public CDAfterParseHelper(CDAfterParseHelper cdAfterParseHelper) {
-    this(cdAfterParseHelper.assocStack, cdAfterParseHelper.typeStack, cdAfterParseHelper.createdAssociations, cdAfterParseHelper.removedDirectCompositions);
+    this(
+        cdAfterParseHelper.assocStack,
+        cdAfterParseHelper.typeStack,
+        cdAfterParseHelper.createdAssociations,
+        cdAfterParseHelper.removedDirectCompositions);
   }
 
-  public CDAfterParseHelper(Stack<ASTCDAssociation> assocStack, Stack<ASTCDType> typeStack, List<ASTCDAssociation> createdAssociations, Set<ASTCDDirectComposition> removedDirectCompositions) {
+  public CDAfterParseHelper(
+      Stack<ASTCDAssociation> assocStack,
+      Stack<ASTCDType> typeStack,
+      List<ASTCDAssociation> createdAssociations,
+      Set<ASTCDDirectComposition> removedDirectCompositions) {
     this.assocStack = assocStack;
     this.typeStack = typeStack;
     this.createdAssociations = createdAssociations;

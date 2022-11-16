@@ -14,9 +14,9 @@ public interface ASTCDAssocSide extends ASTCDAssocSideTOP {
   }
 
   /**
-   * get the name of the association side
-   * use the information of the role and association to
-   * get a name, use the following order
+   * get the name of the association side use the information of the role and association to get a
+   * name, use the following order
+   *
    * <pre>
    * 1. use role name (if present)
    * 2. use association name (if present)

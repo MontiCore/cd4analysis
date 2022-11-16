@@ -4,13 +4,12 @@ package de.monticore.cd4codebasis._symboltable;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-
 import java.util.List;
 
-public class CDMethodSignatureSymbolDeSer
-    extends CDMethodSignatureSymbolDeSerTOP {
+public class CDMethodSignatureSymbolDeSer extends CDMethodSignatureSymbolDeSerTOP {
   @Override
-  protected void serializeExceptions(List<SymTypeExpression> exceptions, CD4CodeBasisSymbols2Json s2j) {
+  protected void serializeExceptions(
+      List<SymTypeExpression> exceptions, CD4CodeBasisSymbols2Json s2j) {
     SymTypeExpressionDeSer.serializeMember(s2j.printer, "exceptions", exceptions);
   }
 

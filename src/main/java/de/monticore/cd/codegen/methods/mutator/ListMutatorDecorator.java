@@ -1,34 +1,39 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.mutator;
 
+import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+
 import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.methods.ListMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 public class ListMutatorDecorator extends ListMethodDecorator {
 
   protected static final String SET_LIST = "public void set%sList(List<%s> %s);";
   protected static final String CLEAR = "public void clear%s();";
   protected static final String ADD = "public boolean add%s(%s element);";
-  protected static final String ADD_ALL = "public boolean addAll%s(Collection<? extends %s> collection);";
+  protected static final String ADD_ALL =
+      "public boolean addAll%s(Collection<? extends %s> collection);";
   protected static final String REMOVE = "public boolean remove%s(Object element);";
-  protected static final String REMOVE_ALL = "public boolean removeAll%s(Collection<?> collection);";
-  protected static final String RETAIN_ALL = "public boolean retainAll%s(Collection<?> collection);";
-  protected static final String REMOVE_IF = "public boolean removeIf%s(Predicate<? super %s> filter);";
+  protected static final String REMOVE_ALL =
+      "public boolean removeAll%s(Collection<?> collection);";
+  protected static final String RETAIN_ALL =
+      "public boolean retainAll%s(Collection<?> collection);";
+  protected static final String REMOVE_IF =
+      "public boolean removeIf%s(Predicate<? super %s> filter);";
   protected static final String FOR_EACH = "public void forEach%s(Consumer<? super %s> action);";
   protected static final String ADD_ = "public void add%s(int index, %s element);";
-  protected static final String ADD_ALL_ = "public boolean addAll%s(int index, Collection<? extends %s> collection);";
+  protected static final String ADD_ALL_ =
+      "public boolean addAll%s(int index, Collection<? extends %s> collection);";
   protected static final String REMOVE_ = "public %s remove%s(int index);";
   protected static final String SET = "public %s set%s(int index, %s element);";
-  protected static final String REPLACE_ALL = "public void replaceAll%s(UnaryOperator<%s> operator);";
+  protected static final String REPLACE_ALL =
+      "public void replaceAll%s(UnaryOperator<%s> operator);";
   protected static final String SORT = "public void sort%s(Comparator<? super %s> comparator);";
 
   public ListMutatorDecorator(final GlobalExtensionManagement glex) {
@@ -46,16 +51,16 @@ public class ListMutatorDecorator extends ListMethodDecorator {
   }
 
   protected ASTCDMethod createSetListMethod(ASTCDAttribute ast) {
-    String signature = String.format(SET_LIST, capitalizedAttributeNameWithOutS, attributeType, ast.getName());
+    String signature =
+        String.format(SET_LIST, capitalizedAttributeNameWithOutS, attributeType, ast.getName());
     ASTCDMethod getList = this.getCDMethodFacade().createMethodByDefinition(signature);
     this.replaceTemplate(EMPTY_BODY, getList, new TemplateHookPoint("methods.Set", ast));
     return getList;
   }
 
-  protected List<ASTCDMethod> createSetter(ASTCDAttribute ast){
+  protected List<ASTCDMethod> createSetter(ASTCDAttribute ast) {
     return super.decorate(ast);
   }
-
 
   @Override
   protected List<String> getMethodSignatures() {
@@ -73,7 +78,6 @@ public class ListMutatorDecorator extends ListMethodDecorator {
         String.format(REMOVE_, attributeType, capitalizedAttributeNameWithOutS),
         String.format(SET, attributeType, capitalizedAttributeNameWithOutS, attributeType),
         String.format(REPLACE_ALL, capitalizedAttributeNameWithS, attributeType),
-        String.format(SORT, capitalizedAttributeNameWithS, attributeType)
-    );
+        String.format(SORT, capitalizedAttributeNameWithS, attributeType));
   }
 }

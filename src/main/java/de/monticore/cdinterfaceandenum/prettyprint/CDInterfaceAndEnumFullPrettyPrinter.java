@@ -25,7 +25,7 @@ public class CDInterfaceAndEnumFullPrettyPrinter {
 
   protected IndentPrinter printer;
 
-  public CDInterfaceAndEnumFullPrettyPrinter(IndentPrinter printer){
+  public CDInterfaceAndEnumFullPrettyPrinter(IndentPrinter printer) {
 
     this.traverser = CDInterfaceAndEnumMill.traverser();
     this.printer = printer;

@@ -1,12 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation._symboltable;
 
+import static de.monticore.cdassociation._symboltable.CDAssociationDeSer.handleSymAssociation;
+
 import de.monticore.cd._symboltable.CDDeSerHelper;
 import de.monticore.symboltable.serialization.json.JsonObject;
-
 import java.util.Optional;
-
-import static de.monticore.cdassociation._symboltable.CDAssociationDeSer.handleSymAssociation;
 
 public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
   @Override
@@ -18,8 +17,12 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
 
   @Override
   protected Optional<SymAssociation> deserializeAssoc(JsonObject symbolJson) {
-    return symbolJson.getIntegerMemberOpt("association")
-        .flatMap(a -> Optional.ofNullable(CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
+    return symbolJson
+        .getIntegerMemberOpt("association")
+        .flatMap(
+            a ->
+                Optional.ofNullable(
+                    CDDeSerHelper.getInstance().getSymAssocForDeserialization().get(a)));
   }
 
   @Override
@@ -36,10 +39,10 @@ public class CDAssociationSymbolDeSer extends CDAssociationSymbolDeSerTOP {
     }
     // ============== change ============
     // don't serialize the spanned scope
-//    if (toSerialize.getSpannedScope().isExportingSymbols()
-//        && toSerialize.getSpannedScope().getSymbolsSize() > 0) {
-//      toSerialize.getSpannedScope().accept(s2j.getTraverser());
-//    }
+    //    if (toSerialize.getSpannedScope().isExportingSymbols()
+    //        && toSerialize.getSpannedScope().getSymbolsSize() > 0) {
+    //      toSerialize.getSpannedScope().accept(s2j.getTraverser());
+    //    }
     // ============== change end ========
     s2j.getTraverser().addTraversedElement(toSerialize.getSpannedScope());
 

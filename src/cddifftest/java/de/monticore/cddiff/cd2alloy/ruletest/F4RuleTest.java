@@ -1,32 +1,29 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.ruletest;
 
-import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import org.junit.Before;
-import org.junit.Test;
-
+import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-/**
- * Unit test for the U1 rule for the generation of common class names
- */
+/** Unit test for the U1 rule for the generation of common class names */
 public class F4RuleTest extends CDDiffTestBasis {
 
-  protected ASTCDCompilationUnit mvAst = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  protected ASTCDCompilationUnit mvAst =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  protected ASTCDCompilationUnit m1Ast = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+  protected ASTCDCompilationUnit m1Ast =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  protected ASTCDCompilationUnit m2Ast = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+  protected ASTCDCompilationUnit m2Ast =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
   public void prepareASTs() {
@@ -93,8 +90,12 @@ public class F4RuleTest extends CDDiffTestBasis {
       if (!(expNameImpl.get(funNameStr[i + 1]).equals(result[i]))) {
         correct = false;
         System.out.println(
-            "Error in F4: Implementation " + result[i] + " for function " + funNameStr[i]
-                + " not in " + expNameImpl);
+            "Error in F4: Implementation "
+                + result[i]
+                + " for function "
+                + funNameStr[i]
+                + " not in "
+                + expNameImpl);
       }
     }
     assertTrue(correct);
@@ -130,5 +131,4 @@ public class F4RuleTest extends CDDiffTestBasis {
 
     checkF4(f4, expectedResult);
   }
-
 }

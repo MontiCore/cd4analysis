@@ -11,21 +11,20 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class AttrInheritanceTest extends CDDiffTestBasis {
-  protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt/DataWrapper/inheritance";
+  protected final String RELATIVE_MODEL_PATH =
+      "src/cd2smttest/resources/de/monticore/cd2smt/DataWrapper/inheritance";
   protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
   protected Context ctx;
   protected ASTCDDefinition cd;
-
 
   @BeforeEach
   public void setup() {
@@ -38,14 +37,16 @@ public class AttrInheritanceTest extends CDDiffTestBasis {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
 
-    ASTCDCompilationUnit ast = parseModel(Paths.get(RELATIVE_MODEL_PATH, "/attribute/AttrInheritance.cd").toString());
+    ASTCDCompilationUnit ast =
+        parseModel(Paths.get(RELATIVE_MODEL_PATH, "/attribute/AttrInheritance.cd").toString());
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     ctx = cd2SMTGenerator.getContext();
     cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
   }
 
   public void checkAttribute(ASTCDClass Class, String attrname, Expr<? extends Sort> obj) {
-    Optional<Expr<? extends Sort>> attribute = Optional.ofNullable(cd2SMTGenerator.getAttribute(Class, attrname, obj));
+    Optional<Expr<? extends Sort>> attribute =
+        Optional.ofNullable(cd2SMTGenerator.getAttribute(Class, attrname, obj));
     Assertions.assertTrue(attribute.isPresent());
   }
 
@@ -70,8 +71,6 @@ public class AttrInheritanceTest extends CDDiffTestBasis {
     checkAttribute(BigCar, "isCar", bigCar);
     checkAttribute(BigCar, "isBigCarInterface", bigCar);
     checkAttribute(BigCar, "isBigCar", bigCar);
-
-
   }
 
   @Test
@@ -86,7 +85,5 @@ public class AttrInheritanceTest extends CDDiffTestBasis {
     checkAttribute(BigBigCar, "isBigCarInterface", bigBigCar);
     checkAttribute(BigBigCar, "isBigCar", bigBigCar);
     checkAttribute(BigBigCar, "isBigBigCar", bigBigCar);
-
-
   }
 }

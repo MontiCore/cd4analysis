@@ -5,32 +5,30 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.Set;
-
 public class MultiInstanceTest {
-  String[] validBaseCDModelsOpenWorld = { "MultiBaseNoOpenDiff.cd", "MultiBaseOpenSubsetDiff.cd",
-      "MultiBaseOpenCycleDiff.cd" };
+  String[] validBaseCDModelsOpenWorld = {
+    "MultiBaseNoOpenDiff.cd", "MultiBaseOpenSubsetDiff.cd", "MultiBaseOpenCycleDiff.cd"
+  };
 
-  String[] validCompareCDModelsOpenWorld = { "MultiCompNoOpenDiff.cd", "MultiCompOpenSubsetDiff.cd",
-      "MultiCompOpenCycleDiff.cd" };
+  String[] validCompareCDModelsOpenWorld = {
+    "MultiCompNoOpenDiff.cd", "MultiCompOpenSubsetDiff.cd", "MultiCompOpenCycleDiff.cd"
+  };
 
   String validODModel = "/MultiOdNoStereotype.od";
 
-  boolean[] openDiff = { false, true, true };
+  boolean[] openDiff = {false, true, true};
 
-  String[] validBaseCDModelsClosedWorld = { "MultiBaseClosedDiff.cd", "MultiBaseClosedNoDiff.cd" };
+  String[] validBaseCDModelsClosedWorld = {"MultiBaseClosedDiff.cd", "MultiBaseClosedNoDiff.cd"};
 
-  String[] validCompareCDModelsClosedWorld = { "MultiCompClosedDiff.cd",
-      "MultiCompClosedNoDiff.cd" };
+  String[] validCompareCDModelsClosedWorld = {"MultiCompClosedDiff.cd", "MultiCompClosedNoDiff.cd"};
 
-  boolean[] closedDiff = { true, false };
+  boolean[] closedDiff = {true, false};
 
   File cdBaseModel;
 
@@ -68,14 +66,11 @@ public class MultiInstanceTest {
       if (closedDiff[i]) {
         Assert.assertTrue(
             matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, baseCD, compCD, od));
-      }
-      else {
+      } else {
         Assert.assertFalse(
             matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, baseCD, compCD, od));
       }
-
     }
-
   }
 
   @Test
@@ -96,13 +91,10 @@ public class MultiInstanceTest {
       if (openDiff[i]) {
         Assert.assertTrue(
             matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, baseCD, compCD, od));
-      }
-      else {
+      } else {
         Assert.assertFalse(
             matcher.isDiffWitness(CDSemantics.MULTI_INSTANCE_OPEN_WORLD, baseCD, compCD, od));
       }
-
     }
   }
-
 }

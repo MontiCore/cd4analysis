@@ -5,8 +5,7 @@ import de.monticore.cd4code._visitor.CD4CodeHandler;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.symboltable.serialization.JsonPrinter;
 
-public class CD4CodeSymbols2Json extends CD4CodeSymbols2JsonTOP
-    implements CD4CodeHandler {
+public class CD4CodeSymbols2Json extends CD4CodeSymbols2JsonTOP implements CD4CodeHandler {
   public CD4CodeSymbols2Json() {
     getTraverser().setCD4CodeHandler(this);
   }

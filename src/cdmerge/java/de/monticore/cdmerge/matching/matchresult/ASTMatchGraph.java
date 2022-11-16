@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import de.monticore.ast.ASTNode;
 import de.monticore.cdmerge.util.CDUtils;
-
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -43,7 +42,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    * node is created if this MatchResult already contains a node for the specified element. Thus,
    * this method is idempotent.
    *
-   * @param parent  The parent (e.g. a ClassDiagramm or Class for this model element
+   * @param parent The parent (e.g. a ClassDiagramm or Class for this model element
    * @param elemens the model element
    * @return the node containing this element
    */
@@ -56,7 +55,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    * node is created if this MatchResult already contains a node for the specified element. Thus,
    * this method is idempotent.
    *
-   * @param parent  The parent (e.g. a ClassDiagramm or Class for this model element
+   * @param parent The parent (e.g. a ClassDiagramm or Class for this model element
    * @param elemens the model element
    * @return the node containing this element
    */
@@ -86,7 +85,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    * element was found
    *
    * @param element - the element to search for
-   * @param parent  - the element's parent
+   * @param parent - the element's parent
    * @return either the node (Boxed in an Optional) or Optional.empty() if no Node was found
    */
   public Optional<MatchNode<E, P>> getNode(E element, P parent) {
@@ -106,9 +105,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     return Optional.empty();
   }
 
-  /**
-   * @return the sequence of Parents for this match result
-   */
+  /** @return the sequence of Parents for this match result */
   public ImmutableList<P> getParents() {
     return ImmutableList.copyOf(this.parents);
   }
@@ -119,7 +116,7 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
    *
    * @param p as stored in this MatchResult
    * @return the matching nodes for the specified parent node and the matchIdentifier or
-   * Optional.empty() if the match could not be resolved
+   *     Optional.empty() if the match could not be resolved
    */
   public List<MatchNode<E, P>> getAllNodesForParent(P parent) {
 
@@ -130,16 +127,12 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     return this.matches.get(parent);
   }
 
-  /**
-   * Returns an iterator that allows to iterate over all matchings nodes
-   */
+  /** Returns an iterator that allows to iterate over all matchings nodes */
   public Iterator<List<MatchNode<E, P>>> getMatchNodeIterator() {
     return this.matches.values().iterator();
   }
 
-  /**
-   * Returns an iterator that allows to iterate over all matchings nodes
-   */
+  /** Returns an iterator that allows to iterate over all matchings nodes */
   public Iterator<MatchNode<E, P>> getMatchNodeIterator(P parent) {
     int idx = getIndexForParent(parent);
     if (idx < 0) {
@@ -233,8 +226,11 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
           sb.append("[" + CDUtils.getName(parent) + "] " + CDUtils.getName(node.getElement()));
           for (MatchNode<E, P> matchNode : node.getMatchedNodes()) {
             visitedNodes.add(matchNode);
-            sb.append(" -> [" + CDUtils.getName(matchNode.getParent()) + "] " + CDUtils.getName(
-                matchNode.getElement()));
+            sb.append(
+                " -> ["
+                    + CDUtils.getName(matchNode.getParent())
+                    + "] "
+                    + CDUtils.getName(matchNode.getElement()));
           }
           sb.append("\n");
         }
@@ -246,5 +242,4 @@ public class ASTMatchGraph<E extends ASTNode, P extends ASTNode> {
     }
     return sb.toString();
   }
-
 }

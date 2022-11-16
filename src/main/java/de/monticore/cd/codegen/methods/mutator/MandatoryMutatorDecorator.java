@@ -1,20 +1,19 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.mutator;
 
+import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+import static de.monticore.cd.facade.CDModifier.PUBLIC;
+
 import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.methods.AbstractMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
-import static de.monticore.cd.facade.CDModifier.PUBLIC;
+import org.apache.commons.lang3.StringUtils;
 
 public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
 
@@ -33,8 +32,11 @@ public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
   }
 
   protected ASTCDMethod createSetter(final ASTCDAttribute ast) {
-    String name = String.format(SET, StringUtils.capitalize(service.getNativeAttributeName(ast.getName())));
-    ASTCDMethod method = this.getCDMethodFacade().createMethod(PUBLIC.build(), name, this.getCDParameterFacade().createParameters(ast));
+    String name =
+        String.format(SET, StringUtils.capitalize(service.getNativeAttributeName(ast.getName())));
+    ASTCDMethod method =
+        this.getCDMethodFacade()
+            .createMethod(PUBLIC.build(), name, this.getCDParameterFacade().createParameters(ast));
     this.replaceTemplate(EMPTY_BODY, method, new TemplateHookPoint("methods.Set", ast));
     return method;
   }

@@ -7,9 +7,8 @@ import de.monticore.cdinterfaceandenum._symboltable.ICDInterfaceAndEnumGlobalSco
 import de.monticore.cdinterfaceandenum.cocos.CDInterfaceAndEnumCoCos;
 import de.monticore.io.paths.MCPath;
 import de.monticore.testcdinterfaceandenum._parser.TestCDInterfaceAndEnumParser;
-import org.junit.Before;
-
 import java.nio.file.Paths;
+import org.junit.Before;
 
 public class CDInterfaceAndEnumTestBasis extends TestBasis {
   protected TestCDInterfaceAndEnumParser p;
@@ -21,8 +20,7 @@ public class CDInterfaceAndEnumTestBasis extends TestBasis {
     CDInterfaceAndEnumMill.init();
     p = new TestCDInterfaceAndEnumParser();
 
-    final ICDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill
-        .globalScope();
+    final ICDInterfaceAndEnumGlobalScope globalScope = CDInterfaceAndEnumMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
 

@@ -9,9 +9,7 @@ import de.monticore.prettyprint.IndentPrinter;
  */
 public class NoLineBreakIndentPrinter extends IndentPrinter {
 
-  /**
-   * @see {@link IndentPrinter}
-   */
+  /** @see {@link IndentPrinter} */
   public NoLineBreakIndentPrinter(StringBuilder sb) {
     super(sb);
   }
@@ -25,7 +23,5 @@ public class NoLineBreakIndentPrinter extends IndentPrinter {
   public String getContent() {
     String printResult = super.getContent();
     return printResult.replaceAll("\n", " ");
-
   }
-
 }

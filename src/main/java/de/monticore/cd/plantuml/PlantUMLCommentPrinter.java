@@ -3,7 +3,6 @@ package de.monticore.cd.plantuml;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.prettyprint.IndentPrinter;
-
 import java.util.Optional;
 
 public class PlantUMLCommentPrinter {
@@ -11,7 +10,11 @@ public class PlantUMLCommentPrinter {
     printCommentToNote(a, Optional.empty(), config, printer);
   }
 
-  public static void printCommentToNote(ASTNode a, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<String> connectTo, PlantUMLConfig config, IndentPrinter printer) {
+  public static void printCommentToNote(
+      ASTNode a,
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<String> connectTo,
+      PlantUMLConfig config,
+      IndentPrinter printer) {
     if (!config.getShowComments()) {
       return;
     }

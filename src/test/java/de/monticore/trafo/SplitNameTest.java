@@ -1,17 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.tf.SplitName;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Created by
@@ -21,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class SplitNameTest {
 
   @BeforeClass
-  public static void init(){
+  public static void init() {
     CD4CodeMill.init();
   }
 
@@ -43,7 +42,7 @@ public class SplitNameTest {
     splitName.doReplacement();
 
     // name replaced
-    assertEquals(2,splitName.get_$C().getCDAttributeList().size());
+    assertEquals(2, splitName.get_$C().getCDAttributeList().size());
     assertEquals(splitName.get_$C().getCDAttributeList().get(0).getName(), "firstName");
     assertEquals(splitName.get_$C().getCDAttributeList().get(1).getName(), "lastName");
   }

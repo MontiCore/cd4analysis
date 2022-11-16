@@ -1,11 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloycddiff;
 
-import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import de.monticore.cddiff.cd2alloy.generator.OpenWorldGenerator;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -16,11 +14,9 @@ import java.util.Set;
  * diagrams
  */
 public class DiffModuleGenerator {
-  /**
-   * Helper function to create the diff module predicate.
-   */
-  private static String diffPredicateGenerator(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      CDSemantics semantics) {
+  /** Helper function to create the diff module predicate. */
+  private static String diffPredicateGenerator(
+      ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, CDSemantics semantics) {
     // Create inputs
     Set<ASTCDCompilationUnit> cds = new HashSet<>();
     cds.add(cd1);
@@ -28,7 +24,7 @@ public class DiffModuleGenerator {
 
     String alloyModule;
     // Generate general module
-    switch(semantics) {
+    switch (semantics) {
       case MULTI_INSTANCE_CLOSED_WORLD:
         // code block
         alloyModule = CD2AlloyGenerator.getInstance().generateModule(cds, true);
@@ -41,8 +37,6 @@ public class DiffModuleGenerator {
         alloyModule = CD2AlloyGenerator.getInstance().generateModule(cds, false);
         // code block
     }
-
-
 
     // Generate diff predicate
     alloyModule += System.lineSeparator();
@@ -63,11 +57,11 @@ public class DiffModuleGenerator {
    *
    * @param cd1 Class diagram which is used as base
    * @param cd2 Class diagram the base is compared to
-   * @param k   Scope for the execution of the alloy module
+   * @param k Scope for the execution of the alloy module
    * @return String for an alloy module comparing cd1 and cd2
    */
-  public static String generateDiffPredicate(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      int k, CDSemantics semantics) {
+  public static String generateDiffPredicate(
+      ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, int k, CDSemantics semantics) {
     // Create module
     String alloyModule = diffPredicateGenerator(cd1, cd2, semantics);
 
@@ -77,8 +71,12 @@ public class DiffModuleGenerator {
     return alloyModule;
   }
 
-  public static Path generateDiffPredicateToFile(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      int k, CDSemantics semantics, File outputDirectory) {
+  public static Path generateDiffPredicateToFile(
+      ASTCDCompilationUnit cd1,
+      ASTCDCompilationUnit cd2,
+      int k,
+      CDSemantics semantics,
+      File outputDirectory) {
 
     // Initialize set of asts
     Set<ASTCDCompilationUnit> asts = new HashSet<>();
@@ -95,5 +93,4 @@ public class DiffModuleGenerator {
 
     return CD2AlloyGenerator.getInstance().saveModulePath(module, moduleName, outputDirectory);
   }
-
 }

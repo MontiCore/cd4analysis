@@ -3,22 +3,23 @@ package de.monticore.testcdbasis.parser;
 
 import de.monticore.cdbasis._ast.*;
 import de.monticore.testcdbasis.CDBasisTestBasis;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.Test;
 
 public class TestCDBasisParserTest extends CDBasisTestBasis {
 
   @Test
   public void parseCDCompilationUnit() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse_StringCDCompilationUnit("package blub; classdiagram CD {}");
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse_StringCDCompilationUnit("package blub; classdiagram CD {}");
     checkNullAndPresence(p, astcdCompilationUnit);
   }
 
   @Test
   public void parseCDDefinition() throws IOException {
-    final Optional<ASTCDDefinition> astcdDefinition = p.parse_StringCDDefinition("classdiagram CD {}");
+    final Optional<ASTCDDefinition> astcdDefinition =
+        p.parse_StringCDDefinition("classdiagram CD {}");
     checkNullAndPresence(p, astcdDefinition);
   }
 
@@ -39,7 +40,8 @@ public class TestCDBasisParserTest extends CDBasisTestBasis {
 
   @Test
   public void parseCDAttribute() throws IOException {
-    final Optional<ASTCDAttribute> astcdAttribute = p.parse_StringCDAttribute("final String name = \"testName\";");
+    final Optional<ASTCDAttribute> astcdAttribute =
+        p.parse_StringCDAttribute("final String name = \"testName\";");
     checkNullAndPresence(p, astcdAttribute);
   }
 
@@ -51,8 +53,8 @@ public class TestCDBasisParserTest extends CDBasisTestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath("cdbasis/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parseCDCompilationUnit(getFilePath("cdbasis/parser/Simple.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
   }
-
 }

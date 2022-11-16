@@ -17,5 +17,4 @@ public class CDAssociationWrapperPack {
   public boolean isReverse() {
     return isReverse;
   }
-
 }

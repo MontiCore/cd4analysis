@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testtypeimporter;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -14,13 +16,10 @@ import de.monticore.testtypeimporter._ast.ASTCompilationUnit;
 import de.monticore.testtypeimporter._parser.TestTypeImporterParser;
 import de.monticore.testtypeimporter._symboltable.ITestTypeImporterArtifactScope;
 import de.monticore.testtypeimporter._symboltable.ITestTypeImporterGlobalScope;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class TestTypeImporterTest extends TestBasis {
   @Test
@@ -47,11 +46,13 @@ public class TestTypeImporterTest extends TestBasis {
     globalScope.addAdaptedFunctionSymbolResolver(c);
 
     final TestTypeImporterParser parser = new TestTypeImporterParser();
-    final Optional<ASTCompilationUnit> cu = parser.parse(getFilePath("testtypeimporter/Simple.def"));
+    final Optional<ASTCompilationUnit> cu =
+        parser.parse(getFilePath("testtypeimporter/Simple.def"));
     assertTrue(cu.isPresent());
 
     final ASTCompilationUnit compilationUnit = cu.get();
-    final ITestTypeImporterArtifactScope symbolTable = TestTypeImporterMill.scopesGenitorDelegator().createFromAST(compilationUnit);
+    final ITestTypeImporterArtifactScope symbolTable =
+        TestTypeImporterMill.scopesGenitorDelegator().createFromAST(compilationUnit);
 
     final Optional<OOTypeSymbol> stringOOType = symbolTable.resolveOOType("java.lang.String");
     assertTrue(stringOOType.isPresent());
@@ -67,6 +68,9 @@ public class TestTypeImporterTest extends TestBasis {
     assertTrue(a.isPresent());
     assertEquals("java.lang.String", a.get().getType().getTypeInfo().getFullName());
 
-    compilationUnit.getDefinition().streamElements().forEach(e -> assertNotNull(e.getSymbol().getType().getTypeInfo()));
+    compilationUnit
+        .getDefinition()
+        .streamElements()
+        .forEach(e -> assertNotNull(e.getSymbol().getType().getTypeInfo()));
   }
 }

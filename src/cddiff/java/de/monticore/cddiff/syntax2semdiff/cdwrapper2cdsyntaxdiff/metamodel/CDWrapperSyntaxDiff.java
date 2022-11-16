@@ -1,33 +1,28 @@
 package de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel;
 
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-
 import java.util.Deque;
 
 /**
- * CDWrapperSyntaxDiff is to compare each element of two CDWrapper and return the result after comparison.
- * We should determine which CDWrapper is the baseCDW and which one is the compareCDW.
- * Determine whether there is a semantic difference between CDWrapper A and CDWrapper B,
- * We should create two CDWrapperSyntaxDiff:
- *    1. baseCDW = A, compareCDW= B
- *    1. baseCDW = B, compareCDW = A
- * If there are no objects in cDTypeWrapperDiffResultQueueWithDiff and
- * cDAssocWrapperDiffResultQueueWithDiff of above two CDSyntaxDiffs,
- * then we can say there is no semantic difference between CD A and CD B,
- * otherwise there are semantic differences between CD A and CD B.
+ * CDWrapperSyntaxDiff is to compare each element of two CDWrapper and return the result after
+ * comparison. We should determine which CDWrapper is the baseCDW and which one is the compareCDW.
+ * Determine whether there is a semantic difference between CDWrapper A and CDWrapper B, We should
+ * create two CDWrapperSyntaxDiff: 1. baseCDW = A, compareCDW= B 1. baseCDW = B, compareCDW = A If
+ * there are no objects in cDTypeWrapperDiffResultQueueWithDiff and
+ * cDAssocWrapperDiffResultQueueWithDiff of above two CDSyntaxDiffs, then we can say there is no
+ * semantic difference between CD A and CD B, otherwise there are semantic differences between CD A
+ * and CD B.
  *
- * @attribute baseCDW:
- *    the based CDWrapper
- * @attribute compareCDW:
- *    the compared CDWrapper
- * @attribute cDTypeWrapperDiffResultQueueWithDiff:
- *    store the CDTypeWrapperDiff that has semantic difference
- * @attribute cDAssocWrapperDiffResultQueueWithDiff:
- *    store the CDAssocWrapperDiff that has semantic difference
- * @attribute cDTypeWrapperDiffResultQueueWithoutDiff:
- *    store the CDTypeWrapperDiff that has no semantic difference
- * @attribute cDAssocWrapperDiffResultQueueWithoutDiff:
- *    store the CDAssocWrapperDiff that has no semantic difference
+ * @attribute baseCDW: the based CDWrapper
+ * @attribute compareCDW: the compared CDWrapper
+ * @attribute cDTypeWrapperDiffResultQueueWithDiff: store the CDTypeWrapperDiff that has semantic
+ *     difference
+ * @attribute cDAssocWrapperDiffResultQueueWithDiff: store the CDAssocWrapperDiff that has semantic
+ *     difference
+ * @attribute cDTypeWrapperDiffResultQueueWithoutDiff: store the CDTypeWrapperDiff that has no
+ *     semantic difference
+ * @attribute cDAssocWrapperDiffResultQueueWithoutDiff: store the CDAssocWrapperDiff that has no
+ *     semantic difference
  */
 public class CDWrapperSyntaxDiff {
   protected CDWrapper baseCDW;
@@ -47,7 +42,9 @@ public class CDWrapperSyntaxDiff {
     this.compareCDW = compareCDW;
   }
 
-  public CDWrapperSyntaxDiff(CDWrapper baseCDW, CDWrapper compareCDW,
+  public CDWrapperSyntaxDiff(
+      CDWrapper baseCDW,
+      CDWrapper compareCDW,
       Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithDiff,
       Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithDiff,
       Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithoutDiff,
@@ -80,7 +77,8 @@ public class CDWrapperSyntaxDiff {
     return cDTypeWrapperDiffResultQueueWithDiff;
   }
 
-  public void setCDTypeDiffResultQueueWithDiff(Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithDiff) {
+  public void setCDTypeDiffResultQueueWithDiff(
+      Deque<CDTypeWrapperDiff> cDTypeWrapperDiffResultQueueWithDiff) {
     this.cDTypeWrapperDiffResultQueueWithDiff = cDTypeWrapperDiffResultQueueWithDiff;
   }
 
@@ -110,5 +108,4 @@ public class CDWrapperSyntaxDiff {
       Deque<CDAssocWrapperDiff> cDAssocWrapperDiffResultQueueWithoutDiff) {
     this.cDAssocWrapperDiffResultQueueWithoutDiff = cDAssocWrapperDiffResultQueueWithoutDiff;
   }
-
 }

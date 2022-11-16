@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static org.junit.Assert.fail;
+
 import com.google.common.collect.Lists;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
@@ -13,13 +15,10 @@ import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.fail;
+import org.junit.Before;
 
 public abstract class DecoratorTestCase {
 
@@ -33,7 +32,7 @@ public abstract class DecoratorTestCase {
     CD4CodeMill.init();
     ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     BuiltInTypes.addBuiltInTypes(globalScope);
-   // globalScope.setModelPath(new ModelPath(Paths.get(MODEL_PATH)));
+    // globalScope.setModelPath(new ModelPath(Paths.get(MODEL_PATH)));
   }
 
   public ASTCDCompilationUnit parse(String... names) {
@@ -58,15 +57,18 @@ public abstract class DecoratorTestCase {
     String packageName = Joiners.DOT.join(comp.getCDPackageList());
     scope.getLocalDiagramSymbols().forEach(s -> s.setPackageName(packageName));
     List<ImportStatement> imports = Lists.newArrayList();
-    comp.getMCImportStatementList().forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
+    comp.getMCImportStatementList()
+        .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
     scope.setImportsList(imports);
     scope.setPackageName(packageName);
-    for (ASTMCImportStatement imp: comp.getMCImportStatementList()) {
+    for (ASTMCImportStatement imp : comp.getMCImportStatementList()) {
       if (!CD4CodeMill.globalScope().resolveDiagram(imp.getQName()).isPresent()) {
-        parse(imp.getMCQualifiedName().getPartsList().toArray(new String[imp.getMCQualifiedName().sizeParts()]));
+        parse(
+            imp.getMCQualifiedName()
+                .getPartsList()
+                .toArray(new String[imp.getMCQualifiedName().sizeParts()]));
       }
     }
     return comp;
   }
-
 }

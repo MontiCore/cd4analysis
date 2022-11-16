@@ -19,5 +19,4 @@ public class CDAssociationWrapperCardinalityPack {
   public CDAssociationWrapperCardinality getRightCardinality() {
     return rightCardinality;
   }
-
 }

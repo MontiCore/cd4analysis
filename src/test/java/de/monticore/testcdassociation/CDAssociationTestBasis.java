@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdassociation;
 
+import static org.junit.Assert.fail;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -9,13 +11,10 @@ import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.monticore.testcdassociation._parser.TestCDAssociationParser;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.fail;
+import org.junit.Before;
 
 public class CDAssociationTestBasis extends TestBasis {
   protected TestCDAssociationParser p;
@@ -27,8 +26,7 @@ public class CDAssociationTestBasis extends TestBasis {
     CD4AnalysisMill.init();
     p = new TestCDAssociationParser();
 
-    final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill
-        .globalScope();
+    final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
@@ -40,8 +38,7 @@ public class CDAssociationTestBasis extends TestBasis {
     final Optional<ASTCDCompilationUnit> astcdCompilationUnit;
     try {
       astcdCompilationUnit = p.parseCDCompilationUnit(getFilePath(modelName));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       fail("Failed while parsing the model `" + getFilePath(modelName) + "': " + e.getMessage());
       return null;
     }
@@ -49,5 +46,4 @@ public class CDAssociationTestBasis extends TestBasis {
     checkNullAndPresence(p, astcdCompilationUnit);
     return astcdCompilationUnit.get();
   }
-
 }

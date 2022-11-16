@@ -7,40 +7,30 @@ import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.translator.A4Solution;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A concrete alloy solution handler to process alloy based diff solutions for class diagrams
- */
+/** A concrete alloy solution handler to process alloy based diff solutions for class diagrams */
 public class AlloyDiffSolution extends AlloySolutionHandler {
 
-  /**
-   * Constructor for de.cddiff.alloycddiff.alloyrunner.AlloyDiffSolution
-   */
+  /** Constructor for de.cddiff.alloycddiff.alloyrunner.AlloyDiffSolution */
   public AlloyDiffSolution(CompModule alloyModule, Command command, A4Solution initialSolution) {
     super(alloyModule, command, initialSolution);
   }
 
-  /**
-   * Constructor for de.cddiff.alloycddiff.alloyrunner.AlloyDiffSolution
-   */
+  /** Constructor for de.cddiff.alloycddiff.alloyrunner.AlloyDiffSolution */
   public AlloyDiffSolution(CompModule alloyModule, Command command) throws Err {
     super(alloyModule, command);
   }
 
-  /**
-   * @see AlloySolutionHandler#generateSolutionsToPath(Path)
-   */
+  /** @see AlloySolutionHandler#generateSolutionsToPath(Path) */
   @Override
   public void generateSolutionsToPath(Path outputDirectory) {
     if (limited) {
-      Alloy2ODGenerator.generateLimited(alloyModule, initialSolution, solutionLimit,
-          outputDirectory.toFile());
-    }
-    else {
+      Alloy2ODGenerator.generateLimited(
+          alloyModule, initialSolution, solutionLimit, outputDirectory.toFile());
+    } else {
       Alloy2ODGenerator.generateAll(alloyModule, initialSolution, outputDirectory.toFile());
     }
   }
@@ -55,8 +45,7 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
   }
 
   /**
-   * @see AlloySolutionHandler#generateSolutionsToPath(Path)
-   * TODO: This is incorrectly implemented.
+   * @see AlloySolutionHandler#generateSolutionsToPath(Path) TODO: This is incorrectly implemented.
    */
   public void generateUniqueSolutionsToPath(Path outputDirectory) {
     // Variable for possibly multiple solutions
@@ -86,8 +75,7 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return;
       }
@@ -103,5 +91,4 @@ public class AlloyDiffSolution extends AlloySolutionHandler {
   public List<ASTODArtifact> generateUniqueODs() {
     return Alloy2ODGenerator.generateUniqueODs(alloyModule, initialSolution);
   }
-
 }

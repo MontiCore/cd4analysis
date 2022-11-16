@@ -7,9 +7,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 
-/**
- * Interface for algorithms which merge two types
- */
+/** Interface for algorithms which merge two types */
 public interface TypeMergeStrategy {
 
   /**
@@ -19,8 +17,8 @@ public interface TypeMergeStrategy {
    * @param class2 - input class 2
    * @return - the merged class
    */
-  ASTCDClass merge(ASTCDClass class1, ASTCDClass class2,
-      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult);
+  ASTCDClass merge(
+      ASTCDClass class1, ASTCDClass class2, ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult);
 
   /**
    * Merges the two enums into one
@@ -51,7 +49,7 @@ public interface TypeMergeStrategy {
   /**
    * Executes a heterogeneous merge of class and interface
    *
-   * @param astClass     - input class
+   * @param astClass - input class
    * @param astInterface - input interface
    * @return - the merged class
    */
@@ -64,7 +62,7 @@ public interface TypeMergeStrategy {
    * Executes a heterogeneous merge of class and interface
    *
    * @param astClass - input class
-   * @param astEnum  - input enum
+   * @param astEnum - input enum
    * @return - the merged class
    */
   default ASTCDClass merge(ASTCDClass astClass, ASTCDEnum astEnum) {
@@ -76,12 +74,11 @@ public interface TypeMergeStrategy {
    * Executes a heterogeneous merge of class and enum
    *
    * @param astClass - input class
-   * @param astEnum  - input enum
+   * @param astEnum - input enum
    * @return - the merged enum
    */
   default ASTCDEnum merge(ASTCDInterface element, ASTCDEnum enm) {
     throw new UnsupportedOperationException(
         "This Strategy does not support heterogenous type merges");
   }
-
 }

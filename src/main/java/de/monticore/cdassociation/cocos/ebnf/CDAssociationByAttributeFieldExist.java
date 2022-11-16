@@ -9,11 +9,8 @@ import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 
-/**
- * Checks that the attribute connected by associations exist.
- */
-public class CDAssociationByAttributeFieldExist implements
-    CDAssociationASTCDAssociationCoCo {
+/** Checks that the attribute connected by associations exist. */
+public class CDAssociationByAttributeFieldExist implements CDAssociationASTCDAssociationCoCo {
 
   protected CDAssociationPrettyPrinter prettyPrinter = new CDAssociationPrettyPrinter();
 
@@ -29,12 +26,9 @@ public class CDAssociationByAttributeFieldExist implements
       final SymTypeExpression type = side.getCDRole().getSymbol().getType();
       if (type.getFieldList(attributeName, false).size() == 0) {
         Log.error(
-            String
-                .format(
-                    "0xCDC6B: The attribute %s does not exists in %s %s.",
-                    attributeName,
-                    CDMill.cDTypeKindPrinter().print(type),
-                    type.print()),
+            String.format(
+                "0xCDC6B: The attribute %s does not exists in %s %s.",
+                attributeName, CDMill.cDTypeKindPrinter().print(type), type.print()),
             assoc.get_SourcePositionStart());
       }
     }

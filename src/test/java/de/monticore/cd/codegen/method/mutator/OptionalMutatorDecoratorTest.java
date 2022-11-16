@@ -1,6 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.method.mutator;
 
+import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
+import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
+import static de.monticore.cd.facade.CDModifier.PROTECTED;
+import static de.monticore.cd.facade.CDModifier.PUBLIC;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 import de.monticore.cd.codegen.methods.mutator.OptionalMutatorDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -10,17 +17,9 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.LogStub;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-
-import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
-import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
-import static de.monticore.cd.facade.CDModifier.PROTECTED;
-import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class OptionalMutatorDecoratorTest {
 
@@ -32,7 +31,8 @@ public class OptionalMutatorDecoratorTest {
   public void setup() {
     LogStub.init();
     ASTMCType optionalType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optionalType, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optionalType, "a");
     OptionalMutatorDecorator optionalMutatorDecorator = new OptionalMutatorDecorator(glex);
     this.methods = optionalMutatorDecorator.decorate(attribute);
   }

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.integrationtest;
 
+import static org.junit.Assert.fail;
+
 import com.google.common.base.Preconditions;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
@@ -10,25 +12,22 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.util.CDUtils;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.fail;
+import org.junit.Test;
 
 public class AssociationCardinalities extends BaseTest {
 
-  private static final String INPUT_MODEL_1 = "src/cdmergetest/resources/class_diagrams"
-      + "/Association/cardinalities/A.cd";
+  private static final String INPUT_MODEL_1 =
+      "src/cdmergetest/resources/class_diagrams" + "/Association/cardinalities/A.cd";
 
-  private static final String INPUT_MODEL_2 = "src/cdmergetest/resources/class_diagrams"
-      + "/Association/cardinalities/B.cd";
+  private static final String INPUT_MODEL_2 =
+      "src/cdmergetest/resources/class_diagrams" + "/Association/cardinalities/B.cd";
 
-  private static final String EXPECTED = "src/cdmergetest/resources/class_diagrams/Association"
-      + "/cardinalities/mergedCD.cd";
+  private static final String EXPECTED =
+      "src/cdmergetest/resources/class_diagrams/Association" + "/cardinalities/mergedCD.cd";
 
   @Test
   public void testAssociationCardinalities() throws IOException {
@@ -42,23 +41,22 @@ public class AssociationCardinalities extends BaseTest {
       processResult(results);
       org.junit.Assert.assertTrue(
           parseCD(CDUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD, false));
-    }
-    catch (MergingException e) {
+    } catch (MergingException e) {
       e.printStackTrace();
       fail("Unexpected exception: " + e.getMessage());
     }
   }
 
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
-            MergeParameter.ON)
-        .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
-        .withParam(MergeParameter.FAIL_FAST);
+    CDMergeConfig.Builder builder =
+        getConfigBuilder()
+            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
+            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
+            .withParam(MergeParameter.FAIL_FAST);
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
-
 }

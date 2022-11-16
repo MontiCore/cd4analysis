@@ -5,7 +5,6 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,26 +12,16 @@ public interface CDExpander {
 
   ASTCDCompilationUnit getCD();
 
-  /**
-   * add newClass as subclass to superclass
-   */
+  /** add newClass as subclass to superclass */
   void addNewSubClass(String name, ASTCDClass superclass);
 
-  /**
-   * add newClass as sub-class to astcdInterface
-   */
+  /** add newClass as sub-class to astcdInterface */
   void addNewSubClass(String name, ASTCDInterface astcdInterface);
 
-  /**
-   * Default Package is troublesome!
-   * todo: fix problem with nested packages
-   */
+  /** Default Package is troublesome! todo: fix problem with nested packages */
   void addType2Package(ASTCDType astcdType, String packageName);
 
-  /**
-   * Default Package is troublesome!
-   * todo: fix problem with nested packages
-   */
+  /** Default Package is troublesome! todo: fix problem with nested packages */
   Optional<ASTCDType> addClone(ASTCDType cdType);
 
   Optional<ASTCDClass> addDummyClass(ASTCDType srcType);
@@ -60,8 +49,10 @@ public interface CDExpander {
   void updateUnspecifiedDir2Default();
 
   void mismatchDir(ASTCDAssociation src, ASTCDAssociation target);
-  void mismatchDirInReverse(ASTCDAssociation src, ASTCDAssociation target);
-  void matchDir(ASTCDAssociation src, ASTCDAssociation target);
-  void matchDirInReverse(ASTCDAssociation src, ASTCDAssociation target);
 
+  void mismatchDirInReverse(ASTCDAssociation src, ASTCDAssociation target);
+
+  void matchDir(ASTCDAssociation src, ASTCDAssociation target);
+
+  void matchDirInReverse(ASTCDAssociation src, ASTCDAssociation target);
 }

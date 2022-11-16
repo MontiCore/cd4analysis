@@ -15,16 +15,13 @@ public class DefaultAttributeMatcher extends AttributeMatcherBase {
     super(blackBoard);
   }
 
-  /**
-   * Matches only Attributes with same name and same type
-   */
+  /** Matches only Attributes with same name and same type */
   @Override
   public boolean matchAttribute(ASTCDAttribute attribute1, ASTCDAttribute attribute2) {
     boolean match =
-        attribute1.getName().equalsIgnoreCase(attribute2.getName()) && attribute1.getMCType()
-            .deepEquals(attribute2.getMCType());
+        attribute1.getName().equalsIgnoreCase(attribute2.getName())
+            && attribute1.getMCType().deepEquals(attribute2.getMCType());
     log(ErrorLevel.FINE, "Identified matching attribute ", attribute1, attribute2);
     return match;
   }
-
 }

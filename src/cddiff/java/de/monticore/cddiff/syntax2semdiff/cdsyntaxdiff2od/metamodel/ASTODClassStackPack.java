@@ -1,8 +1,7 @@
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel;
 
-import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-
+import de.monticore.odbasis._ast.ASTODNamedObject;
 import java.util.List;
 
 public class ASTODClassStackPack {
@@ -30,5 +29,4 @@ public class ASTODClassStackPack {
   public void setCDTypeWrapper(CDTypeWrapper CDTypeWrapper) {
     this.cDTypeWrapper = CDTypeWrapper;
   }
-
 }

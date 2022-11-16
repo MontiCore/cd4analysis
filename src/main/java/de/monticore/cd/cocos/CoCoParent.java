@@ -42,12 +42,9 @@ public abstract class CoCoParent<Checker> {
 
   protected abstract void addCheckerForAllCoCos(Checker checker);
 
-  protected void addEbnfCoCos(Checker checker) {
-  }
+  protected void addEbnfCoCos(Checker checker) {}
 
-  protected void addMcgCoCos(Checker checker) {
-  }
+  protected void addMcgCoCos(Checker checker) {}
 
-  protected void addMcg2EbnfCoCos(Checker checker) {
-  }
+  protected void addMcg2EbnfCoCos(Checker checker) {}
 }

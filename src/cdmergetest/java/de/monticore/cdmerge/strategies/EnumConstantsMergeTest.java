@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.strategies;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
@@ -13,12 +15,9 @@ import de.monticore.cdmerge.merging.strategies.DefaultAtributeMerger;
 import de.monticore.cdmerge.merging.strategies.DefaultTypeMergeStrategy;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class EnumConstantsMergeTest extends BaseTest {
 
@@ -50,11 +49,12 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("D").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("L").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("F").build());
@@ -64,16 +64,15 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("R").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("T").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("F").build());
@@ -88,8 +87,7 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("T").build());
     try {
       assertFalse(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
@@ -101,27 +99,27 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("G").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("T").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -131,8 +129,7 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("T").build());
     try {
       assertFalse(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
@@ -149,11 +146,12 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("D").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("L").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("F").build());
@@ -162,16 +160,15 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("R").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("H").build());
@@ -187,12 +184,10 @@ public class EnumConstantsMergeTest extends BaseTest {
 
     try {
       assertFalse(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -204,27 +199,27 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("D").build());
 
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("G").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("H").build());
 
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -236,12 +231,10 @@ public class EnumConstantsMergeTest extends BaseTest {
 
     try {
       assertFalse(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -250,11 +243,12 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -264,16 +258,15 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("D").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("Y").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setModifier(DefaultModifier)
-        .setName("E")
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setModifier(DefaultModifier).setName("E").build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -286,12 +279,10 @@ public class EnumConstantsMergeTest extends BaseTest {
 
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -304,26 +295,26 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("D").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("Y").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setModifier(DefaultModifier)
-        .setName("E")
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setModifier(DefaultModifier).setName("E").build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -335,12 +326,10 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -349,23 +338,23 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -373,73 +362,69 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
 
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
   public void testMergeEnumsBothEmpty() {
     List<ASTCDEnumConstant> ec1 = new ArrayList<>();
 
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
 
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
 
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
   public void testMergeEnumsEmptyEnum1() {
     List<ASTCDEnumConstant> ec1 = new ArrayList<>();
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -447,12 +432,10 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -461,26 +444,26 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("D").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("F").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("G").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -491,48 +474,44 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("G").build());
     try {
       assertFalse(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
 
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
   public void testMergeEnumsSingleMatch() {
     List<ASTCDEnumConstant> ec1 = new ArrayList<>();
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -541,26 +520,26 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
@@ -568,12 +547,10 @@ public class EnumConstantsMergeTest extends BaseTest {
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("E").build());
     try {
       assertTrue(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   @Test
@@ -582,34 +559,32 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
 
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     try {
       TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum);
       fail("Conflicting order or Enum Constants should cause exception");
-    }
-    catch (MergingException expected) {
+    } catch (MergingException expected) {
       // EXPECTED
     }
-
   }
 
   @Test
@@ -619,33 +594,31 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
 
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
     try {
       TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum);
       fail("Conflicting order or Enum Constants should cause exception");
-    }
-    catch (MergingException expected) {
+    } catch (MergingException expected) {
       // EXPECTED
     }
-
   }
 
   @Test
@@ -656,76 +629,70 @@ public class EnumConstantsMergeTest extends BaseTest {
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
 
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("C").build());
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
     try {
       TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum);
       fail("Conflicting order or Enum Constants should cause exception");
-    }
-    catch (MergingException expected) {
+    } catch (MergingException expected) {
       // EXPECTED
     }
-
   }
 
   @Test
   public void testMergeEnumsSingleNoMatch() {
     List<ASTCDEnumConstant> ec1 = new ArrayList<>();
     ec1.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
-    final ASTCDEnum enum1 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec1)
-        .build();
+    final ASTCDEnum enum1 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec1)
+            .build();
 
     List<ASTCDEnumConstant> ec2 = new ArrayList<>();
     ec2.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
-    final ASTCDEnum enum2 = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .setCDEnumConstantsList(ec2)
-        .build();
+    final ASTCDEnum enum2 =
+        CD4CodeMill.cDEnumBuilder()
+            .setName("E")
+            .setModifier(DefaultModifier)
+            .setCDEnumConstantsList(ec2)
+            .build();
 
-    final ASTCDEnum mergedEnum = CD4CodeMill.cDEnumBuilder()
-        .setName("E")
-        .setModifier(DefaultModifier)
-        .build();
+    final ASTCDEnum mergedEnum =
+        CD4CodeMill.cDEnumBuilder().setName("E").setModifier(DefaultModifier).build();
 
     final List<ASTCDEnumConstant> EXPECTED = new ArrayList<>();
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("A").build());
     EXPECTED.add(CD4CodeMill.cDEnumConstantBuilder().setName("B").build());
     try {
       assertFalse(TESTANT.mergeEnumConstants(enum1, enum2, mergedEnum));
-    }
-    catch (MergingException unexpected) {
+    } catch (MergingException unexpected) {
       fail(unexpected.getMessage());
     }
     checkOrder(EXPECTED, mergedEnum.getCDEnumConstantList());
-
   }
 
   // @Test
-  public void testMergeEnumsConflictParameter() {
-
-  }
+  public void testMergeEnumsConflictParameter() {}
 
   private void checkOrder(List<ASTCDEnumConstant> expected, List<ASTCDEnumConstant> testresult) {
     assertTrue(expected.size() == testresult.size());
@@ -733,5 +700,4 @@ public class EnumConstantsMergeTest extends BaseTest {
       assertTrue(expected.get(i).getName().equalsIgnoreCase(testresult.get(i).getName()));
     }
   }
-
 }

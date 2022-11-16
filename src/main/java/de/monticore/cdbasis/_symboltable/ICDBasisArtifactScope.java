@@ -1,25 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
+import static de.se_rwth.commons.Names.getQualifier;
+import static de.se_rwth.commons.logging.Log.trace;
+
 import com.google.common.collect.Lists;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.symboltable.ImportStatement;
-
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static de.se_rwth.commons.Names.getQualifier;
-import static de.se_rwth.commons.Names.getSimpleName;
-import static de.se_rwth.commons.logging.Log.trace;
-
 public interface ICDBasisArtifactScope extends ICDBasisArtifactScopeTOP {
 
   /**
-   * This method returns the package name of the current artifact scope.
-   * If the package is empty or a language does not support packages,
-   * the method implementation returns an empty String.
+   * This method returns the package name of the current artifact scope. If the package is empty or
+   * a language does not support packages, the method implementation returns an empty String.
    *
    * @return
    */
@@ -30,22 +27,25 @@ public interface ICDBasisArtifactScope extends ICDBasisArtifactScopeTOP {
 
   default List<String> getRemainingNameForResolveDown(String symbolName) {
     final String packageAS = this.getPackageName();
-    final com.google.common.collect.FluentIterable<String> packageASNameParts = com.google.common.collect.FluentIterable
-        .from(de.se_rwth.commons.Splitters.DOT.omitEmptyStrings().split(packageAS));
+    final com.google.common.collect.FluentIterable<String> packageASNameParts =
+        com.google.common.collect.FluentIterable.from(
+            de.se_rwth.commons.Splitters.DOT.omitEmptyStrings().split(packageAS));
 
-    final com.google.common.collect.FluentIterable<String> symbolNameParts = com.google.common.collect.FluentIterable
-        .from(de.se_rwth.commons.Splitters.DOT.split(symbolName));
+    final com.google.common.collect.FluentIterable<String> symbolNameParts =
+        com.google.common.collect.FluentIterable.from(
+            de.se_rwth.commons.Splitters.DOT.split(symbolName));
     String remainingSymbolName = symbolName;
 
     if (symbolNameParts.size() > packageASNameParts.size()) {
-      remainingSymbolName = de.se_rwth.commons.Joiners.DOT.join(symbolNameParts.skip(packageASNameParts.size()));
+      remainingSymbolName =
+          de.se_rwth.commons.Joiners.DOT.join(symbolNameParts.skip(packageASNameParts.size()));
     }
 
     return Lists.newArrayList(remainingSymbolName);
   }
 
-  default Set<String> calculateQualifiedNames(String name, String packageName,
-                                              List<ImportStatement> imports) {
+  default Set<String> calculateQualifiedNames(
+      String name, String packageName, List<ImportStatement> imports) {
     final Set<String> potentialSymbolNames = new LinkedHashSet<>();
 
     // the simple name (in default package)
@@ -66,17 +66,17 @@ public interface ICDBasisArtifactScope extends ICDBasisArtifactScopeTOP {
         }
       }
     }
-    trace("Potential qualified names for \"" + name + "\": " + potentialSymbolNames.toString(),
-      "IArtifactScope");
+    trace(
+        "Potential qualified names for \"" + name + "\": " + potentialSymbolNames.toString(),
+        "IArtifactScope");
 
     return potentialSymbolNames;
   }
 
   default Optional<ISymbol> getTopLevelSymbol() {
-    if(1 == getCDTypeSymbols().values().size()){
+    if (1 == getCDTypeSymbols().values().size()) {
       return Optional.ofNullable(getCDTypeSymbols().values().get(0));
     }
     return Optional.empty();
   }
-
 }

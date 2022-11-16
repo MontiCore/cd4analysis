@@ -2,7 +2,6 @@
 package de.monticore.cd.facade.exception;
 
 public enum CDFactoryErrorCode {
-
   COULD_NOT_CREATE_ATTRIBUTE(0, "Could not create CD attribute: '%s'"),
   COULD_NOT_CREATE_METHOD(10, "Could not create CD method: '%s'"),
   COULD_NOT_CREATE_TYPE(20, "Could not create CD type: '%s'");

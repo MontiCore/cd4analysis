@@ -2,17 +2,16 @@ package de.monticore.odvalidity;
 
 import de.monticore.odlink._ast.*;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class NormalizeLinksTrafo {
 
   /**
-   * Transforms all links into unidirectional, left to right links. Bidirectional links get split
-   * in two unidirectional links. All right to left oriented links get transformed into right to left
-   * links. A < - > B = A->B & B-> A; B < - A = A - > B;
-   * Undirected links stay as they are.
+   * Transforms all links into unidirectional, left to right links. Bidirectional links get split in
+   * two unidirectional links. All right to left oriented links get transformed into right to left
+   * links. A < - > B = A->B & B-> A; B < - A = A - > B; Undirected links stay as they are.
+   *
    * @param links a list of links to be transformed
    * @return A list of transformed LtR links
    */
@@ -24,10 +23,11 @@ public class NormalizeLinksTrafo {
   }
 
   /**
-   * Transforms all links into unidirectional, left to right links. Bidirectional links get split
-   * in two unidirectional links. All right to left oriented links get transformed into right to left
-   * links. A < - > B = A->B & B-> A; B < - A = A - > B;
-   * Undirected links are considered bidirectional.
+   * Transforms all links into unidirectional, left to right links. Bidirectional links get split in
+   * two unidirectional links. All right to left oriented links get transformed into right to left
+   * links. A < - > B = A->B & B-> A; B < - A = A - > B; Undirected links are considered
+   * bidirectional.
+   *
    * @param link a link to possibly be transformed depending on its direction
    * @return A list of transformed LtR links
    */
@@ -35,29 +35,26 @@ public class NormalizeLinksTrafo {
     List<ASTODLink> links = new ArrayList<>();
     ASTODLinkBuilder b = new ASTODLinkBuilder();
 
-    //set name
+    // set name
     if (link.isPresentName()) {
       b.setName(link.getName());
     }
-    //set Type
+    // set Type
     if (link.isLink()) {
       b.setLink(true);
-    }
-    else if (link.isAggregation()) {
+    } else if (link.isAggregation()) {
       b.setAggregation(true);
-    }
-    else if (link.isComposition()) {
+    } else if (link.isComposition()) {
       b.setComposition(true);
     }
 
     if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
-      //nothing to do here
+      // nothing to do here
       return List.of(link);
-    }
-    else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
+    } else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
       links.add(transformRtlToLtr(link, b));
-    }
-    else if (link.getODLinkDirection() instanceof ASTODBiDir || link.getODLinkDirection() instanceof ASTODUnspecifiedDir) {
+    } else if (link.getODLinkDirection() instanceof ASTODBiDir
+        || link.getODLinkDirection() instanceof ASTODUnspecifiedDir) {
 
       b.setODLinkDirection(new ASTODLeftToRightDirBuilder().build());
 
@@ -89,14 +86,12 @@ public class NormalizeLinksTrafo {
 
       ASTODLinkBuilder b2 = new ASTODLinkBuilder();
 
-      //set Type
+      // set Type
       if (link.isLink()) {
         b2.setLink(true);
-      }
-      else if (link.isAggregation()) {
+      } else if (link.isAggregation()) {
         b2.setAggregation(true);
-      }
-      else if (link.isComposition()) {
+      } else if (link.isComposition()) {
         b2.setComposition(true);
       }
 
@@ -105,7 +100,7 @@ public class NormalizeLinksTrafo {
         b2.setName(b.getName() + BIDIR_EXTENSION);
       }
 
-      //add both separated links
+      // add both separated links
       links.add(transformRtlToLtr(link, b2));
       links.add(b.build());
     }
@@ -123,8 +118,7 @@ public class NormalizeLinksTrafo {
     if (link.getODLinkLeftSide().isPresentRole()) {
       right.setRole(link.getODLinkLeftSide().getRole());
 
-    }
-    else {
+    } else {
       right.setRoleAbsent();
       Log.error("Link with missing role in target direction.");
     }
@@ -135,15 +129,14 @@ public class NormalizeLinksTrafo {
 
     if (link.getODLinkRightSide().isPresentRole()) {
       left.setRole(link.getODLinkRightSide().getRole());
-    }
-    else {
+    } else {
       left.setRoleAbsent();
     }
     if (link.getODLinkRightSide().isPresentODLinkQualifier()) {
       left.setODLinkQualifier(link.getODLinkLeftSide().getODLinkQualifier());
     }
 
-    //set reference lists
+    // set reference lists
     left.setReferenceNamesList(link.getODLinkRightSide().getReferenceNamesList());
     right.setReferenceNamesList(link.getODLinkLeftSide().getReferenceNamesList());
 
@@ -152,5 +145,4 @@ public class NormalizeLinksTrafo {
         .setODLinkDirection(new ASTODLeftToRightDirBuilder().build());
     return b.build();
   }
-
 }

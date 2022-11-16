@@ -1,18 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.tf.ReplaceDerivedAttribute;
 import de.se_rwth.commons.logging.Log;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Created by
@@ -30,8 +29,8 @@ public class ReplaceDerivedAttributeTest {
   @Test
   public void testChangeNameTransformation() throws IOException {
 
-    Optional<ASTCDCompilationUnit> ast = CD4CodeMill.parser().parse(
-        "src/test/resources/de/monticore/trafo/DerivedAttr.cd");
+    Optional<ASTCDCompilationUnit> ast =
+        CD4CodeMill.parser().parse("src/test/resources/de/monticore/trafo/DerivedAttr.cd");
 
     assertTrue(ast.isPresent());
 
@@ -40,10 +39,8 @@ public class ReplaceDerivedAttributeTest {
     assertTrue(renameClass.doPatternMatching());
     renameClass.doReplacement();
 
-    assertEquals(0, ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
+    assertEquals(
+        0, ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size());
     assertEquals(1, ast.get().getCDDefinition().getCDClassesList().get(0).getCDMethodList().size());
   }
-
-
-
 }

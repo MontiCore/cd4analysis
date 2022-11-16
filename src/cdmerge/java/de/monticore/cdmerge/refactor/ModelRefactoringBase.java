@@ -4,9 +4,7 @@ package de.monticore.cdmerge.refactor;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 
-/**
- *
- */
+/** */
 public abstract class ModelRefactoringBase implements ModelRefactoring {
 
   public abstract static class ModelRefactoringBuilder {
@@ -17,7 +15,6 @@ public abstract class ModelRefactoringBase implements ModelRefactoring {
       ModelRefactoring validator = buildModelRefactoring(blackBoard);
       return validator;
     }
-
   }
 
   private final MergeBlackBoard mergeBlackBoard;
@@ -28,11 +25,8 @@ public abstract class ModelRefactoringBase implements ModelRefactoring {
     this.mergeBlackBoard = mergeBlackBoard;
   }
 
-  /**
-   * @return mergeBlackBoard
-   */
+  /** @return mergeBlackBoard */
   protected MergeBlackBoard getMergeBlackBoard() {
     return mergeBlackBoard;
   }
-
 }

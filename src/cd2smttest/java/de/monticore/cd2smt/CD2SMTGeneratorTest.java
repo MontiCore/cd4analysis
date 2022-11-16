@@ -8,12 +8,11 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
@@ -21,8 +20,7 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   CD2SMTGenerator cd2SMTGenerator;
   Context context;
 
-  //setup
-
+  // setup
 
   void setup(String fileName) {
     Map<String, String> cfg = new HashMap<>();
@@ -62,12 +60,6 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
           Assert.assertEquals(attr.getSort(), context.mkBoolSort());
           break;
       }
-
-
     }
   }
-
-
 }
-
-

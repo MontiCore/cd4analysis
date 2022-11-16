@@ -16,8 +16,11 @@ public class IntersectionAttributeMerger extends AttributeMerger {
     super(mergeBlackBoard);
   }
 
-  public void mergeAttributes(ASTCDClass left, ASTCDClass right,
-      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult, ASTCDClass mergedClass) {
+  public void mergeAttributes(
+      ASTCDClass left,
+      ASTCDClass right,
+      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult,
+      ASTCDClass mergedClass) {
     for (ASTCDAttribute leftattr : left.getCDAttributeList()) {
       for (ASTCDAttribute rightattr : right.getCDAttributeList()) {
         if (leftattr.deepEquals(rightattr)) {
@@ -25,7 +28,5 @@ public class IntersectionAttributeMerger extends AttributeMerger {
         }
       }
     }
-
   }
-
 }

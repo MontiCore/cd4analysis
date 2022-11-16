@@ -4,7 +4,6 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.validation.ModelValidatorBase.ModelValidatorBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +18,7 @@ public class PostMergeValidation {
     this.mergeBlackBoard = mergeBlackBoard;
   }
 
-  /**
-   * @return mergeBlackBoard
-   */
+  /** @return mergeBlackBoard */
   protected MergeBlackBoard getMergeBlackBoard() {
     return mergeBlackBoard;
   }
@@ -39,5 +36,4 @@ public class PostMergeValidation {
   public void execute(ASTCDDefinition cd) {
     this.validators.forEach(v -> v.apply(cd));
   }
-
 }

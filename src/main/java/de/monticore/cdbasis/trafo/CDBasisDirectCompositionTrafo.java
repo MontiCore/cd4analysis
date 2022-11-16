@@ -8,12 +8,12 @@ import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * this class should only be used with {@link de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo}
+ * this class should only be used with {@link
+ * de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo}
  */
 public class CDBasisDirectCompositionTrafo extends CDAfterParseHelper
     implements CDBasisVisitor2, CDBasisHandler {

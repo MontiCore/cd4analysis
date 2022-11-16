@@ -7,7 +7,7 @@ import de.monticore.types.check.*;
 
 public class FullDeriveFromCD4Analysis extends AbstractDerive {
 
-  public FullDeriveFromCD4Analysis(){
+  public FullDeriveFromCD4Analysis() {
     this(CD4AnalysisMill.traverser());
   }
 
@@ -16,12 +16,13 @@ public class FullDeriveFromCD4Analysis extends AbstractDerive {
     init(traverser);
   }
 
-  public void init(CD4AnalysisTraverser traverser){
+  public void init(CD4AnalysisTraverser traverser) {
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);
 
-    final DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
+    final DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals =
+        new DeriveSymTypeOfMCCommonLiterals();
     deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(getTypeCheckResult());
     traverser.add4MCCommonLiterals(deriveSymTypeOfMCCommonLiterals);
 
@@ -30,15 +31,16 @@ public class FullDeriveFromCD4Analysis extends AbstractDerive {
     traverser.add4ExpressionsBasis(deriveSymTypeOfExpression);
     traverser.setExpressionsBasisHandler(deriveSymTypeOfExpression);
 
-    final DeriveSymTypeOfCommonExpressions deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
+    final DeriveSymTypeOfCommonExpressions deriveSymTypeOfCommonExpressions =
+        new DeriveSymTypeOfCommonExpressions();
     deriveSymTypeOfCommonExpressions.setTypeCheckResult(getTypeCheckResult());
     traverser.add4CommonExpressions(deriveSymTypeOfCommonExpressions);
     traverser.setCommonExpressionsHandler(deriveSymTypeOfCommonExpressions);
 
-    final DeriveSymTypeOfBitExpressions deriveSymTypeOfBitExpressions = new DeriveSymTypeOfBitExpressions();
+    final DeriveSymTypeOfBitExpressions deriveSymTypeOfBitExpressions =
+        new DeriveSymTypeOfBitExpressions();
     deriveSymTypeOfBitExpressions.setTypeCheckResult(getTypeCheckResult());
     traverser.add4BitExpressions(deriveSymTypeOfBitExpressions);
     traverser.setBitExpressionsHandler(deriveSymTypeOfBitExpressions);
   }
-
 }

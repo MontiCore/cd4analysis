@@ -1,12 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.utilities;
 
-import java.io.IOException;
-import java.util.List;
-
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdlib.designpatterns.facade.tf.CreateBiDirAssociation;
 import de.monticore.cdlib.refactoring.delete.tf.DeleteAssociation;
 import de.monticore.cdlib.refactoring.inheritance.tf.AddInheritanceToInterface;
@@ -26,24 +23,24 @@ import de.monticore.cdlib.transformationutility.replacenameinassociation.tf.*;
 import de.monticore.cdlib.transformationutility.tf.CreateClass;
 import de.monticore.cdlib.transformationutility.tf.CreateInterface;
 import de.se_rwth.commons.logging.Log;
+import java.io.IOException;
+import java.util.List;
 
 /**
- * Provides methods for primitive transformations of a class diagram The methods
- * are used in refactoring and design pattern classes
+ * Provides methods for primitive transformations of a class diagram The methods are used in
+ * refactoring and design pattern classes
  *
- * Created by
+ * <p>Created by
  *
  * @author KE
  */
-
 public class TransformationUtility {
 
-  public TransformationUtility() {
-  }
+  public TransformationUtility() {}
 
   /**
    * Checks if a class is present
-   * 
+   *
    * @param className
    * @param ast
    * @return
@@ -56,7 +53,7 @@ public class TransformationUtility {
 
   /**
    * Replaces type in an attribute
-   * 
+   *
    * @param oldType
    * @param newType
    * @param ast
@@ -75,7 +72,8 @@ public class TransformationUtility {
   }
 
   // Replace ReferenceName (oldName) by newName in all associations
-  public boolean changeRefNameInAllAssociations(String oldName, String newName, ASTCDCompilationUnit ast) {
+  public boolean changeRefNameInAllAssociations(
+      String oldName, String newName, ASTCDCompilationUnit ast) {
 
     if (!changeRefNameInOneAssociation(oldName, newName, ast)) {
       return false;
@@ -86,7 +84,8 @@ public class TransformationUtility {
   }
 
   // Replace ReferenceName (oldName) by newName in one association
-  private boolean changeRefNameInOneAssociation(String oldName, String newName, ASTCDCompilationUnit ast) {
+  private boolean changeRefNameInOneAssociation(
+      String oldName, String newName, ASTCDCompilationUnit ast) {
     // Replace Left Qualifier
 
     // Bidirectional associations
@@ -168,8 +167,8 @@ public class TransformationUtility {
   // Create Associations
 
   // Creates a Association with right direction for classes
-  public boolean createRightDirAssociation(String leftReferenceName, String rightReferenceName,
-      ASTCDCompilationUnit ast) {
+  public boolean createRightDirAssociation(
+      String leftReferenceName, String rightReferenceName, ASTCDCompilationUnit ast) {
 
     CreateRightDirAssociation associate = new CreateRightDirAssociation(ast);
 
@@ -187,8 +186,8 @@ public class TransformationUtility {
 
   // Associates a class to all classes in the list rightClasses with a
   // bi-directional association
-  public boolean createBiDirAssociations(String leftClass, List<String> rightClasses, ASTCDCompilationUnit ast)
-      throws IOException {
+  public boolean createBiDirAssociations(
+      String leftClass, List<String> rightClasses, ASTCDCompilationUnit ast) throws IOException {
 
     for (String rightClass : rightClasses) {
       // Create Transformation
@@ -208,7 +207,7 @@ public class TransformationUtility {
 
   /**
    * Deletes an association
-   * 
+   *
    * @param className
    * @param ast
    * @return
@@ -229,7 +228,7 @@ public class TransformationUtility {
 
   /**
    * Deletes all associations
-   * 
+   *
    * @param className
    * @param ast
    * @return
@@ -245,7 +244,7 @@ public class TransformationUtility {
 
   /**
    * Creates a new class
-   * 
+   *
    * @param className
    * @param ast
    * @return
@@ -262,7 +261,7 @@ public class TransformationUtility {
 
   /**
    * Creates a new interface
-   * 
+   *
    * @param interfaceName
    * @param ast
    * @return
@@ -279,7 +278,8 @@ public class TransformationUtility {
 
   // Adds to a class an inheritance to an interface, if no inheritance to an
   // interface is still there
-  public boolean createInheritanceToInterface(String subclass, String interfaceName, ASTCDCompilationUnit ast) {
+  public boolean createInheritanceToInterface(
+      String subclass, String interfaceName, ASTCDCompilationUnit ast) {
     CreateInheritanceInterface createInheritance = new CreateInheritanceInterface(ast);
 
     createInheritance.set_$subclass(subclass);
@@ -293,7 +293,8 @@ public class TransformationUtility {
   }
 
   // Creates an inheritance from a class to an interface
-  public boolean addInheritanceToInterface(String className, String newInterface, ASTCDCompilationUnit ast) {
+  public boolean addInheritanceToInterface(
+      String className, String newInterface, ASTCDCompilationUnit ast) {
 
     AddInheritanceToInterface interfaceI = new AddInheritanceToInterface(ast);
     // Set the Class Name
@@ -323,7 +324,8 @@ public class TransformationUtility {
   }
 
   // Introduces an inheritance between subclass and superclass
-  public boolean createInheritanceToClass(String subclass, String superclass, ASTCDCompilationUnit ast) {
+  public boolean createInheritanceToClass(
+      String subclass, String superclass, ASTCDCompilationUnit ast) {
 
     CreateInheritanceToClass addSuperclass = new CreateInheritanceToClass(ast);
     addSuperclass.set_$subclass(subclass);
@@ -336,7 +338,8 @@ public class TransformationUtility {
   }
 
   // Replaces all extend to oldClass by newClass
-  public boolean changeInheritanceClass(String oldSuperclass, String newSuperclass, ASTCDCompilationUnit ast) {
+  public boolean changeInheritanceClass(
+      String oldSuperclass, String newSuperclass, ASTCDCompilationUnit ast) {
 
     ChangeInheritanceClasses changeInheritance = new ChangeInheritanceClasses(ast);
     changeInheritance.set_$oldSuperclass(oldSuperclass);
@@ -350,7 +353,7 @@ public class TransformationUtility {
 
   /**
    * Gets a method
-   * 
+   *
    * @param methodName
    * @param className
    * @param ast
@@ -366,12 +369,11 @@ public class TransformationUtility {
     }
     Log.info("0xF4131: Not found method", TransformationUtility.class.getName());
     return null;
-
   }
 
   /**
    * Gets the first method
-   * 
+   *
    * @param className
    * @param ast
    * @return
@@ -384,12 +386,11 @@ public class TransformationUtility {
       return getMethod.get_$Method().deepClone();
     }
     return null;
-
   }
 
   /**
    * Gets the first attribute
-   * 
+   *
    * @param className
    * @param ast
    * @return
@@ -407,13 +408,14 @@ public class TransformationUtility {
 
   /**
    * Gets an attribute
-   * 
+   *
    * @param attributeName
    * @param className
    * @param ast
    * @return
    */
-  public ASTCDAttribute getAttribute(String attributeName, String className, ASTCDCompilationUnit ast) {
+  public ASTCDAttribute getAttribute(
+      String attributeName, String className, ASTCDCompilationUnit ast) {
 
     FindAttribute findAttribute = new FindAttribute(ast);
     findAttribute.set_$name(attributeName);
@@ -423,12 +425,11 @@ public class TransformationUtility {
     }
     Log.info("0xF4132: Not found attribute", TransformationUtility.class.getName());
     return null;
-
   }
 
   /**
    * Adds a method to a class
-   * 
+   *
    * @param method
    * @param className
    * @param ast
@@ -449,13 +450,14 @@ public class TransformationUtility {
 
   /**
    * Adds a method to an interface
-   * 
+   *
    * @param method
    * @param interfaceName
    * @param ast
    * @return
    */
-  public boolean addMethodToInterface(ASTCDMethod method, String interfaceName, ASTCDCompilationUnit ast) {
+  public boolean addMethodToInterface(
+      ASTCDMethod method, String interfaceName, ASTCDCompilationUnit ast) {
 
     AddMethodInterface addMethod = new AddMethodInterface(ast);
     addMethod.set_$interfaceName(interfaceName);
@@ -467,5 +469,4 @@ public class TransformationUtility {
     Log.info("0xF4134: Could not add method", TransformationUtility.class.getName());
     return false;
   }
-
 }

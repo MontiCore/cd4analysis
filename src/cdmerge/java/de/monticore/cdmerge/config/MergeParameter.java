@@ -14,14 +14,10 @@ public enum MergeParameter {
   /* ================================================ */
   /* === PARAMETERS WITH ARBRITRARY STRING VALUES === */
   /* ================================================ */
-  /**
-   * The basis Path for the models Default: OPTIONAL
-   */
+  /** The basis Path for the models Default: OPTIONAL */
   MODEL_PATH("modelPath", "mp", "", false),
 
-  /**
-   * The name of the merged class diagram and the output file + ".cd" Default: "mergeResult"
-   */
+  /** The name of the merged class diagram and the output file + ".cd" Default: "mergeResult" */
   OUTPUT_NAME("outputName", "on", "mergeResult", false),
 
   /**
@@ -30,9 +26,7 @@ public enum MergeParameter {
    */
   OUTPUT_PATH("outputPath", "op", "", false),
 
-  /**
-   * Allows to define override scenarios with the provided prefix path Default: OFF
-   */
+  /** Allows to define override scenarios with the provided prefix path Default: OFF */
   PRECEDENCE("precedence", "prec", "", false),
 
   /**
@@ -41,10 +35,8 @@ public enum MergeParameter {
    */
   INPUT_MODELS("inputModels", "m", "", false),
 
-  /**
-   * The model package declaration for the target model. Default: EMPTY
-   */
-  //FIXME Ignore Package
+  /** The model package declaration for the target model. Default: EMPTY */
+  // FIXME Ignore Package
   TARGET_PACKAGE("targetPackage", "tp", "", false),
 
   /* ====================================== */
@@ -76,14 +68,10 @@ public enum MergeParameter {
    */
   DISABLE_POSTMERGE_VALIDATION("disablePostValidation", "dvalid", MergeParameter.OFF, true),
 
-  /**
-   * Disable clean up and post merge refactorings, Default: OFF
-   */
+  /** Disable clean up and post merge refactorings, Default: OFF */
   DISABLE_MODEL_REFACTORINGS("disableModelRefactorings", "drefactor", MergeParameter.OFF, true),
 
-  /**
-   * Abort merging process on first error Default: OFF
-   */
+  /** Abort merging process on first error Default: OFF */
   FAIL_FAST("failFast", "ff", MergeParameter.OFF, true),
 
   /**
@@ -92,35 +80,23 @@ public enum MergeParameter {
    */
   LOG_DEBUG("debug", "d", MergeParameter.OFF, true),
 
-  /**
-   * Logs more information (Level FINE and INFO) and reports each merged element Default: OFF
-   */
+  /** Logs more information (Level FINE and INFO) and reports each merged element Default: OFF */
   LOG_VERBOSE("verbose", "v", MergeParameter.OFF, true),
 
-  /**
-   * Only Reports/Logs Level ERROR Default: OFF
-   */
+  /** Only Reports/Logs Level ERROR Default: OFF */
   LOG_SILENT("silent", "ls", MergeParameter.OFF, true),
 
-  /**
-   * Write all Log entries immediately to Standard Output
-   */
+  /** Write all Log entries immediately to Standard Output */
   LOG_TO_CONSOLE("logConsole", "lc", MergeParameter.OFF, true),
 
-  /**
-   * Propagates Log entries to Monticore Logging framework (se-commons) Default: OFF
-   */
-  //FIXME not implemented
+  /** Propagates Log entries to Monticore Logging framework (se-commons) Default: OFF */
+  // FIXME not implemented
   PROPAGATE_LOG("propagateLog", "plog", MergeParameter.OFF, true),
 
-  /**
-   * Precvent MC to log direcltly to Standard Output/Standard Err. Default: Activated
-   */
+  /** Precvent MC to log direcltly to Standard Output/Standard Err. Default: Activated */
   MS_LOGGER_SILENT("MCLoggerSilent", "noMClog", MergeParameter.ON, true),
 
-  /**
-   * Merge all comments of all model elements from the source diagrams Default: OFF
-   */
+  /** Merge all comments of all model elements from the source diagrams Default: OFF */
   MERGE_COMMENTS("mergeComments", "mc", MergeParameter.OFF, true),
 
   /**
@@ -129,34 +105,22 @@ public enum MergeParameter {
    */
   MERGE_ONLY_NAMED_ASSOCIATIONS("mergeOnlyNamedAssociations", "mona", MergeParameter.OFF, true),
 
-  /**
-   * Allows the merger of classes with abstract classes and interfaces Default: OFF
-   */
+  /** Allows the merger of classes with abstract classes and interfaces Default: OFF */
   MERGE_HETEROGENOUS_TYPES("mergeHeterogenousTypes", "mht", MergeParameter.OFF, true),
 
-  /**
-   * Enables the merging of compatible primitive type attributes like int and long Default: OFF
-   */
+  /** Enables the merging of compatible primitive type attributes like int and long Default: OFF */
   PRIMITIVE_TYPE_CONVERSION("allowPrimitiveTypeConversion", "ptc", MergeParameter.OFF, true),
 
-  /**
-   * Prints the result merged diagram to the file. Default: OFF
-   */
+  /** Prints the result merged diagram to the file. Default: OFF */
   SAVE_INTERMEDIATE_RESULT_TO_FILE("saveIntermediateToFile", "savint", MergeParameter.OFF, true),
 
-  /**
-   * Prints the result merged diagram to the file. Default: OFF
-   */
+  /** Prints the result merged diagram to the file. Default: OFF */
   SAVE_RESULT_TO_FILE("saveResultToFile", "f", MergeParameter.OFF, true),
 
-  /**
-   * Combination of the parameters MERGE_ONLY_NAMED_ASSOCIATIONS, WARNING_AS_ERRORS Default: OFF
-   */
+  /** Combination of the parameters MERGE_ONLY_NAMED_ASSOCIATIONS, WARNING_AS_ERRORS Default: OFF */
   STRICT("strict", "str", MergeParameter.OFF, true),
 
-  /**
-   * Treat warnings as errors (i.e. cancel merge process on each warning) Default: OFF
-   */
+  /** Treat warnings as errors (i.e. cancel merge process on each warning) Default: OFF */
   WARNINGS_AS_ERRORS("warningsAsErrors", "wa", MergeParameter.OFF, true),
 
   /**
@@ -181,14 +145,10 @@ public enum MergeParameter {
   /* ========== FIELDS, CONSTRUCTOR, METHODS ====== */
   /* ============================================== */
 
-  /**
-   * ON-Value for boolean-Parameters
-   */
+  /** ON-Value for boolean-Parameters */
   public static final String ON = "ON";
 
-  /**
-   * OFF-Value for boolean-Parameters
-   */
+  /** OFF-Value for boolean-Parameters */
   public static final String OFF = "OFF";
 
   /**
@@ -203,21 +163,17 @@ public enum MergeParameter {
    */
   private final String shortcut;
 
-  /**
-   * The user defined value for non-boolean-Parameters
-   */
+  /** The user defined value for non-boolean-Parameters */
   private final String defaultValue;
 
-  /**
-   * Indicates if this Parameter just accepts the Values ON and OFF
-   */
+  /** Indicates if this Parameter just accepts the Values ON and OFF */
   private final boolean onlyBoolean;
 
   /**
    * Constructor for de.monticore.umlcd4a.composer.merging.MergeParameter
    *
    * @param cliParameter The long parameter identifier for command line parameters
-   * @param shortcut     The shortcut for command line parameters
+   * @param shortcut The shortcut for command line parameters
    */
   MergeParameter(String cliParameter, String shortcut, String defaultValue, boolean onlyBoolean) {
     this.cliParameter = cliParameter;
@@ -239,7 +195,7 @@ public enum MergeParameter {
    * Returns the default value for this Parameter
    *
    * @return the value of the parameter. For boolean Parameters ON and OFF but its recommended to
-   * use isEnabled() for boolean Parameters instead
+   *     use isEnabled() for boolean Parameters instead
    */
   public String getDefaultValue() {
     return this.defaultValue;
@@ -304,5 +260,4 @@ public enum MergeParameter {
   public String toString() {
     return getCLIParameter() + "(" + getShortcut() + ") DEF: " + this.defaultValue;
   }
-
 }

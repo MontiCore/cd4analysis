@@ -7,16 +7,15 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cddiff.CDDiffTestBasis;
-import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class ReductionTrafoTest extends CDDiffTestBasis {
 
@@ -25,10 +24,10 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
 
     CD4CodeMill.globalScope().clear();
 
-    ASTCDCompilationUnit m1Ast = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees5.cd");
-    ASTCDCompilationUnit m2Ast = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees6.cd");
+    ASTCDCompilationUnit m1Ast =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees5.cd");
+    ASTCDCompilationUnit m2Ast =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees" + "/Employees6.cd");
 
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(m1Ast, m2Ast);
@@ -50,11 +49,9 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     try {
       FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
       FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
-
   }
 
   @Test
@@ -63,10 +60,10 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
 
     String outputPath = "target/generated/cddiff-test/trafo-with-packages/";
 
-    ASTCDCompilationUnit m1Ast = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
-    ASTCDCompilationUnit m2Ast = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
+    ASTCDCompilationUnit m1Ast =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    ASTCDCompilationUnit m2Ast =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees7.cd");
 
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.transform(m1Ast, m2Ast);
@@ -86,23 +83,24 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     try {
       FileUtils.writeStringToFile(outputFile1.toFile(), cd1, Charset.defaultCharset());
       FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
   @Test
   public void testCopyInheritance() {
-    ASTCDCompilationUnit lecture1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
+    ASTCDCompilationUnit lecture1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
-    ASTCDCompilationUnit lecture2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture2.cd");
+    ASTCDCompilationUnit lecture2 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture2.cd");
 
-    lecture1.getCDDefinition()
+    lecture1
+        .getCDDefinition()
         .removeAllCDElements(lecture1.getCDDefinition().getCDAssociationsList());
-    lecture2.getCDDefinition()
+    lecture2
+        .getCDDefinition()
         .removeAllCDElements(lecture2.getCDDefinition().getCDAssociationsList());
 
     lecture2.getCDDefinition().setName(lecture1.getCDDefinition().getName());
@@ -122,13 +120,12 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     String cd2 = pprinter.getPrinter().getContent();
 
     Assert.assertEquals(cd1, cd2);
-
   }
 
   @Test
   public void testRemoveRedundantAttributes() {
-    ASTCDCompilationUnit employees8 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    ASTCDCompilationUnit employees8 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
 
     List<String> subList = new ArrayList<>();
     subList.add("ins.Manager");
@@ -140,46 +137,45 @@ public class ReductionTrafoTest extends CDDiffTestBasis {
     typeList.addAll(employees8.getCDDefinition().getCDInterfacesList());
 
     for (ASTCDType type : typeList) {
-      type.addCDMember(CDAttributeFacade.getInstance()
-          .createAttribute(CD4CodeMill.modifierBuilder().build(), "Date", "test"));
+      type.addCDMember(
+          CDAttributeFacade.getInstance()
+              .createAttribute(CD4CodeMill.modifierBuilder().build(), "Date", "test"));
     }
     ReductionTrafo trafo = new ReductionTrafo();
     trafo.removeRedundantAttributes(employees8);
 
     for (ASTCDType type : typeList) {
       if (subList.stream().anyMatch(sub -> sub.equals(type.getSymbol().getFullName()))) {
-        Assert.assertFalse(type.getCDAttributeList()
-            .stream()
-            .anyMatch(attribute -> attribute.getName().equals("test")));
-      }
-      else {
-        Assert.assertTrue(type.getCDAttributeList()
-            .stream()
-            .anyMatch(attribute -> attribute.getName().equals("test")));
+        Assert.assertFalse(
+            type.getCDAttributeList().stream()
+                .anyMatch(attribute -> attribute.getName().equals("test")));
+      } else {
+        Assert.assertTrue(
+            type.getCDAttributeList().stream()
+                .anyMatch(attribute -> attribute.getName().equals("test")));
       }
     }
   }
 
   @Test
   public void testCreateCommonInterface() {
-    ASTCDCompilationUnit employees8 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    ASTCDCompilationUnit employees8 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
     new ReductionTrafo().createCommonInterface(employees8, "Object");
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
 
-    Assert.assertTrue(employees8.getCDDefinition()
-        .getCDClassesList()
-        .stream()
-        .allMatch(
-            cdClass -> CDInheritanceHelper.isSuperOf("Object", cdClass.getSymbol().getFullName(),
-                scope)));
+    Assert.assertTrue(
+        employees8.getCDDefinition().getCDClassesList().stream()
+            .allMatch(
+                cdClass ->
+                    CDInheritanceHelper.isSuperOf(
+                        "Object", cdClass.getSymbol().getFullName(), scope)));
 
-    Assert.assertTrue(employees8.getCDDefinition()
-        .getCDInterfacesList()
-        .stream()
-        .allMatch(cdInterface -> CDInheritanceHelper.isSuperOf("Object",
-            cdInterface.getSymbol().getFullName(), scope)));
+    Assert.assertTrue(
+        employees8.getCDDefinition().getCDInterfacesList().stream()
+            .allMatch(
+                cdInterface ->
+                    CDInheritanceHelper.isSuperOf(
+                        "Object", cdInterface.getSymbol().getFullName(), scope)));
   }
-
-
 }

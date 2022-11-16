@@ -3,7 +3,6 @@ package de.monticore.cd.cocos;
 
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,15 +14,15 @@ public class CoCoHelper {
     return list.stream().filter(e -> !uniques.add(e)).collect(Collectors.toList());
   }
 
-  public static <T, Inner> List<T> findDuplicatesBy(Collection<T> list, java.util.function.Function<T, Inner> function) {
+  public static <T, Inner> List<T> findDuplicatesBy(
+      Collection<T> list, java.util.function.Function<T, Inner> function) {
     Set<Inner> existingElements = new HashSet<>();
     List<T> duplicates = new ArrayList<>();
 
     for (T elem : list) {
       if (existingElements.contains(function.apply(elem))) {
         duplicates.add(elem);
-      }
-      else {
+      } else {
         existingElements.add(function.apply(elem));
       }
     }

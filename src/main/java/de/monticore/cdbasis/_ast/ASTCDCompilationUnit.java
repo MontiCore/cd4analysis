@@ -13,8 +13,7 @@ public class ASTCDCompilationUnit extends ASTCDCompilationUnitTOP {
   public List<String> getCDPackageList() {
     if (isPresentMCPackageDeclaration()) {
       return this.mCPackageDeclaration.get().getMCQualifiedName().getPartsList();
-    }
-    else {
+    } else {
       return new ArrayList<String>();
     }
   }

@@ -6,7 +6,6 @@ import de.monticore.cdassociation._ast.*;
 import de.monticore.cdassociation._visitor.CDAssociationHandler;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
-
 import java.util.Stack;
 
 public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
@@ -55,7 +54,9 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void visit(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
-      if (immediatelyPrintAssociations.get() && node.getLeft().isPresentSymbol() && node.getRight().isPresentSymbol()) {
+      if (immediatelyPrintAssociations.get()
+          && node.getLeft().isPresentSymbol()
+          && node.getRight().isPresentSymbol()) {
         printComment(node);
         node.getCDAssocType().accept(getTraverser());
       }
@@ -65,14 +66,15 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void traverse(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
-      if (immediatelyPrintAssociations.get() && node.getLeft().isPresentSymbol() && node.getRight().isPresentSymbol()) {
+      if (immediatelyPrintAssociations.get()
+          && node.getLeft().isPresentSymbol()
+          && node.getRight().isPresentSymbol()) {
         node.getLeft().accept(getTraverser());
         print(" ");
         node.getCDAssocDir().accept(getTraverser());
         print(" ");
         node.getRight().accept(getTraverser());
-      }
-      else {
+      } else {
         associations.add(node);
       }
     }
@@ -81,7 +83,9 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   @Override
   public void endVisit(ASTCDAssociation node) {
     if (plantUMLConfig.getShowAssoc()) {
-      if (immediatelyPrintAssociations.get() && node.getLeft().isPresentSymbol() && node.getRight().isPresentSymbol()) {
+      if (immediatelyPrintAssociations.get()
+          && node.getLeft().isPresentSymbol()
+          && node.getRight().isPresentSymbol()) {
         if (plantUMLConfig.getShowAssoc() && node.isPresentName()) {
           print(" : " + shorten(node.getName()));
         }
@@ -95,8 +99,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     print("--");
     if (!stackIsAssociation.isEmpty() && stackIsAssociation.peek()) {
       print("o");
-    }
-    else {
+    } else {
       print("*");
     }
   }
@@ -105,8 +108,7 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void visit(ASTCDRightToLeftDir node) {
     if (!stackIsAssociation.isEmpty() && stackIsAssociation.peek()) {
       print("o");
-    }
-    else {
+    } else {
       print("*");
     }
     print("--");
@@ -116,15 +118,13 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
   public void visit(ASTCDBiDir node) {
     if (!stackIsAssociation.isEmpty() && stackIsAssociation.peek()) {
       print("o");
-    }
-    else {
+    } else {
       print("*");
     }
     print("--");
     if (!stackIsAssociation.isEmpty() && stackIsAssociation.peek()) {
       print("o");
-    }
-    else {
+    } else {
       print("*");
     }
   }
@@ -142,7 +142,8 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
 
     print(node.getCDRole().getSymbol().getType().getTypeInfo().getFullName());
 
-    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
+    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality())
+        || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print(" \"");
     }
 
@@ -162,7 +163,8 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     }
      */
 
-    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
+    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality())
+        || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print("\"");
     }
   }
@@ -173,7 +175,8 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       return;
     }
 
-    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
+    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality())
+        || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print("\"");
     }
 
@@ -193,7 +196,8 @@ public class CDAssociationPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
       node.getCDCardinality().accept(getTraverser());
     }
 
-    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality()) || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
+    if ((plantUMLConfig.getShowCard() && node.isPresentCDCardinality())
+        || plantUMLConfig.getShowRoles() && (node.isPresentCDRole() || node.isPresentCDOrdered())) {
       print("\" ");
     }
 

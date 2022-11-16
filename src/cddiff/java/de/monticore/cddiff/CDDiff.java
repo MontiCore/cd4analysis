@@ -1,5 +1,7 @@
 package de.monticore.cddiff;
 
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.printOD;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
@@ -15,19 +17,20 @@ import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWra
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.printOD;
-
 public class CDDiff {
 
-  public static void computeSyntax2SemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
-      String outputPath, boolean openWorld, boolean toDir)
+  public static void computeSyntax2SemDiff(
+      ASTCDCompilationUnit ast1,
+      ASTCDCompilationUnit ast2,
+      String outputPath,
+      boolean openWorld,
+      boolean toDir)
       throws NumberFormatException, IOException {
     CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
 
@@ -46,17 +49,21 @@ public class CDDiff {
 
     if (toDir) {
       CDDiff.printODs2Dir(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics), outputPath);
+    } else {
+      Log.print(CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics)));
     }
-    else {
-      Log.print(
-          CDDiff.printWitnesses2stdout(CDDiff.computeSyntax2SemDiff(ast1, ast2, semantics)));
-    }
-
   }
 
-  public static void computeAlloySemDiff(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
-      String outputPath, int diffsize, int difflimit, boolean openWorld, boolean reductionBased,
-      boolean toDir) throws NumberFormatException, IOException {
+  public static void computeAlloySemDiff(
+      ASTCDCompilationUnit ast1,
+      ASTCDCompilationUnit ast2,
+      String outputPath,
+      int diffsize,
+      int difflimit,
+      boolean openWorld,
+      boolean reductionBased,
+      boolean toDir)
+      throws NumberFormatException, IOException {
 
     CDSemantics semantics = CDSemantics.SIMPLE_CLOSED_WORLD;
 
@@ -71,8 +78,7 @@ public class CDDiff {
 
         CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
         semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
-      }
-      else {
+      } else {
 
         semantics = CDSemantics.MULTI_INSTANCE_OPEN_WORLD;
 
@@ -88,42 +94,45 @@ public class CDDiff {
         ReductionTrafo.addDummyClass4Associations(ast1, dummyClassName);
         ReductionTrafo.addDummyClass4Associations(ast2, dummyClassName);
       }
-    }
-    else {
-      //handle unspecified association directions for closed-world
+    } else {
+      // handle unspecified association directions for closed-world
       ReductionTrafo.handleAssocDirections(ast1, ast2);
     }
 
     if (toDir) {
-      CDDiff.printODs2Dir(CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics),
-          outputPath);
-    }
-    else {
-      Log.print(CDDiff.printWitnesses2stdout(
-          CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics)));
+      CDDiff.printODs2Dir(
+          CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics), outputPath);
+    } else {
+      Log.print(
+          CDDiff.printWitnesses2stdout(
+              CDDiff.computeAlloySemDiff(ast1, ast2, diffsize, difflimit, semantics)));
     }
   }
 
   public static int getDefaultDiffsize(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2) {
     int diffsize;
-    int cd1size = ast1.getCDDefinition().getCDClassesList().size() + ast1.getCDDefinition()
-        .getCDInterfacesList()
-        .size();
+    int cd1size =
+        ast1.getCDDefinition().getCDClassesList().size()
+            + ast1.getCDDefinition().getCDInterfacesList().size();
 
-    int cd2size = ast2.getCDDefinition().getCDClassesList().size() + ast2.getCDDefinition()
-        .getCDInterfacesList()
-        .size();
+    int cd2size =
+        ast2.getCDDefinition().getCDClassesList().size()
+            + ast2.getCDDefinition().getCDInterfacesList().size();
 
     diffsize = Math.max(20, 2 * Math.max(cd1size, cd2size));
     return diffsize;
   }
 
-  public static List<ASTODArtifact> computeAlloySemDiff(ASTCDCompilationUnit cd1,
-      ASTCDCompilationUnit cd2, int diffsize, int difflimit, CDSemantics semantics) {
+  public static List<ASTODArtifact> computeAlloySemDiff(
+      ASTCDCompilationUnit cd1,
+      ASTCDCompilationUnit cd2,
+      int diffsize,
+      int difflimit,
+      CDSemantics semantics) {
 
     // compute AlloyDiffSolution for semdiff(cd1,cd2)
-    Optional<AlloyDiffSolution> optSol = AlloyCDDiff.getAlloyDiffSolution(cd1, cd2, diffsize,
-        semantics);
+    Optional<AlloyDiffSolution> optSol =
+        AlloyCDDiff.getAlloyDiffSolution(cd1, cd2, diffsize, semantics);
 
     // test if solution is present
     if (optSol.isEmpty()) {
@@ -146,8 +155,8 @@ public class CDDiff {
     return diffWitnesses;
   }
 
-  public static List<ASTODArtifact> computeSyntax2SemDiff(ASTCDCompilationUnit ast1,
-      ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
+  public static List<ASTODArtifact> computeSyntax2SemDiff(
+      ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
 
     // generate CDWrapper
     CDWrapperGenerator cd1Generator = new CDWrapperGenerator();
@@ -158,8 +167,8 @@ public class CDDiff {
     // calculate syntax diff
     CDWrapperSyntaxDiffGenerator cdw2CDDiffGenerator4CDW1WithCDW2 =
         new CDWrapperSyntaxDiffGenerator();
-    CDWrapperSyntaxDiff cg = cdw2CDDiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2,
-        cdSemantics);
+    CDWrapperSyntaxDiff cg =
+        cdw2CDDiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
 
     // generate ODs
     CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
@@ -191,11 +200,9 @@ public class CDDiff {
         Alloy2ODGenerator.saveOD(odDesc, od.getObjectDiagram().getName(), out);
       }
       OD4ReportMill.reset();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       Log.error("0xCDD10: Could not print ODs to directory " + outputDirectory);
     }
   }
-
 }

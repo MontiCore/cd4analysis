@@ -2,7 +2,6 @@ package de.monticore.odvalidity;
 
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,5 +36,4 @@ public class ODHelper {
     }
     return linkList;
   }
-
 }

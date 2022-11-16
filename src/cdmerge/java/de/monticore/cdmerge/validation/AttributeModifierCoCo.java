@@ -13,22 +13,28 @@ import de.se_rwth.commons.logging.Log;
 public class AttributeModifierCoCo implements CDBasisASTCDAttributeCoCo {
 
   /**
-   * @see de.monticore.umlcd4a._cocos.CD4CodeASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4code._ast.ASTCDAttribute)
+   * @see
+   *     de.monticore.umlcd4a._cocos.CD4CodeASTCDAttributeCoCo#check(de.monticore.umlcd4a.cd4code._ast.ASTCDAttribute)
    */
   @Override
   public void check(ASTCDAttribute node) {
     ASTModifier actualMod = node.getModifier();
     boolean hasInvalidModifier =
-        (actualMod.isAbstract() | actualMod.isFinal() | actualMod.isPrivate()
-            | actualMod.isProtected() | actualMod.isPublic() | actualMod.isStatic()
-            | actualMod.isPresentStereotype()) && !(actualMod.isPublic() && actualMod.isStatic()
-            && actualMod.isFinal());
+        (actualMod.isAbstract()
+                | actualMod.isFinal()
+                | actualMod.isPrivate()
+                | actualMod.isProtected()
+                | actualMod.isPublic()
+                | actualMod.isStatic()
+                | actualMod.isPresentStereotype())
+            && !(actualMod.isPublic() && actualMod.isStatic() && actualMod.isFinal());
     if (hasInvalidModifier) {
-      Log.error(String.format(
-          "0xC4A64 Attribute %s has invalid modifiers. Only derived: \"/\" or 'public static "
-              + "final' are permitted.",
-          node.getName()), actualMod.get_SourcePositionStart());
+      Log.error(
+          String.format(
+              "0xC4A64 Attribute %s has invalid modifiers. Only derived: \"/\" or 'public static "
+                  + "final' are permitted.",
+              node.getName()),
+          actualMod.get_SourcePositionStart());
     }
   }
-
 }

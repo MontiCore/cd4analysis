@@ -1,22 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cdbasis.CDBasisMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeUniqueInClass;
-import de.monticore.testcdbasis.CDBasisTestBasis;
 import de.se_rwth.commons.logging.Log;
-import org.checkerframework.checker.units.qual.C;
-import org.junit.After;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Test;
 
 public class CDAttributeUniqueInClassTest extends CD4AnalysisTestBasis {
 
@@ -35,7 +31,8 @@ public class CDAttributeUniqueInClassTest extends CD4AnalysisTestBasis {
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDAttributeUniqueInClass());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDAttributeUniqueInClassInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST =
+        p.parse(getFilePath("cdbasis/cocos/CDAttributeUniqueInClassInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -47,5 +44,5 @@ public class CDAttributeUniqueInClassTest extends CD4AnalysisTestBasis {
 
   @After
   @Override
-  public void after(){}
+  public void after() {}
 }

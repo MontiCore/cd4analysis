@@ -12,11 +12,6 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 public class PrintODTest extends CDDiffTestBasis {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
@@ -39,7 +37,6 @@ public class PrintODTest extends CDDiffTestBasis {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
-
   }
 
   public void printOD(String CDFileName, String targetNumber) {
@@ -54,14 +51,20 @@ public class PrintODTest extends CDDiffTestBasis {
     Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(solver.getModel(), false, "MyOD");
     assert optOd.isPresent();
 
-    Path outputFile = Paths.get(RELATIVE_TARGET_PATH, optOd.get().getObjectDiagram().getName() + targetNumber + ".od");
+    Path outputFile =
+        Paths.get(
+            RELATIVE_TARGET_PATH, optOd.get().getObjectDiagram().getName() + targetNumber + ".od");
     try {
-      FileUtils.writeStringToFile(outputFile.toFile(), new OD4ReportFullPrettyPrinter().prettyprint(optOd.get()), Charset.defaultCharset());
+      FileUtils.writeStringToFile(
+          outputFile.toFile(),
+          new OD4ReportFullPrettyPrinter().prettyprint(optOd.get()),
+          Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
       Assertions.fail();
     }
-    Assertions.assertTrue(matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
+    Assertions.assertTrue(
+        matcher.checkODValidity(CDSemantics.SIMPLE_CLOSED_WORLD, optOd.get(), ast));
   }
 
   @Test
@@ -149,11 +152,8 @@ public class PrintODTest extends CDDiffTestBasis {
     printOD("car19.cd", "19");
   }
 
-
   @Test
   public void test_all() {
     printOD("car.cd", "");
   }
-
-
 }

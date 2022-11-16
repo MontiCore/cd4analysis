@@ -2,8 +2,6 @@
 package de.monticore.cddiff.cd2alloy.generator;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cddiff.CDDiffUtil;
-import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
@@ -11,6 +9,8 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -19,31 +19,26 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
-/**
- * Entry point for the CD2Alloy generator.
- */
+/** Entry point for the CD2Alloy generator. */
 public class CD2AlloyGenerator {
   private final String LOGGER_NAME = CD2AlloyGenerator.class.getName();
 
-  private final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(
-      new IndentPrinter());
+  private final MCBasicTypesFullPrettyPrinter pp =
+      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
   public static CD2AlloyGenerator getInstance() {
     return new CD2AlloyGenerator();
   }
 
-  protected CD2AlloyGenerator() {
-
-  }
+  protected CD2AlloyGenerator() {}
 
   /**
    * Generates the generic part of an alloy module
@@ -74,74 +69,141 @@ public class CD2AlloyGenerator {
     //         .lineSeparator() +
     //         "}" + System.lineSeparator() + System.lineSeparator());
 
-    return "// ***** Generic Part ***** " + System.lineSeparator() + " " + System.lineSeparator()
+    return "// ***** Generic Part ***** "
+        + System.lineSeparator()
+        + " "
+        + System.lineSeparator()
 
         // Comment for abstract Signatures
-        + "// The abstract signatures FName, Obj, Val, and EnumVal. " + System.lineSeparator()
+        + "// The abstract signatures FName, Obj, Val, and EnumVal. "
+        + System.lineSeparator()
 
         // Abstract Signature for Objects
         + "abstract sig Obj { get: FName -> {Obj + Val + EnumVal}, type: Type } "
         + System.lineSeparator()
         // Abstract Signature for Names
-        + "abstract sig FName {} " + System.lineSeparator()
+        + "abstract sig FName {} "
+        + System.lineSeparator()
         // Abstract Signature for Values
-        + "abstract sig Val {} " + System.lineSeparator()
+        + "abstract sig Val {} "
+        + System.lineSeparator()
         // Abstract Signature for EnumValues
-        + "abstract sig EnumVal {} " + System.lineSeparator()
-        + "abstract sig Type { super: set Type, inst : set Obj}" + System.lineSeparator() + " "
+        + "abstract sig EnumVal {} "
+        + System.lineSeparator()
+        + "abstract sig Type { super: set Type, inst : set Obj}"
+        + System.lineSeparator()
+        + " "
         + System.lineSeparator()
 
         // Comment for Parametrized predicates
         + "// Predicates used to specify cardinality constraints for navigable association"
-        + System.lineSeparator() + "// ends and for association ends of undirected associations."
-        + System.lineSeparator() + "pred ObjTypes[obj: set Obj, types: set Type]{"
-        + System.lineSeparator() + " all o:obj| o.type.super = types}" + System.lineSeparator()
-        + System.lineSeparator() + "pred ObjAttrib[objs: set Obj, fName: one FName,"
-        + System.lineSeparator() + " fType: set {Obj + Val + EnumVal}] {" + System.lineSeparator()
-        + " objs.get[fName] in fType" + System.lineSeparator() + " all o: objs| one o.get[fName] }"
-        + System.lineSeparator() + System.lineSeparator()
-        + "pred ObjFNames[objs: set Obj, fNames:set FName]{" + System.lineSeparator()
-        + " no objs.get[FName - fNames] }" + System.lineSeparator() + System.lineSeparator()
-        + "pred BidiAssoc[left: set Obj, lFName:one FName," + System.lineSeparator()
-        + " right: set Obj, rFName:one FName] {" + System.lineSeparator()
-        + " all l: left | all r: l.get[lFName] | l in r.get[rFName]" + System.lineSeparator()
-        + " all r: right | all l: r.get[rFName] | r in l.get[lFName] }" + System.lineSeparator()
-        + System.lineSeparator() + "pred Composition[compos: Obj->Obj, right: set Obj] {"
-        + System.lineSeparator() + " all r: right | lone compos.r }" + System.lineSeparator() + " "
-        + System.lineSeparator() + "fun rel[wholes: set Obj, fn: FName] : Obj->Obj {"
-        + System.lineSeparator() + " {o1:Obj,o2:Obj|o1->fn->o2 in wholes <: get} } "
-        + System.lineSeparator() + System.lineSeparator()
+        + System.lineSeparator()
+        + "// ends and for association ends of undirected associations."
+        + System.lineSeparator()
+        + "pred ObjTypes[obj: set Obj, types: set Type]{"
+        + System.lineSeparator()
+        + " all o:obj| o.type.super = types}"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "pred ObjAttrib[objs: set Obj, fName: one FName,"
+        + System.lineSeparator()
+        + " fType: set {Obj + Val + EnumVal}] {"
+        + System.lineSeparator()
+        + " objs.get[fName] in fType"
+        + System.lineSeparator()
+        + " all o: objs| one o.get[fName] }"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "pred ObjFNames[objs: set Obj, fNames:set FName]{"
+        + System.lineSeparator()
+        + " no objs.get[FName - fNames] }"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "pred BidiAssoc[left: set Obj, lFName:one FName,"
+        + System.lineSeparator()
+        + " right: set Obj, rFName:one FName] {"
+        + System.lineSeparator()
+        + " all l: left | all r: l.get[lFName] | l in r.get[rFName]"
+        + System.lineSeparator()
+        + " all r: right | all l: r.get[rFName] | r in l.get[lFName] }"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "pred Composition[compos: Obj->Obj, right: set Obj] {"
+        + System.lineSeparator()
+        + " all r: right | lone compos.r }"
+        + System.lineSeparator()
+        + " "
+        + System.lineSeparator()
+        + "fun rel[wholes: set Obj, fn: FName] : Obj->Obj {"
+        + System.lineSeparator()
+        + " {o1:Obj,o2:Obj|o1->fn->o2 in wholes <: get} } "
+        + System.lineSeparator()
+        + System.lineSeparator()
         + "// Predicates used to specify cardinality constraints for navigable association"
-        + System.lineSeparator() + "// ends and for association ends of undirected associations. "
+        + System.lineSeparator()
+        + "// ends and for association ends of undirected associations. "
         + System.lineSeparator()
         + "pred ObjUAttrib[objs: set Obj, fName:one FName, fType:set Obj, up: Int] {"
-        + System.lineSeparator() + " objs.get[fName] in fType" + System.lineSeparator()
-        + " all o: objs| (#o.get[fName] =< up) } " + System.lineSeparator() + System.lineSeparator()
+        + System.lineSeparator()
+        + " objs.get[fName] in fType"
+        + System.lineSeparator()
+        + " all o: objs| (#o.get[fName] =< up) } "
+        + System.lineSeparator()
+        + System.lineSeparator()
         + "pred ObjLAttrib[objs: set Obj, fName: one FName, fType: set Obj, low: Int] {"
-        + System.lineSeparator() + " objs.get[fName] in fType" + System.lineSeparator()
-        + " all o: objs | (#o.get[fName] >= low) }" + System.lineSeparator()
-        + System.lineSeparator() + "pred ObjLUAttrib[objs:set Obj, fName:one FName, fType:set Obj,"
-        + System.lineSeparator() + " low: Int, up: Int] {" + System.lineSeparator()
-        + " ObjLAttrib[objs, fName, fType, low]" + System.lineSeparator()
-        + " ObjUAttrib[objs, fName, fType, up] }" + System.lineSeparator() + System.lineSeparator()
+        + System.lineSeparator()
+        + " objs.get[fName] in fType"
+        + System.lineSeparator()
+        + " all o: objs | (#o.get[fName] >= low) }"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "pred ObjLUAttrib[objs:set Obj, fName:one FName, fType:set Obj,"
+        + System.lineSeparator()
+        + " low: Int, up: Int] {"
+        + System.lineSeparator()
+        + " ObjLAttrib[objs, fName, fType, low]"
+        + System.lineSeparator()
+        + " ObjUAttrib[objs, fName, fType, up] }"
+        + System.lineSeparator()
+        + System.lineSeparator()
         + "// Parametrized predicates used to specify cardinality constraints for non-"
-        + System.lineSeparator() + "// navigable association ends. " + System.lineSeparator()
+        + System.lineSeparator()
+        + "// navigable association ends. "
+        + System.lineSeparator()
         + "pred ObjL[objs: set Obj, fName:one FName, fType: set Obj, low: Int] {"
-        + System.lineSeparator() + " all r: objs | # { l: fType | r in l.get[fName]} >= low } "
-        + System.lineSeparator() + System.lineSeparator()
+        + System.lineSeparator()
+        + " all r: objs | # { l: fType | r in l.get[fName]} >= low } "
+        + System.lineSeparator()
+        + System.lineSeparator()
         + "pred ObjU[objs: set Obj, fName:one FName, fType: set Obj, up: Int] {"
-        + System.lineSeparator() + " all r: objs | # { l: fType | r in l.get[fName]} =< up } "
-        + System.lineSeparator() + System.lineSeparator()
-        + "pred ObjLU[objs: set Obj, fName:one FName, fType: set Obj," + System.lineSeparator()
-        + " low: Int, up: Int] {" + System.lineSeparator() + " ObjL[objs, fName, fType, low]"
-        + System.lineSeparator() + " ObjU[objs, fName, fType, up] }" + System.lineSeparator()
-        + System.lineSeparator() + "fact InstancesOfTypes {" + System.lineSeparator()
-        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}" + System.lineSeparator()
-        + System.lineSeparator() + ""
+        + System.lineSeparator()
+        + " all r: objs | # { l: fType | r in l.get[fName]} =< up } "
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "pred ObjLU[objs: set Obj, fName:one FName, fType: set Obj,"
+        + System.lineSeparator()
+        + " low: Int, up: Int] {"
+        + System.lineSeparator()
+        + " ObjL[objs, fName, fType, low]"
+        + System.lineSeparator()
+        + " ObjU[objs, fName, fType, up] }"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "fact InstancesOfTypes {"
+        + System.lineSeparator()
+        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + ""
 
         // Additional Fact from in TechRep Example to exclude illegal
-        + "fact NonEmptyInstancesOnly {" + System.lineSeparator() + " some Obj"
-        + System.lineSeparator() + "}" + System.lineSeparator() + System.lineSeparator();
+        + "fact NonEmptyInstancesOnly {"
+        + System.lineSeparator()
+        + " some Obj"
+        + System.lineSeparator()
+        + "}"
+        + System.lineSeparator()
+        + System.lineSeparator();
   }
 
   public String executeRuleU1(Set<ASTCDCompilationUnit> asts) {
@@ -177,16 +239,16 @@ public class CD2AlloyGenerator {
     // Union of all classes
     Set<ASTCDClass> classUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDClassesList());
+      Set<ASTCDClass> classSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList());
       classUnion.addAll(classSet);
     }
 
     // Union of all interfaces
     Set<ASTCDInterface> interfaceUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDInterface> interfaceSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDInterfacesList());
+      Set<ASTCDInterface> interfaceSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList());
       interfaceUnion.addAll(interfaceSet);
     }
 
@@ -212,8 +274,8 @@ public class CD2AlloyGenerator {
     // Union of all Associations
     Set<ASTCDAssociation> associationUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDAssociation> associationSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDAssociationsList());
+      Set<ASTCDAssociation> associationSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDAssociationsList());
       associationUnion.addAll(associationSet);
     }
 
@@ -226,15 +288,13 @@ public class CD2AlloyGenerator {
 
       if (association.getLeft().isPresentCDRole()) {
         leftRole = association.getLeft().getCDRole().getName();
-      }
-      else {
+      } else {
         // Preprocess parts of reference names and add them as role name
         leftRole = CDDiffUtil.partHandler(association.getLeftReferenceName(), true);
       }
       if (association.getRight().isPresentCDRole()) {
         rightRole = association.getRight().getCDRole().getName();
-      }
-      else {
+      } else {
         // Preprocess parts of reference names and add them as role name
         rightRole = CDDiffUtil.partHandler(association.getRightReferenceName(), true);
       }
@@ -247,12 +307,11 @@ public class CD2AlloyGenerator {
         roleNameUnion.add(rightRole);
       }
 
-      if (!(association.getCDAssocDir().isDefinitiveNavigableLeft() || association.getCDAssocDir()
-          .isDefinitiveNavigableRight())) {
+      if (!(association.getCDAssocDir().isDefinitiveNavigableLeft()
+          || association.getCDAssocDir().isDefinitiveNavigableRight())) {
         roleNameUnion.add(leftRole);
         roleNameUnion.add(rightRole);
       }
-
     }
 
     // Union of all attribute and role names
@@ -263,7 +322,8 @@ public class CD2AlloyGenerator {
     // Generate output of U2 rule
     commonSigs.append("// U2: Common names ").append(System.lineSeparator());
     for (String n : nameUnion) {
-      commonSigs.append("one sig ")
+      commonSigs
+          .append("one sig ")
           .append(n)
           .append(" extends FName {}")
           .append(System.lineSeparator());
@@ -278,8 +338,8 @@ public class CD2AlloyGenerator {
     // Union of all classes
     Set<ASTCDClass> classUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDClass> classSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDClassesList());
+      Set<ASTCDClass> classSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDClassesList());
       classUnion.addAll(classSet);
     }
 
@@ -299,21 +359,20 @@ public class CD2AlloyGenerator {
     // Union of all Interfaces
     Set<ASTCDInterface> interfaceUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDInterface> interfaceSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDInterfacesList());
+      Set<ASTCDInterface> interfaceSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDInterfacesList());
       interfaceUnion.addAll(interfaceSet);
     }
     // Union of all interface Names
     Set<String> interfaceNameUnion = new HashSet<>();
     for (ASTCDInterface astcdInterface : interfaceUnion) {
-      interfaceNameUnion.add(
-          CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()));
+      interfaceNameUnion.add(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()));
     }
     // Union of all Enums
     Set<ASTCDEnum> enumUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDEnum> enumSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDEnumsList());
+      Set<ASTCDEnum> enumSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
     // Union of all Enum Names
@@ -332,8 +391,11 @@ public class CD2AlloyGenerator {
     for (ASTCDAttribute astcdAttribute : attributeUnion) {
       // TODO: Im Tech.-Report sind enums drin, im Beispiel nicht, klären!
       String typeName =
-          astcdAttribute.printType().replaceAll("<", "_of__").replaceAll(">", "__").replaceAll(
-              "\\.","_");
+          astcdAttribute
+              .printType()
+              .replaceAll("<", "_of__")
+              .replaceAll(">", "__")
+              .replaceAll("\\.", "_");
       if (!ciTypes.contains(typeName) && !enumNameUnion.contains(typeName)) {
         puTypes.add(typeName);
       }
@@ -342,7 +404,8 @@ public class CD2AlloyGenerator {
     // Generate rule output
     commonSigs.append("// U3: Concrete primitive or unknown types ").append(System.lineSeparator());
     for (String type : puTypes) {
-      commonSigs.append("one sig type_")
+      commonSigs
+          .append("one sig type_")
           .append(type)
           .append(" extends Val {}")
           .append(System.lineSeparator());
@@ -357,8 +420,8 @@ public class CD2AlloyGenerator {
     // Union of all Enums
     Set<ASTCDEnum> enumUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDEnum> enumSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDEnumsList());
+      Set<ASTCDEnum> enumSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
 
@@ -366,8 +429,10 @@ public class CD2AlloyGenerator {
     for (ASTCDEnum e : enumUnion) {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
-        enumTypeNameUnion.add(CDDiffUtil.processQName(e.getSymbol().getFullName()) + "_"
-            + astcdEnumConstant.getName());
+        enumTypeNameUnion.add(
+            CDDiffUtil.processQName(e.getSymbol().getFullName())
+                + "_"
+                + astcdEnumConstant.getName());
       }
     }
 
@@ -419,7 +484,8 @@ public class CD2AlloyGenerator {
     commonSigs.append("fact{");
 
     for (String typeName : typeNameUnion) {
-      commonSigs.append("all c: ")
+      commonSigs
+          .append("all c: ")
           .append(CDDiffUtil.processQName(typeName))
           .append(" | c.type=Type_")
           .append(CDDiffUtil.processQName(typeName))
@@ -435,15 +501,13 @@ public class CD2AlloyGenerator {
     commonSigs.append("}");
 
     return commonSigs.toString();
-
   }
 
-  /**
-   * A helper function to generate all signatures common to all CDs
-   */
+  /** A helper function to generate all signatures common to all CDs */
   private String createCommonSignatures(Set<ASTCDCompilationUnit> asts) {
 
-    return "// ***** Structures common to both CDs ***** " + System.lineSeparator()
+    return "// ***** Structures common to both CDs ***** "
+        + System.lineSeparator()
         + System.lineSeparator()
 
         // ***** Collect all elements by computing their union *****
@@ -453,17 +517,24 @@ public class CD2AlloyGenerator {
         // TODO: interfaces werden im Report nicht behandelt bzw. explizit
         // ignoriert, tauchen im generierten
         // Code aber auf
-        + executeRuleU1(asts) + "" + System.lineSeparator()
+        + executeRuleU1(asts)
+        + ""
+        + System.lineSeparator()
 
         // U2: Common names
-        + executeRuleU2(asts) + "" + System.lineSeparator()
+        + executeRuleU2(asts)
+        + ""
+        + System.lineSeparator()
 
         // U3: Concrete primitive or unknown types
-        + executeRuleU3(asts) + "" + System.lineSeparator()
+        + executeRuleU3(asts)
+        + ""
+        + System.lineSeparator()
 
         // U4: Concrete enum values
-        + executeRuleU4(asts) + "" + System.lineSeparator();
-
+        + executeRuleU4(asts)
+        + ""
+        + System.lineSeparator();
   }
 
   /**
@@ -476,7 +547,8 @@ public class CD2AlloyGenerator {
     // The set of all classes in the class diagram
     Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
 
-    classFunctions.append("// F1: Function returning all atoms of all subclasses of the class. ")
+    classFunctions
+        .append("// F1: Function returning all atoms of all subclasses of the class. ")
         .append(System.lineSeparator());
     for (ASTCDClass astcdClass : classes) {
       Set<ASTCDClass> subs = new HashSet<>();
@@ -492,7 +564,8 @@ public class CD2AlloyGenerator {
 
       // Output F1
       // Functions + Names
-      classFunctions.append("fun ")
+      classFunctions
+          .append("fun ")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
@@ -540,7 +613,6 @@ public class CD2AlloyGenerator {
               toProcess.add(astClass);
             }
           }
-
         }
       }
     }
@@ -558,12 +630,13 @@ public class CD2AlloyGenerator {
     // The set of all classes in the class diagram
     Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
 
-    classFunctions.append(
-            "// F2: Functions returning all instances of classes implementing the interface. ")
+    classFunctions
+        .append("// F2: Functions returning all instances of classes implementing the interface. ")
         .append(System.lineSeparator());
     Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
     for (ASTCDInterface astcdInterface : interfaces) {
-      classFunctions.append("fun ")
+      classFunctions
+          .append("fun ")
           .append(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
@@ -590,8 +663,7 @@ public class CD2AlloyGenerator {
         }
         // Remove last '+'
         classFunctions.delete(classFunctions.length() - 2, classFunctions.length());
-      }
-      else {
+      } else {
         classFunctions.append("none");
       }
       classFunctions.append("}").append(System.lineSeparator());
@@ -604,8 +676,8 @@ public class CD2AlloyGenerator {
    * A helper function to compute the transitive hull of all interfaces implemented by a class
    * superClass in environment classes.
    */
-  static Set<ASTCDInterface> interfaces(ASTCDClass superClass,
-      Set<ASTCDInterface> allowedInterfaces) {
+  static Set<ASTCDInterface> interfaces(
+      ASTCDClass superClass, Set<ASTCDInterface> allowedInterfaces) {
     // Initialize variables
     Set<ASTCDInterface> interfaces = new HashSet<>();
     LinkedList<ASTCDInterface> toProcess = new LinkedList<>();
@@ -650,8 +722,8 @@ public class CD2AlloyGenerator {
     return interfaces;
   }
 
-  static Set<ASTCDInterface> interfaces(ASTCDInterface astcdInterface,
-      Set<ASTCDInterface> allowedInterfaces) {
+  static Set<ASTCDInterface> interfaces(
+      ASTCDInterface astcdInterface, Set<ASTCDInterface> allowedInterfaces) {
     Set<ASTCDInterface> interfaces = new HashSet<>();
     interfaces.add(astcdInterface);
 
@@ -687,11 +759,12 @@ public class CD2AlloyGenerator {
     Set<ASTCDEnum> enums = new HashSet<>(cdDefinition.getCDEnumsList());
 
     // Comment for F3 rule
-    classFunctions.append(
-            "// F3: Functions returning all possible enum values for all enums in the CD. ")
+    classFunctions
+        .append("// F3: Functions returning all possible enum values for all enums in the CD. ")
         .append(System.lineSeparator());
     for (ASTCDEnum e : enums) {
-      classFunctions.append("fun ")
+      classFunctions
+          .append("fun ")
           .append(CDDiffUtil.processQName(e.getSymbol().getFullName()))
           .append("EnumCD")
           .append(cdDefinition.getName())
@@ -700,11 +773,11 @@ public class CD2AlloyGenerator {
 
       if (enumVals.isEmpty()) {
         classFunctions.append("none }").append(System.lineSeparator());
-      }
-      else {
+      } else {
 
         for (ASTCDEnumConstant enumVal : enumVals) {
-          classFunctions.append("enum_")
+          classFunctions
+              .append("enum_")
               .append(CDDiffUtil.processQName(e.getSymbol().getFullName()))
               .append("_")
               .append(enumVal.getName());
@@ -740,8 +813,8 @@ public class CD2AlloyGenerator {
       }
     }
 
-    classFunctions.append(
-            "// F4: Creates a function for every part of a composite whole-part-relation")
+    classFunctions
+        .append("// F4: Creates a function for every part of a composite whole-part-relation")
         .append(System.lineSeparator())
         .append("// that returns all linked whole/part instance pairs.")
         .append(System.lineSeparator());
@@ -759,7 +832,8 @@ public class CD2AlloyGenerator {
       }
 
       // Generate Alloy function
-      classFunctions.append("fun ")
+      classFunctions
+          .append("fun ")
           .append(part)
           .append("CompFieldsCD")
           .append(cdDefinition.getName())
@@ -768,13 +842,13 @@ public class CD2AlloyGenerator {
       for (ASTCDAssociation c : comps) {
         // TODO: Das ist im tech Report unterspezifiziert, gilt das immer?
         if (c.getRight().isPresentCDRole() && (c.getLeftReferenceName().size() == 1)) {
-          classFunctions.append("  rel[")
+          classFunctions
+              .append("  rel[")
               .append(c.getLeftReferenceName().get(0))
               .append("SubsCD")
               .append(cdDefinition.getName());
           classFunctions.append(",").append(c.getRight().getCDRole().getName()).append("] + ");
-        }
-        else {
+        } else {
           Log.error("0xCDD04: " + c + ": has no roleName or more than one LeftReferenceName.");
         }
       }
@@ -786,29 +860,34 @@ public class CD2AlloyGenerator {
     return classFunctions.toString();
   }
 
-  /**
-   * Generates the Functions for Subclassing, Interfaces, Compositions, and Enums
-   */
+  /** Generates the Functions for Subclassing, Interfaces, Compositions, and Enums */
   private String createFunctions(ASTCDCompilationUnit cd) {
 
     // Comment for each alloy module
 
-    return "// ***** Functions specific to CD " + cd.getCDDefinition().getName() + " ***** "
-        + System.lineSeparator() + System.lineSeparator()
+    return "// ***** Functions specific to CD "
+        + cd.getCDDefinition().getName()
+        + " ***** "
+        + System.lineSeparator()
+        + System.lineSeparator()
 
         // F1: Functions returning all atoms of all subclasses of the class.
-        + executeRuleF1(cd) + System.lineSeparator()
+        + executeRuleF1(cd)
+        + System.lineSeparator()
 
         // F2: Functions returning all instances of classes implementing the
         // interface.
-        + executeRuleF2(cd) + System.lineSeparator()
+        + executeRuleF2(cd)
+        + System.lineSeparator()
 
         // F3: Functions returning all possible enum values for all enums in the CD.
-        + executeRuleF3(cd) + System.lineSeparator()
+        + executeRuleF3(cd)
+        + System.lineSeparator()
 
         // F4: Creates a function for every part of a composite whole-part-relation
         // that returns all linked whole/part instance pairs.
-        + executeRuleF4(cd) + System.lineSeparator();
+        + executeRuleF4(cd)
+        + System.lineSeparator();
   }
 
   /**
@@ -850,16 +929,15 @@ public class CD2AlloyGenerator {
     return result.toString();
   }
 
-  /**
-   * additional rule for new semantics
-   */
+  /** additional rule for new semantics */
   public String executeRuleP0(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
 
     // The set of all classes in the class diagram
     Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
 
-    classFunctions.append("// P0: New rule for multi-instance semantics. ")
+    classFunctions
+        .append("// P0: New rule for multi-instance semantics. ")
         .append(System.lineSeparator());
     for (ASTCDClass astcdClass : classes) {
 
@@ -872,13 +950,15 @@ public class CD2AlloyGenerator {
 
       // Output P0
       // Functions + Names
-      classFunctions.append("ObjTypes[")
+      classFunctions
+          .append("ObjTypes[")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append(",(");
 
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
-        classFunctions.append("Type_")
+        classFunctions
+            .append("Type_")
             .append(CDDiffUtil.processQName(superType.getSymbol().getFullName()))
             .append(" + ");
       }
@@ -888,7 +968,6 @@ public class CD2AlloyGenerator {
     }
 
     return classFunctions.toString();
-
   }
 
   /**
@@ -919,15 +998,23 @@ public class CD2AlloyGenerator {
 
       // Generate Alloy predicate
       for (ASTCDAttribute astcdAttribute : attributeUnion) {
-        predicate.append("ObjAttrib[")
+        predicate
+            .append("ObjAttrib[")
             .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
             .append(", ");
         predicate.append(astcdAttribute.getName()).append(", ");
-        predicate.append(
-            executeRuleH1(astcdAttribute.printType().replaceAll("<", "_of__").replaceAll(">", "__").replaceAll("\\.","_"),
-                cd)).append("]").append(System.lineSeparator());
+        predicate
+            .append(
+                executeRuleH1(
+                    astcdAttribute
+                        .printType()
+                        .replaceAll("<", "_of__")
+                        .replaceAll(">", "__")
+                        .replaceAll("\\.", "_"),
+                    cd))
+            .append("]")
+            .append(System.lineSeparator());
       }
-
     }
     return predicate.toString();
   }
@@ -949,8 +1036,8 @@ public class CD2AlloyGenerator {
     Set<ASTCDInterface> cdInterfaces = new HashSet<>(cdDefinition.getCDInterfacesList());
 
     // Comment
-    predicate.append(
-            "// P2: Restricts the tuples of the get relation to the attributes of the class ")
+    predicate
+        .append("// P2: Restricts the tuples of the get relation to the attributes of the class ")
         .append(System.lineSeparator())
         .append("// and to the role names of its partners in associations. ")
         .append(System.lineSeparator());
@@ -988,15 +1075,14 @@ public class CD2AlloyGenerator {
       // All left roles
       for (ASTCDAssociation a : cdDefinition.getCDAssociationsList()) {
         // Skip associations with wrong direction
-        if (a.getCDAssocDir().isDefinitiveNavigableRight() && !a.getCDAssocDir()
-            .isBidirectional()) {
+        if (a.getCDAssocDir().isDefinitiveNavigableRight()
+            && !a.getCDAssocDir().isBidirectional()) {
           continue;
         }
         for (String lrName : a.getRightReferenceName()) {
           if (a.getLeft().isPresentCDRole() && superNames.contains(lrName)) {
             fields.add(a.getLeft().getCDRole().getName());
-          }
-          else {
+          } else {
             // TODO: Nur ein test
             if (superNames.contains(lrName)) {
               // Preprocess parts of reference names and add them as role name
@@ -1016,8 +1102,7 @@ public class CD2AlloyGenerator {
         for (String rrName : a.getLeftReferenceName()) {
           if (a.getRight().isPresentCDRole() && superNames.contains(rrName)) {
             fields.add(a.getRight().getCDRole().getName());
-          }
-          else {
+          } else {
             // TODO: Nur ein test
             if (superNames.contains(rrName)) {
               // Preprocess parts of reference names and add them as role name
@@ -1029,7 +1114,8 @@ public class CD2AlloyGenerator {
       }
 
       // Output
-      predicate.append("ObjFNames[")
+      predicate
+          .append("ObjFNames[")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append(", ");
       if (fields.size() > 0) {
@@ -1042,8 +1128,7 @@ public class CD2AlloyGenerator {
 
         // TODO: Nur im Beispiel und ich habe keine Ahnung, warum!
         predicate.append(" + none");
-      }
-      else {
+      } else {
         predicate.append("none ");
       }
       predicate.append("]").append(System.lineSeparator());
@@ -1063,7 +1148,8 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append("// P3: Atoms for interfaces, singleton, and abstract classes")
+    predicate
+        .append("// P3: Atoms for interfaces, singleton, and abstract classes")
         .append(System.lineSeparator());
 
     // Abstract classes should not have objects
@@ -1076,29 +1162,31 @@ public class CD2AlloyGenerator {
         abstractClasses.add(astcdClass);
       }
       // TODO: Überprüfen und testen -> Gibt es nicht, was also tun?
-      if (astcdClass.getModifier().isPresentStereotype() && astcdClass.getModifier()
-          .getStereotype()
-          .contains("singleton")) {
+      if (astcdClass.getModifier().isPresentStereotype()
+          && astcdClass.getModifier().getStereotype().contains("singleton")) {
         singletonClasses.add(astcdClass);
       }
     }
     // Alloy predicate for abstract classes
     for (ASTCDClass astcdClass : abstractClasses) {
-      predicate.append("no ")
+      predicate
+          .append("no ")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
 
     // Alloy predicate for interfaces
     for (ASTCDInterface astcdInterface : cd.getCDDefinition().getCDInterfacesList()) {
-      predicate.append("no ")
+      predicate
+          .append("no ")
           .append(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
 
     // Alloy predicates for singleton classes
     for (ASTCDClass astcdClass : singletonClasses) {
-      predicate.append("one ")
+      predicate
+          .append("one ")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append(System.lineSeparator());
     }
@@ -1120,7 +1208,8 @@ public class CD2AlloyGenerator {
     List<ASTCDClass> cdClasses = cdDefinition.getCDClassesList();
 
     // Comment
-    predicate.append("// P4: Restrict Objects to instances of classes in the CD. ")
+    predicate
+        .append("// P4: Restrict Objects to instances of classes in the CD. ")
         .append(System.lineSeparator());
 
     predicate.append("Obj = (");
@@ -1131,8 +1220,7 @@ public class CD2AlloyGenerator {
       }
       // Remove last '+'
       predicate.delete(predicate.length() - 2, predicate.length());
-    }
-    else {
+    } else {
       predicate.append("none").append(System.lineSeparator());
     }
     predicate.append(")").append(System.lineSeparator());
@@ -1140,9 +1228,7 @@ public class CD2AlloyGenerator {
     return predicate.toString();
   }
 
-  /**
-   * Rule A1 constraints the sets of links of bidirectional associations.
-   */
+  /** Rule A1 constraints the sets of links of bidirectional associations. */
   public String executeRuleA1(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
@@ -1153,39 +1239,37 @@ public class CD2AlloyGenerator {
     List<ASTCDAssociation> cdAssociations = cdDefinition.getCDAssociationsList();
 
     // Comment
-    predicate.append("// A1: Constraints the sets of links of bidirectional associations.")
+    predicate
+        .append("// A1: Constraints the sets of links of bidirectional associations.")
         .append(System.lineSeparator());
     for (ASTCDAssociation a : cdAssociations) {
-      if (a.getCDAssocDir().isBidirectional() || (!a.getCDAssocDir().isDefinitiveNavigableLeft()
-          && !a.getCDAssocDir().isDefinitiveNavigableRight())) {
+      if (a.getCDAssocDir().isBidirectional()
+          || (!a.getCDAssocDir().isDefinitiveNavigableLeft()
+              && !a.getCDAssocDir().isDefinitiveNavigableRight())) {
         List<String> leftReferenceNames = a.getLeftReferenceName();
         List<String> rightReferenceNames = a.getRightReferenceName();
 
         // Generation
         predicate.append("BidiAssoc[");
 
-        predicate.append(
-            executeRuleH1(CDDiffUtil.partHandler(leftReferenceNames, false), cd));
+        predicate.append(executeRuleH1(CDDiffUtil.partHandler(leftReferenceNames, false), cd));
         predicate.append(",");
 
         if (a.getRight().isPresentCDRole()) {
           predicate.append(a.getRight().getCDRole().getName());
-        }
-        else {
+        } else {
           // Preprocess parts of reference names and add them as role name
           String name = CDDiffUtil.partHandler(a.getRightReferenceName(), true);
           predicate.append(name);
         }
         predicate.append(",");
 
-        predicate.append(
-            executeRuleH1(CDDiffUtil.partHandler(rightReferenceNames, false), cd));
+        predicate.append(executeRuleH1(CDDiffUtil.partHandler(rightReferenceNames, false), cd));
         predicate.append(",");
 
         if (a.getLeft().isPresentCDRole()) {
           predicate.append(a.getLeft().getCDRole().getName());
-        }
-        else {
+        } else {
           // Preprocess parts of reference names and add them as role name
           String name = CDDiffUtil.partHandler(a.getLeftReferenceName(), true);
           predicate.append(name);
@@ -1197,9 +1281,7 @@ public class CD2AlloyGenerator {
     return predicate.toString();
   }
 
-  /**
-   * Executes Rule A2, which ensures that parts of compositions have at most one whole.
-   */
+  /** Executes Rule A2, which ensures that parts of compositions have at most one whole. */
   public String executeRuleA2(ASTCDCompilationUnit cd) {
     StringBuilder predicate = new StringBuilder();
 
@@ -1207,7 +1289,8 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append("// A2: ensures that parts of compositions have at most one whole.")
+    predicate
+        .append("// A2: ensures that parts of compositions have at most one whole.")
         .append(System.lineSeparator());
 
     for (ASTCDAssociation a : cdDefinition.getCDAssociationsList()) {
@@ -1241,8 +1324,8 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append(
-            "// A3: ensures the cardinality constraints stated on the left sides of bidirec-")
+    predicate
+        .append("// A3: ensures the cardinality constraints stated on the left sides of bidirec-")
         .append(System.lineSeparator())
         .append(
             "// tional associations, undirected association, and associations that are navigable "
@@ -1252,9 +1335,10 @@ public class CD2AlloyGenerator {
         .append(System.lineSeparator());
 
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
-      if ((asc.getCDAssocDir().isBidirectional() || asc.getCDAssocDir().isDefinitiveNavigableLeft()
-          || (!asc.getCDAssocDir().isDefinitiveNavigableLeft() && !asc.getCDAssocDir()
-          .isDefinitiveNavigableRight()))) {
+      if ((asc.getCDAssocDir().isBidirectional()
+          || asc.getCDAssocDir().isDefinitiveNavigableLeft()
+          || (!asc.getCDAssocDir().isDefinitiveNavigableLeft()
+              && !asc.getCDAssocDir().isDefinitiveNavigableRight()))) {
         predicate.append(appendRemainingRuleA(3, cd, asc));
       }
     }
@@ -1273,15 +1357,16 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append("// A4: ensures the cardinality constraints stated on the right sides of")
+    predicate
+        .append("// A4: ensures the cardinality constraints stated on the right sides of")
         .append(System.lineSeparator())
         .append("// associations, which are navigable from right to left, are respected.")
         .append(System.lineSeparator());
 
     // Computation
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
-      if ((asc.getCDAssocDir().isDefinitiveNavigableLeft() && !asc.getCDAssocDir()
-          .isBidirectional())) {
+      if ((asc.getCDAssocDir().isDefinitiveNavigableLeft()
+          && !asc.getCDAssocDir().isBidirectional())) {
         predicate.append(appendRemainingRuleA(4, cd, asc));
       }
     }
@@ -1300,19 +1385,22 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append("// A5: ensures the cardinality constraints stated on the right sides of")
+    predicate
+        .append("// A5: ensures the cardinality constraints stated on the right sides of")
         .append(System.lineSeparator())
-        .append("// bidirectional associations, undirected association, and associations that are "
-            + "navigable from")
+        .append(
+            "// bidirectional associations, undirected association, and associations that are "
+                + "navigable from")
         .append(System.lineSeparator())
         .append("// right to left are respected.")
         .append(System.lineSeparator());
 
     // Computation
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
-      if ((asc.getCDAssocDir().isBidirectional() || asc.getCDAssocDir().isDefinitiveNavigableRight()
-          || (!asc.getCDAssocDir().isDefinitiveNavigableLeft() && !asc.getCDAssocDir()
-          .isDefinitiveNavigableRight()))) {
+      if ((asc.getCDAssocDir().isBidirectional()
+          || asc.getCDAssocDir().isDefinitiveNavigableRight()
+          || (!asc.getCDAssocDir().isDefinitiveNavigableLeft()
+              && !asc.getCDAssocDir().isDefinitiveNavigableRight()))) {
         predicate.append(appendRemainingRuleA(5, cd, asc));
       }
     }
@@ -1330,27 +1418,25 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append(
-            "// A6: ensures the cardinality constraints stated on the left sides of associ-")
+    predicate
+        .append("// A6: ensures the cardinality constraints stated on the left sides of associ-")
         .append(System.lineSeparator())
         .append("// ations that are navigable from left to right are respected.")
         .append(System.lineSeparator());
 
     // Computation
     for (ASTCDAssociation asc : cdDefinition.getCDAssociationsList()) {
-      if ((asc.getCDAssocDir().isDefinitiveNavigableRight() && !asc.getCDAssocDir()
-          .isBidirectional())) {
+      if ((asc.getCDAssocDir().isDefinitiveNavigableRight()
+          && !asc.getCDAssocDir().isBidirectional())) {
         predicate.append(appendRemainingRuleA(6, cd, asc));
       }
     }
     return predicate.toString();
   }
 
-  /**
-   * private helper method that completes predicate for rules A4 - A6
-   */
-  private StringBuilder appendRemainingRuleA(int ruleID, ASTCDCompilationUnit cd,
-      ASTCDAssociation association) {
+  /** private helper method that completes predicate for rules A4 - A6 */
+  private StringBuilder appendRemainingRuleA(
+      int ruleID, ASTCDCompilationUnit cd, ASTCDAssociation association) {
 
     StringBuilder predicate = new StringBuilder();
 
@@ -1383,106 +1469,100 @@ public class CD2AlloyGenerator {
     }
 
     switch (ruleID) {
-      case 3: {
-        infix = "Attrib";
+      case 3:
+        {
+          infix = "Attrib";
 
-        lowerCardinality = "" + leftLowerBound;
+          lowerCardinality = "" + leftLowerBound;
 
-        if (leftUpperBound < 0) {
-          upperCardinality = "";
-        }
-        else {
-          upperCardinality = "" + leftUpperBound;
-        }
+          if (leftUpperBound < 0) {
+            upperCardinality = "";
+          } else {
+            upperCardinality = "" + leftUpperBound;
+          }
 
-        firstReferenceName = association.getRightReferenceName();
-        secondReferenceName = association.getLeftReferenceName();
-        rolePresent = association.getLeft().isPresentCDRole();
-        if (rolePresent) {
-          roleName = association.getLeft().getCDRole().getName();
+          firstReferenceName = association.getRightReferenceName();
+          secondReferenceName = association.getLeftReferenceName();
+          rolePresent = association.getLeft().isPresentCDRole();
+          if (rolePresent) {
+            roleName = association.getLeft().getCDRole().getName();
+          } else {
+            roleName = CDDiffUtil.partHandler(secondReferenceName, true);
+          }
+          break;
         }
-        else {
-          roleName = CDDiffUtil.partHandler(secondReferenceName, true);
-        }
-        break;
-      }
-      case 4: {
+      case 4:
+        {
+          lowerCardinality = "" + rightLowerBound;
 
-        lowerCardinality = "" + rightLowerBound;
+          if (rightUpperBound < 0) {
+            upperCardinality = "";
+          } else {
+            upperCardinality = "" + rightUpperBound;
+          }
 
-        if (rightUpperBound < 0) {
-          upperCardinality = "";
+          firstReferenceName = association.getLeftReferenceName();
+          secondReferenceName = association.getRightReferenceName();
+          rolePresent = association.getLeft().isPresentCDRole();
+          if (rolePresent) {
+            roleName = association.getLeft().getCDRole().getName();
+          } else {
+            roleName = CDDiffUtil.partHandler(firstReferenceName, true);
+          }
+          break;
         }
-        else {
-          upperCardinality = "" + rightUpperBound;
-        }
+      case 5:
+        {
+          infix = "Attrib";
 
-        firstReferenceName = association.getLeftReferenceName();
-        secondReferenceName = association.getRightReferenceName();
-        rolePresent = association.getLeft().isPresentCDRole();
-        if (rolePresent) {
-          roleName = association.getLeft().getCDRole().getName();
-        }
-        else {
-          roleName = CDDiffUtil.partHandler(firstReferenceName, true);
-        }
-        break;
-      }
-      case 5: {
-        infix = "Attrib";
+          lowerCardinality = "" + rightLowerBound;
 
-        lowerCardinality = "" + rightLowerBound;
+          if (rightUpperBound < 0) {
+            upperCardinality = "";
+          } else {
+            upperCardinality = "" + rightUpperBound;
+          }
 
-        if (rightUpperBound < 0) {
-          upperCardinality = "";
+          firstReferenceName = association.getLeftReferenceName();
+          secondReferenceName = association.getRightReferenceName();
+          rolePresent = association.getRight().isPresentCDRole();
+          if (rolePresent) {
+            roleName = association.getRight().getCDRole().getName();
+          } else {
+            roleName = CDDiffUtil.partHandler(secondReferenceName, true);
+          }
+          break;
         }
-        else {
-          upperCardinality = "" + rightUpperBound;
-        }
+      case 6:
+        {
+          lowerCardinality = "" + leftLowerBound;
 
-        firstReferenceName = association.getLeftReferenceName();
-        secondReferenceName = association.getRightReferenceName();
-        rolePresent = association.getRight().isPresentCDRole();
-        if (rolePresent) {
-          roleName = association.getRight().getCDRole().getName();
-        }
-        else {
-          roleName = CDDiffUtil.partHandler(secondReferenceName, true);
-        }
-        break;
-      }
-      case 6: {
+          if (leftUpperBound < 0) {
+            upperCardinality = "";
+          } else {
+            upperCardinality = "" + leftUpperBound;
+          }
 
-        lowerCardinality = "" + leftLowerBound;
-
-        if (leftUpperBound < 0) {
-          upperCardinality = "";
+          firstReferenceName = association.getRightReferenceName();
+          secondReferenceName = association.getLeftReferenceName();
+          rolePresent = association.getRight().isPresentCDRole();
+          if (rolePresent) {
+            roleName = association.getRight().getCDRole().getName();
+          } else {
+            roleName = CDDiffUtil.partHandler(firstReferenceName, true);
+          }
+          break;
         }
-        else {
-          upperCardinality = "" + leftUpperBound;
+      default:
+        {
+          Log.error("0xCDD05: incorrect ruleID, method is designed for A4-A6 only");
+          return predicate;
         }
-
-        firstReferenceName = association.getRightReferenceName();
-        secondReferenceName = association.getLeftReferenceName();
-        rolePresent = association.getRight().isPresentCDRole();
-        if (rolePresent) {
-          roleName = association.getRight().getCDRole().getName();
-        }
-        else {
-          roleName = CDDiffUtil.partHandler(firstReferenceName, true);
-        }
-        break;
-      }
-      default: {
-        Log.error("0xCDD05: incorrect ruleID, method is designed for A4-A6 only");
-        return predicate;
-      }
     }
 
     if (upperCardinality.equals("")) {
       predicate.append("ObjL").append(infix).append("[");
-    }
-    else {
+    } else {
       predicate.append("ObjLU").append(infix).append("[");
     }
 
@@ -1492,8 +1572,7 @@ public class CD2AlloyGenerator {
     predicate.append(roleName);
     predicate.append(", ");
 
-    predicate.append(
-        executeRuleH1(CDDiffUtil.partHandler(secondReferenceName, false), cd));
+    predicate.append(executeRuleH1(CDDiffUtil.partHandler(secondReferenceName, false), cd));
     predicate.append(", ");
 
     // Write cardinalities
@@ -1506,9 +1585,7 @@ public class CD2AlloyGenerator {
     return predicate;
   }
 
-  /**
-   * Creates all predicates necessary for the description of the semantics
-   */
+  /** Creates all predicates necessary for the description of the semantics */
   public String createPredicates(ASTCDCompilationUnit cd, boolean newSemantics) {
     StringBuilder predicate = new StringBuilder();
 
@@ -1516,12 +1593,14 @@ public class CD2AlloyGenerator {
     ASTCDDefinition cdDefinition = cd.getCDDefinition();
 
     // Comment
-    predicate.append("// Semantics predicate ")
+    predicate
+        .append("// Semantics predicate ")
         .append(cdDefinition.getName())
         .append(System.lineSeparator());
 
     // Begin predicate
-    predicate.append("pred ")
+    predicate
+        .append("pred ")
         .append(cdDefinition.getName())
         .append(" {")
         .append(System.lineSeparator())
@@ -1529,14 +1608,15 @@ public class CD2AlloyGenerator {
 
     if (newSemantics) {
       predicate.append(executeRuleP0(cd)).append(System.lineSeparator());
-    }
-    else {
-      predicate.append(("ObjTypes[Obj,(Type_Dummy4SimpleSemantics)]"))
+    } else {
+      predicate
+          .append(("ObjTypes[Obj,(Type_Dummy4SimpleSemantics)]"))
           .append(System.lineSeparator())
           .append(System.lineSeparator());
     }
 
-    predicate.append("// Classes and attributes in ")
+    predicate
+        .append("// Classes and attributes in ")
         .append(cdDefinition.getName())
         .append(System.lineSeparator());
 
@@ -1554,7 +1634,8 @@ public class CD2AlloyGenerator {
 
     // Handle Associations
     // Comment
-    predicate.append("// Associations in ")
+    predicate
+        .append("// Associations in ")
         .append(cdDefinition.getName())
         .append(System.lineSeparator());
 
@@ -1601,7 +1682,7 @@ public class CD2AlloyGenerator {
 
     for (ASTCDCompilationUnit ast : asts) {
       // build symbol table
-      //CD4CodeMill.globalScope().clear();
+      // CD4CodeMill.globalScope().clear();
       BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
       new CD4CodeDirectCompositionTrafo().transform(ast);
       CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
@@ -1619,8 +1700,9 @@ public class CD2AlloyGenerator {
     String moduleName = generateModuleName(asts);
 
     // Initialize output variable
-    StringBuilder module = new StringBuilder(
-        "module " + moduleName + System.lineSeparator() + " " + System.lineSeparator());
+    StringBuilder module =
+        new StringBuilder(
+            "module " + moduleName + System.lineSeparator() + " " + System.lineSeparator());
 
     // Generate the Generic Part
     module.append(createGenericPart());
@@ -1681,7 +1763,7 @@ public class CD2AlloyGenerator {
   /**
    * Writes a string containing an alloy module into a file
    *
-   * @param module          the string the Alloy module should contain
+   * @param module the string the Alloy module should contain
    * @param outputDirectory the directory to generate the Alloy Module in.
    */
   public void saveModule(String module, String moduleName, File outputDirectory) {
@@ -1692,21 +1774,21 @@ public class CD2AlloyGenerator {
     // Write results into a file
     try {
       FileUtils.writeStringToFile(outputFile.toFile(), module, Charset.defaultCharset());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
 
       Log.error("0xCDD06: Could not create Alloy Module file.");
     }
 
-    Log.trace(LOGGER_NAME,
+    Log.trace(
+        LOGGER_NAME,
         "Generated Alloy Module " + moduleName + " in folder" + outputDirectory.getAbsolutePath());
   }
 
   /**
    * Writes a string containing an alloy module into a file and return path
    *
-   * @param module          the string the Alloy module should contain
+   * @param module the string the Alloy module should contain
    * @param outputDirectory the directory to generate the Alloy Module in.
    * @return Path to the file
    */
@@ -1724,12 +1806,12 @@ public class CD2AlloyGenerator {
   /**
    * Generates the Alloy Module in outputDirectory using the ast.
    *
-   * @param asts            the set of asts to generate the alloy module for.
+   * @param asts the set of asts to generate the alloy module for.
    * @param outputDirectory the directory to generate the Alloy Module in.
-   * @param newSemantics    specify whether to use simple or multi-instance semantics
+   * @param newSemantics specify whether to use simple or multi-instance semantics
    */
-  public void generateModuleToFile(Set<ASTCDCompilationUnit> asts, File outputDirectory,
-      boolean newSemantics) {
+  public void generateModuleToFile(
+      Set<ASTCDCompilationUnit> asts, File outputDirectory, boolean newSemantics) {
     // Generate the name of the module
     String moduleName = generateModuleName(asts);
 
@@ -1757,8 +1839,7 @@ public class CD2AlloyGenerator {
   }
 
   /**
-   * Generates the Alloy Module in outputDirectory using the ast.
-   * TODO: Better documentation
+   * Generates the Alloy Module in outputDirectory using the ast. TODO: Better documentation
    *
    * @param filePaths ?
    */
@@ -1774,8 +1855,7 @@ public class CD2AlloyGenerator {
         // assertFalse(parser.hasErrors());
         assert (optCD.isPresent());
         cds.add(optCD.get());
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         Log.error(
             "There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
@@ -1798,5 +1878,4 @@ public class CD2AlloyGenerator {
 
     return moduleName.toString();
   }
-
 }

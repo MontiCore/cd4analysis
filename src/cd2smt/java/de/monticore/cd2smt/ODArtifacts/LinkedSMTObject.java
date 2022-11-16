@@ -1,6 +1,5 @@
 package de.monticore.cd2smt.ODArtifacts;
 
-
 import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.FuncDecl;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -11,7 +10,11 @@ public class LinkedSMTObject {
   protected boolean isLeft;
   FuncDecl<BoolSort> assocFunc;
 
-  public LinkedSMTObject(ASTCDAssociation association, SMTObject linkedObject, FuncDecl<BoolSort> assocFunc, boolean isLeft) {
+  public LinkedSMTObject(
+      ASTCDAssociation association,
+      SMTObject linkedObject,
+      FuncDecl<BoolSort> assocFunc,
+      boolean isLeft) {
     this.isLeft = isLeft;
     this.assocFunc = assocFunc;
     this.linkedObject = linkedObject;

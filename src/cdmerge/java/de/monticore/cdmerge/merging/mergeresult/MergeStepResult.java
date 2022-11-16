@@ -23,8 +23,12 @@ public class MergeStepResult {
 
   private boolean successful;
 
-  public MergeStepResult(ASTCDCompilationUnit inputCD1, ASTCDCompilationUnit inputCD2,
-      ASTCDCompilationUnit mergedCD, ExecutionLog mergeLog, boolean successful) {
+  public MergeStepResult(
+      ASTCDCompilationUnit inputCD1,
+      ASTCDCompilationUnit inputCD2,
+      ASTCDCompilationUnit mergedCD,
+      ExecutionLog mergeLog,
+      boolean successful) {
     this.inputCD1 = inputCD1;
     this.inputCD2 = inputCD2;
     this.mergedCD = mergedCD;
@@ -32,30 +36,22 @@ public class MergeStepResult {
     this.successful = successful;
   }
 
-  /**
-   * @return mergeLog - the log events recorded during the merging process
-   */
+  /** @return mergeLog - the log events recorded during the merging process */
   public ExecutionLog getMergeLog() {
     return mergeLog;
   }
 
-  /**
-   * @return mergedCD - the merged class diagram
-   */
+  /** @return mergedCD - the merged class diagram */
   public ASTCDCompilationUnit getMergedCD() {
     return mergedCD;
   }
 
-  /**
-   * @return inputCD1 - the first source diagram
-   */
+  /** @return inputCD1 - the first source diagram */
   public ASTCDCompilationUnit getInputCD1() {
     return inputCD1;
   }
 
-  /**
-   * @return inputCD2 - the second source diagram
-   */
+  /** @return inputCD2 - the second source diagram */
   public ASTCDCompilationUnit getInputCD2() {
     return inputCD2;
   }
@@ -75,5 +71,4 @@ public class MergeStepResult {
   public boolean isSuccessful() {
     return this.successful;
   }
-
 }

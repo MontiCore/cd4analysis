@@ -1,13 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.prettyprint;
 
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
-import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisHandler;
-import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
 import de.monticore.cd4analysis._ast.ASTCD4AnalysisNode;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._ast.ASTCD4CodeNode;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._ast.ASTCD4CodeBasisNode;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cd4codebasis.prettyprint.CD4CodeBasisPrettyPrinter;
@@ -24,6 +21,7 @@ import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.literals.mcliteralsbasis._ast.ASTMCLiteralsBasisNode;
+import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.UMLModifierPrettyPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
@@ -86,7 +84,8 @@ public class CD4CodeFullPrettyPrinter {
     traverser.add4MCArrayTypes(arrayTypes);
     traverser.setMCArrayTypesHandler(arrayTypes);
 
-    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes = new MCSimpleGenericTypesPrettyPrinter(printer);
+    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes =
+        new MCSimpleGenericTypesPrettyPrinter(printer);
     traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
     traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
 

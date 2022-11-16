@@ -1,34 +1,27 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4TypeHelper.*;
+
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.se_rwth.commons.SourcePosition;
-
 import java.util.*;
-
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4TypeHelper.*;
 
 /**
  * The class, abstract class, interface and enum in AST will be converted to the corresponding
- * CDTypeWrapper
- * The kind of CDTypeWrapper are CDWRAPPER_CLASS, CDWRAPPER_ENUM, CDWRAPPER_ABSTRACT_CLASS,
- * CDWRAPPER_INTERFACE
+ * CDTypeWrapper The kind of CDTypeWrapper are CDWRAPPER_CLASS, CDWRAPPER_ENUM,
+ * CDWRAPPER_ABSTRACT_CLASS, CDWRAPPER_INTERFACE
  *
- * @attribute originalElement:
- *    store the original AST Class
- * @attribute editedElement:
- *    if the class has inherited attributes, they will be added into editedElement.
- * @attribute cDWrapperLink4EnumClass:
- *    This attribute is only suitable for CDWRAPPER_ENUM class. If someone CDTypeWrapper uses
- *    Enum in attributes, then this CDTypeWrapper name will be added into
- *    this cDWrapperLink4EnumClass attribute of corresponding CDWRAPPER_ENUM class.
- * @attribute superclasses:
- *    store the superclasses (including itself) of this CDTypeWrapper
- * @attribute subclasses:
- *    store the subclasses (including itself) of this CDTypeWrapper
- * @attribute status:
- *    OPEN, LOCKED
+ * @attribute originalElement: store the original AST Class
+ * @attribute editedElement: if the class has inherited attributes, they will be added into
+ *     editedElement.
+ * @attribute cDWrapperLink4EnumClass: This attribute is only suitable for CDWRAPPER_ENUM class. If
+ *     someone CDTypeWrapper uses Enum in attributes, then this CDTypeWrapper name will be added
+ *     into this cDWrapperLink4EnumClass attribute of corresponding CDWRAPPER_ENUM class.
+ * @attribute superclasses: store the superclasses (including itself) of this CDTypeWrapper
+ * @attribute subclasses: store the subclasses (including itself) of this CDTypeWrapper
+ * @attribute status: OPEN, LOCKED
  */
 public class CDTypeWrapper implements Cloneable {
   protected final ASTCDType originalElement;
@@ -50,7 +43,8 @@ public class CDTypeWrapper implements Cloneable {
   }
 
   public String getName() {
-    return getCDTypeWrapperKindStrHelper(getCDWrapperKind()) + "_"
+    return getCDTypeWrapperKindStrHelper(getCDWrapperKind())
+        + "_"
         + this.originalElement.getSymbol().getFullName();
   }
 
@@ -70,35 +64,36 @@ public class CDTypeWrapper implements Cloneable {
     this.cDWrapperLink4EnumClass = cDWrapperLink4EnumClass;
   }
 
-  /**
-   * @return attributes: {  [attributes name] : [attribute type] }
-   */
+  /** @return attributes: { [attributes name] : [attribute type] } */
   public Map<String, String> getAttributes() {
     Map<String, String> attributesMap = new HashMap<>();
     if (editedElement instanceof ASTCDEnum) {
-      ((ASTCDEnum) editedElement).getCDEnumConstantList()
+      ((ASTCDEnum) editedElement)
+          .getCDEnumConstantList()
           .forEach(e -> attributesMap.put(e.getName(), null));
-    }
-    else {
-      editedElement.getCDAttributeList()
+    } else {
+      editedElement
+          .getCDAttributeList()
           .forEach(e -> attributesMap.put(e.getName(), e.printType()));
     }
     return attributesMap;
   }
 
   public void addAttribute(ASTCDAttribute astcdAttribute) {
-    if (this.editedElement.getCDAttributeList()
-        .stream()
-        .noneMatch(e -> e.getName().equals(astcdAttribute.getName()) &&
-            e.printType().equals(astcdAttribute.printType()))) {
+    if (this.editedElement.getCDAttributeList().stream()
+        .noneMatch(
+            e ->
+                e.getName().equals(astcdAttribute.getName())
+                    && e.printType().equals(astcdAttribute.printType()))) {
       this.editedElement.addCDMember(astcdAttribute);
     }
 
     // attributes conflict
-    if (this.editedElement.getCDAttributeList()
-        .stream()
-        .anyMatch(e -> e.getName().equals(astcdAttribute.getName()) &&
-            !e.printType().equals(astcdAttribute.printType()))) {
+    if (this.editedElement.getCDAttributeList().stream()
+        .anyMatch(
+            e ->
+                e.getName().equals(astcdAttribute.getName())
+                    && !e.printType().equals(astcdAttribute.printType()))) {
       this.status = CDStatus.LOCKED;
     }
   }
@@ -149,8 +144,4 @@ public class CDTypeWrapper implements Cloneable {
     cloned.editedElement = editedElement.deepClone();
     return cloned;
   }
-
 }
-
-
-

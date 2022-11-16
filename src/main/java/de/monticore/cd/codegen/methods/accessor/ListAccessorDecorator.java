@@ -1,22 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods.accessor;
 
+import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+
 import de.monticore.cd.codegen.methods.ListMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateHookPoint;
-
 import java.util.Arrays;
 import java.util.List;
-
-import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 public class ListAccessorDecorator extends ListMethodDecorator {
 
   protected static final String GET_LIST = "public List<%s> get%sList();";
   protected static final String CONTAINS = "public boolean contains%s(Object element);";
-  protected static final String CONTAINS_ALL = "public boolean containsAll%s(Collection<?> collection);";
+  protected static final String CONTAINS_ALL =
+      "public boolean containsAll%s(Collection<?> collection);";
   protected static final String IS_EMPTY = "public boolean isEmpty%s();";
   protected static final String ITERATOR = "public Iterator<%s> iterator%s();";
   protected static final String SIZE = "public int size%s();";
@@ -31,7 +31,8 @@ public class ListAccessorDecorator extends ListMethodDecorator {
   protected static final String EQUALS = "public boolean equals%s(Object o);";
   protected static final String HASHCODE = "public int hashCode%s();";
   protected static final String LIST_ITERATOR = "public ListIterator<%s> listIterator%s();";
-  protected static final String LIST_ITERATOR_ = "public ListIterator<%s> listIterator%s(int index);";
+  protected static final String LIST_ITERATOR_ =
+      "public ListIterator<%s> listIterator%s(int index);";
   protected static final String SUBLIST = "public List<%s> subList%s(int start, int end);";
 
   public ListAccessorDecorator(final GlobalExtensionManagement glex) {
@@ -77,7 +78,6 @@ public class ListAccessorDecorator extends ListMethodDecorator {
         String.format(HASHCODE, capitalizedAttributeNameWithS),
         String.format(LIST_ITERATOR, attributeType, capitalizedAttributeNameWithS),
         String.format(LIST_ITERATOR_, attributeType, capitalizedAttributeNameWithS),
-        String.format(SUBLIST, attributeType, capitalizedAttributeNameWithS)
-    );
+        String.format(SUBLIST, attributeType, capitalizedAttributeNameWithS));
   }
 }

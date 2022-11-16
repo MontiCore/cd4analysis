@@ -7,13 +7,10 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-
 import java.util.List;
 import java.util.Map;
 
-/**
- * This data structure stores all matching ASTNodes of two class diagrams
- */
+/** This data structure stores all matching ASTNodes of two class diagrams */
 public class CDMatch {
 
   private List<ASTCDDefinition> cds;
@@ -73,7 +70,6 @@ public class CDMatch {
     }
     throw new IllegalArgumentException(
         "No class with name " + classname + " found in any of the classdiagrams");
-
   }
 
   public void setMatchedAttributes(
@@ -102,16 +98,13 @@ public class CDMatch {
     StringBuilder sb = new StringBuilder();
     sb.append("=== BEGIN CD Match Result ===\n");
     sb.append("== Type Matches: ==\n");
-    if (this.matchedTypes != null)
-      sb.append(this.matchedTypes.toString());
+    if (this.matchedTypes != null) sb.append(this.matchedTypes.toString());
     sb.append("== Attribute Matches: ==\n");
     if (this.matchedAttributes != null)
       this.matchedAttributes.values().forEach(mg -> sb.append(mg));
     sb.append("== Association Matches: ==\n");
-    if (this.matchedAssociations != null)
-      sb.append(this.matchedAssociations.toString());
+    if (this.matchedAssociations != null) sb.append(this.matchedAssociations.toString());
     sb.append("=== END CD Match Result ===\n");
     return sb.toString();
   }
-
 }

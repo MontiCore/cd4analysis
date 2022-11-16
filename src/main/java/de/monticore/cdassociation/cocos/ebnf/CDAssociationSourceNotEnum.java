@@ -6,19 +6,15 @@ import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
-import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
-/**
- * Checks that type of the type-qualifier of an type-qualified association
- * exists.
- */
+/** Checks that type of the type-qualifier of an type-qualified association exists. */
 // TODO should an enum be allowed?
-public class CDAssociationSourceNotEnum
-    implements CDAssociationASTCDAssociationCoCo {
+public class CDAssociationSourceNotEnum implements CDAssociationASTCDAssociationCoCo {
 
-  protected final CDAssociationFullPrettyPrinter prettyPrinter = new CDAssociationFullPrettyPrinter(new IndentPrinter());
+  protected final CDAssociationFullPrettyPrinter prettyPrinter =
+      new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   @Override
   public void check(ASTCDAssociation node) {
@@ -35,12 +31,10 @@ public class CDAssociationSourceNotEnum
   private void check(ASTCDAssocSide side, ASTCDAssociation node) {
     if (CoCoHelper.isEnum(side.getSymbol().getType().getTypeInfo())) {
       Log.error(
-          String
-              .format(
-                  "0xCDC67: Association %s is invalid, because an association's source may not be an Enumeration.",
-                  prettyPrinter.prettyprint(node)),
+          String.format(
+              "0xCDC67: Association %s is invalid, because an association's source may not be an Enumeration.",
+              prettyPrinter.prettyprint(node)),
           node.get_SourcePositionStart());
     }
   }
-
 }

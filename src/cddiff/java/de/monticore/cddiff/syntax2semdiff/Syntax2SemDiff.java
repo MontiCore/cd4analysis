@@ -1,26 +1,23 @@
 package de.monticore.cddiff.syntax2semdiff;
 
+import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.*;
+
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperGenerator;
-import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
 import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiffODGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffGenerator;
 import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.util.List;
 
-import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.*;
-
 public class Syntax2SemDiff {
   public static List<ASTODArtifact> computeSemDiff(
-      ASTCDCompilationUnit ast1,
-      ASTCDCompilationUnit ast2,
-      CDSemantics cdSemantics) {
+      ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
 
     // generate CDWrapper
     CDWrapperGenerator cd1Generator = new CDWrapperGenerator();
@@ -31,7 +28,8 @@ public class Syntax2SemDiff {
     // calculate syntax diff
     CDWrapperSyntaxDiffGenerator cdw2CDDiffGenerator4CDW1WithCDW2 =
         new CDWrapperSyntaxDiffGenerator();
-    CDWrapperSyntaxDiff cg = cdw2CDDiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
+    CDWrapperSyntaxDiff cg =
+        cdw2CDDiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
 
     // generate ODs
     CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
@@ -39,28 +37,27 @@ public class Syntax2SemDiff {
   }
 
   public static String printSemDiff(
-      ASTCDCompilationUnit ast1,
-      ASTCDCompilationUnit ast2,
-      CDSemantics cdSemantics) {
+      ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
 
     List<ASTODArtifact> ods1 = computeSemDiff(ast1, ast2, cdSemantics);
     List<ASTODArtifact> ods2 = computeSemDiff(ast2, ast1, cdSemantics);
 
     StringBuilder result = new StringBuilder();
     if (ods1.size() == 0 && ods2.size() == 0) {
-      return "\t ********************************************************************* \n" +
-          "\t ************************  Equivalent Semantics ********************** \n" +
-          "\t ********************************************************************* \n";
-    }
-    else {
+      return "\t ********************************************************************* \n"
+          + "\t ************************  Equivalent Semantics ********************** \n"
+          + "\t ********************************************************************* \n";
+    } else {
       result.append("\t ******************************************************************** \n");
       result.append("\t ******************  SemanticDiff from CD1 to CD2  ****************** \n");
       switch (cdSemantics) {
         case SIMPLE_CLOSED_WORLD:
-          result.append("\t *********************  in Simple-Closed-World  ********************* \n");
+          result.append(
+              "\t *********************  in Simple-Closed-World  ********************* \n");
           break;
         case MULTI_INSTANCE_CLOSED_WORLD:
-          result.append("\t *****************  in Multi-Instance-Closed-World  ***************** \n");
+          result.append(
+              "\t *****************  in Multi-Instance-Closed-World  ***************** \n");
           break;
         default:
           break;
@@ -73,10 +70,12 @@ public class Syntax2SemDiff {
       result.append("\t ******************  SemanticDiff from CD2 to CD1  ****************** \n");
       switch (cdSemantics) {
         case SIMPLE_CLOSED_WORLD:
-          result.append("\t *********************  in Simple-Closed-World  ********************* \n");
+          result.append(
+              "\t *********************  in Simple-Closed-World  ********************* \n");
           break;
         case MULTI_INSTANCE_CLOSED_WORLD:
-          result.append("\t *****************  in Multi-Instance-Closed-World  ***************** \n");
+          result.append(
+              "\t *****************  in Multi-Instance-Closed-World  ***************** \n");
           break;
         default:
           break;
@@ -89,17 +88,16 @@ public class Syntax2SemDiff {
     return result.toString();
   }
 
-  public static void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory){
+  public static void printODs2Dir(List<ASTODArtifact> ods, String outputDirectory) {
     try {
       File out = new File(outputDirectory);
       for (ASTODArtifact od : ods) {
         String odDesc = printOD(od);
-        Alloy2ODGenerator.saveOD(odDesc,od.getObjectDiagram().getName(),out);
+        Alloy2ODGenerator.saveOD(odDesc, od.getObjectDiagram().getName(), out);
       }
-    } catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       Log.error("0xCDD10: Could not print ODs to directory " + outputDirectory);
     }
   }
-
 }

@@ -66,7 +66,8 @@ public class CD4Analysis2ODDelegator {
     traverser.add4CDBasis(cdBasis2OD);
     traverser.setCDBasisHandler(cdBasis2OD);
 
-    final CDInterfaceAndEnum2OD cdInterfaceAndEnum2OD = new CDInterfaceAndEnum2OD(printer, reporting);
+    final CDInterfaceAndEnum2OD cdInterfaceAndEnum2OD =
+        new CDInterfaceAndEnum2OD(printer, reporting);
     cdInterfaceAndEnum2OD.setTraverser(traverser);
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnum2OD);
     traverser.setCDInterfaceAndEnumHandler(cdInterfaceAndEnum2OD);

@@ -9,7 +9,6 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 
 public class DistinctSort implements ClassStrategy {
@@ -25,34 +24,42 @@ public class DistinctSort implements ClassStrategy {
   }
 
   @Override
-  public Expr<? extends  Sort> getSortFilter(ASTCDType astcdType) {
+  public Expr<? extends Sort> getSortFilter(ASTCDType astcdType) {
     Log.error("function getSortFilter() not implemented for the class-strategy DistinctSort");
     return null;
-  } //TODO:implement and introduce it
+  } // TODO:implement and introduce it
 
   @Override
-  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
-    return smtTypesMap.get(astCdType).getAttribute(CDHelper.getAttribute(astCdType,attributeName)).apply(cDTypeExpr);
+  public Expr<? extends Sort> getAttribute(
+      ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
+    return smtTypesMap
+        .get(astCdType)
+        .getAttribute(CDHelper.getAttribute(astCdType, attributeName))
+        .apply(cDTypeExpr);
   }
-
 
   @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
     ast.getCDDefinition().getCDClassesList().forEach(Class -> declareCDType(Class, context, false));
-    ast.getCDDefinition().getCDInterfacesList().forEach(Interface -> declareCDType(Interface, context, true));
+    ast.getCDDefinition()
+        .getCDInterfacesList()
+        .forEach(Interface -> declareCDType(Interface, context, true));
   }
 
   private void declareCDType(ASTCDType astcdType, Context ctx, boolean isInterface) {
     SMTType smtType = new SMTType(isInterface);
 
-    //(declare-sort A_obj 0)
-    UninterpretedSort typeSort = ctx.mkUninterpretedSort(ctx.mkSymbol(SMTNameHelper.printSMTCDTypeName(astcdType)));
+    // (declare-sort A_obj 0)
+    UninterpretedSort typeSort =
+        ctx.mkUninterpretedSort(ctx.mkSymbol(SMTNameHelper.printSMTCDTypeName(astcdType)));
     smtType.setSort(typeSort);
 
-    //(declare-fun a_attrib_something (A_obj) String) declare all attributes
+    // (declare-fun a_attrib_something (A_obj) String) declare all attributes
     for (ASTCDAttribute myAttribute : astcdType.getCDAttributeList()) {
       Sort sort = CDHelper.parseAttribType2SMT(ctx, myAttribute);
-      FuncDecl<Sort> attributeFunc = ctx.mkFuncDecl(SMTNameHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
+      FuncDecl<Sort> attributeFunc =
+          ctx.mkFuncDecl(
+              SMTNameHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
       smtType.addAttribute(myAttribute, attributeFunc);
     }
 
@@ -63,7 +70,7 @@ public class DistinctSort implements ClassStrategy {
   public Set<MinObject> smt2od(Model model, Boolean partial) {
     Set<MinObject> objectSet = new HashSet<>();
 
-    //interfaces , abstract and superInstance must be deleted
+    // interfaces , abstract and superInstance must be deleted
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
         SMTType smtType = getSMTType(SMTNameHelper.sort2CDTypeName(mySort)).orElse(null);
@@ -71,7 +78,8 @@ public class DistinctSort implements ClassStrategy {
         boolean isAbstract = smtType.isInterface();
         MinObject obj = new MinObject(isAbstract, smtExpr, smtType);
 
-        for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute : smtType.getAttributesMap().entrySet()) {
+        for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
+            smtType.getAttributesMap().entrySet()) {
           Expr<? extends Sort> attrExpr = model.eval(attribute.getValue().apply(smtExpr), !partial);
           if (attrExpr.getNumArgs() == 0) {
             obj.addAttribute(attribute.getKey(), attrExpr);
@@ -92,5 +100,3 @@ public class DistinctSort implements ClassStrategy {
     return Optional.empty();
   }
 }
-
-

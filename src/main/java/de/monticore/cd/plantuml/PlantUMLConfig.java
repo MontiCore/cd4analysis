@@ -13,10 +13,19 @@ public class PlantUMLConfig {
   protected Boolean shortenWords = false;
   protected Boolean showComments = false;
 
-  public PlantUMLConfig() {
-  }
+  public PlantUMLConfig() {}
 
-  public PlantUMLConfig(Boolean showAtt, Boolean showAssoc, Boolean showRoles, Boolean showCard, Boolean showModifier, int nodesep, int ranksep, Boolean ortho, Boolean shortenWords, Boolean showComments) {
+  public PlantUMLConfig(
+      Boolean showAtt,
+      Boolean showAssoc,
+      Boolean showRoles,
+      Boolean showCard,
+      Boolean showModifier,
+      int nodesep,
+      int ranksep,
+      Boolean ortho,
+      Boolean shortenWords,
+      Boolean showComments) {
     this.showAtt = showAtt;
     this.showAssoc = showAssoc;
     this.showRoles = showRoles;
@@ -29,7 +38,12 @@ public class PlantUMLConfig {
     this.showComments = showComments;
   }
 
-  public PlantUMLConfig(Boolean showAtt, Boolean showAssoc, Boolean showRoles, Boolean showCard, Boolean showModifier) {
+  public PlantUMLConfig(
+      Boolean showAtt,
+      Boolean showAssoc,
+      Boolean showRoles,
+      Boolean showCard,
+      Boolean showModifier) {
     this.showAtt = showAtt;
     this.showAssoc = showAssoc;
     this.showRoles = showRoles;
@@ -119,17 +133,27 @@ public class PlantUMLConfig {
 
   @Override
   public String toString() {
-    return "PlantUMLConfig{" +
-        "showAtt=" + showAtt +
-        ", showAssoc=" + showAssoc +
-        ", showRoles=" + showRoles +
-        ", showCard=" + showCard +
-        ", showModifier=" + showModifier +
-        ", nodesep=" + nodesep +
-        ", ranksep=" + ranksep +
-        ", ortho=" + ortho +
-        ", shortenWords=" + shortenWords +
-        ", showComments=" + showComments +
-        '}';
+    return "PlantUMLConfig{"
+        + "showAtt="
+        + showAtt
+        + ", showAssoc="
+        + showAssoc
+        + ", showRoles="
+        + showRoles
+        + ", showCard="
+        + showCard
+        + ", showModifier="
+        + showModifier
+        + ", nodesep="
+        + nodesep
+        + ", ranksep="
+        + ranksep
+        + ", ortho="
+        + ortho
+        + ", shortenWords="
+        + shortenWords
+        + ", showComments="
+        + showComments
+        + '}';
   }
 }

@@ -9,7 +9,6 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
-
 import java.util.Iterator;
 
 public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
@@ -61,8 +60,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     if (!node.isEmptyCDMembers()) {
       unindent();
       println("}");
-    }
-    else {
+    } else {
       print(";");
       printPostComments(node);
       println();
@@ -99,8 +97,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
       iterator.next().accept(getTraverser());
       if (iterator.hasNext()) {
         print(",");
-      }
-      else {
+      } else {
         print(";");
       }
       printPostComments(node);
@@ -115,8 +112,7 @@ public class CDInterfaceAndEnumPrettyPrinter extends PrettyPrintUtil
     if (!node.isEmptyCDMembers() || !node.isEmptyCDEnumConstants()) {
       unindent();
       println("}");
-    }
-    else {
+    } else {
       print(";");
       printPostComments(node);
       println();

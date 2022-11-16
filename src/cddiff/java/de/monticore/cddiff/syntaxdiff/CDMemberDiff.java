@@ -15,7 +15,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,6 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
 
   protected List<ASTCDParameter> deletedParameter;
 
-
   public ASTNodeType getCd1Element() {
     return cd1Element;
   }
@@ -46,9 +44,25 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     return cd2Element;
   }
 
-  private String ppModifier1, ppType1, ppName1, ppInitial1, ppReturn1, ppThrow1, ppExpres1,
-      ppModifier2, ppType2, ppName2, ppInitial2, ppReturn2, ppThrow2, ppExpres2,
-      cd1SelfbuildString, cd2SelfbuildString, interpretation, parameter1, parameter2;
+  private String ppModifier1,
+      ppType1,
+      ppName1,
+      ppInitial1,
+      ppReturn1,
+      ppThrow1,
+      ppExpres1,
+      ppModifier2,
+      ppType2,
+      ppName2,
+      ppInitial2,
+      ppReturn2,
+      ppThrow2,
+      ppExpres2,
+      cd1SelfbuildString,
+      cd2SelfbuildString,
+      interpretation,
+      parameter1,
+      parameter2;
 
   /**
    * Constructor of the element diff type
@@ -85,22 +99,21 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
         size += x.getDiffSize() / 3.0;
       }
     }
-    if (addedParameter != null){
-      size += addedParameter.size()/2.0;
+    if (addedParameter != null) {
+      size += addedParameter.size() / 2.0;
     }
-    if (deletedParameter != null){
-      size += deletedParameter.size()/2.0;
+    if (deletedParameter != null) {
+      size += deletedParameter.size() / 2.0;
     }
-
 
     for (ASTNodeDiff<? extends ASTNode, ? extends ASTNode> diff : diffList) {
       if (diff.isPresent() && diff.getCd1Value().isPresent()) {
         // Name Diffs are weighted doubled compared to every other diff
         // Parent Object in ASTNodeDiff when we check the name of it (when there is no specific
         // node for the name)
-        if (diff.getCd1Value().get() instanceof ASTCDAttribute || diff.getCd1Value()
-            .get() instanceof ASTMCQualifiedName || diff.getCd1Value()
-            .get() instanceof ASTCDClass) {
+        if (diff.getCd1Value().get() instanceof ASTCDAttribute
+            || diff.getCd1Value().get() instanceof ASTMCQualifiedName
+            || diff.getCd1Value().get() instanceof ASTCDClass) {
           size += 1.0 / 3.0;
         }
       }
@@ -127,6 +140,7 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     this.diffList = createDiffList(cd1Element, cd2Element);
     setEnumStrings();
   }
+
   public void createDiff(ASTCDParameter cd1Element, ASTCDParameter cd2Element) {
     this.diffList = createDiffList(cd1Element, cd2Element);
     setParameterStrings();
@@ -139,7 +153,7 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
 
     // Modifier, non-optional
     if (!(pp.prettyprint(cd1Element.getModifier()).length() < 1
-      && pp.prettyprint(cd2Element.getModifier()).length() < 1)){
+        && pp.prettyprint(cd2Element.getModifier()).length() < 1)) {
       diffs.add(setModifier(cd1Element.getModifier(), cd2Element.getModifier()));
     }
 
@@ -156,8 +170,8 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     // Name, non-optional
     Optional<ASTCDAttribute> cd1Name = Optional.of(cd1Element);
     Optional<ASTCDAttribute> cd2Name = Optional.of(cd2Element);
-    ASTNodeDiff<ASTCDAttribute, ASTCDAttribute> attributeName = new ASTNodeDiff<>(null, cd1Name,
-        cd2Name);
+    ASTNodeDiff<ASTCDAttribute, ASTCDAttribute> attributeName =
+        new ASTNodeDiff<>(null, cd1Name, cd2Name);
 
     if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
       attributeName = new ASTNodeDiff<>(CDSyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
@@ -170,21 +184,21 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     ppName2 = getColorCode(attributeName) + cd2Name.get().getName() + RESET;
 
     // Initial expression, optional
-    Optional<ASTExpression> cd1Initial = (cd1Element.isPresentInitial()) ?
-        Optional.of(cd1Element.getInitial()) :
-        Optional.empty();
-    Optional<ASTExpression> cd2Initial = (cd2Element.isPresentInitial()) ?
-        Optional.of(cd2Element.getInitial()) :
-        Optional.empty();
-    ASTNodeDiff<ASTExpression, ASTExpression> attributeInital = new ASTNodeDiff<>(cd1Initial,
-        cd2Initial);
+    Optional<ASTExpression> cd1Initial =
+        (cd1Element.isPresentInitial()) ? Optional.of(cd1Element.getInitial()) : Optional.empty();
+    Optional<ASTExpression> cd2Initial =
+        (cd2Element.isPresentInitial()) ? Optional.of(cd2Element.getInitial()) : Optional.empty();
+    ASTNodeDiff<ASTExpression, ASTExpression> attributeInital =
+        new ASTNodeDiff<>(cd1Initial, cd2Initial);
     if (attributeInital.isPresent()) {
       diffs.add(attributeInital);
     }
-    cd1Initial.ifPresent(initial -> ppInitial1 =
-        "= " + getColorCode(attributeInital) + pp.prettyprint(initial) + RESET);
-    cd2Initial.ifPresent(initial -> ppInitial2 =
-        "= " + getColorCode(attributeInital) + pp.prettyprint(initial) + RESET);
+    cd1Initial.ifPresent(
+        initial ->
+            ppInitial1 = "= " + getColorCode(attributeInital) + pp.prettyprint(initial) + RESET);
+    cd2Initial.ifPresent(
+        initial ->
+            ppInitial2 = "= " + getColorCode(attributeInital) + pp.prettyprint(initial) + RESET);
 
     return diffs;
   }
@@ -196,15 +210,15 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
 
     // Modifier, non-optional
     if (!(pp.prettyprint(cd1Element.getModifier()).length() < 1
-      && pp.prettyprint(cd2Element.getModifier()).length() < 1)){
+        && pp.prettyprint(cd2Element.getModifier()).length() < 1)) {
       diffs.add(setModifier(cd1Element.getModifier(), cd2Element.getModifier()));
     }
 
     // ASTMCReturnType, non-optional
     Optional<ASTMCReturnType> cd1ReturnType = Optional.of(cd1Element.getMCReturnType());
     Optional<ASTMCReturnType> cd2ReturnType = Optional.of(cd2Element.getMCReturnType());
-    ASTNodeDiff<ASTMCReturnType, ASTMCReturnType> methodeReturnType = new ASTNodeDiff<>(cd1ReturnType,
-        cd2ReturnType);
+    ASTNodeDiff<ASTMCReturnType, ASTMCReturnType> methodeReturnType =
+        new ASTNodeDiff<>(cd1ReturnType, cd2ReturnType);
     if (methodeReturnType.isPresent()) {
       diffs.add(methodeReturnType);
     }
@@ -227,14 +241,16 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     ppName2 = getColorCode(methodeName) + cd2Name.get().getName() + RESET;
 
     // ThrowsDeclaration, optional
-    Optional<ASTCDThrowsDeclaration> cd1ThrowDec = (cd1Element.isPresentCDThrowsDeclaration()) ?
-        Optional.of(cd1Element.getCDThrowsDeclaration()) :
-        Optional.empty();
-    Optional<ASTCDThrowsDeclaration> cd2ThrowDec = (cd2Element.isPresentCDThrowsDeclaration()) ?
-        Optional.of(cd2Element.getCDThrowsDeclaration()) :
-        Optional.empty();
-    ASTNodeDiff<ASTCDThrowsDeclaration, ASTCDThrowsDeclaration> throwDecl = new ASTNodeDiff<>(
-        cd1ThrowDec, cd2ThrowDec);
+    Optional<ASTCDThrowsDeclaration> cd1ThrowDec =
+        (cd1Element.isPresentCDThrowsDeclaration())
+            ? Optional.of(cd1Element.getCDThrowsDeclaration())
+            : Optional.empty();
+    Optional<ASTCDThrowsDeclaration> cd2ThrowDec =
+        (cd2Element.isPresentCDThrowsDeclaration())
+            ? Optional.of(cd2Element.getCDThrowsDeclaration())
+            : Optional.empty();
+    ASTNodeDiff<ASTCDThrowsDeclaration, ASTCDThrowsDeclaration> throwDecl =
+        new ASTNodeDiff<>(cd1ThrowDec, cd2ThrowDec);
     if (throwDecl.isPresent()) {
       diffs.add(throwDecl);
     }
@@ -254,7 +270,8 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     // Name, non-optional
     Optional<ASTCDEnumConstant> cd1Name = Optional.of(cd1Element);
     Optional<ASTCDEnumConstant> cd2Name = Optional.of(cd2Element);
-    ASTNodeDiff<ASTCDEnumConstant, ASTCDEnumConstant> name = new ASTNodeDiff<>(null, cd1Name, cd2Name);
+    ASTNodeDiff<ASTCDEnumConstant, ASTCDEnumConstant> name =
+        new ASTNodeDiff<>(null, cd1Name, cd2Name);
 
     if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
       name = new ASTNodeDiff<>(CDSyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
@@ -275,15 +292,15 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
 
     // Modifier, non-optional
     if (!(pp.prettyprint(cd1Element.getModifier()).length() < 1
-      && pp.prettyprint(cd2Element.getModifier()).length() < 1)){
+        && pp.prettyprint(cd2Element.getModifier()).length() < 1)) {
       diffs.add(setModifier(cd1Element.getModifier(), cd2Element.getModifier()));
     }
 
     // Name, non-optional
     Optional<ASTCDConstructor> cd1Name = Optional.of(cd1Element);
     Optional<ASTCDConstructor> cd2Name = Optional.of(cd2Element);
-    ASTNodeDiff<ASTCDConstructor, ASTCDConstructor> constructorName = new ASTNodeDiff<>(null, cd1Name,
-        cd2Name);
+    ASTNodeDiff<ASTCDConstructor, ASTCDConstructor> constructorName =
+        new ASTNodeDiff<>(null, cd1Name, cd2Name);
 
     if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
       constructorName = new ASTNodeDiff<>(CDSyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
@@ -296,14 +313,16 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     ppName2 = getColorCode(constructorName) + cd2Name.get().getName() + RESET;
 
     // ThrowsDeclaration, optional
-    Optional<ASTCDThrowsDeclaration> cd1ThrowDec = (cd1Element.isPresentCDThrowsDeclaration()) ?
-        Optional.of(cd1Element.getCDThrowsDeclaration()) :
-        Optional.empty();
-    Optional<ASTCDThrowsDeclaration> cd2ThrowDec = (cd2Element.isPresentCDThrowsDeclaration()) ?
-        Optional.of(cd2Element.getCDThrowsDeclaration()) :
-        Optional.empty();
-    ASTNodeDiff<ASTCDThrowsDeclaration, ASTCDThrowsDeclaration> throwDecl = new ASTNodeDiff<>(
-        cd1ThrowDec, cd2ThrowDec);
+    Optional<ASTCDThrowsDeclaration> cd1ThrowDec =
+        (cd1Element.isPresentCDThrowsDeclaration())
+            ? Optional.of(cd1Element.getCDThrowsDeclaration())
+            : Optional.empty();
+    Optional<ASTCDThrowsDeclaration> cd2ThrowDec =
+        (cd2Element.isPresentCDThrowsDeclaration())
+            ? Optional.of(cd2Element.getCDThrowsDeclaration())
+            : Optional.empty();
+    ASTNodeDiff<ASTCDThrowsDeclaration, ASTCDThrowsDeclaration> throwDecl =
+        new ASTNodeDiff<>(cd1ThrowDec, cd2ThrowDec);
     if (throwDecl.isPresent()) {
       diffs.add(throwDecl);
     }
@@ -323,10 +342,10 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
    * @param cd1Element List of attributes from the original model
    * @param cd2Element List of attributes from the target(new) model
    * @return Returns a difflist for each attribute, ordered by diffsize (small diff values ==
-   * similar)
+   *     similar)
    */
 
-  //MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
+  // MCType (ellipsis:["..."])? Name ("=" defaultValue:Expression)?;
   private List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> createDiffList(
       ASTCDParameter cd1Element, ASTCDParameter cd2Element) {
     List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> diffs = new ArrayList<>();
@@ -341,11 +360,11 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     ppType1 = getColorCode(eleType) + pp.prettyprint(cd1Type.get()) + RESET;
     ppType2 = getColorCode(eleType) + pp.prettyprint(cd2Type.get()) + RESET;
 
-       // Name, non-optional
+    // Name, non-optional
     Optional<ASTCDParameter> cd1Name = Optional.of(cd1Element);
     Optional<ASTCDParameter> cd2Name = Optional.of(cd2Element);
-    ASTNodeDiff<ASTCDParameter, ASTCDParameter> nameDiff = new ASTNodeDiff<>(null, cd1Name,
-      cd2Name);
+    ASTNodeDiff<ASTCDParameter, ASTCDParameter> nameDiff =
+        new ASTNodeDiff<>(null, cd1Name, cd2Name);
 
     if (!cd1Name.get().getName().equals(cd2Name.get().getName())) {
       nameDiff = new ASTNodeDiff<>(CDSyntaxDiff.Op.CHANGE, cd1Name, cd2Name);
@@ -358,21 +377,25 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     ppName2 = getColorCode(nameDiff) + cd2Name.get().getName() + RESET;
 
     // Default Value, optional
-    Optional<ASTExpression> cd1Default = (cd1Element.isPresentDefaultValue()) ?
-        Optional.of(cd1Element.getDefaultValue()) :
-        Optional.empty();
-    Optional<ASTExpression> cd2Default = (cd2Element.isPresentDefaultValue()) ?
-        Optional.of(cd2Element.getDefaultValue()) :
-        Optional.empty();
-    ASTNodeDiff<ASTExpression, ASTExpression> parameterDefault = new ASTNodeDiff<>(cd1Default,
-        cd2Default);
+    Optional<ASTExpression> cd1Default =
+        (cd1Element.isPresentDefaultValue())
+            ? Optional.of(cd1Element.getDefaultValue())
+            : Optional.empty();
+    Optional<ASTExpression> cd2Default =
+        (cd2Element.isPresentDefaultValue())
+            ? Optional.of(cd2Element.getDefaultValue())
+            : Optional.empty();
+    ASTNodeDiff<ASTExpression, ASTExpression> parameterDefault =
+        new ASTNodeDiff<>(cd1Default, cd2Default);
     if (parameterDefault.isPresent()) {
       diffs.add(parameterDefault);
     }
-    cd1Default.ifPresent(defExpres -> ppExpres1 =
-        getColorCode(parameterDefault) + pp.prettyprint(defExpres) + RESET);
-    cd2Default.ifPresent(defExpres -> ppExpres2 =
-        getColorCode(parameterDefault) + pp.prettyprint(defExpres) + RESET);
+    cd1Default.ifPresent(
+        defExpres ->
+            ppExpres1 = getColorCode(parameterDefault) + pp.prettyprint(defExpres) + RESET);
+    cd2Default.ifPresent(
+        defExpres ->
+            ppExpres2 = getColorCode(parameterDefault) + pp.prettyprint(defExpres) + RESET);
 
     return diffs;
   }
@@ -384,51 +407,46 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     List<ASTCDParameter> deleted = new ArrayList<>();
     List<ASTCDParameter> added = new ArrayList<>();
 
-    if (cd1list.size() == cd2list.size()){
+    if (cd1list.size() == cd2list.size()) {
       cd1ReducedList = cd1list;
       cd2ReducedList = cd2list;
     } else {
       int min = Math.min(cd1list.size(), cd2list.size());
       cd1ReducedList = cd1list.stream().limit(min).collect(Collectors.toList());
       cd2ReducedList = cd2list.stream().limit(min).collect(Collectors.toList());
-      for (int i = min; i < cd1list.size(); i++){
+      for (int i = min; i < cd1list.size(); i++) {
         deleted.add(cd1list.get(i));
       }
-      for (int i = min; i < cd2list.size(); i++){
+      for (int i = min; i < cd2list.size(); i++) {
         added.add(cd2list.get(i));
       }
     }
     List<CDMemberDiff<ASTCDParameter>> paraDiffList = new ArrayList<>();
     // minimum only for safety, lists should have equal length at this point
-    for (int i = 0; i < Math.min(cd1ReducedList.size(), cd2ReducedList.size()); i++){
-      CDMemberDiff<ASTCDParameter> tmp1 = new CDMemberDiff<>(cd1ReducedList.get(i), cd2ReducedList.get(i));
+    for (int i = 0; i < Math.min(cd1ReducedList.size(), cd2ReducedList.size()); i++) {
+      CDMemberDiff<ASTCDParameter> tmp1 =
+          new CDMemberDiff<>(cd1ReducedList.get(i), cd2ReducedList.get(i));
       paraDiffList.add(tmp1);
     }
 
     StringBuilder builder1 = new StringBuilder();
     StringBuilder builder2 = new StringBuilder();
 
-    for (CDMemberDiff<ASTCDParameter> x : paraDiffList){
+    for (CDMemberDiff<ASTCDParameter> x : paraDiffList) {
       builder1.append(x.printCD1Element()).append(", ");
       builder2.append(x.printCD2Element()).append(", ");
     }
-    for (ASTCDParameter x : deleted){
-      builder1.append(COLOR_DELETE)
-        .append(pp.prettyprint(x))
-        .append(RESET)
-        .append(", ");
+    for (ASTCDParameter x : deleted) {
+      builder1.append(COLOR_DELETE).append(pp.prettyprint(x)).append(RESET).append(", ");
     }
-    for (ASTCDParameter x : added){
-      builder2.append(COLOR_ADD)
-        .append(pp.prettyprint(x))
-        .append(RESET)
-        .append(", ");
+    for (ASTCDParameter x : added) {
+      builder2.append(COLOR_ADD).append(pp.prettyprint(x)).append(RESET).append(", ");
     }
-    if (!paraDiffList.isEmpty() || !(deleted.isEmpty())){
-      this.parameter1 = builder1.substring(0, builder1.length()-2);
+    if (!paraDiffList.isEmpty() || !(deleted.isEmpty())) {
+      this.parameter1 = builder1.substring(0, builder1.length() - 2);
     }
-    if (!paraDiffList.isEmpty() || !(added.isEmpty())){
-      this.parameter2 = builder2.substring(0, builder2.length()-2);
+    if (!paraDiffList.isEmpty() || !(added.isEmpty())) {
+      this.parameter2 = builder2.substring(0, builder2.length() - 2);
     }
 
     this.matchedParameter = paraDiffList;
@@ -436,25 +454,25 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
     this.deletedParameter = deleted;
   }
 
-  protected ASTNodeDiff<ASTModifier, ASTModifier> setModifier (ASTModifier cd1Modi, ASTModifier cd2Modi){
-    ASTNodeDiff<ASTModifier, ASTModifier> modifier = new ASTNodeDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
+  protected ASTNodeDiff<ASTModifier, ASTModifier> setModifier(
+      ASTModifier cd1Modi, ASTModifier cd2Modi) {
+    ASTNodeDiff<ASTModifier, ASTModifier> modifier =
+        new ASTNodeDiff<>(Optional.of(cd1Modi), Optional.of(cd2Modi));
     // Special case, as prettyprint of empty modifiers still produce a non-empty string
-    if (! (pp.prettyprint(cd1Modi).length() < 1)){
+    if (!(pp.prettyprint(cd1Modi).length() < 1)) {
       ppModifier1 = getColorCode(modifier) + pp.prettyprint(cd1Modi) + RESET;
     }
-    if (! (pp.prettyprint(cd2Modi).length() < 1)){
+    if (!(pp.prettyprint(cd2Modi).length() < 1)) {
       ppModifier2 = getColorCode(modifier) + pp.prettyprint(cd2Modi) + RESET;
     }
     return modifier;
   }
 
-  private void setParameterStrings(){
+  private void setParameterStrings() {
 
-    this.cd1SelfbuildString = super.combineWithoutNulls(
-      Arrays.asList(ppType1, ppName1, ppExpres1));
+    this.cd1SelfbuildString = super.combineWithoutNulls(Arrays.asList(ppType1, ppName1, ppExpres1));
 
-    this.cd2SelfbuildString = super.combineWithoutNulls(
-      Arrays.asList(ppType2, ppName2, ppExpres2));
+    this.cd2SelfbuildString = super.combineWithoutNulls(Arrays.asList(ppType2, ppName2, ppExpres2));
 
     this.interpretation = "Interpretation: ";
   }
@@ -470,31 +488,33 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
 
   private void setAttributeStrings() {
 
-    this.cd1SelfbuildString = combineWithoutNulls(
-        Arrays.asList(ppModifier1, ppType1, ppName1, ppInitial1));
+    this.cd1SelfbuildString =
+        combineWithoutNulls(Arrays.asList(ppModifier1, ppType1, ppName1, ppInitial1));
 
-    this.cd2SelfbuildString = combineWithoutNulls(
-        Arrays.asList(ppModifier2, ppType2, ppName2, ppInitial2));
+    this.cd2SelfbuildString =
+        combineWithoutNulls(Arrays.asList(ppModifier2, ppType2, ppName2, ppInitial2));
 
     this.interpretation = "Interpretation: ";
   }
 
-  //Methods: Modifier MCReturnType Name "(" (CDParameter || ",")* ")" CDThrowsDeclaration? ";";
+  // Methods: Modifier MCReturnType Name "(" (CDParameter || ",")* ")" CDThrowsDeclaration? ";";
   private void setMethodStrings() {
-    //Signature
-    this.cd1SelfbuildString = combineWithoutNulls(
-        Arrays.asList(ppModifier1, ppReturn1, ppName1, "(", parameter1, ")", ppThrow1));
-    this.cd2SelfbuildString = combineWithoutNulls(
-        Arrays.asList(ppModifier2, ppReturn2, ppName2, "(", parameter2, ")", ppThrow2));
+    // Signature
+    this.cd1SelfbuildString =
+        combineWithoutNulls(
+            Arrays.asList(ppModifier1, ppReturn1, ppName1, "(", parameter1, ")", ppThrow1));
+    this.cd2SelfbuildString =
+        combineWithoutNulls(
+            Arrays.asList(ppModifier2, ppReturn2, ppName2, "(", parameter2, ")", ppThrow2));
 
     this.interpretation = "Interpretation: ";
   }
 
   private void setConstructorStrings() {
-    this.cd1SelfbuildString = combineWithoutNulls(
-        Arrays.asList(ppModifier1, ppName1, "(", parameter1, ")", ppThrow1));
-    this.cd2SelfbuildString = combineWithoutNulls(
-        Arrays.asList(ppModifier2, ppName2, "(", parameter2, ")", ppThrow2));
+    this.cd1SelfbuildString =
+        combineWithoutNulls(Arrays.asList(ppModifier1, ppName1, "(", parameter1, ")", ppThrow1));
+    this.cd2SelfbuildString =
+        combineWithoutNulls(Arrays.asList(ppModifier2, ppName2, "(", parameter2, ")", ppThrow2));
 
     this.interpretation = "Interpretation: ";
   }
@@ -511,5 +531,4 @@ public class CDMemberDiff<ASTNodeType extends ASTNode> extends CDElementDiff {
   public String printCD2Element() {
     return cd2SelfbuildString;
   }
-
 }

@@ -13,11 +13,10 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
-import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cddiff.ow2cw.expander.BasicExpander;
 import de.monticore.cddiff.ow2cw.expander.FullExpander;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
-
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,7 @@ public class ReductionTrafo {
     new CD4CodeDirectCompositionTrafo().transform(first);
     new CD4CodeDirectCompositionTrafo().transform(second);
 
-    //handle association directions
+    // handle association directions
     handleAssocDirections(first, second);
 
     /*
@@ -61,13 +60,13 @@ public class ReductionTrafo {
     Add classes and interfaces exclusive to second as classes without attributes, extends and
     implements and built new associations for classes that are only <<complete>> in second
      */
-    Set<ASTCDAssociation> newAssocs = new HashSet<>(
-        expander1.getDummies4Diff(typeList, COMMON_INTERFACE));
+    Set<ASTCDAssociation> newAssocs =
+        new HashSet<>(expander1.getDummies4Diff(typeList, COMMON_INTERFACE));
 
-    //Add missing Enums and new EnumConstant if Enum is <<complete>> in second.
+    // Add missing Enums and new EnumConstant if Enum is <<complete>> in second.
     expander1.addNewEnumConstants(second.getCDDefinition().getCDEnumsList());
 
-    //create common interface for all classes in first
+    // create common interface for all classes in first
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     createCommonInterface(first, COMMON_INTERFACE);
 
@@ -78,19 +77,20 @@ public class ReductionTrafo {
     expander1.addAssociationsWithoutConflicts(newAssocs);
 
     // add a unidirectional super-association in first for each association in second
-    Set<ASTCDAssociation> superSet = expander1.buildSuperAssociations(
-        second.getCDDefinition().getCDAssociationsList(), COMMON_INTERFACE);
+    Set<ASTCDAssociation> superSet =
+        expander1.buildSuperAssociations(
+            second.getCDDefinition().getCDAssociationsList(), COMMON_INTERFACE);
     expander1.addAssociationsWithoutConflicts(superSet);
 
     /*
     transform second
      */
 
-    //re-build symbol tables
+    // re-build symbol tables
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
 
-    //create common interface for all classes in second
+    // create common interface for all classes in second
     createCommonInterface(second, COMMON_INTERFACE);
 
     // add classes, interfaces and attributes exclusive to first
@@ -111,12 +111,11 @@ public class ReductionTrafo {
     */
 
     // add all non-conflicting associations from first to second
-    Set<ASTCDAssociation> noConflictSet = new HashSet<>(
-        first.getCDDefinition().getCDAssociationsList());
+    Set<ASTCDAssociation> noConflictSet =
+        new HashSet<>(first.getCDDefinition().getCDAssociationsList());
     noConflictSet.removeAll(CDAssociationHelper.collectConflictingAssociations(first, second));
 
     expander2.addAssociationClones(noConflictSet);
-
   }
 
   public static void addDummyClass4Associations(ASTCDCompilationUnit first, String dummyName) {
@@ -139,11 +138,9 @@ public class ReductionTrafo {
     }
   }
 
-  /**
-   * handles unspecified AssocDir
-   */
-  public static void handleAssocDirections(ASTCDCompilationUnit first,
-      ASTCDCompilationUnit second) {
+  /** handles unspecified AssocDir */
+  public static void handleAssocDirections(
+      ASTCDCompilationUnit first, ASTCDCompilationUnit second) {
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(first);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(second);
@@ -170,36 +167,36 @@ public class ReductionTrafo {
 
       for (ASTCDClass current : cd.getCDDefinition().getCDClassesList()) {
         scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
-        if (CDInheritanceHelper.getAllSuper(current, scope).size() == 1 && (!current.getName()
-            .equals(commonInterface))) {
-          Set<String> implementsSet = CDInheritanceHelper.getDirectInterfaces(current, scope)
-              .stream()
-              .map(i -> i.getSymbol().getFullName())
-              .collect(Collectors.toSet());
+        if (CDInheritanceHelper.getAllSuper(current, scope).size() == 1
+            && (!current.getName().equals(commonInterface))) {
+          Set<String> implementsSet =
+              CDInheritanceHelper.getDirectInterfaces(current, scope).stream()
+                  .map(i -> i.getSymbol().getFullName())
+                  .collect(Collectors.toSet());
           implementsSet.add(commonInterface);
-          current.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
-              .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
+          current.setCDInterfaceUsage(
+              CDInterfaceUsageFacade.getInstance()
+                  .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
         }
       }
 
       for (ASTCDInterface current : cd.getCDDefinition().getCDInterfacesList()) {
         scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
-        if (CDInheritanceHelper.getAllSuper(current, scope).size() == 1 && (!current.getName()
-            .equals(commonInterface))) {
-          Set<String> extendsSet = CDInheritanceHelper.getDirectInterfaces(current, scope)
-              .stream()
-              .map(i -> i.getSymbol().getFullName())
-              .collect(Collectors.toSet());
+        if (CDInheritanceHelper.getAllSuper(current, scope).size() == 1
+            && (!current.getName().equals(commonInterface))) {
+          Set<String> extendsSet =
+              CDInheritanceHelper.getDirectInterfaces(current, scope).stream()
+                  .map(i -> i.getSymbol().getFullName())
+                  .collect(Collectors.toSet());
           extendsSet.add(commonInterface);
-          current.setCDExtendUsage(CDExtendUsageFacade.getInstance()
-              .createCDExtendUsage(extendsSet.toArray(new String[0])));
+          current.setCDExtendUsage(
+              CDExtendUsageFacade.getInstance()
+                  .createCDExtendUsage(extendsSet.toArray(new String[0])));
         }
       }
-
     }
 
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
-
   }
 
   /**
@@ -209,8 +206,8 @@ public class ReductionTrafo {
   public void copyInheritance(ASTCDCompilationUnit srcCD, ASTCDCompilationUnit targetCD) {
 
     ICD4CodeArtifactScope srcScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(srcCD);
-    ICD4CodeArtifactScope targetScope = CD4CodeMill.scopesGenitorDelegator()
-        .createFromAST(targetCD);
+    ICD4CodeArtifactScope targetScope =
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(targetCD);
 
     // Create a map that maps each type to all its supertypes according to both CDs
     Map<ASTCDType, Set<ASTCDType>> inheritanceGraph = new HashMap<>();
@@ -226,9 +223,10 @@ public class ReductionTrafo {
       inheritanceGraph.put(type, new HashSet<>(CDInheritanceHelper.getAllSuper(type, targetScope)));
       Optional<CDTypeSymbol> optType = srcScope.resolveCDTypeDown(type.getSymbol().getFullName());
       if (optType.isPresent()) {
-        for (ASTCDType superType : CDInheritanceHelper.getAllSuper(optType.get().getAstNode(),
-            srcScope)) {
-          targetScope.resolveCDTypeDown(superType.getSymbol().getFullName())
+        for (ASTCDType superType :
+            CDInheritanceHelper.getAllSuper(optType.get().getAstNode(), srcScope)) {
+          targetScope
+              .resolveCDTypeDown(superType.getSymbol().getFullName())
               .ifPresent(cdTypeSymbol -> inheritanceGraph.get(type).add(cdTypeSymbol.getAstNode()));
         }
       }
@@ -237,21 +235,25 @@ public class ReductionTrafo {
 
     // make sure interfaces do not extend classes
     for (ASTCDInterface current : interfaces) {
-      inheritanceGraph.get(current)
-          .removeAll(inheritanceGraph.get(current)
-              .stream()
-              .filter(superType -> !(interfaces.contains(superType)))
-              .collect(Collectors.toSet()));
+      inheritanceGraph
+          .get(current)
+          .removeAll(
+              inheritanceGraph.get(current).stream()
+                  .filter(superType -> !(interfaces.contains(superType)))
+                  .collect(Collectors.toSet()));
     }
 
     // remove cyclical inheritance
     for (ASTCDType type : typeSet) {
-      inheritanceGraph.get(type)
-          .removeIf(superType -> inheritanceGraph.get(superType).contains(type)
-              && !CDInheritanceHelper.getAllSuper(type, targetScope).contains(superType));
+      inheritanceGraph
+          .get(type)
+          .removeIf(
+              superType ->
+                  inheritanceGraph.get(superType).contains(type)
+                      && !CDInheritanceHelper.getAllSuper(type, targetScope).contains(superType));
     }
 
-    //remove redundant inheritance
+    // remove redundant inheritance
     for (ASTCDType type : typeSet) {
       Set<ASTCDType> superSet = new HashSet<>(inheritanceGraph.get(type));
       for (ASTCDType superType : inheritanceGraph.get(type)) {
@@ -260,7 +262,7 @@ public class ReductionTrafo {
       inheritanceGraph.put(type, superSet);
     }
 
-    //update targetAST (distinguish between extends vs implements)
+    // update targetAST (distinguish between extends vs implements)
     FullExpander expander = new FullExpander(new VariableExpander(targetCD));
 
     for (ASTCDInterface current : interfaces) {
@@ -278,8 +280,7 @@ public class ReductionTrafo {
       for (ASTCDType superType : inheritanceGraph.get(current)) {
         if (classes.contains(superType)) {
           extendsSet.add(superType.getSymbol().getFullName());
-        }
-        else if (interfaces.contains(superType)) {
+        } else if (interfaces.contains(superType)) {
           implementsSet.add(superType.getSymbol().getFullName());
         }
       }
@@ -288,7 +289,6 @@ public class ReductionTrafo {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(targetCD);
     removeRedundantAttributes(targetCD);
-
   }
 
   /**
@@ -313,5 +313,4 @@ public class ReductionTrafo {
     }
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
   }
-
 }

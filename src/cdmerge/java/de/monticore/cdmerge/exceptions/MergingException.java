@@ -5,7 +5,6 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cdmerge.log.ExecutionLog;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
-
 import java.util.Optional;
 
 public class MergingException extends Exception {
@@ -77,7 +76,6 @@ public class MergingException extends Exception {
     this.phase = Optional.of(phase);
     this.astNode1 = Optional.of(astNode);
     this.astNode2 = Optional.empty();
-
   }
 
   public MergingException(String message, MergePhase phase) {
@@ -98,39 +96,28 @@ public class MergingException extends Exception {
     this.astNode2 = Optional.empty();
   }
 
-  /**
-   * @return report
-   */
+  /** @return report */
   public Optional<MergeStepResult> getReport() {
     return mergeStepResult;
   }
 
-  /**
-   * @return astNode2
-   */
+  /** @return astNode2 */
   public Optional<ASTNode> getAstNode2() {
     return astNode2;
   }
 
-  /**
-   * @return astNode1
-   */
+  /** @return astNode1 */
   public Optional<ASTNode> getAstNode1() {
     return astNode1;
   }
 
-  /**
-   * @return phase
-   */
+  /** @return phase */
   public Optional<MergePhase> getPhase() {
     return phase;
   }
 
-  /**
-   * @return log
-   */
+  /** @return log */
   public Optional<ExecutionLog> getLog() {
     return this.log;
   }
-
 }

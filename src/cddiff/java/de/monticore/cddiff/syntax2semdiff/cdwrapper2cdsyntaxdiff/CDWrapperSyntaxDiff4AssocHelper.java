@@ -1,99 +1,101 @@
 package de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff;
 
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
-
-import java.util.*;
-
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
 import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4SearchHelper.*;
 
+import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.*;
+import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.*;
+import java.util.*;
+
 public class CDWrapperSyntaxDiff4AssocHelper {
 
-  /**
-   * create check list for association in compareCDW
-   */
+  /** create check list for association in compareCDW */
   public static void createCheckList4AssocInCompareCDW(
-      CDWrapper compareCDW,
-      Map<CDAssociationWrapper, Boolean> checkList4AssocInCompareCDW) {
-    compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN().forEach((assocName, assoc) -> {
-      if (assoc.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC) {
-        checkList4AssocInCompareCDW.put(assoc, false);
-      }
-    });
+      CDWrapper compareCDW, Map<CDAssociationWrapper, Boolean> checkList4AssocInCompareCDW) {
+    compareCDW
+        .getCDAssociationWrapperGroupOnlyWithStatusOPEN()
+        .forEach(
+            (assocName, assoc) -> {
+              if (assoc.getCDWrapperKind() == CDAssociationWrapperKind.CDWRAPPER_ASC) {
+                checkList4AssocInCompareCDW.put(assoc, false);
+              }
+            });
   }
 
-  /**
-   * update checkList4AssocInCompareCDW
-   */
+  /** update checkList4AssocInCompareCDW */
   public static void updateCheckList4AssocInCompareCDW(
       CDWrapper baseCDW,
       CDWrapper compareCDW,
       Map<CDAssociationWrapper, Boolean> checkList4AssocInCompareCDW) {
-    baseCDW.getCDAssociationWrapperGroup().forEach((assocName, baseCDAssociationWrapper) -> {
+    baseCDW
+        .getCDAssociationWrapperGroup()
+        .forEach(
+            (assocName, baseCDAssociationWrapper) -> {
+              CDAssociationWrapper intersectedBaseCDAssociationWrapper =
+                  intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap(
+                      baseCDAssociationWrapper, baseCDW);
 
-      CDAssociationWrapper intersectedBaseCDAssociationWrapper =
-          intersectCDAssociationWrapperCardinalityByCDAssociationWrapperWithOverlap(
-              baseCDAssociationWrapper, baseCDW);
+              // get all associations including reversed association in CompareSG
+              // by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
+              List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
+                  fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
+                      compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(),
+                      intersectedBaseCDAssociationWrapper);
 
-      // get all associations including reversed association in CompareSG
-      // by matching [leftClass], [leftRoleName], [rightRoleName], [rightClass]
-      List<CDAssociationWrapperPack> DiffAssocMapInCompareSG =
-          fuzzySearchCDAssociationWrapperByCDAssociationWrapperWithoutDirectionAndCardinality(
-              compareCDW.getCDAssociationWrapperGroupOnlyWithStatusOPEN(), intersectedBaseCDAssociationWrapper);
+              List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
+              List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
+              DiffAssocMapInCompareSG.forEach(
+                  e -> {
+                    if (!e.isReverse()) {
+                      forwardDiffAssocListInCompareSG.add(e.getCDAssociationWrapper());
+                    } else {
+                      reverseDiffAssocListInCompareSG.add(e.getCDAssociationWrapper());
+                    }
+                  });
 
-      List<CDAssociationWrapper> forwardDiffAssocListInCompareSG = new ArrayList<>();
-      List<CDAssociationWrapper> reverseDiffAssocListInCompareSG = new ArrayList<>();
-      DiffAssocMapInCompareSG.forEach(e -> {
-        if (!e.isReverse()) {
-          forwardDiffAssocListInCompareSG.add(e.getCDAssociationWrapper());
-        }
-        else {
-          reverseDiffAssocListInCompareSG.add(e.getCDAssociationWrapper());
-        }
-      });
+              boolean isInCompareSG4ForwardAssocName = forwardDiffAssocListInCompareSG.size() > 0;
+              boolean isInCompareSG4ReverseAssocName = reverseDiffAssocListInCompareSG.size() > 0;
 
-      boolean isInCompareSG4ForwardAssocName = forwardDiffAssocListInCompareSG.size() > 0;
-      boolean isInCompareSG4ReverseAssocName = reverseDiffAssocListInCompareSG.size() > 0;
+              if (isInCompareSG4ForwardAssocName && !isInCompareSG4ReverseAssocName) {
+                forwardDiffAssocListInCompareSG.forEach(
+                    compareCDAssociationWrapper -> {
 
-      if (isInCompareSG4ForwardAssocName && !isInCompareSG4ReverseAssocName) {
-        forwardDiffAssocListInCompareSG.forEach(compareCDAssociationWrapper -> {
+                      // change the flag of current compareCDAssociationWrapper to True (is used)
+                      if (compareCDAssociationWrapper.getCDWrapperKind()
+                          == CDAssociationWrapperKind.CDWRAPPER_ASC) {
+                        // change CDWrapperKind to ensure display this inherited assoc
+                        if (baseCDAssociationWrapper.getCDWrapperKind()
+                            == CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC) {
+                          baseCDAssociationWrapper.setCDWrapperKind(
+                              CDAssociationWrapperKind.CDWRAPPER_INHERIT_DISPLAY_ASC);
+                        }
+                        checkList4AssocInCompareCDW.put(compareCDAssociationWrapper, true);
+                      }
+                    });
+              }
+              if (!isInCompareSG4ForwardAssocName && isInCompareSG4ReverseAssocName) {
+                reverseDiffAssocListInCompareSG.forEach(
+                    compareCDAssociationWrapper -> {
 
-          // change the flag of current compareCDAssociationWrapper to True (is used)
-          if (compareCDAssociationWrapper.getCDWrapperKind()
-              == CDAssociationWrapperKind.CDWRAPPER_ASC) {
-            // change CDWrapperKind to ensure display this inherited assoc
-            if (baseCDAssociationWrapper.getCDWrapperKind()
-                == CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC) {
-              baseCDAssociationWrapper.setCDWrapperKind(
-                  CDAssociationWrapperKind.CDWRAPPER_INHERIT_DISPLAY_ASC);
-            }
-            checkList4AssocInCompareCDW.put(compareCDAssociationWrapper, true);
-          }
-        });
-      }
-      if (!isInCompareSG4ForwardAssocName && isInCompareSG4ReverseAssocName) {
-        reverseDiffAssocListInCompareSG.forEach(compareCDAssociationWrapper -> {
-
-          // change the flag of current compareCDAssociationWrapper to True (is used)
-          if (compareCDAssociationWrapper.getCDWrapperKind()
-              == CDAssociationWrapperKind.CDWRAPPER_ASC) {
-            // change CDWrapperKind to ensure display this inherited assoc
-            if (baseCDAssociationWrapper.getCDWrapperKind()
-                == CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC) {
-              baseCDAssociationWrapper.setCDWrapperKind(
-                  CDAssociationWrapperKind.CDWRAPPER_INHERIT_DISPLAY_ASC);
-            }
-            checkList4AssocInCompareCDW.put(compareCDAssociationWrapper, true);
-          }
-        });
-      }
-    });
+                      // change the flag of current compareCDAssociationWrapper to True (is used)
+                      if (compareCDAssociationWrapper.getCDWrapperKind()
+                          == CDAssociationWrapperKind.CDWRAPPER_ASC) {
+                        // change CDWrapperKind to ensure display this inherited assoc
+                        if (baseCDAssociationWrapper.getCDWrapperKind()
+                            == CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC) {
+                          baseCDAssociationWrapper.setCDWrapperKind(
+                              CDAssociationWrapperKind.CDWRAPPER_INHERIT_DISPLAY_ASC);
+                        }
+                        checkList4AssocInCompareCDW.put(compareCDAssociationWrapper, true);
+                      }
+                    });
+              }
+            });
   }
 
   /**
-   * return the result for cardinality of association after comparison
-   * between base CDAssociationWrapper and compare CDAssociationWrapper
+   * return the result for cardinality of association after comparison between base
+   * CDAssociationWrapper and compare CDAssociationWrapper
    */
   public static CDAssociationDiffCardinality cDAssociationDiffCardinalityHelper(
       CDAssociationWrapperCardinality baseCDAssociationWrapperCardinality,
@@ -147,12 +149,11 @@ public class CDWrapperSyntaxDiff4AssocHelper {
   }
 
   /**
-   * return the result for direction of association after comparison
-   * between base CDAssociationWrapper and compare CDAssociationWrapper
+   * return the result for direction of association after comparison between base
+   * CDAssociationWrapper and compare CDAssociationWrapper
    */
   public static CDAssociationDiffDirection cDAssociationDiffDirectionHelper(
-      CDAssociationWrapperDirection baseDirection,
-      CDAssociationWrapperDirection compareDirection) {
+      CDAssociationWrapperDirection baseDirection, CDAssociationWrapperDirection compareDirection) {
     switch (baseDirection) {
       case LEFT_TO_RIGHT:
         switch (compareDirection) {
@@ -206,7 +207,8 @@ public class CDWrapperSyntaxDiff4AssocHelper {
    * difference for direction
    */
   public static CDAssociationDiffCategory cDAssociationDiffCategoryByDirectionHelper(
-      boolean isDirectionChanged, boolean isAssocNameExchanged,
+      boolean isDirectionChanged,
+      boolean isAssocNameExchanged,
       CDAssociationDiffDirection directionResult) {
     if (isDirectionChanged) {
       // check directionResult
@@ -214,12 +216,10 @@ public class CDWrapperSyntaxDiff4AssocHelper {
         return CDAssociationDiffCategory.DIRECTION_SUBSET;
       }
       return CDAssociationDiffCategory.DIRECTION_CHANGED;
-    }
-    else {
+    } else {
       if (isAssocNameExchanged) {
         return CDAssociationDiffCategory.DIRECTION_CHANGED_BUT_SAME_MEANING;
-      }
-      else {
+      } else {
         return CDAssociationDiffCategory.ORIGINAL;
       }
     }
@@ -237,15 +237,12 @@ public class CDWrapperSyntaxDiff4AssocHelper {
         return CDAssociationDiffCategory.CARDINALITY_SUBSET;
       }
       return CDAssociationDiffCategory.CARDINALITY_CHANGED;
-    }
-    else {
+    } else {
       return CDAssociationDiffCategory.ORIGINAL;
     }
   }
 
-  /**
-   * get the corresponding CDDiff kind for association by cDAssociationWrapperKind
-   */
+  /** get the corresponding CDDiff kind for association by cDAssociationWrapperKind */
   public static CDAssociationDiffKind getCDAssociationDiffKindHelper(
       CDAssociationWrapperKind cDAssociationWrapperKind) {
     switch (cDAssociationWrapperKind) {
@@ -280,9 +277,7 @@ public class CDWrapperSyntaxDiff4AssocHelper {
     return cDAssocWrapperDiff;
   }
 
-  /**
-   * helper for creating CDAssocWrapperDiff with whichPartDiff and the result after comparison
-   */
+  /** helper for creating CDAssocWrapperDiff with whichPartDiff and the result after comparison */
   public static CDAssocWrapperDiff createCDAssociationDiffHelper(
       CDAssociationWrapper base,
       Optional<CDAssociationWrapper> optCompare,
@@ -340,5 +335,4 @@ public class CDWrapperSyntaxDiff4AssocHelper {
     cDAssocWrapperDiff.setRightInstanceClass(rightInstanceClass);
     return cDAssocWrapperDiff;
   }
-
 }

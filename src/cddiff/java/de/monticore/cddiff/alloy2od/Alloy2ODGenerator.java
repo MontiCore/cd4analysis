@@ -12,18 +12,15 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.A4Tuple;
 import edu.mit.csail.sdg.translator.A4TupleSet;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
-/**
- * A collection of functions to transform alloy solutions to object diagrams
- */
+/** A collection of functions to transform alloy solutions to object diagrams */
 public class Alloy2ODGenerator {
 
   /**
@@ -80,8 +77,7 @@ public class Alloy2ODGenerator {
       type = (A4TupleSet) solution.eval(e);
       e = CompUtil.parseOneExpression_fromString(module, "super");
       superTypes = (A4TupleSet) solution.eval(e);
-    }
-    catch (Err e1) {
+    } catch (Err e1) {
       e1.printStackTrace();
     }
 
@@ -182,8 +178,7 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates the diff witness for a given alloy module and alloy solution and returns it as
-   * string
+   * Generates the diff witness for a given alloy module and alloy solution and returns it as string
    */
   public static String generateString(CompModule module, A4Solution currentSolution, int number) {
 
@@ -192,10 +187,9 @@ public class Alloy2ODGenerator {
   }
 
   /**
-   * Generates the diff witness for a given alloy module and alloy solution and returns it as
-   * string
+   * Generates the diff witness for a given alloy module and alloy solution and returns it as string
    *
-   * @param module   The compiled alloy module for which witnesses should be generated
+   * @param module The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static String generateString(CompModule module, A4Solution solution) {
@@ -210,7 +204,7 @@ public class Alloy2ODGenerator {
    * Generates all diff witnesses for a given alloy module and alloy solution and saves them in the
    * outputDirectory
    *
-   * @param module   The compiled alloy module for which witnesses should be generated
+   * @param module The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static void generateAll(CompModule module, A4Solution solution, File outputDirectory) {
@@ -234,8 +228,7 @@ public class Alloy2ODGenerator {
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return;
       }
@@ -247,11 +240,11 @@ public class Alloy2ODGenerator {
    * Generates at most limit diff witnesses for a given alloy module and alloy solution and saves
    * them in the outputDirectory
    *
-   * @param module   The compiled alloy module for which witnesses should be generated
+   * @param module The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
-  public static void generateLimited(CompModule module, A4Solution solution, int limit,
-      File outputDirectory) {
+  public static void generateLimited(
+      CompModule module, A4Solution solution, int limit, File outputDirectory) {
 
     // Variable for possibly multiple solutions
     int number = 0;
@@ -273,8 +266,7 @@ public class Alloy2ODGenerator {
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return;
       }
@@ -285,7 +277,7 @@ public class Alloy2ODGenerator {
   /**
    * Generates the diff witness for a given alloy module and alloy solution and saves it as od
    *
-   * @param module   The compiled alloy module for which witnesses should be generated
+   * @param module The compiled alloy module for which witnesses should be generated
    * @param solution The Alloy solution for the alloy diff predicate
    */
   public static Optional<ASTODArtifact> generateOD(CompModule module, A4Solution solution) {
@@ -302,8 +294,7 @@ public class Alloy2ODGenerator {
 
     try {
       od = odParser.parse_String(odString);
-    }
-    catch (IOException e1) {
+    } catch (IOException e1) {
       System.out.println("Unable to parse:");
       System.out.println(odString);
     }
@@ -312,9 +303,7 @@ public class Alloy2ODGenerator {
     return od;
   }
 
-  /**
-   * Generates all ODs and returns them as parsed ASTOArtifacts
-   */
+  /** Generates all ODs and returns them as parsed ASTOArtifacts */
   public static List<ASTODArtifact> generateAllODs(CompModule module, A4Solution solution) {
     List<ASTODArtifact> ods = new ArrayList<>();
 
@@ -332,8 +321,7 @@ public class Alloy2ODGenerator {
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return ods;
       }
@@ -342,9 +330,7 @@ public class Alloy2ODGenerator {
     return ods;
   }
 
-  /**
-   * Generates all unique ODs and returns them as parsed ASTOArtifacts
-   */
+  /** Generates all unique ODs and returns them as parsed ASTOArtifacts */
   public static List<ASTODArtifact> generateUniqueODs(CompModule module, A4Solution solution) {
     List<ASTODArtifact> ods = new ArrayList<>();
 
@@ -364,8 +350,7 @@ public class Alloy2ODGenerator {
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return ods;
       }
@@ -374,11 +359,9 @@ public class Alloy2ODGenerator {
     return ods;
   }
 
-  /**
-   * Generates at most limit ODs and returns them as parsed ASTOArtifacts
-   */
-  public static List<ASTODArtifact> generateLimitODs(CompModule module, A4Solution solution,
-      int limit) {
+  /** Generates at most limit ODs and returns them as parsed ASTOArtifacts */
+  public static List<ASTODArtifact> generateLimitODs(
+      CompModule module, A4Solution solution, int limit) {
     List<ASTODArtifact> ods = new ArrayList<>();
 
     // Variable for possibly multiple solutions
@@ -401,8 +384,7 @@ public class Alloy2ODGenerator {
       // Increase loop variables
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return ods;
       }
@@ -415,7 +397,7 @@ public class Alloy2ODGenerator {
   /**
    * Writes a string containing an object diagram into a file
    *
-   * @param od              the string the Alloy module should contain
+   * @param od the string the Alloy module should contain
    * @param outputDirectory the directory to generate the Alloy Module in.
    */
   public static void saveOD(String od, String odName, File outputDirectory) {
@@ -426,8 +408,7 @@ public class Alloy2ODGenerator {
     // Write results into a file
     try {
       FileUtils.writeStringToFile(outputFile.toFile(), od, Charset.defaultCharset());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -470,7 +451,7 @@ public class Alloy2ODGenerator {
 
     // Remove enum_ and $number from val
     String type = val.replaceAll("enum_", "").replaceAll("_", ".").replaceAll("[$]\\d*", "");
-    //type = type.replaceAll("_.*", "");
+    // type = type.replaceAll("_.*", "");
 
     // Get name from fName by removing $number from fName
     String name = fName.replaceAll("[$]\\d*", "");
@@ -500,11 +481,12 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Get attribute type by replacing alloy-specific elements
-    String type = val.replaceAll("_of__", "<")
-        .replaceAll("__", ">")
-        .replaceAll("type_", "")
-        .replaceAll("[$]\\d*", "")
-        .replaceAll("_", ".");
+    String type =
+        val.replaceAll("_of__", "<")
+            .replaceAll("__", ">")
+            .replaceAll("type_", "")
+            .replaceAll("[$]\\d*", "")
+            .replaceAll("_", ".");
 
     // Get name from fName by removing $number from fName
     String name = fName.replaceAll("[$]\\d*", "");
@@ -564,5 +546,4 @@ public class Alloy2ODGenerator {
     typeDecl.append("\">>").append(System.lineSeparator());
     return typeDecl.toString().replaceFirst("= \", ", "= \"");
   }
-
 }

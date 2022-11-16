@@ -10,23 +10,23 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.util.CDUtils;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Test;
 
 public class InheritanceInheritanceAttributePullup1 extends BaseTest {
 
-  private static final String INPUT_MODEL_1 = "src/cdmergetest/resources/class_diagrams"
-      + "/Inheritance/inheritanceAttributePullup1/A.cd";
+  private static final String INPUT_MODEL_1 =
+      "src/cdmergetest/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup1/A.cd";
 
-  private static final String INPUT_MODEL_2 = "src/cdmergetest/resources/class_diagrams"
-      + "/Inheritance/inheritanceAttributePullup1/B.cd";
+  private static final String INPUT_MODEL_2 =
+      "src/cdmergetest/resources/class_diagrams" + "/Inheritance/inheritanceAttributePullup1/B.cd";
 
-  private static final String EXPECTED = "src/cdmergetest/resources/class_diagrams/Inheritance"
-      + "/inheritanceAttributePullup1/mergedCD.cd";
+  private static final String EXPECTED =
+      "src/cdmergetest/resources/class_diagrams/Inheritance"
+          + "/inheritanceAttributePullup1/mergedCD.cd";
 
   @Test
   public void testInheritanceInheritanceAttributePullup1() throws IOException, MergingException {
@@ -39,17 +39,17 @@ public class InheritanceInheritanceAttributePullup1 extends BaseTest {
     processResult(results);
     org.junit.Assert.assertTrue(
         parseCD(CDUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD, false));
-
   }
 
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY)
-        .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+    CDMergeConfig.Builder builder =
+        getConfigBuilder()
+            .withParam(MergeParameter.CHECK_ONLY)
+            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
       builder.addInputFile(m);
     }
     return builder.build();
   }
-
 }

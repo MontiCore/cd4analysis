@@ -3,9 +3,7 @@ package de.monticore.cdmerge.matching.matchresult;
 
 import de.monticore.cdmerge.BaseTest;
 
-/**
- * UnitTest for the Match class.
- */
+/** UnitTest for the Match class. */
 public class MatchTest extends BaseTest {
 
   //	public static final MatchNode<Integer, String> matchNode1 = new MatchNode<Integer, String>

@@ -3,9 +3,7 @@ package de.monticore.cdmerge.matching;
 import de.monticore.cdmerge.matching.strategies.*;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 
-/**
- * Concrete Factory that assembles default matching strategies.
- */
+/** Concrete Factory that assembles default matching strategies. */
 public class DefaultMatchStrategyFactory extends MatchStrategyFactory {
 
   @Override
@@ -30,5 +28,4 @@ public class DefaultMatchStrategyFactory extends MatchStrategyFactory {
     AssociationMatcher associationMatcher = createAssociationMatcher(blackBoard);
     return new DefaultCDMatcher(blackBoard, typeMatcher, attributeMatcher, associationMatcher);
   }
-
 }

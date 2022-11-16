@@ -10,17 +10,13 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CDTypeFacade {
 
-  /**
-   * Class that helps with the creation of ASTCDType
-   */
-
+  /** Class that helps with the creation of ASTCDType */
   private static CDTypeFacade cdTypeFacade;
 
   private final MCTypeFacade mcTypeFacade;
@@ -36,9 +32,7 @@ public class CDTypeFacade {
     return cdTypeFacade;
   }
 
-  /**
-   * delegation methods for a more comfortable usage
-   */
+  /** delegation methods for a more comfortable usage */
 
   /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\
   | CDClass                                                                   |
@@ -49,60 +43,102 @@ public class CDTypeFacade {
   }
 
   public ASTCDClass createCDClass(final String name, List<String> interfaces) {
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(interfaces.stream().map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder()
+            .addAllInterface(
+                interfaces.stream()
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
     return CD4CodeMill.cDClassBuilder().setName(name).setCDInterfaceUsage(interfaceUsage).build();
   }
 
-  public ASTCDClass createCDClass(final String name, String ... interfaces) {
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(Arrays.stream(interfaces).map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
+  public ASTCDClass createCDClass(final String name, String... interfaces) {
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder()
+            .addAllInterface(
+                Arrays.stream(interfaces)
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
     return CD4CodeMill.cDClassBuilder().setName(name).setCDInterfaceUsage(interfaceUsage).build();
   }
 
   public ASTCDClass createCDClass(final String name, String superClass, List<String> interfaces) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addSuperclass(mcTypeFacade.createQualifiedType(superClass)).build();
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(interfaces.stream().map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
-    return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).setCDInterfaceUsage(interfaceUsage).build();
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder()
+            .addSuperclass(mcTypeFacade.createQualifiedType(superClass))
+            .build();
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder()
+            .addAllInterface(
+                interfaces.stream()
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
+    return CD4CodeMill.cDClassBuilder()
+        .setName(name)
+        .setCDExtendUsage(cdExtend)
+        .setCDInterfaceUsage(interfaceUsage)
+        .build();
   }
 
-  public ASTCDClass createCDClass(final String name, String superClass, String ... interfaces) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addSuperclass(mcTypeFacade.createQualifiedType(superClass)).build();
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(Arrays.stream(interfaces).map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
-    return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).setCDInterfaceUsage(interfaceUsage).build();
+  public ASTCDClass createCDClass(final String name, String superClass, String... interfaces) {
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder()
+            .addSuperclass(mcTypeFacade.createQualifiedType(superClass))
+            .build();
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder()
+            .addAllInterface(
+                Arrays.stream(interfaces)
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
+    return CD4CodeMill.cDClassBuilder()
+        .setName(name)
+        .setCDExtendUsage(cdExtend)
+        .setCDInterfaceUsage(interfaceUsage)
+        .build();
   }
 
-  public ASTCDClass createCDClass(final String name, final ASTMCObjectType superClass, List<ASTMCObjectType> interfaces) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addSuperclass(superClass).build();
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(interfaces).build();
-    return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).setCDInterfaceUsage(interfaceUsage).build();
+  public ASTCDClass createCDClass(
+      final String name, final ASTMCObjectType superClass, List<ASTMCObjectType> interfaces) {
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder().addSuperclass(superClass).build();
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder().addAllInterface(interfaces).build();
+    return CD4CodeMill.cDClassBuilder()
+        .setName(name)
+        .setCDExtendUsage(cdExtend)
+        .setCDInterfaceUsage(interfaceUsage)
+        .build();
   }
 
-  public ASTCDClass createCDClass(final String name, final ASTMCObjectType superClass, ASTMCObjectType ... interfaces) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addSuperclass(superClass).build();
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(Arrays.asList(interfaces)).build();
-    return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).setCDInterfaceUsage(interfaceUsage).build();
+  public ASTCDClass createCDClass(
+      final String name, final ASTMCObjectType superClass, ASTMCObjectType... interfaces) {
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder().addSuperclass(superClass).build();
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder().addAllInterface(Arrays.asList(interfaces)).build();
+    return CD4CodeMill.cDClassBuilder()
+        .setName(name)
+        .setCDExtendUsage(cdExtend)
+        .setCDInterfaceUsage(interfaceUsage)
+        .build();
   }
 
   public ASTCDClass createCDClass(final String name, String superClass) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addSuperclass(mcTypeFacade.createQualifiedType(superClass))
-      .build();
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder()
+            .addSuperclass(mcTypeFacade.createQualifiedType(superClass))
+            .build();
     return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).build();
   }
 
   public ASTCDClass createCDClass(final String name, final ASTMCObjectType superClass) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addSuperclass(superClass)
-      .build();
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder().addSuperclass(superClass).build();
     return CD4CodeMill.cDClassBuilder().setName(name).setCDExtendUsage(cdExtend).build();
   }
 
@@ -115,20 +151,30 @@ public class CDTypeFacade {
   }
 
   public ASTCDInterface createCDInterface(final String name, List<String> interfaces) {
-    ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().
-      addAllSuperclass(interfaces.stream().map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
+    ASTCDExtendUsage extendUsage =
+        CD4CodeMill.cDExtendUsageBuilder()
+            .addAllSuperclass(
+                interfaces.stream()
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
     return CD4CodeMill.cDInterfaceBuilder().setName(name).setCDExtendUsage(extendUsage).build();
   }
 
-  public ASTCDInterface createCDInterface(final String name, String ... interfaces) {
-    ASTCDExtendUsage extendUsage = CD4CodeMill.cDExtendUsageBuilder().
-      addAllSuperclass(Arrays.stream(interfaces).map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
+  public ASTCDInterface createCDInterface(final String name, String... interfaces) {
+    ASTCDExtendUsage extendUsage =
+        CD4CodeMill.cDExtendUsageBuilder()
+            .addAllSuperclass(
+                Arrays.stream(interfaces)
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
     return CD4CodeMill.cDInterfaceBuilder().setName(name).setCDExtendUsage(extendUsage).build();
   }
 
-  public ASTCDInterface createCDInterface(final String name, ASTMCObjectType ... interfaces) {
-    ASTCDExtendUsage cdExtend = CD4CodeBasisMill.cDExtendUsageBuilder()
-      .addAllSuperclass(Arrays.asList(interfaces)).build();
+  public ASTCDInterface createCDInterface(final String name, ASTMCObjectType... interfaces) {
+    ASTCDExtendUsage cdExtend =
+        CD4CodeBasisMill.cDExtendUsageBuilder().addAllSuperclass(Arrays.asList(interfaces)).build();
     return CD4CodeMill.cDInterfaceBuilder().setName(name).setCDExtendUsage(cdExtend).build();
   }
 
@@ -141,21 +187,32 @@ public class CDTypeFacade {
   }
 
   public ASTCDEnum createCDEnum(final String name, List<String> interfaces) {
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(interfaces.stream().map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder()
+            .addAllInterface(
+                interfaces.stream()
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
     return CD4CodeMill.cDEnumBuilder().setName(name).setCDInterfaceUsage(interfaceUsage).build();
   }
 
-  public ASTCDEnum createCDEnum(final String name, String ... interfaces) {
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeMill.cDInterfaceUsageBuilder().
-      addAllInterface(Arrays.stream(interfaces).map(x -> mcTypeFacade.createQualifiedType(x)).collect(Collectors.toList())).build();
+  public ASTCDEnum createCDEnum(final String name, String... interfaces) {
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeMill.cDInterfaceUsageBuilder()
+            .addAllInterface(
+                Arrays.stream(interfaces)
+                    .map(x -> mcTypeFacade.createQualifiedType(x))
+                    .collect(Collectors.toList()))
+            .build();
     return CD4CodeMill.cDEnumBuilder().setName(name).setCDInterfaceUsage(interfaceUsage).build();
   }
 
-  public ASTCDEnum createCDEnum(final String name, ASTMCObjectType ... interfaces) {
-    ASTCDInterfaceUsage interfaceUsage = CD4CodeBasisMill.cDInterfaceUsageBuilder()
-      .addAllInterface(Arrays.asList(interfaces)).build();
+  public ASTCDEnum createCDEnum(final String name, ASTMCObjectType... interfaces) {
+    ASTCDInterfaceUsage interfaceUsage =
+        CD4CodeBasisMill.cDInterfaceUsageBuilder()
+            .addAllInterface(Arrays.asList(interfaces))
+            .build();
     return CD4CodeMill.cDEnumBuilder().setName(name).setCDInterfaceUsage(interfaceUsage).build();
   }
-
 }

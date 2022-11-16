@@ -11,13 +11,10 @@ import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Visitor to collect all CDElements of specific types
- */
+/** Visitor to collect all CDElements of specific types */
 public class CDElementVisitor
     implements CD4CodeVisitor2, CDBasisVisitor2, CDInterfaceAndEnumVisitor2, CDAssociationVisitor2 {
   protected final Set<Options> options;
@@ -30,7 +27,6 @@ public class CDElementVisitor
     }
     this.elements = new ArrayList<>();
   }
-
 
   public List<ASTCDElement> getCDElementList() {
     return elements;

@@ -6,10 +6,6 @@ import de.monticore.cd4code.prettyprint.CD4CodePlantUMLFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
-import net.sourceforge.plantuml.SourceStringReader;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,6 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.SourceStringReader;
 
 public class PlantUMLUtil {
   public static final String PLANTUML_EMPTY = "@startuml\n@enduml";
@@ -42,10 +41,11 @@ public class PlantUMLUtil {
     }
   }*/
 
-  /**
-   * this needs GraphViz/JDOT installed on your PC
-   */
-  public static String printCD2PlantUMLLocally(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
+  /** this needs GraphViz/JDOT installed on your PC */
+  public static String printCD2PlantUMLLocally(
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
+      String outputPathSVG,
+      PlantUMLConfig plantUMLConfig)
       throws IOException {
 
     final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
@@ -64,11 +64,9 @@ public class PlantUMLUtil {
     return outputPathSVG;
   }
 
-  /**
-   * this needs GraphViz/JDOT installed on your PC
-   */
-  public static void printCD2PlantUMLLocally(String pathCD, String outputPathSVG, PlantUMLConfig plantUMLConfig)
-      throws IOException {
+  /** this needs GraphViz/JDOT installed on your PC */
+  public static void printCD2PlantUMLLocally(
+      String pathCD, String outputPathSVG, PlantUMLConfig plantUMLConfig) throws IOException {
 
     final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
 
@@ -86,7 +84,10 @@ public class PlantUMLUtil {
     }
   }
 
-  public static String printCD2PlantUMLModelFileLocally(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, String outputPath, PlantUMLConfig plantUMLConfig)
+  public static String printCD2PlantUMLModelFileLocally(
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
+      String outputPath,
+      PlantUMLConfig plantUMLConfig)
       throws IOException {
     final String plantUMLString = printCD2PlantUML(astCD, plantUMLConfig);
 
@@ -97,8 +98,8 @@ public class PlantUMLUtil {
     return outputPath;
   }
 
-  public static void printCD2PlantUMLModelFileLocally(String pathCD, String outputPath, PlantUMLConfig plantUMLConfig)
-      throws IOException {
+  public static void printCD2PlantUMLModelFileLocally(
+      String pathCD, String outputPath, PlantUMLConfig plantUMLConfig) throws IOException {
     final String cdString = new String(Files.readAllBytes(Paths.get(pathCD)));
 
     final String plantUMLString = printCD2PlantUML(cdString, plantUMLConfig);
@@ -108,9 +109,13 @@ public class PlantUMLUtil {
     }
   }
 
-  protected static String printCD2PlantUML(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD, PlantUMLConfig config) {
-    final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil = new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
-    CD4CodePlantUMLFullPrettyPrinter cdVisitor = new CD4CodePlantUMLFullPrettyPrinter(plantUMLPrettyPrintUtil);
+  protected static String printCD2PlantUML(
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<ASTCDCompilationUnit> astCD,
+      PlantUMLConfig config) {
+    final PlantUMLPrettyPrintUtil plantUMLPrettyPrintUtil =
+        new PlantUMLPrettyPrintUtil(new IndentPrinter(), config);
+    CD4CodePlantUMLFullPrettyPrinter cdVisitor =
+        new CD4CodePlantUMLFullPrettyPrinter(plantUMLPrettyPrintUtil);
     if (astCD.isPresent()) {
       plantUMLPrettyPrintUtil.getPrinter().print(cdVisitor.prettyprint(astCD.get()));
       return plantUMLPrettyPrintUtil.getPrinter().getContent();
@@ -119,15 +124,13 @@ public class PlantUMLUtil {
     return PLANTUML_EMPTY;
   }
 
-  protected static String printCD2PlantUML(String cdString, PlantUMLConfig
-      config) {
+  protected static String printCD2PlantUML(String cdString, PlantUMLConfig config) {
     CD4CodeParser parser = new CD4CodeParser();
 
     try {
       Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
       return printCD2PlantUML(astCD, config);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       Log.error("Cannot display CD since it contains errors!");
     }
 

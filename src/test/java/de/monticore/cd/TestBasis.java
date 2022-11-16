@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd;
 
+import static org.junit.Assert.*;
+
 import com.google.common.base.Joiner;
 import de.monticore.antlr4.MCConcreteParser;
 import de.monticore.ast.ASTNode;
@@ -11,12 +13,6 @@ import de.monticore.cdbasis._symboltable.ICDBasisArtifactScope;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,21 +20,19 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
-import static org.junit.Assert.*;
-
-/**
- * The base class for the tests, to provide common functionality
- */
+/** The base class for the tests, to provide common functionality */
 public class TestBasis {
 
-  public final static String PATH = "src/test/resources/de/monticore/";
+  public static final String PATH = "src/test/resources/de/monticore/";
 
-  /**
-   * have a temporary folder for the tests
-   */
-  @Rule
-  public TemporaryFolder folder = new TemporaryFolder();
+  /** have a temporary folder for the tests */
+  @Rule public TemporaryFolder folder = new TemporaryFolder();
 
   @BeforeClass
   public static void setup() {
@@ -67,7 +61,9 @@ public class TestBasis {
     return Joiner.on("\n").join(Log.getFindings());
   }
 
-  public static void checkNullAndPresence(MCConcreteParser parser, @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<? extends ASTNode> node) {
+  public static void checkNullAndPresence(
+      MCConcreteParser parser,
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<? extends ASTNode> node) {
     final String joinedErrors = getJoinedErrors();
     final boolean hasErrors = parser.hasErrors();
     parser.setError(false);
@@ -89,15 +85,18 @@ public class TestBasis {
     if (Log.getErrorCount() == 0) {
       if (i == 0) {
         return;
-      }
-      else {
+      } else {
         fail("exptected " + i + " errors, but none were present");
       }
     }
 
-    assertEquals("exptected to get exaclty " + i + " errors, the errors where:\n" + getJoinedErrors(), Log.getErrorCount(), i);
+    assertEquals(
+        "exptected to get exaclty " + i + " errors, the errors where:\n" + getJoinedErrors(),
+        Log.getErrorCount(),
+        i);
     final List<Finding> findings = Log.getFindings();
-    IntStream.range(0, i).forEach(c -> assertEquals(listOfErrors.get(c), findings.get(c).toString()));
+    IntStream.range(0, i)
+        .forEach(c -> assertEquals(listOfErrors.get(c), findings.get(c).toString()));
     Log.getFindings().clear();
   }
 
@@ -112,7 +111,8 @@ public class TestBasis {
   }
 
   protected ICDBasisArtifactScope createST(ASTCDCompilationUnit astcdCompilationUnit) {
-    final ICD4AnalysisArtifactScope st = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
+    final ICD4AnalysisArtifactScope st =
+        CD4AnalysisMill.scopesGenitorDelegator().createFromAST(astcdCompilationUnit);
     checkLogError();
     return st;
   }

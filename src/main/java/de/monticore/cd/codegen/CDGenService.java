@@ -19,16 +19,14 @@ public class CDGenService {
     // because sometimes there is not enough information for a unique string
     String codeString = name + count;
     count++;
-    //calculate hashCode, but limit the values to have at most 5 digits
+    // calculate hashCode, but limit the values to have at most 5 digits
     int hashCode = Math.abs(codeString.hashCode() % 100000);
-    //use String formatting to add leading zeros to always have 5 digits
+    // use String formatting to add leading zeros to always have 5 digits
     String errorCodeSuffix = String.format("%05d", hashCode);
     return "x" + errorCodeSuffix;
   }
 
-  /**
-   * It's possible to overwrite this method if the attribute has prefixes
-   */
+  /** It's possible to overwrite this method if the attribute has prefixes */
   public String getNativeAttributeName(String attributeName) {
     return attributeName;
   }
@@ -47,5 +45,4 @@ public class CDGenService {
   public boolean hasDerivedAttributeName(ASTCDAttribute astcdAttribute) {
     return false;
   }
-
 }

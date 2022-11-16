@@ -22,7 +22,6 @@ import de.monticore.cdmerge.validation.AttributeChecker;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
 import de.monticore.cdmerge.validation.ModelValidatorBase.ModelValidatorBuilder;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,9 +30,7 @@ import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-/**
- * Handles all user-specified configurations for the composition of classdiagrams
- */
+/** Handles all user-specified configurations for the composition of classdiagrams */
 public class CDMergeConfig {
 
   private final ImmutableMap<MergeParameter, String> parameters;
@@ -89,8 +86,7 @@ public class CDMergeConfig {
     public Builder withParam(MergeParameter param) {
       if (param.isBooleanParameter()) {
         this._parameters.put(param, MergeParameter.ON);
-      }
-      else {
+      } else {
         this._parameters.put(param, "");
       }
       return this;
@@ -106,16 +102,13 @@ public class CDMergeConfig {
     public Builder withParam(MergeParameter param, String value) {
       if (this._parameters.containsKey(param)) {
         this._parameters.put(param, this._parameters.get(param) + INPUT_SEPARATOR + value);
-      }
-      else {
+      } else {
         this._parameters.put(param, value);
       }
       return this;
     }
 
-    /**
-     * Adds a Classdiagram File to the input
-     */
+    /** Adds a Classdiagram File to the input */
     public Builder addInputFile(String fileName) {
       this._inputFiles.add(fileName);
       return this;
@@ -126,37 +119,29 @@ public class CDMergeConfig {
       return this;
     }
 
-    /**
-     * Returns a copy of the configured parameters
-     */
+    /** Returns a copy of the configured parameters */
     public ImmutableMap<MergeParameter, String> getMergeParameters() {
       return ImmutableMap.copyOf(this._parameters);
     }
 
-    /**
-     * Returns true if the Parameter is specified
-     */
+    /** Returns true if the Parameter is specified */
     public boolean isDefinedParameter(MergeParameter param) {
       return this._parameters.keySet().contains(param);
     }
 
-    /**
-     * Provides default values to the configuration if not specified by user
-     */
+    /** Provides default values to the configuration if not specified by user */
     private void completeDefaultConfig() {
       for (MergeParameter m : MergeParameter.values()) {
         if (!_parameters.containsKey(m) || _parameters.get(m).isEmpty()) {
           _parameters.put(m, m.getDefaultValue());
         }
       }
-
     }
 
     public void setPrecedences(PrecedenceConfig val) {
       if (val.conflictsPresent()) {
         throw new IllegalArgumentException("Please check your precedences for contradictions.");
-      }
-      else {
+      } else {
         _precedences = val;
       }
     }
@@ -171,24 +156,19 @@ public class CDMergeConfig {
       return this;
     }
 
-    /**
-     * Fetches and parses the specified input models and creates the actual configuration
-     */
+    /** Fetches and parses the specified input models and creates the actual configuration */
     public CDMergeConfig build() {
       completeDefaultConfig();
       // Quick Logger settings for this class as the MergeTool Log
       // Framework is not used here
       if (_parameters.get(MergeParameter.LOG_DEBUG).equals(MergeParameter.ON)) {
         MCLoggerWrapper.initDEBUG();
-      }
-      else if (_parameters.get(MergeParameter.LOG_VERBOSE).equals(MergeParameter.ON)) {
+      } else if (_parameters.get(MergeParameter.LOG_VERBOSE).equals(MergeParameter.ON)) {
         MCLoggerWrapper.initDEBUG();
         ;
-      }
-      else if (_parameters.get(MergeParameter.LOG_SILENT).equals(MergeParameter.ON)) {
+      } else if (_parameters.get(MergeParameter.LOG_SILENT).equals(MergeParameter.ON)) {
         MCLoggerWrapper.initWARN();
-      }
-      else {
+      } else {
         MCLoggerWrapper.init();
       }
 
@@ -201,22 +181,25 @@ public class CDMergeConfig {
           // Collect the input models either via explicit files oder
           // via
           // resolving on model path
-          String[] inputModels = _parameters.get(MergeParameter.INPUT_MODELS)
-              .split(INPUT_SEPARATOR);
+          String[] inputModels =
+              _parameters.get(MergeParameter.INPUT_MODELS).split(INPUT_SEPARATOR);
           if (inputModels.length >= 2) {
             _inputFiles = new ArrayList<>();
             for (String modelFile : inputModels) {
               if (!Files.exists(Paths.get(modelFile).toAbsolutePath())) {
-                Log.trace("No valid class diagramm found for input file " + modelFile
-                    + " will check Modelpath, too", "CDMerge");
-                modelFile = Paths.get(_parameters.get(MergeParameter.MODEL_PATH), modelFile)
-                    .toAbsolutePath()
-                    .toString();
+                Log.trace(
+                    "No valid class diagramm found for input file "
+                        + modelFile
+                        + " will check Modelpath, too",
+                    "CDMerge");
+                modelFile =
+                    Paths.get(_parameters.get(MergeParameter.MODEL_PATH), modelFile)
+                        .toAbsolutePath()
+                        .toString();
                 if (!Files.exists(Paths.get(modelFile))) {
                   Log.error("No valid class diagramm found for specified location " + modelFile);
                   continue;
-                }
-                else {
+                } else {
                   Log.trace("Found cd in input file " + modelFile, "CDMerge");
                   _inputFiles.add(modelFile);
                 }
@@ -227,13 +210,13 @@ public class CDMergeConfig {
                   "No valid or sufficient (at least 2) input models specified as explicit "
                       + "inputmodels");
             }
-          }
-          else {
+          } else {
             if (!_parameters.get(MergeParameter.MODEL_PATH).isEmpty()) {
-              this._inputFiles = new ArrayList<>(
-                  resolveInputCDsFilesFromPath(this._parameters.get(MergeParameter.MODEL_PATH)));
-            }
-            else {
+              this._inputFiles =
+                  new ArrayList<>(
+                      resolveInputCDsFilesFromPath(
+                          this._parameters.get(MergeParameter.MODEL_PATH)));
+            } else {
               throw new IllegalArgumentException(
                   "No valid or sufficient (at least 2) input models specified either in a global "
                       + "model path or as explicit inputmodels");
@@ -255,8 +238,8 @@ public class CDMergeConfig {
       }
 
       // Configure Model Refactoring
-      if (!this.isDefinedParameter(MergeParameter.DISABLE_MODEL_REFACTORINGS) || !this.isOn(
-          MergeParameter.DISABLE_POSTMERGE_VALIDATION)) {
+      if (!this.isDefinedParameter(MergeParameter.DISABLE_MODEL_REFACTORINGS)
+          || !this.isOn(MergeParameter.DISABLE_POSTMERGE_VALIDATION)) {
         if (this._modelRefactorings.size() == 0) {
           this._modelRefactorings.add(new CleanAttributesInheritedFromSuperclass.Builder());
           this._modelRefactorings.add(new RemoveRedundantInterfaces.Builder());
@@ -264,8 +247,8 @@ public class CDMergeConfig {
       }
 
       // Configure Model Validation
-      if (!this.isDefinedParameter(MergeParameter.DISABLE_POSTMERGE_VALIDATION) || !this.isOn(
-          MergeParameter.DISABLE_POSTMERGE_VALIDATION)) {
+      if (!this.isDefinedParameter(MergeParameter.DISABLE_POSTMERGE_VALIDATION)
+          || !this.isOn(MergeParameter.DISABLE_POSTMERGE_VALIDATION)) {
         if (this._modelValidators.size() == 0) {
           this._modelValidators.add(new AssociationChecker.Builder());
           this._modelValidators.add(new AttributeChecker.Builder());
@@ -283,34 +266,40 @@ public class CDMergeConfig {
      */
     public List<String> resolveInputCDsFilesFromPath(String modelPath) {
       List<String> resolvedCDs = new ArrayList<>();
-      Collection<File> files = de.se_rwth.commons.Directories.listFilesRecursivly(
-          new File(modelPath), "*.cd");
+      Collection<File> files =
+          de.se_rwth.commons.Directories.listFilesRecursivly(new File(modelPath), "*.cd");
       if (files != null && !files.isEmpty()) {
         for (File cdFile : files) {
           resolvedCDs.add(cdFile.getAbsolutePath());
-
         }
       }
       return resolvedCDs;
     }
 
     private void checkParameterConsistency() {
-      if (isOn(MergeParameter.LOG_SILENT) && (isOn(MergeParameter.LOG_DEBUG) || isOn(
-          MergeParameter.LOG_VERBOSE))) {
+      if (isOn(MergeParameter.LOG_SILENT)
+          && (isOn(MergeParameter.LOG_DEBUG) || isOn(MergeParameter.LOG_VERBOSE))) {
         throw new InvalidParameterException(
-            "Can't activate " + MergeParameter.LOG_SILENT + " with " + MergeParameter.LOG_VERBOSE
-                + " or " + MergeParameter.LOG_DEBUG);
+            "Can't activate "
+                + MergeParameter.LOG_SILENT
+                + " with "
+                + MergeParameter.LOG_VERBOSE
+                + " or "
+                + MergeParameter.LOG_DEBUG);
       }
 
-      if (!isOn(MergeParameter.CHECK_ONLY) && isOn(MergeParameter.SAVE_RESULT_TO_FILE) && !hasValue(
-          MergeParameter.OUTPUT_PATH)) {
+      if (!isOn(MergeParameter.CHECK_ONLY)
+          && isOn(MergeParameter.SAVE_RESULT_TO_FILE)
+          && !hasValue(MergeParameter.OUTPUT_PATH)) {
         throw new InvalidParameterException("Missing output path!");
       }
 
       if (isOn(MergeParameter.PRIMITIVE_TYPE_CONVERSION) && isOn(MergeParameter.STRICT)) {
         System.out.println(
-            "Invalid paramater combination: " + MergeParameter.PRIMITIVE_TYPE_CONVERSION
-                + " cannot be used together with " + MergeParameter.STRICT);
+            "Invalid paramater combination: "
+                + MergeParameter.PRIMITIVE_TYPE_CONVERSION
+                + " cannot be used together with "
+                + MergeParameter.STRICT);
         return;
       }
 
@@ -324,7 +313,6 @@ public class CDMergeConfig {
     private boolean hasValue(MergeParameter p) {
       return !_parameters.get(p).isEmpty();
     }
-
   }
 
   /**
@@ -343,20 +331,18 @@ public class CDMergeConfig {
     if (!isEnabled(MergeParameter.NO_INPUT_MODELS) && !isEnabled(MergeParameter.AST_BASED)) {
       try {
         loadCDs(builder._inputFiles);
-      }
-      catch (IOException ex) {
+      } catch (IOException ex) {
         throw new RuntimeException("Unable to load input models " + ex.getMessage());
       }
-    }
-    else if (isEnabled(MergeParameter.AST_BASED)) {
+    } else if (isEnabled(MergeParameter.AST_BASED)) {
       processCDs(builder._inputCDs);
     }
     this.CLI_MODE = builder.CLI_Mode;
   }
 
   public void loadCDsFromPaths(List<Path> inputFiles) {
-    Preconditions.checkArgument(inputFiles.size() > 1,
-        "At least 2 Class Diagrams ar required to run CD Merge");
+    Preconditions.checkArgument(
+        inputFiles.size() > 1, "At least 2 Class Diagrams ar required to run CD Merge");
     this.inputCDs = new ArrayList<>(inputFiles.size());
     Optional<ASTCDCompilationUnit> cd;
     for (Path file : inputFiles) {
@@ -388,16 +374,15 @@ public class CDMergeConfig {
   }
 
   public void loadCDs(List<String> inputFiles) throws IOException {
-    Preconditions.checkArgument(inputFiles.size() > 1,
-        "At least 2 Class Diagrams ar required to run CD Merge");
+    Preconditions.checkArgument(
+        inputFiles.size() > 1, "At least 2 Class Diagrams ar required to run CD Merge");
     this.inputCDs = new ArrayList<>(inputFiles.size());
     Optional<ASTCDCompilationUnit> cd;
     for (String file : inputFiles) {
       try {
         cd = parseCDFile(file);
-      }
-      catch (RuntimeException e) {
-        //Catch and Reformat Monticore Runtime Exceptions for gentle program exit
+      } catch (RuntimeException e) {
+        // Catch and Reformat Monticore Runtime Exceptions for gentle program exit
         throw new RuntimeException(
             "Issues while processing input model: " + file + " Reason: " + e.getMessage(), e);
       }
@@ -409,10 +394,9 @@ public class CDMergeConfig {
   }
 
   public void setInputCDs(List<ASTCDCompilationUnit> inputCDs) {
-    Preconditions.checkArgument(inputCDs.size() > 1,
-        "At least 2 Class Diagrams ar required to run CD Merge");
+    Preconditions.checkArgument(
+        inputCDs.size() > 1, "At least 2 Class Diagrams ar required to run CD Merge");
     this.inputCDs = new ArrayList<>(inputCDs);
-
   }
 
   private Optional<ASTCDCompilationUnit> parseCDFile(String modelfile) {
@@ -421,8 +405,7 @@ public class CDMergeConfig {
       globalScope.clear();
       BuiltInTypes.addBuiltInTypes(globalScope);
       return CDUtils.parseCDFile(modelfile, true);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       Log.error("Unable to parse modelfile " + modelfile + ". " + e.getMessage());
     }
     return Optional.empty();
@@ -478,7 +461,8 @@ public class CDMergeConfig {
   }
 
   public boolean disabledPostMergeValidation() {
-    return this.parameters.get(MergeParameter.DISABLE_POSTMERGE_VALIDATION)
+    return this.parameters
+        .get(MergeParameter.DISABLE_POSTMERGE_VALIDATION)
         .equals(MergeParameter.ON);
   }
 
@@ -487,9 +471,10 @@ public class CDMergeConfig {
   }
 
   public boolean mergeOnlyNamedAssociations() {
-    return
-        this.parameters.get(MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS).equals(MergeParameter.ON)
-            || isStrict();
+    return this.parameters
+            .get(MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS)
+            .equals(MergeParameter.ON)
+        || isStrict();
   }
 
   public boolean allowPrimitiveTypeConversion() {
@@ -522,7 +507,8 @@ public class CDMergeConfig {
   }
 
   public boolean printIntermediateToFile() {
-    return this.parameters.get(MergeParameter.SAVE_INTERMEDIATE_RESULT_TO_FILE)
+    return this.parameters
+        .get(MergeParameter.SAVE_INTERMEDIATE_RESULT_TO_FILE)
         .equals(MergeParameter.ON);
   }
 
@@ -545,10 +531,11 @@ public class CDMergeConfig {
   public boolean isEnabled(MergeParameter param) {
     if (param.isBooleanParameter()) {
       return this.parameters.get(param).equals(MergeParameter.ON);
-    }
-    else {
-      throw new UnsupportedOperationException("The specified parameter '" + param
-          + "' is a non booelan parameter! Call String getValue() instead!");
+    } else {
+      throw new UnsupportedOperationException(
+          "The specified parameter '"
+              + param
+              + "' is a non booelan parameter! Call String getValue() instead!");
     }
   }
 
@@ -556,9 +543,7 @@ public class CDMergeConfig {
     return precedences;
   }
 
-  /**
-   * @return cLI_MODE
-   */
+  /** @return cLI_MODE */
   public boolean isCLI_MODE() {
     return CLI_MODE;
   }
@@ -572,11 +557,9 @@ public class CDMergeConfig {
 
     if (isSilent()) {
       return ErrorLevel.ERROR;
-    }
-    else if (isVerbose()) {
+    } else if (isVerbose()) {
       return ErrorLevel.FINE;
-    }
-    else if (isDebug()) {
+    } else if (isDebug()) {
       return ErrorLevel.DEBUG;
     }
     return ErrorLevel.WARNING;
@@ -594,5 +577,4 @@ public class CDMergeConfig {
   public List<ModelValidatorBuilder> getModelValidators() {
     return this.modelValidators;
   }
-
 }

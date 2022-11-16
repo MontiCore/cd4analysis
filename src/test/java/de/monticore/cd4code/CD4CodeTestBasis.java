@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code;
 
+import static org.junit.Assert.fail;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
@@ -18,13 +20,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.fail;
+import org.junit.Before;
 
 public class CD4CodeTestBasis extends TestBasis {
   protected CD4CodeParser p;
@@ -41,8 +40,7 @@ public class CD4CodeTestBasis extends TestBasis {
     CD4CodeMill.init();
     p = new CD4CodeParser();
 
-    final ICD4CodeGlobalScope globalScope = CD4CodeMill
-        .globalScope();
+    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
     globalScope.clear();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
@@ -86,5 +84,4 @@ public class CD4CodeTestBasis extends TestBasis {
     cdAssociationRoleNameTrafo.transform(node);
     checkLogError();
   }
-
 }

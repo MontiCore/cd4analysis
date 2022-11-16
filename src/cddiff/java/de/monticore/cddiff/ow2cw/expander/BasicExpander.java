@@ -16,7 +16,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,9 +23,7 @@ public class BasicExpander implements CDExpander {
 
   protected ASTCDCompilationUnit cd;
 
-  /**
-   * @param cd Used for checking if adding/etc is allowed
-   */
+  /** @param cd Used for checking if adding/etc is allowed */
   public BasicExpander(ASTCDCompilationUnit cd) {
     this.cd = cd;
   }
@@ -35,67 +32,58 @@ public class BasicExpander implements CDExpander {
     return cd;
   }
 
-  /**
-   * add newClass as subclass to superclass
-   */
+  /** add newClass as subclass to superclass */
   public void addNewSubClass(String name, ASTCDClass superclass) {
 
     if (!superclass.getModifier().isFinal()) {
 
       ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
-      ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-          .setName(name)
-          .setCDExtendUsage(CDExtendUsageFacade.getInstance().createCDExtendUsage(superclass.getName()))
-          .setCDInterfaceUsageAbsent()
-          .setModifier(newModifier)
-          .build();
+      ASTCDClass newClass =
+          CD4CodeMill.cDClassBuilder()
+              .setName(name)
+              .setCDExtendUsage(
+                  CDExtendUsageFacade.getInstance().createCDExtendUsage(superclass.getName()))
+              .setCDInterfaceUsageAbsent()
+              .setModifier(newModifier)
+              .build();
       addType2Package(newClass, determinePackageName(superclass));
     }
-
   }
 
-  /**
-   * add newClass as sub-class to astcdInterface
-   */
+  /** add newClass as sub-class to astcdInterface */
   public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
 
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(name)
-        .setCDInterfaceUsage(
-            CDInterfaceUsageFacade.getInstance().createCDInterfaceUsage(astcdInterface.getName()))
-        .setCDExtendUsageAbsent()
-        .setModifier(newModifier)
-        .build();
+    ASTCDClass newClass =
+        CD4CodeMill.cDClassBuilder()
+            .setName(name)
+            .setCDInterfaceUsage(
+                CDInterfaceUsageFacade.getInstance()
+                    .createCDInterfaceUsage(astcdInterface.getName()))
+            .setCDExtendUsageAbsent()
+            .setModifier(newModifier)
+            .build();
     addType2Package(newClass, determinePackageName(astcdInterface));
   }
 
-  /**
-   * Default Package is troublesome!
-   * todo: fix problem with nested packages
-   */
+  /** Default Package is troublesome! todo: fix problem with nested packages */
   public void addType2Package(ASTCDType astcdType, String packageName) {
     if (packageName.equals(cd.getCDDefinition().getDefaultPackageName())) {
       cd.getCDDefinition().getCDElementList().add(astcdType);
-    }
-    else {
+    } else {
       cd.getCDDefinition().addCDElementToPackage(astcdType, packageName);
     }
   }
 
-  /**
-   * Default Package is troublesome!
-   * todo: fix problem with nested packages
-   */
+  /** Default Package is troublesome! todo: fix problem with nested packages */
   public Optional<ASTCDType> addClone(ASTCDType srcType) {
     ASTCDType newType = srcType.deepClone();
 
     if (determinePackageName(srcType).equals(cd.getCDDefinition().getDefaultPackageName())) {
       cd.getCDDefinition().getCDElementList().add(newType);
-    }
-    else {
+    } else {
       cd.getCDDefinition().addCDElementToPackage(newType, determinePackageName(srcType));
     }
     return Optional.of(newType);
@@ -107,12 +95,13 @@ public class BasicExpander implements CDExpander {
 
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(srcType.getName())
-        .setCDExtendUsageAbsent()
-        .setCDInterfaceUsageAbsent()
-        .setModifier(newModifier)
-        .build();
+    ASTCDClass newClass =
+        CD4CodeMill.cDClassBuilder()
+            .setName(srcType.getName())
+            .setCDExtendUsageAbsent()
+            .setCDInterfaceUsageAbsent()
+            .setModifier(newModifier)
+            .build();
     addType2Package(newClass, determinePackageName(srcType));
     return Optional.of(newClass);
   }
@@ -120,12 +109,13 @@ public class BasicExpander implements CDExpander {
   public Optional<ASTCDClass> addDummyClass(String dummyName) {
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
-    ASTCDClass newClass = CD4CodeMill.cDClassBuilder()
-        .setName(dummyName)
-        .setCDExtendUsageAbsent()
-        .setCDInterfaceUsageAbsent()
-        .setModifier(newModifier)
-        .build();
+    ASTCDClass newClass =
+        CD4CodeMill.cDClassBuilder()
+            .setName(dummyName)
+            .setCDExtendUsageAbsent()
+            .setCDInterfaceUsageAbsent()
+            .setModifier(newModifier)
+            .build();
     getCD().getCDDefinition().getCDElementList().add(newClass);
     return Optional.of(newClass);
   }
@@ -133,11 +123,12 @@ public class BasicExpander implements CDExpander {
   public Optional<ASTCDInterface> addDummyInterface(ASTCDInterface srcInterface) {
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
-    ASTCDInterface newInterface = CD4CodeMill.cDInterfaceBuilder()
-        .setName(srcInterface.getName())
-        .setCDExtendUsageAbsent()
-        .setModifier(newModifier)
-        .build();
+    ASTCDInterface newInterface =
+        CD4CodeMill.cDInterfaceBuilder()
+            .setName(srcInterface.getName())
+            .setCDExtendUsageAbsent()
+            .setModifier(newModifier)
+            .build();
     addType2Package(newInterface, determinePackageName(srcInterface));
     return Optional.of(newInterface);
   }
@@ -145,54 +136,53 @@ public class BasicExpander implements CDExpander {
   public Optional<ASTCDInterface> addDummyInterface(String dummyName) {
     ASTModifier newModifier = CD4CodeMill.modifierBuilder().build();
 
-    ASTCDInterface newInterface = CD4CodeMill.cDInterfaceBuilder()
-        .setName(dummyName)
-        .setCDExtendUsageAbsent()
-        .setModifier(newModifier)
-        .build();
+    ASTCDInterface newInterface =
+        CD4CodeMill.cDInterfaceBuilder()
+            .setName(dummyName)
+            .setCDExtendUsageAbsent()
+            .setModifier(newModifier)
+            .build();
     getCD().getCDDefinition().getCDElementList().add(newInterface);
     return Optional.of(newInterface);
   }
 
-  public void addAssociation(ASTCDAssociation assoc){
+  public void addAssociation(ASTCDAssociation assoc) {
     getCD().getCDDefinition().getCDElementList().add(assoc);
   }
 
-  public void addAttribute(ASTCDType type, ASTCDAttribute attribute){
+  public void addAttribute(ASTCDType type, ASTCDAttribute attribute) {
     type.addCDMember(attribute);
   }
 
-  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant){
+  public void addEnumConstant(ASTCDEnum targetEnum, ASTCDEnumConstant constant) {
     targetEnum.addCDEnumConstant(constant);
   }
 
-  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet){
+  public void updateExtends(ASTCDClass targetClass, Set<String> extendsSet) {
     if (extendsSet.isEmpty()) {
       targetClass.setCDExtendUsageAbsent();
-    }
-    else {
-      targetClass.setCDExtendUsage(CDExtendUsageFacade.getInstance()
-          .createCDExtendUsage(extendsSet.toArray(new String[0])));
+    } else {
+      targetClass.setCDExtendUsage(
+          CDExtendUsageFacade.getInstance().createCDExtendUsage(extendsSet.toArray(new String[0])));
     }
   }
 
-  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet){
+  public void updateImplements(ASTCDClass targetClass, Set<String> implementsSet) {
     if (implementsSet.isEmpty()) {
       targetClass.setCDInterfaceUsageAbsent();
-    }
-    else {
-      targetClass.setCDInterfaceUsage(CDInterfaceUsageFacade.getInstance()
-          .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
+    } else {
+      targetClass.setCDInterfaceUsage(
+          CDInterfaceUsageFacade.getInstance()
+              .createCDInterfaceUsage(implementsSet.toArray(new String[0])));
     }
   }
 
-  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet){
+  public void updateExtends(ASTCDInterface targetInterface, Set<String> extendsSet) {
     if (extendsSet.isEmpty()) {
       targetInterface.setCDExtendUsageAbsent();
-    }
-    else {
-      targetInterface.setCDExtendUsage(CDExtendUsageFacade.getInstance()
-          .createCDExtendUsage(extendsSet.toArray(new String[0])));
+    } else {
+      targetInterface.setCDExtendUsage(
+          CDExtendUsageFacade.getInstance().createCDExtendUsage(extendsSet.toArray(new String[0])));
     }
   }
 
@@ -213,58 +203,63 @@ public class BasicExpander implements CDExpander {
 
   /**
    * Create left-to-right association without multiplicity constraints
+   *
    * @param left qualified name of the referenced class on the left
    * @param roleName role name of the referenced class on the right
    * @param right qualified name of the referenced class on the right
    * @return new ASTCDAssociation without multiplicity constraints
    */
-  public Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName,
-      String right) {
+  public Optional<ASTCDAssociation> buildDummyAssociation(
+      String left, String roleName, String right) {
 
-    ASTCDAssociation dummy = CDAssociationMill.cDAssociationBuilder()
-        .setModifier(CD4CodeMill.modifierBuilder().build())
-        .setCDAssocType(CDAssociationMill.cDAssocTypeAssocBuilder().build())
-        .setLeft(CDAssociationMill.cDAssocLeftSideBuilder()
-            .setCDCardinalityAbsent()
-            .setCDRoleAbsent()
-            .setCDOrderedAbsent()
-            .setCDQualifierAbsent()
+    ASTCDAssociation dummy =
+        CDAssociationMill.cDAssociationBuilder()
             .setModifier(CD4CodeMill.modifierBuilder().build())
-            .setMCQualifiedType(MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
-                .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(left))
-                .build())
-            .build())
-        .setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build())
-        .setRight(CDAssociationMill.cDAssocRightSideBuilder()
-            .setCDCardinalityAbsent()
-            .setCDRole(CDAssociationMill.cDRoleBuilder().setName(roleName).build())
-            .setCDOrderedAbsent()
-            .setCDQualifierAbsent()
-            .setModifier(CD4CodeMill.modifierBuilder().build())
-            .setMCQualifiedType(MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
-                .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(right))
-                .build())
-            .build())
-        .build();
+            .setCDAssocType(CDAssociationMill.cDAssocTypeAssocBuilder().build())
+            .setLeft(
+                CDAssociationMill.cDAssocLeftSideBuilder()
+                    .setCDCardinalityAbsent()
+                    .setCDRoleAbsent()
+                    .setCDOrderedAbsent()
+                    .setCDQualifierAbsent()
+                    .setModifier(CD4CodeMill.modifierBuilder().build())
+                    .setMCQualifiedType(
+                        MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+                            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(left))
+                            .build())
+                    .build())
+            .setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build())
+            .setRight(
+                CDAssociationMill.cDAssocRightSideBuilder()
+                    .setCDCardinalityAbsent()
+                    .setCDRole(CDAssociationMill.cDRoleBuilder().setName(roleName).build())
+                    .setCDOrderedAbsent()
+                    .setCDQualifierAbsent()
+                    .setModifier(CD4CodeMill.modifierBuilder().build())
+                    .setMCQualifiedType(
+                        MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+                            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(right))
+                            .build())
+                    .build())
+            .build();
     return Optional.of(dummy);
   }
 
   public void updateUnspecifiedDir2Default() {
     for (ASTCDAssociation assoc : getCD().getCDDefinition().getCDAssociationsList()) {
-      if (!(assoc.getCDAssocDir().isDefinitiveNavigableRight() || assoc.getCDAssocDir()
-          .isDefinitiveNavigableLeft())) {
+      if (!(assoc.getCDAssocDir().isDefinitiveNavigableRight()
+          || assoc.getCDAssocDir().isDefinitiveNavigableLeft())) {
         assoc.setCDAssocDir(CD4AnalysisMill.cDBiDirBuilder().build());
       }
     }
   }
 
   public void mismatchDir(ASTCDAssociation src, ASTCDAssociation target) {
-    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft() || src.getCDAssocDir()
-        .isDefinitiveNavigableRight())) {
+    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft()
+        || src.getCDAssocDir().isDefinitiveNavigableRight())) {
       if (target.getCDAssocDir().isDefinitiveNavigableRight()) {
         src.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
-      }
-      else {
+      } else {
         if (target.getCDAssocDir().isDefinitiveNavigableLeft()) {
           src.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
         }
@@ -273,32 +268,30 @@ public class BasicExpander implements CDExpander {
   }
 
   public void mismatchDirInReverse(ASTCDAssociation src, ASTCDAssociation target) {
-    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft() || src.getCDAssocDir()
-        .isDefinitiveNavigableRight())) {
+    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft()
+        || src.getCDAssocDir().isDefinitiveNavigableRight())) {
       if (target.getCDAssocDir().isDefinitiveNavigableRight()) {
         src.setCDAssocDir(CD4AnalysisMill.cDLeftToRightDirBuilder().build());
-      }
-      else if (target.getCDAssocDir().isDefinitiveNavigableLeft()) {
+      } else if (target.getCDAssocDir().isDefinitiveNavigableLeft()) {
         src.setCDAssocDir(CD4AnalysisMill.cDRightToLeftDirBuilder().build());
       }
     }
   }
 
   public void matchDir(ASTCDAssociation src, ASTCDAssociation target) {
-    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft() || src.getCDAssocDir()
-        .isDefinitiveNavigableRight())) {
+    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft()
+        || src.getCDAssocDir().isDefinitiveNavigableRight())) {
       src.setCDAssocDir(target.getCDAssocDir().deepClone());
     }
   }
 
   public void matchDirInReverse(ASTCDAssociation src, ASTCDAssociation target) {
-    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft() || src.getCDAssocDir()
-        .isDefinitiveNavigableRight()) && target.getCDAssocDir().isBidirectional()) {
+    if (!(src.getCDAssocDir().isDefinitiveNavigableLeft()
+            || src.getCDAssocDir().isDefinitiveNavigableRight())
+        && target.getCDAssocDir().isBidirectional()) {
       src.setCDAssocDir(target.getCDAssocDir().deepClone());
-    }
-    else {
+    } else {
       mismatchDirInReverse(src, target);
     }
   }
-
 }

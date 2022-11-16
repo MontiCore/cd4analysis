@@ -7,10 +7,9 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.ow2cw.expander.VariableExpander;
+import java.util.HashSet;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashSet;
 
 public class VariableDiffTest extends CDDiffTestBasis {
 
@@ -19,10 +18,12 @@ public class VariableDiffTest extends CDDiffTestBasis {
 
     CD4CodeMill.globalScope().clear();
 
-    ASTCDCompilationUnit cd1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/variablediff/VariableEmployees1.cd");
-    ASTCDCompilationUnit cd2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/variablediff/VariableEmployees2.cd");
+    ASTCDCompilationUnit cd1 =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/variablediff/VariableEmployees1.cd");
+    ASTCDCompilationUnit cd2 =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/variablediff/VariableEmployees2.cd");
 
     new ReductionTrafo().transform(cd2, cd1);
 
@@ -33,23 +34,23 @@ public class VariableDiffTest extends CDDiffTestBasis {
     cd1.accept(pp.getTraverser());
     System.out.println(pp.prettyprint(cd1));
 
+    Assert.assertTrue(
+        cd2.getCDDefinition().getModifier().isPresentStereotype()
+            && cd2.getCDDefinition()
+                .getModifier()
+                .getStereotype()
+                .contains(VariableExpander.VAR_TAG));
 
     Assert.assertTrue(
-        cd2.getCDDefinition().getModifier().isPresentStereotype() && cd2.getCDDefinition()
-            .getModifier()
-            .getStereotype()
-            .contains(VariableExpander.VAR_TAG));
+        cd2.getCDDefinition().getCDClassesList().stream()
+            .noneMatch(
+                subClass ->
+                    subClass.getName().contains("Sub4Diff")
+                        || subClass.getName().contains("ManagerTask")));
 
-    Assert.assertTrue(cd2.getCDDefinition()
-        .getCDClassesList()
-        .stream()
-        .noneMatch(subClass -> subClass.getName().contains("Sub4Diff") || subClass.getName()
-            .contains("ManagerTask")));
-
-    Assert.assertTrue(cd2.getCDDefinition()
-        .getCDInterfacesList()
-        .stream()
-        .noneMatch(subClass -> subClass.getName().contains("Doable")));
+    Assert.assertTrue(
+        cd2.getCDDefinition().getCDInterfacesList().stream()
+            .noneMatch(subClass -> subClass.getName().contains("Doable")));
 
     Assert.assertEquals(3, cd2.getCDDefinition().getCDAssociationsList().size());
 
@@ -67,9 +68,7 @@ public class VariableDiffTest extends CDDiffTestBasis {
     Assert.assertEquals(2, found);
 
     Assert.assertEquals(3, cd1.getCDDefinition().getCDAssociationsList().size());
-    Assert.assertEquals(2,
-        cd1.getCDDefinition().getCDEnumsList().get(0).getCDEnumConstantList().size());
-
+    Assert.assertEquals(
+        2, cd1.getCDDefinition().getCDEnumsList().get(0).getCDEnumConstantList().size());
   }
-
 }

@@ -21,10 +21,10 @@ public class CDPackageSymbolDeSer extends CDPackageSymbolDeSerTOP {
 
     // ====== only change: don't iterate the subscopes in the opened object ========
     // serialize spanned scope
-//     if (toSerialize.getSpannedScope().isExportingSymbols()
-//         && toSerialize.getSpannedScope().getSymbolsSize() > 0) {
-//       toSerialize.getSpannedScope().accept(s2j.getTraverser());
-//     }
+    //     if (toSerialize.getSpannedScope().isExportingSymbols()
+    //         && toSerialize.getSpannedScope().getSymbolsSize() > 0) {
+    //       toSerialize.getSpannedScope().accept(s2j.getTraverser());
+    //     }
     s2j.getTraverser().addTraversedElement(toSerialize.getSpannedScope());
 
     serializeAddons(toSerialize, s2j);

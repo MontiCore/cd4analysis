@@ -60,8 +60,7 @@ public class CDTypeKindPrinter extends PrettyPrintUtil
   }
 
   public String print(ASTCDType type) {
-    CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill
-        .traverser();
+    CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.traverser();
     t.add4CDInterfaceAndEnum(this);
     type.accept(t);
     return getPrinter().getContent();

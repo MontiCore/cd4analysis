@@ -13,7 +13,6 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.Joiners;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +23,8 @@ public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
     implements CDBasisVisitor2, CDBasisHandler {
   protected CDBasisTraverser traverser;
   protected List<String> packageNameList = new ArrayList<>();
-  protected List<String> defaultPackageList = Arrays.asList("de", "monticore"); //default, if the model has no package
+  protected List<String> defaultPackageList =
+      Arrays.asList("de", "monticore"); // default, if the model has no package
 
   public CDBasisDefaultPackageTrafo() {
     this(new CDAfterParseHelper());
@@ -38,7 +38,8 @@ public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
     super(cdAfterParseHelper);
   }
 
-  public CDBasisDefaultPackageTrafo(List<String> defaultPackageList, CDAfterParseHelper cdAfterParseHelper) {
+  public CDBasisDefaultPackageTrafo(
+      List<String> defaultPackageList, CDAfterParseHelper cdAfterParseHelper) {
     super(cdAfterParseHelper);
     this.defaultPackageList = defaultPackageList;
   }
@@ -57,8 +58,7 @@ public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
   public void visit(ASTCDCompilationUnit node) {
     if (node.isPresentMCPackageDeclaration()) {
       packageNameList = node.getMCPackageDeclaration().getMCQualifiedName().getPartsList();
-    }
-    else {
+    } else {
       packageNameList = defaultPackageList;
     }
     node.getCDDefinition().setDefaultPackageName(Joiners.DOT.join(packageNameList));
@@ -74,46 +74,51 @@ public class CDBasisDefaultPackageTrafo extends CDAfterParseHelper
   }
 
   protected void combinePackagesWithSameName(ASTCDDefinition node) {
-    final List<ASTCDPackage> packages = node
-        .streamCDElements()
-        .filter(e -> e instanceof ASTCDPackage)
-        .map(e -> (ASTCDPackage) e)
-        .collect(Collectors.toList());
+    final List<ASTCDPackage> packages =
+        node.streamCDElements()
+            .filter(e -> e instanceof ASTCDPackage)
+            .map(e -> (ASTCDPackage) e)
+            .collect(Collectors.toList());
 
-    final List<ASTCDPackage> duplicates = CoCoHelper.findDuplicatesBy(packages, (e) -> e.getMCQualifiedName().getQName());
+    final List<ASTCDPackage> duplicates =
+        CoCoHelper.findDuplicatesBy(packages, (e) -> e.getMCQualifiedName().getQName());
     node.getCDElementList().removeAll(duplicates);
-    duplicates.forEach(e ->
-        packages.stream()
-            .filter(p -> p.getMCQualifiedName().getQName().equals(e.getMCQualifiedName().getQName()))
-            .findFirst()
-            .ifPresent(pa -> pa.addAllCDElements(e.getCDElementList())));
+    duplicates.forEach(
+        e ->
+            packages.stream()
+                .filter(
+                    p ->
+                        p.getMCQualifiedName().getQName().equals(e.getMCQualifiedName().getQName()))
+                .findFirst()
+                .ifPresent(pa -> pa.addAllCDElements(e.getCDElementList())));
   }
 
   protected void moveElementsToDefaultPackage(ASTCDDefinition node) {
-    final List<ASTCDElement> elementsInCDDefinition = node
-        .streamCDElements()
-        .filter(e -> !(e instanceof ASTCDPackage))
-        .collect(Collectors.toList());
+    final List<ASTCDElement> elementsInCDDefinition =
+        node.streamCDElements()
+            .filter(e -> !(e instanceof ASTCDPackage))
+            .collect(Collectors.toList());
 
     // find the package with the package of the model
-    Optional<ASTCDPackage> defaultPackage = node
-        .streamCDElements()
-        .filter(e -> e instanceof ASTCDPackage)
-        .map(e -> (ASTCDPackage) e)
-        .filter(e -> e
-            .getMCQualifiedName()
-            .getQName()
-            .equals(Joiners.DOT.join(packageNameList)))
-        .findFirst();
+    Optional<ASTCDPackage> defaultPackage =
+        node.streamCDElements()
+            .filter(e -> e instanceof ASTCDPackage)
+            .map(e -> (ASTCDPackage) e)
+            .filter(
+                e -> e.getMCQualifiedName().getQName().equals(Joiners.DOT.join(packageNameList)))
+            .findFirst();
 
     // only create the default package if not already present
     // AND we have elements that should be put in the package
     if (!defaultPackage.isPresent() && !elementsInCDDefinition.isEmpty()) {
-      defaultPackage = Optional.of(CDBasisMill.cDPackageBuilder()
-          .setMCQualifiedName(MCBasicTypesMill.mCQualifiedNameBuilder()
-              .setPartsList(packageNameList)
-              .build())
-          .build());
+      defaultPackage =
+          Optional.of(
+              CDBasisMill.cDPackageBuilder()
+                  .setMCQualifiedName(
+                      MCBasicTypesMill.mCQualifiedNameBuilder()
+                          .setPartsList(packageNameList)
+                          .build())
+                  .build());
       node.addCDPackage(0, defaultPackage.get()); // add the default package as first package
     }
 

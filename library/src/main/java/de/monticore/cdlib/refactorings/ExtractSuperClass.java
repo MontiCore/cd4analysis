@@ -1,32 +1,29 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdlib.refactorings;
 
-import java.util.ArrayList;
-
 import com.google.common.collect.Lists;
 import de.monticore.cdbasis.CDBasisMill;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdlib.refactoring.extractsuperclass.attribute.tf.ExtractSuperClassAttribute;
 import de.monticore.cdlib.refactoring.extractsuperclass.method.tf.ExtractSuperClassMethod;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.se_rwth.commons.Splitters;
+import java.util.ArrayList;
 
 /**
- * Extract class: Introduce a new superclass for classes with no superclass and
- * same methods or attributes
+ * Extract class: Introduce a new superclass for classes with no superclass and same methods or
+ * attributes
  *
- * Created by
+ * <p>Created by
  *
  * @author hoelldobler, KE
  * @montitoolbox
  */
 public class ExtractSuperClass implements Refactoring {
-  public ExtractSuperClass() {
-  }
+  public ExtractSuperClass() {}
 
   /**
-   * Introduce a new superclass for classes with no superclass and same
-   * methods or attributes
+   * Introduce a new superclass for classes with no superclass and same methods or attributes
    *
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
@@ -39,8 +36,7 @@ public class ExtractSuperClass implements Refactoring {
   }
 
   /**
-   * Introduce a new superclass for classes with no superclass and same
-   * attributes
+   * Introduce a new superclass for classes with no superclass and same attributes
    *
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
@@ -56,8 +52,8 @@ public class ExtractSuperClass implements Refactoring {
   }
 
   /**
-   * Introduce a new superclass for classes with no superclass and same
-   * methods, where the superclass is called by  <code>classname</code>
+   * Introduce a new superclass for classes with no superclass and same methods, where the
+   * superclass is called by <code>classname</code>
    *
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
@@ -71,25 +67,26 @@ public class ExtractSuperClass implements Refactoring {
       return false;
     }
   }
-  
+
   /**
-   * Introduce a new superclass for classes with no superclass and same
-   * methods or attributes, where the superclass is called by  <code>classname</code>
+   * Introduce a new superclass for classes with no superclass and same methods or attributes, where
+   * the superclass is called by <code>classname</code>
    *
    * @param ast - class diagram to be transformed
    * @param classname is the classname of the new superclass
    * @return true, if applied successfully
    */
   public boolean extractSuperClassWithName(ASTCDCompilationUnit ast, String classname) {
-    if (extractSuperClassAttributeWithName(ast, classname) || extractSuperClassMethodWithName(ast, classname)) {
+    if (extractSuperClassAttributeWithName(ast, classname)
+        || extractSuperClassMethodWithName(ast, classname)) {
       return true;
     }
     return false;
   }
 
   /**
-   * Introduce a new superclass for classes with no superclass and same
-   * attributes, where the superclass is called by  <code>classname</code>
+   * Introduce a new superclass for classes with no superclass and same attributes, where the
+   * superclass is called by <code>classname</code>
    *
    * @param ast - class diagram to be transformed
    * @param classname is the classname of the new superclass
@@ -103,19 +100,16 @@ public class ExtractSuperClass implements Refactoring {
       extractClass.get_$S().setName(classname);
       ArrayList<String> nameList = new ArrayList<String>();
       nameList.add(classname);
-      ASTMCQualifiedType reference = CDBasisMill
-              .mCQualifiedTypeBuilder()
+      ASTMCQualifiedType reference =
+          CDBasisMill.mCQualifiedTypeBuilder()
               .setMCQualifiedName(
-                      CDBasisMill.mCQualifiedNameBuilder()
-                              .addAllParts(
-                                      Lists.newArrayList(
-                                              Splitters.DOT
-                                                      .split(classname))
-                                          ).build()
-                                 ).build();
+                  CDBasisMill.mCQualifiedNameBuilder()
+                      .addAllParts(Lists.newArrayList(Splitters.DOT.split(classname)))
+                      .build())
+              .build();
       extractClass.get_$b().getSuperclassList().clear();
       extractClass.get_$b().getSuperclassList().add(reference);
-      for ( int i = 0;i<extractClass.get_$c().size();i++){
+      for (int i = 0; i < extractClass.get_$c().size(); i++) {
         extractClass.get_$c().get(i).getSuperclassList().clear();
         extractClass.get_$c().get(i).getSuperclassList().add(reference);
       }
@@ -126,8 +120,7 @@ public class ExtractSuperClass implements Refactoring {
   }
 
   /**
-   * Introduce a new superclass for classes with no superclass and same
-   * methods
+   * Introduce a new superclass for classes with no superclass and same methods
    *
    * @param ast - class diagram to be transformed
    * @return true, if applied successfully
@@ -140,14 +133,14 @@ public class ExtractSuperClass implements Refactoring {
       extractClass.get_$S().setName(classname);
       ArrayList<String> nameList = new ArrayList<String>();
       nameList.add(classname);
-      ASTMCQualifiedType reference = CDBasisMill
-              .mCQualifiedTypeBuilder()
+      ASTMCQualifiedType reference =
+          CDBasisMill.mCQualifiedTypeBuilder()
               .setMCQualifiedName(
-                      CDBasisMill.mCQualifiedNameBuilder()
-                              .addAllParts(nameList).build()).build();
+                  CDBasisMill.mCQualifiedNameBuilder().addAllParts(nameList).build())
+              .build();
       extractClass.get_$b().getSuperclassList().clear();
       extractClass.get_$b().getSuperclassList().add(reference);
-      for ( int i = 0;i<extractClass.get_$c().size();i++){
+      for (int i = 0; i < extractClass.get_$c().size(); i++) {
         extractClass.get_$c().get(i).getSuperclassList().clear();
         extractClass.get_$c().get(i).getSuperclassList().add(reference);
       }
@@ -156,5 +149,4 @@ public class ExtractSuperClass implements Refactoring {
       return false;
     }
   }
-
 }

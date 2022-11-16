@@ -1,9 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
-/**
- * @deprecated remove when the builder are setting the spanned scope
- */
+/** @deprecated remove when the builder are setting the spanned scope */
 @Deprecated
 public class CDTypeSymbolBuilder extends CDTypeSymbolBuilderTOP {
   public CDTypeSymbolBuilder() {

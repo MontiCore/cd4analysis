@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.resolving;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd.TestBasis;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdbasis.CDBasisMill;
@@ -11,15 +14,11 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.testcdbasis._parser.TestCDBasisParser;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class TestCDBasisResolvingTest extends TestBasis {
@@ -28,7 +27,8 @@ public class TestCDBasisResolvingTest extends TestBasis {
   @BeforeClass
   public static void parseCompleteModel() throws IOException {
     final TestCDBasisParser p = new TestCDBasisParser();
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cdbasis/parser/Packages.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cdbasis/parser/Packages.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
 
     final ASTCDCompilationUnit compilationUnit = astcdCompilationUnit.get();

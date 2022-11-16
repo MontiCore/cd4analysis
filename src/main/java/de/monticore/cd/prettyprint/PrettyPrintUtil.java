@@ -10,7 +10,6 @@ import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesTraverser;
-
 import java.util.Iterator;
 
 public abstract class PrettyPrintUtil {
@@ -83,10 +82,11 @@ public abstract class PrettyPrintUtil {
   /**
    * Prints a list of CDBasisNode in an ownVisit method
    *
-   * @param iter      iterator for the list of {@link ASTCDBasisNode}s
+   * @param iter iterator for the list of {@link ASTCDBasisNode}s
    * @param seperator string for seperating the ASTCDBasisNodes
    */
-  public void printSeparatorCDBasis(CDBasisTraverser visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
+  public void printSeparatorCDBasis(
+      CDBasisTraverser visitor, Iterator<? extends ASTCDBasisNode> iter, String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -99,10 +99,13 @@ public abstract class PrettyPrintUtil {
   /**
    * Prints a list of ASTQualifiedNames in an ownVisit method
    *
-   * @param iter      iterator for the list of {@link ASTCD4CodeBasisNode}s
+   * @param iter iterator for the list of {@link ASTCD4CodeBasisNode}s
    * @param seperator string for seperating the ASTCD4CodeBasisNodes
    */
-  public void printSeparatorCD4CodeBasis(CD4CodeBasisTraverser traverser, Iterator<? extends ASTCD4CodeBasisNode> iter, String seperator) {
+  public void printSeparatorCD4CodeBasis(
+      CD4CodeBasisTraverser traverser,
+      Iterator<? extends ASTCD4CodeBasisNode> iter,
+      String seperator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {
@@ -115,10 +118,13 @@ public abstract class PrettyPrintUtil {
   /**
    * Prints a list
    *
-   * @param iter      iterator for the list
+   * @param iter iterator for the list
    * @param separator string for separating list
    */
-  public void printList(MCBasicTypesTraverser traverser, Iterator<? extends ASTMCBasicTypesNode> iter, String separator) {
+  public void printList(
+      MCBasicTypesTraverser traverser,
+      Iterator<? extends ASTMCBasicTypesNode> iter,
+      String separator) {
     // print by iterate through all items
     String sep = "";
     while (iter.hasNext()) {

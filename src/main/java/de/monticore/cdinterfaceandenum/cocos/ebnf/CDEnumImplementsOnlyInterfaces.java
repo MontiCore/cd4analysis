@@ -5,9 +5,7 @@ import de.monticore.cd.cocos.ImplementOnlyInterfaces;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDEnumCoCo;
 
-/**
- * See {@link ImplementOnlyInterfaces}.
- */
+/** See {@link ImplementOnlyInterfaces}. */
 public class CDEnumImplementsOnlyInterfaces extends ImplementOnlyInterfaces
     implements CDInterfaceAndEnumASTCDEnumCoCo {
 

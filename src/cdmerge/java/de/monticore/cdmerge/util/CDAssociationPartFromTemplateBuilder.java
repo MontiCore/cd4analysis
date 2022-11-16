@@ -19,15 +19,13 @@ public class CDAssociationPartFromTemplateBuilder {
 
     if (assocDirTemplate.isPresent_SourcePositionEnd()) {
       builder.set_SourcePositionEnd(assocDirTemplate.get_SourcePositionEnd());
-    }
-    else {
+    } else {
       builder.set_SourcePositionEndAbsent();
     }
 
     if (assocDirTemplate.isPresent_SourcePositionStart()) {
       builder.set_SourcePositionStart(assocDirTemplate.get_SourcePositionStart());
-    }
-    else {
+    } else {
       builder.set_SourcePositionStartAbsent();
     }
 
@@ -40,15 +38,13 @@ public class CDAssociationPartFromTemplateBuilder {
     ASTCDRightToLeftDirBuilder builder = new ASTCDRightToLeftDirBuilder();
     if (assocDirTemplate.isPresent_SourcePositionEnd()) {
       builder.set_SourcePositionEnd(assocDirTemplate.get_SourcePositionEnd());
-    }
-    else {
+    } else {
       builder.set_SourcePositionEndAbsent();
     }
 
     if (assocDirTemplate.isPresent_SourcePositionStart()) {
       builder.set_SourcePositionStart(assocDirTemplate.get_SourcePositionStart());
-    }
-    else {
+    } else {
       builder.set_SourcePositionStartAbsent();
     }
 
@@ -57,13 +53,12 @@ public class CDAssociationPartFromTemplateBuilder {
     return builder.build();
   }
 
-  private static ASTCDAssocRightSide buildRightSide(ASTCDAssocSide assocSideTemplate,
-      ASTCDAssocRightSideBuilder builder) {
+  private static ASTCDAssocRightSide buildRightSide(
+      ASTCDAssocSide assocSideTemplate, ASTCDAssocRightSideBuilder builder) {
 
     if (assocSideTemplate.isPresentCDOrdered()) {
       builder.setCDOrdered(assocSideTemplate.getCDOrdered());
-    }
-    else {
+    } else {
       builder.setCDOrderedAbsent();
     }
 
@@ -71,8 +66,7 @@ public class CDAssociationPartFromTemplateBuilder {
 
     if (assocSideTemplate.isPresentCDCardinality()) {
       builder.setCDCardinality(assocSideTemplate.getCDCardinality());
-    }
-    else {
+    } else {
       builder.setCDCardinalityAbsent();
     }
 
@@ -80,29 +74,25 @@ public class CDAssociationPartFromTemplateBuilder {
 
     if (assocSideTemplate.isPresentCDQualifier()) {
       builder.setCDQualifier(assocSideTemplate.getCDQualifier());
-    }
-    else {
+    } else {
       builder.setCDQualifierAbsent();
     }
 
     if (assocSideTemplate.isPresentCDRole()) {
       builder.setCDRole(assocSideTemplate.getCDRole());
-    }
-    else {
+    } else {
       builder.setCDRoleAbsent();
     }
 
     if (assocSideTemplate.isPresent_SourcePositionEnd()) {
       builder.set_SourcePositionEnd(assocSideTemplate.get_SourcePositionEnd());
-    }
-    else {
+    } else {
       builder.set_SourcePositionEndAbsent();
     }
 
     if (assocSideTemplate.isPresent_SourcePositionStart()) {
       builder.set_SourcePositionStart(assocSideTemplate.get_SourcePositionStart());
-    }
-    else {
+    } else {
       builder.set_SourcePositionStartAbsent();
     }
 
@@ -112,13 +102,12 @@ public class CDAssociationPartFromTemplateBuilder {
     return builder.build();
   }
 
-  private static ASTCDAssocLeftSide buildLeftSide(ASTCDAssocSide assocSideTemplate,
-      ASTCDAssocLeftSideBuilder builder) {
+  private static ASTCDAssocLeftSide buildLeftSide(
+      ASTCDAssocSide assocSideTemplate, ASTCDAssocLeftSideBuilder builder) {
 
     if (assocSideTemplate.isPresentCDOrdered()) {
       builder.setCDOrdered(assocSideTemplate.getCDOrdered());
-    }
-    else {
+    } else {
       builder.setCDOrderedAbsent();
     }
 
@@ -126,8 +115,7 @@ public class CDAssociationPartFromTemplateBuilder {
 
     if (assocSideTemplate.isPresentCDCardinality()) {
       builder.setCDCardinality(assocSideTemplate.getCDCardinality());
-    }
-    else {
+    } else {
       builder.setCDCardinalityAbsent();
     }
 
@@ -135,29 +123,25 @@ public class CDAssociationPartFromTemplateBuilder {
 
     if (assocSideTemplate.isPresentCDQualifier()) {
       builder.setCDQualifier(assocSideTemplate.getCDQualifier());
-    }
-    else {
+    } else {
       builder.setCDQualifierAbsent();
     }
 
     if (assocSideTemplate.isPresentCDRole()) {
       builder.setCDRole(assocSideTemplate.getCDRole());
-    }
-    else {
+    } else {
       builder.setCDRoleAbsent();
     }
 
     if (assocSideTemplate.isPresent_SourcePositionEnd()) {
       builder.set_SourcePositionEnd(assocSideTemplate.get_SourcePositionEnd());
-    }
-    else {
+    } else {
       builder.set_SourcePositionEndAbsent();
     }
 
     if (assocSideTemplate.isPresent_SourcePositionStart()) {
       builder.set_SourcePositionStart(assocSideTemplate.get_SourcePositionStart());
-    }
-    else {
+    } else {
       builder.set_SourcePositionStartAbsent();
     }
 
@@ -166,5 +150,4 @@ public class CDAssociationPartFromTemplateBuilder {
 
     return builder.build();
   }
-
 }

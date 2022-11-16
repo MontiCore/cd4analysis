@@ -6,26 +6,23 @@ import de.monticore.cdlib.refactoring.delete.tf.DeleteAttribute;
 import de.monticore.cdlib.refactoring.delete.tf.DeleteClass;
 import de.monticore.cdlib.refactoring.delete.tf.DeleteMethod;
 import de.se_rwth.commons.logging.Log;
+
 /**
  * Remove a class
  *
- * Created by
+ * <p>Created by
  *
  * @author hoelldobler, KE
  * @montitoolbox
  */
-
 public class Remove implements Refactoring {
-  public Remove() {
-  }
+  public Remove() {}
 
   /**
    * Removes the class and all references
    *
-   * @param className
-   *          - name of the class
-   * @param ast
-   *          - class diagram to be transformed
+   * @param className - name of the class
+   * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
   public boolean removeClass(String className, ASTCDCompilationUnit ast) {
@@ -51,13 +48,10 @@ public class Remove implements Refactoring {
 
   /**
    * Removes the first occurrence of the method in the class
-   * 
-   * @param className
-   *          - name of the class
-   * @param methodName
-   *          - name of the method
-   * @param ast
-   *          - class diagram to be transformed
+   *
+   * @param className - name of the class
+   * @param methodName - name of the method
+   * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
   public boolean removeMethod(String className, String methodName, ASTCDCompilationUnit ast) {
@@ -75,20 +69,17 @@ public class Remove implements Refactoring {
     return false;
   }
 
-/**
+  /**
    * Removes the first occurrence of the method in the class
-   * 
-   * @param className
-   *  		    - name of the class
-   * @param attributeName
-   *          - name of the method
-   * @param ast
-   *          - class diagram to be transformed
+   *
+   * @param className - name of the class
+   * @param attributeName - name of the method
+   * @param ast - class diagram to be transformed
    * @return true, if applied successfully
    */
   public boolean removeAttribute(String className, String attributeName, ASTCDCompilationUnit ast) {
 
-  	// Delete all the attributes
+    // Delete all the attributes
     DeleteAttribute deleteAttribute = new DeleteAttribute(ast);
     deleteAttribute.set_$className(className);
     deleteAttribute.set_$name(attributeName);
@@ -101,5 +92,4 @@ public class Remove implements Refactoring {
     }
     return false;
   }
-  
 }

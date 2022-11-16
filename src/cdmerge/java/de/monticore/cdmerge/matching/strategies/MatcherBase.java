@@ -10,12 +10,9 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.ASTCDHelper;
-
 import java.util.List;
 
-/**
- * Provides config and merge blackboard to all matchers and merging strategies
- */
+/** Provides config and merge blackboard to all matchers and merging strategies */
 public abstract class MatcherBase {
 
   private final MergeBlackBoard mergeBlackBoard;
@@ -89,5 +86,4 @@ public abstract class MatcherBase {
   protected void logWarning(String message, ASTNode astNode1, ASTNode astNode2) {
     this.mergeBlackBoard.addLog(ErrorLevel.WARNING, message, PHASE, astNode1, astNode2);
   }
-
 }

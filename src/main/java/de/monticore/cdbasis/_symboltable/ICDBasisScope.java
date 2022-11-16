@@ -4,7 +4,6 @@ package de.monticore.cdbasis._symboltable;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import de.monticore.symboltable.ISymbol;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +19,12 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
     final FluentIterable<String> packageNameParts = getNameParts(getRealPackageName());
 
     if (nameParts.size() >= packageNameParts.size()) {
-      final String firstNNameParts = nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
+      final String firstNNameParts =
+          nameParts.stream().limit(packageNameParts.size()).collect(Collectors.joining("."));
       // A scope that exports symbols usually has a name.
       if (firstNNameParts.equals(getRealPackageName())) {
-        return Lists.newArrayList(nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining(".")));
+        return Lists.newArrayList(
+            nameParts.stream().skip(packageNameParts.size()).collect(Collectors.joining(".")));
       }
     }
 
@@ -37,7 +38,8 @@ public interface ICDBasisScope extends ICDBasisScopeTOP {
   }
 
   @Override
-  default <T extends ISymbol> Optional<T> getResolvedOrThrowException(final Collection<T> resolved) {
+  default <T extends ISymbol> Optional<T> getResolvedOrThrowException(
+      final Collection<T> resolved) {
     return ICDBasisScopeTOP.super.getResolvedOrThrowException(
         resolved.stream().distinct().collect(Collectors.toList()));
   }

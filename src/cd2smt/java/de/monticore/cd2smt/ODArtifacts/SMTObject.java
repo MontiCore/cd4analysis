@@ -1,7 +1,6 @@
 package de.monticore.cd2smt.ODArtifacts;
 
 import com.microsoft.z3.Sort;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,6 @@ public class SMTObject extends MinObject {
     return this.superInterfaceList.size() > 0;
   }
 
-
   public List<LinkedSMTObject> getLinkedObjects() {
     return linkedObjects;
   }
@@ -50,5 +48,4 @@ public class SMTObject extends MinObject {
   public boolean hasSort(Sort sort) {
     return sort.equals(this.getSmtExpr().getSort());
   }
-
 }

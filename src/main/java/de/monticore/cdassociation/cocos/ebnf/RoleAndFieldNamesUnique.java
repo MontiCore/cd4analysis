@@ -10,20 +10,19 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 
 /**
- * Checks that Role and Field names are unique within classes.
- * Fields and roles defined in superclasses are also incorporated.
+ * Checks that Role and Field names are unique within classes. Fields and roles defined in
+ * superclasses are also incorporated.
  */
 public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
 
-  private static final String FIELD_ROLE_DEFINED_MULTIPLE_TIMES = " Name of the field or role '%s' is not unique for the class '%s'. " + "The role and field names of each class must be unique for the class.";
+  private static final String FIELD_ROLE_DEFINED_MULTIPLE_TIMES =
+      " Name of the field or role '%s' is not unique for the class '%s'. "
+          + "The role and field names of each class must be unique for the class.";
 
-  /**
-   * @param node class to check.
-   */
+  /** @param node class to check. */
   @Override
   public void check(ASTCDClass node) {
     if (!node.isPresentSymbol()) {
@@ -41,9 +40,10 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
 
       for (FieldSymbol field : curSymbol.getFieldList()) {
         if (fieldAndRoleNames.contains(field.getName())) {
-          Log.error(String.format("0xC4A28" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, field.getName(), node.getName()));
-        }
-        else {
+          Log.error(
+              String.format(
+                  "0xC4A28" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, field.getName(), node.getName()));
+        } else {
           fieldAndRoleNames.add(field.getName());
         }
       }
@@ -51,9 +51,10 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
       if (curSymbol instanceof CDTypeSymbol) {
         for (CDRoleSymbol role : ((CDTypeSymbol) curSymbol).getCDRoleList()) {
           if (fieldAndRoleNames.contains(role.getName())) {
-            Log.error(String.format("0xC4A29" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, role.getName(), node.getName()));
-          }
-          else {
+            Log.error(
+                String.format(
+                    "0xC4A29" + FIELD_ROLE_DEFINED_MULTIPLE_TIMES, role.getName(), node.getName()));
+          } else {
             fieldAndRoleNames.add(role.getName());
           }
         }
@@ -70,5 +71,4 @@ public class RoleAndFieldNamesUnique implements CDBasisASTCDClassCoCo {
       }
     }
   }
-
 }

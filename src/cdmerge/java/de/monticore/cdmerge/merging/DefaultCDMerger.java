@@ -6,7 +6,6 @@ import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.merging.strategies.AssociationMerger;
 import de.monticore.cdmerge.merging.strategies.TypeMerger;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,14 +13,13 @@ import java.util.Set;
 
 public class DefaultCDMerger extends CDMerger {
 
-  public DefaultCDMerger(MergeBlackBoard blackboard, TypeMerger typeMerger,
-      AssociationMerger associationMerger) {
+  public DefaultCDMerger(
+      MergeBlackBoard blackboard, TypeMerger typeMerger, AssociationMerger associationMerger) {
     super(blackboard, typeMerger, associationMerger);
   }
 
   @Override
-  public void mergeComments(ASTCD4CodeNode left, ASTCD4CodeNode right,
-      ASTCD4CodeNode merged) {
+  public void mergeComments(ASTCD4CodeNode left, ASTCD4CodeNode right, ASTCD4CodeNode merged) {
     // Clean up anything from possibly cloned AST Nodes
     merged.get_PostCommentList().clear();
     merged.get_PreCommentList().clear();
@@ -84,5 +82,4 @@ public class DefaultCDMerger extends CDMerger {
     }
     merged.addAll_PostComments(postComments);
   }
-
 }

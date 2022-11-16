@@ -12,8 +12,7 @@ public class ASTCDCardMult extends ASTCDCardMultTOP {
 
   @Override
   public ASTCardinality toCardinality() {
-    return CardinalityMill
-        .cardinalityBuilder()
+    return CardinalityMill.cardinalityBuilder()
         .setLowerBoundLitAbsent()
         .setUpperBoundLitAbsent()
         .setNoUpperLimit(true)

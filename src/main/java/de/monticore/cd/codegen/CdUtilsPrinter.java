@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
@@ -12,11 +14,8 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.*;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
 import java.util.Collection;
 import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /** AST specific helper to print AST nodes. */
 public class CdUtilsPrinter {
@@ -59,7 +58,7 @@ public class CdUtilsPrinter {
   /**
    * Prints the fully qualified name of an {@code ASTCDPackage}
    *
-   * @param astPackage  the package whose name to print
+   * @param astPackage the package whose name to print
    * @return a dot-separated package name
    */
   public String printPackageName(ASTCDPackage astPackage) {
@@ -105,17 +104,17 @@ public class CdUtilsPrinter {
   }
 
   /**
-   * Prints the parameter declarations that can be used in methods,
-   * constructors, etc.
+   * Prints the parameter declarations that can be used in methods, constructors, etc.
    *
    * @param parameterList a list of all parameters
    * @return a string list of parameter declarations, e.g. type name
    */
   public String printCDParametersDecl(List<ASTCDParameter> parameterList) {
     checkNotNull(parameterList);
-    return Joiner.on(",").join(
-      Collections2.transform(parameterList, arg0 -> printType(arg0.getMCType()) + " " + arg0.getName())
-    );
+    return Joiner.on(",")
+        .join(
+            Collections2.transform(
+                parameterList, arg0 -> printType(arg0.getMCType()) + " " + arg0.getName()));
   }
 
   /**
@@ -125,9 +124,12 @@ public class CdUtilsPrinter {
    * @return a string list of all exceptions
    */
   public String printThrowsDecl(ASTCDThrowsDeclaration throwsDecl) {
-    return "throws " + Joiner.on(",").join(
-      Collections2.transform(throwsDecl.getExceptionList(), arg0 -> Joiner.on(".").join(arg0.getPartsList()))
-    );
+    return "throws "
+        + Joiner.on(",")
+            .join(
+                Collections2.transform(
+                    throwsDecl.getExceptionList(),
+                    arg0 -> Joiner.on(".").join(arg0.getPartsList())));
   }
 
   /**
@@ -144,6 +146,4 @@ public class CdUtilsPrinter {
   public String printExpression(ASTExpression expr) {
     return new CD4CodeFullPrettyPrinter().prettyprint(expr);
   }
-
-
 }

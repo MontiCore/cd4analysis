@@ -14,21 +14,19 @@ import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CDInterfaceAndEnumSymbolTableCompleter
-    implements CDInterfaceAndEnumVisitor2 {
+public class CDInterfaceAndEnumSymbolTableCompleter implements CDInterfaceAndEnumVisitor2 {
   protected CDSymbolTableHelper symbolTableHelper;
 
   public CDInterfaceAndEnumSymbolTableCompleter(CDSymbolTableHelper symbolTableHelper) {
     this.symbolTableHelper = symbolTableHelper;
   }
 
-  public CDInterfaceAndEnumSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper()
-        .setPackageDeclaration(packageDeclaration);
+  public CDInterfaceAndEnumSymbolTableCompleter(
+      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
+    this.symbolTableHelper = new CDSymbolTableHelper().setPackageDeclaration(packageDeclaration);
   }
 
   @Override
@@ -69,13 +67,25 @@ public class CDInterfaceAndEnumSymbolTableCompleter
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDExtendUsage()) {
-      symbol.addAllSuperTypes(ast.getCDExtendUsage().streamSuperclass().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
-          Log.error(String.format("0xCDA30: The type of the extended interfaces (%s) could not be calculated", symbolTableHelper.getPrettyPrinter().prettyprint(s)), s.get_SourcePositionStart());
-        }
-        return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
+      symbol.addAllSuperTypes(
+          ast.getCDExtendUsage()
+              .streamSuperclass()
+              .map(
+                  s -> {
+                    final TypeCheckResult result =
+                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                    if (!result.isPresentResult()) {
+                      Log.error(
+                          String.format(
+                              "0xCDA30: The type of the extended interfaces (%s) could not be calculated",
+                              symbolTableHelper.getPrettyPrinter().prettyprint(s)),
+                          s.get_SourcePositionStart());
+                    }
+                    return result;
+                  })
+              .filter(TypeCheckResult::isPresentResult)
+              .map(TypeCheckResult::getResult)
+              .collect(Collectors.toList()));
     }
   }
 
@@ -86,13 +96,25 @@ public class CDInterfaceAndEnumSymbolTableCompleter
     symbolTableHelper.getModifierHandler().handle(ast.getModifier(), symbol);
 
     if (ast.isPresentCDInterfaceUsage()) {
-      symbol.addAllSuperTypes(ast.getCDInterfaceUsage().streamInterface().map(s -> {
-        final TypeCheckResult result = symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
-        if (!result.isPresentResult()) {
-          Log.error(String.format("0xCDA31: The type of the interface (%s) could not be calculated", s.getClass().getSimpleName()), s.get_SourcePositionStart());
-        }
-        return result;
-      }).filter(TypeCheckResult::isPresentResult).map(TypeCheckResult::getResult).collect(Collectors.toList()));
+      symbol.addAllSuperTypes(
+          ast.getCDInterfaceUsage()
+              .streamInterface()
+              .map(
+                  s -> {
+                    final TypeCheckResult result =
+                        symbolTableHelper.getTypeSynthesizer().synthesizeType(s);
+                    if (!result.isPresentResult()) {
+                      Log.error(
+                          String.format(
+                              "0xCDA31: The type of the interface (%s) could not be calculated",
+                              s.getClass().getSimpleName()),
+                          s.get_SourcePositionStart());
+                    }
+                    return result;
+                  })
+              .filter(TypeCheckResult::isPresentResult)
+              .map(TypeCheckResult::getResult)
+              .collect(Collectors.toList()));
     }
   }
 
@@ -108,7 +130,9 @@ public class CDInterfaceAndEnumSymbolTableCompleter
     // create a SymType for the enum, because the type of the enum constant is the enum itself
     final String enumName = symbolTableHelper.getCurrentCDTypeOnStack();
     // call getEnclosingScope() twice, to achieve the correct package name
-    final SymTypeOfObject typeObject = SymTypeExpressionFactory.createTypeObject(enumName, ast.getEnclosingScope().getEnclosingScope());
+    final SymTypeOfObject typeObject =
+        SymTypeExpressionFactory.createTypeObject(
+            enumName, ast.getEnclosingScope().getEnclosingScope());
     symbol.setType(typeObject);
 
     // Don't store the arguments in the ST

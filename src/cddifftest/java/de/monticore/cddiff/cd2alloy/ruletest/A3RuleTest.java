@@ -1,24 +1,21 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.ruletest;
 
-import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertTrue;
-
-/**
- * Unit test for the U1 rule for the generation of common class names
- */
+/** Unit test for the U1 rule for the generation of common class names */
 public class A3RuleTest extends CDDiffTestBasis {
 
-  protected ASTCDCompilationUnit mvAst = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  protected ASTCDCompilationUnit mvAst =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
   @Before
   public void prepareASTs() {
@@ -75,5 +72,4 @@ public class A3RuleTest extends CDDiffTestBasis {
 
     checkA3(lines, expectedResult);
   }
-
 }

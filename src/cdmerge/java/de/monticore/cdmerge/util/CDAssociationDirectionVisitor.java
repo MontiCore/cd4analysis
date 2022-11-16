@@ -42,5 +42,4 @@ public class CDAssociationDirectionVisitor extends CDAssociationNavigableVisitor
   public AssociationDirection getDirection() {
     return direction;
   }
-
 }
