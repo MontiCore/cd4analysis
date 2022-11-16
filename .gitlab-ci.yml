@@ -39,6 +39,13 @@ test:
   - "cd library"
   - "gradle --include-build ../ check $GRADLE_OPT $ARGS2"
 
+check_format:
+  stage: test
+  allow_failure: true
+  script:
+    - echo "You can format the java files using <gradle fmt>"
+    - gradle checkfmt $GRADLE_OPT $ARGS2
+
 trigger-langexp:
   stage: trigger
   trigger:
