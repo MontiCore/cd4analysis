@@ -36,10 +36,8 @@ public class CD4CTemplateHelper {
       this.astcdMethod =
           new CD4CodeParser()
               .parseCDMethod(new StringReader(methodSignature))
-              .map(
-                  m ->
-                      m); // needed because we need Optional<ASTCDMethodSignature> and not
-                          // Optional<ASTCDMethod>
+              .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+      // Optional<ASTCDMethod>
     } catch (IOException e) {
       Log.error("0x12000: can't parse method signature '" + methodSignature + "': ", e);
     }
@@ -59,10 +57,8 @@ public class CD4CTemplateHelper {
       this.astcdMethod =
           new CD4CodeParser()
               .parseCDConstructor(new StringReader(constructorSignature))
-              .map(
-                  m ->
-                      m); // needed because we need Optional<ASTCDMethodSignature> and not
-                          // Optional<ASTCDConstructor>
+              .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+      // Optional<ASTCDConstructor>
     } catch (IOException e) {
       Log.error("0x12001: can't parse constructor signature '" + constructorSignature + "': ", e);
     }
@@ -83,10 +79,8 @@ public class CD4CTemplateHelper {
       this.astcdAttribute =
           new CD4CodeParser()
               .parseCDAttribute(new StringReader(attributeSignature))
-              .map(
-                  m ->
-                      m); // needed because we need Optional<ASTCDMethodSignature> and not
-                          // Optional<ASTCDMethod>
+              .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+      // Optional<ASTCDMethod>
     } catch (IOException e) {
       Log.error("0x12002: can't parse attribute '" + attributeSignature + "': ", e);
     }
@@ -111,10 +105,8 @@ public class CD4CTemplateHelper {
       this.astcdImport =
           new CD4CodeParser()
               .parseMCImportStatement(new StringReader(importSignature))
-              .map(
-                  m ->
-                      m); // needed because we need Optional<ASTCDMethodSignature> and not
-                          // Optional<ASTCDMethod>
+              .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
+      // Optional<ASTCDMethod>
     } catch (IOException e) {
       Log.error("0x12002: can't parse '" + importSignature + "': ", e);
     }
