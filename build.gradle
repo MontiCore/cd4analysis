@@ -61,7 +61,7 @@ verifyGoogleJavaFormat{
 task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
 
 task fmt {
-  dependsOn googleJavaFormat
+  dependsOn tasks.named("googleJavaFormat")
 }
 
 
