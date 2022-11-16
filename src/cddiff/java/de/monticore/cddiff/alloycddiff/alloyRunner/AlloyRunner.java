@@ -10,15 +10,12 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Abstract class for the computation of alloy solutions for alloy modules containing predicates
- */
+/** Abstract class for the computation of alloy solutions for alloy modules containing predicates */
 public abstract class AlloyRunner {
 
   public List<AlloySolutionHandler> runAlloy(Path moduleFile) {
@@ -32,16 +29,21 @@ public abstract class AlloyRunner {
     // Alloy4 sends diagnostic messages and progress reports to the A4Reporter.
     // By default, the A4Reporter ignores all these events (but you can extend
     // the A4Reporter to display the event for the user)
-    A4Reporter rep = new A4Reporter() {
-      // For example, here we choose to display each "warning" by printing it to
-      // System.out
-      @Override
-      public void warning(ErrorWarning msg) {
-        System.out.print("Relevance Warning:" + System.lineSeparator() + (msg.toString().trim())
-            + System.lineSeparator() + System.lineSeparator());
-        System.out.flush();
-      }
-    };
+    A4Reporter rep =
+        new A4Reporter() {
+          // For example, here we choose to display each "warning" by printing it to
+          // System.out
+          @Override
+          public void warning(ErrorWarning msg) {
+            System.out.print(
+                "Relevance Warning:"
+                    + System.lineSeparator()
+                    + (msg.toString().trim())
+                    + System.lineSeparator()
+                    + System.lineSeparator());
+            System.out.flush();
+          }
+        };
 
     // Compute result
     result = runAlloy(moduleFile, rep, opt);
@@ -61,16 +63,21 @@ public abstract class AlloyRunner {
     // Alloy4 sends diagnostic messages and progress reports to the A4Reporter.
     // By default, the A4Reporter ignores all these events (but you can extend
     // the A4Reporter to display the event for the user)
-    A4Reporter rep = new A4Reporter() {
-      // For example, here we choose to display each "warning" by printing it to
-      // System.out
-      @Override
-      public void warning(ErrorWarning msg) {
-        System.out.print("Relevance Warning:" + System.lineSeparator() + (msg.toString().trim())
-            + System.lineSeparator() + System.lineSeparator());
-        System.out.flush();
-      }
-    };
+    A4Reporter rep =
+        new A4Reporter() {
+          // For example, here we choose to display each "warning" by printing it to
+          // System.out
+          @Override
+          public void warning(ErrorWarning msg) {
+            System.out.print(
+                "Relevance Warning:"
+                    + System.lineSeparator()
+                    + (msg.toString().trim())
+                    + System.lineSeparator()
+                    + System.lineSeparator());
+            System.out.flush();
+          }
+        };
 
     // Compute result
     result = runAlloy(module, rep, opt);
@@ -89,10 +96,10 @@ public abstract class AlloyRunner {
     // Try to parse the model
     Optional<CompModule> optModule = Optional.empty();
     try {
-      optModule = Optional.ofNullable(
-          CompUtil.parseEverything_fromFile(rep, null, moduleFile.toAbsolutePath().toString()));
-    }
-    catch (Err e) {
+      optModule =
+          Optional.ofNullable(
+              CompUtil.parseEverything_fromFile(rep, null, moduleFile.toAbsolutePath().toString()));
+    } catch (Err e) {
       e.printStackTrace();
     }
 
@@ -114,13 +121,13 @@ public abstract class AlloyRunner {
 
         A4Solution sol;
         try {
-          sol = TranslateAlloyToKodkod.execute_command(rep, module.getAllReachableSigs(), command,
-              options);
+          sol =
+              TranslateAlloyToKodkod.execute_command(
+                  rep, module.getAllReachableSigs(), command, options);
 
           // Generate solution handler and add it to result
           result.add(solutionHandlerGenerator(module, command, sol));
-        }
-        catch (Err e) {
+        } catch (Err e) {
           e.printStackTrace();
         }
       }
@@ -140,10 +147,8 @@ public abstract class AlloyRunner {
     // Try to parse the model
     Optional<CompModule> optModule = Optional.empty();
     try {
-      optModule = Optional.ofNullable(
-          CompUtil.parseEverything_fromString(rep, moduleString));
-    }
-    catch (Err e) {
+      optModule = Optional.ofNullable(CompUtil.parseEverything_fromString(rep, moduleString));
+    } catch (Err e) {
       e.printStackTrace();
     }
 
@@ -165,13 +170,13 @@ public abstract class AlloyRunner {
 
         A4Solution sol;
         try {
-          sol = TranslateAlloyToKodkod.execute_command(rep, module.getAllReachableSigs(), command,
-              options);
+          sol =
+              TranslateAlloyToKodkod.execute_command(
+                  rep, module.getAllReachableSigs(), command, options);
 
           // Generate solution handler and add it to result
           result.add(solutionHandlerGenerator(module, command, sol));
-        }
-        catch (Err e) {
+        } catch (Err e) {
           e.printStackTrace();
         }
       }
@@ -181,10 +186,7 @@ public abstract class AlloyRunner {
     return result;
   }
 
-  /**
-   * Returns a concrete solution handler based on module, command and solution
-   */
-  public abstract AlloySolutionHandler solutionHandlerGenerator(CompModule module, Command command,
-      A4Solution solution);
-
+  /** Returns a concrete solution handler based on module, command and solution */
+  public abstract AlloySolutionHandler solutionHandlerGenerator(
+      CompModule module, Command command, A4Solution solution);
 }

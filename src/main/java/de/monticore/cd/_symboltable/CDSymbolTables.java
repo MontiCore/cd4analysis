@@ -10,7 +10,6 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.symbols.basicsymbols._ast.ASTType;
 import de.monticore.types.check.SymTypeExpression;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,11 +30,13 @@ public class CDSymbolTables {
   }
 
   public static List<ASTCDAssocSide> getAssociations(ASTCDType ast) {
-    return ast.getSymbol().getCDRoleList().stream().filter(r -> r.isIsDefinitiveNavigable())
-      .map(a -> a.getAssocSide()).collect(Collectors.toList());
+    return ast.getSymbol().getCDRoleList().stream()
+        .filter(r -> r.isIsDefinitiveNavigable())
+        .map(a -> a.getAssocSide())
+        .collect(Collectors.toList());
   }
 
-   public static List<ASTCDAssocSide> getAssociationsInHierarchy(ASTCDType ast) {
+  public static List<ASTCDAssocSide> getAssociationsInHierarchy(ASTCDType ast) {
     List<ASTCDAssocSide> assocs = Lists.newArrayList();
     for (ASTCDType sc : getTransitiveSuperTypes(ast)) {
       assocs.addAll(getAssociations(sc));
@@ -55,6 +56,7 @@ public class CDSymbolTables {
     }
     return classes;
   }
+
   public static List<ASTCDInterface> getTransitiveSuperInterfaces(ASTCDType ast) {
     List<ASTCDInterface> interfaces = Lists.newArrayList();
     for (SymTypeExpression s : ast.getSymbol().getInterfaceList()) {
@@ -76,5 +78,4 @@ public class CDSymbolTables {
     types.addAll(getTransitiveSuperInterfaces(ast));
     return types;
   }
-
 }

@@ -1,31 +1,23 @@
 package de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel;
 
+import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiff4TypeHelper.*;
+
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDAssociationWrapper;
 import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-
 import java.util.*;
-
-import static de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiff4TypeHelper.*;
 
 /**
  * Each CDTypeWrapper in based CDWrapper will generate one corresponding CDTypeWrapperDiff
  *
- * @attribute cDDiffId:
- *    unique cDDiff id
- * @attribute baseElement:
- *    base original CDTypeWrapper
- * @attribute isInCompareCDW:
- *    whether this CDTypeWrapper exists in compared CDWrapper (only check CDTypeWrapper name)
- * @attribute isContentDiff:
- *    if this CDTypeWrapper exists in compared CDWrapper (only check CDTypeWrapper name),
- *    then check whether the content of those two CDTypeWrappers are different
- * @attribute cDDiffCategory:
- *    - has semantic difference:
- *        EDITED, DELETED, FREED
- *    - has no semantic difference:
- *        ORIGINAL, SUBSET
- * @attribute whichAttributesDiff:
- *    mark which attribute has syntactic differences
+ * @attribute cDDiffId: unique cDDiff id
+ * @attribute baseElement: base original CDTypeWrapper
+ * @attribute isInCompareCDW: whether this CDTypeWrapper exists in compared CDWrapper (only check
+ *     CDTypeWrapper name)
+ * @attribute isContentDiff: if this CDTypeWrapper exists in compared CDWrapper (only check
+ *     CDTypeWrapper name), then check whether the content of those two CDTypeWrappers are different
+ * @attribute cDDiffCategory: - has semantic difference: EDITED, DELETED, FREED - has no semantic
+ *     difference: ORIGINAL, SUBSET
+ * @attribute whichAttributesDiff: mark which attribute has syntactic differences
  */
 public class CDTypeWrapperDiff {
   protected final UUID cDDiffId;
@@ -44,7 +36,8 @@ public class CDTypeWrapperDiff {
 
   protected Optional<List<String>> whichAttributesDiff;
 
-  public CDTypeWrapperDiff(CDTypeWrapper baseElement,
+  public CDTypeWrapperDiff(
+      CDTypeWrapper baseElement,
       Optional<CDTypeWrapper> optCompareClass,
       Optional<CDAssociationWrapper> optCompareAssoc,
       boolean isInCompareCDW,
@@ -64,7 +57,8 @@ public class CDTypeWrapperDiff {
   }
 
   public String getName(boolean is4Print) {
-    return getCDTypeDiffKindStrHelper(getCDDiffKind(), is4Print) + "_"
+    return getCDTypeDiffKindStrHelper(getCDDiffKind(), is4Print)
+        + "_"
         + this.baseElement.getOriginalClassName();
   }
 
@@ -105,6 +99,7 @@ public class CDTypeWrapperDiff {
     stringBuilder.append(baseElement.getSourcePosition().getColumn());
     return stringBuilder.toString();
   }
+
   public String getCompareSourcePositionStr() {
     if (this.cDDiffCategory != CDTypeDiffCategory.DELETED) {
       if (optCompareClass.isPresent()) {
@@ -128,5 +123,4 @@ public class CDTypeWrapperDiff {
     }
     return "NULL";
   }
-
 }

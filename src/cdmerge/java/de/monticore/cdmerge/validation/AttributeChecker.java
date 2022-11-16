@@ -21,10 +21,9 @@ public class AttributeChecker extends ModelValidatorBase {
     protected ModelValidator buildModelValidator(MergeBlackBoard blackboard) {
       return new AttributeChecker(blackboard);
     }
-
   }
 
-  //FIXME Shouldnt this be covered by CoCos?
+  // FIXME Shouldnt this be covered by CoCos?
   protected void checkIfAttributeCalledLikeType(ASTCDDefinition classDiagram) {
     ASTCDHelper mergedCDHelper = getBlackBoard().getASTCDHelperMergedCD();
     for (ASTCDClass clazz : mergedCDHelper.getAllClasses()) {
@@ -32,17 +31,21 @@ public class AttributeChecker extends ModelValidatorBase {
         String attributeName = attr.getName();
         String typeName;
         if (attributeName.length() > 1) {
-          typeName = attributeName.substring(0, 1).toUpperCase() + attributeName.substring(1,
-              attributeName.length());
-        }
-        else {
+          typeName =
+              attributeName.substring(0, 1).toUpperCase()
+                  + attributeName.substring(1, attributeName.length());
+        } else {
           // Can't be 0...
           typeName = attributeName.substring(0, 1).toUpperCase();
         }
         if (mergedCDHelper.cdContainsType(typeName)) {
-          getBlackBoard().addLog(ErrorLevel.FINE,
-              "Attribute '" + attributeName + "' has the same name as a type (ignoring case).",
-              MergePhase.VALIDATION, clazz, mergedCDHelper.getType(typeName).get());
+          getBlackBoard()
+              .addLog(
+                  ErrorLevel.FINE,
+                  "Attribute '" + attributeName + "' has the same name as a type (ignoring case).",
+                  MergePhase.VALIDATION,
+                  clazz,
+                  mergedCDHelper.getType(typeName).get());
         }
       }
     }
@@ -52,5 +55,4 @@ public class AttributeChecker extends ModelValidatorBase {
   public void apply(ASTCDDefinition classDiagram) {
     checkIfAttributeCalledLikeType(classDiagram);
   }
-
 }

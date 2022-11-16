@@ -5,12 +5,10 @@ import de.monticore.cdassociation._ast.ASTCDAssocTypeAssoc;
 import de.monticore.cdassociation._ast.ASTCDAssocTypeComp;
 import de.monticore.cdassociation._symboltable.SymAssociationBuilder;
 
-public class CDAssocTypeForSymAssociationVisitor
-    implements CDAssociationVisitor2 {
+public class CDAssocTypeForSymAssociationVisitor implements CDAssociationVisitor2 {
   protected SymAssociationBuilder symAssociation;
 
-  public CDAssocTypeForSymAssociationVisitor() {
-  }
+  public CDAssocTypeForSymAssociationVisitor() {}
 
   public CDAssocTypeForSymAssociationVisitor(SymAssociationBuilder symAssociation) {
     this.symAssociation = symAssociation;
@@ -20,7 +18,8 @@ public class CDAssocTypeForSymAssociationVisitor
     return symAssociation;
   }
 
-  public CDAssocTypeForSymAssociationVisitor setSymAssociation(SymAssociationBuilder symAssociation) {
+  public CDAssocTypeForSymAssociationVisitor setSymAssociation(
+      SymAssociationBuilder symAssociation) {
     this.symAssociation = symAssociation;
     return this;
   }

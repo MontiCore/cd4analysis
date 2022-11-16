@@ -4,10 +4,8 @@ package de.monticore.cdinterfaceandenum.cocos;
 import de.monticore.cd.cocos.CoCoParent;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumCoCoChecker;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
-import de.monticore.cd4codebasis.cocos.ebnf.CD4CodeEnumConstantParameterMatchConstructorArguments;
 
-public class CDInterfaceAndEnumCoCos
-    extends CoCoParent<CDInterfaceAndEnumCoCoChecker> {
+public class CDInterfaceAndEnumCoCos extends CoCoParent<CDInterfaceAndEnumCoCoChecker> {
   @Override
   public CDInterfaceAndEnumCoCoChecker createNewChecker() {
     return new CDInterfaceAndEnumCoCoChecker();
@@ -32,6 +30,5 @@ public class CDInterfaceAndEnumCoCos
     checker.addCoCo(new CDEnumConstantUnique());
   }
 
-  protected void addMcgCoCos(CDInterfaceAndEnumCoCoChecker checker) {
-  }
+  protected void addMcgCoCos(CDInterfaceAndEnumCoCoChecker checker) {}
 }

@@ -16,21 +16,18 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy.DefaultInhrStrategy;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.odbasis._ast.ASTODArtifact;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * this class Convert a class diagram into SMT using three different Strategies
- * a class-strategy to convert classes and interface
- * an association-strategy to Convert Association
- * an inheritance-strategy to convert inheritance
+ * this class Convert a class diagram into SMT using three different Strategies a class-strategy to
+ * convert classes and interface an association-strategy to Convert Association an
+ * inheritance-strategy to convert inheritance
  */
 public class CD2SMTGenerator implements ClassData, AssociationsData, InheritanceData {
 
@@ -38,36 +35,42 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   private final ClassStrategy classStrategy = new DistinctSort();
   private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy();
   private final AssociationStrategy associationStrategy = new DefaultAssocStrategy();
-  private DataWrapper dataWrapper ;
+  private DataWrapper dataWrapper;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
   private Context ctx;
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
     Solver solver = ctx.mkSolver();
-    inheritanceStrategy.getInheritanceConstraints().forEach(c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
-    associationStrategy.getAssociationsConstraints().forEach(c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
-    constraints.forEach(c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
+    inheritanceStrategy
+        .getInheritanceConstraints()
+        .forEach(
+            c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
+    associationStrategy
+        .getAssociationsConstraints()
+        .forEach(
+            c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
+    constraints.forEach(
+        c -> solver.assertAndTrack(c.getValue(), ctx.mkBoolConst(String.valueOf(c.getId()))));
     return solver;
   }
 
   /**
    * this function convert class diagram into SMT using the three different Strategies
    *
-   * @param ctx   the SMT Context
+   * @param ctx the SMT Context
    * @param astCd the class diagram to translate
    */
   public void cd2smt(ASTCDCompilationUnit astCd, Context ctx) {
     CDHelper.setAssociationsRoles(astCd);
     this.ctx = ctx;
     this.astCd = astCd;
-    //set All Associations Role
+    // set All Associations Role
     dataWrapper = new DataWrapper(classStrategy, associationStrategy, inheritanceStrategy, astCd);
     classStrategy.cd2smt(astCd, ctx);
 
     inheritanceStrategy.cd2smt(astCd, ctx, classStrategy);
 
     associationStrategy.cd2smt(astCd, ctx, classStrategy);
-
   }
 
   @Override
@@ -81,12 +84,14 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
+  public Expr<? extends Sort> getAttribute(
+      ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
     return dataWrapper.getAttribute(astCdType, attributeName, cDTypeExpr);
   }
 
   @Override
-  public BoolExpr evaluateLink(ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right) {
+  public BoolExpr evaluateLink(
+      ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right) {
     return dataWrapper.evaluateLink(association, left, right);
   }
 
@@ -96,7 +101,8 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public Expr<? extends Sort> getSuperInstance(ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
+  public Expr<? extends Sort> getSuperInstance(
+      ASTCDType objType, ASTCDType superType, Expr<? extends Sort> objExpr) {
     return dataWrapper.getSuperInstance(objType, superType, objExpr);
   }
 
@@ -114,21 +120,21 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   public Optional<ASTODArtifact> smt2od(Model model, Boolean partial, String odName) {
-    //get all objects
+    // get all objects
     Set<MinObject> minObjects = classStrategy.smt2od(model, partial);
-    //transform MinObject into SMTObjects
+    // transform MinObject into SMTObjects
     Set<SMTObject> objectSet2 = new HashSet<>();
     for (MinObject entry : minObjects) {
       objectSet2.add(new SMTObject(entry));
     }
 
-    //get the superclass instances
+    // get the superclass instances
     objectSet2 = inheritanceStrategy.smt2od(model, objectSet2);
 
-    //get link between Objects
+    // get link between Objects
     objectSet2 = associationStrategy.smt2od(model, objectSet2);
 
-    ////remove the subclass instances and their links and Interface  objects
+    //// remove the subclass instances and their links and Interface  objects
     Set<SMTObject> objectSet = new HashSet<>();
     for (SMTObject entry : objectSet2) {
       if (!entry.isAbstract()) {
@@ -137,13 +143,4 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
     }
     return smt2ODGenerator.buildOd(objectSet, odName, model);
   }
-
 }
-
-
-
-
-
-
-
-

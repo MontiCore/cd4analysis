@@ -10,23 +10,22 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.util.CDUtils;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Test;
 
 public class GeneralOffice extends BaseTest {
 
-  private static final String INPUT_MODEL_1 = "src/cdmergetest/resources/class_diagrams/General"
-      + "/office/A.cd";
+  private static final String INPUT_MODEL_1 =
+      "src/cdmergetest/resources/class_diagrams/General" + "/office/A.cd";
 
-  private static final String INPUT_MODEL_2 = "src/cdmergetest/resources/class_diagrams/General"
-      + "/office/B.cd";
+  private static final String INPUT_MODEL_2 =
+      "src/cdmergetest/resources/class_diagrams/General" + "/office/B.cd";
 
-  private static final String EXPECTED = "src/cdmergetest/resources/class_diagrams/General/office"
-      + "/mergedCD.cd";
+  private static final String EXPECTED =
+      "src/cdmergetest/resources/class_diagrams/General/office" + "/mergedCD.cd";
 
   @Test
   public void testOffice() throws IOException, MergingException {
@@ -39,15 +38,15 @@ public class GeneralOffice extends BaseTest {
     processResult(result);
     org.junit.Assert.assertTrue(
         parseCD(CDUtils.prettyPrint(result.getMergedCD().get())).deepEquals(expectedCD, false));
-
   }
 
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
-            MergeParameter.ON)
-        .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
-        .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES)
-        .withParam(MergeParameter.DISABLE_CONTEXT_CONDITIONS);
+    CDMergeConfig.Builder builder =
+        getConfigBuilder()
+            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
+            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD")
+            .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES)
+            .withParam(MergeParameter.DISABLE_CONTEXT_CONDITIONS);
 
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
@@ -55,5 +54,4 @@ public class GeneralOffice extends BaseTest {
     }
     return builder.build();
   }
-
 }

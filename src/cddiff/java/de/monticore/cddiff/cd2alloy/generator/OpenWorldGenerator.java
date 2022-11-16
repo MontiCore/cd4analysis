@@ -8,7 +8,6 @@ import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,37 +18,57 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     return new OpenWorldGenerator();
   }
 
-  protected OpenWorldGenerator() {
-
-  }
+  protected OpenWorldGenerator() {}
 
   @Override
   public String createGenericPart() {
-    return super.createGenericPart() + System.lineSeparator()
+    return super.createGenericPart()
+        + System.lineSeparator()
 
         // additional signature
-        + "abstract sig Enum {values: set EnumVal}" + System.lineSeparator()
+        + "abstract sig Enum {values: set EnumVal}"
+        + System.lineSeparator()
         + System.lineSeparator()
 
         // additional facts
-        + "fact NonEmptyInstancesOnly {" + System.lineSeparator() + " some Obj"
-        + System.lineSeparator() + "}" + System.lineSeparator() + System.lineSeparator()
-        + "fact InstancesOfTypes {" + System.lineSeparator()
-        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}" + System.lineSeparator()
-        + System.lineSeparator() + "fact NoCyclicalInheritance {" + System.lineSeparator()
+        + "fact NonEmptyInstancesOnly {"
+        + System.lineSeparator()
+        + " some Obj"
+        + System.lineSeparator()
+        + "}"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "fact InstancesOfTypes {"
+        + System.lineSeparator()
+        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "fact NoCyclicalInheritance {"
+        + System.lineSeparator()
         + " all t1: Type | all t2: Type | {t2 in t1.super} && {t1 in t2.super} => {t1 = t2}}"
-        + System.lineSeparator() + System.lineSeparator() + "fact ReflexiveTransitiveInheritance {"
-        + System.lineSeparator() + " all t1: Type | t1 in t1.super" + System.lineSeparator()
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "fact ReflexiveTransitiveInheritance {"
+        + System.lineSeparator()
+        + " all t1: Type | t1 in t1.super"
+        + System.lineSeparator()
         + " all t1: Type | all t2: Type | {t2 in t1.super} => {t2.super in t1.super}}"
-        + System.lineSeparator() + System.lineSeparator() + "fact GetConsistency {"
+        + System.lineSeparator()
+        + System.lineSeparator()
+        + "fact GetConsistency {"
         + System.lineSeparator()
         + " all src: Obj | all q : FName | src.get[q] in EnumVal => {some e:Enum | ObjAttrib[src"
-        + ".type.inst,q,e.values]}" + System.lineSeparator()
+        + ".type.inst,q,e.values]}"
+        + System.lineSeparator()
         + " all src: Obj | all q : FName | src.get[q] in Val => {some v:Val | ObjAttrib[src.type"
-        + ".inst,q,v]}" + System.lineSeparator()
+        + ".inst,q,v]}"
+        + System.lineSeparator()
         + " all src: Obj | all q : FName | src.get[q] in Obj  => {some target : Type | all o : "
-        + "src.type.inst | o.get[q] in target.inst}" + System.lineSeparator() + "}"
-        + System.lineSeparator() + System.lineSeparator();
+        + "src.type.inst | o.get[q] in target.inst}"
+        + System.lineSeparator()
+        + "}"
+        + System.lineSeparator()
+        + System.lineSeparator();
   }
 
   @Override
@@ -59,8 +78,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     // Union of all Enums
     Set<ASTCDEnum> enumUnion = new HashSet<>();
     for (ASTCDCompilationUnit astcdCompilationUnit : asts) {
-      Set<ASTCDEnum> enumSet = new HashSet<>(
-          astcdCompilationUnit.getCDDefinition().getCDEnumsList());
+      Set<ASTCDEnum> enumSet =
+          new HashSet<>(astcdCompilationUnit.getCDDefinition().getCDEnumsList());
       enumUnion.addAll(enumSet);
     }
     // Union of all Enum Names
@@ -72,8 +91,10 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     for (ASTCDEnum e : enumUnion) {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
-        enumTypeNameUnion.add(CDDiffUtil.processQName(e.getSymbol().getFullName()) + "_"
-            + astcdEnumConstant.getName());
+        enumTypeNameUnion.add(
+            CDDiffUtil.processQName(e.getSymbol().getFullName())
+                + "_"
+                + astcdEnumConstant.getName());
       }
     }
 
@@ -88,7 +109,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     commonSigs.append(System.lineSeparator());
 
     for (String enumName : enumNameUnion) {
-      commonSigs.append("one sig ")
+      commonSigs
+          .append("one sig ")
           .append(enumName)
           .append(" extends Enum {}")
           .append(System.lineSeparator())
@@ -108,9 +130,7 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     return commonSigs.toString();
   }
 
-  /**
-   * additional rule for new semantics
-   */
+  /** additional rule for new semantics */
   @Override
   public String executeRuleP0(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
@@ -118,7 +138,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     // The set of all classes in the class diagram
     Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
 
-    classFunctions.append("// P0: New rule for multi-instance semantics. ")
+    classFunctions
+        .append("// P0: New rule for multi-instance semantics. ")
         .append(System.lineSeparator());
     for (ASTCDClass astcdClass : classes) {
 
@@ -131,7 +152,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
       // Output P0
       // Functions + Names
-      classFunctions.append("all c: ")
+      classFunctions
+          .append("all c: ")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append(" | c.type=Type_")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
@@ -139,7 +161,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
-        classFunctions.append("Type_")
+        classFunctions
+            .append("Type_")
             .append(CDDiffUtil.processQName(superType.getSymbol().getFullName()))
             .append(" in Type_")
             .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
@@ -157,7 +180,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
       // Output P0
       // Functions + Names
-      classFunctions.append("all i: ")
+      classFunctions
+          .append("all i: ")
           .append(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()))
           .append(" | i.type=Type_")
           .append(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()))
@@ -165,7 +189,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
       // All subclasses connected with a '+'
       for (ASTCDType superType : superList) {
-        classFunctions.append("Type_")
+        classFunctions
+            .append("Type_")
             .append(CDDiffUtil.processQName(superType.getSymbol().getFullName()))
             .append(" in Type_")
             .append(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()))
@@ -175,7 +200,6 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     }
 
     return classFunctions.toString();
-
   }
 
   @Override
@@ -194,13 +218,15 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     // The set of all classes in the class diagram
     Set<ASTCDClass> classes = new HashSet<>(cd.getCDDefinition().getCDClassesList());
 
-    classFunctions.append("// F1: Function returning all atoms of all subclasses of the class. ")
+    classFunctions
+        .append("// F1: Function returning all atoms of all subclasses of the class. ")
         .append(System.lineSeparator());
     for (ASTCDClass astcdClass : classes) {
 
       // Output F1
       // Functions + Names
-      classFunctions.append("fun ")
+      classFunctions
+          .append("fun ")
           .append(CDDiffUtil.processQName(astcdClass.getSymbol().getFullName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
@@ -226,14 +252,18 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     // The set of all classes in the class diagram
     Set<ASTCDInterface> interfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
 
-    interfaceFunctions.append(
-            "// F2: Function returning all atoms of all classes implementing " + "the interface" + ". ")
+    interfaceFunctions
+        .append(
+            "// F2: Function returning all atoms of all classes implementing "
+                + "the interface"
+                + ". ")
         .append(System.lineSeparator());
     for (ASTCDInterface astcdInterface : interfaces) {
 
       // Output F1
       // Functions + Names
-      interfaceFunctions.append("fun ")
+      interfaceFunctions
+          .append("fun ")
           .append(CDDiffUtil.processQName(astcdInterface.getSymbol().getFullName()))
           .append("SubsCD")
           .append(cd.getCDDefinition().getName())
@@ -265,11 +295,12 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
     Set<ASTCDEnum> enums = new HashSet<>(cdDefinition.getCDEnumsList());
 
     // Comment for F3 rule
-    classFunctions.append(
-            "// F3: Functions returning all possible enum values for all enums in the CD. ")
+    classFunctions
+        .append("// F3: Functions returning all possible enum values for all enums in the CD. ")
         .append(System.lineSeparator());
     for (ASTCDEnum e : enums) {
-      classFunctions.append("fun ")
+      classFunctions
+          .append("fun ")
           .append(CDDiffUtil.processQName(e.getSymbol().getFullName()))
           .append("EnumCD")
           .append(cdDefinition.getName())
@@ -286,5 +317,4 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
   public String executeRuleP4(ASTCDCompilationUnit cd) {
     return "";
   }
-
 }

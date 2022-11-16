@@ -29,7 +29,7 @@ public class CDAssociationFullPrettyPrinter {
   protected CDBasisPrettyPrinter cdBasis;
   protected CDAssociationPrettyPrinter cdAssoc;
 
-  public CDAssociationFullPrettyPrinter(IndentPrinter printer){
+  public CDAssociationFullPrettyPrinter(IndentPrinter printer) {
     this.traverser = CDAssociationMill.traverser();
     this.printer = printer;
 
@@ -130,12 +130,13 @@ public class CDAssociationFullPrettyPrinter {
     return getPrinter().getContent();
   }
 
-  public String prettyprint(ASTCDAssociationNode node){
+  public String prettyprint(ASTCDAssociationNode node) {
     getPrinter().clearBuffer();
     node.accept(getTraverser());
     return getPrinter().getContent();
   }
-  public String prettyprint(ASTCDAssociation node){
+
+  public String prettyprint(ASTCDAssociation node) {
     getPrinter().clearBuffer();
     node.accept(getTraverser());
     return getPrinter().getContent();

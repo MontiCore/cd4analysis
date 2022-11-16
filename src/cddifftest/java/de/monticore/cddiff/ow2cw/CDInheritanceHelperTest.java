@@ -12,19 +12,18 @@ import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
   @Test
   public void testIsNewSuper() {
-    ASTCDCompilationUnit lecture1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
+    ASTCDCompilationUnit lecture1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture1);
 
@@ -34,15 +33,15 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
     subList.add("PostDoc");
     subList.add("Professor");
 
-    ASTMCObjectType newSuper = MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
-        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Presenting"))
-        .build();
+    ASTMCObjectType newSuper =
+        MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Presenting"))
+            .build();
 
     for (ASTCDClass targetClass : lecture1.getCDDefinition().getCDClassesList()) {
       if (subList.stream().anyMatch(superType -> targetClass.getName().equals(superType))) {
         Assert.assertFalse(CDInheritanceHelper.isNewSuper(newSuper, targetClass, scope1));
-      }
-      else {
+      } else {
         Assert.assertTrue(CDInheritanceHelper.isNewSuper(newSuper, targetClass, scope1));
       }
     }
@@ -50,8 +49,7 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
     for (ASTCDInterface targetInterface : lecture1.getCDDefinition().getCDInterfacesList()) {
       if (subList.stream().anyMatch(superType -> targetInterface.getName().equals(superType))) {
         Assert.assertFalse(CDInheritanceHelper.isNewSuper(newSuper, targetInterface, scope1));
-      }
-      else {
+      } else {
         Assert.assertTrue(CDInheritanceHelper.isNewSuper(newSuper, targetInterface, scope1));
       }
     }
@@ -59,8 +57,8 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
   @Test
   public void testInducesNoInheritanceCycle() {
-    ASTCDCompilationUnit lecture1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
+    ASTCDCompilationUnit lecture1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture1);
 
@@ -69,16 +67,16 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
     superList.add("Person");
     superList.add("Professor");
 
-    ASTMCObjectType newSuper = MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
-        .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Professor"))
-        .build();
+    ASTMCObjectType newSuper =
+        MCBasicTypesMillForCD4Analysis.mCQualifiedTypeBuilder()
+            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Professor"))
+            .build();
 
     for (ASTCDClass targetClass : lecture1.getCDDefinition().getCDClassesList()) {
       if (superList.stream().anyMatch(superType -> targetClass.getName().equals(superType))) {
         Assert.assertFalse(
             CDInheritanceHelper.inducesNoInheritanceCycle(newSuper, targetClass, scope1));
-      }
-      else {
+      } else {
         Assert.assertTrue(
             CDInheritanceHelper.inducesNoInheritanceCycle(newSuper, targetClass, scope1));
       }
@@ -87,22 +85,27 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
   @Test
   public void testFindInSuper() {
-    ASTCDCompilationUnit cd1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+    ASTCDCompilationUnit cd1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd1);
 
     Optional<CDTypeSymbol> opt = scope1.resolveCDType("Truck");
 
-    opt.ifPresent(cdTypeSymbol -> Assert.assertTrue(CDInheritanceHelper.isAttributInSuper(
-        CDAttributeFacade.getInstance()
-            .createAttribute(CD4CodeMill.modifierBuilder().build(), "String", "licensePlate"),
-        cdTypeSymbol.getAstNode(), scope1)));
+    opt.ifPresent(
+        cdTypeSymbol ->
+            Assert.assertTrue(
+                CDInheritanceHelper.isAttributInSuper(
+                    CDAttributeFacade.getInstance()
+                        .createAttribute(
+                            CD4CodeMill.modifierBuilder().build(), "String", "licensePlate"),
+                    cdTypeSymbol.getAstNode(),
+                    scope1)));
   }
 
   @Test
   public void testGetAllSuper() {
-    ASTCDCompilationUnit lecture1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
+    ASTCDCompilationUnit lecture1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Lecture/Lecture1.cd");
 
     ICD4CodeArtifactScope scope1 = CD4CodeMill.scopesGenitorDelegator().createFromAST(lecture1);
 
@@ -124,15 +127,18 @@ public class CDInheritanceHelperTest extends CDDiffTestBasis {
 
   @Test
   public void testResolveClosestType() {
-    ASTCDCompilationUnit employees8 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
+    ASTCDCompilationUnit employees8 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees8.cd");
 
     ICD4CodeArtifactScope scope8 = CD4CodeMill.scopesGenitorDelegator().createFromAST(employees8);
-    scope8.resolveCDType("Manager")
-        .ifPresent(src -> Assert.assertEquals("ins.Employee",
-            CDInheritanceHelper.resolveClosestType(src.getAstNode(), "Employee", scope8)
-                .getSymbol()
-                .getFullName()));
+    scope8
+        .resolveCDType("Manager")
+        .ifPresent(
+            src ->
+                Assert.assertEquals(
+                    "ins.Employee",
+                    CDInheritanceHelper.resolveClosestType(src.getAstNode(), "Employee", scope8)
+                        .getSymbol()
+                        .getFullName()));
   }
-
 }

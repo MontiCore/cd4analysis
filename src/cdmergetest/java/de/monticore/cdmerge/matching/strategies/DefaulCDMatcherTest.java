@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.matching.strategies;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdmerge.BaseTest;
@@ -10,16 +13,12 @@ import de.monticore.cdmerge.matching.DefaultCDMatcher;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DefaulCDMatcherTest extends BaseTest {
 
@@ -56,8 +55,8 @@ public class DefaulCDMatcherTest extends BaseTest {
     this.typeMatcher = new DefaultTypeMatcher(blackBoard);
     this.attributeMatcher = new DefaultAttributeMatcher(blackBoard);
     this.associationMatcher = new DefaultAssociationMatcher(blackBoard);
-    this.testant = new DefaultCDMatcher(blackBoard, typeMatcher, attributeMatcher,
-        associationMatcher);
+    this.testant =
+        new DefaultCDMatcher(blackBoard, typeMatcher, attributeMatcher, associationMatcher);
   }
 
   @Test
@@ -80,20 +79,18 @@ public class DefaulCDMatcherTest extends BaseTest {
     for (MatchNode<ASTCDType, ASTCDDefinition> node : nodes) {
       assertTrue(node.getMatchedElements().size() == 0);
     }
-
   }
 
   @Test
   public void testFindAttributes() {
-    ASTMatchGraph<ASTCDAttribute, ASTCDClass> result = this.testant.findMatchingAttributes(
-        "Employee");
+    ASTMatchGraph<ASTCDAttribute, ASTCDClass> result =
+        this.testant.findMatchingAttributes("Employee");
     List<MatchNode<ASTCDAttribute, ASTCDClass>> nodes;
     nodes = result.findNodes(t -> t.getElement().getName().equals("emplNumber"));
     for (MatchNode<ASTCDAttribute, ASTCDClass> node : nodes) {
       assertTrue(node.getMatchedElements().size() == 1);
       assertTrue(node.getParent().getName().equals("Employee"));
     }
-
   }
 
   @Test
@@ -102,36 +99,42 @@ public class DefaulCDMatcherTest extends BaseTest {
         this.testant.findMatchingAssociations();
     List<MatchNode<ASTCDAssociation, ASTCDDefinition>> nodes;
 
-    nodes = result.findNodes(
-        t -> t.getElement().getRightQualifiedName().getBaseName().equals("Room"));
+    nodes =
+        result.findNodes(t -> t.getElement().getRightQualifiedName().getBaseName().equals("Room"));
     assertEquals("Find asscociations with right reference 'Room'", 5, nodes.size());
 
-    nodes = result.findNodes(
-        t -> t.getElement().getLeftQualifiedName().getBaseName().equals("Room"));
+    nodes =
+        result.findNodes(t -> t.getElement().getLeftQualifiedName().getBaseName().equals("Room"));
     assertEquals("Find asscociations with left reference 'Room'", 1, nodes.size());
-    assertEquals("Find asscociations with left reference 'Room'", 1,
+    assertEquals(
+        "Find asscociations with left reference 'Room'",
+        1,
         nodes.get(0).getMatchedElements().size());
 
-    nodes = result.findNodes(
-        t -> t.getElement().getLeftQualifiedName().toString().equals("Person"));
+    nodes =
+        result.findNodes(t -> t.getElement().getLeftQualifiedName().toString().equals("Person"));
     assertEquals("Find asscociations with left reference 'Person'", 2, nodes.size());
 
     // FIXME Fails in Maven
     // assertEquals("Find asscociations with left reference 'Person'", 1,
     // nodes.get(0).getMatchedElements().size());
 
-    nodes = result.findNodes(
-        t -> t.getElement().getRightQualifiedName().getBaseName().equals("Person"));
+    nodes =
+        result.findNodes(
+            t -> t.getElement().getRightQualifiedName().getBaseName().equals("Person"));
     assertEquals("Find asscociations with right reference 'Person'", 1, nodes.size());
-    assertEquals("Find asscociations with right reference 'Person'", 1,
+    assertEquals(
+        "Find asscociations with right reference 'Person'",
+        1,
         nodes.get(0).getMatchedElements().size());
 
-    nodes = result.findNodes(
-        t -> t.getElement().getLeftQualifiedName().getBaseName().equals("Department"));
+    nodes =
+        result.findNodes(
+            t -> t.getElement().getLeftQualifiedName().getBaseName().equals("Department"));
     assertEquals("Find asscociations with left reference 'Department'", 2, nodes.size());
-    assertEquals("Find asscociations with left reference 'Department'", 0,
+    assertEquals(
+        "Find asscociations with left reference 'Department'",
+        0,
         nodes.get(0).getMatchedElements().size());
-
   }
-
 }

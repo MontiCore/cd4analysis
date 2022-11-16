@@ -7,7 +7,6 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +34,7 @@ public abstract class CDElementDiff implements IElementDiff {
   public StringBuilder getInterpretation() {
     return interpretation;
   }
+
   @Override
   public void setInterpretation(StringBuilder builder) {
     this.interpretation = builder;
@@ -51,7 +51,7 @@ public abstract class CDElementDiff implements IElementDiff {
   }
 
   @Override
-  public void setInterpretationList(List<CDSyntaxDiff.Interpretation> newInterpretationList){
+  public void setInterpretationList(List<CDSyntaxDiff.Interpretation> newInterpretationList) {
     this.interpretationList = newInterpretationList;
   }
 
@@ -59,28 +59,29 @@ public abstract class CDElementDiff implements IElementDiff {
   public double getDiffSize() {
     return diffSize;
   }
+
   @Override
   public void addDiffSize(int value) {
     this.diffSize += value;
   }
+
   @Override
   public List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> getDiffList() {
     return diffList;
   }
-
 
   @Override
   public String combineWithoutNulls(List<String> stringList) {
     StringBuilder output = new StringBuilder();
 
     for (String field : stringList) {
-     // if (!(field == null) && field.length() > 8) {
-       if (!(field == null)) {
+      // if (!(field == null) && field.length() > 8) {
+      if (!(field == null)) {
         output.append(field).append(" ");
       }
     }
-    if (!stringList.isEmpty()){
-      return output.substring(0, output.length()-1);
+    if (!stringList.isEmpty()) {
+      return output.substring(0, output.length() - 1);
     }
     return output.toString();
   }
@@ -105,7 +106,7 @@ public abstract class CDElementDiff implements IElementDiff {
   }
 
   static double addWeightToDiffSize(
-    List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> diffList) {
+      List<ASTNodeDiff<? extends ASTNode, ? extends ASTNode>> diffList) {
     double size = 0.0;
     boolean foundSignatureNameDiff = false;
     int associationNameCounter = 0;
@@ -118,24 +119,27 @@ public abstract class CDElementDiff implements IElementDiff {
         ASTNode type = diff.getCd1Value().get();
 
         // CDMember / Fields
-        if (type instanceof ASTCDAttribute || type instanceof ASTCDConstructor || type instanceof ASTCDMethod
-          || type instanceof ASTCDParameter) {
+        if (type instanceof ASTCDAttribute
+            || type instanceof ASTCDConstructor
+            || type instanceof ASTCDMethod
+            || type instanceof ASTCDParameter) {
           size += 1;
         } else
 
-          // Main Signature Names
-          if (type instanceof ASTCDType) {
-            size += 2;
-            foundSignatureNameDiff = true;
-          } else
-            // Association participant names
-            if (type instanceof ASTMCQualifiedName) {
-              size += 1;
-              associationNameCounter += 1;
-            }
+        // Main Signature Names
+        if (type instanceof ASTCDType) {
+          size += 2;
+          foundSignatureNameDiff = true;
+        } else
+        // Association participant names
+        if (type instanceof ASTMCQualifiedName) {
+          size += 1;
+          associationNameCounter += 1;
+        }
       }
     }
-    // No namediff in current diff set -> Name is equal, asso counter is 0 only if both qualified names are equal
+    // No namediff in current diff set -> Name is equal, asso counter is 0 only if both qualified
+    // names are equal
     if ((!foundSignatureNameDiff) && (associationNameCounter == 0)) {
       size -= 2;
     }

@@ -13,7 +13,6 @@ import de.monticore.types.check.AbstractDerive;
 import de.monticore.types.check.AbstractSynthesize;
 import de.monticore.types.check.FullSynthesizeFromMCBasicTypes;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -38,10 +37,26 @@ public class CDSymbolTableHelper {
   }
 
   public CDSymbolTableHelper(AbstractDerive typeDeriver, AbstractSynthesize typeSynthesizer) {
-    this(new CDBasisFullPrettyPrinter(), typeDeriver, typeSynthesizer, CDMill.modifierHandler(), new CDAssociationNavigableVisitor(), new CDAssocTypeForSymAssociationVisitor(), new Stack<>(), new HashMap<>());
+    this(
+        new CDBasisFullPrettyPrinter(),
+        typeDeriver,
+        typeSynthesizer,
+        CDMill.modifierHandler(),
+        new CDAssociationNavigableVisitor(),
+        new CDAssocTypeForSymAssociationVisitor(),
+        new Stack<>(),
+        new HashMap<>());
   }
 
-  public CDSymbolTableHelper(CDBasisFullPrettyPrinter prettyPrinter, AbstractDerive typeDeriver, AbstractSynthesize typeSynthesizer, ModifierHandler modifierHandler, CDAssociationNavigableVisitor navigableVisitor, CDAssocTypeForSymAssociationVisitor assocTypeVisitor, Stack<String> cdTypeStack, Map<CDRoleSymbol, TypeSymbol> handledRoles) {
+  public CDSymbolTableHelper(
+      CDBasisFullPrettyPrinter prettyPrinter,
+      AbstractDerive typeDeriver,
+      AbstractSynthesize typeSynthesizer,
+      ModifierHandler modifierHandler,
+      CDAssociationNavigableVisitor navigableVisitor,
+      CDAssocTypeForSymAssociationVisitor assocTypeVisitor,
+      Stack<String> cdTypeStack,
+      Map<CDRoleSymbol, TypeSymbol> handledRoles) {
     this.prettyPrinter = prettyPrinter;
     this.typeDeriver = typeDeriver;
     this.typeSynthesizer = typeSynthesizer;
@@ -94,12 +109,14 @@ public class CDSymbolTableHelper {
     return this;
   }
 
-  public CDAssocTypeForSymAssociationVisitor getAssocTypeVisitor(SymAssociationBuilder symAssociation) {
+  public CDAssocTypeForSymAssociationVisitor getAssocTypeVisitor(
+      SymAssociationBuilder symAssociation) {
     assocTypeVisitor.setSymAssociation(symAssociation);
     return assocTypeVisitor;
   }
 
-  public CDSymbolTableHelper setAssocTypeVisitor(CDAssocTypeForSymAssociationVisitor assocTypeVisitor) {
+  public CDSymbolTableHelper setAssocTypeVisitor(
+      CDAssocTypeForSymAssociationVisitor assocTypeVisitor) {
     this.assocTypeVisitor = assocTypeVisitor;
     return this;
   }
@@ -151,5 +168,4 @@ public class CDSymbolTableHelper {
   public TypeSymbol removeFromHandledAssociations(CDRoleSymbol symbol) {
     return this.handledRoles.remove(symbol);
   }
-
 }

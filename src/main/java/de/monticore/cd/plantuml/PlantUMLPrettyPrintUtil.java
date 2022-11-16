@@ -5,7 +5,6 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.prettyprint.IndentPrinter;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -63,7 +62,8 @@ public class PlantUMLPrettyPrintUtil extends PrettyPrintUtil {
     if (plantUMLConfig.getShowComments()) {
       // TODO SVa: check if namestack contains something -> use it for connectsTo
 
-      PlantUMLCommentPrinter.printCommentToNote(node, Optional.of(connectTo), getPlantUMLConfig(), getPrinter());
+      PlantUMLCommentPrinter.printCommentToNote(
+          node, Optional.of(connectTo), getPlantUMLConfig(), getPrinter());
     }
   }
 

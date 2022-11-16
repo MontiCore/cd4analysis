@@ -6,7 +6,6 @@ import de.monticore.cdmerge.config.CDMergeConfig;
 import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -17,8 +16,8 @@ public class CDMerge {
     return merge(inputs, "Merge", new HashSet<>());
   }
 
-  public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs, String name,
-      Set<MergeParameter> mergeParameters) {
+  public static ASTCDCompilationUnit merge(
+      Set<ASTCDCompilationUnit> inputs, String name, Set<MergeParameter> mergeParameters) {
 
     Optional<ASTCDCompilationUnit> optAST;
 
@@ -38,8 +37,7 @@ public class CDMerge {
         return optAST.get();
       }
 
-    }
-    catch (MergingException e) {
+    } catch (MergingException e) {
       Log.error(e.getMessage());
       return null;
     }
@@ -47,12 +45,13 @@ public class CDMerge {
     return null;
   }
 
-  private static CDMergeConfig getConfig(Set<ASTCDCompilationUnit> inputModels, String name,
-      Set<MergeParameter> mergeParameters) {
-    CDMergeConfig.Builder builder = new CDMergeConfig.Builder(false).withParam(
-            MergeParameter.AST_BASED)
-        .withParam(MergeParameter.OUTPUT_NAME, name)
-        .withParam(MergeParameter.LOG_SILENT);
+  private static CDMergeConfig getConfig(
+      Set<ASTCDCompilationUnit> inputModels, String name, Set<MergeParameter> mergeParameters) {
+    CDMergeConfig.Builder builder =
+        new CDMergeConfig.Builder(false)
+            .withParam(MergeParameter.AST_BASED)
+            .withParam(MergeParameter.OUTPUT_NAME, name)
+            .withParam(MergeParameter.LOG_SILENT);
 
     mergeParameters.forEach(builder::withParam);
 
@@ -62,5 +61,4 @@ public class CDMerge {
     }
     return builder.build();
   }
-
 }

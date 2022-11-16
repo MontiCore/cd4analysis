@@ -46,9 +46,6 @@ import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.cli.*;
-import org.apache.commons.io.FileUtils;
-
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -56,6 +53,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
 
 public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
@@ -113,8 +112,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
         if (modelFile != null) {
           ast = parse(modelFile);
-        }
-        else {
+        } else {
           ast = parse(modelReader);
         }
 
@@ -139,8 +137,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         // don't output to stdout when the prettyprint is output to stdout
         final boolean doPrintToStdOut = !(cmd.hasOption("pp") && cmd.getOptionValue("pp") == null);
 
-        boolean defaultPackage = cmd.hasOption("defaultpackage") && Boolean.parseBoolean(
-            cmd.getOptionValue("defaultpackage", "true"));
+        boolean defaultPackage =
+            cmd.hasOption("defaultpackage")
+                && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
         if (defaultPackage) {
           final CD4CodeTraverser traverser = CD4CodeMill.traverser();
           final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
@@ -173,7 +172,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         boolean useBuiltInTypes = !cmd.hasOption("nt");
 
         // create a symbol table with provided model paths
-        String[] modelPath = { "." };
+        String[] modelPath = {"."};
         if (cmd.hasOption("path")) {
           modelPath = cmd.getOptionValues("path");
         }
@@ -207,23 +206,27 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           runGeneratorCoCo();
 
           switch (cmd.getOptionValue("fieldfromrole")) {
-            case "all": { // add FieldSymbols for all the CDRoleSymbols
-              final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
-                  new CDAssociationCreateFieldsFromAllRoles();
-              final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
-              traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
-              traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
-              cdAssociationCreateFieldsFromAllRoles.transform(ast);
-              break;
-            }
-            case "navigable": { // add FieldSymbols only for navigable CDRoleSymbols
-              final CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromNavigableRoles = new CDAssociationCreateFieldsFromNavigableRoles();
-              final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
-              traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
-              traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
-              cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
-              break;
-            }
+            case "all":
+              { // add FieldSymbols for all the CDRoleSymbols
+                final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
+                    new CDAssociationCreateFieldsFromAllRoles();
+                final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+                traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+                traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+                cdAssociationCreateFieldsFromAllRoles.transform(ast);
+                break;
+              }
+            case "navigable":
+              { // add FieldSymbols only for navigable CDRoleSymbols
+                final CDAssociationCreateFieldsFromNavigableRoles
+                    cdAssociationCreateFieldsFromNavigableRoles =
+                        new CDAssociationCreateFieldsFromNavigableRoles();
+                final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+                traverser.add4CDAssociation(cdAssociationCreateFieldsFromNavigableRoles);
+                traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromNavigableRoles);
+                cdAssociationCreateFieldsFromNavigableRoles.transform(ast);
+                break;
+              }
             case "none":
             default:
               // do nothing
@@ -233,8 +236,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         if (doPrintToStdOut) {
           if (Log.getErrorCount() == 0) {
             System.out.printf(CHECK_SUCCESSFUL, modelName);
-          }
-          else {
+          } else {
             System.out.println(CHECK_ERROR);
             return;
           }
@@ -247,14 +249,15 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           if (targetFile == null) {
             if (modelFile != null) {
               symbolPath = Paths.get(Names.getQualifier(modelFile) + ".cdsym");
+            } else {
+              symbolPath =
+                  Paths.get(
+                      Names.getPathFromPackage(artifactScope.getRealPackageName())
+                          + File.separator
+                          + modelName
+                          + ".cdsym");
             }
-            else {
-              symbolPath = Paths.get(
-                  Names.getPathFromPackage(artifactScope.getRealPackageName()) + File.separator
-                      + modelName + ".cdsym");
-            }
-          }
-          else {
+          } else {
             symbolPath = Paths.get(targetFile);
           }
           storeSymbols(artifactScope, symbolPath.toString());
@@ -285,10 +288,11 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           GeneratorSetup generatorSetup = new GeneratorSetup();
 
           if (cmd.hasOption("fp")) { // Template path
-            generatorSetup.setAdditionalTemplatePaths(Arrays.stream(cmd.getOptionValues("fp"))
-                .map(Paths::get)
-                .map(Path::toFile)
-                .collect(Collectors.toList()));
+            generatorSetup.setAdditionalTemplatePaths(
+                Arrays.stream(cmd.getOptionValues("fp"))
+                    .map(Paths::get)
+                    .map(Path::toFile)
+                    .collect(Collectors.toList()));
           }
 
           if (cmd.hasOption("hwc")) {
@@ -320,29 +324,23 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
             writer.close();
           }
           System.out.printf(JSON_SUCCESSFUL, filename);
-
         }
-
       }
-    }
-    catch (AmbiguousOptionException e) {
+    } catch (AmbiguousOptionException e) {
       Log.error(String.format("0xCD0E2: option '%s' can't match any valid option", e.getOption()));
-    }
-    catch (UnrecognizedOptionException e) {
+    } catch (UnrecognizedOptionException e) {
       Log.error(String.format("0xCD0E3: unrecognized option '%s'", e.getOption()));
-    }
-    catch (MissingOptionException e) {
-      Log.error(String.format("0xCD0E4: options [%s] are missing, but are required",
-          Joiners.COMMA.join(e.getMissingOptions())));
-    }
-    catch (MissingArgumentException e) {
+    } catch (MissingOptionException e) {
+      Log.error(
+          String.format(
+              "0xCD0E4: options [%s] are missing, but are required",
+              Joiners.COMMA.join(e.getMissingOptions())));
+    } catch (MissingArgumentException e) {
       Log.error(String.format("0xCD0E5: option '%s' is missing an argument", e.getOption()));
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       Log.error(
           "0xCD0E6: options --diffsize and --difflimit each require an " + "integer as argument");
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       Log.error(String.format("0xCD0E7: an error occurred: %s", e.getMessage()));
     }
   }
@@ -366,18 +364,17 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     if (cmd.hasOption("h")) {
       if (cmd.hasOption("puml")) {
         printHelp(CDToolOptions.SubCommand.PLANTUML);
-      }
-      else {
+      } else {
         printHelp((CDToolOptions.SubCommand) null);
       }
       return false;
-    }
-    else {
+    } else {
 
       if (!cmd.hasOption("i") && !cmd.hasOption("stdin")) {
         printHelp((CDToolOptions.SubCommand) null);
-        Log.error(String.format("0xCD014: option '%s' is missing, but an input is required",
-            "[i, stdin]"));
+        Log.error(
+            String.format(
+                "0xCD014: option '%s' is missing, but an input is required", "[i, stdin]"));
         return false;
       }
 
@@ -390,8 +387,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           System.out.printf(INPUT_FILE_NOT_EXISTENT, modelFile);
           return false;
         }
-      }
-      else {
+      } else {
         modelReader = new BufferedReader(new InputStreamReader(System.in));
       }
 
@@ -408,8 +404,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         return optAst.get();
       }
       Log.error("0xCD0E0 Model could not be parsed.");
-    }
-    catch (NullPointerException | java.io.IOException e) {
+    } catch (NullPointerException | java.io.IOException e) {
       Log.error("0xCD0E1 Failed to parse from stdin", e);
     }
     // should never be reached (unless failquick is off)
@@ -431,8 +426,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     if (modelFile != null) {
       sb.append("File ").append(modelFile).append(" parsed:\n");
-    }
-    else {
+    } else {
       sb.append("Model ").append(modelName).append(" parsed:\n");
     }
 
@@ -447,61 +441,69 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     sb.append("\nClasses (")
         .append(cdClassesList.size())
         .append("): [")
-        .append(Joiners.COMMA.join(
-            cdClassesList.stream().map(ASTCDClass::getName).collect(Collectors.toList())))
+        .append(
+            Joiners.COMMA.join(
+                cdClassesList.stream().map(ASTCDClass::getName).collect(Collectors.toList())))
         .append("]");
 
     final List<ASTCDInterface> cdInterfacesList = ast.getCDDefinition().getCDInterfacesList();
     sb.append("\nInterface (")
         .append(cdInterfacesList.size())
         .append("): [")
-        .append(Joiners.COMMA.join(
-            cdInterfacesList.stream().map(ASTCDInterface::getName).collect(Collectors.toList())))
+        .append(
+            Joiners.COMMA.join(
+                cdInterfacesList.stream()
+                    .map(ASTCDInterface::getName)
+                    .collect(Collectors.toList())))
         .append("]");
 
     final List<ASTCDEnum> cdEnumsList = ast.getCDDefinition().getCDEnumsList();
     sb.append("\nEnum (")
         .append(cdEnumsList.size())
         .append("): [")
-        .append(Joiners.COMMA.join(
-            cdEnumsList.stream().map(ASTCDEnum::getName).collect(Collectors.toList())))
+        .append(
+            Joiners.COMMA.join(
+                cdEnumsList.stream().map(ASTCDEnum::getName).collect(Collectors.toList())))
         .append("]");
 
     final List<ASTCDAssociation> cdAssociationsList = ast.getCDDefinition().getCDAssociationsList();
     sb.append("\nAssociations (")
         .append(cdAssociationsList.size())
         .append("): [")
-        .append(Joiners.COMMA.join(cdAssociationsList.stream().map(a -> {
-          final String name;
-          if (a.isPresentName()) {
-            name = a.getName();
-          }
-          else {
-            name = a.getPrintableName();
-          }
-          return name;
-        }).collect(Collectors.toList())))
+        .append(
+            Joiners.COMMA.join(
+                cdAssociationsList.stream()
+                    .map(
+                        a -> {
+                          final String name;
+                          if (a.isPresentName()) {
+                            name = a.getName();
+                          } else {
+                            name = a.getPrintableName();
+                          }
+                          return name;
+                        })
+                    .collect(Collectors.toList())))
         .append("]");
 
     final Path allElementsPath = Paths.get(path, REPORT_NAME + "." + modelName);
     if (Files.notExists(allElementsPath.getParent())) {
       try {
         Files.createDirectories(allElementsPath.getParent());
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         e.printStackTrace();
         return;
       }
     }
     try (PrintWriter out = new PrintWriter(allElementsPath.toFile())) {
       out.println(sb);
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
       return;
     }
 
-    System.out.printf(REPORT_SUCCESSFUL,
+    System.out.printf(
+        REPORT_SUCCESSFUL,
         Joiners.COMMA.join(Collections.singletonList(unifyPath(allElementsPath))));
   }
 
@@ -519,17 +521,14 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ast.accept(cd4CodeFullPrettyPrinter.getTraverser());
     if (ppTarget == null) {
       System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
-    }
-    else {
+    } else {
       final Path outputPath;
       if (Paths.get(ppTarget).isAbsolute()) {
         outputPath = Paths.get(ppTarget);
-      }
-      else {
+      } else {
         if (this.outputPath.isEmpty()) {
           outputPath = Paths.get(ppTarget);
-        }
-        else {
+        } else {
           outputPath = Paths.get(this.outputPath, ppTarget);
         }
       }
@@ -539,10 +538,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       }
       try {
         // Write results into a file
-        FileUtils.writeStringToFile(file, cd4CodeFullPrettyPrinter.getPrinter().getContent(),
-            Charset.defaultCharset());
-      }
-      catch (IOException e) {
+        FileUtils.writeStringToFile(
+            file, cd4CodeFullPrettyPrinter.getPrinter().getContent(), Charset.defaultCharset());
+      } catch (IOException e) {
         System.out.println(cd4CodeFullPrettyPrinter.getPrinter().getContent());
         System.out.printf(FILE_CREATION_ERROR, file.getAbsolutePath());
       }
@@ -551,9 +549,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   }
 
   protected String createPlantUML(CommandLine plantUMLCmd, String outputPath) throws IOException {
-    final String output = Paths.get(outputPath, cmd.getOptionValue("puml", modelName))
-        .toUri()
-        .getPath();
+    final String output =
+        Paths.get(outputPath, cmd.getOptionValue("puml", modelName)).toUri().getPath();
 
     final PlantUMLConfig plantUMLConfig = new PlantUMLConfig();
 
@@ -591,12 +588,15 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
 
     if (plantUMLCmd.hasOption("svg")) {
-      return PlantUMLUtil.printCD2PlantUMLLocally(Optional.ofNullable(ast),
-          output.endsWith(".svg") ? output : output + ".svg", plantUMLConfig);
-    }
-    else {
-      return PlantUMLUtil.printCD2PlantUMLModelFileLocally(Optional.ofNullable(ast),
-          output.endsWith(".puml") ? output : output + ".puml", plantUMLConfig);
+      return PlantUMLUtil.printCD2PlantUMLLocally(
+          Optional.ofNullable(ast),
+          output.endsWith(".svg") ? output : output + ".svg",
+          plantUMLConfig);
+    } else {
+      return PlantUMLUtil.printCD2PlantUMLModelFileLocally(
+          Optional.ofNullable(ast),
+          output.endsWith(".puml") ? output : output + ".puml",
+          plantUMLConfig);
     }
   }
 
@@ -609,10 +609,14 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(110);
     formatter.printHelp(
-        "Examples in case the Tool file is called MCCD.jar: " + System.lineSeparator()
+        "Examples in case the Tool file is called MCCD.jar: "
+            + System.lineSeparator()
             + "java -jar MCCD.jar -i Person.cd --path target:src/models -o target/out -t true -s"
-            + System.lineSeparator() + "java -jar MCCD.jar -i src/Person.cd -pp target/Person.cd"
-            + System.lineSeparator() + "", cdToolOptionsForHelp.getOptions());
+            + System.lineSeparator()
+            + "java -jar MCCD.jar -i src/Person.cd -pp target/Person.cd"
+            + System.lineSeparator()
+            + "",
+        cdToolOptionsForHelp.getOptions());
 
     if (subCommand != null) {
       formatter.printHelp(subCommand.toString(), cdToolOptionsForHelp.getOptions(subCommand));
@@ -653,12 +657,19 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     if (cmd.hasOption("rule-based")) {
       CDDiff.computeSyntax2SemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
-    }
-    else {
-      boolean reductionBased = !(cmd.hasOption("open-world") && cmd.getOptionValue("open-world",
-          "reduction-based").equals("alloy-based"));
-      CDDiff.computeAlloySemDiff(ast1, ast2, outputPath, diffsize, difflimit, openWorld,
-          reductionBased, cmd.hasOption("o"));
+    } else {
+      boolean reductionBased =
+          !(cmd.hasOption("open-world")
+              && cmd.getOptionValue("open-world", "reduction-based").equals("alloy-based"));
+      CDDiff.computeAlloySemDiff(
+          ast1,
+          ast2,
+          outputPath,
+          diffsize,
+          difflimit,
+          openWorld,
+          reductionBased,
+          cmd.hasOption("o"));
     }
   }
 
@@ -675,12 +686,10 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
       return;
     }
 
-
     // use fully qualified names for attributes and associations
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CDFullNameTrafo().transform(ast1);
     new CDFullNameTrafo().transform(ast2);
-
 
     ast1 = ast1.deepClone();
     ast2 = ast2.deepClone();
@@ -718,9 +727,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
   }
 
-  /**
-   * perform merge of 2 CDs
-   */
+  /** perform merge of 2 CDs */
   public void mergeCDs() {
     Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
 
@@ -740,8 +747,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast2)).get());
 
     String cdName = "Merge.cd";
-    if (cmd.hasOption("pp") && cmd.getOptionValue("pp") != null && cmd.getOptionValue("pp")
-        .endsWith(".cd")) {
+    if (cmd.hasOption("pp")
+        && cmd.getOptionValue("pp") != null
+        && cmd.getOptionValue("pp").endsWith(".cd")) {
       cdName = Path.of(cmd.getOptionValue("pp")).getFileName().toString();
     }
     cdName = cdName.substring(0, cdName.length() - 3);
@@ -750,15 +758,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     if (mergeResult != null) {
       ast = mergeResult;
-    }
-    else {
+    } else {
       Log.error("0xCDD16 Could not merge CDs.");
     }
   }
 
-  /**
-   * Additional CoCo-Check for Code-Generation
-   */
+  /** Additional CoCo-Check for Code-Generation */
   protected void runGeneratorCoCo() {
     CD4AnalysisCoCos generalCoCos = new CD4AnalysisCoCos();
     CD4AnalysisCoCoChecker checker = generalCoCos.createNewChecker();
@@ -773,7 +778,5 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
 
     CD4CodeTool tool = new CD4CodeTool();
     tool.run(args);
-
   }
-
 }

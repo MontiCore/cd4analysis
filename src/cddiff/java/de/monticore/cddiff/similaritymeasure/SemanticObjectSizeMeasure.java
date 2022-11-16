@@ -1,10 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.similaritymeasure;
 
-import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
-import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
+import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
+import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import java.util.Optional;
 
 /**
@@ -15,9 +14,7 @@ public class SemanticObjectSizeMeasure {
   // Parameter to specify the size of the search space
   int k;
 
-  /**
-   * Constructor for de.cddiff.similaritymeasure.measures.SemanticObjectSizeMeasure
-   */
+  /** Constructor for de.cddiff.similaritymeasure.measures.SemanticObjectSizeMeasure */
   public SemanticObjectSizeMeasure() {
     // TODO Set to better size or estimate it.
     this.k = 2;
@@ -66,5 +63,4 @@ public class SemanticObjectSizeMeasure {
     double yx = sizeDifference(y, x, k);
     return Math.max(xy, yx);
   }
-
 }

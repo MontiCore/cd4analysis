@@ -1,17 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.method.accessor;
 
-import de.monticore.cd.codegen.methods.accessor.MandatoryAccessorDecorator;
-import de.monticore.cd.facade.CDAttributeFacade;
-import de.monticore.cd4codebasis._ast.ASTCDMethod;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
-import de.monticore.generating.templateengine.GlobalExtensionManagement;
-import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
 import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
 import static de.monticore.cd.facade.CDModifier.PROTECTED;
@@ -19,10 +8,19 @@ import static de.monticore.cd.facade.CDModifier.PUBLIC;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import de.monticore.cd.codegen.methods.accessor.MandatoryAccessorDecorator;
+import de.monticore.cd.facade.CDAttributeFacade;
+import de.monticore.cd4codebasis._ast.ASTCDMethod;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.generating.templateengine.GlobalExtensionManagement;
+import de.se_rwth.commons.logging.LogStub;
+import java.util.List;
+import org.junit.Before;
+import org.junit.Test;
+
 public class MandatoryAccessorDecoratorTest {
 
   private final GlobalExtensionManagement glex = new GlobalExtensionManagement();
-
 
   @Before
   public void setup() {
@@ -31,7 +29,8 @@ public class MandatoryAccessorDecoratorTest {
 
   @Test
   public void testGetMethodString() {
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
 
     MandatoryAccessorDecorator mandatoryAccessorDecorator = new MandatoryAccessorDecorator(glex);
     List<ASTCDMethod> methods = mandatoryAccessorDecorator.decorate(attribute);
@@ -46,7 +45,8 @@ public class MandatoryAccessorDecoratorTest {
 
   @Test
   public void testGetMethodBoolean() {
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
     MandatoryAccessorDecorator mandatoryAccessorDecorator = new MandatoryAccessorDecorator(glex);
     List<ASTCDMethod> methods = mandatoryAccessorDecorator.decorate(attribute);
 
@@ -60,7 +60,8 @@ public class MandatoryAccessorDecoratorTest {
 
   @Test
   public void testDerivedAttr() {
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
     attribute.getModifier().setDerived(true);
     MandatoryAccessorDecorator mandatoryAccessorDecorator = new MandatoryAccessorDecorator(glex);
     List<ASTCDMethod> methList = mandatoryAccessorDecorator.decorate(attribute);

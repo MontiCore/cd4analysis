@@ -19,5 +19,4 @@ public class ASTCDAttribute extends ASTCDAttributeTOP {
   public String printType() {
     return new CD4CodeFullPrettyPrinter().prettyprint(mCType);
   }
-
 }

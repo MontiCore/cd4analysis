@@ -8,12 +8,9 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdmerge.util.AssociationDirection;
 import de.monticore.cdmerge.util.CDUtils;
-
 import java.util.*;
 
-/**
- * Handles user-precedence overrides for the merging process
- */
+/** Handles user-precedence overrides for the merging process */
 public class PrecedenceConfig {
   private final Set<String> precedenceCDs = new HashSet<>(); // CD
 
@@ -27,24 +24,21 @@ public class PrecedenceConfig {
    * Adds a precedence for a model element (user-precedence override)
    *
    * @param precedence the preferred model element in the form of "CD", "CD.Type", "CD.association"
-   *                   or "CD.Type.field"
+   *     or "CD.Type.field"
    */
   public void addPrecedence(String precedence) {
     String[] precedenceSplit = precedence.split("\\.");
     if (precedenceSplit.length == 1) { // precedence for a CD
       precedenceCDs.add(precedence);
-    }
-    else if (precedenceSplit.length == 2) {
+    } else if (precedenceSplit.length == 2) {
       String element = precedenceSplit[1];
       if (Character.isUpperCase(element.charAt(0))) { // precedence for a
         // type
         precedenceTypes.add(precedence);
-      }
-      else { // precedence for an association
+      } else { // precedence for an association
         precedenceAssocs.add(precedence);
       }
-    }
-    else if (precedenceSplit.length == 3) { // precedence for a field
+    } else if (precedenceSplit.length == 3) { // precedence for a field
       precedenceFields.add(precedence);
     }
   }
@@ -100,36 +94,35 @@ public class PrecedenceConfig {
     return precedenceCDs.contains(cd.getName());
   }
 
-  public boolean hasPrecedence(ASTCDType precedenceType, ASTCDType otherType, ASTCDDefinition cd1,
-      ASTCDDefinition cd2) {
-    return precedenceTypes.contains(cd1.getName() + "." + precedenceType.getName()) || (
-        precedenceCDs.contains(cd1.getName()) && !precedenceTypes.contains(
-            cd2.getName() + "." + otherType.getName()));
+  public boolean hasPrecedence(
+      ASTCDType precedenceType, ASTCDType otherType, ASTCDDefinition cd1, ASTCDDefinition cd2) {
+    return precedenceTypes.contains(cd1.getName() + "." + precedenceType.getName())
+        || (precedenceCDs.contains(cd1.getName())
+            && !precedenceTypes.contains(cd2.getName() + "." + otherType.getName()));
   }
 
-  public boolean hasPrecedence(ASTCDAssociation precedenceAssoc, ASTCDAssociation otherAssoc,
-      ASTCDDefinition cd1, ASTCDDefinition cd2) {
+  public boolean hasPrecedence(
+      ASTCDAssociation precedenceAssoc,
+      ASTCDAssociation otherAssoc,
+      ASTCDDefinition cd1,
+      ASTCDDefinition cd2) {
     if (precedenceAssoc.isPresentName()) {
       if (otherAssoc.isPresentName()) {
-        return (precedenceAssocs.contains(cd1.getName() + "." + precedenceAssoc.getName()) || (
-            precedenceCDs.contains(cd1.getName()) && !precedenceTypes.contains(
-                cd2.getName() + "." + otherAssoc.getName())));
-      }
-      else {
+        return (precedenceAssocs.contains(cd1.getName() + "." + precedenceAssoc.getName())
+            || (precedenceCDs.contains(cd1.getName())
+                && !precedenceTypes.contains(cd2.getName() + "." + otherAssoc.getName())));
+      } else {
         return precedenceAssocs.contains(cd1.getName() + "." + precedenceAssoc.getName());
       }
-    }
-    else {
+    } else {
       if (otherAssoc.isPresentName()) {
-        return precedenceAssocs.contains(cd1.getName()) && !precedenceAssocs.contains(
-            cd2.getName() + "." + otherAssoc.getName());
-      }
-      else {
+        return precedenceAssocs.contains(cd1.getName())
+            && !precedenceAssocs.contains(cd2.getName() + "." + otherAssoc.getName());
+      } else {
         // No names of either association
         return false;
       }
     }
-
   }
 
   public List<String> getPrecedenceTypesForCD(ASTCDDefinition cd) {
@@ -177,10 +170,10 @@ public class PrecedenceConfig {
     return constNames;
   }
 
-  public boolean hasConflictWithPrecedenceType(ASTCDAssociation precedenceAssoc,
-      ASTCDAssociation otherAssoc, ASTCDDefinition cd) {
-    Optional<ASTCDAssociation> association2 = CDUtils.tryAlignAssociation(precedenceAssoc,
-        otherAssoc);
+  public boolean hasConflictWithPrecedenceType(
+      ASTCDAssociation precedenceAssoc, ASTCDAssociation otherAssoc, ASTCDDefinition cd) {
+    Optional<ASTCDAssociation> association2 =
+        CDUtils.tryAlignAssociation(precedenceAssoc, otherAssoc);
 
     String leftType = precedenceAssoc.getLeftReferenceName().toString();
     String rightType = precedenceAssoc.getRightReferenceName().toString();
@@ -192,8 +185,8 @@ public class PrecedenceConfig {
       // Precedence Types in CD1
 
       if (this.precedenceTypes.contains(cd.getName() + "." + leftType)) {
-        if ((directionPrecedence == AssociationDirection.RightToLeft) && (
-            directionOther == AssociationDirection.LeftToRight
+        if ((directionPrecedence == AssociationDirection.RightToLeft)
+            && (directionOther == AssociationDirection.LeftToRight
                 || directionOther == AssociationDirection.BiDirectional)) {
           // We would merge LEFT <- X with LEFT X-> which would modify
           // the precedence type "Left"
@@ -201,8 +194,8 @@ public class PrecedenceConfig {
         }
       }
       if (this.precedenceTypes.contains(cd.getName() + "." + rightType)) {
-        if ((directionPrecedence == AssociationDirection.LeftToRight) && (
-            directionOther == AssociationDirection.RightToLeft
+        if ((directionPrecedence == AssociationDirection.LeftToRight)
+            && (directionOther == AssociationDirection.RightToLeft
                 || directionOther == AssociationDirection.BiDirectional)) {
           // We would merge LEFT -> X with LEFT <-X which would modify
           // the precedence type "Left"
@@ -211,7 +204,5 @@ public class PrecedenceConfig {
       }
     }
     return false;
-
   }
-
 }

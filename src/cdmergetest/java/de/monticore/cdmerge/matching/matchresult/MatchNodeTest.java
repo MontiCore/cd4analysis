@@ -4,9 +4,7 @@ package de.monticore.cdmerge.matching.matchresult;
 import de.monticore.cdmerge.BaseTest;
 import org.junit.Test;
 
-/**
- * Unit tests for the functionality of the MergeNode Class.
- */
+/** Unit tests for the functionality of the MergeNode Class. */
 public class MatchNodeTest extends BaseTest {
 
   //  public static final MatchNode<Integer, String> matchNode1 = new MatchNode<Integer, String>
@@ -14,19 +12,13 @@ public class MatchNodeTest extends BaseTest {
   //  public static final MatchNode<Integer, String> matchNode2 = new MatchNode<Integer, String>
   //  (2, "two");
 
-  public MatchNodeTest() {
-
-  }
+  public MatchNodeTest() {}
 
   @Test
-  public void getElementTest() {
-
-  }
+  public void getElementTest() {}
 
   @Test
-  public void getParentTest() {
-
-  }
+  public void getParentTest() {}
 
   @Test
   public void matchNodeTest() {
@@ -68,5 +60,4 @@ public class MatchNodeTest extends BaseTest {
     //    assertTrue(matchNode1.getMatchedNodes().get(1).equals(matchNode1));
 
   }
-
 }

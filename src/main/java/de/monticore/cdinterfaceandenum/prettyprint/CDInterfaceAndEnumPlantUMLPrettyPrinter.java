@@ -9,8 +9,7 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumHandler;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
-public class CDInterfaceAndEnumPlantUMLPrettyPrinter
-    extends PlantUMLPrettyPrintUtil
+public class CDInterfaceAndEnumPlantUMLPrettyPrinter extends PlantUMLPrettyPrintUtil
     implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {
   protected CDInterfaceAndEnumTraverser traverser;
 
@@ -59,8 +58,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     if (getPlantUMLConfig().getShowAtt() && !node.isEmptyCDMembers()) {
       unindent();
       println("}");
-    }
-    else {
+    } else {
       println();
     }
 
@@ -90,18 +88,22 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     if (!node.getCDEnumConstantList().isEmpty()) {
       println("__ Enum Constants __");
     }
-    node.streamCDEnumConstants().forEach(c -> {
-      c.accept(getTraverser());
-      println();
-    });
+    node.streamCDEnumConstants()
+        .forEach(
+            c -> {
+              c.accept(getTraverser());
+              println();
+            });
 
     if (plantUMLConfig.getShowAtt() && !node.getCDMemberList().isEmpty()) {
       println("__ Attributes __");
 
-      node.streamCDMembers().forEach(m -> {
-        m.accept(getTraverser());
-        println();
-      });
+      node.streamCDMembers()
+          .forEach(
+              m -> {
+                m.accept(getTraverser());
+                println();
+              });
     }
   }
 
@@ -110,8 +112,7 @@ public class CDInterfaceAndEnumPlantUMLPrettyPrinter
     if (getPlantUMLConfig().getShowAtt() || !node.isEmptyCDEnumConstants()) {
       unindent();
       println("}");
-    }
-    else {
+    } else {
       println();
     }
 

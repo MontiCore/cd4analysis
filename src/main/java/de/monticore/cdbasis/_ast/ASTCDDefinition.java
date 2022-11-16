@@ -15,7 +15,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.ImmutableCollectors;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -33,11 +32,13 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     return cdElementVisitor.getElements();
   }
 
-  public <T extends ASTCDElement> Iterator<T> iterateCDElementsBy(CDElementVisitor.Options... options) {
+  public <T extends ASTCDElement> Iterator<T> iterateCDElementsBy(
+      CDElementVisitor.Options... options) {
     return this.<T>getCDElementListBy(options).iterator();
   }
 
-  public <T extends ASTCDElement> Stream<T> streamCDElementsBy(CDElementVisitor.Options... options) {
+  public <T extends ASTCDElement> Stream<T> streamCDElementsBy(
+      CDElementVisitor.Options... options) {
     return this.<T>getCDElementListBy(options).stream();
   }
 
@@ -46,7 +47,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public List<ASTCDPackage> getCDPackagesList() {
-    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.PACKAGES);
+    final CDElementVisitor cdElementVisitor =
+        CDMill.cDElementVisitor(CDElementVisitor.Options.PACKAGES);
     CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     this.accept(t);
@@ -54,7 +56,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public List<ASTCDClass> getCDClassesList() {
-    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.CLASSES);
+    final CDElementVisitor cdElementVisitor =
+        CDMill.cDElementVisitor(CDElementVisitor.Options.CLASSES);
     CDBasisTraverser t = CDBasisMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     this.accept(t);
@@ -62,7 +65,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public List<ASTCDInterface> getCDInterfacesList() {
-    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.INTERFACES);
+    final CDElementVisitor cdElementVisitor =
+        CDMill.cDElementVisitor(CDElementVisitor.Options.INTERFACES);
     CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     t.add4CDInterfaceAndEnum(cdElementVisitor);
@@ -71,7 +75,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public List<ASTCDEnum> getCDEnumsList() {
-    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ENUMS);
+    final CDElementVisitor cdElementVisitor =
+        CDMill.cDElementVisitor(CDElementVisitor.Options.ENUMS);
     CDInterfaceAndEnumTraverser t = CDInterfaceAndEnumMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     t.add4CDInterfaceAndEnum(cdElementVisitor);
@@ -80,7 +85,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   }
 
   public List<ASTCDAssociation> getCDAssociationsList() {
-    final CDElementVisitor cdElementVisitor = CDMill.cDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
+    final CDElementVisitor cdElementVisitor =
+        CDMill.cDElementVisitor(CDElementVisitor.Options.ASSOCIATIONS);
     CDAssociationTraverser t = CDAssociationMill.traverser();
     t.add4CDBasis(cdElementVisitor);
     t.add4CDAssociation(cdElementVisitor);
@@ -91,17 +97,20 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
   /**
    * Returns an immutable list of associations for a given {@link ASTCDType type}.
    *
-   * <p>This method does not take the class hierarchy into account.</p>
+   * <p>This method does not take the class hierarchy into account.
    *
-   * @param type  the type to find associations for
+   * @param type the type to find associations for
    * @return an immutable list of matching associations
    */
   public List<ASTCDAssociation> getCDAssociationsListForType(ASTCDType type) {
     return getCDAssociationsList().stream()
-      .filter(it ->
-        (type.getName().equals(it.getLeftQualifiedName().getQName()) && it.getCDAssocDir().isDefinitiveNavigableRight())
-        || (type.getName().equals(it.getRightQualifiedName().getQName()) && it.getCDAssocDir().isDefinitiveNavigableLeft())
-      ).collect(ImmutableCollectors.toImmutableList());
+        .filter(
+            it ->
+                (type.getName().equals(it.getLeftQualifiedName().getQName())
+                        && it.getCDAssocDir().isDefinitiveNavigableRight())
+                    || (type.getName().equals(it.getRightQualifiedName().getQName())
+                        && it.getCDAssocDir().isDefinitiveNavigableLeft()))
+        .collect(ImmutableCollectors.toImmutableList());
   }
 
   public List<String> getDefaultPackageNameList() {
@@ -120,9 +129,9 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     return getPackageWithName(getCDPackagesList(), packageName);
   }
 
-  public static Optional<ASTCDPackage> getPackageWithName(List<ASTCDPackage> packages, String packageName) {
-    return packages
-        .stream()
+  public static Optional<ASTCDPackage> getPackageWithName(
+      List<ASTCDPackage> packages, String packageName) {
+    return packages.stream()
         .filter(p -> p.getMCQualifiedName().getQName().equals(packageName))
         .findAny();
   }
@@ -144,13 +153,13 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     if (pkg.isPresent()) {
       return pkg.get();
     }
-    final ASTCDPackage createdPkg = CDBasisMill
-        .cDPackageBuilder()
-        .setMCQualifiedName(MCBasicTypesMill
-            .mCQualifiedNameBuilder()
-            .setPartsList(MCQualifiedNameFacade.createPartList(packageName))
-            .build())
-        .build();
+    final ASTCDPackage createdPkg =
+        CDBasisMill.cDPackageBuilder()
+            .setMCQualifiedName(
+                MCBasicTypesMill.mCQualifiedNameBuilder()
+                    .setPartsList(MCQualifiedNameFacade.createPartList(packageName))
+                    .build())
+            .build();
     super.addCDElement(createdPkg);
     createdPkg.setEnclosingScope(this.getEnclosingScope());
     return createdPkg;
@@ -168,13 +177,13 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     return addCDElementToPackageWithName(-1, element, packageName);
   }
 
-  public boolean addCDElementToPackageWithName(int index, ASTCDElement element, String packageName) {
+  public boolean addCDElementToPackageWithName(
+      int index, ASTCDElement element, String packageName) {
     // should be added to the package
     final ASTCDPackage specificPackage = getOrCreatePackage(packageName);
     if (index < 0) {
       return specificPackage.addCDElement(element);
-    }
-    else {
+    } else {
       specificPackage.addCDElement(index, element);
       return true;
     }
@@ -195,9 +204,12 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     return true;
   }
 
-  public boolean addCDElementToPackage(Collection<? extends ASTCDElement> collection, String packageName) {
+  public boolean addCDElementToPackage(
+      Collection<? extends ASTCDElement> collection, String packageName) {
     // returns the result, if all elements have been added
-    return collection.stream().map(e -> addCDElementToPackageWithName(e, packageName)).anyMatch(e -> !e);
+    return collection.stream()
+        .map(e -> addCDElementToPackageWithName(e, packageName))
+        .anyMatch(e -> !e);
   }
 
   public void addCDPackage(int index, ASTCDPackage p) {
@@ -218,7 +230,8 @@ public class ASTCDDefinition extends ASTCDDefinitionTOP {
     return addCDElementToPackage(index, collection, defaultPackageName);
   }
 
-  public boolean addCDElementToPackage(int index, Collection<? extends ASTCDElement> collection, String packageName) {
+  public boolean addCDElementToPackage(
+      int index, Collection<? extends ASTCDElement> collection, String packageName) {
     // count index up, because every element will be inserted separately and
     // therefore the latest element would be at place index
     int i = index;

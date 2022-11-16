@@ -15,13 +15,12 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 
 public class MultiInstanceMatcher {
 
-  private final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(
-      new IndentPrinter());
+  private final MCBasicTypesFullPrettyPrinter pp =
+      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
   private final OD2CDMatcher matcher;
 
@@ -35,65 +34,78 @@ public class MultiInstanceMatcher {
    * Returns true if the od is within the baseCD semantics but not within the compareCD semantics.
    * Also checks inheritance of instanced classes in both CDs Returns false otherwise.
    */
-  public boolean isDiffWitness(CDSemantics semantic, ASTCDCompilationUnit baseCD,
-      ASTCDCompilationUnit compCD, ASTODArtifact odAll) {
-
+  public boolean isDiffWitness(
+      CDSemantics semantic,
+      ASTCDCompilationUnit baseCD,
+      ASTCDCompilationUnit compCD,
+      ASTODArtifact odAll) {
 
     ASTObjectDiagram od = odAll.getObjectDiagram();
     List<ASTODObject> objectList = ODHelper.getAllObjects(od);
 
-    //generate scopes
+    // generate scopes
     ICD4CodeArtifactScope baseScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(baseCD);
     ICD4CodeArtifactScope compScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(compCD);
 
-    Log.print(System.lineSeparator() + String.format("[CHECK] Check if %s in sem(%s)\\sem(%s)",
-        od.getName(), baseCD.getCDDefinition().getName(), compCD.getCDDefinition().getName())
-        + System.lineSeparator());
+    Log.print(
+        System.lineSeparator()
+            + String.format(
+                "[CHECK] Check if %s in sem(%s)\\sem(%s)",
+                od.getName(),
+                baseCD.getCDDefinition().getName(),
+                compCD.getCDDefinition().getName())
+            + System.lineSeparator());
 
-    Log.print(System.lineSeparator() + "BASE_CD: " + baseCD.getCDDefinition().getName()
-        + System.lineSeparator());
+    Log.print(
+        System.lineSeparator()
+            + "BASE_CD: "
+            + baseCD.getCDDefinition().getName()
+            + System.lineSeparator());
 
-    //OD has to be in the semantics of the base CD
+    // OD has to be in the semantics of the base CD
     if (!matcher.checkODValidity(semantic, odAll, baseCD)) {
       Log.println(System.lineSeparator() + "[RESULT] " + od.getName() + " is not a diff-witness.");
       return false;
     }
 
-    Log.print(System.lineSeparator() + "COMPARE_CD: " + compCD.getCDDefinition().getName()
-        + System.lineSeparator());
+    Log.print(
+        System.lineSeparator()
+            + "COMPARE_CD: "
+            + compCD.getCDDefinition().getName()
+            + System.lineSeparator());
     if (!matcher.checkODValidity(semantic, odAll, compCD)) {
-      //OD is a diffWitness for OD in semantics of base CD and in semantics of comp CD
+      // OD is a diffWitness for OD in semantics of base CD and in semantics of comp CD
       Log.println(System.lineSeparator() + "[RESULT] " + od.getName() + " is a diff-witness.");
       return true;
     }
 
-    //boolean and list for collecting all objects which are witnesses
+    // boolean and list for collecting all objects which are witnesses
     boolean isWitness = false;
     List<String> witnessingObjects = new ArrayList<>();
 
-    //iterate over all objects
+    // iterate over all objects
     for (ASTODObject obj : objectList) {
-      //for closed world semantics call hasObjectSameInheritance()
+      // for closed world semantics call hasObjectSameInheritance()
       if (Semantic.isClosedWorld(semantic)) {
         if (!hasObjectSameInheritance(obj, baseScope, compScope)) {
-          //object has not the same inheritance in both CDs
-          //-> DiffWitness
+          // object has not the same inheritance in both CDs
+          // -> DiffWitness
           isWitness = true;
           witnessingObjects.add(obj.getMCObjectType().printType(pp));
         }
       }
-      //for open world semantics call checkInheritanceOpenWorld()
+      // for open world semantics call checkInheritanceOpenWorld()
       else if (Semantic.isOpenWorld(semantic)) {
         if (!checkInheritanceOpenWorld(obj, baseScope, compScope, compCD)) {
-          //inheritance contradicts that both CDs have the same open world semantics
-          //-> DiffWitness
+          // inheritance contradicts that both CDs have the same open world semantics
+          // -> DiffWitness
           isWitness = true;
           witnessingObjects.add(obj.getMCObjectType().printType(pp));
         }
       }
     }
 
-    //if DiffWitness -> print all witnessing objects
+    // if DiffWitness -> print all witnessing objects
     if (isWitness) {
       Log.print("OD is a diffWitness in " + semantic + "\n");
       Log.print("Following object types are witnesses:\n");
@@ -107,38 +119,39 @@ public class MultiInstanceMatcher {
     return false;
   }
 
-  /**
-   * Returns if an object has the same inheritance in two CDs
-   */
-  private boolean hasObjectSameInheritance(ASTODObject obj, ICD4CodeArtifactScope baseScope,
-      ICD4CodeArtifactScope compScope) {
+  /** Returns if an object has the same inheritance in two CDs */
+  private boolean hasObjectSameInheritance(
+      ASTODObject obj, ICD4CodeArtifactScope baseScope, ICD4CodeArtifactScope compScope) {
 
-    //get object type
+    // get object type
     String objType = obj.getMCObjectType().printType(pp);
 
-    //get super set of base CD
+    // get super set of base CD
     Set<String> baseSuperSet = getSuperSet(objType, baseScope);
-    //get super set of compare CD
+    // get super set of compare CD
     Set<String> compSuperSet = getSuperSet(objType, compScope);
 
-    //compare Super Sets
+    // compare Super Sets
     if (!baseSuperSet.equals(compSuperSet)) {
       Log.print("object of type " + objType + " has not the same inheritance in both CDs\n");
       return false;
     }
 
-    //repeat equality check for superset in stereotype of the object instead of the baseSuperSet
-    //if stereotype "instanceOf" is present
+    // repeat equality check for superset in stereotype of the object instead of the baseSuperSet
+    // if stereotype "instanceOf" is present
     Optional<Set<String>> stereotypeSuperSet = getSuperSetFromStereotype(obj);
     if (stereotypeSuperSet.isPresent()) {
       if (!stereotypeSuperSet.get().equals(compSuperSet)) {
-        Log.print("object of type " + objType + " has not the same inheritance in both CDs for "
-            + "super set in stereotype\n");
+        Log.print(
+            "object of type "
+                + objType
+                + " has not the same inheritance in both CDs for "
+                + "super set in stereotype\n");
         return false;
       }
     }
 
-    //no diff found
+    // no diff found
     return true;
   }
 
@@ -146,56 +159,68 @@ public class MultiInstanceMatcher {
    * Returns if the inheritance of an object contradicts that both CDs have the same open world
    * semantics
    */
-  private boolean checkInheritanceOpenWorld(ASTODObject obj, ICD4CodeArtifactScope baseScope,
-      ICD4CodeArtifactScope compScope, ASTCDCompilationUnit compCD) {
+  private boolean checkInheritanceOpenWorld(
+      ASTODObject obj,
+      ICD4CodeArtifactScope baseScope,
+      ICD4CodeArtifactScope compScope,
+      ASTCDCompilationUnit compCD) {
 
-    //get object type
+    // get object type
     String objType = obj.getMCObjectType().printType(pp);
 
-    //get super set of base CD
+    // get super set of base CD
     Set<String> baseSuperSet = getSuperSet(objType, baseScope);
-    //get super set of compare CD
+    // get super set of compare CD
     Set<String> compSuperSet = getSuperSet(objType, compScope);
-    //get sub classes of objType in compCD
+    // get sub classes of objType in compCD
     Set<String> compSubClasses = getSubClasses(compCD, objType, compScope);
 
-    //compare Super Sets
+    // compare Super Sets
     if (!baseSuperSet.containsAll(compSuperSet)) {
-      //baseSuperSet is no superset of compSuperSet
+      // baseSuperSet is no superset of compSuperSet
       Log.print("Superset of object with type " + objType + " of compCD is no subset of baseCD\n");
       return false;
     }
 
-    //check for cyclic inheritance
+    // check for cyclic inheritance
     compSubClasses.retainAll(baseSuperSet);
     if (!compSubClasses.isEmpty()) {
-      //intersection of baseSuperSet and subclasses in compCD is not empty
-      Log.print("Superset of object with type " + objType + " of baseCD contains a subclass from "
-          + "the object in compCD\n");
+      // intersection of baseSuperSet and subclasses in compCD is not empty
+      Log.print(
+          "Superset of object with type "
+              + objType
+              + " of baseCD contains a subclass from "
+              + "the object in compCD\n");
       return false;
     }
 
-    //repeat checks for superset in stereotype of the object instead of the baseSuperSet
-    //if stereotype "instanceof" is present
+    // repeat checks for superset in stereotype of the object instead of the baseSuperSet
+    // if stereotype "instanceof" is present
     Optional<Set<String>> stereotypeSuperSet = getSuperSetFromStereotype(obj);
     if (stereotypeSuperSet.isPresent()) {
-      //compare Super Sets
+      // compare Super Sets
       if (!stereotypeSuperSet.get().containsAll(compSuperSet)) {
-        Log.print("Superset of object with type " + objType + " of compCD is no subset of baseCD "
-            + "for superset in stereotype\n");
+        Log.print(
+            "Superset of object with type "
+                + objType
+                + " of compCD is no subset of baseCD "
+                + "for superset in stereotype\n");
         return false;
       }
-      //check for cyclic inheritance
+      // check for cyclic inheritance
       compSubClasses = getSubClasses(compCD, objType, compScope);
       compSubClasses.retainAll(stereotypeSuperSet.get());
       if (!compSubClasses.isEmpty()) {
-        Log.print("Superset of object with type " + objType + " of baseCD contains a subclass from "
-            + "the object in compCD for superset in stereotype\n");
+        Log.print(
+            "Superset of object with type "
+                + objType
+                + " of baseCD contains a subclass from "
+                + "the object in compCD for superset in stereotype\n");
         return false;
       }
     }
 
-    //no diff found
+    // no diff found
     return true;
   }
 
@@ -205,25 +230,24 @@ public class MultiInstanceMatcher {
    */
   public static Set<String> getSuperSet(String objType, ICD4CodeArtifactScope scope) {
 
-    //get class symbol
+    // get class symbol
     Optional<CDTypeSymbol> classSymbol = scope.resolveCDTypeDown(objType);
 
-    //initialize output variable
+    // initialize output variable
     Set<String> superSet = new HashSet<>();
 
-    //get all superclasses and implemented interfaces
+    // get all superclasses and implemented interfaces
     if (classSymbol.isPresent()) {
-      Set<ASTCDType> astSuperSet = CDInheritanceHelper.getAllSuper(classSymbol.get().getAstNode(),
-          scope);
+      Set<ASTCDType> astSuperSet =
+          CDInheritanceHelper.getAllSuper(classSymbol.get().getAstNode(), scope);
 
-      //transform set of AST nodes to a set of their full qualified names
+      // transform set of AST nodes to a set of their full qualified names
       for (ASTCDType cdType : astSuperSet) {
         superSet.add(cdType.getSymbol().getFullName());
       }
-    }
-    else {
-      //print warning if symbol does not exist
-      //does not affect the correctness of the overall output
+    } else {
+      // print warning if symbol does not exist
+      // does not affect the correctness of the overall output
       ASTCDCompilationUnit cd = (ASTCDCompilationUnit) scope.getAstNode();
       String cdName = cd.getCDDefinition().getName();
       Log.warn("class symbol of " + objType + " not found in CD \"" + cdName + "\"");
@@ -232,19 +256,17 @@ public class MultiInstanceMatcher {
     return superSet;
   }
 
-  /**
-   * Return all subclasses from class "objType" Returns the full qualified names
-   */
-  private Set<String> getSubClasses(ASTCDCompilationUnit astcd, String objType,
-      ICD4CodeArtifactScope scope) {
+  /** Return all subclasses from class "objType" Returns the full qualified names */
+  private Set<String> getSubClasses(
+      ASTCDCompilationUnit astcd, String objType, ICD4CodeArtifactScope scope) {
 
-    //get class symbol
+    // get class symbol
     Optional<CDTypeSymbol> classSymbol = scope.resolveCDTypeDown(objType);
-    //get all classes of astcd
+    // get all classes of astcd
     List<ASTCDClass> astClasses = astcd.getCDDefinition().getCDClassesList();
 
-    //collect all classes which have the class "objType" as superclass
-    //the set contains the class "objType" itself
+    // collect all classes which have the class "objType" as superclass
+    // the set contains the class "objType" itself
     Set<ASTCDClass> astSubClasses = new HashSet<>();
     for (ASTCDClass astClass : astClasses) {
       if (CDInheritanceHelper.isSuperOf(objType, astClass.getSymbol().getFullName(), scope)) {
@@ -252,21 +274,20 @@ public class MultiInstanceMatcher {
       }
     }
 
-    //initialize output variable
+    // initialize output variable
     Set<String> subClasses = new HashSet<>();
 
-    //transform set of AST nodes to a set of their full qualified names
+    // transform set of AST nodes to a set of their full qualified names
     for (ASTCDType cdType : astSubClasses) {
       subClasses.add(cdType.getSymbol().getFullName());
     }
 
-    //remove the class "objType" from the set of its subclasses
+    // remove the class "objType" from the set of its subclasses
     if (classSymbol.isPresent()) {
       subClasses.remove(classSymbol.get().getFullName());
-    }
-    else {
-      //print warning if symbol does not exist
-      //does not affect the correctness of the overall output
+    } else {
+      // print warning if symbol does not exist
+      // does not affect the correctness of the overall output
       ASTCDCompilationUnit cd = (ASTCDCompilationUnit) scope.getAstNode();
       String cdName = cd.getCDDefinition().getName();
       Log.warn("class symbol of " + objType + " not found in CD \"" + cdName + "\"");
@@ -281,27 +302,27 @@ public class MultiInstanceMatcher {
    */
   public static Optional<Set<String>> getSuperSetFromStereotype(ASTODObject obj) {
 
-    //get object modifier
+    // get object modifier
     ASTModifier modifier = obj.getModifier();
-    //check if stereotype is present
+    // check if stereotype is present
     if (modifier.isPresentStereotype()) {
-      //check if stereotype contains "instanceOf"
+      // check if stereotype contains "instanceOf"
       if (modifier.getStereotype().contains(INSTANCE_OF_STEREOTYPE)) {
 
-        //get String value of "instanceOf"
+        // get String value of "instanceOf"
         String instanceStereotype = modifier.getStereotype().getValue(INSTANCE_OF_STEREOTYPE);
-        //delete whitespaces
+        // delete whitespaces
         instanceStereotype = instanceStereotype.replace(" ", "");
-        //split String by ","
+        // split String by ","
         String[] temp = instanceStereotype.split(",");
-        //return split "instanceOf" values in a set
+        // return split "instanceOf" values in a set
         Set<String> superSet = new HashSet<>();
         Collections.addAll(superSet, temp);
         return Optional.of(superSet);
       }
     }
 
-    //no stereotype found or stereotype does not contain "instanceOf"
+    // no stereotype found or stereotype does not contain "instanceOf"
     return Optional.empty();
   }
 
@@ -339,5 +360,4 @@ public class MultiInstanceMatcher {
     String[] temp = objType.split("\\.");
     return temp[(temp.length - 1)];
   }
-
 }

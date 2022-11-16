@@ -13,26 +13,23 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.cdmerge.util.JPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Merges the attribute lists of two classes by uniting them and/or considering precedences
- */
+/** Merges the attribute lists of two classes by uniting them and/or considering precedences */
 public class DefaultAtributeMerger extends AttributeMerger {
 
   public DefaultAtributeMerger(MergeBlackBoard mergeBlackBoard) {
     super(mergeBlackBoard);
   }
 
-  private void addExlicitAttributePrecedences(ASTCDClass sourceClass, ASTCDDefinition sourceCD,
-      ASTCDClass mergedClass) {
+  private void addExlicitAttributePrecedences(
+      ASTCDClass sourceClass, ASTCDDefinition sourceCD, ASTCDClass mergedClass) {
     PrecedenceConfig precedences = getConfig().getPrecedences();
 
-    List<String> additionalAttrNames = precedences.getPrecedenceAttributesForClass(sourceClass,
-        sourceCD);
+    List<String> additionalAttrNames =
+        precedences.getPrecedenceAttributesForClass(sourceClass, sourceCD);
     for (String attrName : additionalAttrNames) {
       Optional<ASTCDAttribute> attr = CDUtils.getAttributeFromClass(attrName, sourceClass);
       if (attr.isPresent() && !CDUtils.getAttributeFromClass(attrName, mergedClass).isPresent()) {
@@ -42,49 +39,58 @@ public class DefaultAtributeMerger extends AttributeMerger {
   }
 
   @Override
-  public void mergeAttributes(ASTCDClass input1, ASTCDClass input2,
-      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult, ASTCDClass mergedClazz) {
+  public void mergeAttributes(
+      ASTCDClass input1,
+      ASTCDClass input2,
+      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult,
+      ASTCDClass mergedClazz) {
 
     PrecedenceConfig precedences = getConfig().getPrecedences();
 
-    if (precedences.hasPrecedence(input1, input2,
+    if (precedences.hasPrecedence(
+        input1,
+        input2,
         getBlackBoard().getCurrentInputCd1().getCDDefinition(),
         getBlackBoard().getCurrentInputCd2().getCDDefinition())) {
       // No union: take only the attributes of the left class
-      log(ErrorLevel.INFO,
+      log(
+          ErrorLevel.INFO,
           "Left Class has preference over right class, ommiting attributes from right, if not "
               + "explicitily specified via precedence");
       mergedClazz.getCDAttributeList().clear();
       mergedClazz.getCDAttributeList().addAll(input1.getCDAttributeList());
       log(ErrorLevel.INFO, "Adding explicitly defined Attributes from right class");
-      addExlicitAttributePrecedences(input2, getBlackBoard().getCurrentInputCd2().getCDDefinition(),
-          mergedClazz);
-    }
-    else if (precedences.hasPrecedence(input2, input1,
+      addExlicitAttributePrecedences(
+          input2, getBlackBoard().getCurrentInputCd2().getCDDefinition(), mergedClazz);
+    } else if (precedences.hasPrecedence(
+        input2,
+        input1,
         getBlackBoard().getCurrentInputCd2().getCDDefinition(),
         getBlackBoard().getCurrentInputCd1().getCDDefinition())) {
       // No union: take only the attributes of the right class
-      log(ErrorLevel.INFO,
+      log(
+          ErrorLevel.INFO,
           "Right Class has preference over left class, ommiting attributes from left, if not "
               + "exlicitily specified via precedence");
       mergedClazz.getCDAttributeList().clear();
       mergedClazz.getCDAttributeList().addAll(input2.getCDAttributeList());
       log(ErrorLevel.INFO, "Adding explicitly defined Attributes from left class");
-      addExlicitAttributePrecedences(input1, getBlackBoard().getCurrentInputCd1().getCDDefinition(),
-          mergedClazz);
-    }
-    else { // union of both attribute lists
+      addExlicitAttributePrecedences(
+          input1, getBlackBoard().getCurrentInputCd1().getCDDefinition(), mergedClazz);
+    } else { // union of both attribute lists
       try {
         defaultMergeAttributes(input1, input2, matchResult, mergedClazz);
-      }
-      catch (MergingException e) {
+      } catch (MergingException e) {
         logError(e);
       }
     }
   }
 
-  private void defaultMergeAttributes(ASTCDClass input1, ASTCDClass input2,
-      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult, ASTCDClass mergedClass)
+  private void defaultMergeAttributes(
+      ASTCDClass input1,
+      ASTCDClass input2,
+      ASTMatchGraph<ASTCDAttribute, ASTCDClass> matchResult,
+      ASTCDClass mergedClass)
       throws MergingException {
 
     if (!input1.getName().equalsIgnoreCase(input2.getName())) {
@@ -97,7 +103,9 @@ public class DefaultAtributeMerger extends AttributeMerger {
       throw new MergingException(
           "Unexpected error while merging Attribtues, no matches found for the given classes - Do"
               + " the classes Match?",
-          PHASE, input1, input2);
+          PHASE,
+          input1,
+          input2);
     }
 
     List<MatchNode<ASTCDAttribute, ASTCDClass>> matches;
@@ -108,11 +116,18 @@ public class DefaultAtributeMerger extends AttributeMerger {
         case 0:
           // add unique attribute
           mergedClass.addCDMember(attr1.getElement());
-          log(ErrorLevel.FINE, "Added declared attribute " + getBlackBoard().getCurrentInputCd1()
-              .getCDDefinition()
-              .getName() + "." + input1.getName() + "." + attr1.getElement().getName() + "["
-              + CDUtils.getTypeName(attr1.getElement().getMCType()) + "]"
-              + " not present in other Class");
+          log(
+              ErrorLevel.FINE,
+              "Added declared attribute "
+                  + getBlackBoard().getCurrentInputCd1().getCDDefinition().getName()
+                  + "."
+                  + input1.getName()
+                  + "."
+                  + attr1.getElement().getName()
+                  + "["
+                  + CDUtils.getTypeName(attr1.getElement().getMCType())
+                  + "]"
+                  + " not present in other Class");
           break;
         case 1:
           mergedAttr = Optional.empty();
@@ -120,51 +135,85 @@ public class DefaultAtributeMerger extends AttributeMerger {
           if (attr1.getElement().getMCType().deepEquals(matches.get(0).getElement().getMCType())) {
             // add matched attribute
             mergedAttr = Optional.of(attr1.getElement().deepClone());
-            log(ErrorLevel.INFO, "Merged attribute " + getBlackBoard().getCurrentInputCd1()
-                .getCDDefinition()
-                .getName() + "." + input1.getName() + "." + attr1.getElement().getName() + "["
-                + CDUtils.getTypeName(attr1.getElement().getMCType()) + "]" + " with "
-                + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName() + "."
-                + input2.getName() + "." + matches.get(0).getElement().getName() + "["
-                + CDUtils.getTypeName(matches.get(0).getElement().getMCType()) + "]");
+            log(
+                ErrorLevel.INFO,
+                "Merged attribute "
+                    + getBlackBoard().getCurrentInputCd1().getCDDefinition().getName()
+                    + "."
+                    + input1.getName()
+                    + "."
+                    + attr1.getElement().getName()
+                    + "["
+                    + CDUtils.getTypeName(attr1.getElement().getMCType())
+                    + "]"
+                    + " with "
+                    + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
+                    + "."
+                    + input2.getName()
+                    + "."
+                    + matches.get(0).getElement().getName()
+                    + "["
+                    + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+                    + "]");
 
-          }
-          else {
+          } else {
             if (getConfig().allowPrimitiveTypeConversion()) {
               if (CDUtils.getTypeName(attr1.getElement().getMCType())
                   .equals(CDUtils.getTypeName(matches.get(0).getElement().getMCType()))) {
 
-                Optional<ASTMCType> commonSuperType = JPrimitiveType.getCommonSuperType(
-                    attr1.getElement().getMCType(), matches.get(0).getElement().getMCType());
+                Optional<ASTMCType> commonSuperType =
+                    JPrimitiveType.getCommonSuperType(
+                        attr1.getElement().getMCType(), matches.get(0).getElement().getMCType());
                 if (commonSuperType.isPresent()) {
                   attr1.getElement().setMCType(commonSuperType.get());
                   mergedAttr = Optional.of(attr1.getElement());
-                  log(ErrorLevel.INFO, "Merged attribute " + getBlackBoard().getCurrentInputCd1()
-                      .getCDDefinition()
-                      .getName() + "." + input1.getName() + "." + attr1.getElement().getName() + "["
-                      + CDUtils.getTypeName(attr1.getElement().getMCType()) + "]" + " with "
-                      + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName() + "."
-                      + input2.getName() + "." + matches.get(0).getElement().getName() + "["
-                      + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
-                      + "] with result type " + CDUtils.getTypeName(commonSuperType.get()));
-                }
-                else {
+                  log(
+                      ErrorLevel.INFO,
+                      "Merged attribute "
+                          + getBlackBoard().getCurrentInputCd1().getCDDefinition().getName()
+                          + "."
+                          + input1.getName()
+                          + "."
+                          + attr1.getElement().getName()
+                          + "["
+                          + CDUtils.getTypeName(attr1.getElement().getMCType())
+                          + "]"
+                          + " with "
+                          + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
+                          + "."
+                          + input2.getName()
+                          + "."
+                          + matches.get(0).getElement().getName()
+                          + "["
+                          + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+                          + "] with result type "
+                          + CDUtils.getTypeName(commonSuperType.get()));
+                } else {
                   logError(
                       "Could not detect common super type for attributes! Merged Class will only "
                           + "contain attribute with type from first attribute",
-                      attr1.getElement(), matches.get(0).getElement());
+                      attr1.getElement(),
+                      matches.get(0).getElement());
                 }
               }
-            }
-            else {
-              log(ErrorLevel.INFO,
-                  "Unable to merge attributes " + input1.getName() + "." + attr1.getElement()
-                      .getName() + "[" + CDUtils.getTypeName(attr1.getElement().getMCType()) + "]"
-                      + " with " + input2.getName() + "." + matches.get(0).getElement().getName()
-                      + "[" + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+            } else {
+              log(
+                  ErrorLevel.INFO,
+                  "Unable to merge attributes "
+                      + input1.getName()
+                      + "."
+                      + attr1.getElement().getName()
+                      + "["
+                      + CDUtils.getTypeName(attr1.getElement().getMCType())
+                      + "]"
+                      + " with "
+                      + input2.getName()
+                      + "."
+                      + matches.get(0).getElement().getName()
+                      + "["
+                      + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
                       + "] as result types differ and type conversion is not enabled");
             }
-
           }
           if (mergedAttr.isPresent()) {
             mergeComments(mergedAttr.get(), attr1.getElement(), matches.get(0).getElement());
@@ -174,20 +223,31 @@ public class DefaultAtributeMerger extends AttributeMerger {
           }
           break;
         default:
-          logError("There was more than one match for attribute " + attr1.getElement().getName()
-              + " in class " + input1.getName(), input1, input2);
+          logError(
+              "There was more than one match for attribute "
+                  + attr1.getElement().getName()
+                  + " in class "
+                  + input1.getName(),
+              input1,
+              input2);
           break;
       }
     }
     // Add remaining, non matching attributes from input2
     for (ASTCDAttribute attr2 : remainingFromInput2) {
       mergedClass.addCDMember(attr2);
-      log(ErrorLevel.FINE, "Added declared attribute " + getBlackBoard().getCurrentInputCd2()
-          .getCDDefinition()
-          .getName() + "." + input2.getName() + "." + attr2.getName() + "[" + CDUtils.getTypeName(
-          attr2.getMCType()) + "]" + " not present in other Class");
+      log(
+          ErrorLevel.FINE,
+          "Added declared attribute "
+              + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
+              + "."
+              + input2.getName()
+              + "."
+              + attr2.getName()
+              + "["
+              + CDUtils.getTypeName(attr2.getMCType())
+              + "]"
+              + " not present in other Class");
     }
-
   }
-
 }

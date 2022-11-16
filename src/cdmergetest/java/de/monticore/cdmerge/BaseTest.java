@@ -15,12 +15,11 @@ import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.prettyprint.IndentPrinter;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 public class BaseTest {
 
@@ -28,15 +27,15 @@ public class BaseTest {
    * Simple switch to print merged CD from tests always to Standard Output for inspection, default
    * false
    */
-  private final static boolean PRINTOUT_CD = true;
+  private static final boolean PRINTOUT_CD = true;
 
   /**
    * Simple switch to print detailled merge log from tests always to Standard Output for inspection,
    * default false
    */
-  private final static boolean PRINTOUT_TRACE = false;
+  private static final boolean PRINTOUT_TRACE = false;
 
-  protected final static String MODEL_PATH = "src/cdmergetest/resources/class_diagrams";
+  protected static final String MODEL_PATH = "src/cdmergetest/resources/class_diagrams";
 
   protected final CD4CodeParser parser;
 
@@ -60,12 +59,11 @@ public class BaseTest {
   }
 
   protected ASTCDCompilationUnit loadModel(String filename) throws IOException {
-    //We need an empty symbol table as we load models that contain the same symbols
+    // We need an empty symbol table as we load models that contain the same symbols
     Optional<ASTCDCompilationUnit> ast = CDUtils.parseCDFile(filename, false);
     if (ast.isPresent()) {
       return ast.get();
-    }
-    else {
+    } else {
       throw new RuntimeException("Unable to parse cd model");
     }
   }
@@ -79,8 +77,7 @@ public class BaseTest {
     Optional<ASTCDCompilationUnit> ast = CDUtils.parseCDCompilationUnit(cd, false);
     if (ast.isPresent()) {
       return ast.get();
-    }
-    else {
+    } else {
       throw new RuntimeException("Unable to parse cd model");
     }
   }
@@ -98,16 +95,18 @@ public class BaseTest {
       }
     }
     if (PRINTOUT_TRACE | getSystemProperty("test.printout.trace").equals("1")) {
-      result.getMergeLog()
+      result
+          .getMergeLog()
           .getAllLogs(false)
           .forEach(log -> System.out.println(log.toStringWithTimeStamp()));
     }
-
   }
 
   @SuppressWarnings("unused")
   protected void processResult(MergeResult result) {
-    if (!PRINTOUT_CD && !getSystemProperty("test.printout.result").equals("1") && !PRINTOUT_TRACE
+    if (!PRINTOUT_CD
+        && !getSystemProperty("test.printout.result").equals("1")
+        && !PRINTOUT_TRACE
         && !getSystemProperty("test.printout.trace").equals("1")) {
       return;
     }
@@ -118,11 +117,9 @@ public class BaseTest {
         processResult(step);
         System.out.println();
       }
-    }
-    else if (result.getIntermediateResults().size() == 1) {
+    } else if (result.getIntermediateResults().size() == 1) {
       processResult(result.getIntermediateResults().get(0));
     }
-
   }
 
   protected CDMergeConfig.Builder getConfigBuilder() {
@@ -135,7 +132,6 @@ public class BaseTest {
     }
 
     return builder;
-
   }
 
   private static String getSystemProperty(String propertyName) {
@@ -144,5 +140,4 @@ public class BaseTest {
     }
     return System.getProperty(propertyName);
   }
-
 }

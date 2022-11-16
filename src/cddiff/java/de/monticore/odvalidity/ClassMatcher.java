@@ -20,12 +20,11 @@ import de.monticore.odbasis._ast.*;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.prettyprint.MCCollectionTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 
 public class ClassMatcher {
 
-  //TODO ODMapElement in attributes https://github
+  // TODO ODMapElement in attributes https://github
   // .com/MontiCore/object-diagram/blob/dev/src/main/grammars/de/monticore/ODAttribute.mc4
 
   private final MCCollectionTypesFullPrettyPrinter pp;
@@ -46,17 +45,17 @@ public class ClassMatcher {
    * @param semantics Open/Closed World
    * @return true, if all objects are valid in CD for the given semantics
    */
-  public boolean checkAllObjectsInClassDiagram(ASTODArtifact od, ASTCDCompilationUnit cd,
-      CDSemantics semantics) {
+  public boolean checkAllObjectsInClassDiagram(
+      ASTODArtifact od, ASTCDCompilationUnit cd, CDSemantics semantics) {
 
     this.od = od;
     this.cd = cd;
     this.scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
 
-    //Set all parameters
+    // Set all parameters
     List<ASTODObject> odObjects = ODHelper.getAllObjects(od.getObjectDiagram());
 
-    //Check all objects from OD if they can exist in the CD
+    // Check all objects from OD if they can exist in the CD
     for (ASTODObject obj : odObjects) {
 
       String objectType = obj.getMCObjectType().printType(pp);
@@ -65,10 +64,11 @@ public class ClassMatcher {
       if (Semantic.isClosedWorld(semantics) && optClass.isEmpty()) {
         Log.println("[CONFLICT] Could not find class: " + objectType);
         return false;
-      }
-      else if (optClass.isPresent() && !isObjectValid4Class(obj, optClass.get(), semantics)) {
-        Log.println(String.format("[CONFLICT] Object %s is not valid for Class %s", obj.getName(),
-            optClass.get().getName()));
+      } else if (optClass.isPresent() && !isObjectValid4Class(obj, optClass.get(), semantics)) {
+        Log.println(
+            String.format(
+                "[CONFLICT] Object %s is not valid for Class %s",
+                obj.getName(), optClass.get().getName()));
         return false;
       }
     }
@@ -79,7 +79,7 @@ public class ClassMatcher {
   /**
    * Checks whether an object is valid in a class
    *
-   * @param obj     Object of OD
+   * @param obj Object of OD
    * @param cdClass Class of CD
    * @return true, if object is valid in class
    */
@@ -93,7 +93,7 @@ public class ClassMatcher {
     for (ASTCDAttribute cdAttribute : superAttributes) {
       boolean attributeMissing = true;
       for (ASTODAttribute odAttribute : obj.getODAttributeList()) {
-        //Compare attributes: By name, visibility and type. When no type in OD given then by AST
+        // Compare attributes: By name, visibility and type. When no type in OD given then by AST
         // node
         if (cdAttribute.getName().equals(odAttribute.getName())) {
           if (!(isAttributeVisibilityEqual(odAttribute, cdAttribute)
@@ -104,7 +104,7 @@ public class ClassMatcher {
         }
       }
       if (attributeMissing) {
-        //TODO: find in link
+        // TODO: find in link
         return false;
       }
     }
@@ -117,8 +117,7 @@ public class ClassMatcher {
   }
 
   /**
-   * Builds the attribute list of a CD class also by considering the attribute list of super
-   * classes
+   * Builds the attribute list of a CD class also by considering the attribute list of super classes
    *
    * @param type Class of CD
    * @return List of class attributes
@@ -140,24 +139,25 @@ public class ClassMatcher {
    * @param cdAttributes Attributes of CD class
    * @return true, if all object attributes are valid in class
    */
-  private boolean areObjectAttributesValidInClass(Collection<ASTODAttribute> odAttributes,
-      Collection<ASTCDAttribute> cdAttributes) {
-    //Given: All object attributes, all attributes of matching class
-    //Check if all object attributes are also attributes in the class
+  private boolean areObjectAttributesValidInClass(
+      Collection<ASTODAttribute> odAttributes, Collection<ASTCDAttribute> cdAttributes) {
+    // Given: All object attributes, all attributes of matching class
+    // Check if all object attributes are also attributes in the class
     for (ASTODAttribute odAttr : odAttributes) {
       boolean odAttrFoundInCD = false;
       for (ASTCDAttribute cdAttr : cdAttributes) {
-        //Compare attributes: By name, visibility and type. When no type in OD given then by AST
+        // Compare attributes: By name, visibility and type. When no type in OD given then by AST
         // node
-        if (odAttr.getName().equals(cdAttr.getName()) && isAttributeVisibilityEqual(odAttr, cdAttr)
+        if (odAttr.getName().equals(cdAttr.getName())
+            && isAttributeVisibilityEqual(odAttr, cdAttr)
             && areAttributesSemanticallyEqual(odAttr, cdAttr)) {
-          //We found a matching attribute
+          // We found a matching attribute
           odAttrFoundInCD = true;
           break;
         }
       }
       if (!odAttrFoundInCD) {
-        //If we didn't find a matching attribute in class then we check if it exists in the
+        // If we didn't find a matching attribute in class then we check if it exists in the
         // associations
         ASTCDAssociation cdAssociation = getCDAssociationOfODObjectAttribute(odAttr);
         return cdAssociation != null;
@@ -177,46 +177,46 @@ public class ClassMatcher {
    */
   private boolean areAttributesSemanticallyEqual(ASTODAttribute odAttr, ASTCDAttribute cdAttr) {
 
-    //Check names and visibility
+    // Check names and visibility
     if (!cdAttr.getName().equals(odAttr.getName()) && isAttributeVisibilityEqual(odAttr, cdAttr)) {
       return false;
     }
-    //Check if they have the same name and type
+    // Check if they have the same name and type
     String cdAttrType = cdAttr.getMCType().printType(pp);
     String odAttrType = getObjectAttributeType(odAttr);
 
-    //Handle enums and another objects
+    // Handle enums and another objects
     if (isNameEnumInCD(cdAttrType) || isNameClassInCD(cdAttrType)) {
       return validateNameExpression(odAttr.getODValue(), cdAttrType);
     }
 
-    //Handle lists
+    // Handle lists
     if ((odAttr.getODValue() instanceof ASTODList) && cdAttr.getMCType() instanceof ASTMCListType) {
-      //Handle special case that list has no elements
+      // Handle special case that list has no elements
       var elementList = ((ASTODList) odAttr.getODValue()).getODValueList();
       if (elementList.size() == 0 && cdAttr.getMCType() instanceof ASTMCListType) {
-        //When the list attribute of the object has no elements then we have no chance to
+        // When the list attribute of the object has no elements then we have no chance to
         // determine the list element type
         // Just say it is valid because we can not contradict it
         return true;
       }
 
-      //Check if types are correct
+      // Check if types are correct
       if (!cdAttrType.equals(odAttrType)) {
         return false;
       }
-      //Check if all list elements have the same type
-      String listElementType = ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument()
-          .printType(pp);
+      // Check if all list elements have the same type
+      String listElementType =
+          ((ASTMCListType) cdAttr.getMCType()).getMCTypeArgument().printType(pp);
       for (var element : ((ASTODList) odAttr.getODValue()).getODValueList()) {
-        //Compare list element type to with type of all elements in object list attribute
+        // Compare list element type to with type of all elements in object list attribute
         if (!listElementType.equals(getObjectAttributeTypeByAST(element))) {
           return false;
         }
       }
     }
 
-    //Check types
+    // Check types
     return cdAttrType.equals(odAttrType);
   }
 
@@ -271,14 +271,14 @@ public class ClassMatcher {
    * Checks whether given OD value is of the given type
    *
    * @param odAttrValue Type of OD object attribute
-   * @param type        object/class type
+   * @param type object/class type
    * @return true iff odAttrValue is of given type
    */
   private boolean isAttributeValidForType(ASTODValue odAttrValue, String type) {
     return (isODAttributeList(odAttrValue) && listTypeValidation((ASTODList) odAttrValue, type))
-        || (isTypePrimitive(type) && primitiveTypeValidationByAST(
-        (ASTODSimpleAttributeValue) odAttrValue, type)) || validateNameExpression(odAttrValue,
-        type);
+        || (isTypePrimitive(type)
+            && primitiveTypeValidationByAST((ASTODSimpleAttributeValue) odAttrValue, type))
+        || validateNameExpression(odAttrValue, type);
   }
 
   /**
@@ -295,11 +295,11 @@ public class ClassMatcher {
    * Validates whether all list elements are of the given type
    *
    * @param odAttrList List of OD object values
-   * @param type       Type
+   * @param type Type
    * @return true iff all elements in odAttrList are of given type
    */
   private boolean listTypeValidation(ASTODList odAttrList, String type) {
-    //Check if each element in list has the given type
+    // Check if each element in list has the given type
     for (var odAttrListElement : odAttrList.getODValueList()) {
       if (!isAttributeValidForType(odAttrListElement, type)) {
         return false;
@@ -313,32 +313,33 @@ public class ClassMatcher {
    * float and long
    */
   private boolean isTypePrimitive(String typeName) {
-    return typeName.equals("String") || typeName.equals("int") || typeName.equals("float")
-        || typeName.equals("double") || typeName.equals("long");
+    return typeName.equals("String")
+        || typeName.equals("int")
+        || typeName.equals("float")
+        || typeName.equals("double")
+        || typeName.equals("long");
   }
 
   /**
    * Validate object attribute value for primitive type by using the type of the AST node
    *
    * @param odAttrValue Attribute value of OD object
-   * @param cdAttrType  Attribute type of CD class
+   * @param cdAttrType Attribute type of CD class
    * @return true iff ASTNode-Type of odAttrValue fits cdAttrType
    */
-  private boolean primitiveTypeValidationByAST(ASTODSimpleAttributeValue odAttrValue,
-      String cdAttrType) {
+  private boolean primitiveTypeValidationByAST(
+      ASTODSimpleAttributeValue odAttrValue, String cdAttrType) {
     if (odAttrValue.getExpression() instanceof ASTLiteralExpression) {
       ASTLiteralExpression odAttrValueExpression =
           (ASTLiteralExpression) odAttrValue.getExpression();
       var odAttrValueLiteral = odAttrValueExpression.getLiteral();
 
       if (odAttrValueLiteral instanceof ASTNatLiteral) {
-        //Natural number, integer or long
+        // Natural number, integer or long
         return cdAttrType.equals("int") || cdAttrType.equals("long");
-      }
-      else if (odAttrValueLiteral instanceof ASTStringLiteral) {
+      } else if (odAttrValueLiteral instanceof ASTStringLiteral) {
         return cdAttrType.equals("String");
-      }
-      else if (odAttrValueLiteral instanceof ASTBasicDoubleLiteral) {
+      } else if (odAttrValueLiteral instanceof ASTBasicDoubleLiteral) {
         return cdAttrType.equals("double") || cdAttrType.equals("float");
       }
     }
@@ -351,9 +352,7 @@ public class ClassMatcher {
    * @param name Class name
    */
   private Optional<ASTCDClass> getCDClassOfType(String name) {
-    return cd.getCDDefinition()
-        .getCDClassesList()
-        .stream()
+    return cd.getCDDefinition().getCDClassesList().stream()
         .filter(cdClass -> cdClass.getSymbol().getFullName().equals(name))
         .findAny();
   }
@@ -365,7 +364,7 @@ public class ClassMatcher {
    */
   private boolean isNameClassInCD(String className) {
     for (var cdClass : cd.getCDDefinition().getCDClassesList()) {
-      //Check if we can find
+      // Check if we can find
       if (cdClass.getSymbol().getFullName().contains(className)) {
         return true;
       }
@@ -380,7 +379,7 @@ public class ClassMatcher {
    */
   private boolean isNameEnumInCD(String name) {
     for (var cdEnum : cd.getCDDefinition().getCDEnumsList()) {
-      //Check if we can find
+      // Check if we can find
       if (cdEnum.getSymbol().getFullName().equals(name)) {
         return true;
       }
@@ -388,13 +387,9 @@ public class ClassMatcher {
     return false;
   }
 
-  /**
-   * Returns AST enum node for given name
-   */
+  /** Returns AST enum node for given name */
   private Optional<ASTCDEnum> getEnum(String enumName) {
-    return cd.getCDDefinition()
-        .getCDEnumsList()
-        .stream()
+    return cd.getCDDefinition().getCDEnumsList().stream()
         .filter(cdEnum -> cdEnum.getSymbol().getFullName().equals(enumName))
         .findAny();
   }
@@ -403,7 +398,7 @@ public class ClassMatcher {
    * Checks if the given value is defined in CD enum
    *
    * @param cdEnum CD Enumeration
-   * @param value  Enumeration value
+   * @param value Enumeration value
    */
   private boolean validateEnumValue(ASTCDEnum cdEnum, String value) {
     for (var cdEnumMember : cdEnum.getCDEnumConstantList()) {
@@ -416,45 +411,43 @@ public class ClassMatcher {
 
   /**
    * Validates a name expression value node. Tries validation as enum and object name. If value is
-   * not an enum value than it can also be an object name. Check if object name exist in object
-   * list
+   * not an enum value than it can also be an object name. Check if object name exist in object list
    *
    * @param odAttrValue Attribute value of OD object
-   * @param cdAttrType  Attribute type of CD class
+   * @param cdAttrType Attribute type of CD class
    * @return true, if value is a valid enum or object name
    */
   private boolean validateNameExpression(ASTODValue odAttrValue, String cdAttrType) {
     if (odAttrValue instanceof ASTODName) {
-      //It can be an enum or another object
-      var odAttrValueLiteral = ((ASTODName) odAttrValue).getName(); //Enum value but not type name
+      // It can be an enum or another object
+      var odAttrValueLiteral = ((ASTODName) odAttrValue).getName(); // Enum value but not type name
       Optional<ASTCDEnum> optEnum = getEnum(cdAttrType);
       if (optEnum.isPresent()) {
         return validateEnumValue(optEnum.get(), odAttrValueLiteral);
-      }
-      else if (isNameClassInCD(cdAttrType)) {
-        //Our literal could be the name of another object, check if it is in the object list
-        //We do not need to validate the object here because it will be validated by the algorithm
+      } else if (isNameClassInCD(cdAttrType)) {
+        // Our literal could be the name of another object, check if it is in the object list
+        // We do not need to validate the object here because it will be validated by the algorithm
         // automatically
         return isObjectInList(odAttrValueLiteral);
       }
     }
 
-    //In an older version, the AST parser throws here an ASTODSimpleAttributeValue node but now
+    // In an older version, the AST parser throws here an ASTODSimpleAttributeValue node but now
     // it is a ASTODName ... let's keep this here, maybe we still need it but probably it is
     // redundant
     if (odAttrValue instanceof ASTODSimpleAttributeValue) {
-      //It can be an enum or another object
+      // It can be an enum or another object
       var value = (ASTODSimpleAttributeValue) odAttrValue;
       if (value.getExpression() instanceof ASTNameExpression) {
         ASTNameExpression odAttrValueExpression = (ASTNameExpression) value.getExpression();
-        var odAttrValueLiteral = odAttrValueExpression.getName(); //Enum value but not type name
+        var odAttrValueLiteral = odAttrValueExpression.getName(); // Enum value but not type name
         Optional<ASTCDEnum> optEnum = getEnum(cdAttrType);
         if (optEnum.isPresent()) {
           return validateEnumValue(optEnum.get(), odAttrValueLiteral);
-        }
-        else if (isNameClassInCD(cdAttrType)) {
-          //Our literal could be the name of another object, check if it is in the object list
-          //We do not need to validate the object here because it will be validated by the algorithm
+        } else if (isNameClassInCD(cdAttrType)) {
+          // Our literal could be the name of another object, check if it is in the object list
+          // We do not need to validate the object here because it will be validated by the
+          // algorithm
           // automatically
           return isObjectInList(odAttrValueLiteral);
         }
@@ -484,9 +477,7 @@ public class ClassMatcher {
     return null;
   }
 
-  /**
-   * Determines the OD object attribute type by AST node analysis of attribute value
-   */
+  /** Determines the OD object attribute type by AST node analysis of attribute value */
   private String getObjectAttributeTypeByAST(ASTODValue odAttrValue) {
     if (isODAttributeList(odAttrValue)) {
       var elementList = ((ASTODList) odAttrValue).getODValueList();
@@ -501,8 +492,7 @@ public class ClassMatcher {
     }
     if (odAttrValue instanceof ASTODSimpleAttributeValue) {
       return getASTObjectSimpleAttributeType((ASTODSimpleAttributeValue) odAttrValue);
-    }
-    else if (odAttrValue instanceof ASTODObject) {
+    } else if (odAttrValue instanceof ASTODObject) {
       return ((ASTODObject) odAttrValue).getName();
     }
     return null;
@@ -516,26 +506,23 @@ public class ClassMatcher {
    */
   private String getASTObjectSimpleAttributeType(ASTODSimpleAttributeValue odAttrValue) {
     if (odAttrValue.getExpression() instanceof ASTLiteralExpression) {
-      //Primitive type
+      // Primitive type
       ASTLiteralExpression odAttrValueExpression =
           (ASTLiteralExpression) odAttrValue.getExpression();
       var odAttrValueLiteral = odAttrValueExpression.getLiteral();
 
       if (odAttrValueLiteral instanceof ASTNatLiteral) {
-        //Can also be a long
-        //TODO find out which AST is for int/long-type
+        // Can also be a long
+        // TODO find out which AST is for int/long-type
         return "int";
-      }
-      else if (odAttrValueLiteral instanceof ASTStringLiteral) {
+      } else if (odAttrValueLiteral instanceof ASTStringLiteral) {
         return "String";
-      }
-      else if (odAttrValueLiteral instanceof ASTBasicDoubleLiteral) {
-        //Can also be a float
-        //TODO find out which AST is for float/double-type
+      } else if (odAttrValueLiteral instanceof ASTBasicDoubleLiteral) {
+        // Can also be a float
+        // TODO find out which AST is for float/double-type
         return "double";
       }
     }
     return null;
   }
-
 }

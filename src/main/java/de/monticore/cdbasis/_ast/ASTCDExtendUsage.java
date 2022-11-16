@@ -9,9 +9,9 @@ public class ASTCDExtendUsage extends ASTCDExtendUsageTOP {
   public void setEnclosingScope(IMCLiteralsBasisScope enclosingScope) {
     if (enclosingScope instanceof de.monticore.cdbasis._symboltable.ICDBasisScope) {
       setEnclosingScope((de.monticore.cdbasis._symboltable.ICDBasisScope) enclosingScope);
-    }
-    else {
-      de.se_rwth.commons.logging.Log.error("0xAE886 The EnclosingScope form type de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope could not be casted to the type de.monticore.cdbasis._symboltable.ICDBasisScope. Please call the Method setEnclosingScope with a parameter form type de.monticore.cdbasis._symboltable.ICDBasisScope");
+    } else {
+      de.se_rwth.commons.logging.Log.error(
+          "0xAE886 The EnclosingScope form type de.monticore.literals.mcliteralsbasis._symboltable.IMCLiteralsBasisScope could not be casted to the type de.monticore.cdbasis._symboltable.ICDBasisScope. Please call the Method setEnclosingScope with a parameter form type de.monticore.cdbasis._symboltable.ICDBasisScope");
     }
   }
 

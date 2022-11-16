@@ -1,18 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.tf.AddMethodToEnum;
 import de.monticore.tf.RefactorCDs;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Created by
@@ -22,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 public class RefactorCDsTest {
 
   @BeforeClass
-  public static void init(){
+  public static void init() {
     CD4CodeMill.init();
   }
 
@@ -38,7 +37,8 @@ public class RefactorCDsTest {
     assertTrue(refactorCDs.doPatternMatching());
     refactorCDs.doReplacement();
 
-//    System.out.println(new CDPrettyPrinterConcreteVisitor(new IndentPrinter()).prettyprint(ast.get()));
+    //    System.out.println(new CDPrettyPrinterConcreteVisitor(new
+    // IndentPrinter()).prettyprint(ast.get()));
 
   }
 
@@ -53,45 +53,48 @@ public class RefactorCDsTest {
 
     assertFalse(refactorCDs.doPatternMatching());
 
-//    System.out.println(new CDPrettyPrinterConcreteVisitor(new IndentPrinter()).prettyprint(ast.get()));
+    //    System.out.println(new CDPrettyPrinterConcreteVisitor(new
+    // IndentPrinter()).prettyprint(ast.get()));
 
   }
   // TODO: Fix me
-//  @Test
-//  public void testTranslation() throws IOException {
-//    Optional<ASTTFRule> ast = CD4CodeTRMill.parser().parseTFRule("src/main/transformations/RefactorCDs.mtr");
-//    if(ast.isPresent()){
-//      ASTTFRule rule = ast.get();
-//
-//      ModelTraversal mt = new ModelTraversal();
-//      mt.handle(rule);
-//      Rule2ODState state = new Rule2ODState(new Variable2AttributeMap(), mt.getParents());
-//      CD4AnalysisRuleCollectVariablesVisitor variablesVisitor = new CD4AnalysisRuleCollectVariablesVisitor(state);
-//      variablesVisitor.handle(rule);
-//      CD4AnalysisRule2ODVisitor rule2ODVisitor = new CD4AnalysisRule2ODVisitor(state);
-//      rule2ODVisitor.handle(rule);
-//      ASTODRule astod = rule2ODVisitor.getOD();
-//
-//      ODRulesPrettyPrinter pp = new ODRulesPrettyPrinter();
-//      pp.handle(astod);
-//      System.out.println(pp.getPrintedAST());
-//    }
-//  }
-  
+  //  @Test
+  //  public void testTranslation() throws IOException {
+  //    Optional<ASTTFRule> ast =
+  // CD4CodeTRMill.parser().parseTFRule("src/main/transformations/RefactorCDs.mtr");
+  //    if(ast.isPresent()){
+  //      ASTTFRule rule = ast.get();
+  //
+  //      ModelTraversal mt = new ModelTraversal();
+  //      mt.handle(rule);
+  //      Rule2ODState state = new Rule2ODState(new Variable2AttributeMap(), mt.getParents());
+  //      CD4AnalysisRuleCollectVariablesVisitor variablesVisitor = new
+  // CD4AnalysisRuleCollectVariablesVisitor(state);
+  //      variablesVisitor.handle(rule);
+  //      CD4AnalysisRule2ODVisitor rule2ODVisitor = new CD4AnalysisRule2ODVisitor(state);
+  //      rule2ODVisitor.handle(rule);
+  //      ASTODRule astod = rule2ODVisitor.getOD();
+  //
+  //      ODRulesPrettyPrinter pp = new ODRulesPrettyPrinter();
+  //      pp.handle(astod);
+  //      System.out.println(pp.getPrintedAST());
+  //    }
+  //  }
+
   @Test
   public void testAdMethodToEnum() throws IOException {
     String input = "src/test/resources/de/monticore/trafo/Enum.cd";
     Optional<ASTCDCompilationUnit> ast = CD4CodeMill.parser().parse(input);
-  
-    assertTrue(ast.isPresent());
-  
-    AddMethodToEnum refactorCDs = new AddMethodToEnum(ast.get());
-  
-    assertTrue(refactorCDs.doPatternMatching());
-    
-    refactorCDs.doReplacement();
-  
-//    System.out.println(new CDPrettyPrinterConcreteVisitor(new IndentPrinter()).prettyprint(ast.get()));
-  }
 
+    assertTrue(ast.isPresent());
+
+    AddMethodToEnum refactorCDs = new AddMethodToEnum(ast.get());
+
+    assertTrue(refactorCDs.doPatternMatching());
+
+    refactorCDs.doReplacement();
+
+    //    System.out.println(new CDPrettyPrinterConcreteVisitor(new
+    // IndentPrinter()).prettyprint(ast.get()));
+  }
 }

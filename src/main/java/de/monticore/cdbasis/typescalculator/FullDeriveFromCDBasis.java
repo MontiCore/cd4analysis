@@ -14,11 +14,11 @@ public class FullDeriveFromCDBasis extends AbstractDerive {
     init(traverser);
   }
 
-  public FullDeriveFromCDBasis(){
+  public FullDeriveFromCDBasis() {
     this(CDBasisMill.traverser());
   }
 
-  public void init(CDBasisTraverser traverser){
+  public void init(CDBasisTraverser traverser) {
     final DeriveSymTypeOfLiterals deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(getTypeCheckResult());
     traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);

@@ -16,15 +16,13 @@ import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
-
 import java.util.*;
-
 
 public class SMT2ODGenerator {
 
   public Optional<ASTODArtifact> buildOd(Set<SMTObject> objectSet, String ODName, Model model) {
     List<ASTODElement> elementList = new ArrayList<>();
-    //add all Objects
+    // add all Objects
     for (SMTObject obj : objectSet) {
       elementList.add(buildObject(obj));
     }
@@ -37,15 +35,18 @@ public class SMT2ODGenerator {
     return Optional.of(ODHelper.buildOD(ODName, elementList));
   }
 
-
   protected ASTODNamedObject buildObject(SMTObject obj) {
     List<ASTODAttribute> attributeList = new ArrayList<>();
     attributeList = getAllSuperInstanceAttribute(obj, attributeList);
 
-    return ODHelper.buildObject(obj.getSmtExpr().toString().replace("!val!", ""), SMTNameHelper.printObjectType(obj), attributeList);
+    return ODHelper.buildObject(
+        obj.getSmtExpr().toString().replace("!val!", ""),
+        SMTNameHelper.printObjectType(obj),
+        attributeList);
   }
 
-  protected List<ASTODAttribute> getAllSuperInstanceAttribute(SMTObject obj, List<ASTODAttribute> attributeList) {
+  protected List<ASTODAttribute> getAllSuperInstanceAttribute(
+      SMTObject obj, List<ASTODAttribute> attributeList) {
     attributeList.addAll(buildAttributeList(obj));
     if (obj.isPresentSuperclass()) {
       getAllSuperInstanceAttribute(obj.getSuperClass(), attributeList);
@@ -57,14 +58,23 @@ public class SMT2ODGenerator {
   }
 
   protected ASTODLink buildLink(SMTLink smtLink) {
-    return ODHelper.buildLink(buildObject(smtLink.getLeftObject()).getName(), buildObject(smtLink.getRightObject()).getName(), smtLink.getAssociation().getLeft().getCDRole().getName(), smtLink.getAssociation().getRight().getCDRole().getName());
+    return ODHelper.buildLink(
+        buildObject(smtLink.getLeftObject()).getName(),
+        buildObject(smtLink.getRightObject()).getName(),
+        smtLink.getAssociation().getLeft().getCDRole().getName(),
+        smtLink.getAssociation().getRight().getCDRole().getName());
   }
 
-  protected ASTODAttribute buildAttribute(Map.Entry<ASTCDAttribute, Expr<? extends Sort>> smtAttribute) {
-    return ODHelper.buildAttribute(smtAttribute.getKey().getName(), CDHelper.sort2MCType(smtAttribute.getValue().getSort()), smtAttribute.getValue().toString());
+  protected ASTODAttribute buildAttribute(
+      Map.Entry<ASTCDAttribute, Expr<? extends Sort>> smtAttribute) {
+    return ODHelper.buildAttribute(
+        smtAttribute.getKey().getName(),
+        CDHelper.sort2MCType(smtAttribute.getValue().getSort()),
+        smtAttribute.getValue().toString());
   }
 
-  protected List<LinkedSMTObject> getSuperInstanceLinks(SMTObject obj, List<LinkedSMTObject> linkedObjects) {
+  protected List<LinkedSMTObject> getSuperInstanceLinks(
+      SMTObject obj, List<LinkedSMTObject> linkedObjects) {
     linkedObjects.addAll(obj.getLinkedObjects());
     if (obj.isPresentSuperclass()) {
       getSuperInstanceLinks(obj.getSuperClass(), linkedObjects);
@@ -85,15 +95,17 @@ public class SMT2ODGenerator {
 
   protected Set<SMTLink> buildLinkSet(Set<SMTObject> objectMap, Model model) {
     Set<SMTLink> links = new HashSet<>();
-    //inherit links of sub instances
+    // inherit links of sub instances
     for (SMTObject obj : objectMap) {
       for (LinkedSMTObject linkedObj : getSuperInstanceLinks(obj, new ArrayList<>())) {
-        if (objectMap.stream().anyMatch(o -> o.getSmtExpr().equals(linkedObj.getLinkedObject().getSmtExpr())) && linkedObj.isLeft()) {
+        if (objectMap.stream()
+                .anyMatch(o -> o.getSmtExpr().equals(linkedObj.getLinkedObject().getSmtExpr()))
+            && linkedObj.isLeft()) {
           links.add(new SMTLink(linkedObj.getLinkedObject(), obj, linkedObj.getAssociation()));
         }
       }
     }
-    //linked class whose superclasses are linked
+    // linked class whose superclasses are linked
     for (SMTObject obj1 : objectMap) {
       for (SMTObject obj2 : objectMap) {
         Optional<SMTLink> isLink = haveLinkedSuperInstances(obj1, obj2, model);
@@ -106,11 +118,22 @@ public class SMT2ODGenerator {
     return links;
   }
 
-  protected Optional<SMTLink> haveLinkedSuperInstances(SMTObject leftObj, SMTObject rightObj, Model model) {
+  protected Optional<SMTLink> haveLinkedSuperInstances(
+      SMTObject leftObj, SMTObject rightObj, Model model) {
     for (LinkedSMTObject left : getSuperInstanceLinks(leftObj, new ArrayList<>())) {
       for (LinkedSMTObject right : getSuperInstanceLinks(rightObj, new ArrayList<>())) {
-        if (left.getAssociation().equals(right.getAssociation()) && left.isLeft() && right.isRight()) {
-          if (model.evaluate(left.getAssocFunc().apply(left.getLinkedObject().getSmtExpr(), right.getLinkedObject().getSmtExpr()), true).getBoolValue() == Z3_lbool.Z3_L_TRUE) {
+        if (left.getAssociation().equals(right.getAssociation())
+            && left.isLeft()
+            && right.isRight()) {
+          if (model
+                  .evaluate(
+                      left.getAssocFunc()
+                          .apply(
+                              left.getLinkedObject().getSmtExpr(),
+                              right.getLinkedObject().getSmtExpr()),
+                      true)
+                  .getBoolValue()
+              == Z3_lbool.Z3_L_TRUE) {
             return Optional.of(new SMTLink(rightObj, leftObj, right.getAssociation()));
           }
         }
@@ -118,11 +141,4 @@ public class SMT2ODGenerator {
     }
     return Optional.empty();
   }
-
-
 }
-
-
-
-
-

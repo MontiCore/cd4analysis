@@ -1,27 +1,28 @@
 package de.monticore.cddiff.cd2alloy;
 
-import de.monticore.cddiff.cd2alloy.generator.OpenWorldGenerator;
+import static org.junit.Assert.assertNotNull;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
-import org.junit.Test;
-
+import de.monticore.cddiff.cd2alloy.generator.OpenWorldGenerator;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.junit.Assert.assertNotNull;
+import org.junit.Test;
 
 public class OpenWorldGeneratorTest extends CDDiffTestBasis {
 
   @Test
-  public void testGenerator(){
-    final ASTCDCompilationUnit ast1 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface/AbstractPerson.cd");
+  public void testGenerator() {
+    final ASTCDCompilationUnit ast1 =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface/AbstractPerson.cd");
     assertNotNull(ast1);
 
-    final ASTCDCompilationUnit ast2 = parseModel(
-        "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface/InterfacePerson.cd");
+    final ASTCDCompilationUnit ast2 =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/Abstract2Interface/InterfacePerson.cd");
     assertNotNull(ast2);
 
     // Create Output Path

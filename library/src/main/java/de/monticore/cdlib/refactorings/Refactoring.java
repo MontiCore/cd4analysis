@@ -5,6 +5,5 @@ import de.monticore.cdlib.utilities.TransformationUtility;
 
 public interface Refactoring {
 
-	public TransformationUtility transformationUtility = new TransformationUtility();
-
+  public TransformationUtility transformationUtility = new TransformationUtility();
 }

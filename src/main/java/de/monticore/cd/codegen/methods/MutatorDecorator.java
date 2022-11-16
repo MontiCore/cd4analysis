@@ -9,13 +9,18 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 public class MutatorDecorator extends SpecificMethodDecorator {
 
   public MutatorDecorator(final GlobalExtensionManagement glex) {
-    super(glex, new MandatoryMutatorDecorator(glex), new OptionalMutatorDecorator(glex), new ListMutatorDecorator(glex));
+    super(
+        glex,
+        new MandatoryMutatorDecorator(glex),
+        new OptionalMutatorDecorator(glex),
+        new ListMutatorDecorator(glex));
   }
 
-  public MutatorDecorator(final GlobalExtensionManagement glex,
+  public MutatorDecorator(
+      final GlobalExtensionManagement glex,
       final AbstractMethodDecorator mandatoryMethodDecorator,
       final AbstractMethodDecorator optionalMethodDecorator,
       final AbstractMethodDecorator listMethodDecorator) {
-    super(glex,mandatoryMethodDecorator, optionalMethodDecorator, listMethodDecorator);
+    super(glex, mandatoryMethodDecorator, optionalMethodDecorator, listMethodDecorator);
   }
 }

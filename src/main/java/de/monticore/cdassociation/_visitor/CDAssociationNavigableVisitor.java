@@ -10,7 +10,6 @@ public class CDAssociationNavigableVisitor implements CDAssociationVisitor2 {
   protected boolean isDefinitiveNavigableLeft;
   protected boolean isDefinitiveNavigableRight;
 
-
   public boolean isDefinitiveNavigableLeft() {
     return this.isDefinitiveNavigableLeft;
   }

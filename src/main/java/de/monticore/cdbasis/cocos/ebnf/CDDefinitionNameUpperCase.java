@@ -10,8 +10,10 @@ public class CDDefinitionNameUpperCase implements CDBasisASTCDDefinitionCoCo {
   @Override
   public void check(ASTCDDefinition cdDefinition) {
     if (!Character.isUpperCase(cdDefinition.getName().charAt(0))) {
-      Log.error(String.format("0xCDC0B: First character of the diagram name %s must be upper-case.",
-          cdDefinition.getName()),
+      Log.error(
+          String.format(
+              "0xCDC0B: First character of the diagram name %s must be upper-case.",
+              cdDefinition.getName()),
           cdDefinition.get_SourcePositionStart());
     }
   }

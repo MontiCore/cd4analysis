@@ -2,19 +2,22 @@
 package de.monticore.cdassociation._symboltable;
 
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 
 public class SymAssociation {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  protected Optional<CDAssociationSymbol> association=Optional.empty();
+  protected Optional<CDAssociationSymbol> association = Optional.empty();
+
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
 
-  public SymAssociation() {
-  }
+  public SymAssociation() {}
 
-  public SymAssociation(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") Optional<CDAssociationSymbol> association, CDRoleSymbol left, CDRoleSymbol right) {
+  public SymAssociation(
+      @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+          Optional<CDAssociationSymbol> association,
+      CDRoleSymbol left,
+      CDRoleSymbol right) {
     this(left, right);
     association.ifPresent(this::setAssociation);
   }
@@ -32,12 +35,11 @@ public class SymAssociation {
   public CDRoleSymbol getOtherRole(CDRoleSymbol source) {
     if (source.equals(this.left)) {
       return this.right;
-    }
-    else if (source.equals(this.right)) {
+    } else if (source.equals(this.right)) {
       return this.left;
-    }
-    else {
-      throw new RuntimeException("0xCD000: unknown role, the passed role is not part of the association");
+    } else {
+      throw new RuntimeException(
+          "0xCD000: unknown role, the passed role is not part of the association");
     }
   }
 

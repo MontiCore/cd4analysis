@@ -9,7 +9,8 @@ import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumTraverser;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 
 /**
- * this class should only be used with {@link de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo}
+ * this class should only be used with {@link
+ * de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo}
  */
 public class CDInterfaceAndEnumDirectCompositionTrafo extends CDAfterParseHelper
     implements CDInterfaceAndEnumVisitor2, CDInterfaceAndEnumHandler {

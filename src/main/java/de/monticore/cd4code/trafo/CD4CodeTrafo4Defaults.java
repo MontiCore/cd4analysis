@@ -19,7 +19,8 @@ public class CD4CodeTrafo4Defaults {
     this(new CDAfterParseHelper(), CD4AnalysisMill.scopesGenitorDelegator());
   }
 
-  public CD4CodeTrafo4Defaults(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
+  public CD4CodeTrafo4Defaults(
+      CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
     this.cdAfterParseHelper = cdAfterParseHelper;
     this.traverser = CD4CodeMill.traverser();
     this.symbolTableCreator = symbolTableCreator;
@@ -27,8 +28,12 @@ public class CD4CodeTrafo4Defaults {
     init(cdAfterParseHelper, symbolTableCreator, traverser);
   }
 
-  public void init(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator, CD4CodeTraverser traverser) {
-    final CDAssociationRoleNameTrafo cdAssociation = new CDAssociationRoleNameTrafo(cdAfterParseHelper, symbolTableCreator);
+  public void init(
+      CDAfterParseHelper cdAfterParseHelper,
+      CD4AnalysisScopesGenitorDelegator symbolTableCreator,
+      CD4CodeTraverser traverser) {
+    final CDAssociationRoleNameTrafo cdAssociation =
+        new CDAssociationRoleNameTrafo(cdAfterParseHelper, symbolTableCreator);
     traverser.add4CDAssociation(cdAssociation);
     traverser.setCDAssociationHandler(cdAssociation);
   }
@@ -48,7 +53,7 @@ public class CD4CodeTrafo4Defaults {
       throw new RuntimeException(msg);
     }
 
-    ((CDAssociationRoleNameTrafo)traverser.getCDAssociationHandler().get()).init(compilationUnit);
+    ((CDAssociationRoleNameTrafo) traverser.getCDAssociationHandler().get()).init(compilationUnit);
 
     compilationUnit.accept(getTraverser());
   }

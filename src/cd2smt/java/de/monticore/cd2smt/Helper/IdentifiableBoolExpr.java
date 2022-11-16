@@ -3,7 +3,6 @@ package de.monticore.cd2smt.Helper;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import de.se_rwth.commons.SourcePosition;
-
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,11 @@ public class IdentifiableBoolExpr {
   protected Optional<String> invariantName;
   protected boolean wasNegated;
 
-  private IdentifiableBoolExpr(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName, boolean wasNegated) {
+  private IdentifiableBoolExpr(
+      BoolExpr value,
+      SourcePosition sourcePosition,
+      Optional<String> invariantName,
+      boolean wasNegated) {
     this.value = value;
     this.id = counter;
     this.sourcePosition = sourcePosition;
@@ -27,13 +30,19 @@ public class IdentifiableBoolExpr {
     counter++;
   }
 
-  private static IdentifiableBoolExpr buildIdentifiable(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName, boolean wasNegated) {
-    IdentifiableBoolExpr identifiableBoolexpr = new IdentifiableBoolExpr(value, sourcePosition, invariantName, wasNegated);
+  private static IdentifiableBoolExpr buildIdentifiable(
+      BoolExpr value,
+      SourcePosition sourcePosition,
+      Optional<String> invariantName,
+      boolean wasNegated) {
+    IdentifiableBoolExpr identifiableBoolexpr =
+        new IdentifiableBoolExpr(value, sourcePosition, invariantName, wasNegated);
     constraintMap.put(identifiableBoolexpr.getId(), identifiableBoolexpr);
     return identifiableBoolexpr;
   }
 
-  public static IdentifiableBoolExpr buildIdentifiable(BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName) {
+  public static IdentifiableBoolExpr buildIdentifiable(
+      BoolExpr value, SourcePosition sourcePosition, Optional<String> invariantName) {
     return buildIdentifiable(value, sourcePosition, invariantName, false);
   }
 
@@ -71,7 +80,7 @@ public class IdentifiableBoolExpr {
   }
 
   public IdentifiableBoolExpr negate(Context ctx) {
-    return buildIdentifiable(ctx.mkNot(this.getValue()), this.sourcePosition, this.invariantName, true);
+    return buildIdentifiable(
+        ctx.mkNot(this.getValue()), this.sourcePosition, this.invariantName, true);
   }
-
 }

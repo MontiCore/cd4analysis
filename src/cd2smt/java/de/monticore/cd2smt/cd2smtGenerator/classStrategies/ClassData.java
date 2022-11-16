@@ -21,23 +21,24 @@ public interface ClassData {
   /**
    * this function calculate the value of an Expr that represent a ASTCDType Object .
    *
-   * @param astCdType     the ASTCDType (class or interface)
+   * @param astCdType the ASTCDType (class or interface)
    * @param attributeName an name of the Attribute of the ASTCDType
-   * @param cDTypeExpr    the SMT Expr of the object
+   * @param cDTypeExpr the SMT Expr of the object
    * @return the Attribute as SMT Expr
    */
-  Expr<? extends Sort> getAttribute(ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr);
+  Expr<? extends Sort> getAttribute(
+      ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr);
 
   /**
    * this function calculate the value of an Expr that represent a ASTCDType Object .
    *
-   * @param astCdType  the ASTCDType (class or interface)
-   * @param attribute  ASTCDAttribute  of the ASTCDType
+   * @param astCdType the ASTCDType (class or interface)
+   * @param attribute ASTCDAttribute of the ASTCDType
    * @param cDTypeExpr the SMT Expr of the object
    * @return the Attribute as SMT Expr
    */
-  default Expr<? extends Sort> getAttribute(ASTCDType astCdType, ASTCDAttribute attribute, Expr<? extends Sort> cDTypeExpr) {
+  default Expr<? extends Sort> getAttribute(
+      ASTCDType astCdType, ASTCDAttribute attribute, Expr<? extends Sort> cDTypeExpr) {
     return getAttribute(astCdType, attribute.getName(), cDTypeExpr);
   }
-
 }

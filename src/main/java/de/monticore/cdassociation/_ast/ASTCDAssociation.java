@@ -4,7 +4,6 @@ package de.monticore.cdassociation._ast;
 import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.List;
 
 public class ASTCDAssociation extends ASTCDAssociationTOP {
@@ -14,7 +13,8 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
       return getName();
     }
 
-    return new CDAssociationFullPrettyPrinter(new IndentPrinter()).prettyprint((ASTCDAssociationNode) this);
+    return new CDAssociationFullPrettyPrinter(new IndentPrinter())
+        .prettyprint((ASTCDAssociationNode) this);
   }
 
   public ASTMCQualifiedName getLeftQualifiedName() {
@@ -32,5 +32,4 @@ public class ASTCDAssociation extends ASTCDAssociationTOP {
   public List<String> getRightReferenceName() {
     return getRight().getMCQualifiedType().getNameList();
   }
-
 }

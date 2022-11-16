@@ -10,23 +10,22 @@ import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.util.CDUtils;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Test;
 
 public class TypesAbstractClasses extends BaseTest {
 
-  private static final String INPUT_MODEL_1 = "src/cdmergetest/resources/class_diagrams/Types"
-      + "/abstractClasses/A.cd";
+  private static final String INPUT_MODEL_1 =
+      "src/cdmergetest/resources/class_diagrams/Types" + "/abstractClasses/A.cd";
 
-  private static final String INPUT_MODEL_2 = "src/cdmergetest/resources/class_diagrams/Types"
-      + "/abstractClasses/B.cd";
+  private static final String INPUT_MODEL_2 =
+      "src/cdmergetest/resources/class_diagrams/Types" + "/abstractClasses/B.cd";
 
-  private static final String EXPECTED = "src/cdmergetest/resources/class_diagrams/Types"
-      + "/abstractClasses/mergedCD.cd";
+  private static final String EXPECTED =
+      "src/cdmergetest/resources/class_diagrams/Types" + "/abstractClasses/mergedCD.cd";
 
   @Test
   public void testTypesAbstractClasses() throws IOException, MergingException {
@@ -40,12 +39,13 @@ public class TypesAbstractClasses extends BaseTest {
     processResult(results);
     org.junit.Assert.assertTrue(
         parseCD(CDUtils.prettyPrint(results.getMergedCD().get())).deepEquals(expectedCD, false));
-
   }
 
   private CDMergeConfig getConfig(List<String> inputModels) throws IOException {
-    CDMergeConfig.Builder builder = getConfigBuilder().withParam(MergeParameter.CHECK_ONLY,
-        MergeParameter.ON).withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
+    CDMergeConfig.Builder builder =
+        getConfigBuilder()
+            .withParam(MergeParameter.CHECK_ONLY, MergeParameter.ON)
+            .withParam(MergeParameter.OUTPUT_NAME, "mergedCD");
 
     for (String m : inputModels) {
       Preconditions.checkNotNull(loadModel(Paths.get(m)));
@@ -53,5 +53,4 @@ public class TypesAbstractClasses extends BaseTest {
     }
     return builder.build();
   }
-
 }

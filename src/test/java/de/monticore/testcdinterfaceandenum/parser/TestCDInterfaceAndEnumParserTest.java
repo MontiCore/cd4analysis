@@ -7,17 +7,16 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.testcdinterfaceandenum.CDInterfaceAndEnumTestBasis;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.Test;
 
-public class TestCDInterfaceAndEnumParserTest
-    extends CDInterfaceAndEnumTestBasis {
+public class TestCDInterfaceAndEnumParserTest extends CDInterfaceAndEnumTestBasis {
 
   @Test
   public void parseCDInterface() throws IOException {
-    final Optional<ASTCDInterface> astcdInterface = p.parse_StringCDInterface("interface I extends I2 { String a; }");
+    final Optional<ASTCDInterface> astcdInterface =
+        p.parse_StringCDInterface("interface I extends I2 { String a; }");
     checkNullAndPresence(p, astcdInterface);
   }
 
@@ -41,7 +40,8 @@ public class TestCDInterfaceAndEnumParserTest
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdinterfaceandenum/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> parse =
+        p.parseCDCompilationUnit(getFilePath("cdinterfaceandenum/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
   }
 }

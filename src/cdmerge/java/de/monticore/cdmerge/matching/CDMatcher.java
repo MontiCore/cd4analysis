@@ -15,13 +15,10 @@ import de.monticore.cdmerge.matching.strategies.AttributeMatcher;
 import de.monticore.cdmerge.matching.strategies.MatcherBase;
 import de.monticore.cdmerge.matching.strategies.TypeMatcher;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-
 import java.util.List;
 import java.util.Map;
 
-/**
- * Returns a list of matching type definitions from the provided class diagrams.
- */
+/** Returns a list of matching type definitions from the provided class diagrams. */
 public abstract class CDMatcher extends MatcherBase {
 
   private AssociationMatcher associationMatcher;
@@ -30,8 +27,11 @@ public abstract class CDMatcher extends MatcherBase {
 
   private TypeMatcher typeMatcher;
 
-  public CDMatcher(MergeBlackBoard blackBoard, TypeMatcher typeMatcher,
-      AttributeMatcher attributeMatcher, AssociationMatcher associationMatcher) {
+  public CDMatcher(
+      MergeBlackBoard blackBoard,
+      TypeMatcher typeMatcher,
+      AttributeMatcher attributeMatcher,
+      AssociationMatcher associationMatcher) {
     super(blackBoard);
     this.typeMatcher = typeMatcher;
     this.attributeMatcher = attributeMatcher;
@@ -56,17 +56,14 @@ public abstract class CDMatcher extends MatcherBase {
 
   public ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> findMatchingAssociations() {
     return getAssociationMatcher().findMatchingAssociations();
-
   }
 
   public ASTMatchGraph<ASTCDAttribute, ASTCDClass> findMatchingAttributes(String className) {
     Map<String, ASTMatchGraph<ASTCDAttribute, ASTCDClass>> matchingAttributes =
-        getAttributeMatcher().findMatchingAttributes(
-        findMatchingClasses());
+        getAttributeMatcher().findMatchingAttributes(findMatchingClasses());
     if (matchingAttributes.containsKey(className)) {
       return matchingAttributes.get(className);
-    }
-    else {
+    } else {
       throw new IllegalArgumentException(
           "No class with name " + className + " found in any of the classdiagrams");
     }
@@ -86,9 +83,7 @@ public abstract class CDMatcher extends MatcherBase {
 
   public ASTMatchGraph<ASTCDEnum, ASTCDDefinition> findMatchingEnums() {
     return getTypeMatcher().findMatchingEnums();
-
   }
 
   public abstract CDMatch createCDMatch(List<ASTCDDefinition> cds);
-
 }

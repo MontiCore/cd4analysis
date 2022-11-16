@@ -5,20 +5,17 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.odbasis._ast.ASTObjectDiagram;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class AssociationsMatcherTest {
 
@@ -48,7 +45,6 @@ public class AssociationsMatcherTest {
     CD4CodeMill.init();
 
     matcher = new AssociationsMatcher(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()));
-
   }
 
   void loadModels(String odName, String cdName) throws FileNotFoundException {
@@ -66,7 +62,6 @@ public class AssociationsMatcherTest {
 
     odLinks = ODHelper.getAllLinks(od.get().getObjectDiagram());
     cdAssociations = cd.get().getCDDefinition().getCDAssociationsList();
-
   }
 
   @Test
@@ -83,10 +78,7 @@ public class AssociationsMatcherTest {
   public void associationWithCardinalityDiff() throws FileNotFoundException {
     assert (true);
 
-
     loadModels("/Cardinality.od", "/Cardinality.cd");
     Assert.assertTrue(matcher.checkAssociations(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
-
   }
-
 }

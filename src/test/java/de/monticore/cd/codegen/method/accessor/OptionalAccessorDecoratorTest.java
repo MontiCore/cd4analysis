@@ -1,6 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.method.accessor;
 
+import static de.monticore.cd.codegen.DecoratorAssert.assertBoolean;
+import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
+import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
+import static de.monticore.cd.facade.CDModifier.PROTECTED;
+import static de.monticore.cd.facade.CDModifier.PUBLIC;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 import de.monticore.cd.codegen.DecoratorTestCase;
 import de.monticore.cd.codegen.methods.accessor.OptionalAccessorDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
@@ -11,19 +19,10 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.LogStub;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-
-import static de.monticore.cd.codegen.DecoratorAssert.assertBoolean;
-import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
-import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
-import static de.monticore.cd.facade.CDModifier.PROTECTED;
-import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
 
@@ -39,7 +38,8 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
     ASTCDCompilationUnit cd = this.parse("de", "monticore", "cd", "codegen", "Automaton");
 
     ASTMCType optType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
     OptionalAccessorDecorator optionalAccessorDecorator = new OptionalAccessorDecorator(glex);
     this.methods = optionalAccessorDecorator.decorate(attribute);
   }
@@ -70,7 +70,8 @@ public class OptionalAccessorDecoratorTest extends DecoratorTestCase {
   @Test
   public void testDerivedAttr() {
     ASTMCType optType = MCTypeFacade.getInstance().createOptionalTypeOf(String.class);
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), optType, "a");
     attribute.getModifier().setDerived(true);
     OptionalAccessorDecorator optionalAccessorDecorator = new OptionalAccessorDecorator(glex);
     List<ASTCDMethod> methList = optionalAccessorDecorator.decorate(attribute);

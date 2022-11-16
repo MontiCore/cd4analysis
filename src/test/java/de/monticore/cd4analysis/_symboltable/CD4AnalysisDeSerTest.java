@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4analysis._symboltable;
 
+import static org.junit.Assert.*;
+
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
@@ -16,31 +18,31 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 @SuppressWarnings("OptionalGetWithoutIsPresent")
 public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
   @Test
   public void completeModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/STTest.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cd4analysis/parser/STTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope =
+        CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
 
     {
-      final CD4AnalysisTraverser traverser = new CD4AnalysisSymbolTableCompleter(node).getTraverser();
+      final CD4AnalysisTraverser traverser =
+          new CD4AnalysisSymbolTableCompleter(node).getTraverser();
       node.accept(traverser);
 
       checkLogError();
@@ -56,12 +58,14 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
   @Test
   public void simple() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/SimpleSTTest.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cd4analysis/parser/SimpleSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope =
+        CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
     new CD4AnalysisTrafo4Defaults().transform(node);
 
@@ -75,12 +79,14 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
 
   @Test
   public void minimal() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope =
+        CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
     final String serializedST = symbols2Json.serialize(scope);
@@ -104,34 +110,49 @@ public class CD4AnalysisDeSerTest extends CD4AnalysisTestBasis {
   @Ignore("no inner classes are allowed")
   @Test
   public void innerClass() throws IOException {
-    final Optional<ASTCDCompilationUnit> astcdCompilationUnit = p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
+    final Optional<ASTCDCompilationUnit> astcdCompilationUnit =
+        p.parse(getFilePath("cd4analysis/parser/MinimalSTTest.cd"));
     checkNullAndPresence(p, astcdCompilationUnit);
     final ASTCDCompilationUnit node = astcdCompilationUnit.get();
     new CD4AnalysisAfterParseTrafo().transform(node);
 
-    final ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4AnalysisArtifactScope scope =
+        CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
     final Optional<CDTypeSymbol> c = scope.resolveCDType("A");
     final ICD4AnalysisScope innerSpanningScope = CD4AnalysisMill.scope();
     innerSpanningScope.setEnclosingScope((ICD4AnalysisScope) c.get().getSpannedScope());
-    innerSpanningScope.add(OOSymbolsMill.fieldSymbolBuilder().setName("field").setType(SymTypeExpressionFactory.createTypeObject("A", innerSpanningScope)).build());
-    final CDTypeSymbol inner = CDBasisMill.cDTypeSymbolBuilder().setName("Inner").setIsClass(true).setIsStatic(true).setSpannedScope(innerSpanningScope).build();
+    innerSpanningScope.add(
+        OOSymbolsMill.fieldSymbolBuilder()
+            .setName("field")
+            .setType(SymTypeExpressionFactory.createTypeObject("A", innerSpanningScope))
+            .build());
+    final CDTypeSymbol inner =
+        CDBasisMill.cDTypeSymbolBuilder()
+            .setName("Inner")
+            .setIsClass(true)
+            .setIsStatic(true)
+            .setSpannedScope(innerSpanningScope)
+            .build();
     c.get().getSpannedScope().add(inner);
     innerSpanningScope.setSpanningSymbol(inner);
 
     final String serializedST = symbols2Json.serialize(scope);
     final ICD4AnalysisArtifactScope deserialize = getGlobalScopeForDeserialization(serializedST);
 
-    final Optional<CDTypeSymbol> innerType = deserialize.resolveCDTypeMany("Inner").stream().distinct().findAny();
+    final Optional<CDTypeSymbol> innerType =
+        deserialize.resolveCDTypeMany("Inner").stream().distinct().findAny();
     assertTrue(innerType.isPresent());
 
     final Optional<CDTypeSymbol> a = deserialize.resolveCDType("A");
     assertTrue(a.isPresent());
 
-    final Optional<CDTypeSymbol> aInnerType = a.get().getSpannedScope().resolveCDTypeLocally("Inner");
+    final Optional<CDTypeSymbol> aInnerType =
+        a.get().getSpannedScope().resolveCDTypeLocally("Inner");
     assertTrue(aInnerType.isPresent());
     assertEquals(innerType, aInnerType);
 
-    final Optional<FieldSymbol> fieldSymbol = aInnerType.get().getSpannedScope().resolveFieldLocally("field");
+    final Optional<FieldSymbol> fieldSymbol =
+        aInnerType.get().getSpannedScope().resolveFieldLocally("field");
     assertTrue(fieldSymbol.isPresent());
   }
 

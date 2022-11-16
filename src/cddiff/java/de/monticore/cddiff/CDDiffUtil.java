@@ -7,8 +7,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FileUtils;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.apache.commons.io.FileUtils;
 
 public class CDDiffUtil {
 
@@ -30,9 +29,9 @@ public class CDDiffUtil {
 
     // Process to role name only
     if (toRoleName) {
-      char[] roleName = parts.get(parts.size()-1).toCharArray();
+      char[] roleName = parts.get(parts.size() - 1).toCharArray();
       roleName[0] = Character.toLowerCase(roleName[0]);
-      return new String (roleName);
+      return new String(roleName);
     }
 
     // Combine all parts using "_" as separator instead of "."
@@ -42,12 +41,12 @@ public class CDDiffUtil {
     // Remove last "_"
     completeName = new StringBuilder(completeName.substring(0, completeName.length() - 1));
 
-
     return completeName.toString();
   }
 
   /**
    * This helper functions processes a qualified name such that it can be used in Alloy
+   *
    * @return The processed name
    */
   public static String processQName(String qname) {
@@ -57,8 +56,9 @@ public class CDDiffUtil {
   }
 
   /**
-   * The default role-name for a referenced type is the (simple) type-name with the first letter
-   * in lower case.
+   * The default role-name for a referenced type is the (simple) type-name with the first letter in
+   * lower case.
+   *
    * @param qname is the qualified name of the referenced type
    * @return default role-name
    */
@@ -69,14 +69,15 @@ public class CDDiffUtil {
   }
 
   public static String inferRole(ASTCDAssocSide assocSide) {
-    if (assocSide.isPresentCDRole()){
+    if (assocSide.isPresentCDRole()) {
       return assocSide.getCDRole().getName();
     }
-    return CDDiffUtil.processQName2RoleName(assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
+    return CDDiffUtil.processQName2RoleName(
+        assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
   }
 
-  protected static void saveDiffCDs2File(ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2,
-      String outputPath) throws IOException {
+  protected static void saveDiffCDs2File(
+      ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, String outputPath) throws IOException {
     CD4CodeFullPrettyPrinter pprinter = new CD4CodeFullPrettyPrinter();
     ast1.accept(pprinter.getTraverser());
     String cd1 = pprinter.getPrinter().getContent();
@@ -100,8 +101,7 @@ public class CDDiffUtil {
     FileUtils.writeStringToFile(outputFile2.toFile(), cd2, Charset.defaultCharset());
   }
 
-
-  public static ASTCDCompilationUnit loadCD(String modelPath) throws IOException{
+  public static ASTCDCompilationUnit loadCD(String modelPath) throws IOException {
     Optional<ASTCDCompilationUnit> cd = CD4CodeMill.parser().parse(modelPath);
     if (cd.isPresent()) {
       new CDFullNameTrafo().transform(cd.get());
@@ -118,16 +118,13 @@ public class CDDiffUtil {
       Optional<ASTODArtifact> optOD = parser.parse(modelPath);
       if (parser.hasErrors()) {
         Log.error("Model parsed with errors. Model path: " + modelPath);
-      }
-      else if (optOD.isPresent()) {
+      } else if (optOD.isPresent()) {
         return optOD.get();
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       Log.error("Could not parse CD model.");
       e.printStackTrace();
     }
     return null;
   }
-
 }

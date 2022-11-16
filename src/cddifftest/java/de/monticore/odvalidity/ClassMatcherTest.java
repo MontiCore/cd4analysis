@@ -6,13 +6,11 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
+import java.io.File;
+import java.io.FileNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 
 public class ClassMatcherTest {
   final String resources = "src/cddifftest/resources/de/monticore/odvalidity/classmatcher/";
@@ -97,17 +95,18 @@ public class ClassMatcherTest {
       throws FileNotFoundException {
     reloadOD(odPath);
 
-    Assert.assertEquals(shouldPass,
+    Assert.assertEquals(
+        shouldPass,
         classMatcher.checkAllObjectsInClassDiagram(od, cd, CDSemantics.SIMPLE_CLOSED_WORLD));
-    Assert.assertEquals(shouldPass,
+    Assert.assertEquals(
+        shouldPass,
         classMatcher.checkAllObjectsInClassDiagram(od, cd, CDSemantics.SIMPLE_OPEN_WORLD));
   }
 
-  private void simpleAssertion(String odPath, boolean shouldPass, CDSemantics semantic) throws FileNotFoundException {
+  private void simpleAssertion(String odPath, boolean shouldPass, CDSemantics semantic)
+      throws FileNotFoundException {
     reloadOD(odPath);
 
-    Assert.assertEquals(shouldPass,
-        classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic));
+    Assert.assertEquals(shouldPass, classMatcher.checkAllObjectsInClassDiagram(od, cd, semantic));
   }
-
 }

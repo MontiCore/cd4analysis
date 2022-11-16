@@ -1,18 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4analysis.CD4AnalysisTestBasis;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDPackageNameUnique;
 import de.se_rwth.commons.logging.Log;
-import org.junit.After;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Test;
 
 public class CDPackageNameUniqueTest extends CD4AnalysisTestBasis {
 
@@ -30,7 +29,8 @@ public class CDPackageNameUniqueTest extends CD4AnalysisTestBasis {
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDPackageNameUnique());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDPackageNameUniqueInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST =
+        p.parse(getFilePath("cdbasis/cocos/CDPackageNameUniqueInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -41,5 +41,4 @@ public class CDPackageNameUniqueTest extends CD4AnalysisTestBasis {
 
   @After
   public void after() {}
-
 }

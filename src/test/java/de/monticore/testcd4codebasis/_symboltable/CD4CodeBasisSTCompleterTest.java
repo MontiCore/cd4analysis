@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcd4codebasis._symboltable;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4code.CD4CodeMill;
@@ -21,15 +23,12 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CD4CodeBasisSTCompleterTest {
 
@@ -115,7 +114,8 @@ public class CD4CodeBasisSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CD4CodeSymbolTableCompleter cd4codeCompleter = new CD4CodeSymbolTableCompleter(imports, packageDecl);
+    CD4CodeSymbolTableCompleter cd4codeCompleter =
+        new CD4CodeSymbolTableCompleter(imports, packageDecl);
 
     ast.accept(cd4codeCompleter.getTraverser());
 
@@ -132,8 +132,10 @@ public class CD4CodeBasisSTCompleterTest {
     ASTMCQualifiedName packageDecl = ast.getMCPackageDeclaration().getMCQualifiedName();
     List<ASTMCImportStatement> imports = ast.getMCImportStatementList();
 
-    CDBasisSymbolTableCompleter cdBasisCompleter = new CDBasisSymbolTableCompleter(imports, packageDecl);
-    CD4CodeBasisSymbolTableCompleter cd4codeCompleter = new CD4CodeBasisSymbolTableCompleter(imports, packageDecl);
+    CDBasisSymbolTableCompleter cdBasisCompleter =
+        new CDBasisSymbolTableCompleter(imports, packageDecl);
+    CD4CodeBasisSymbolTableCompleter cd4codeCompleter =
+        new CD4CodeBasisSymbolTableCompleter(imports, packageDecl);
     CD4CodeTraverser t = CD4CodeMill.traverser();
     t.add4CDBasis(cdBasisCompleter);
     t.add4OOSymbols(cdBasisCompleter);
@@ -146,9 +148,10 @@ public class CD4CodeBasisSTCompleterTest {
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {
     try {
-      return parser.parse(Paths.get(pathToArtifact).toString()).orElseThrow(NoSuchElementException::new);
-    }
-    catch (IOException | NoSuchElementException e) {
+      return parser
+          .parse(Paths.get(pathToArtifact).toString())
+          .orElseThrow(NoSuchElementException::new);
+    } catch (IOException | NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }

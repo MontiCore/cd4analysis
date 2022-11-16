@@ -11,7 +11,6 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingConstan
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.Names;
-
 import java.io.File;
 
 public class CDBasis2ODReporter extends AReporter {
@@ -19,9 +18,10 @@ public class CDBasis2ODReporter extends AReporter {
   private final ReportingRepository reporting;
 
   public CDBasis2ODReporter(String outputDir, String modelName, ReportingRepository reporting) {
-    super(outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator
-            + modelName,
-        Names.getSimpleName(modelName) + "_AST", ReportingConstants.OD_FILE_EXTENSION);
+    super(
+        outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator + modelName,
+        Names.getSimpleName(modelName) + "_AST",
+        ReportingConstants.OD_FILE_EXTENSION);
     this.modelName = modelName;
     this.reporting = reporting;
   }
@@ -47,9 +47,7 @@ public class CDBasis2ODReporter extends AReporter {
     super.flush(ast);
   }
 
-  /**
-   * @param ast the ASTNode used to write the object diagram
-   */
+  /** @param ast the ASTNode used to write the object diagram */
   private void writeContent(ASTNode ast) {
     if (ast instanceof ASTCDCompilationUnit || ast instanceof ASTCDDefinition) {
       ASTCDBasisNode cdNode = (ASTCDBasisNode) ast;

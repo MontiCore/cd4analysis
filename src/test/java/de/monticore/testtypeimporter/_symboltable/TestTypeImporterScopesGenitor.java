@@ -7,25 +7,24 @@ import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 
-public class TestTypeImporterScopesGenitor
-    extends TestTypeImporterScopesGenitorTOP {
+public class TestTypeImporterScopesGenitor extends TestTypeImporterScopesGenitorTOP {
 
-  public TestTypeImporterScopesGenitor() {
-  }
+  public TestTypeImporterScopesGenitor() {}
 
   @Override
   public void endVisit(ASTElement node) {
     super.endVisit(node);
 
-    final TypeCheckResult typeResult = new FullSynthesizeFromMCBasicTypes().synthesizeType(node.getMCType());
+    final TypeCheckResult typeResult =
+        new FullSynthesizeFromMCBasicTypes().synthesizeType(node.getMCType());
     if (!typeResult.isPresentResult()) {
-      Log.error(String.format(
-          "0xCDE00: The type (%s) of the element (%s) could not be calculated",
-          node.getMCType().printType(MCBasicTypesMill.mcBasicTypesPrettyPrinter()),
-          node.getName()),
+      Log.error(
+          String.format(
+              "0xCDE00: The type (%s) of the element (%s) could not be calculated",
+              node.getMCType().printType(MCBasicTypesMill.mcBasicTypesPrettyPrinter()),
+              node.getName()),
           node.getMCType().get_SourcePositionStart());
-    }
-    else {
+    } else {
       node.getSymbol().setType(typeResult.getResult());
     }
   }

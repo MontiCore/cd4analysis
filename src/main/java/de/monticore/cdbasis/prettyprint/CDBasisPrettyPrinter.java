@@ -161,7 +161,6 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
       println();
       indent();
     }
-
   }
 
   @Override
@@ -174,8 +173,7 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
     if (!node.isEmptyCDMembers()) {
       unindent();
       println("}");
-    }
-    else {
+    } else {
       print(";");
       printPostComments(node);
       println();
@@ -204,5 +202,4 @@ public class CDBasisPrettyPrinter extends PrettyPrintUtil
     printPostComments(node);
     println();
   }
-
 }

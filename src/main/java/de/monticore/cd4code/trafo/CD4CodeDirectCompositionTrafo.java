@@ -25,17 +25,20 @@ public class CD4CodeDirectCompositionTrafo {
   }
 
   public static void init(CDAfterParseHelper cdAfterParseHelper, CD4CodeTraverser traverser) {
-    final CDBasisDirectCompositionTrafo cdBasisDirectCompositionTrafo = new CDBasisDirectCompositionTrafo(cdAfterParseHelper);
+    final CDBasisDirectCompositionTrafo cdBasisDirectCompositionTrafo =
+        new CDBasisDirectCompositionTrafo(cdAfterParseHelper);
     traverser.add4CDBasis(cdBasisDirectCompositionTrafo);
     traverser.setCDBasisHandler(cdBasisDirectCompositionTrafo);
     cdBasisDirectCompositionTrafo.setTraverser(traverser);
 
-    final CDAssociationDirectCompositionTrafo cdAssociation = new CDAssociationDirectCompositionTrafo(cdAfterParseHelper);
+    final CDAssociationDirectCompositionTrafo cdAssociation =
+        new CDAssociationDirectCompositionTrafo(cdAfterParseHelper);
     traverser.add4CDAssociation(cdAssociation);
     traverser.setCDAssociationHandler(cdAssociation);
     cdAssociation.setTraverser(traverser);
 
-    final CDInterfaceAndEnumDirectCompositionTrafo cDInterfaceAndEnum = new CDInterfaceAndEnumDirectCompositionTrafo(cdAfterParseHelper);
+    final CDInterfaceAndEnumDirectCompositionTrafo cDInterfaceAndEnum =
+        new CDInterfaceAndEnumDirectCompositionTrafo(cdAfterParseHelper);
     traverser.add4CDInterfaceAndEnum(cDInterfaceAndEnum);
     traverser.setCDInterfaceAndEnumHandler(cDInterfaceAndEnum);
     cDInterfaceAndEnum.setTraverser(traverser);

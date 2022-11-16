@@ -6,15 +6,16 @@ import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.symboltable.serialization.json.JsonElement;
 import de.monticore.symboltable.serialization.json.JsonObject;
-
 import java.util.Map;
 
 public class CDAssociationDeSer extends CDAssociationDeSerTOP {
   public static final String FURTHER_OBJECTS_MAP = "furtherObjects";
-  public static final String SYM_ASSOCIATION_TYPE = "de.monticore.cdassociation._symboltable.SymAssociation";
+  public static final String SYM_ASSOCIATION_TYPE =
+      "de.monticore.cdassociation._symboltable.SymAssociation";
 
   @Override
-  public void serializeAddons(ICDAssociationArtifactScope toSerialize, CDAssociationSymbols2Json s2j) {
+  public void serializeAddons(
+      ICDAssociationArtifactScope toSerialize, CDAssociationSymbols2Json s2j) {
     super.serializeAddons(toSerialize, s2j);
     serializeFurtherObjects(s2j.printer);
   }
@@ -43,7 +44,9 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
   }
 
   public static void serializeSymAssociations(JsonPrinter printer) {
-    CDDeSerHelper.getInstance().getSymAssocForSerialization().forEach(a -> CDAssociationDeSer.serializeSymAssociation(printer, a));
+    CDDeSerHelper.getInstance()
+        .getSymAssocForSerialization()
+        .forEach(a -> CDAssociationDeSer.serializeSymAssociation(printer, a));
   }
 
   /**
@@ -63,7 +66,8 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
   }
 
   public static int handleSymAssociation(SymAssociation association) {
-    // don't serialize the SymAssociation, just add it to the list and generate an identifier to be placed in the CDAssociation or CDRoleSymbol
+    // don't serialize the SymAssociation, just add it to the list and generate an identifier to be
+    // placed in the CDAssociation or CDRoleSymbol
     CDDeSerHelper.getInstance().addSymAssociationForSerialization(association);
     return association.hashCode();
   }
@@ -76,7 +80,8 @@ public class CDAssociationDeSer extends CDAssociationDeSerTOP {
     symAssociation.setIsAssociation(symbolJson.getBooleanMemberOpt("isAssociation").orElse(false));
     symAssociation.setIsComposition(symbolJson.getBooleanMemberOpt("isComposition").orElse(false));
 
-    CDDeSerHelper.getInstance().addSymAssociationForDeserialization(Integer.parseInt(name), symAssociation);
+    CDDeSerHelper.getInstance()
+        .addSymAssociationForDeserialization(Integer.parseInt(name), symAssociation);
   }
 
   public static void deserializeSymAssociations(Map.Entry<String, JsonElement> entry) {

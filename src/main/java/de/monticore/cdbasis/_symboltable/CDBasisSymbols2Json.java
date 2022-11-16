@@ -1,13 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdbasis._symboltable;
 
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.symboltable.serialization.JsonPrinter;
 
-public class CDBasisSymbols2Json extends CDBasisSymbols2JsonTOP
-    implements CDBasisHandler {
+public class CDBasisSymbols2Json extends CDBasisSymbols2JsonTOP implements CDBasisHandler {
   public CDBasisSymbols2Json() {
     getTraverser().setCDBasisHandler(this);
   }

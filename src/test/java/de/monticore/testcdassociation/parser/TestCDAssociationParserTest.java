@@ -11,22 +11,23 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDElement;
 import de.monticore.cdbasis._ast.ASTCDMember;
 import de.monticore.testcdassociation.CDAssociationTestBasis;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.Test;
 
 public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 
   @Test
   public void parseCDAssociation() throws IOException {
-    final Optional<ASTCDAssociation> astcdAssociation = p.parse_StringCDAssociation("association [*] A -> [[id]] S [1];");
+    final Optional<ASTCDAssociation> astcdAssociation =
+        p.parse_StringCDAssociation("association [*] A -> [[id]] S [1];");
     checkNullAndPresence(p, astcdAssociation);
   }
 
   @Test
   public void parseCDElement() throws IOException {
-    final Optional<ASTCDElement> astcdElement = p.parse_StringCDElement("composition a [*] A -> [[id]] S [1];");
+    final Optional<ASTCDElement> astcdElement =
+        p.parse_StringCDElement("composition a [*] A -> [[id]] S [1];");
     checkNullAndPresence(p, astcdElement);
   }
 
@@ -58,13 +59,15 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
 
   @Test
   public void parseCompleteModel() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> parse =
+        p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
   }
 
   @Test
   public void directCompositionTrafoTest() throws IOException {
-    final Optional<ASTCDCompilationUnit> parse = p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
+    final Optional<ASTCDCompilationUnit> parse =
+        p.parseCDCompilationUnit(getFilePath("cdassociation/parser/Simple.cd"));
     checkNullAndPresence(p, parse);
 
     final ASTCDCompilationUnit node = parse.get();
@@ -72,7 +75,8 @@ public class TestCDAssociationParserTest extends CDAssociationTestBasis {
     new CD4AnalysisDirectCompositionTrafo().transform(node);
 
     CD4CodeMill.init();
-    final ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    final ICD4CodeArtifactScope artifactScope =
+        CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
     checkLogError();
   }
 }

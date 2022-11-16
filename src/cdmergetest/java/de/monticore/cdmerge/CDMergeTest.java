@@ -1,15 +1,14 @@
 package de.monticore.cdmerge;
 
+import static org.junit.Assert.fail;
+
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.junit.Assert.fail;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CDMergeTest extends BaseTest {
   @Test
@@ -21,8 +20,7 @@ public class CDMergeTest extends BaseTest {
       inputSet.add(loadModel(srcDir + "A.cd"));
       inputSet.add(loadModel(srcDir + "B.cd"));
       inputSet.add(loadModel(srcDir + "C.cd"));
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
 
@@ -32,7 +30,5 @@ public class CDMergeTest extends BaseTest {
     Assert.assertNotNull(mergedCD);
     mergedCD.accept(pp.getTraverser());
     System.out.println(pp.prettyprint(mergedCD));
-
   }
-
 }

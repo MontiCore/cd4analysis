@@ -1,24 +1,21 @@
 package de.monticore.cddiff.ow2cw.expander;
 
-import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._symboltable.CDTypeSymbol;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.ow2cw.CDAssociationHelper;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
-import de.monticore.cddiff.ow2cw.CDAssociationHelper;
-
 import java.util.*;
 
 public class FullExpander implements CDExpander {
-  final protected CDExpander expander;
+  protected final CDExpander expander;
 
-  /**
-   * @param expander checking if adding/etc is allowed
-   */
+  /** @param expander checking if adding/etc is allowed */
   public FullExpander(CDExpander expander) {
     this.expander = expander;
   }
@@ -29,15 +26,14 @@ public class FullExpander implements CDExpander {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(type.getSymbol().getFullName());
       if (opt.isEmpty()) {
         if (type instanceof ASTCDInterface) {
-          addDummyInterface((ASTCDInterface) type).ifPresent(
-              newInterface -> addMissingAttributes(newInterface, type.getCDAttributeList()));
+          addDummyInterface((ASTCDInterface) type)
+              .ifPresent(
+                  newInterface -> addMissingAttributes(newInterface, type.getCDAttributeList()));
+        } else {
+          addDummyClass(type)
+              .ifPresent(newClass -> addMissingAttributes(newClass, type.getCDAttributeList()));
         }
-        else {
-          addDummyClass(type).ifPresent(
-              newClass -> addMissingAttributes(newClass, type.getCDAttributeList()));
-        }
-      }
-      else {
+      } else {
         addMissingAttributes(opt.get().getAstNode(), type.getCDAttributeList());
       }
     }
@@ -50,13 +46,11 @@ public class FullExpander implements CDExpander {
       Optional<CDTypeSymbol> opt = scope.resolveCDTypeDown(astcdEnum.getSymbol().getFullName());
       if (opt.isEmpty()) {
         addClone(astcdEnum);
-      }
-      else {
+      } else {
         for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
-          boolean found = opt.get()
-              .getFieldList()
-              .stream()
-              .anyMatch(field -> field.getName().equals(constant.getName()));
+          boolean found =
+              opt.get().getFieldList().stream()
+                  .anyMatch(field -> field.getName().equals(constant.getName()));
           if (!found) {
             // I wanted to avoid reflection, but I think this is just reflection with extra steps...
             for (ASTCDEnum someEnum : getCD().getCDDefinition().getCDEnumsList()) {
@@ -76,9 +70,9 @@ public class FullExpander implements CDExpander {
     }
      */
     for (ASTCDAttribute attribute1 : missingAttributes) {
-      boolean found = cdType.getCDAttributeList()
-          .stream()
-          .anyMatch(attribute2 -> attribute1.getName().equals(attribute2.getName()));
+      boolean found =
+          cdType.getCDAttributeList().stream()
+              .anyMatch(attribute2 -> attribute1.getName().equals(attribute2.getName()));
       if (!found) {
         ASTCDAttribute newAttribute = attribute1.deepClone();
         addAttribute(cdType, newAttribute);
@@ -135,8 +129,8 @@ public class FullExpander implements CDExpander {
     }
   }
 
-  public Set<ASTCDAssociation> buildSuperAssociations(Collection<ASTCDAssociation> originals,
-      String dummyClassName) {
+  public Set<ASTCDAssociation> buildSuperAssociations(
+      Collection<ASTCDAssociation> originals, String dummyClassName) {
 
     Set<ASTCDAssociation> superSet = new HashSet<>();
     String roleName;
@@ -147,29 +141,24 @@ public class FullExpander implements CDExpander {
 
         if (original.getRight().isPresentCDRole()) {
           roleName = original.getRight().getCDRole().getName();
-        }
-        else {
-          roleName = CDDiffUtil.processQName2RoleName(
-              original.getRightQualifiedName().getQName());
+        } else {
+          roleName = CDDiffUtil.processQName2RoleName(original.getRightQualifiedName().getQName());
         }
 
-        buildDummyAssociation(original.getLeftQualifiedName().getQName(), roleName,
-            dummyClassName).ifPresent(superSet::add);
-
+        buildDummyAssociation(original.getLeftQualifiedName().getQName(), roleName, dummyClassName)
+            .ifPresent(superSet::add);
       }
 
       if (original.getCDAssocDir().isDefinitiveNavigableLeft()) {
 
         if (original.getLeft().isPresentCDRole()) {
           roleName = original.getLeft().getCDRole().getName();
-        }
-        else {
-          roleName = CDDiffUtil.processQName2RoleName(
-              original.getLeftQualifiedName().getQName());
+        } else {
+          roleName = CDDiffUtil.processQName2RoleName(original.getLeftQualifiedName().getQName());
         }
 
-        buildDummyAssociation(original.getRightQualifiedName().getQName(), roleName,
-            dummyClassName).ifPresent(superSet::add);
+        buildDummyAssociation(original.getRightQualifiedName().getQName(), roleName, dummyClassName)
+            .ifPresent(superSet::add);
       }
     }
     return superSet;
@@ -178,17 +167,15 @@ public class FullExpander implements CDExpander {
   public void addAssociationsWithoutConflicts(Collection<ASTCDAssociation> dummySet) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     for (ASTCDAssociation dummy : dummySet) {
-      if (getCD().getCDDefinition()
-          .getCDAssociationsList()
-          .stream()
+      if (getCD().getCDDefinition().getCDAssociationsList().stream()
           .noneMatch(assoc -> CDAssociationHelper.inConflict(dummy, assoc, scope))) {
         addAssociation(dummy);
       }
     }
   }
 
-  public Set<ASTCDAssociation> getDummies4Diff(Collection<ASTCDType> typeCol
-      , String assocTargetName){
+  public Set<ASTCDAssociation> getDummies4Diff(
+      Collection<ASTCDType> typeCol, String assocTargetName) {
     ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(getCD());
     Set<ASTCDAssociation> newAssocs = new HashSet<>();
     for (ASTCDType srcType : typeCol) {
@@ -196,11 +183,11 @@ public class FullExpander implements CDExpander {
       if (opt.isEmpty()) {
         addDummyClass(srcType);
       }
-      if (srcType.getModifier().isPresentStereotype() && srcType.getModifier()
-          .getStereotype()
-          .contains(VariableExpander.VAR_TAG)) {
-        buildDummyAssociation(srcType.getSymbol().getFullName(),
-            "myNew"+assocTargetName,assocTargetName).ifPresent(newAssocs::add);
+      if (srcType.getModifier().isPresentStereotype()
+          && srcType.getModifier().getStereotype().contains(VariableExpander.VAR_TAG)) {
+        buildDummyAssociation(
+                srcType.getSymbol().getFullName(), "myNew" + assocTargetName, assocTargetName)
+            .ifPresent(newAssocs::add);
       }
     }
     return newAssocs;
@@ -208,22 +195,22 @@ public class FullExpander implements CDExpander {
 
   public void addNewEnumConstants(Collection<ASTCDEnum> enumCol) {
     for (ASTCDEnum srcEnum : enumCol) {
-      if (srcEnum.getModifier().isPresentStereotype() && srcEnum.getModifier()
-          .getStereotype()
-          .contains(VariableExpander.VAR_TAG)) {
+      if (srcEnum.getModifier().isPresentStereotype()
+          && srcEnum.getModifier().getStereotype().contains(VariableExpander.VAR_TAG)) {
         for (ASTCDEnum targetEnum : getCD().getCDDefinition().getCDEnumsList()) {
           if (srcEnum.getSymbol().getFullName().equals(targetEnum.getSymbol().getFullName())) {
-            addEnumConstant(targetEnum, CD4CodeMill.cD4CodeEnumConstantBuilder()
-                .setArgumentsAbsent()
-                .setName("myNew" + targetEnum.getName() + "Const")
-                .build());
+            addEnumConstant(
+                targetEnum,
+                CD4CodeMill.cD4CodeEnumConstantBuilder()
+                    .setArgumentsAbsent()
+                    .setName("myNew" + targetEnum.getName() + "Const")
+                    .build());
             break;
           }
         }
       }
     }
   }
-
 
   /*
   delegated methods
@@ -233,16 +220,12 @@ public class FullExpander implements CDExpander {
     return expander.getCD();
   }
 
-  /**
-   * add newClass as subclass to superclass
-   */
+  /** add newClass as subclass to superclass */
   public void addNewSubClass(String name, ASTCDClass superclass) {
     expander.addNewSubClass(name, superclass);
   }
 
-  /**
-   * add newClass as sub-class to astcdInterface
-   */
+  /** add newClass as sub-class to astcdInterface */
   public void addNewSubClass(String name, ASTCDInterface astcdInterface) {
     expander.addNewSubClass(name, astcdInterface);
   }
@@ -311,13 +294,12 @@ public class FullExpander implements CDExpander {
     expander.matchDirInReverse(src, target);
   }
 
-  public Optional<ASTCDAssociation> buildDummyAssociation(String left, String roleName,
-      String right) {
+  public Optional<ASTCDAssociation> buildDummyAssociation(
+      String left, String roleName, String right) {
     return expander.buildDummyAssociation(left, roleName, right);
   }
 
   public void updateUnspecifiedDir2Default() {
     expander.updateUnspecifiedDir2Default();
   }
-
 }

@@ -7,7 +7,6 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
-
 import java.util.List;
 
 abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
@@ -18,7 +17,8 @@ abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
 
   protected final AbstractMethodDecorator listMethodDecorator;
 
-  SpecificMethodDecorator(final GlobalExtensionManagement glex,
+  SpecificMethodDecorator(
+      final GlobalExtensionManagement glex,
       final AbstractMethodDecorator mandatoryMethodDecorator,
       final AbstractMethodDecorator optionalMethodDecorator,
       final AbstractMethodDecorator listMethodDecorator) {

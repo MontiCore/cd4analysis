@@ -2,20 +2,22 @@
 package de.monticore.cdmerge.util;
 
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-/**
- * Allows Conversion of PrimitiveTypes
- */
+/** Allows Conversion of PrimitiveTypes */
 public enum JPrimitiveType {
-  BYTE("byte"), SHORT("short"), INT("int"), LONG("long"), FLOAT("float"), DOUBLE("double"), BOOLEAN(
-      "boolean"), CHAR("char"), STRING("string");
+  BYTE("byte"),
+  SHORT("short"),
+  INT("int"),
+  LONG("long"),
+  FLOAT("float"),
+  DOUBLE("double"),
+  BOOLEAN("boolean"),
+  CHAR("char"),
+  STRING("string");
 
-  /**
-   * @return name
-   */
+  /** @return name */
   public String getName() {
     return this.name;
   }
@@ -45,16 +47,12 @@ public enum JPrimitiveType {
   }
 
   /**
-   * JAVA Widening Type Conversion
-   * byte to short, int, long, float, or double
-   * short to int, long, float, or double
-   * char to int, long, float, or double
-   * int to long, float, or double
-   * long to float or double
-   * float to double
+   * JAVA Widening Type Conversion byte to short, int, long, float, or double short to int, long,
+   * float, or double char to int, long, float, or double int to long, float, or double long to
+   * float or double float to double
    */
-  public static Optional<JPrimitiveType> getCommonSuperType(JPrimitiveType type1,
-      JPrimitiveType type2) {
+  public static Optional<JPrimitiveType> getCommonSuperType(
+      JPrimitiveType type1, JPrimitiveType type2) {
     if (type1.equals(type2)) {
       return Optional.of(type1);
     }
@@ -62,29 +60,28 @@ public enum JPrimitiveType {
       // the other is not of type boolean and we don't convert booleans
       return Optional.empty();
     }
-    if (((type1.equals(CHAR) || type2.equals(CHAR)) && (type1.equals(STRING) || type2.equals(
-        STRING)))) {
+    if (((type1.equals(CHAR) || type2.equals(CHAR))
+        && (type1.equals(STRING) || type2.equals(STRING)))) {
       return Optional.of(STRING);
     }
     // The rest are numbers
     if (type1.compareTo(type2) > 0) {
       return Optional.of(type1);
-    }
-    else {
+    } else {
       return Optional.of(type2);
     }
   }
 
   public static Optional<ASTMCType> getCommonSuperType(ASTMCType type1, ASTMCType type2) {
-    if (isPrimitiveType(CDUtils.getTypeName(type1)) && isPrimitiveType(
-        CDUtils.getTypeName(type1))) {
-      Optional<JPrimitiveType> commonSuperType = getCommonSuperType(
-          getType(CDUtils.getTypeName(type1)), getType(CDUtils.getTypeName(type2)));
+    if (isPrimitiveType(CDUtils.getTypeName(type1))
+        && isPrimitiveType(CDUtils.getTypeName(type1))) {
+      Optional<JPrimitiveType> commonSuperType =
+          getCommonSuperType(
+              getType(CDUtils.getTypeName(type1)), getType(CDUtils.getTypeName(type2)));
       if (commonSuperType.isPresent()) {
         if (commonSuperType.get().getName().equalsIgnoreCase(CDUtils.getTypeName(type1))) {
           return Optional.of(type1);
-        }
-        else if (commonSuperType.get().getName().equalsIgnoreCase(CDUtils.getTypeName(type2))) {
+        } else if (commonSuperType.get().getName().equalsIgnoreCase(CDUtils.getTypeName(type2))) {
           return Optional.of(type2);
         }
       }

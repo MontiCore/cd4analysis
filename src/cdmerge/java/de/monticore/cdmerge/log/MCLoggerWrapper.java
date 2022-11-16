@@ -56,7 +56,7 @@ public class MCLoggerWrapper extends Log {
   }
 
   @Override
-  //We don't do MC trace logs
+  // We don't do MC trace logs
   protected boolean doIsTraceEnabled(String logName) {
     return false;
   }
@@ -96,5 +96,4 @@ public class MCLoggerWrapper extends Log {
   public void setMinLogLevel(ErrorLevel minLogLevel) {
     this.minLogLevel = minLogLevel;
   }
-
 }

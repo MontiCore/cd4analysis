@@ -1,20 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis.cocos;
 
-import de.monticore.cd4analysis.CD4AnalysisTestBasis;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.cocos.ebnf.CDAttributeNameLowerCaseIfNotStatic;
-import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
-import de.monticore.testcdbasis.CDBasisTestBasis;
-import de.se_rwth.commons.logging.Log;
-import org.junit.After;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import de.monticore.cd4analysis.CD4AnalysisTestBasis;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
+import de.se_rwth.commons.logging.Log;
+import java.io.IOException;
+import java.util.Optional;
+import org.junit.After;
+import org.junit.Test;
 
 public class CDPackageNotContainingCDPackageTest extends CD4AnalysisTestBasis {
 
@@ -32,7 +29,8 @@ public class CDPackageNotContainingCDPackageTest extends CD4AnalysisTestBasis {
   @Test
   public void testInvalid() throws IOException {
     coCoChecker.addCoCo(new CDPackageNotContainingCDPackage());
-    final Optional<ASTCDCompilationUnit> optAST = p.parse(getFilePath("cdbasis/cocos/CDPackageNotContainingCDPackageInvalid.cd"));
+    final Optional<ASTCDCompilationUnit> optAST =
+        p.parse(getFilePath("cdbasis/cocos/CDPackageNotContainingCDPackageInvalid.cd"));
     assertTrue(optAST.isPresent());
     final ASTCDCompilationUnit ast = optAST.get();
     Log.getFindings().clear();
@@ -43,6 +41,4 @@ public class CDPackageNotContainingCDPackageTest extends CD4AnalysisTestBasis {
 
   @After
   public void after() {}
-
-
 }

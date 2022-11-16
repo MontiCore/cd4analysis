@@ -12,8 +12,8 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
  */
 public class IntersectionAssociationMerger extends AssociationMerger {
 
-  public IntersectionAssociationMerger(MergeBlackBoard mergeBlackBoard,
-      AssociationMergeStrategy associationMergeStrategy) {
+  public IntersectionAssociationMerger(
+      MergeBlackBoard mergeBlackBoard, AssociationMergeStrategy associationMergeStrategy) {
     super(mergeBlackBoard, associationMergeStrategy);
   }
 
@@ -22,5 +22,4 @@ public class IntersectionAssociationMerger extends AssociationMerger {
     // TODO - Implement Association Intersection Merger
     throw new UnsupportedOperationException("AssociationIntersectionMerger NOT IMPLEMENTED");
   }
-
 }

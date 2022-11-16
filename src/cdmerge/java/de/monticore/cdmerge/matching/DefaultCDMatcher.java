@@ -8,7 +8,6 @@ import de.monticore.cdmerge.matching.strategies.AssociationMatcher;
 import de.monticore.cdmerge.matching.strategies.AttributeMatcher;
 import de.monticore.cdmerge.matching.strategies.TypeMatcher;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-
 import java.util.List;
 
 /**
@@ -17,8 +16,11 @@ import java.util.List;
  */
 public class DefaultCDMatcher extends CDMatcher {
 
-  public DefaultCDMatcher(MergeBlackBoard blackboard, TypeMatcher typeMatcher,
-      AttributeMatcher attributeMatcher, AssociationMatcher associationMatcher) {
+  public DefaultCDMatcher(
+      MergeBlackBoard blackboard,
+      TypeMatcher typeMatcher,
+      AttributeMatcher attributeMatcher,
+      AssociationMatcher associationMatcher) {
     super(blackboard, typeMatcher, attributeMatcher, associationMatcher);
   }
 
@@ -34,7 +36,5 @@ public class DefaultCDMatcher extends CDMatcher {
     log(ErrorLevel.INFO, "Match Graph completed");
     log(ErrorLevel.FINE, matchResult.toString());
     return matchResult;
-
   }
-
 }

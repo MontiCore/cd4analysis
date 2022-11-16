@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdassociation.trafo;
 
+import static de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo.createASTCDRoleIfAbsent;
+
 import de.monticore.cd._parser.CDAfterParseHelper;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -17,10 +19,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
-
-import static de.monticore.cdassociation.trafo.CDAssociationDirectCompositionTrafo.createASTCDRoleIfAbsent;
 
 public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     implements CDAssociationVisitor2, CDAssociationHandler {
@@ -29,11 +28,11 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   protected CDAssociationSymbolTableCompleter symbolTableCompleter;
 
   public CDAssociationRoleNameTrafo() {
-    this(new CDAfterParseHelper(),
-        CD4AnalysisMill.scopesGenitorDelegator());
+    this(new CDAfterParseHelper(), CD4AnalysisMill.scopesGenitorDelegator());
   }
 
-  public CDAssociationRoleNameTrafo(CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
+  public CDAssociationRoleNameTrafo(
+      CDAfterParseHelper cdAfterParseHelper, CD4AnalysisScopesGenitorDelegator symbolTableCreator) {
     super(cdAfterParseHelper);
     this.symbolTableCreator = symbolTableCreator;
   }
@@ -63,8 +62,10 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
 
     final ASTCDAssocLeftSide leftSide = node.getLeft();
     final ASTCDAssocRightSide rightSide = node.getRight();
-    CDAssociationSymbolTableCompleter.addRoleToTheirType(leftSide.getSymbol(), rightSide.getSymbol().getType().getTypeInfo());
-    CDAssociationSymbolTableCompleter.addRoleToTheirType(rightSide.getSymbol(), leftSide.getSymbol().getType().getTypeInfo());
+    CDAssociationSymbolTableCompleter.addRoleToTheirType(
+        leftSide.getSymbol(), rightSide.getSymbol().getType().getTypeInfo());
+    CDAssociationSymbolTableCompleter.addRoleToTheirType(
+        rightSide.getSymbol(), leftSide.getSymbol().getType().getTypeInfo());
 
     assocStack.pop();
   }
@@ -91,8 +92,7 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
     }
   }
 
-  public void transform(ASTCDCompilationUnit compilationUnit)
-      throws RuntimeException {
+  public void transform(ASTCDCompilationUnit compilationUnit) throws RuntimeException {
     if (!compilationUnit.getCDDefinition().isPresentSymbol()) {
       final String msg = "0xCD0B1: can't start the transformation, the symbol table is missing";
       Log.error(msg);
@@ -107,10 +107,6 @@ public class CDAssociationRoleNameTrafo extends CDAfterParseHelper
   public void init(ASTCDCompilationUnit compilationUnit) {
     final List<ASTMCImportStatement> imports = compilationUnit.getMCImportStatementList();
     final ASTMCQualifiedName packageDeclaration = MCQualifiedNameFacade.createQualifiedName("");
-    symbolTableCompleter =
-        new CDAssociationSymbolTableCompleter(
-            imports,
-            packageDeclaration
-        );
+    symbolTableCompleter = new CDAssociationSymbolTableCompleter(imports, packageDeclaration);
   }
 }

@@ -1,7 +1,6 @@
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.ast.ASTNode;
-
 import java.util.Optional;
 
 public interface IASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> {

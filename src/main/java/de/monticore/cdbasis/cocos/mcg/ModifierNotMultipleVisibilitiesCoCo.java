@@ -5,15 +5,10 @@ import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlmodifier._cocos.UMLModifierASTModifierCoCo;
 import de.se_rwth.commons.logging.Log;
 
-/**
- * Modifiers may only have none or exactly one visibility.
- */
-public class ModifierNotMultipleVisibilitiesCoCo
-    implements UMLModifierASTModifierCoCo {
+/** Modifiers may only have none or exactly one visibility. */
+public class ModifierNotMultipleVisibilitiesCoCo implements UMLModifierASTModifierCoCo {
 
-  /**
-   * @see UMLModifierASTModifierCoCo#check(ASTModifier)
-   */
+  /** @see UMLModifierASTModifierCoCo#check(ASTModifier) */
   @Override
   public void check(ASTModifier mod) {
     int visibilityCount = 0;

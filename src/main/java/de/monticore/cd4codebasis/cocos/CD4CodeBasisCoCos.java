@@ -36,6 +36,5 @@ public class CD4CodeBasisCoCos extends CoCoParent<CD4CodeBasisCoCoChecker> {
 
     // CD4CodeEnumConstant
     checker.addCoCo(new CD4CodeEnumConstantParameterMatchConstructorArguments(calculator));
-
   }
 }

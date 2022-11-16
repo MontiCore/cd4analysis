@@ -3,8 +3,10 @@ package de.monticore.cdmerge.util;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 
 public enum AssociationDirection {
-
-  Unspecified, LeftToRight, RightToLeft, BiDirectional;
+  Unspecified,
+  LeftToRight,
+  RightToLeft,
+  BiDirectional;
 
   public static AssociationDirection getDirection(ASTCDAssociation association) {
     if (association == null) {
@@ -24,5 +26,4 @@ public enum AssociationDirection {
     }
     return Unspecified;
   }
-
 }

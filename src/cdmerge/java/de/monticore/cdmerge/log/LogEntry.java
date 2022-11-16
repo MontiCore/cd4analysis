@@ -8,14 +8,11 @@ import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.util.CDUtils;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-/**
- * A log entry for recording events during a merging process
- */
+/** A log entry for recording events during a merging process */
 public class LogEntry implements Comparable<LogEntry> {
   private final LocalDateTime timestamp = LocalDateTime.now();
 
@@ -33,7 +30,11 @@ public class LogEntry implements Comparable<LogEntry> {
     this(level, message, phase, Optional.empty(), Optional.empty());
   }
 
-  public LogEntry(ErrorLevel level, String message, MergePhase phase, Optional<ASTNode> left,
+  public LogEntry(
+      ErrorLevel level,
+      String message,
+      MergePhase phase,
+      Optional<ASTNode> left,
       Optional<ASTNode> right) {
     this.level = level;
     this.message = message;
@@ -54,7 +55,6 @@ public class LogEntry implements Comparable<LogEntry> {
     String logMessage = message;
     if (this.node1.isPresent()) {
       logMessage += " ast element 1 " + CDUtils.prettyPrintInline(node1.get());
-
     }
     if (this.node2.isPresent()) {
       logMessage += " ast element 1 " + CDUtils.prettyPrintInline(node2.get());
@@ -74,14 +74,11 @@ public class LogEntry implements Comparable<LogEntry> {
     return phase;
   }
 
-  /**
-   * Compares this log entry with the other chronologically
-   */
+  /** Compares this log entry with the other chronologically */
   public int compareTo(LogEntry other) {
     if (this.timestamp.compareTo(other.timestamp) == 0) {
       return this.phase.compareTo(other.phase);
-    }
-    else {
+    } else {
       return this.timestamp.compareTo(other.timestamp);
     }
   }
@@ -116,21 +113,15 @@ public class LogEntry implements Comparable<LogEntry> {
   private String astToString(ASTNode node) {
     if (node instanceof ASTCDCompilationUnit) {
       return ((ASTCDCompilationUnit) node).getCDDefinition().getName();
-    }
-    else if (node instanceof ASTCDDefinition) {
+    } else if (node instanceof ASTCDDefinition) {
       return ((ASTCDDefinition) node).getName();
-    }
-    else if (node instanceof ASTCDAssociationNode) {
+    } else if (node instanceof ASTCDAssociationNode) {
       return CDUtils.prettyPrintInline((ASTCDAssociationNode) node);
-    }
-    else if (node instanceof ASTCD4CodeNode) {
+    } else if (node instanceof ASTCD4CodeNode) {
       return CDUtils.prettyPrintInline((ASTCD4CodeNode) node);
-    }
-    else if (node instanceof ASTCDBasisNode) {
+    } else if (node instanceof ASTCDBasisNode) {
       return CDUtils.prettyPrintInline((ASTCDBasisNode) node);
     }
     return "";
-
   }
-
 }

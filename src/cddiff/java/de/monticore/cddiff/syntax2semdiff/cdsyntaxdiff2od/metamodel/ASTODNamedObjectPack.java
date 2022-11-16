@@ -1,7 +1,6 @@
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.metamodel;
 
 import de.monticore.odbasis._ast.ASTODNamedObject;
-
 import java.util.List;
 
 public class ASTODNamedObjectPack {
@@ -9,8 +8,7 @@ public class ASTODNamedObjectPack {
 
   private boolean isInList;
 
-  public ASTODNamedObjectPack() {
-  }
+  public ASTODNamedObjectPack() {}
 
   public ASTODNamedObjectPack(List<ASTODNamedObject> namedObjects, boolean isInList) {
     this.namedObjects = namedObjects;
@@ -36,5 +34,4 @@ public class ASTODNamedObjectPack {
   public boolean isEmpty() {
     return namedObjects.isEmpty();
   }
-
 }

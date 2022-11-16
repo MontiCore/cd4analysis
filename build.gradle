@@ -10,6 +10,7 @@ plugins {
   id "com.github.johnrengelman.shadow" version "6.0.0" apply false
   id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
+  id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
 
 def var_path = "de.monticore"
@@ -46,6 +47,23 @@ ext {
   logback_version = "1.2.3"
   apache_commons_version = '4.4'
 }
+
+
+googleJavaFormat {
+  exclude '**/target/**'
+}
+
+verifyGoogleJavaFormat{
+  ignoreFailures true
+  exclude "**"
+}  // do not check format in "build"
+
+task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
+
+task fmt {
+  dependsOn tasks.named("googleJavaFormat")
+}
+
 
 // configure non-standard source sets
 def genDir = "$buildDir/generated-sources/monticore/sourcecode"

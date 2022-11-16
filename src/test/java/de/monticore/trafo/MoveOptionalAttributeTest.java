@@ -1,17 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.trafo;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.tf.MoveOptionalAttribute;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Created by
@@ -21,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class MoveOptionalAttributeTest {
 
   @BeforeClass
-  public static void init(){
+  public static void init() {
     CD4CodeMill.init();
   }
 
@@ -39,10 +38,14 @@ public class MoveOptionalAttributeTest {
 
     assertEquals(ast.get().getCDDefinition().getCDClassesList().size(), 2);
     assertEquals(ast.get().getCDDefinition().getCDClassesList().get(0).getName(), "A");
-    assertEquals(ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size(), 0);
+    assertEquals(
+        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size(), 0);
     assertEquals(ast.get().getCDDefinition().getCDClassesList().get(1).getName(), "B");
-    assertEquals(ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().size(), 1);
-    assertEquals(ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().get(0).getName(), "foo");
+    assertEquals(
+        ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().size(), 1);
+    assertEquals(
+        ast.get().getCDDefinition().getCDClassesList().get(1).getCDAttributeList().get(0).getName(),
+        "foo");
   }
 
   @Test
@@ -59,7 +62,8 @@ public class MoveOptionalAttributeTest {
 
     assertEquals(ast.get().getCDDefinition().getCDClassesList().size(), 1);
     assertEquals(ast.get().getCDDefinition().getCDClassesList().get(0).getName(), "A");
-    assertEquals(ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size(), 0);
+    assertEquals(
+        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size(), 0);
   }
 
   @Test
@@ -76,6 +80,7 @@ public class MoveOptionalAttributeTest {
 
     assertEquals(ast.get().getCDDefinition().getCDClassesList().size(), 1);
     assertEquals(ast.get().getCDDefinition().getCDClassesList().get(0).getName(), "B");
-    assertEquals(ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size(), 0);
+    assertEquals(
+        ast.get().getCDDefinition().getCDClassesList().get(0).getCDAttributeList().size(), 0);
   }
 }

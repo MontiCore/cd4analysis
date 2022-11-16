@@ -13,17 +13,14 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._visitor.CDInterfaceAndEnumVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Collects the named elements of an CD AST and makes them accessible more easily
- */
-public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisitor2,
-    CDInterfaceAndEnumVisitor2 {
+/** Collects the named elements of an CD AST and makes them accessible more easily */
+public class ASTCDElementCollector
+    implements CDBasisVisitor2, CDAssociationVisitor2, CDInterfaceAndEnumVisitor2 {
 
   private List<String> ownPackage;
 
@@ -43,10 +40,9 @@ public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisi
     this.traverser.add4CDBasis(this);
     this.traverser.add4CDAssociation(this);
     this.traverser.add4CDInterfaceAndEnum(this);
-
   }
 
-  public void collect(ASTCDCompilationUnit  cd) {
+  public void collect(ASTCDCompilationUnit cd) {
     cd.accept(traverser);
   }
 
@@ -83,8 +79,8 @@ public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisi
     // Add Interfaces if defined in this CD (i.e. we have an ASTNode for
     // it)
     if (node.getInterfaceList().size() > 0) {
-      helper.addSuperInterfaces(node.getName(),
-          new ArrayList<>(Arrays.asList(node.printInterfaces().split(","))));
+      helper.addSuperInterfaces(
+          node.getName(), new ArrayList<>(Arrays.asList(node.printInterfaces().split(","))));
     }
   }
 
@@ -94,8 +90,8 @@ public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisi
     // Add Interfaces if defined in this CD (i.e. we have an ASTNode for
     // it)
     if (node.getInterfaceList().size() > 0) {
-      helper.addSuperInterfaces(node.getName(),
-          new ArrayList<>(Arrays.asList(node.printInterfaces().split(","))));
+      helper.addSuperInterfaces(
+          node.getName(), new ArrayList<>(Arrays.asList(node.printInterfaces().split(","))));
     }
   }
 
@@ -111,8 +107,8 @@ public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisi
     }
 
     if ((node.getLeftReferenceName().size() == 1 || isSamePackage(node.getLeftReferenceName()))
-        && node.getRightReferenceName().size() == 1 || isSamePackage(
-        node.getRightReferenceName())) {
+            && node.getRightReferenceName().size() == 1
+        || isSamePackage(node.getRightReferenceName())) {
       // It could still be a imported type, these will be filtered out
       // later. Types with same or imported package will be normalized to
       // just type name
@@ -122,11 +118,9 @@ public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisi
           node.getRightReferenceName().get(node.getRightReferenceName().size() - 1), node);
 
       helper.addInternalAssociation(node);
-    }
-    else {
+    } else {
       helper.addAssociationWithExternalReferences(node);
     }
-
   }
 
   private boolean isSamePackage(List<String> referenceParts) {
@@ -139,11 +133,9 @@ public class ASTCDElementCollector implements CDBasisVisitor2, CDAssociationVisi
         if (!referenceParts.get(i).equalsIgnoreCase(ownPackage.get(i))) {
           return false;
         }
-
       }
       return true;
     }
     return false;
   }
-
 }

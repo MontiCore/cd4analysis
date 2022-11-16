@@ -1,17 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.exceptions.MergingException;
 import de.monticore.prettyprint.IndentPrinter;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
-
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class ASTCDElementCollectorTest extends BaseTest {
 
@@ -44,5 +43,4 @@ public class ASTCDElementCollectorTest extends BaseTest {
 
     assertTrue(oldCD.equals(visitor.prettyprint(cd)));
   }
-
 }

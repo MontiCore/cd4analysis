@@ -1,14 +1,13 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDTypeWrapper;
-
 public class CDTypeWrapperPack {
   private CDTypeWrapper otherSideClass;
 
   private Position position;
 
   public enum Position {
-    LEFT, RIGHT;
+    LEFT,
+    RIGHT;
   }
 
   public CDTypeWrapperPack(CDTypeWrapper otherSideClass, Position position) {
@@ -31,5 +30,4 @@ public class CDTypeWrapperPack {
   public void setPosition(Position position) {
     this.position = position;
   }
-
 }

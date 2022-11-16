@@ -4,16 +4,13 @@ package de.monticore.cdmerge.merging;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.merging.strategies.*;
 
-/**
- * Configures the Merge Strategies / Algorithms
- */
+/** Configures the Merge Strategies / Algorithms */
 public class DefaultCDMergeStrategyFactory extends MergeStrategyFactory {
 
   @Override
   protected TypeMerger createTypeMerger(MergeBlackBoard blackBoard, AttributeMerger attrMerger) {
     TypeMergeStrategy typeMerger = new DefaultTypeMergeStrategy(blackBoard, attrMerger);
     return new DefaultTypeMerger(blackBoard, typeMerger);
-
   }
 
   @Override
@@ -24,8 +21,8 @@ public class DefaultCDMergeStrategyFactory extends MergeStrategyFactory {
 
   @Override
   protected AssociationMerger createAssociationMerger(MergeBlackBoard blackBoard) {
-    AssociationMergeStrategy associationMergeStrategy = new DefaultAssociationMergeStrategy(
-        blackBoard);
+    AssociationMergeStrategy associationMergeStrategy =
+        new DefaultAssociationMergeStrategy(blackBoard);
 
     return new DefaultAssociationMerger(blackBoard, associationMergeStrategy);
   }
@@ -37,5 +34,4 @@ public class DefaultCDMergeStrategyFactory extends MergeStrategyFactory {
     AssociationMerger associationMerger = createAssociationMerger(blackBoard);
     return new DefaultCDMerger(blackBoard, typeMerger, associationMerger);
   }
-
 }

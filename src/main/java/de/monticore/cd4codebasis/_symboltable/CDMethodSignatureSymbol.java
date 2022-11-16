@@ -2,7 +2,6 @@
 package de.monticore.cd4codebasis._symboltable;
 
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +11,8 @@ public class CDMethodSignatureSymbol extends CDMethodSignatureSymbolTOP {
   }
 
   /**
-   * this is overriden, because parameters could be FieldSymbols
-   * and there could be no variable symbols present
+   * this is overriden, because parameters could be FieldSymbols and there could be no variable
+   * symbols present
    */
   @Override
   public List<VariableSymbol> getParameterList() {

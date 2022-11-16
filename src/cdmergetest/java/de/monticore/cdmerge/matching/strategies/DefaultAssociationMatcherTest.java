@@ -5,6 +5,8 @@
  */
 package de.monticore.cdmerge.matching.strategies;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.ImmutableList;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,24 +18,19 @@ import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.Match;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-/**
- * A Unit Test for the default association matcher
- */
+/** A Unit Test for the default association matcher */
 public class DefaultAssociationMatcherTest extends BaseTest {
 
-  public static final String INPUT_MODEL_PATH_A = "src/cdmergetest/resources/class_diagrams"
-      + "/General/university/Staff.cd";
+  public static final String INPUT_MODEL_PATH_A =
+      "src/cdmergetest/resources/class_diagrams" + "/General/university/Staff.cd";
 
-  public static final String INPUT_MODEL_PATH_B = "src/cdmergetest/resources/class_diagrams"
-      + "/General/university/Teaching.cd";
+  public static final String INPUT_MODEL_PATH_B =
+      "src/cdmergetest/resources/class_diagrams" + "/General/university/Teaching.cd";
 
   public static final String INPUT_MODEL_A = "General/university/Staff.cd";
 
@@ -41,12 +38,10 @@ public class DefaultAssociationMatcherTest extends BaseTest {
 
   private AssociationMatcher testant;
 
-  public DefaultAssociationMatcherTest() {
+  public DefaultAssociationMatcherTest() {}
 
-  }
-
-  private void checkAssociationMatch(ASTCDAssociation association1, ASTCDAssociation association2,
-      boolean named) {
+  private void checkAssociationMatch(
+      ASTCDAssociation association1, ASTCDAssociation association2, boolean named) {
     // The reference names should match
     String lr1 = association1.getLeftReferenceName().toString();
     String rr1 = association1.getRightReferenceName().toString();
@@ -64,38 +59,41 @@ public class DefaultAssociationMatcherTest extends BaseTest {
     }
   }
 
-  private void checkRoleMatch(ASTCDAssociation association1, ASTCDAssociation association2,
-      final int numRolesToMatch) {
+  private void checkRoleMatch(
+      ASTCDAssociation association1, ASTCDAssociation association2, final int numRolesToMatch) {
     if (association1.getLeft().isPresentCDRole()) {
       // LeftRole1 != LeftRole2
       if (association2.getLeft().isPresentCDRole()) {
-        assertTrue(association1.getLeft()
-            .getCDRole()
-            .getName()
-            .equalsIgnoreCase(association2.getLeft().getCDRole().getName()));
+        assertTrue(
+            association1
+                .getLeft()
+                .getCDRole()
+                .getName()
+                .equalsIgnoreCase(association2.getLeft().getCDRole().getName()));
       }
     }
     if (association1.getRight().isPresentCDRole()) {
       // RightRole1 != RightRole2
       if (association2.getRight().isPresentCDRole()) {
-        assertTrue(association1.getRight()
-            .getCDRole()
-            .getName()
-            .equalsIgnoreCase(association2.getRight().getCDRole().getName()));
+        assertTrue(
+            association1
+                .getRight()
+                .getCDRole()
+                .getName()
+                .equalsIgnoreCase(association2.getRight().getCDRole().getName()));
       }
     }
   }
 
-  private void checkMatches(ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> matchingAssociations,
-      boolean named) {
+  private void checkMatches(
+      ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> matchingAssociations, boolean named) {
     // Retrieve parents
     ImmutableList<ASTCDDefinition> parents = matchingAssociations.getParents();
 
     // Check result
     for (ASTCDDefinition astcdDefinition : parents) {
       List<MatchNode<ASTCDAssociation, ASTCDDefinition>> associations =
-          matchingAssociations.getAllNodesForParent(
-          astcdDefinition);
+          matchingAssociations.getAllNodesForParent(astcdDefinition);
       for (MatchNode<ASTCDAssociation, ASTCDDefinition> matchNode : associations) {
 
         // Assert that all matched nodes are part of the class diagram
@@ -111,7 +109,6 @@ public class DefaultAssociationMatcherTest extends BaseTest {
           ASTCDAssociation association1 = match.getNode1().getElement();
           ASTCDAssociation association2 = match.getNode2().getElement();
           checkAssociationMatch(association1, association2, named);
-
         }
       }
       // Check if the size is set correctly
@@ -129,8 +126,10 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     // FIXME USCHOEN!
-    blackBoard.initOrReset(blackBoard.getConfig().getInputCDs().get(0),
-        blackBoard.getConfig().getInputCDs().get(1), Optional.empty());
+    blackBoard.initOrReset(
+        blackBoard.getConfig().getInputCDs().get(0),
+        blackBoard.getConfig().getInputCDs().get(1),
+        Optional.empty());
     this.testant = new DefaultAssociationMatcher(blackBoard);
     // Match associations without regarding the naming
     ASTMatchGraph<ASTCDAssociation, ASTCDDefinition> matchingAssociations =
@@ -147,8 +146,10 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES)
         .withParam(MergeParameter.MERGE_ONLY_NAMED_ASSOCIATIONS);
     blackBoard = new MergeBlackBoard(b.build());
-    blackBoard.initOrReset(blackBoard.getConfig().getInputCDs().get(0),
-        blackBoard.getConfig().getInputCDs().get(1), Optional.empty());
+    blackBoard.initOrReset(
+        blackBoard.getConfig().getInputCDs().get(0),
+        blackBoard.getConfig().getInputCDs().get(1),
+        Optional.empty());
     this.testant = new DefaultAssociationMatcher(blackBoard);
     matchingAssociations = testant.findMatchingAssociations();
     // Check found matches
@@ -166,8 +167,10 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.OUTPUT_PATH, "C:\\TEMP")
         .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
-    blackBoard.initOrReset(blackBoard.getConfig().getInputCDs().get(0),
-        blackBoard.getConfig().getInputCDs().get(1), Optional.empty());
+    blackBoard.initOrReset(
+        blackBoard.getConfig().getInputCDs().get(0),
+        blackBoard.getConfig().getInputCDs().get(1),
+        Optional.empty());
     this.testant = new DefaultAssociationMatcher(blackBoard);
     // Parse input for association matching
     ASTCDCompilationUnit cd1 = loadModel(INPUT_MODEL_PATH_A);
@@ -201,13 +204,15 @@ public class DefaultAssociationMatcherTest extends BaseTest {
         .withParam(MergeParameter.MERGE_HETEROGENOUS_TYPES);
     MergeBlackBoard blackBoard = new MergeBlackBoard(b.build());
     this.testant = new DefaultAssociationMatcher(blackBoard);
-    blackBoard.initOrReset(blackBoard.getConfig().getInputCDs().get(0),
-        blackBoard.getConfig().getInputCDs().get(1), Optional.empty());
+    blackBoard.initOrReset(
+        blackBoard.getConfig().getInputCDs().get(0),
+        blackBoard.getConfig().getInputCDs().get(1),
+        Optional.empty());
     // Parse input for association matching
-    ASTCDCompilationUnit cd1 = loadModel(
-        "src/cdmergetest/resources/class_diagrams/Association/rolesWithAssocName/A.cd");
-    ASTCDCompilationUnit cd2 = loadModel(
-        "src/cdmergetest/resources/class_diagrams/Association/rolesWithAssocName/B.cd");
+    ASTCDCompilationUnit cd1 =
+        loadModel("src/cdmergetest/resources/class_diagrams/Association/rolesWithAssocName/A.cd");
+    ASTCDCompilationUnit cd2 =
+        loadModel("src/cdmergetest/resources/class_diagrams/Association/rolesWithAssocName/B.cd");
     List<ASTCDAssociation> associations1 = cd1.getCDDefinition().getCDAssociationsList();
     List<ASTCDAssociation> associations2 = cd2.getCDDefinition().getCDAssociationsList();
 
@@ -222,5 +227,4 @@ public class DefaultAssociationMatcherTest extends BaseTest {
     }
     assertEquals(1, matchesFound);
   }
-
 }

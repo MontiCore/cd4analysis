@@ -3,13 +3,12 @@ package de.monticore.odvalidity;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ModelLoaderTest {
 
@@ -41,8 +40,7 @@ public class ModelLoaderTest {
       Optional<ASTCDCompilationUnit> cd = loader.loadCDModel(cdModel1);
       Assert.assertTrue(cd.isPresent());
 
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       Assert.fail("File could not be found.");
     }
   }
@@ -54,10 +52,8 @@ public class ModelLoaderTest {
       Optional<ASTODArtifact> od = loader.loadODModel(odModel1);
       Assert.assertTrue(od.isPresent());
 
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       Assert.fail("File could not be found.");
     }
   }
-
 }

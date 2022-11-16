@@ -4,7 +4,6 @@ import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import com.microsoft.z3.UninterpretedSort;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ public class SMTType {
   public void addAttribute(ASTCDAttribute attribute, FuncDecl<? extends Sort> attrFunc) {
     attributes.put(attribute, attrFunc);
   }
-
 
   public Sort getSort() {
     return sort;
@@ -50,6 +48,4 @@ public class SMTType {
   public Map<ASTCDAttribute, FuncDecl<? extends Sort>> getAttributesMap() {
     return attributes;
   }
-
-
 }

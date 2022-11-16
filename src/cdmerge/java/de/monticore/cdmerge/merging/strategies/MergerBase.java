@@ -9,7 +9,6 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.MergePhase;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.umlmodifier._ast.ASTModifier;
-
 import java.util.Optional;
 
 /**
@@ -82,8 +81,7 @@ public abstract class MergerBase {
       // We always assume, that the comments are only prior to an element
       merged.addAll_PreComments(input1.get_PreCommentList());
       merged.addAll_PreComments(input2.get_PreCommentList());
-    }
-    else {
+    } else {
       // If we don't merge the comments, they make no sense at all
       merged.get_PreCommentList().clear();
       merged.get_PostCommentList().clear();
@@ -113,23 +111,18 @@ public abstract class MergerBase {
     if (modifier1.isPresentStereotype() && modifier2.isPresentStereotype()) {
       if (modifier1.getStereotype().deepEquals(modifier2.getStereotype())) {
         modifier.setStereotype(modifier1.getStereotype());
-      }
-      else {
+      } else {
         logError("Cannot match Modifies: Stereotyes do not match", modifier1, modifier2);
         return Optional.empty();
       }
-    }
-    else if (modifier1.isPresentStereotype()) {
+    } else if (modifier1.isPresentStereotype()) {
       modifier.setStereotype(modifier1.getStereotype());
-    }
-    else if (modifier2.isPresentStereotype()) {
+    } else if (modifier2.isPresentStereotype()) {
       modifier.setStereotype(modifier2.getStereotype());
-    }
-    else {
+    } else {
       modifier.setStereotypeAbsent();
     }
 
     return Optional.of(modifier1);
   }
-
 }

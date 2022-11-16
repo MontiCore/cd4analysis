@@ -17,11 +17,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
+import org.junit.Before;
 
 public class CD4AnalysisTestBasis extends TestBasis {
   protected CD4AnalysisCoCoChecker coCoChecker;
@@ -36,8 +35,7 @@ public class CD4AnalysisTestBasis extends TestBasis {
     CD4AnalysisMill.reset();
     CD4AnalysisMill.init();
     p = new CD4AnalysisParser();
-    final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill
-        .globalScope();
+    final ICD4AnalysisGlobalScope globalScope = CD4AnalysisMill.globalScope();
     globalScope.setSymbolPath(new MCPath(Paths.get(PATH)));
     BuiltInTypes.addBuiltInTypes(globalScope);
 
@@ -74,5 +72,4 @@ public class CD4AnalysisTestBasis extends TestBasis {
     cdAssociationRoleNameTrafo.transform(node);
     checkLogError();
   }
-
 }

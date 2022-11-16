@@ -1,31 +1,28 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.ruletest;
 
-import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiffTestBasis;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Unit test for the U1 rule for the generation of common class names
- */
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
+import java.util.HashSet;
+import java.util.Set;
+import org.junit.Before;
+import org.junit.Test;
+
+/** Unit test for the U1 rule for the generation of common class names */
 public class A1RuleTest extends CDDiffTestBasis {
 
-  protected ASTCDCompilationUnit mvAst = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
+  protected ASTCDCompilationUnit mvAst =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/VehicleManagement/cd1.cd");
 
-  protected ASTCDCompilationUnit m1Ast = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
+  protected ASTCDCompilationUnit m1Ast =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees1.cd");
 
-  protected ASTCDCompilationUnit m2Ast = parseModel(
-      "src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
+  protected ASTCDCompilationUnit m2Ast =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/Employees/Employees2.cd");
 
   @Before
   public void prepareASTs() {
@@ -105,5 +102,4 @@ public class A1RuleTest extends CDDiffTestBasis {
 
     checkA1(lines, expectedResult);
   }
-
 }

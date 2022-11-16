@@ -49,7 +49,8 @@ public class CD4CodeCoCosDelegator extends CoCoParent<CD4CodeCoCoChecker> {
     checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CDAssociationCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CD4AnalysisCoCos().addCheckerForMcg2EbnfCoCos());
-    checker.addChecker(new CD4CodeBasisCoCos(new FullDeriveFromCD4Code()).addCheckerForMcg2EbnfCoCos());
+    checker.addChecker(
+        new CD4CodeBasisCoCos(new FullDeriveFromCD4Code()).addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CD4CodeCoCos().addCheckerForMcg2EbnfCoCos());
   }
 }

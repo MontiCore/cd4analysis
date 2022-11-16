@@ -9,15 +9,14 @@ import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.monticore.odlink.prettyprinter.ODLinkFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class NormalizeLinksTrafoTest {
 
@@ -30,7 +29,6 @@ public class NormalizeLinksTrafoTest {
     OD4ReportMill.init();
     Log.enableFailQuick(false);
     trafo = new NormalizeLinksTrafo();
-
   }
 
   @Test
@@ -41,21 +39,21 @@ public class NormalizeLinksTrafoTest {
 
     List<ASTODLink> odLinks = ODHelper.getAllLinks(od);
 
-    //transform
+    // transform
     List<ASTODLink> result = trafo.transformLinksToLTR(odLinks);
 
     Assert.assertEquals(7, result.size());
-    //check directions
+    // check directions
     result.forEach(l -> Assert.assertTrue(l.getODLinkDirection() instanceof ASTODLeftToRightDir));
-    result.forEach(l -> Assert.assertFalse((l.getODLinkDirection() instanceof ASTODRightToLeftDir)));
+    result.forEach(
+        l -> Assert.assertFalse((l.getODLinkDirection() instanceof ASTODRightToLeftDir)));
     result.forEach(l -> Assert.assertFalse(l.getODLinkDirection() instanceof ASTODBiDir));
 
-    //check roles
+    // check roles
     result.forEach(l -> Assert.assertTrue(l.getODLinkRightSide().isPresentRole()));
 
     ODLinkFullPrettyPrinter p = new ODLinkFullPrettyPrinter();
     result.forEach(l -> System.out.println(p.prettyprint(l)));
-
   }
 
   ASTObjectDiagram loadModel(String odName) throws FileNotFoundException {
@@ -67,12 +65,10 @@ public class NormalizeLinksTrafoTest {
 
     Optional<ASTODArtifact> od = loader.loadODModel(odModel);
     return od.get().getObjectDiagram();
-
   }
 
   @After
-  public void reset(){
+  public void reset() {
     OD4ReportMill.reset();
   }
-
 }

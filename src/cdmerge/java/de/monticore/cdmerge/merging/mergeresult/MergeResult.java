@@ -3,7 +3,6 @@ package de.monticore.cdmerge.merging.mergeresult;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.log.ExecutionLog;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,8 +23,7 @@ public class MergeResult {
     if (this.intermediateResults.size() > 0) {
       return this.intermediateResults.get(this.intermediateResults.size() - 1).isSuccessful()
           && getMergedCD().isPresent();
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -34,8 +32,7 @@ public class MergeResult {
     if (this.intermediateResults.size() > 0) {
       return Optional.of(
           this.intermediateResults.get(this.intermediateResults.size() - 1).getMergedCD());
-    }
-    else {
+    } else {
       return Optional.empty();
     }
   }
@@ -59,5 +56,4 @@ public class MergeResult {
   public ErrorLevel getMaxErrorLevel() {
     return this.getLog().getMaxErrorLevel();
   }
-
 }

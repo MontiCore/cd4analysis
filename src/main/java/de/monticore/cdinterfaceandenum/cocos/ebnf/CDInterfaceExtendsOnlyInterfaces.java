@@ -6,9 +6,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._cocos.CDInterfaceAndEnumASTCDInterfaceCoCo;
 
-/**
- * Checks that interfaces do only extend other interfaces.
- */
+/** Checks that interfaces do only extend other interfaces. */
 public class CDInterfaceExtendsOnlyInterfaces extends ImplementOnlyInterfaces
     implements CDInterfaceAndEnumASTCDInterfaceCoCo {
 

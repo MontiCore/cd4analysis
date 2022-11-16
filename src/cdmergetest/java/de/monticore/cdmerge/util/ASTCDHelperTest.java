@@ -1,16 +1,15 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.BaseTest;
 import de.monticore.cdmerge.exceptions.MergingException;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class ASTCDHelperTest extends BaseTest {
 
@@ -29,14 +28,12 @@ public class ASTCDHelperTest extends BaseTest {
     assertTrue(testant.getType("Employee").isPresent());
     assertTrue(testant.getType("Faculty").isPresent());
     assertTrue(testant.getType("StaffFunction").isPresent());
-
   }
 
   @Test
   public void testGetInterface() {
     assertTrue(testant.getInterface("Human").isPresent());
     assertTrue(!testant.getInterface("noInterface").isPresent());
-
   }
 
   @Test
@@ -44,7 +41,6 @@ public class ASTCDHelperTest extends BaseTest {
     assertTrue(testant.getClass("Employee").isPresent());
     assertTrue(testant.getClass("Room").isPresent());
     assertTrue(!testant.getClass("noclass").isPresent());
-
   }
 
   @Test
@@ -78,7 +74,6 @@ public class ASTCDHelperTest extends BaseTest {
   public void testGetEsternalAssociations() {
     assertTrue(testant.getAssociationsWithExternalReferences().isPresent());
     assertEquals(0, testant.getAssociationsWithExternalReferences().get().size());
-
   }
 
   @Test
@@ -91,5 +86,4 @@ public class ASTCDHelperTest extends BaseTest {
     assertEquals(1, testant.getLocalSuperInterfaces("Person").size());
     assertEquals(2, testant.getLocalImplementedInterfaces("Employee").size());
   }
-
 }

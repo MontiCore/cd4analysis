@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.testcdbasis._symboltable;
 
+import static org.junit.Assert.*;
+
 import com.google.common.collect.LinkedListMultimap;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
@@ -20,17 +22,14 @@ import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-
-import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CDBasisSTCompleterTest {
 
@@ -107,13 +106,16 @@ public class CDBasisSTCompleterTest {
     CD4AnalysisMill.globalScope().addSubScope(artifactScope);
     assertSame(artifactScope, CD4AnalysisMill.globalScope().getSubScopes().get(0));
 
-    List<TypeSymbol> resolvedTypesGS = CD4AnalysisMill.globalScope().resolveTypeMany("SomeImportedType");
+    List<TypeSymbol> resolvedTypesGS =
+        CD4AnalysisMill.globalScope().resolveTypeMany("SomeImportedType");
     assertEquals(1, resolvedTypesGS.size());
 
-    List<TypeSymbol> resolvedTypesGS2 = CD4AnalysisMill.globalScope().resolveTypeMany("NOTEXISTING");
+    List<TypeSymbol> resolvedTypesGS2 =
+        CD4AnalysisMill.globalScope().resolveTypeMany("NOTEXISTING");
     assertEquals(0, resolvedTypesGS2.size());
 
-    List<DiagramSymbol> resolvedDiagramGS = CD4AnalysisMill.globalScope().resolveDiagramMany("MyTypes");
+    List<DiagramSymbol> resolvedDiagramGS =
+        CD4AnalysisMill.globalScope().resolveDiagramMany("MyTypes");
     assertEquals(1, resolvedDiagramGS.size());
 
     assertEquals(0, Log.getErrorCount());
@@ -170,7 +172,8 @@ public class CDBasisSTCompleterTest {
       List<DiagramSymbol> resolvedDiagram = artifactScope.resolveDiagramMany("MyTypes");
       assertEquals(1, resolvedDiagram.size());
 
-      Set<TypeSymbol> resolvedTypes1 = new HashSet<>(artifactScope.resolveTypeMany("SomeImportedType"));
+      Set<TypeSymbol> resolvedTypes1 =
+          new HashSet<>(artifactScope.resolveTypeMany("SomeImportedType"));
       assertFalse(resolvedTypes1.isEmpty());
 
       // UNCOMMENT THE FOLLOWING LINE AFTER THE DOUBLE RESOLVE BUG IS FIXED
@@ -221,9 +224,10 @@ public class CDBasisSTCompleterTest {
 
   private ASTCDCompilationUnit loadModel(String pathToArtifact) {
     try {
-      return parser.parse(Paths.get(pathToArtifact).toString()).orElseThrow(NoSuchElementException::new);
-    }
-    catch (IOException | NoSuchElementException e) {
+      return parser
+          .parse(Paths.get(pathToArtifact).toString())
+          .orElseThrow(NoSuchElementException::new);
+    } catch (IOException | NoSuchElementException e) {
       System.err.println("Loading artifact: " + pathToArtifact + " failed: " + e.getMessage());
       fail();
     }

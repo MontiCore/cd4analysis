@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.methodtemplates;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.collect.Lists;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.facade.CDAttributeFacade;
@@ -21,22 +24,15 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import org.junit.Before;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-/**
- * Tests for parameterized calls of the {@link TemplateController}
- */
-
+/** Tests for parameterized calls of the {@link TemplateController} */
 public class CD4CTest extends CD4CodeTestBasis {
 
   private GeneratorSetup config;
@@ -56,16 +52,14 @@ public class CD4CTest extends CD4CodeTestBasis {
     config.setGlex(glex);
     config.setOutputDirectory(new File("target/generated"));
     config.setTracing(false);
-    config.setAdditionalTemplatePaths(Lists.newArrayList(
-      new File("src/main/resources"),
-      new File("src/test/resources")));
+    config.setAdditionalTemplatePaths(
+        Lists.newArrayList(new File("src/main/resources"), new File("src/test/resources")));
 
     // Configure CD4C
     CD4C.init(config);
 
     // create diagram
     node = p.parse(getFilePath("cd4code/generator/Simple.cd")).get();
-
   }
 
   // =================================================
@@ -74,16 +68,18 @@ public class CD4CTest extends CD4CodeTestBasis {
 
   @Test
   public void testCreateMethod() {
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorld")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorld")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
 
     // testing createMethod
-    Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
+    Optional<ASTCDMethodSignature> methSignature =
+        CD4C.getInstance().createMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertTrue(methSignature.isPresent());
     assertTrue(methSignature.get() instanceof ASTCDMethod);
@@ -95,16 +91,18 @@ public class CD4CTest extends CD4CodeTestBasis {
 
   @Test
   public void testCreateMethodInInterfaces() {
-    ASTCDInterface ast = CD4CodeMill.cDInterfaceBuilder()
-      .setName("IHelloWorld")
-      .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-      .build();
+    ASTCDInterface ast =
+        CD4CodeMill.cDInterfaceBuilder()
+            .setName("IHelloWorld")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(ast);
 
     // testing createMethod
-    Optional<ASTCDMethodSignature> methSignature = CD4C.getInstance().createMethod(ast, "de.monticore.cd.methodtemplates.PrintMethod");
+    Optional<ASTCDMethodSignature> methSignature =
+        CD4C.getInstance().createMethod(ast, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertTrue(methSignature.isPresent());
     assertTrue(methSignature.get() instanceof ASTCDMethod);
@@ -117,10 +115,11 @@ public class CD4CTest extends CD4CodeTestBasis {
   @Test
   public void testGenerateMethod() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorld")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorld")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
     final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
     // add class to the AST and create a symbol table to we can resolve the types
@@ -137,16 +136,18 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorld.java");
-    generatorEngine.generate("cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
+    generatorEngine.generate(
+        "cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
   }
 
   @Test
   public void testGenerateMethodWithAllAttributes() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorldWithConstructor")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithConstructor")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
 
     //  testing .createAttribute
     // add class to the AST and create a symbol table to we can resolve the types
@@ -154,37 +155,37 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     clazz.addCDMember(
         CDAttributeFacade.getInstance()
-            .createAttribute(new ASTModifierBuilder().PUBLIC().build(), String.class, "text")
-    );
+            .createAttribute(new ASTModifierBuilder().PUBLIC().build(), String.class, "text"));
     clazz.addCDMember(
         CDAttributeFacade.getInstance()
-            .createAttribute(new ASTModifierBuilder().PROTECTED().build(), "int", "notPublic")
-    );
+            .createAttribute(new ASTModifierBuilder().PROTECTED().build(), "int", "notPublic"));
 
     final CD4CodeFullPrettyPrinter printer = new CD4CodeFullPrettyPrinter(new IndentPrinter());
 
     // add the constructor that is described in template "DefaultConstructor"
-    CD4C.getInstance().addConstructor(clazz, "de.monticore.cd.methodtemplates.ConstructorWithAllAttributes");
+    CD4C.getInstance()
+        .addConstructor(clazz, "de.monticore.cd.methodtemplates.ConstructorWithAllAttributes");
 
     checkLogError();
 
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get("HelloWorldWithConstructor.java");
-    generatorEngine.generate("cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
+    generatorEngine.generate(
+        "cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
   }
 
   @Test
   public void testNoPredicates() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorldNoPredicates")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldNoPredicates")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
     clazz.addCDMember(
         CDMethodFacade.getInstance()
-            .createMethod(new ASTModifierBuilder().PUBLIC().build(), String.class, "print")
-    );
+            .createMethod(new ASTModifierBuilder().PUBLIC().build(), String.class, "print"));
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
@@ -199,20 +200,21 @@ public class CD4CTest extends CD4CodeTestBasis {
     // generate Java-Code
     GeneratorEngine generatorEngine = new GeneratorEngine(config);
     final Path output = Paths.get(clazz.getName() + ".java");
-    generatorEngine.generate("cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
+    generatorEngine.generate(
+        "cd2java.Class", output, clazz, node.getCDDefinition().getCDPackagesList().get(0));
   }
 
   @Test
   public void testWithClassPredicates() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorldWithClassPredicates")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithClassPredicates")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
     clazz.addCDMember(
         CDMethodFacade.getInstance()
-            .createMethod(new ASTModifierBuilder().PUBLIC().build(), String.class, "print")
-    );
+            .createMethod(new ASTModifierBuilder().PUBLIC().build(), String.class, "print"));
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
@@ -224,8 +226,12 @@ public class CD4CTest extends CD4CodeTestBasis {
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.PrintMethod");
 
     assertEquals(2, Log.getFindingsCount());
-    assertEquals("0x110C8: The class 'HelloWorldWithClassPredicates' already has a method named 'print'", Log.getFindings().get(0).getMsg());
-    assertEquals("0x11011: A check for the class method failed for method 'print'", Log.getFindings().get(1).getMsg());
+    assertEquals(
+        "0x110C8: The class 'HelloWorldWithClassPredicates' already has a method named 'print'",
+        Log.getFindings().get(0).getMsg());
+    assertEquals(
+        "0x11011: A check for the class method failed for method 'print'",
+        Log.getFindings().get(1).getMsg());
 
     Log.clearFindings();
   }
@@ -233,10 +239,11 @@ public class CD4CTest extends CD4CodeTestBasis {
   @Test
   public void testWithUnknownReturnTypePredicates() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorldWithUnknownReturnTypePredicates")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithUnknownReturnTypePredicates")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
@@ -256,10 +263,11 @@ public class CD4CTest extends CD4CodeTestBasis {
   @Test
   public void testWithUnknownParameterTypePredicates() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
-        .setName("HelloWorldWithUnknownParameterTypePredicates")
-        .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
-        .build();
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
+            .setName("HelloWorldWithUnknownParameterTypePredicates")
+            .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
+            .build();
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
@@ -271,7 +279,8 @@ public class CD4CTest extends CD4CodeTestBasis {
     CD4C.getInstance().addMethod(clazz, "de.monticore.cd.methodtemplates.UnknownParameterType");
 
     assertEquals(1, Log.getFindingsCount());
-    assertEquals("0xA0324 Cannot find symbol UnknownParameterType", Log.getFindings().get(0).getMsg());
+    assertEquals(
+        "0xA0324 Cannot find symbol UnknownParameterType", Log.getFindings().get(0).getMsg());
 
     Log.clearFindings();
   }
@@ -279,13 +288,14 @@ public class CD4CTest extends CD4CodeTestBasis {
   @Test
   public void testWithAttrClassPredicates() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
             .setName("HelloWorldWithClassPredicates")
             .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
             .build();
     clazz.addCDMember(
-            CDAttributeFacade.getInstance().createAttribute(CD4CodeMill.modifierBuilder().build(),
-                    "int", "counter"));
+        CDAttributeFacade.getInstance()
+            .createAttribute(CD4CodeMill.modifierBuilder().build(), "int", "counter"));
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
@@ -297,7 +307,9 @@ public class CD4CTest extends CD4CodeTestBasis {
     CD4C.getInstance().addAttribute(clazz, "int counter;");
 
     assertEquals(1, Log.getFindingsCount());
-    assertEquals("0x110C9: The class 'HelloWorldWithClassPredicates' already has a attribute named 'counter'", Log.getFindings().get(0).getMsg());
+    assertEquals(
+        "0x110C9: The class 'HelloWorldWithClassPredicates' already has a attribute named 'counter'",
+        Log.getFindings().get(0).getMsg());
 
     Log.clearFindings();
   }
@@ -305,7 +317,8 @@ public class CD4CTest extends CD4CodeTestBasis {
   @Test
   public void testWithUnknownAttributeTypePredicates() {
     // Build class for testing
-    ASTCDClass clazz = CD4CodeMill.cDClassBuilder()
+    ASTCDClass clazz =
+        CD4CodeMill.cDClassBuilder()
             .setName("HelloWorldWithUnknownAttributeTypePredicates")
             .setModifier(CD4CodeMill.modifierBuilder().setPublic(true).build())
             .build();
@@ -320,7 +333,8 @@ public class CD4CTest extends CD4CodeTestBasis {
     CD4C.getInstance().addAttribute(clazz, "UnknownAttributeType unkwonAttributeType;");
 
     assertEquals(1, Log.getFindingsCount());
-    assertEquals("0xA0324 Cannot find symbol UnknownAttributeType", Log.getFindings().get(0).getMsg());
+    assertEquals(
+        "0xA0324 Cannot find symbol UnknownAttributeType", Log.getFindings().get(0).getMsg());
 
     Log.clearFindings();
   }

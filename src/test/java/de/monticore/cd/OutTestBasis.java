@@ -1,15 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-/**
- * a base class for tests to use stdout and stderr
- */
+/** a base class for tests to use stdout and stderr */
 public class OutTestBasis extends TestBasis {
   protected static final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
   protected static final ByteArrayOutputStream errContent = new ByteArrayOutputStream();

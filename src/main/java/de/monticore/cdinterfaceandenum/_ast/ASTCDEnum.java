@@ -6,7 +6,6 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-
 import java.util.ArrayList;
 import java.util.List;
 

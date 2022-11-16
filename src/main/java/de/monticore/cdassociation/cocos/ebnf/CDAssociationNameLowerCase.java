@@ -5,11 +5,8 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.se_rwth.commons.logging.Log;
 
-/**
- * Checks that association names start lower-case.
- */
-public class CDAssociationNameLowerCase
-    implements CDAssociationASTCDAssociationCoCo {
+/** Checks that association names start lower-case. */
+public class CDAssociationNameLowerCase implements CDAssociationASTCDAssociationCoCo {
 
   @Override
   public void check(ASTCDAssociation a) {

@@ -14,12 +14,11 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class CD4CodeEnumConstantParameterMatchConstructorArguments
-  implements CDInterfaceAndEnumASTCDEnumCoCo {
+    implements CDInterfaceAndEnumASTCDEnumCoCo {
 
   final AbstractDerive calculator;
 
@@ -29,8 +28,9 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
 
   @Override
   public void check(ASTCDEnum node) {
-    boolean hasDefaultConstructor = node.getCDConstructorList().isEmpty() ||
-      node.getCDConstructorList().stream().anyMatch(c -> c.isEmptyCDParameters());
+    boolean hasDefaultConstructor =
+        node.getCDConstructorList().isEmpty()
+            || node.getCDConstructorList().stream().anyMatch(c -> c.isEmptyCDParameters());
     for (ASTCDEnumConstant enumConstant : node.getCDEnumConstantList()) {
       if (enumConstant instanceof ASTCD4CodeEnumConstant) {
         ASTCD4CodeEnumConstant cenumConstant = (ASTCD4CodeEnumConstant) enumConstant;
@@ -54,7 +54,8 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
     }
   }
 
-  protected boolean matchConstructor(ArrayList<SymTypeExpression> paramTypes, List<ASTCDConstructor> cdConstructorList) {
+  protected boolean matchConstructor(
+      ArrayList<SymTypeExpression> paramTypes, List<ASTCDConstructor> cdConstructorList) {
     for (ASTCDConstructor constructor : cdConstructorList) {
       List<VariableSymbol> formalParams = constructor.getSymbol().getParameterList();
       if (paramTypes.size() != formalParams.size()) {
@@ -75,9 +76,9 @@ public class CD4CodeEnumConstantParameterMatchConstructorArguments
 
   protected void logError(ASTCDEnumConstant enumConstant, String name) {
     Log.error(
-      String.format(
-        "0xCDCD2: The enum constant %s uses a constructor which is incompatible with the available constructors of the enum %s.",
-        enumConstant.getName(), name),
-      enumConstant.get_SourcePositionStart());
+        String.format(
+            "0xCDCD2: The enum constant %s uses a constructor which is incompatible with the available constructors of the enum %s.",
+            enumConstant.getName(), name),
+        enumConstant.get_SourcePositionStart());
   }
 }

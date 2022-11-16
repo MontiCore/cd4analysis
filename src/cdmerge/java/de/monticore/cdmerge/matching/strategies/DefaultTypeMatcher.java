@@ -12,13 +12,10 @@ import de.monticore.cdmerge.log.ErrorLevel;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-
 import java.util.*;
 import java.util.function.BiFunction;
 
-/**
- * Default Type matcher implementation
- */
+/** Default Type matcher implementation */
 public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
 
   public DefaultTypeMatcher(MergeBlackBoard blackBoard) {
@@ -30,8 +27,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
     Set<String> names = new HashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getTypeNames()));
     BiFunction<Integer, String, Optional<ASTCDType>> getTypeFunc =
-        ((i, name) -> getCurrentCDHelper().get(
-        i).getType(name));
+        ((i, name) -> getCurrentCDHelper().get(i).getType(name));
     return findMatching(names, getTypeFunc);
   }
 
@@ -40,8 +36,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
     Set<String> names = new HashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getClassNames()));
     BiFunction<Integer, String, Optional<ASTCDClass>> getClassFunc =
-        ((i, name) -> getCurrentCDHelper().get(
-        i).getClass(name));
+        ((i, name) -> getCurrentCDHelper().get(i).getClass(name));
     return findMatching(names, getClassFunc);
   }
 
@@ -50,8 +45,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
     Set<String> names = new HashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getInterfaceNames()));
     BiFunction<Integer, String, Optional<ASTCDInterface>> getInterfaceFunc =
-        ((i, name) -> getCurrentCDHelper().get(
-        i).getInterface(name));
+        ((i, name) -> getCurrentCDHelper().get(i).getInterface(name));
     return findMatching(names, getInterfaceFunc);
   }
 
@@ -60,8 +54,7 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
     Set<String> names = new HashSet<>();
     getCurrentCDHelper().forEach(h -> names.addAll(h.getEnumNames()));
     BiFunction<Integer, String, Optional<ASTCDEnum>> getEnumFunc =
-        ((i, name) -> getCurrentCDHelper().get(
-        i).getEnum(name));
+        ((i, name) -> getCurrentCDHelper().get(i).getEnum(name));
     return findMatching(names, getEnumFunc);
   }
 
@@ -69,16 +62,16 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
    * This generic lambda parameterized Method retrieves Matchings for ASTCDTypes
    *
    * @param cds
-   * @param typeNames       - A Set of all Typenames
+   * @param typeNames - A Set of all Typenames
    * @param getSpecificType - A Function with two Params: The first integer addresses an
-   *                        ASTCDHelper, the second the concrete Type
+   *     ASTCDHelper, the second the concrete Type
    * @return
    */
   private <T extends ASTCDElement> ASTMatchGraph<T, ASTCDDefinition> findMatching(
       Set<String> typeNames, BiFunction<Integer, String, Optional<T>> getSpecificType) {
 
-    ASTMatchGraph<T, ASTCDDefinition> matches = new ASTMatchGraph<T, ASTCDDefinition>(
-        getCurrentCDs());
+    ASTMatchGraph<T, ASTCDDefinition> matches =
+        new ASTMatchGraph<T, ASTCDDefinition>(getCurrentCDs());
     Optional<T> astType;
     List<MatchNode<T, ASTCDDefinition>> previousMatches = new ArrayList<>();
     MatchNode<T, ASTCDDefinition> node = null;
@@ -87,12 +80,18 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
       for (int i = 0; i < getCurrentCDs().size(); i++) {
         astType = getSpecificType.apply(i, type);
         if (astType.isPresent()) {
-          node = matches.addElement(astType.get(), getCurrentCDs().get(i),
-              getCurrentCDHelper().get(i).getCDPackageName((astType.get())));
+          node =
+              matches.addElement(
+                  astType.get(),
+                  getCurrentCDs().get(i),
+                  getCurrentCDHelper().get(i).getCDPackageName((astType.get())));
           for (MatchNode<T, ASTCDDefinition> match : previousMatches) {
             // addMatch is bidirectional so reverse match will be
             // automatically created
-            log(ErrorLevel.FINE, "Identified Type Match", (ASTNode) node.getElement(),
+            log(
+                ErrorLevel.FINE,
+                "Identified Type Match",
+                (ASTNode) node.getElement(),
                 (ASTNode) match.getElement());
             node.addMatch(match);
           }
@@ -102,5 +101,4 @@ public class DefaultTypeMatcher extends MatcherBase implements TypeMatcher {
     }
     return matches;
   }
-
 }

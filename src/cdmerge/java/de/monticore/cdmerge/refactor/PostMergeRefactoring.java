@@ -4,7 +4,6 @@ package de.monticore.cdmerge.refactor;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.refactor.ModelRefactoringBase.ModelRefactoringBuilder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,5 +33,4 @@ public class PostMergeRefactoring {
   public void execute(ASTCDCompilationUnit cd) {
     this.refactorings.forEach(r -> r.apply(cd));
   }
-
 }

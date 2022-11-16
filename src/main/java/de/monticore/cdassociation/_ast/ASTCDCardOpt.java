@@ -12,10 +12,6 @@ public class ASTCDCardOpt extends ASTCDCardOptTOP {
 
   @Override
   public ASTCardinality toCardinality() {
-    return CardinalityMill
-        .cardinalityBuilder()
-        .setLowerBound(0)
-        .setUpperBound(1)
-        .build();
+    return CardinalityMill.cardinalityBuilder().setLowerBound(0).setUpperBound(1).build();
   }
 }

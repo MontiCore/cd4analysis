@@ -20,5 +20,4 @@ public abstract class TypeMerger extends MergerBase {
   }
 
   public abstract void mergeTypes(ASTCDDefinition cd1, ASTCDDefinition cd2, CDMatch matchResult);
-
 }

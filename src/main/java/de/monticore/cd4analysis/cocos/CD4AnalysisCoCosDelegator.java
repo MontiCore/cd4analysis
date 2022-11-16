@@ -8,8 +8,7 @@ import de.monticore.cdassociation.cocos.CDAssociationCoCos;
 import de.monticore.cdbasis.cocos.CDBasisCoCos;
 import de.monticore.cdinterfaceandenum.cocos.CDInterfaceAndEnumCoCos;
 
-public class CD4AnalysisCoCosDelegator
-    extends CoCoParent<CD4AnalysisCoCoChecker> {
+public class CD4AnalysisCoCosDelegator extends CoCoParent<CD4AnalysisCoCoChecker> {
 
   @Override
   public CD4AnalysisCoCoChecker createNewChecker() {
@@ -41,7 +40,8 @@ public class CD4AnalysisCoCosDelegator
 
   @Override
   protected void addMcg2EbnfCoCos(CD4AnalysisCoCoChecker checker) {
-    checker.addChecker(new CDBasisCoCos(new FullDeriveFromCD4Analysis()).addCheckerForMcg2EbnfCoCos());
+    checker.addChecker(
+        new CDBasisCoCos(new FullDeriveFromCD4Analysis()).addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CDInterfaceAndEnumCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CDAssociationCoCos().addCheckerForMcg2EbnfCoCos());
     checker.addChecker(new CD4AnalysisCoCos().addCheckerForMcg2EbnfCoCos());

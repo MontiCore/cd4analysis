@@ -1,26 +1,26 @@
 package de.monticore.cddiff.syntaxdiff;
 
-import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cddiff.CDDiffTestBasis;
-import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffTestBasis;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Optional;
+import org.junit.Before;
+import org.junit.Test;
+
 public class SyntaxDemoTest extends CDDiffTestBasis {
 
-  ASTCDCompilationUnit cd1 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample1.cd");
-  ASTCDCompilationUnit cd2 = parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample2.cd");
+  ASTCDCompilationUnit cd1 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample1.cd");
+  ASTCDCompilationUnit cd2 =
+      parseModel("src/cddifftest/resources/de/monticore/cddiff/syntaxdiff/CDSynExample2.cd");
 
   @Override
   protected ASTCDCompilationUnit parseModel(String modelFile) {
@@ -29,12 +29,11 @@ public class SyntaxDemoTest extends CDDiffTestBasis {
     Optional<ASTCDCompilationUnit> optAutomaton;
     try {
       optAutomaton = parser.parse(model.toString());
-      //assertFalse(parser.hasErrors());
+      // assertFalse(parser.hasErrors());
       assertTrue(optAutomaton.isPresent());
 
       return optAutomaton.get();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
@@ -43,7 +42,7 @@ public class SyntaxDemoTest extends CDDiffTestBasis {
   }
 
   @Before
-  public void buildSymTable(){
+  public void buildSymTable() {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(cd1);
     new CD4CodeDirectCompositionTrafo().transform(cd2);
@@ -53,7 +52,7 @@ public class SyntaxDemoTest extends CDDiffTestBasis {
 
   @Test
   public void syntaxDemoTest() {
-    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(cd1,cd2);
+    CDSyntaxDiff syntaxDiff = new CDSyntaxDiff(cd1, cd2);
 
     syntaxDiff.print();
     syntaxDiff.printCD1();

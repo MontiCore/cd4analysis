@@ -15,7 +15,6 @@ import de.monticore.odlink._ast.ASTODRightToLeftDir;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -26,8 +25,8 @@ public class JoinLinksTrafo {
 
   protected ICD4CodeArtifactScope scope;
 
-  protected final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(
-      new IndentPrinter());
+  protected final MCBasicTypesFullPrettyPrinter pp =
+      new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
 
   public JoinLinksTrafo(ASTCDCompilationUnit cd) {
     this.cd = cd;
@@ -36,9 +35,9 @@ public class JoinLinksTrafo {
 
   public void transform(ASTODArtifact od) {
     for (ASTCDAssociation assoc : cd.getCDDefinition().getCDAssociationsList()) {
-      if (assoc.getCDAssocDir().isBidirectional() || !(
-          assoc.getCDAssocDir().isDefinitiveNavigableLeft() || assoc.getCDAssocDir()
-              .isDefinitiveNavigableRight())) {
+      if (assoc.getCDAssocDir().isBidirectional()
+          || !(assoc.getCDAssocDir().isDefinitiveNavigableLeft()
+              || assoc.getCDAssocDir().isDefinitiveNavigableRight())) {
         transformLinks4Assoc(od, assoc);
       }
     }
@@ -58,19 +57,16 @@ public class JoinLinksTrafo {
           if (!link.getODLinkLeftSide().isPresentRole()) {
             link.getODLinkLeftSide().setRole(CDDiffUtil.inferRole(assoc.getLeft()));
           }
-        }
-        else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
+        } else if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           od.getObjectDiagram().removeODElement(link);
         }
-      }
-      else if (matchLink2AssocInReverse(link, assoc, od)) {
+      } else if (matchLink2AssocInReverse(link, assoc, od)) {
         if (link.getODLinkDirection() instanceof ASTODRightToLeftDir) {
           link.setODLinkDirection(OD4ReportMill.oDBiDirBuilder().build());
           if (!link.getODLinkRightSide().isPresentRole()) {
             link.getODLinkRightSide().setRole(CDDiffUtil.inferRole(assoc.getLeft()));
           }
-        }
-        else if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
+        } else if (link.getODLinkDirection() instanceof ASTODLeftToRightDir) {
           od.getObjectDiagram().removeODElement(link);
         }
       }
@@ -83,58 +79,65 @@ public class JoinLinksTrafo {
 
     if (leftObj.isEmpty() || rightObj.isEmpty()) {
       Log.error(
-          "0xCDD11: Could not find named objects: " + link.getLeftReferenceNames().get(0) + ", "
+          "0xCDD11: Could not find named objects: "
+              + link.getLeftReferenceNames().get(0)
+              + ", "
               + link.getRightReferenceNames().get(0));
       return false;
     }
 
-    if (!CDInheritanceHelper.isSuperOf(assoc.getLeftQualifiedName().getQName(),
-        leftObj.get().getMCObjectType().printType(pp), scope)) {
+    if (!CDInheritanceHelper.isSuperOf(
+        assoc.getLeftQualifiedName().getQName(),
+        leftObj.get().getMCObjectType().printType(pp),
+        scope)) {
       return false;
     }
 
-    if (!CDInheritanceHelper.isSuperOf(assoc.getRightQualifiedName().getQName(),
-        rightObj.get().getMCObjectType().printType(pp), scope)) {
+    if (!CDInheritanceHelper.isSuperOf(
+        assoc.getRightQualifiedName().getQName(),
+        rightObj.get().getMCObjectType().printType(pp),
+        scope)) {
       return false;
     }
 
-    return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
-        .getRole()
-        .equals(CDDiffUtil.inferRole(assoc.getLeft())))
-        && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
-        .getRole()
-        .equals(CDDiffUtil.inferRole(assoc.getRight()))));
+    return ((!link.getODLinkLeftSide().isPresentRole()
+            || link.getODLinkLeftSide().getRole().equals(CDDiffUtil.inferRole(assoc.getLeft())))
+        && (!link.getODLinkRightSide().isPresentRole()
+            || link.getODLinkRightSide().getRole().equals(CDDiffUtil.inferRole(assoc.getRight()))));
   }
 
-
-  protected boolean matchLink2AssocInReverse(ASTODLink link, ASTCDAssociation assoc,
-      ASTODArtifact od) {
+  protected boolean matchLink2AssocInReverse(
+      ASTODLink link, ASTCDAssociation assoc, ASTODArtifact od) {
     Optional<ASTODNamedObject> leftObj = findObjectInOD(link.getLeftReferenceNames().get(0), od);
     Optional<ASTODNamedObject> rightObj = findObjectInOD(link.getRightReferenceNames().get(0), od);
 
     if (leftObj.isEmpty() || rightObj.isEmpty()) {
       Log.error(
-          "0xCDD12: Could not find named objects: " + link.getLeftReferenceNames().get(0) + ", "
+          "0xCDD12: Could not find named objects: "
+              + link.getLeftReferenceNames().get(0)
+              + ", "
               + link.getRightReferenceNames().get(0));
       return false;
     }
 
-    if (!CDInheritanceHelper.isSuperOf(assoc.getRightQualifiedName().getQName(),
-        leftObj.get().getMCObjectType().printType(pp), scope)) {
+    if (!CDInheritanceHelper.isSuperOf(
+        assoc.getRightQualifiedName().getQName(),
+        leftObj.get().getMCObjectType().printType(pp),
+        scope)) {
       return false;
     }
 
-    if (!CDInheritanceHelper.isSuperOf(assoc.getLeftQualifiedName().getQName(),
-        rightObj.get().getMCObjectType().printType(pp), scope)) {
+    if (!CDInheritanceHelper.isSuperOf(
+        assoc.getLeftQualifiedName().getQName(),
+        rightObj.get().getMCObjectType().printType(pp),
+        scope)) {
       return false;
     }
 
-    return ((!link.getODLinkLeftSide().isPresentRole() || link.getODLinkLeftSide()
-        .getRole()
-        .equals(CDDiffUtil.inferRole(assoc.getRight())))
-        && (!link.getODLinkRightSide().isPresentRole() || link.getODLinkRightSide()
-        .getRole()
-        .equals(CDDiffUtil.inferRole(assoc.getLeft()))));
+    return ((!link.getODLinkLeftSide().isPresentRole()
+            || link.getODLinkLeftSide().getRole().equals(CDDiffUtil.inferRole(assoc.getRight())))
+        && (!link.getODLinkRightSide().isPresentRole()
+            || link.getODLinkRightSide().getRole().equals(CDDiffUtil.inferRole(assoc.getLeft()))));
   }
 
   protected Optional<ASTODNamedObject> findObjectInOD(String name, ASTODArtifact od) {
@@ -146,9 +149,4 @@ public class JoinLinksTrafo {
     }
     return objects.stream().filter(obj -> obj.getName().equals(name)).findAny();
   }
-
-
-
-
-
 }

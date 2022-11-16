@@ -18,10 +18,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 public class CDHelper {
   public static final Map<String, ASTMCType> javaTypeMap = buildJavaTypeMap();
@@ -30,23 +28,27 @@ public class CDHelper {
     List<ASTCDClass> subclasses = new LinkedList<>();
     for (ASTCDClass entry : cd.getCDClassesList()) {
       for (ASTMCObjectType entry2 : entry.getSuperclassList()) {
-        if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdType.getName()))
-          subclasses.add(entry);
+        if (entry2
+            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+            .equals(astcdType.getName())) subclasses.add(entry);
       }
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
-        if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdType.getName()))
-          subclasses.add(entry);
+        if (entry2
+            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+            .equals(astcdType.getName())) subclasses.add(entry);
       }
     }
     return subclasses;
   }
 
-  public static List<ASTCDInterface> getSubInterfaceList(ASTCDDefinition cd, ASTCDInterface astcdInterface) {
+  public static List<ASTCDInterface> getSubInterfaceList(
+      ASTCDDefinition cd, ASTCDInterface astcdInterface) {
     List<ASTCDInterface> subInterfaces = new LinkedList<>();
     for (ASTCDInterface entry : cd.getCDInterfacesList()) {
       for (ASTMCObjectType entry2 : entry.getInterfaceList()) {
-        if (entry2.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())).equals(astcdInterface.getName()))
-          subInterfaces.add(entry);
+        if (entry2
+            .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+            .equals(astcdInterface.getName())) subInterfaces.add(entry);
       }
     }
     return subInterfaces;
@@ -90,22 +92,20 @@ public class CDHelper {
   public static void createCDSymTab(ASTCDCompilationUnit ast) {
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
     BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
-    CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(
-      ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    CD4AnalysisSymbolTableCompleter c =
+        new CD4AnalysisSymbolTableCompleter(
+            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
-
   }
 
   public static void setAssociationsRoles(ASTCDCompilationUnit ast) {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
-    final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
-      new CDAssociationRoleNameTrafo();
+    final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
     final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
     traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
     cdAssociationRoleNameTrafo.transform(ast);
-
   }
 
   public static Sort parseAttribType2SMT(Context ctx, ASTCDAttribute myAttribute) {
@@ -138,17 +138,21 @@ public class CDHelper {
     return javaTypeMap.get(mySort.toString());
   }
 
-
   protected static Map<String, ASTMCType> buildJavaTypeMap() {
     Map<String, ASTMCType> typeMap = new HashMap<>();
     typeMap.put("Int", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build());
     typeMap.put("Real", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build());
     typeMap.put("Bool", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build());
-    typeMap.put("String", OD4ReportMill.mCQualifiedTypeBuilder().setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build());
+    typeMap.put(
+        "String",
+        OD4ReportMill.mCQualifiedTypeBuilder()
+            .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String"))
+            .build());
     return typeMap;
   }
 
-  public static ASTCDAssociation getAssociation(ASTCDType objType, String otherRole, ASTCDDefinition cd) {
+  public static ASTCDAssociation getAssociation(
+      ASTCDType objType, String otherRole, ASTCDDefinition cd) {
     List<ASTCDType> objTypes = new ArrayList<>();
     objTypes.add(objType);
     getAllSuperType(objType, cd, objTypes);
@@ -163,16 +167,22 @@ public class CDHelper {
       leftRole = association.getLeft().getCDRole().getName();
       rightRole = association.getRight().getCDRole().getName();
 
-      if (objTypes.contains(leftType) && otherRole.equals(rightRole) || objTypes.contains(rightType) && otherRole.equals(leftRole)) {
+      if (objTypes.contains(leftType) && otherRole.equals(rightRole)
+          || objTypes.contains(rightType) && otherRole.equals(leftRole)) {
         return association;
       }
     }
-    Log.error("Association with the other-role " + otherRole + " not found for the ASTCDType" + objType.getName());
+    Log.error(
+        "Association with the other-role "
+            + otherRole
+            + " not found for the ASTCDType"
+            + objType.getName());
     return null;
   }
 
   public static ASTCDAttribute getAttribute(ASTCDType astcdType, String attrName) {
-    Optional<ASTCDAttribute> attr = astcdType.getCDAttributeList().stream().filter(a -> a.getName().equals(attrName)).findAny();
+    Optional<ASTCDAttribute> attr =
+        astcdType.getCDAttributeList().stream().filter(a -> a.getName().equals(attrName)).findAny();
     if (attr.isEmpty()) {
       Log.error("attribute " + attrName + " not found in class " + astcdType.getName());
     }
@@ -189,20 +199,31 @@ public class CDHelper {
     return false;
   }
 
-
   public static List<ASTCDType> getSuperTypeList(ASTCDType astcdType, ASTCDDefinition cd) {
-    List<ASTCDType> res = astcdType.getSuperclassList().stream().map(mcType -> getASTCDType(mcType
-      .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd)).collect(Collectors.toList());
+    List<ASTCDType> res =
+        astcdType.getSuperclassList().stream()
+            .map(
+                mcType ->
+                    getASTCDType(
+                        mcType.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+                        cd))
+            .collect(Collectors.toList());
 
-    res.addAll(astcdType.getInterfaceList().stream().map(mcType -> getASTCDType(mcType
-      .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd)).collect(Collectors.toList()));
+    res.addAll(
+        astcdType.getInterfaceList().stream()
+            .map(
+                mcType ->
+                    getASTCDType(
+                        mcType.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())),
+                        cd))
+            .collect(Collectors.toList()));
 
     return res;
   }
 
   public static void getAllSuperType(ASTCDType astcdType, ASTCDDefinition cd, List<ASTCDType> res) {
     if (astcdType.getInterfaceList().isEmpty() && astcdType.getSuperclassList().isEmpty()) {
-      return ;
+      return;
     }
     List<ASTCDType> superClassList = getSuperTypeList(astcdType, cd);
     res.add(superClassList.get(0));

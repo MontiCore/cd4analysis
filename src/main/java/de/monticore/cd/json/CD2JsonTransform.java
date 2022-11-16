@@ -21,23 +21,18 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
-
 import java.util.*;
 
-/**
-  * This class transforms the cd4a-classdiagram into an JSON Schema.
- **/
+/** This class transforms the cd4a-classdiagram into an JSON Schema. */
 public class CD2JsonTransform {
 
-
   /**
-   * Stores the resulting JSON-Schema. Each call of visit(ASTCDClass astcdClass) is updating the result.
+   * Stores the resulting JSON-Schema. Each call of visit(ASTCDClass astcdClass) is updating the
+   * result.
    */
   private final ObjectNode classSchemata = JsonNodeFactory.instance.objectNode();
 
-  /**
-   * JSON value that gets assigned to CD StereoValues without a value property
-   */
+  /** JSON value that gets assigned to CD StereoValues without a value property */
   private static final boolean DEFAULT_ANNOTATION_VALUE = true;
 
   private final ICD4AnalysisGlobalScope globalScope;
@@ -46,20 +41,24 @@ public class CD2JsonTransform {
     this.globalScope = globalScope;
   }
 
-  /**
-   * Create JSON-Schema for the given class and stores it in variable "classSchemata"
-   */
+  /** Create JSON-Schema for the given class and stores it in variable "classSchemata" */
   public void visit(ASTCDClass astcdClass) {
     ObjectNode node = new ObjectMapper().createObjectNode();
     ObjectNode properties = new ObjectMapper().createObjectNode();
 
     // Iterate over all superclasses and add the attributes to the properties
     for (ASTCDClass superClass : CD2JsonTransform.getAllSuperClasses(astcdClass)) {
-      superClass.getSymbol().getFieldList().forEach(attr -> properties.set(attr.getName(), getField(attr)));
+      superClass
+          .getSymbol()
+          .getFieldList()
+          .forEach(attr -> properties.set(attr.getName(), getField(attr)));
     }
 
     // Add the attributes of the child-class to the properties
-    astcdClass.getSymbol().getFieldList().forEach(attr -> properties.set(attr.getName(), getField(attr)));
+    astcdClass
+        .getSymbol()
+        .getFieldList()
+        .forEach(attr -> properties.set(attr.getName(), getField(attr)));
 
     node.put("title", astcdClass.getName());
     node.put("type", "object");
@@ -87,19 +86,21 @@ public class CD2JsonTransform {
       result.put("derived", ((ASTCDAttribute) f.getAstNode()).getModifier().isDerived());
       if (hasAttributeAnnotations(attribute)) {
         ObjectNode annotations = new ObjectMapper().createObjectNode();
-        attribute.getModifier()
-          .getStereotype()
-          .forEachValues(annotation -> {
-            if (annotation.getValue().isEmpty()) {
-              annotations.put(annotation.getName(), DEFAULT_ANNOTATION_VALUE);
-            } else {
-              annotations.put(annotation.getName(), annotation.getValue());
-            }
-          });
+        attribute
+            .getModifier()
+            .getStereotype()
+            .forEachValues(
+                annotation -> {
+                  if (annotation.getValue().isEmpty()) {
+                    annotations.put(annotation.getName(), DEFAULT_ANNOTATION_VALUE);
+                  } else {
+                    annotations.put(annotation.getName(), annotation.getValue());
+                  }
+                });
         result.set("annotations", annotations);
       }
 
-    } else {// association assumed
+    } else { // association assumed
       Optional<CDRoleSymbol> associationRole = getRoleFromField(f);
       Optional<ASTCDAssociation> association = Optional.empty();
       if (associationRole.isPresent()) {
@@ -107,14 +108,17 @@ public class CD2JsonTransform {
       }
       if (association.isPresent()) {
         ObjectNode annotations = new ObjectMapper().createObjectNode();
-        getAnnotationFromAssociation(association.get()).ifPresent(
-          annotation -> annotation.forEachValues(annotationValue -> {
-            if (annotationValue.getValue().isEmpty()) {
-              annotations.put(annotationValue.getName(), DEFAULT_ANNOTATION_VALUE);
-            } else {
-              annotations.put(annotationValue.getName(), annotationValue.getValue());
-            }
-          }));
+        getAnnotationFromAssociation(association.get())
+            .ifPresent(
+                annotation ->
+                    annotation.forEachValues(
+                        annotationValue -> {
+                          if (annotationValue.getValue().isEmpty()) {
+                            annotations.put(annotationValue.getName(), DEFAULT_ANNOTATION_VALUE);
+                          } else {
+                            annotations.put(annotationValue.getName(), annotationValue.getValue());
+                          }
+                        }));
         result.set("annotations", annotations);
       }
     }
@@ -146,10 +150,9 @@ public class CD2JsonTransform {
 
     ObjectNode result = new ObjectMapper().createObjectNode();
 
-
-    if (m.containsKey(attr.getTypeInfo().getName())) {    // Primitive Types
+    if (m.containsKey(attr.getTypeInfo().getName())) { // Primitive Types
       result.put("type", m.get(attr.getTypeInfo().getName()));
-    } else if (attr instanceof SymTypeOfGenerics) {       // List<T> OR Optional<T>
+    } else if (attr instanceof SymTypeOfGenerics) { // List<T> OR Optional<T>
       SymTypeOfGenerics gAttr = (SymTypeOfGenerics) attr;
       if (gAttr.getFullName().equals("java.util.Optional")) {
         result.setAll(getAttribute(gAttr.getArgument(0)));
@@ -159,13 +162,14 @@ public class CD2JsonTransform {
       }
       result.put("required", false);
 
-    } else if (attr instanceof SymTypeOfObject) {         // Associations to other Classes
-      if(attr.getTypeInfo().isPresentAstNode() && attr.getTypeInfo().getAstNode() instanceof ASTCDEnum){
+    } else if (attr instanceof SymTypeOfObject) { // Associations to other Classes
+      if (attr.getTypeInfo().isPresentAstNode()
+          && attr.getTypeInfo().getAstNode() instanceof ASTCDEnum) {
         ASTCDEnum attrEnum = (ASTCDEnum) attr.getTypeInfo().getAstNode();
         result.put("type", "string");
 
         ArrayNode arrayEnumValues = new ObjectMapper().createArrayNode();
-        attrEnum.getCDEnumConstantList().forEach(x->arrayEnumValues.add(x.getName()));
+        attrEnum.getCDEnumConstantList().forEach(x -> arrayEnumValues.add(x.getName()));
         result.set("enum", arrayEnumValues);
       } else {
         result.put("$ref", "#/" + attr.getTypeInfo().getName());
@@ -177,21 +181,23 @@ public class CD2JsonTransform {
     return result;
   }
 
-
   /**
-   * @return List with all superclasses of given class. The given class (parameter astcdClass) is not in the result
+   * @return List with all superclasses of given class. The given class (parameter astcdClass) is
+   *     not in the result
    */
   public static List<ASTCDClass> getAllSuperClasses(ASTCDClass astcdClass) {
     List<ASTCDClass> allSuperClasses = new ArrayList<>();
     for (ASTMCObjectType superClass : astcdClass.getSuperclassList()) {
-      Optional<CDTypeSymbol> superTypeSymbol = astcdClass.getEnclosingScope()
-        .resolveCDType(
-          new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superClass));
+      Optional<CDTypeSymbol> superTypeSymbol =
+          astcdClass
+              .getEnclosingScope()
+              .resolveCDType(
+                  new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(superClass));
 
       if (superTypeSymbol.isPresent() && superTypeSymbol.get().getAstNode() instanceof ASTCDClass) {
         allSuperClasses.add((ASTCDClass) superTypeSymbol.get().getAstNode());
         allSuperClasses.addAll(
-          CD2JsonTransform.getAllSuperClasses((ASTCDClass) superTypeSymbol.get().getAstNode()));
+            CD2JsonTransform.getAllSuperClasses((ASTCDClass) superTypeSymbol.get().getAstNode()));
       }
     }
 
@@ -212,7 +218,8 @@ public class CD2JsonTransform {
    * extracts annotations out off an association
    * assumption: the annotation is provided before the assumption
    */
-  private static Optional<ASTStereotype> getAnnotationFromAssociation(ASTCDAssociation association) {
+  private static Optional<ASTStereotype> getAnnotationFromAssociation(
+      ASTCDAssociation association) {
     ASTModifier modifier = association.getModifier();
     if (modifier.isPresentStereotype() && !modifier.getStereotype().isEmptyValues())
       return Optional.of(association.getModifier().getStereotype());
@@ -242,5 +249,4 @@ public class CD2JsonTransform {
   public JsonNode getScheme() {
     return classSchemata;
   }
-
 }

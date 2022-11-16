@@ -1,6 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.method.accessor;
 
+import static de.monticore.cd.codegen.DecoratorAssert.*;
+import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
+import static de.monticore.cd.facade.CDModifier.PROTECTED;
+import static de.monticore.cd.facade.CDModifier.PUBLIC;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 import de.monticore.cd.codegen.methods.accessor.ListAccessorDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -12,17 +19,9 @@ import de.monticore.types.MCTypeFacade;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.LogStub;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-
-import static de.monticore.cd.codegen.DecoratorAssert.*;
-import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
-import static de.monticore.cd.facade.CDModifier.PROTECTED;
-import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class ListAccessorDecoratorTest {
 
@@ -34,7 +33,8 @@ public class ListAccessorDecoratorTest {
   public void setup() {
     LogStub.init();
     ASTMCType listType = MCTypeFacade.getInstance().createListTypeOf(String.class);
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
     ListAccessorDecorator listAccessorDecorator = new ListAccessorDecorator(glex);
     this.methods = listAccessorDecorator.decorate(attribute);
   }
@@ -198,7 +198,9 @@ public class ListAccessorDecoratorTest {
   public void testHashCodeMethod() {
     ASTCDMethod method = getMethodBy("hashCodeA", this.methods);
     assertTrue(method.getCDParameterList().isEmpty());
-    assertEquals("int", method.getMCReturnType().printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())));
+    assertEquals(
+        "int",
+        method.getMCReturnType().printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())));
     assertDeepEquals(PUBLIC, method.getModifier());
   }
 
@@ -245,12 +247,12 @@ public class ListAccessorDecoratorTest {
   @Test
   public void testDerivedAttr() {
     ASTMCType listType = MCTypeFacade.getInstance().createListTypeOf(String.class);
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), listType, "a");
     attribute.getModifier().setDerived(true);
     ListAccessorDecorator listAccessorDecorator = new ListAccessorDecorator(glex);
     List<ASTCDMethod> methList = listAccessorDecorator.decorate(attribute);
     assertEquals(1, methList.size());
     assertTrue(methList.get(0).getModifier().isAbstract());
   }
-
 }

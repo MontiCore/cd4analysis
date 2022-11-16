@@ -1,9 +1,8 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
 import com.google.common.graph.MutableGraph;
-import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
+import de.monticore.cddiff.alloycddiff.CDSemantics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
  * @attribute cDAssociationWrapperGroup: store generated CDAssociationWrapper
  * @attribute refSetAssociationList: store generated CDRefSetAssociationWrapper
  * @attribute inheritanceGraph: store all inheritance information that presents all the parents and
- * children of a class.
+ *     children of a class.
  */
 public class CDWrapper {
   protected ASTCDCompilationUnit model;
@@ -33,8 +32,7 @@ public class CDWrapper {
 
   protected MutableGraph<String> inheritanceGraph;
 
-  public CDWrapper() {
-  }
+  public CDWrapper() {}
 
   public ASTCDCompilationUnit getModel() {
     return model;
@@ -96,5 +94,4 @@ public class CDWrapper {
   public void setInheritanceGraph(MutableGraph<String> inheritanceGraph) {
     this.inheritanceGraph = inheritanceGraph;
   }
-
 }

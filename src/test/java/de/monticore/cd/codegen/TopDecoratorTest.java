@@ -1,6 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
+import static de.monticore.cd.facade.CDModifier.*;
+import static org.junit.Assert.assertEquals;
+
 import de.monticore.cd4codebasis._ast.ASTCDConstructor;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,14 +20,9 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
-import static de.monticore.cd.facade.CDModifier.*;
-import static org.junit.Assert.assertEquals;
-
 public class TopDecoratorTest extends DecoratorTestCase {
 
-  @Mock
-  private MCPath targetPath;
+  @Mock private MCPath targetPath;
 
   private TopDecorator topDecorator;
 
@@ -40,7 +39,12 @@ public class TopDecoratorTest extends DecoratorTestCase {
   @Test
   public void testHandWrittenClassFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
-    engineMock.when(() -> GeneratorEngine.existsHandwrittenClass(Mockito.any(MCPath.class), Mockito.any(String.class))).thenReturn(true);
+    engineMock
+        .when(
+            () ->
+                GeneratorEngine.existsHandwrittenClass(
+                    Mockito.any(MCPath.class), Mockito.any(String.class)))
+        .thenReturn(true);
     ASTCDDefinition ast = this.topDecorator.decorate(this.topCD).getCDDefinition();
 
     assertEquals(1, ast.getCDClassesList().size());
@@ -68,7 +72,12 @@ public class TopDecoratorTest extends DecoratorTestCase {
   @Test
   public void testHandWrittenClassInLocalPackageFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
-    engineMock.when(() -> GeneratorEngine.existsHandwrittenClass(Mockito.any(MCPath.class), Mockito.any(String.class))).thenReturn(true);
+    engineMock
+        .when(
+            () ->
+                GeneratorEngine.existsHandwrittenClass(
+                    Mockito.any(MCPath.class), Mockito.any(String.class)))
+        .thenReturn(true);
     this.topDecorator.decoratePackage(this.topCD);
     ASTCDDefinition ast = topCD.getCDDefinition();
 
@@ -97,7 +106,12 @@ public class TopDecoratorTest extends DecoratorTestCase {
   @Test
   public void testHandWrittenClassNotFound() {
     MockedStatic<GeneratorEngine> engineMock = Mockito.mockStatic(GeneratorEngine.class);
-    engineMock.when(() -> GeneratorEngine.existsHandwrittenClass(Mockito.any(MCPath.class), Mockito.any(String.class))).thenReturn(false);
+    engineMock
+        .when(
+            () ->
+                GeneratorEngine.existsHandwrittenClass(
+                    Mockito.any(MCPath.class), Mockito.any(String.class)))
+        .thenReturn(false);
     ASTCDDefinition ast = this.topDecorator.decorate(this.topCD).getCDDefinition();
 
     assertEquals(1, ast.getCDClassesList().size());

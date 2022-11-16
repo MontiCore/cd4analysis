@@ -1,6 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.ast.ASTNode;
 import de.monticore.cd.facade.CDModifier;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
@@ -10,20 +13,18 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcfullgenerictypes.MCFullGenericTypesMill;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 public final class DecoratorAssert {
 
   private static final int DEFAULT_ARRAY_DIMENSION = 1;
 
   private static final MCTypeFacade CD_TYPE_FACADE = MCTypeFacade.getInstance();
 
-  private DecoratorAssert() {
-  }
+  private DecoratorAssert() {}
 
   public static void assertDeepEquals(ASTNode expected, ASTNode actual) {
-    assertTrue(String.format("Expected: [%s], Actual: [%s]", getAsString(expected), getAsString(actual)), expected.deepEquals(actual));
+    assertTrue(
+        String.format("Expected: [%s], Actual: [%s]", getAsString(expected), getAsString(actual)),
+        expected.deepEquals(actual));
   }
 
   public static void assertDeepEquals(ASTMCType expected, ASTMCType actual) {
@@ -32,7 +33,9 @@ public final class DecoratorAssert {
   }
 
   private static String getAsString(ASTNode node) {
-    return node instanceof ASTMCType ? ((ASTMCType) node).printType(MCFullGenericTypesMill.mcFullGenericTypesPrettyPrinter()) : node.toString();
+    return node instanceof ASTMCType
+        ? ((ASTMCType) node).printType(MCFullGenericTypesMill.mcFullGenericTypesPrettyPrinter())
+        : node.toString();
   }
 
   public static void assertDeepEquals(CDModifier expected, ASTNode actual) {
@@ -51,7 +54,8 @@ public final class DecoratorAssert {
 
   public static void assertDeepEquals(Class<?> expected, ASTNode actual) {
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(expected.getSimpleName(), (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(
+        expected.getSimpleName(), (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
   }
 
   public static void assertDeepEquals(String name, ASTNode actual) {
@@ -69,7 +73,7 @@ public final class DecoratorAssert {
     assertTrue(((ASTMCPrimitiveType) actual).isInt());
   }
 
-  public static void assertFloat(ASTNode actual){
+  public static void assertFloat(ASTNode actual) {
     assertTrue(actual instanceof ASTMCPrimitiveType);
     assertTrue(((ASTMCPrimitiveType) actual).isFloat());
   }
@@ -81,24 +85,25 @@ public final class DecoratorAssert {
   public static void assertOptionalOf(Class<?> clazz, ASTNode actual) {
     String type = "Optional<" + clazz.getSimpleName() + ">";
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(type,(new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(type, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
   }
 
   public static void assertOptionalOf(String name, ASTNode actual) {
     String type = "Optional<" + name + ">";
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(type,(new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(type, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
   }
 
   public static void assertListOf(Class<?> clazz, ASTNode actual) {
     String type = "List<" + clazz.getSimpleName() + ">";
     assertTrue(actual instanceof ASTMCType);
-    assertEquals(type,(new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
+    assertEquals(type, (new CD4CodeFullPrettyPrinter()).prettyprint((ASTMCType) actual));
   }
 
   public static void assertListOf(String name, ASTNode actual) {
     assertDeepEquals(CD_TYPE_FACADE.createListTypeOf(name), actual);
   }
+
   public static void assertArrayOf(Class<?> clazz, ASTNode actual) {
     assertDeepEquals(CD_TYPE_FACADE.createArrayType(clazz, DEFAULT_ARRAY_DIMENSION), actual);
   }

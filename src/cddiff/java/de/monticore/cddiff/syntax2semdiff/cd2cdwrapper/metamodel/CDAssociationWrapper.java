@@ -1,32 +1,25 @@
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel;
 
+import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
+
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cddiff.CDDiffUtil;
 import de.se_rwth.commons.SourcePosition;
 
-import static de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapper4AssocHelper.*;
-
 /**
- * The association in AST will be converted to the corresponding CDAssociationWrapper
- * The kind of CDAssociationWrapper are CDWRAPPER_ASC, CDWRAPPER_INHERIT_ASC, CDWRAPPER_INHERIT_DISPLAY_ASC
+ * The association in AST will be converted to the corresponding CDAssociationWrapper The kind of
+ * CDAssociationWrapper are CDWRAPPER_ASC, CDWRAPPER_INHERIT_ASC, CDWRAPPER_INHERIT_DISPLAY_ASC
  *
- * @attribute originalElement:
- *    store the original AST Association
- * @attribute cDWrapperKind:
- *    - if this CDAssociationWrapper is created by inherited situation,
- *      then the cDWrapperKind is 'CDWRAPPER_INHERIT_ASC'
- *      otherwise 'CDWRAPPER_ASC'
- *    - Special situation of inherited association:
- *      In comparing process, if this inherited association should be displayed and generate a
- *      witness, the CDWrapperKind of this current inherited association will be changed into
- *      'CDWRAPPER_INHERIT_DISPLAY_ASC'
- * @attribute cDWrapperLeftClass:
- *    linked left CDTypeWrapper
- * @attribute cDWrapperRightClass:
- *    linked right CDTypeWrapper
- * @attribute status:
- *    OPEN, CONFLICTING
+ * @attribute originalElement: store the original AST Association
+ * @attribute cDWrapperKind: - if this CDAssociationWrapper is created by inherited situation, then
+ *     the cDWrapperKind is 'CDWRAPPER_INHERIT_ASC' otherwise 'CDWRAPPER_ASC' - Special situation of
+ *     inherited association: In comparing process, if this inherited association should be
+ *     displayed and generate a witness, the CDWrapperKind of this current inherited association
+ *     will be changed into 'CDWRAPPER_INHERIT_DISPLAY_ASC'
+ * @attribute cDWrapperLeftClass: linked left CDTypeWrapper
+ * @attribute cDWrapperRightClass: linked right CDTypeWrapper
+ * @attribute status: OPEN, CONFLICTING
  */
 public class CDAssociationWrapper implements Cloneable {
   protected final ASTCDAssociation originalElement;
@@ -44,18 +37,24 @@ public class CDAssociationWrapper implements Cloneable {
   public CDAssociationWrapper(ASTCDAssociation originalElement, boolean isInherited) {
     this.originalElement = originalElement;
     this.editedElement = originalElement.deepClone();
-    this.cDWrapperKind = isInherited ?
-      CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC : CDAssociationWrapperKind.CDWRAPPER_ASC;
+    this.cDWrapperKind =
+        isInherited
+            ? CDAssociationWrapperKind.CDWRAPPER_INHERIT_ASC
+            : CDAssociationWrapperKind.CDWRAPPER_ASC;
     this.status = CDStatus.OPEN;
   }
 
   public String getName() {
     return "CDAssociationWrapper_"
-      + getCDWrapperLeftClass().getOriginalClassName() + "_"
-      + getCDWrapperLeftClassRoleName() + "_"
-      + formatDirection(getCDAssociationWrapperDirection()) + "_"
-      + getCDWrapperRightClassRoleName() + "_"
-      + getCDWrapperRightClass().getOriginalClassName();
+        + getCDWrapperLeftClass().getOriginalClassName()
+        + "_"
+        + getCDWrapperLeftClassRoleName()
+        + "_"
+        + formatDirection(getCDAssociationWrapperDirection())
+        + "_"
+        + getCDWrapperRightClassRoleName()
+        + "_"
+        + getCDWrapperRightClass().getOriginalClassName();
   }
 
   public CDAssociationWrapperKind getCDWrapperKind() {
@@ -107,7 +106,9 @@ public class CDAssociationWrapper implements Cloneable {
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
         break;
       case AT_LEAST_ONE:
-        this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
+        this.editedElement
+            .getLeft()
+            .setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
         break;
       case MULTIPLE:
         this.editedElement.getLeft().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
@@ -119,8 +120,7 @@ public class CDAssociationWrapper implements Cloneable {
     return distinguishRightAssociationCardinalityHelper(this.editedElement);
   }
 
-  public void setCDWrapperRightClassCardinality(
-      CDAssociationWrapperCardinality cardinalityResult) {
+  public void setCDWrapperRightClassCardinality(CDAssociationWrapperCardinality cardinalityResult) {
     switch (cardinalityResult) {
       case ONE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOneBuilder().build());
@@ -129,7 +129,9 @@ public class CDAssociationWrapper implements Cloneable {
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardOptBuilder().build());
         break;
       case AT_LEAST_ONE:
-        this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
+        this.editedElement
+            .getRight()
+            .setCDCardinality(CD4AnalysisMill.cDCardAtLeastOneBuilder().build());
         break;
       case MULTIPLE:
         this.editedElement.getRight().setCDCardinality(CD4AnalysisMill.cDCardMultBuilder().build());
@@ -181,5 +183,4 @@ public class CDAssociationWrapper implements Cloneable {
     cloned.cDWrapperRightClass = cDWrapperRightClass.clone();
     return cloned;
   }
-
 }

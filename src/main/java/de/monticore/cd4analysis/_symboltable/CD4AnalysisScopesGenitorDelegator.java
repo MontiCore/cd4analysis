@@ -15,7 +15,7 @@ public class CD4AnalysisScopesGenitorDelegator extends CD4AnalysisScopesGenitorD
     this.traverser = traverser;
   }
 
-  public  void putOnStack (ICD4AnalysisScope scope) {
+  public void putOnStack(ICD4AnalysisScope scope) {
     scopeStack.addLast(scope);
   }
 }

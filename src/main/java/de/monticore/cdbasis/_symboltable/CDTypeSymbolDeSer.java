@@ -4,7 +4,6 @@ package de.monticore.cdbasis._symboltable;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionDeSer;
-
 import java.util.List;
 
 public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
@@ -43,7 +42,6 @@ public class CDTypeSymbolDeSer extends CDTypeSymbolDeSerTOP {
     p.endObject();
 
     return p.toString();
-
   }
 
   @Override

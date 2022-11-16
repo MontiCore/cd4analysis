@@ -7,7 +7,6 @@ import de.monticore.cd4codebasis._symboltable.ICD4CodeBasisScope;
 import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.cdassociation._symboltable.ICDAssociationScope;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-
 import java.util.List;
 
 public class CDTypeSymbol extends CDTypeSymbolTOP {
@@ -15,9 +14,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     super(name);
   }
 
-  /**
-   * get a list of all the methods the type definition can access
-   */
+  /** get a list of all the methods the type definition can access */
   public List<CDMethodSignatureSymbol> getMethodSignatureList() {
     if (spannedScope == null) {
       return Lists.newArrayList();
@@ -29,16 +26,12 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return Lists.newArrayList();
   }
 
-  /**
-   * search in the scope for methods with a specific name
-   */
+  /** search in the scope for methods with a specific name */
   public List<CDMethodSignatureSymbol> getMethodSignatureList(String methodname) {
     return ((ICD4CodeBasisScope) getSpannedScope()).resolveCDMethodSignatureMany(methodname);
   }
 
-  /**
-   * get a list of all the roles the type definition can access
-   */
+  /** get a list of all the roles the type definition can access */
   public List<CDRoleSymbol> getCDRoleList() {
     if (spannedScope == null) {
       return Lists.newArrayList();
@@ -50,16 +43,17 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return Lists.newArrayList();
   }
 
-  /**
-   * search in the scope for roles with a specific name
-   */
+  /** search in the scope for roles with a specific name */
   public List<CDRoleSymbol> getCDRoleList(String rolename) {
-    return ((ICDAssociationScope) getSpannedScope()).resolveCDRoleLocallyMany(false, rolename, de.monticore.symboltable.modifiers.AccessModifier.ALL_INCLUSION, x -> true);
+    return ((ICDAssociationScope) getSpannedScope())
+        .resolveCDRoleLocallyMany(
+            false,
+            rolename,
+            de.monticore.symboltable.modifiers.AccessModifier.ALL_INCLUSION,
+            x -> true);
   }
 
-  /**
-   * get a list of all the fields the type definition can access
-   */
+  /** get a list of all the fields the type definition can access */
   public List<FieldSymbol> getFieldList() {
     if (spannedScope == null) {
       return Lists.newArrayList();
@@ -67,9 +61,7 @@ public class CDTypeSymbol extends CDTypeSymbolTOP {
     return getSpannedScope().getLocalFieldSymbols();
   }
 
-  /**
-   * search in the scope for methods with a specific name
-   */
+  /** search in the scope for methods with a specific name */
   public List<FieldSymbol> getFieldList(String fieldname) {
     return getSpannedScope().resolveFieldMany(fieldname);
   }

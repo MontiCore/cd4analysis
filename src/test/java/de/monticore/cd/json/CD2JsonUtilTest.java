@@ -12,16 +12,16 @@ import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromNavigableRole
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.junit.Test;
 
 public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
 
   protected JsonNode toJson(Path cd4a_file) throws IOException {
-    final ASTCDCompilationUnit node = p.parseCDCompilationUnit(cd4a_file.toAbsolutePath().toString()).get();
+    final ASTCDCompilationUnit node =
+        p.parseCDCompilationUnit(cd4a_file.toAbsolutePath().toString()).get();
 
     // create symtab
     CD4AnalysisMill.reset();
@@ -32,13 +32,10 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
     globalScope.setSymbolPath(new MCPath(cd4a_file));
     BuiltInTypes.addBuiltInTypes(globalScope);
 
-
     new CD4AnalysisAfterParseTrafo().transform(node);
     CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
 
-    node.accept(
-      new CD4AnalysisSymbolTableCompleter(node).getTraverser()
-    );
+    node.accept(new CD4AnalysisSymbolTableCompleter(node).getTraverser());
 
     // first add roles if they don't exist
     CDAssociationRoleNameTrafo associationRoleNameTrafo = new CDAssociationRoleNameTrafo();
@@ -50,31 +47,28 @@ public class CD2JsonUtilTest extends CD4AnalysisTestBasis {
 
     // then add roles as fields
     CDAssociationCreateFieldsFromNavigableRoles cdAssociationCreateFieldsFromAllRoles =
-      new CDAssociationCreateFieldsFromNavigableRoles();
+        new CDAssociationCreateFieldsFromNavigableRoles();
     traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.setTraverser(traverser);
     cdAssociationCreateFieldsFromAllRoles.transform(node);
 
-
     return CD2JsonUtil.run(node, globalScope);
   }
 
-
   @Test
-  public void cd2json_Simple() throws IOException{
+  public void cd2json_Simple() throws IOException {
     this.toJson(Paths.get(PATH, "cd4analysis/parser/Simple.cd"));
   }
 
-
   @Test
-  public void cd2json_MyLife() throws IOException{
+  public void cd2json_MyLife() throws IOException {
     this.toJson(Paths.get(PATH, "cd4analysis/parser/MyLife.cd"));
   }
 
   @Test
-  public void cd2json_STTest() throws IOException{
+  public void cd2json_STTest() throws IOException {
     this.toJson(Paths.get(PATH, "cd4analysis/parser/STTest.cd"));
   }
 }

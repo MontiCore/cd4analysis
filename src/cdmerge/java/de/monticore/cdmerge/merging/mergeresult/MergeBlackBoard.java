@@ -22,7 +22,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedNameBuilder;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,15 +49,12 @@ public class MergeBlackBoard {
   private final List<MergeStepResult> mergeStepResults;
 
   /**
-   * This stores the mergedCD. The class diagram is constructed iteratively during the merge
-   * process
+   * This stores the mergedCD. The class diagram is constructed iteratively during the merge process
    * by different strategies
    */
   private ASTCDCompilationUnit mergedCD;
 
-  /**
-   * True if no changes to the mergedCD did happen before refreshing the clone
-   */
+  /** True if no changes to the mergedCD did happen before refreshing the clone */
   private boolean mergedCDupdated = false;
 
   private boolean mergeFinished = false;
@@ -68,8 +64,12 @@ public class MergeBlackBoard {
     if (!config.noInputModels()) {
       this.originalInputCDs = new ArrayList<ASTCDCompilationUnit>(config.getInputCDs());
     }
-    this.currentExecutionLog = new ExecutionLog(config.getMinimalLogable(), config.isFailFast(),
-        config.cancelOnWarnings(), config.isTraceEnabled());
+    this.currentExecutionLog =
+        new ExecutionLog(
+            config.getMinimalLogable(),
+            config.isFailFast(),
+            config.cancelOnWarnings(),
+            config.isTraceEnabled());
     this.mergeStepResults = new ArrayList<MergeStepResult>();
   }
 
@@ -85,15 +85,21 @@ public class MergeBlackBoard {
     if (cleanMergedCd.isPresent()) {
       this.mergedCD = cleanMergedCd.get();
       this.mergeStepResults.add(
-          new MergeStepResult(getCurrentInputCd1(), getCurrentInputCd2(), cleanMergedCd.get(),
-              this.currentExecutionLog, successful));
+          new MergeStepResult(
+              getCurrentInputCd1(),
+              getCurrentInputCd2(),
+              cleanMergedCd.get(),
+              this.currentExecutionLog,
+              successful));
       return this.mergeStepResults.get(mergeStepResults.size() - 1);
+    } else {
+      return new MergeStepResult(
+          getCurrentInputCd1(),
+          getCurrentInputCd2(),
+          this.mergedCD,
+          this.currentExecutionLog,
+          false);
     }
-    else {
-      return new MergeStepResult(getCurrentInputCd1(), getCurrentInputCd2(), this.mergedCD,
-          this.currentExecutionLog, false);
-    }
-
   }
 
   /**
@@ -103,23 +109,20 @@ public class MergeBlackBoard {
    */
   public MergeStepResult finalizeMerge(boolean successful) {
     return finalizeMerge(this.mergedCD, successful);
-
   }
 
-  /**
-   * Must be called prior to each merging process
-   */
-  public void initOrReset(ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2,
-      Optional<String> mergedCDName) {
-    //final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-    //globalScope.clear();
-    //CD4CodeScopesGenitorDelegator scopesGenitorDelegator = CD4CodeMill
+  /** Must be called prior to each merging process */
+  public void initOrReset(
+      ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, Optional<String> mergedCDName) {
+    // final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
+    // globalScope.clear();
+    // CD4CodeScopesGenitorDelegator scopesGenitorDelegator = CD4CodeMill
     // .scopesGenitorDelegator();
 
-    //scopesGenitorDelegator.createFromAST(cd1);
-    //cd1.accept(new CD4CodeSymbolTableCompleter(cd1).getTraverser());
-    //scopesGenitorDelegator.createFromAST(cd2);
-    //cd2.accept(new CD4CodeSymbolTableCompleter(cd2).getTraverser());
+    // scopesGenitorDelegator.createFromAST(cd1);
+    // cd1.accept(new CD4CodeSymbolTableCompleter(cd1).getTraverser());
+    // scopesGenitorDelegator.createFromAST(cd2);
+    // cd2.accept(new CD4CodeSymbolTableCompleter(cd2).getTraverser());
 
     this.currentCDHelpers = new ArrayList<ASTCDHelper>();
     this.currentCDHelpers.add(new ASTCDHelper(cd1));
@@ -129,23 +132,27 @@ public class MergeBlackBoard {
     this.currentCDs.add(cd1);
     this.currentCDs.add(cd2);
 
-    this.currentExecutionLog = new ExecutionLog(config.getMinimalLogable(), config.isFailFast(),
-        config.cancelOnWarnings(), config.isTraceEnabled());
+    this.currentExecutionLog =
+        new ExecutionLog(
+            config.getMinimalLogable(),
+            config.isFailFast(),
+            config.cancelOnWarnings(),
+            config.isTraceEnabled());
 
-    String name1 = cd1.getCDDefinition().getName().isEmpty() ?
-        cd1.getCDDefinition().getName() :
-        "CD1";
-    String name2 = cd2.getCDDefinition().getName().isEmpty() ?
-        cd2.getCDDefinition().getName() :
-        "CD2";
-    String resultName = mergedCDName.isPresent() && !mergedCDName.get().isEmpty() ?
-        mergedCDName.get() :
-        name1 + "_" + name2;
+    String name1 =
+        cd1.getCDDefinition().getName().isEmpty() ? cd1.getCDDefinition().getName() : "CD1";
+    String name2 =
+        cd2.getCDDefinition().getName().isEmpty() ? cd2.getCDDefinition().getName() : "CD2";
+    String resultName =
+        mergedCDName.isPresent() && !mergedCDName.get().isEmpty()
+            ? mergedCDName.get()
+            : name1 + "_" + name2;
 
-    ASTCDDefinition emptyCDDef = CD4CodeMill.cDDefinitionBuilder()
-        .setName(resultName)
-        .setModifier(new ASTModifierBuilder().build())
-        .build();
+    ASTCDDefinition emptyCDDef =
+        CD4CodeMill.cDDefinitionBuilder()
+            .setName(resultName)
+            .setModifier(new ASTModifierBuilder().build())
+            .build();
     this.mergedCD = CD4CodeMill.cDCompilationUnitBuilder().setCDDefinition(emptyCDDef).build();
 
     this.mergedCDupdated = false;
@@ -193,14 +200,12 @@ public class MergeBlackBoard {
         }
       }
 
-      throw new MergingException("Unable to Parse merged AST, Empty parse result" + errors,
-          mergedCD);
-    }
-    catch (RuntimeException rtEx) {
-      //Runtime Exceptions originate mostly from MontiCore
+      throw new MergingException(
+          "Unable to Parse merged AST, Empty parse result" + errors, mergedCD);
+    } catch (RuntimeException rtEx) {
+      // Runtime Exceptions originate mostly from MontiCore
       addLog(new MergingException("Issues in merged CD: " + rtEx.getMessage(), mergedCD));
-    }
-    catch (MergingException e) {
+    } catch (MergingException e) {
       addLog(e);
     }
     return Optional.empty();
@@ -213,8 +218,7 @@ public class MergeBlackBoard {
     if (mergedCDupdated) {
       try {
         this.currentMergedCDHelper = new ASTCDHelper(this.mergedCD);
-      }
-      catch (ConfigurationException e) {
+      } catch (ConfigurationException e) {
         addLog(new MergingException(e.getMessage()));
       }
       this.mergedCDupdated = false;
@@ -271,9 +275,7 @@ public class MergeBlackBoard {
     }
   }
 
-  /**
-   * @see ExecutionLog
-   */
+  /** @see ExecutionLog */
   public void addLog(ErrorLevel level, String message, MergePhase phase) {
     // The Method in MergeExecutionLog accepts null
     addLog(level, message, phase, null, null);
@@ -285,13 +287,11 @@ public class MergeBlackBoard {
       phase = e.getPhase().get();
     }
     if (e.getAstNode1().isPresent() && e.getAstNode2().isPresent()) {
-      this.addLog(ErrorLevel.ERROR, e.getMessage(), phase, e.getAstNode1().get(),
-          e.getAstNode2().get());
-    }
-    else if (e.getAstNode1().isPresent()) {
+      this.addLog(
+          ErrorLevel.ERROR, e.getMessage(), phase, e.getAstNode1().get(), e.getAstNode2().get());
+    } else if (e.getAstNode1().isPresent()) {
       this.addLog(ErrorLevel.ERROR, e.getMessage(), phase, e.getAstNode1().get());
-    }
-    else {
+    } else {
       this.addLog(ErrorLevel.ERROR, e.getMessage(), phase);
     }
   }
@@ -300,19 +300,15 @@ public class MergeBlackBoard {
     this.addLog(ErrorLevel.ERROR, e.getMessage(), phase);
   }
 
-  /**
-   * @see ExecutionLog
-   */
+  /** @see ExecutionLog */
   public void addLog(ErrorLevel level, String message, MergePhase phase, ASTNode node) {
     // The Method in MergeExecutionLog accepts null
     addLog(level, message, phase, node, null);
   }
 
-  /**
-   * @see ExecutionLog
-   */
-  public void addLog(ErrorLevel level, String message, MergePhase phase, ASTNode node1,
-      ASTNode node2) {
+  /** @see ExecutionLog */
+  public void addLog(
+      ErrorLevel level, String message, MergePhase phase, ASTNode node1, ASTNode node2) {
     this.currentExecutionLog.log(level, message, phase, node1, node2);
   }
 
@@ -327,19 +323,27 @@ public class MergeBlackBoard {
     this.mergedCDupdated = true;
     if (cdPackageName.isPresent()) {
       mergedCD.getCDDefinition().addCDElementToPackage(astClass.get(), cdPackageName.get());
-      addLog(ErrorLevel.FINE, "Class '" + cdPackageName.get() + "." + astClass.get().getName()
-          + "' added to specified package.", MergePhase.TYPE_MERGING, astClass.get());
-    }
-    else {
+      addLog(
+          ErrorLevel.FINE,
+          "Class '"
+              + cdPackageName.get()
+              + "."
+              + astClass.get().getName()
+              + "' added to specified package.",
+          MergePhase.TYPE_MERGING,
+          astClass.get());
+    } else {
       mergedCD.getCDDefinition().addCDElement(astClass.get());
-      addLog(ErrorLevel.FINE, "Class '" + astClass.get().getName() + "' added to default Package.",
-          MergePhase.TYPE_MERGING, astClass.get());
+      addLog(
+          ErrorLevel.FINE,
+          "Class '" + astClass.get().getName() + "' added to default Package.",
+          MergePhase.TYPE_MERGING,
+          astClass.get());
     }
-
   }
 
-  public void addMergedAssociation(Optional<ASTCDAssociation> astAssociation,
-      Optional<String> cdPackageName) {
+  public void addMergedAssociation(
+      Optional<ASTCDAssociation> astAssociation, Optional<String> cdPackageName) {
     if (astAssociation == null) {
       return;
     }
@@ -351,8 +355,7 @@ public class MergeBlackBoard {
 
     if (cdPackageName.isPresent()) {
       mergedCD.getCDDefinition().addCDElementToPackage(astAssociation.get(), cdPackageName.get());
-    }
-    else {
+    } else {
       mergedCD.getCDDefinition().addCDElement(astAssociation.get());
     }
 
@@ -362,32 +365,55 @@ public class MergeBlackBoard {
     }
     if (astAssociation.get().isPresentName()) {
       if (astAssociation.get().getCDAssocType().isComposition()) {
-        addLog(ErrorLevel.FINE,
-            "Composition '" + astAssociation.get().getName() + "' between '" + astAssociation.get()
-                .getLeftReferenceName()
-                .toString() + "' and '" + astAssociation.get().getRightReferenceName().toString()
-                + "' added " + logPname, MergePhase.ASSOCIATION_MERGING, astAssociation.get());
+        addLog(
+            ErrorLevel.FINE,
+            "Composition '"
+                + astAssociation.get().getName()
+                + "' between '"
+                + astAssociation.get().getLeftReferenceName().toString()
+                + "' and '"
+                + astAssociation.get().getRightReferenceName().toString()
+                + "' added "
+                + logPname,
+            MergePhase.ASSOCIATION_MERGING,
+            astAssociation.get());
+      } else {
+        addLog(
+            ErrorLevel.FINE,
+            "Association '"
+                + astAssociation.get().getName()
+                + "' between '"
+                + astAssociation.get().getLeftReferenceName().toString()
+                + "' and '"
+                + astAssociation.get().getRightReferenceName().toString()
+                + "' added "
+                + logPname,
+            MergePhase.ASSOCIATION_MERGING,
+            astAssociation.get());
       }
-      else {
-        addLog(ErrorLevel.FINE,
-            "Association '" + astAssociation.get().getName() + "' between '" + astAssociation.get()
-                .getLeftReferenceName()
-                .toString() + "' and '" + astAssociation.get().getRightReferenceName().toString()
-                + "' added " + logPname, MergePhase.ASSOCIATION_MERGING, astAssociation.get());
-      }
-    }
-    else {
+    } else {
       if (astAssociation.get().getCDAssocType().isComposition()) {
-        addLog(ErrorLevel.FINE,
-            "Composition between '" + astAssociation.get().getLeftReferenceName().toString()
-                + "' and '" + astAssociation.get().getRightReferenceName().toString() + "' added "
-                + logPname, MergePhase.ASSOCIATION_MERGING, astAssociation.get());
-      }
-      else {
-        addLog(ErrorLevel.FINE,
-            "Association between '" + astAssociation.get().getLeftReferenceName().toString()
-                + "' and '" + astAssociation.get().getRightReferenceName().toString() + "' added "
-                + logPname, MergePhase.ASSOCIATION_MERGING, astAssociation.get());
+        addLog(
+            ErrorLevel.FINE,
+            "Composition between '"
+                + astAssociation.get().getLeftReferenceName().toString()
+                + "' and '"
+                + astAssociation.get().getRightReferenceName().toString()
+                + "' added "
+                + logPname,
+            MergePhase.ASSOCIATION_MERGING,
+            astAssociation.get());
+      } else {
+        addLog(
+            ErrorLevel.FINE,
+            "Association between '"
+                + astAssociation.get().getLeftReferenceName().toString()
+                + "' and '"
+                + astAssociation.get().getRightReferenceName().toString()
+                + "' added "
+                + logPname,
+            MergePhase.ASSOCIATION_MERGING,
+            astAssociation.get());
       }
     }
   }
@@ -405,22 +431,20 @@ public class MergeBlackBoard {
   public void addCDElement(ASTCDElement element, Optional<String> packageName) {
     if (element instanceof ASTCDClass) {
       addMergedClass(Optional.of((ASTCDClass) element), packageName);
-    }
-    else if (element instanceof ASTCDInterface) {
+    } else if (element instanceof ASTCDInterface) {
       addMergedInterface(Optional.of((ASTCDInterface) element), packageName);
-    }
-    else if (element instanceof ASTCDEnum) {
+    } else if (element instanceof ASTCDEnum) {
       addMergedEnum(Optional.of((ASTCDEnum) element), packageName);
-    }
-    else if (element instanceof ASTCDAssociation) {
+    } else if (element instanceof ASTCDAssociation) {
       addMergedAssociation(Optional.of((ASTCDAssociation) element), packageName);
-    }
-    else if (element instanceof ASTCDPackage) {
+    } else if (element instanceof ASTCDPackage) {
       // IGNORE, Packages are added automatically with the corresponding CDElements
-    }
-    else {
-      addLog(ErrorLevel.ERROR, "Unable to add unexpected CD Element: Unknown type",
-          MergePhase.CD_MERGING, element);
+    } else {
+      addLog(
+          ErrorLevel.ERROR,
+          "Unable to add unexpected CD Element: Unknown type",
+          MergePhase.CD_MERGING,
+          element);
     }
   }
 
@@ -435,20 +459,29 @@ public class MergeBlackBoard {
 
     if (cdPackageName.isPresent()) {
       mergedCD.getCDDefinition().addCDElementToPackage(astEnum.get(), cdPackageName.get());
-      addLog(ErrorLevel.FINE, "Enum '" + cdPackageName.get() + "." + astEnum.get().getName()
-          + "' added to specified package.", MergePhase.TYPE_MERGING, astEnum.get());
-    }
-    else {
+      addLog(
+          ErrorLevel.FINE,
+          "Enum '"
+              + cdPackageName.get()
+              + "."
+              + astEnum.get().getName()
+              + "' added to specified package.",
+          MergePhase.TYPE_MERGING,
+          astEnum.get());
+    } else {
       mergedCD.getCDDefinition().addCDElement(astEnum.get());
-      addLog(ErrorLevel.FINE, "Enum '" + astEnum.get().getName() + "' added to default Package.",
-          MergePhase.TYPE_MERGING, astEnum.get());
+      addLog(
+          ErrorLevel.FINE,
+          "Enum '" + astEnum.get().getName() + "' added to default Package.",
+          MergePhase.TYPE_MERGING,
+          astEnum.get());
     }
 
     this.mergedCDupdated = true;
   }
 
-  public void addMergedInterface(Optional<ASTCDInterface> astInterface,
-      Optional<String> cdPackageName) {
+  public void addMergedInterface(
+      Optional<ASTCDInterface> astInterface, Optional<String> cdPackageName) {
     if (astInterface == null) {
       return;
     }
@@ -456,15 +489,22 @@ public class MergeBlackBoard {
     this.mergedCDupdated = true;
     if (cdPackageName.isPresent()) {
       mergedCD.getCDDefinition().addCDElementToPackage(astInterface.get(), cdPackageName.get());
-      addLog(ErrorLevel.FINE,
-          "Interface '" + cdPackageName.get() + "." + astInterface.get().getName()
-              + "' added to specified package.", MergePhase.TYPE_MERGING, astInterface.get());
-    }
-    else {
+      addLog(
+          ErrorLevel.FINE,
+          "Interface '"
+              + cdPackageName.get()
+              + "."
+              + astInterface.get().getName()
+              + "' added to specified package.",
+          MergePhase.TYPE_MERGING,
+          astInterface.get());
+    } else {
       mergedCD.getCDDefinition().addCDElement(astInterface.get());
-      addLog(ErrorLevel.FINE,
+      addLog(
+          ErrorLevel.FINE,
           "Interface '" + astInterface.get().getName() + "' added to default package.",
-          MergePhase.TYPE_MERGING, astInterface.get());
+          MergePhase.TYPE_MERGING,
+          astInterface.get());
     }
   }
 
@@ -473,8 +513,12 @@ public class MergeBlackBoard {
     this.mergedCDupdated = true;
     mergedCD.setMCImportStatementList(imports);
     if (imports.size() > 0) {
-      addLog(ErrorLevel.FINE, "Imports added: " + String.join("; ",
-              imports.stream().map(element -> element.getQName()).collect(Collectors.toList())),
+      addLog(
+          ErrorLevel.FINE,
+          "Imports added: "
+              + String.join(
+                  "; ",
+                  imports.stream().map(element -> element.getQName()).collect(Collectors.toList())),
           MergePhase.CD_MERGING);
     }
   }
@@ -484,11 +528,15 @@ public class MergeBlackBoard {
     String packageFQN = packages.stream().map(s -> s.toString()).collect(Collectors.joining("."));
     this.mergedCDupdated = true;
 
-    ASTMCPackageDeclaration pckg = new ASTMCPackageDeclarationBuilder().setMCQualifiedName(
-        new ASTMCQualifiedNameBuilder().setPartsList(packages).build()).build();
+    ASTMCPackageDeclaration pckg =
+        new ASTMCPackageDeclarationBuilder()
+            .setMCQualifiedName(new ASTMCQualifiedNameBuilder().setPartsList(packages).build())
+            .build();
     mergedCD.setMCPackageDeclaration(pckg);
     if (packages.size() > 0) {
-      addLog(ErrorLevel.FINE, "Package set for merged CD: '" + packageFQN + "'",
+      addLog(
+          ErrorLevel.FINE,
+          "Package set for merged CD: '" + packageFQN + "'",
           MergePhase.CD_MERGING);
     }
   }
@@ -530,5 +578,4 @@ public class MergeBlackBoard {
   public List<MergeStepResult> getMergeResults() {
     return mergeStepResults;
   }
-
 }

@@ -15,7 +15,8 @@ public interface ASTCDAssocDir extends ASTCDAssocDirTOP {
     CDAssociationTraverser t = CDAssociationMill.traverser();
     t.add4CDAssociation(navigableVisitor);
     this.accept(t);
-    return navigableVisitor.isDefinitiveNavigableLeft() && navigableVisitor.isDefinitiveNavigableRight();
+    return navigableVisitor.isDefinitiveNavigableLeft()
+        && navigableVisitor.isDefinitiveNavigableRight();
   }
 
   default boolean isDefinitiveNavigableLeft() {

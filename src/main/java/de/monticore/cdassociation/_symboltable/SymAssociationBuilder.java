@@ -6,6 +6,7 @@ import java.util.Optional;
 public class SymAssociationBuilder {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   protected Optional<CDAssociationSymbol> association = Optional.empty();
+
   protected CDRoleSymbol left, right;
   protected boolean isAssociation, isComposition;
 
@@ -39,7 +40,8 @@ public class SymAssociationBuilder {
   }
 
   public SymAssociation build() {
-    final SymAssociation symAssociation = new SymAssociation(this.association, this.left, this.right);
+    final SymAssociation symAssociation =
+        new SymAssociation(this.association, this.left, this.right);
 
     symAssociation.setIsAssociation(this.isAssociation);
     symAssociation.setIsComposition(this.isComposition);

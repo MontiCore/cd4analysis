@@ -1,6 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.method.mutator;
 
+import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
+import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
+import static de.monticore.cd.facade.CDModifier.PROTECTED;
+import static de.monticore.cd.facade.CDModifier.PUBLIC;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import de.monticore.cd.codegen.methods.mutator.MandatoryMutatorDecorator;
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
@@ -8,17 +15,9 @@ import de.monticore.cd4codebasis._ast.ASTCDParameter;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.se_rwth.commons.logging.LogStub;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-
-import static de.monticore.cd.codegen.DecoratorAssert.assertDeepEquals;
-import static de.monticore.cd.codegen.DecoratorTestUtil.getMethodBy;
-import static de.monticore.cd.facade.CDModifier.PROTECTED;
-import static de.monticore.cd.facade.CDModifier.PUBLIC;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class MandatoryMutatorDecoratorTest {
 
@@ -29,7 +28,8 @@ public class MandatoryMutatorDecoratorTest {
   @Before
   public void setup() {
     LogStub.init();
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
     MandatoryMutatorDecorator mandatoryMutatorDecorator = new MandatoryMutatorDecorator(glex);
     this.methods = mandatoryMutatorDecorator.decorate(attribute);
   }
@@ -52,7 +52,8 @@ public class MandatoryMutatorDecoratorTest {
 
   @Test
   public void testDerivedAttr() {
-    ASTCDAttribute attribute = CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
+    ASTCDAttribute attribute =
+        CDAttributeFacade.getInstance().createAttribute(PROTECTED.build(), String.class, "a");
     attribute.getModifier().setDerived(true);
     MandatoryMutatorDecorator mandatoryMutatorDecorator = new MandatoryMutatorDecorator(glex);
     List<ASTCDMethod> methList = mandatoryMutatorDecorator.decorate(attribute);

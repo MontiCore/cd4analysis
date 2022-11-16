@@ -13,7 +13,6 @@ public abstract class ModelValidatorBase implements ModelValidator {
       ModelValidator validator = buildModelValidator(blackBoard);
       return validator;
     }
-
   }
 
   private MergeBlackBoard mergeBlackBoard;
@@ -27,5 +26,4 @@ public abstract class ModelValidatorBase implements ModelValidator {
   protected MergeBlackBoard getBlackBoard() {
     return this.mergeBlackBoard;
   }
-
 }

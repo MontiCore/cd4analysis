@@ -5,7 +5,6 @@ import com.microsoft.z3.DatatypeSort;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import de.monticore.cdbasis._ast.ASTCDType;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,11 +15,9 @@ public class InheritanceFeatures {
   private DatatypeSort<? extends Sort> subclassDatatype;
   private FuncDecl<Sort> getSubClass;
 
-
   InheritanceFeatures() {
     this.subClassConstructorList = new HashMap<>();
     this.convert2SuperTypeFuncMap = new HashMap<>();
-
   }
 
   public FuncDecl<Sort> getSubClass() {
@@ -47,13 +44,12 @@ public class InheritanceFeatures {
     this.getSubClass = getSubClass;
   }
 
-  public void addSubclassConstructor(ASTCDType astcdType, Constructor<? extends Sort> subClassConstructor) {
+  public void addSubclassConstructor(
+      ASTCDType astcdType, Constructor<? extends Sort> subClassConstructor) {
     subClassConstructorList.put(astcdType, subClassConstructor);
   }
 
   public void addConvert2SuperTypeFunc(ASTCDType astcdType, FuncDecl<Sort> convertFunc) {
     convert2SuperTypeFuncMap.put(astcdType, convertFunc);
   }
-
-
 }

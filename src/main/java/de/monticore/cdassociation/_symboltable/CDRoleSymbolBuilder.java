@@ -8,8 +8,7 @@ public class CDRoleSymbolBuilder extends CDRoleSymbolBuilderTOP {
     if (symbol.isPresentAssoc()) {
       if (symbol.isIsLeft()) {
         symbol.getAssoc().setLeft(symbol);
-      }
-      else {
+      } else {
         symbol.getAssoc().setRight(symbol);
       }
     }
@@ -21,8 +20,7 @@ public class CDRoleSymbolBuilder extends CDRoleSymbolBuilderTOP {
     if (symbol.isPresentAssoc()) {
       if (isLeft) {
         symbol.getAssoc().setLeft(symbol);
-      }
-      else {
+      } else {
         symbol.getAssoc().setRight(symbol);
       }
     }

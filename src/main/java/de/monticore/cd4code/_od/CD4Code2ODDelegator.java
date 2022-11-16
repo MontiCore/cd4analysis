@@ -5,7 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4codebasis._od.CD4CodeBasis2OD;
-import de.monticore.cdbasis._ast.ASTCDBasisNode;
 import de.monticore.cdbasis._od.CDBasis2OD;
 import de.monticore.cdinterfaceandenum._od.CDInterfaceAndEnum2OD;
 import de.monticore.expressions.commonexpressions._od.CommonExpressions2OD;
@@ -45,12 +44,14 @@ public class CD4Code2ODDelegator {
     traverser.add4CommonExpressions(commonExpressions2OD);
     traverser.setCommonExpressionsHandler(commonExpressions2OD);
 
-    final MCSimpleGenericTypes2OD mcSimpleGenericTypes2OD = new MCSimpleGenericTypes2OD(printer, reporting);
+    final MCSimpleGenericTypes2OD mcSimpleGenericTypes2OD =
+        new MCSimpleGenericTypes2OD(printer, reporting);
     mcSimpleGenericTypes2OD.setTraverser(traverser);
     traverser.add4MCSimpleGenericTypes(mcSimpleGenericTypes2OD);
     traverser.setMCSimpleGenericTypesHandler(mcSimpleGenericTypes2OD);
 
-    final MCFullGenericTypes2OD mcFullGenericTypes2OD = new MCFullGenericTypes2OD(printer, reporting);
+    final MCFullGenericTypes2OD mcFullGenericTypes2OD =
+        new MCFullGenericTypes2OD(printer, reporting);
     mcFullGenericTypes2OD.setTraverser(traverser);
     traverser.add4MCFullGenericTypes(mcFullGenericTypes2OD);
     traverser.setMCFullGenericTypesHandler(mcFullGenericTypes2OD);
@@ -80,7 +81,8 @@ public class CD4Code2ODDelegator {
     traverser.add4CDBasis(cdBasis2OD);
     traverser.setCDBasisHandler(cdBasis2OD);
 
-    final CDInterfaceAndEnum2OD cdInterfaceAndEnum2OD = new CDInterfaceAndEnum2OD(printer, reporting);
+    final CDInterfaceAndEnum2OD cdInterfaceAndEnum2OD =
+        new CDInterfaceAndEnum2OD(printer, reporting);
     cdInterfaceAndEnum2OD.setTraverser(traverser);
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnum2OD);
     traverser.setCDInterfaceAndEnumHandler(cdInterfaceAndEnum2OD);

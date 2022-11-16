@@ -7,12 +7,9 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.matching.matchresult.ASTMatchGraph;
 import de.monticore.cdmerge.matching.matchresult.MatchNode;
 import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
-
 import java.util.*;
 
-/**
- * Base Class for Attribute Matching
- */
+/** Base Class for Attribute Matching */
 public abstract class AttributeMatcherBase extends MatcherBase implements AttributeMatcher {
 
   public AttributeMatcherBase(MergeBlackBoard mergeBlackBoard) {
@@ -44,20 +41,23 @@ public abstract class AttributeMatcherBase extends MatcherBase implements Attrib
         parents.add(clazzNode.getElement());
         parents.addAll(clazzNode.getMatchedElements());
         if (!matchingAttributes.containsKey(parentClassName)) {
-          matchingAttributes.put(parentClassName,
-              new ASTMatchGraph<ASTCDAttribute, ASTCDClass>(parents));
+          matchingAttributes.put(
+              parentClassName, new ASTMatchGraph<ASTCDAttribute, ASTCDClass>(parents));
         }
         // add each attribute of the current class to the
         // MatchResult
         for (ASTCDAttribute attribute1 : clazzNode.getElement().getCDAttributeList()) {
           // Did we already consider this attribute?
-          if (matchingAttributes.get(parentClassName)
+          if (matchingAttributes
+              .get(parentClassName)
               .getNode(attribute1, clazzNode.getElement())
               .isPresent()) {
             continue;
           }
-          node1 = matchingAttributes.get(parentClassName)
-              .addElement(attribute1, clazzNode.getElement(), Optional.empty());
+          node1 =
+              matchingAttributes
+                  .get(parentClassName)
+                  .addElement(attribute1, clazzNode.getElement(), Optional.empty());
           // Check for attribute matches in matching classes (i.e.
           // classes with same name but other ClassDiagrams)
           for (MatchNode<ASTCDClass, ASTCDDefinition> matchingClazz : clazzNode.getMatchedNodes()) {
@@ -67,8 +67,10 @@ public abstract class AttributeMatcherBase extends MatcherBase implements Attrib
                 // result and establish bidirectional
                 // matching
                 // (edge)
-                node2 = matchingAttributes.get(parentClassName)
-                    .addElement(attribute2, matchingClazz.getElement(), Optional.empty());
+                node2 =
+                    matchingAttributes
+                        .get(parentClassName)
+                        .addElement(attribute2, matchingClazz.getElement(), Optional.empty());
                 node2.addMatch(node1);
               }
             }
@@ -78,5 +80,4 @@ public abstract class AttributeMatcherBase extends MatcherBase implements Attrib
     }
     return matchingAttributes;
   }
-
 }

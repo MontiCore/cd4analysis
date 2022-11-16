@@ -1,29 +1,26 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.cd2alloy.cocos.CD2AlloyCoCos;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
-import org.junit.Before;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import org.junit.Before;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-/**
- * Provides some helpers for tests.
- */
-abstract public class CDDiffTestBasis {
+/** Provides some helpers for tests. */
+public abstract class CDDiffTestBasis {
 
   @Before
   public void setup() {
@@ -46,12 +43,11 @@ abstract public class CDDiffTestBasis {
     Optional<ASTCDCompilationUnit> optAutomaton;
     try {
       optAutomaton = parser.parse(model.toString());
-      //assertFalse(parser.hasErrors());
+      // assertFalse(parser.hasErrors());
       assertTrue(optAutomaton.isPresent());
 
       return optAutomaton.get();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       e.printStackTrace();
       fail("There was an exception when parsing the model " + modelFile + ": " + e.getMessage());
     }
@@ -64,8 +60,9 @@ abstract public class CDDiffTestBasis {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(ast);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(ast.getMCImportStatementList(),
-        MCBasicTypesMill.mCQualifiedNameBuilder().build());
+    CD4CodeSymbolTableCompleter c =
+        new CD4CodeSymbolTableCompleter(
+            ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
     CD2AlloyCoCos cd2aCoCos = new CD2AlloyCoCos();
     CD4AnalysisCoCoChecker cocos = cd2aCoCos.getCheckerForAllCoCos();
@@ -75,8 +72,8 @@ abstract public class CDDiffTestBasis {
   /**
    * Checks if a String matches a legal alloy struct
    *
-   * @param prefix     Name prefix of the struct
-   * @param structs    String representation of an alloy module
+   * @param prefix Name prefix of the struct
+   * @param structs String representation of an alloy module
    * @param startIndex optional start index, if struct starts with comments
    */
   protected void checkAlloyStructs(String prefix, String[] structs, int... startIndex) {
@@ -103,5 +100,4 @@ abstract public class CDDiffTestBasis {
       assertTrue(currentLine.matches(prefix + "\\[.*[\\]]"));
     }
   }
-
 }

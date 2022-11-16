@@ -8,7 +8,6 @@ import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.translator.A4Options;
 import edu.mit.csail.sdg.translator.A4Solution;
 import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,7 @@ public abstract class AlloySolutionHandler {
   // Flag indicating if the solution limiter should be activated
   protected boolean limited = false;
 
-  /**
-   * Constructor for de.cddiff.alloycddiff.alloyrunner.AlloySolutionHandler
-   */
+  /** Constructor for de.cddiff.alloycddiff.alloyrunner.AlloySolutionHandler */
   public AlloySolutionHandler(CompModule alloyModule, Command command, A4Solution initialSolution) {
     // Note that the alloy command must be part of the alloy module
     assert (alloyModule.getAllCommands().contains(command));
@@ -67,13 +64,12 @@ public abstract class AlloySolutionHandler {
     // Get standard reporter (which ignores all events by default)
     A4Reporter rep = new A4Reporter();
 
-    this.initialSolution = TranslateAlloyToKodkod.execute_command(rep,
-        alloyModule.getAllReachableSigs(), command, opt);
+    this.initialSolution =
+        TranslateAlloyToKodkod.execute_command(
+            rep, alloyModule.getAllReachableSigs(), command, opt);
   }
 
-  /**
-   * A function which should save all available solution to outputDirectory
-   */
+  /** A function which should save all available solution to outputDirectory */
   abstract void generateSolutionsToPath(Path outputDirectory);
 
   /**
@@ -95,8 +91,7 @@ public abstract class AlloySolutionHandler {
       // Increase loop variable
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return result;
       }
@@ -126,8 +121,7 @@ public abstract class AlloySolutionHandler {
       // Increase loop variable
       try {
         currentSolution = currentSolution.next();
-      }
-      catch (Err e) {
+      } catch (Err e) {
         e.printStackTrace();
         return result;
       }
@@ -136,53 +130,38 @@ public abstract class AlloySolutionHandler {
     return result;
   }
 
-  /**
-   * @return alloyModule
-   */
+  /** @return alloyModule */
   public CompModule getAlloyModule() {
     return this.alloyModule;
   }
 
-  /**
-   * @return command
-   */
+  /** @return command */
   public Command getCommand() {
     return this.command;
   }
 
-  /**
-   * @return initialSolution
-   */
+  /** @return initialSolution */
   public A4Solution getInitialSolution() {
     return this.initialSolution;
   }
 
-  /**
-   * @return solutionLimit
-   */
+  /** @return solutionLimit */
   public int getSolutionLimit() {
     return this.solutionLimit;
   }
 
-  /**
-   * @param solutionLimit the solutionLimit to set
-   */
+  /** @param solutionLimit the solutionLimit to set */
   public void setSolutionLimit(int solutionLimit) {
     this.solutionLimit = solutionLimit;
   }
 
-  /**
-   * @return limited
-   */
+  /** @return limited */
   public boolean isLimited() {
     return this.limited;
   }
 
-  /**
-   * @param limited the limited to set
-   */
+  /** @param limited the limited to set */
   public void setLimited(boolean limited) {
     this.limited = limited;
   }
-
 }

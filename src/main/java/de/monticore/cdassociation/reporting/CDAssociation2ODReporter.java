@@ -11,17 +11,18 @@ import de.monticore.generating.templateengine.reporting.commons.ReportingConstan
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.Names;
-
 import java.io.File;
 
 public class CDAssociation2ODReporter extends AReporter {
   private final String modelName;
   private final ReportingRepository reporting;
 
-  public CDAssociation2ODReporter(String outputDir, String modelName, ReportingRepository reporting) {
-    super(outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator
-            + modelName,
-        Names.getSimpleName(modelName) + "_AST", ReportingConstants.OD_FILE_EXTENSION);
+  public CDAssociation2ODReporter(
+      String outputDir, String modelName, ReportingRepository reporting) {
+    super(
+        outputDir + File.separator + ReportingConstants.REPORTING_DIR + File.separator + modelName,
+        Names.getSimpleName(modelName) + "_AST",
+        ReportingConstants.OD_FILE_EXTENSION);
     this.modelName = modelName;
     this.reporting = reporting;
   }
@@ -29,7 +30,8 @@ public class CDAssociation2ODReporter extends AReporter {
   @Override
   protected void writeHeader() {
     writeLine("/*");
-    writeLine(" * ========================================================== AST for CDAssociation");
+    writeLine(
+        " * ========================================================== AST for CDAssociation");
     writeLine(" */");
   }
 
@@ -47,9 +49,7 @@ public class CDAssociation2ODReporter extends AReporter {
     super.flush(ast);
   }
 
-  /**
-   * @param ast the ASTNode used to write the object diagram
-   */
+  /** @param ast the ASTNode used to write the object diagram */
   private void writeContent(ASTNode ast) {
     if (ast instanceof ASTCDCompilationUnit || ast instanceof ASTCDDefinition) {
       ASTCDAssociationNode cdNode = (ASTCDAssociationNode) ast;

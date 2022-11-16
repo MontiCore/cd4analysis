@@ -5,7 +5,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,16 +22,14 @@ public class ModelLoader {
         if (parser.hasErrors()) {
           Log.error("Model parsed with errors. Model path: " + cdModel.getPath());
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         Log.error("Could not parse CD model.");
         e.printStackTrace();
       }
 
       return cdAST;
 
-    }
-    else {
+    } else {
       Log.error("No File found using path: " + cdModel.getPath());
       throw new FileNotFoundException();
     }
@@ -48,19 +45,16 @@ public class ModelLoader {
         if (parser.hasErrors()) {
           Log.error("Model parsed with errors. Model path: " + odModel.getPath());
         }
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         Log.error("Could not parse CD model.");
         e.printStackTrace();
       }
 
       return odAST;
 
-    }
-    else {
+    } else {
       Log.error("No File found using path: " + odModel.getPath());
       throw new FileNotFoundException();
     }
   }
-
 }

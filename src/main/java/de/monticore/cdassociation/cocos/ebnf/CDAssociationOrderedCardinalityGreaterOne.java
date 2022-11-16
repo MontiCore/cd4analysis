@@ -5,20 +5,19 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo;
 import de.monticore.cdassociation.prettyprint.CDAssociationFullPrettyPrinter;
-import de.monticore.cdassociation.prettyprint.CDAssociationPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 
-/**
- * Checks that the cardinality of an ordered association is greater than 1.
- */
+/** Checks that the cardinality of an ordered association is greater than 1. */
 public class CDAssociationOrderedCardinalityGreaterOne
     implements CDAssociationASTCDAssociationCoCo {
 
-  final CDAssociationFullPrettyPrinter prettyPrinter = new CDAssociationFullPrettyPrinter(new IndentPrinter());
+  final CDAssociationFullPrettyPrinter prettyPrinter =
+      new CDAssociationFullPrettyPrinter(new IndentPrinter());
 
   /**
-   * @see de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo#check(de.monticore.cdassociation._ast.ASTCDAssociation)
+   * @see
+   *     de.monticore.cdassociation._cocos.CDAssociationASTCDAssociationCoCo#check(de.monticore.cdassociation._ast.ASTCDAssociation)
    */
   @Override
   public void check(ASTCDAssociation assoc) {
@@ -33,18 +32,16 @@ public class CDAssociationOrderedCardinalityGreaterOne
   /**
    * Does the check on the given cardinality.
    *
-   * @param card  the cardinality under test
+   * @param card the cardinality under test
    * @param assoc the association under test
    */
   private void check(ASTCDCardinality card, ASTCDAssociation assoc) {
     if (card.getUpperBound() <= 1 && !card.toCardinality().isNoUpperLimit()) {
       Log.error(
-          String
-              .format(
-                  "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
-                  prettyPrinter.prettyprint(assoc)),
+          String.format(
+              "0xCDC65: Association %s is invalid, because ordered associations are forbidden for a cardinality lower or equal to 1.",
+              prettyPrinter.prettyprint(assoc)),
           assoc.get_SourcePositionStart());
     }
   }
-
 }

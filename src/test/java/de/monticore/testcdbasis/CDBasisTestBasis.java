@@ -8,9 +8,8 @@ import de.monticore.testcdbasis._parser.TestCDBasisParser;
 import de.monticore.testcdbasis._symboltable.ITestCDBasisGlobalScope;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-
 import java.nio.file.Paths;
+import org.junit.Before;
 
 public class CDBasisTestBasis extends TestBasis {
   protected TestCDBasisParser p;

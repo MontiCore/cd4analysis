@@ -11,8 +11,8 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
  */
 public class IntersectionTypeMerger extends TypeMerger {
 
-  public IntersectionTypeMerger(MergeBlackBoard mergeBlackBoard,
-      TypeMergeStrategy typeMergeStrategy) {
+  public IntersectionTypeMerger(
+      MergeBlackBoard mergeBlackBoard, TypeMergeStrategy typeMergeStrategy) {
     super(mergeBlackBoard, typeMergeStrategy);
   }
 
@@ -21,5 +21,4 @@ public class IntersectionTypeMerger extends TypeMerger {
     // TODO - Implement Type Intersection Merger
     throw new UnsupportedOperationException("TypeIntersectionMerger NOT IMPLEMENTED");
   }
-
 }

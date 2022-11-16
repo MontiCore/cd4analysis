@@ -33,7 +33,8 @@ public class CD4CodePlantUMLFullPrettyPrinter {
     final IndentPrinter printer = this.plantUMLPrettyPrintUtil.getPrinter();
 
     this.traverser = CD4CodeMill.traverser();
-    CDBasisPlantUMLPrettyPrinter cdBasis = new CDBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
+    CDBasisPlantUMLPrettyPrinter cdBasis =
+        new CDBasisPlantUMLPrettyPrinter(plantUMLPrettyPrintUtil);
     traverser.add4CDBasis(cdBasis);
     traverser.setCDBasisHandler(cdBasis);
 
@@ -72,7 +73,8 @@ public class CD4CodePlantUMLFullPrettyPrinter {
     traverser.add4MCArrayTypes(arrayTypes);
     traverser.setMCArrayTypesHandler(arrayTypes);
 
-    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes = new MCSimpleGenericTypesPrettyPrinter(printer);
+    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes =
+        new MCSimpleGenericTypesPrettyPrinter(printer);
     traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
     traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
 

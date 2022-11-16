@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
+import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDParameter;
@@ -10,12 +12,9 @@ import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class ListMethodDecorator extends AbstractMethodDecorator {
 
@@ -36,19 +35,20 @@ public abstract class ListMethodDecorator extends AbstractMethodDecorator {
     // this means capitalizedAttributeNameWithS == capitalizedAttributeNameWithOutS
     this.capitalizedAttributeNameWithOutS = capitalizedAttributeNameWithS;
     // but if the attributeName is derived then the s is removed
-    if(capitalizedAttributeNameWithS.endsWith("s") && service.hasDerivedAttributeName(ast)) {
-      this.capitalizedAttributeNameWithOutS = capitalizedAttributeNameWithS.substring(0, capitalizedAttributeNameWithS.length() - 1);
+    if (capitalizedAttributeNameWithS.endsWith("s") && service.hasDerivedAttributeName(ast)) {
+      this.capitalizedAttributeNameWithOutS =
+          capitalizedAttributeNameWithS.substring(0, capitalizedAttributeNameWithS.length() - 1);
     }
     this.attributeType = getAttributeType(ast);
 
-    List<ASTCDMethod> methods = getMethodSignatures().stream()
-        .map(getCDMethodFacade()::createMethodByDefinition)
-        .collect(Collectors.toList());
+    List<ASTCDMethod> methods =
+        getMethodSignatures().stream()
+            .map(getCDMethodFacade()::createMethodByDefinition)
+            .collect(Collectors.toList());
 
     methods.forEach(m -> this.replaceTemplate(EMPTY_BODY, m, createListImplementation(m)));
     return methods;
   }
-
 
   protected abstract List<String> getMethodSignatures();
 
@@ -56,12 +56,14 @@ public abstract class ListMethodDecorator extends AbstractMethodDecorator {
     String attributeName = StringUtils.uncapitalize(capitalizedAttributeNameWithOutS);
     int attributeIndex = method.getName().lastIndexOf(capitalizedAttributeNameWithOutS);
     String methodName = method.getName().substring(0, attributeIndex);
-    String parameterCall = method.getCDParameterList().stream()
-        .map(ASTCDParameter::getName)
-        .collect(Collectors.joining(", "));
+    String parameterCall =
+        method.getCDParameterList().stream()
+            .map(ASTCDParameter::getName)
+            .collect(Collectors.joining(", "));
     String returnType = (new CD4CodeFullPrettyPrinter()).prettyprint(method.getMCReturnType());
 
-    return new TemplateHookPoint("methods.MethodDelegate", attributeName, methodName, parameterCall, returnType);
+    return new TemplateHookPoint(
+        "methods.MethodDelegate", attributeName, methodName, parameterCall, returnType);
   }
 
   public String getCapitalizedAttributeNameWithS(ASTCDAttribute attribute) {

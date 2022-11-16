@@ -12,18 +12,13 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Symbols that are operators in Alloy should not be contained in the cd
- */
+/** Symbols that are operators in Alloy should not be contained in the cd */
 public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
 
-  /**
-   * @see CDBasisASTCDDefinitionCoCo#check(de.monticore.cdbasis._ast.ASTCDDefinition)
-   */
+  /** @see CDBasisASTCDDefinitionCoCo#check(de.monticore.cdbasis._ast.ASTCDDefinition) */
   public void check(ASTCDDefinition node) {
 
     final MCBasicTypesFullPrettyPrinter pp = new MCBasicTypesFullPrettyPrinter(new IndentPrinter());
@@ -39,46 +34,56 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
     illegalSymbols.add("\"");
     illegalSymbols.add("'");
 
-    //check the default package's full-qualified name
+    // check the default package's full-qualified name
     if (node.getDefaultPackage().isPresent()) {
-      checkIllegalSymbol(node.getDefaultPackage().get().get_SourcePositionStart(),
-          node.getDefaultPackage().get().getMCQualifiedName().getQName(), illegalSymbols);
+      checkIllegalSymbol(
+          node.getDefaultPackage().get().get_SourcePositionStart(),
+          node.getDefaultPackage().get().getMCQualifiedName().getQName(),
+          illegalSymbols);
     }
 
-    //check classes
+    // check classes
     for (ASTCDClass astcdClass : node.getCDClassesList()) {
-      checkIllegalSymbol(astcdClass.get_SourcePositionStart(), astcdClass.getSymbol().getFullName(),
+      checkIllegalSymbol(
+          astcdClass.get_SourcePositionStart(),
+          astcdClass.getSymbol().getFullName(),
           illegalSymbols);
       for (ASTCDAttribute attribute : astcdClass.getCDAttributeList()) {
-        checkIllegalSymbol(attribute.get_SourcePositionStart(), attribute.getName(),
+        checkIllegalSymbol(
+            attribute.get_SourcePositionStart(), attribute.getName(), illegalSymbols);
+        checkIllegalSymbol(
+            attribute.getMCType().get_SourcePositionStart(),
+            attribute.getMCType().printType(pp),
             illegalSymbols);
-        checkIllegalSymbol(attribute.getMCType().get_SourcePositionStart(),
-            attribute.getMCType().printType(pp), illegalSymbols);
       }
     }
 
-    //check interfaces
+    // check interfaces
     for (ASTCDInterface astcdInterface : node.getCDInterfacesList()) {
-      checkIllegalSymbol(astcdInterface.get_SourcePositionStart(),
-          astcdInterface.getSymbol().getFullName(), illegalSymbols);
+      checkIllegalSymbol(
+          astcdInterface.get_SourcePositionStart(),
+          astcdInterface.getSymbol().getFullName(),
+          illegalSymbols);
       for (ASTCDAttribute attribute : astcdInterface.getCDAttributeList()) {
-        checkIllegalSymbol(attribute.get_SourcePositionStart(), attribute.getName(),
+        checkIllegalSymbol(
+            attribute.get_SourcePositionStart(), attribute.getName(), illegalSymbols);
+        checkIllegalSymbol(
+            attribute.getMCType().get_SourcePositionStart(),
+            attribute.getMCType().printType(pp),
             illegalSymbols);
-        checkIllegalSymbol(attribute.getMCType().get_SourcePositionStart(),
-            attribute.getMCType().printType(pp), illegalSymbols);
       }
     }
 
-    //check enums
+    // check enums
     for (ASTCDEnum astcdEnum : node.getCDEnumsList()) {
-      checkIllegalSymbol(astcdEnum.get_SourcePositionStart(), astcdEnum.getSymbol().getFullName(),
-          illegalSymbols);
+      checkIllegalSymbol(
+          astcdEnum.get_SourcePositionStart(), astcdEnum.getSymbol().getFullName(), illegalSymbols);
       for (ASTCDEnumConstant constant : astcdEnum.getCDEnumConstantList()) {
         checkIllegalSymbol(constant.get_SourcePositionStart(), constant.getName(), illegalSymbols);
       }
     }
 
-    //check associations
+    // check associations
     for (ASTCDAssociation assoc : node.getCDAssociationsList()) {
       ASTCDRole leftRole;
       ASTCDRole rightRole;
@@ -92,13 +97,17 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
       }
       if (assoc.getRight().isPresentCDRole()) {
         rightRole = assoc.getRight().getCDRole();
-        checkIllegalSymbol(rightRole.get_SourcePositionStart(), rightRole.getName(),
-            illegalSymbols);
+        checkIllegalSymbol(
+            rightRole.get_SourcePositionStart(), rightRole.getName(), illegalSymbols);
       }
-      checkIllegalSymbol(assoc.getLeft().get_SourcePositionStart(),
-          assoc.getLeftQualifiedName().getQName(), illegalSymbols);
-      checkIllegalSymbol(assoc.getRight().get_SourcePositionStart(),
-          assoc.getRightQualifiedName().getQName(), illegalSymbols);
+      checkIllegalSymbol(
+          assoc.getLeft().get_SourcePositionStart(),
+          assoc.getLeftQualifiedName().getQName(),
+          illegalSymbols);
+      checkIllegalSymbol(
+          assoc.getRight().get_SourcePositionStart(),
+          assoc.getRightQualifiedName().getQName(),
+          illegalSymbols);
     }
   }
 
@@ -111,5 +120,4 @@ public class NotAlloyOperator implements CDBasisASTCDDefinitionCoCo {
       }
     }
   }
-
 }

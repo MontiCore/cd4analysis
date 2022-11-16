@@ -13,7 +13,6 @@ import de.monticore.cdbasis._symboltable.CDBasisSymbolTableCompleter;
 import de.monticore.cdinterfaceandenum._symboltable.CDInterfaceAndEnumSymbolTableCompleter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-
 import java.util.List;
 
 public class CD4AnalysisSymbolTableCompleter {
@@ -21,24 +20,31 @@ public class CD4AnalysisSymbolTableCompleter {
   protected CDSymbolTableHelper symbolTableHelper;
 
   public CD4AnalysisSymbolTableCompleter(ASTCDCompilationUnit ast) {
-    this(ast.getMCImportStatementList(),
-        ast.isPresentMCPackageDeclaration() ?
-            ast.getMCPackageDeclaration().getMCQualifiedName() :
-            MCQualifiedNameFacade.createQualifiedName(""));
+    this(
+        ast.getMCImportStatementList(),
+        ast.isPresentMCPackageDeclaration()
+            ? ast.getMCPackageDeclaration().getMCQualifiedName()
+            : MCQualifiedNameFacade.createQualifiedName(""));
   }
 
-  public CD4AnalysisSymbolTableCompleter(List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
-    this.symbolTableHelper = new CDSymbolTableHelper(new FullDeriveFromCD4Analysis(), new FullSynthesizeFromCD4Analysis())
-        .setPackageDeclaration(packageDeclaration);
+  public CD4AnalysisSymbolTableCompleter(
+      List<ASTMCImportStatement> imports, ASTMCQualifiedName packageDeclaration) {
+    this.symbolTableHelper =
+        new CDSymbolTableHelper(
+                new FullDeriveFromCD4Analysis(), new FullSynthesizeFromCD4Analysis())
+            .setPackageDeclaration(packageDeclaration);
     this.traverser = CD4CodeMill.traverser();
 
-    final CDBasisSymbolTableCompleter cDBasisVisitor = new CDBasisSymbolTableCompleter(symbolTableHelper);
+    final CDBasisSymbolTableCompleter cDBasisVisitor =
+        new CDBasisSymbolTableCompleter(symbolTableHelper);
     traverser.add4CDBasis(cDBasisVisitor);
     traverser.add4OOSymbols(cDBasisVisitor);
-    final CDAssociationSymbolTableCompleter cDAssociationVisitor = new CDAssociationSymbolTableCompleter(symbolTableHelper);
+    final CDAssociationSymbolTableCompleter cDAssociationVisitor =
+        new CDAssociationSymbolTableCompleter(symbolTableHelper);
     traverser.add4CDAssociation(cDAssociationVisitor);
     traverser.setCDAssociationHandler(cDAssociationVisitor);
-    final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor = new CDInterfaceAndEnumSymbolTableCompleter(symbolTableHelper);
+    final CDInterfaceAndEnumSymbolTableCompleter cdInterfaceAndEnumVisitor =
+        new CDInterfaceAndEnumSymbolTableCompleter(symbolTableHelper);
     traverser.add4CDInterfaceAndEnum(cdInterfaceAndEnumVisitor);
   }
 

@@ -4,7 +4,6 @@ package de.monticore.cdbasis._ast;
 import de.monticore.cd.prettyprint.PrettyPrintUtil;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
-
 import java.util.ArrayList;
 import java.util.List;
 
