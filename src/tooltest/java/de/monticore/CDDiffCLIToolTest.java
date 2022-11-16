@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import org.apache.commons.io.file.PathUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -78,8 +79,8 @@ public class CDDiffCLIToolTest {
       CD4CodeTool.main(args);
 
       try {
-        ASTCDCompilationUnit ast1 = CDDiffUtil.loadCD(cd1).deepClone();
-        ASTCDCompilationUnit ast2 = CDDiffUtil.loadCD(cd2).deepClone();
+        ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
+        ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
 
         // then corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -98,7 +99,7 @@ public class CDDiffCLIToolTest {
                         CDDiffUtil.loadODModel(odFile.getPath())));
           }
         }
-      } catch (IOException e) {
+      } catch (NullPointerException | IOException e) {
         fail(e.getMessage());
       }
 
@@ -172,8 +173,8 @@ public class CDDiffCLIToolTest {
     CD4CodeTool.main(args);
 
     try {
-      ASTCDCompilationUnit ast1 = CDDiffUtil.loadCD(cd1).deepClone();
-      ASTCDCompilationUnit ast2 = CDDiffUtil.loadCD(cd2).deepClone();
+      ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
+      ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
 
       // then corresponding .od files are generated
       File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -192,7 +193,7 @@ public class CDDiffCLIToolTest {
                       CDDiffUtil.loadODModel(odFile.getPath())));
         }
       }
-    } catch (IOException e) {
+    } catch (NullPointerException | IOException e) {
       fail(e.getMessage());
     }
 
@@ -434,8 +435,8 @@ public class CDDiffCLIToolTest {
       CD4CodeTool.main(args);
 
       try {
-        ASTCDCompilationUnit ast1 = CDDiffUtil.loadCD(cd1).deepClone();
-        ASTCDCompilationUnit ast2 = CDDiffUtil.loadCD(cd2).deepClone();
+        ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
+        ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
 
         // then corresponding .od files are generated
         File[] odFiles = Paths.get(output).toFile().listFiles();
@@ -454,7 +455,7 @@ public class CDDiffCLIToolTest {
                         CDDiffUtil.loadODModel(odFile.getPath())));
           }
         }
-      } catch (IOException e) {
+      } catch (NullPointerException | IOException e) {
         fail(e.getMessage());
       }
     }

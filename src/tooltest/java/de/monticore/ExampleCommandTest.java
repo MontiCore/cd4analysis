@@ -3,8 +3,25 @@ package de.monticore;
 import static org.junit.Assert.*;
 
 import de.monticore.cd.OutTestBasis;
+import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
+import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cddiff.CDDiffUtil;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.odvalidity.OD2CDMatcher;
 import de.se_rwth.commons.logging.Log;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +86,11 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testPrettyPrintingExample2() {
     String fileName = "doc/MyExample.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "-pp", "target/PPExample.cd"});
+    CD4CodeTool.main(new String[] {"-i", fileName, "-pp", outputPath + "PPExample.cd"});
+    assertTrue(Files.exists(Paths.get(outputPath + "PPExample.cd")));
+    assertTrue(
+        loadAndCheckCD("doc/MyExample.cd")
+            .deepEquals(loadAndCheckCD(outputPath + "PPExample.cd"), false));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -77,7 +98,16 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testStoringSymbolsExample1() {
     String fileName = "doc/MyExample.cd";
+
+    // copy the CD into test-directory
+    CD4CodeTool.main(new String[] {"-i", fileName, "-pp", outputPath + "MyExample.cd"});
+    fileName = outputPath + "MyExample.cd";
+
+    // execute the command at test
     CD4CodeTool.main(new String[] {"-i", fileName, "-s"});
+
+    // test if the result exists and no errors occur
+    assertTrue(Files.exists(Paths.get(outputPath + "MyExample.cdsym")));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -88,7 +118,12 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testStoringSymbolsExample2() {
     String fileName = "doc/MyExample.cd";
+
+    // execute the command at test
     CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym"});
+
+    // test if the result exists and no errors occur
+    assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -103,6 +138,7 @@ public class ExampleCommandTest extends OutTestBasis {
         new String[] {
           "-i", fileName, "-s", outputPath + "symbols/MyExample.cdsym", "--fieldfromrole", "all"
         });
+    assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -122,6 +158,7 @@ public class ExampleCommandTest extends OutTestBasis {
           "--fieldfromrole",
           "navigable"
         });
+    assertTrue(Files.exists(Paths.get(outputPath + "symbols/MyExample.cdsym")));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -159,14 +196,6 @@ public class ExampleCommandTest extends OutTestBasis {
     assertTrue(getErr(), getErr().isEmpty());
   }
 
-  /** Step 7: Generating .java-Files for command: java -jar MCCD.jar -i src/MyExample.cd --gen */
-  @Test
-  public void testGenerateJavaExample1() {
-    String fileName = "doc/MyExample.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--gen"});
-    assertTrue(getErr(), getErr().isEmpty());
-  }
-
   /**
    * Step 7: Generating .java-Files for command: java -jar MCCD.jar -i src/MyExample.cd --gen -o out
    */
@@ -174,6 +203,18 @@ public class ExampleCommandTest extends OutTestBasis {
   public void testGenerateJavaExample2() {
     String fileName = "doc/MyExample.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "--gen", "-o", outputPath + "out"});
+    ASTCDCompilationUnit cd = loadAndCheckCD(fileName);
+    cd.getCDDefinition()
+        .getCDClassesList()
+        .forEach(
+            c ->
+                assertTrue(
+                    Files.exists(
+                        Paths.get(
+                            outputPath
+                                + "out/"
+                                + c.getSymbol().getFullName().replaceAll("\\.", "/")
+                                + ".java"))));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -188,6 +229,18 @@ public class ExampleCommandTest extends OutTestBasis {
         new String[] {
           "-i", fileName, "-o", outputPath + "out", "--gen", "--fieldfromrole", "navigable"
         });
+    ASTCDCompilationUnit cd = loadAndCheckCD(fileName);
+    cd.getCDDefinition()
+        .getCDClassesList()
+        .forEach(
+            c ->
+                assertTrue(
+                    Files.exists(
+                        Paths.get(
+                            outputPath
+                                + "out/"
+                                + c.getSymbol().getFullName().replaceAll("\\.", "/")
+                                + ".java"))));
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -208,18 +261,35 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsComparisonExample2() {
-    final String fileName = "doc/Employees1.cd";
+    final String cd1 = "doc/Employees1.cd";
+    final String cd2 = "doc/Employees2.cd";
     CD4CodeTool.main(
-        new String[] {
-          "-i",
-          fileName,
-          "--semdiff",
-          "doc/Employees2.cd",
-          "--difflimit",
-          "20",
-          "-o",
-          outputPath + "out"
-        });
+        new String[] {"-i", cd1, "--semdiff", cd2, "--difflimit", "20", "-o", outputPath + "out"});
+
+    try {
+      ASTCDCompilationUnit ast1 = Objects.requireNonNull(CDDiffUtil.loadCD(cd1)).deepClone();
+      ASTCDCompilationUnit ast2 = Objects.requireNonNull(CDDiffUtil.loadCD(cd2)).deepClone();
+
+      // then corresponding .od files are generated
+      File[] odFiles = Paths.get(outputPath + "out").toFile().listFiles();
+      assertNotNull(odFiles);
+
+      // now check for each OD if it is a diff-witness, i.e., in sem(cd1)\sem(cd2)
+
+      for (File odFile : odFiles) {
+        if (odFile.getName().endsWith(".od")) {
+          Assert.assertTrue(
+              new OD2CDMatcher()
+                  .checkIfDiffWitness(
+                      CDSemantics.SIMPLE_CLOSED_WORLD,
+                      ast1,
+                      ast2,
+                      CDDiffUtil.loadODModel(odFile.getPath())));
+        }
+      }
+    } catch (NullPointerException | IOException e) {
+      fail(e.getMessage());
+    }
     assertEquals(0, Log.getErrorCount());
   }
 
@@ -248,6 +318,31 @@ public class ExampleCommandTest extends OutTestBasis {
         new String[] {
           "-i", fileName, "--merge", "doc/Person2.cd", "-o", outputPath + "out", "-pp", "Person.cd"
         });
+    assertTrue(Files.exists(Paths.get(outputPath + "out/Person.cd")));
     assertTrue(getErr(), getErr().isEmpty());
+  }
+
+  protected ASTCDCompilationUnit loadAndCheckCD(String filePath) {
+    try {
+      Optional<ASTCDCompilationUnit> optCD = CD4CodeMill.parser().parse(filePath);
+      assertTrue(optCD.isPresent());
+      new CD4CodeAfterParseTrafo().transform(optCD.get());
+      new CD4CodeDirectCompositionTrafo().transform(optCD.get());
+      CD4CodeMill.scopesGenitorDelegator().createFromAST(optCD.get());
+      CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(optCD.get());
+      optCD.get().accept(c.getTraverser());
+      final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
+          new CDAssociationRoleNameTrafo();
+      final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+      traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
+      traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
+      cdAssociationRoleNameTrafo.transform(optCD.get());
+      new CD4CodeCoCosDelegator().getCheckerForAllCoCos().checkAll(optCD.get());
+      return optCD.get();
+
+    } catch (IOException e) {
+      fail(e.getMessage());
+    }
+    return null;
   }
 }
