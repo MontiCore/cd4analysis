@@ -157,7 +157,9 @@ dependencies {
   }
 
   // dependencies for cddiff
-  cddiffImplementation "de.monticore.lang:od:$mc_version"
+  cddiffImplementation("de.monticore.lang:od:$mc_version") {
+    exclude group: 'de.monticore.lang', module:'cd4analysis'
+  }
   cddiffImplementation "edu.mit.alloy:alloy:6"
   cddiffImplementation(sourceSets.main.output.classesDirs)
 
