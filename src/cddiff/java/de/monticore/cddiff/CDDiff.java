@@ -2,19 +2,13 @@ package de.monticore.cddiff;
 
 import static de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiff4ASTODHelper.printOD;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.alloy2od.Alloy2ODGenerator;
 import de.monticore.cddiff.alloycddiff.AlloyCDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.cddiff.alloycddiff.alloyRunner.AlloyDiffSolution;
 import de.monticore.cddiff.ow2cw.ReductionTrafo;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.CDWrapperGenerator;
-import de.monticore.cddiff.syntax2semdiff.cd2cdwrapper.metamodel.CDWrapper;
-import de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od.CDSyntax2SemDiffODGenerator;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.CDWrapperSyntaxDiffGenerator;
-import de.monticore.cddiff.syntax2semdiff.cdwrapper2cdsyntaxdiff.metamodel.CDWrapperSyntaxDiff;
-import de.monticore.od4report.OD4ReportMill;
+import de.monticore.cddiff.syntax2semdiff.Syntax2SemDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -36,8 +30,6 @@ public class CDDiff {
 
     // determine if open-world should be applied
     if (openWorld) {
-
-      CD4CodeMill.globalScope().clear();
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(ast1, ast2);
 
@@ -72,9 +64,12 @@ public class CDDiff {
 
       // determine which method should be used to compute the diff-witnesses
       if (reductionBased) {
-        CD4CodeMill.globalScope().clear();
         ReductionTrafo trafo = new ReductionTrafo();
         trafo.transform(ast1, ast2);
+
+        // reparse to fix source-positions
+        ast1 = CDDiffUtil.reparseCD(ast1);
+        ast2 = CDDiffUtil.reparseCD(ast2);
 
         CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
         semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
@@ -158,21 +153,7 @@ public class CDDiff {
   public static List<ASTODArtifact> computeSyntax2SemDiff(
       ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
 
-    // generate CDWrapper
-    CDWrapperGenerator cd1Generator = new CDWrapperGenerator();
-    CDWrapperGenerator cd2Generator = new CDWrapperGenerator();
-    CDWrapper cdw1 = cd1Generator.generateCDWrapper(ast1, cdSemantics);
-    CDWrapper cdw2 = cd2Generator.generateCDWrapper(ast2, cdSemantics);
-
-    // calculate syntax diff
-    CDWrapperSyntaxDiffGenerator cdw2CDDiffGenerator4CDW1WithCDW2 =
-        new CDWrapperSyntaxDiffGenerator();
-    CDWrapperSyntaxDiff cg =
-        cdw2CDDiffGenerator4CDW1WithCDW2.generateCDSyntaxDiff(cdw1, cdw2, cdSemantics);
-
-    // generate ODs
-    CDSyntax2SemDiffODGenerator odGenerator = new CDSyntax2SemDiffODGenerator();
-    List<ASTODArtifact> diffWitnesses = odGenerator.generateObjectDiagrams(cdw1, cg, cdSemantics);
+    List<ASTODArtifact> diffWitnesses = Syntax2SemDiff.computeSemDiff(ast1, ast2, cdSemantics);
 
     // join unidirectional links for bidirectional associations
     JoinLinksTrafo joinLinksTrafo = new JoinLinksTrafo(ast1);
@@ -188,7 +169,6 @@ public class CDDiff {
     for (ASTODArtifact od : witnesses) {
       result.append(printOD(od)).append(System.lineSeparator());
     }
-    OD4ReportMill.reset();
     return result.toString();
   }
 
@@ -199,7 +179,6 @@ public class CDDiff {
         String odDesc = printOD(od);
         Alloy2ODGenerator.saveOD(odDesc, od.getObjectDiagram().getName(), out);
       }
-      OD4ReportMill.reset();
     } catch (Exception e) {
       e.printStackTrace();
       Log.error("0xCDD10: Could not print ODs to directory " + outputDirectory);

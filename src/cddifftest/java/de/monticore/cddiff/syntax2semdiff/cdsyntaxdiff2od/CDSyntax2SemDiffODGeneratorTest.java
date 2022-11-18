@@ -619,6 +619,16 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   }
 
   @Test
+  public void testFullNameEmployees() {
+    ast1 = parseModel("target/mantest/Employees1.cd");
+
+    ast2 = parseModel("target/mantest/Employees2.cd");
+
+    String res = Syntax2SemDiff.printSemDiff(ast1, ast2, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+    System.out.println(res);
+  }
+
+  @Test
   public void testVehicleExampleMultiInstanceClosedWorld() {
     ast1 =
         parseModel(

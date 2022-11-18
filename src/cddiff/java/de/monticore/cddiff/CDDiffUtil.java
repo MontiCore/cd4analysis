@@ -127,4 +127,19 @@ public class CDDiffUtil {
     }
     return null;
   }
+
+  public static ASTCDCompilationUnit reparseCD(ASTCDCompilationUnit cd) {
+    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
+    cd.accept(pp.getTraverser());
+    String content = pp.prettyprint(cd);
+    try {
+      Optional<ASTCDCompilationUnit> opt = CD4CodeMill.parser().parse_String(content);
+      if (opt.isPresent()) {
+        cd = opt.get();
+      }
+    } catch (IOException e) {
+      Log.warn("Could not reparse CD: " + cd.getCDDefinition().getName());
+    }
+    return cd;
+  }
 }

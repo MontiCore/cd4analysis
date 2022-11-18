@@ -5,6 +5,8 @@ import static org.junit.Assert.assertNotNull;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
+import de.monticore.cddiff.alloycddiff.CDSemantics;
+import de.monticore.cddiff.alloycddiff.DiffModuleGenerator;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -97,5 +99,33 @@ public class AlloyGeneratorTest extends CDDiffTestBasis {
 
     // Call generator
     CD2AlloyGenerator.getInstance().generateModuleToFile(asts, outputDirectory.toFile(), true);
+  }
+
+  @Test
+  public void testEmployeesWithFullNames() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/FullNameEmployees/FNEmployees1" + ".cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 =
+        parseModel(
+            "src/cddifftest/resources/de/monticore/cddiff/FullNameEmployees/FNEmployees2" + ".cd");
+    assertNotNull(astV2);
+
+    // Create Output Path
+    final Path outputDirectory = Paths.get("target/generated/cddiff-test/full-name");
+
+    // Initialize set of asts
+    final Set<ASTCDCompilationUnit> asts = new HashSet<>();
+    asts.add(astV1);
+    asts.add(astV2);
+
+    // Assert.fail(CDDiffUtil.inferRole(astV1.getCDDefinition().getCDAssociationsList().get(0)
+    // .getRight()));
+
+    // Call generator
+    DiffModuleGenerator.generateDiffPredicateToFile(
+        astV1, astV2, 20, CDSemantics.MULTI_INSTANCE_CLOSED_WORLD, outputDirectory.toFile());
   }
 }

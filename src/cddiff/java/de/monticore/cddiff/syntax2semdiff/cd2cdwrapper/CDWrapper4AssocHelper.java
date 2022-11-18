@@ -284,6 +284,7 @@ public class CDWrapper4AssocHelper {
   }
 
   /**
+   * TODO: Needs to be fixed! Problem: only the last version of the same association is considered.
    * calculate the intersection set of cardinality of given CDAssociationWrapper by its relevant
    * CDRefSetAssociationWrappers
    */

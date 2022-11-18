@@ -177,25 +177,14 @@ public class CDWrapperSyntaxDiff4AssocHelper {
           default:
             return CDAssociationDiffDirection.NONE;
         }
-      case BIDIRECTIONAL:
-        switch (compareDirection) {
-          case LEFT_TO_RIGHT:
-            return CDAssociationDiffDirection.BIDIRECTIONAL;
-          case RIGHT_TO_LEFT:
-            return CDAssociationDiffDirection.BIDIRECTIONAL;
-          case BIDIRECTIONAL:
-            return CDAssociationDiffDirection.NONE;
-          default:
-            return CDAssociationDiffDirection.NONE;
-        }
       default:
         switch (compareDirection) {
           case LEFT_TO_RIGHT:
-            return CDAssociationDiffDirection.RIGHT_TO_LEFT;
+            return CDAssociationDiffDirection.BIDIRECTIONAL;
           case RIGHT_TO_LEFT:
-            return CDAssociationDiffDirection.LEFT_TO_RIGHT;
+            return CDAssociationDiffDirection.BIDIRECTIONAL;
           case BIDIRECTIONAL:
-            return CDAssociationDiffDirection.LEFT_TO_RIGHT_OR_RIGHT_TO_LEFT;
+            return CDAssociationDiffDirection.NONE;
           default:
             return CDAssociationDiffDirection.NONE;
         }

@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Employees1 {
+  package de.monticore {
+    class Employee;
+    class Task;
+    association [1] de.monticore.Employee  (employee) -- (task) de.monticore.Task [*] ;
+  }
+
+}

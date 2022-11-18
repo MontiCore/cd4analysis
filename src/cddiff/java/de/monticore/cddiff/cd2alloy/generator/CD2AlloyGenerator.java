@@ -283,21 +283,8 @@ public class CD2AlloyGenerator {
     Set<String> roleNameUnion = new HashSet<>();
     for (ASTCDAssociation association : associationUnion) {
 
-      String leftRole;
-      String rightRole;
-
-      if (association.getLeft().isPresentCDRole()) {
-        leftRole = association.getLeft().getCDRole().getName();
-      } else {
-        // Preprocess parts of reference names and add them as role name
-        leftRole = CDDiffUtil.partHandler(association.getLeftReferenceName(), true);
-      }
-      if (association.getRight().isPresentCDRole()) {
-        rightRole = association.getRight().getCDRole().getName();
-      } else {
-        // Preprocess parts of reference names and add them as role name
-        rightRole = CDDiffUtil.partHandler(association.getRightReferenceName(), true);
-      }
+      String leftRole = CDDiffUtil.inferRole(association.getLeft());
+      String rightRole = CDDiffUtil.inferRole(association.getRight());
 
       if (association.getCDAssocDir().isDefinitiveNavigableLeft()) {
         roleNameUnion.add(leftRole);
@@ -793,8 +780,9 @@ public class CD2AlloyGenerator {
   }
 
   /**
-   * Executes the rule F4, which creates a function for every part of a composite
-   * whole-part-relation that returns all linked whole/part instance pairs in the Class Diagram cd.
+   * TODO: Muss später vielleicht nochmal überarbeitet werden. Executes the rule F4, which creates a
+   * function for every part of a composite whole-part-relation that returns all linked whole/part
+   * instance pairs in the Class Diagram cd.
    */
   public String executeRuleF4(ASTCDCompilationUnit cd) {
     StringBuilder classFunctions = new StringBuilder();
@@ -809,7 +797,7 @@ public class CD2AlloyGenerator {
     Set<String> parts = new HashSet<>();
     for (ASTCDAssociation a : associations) {
       if (a.getCDAssocType().isComposition()) {
-        parts.addAll(a.getRightReferenceName());
+        parts.add(a.getRightQualifiedName().getQName());
       }
     }
 
@@ -823,10 +811,8 @@ public class CD2AlloyGenerator {
       Set<ASTCDAssociation> comps = new HashSet<>();
       for (ASTCDAssociation comp : associations) {
         if (comp.getCDAssocType().isComposition()) {
-          for (String compRightReferenceName : comp.getRightReferenceName()) {
-            if (compRightReferenceName.equals(part)) {
-              comps.add(comp);
-            }
+          if (comp.getRightQualifiedName().getQName().equals(part)) {
+            comps.add(comp);
           }
         }
       }
@@ -840,17 +826,12 @@ public class CD2AlloyGenerator {
           .append(": Obj->Obj {")
           .append(System.lineSeparator());
       for (ASTCDAssociation c : comps) {
-        // TODO: Das ist im tech Report unterspezifiziert, gilt das immer?
-        if (c.getRight().isPresentCDRole() && (c.getLeftReferenceName().size() == 1)) {
-          classFunctions
-              .append("  rel[")
-              .append(c.getLeftReferenceName().get(0))
-              .append("SubsCD")
-              .append(cdDefinition.getName());
-          classFunctions.append(",").append(c.getRight().getCDRole().getName()).append("] + ");
-        } else {
-          Log.error("0xCDD04: " + c + ": has no roleName or more than one LeftReferenceName.");
-        }
+        classFunctions
+            .append("  rel[")
+            .append(CDDiffUtil.partHandler(c.getLeftReferenceName(), false))
+            .append("SubsCD")
+            .append(cdDefinition.getName());
+        classFunctions.append(",").append(CDDiffUtil.inferRole(c.getRight())).append("] + ");
       }
       // Remove last '+'
       classFunctions.delete(classFunctions.length() - 2, classFunctions.length());
@@ -1079,17 +1060,9 @@ public class CD2AlloyGenerator {
             && !a.getCDAssocDir().isBidirectional()) {
           continue;
         }
-        for (String lrName : a.getRightReferenceName()) {
-          if (a.getLeft().isPresentCDRole() && superNames.contains(lrName)) {
-            fields.add(a.getLeft().getCDRole().getName());
-          } else {
-            // TODO: Nur ein test
-            if (superNames.contains(lrName)) {
-              // Preprocess parts of reference names and add them as role name
-              String name = CDDiffUtil.partHandler(a.getLeftReferenceName(), true);
-              fields.add(name);
-            }
-          }
+        String lrName = CDDiffUtil.processQName(a.getRightQualifiedName().getQName());
+        if (superNames.contains(lrName)) {
+          fields.add(CDDiffUtil.inferRole(a.getLeft()));
         }
       }
 
@@ -1099,17 +1072,9 @@ public class CD2AlloyGenerator {
         if (a.getCDAssocDir().isDefinitiveNavigableLeft() && !a.getCDAssocDir().isBidirectional()) {
           continue;
         }
-        for (String rrName : a.getLeftReferenceName()) {
-          if (a.getRight().isPresentCDRole() && superNames.contains(rrName)) {
-            fields.add(a.getRight().getCDRole().getName());
-          } else {
-            // TODO: Nur ein test
-            if (superNames.contains(rrName)) {
-              // Preprocess parts of reference names and add them as role name
-              String name = CDDiffUtil.partHandler(a.getRightReferenceName(), true);
-              fields.add(name);
-            }
-          }
+        String rrName = CDDiffUtil.processQName(a.getLeftQualifiedName().getQName());
+        if (superNames.contains(rrName)) {
+          fields.add(CDDiffUtil.inferRole(a.getRight()));
         }
       }
 
@@ -1255,25 +1220,13 @@ public class CD2AlloyGenerator {
         predicate.append(executeRuleH1(CDDiffUtil.partHandler(leftReferenceNames, false), cd));
         predicate.append(",");
 
-        if (a.getRight().isPresentCDRole()) {
-          predicate.append(a.getRight().getCDRole().getName());
-        } else {
-          // Preprocess parts of reference names and add them as role name
-          String name = CDDiffUtil.partHandler(a.getRightReferenceName(), true);
-          predicate.append(name);
-        }
+        predicate.append(CDDiffUtil.inferRole(a.getRight()));
         predicate.append(",");
 
         predicate.append(executeRuleH1(CDDiffUtil.partHandler(rightReferenceNames, false), cd));
         predicate.append(",");
 
-        if (a.getLeft().isPresentCDRole()) {
-          predicate.append(a.getLeft().getCDRole().getName());
-        } else {
-          // Preprocess parts of reference names and add them as role name
-          String name = CDDiffUtil.partHandler(a.getLeftReferenceName(), true);
-          predicate.append(name);
-        }
+        predicate.append(CDDiffUtil.inferRole(a.getLeft()));
         predicate.append("]").append(System.lineSeparator());
       }
     }
@@ -1483,12 +1436,7 @@ public class CD2AlloyGenerator {
 
           firstReferenceName = association.getRightReferenceName();
           secondReferenceName = association.getLeftReferenceName();
-          rolePresent = association.getLeft().isPresentCDRole();
-          if (rolePresent) {
-            roleName = association.getLeft().getCDRole().getName();
-          } else {
-            roleName = CDDiffUtil.partHandler(secondReferenceName, true);
-          }
+          roleName = CDDiffUtil.inferRole(association.getLeft());
           break;
         }
       case 4:
@@ -1503,12 +1451,7 @@ public class CD2AlloyGenerator {
 
           firstReferenceName = association.getLeftReferenceName();
           secondReferenceName = association.getRightReferenceName();
-          rolePresent = association.getLeft().isPresentCDRole();
-          if (rolePresent) {
-            roleName = association.getLeft().getCDRole().getName();
-          } else {
-            roleName = CDDiffUtil.partHandler(firstReferenceName, true);
-          }
+          roleName = CDDiffUtil.inferRole(association.getLeft());
           break;
         }
       case 5:
@@ -1525,12 +1468,7 @@ public class CD2AlloyGenerator {
 
           firstReferenceName = association.getLeftReferenceName();
           secondReferenceName = association.getRightReferenceName();
-          rolePresent = association.getRight().isPresentCDRole();
-          if (rolePresent) {
-            roleName = association.getRight().getCDRole().getName();
-          } else {
-            roleName = CDDiffUtil.partHandler(secondReferenceName, true);
-          }
+          roleName = CDDiffUtil.inferRole(association.getRight());
           break;
         }
       case 6:
@@ -1545,12 +1483,7 @@ public class CD2AlloyGenerator {
 
           firstReferenceName = association.getRightReferenceName();
           secondReferenceName = association.getLeftReferenceName();
-          rolePresent = association.getRight().isPresentCDRole();
-          if (rolePresent) {
-            roleName = association.getRight().getCDRole().getName();
-          } else {
-            roleName = CDDiffUtil.partHandler(firstReferenceName, true);
-          }
+          roleName = CDDiffUtil.inferRole(association.getRight());
           break;
         }
       default:
