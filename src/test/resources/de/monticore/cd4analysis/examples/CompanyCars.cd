@@ -4,7 +4,7 @@ package cars;
 
 import java.util.Date;
 
-classdiagram MyCars {
+classdiagram CompanyCars {
 
   abstract class Entity;
 

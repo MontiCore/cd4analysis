@@ -34,52 +34,60 @@ The CD languages are mainly intended for
 
 ## An Example Model
 
-The following example CD [`MyLife`](doc/MyLife.cd) illustrates the textual 
+The following example CD [`MyCompany`](doc/MyCompany.cd) illustrates the textual 
 syntax of CDs:
 ```
-package monticore;
-
-import MyBasics;
-import java.lang.String;
-import java.util.List;
+package corp;
 import java.util.Date;
 
-classdiagram MyLife {
-  abstract class Person {
-    int age;
-    Date birthday;
-    List<String> nickNames;
-  }
-  class PhoneNumber;
-  package uni {
-    class Student extends Person {
-      StudentStatus status;
-      -> Address [1..*] {ordered};
+classdiagram MyCompany {
+
+  enum CorpKind { SOLE_PROPRIETOR, S_CORP, C_CORP, B_CORP, CLOSE_CORP, NON_PROFIT; }
+  abstract class Entity;
+  package people {
+    class Person extends Entity {
+      Date birthday;
+      List<String> nickNames;
+      -> Address [*] {ordered};
     }
-    class Grade;
-    enum StudentStatus { ENROLLED, FINISHED; }
-    composition Student -> Grade [*];
-    association phonebook uni.Student [String] -> PhoneNumber;
+    class Address {
+      String city;
+      String street;
+      int number;
+    }
   }
-  association [0..1] Person (parent) <-> (child) monticore.Person [*];
+  class Company extends Entity {
+    CorpKind kind;
+  }
+  class Employee extends people.Person {
+    int salary;
+  }
+  class Share {
+    int value;
+  }
+  association [1..*] Company (employer) <-> Employee [*];
+  composition [1] Company <- Share [*];
+  association shareholding [1] Entity (shareholder) -- (owns) Share [*];
+
 }
 ```
 This example CD contains the following information:
-- The CD is contained in the package `monticore` and is called `MyLife`.
-- The package `monticore` also serves as the default package for all classes in the CD.
-- The CD defines four (4) classes `Person`,`PhoneNumber`, `Student`, and `Grade`.
-- `Person` is an abstract class, and therefore cannot be instantiated directly.
-- `Student` and `Grade` are contained in the package `uni`. Packages can be used to structure the classes contained in a CD.
-- The class `Student` extends the class `Person` (like in Java, implementation of interfaces
+- The CD is contained in the package `corp` and is called `MyCompany`.
+- The package `corp` also serves as the default package for all classes in the CD.
+- The CD defines the six (6) classes `Entity`,`Person`, `Address`, `Company`, `Employee`, and `Share`. 
+- `Entity` is an abstract class, and therefore cannot be instantiated directly.
+- `Person` and `Address` are contained in the package `people`. Packages can be used to structure the classes contained in a CD.
+- The class `Employee` extends the class `Person` (like in Java, implementation of interfaces
   are also possible).
 - Each class may contain attributes, which have a type and name.
 - The CD uses available default types (which are basic types from Java), imported types 
   (like `Date`), and predefined forms of generic types (e.g., `List<.>`),
-- It also contains associations and compositions that are defined between two classes.
-- An association can have a name, navigation information (e.g., `<->`), a role name on each
-  side, multiplicity constraints (e.g., `[0..1]`) and certain predefined 
-  tags/stereotypes (e.g., `{ordered}`),
-- Associations and attributes may also reference qualified types (e.g., `[java.lang.String]`).
+- Enums can also be defined (eg., `CorpKind` ).
+- The CD contains associations and compositions that are defined between two classes.
+- An association can have a name and navigation information (e.g., `<->`),.
+- Each side of an association can have a role name, a cardinality (e.g., `[0..1]`) and certain predefined 
+  tags/stereotypes (e.g., `{ordered}`).
+- Associations and attributes may also reference qualified types (e.g., `[java.util.Date]`).
 
 More examples can be found [here][ExampleModels].
 
@@ -117,13 +125,13 @@ The tool provides quite a number of executable actions and configurable paramete
 These commands are examples for calling the tool:
 
 ```shell
-java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
+java -jar MCCd.jar -i src/MyCompany --path symbols -o out --gen
+java -jar MCCD.jar -i src/MyAddress.cd -s symbols/MyAddress.cdsym
 java -jar MCCD.jar -i src/MyLife --path symbols -pp 
-java -jar MCCd.jar -i src/MyLife --path symbols -o out --gen
 ```
 
 To try them out for yourself download and put the files
-[MyBasics.cd](doc/MyBasics.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. The first command needs to be executed before the second and the third.
+[MyAddress.cd](doc/MyAddress.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. The second command needs to be executed before the third.
 
 The possible options are:
 | Option                     | Explanation |
@@ -369,13 +377,13 @@ the model:
 
 The missing class `Address` is currently not imported.
 `MyLife` already has an `import` statement to another class diagram 
-included ([available here](doc/MyBasics.cd)):
+included ([available here](doc/MyAddress.cd)):
 
-(content of src/MyBasics.cd)
+(content of src/MyAddress.cd)
 ```
 import java.lang.String;
 
-classdiagram MyBasics {
+classdiagram MyAddress {
   class Address {
     String city;
     String street;
@@ -399,7 +407,7 @@ their symbol files. This has several interesting advantages:
 However, the tool has to be applied to the new additional model first:
 
 ```shell
-java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym
+java -jar MCCD.jar -i src/MyAddress.cd -s symbols/MyAddress.cdsym
 ```
 
 We then add the symbol file to the model path using `--path`:
@@ -439,10 +447,10 @@ java -jar MCCD.jar -i src/MyExample.cd --gen -o out
 ```
 Note that the option `--fieldfromrole` must be used with the appropriate
 argument in order to generate attributes for associations contained in the input CD. 
-Use the following commands in order to generate .java-files for the CD `MyCars`([available here](doc/MyCars.cd)):
+Use the following commands in order to generate .java-files for the CD `MyCompany`([available here](doc/MyCompany.cd)):
 
 ```shell
-java -jar MCCD.jar -i src/MyCars.cd -o out --gen --fieldfromrole navigable
+java -jar MCCD.jar -i src/MyCompany.cd -o out --gen --fieldfromrole navigable
 ```
 
 ### Step 8: The Semantic Difference of Two Class Diagrams
@@ -459,12 +467,12 @@ The option `--semdiff <file>` computes the semantic difference of the current CD
 and the CD specified by the argument.
 
 For the following examples, download the files 
-[Employees1.cd](doc/Employees1.cd) and [Employees2.cd](doc/Employees2.cd) 
+[MyEmployees1.cd](doc/MyEmployees1.cd) and [MyEmployees2.cd](doc/MyEmployees2.cd) 
 and save them in
 `src`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd --semdiff scr/Employees2.cd
+java -jar MCCD.jar -i src/MyEmployees1.cd --semdiff scr/MyEmployees2.cd
 ```
 
 We can use the option `difflimit` to specify the maximum number of witnesses 
@@ -472,7 +480,7 @@ that are generated in the output directory; the default is to generate one diff-
 Once again, the option `-o` can be used to specify the output directory; the default is `.`:
 
 ```shell
-java -jar MCCD.jar -i src/Employees1.cd  --semdiff src/Employees2.cd --difflimit 20 -o out
+java -jar MCCD.jar -i src/MyEmployees1.cd  --semdiff src/MyEmployees2.cd --difflimit 20 -o out
 ```
 
 Note that `--semdiff` does not use symbols from symbol files.
@@ -484,17 +492,17 @@ iff the two are semantically compatible.
 The result is stored in memory as the current CD.
 
 For the following examples, download the files 
-[Person1.cd](doc/Person1.cd) and [Person2.cd](doc/Person2.cd) and 
+[MyEmployees2.cd](doc/MyEmployees2.cd) and [MyWorkplace.cd](doc/MyWorkplace.cd) and 
 save them in `src`:
 
 ```shell
-java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o out -pp
+java -jar MCCD.jar -i src/MyEmployees2.cd --merge src/MyWorkplace.cd -o out -pp
 ```
 
 If `-pp` is used in conjunction with `--merge`, the name of the merged CD always corresponds to the name of the file (without the suffix `.cd`):
 
 ```shell
-java -jar MCCD.jar -i src/Person1.cd --merge src/Person2.cd -o out -pp Person.cd
+java -jar MCCD.jar -i src/MyEmployees2.cd --merge src/MyWorkplace.cd -o out -pp MyJob.cd
 ```
 
 Note that `--merge` does not use symbols from symbol files.

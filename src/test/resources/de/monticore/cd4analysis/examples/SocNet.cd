@@ -69,7 +69,7 @@ classdiagram SocNet {
 
   association member [*] Person <-> Group [*];
 
-  association [1] Person (organizer) <-> (organized) [profileName] Group [*];
+  association [1] Person (organizer) <-> (organized) [[profileName]] Group [*];
 
   association invited [*] Relationship <-> Profile [1];
 

@@ -3,6 +3,7 @@ package de.monticore;
 import static org.junit.Assert.*;
 
 import de.monticore.cd.OutTestBasis;
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -36,13 +37,13 @@ public class ExampleCommandTest extends OutTestBasis {
   }
 
   /**
-   * Tests commands: java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym java -jar
+   * Tests commands: java -jar MCCD.jar -i src/MyAddress.cd -s symbols/MyAddress.cdsym java -jar
    * MCCD.jar -i src/MyLife --path symbols -pp
    */
   @Test
   public void testExampleCommands1and3() {
-    String fileName = "doc/MyBasics.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyBasics.cdsym"});
+    String fileName = "doc/MyAddress.cd";
+    CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     fileName = "doc/MyLife.cd";
     CD4CodeTool.main(
         new String[] {
@@ -51,13 +52,13 @@ public class ExampleCommandTest extends OutTestBasis {
   }
 
   /**
-   * Tests commands: java -jar MCCD.jar -i src/MyBasics.cd -s symbols/MyBasics.cdsym java -jar
+   * Tests commands: java -jar MCCD.jar -i src/MyAddress.cd -s symbols/MyAddress.cdsym java -jar
    * MCCd.jar -i src/MyLife --path symbols -o out --gen
    */
   @Test
   public void testExampleCommands1and2() {
-    String fileName = "doc/MyBasics.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyBasics.cdsym"});
+    String fileName = "doc/MyAddress.cd";
+    CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     fileName = "doc/MyLife.cd";
     CD4CodeTool.main(new String[] {"-i", fileName, "--path", outputPath + "symbols", "-pp"});
     assertTrue(getErr(), getErr().isEmpty());
@@ -181,14 +182,14 @@ public class ExampleCommandTest extends OutTestBasis {
   }
 
   /**
-   * Step 5: Importing Symbol Files Using a Path for commands: java -jar MCCD.jar -i src/MyBasics.cd
-   * -s symbols/MyBasics.cdsym java -jar MCCD.jar -i src/monticore/MyLife.cd --defaultpackage --path
-   * symbols
+   * Step 5: Importing Symbol Files Using a Path for commands: java -jar MCCD.jar -i
+   * src/MyAddress.cd -s symbols/MyAddress.cdsym java -jar MCCD.jar -i src/monticore/MyLife.cd
+   * --defaultpackage --path symbols
    */
   @Test
   public void testStoringSymbolsPerPathsExample2() {
-    String fileName = "doc/MyBasics.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyBasics.cdsym"});
+    String fileName = "doc/MyAddress.cd";
+    CD4CodeTool.main(new String[] {"-i", fileName, "-s", outputPath + "symbols/MyAddress.cdsym"});
     assertTrue(getErr(), getErr().isEmpty());
     fileName = "doc/MyLife.cd";
     CD4CodeTool.main(
@@ -219,16 +220,17 @@ public class ExampleCommandTest extends OutTestBasis {
   }
 
   /**
-   * Step 7: Generating .java-Files for command: java -jar MCCD.jar -i src/MyCars.cd -o out --gen
+   * Step 7: Generating .java-Files for command: java -jar MCCD.jar -i src/MyCompany.cd -o out --gen
    * --fieldfromrole navigable
    */
   @Test
   public void testGenerateJavaExample3() {
-    String fileName = "doc/MyCars.cd";
+    String fileName = "doc/MyCompany.cd";
     CD4CodeTool.main(
         new String[] {
           "-i", fileName, "-o", outputPath + "out", "--gen", "--fieldfromrole", "navigable"
         });
+    resetGlobalScope(); // --fieldfromrole makes this necessary
     ASTCDCompilationUnit cd = loadAndCheckCD(fileName);
     cd.getCDDefinition()
         .getCDClassesList()
@@ -246,23 +248,23 @@ public class ExampleCommandTest extends OutTestBasis {
 
   /**
    * Step 8: The Semantic Difference of Two Class Diagrams for command: java -jar MCCD.jar -i
-   * src/Employees1.cd --semdiff scr/Employees2.cd
+   * src/MyEmployees1.cd --semdiff scr/MyEmployees2.cd
    */
   @Test
   public void testTwoCDsComparisonExample1() {
-    final String fileName = "doc/Employees1.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--semdiff", "doc/Employees2.cd"});
+    final String fileName = "doc/MyEmployees1.cd";
+    CD4CodeTool.main(new String[] {"-i", fileName, "--semdiff", "doc/MyEmployees2.cd"});
     assertEquals(0, Log.getErrorCount());
   }
 
   /**
    * Step 8: The Semantic Difference of Two Class Diagrams for command: java -jar MCCD.jar -i
-   * src/Employees1.cd --semdiff src/Employees2.cd --difflimit 20 -o out
+   * src/MyEmployees1.cd --semdiff src/MyEmployees2.cd --difflimit 20 -o out
    */
   @Test
   public void testTwoCDsComparisonExample2() {
-    final String cd1 = "doc/Employees1.cd";
-    final String cd2 = "doc/Employees2.cd";
+    final String cd1 = "doc/MyEmployees1.cd";
+    final String cd2 = "doc/MyEmployees2.cd";
     CD4CodeTool.main(
         new String[] {"-i", cd1, "--semdiff", cd2, "--difflimit", "20", "-o", outputPath + "out"});
 
@@ -294,32 +296,45 @@ public class ExampleCommandTest extends OutTestBasis {
   }
 
   /**
-   * Step 9: Merging Two Class Diagram for command: java -jar MCCD.jar -i src/Person1.cd --merge
-   * src/Person2.cd -o out -pp
+   * Step 9: Merging Two Class Diagram for command: java -jar MCCD.jar -i src/MyEmployees2.cd
+   * --merge src/MyWorkplace.cd -o out -pp
    */
   @Test
   public void testTwoCDsMergeExample1() {
-    final String fileName = "doc/Person1.cd";
+    final String fileName = "doc/MyEmployees2.cd";
     CD4CodeTool.main(
         new String[] {
-          "-i", fileName, "--merge", "doc/Person2.cd", "-o", outputPath + "out", "-pp"
+          "-i", fileName, "--merge", "doc/MyWorkplace.cd", "-o", outputPath + "out", "-pp"
         });
     assertTrue(getErr(), getErr().isEmpty());
   }
 
   /**
-   * Step 9: Merging Two Class Diagram for command: java -jar MCCD.jar -i src/Person1.cd --merge
-   * src/Person2.cd -o out -pp Person.cd
+   * Step 9: Merging Two Class Diagram for command: java -jar MCCD.jar -i src/MyEmployees2.cd
+   * --merge src/MyWorkplace.cd -o out -pp MyJob.cd
    */
   @Test
   public void testTwoCDsMergeExample2() {
-    final String fileName = "doc/Person1.cd";
+    final String fileName = "doc/MyEmployees2.cd";
     CD4CodeTool.main(
         new String[] {
-          "-i", fileName, "--merge", "doc/Person2.cd", "-o", outputPath + "out", "-pp", "Person.cd"
+          "-i",
+          fileName,
+          "--merge",
+          "doc/MyWorkplace.cd",
+          "-o",
+          outputPath + "out",
+          "-pp",
+          "MyJob.cd"
         });
-    assertTrue(Files.exists(Paths.get(outputPath + "out/Person.cd")));
+    assertTrue(Files.exists(Paths.get(outputPath + "out/MyJob.cd")));
     assertTrue(getErr(), getErr().isEmpty());
+  }
+
+  protected void resetGlobalScope() {
+    CD4CodeMill.globalScope().clear();
+    CD4CodeMill.globalScope().init();
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
   }
 
   protected ASTCDCompilationUnit loadAndCheckCD(String filePath) {
