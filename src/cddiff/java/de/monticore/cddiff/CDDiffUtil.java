@@ -36,10 +36,10 @@ public class CDDiffUtil {
 
     // Combine all parts using "_" as separator instead of "."
     for (String part : parts) {
-      completeName.append(part).append("_");
+      completeName.append(part).append("_dot_");
     }
     // Remove last "_"
-    completeName = new StringBuilder(completeName.substring(0, completeName.length() - 1));
+    completeName = new StringBuilder(completeName.substring(0, completeName.length() - 5));
 
     return completeName.toString();
   }

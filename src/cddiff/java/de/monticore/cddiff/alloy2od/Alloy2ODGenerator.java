@@ -422,13 +422,13 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Get left name
-    String lObj = sourceName.replaceAll("[$]", "");
+    String lObj = sourceName.replaceAll("[$]", "").replaceAll("_dot_", "_");
 
     // Get link name
     String link = a.replaceAll("[$.*]\\d*", "");
 
     // Get right name
-    String rObj = targetName.replaceAll("[$]", "");
+    String rObj = targetName.replaceAll("[$]", "").replaceAll("_dot_", "_");
 
     // Generate output
     od.append("link ");
@@ -450,15 +450,15 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove enum_ and $number from val
-    String type = val.replaceAll("enum_", "").replaceAll("_", ".").replaceAll("[$]\\d*", "");
+    String type = val.replaceAll("enum_", "").replaceAll("_dot_", ".").replaceAll("[$]\\d*", "");
     // type = type.replaceAll("_.*", "");
 
     // Get name from fName by removing $number from fName
-    String name = fName.replaceAll("[$]\\d*", "");
+    String name = fName.replaceAll("[$]\\d*", "").replaceAll("_dot_", "_");
 
     // Get value from val by removing "*_*_" part and $number from fName
     String value = val.replaceAll("[$]\\d*", "");
-    value = value.replaceAll(".*_", "");
+    value = value.replaceAll(".*_dot_", "");
 
     type = type.substring(0, type.length() - value.length() - 1);
 
@@ -486,10 +486,10 @@ public class Alloy2ODGenerator {
             .replaceAll("__", ">")
             .replaceAll("type_", "")
             .replaceAll("[$]\\d*", "")
-            .replaceAll("_", ".");
+            .replaceAll("_dot_", ".");
 
     // Get name from fName by removing $number from fName
-    String name = fName.replaceAll("[$]\\d*", "");
+    String name = fName.replaceAll("[$]\\d*", "").replaceAll("_dot_", "_");
 
     // Get value from val by $number from fName
     String value = val.replaceAll("[$]\\d*", "");
@@ -515,11 +515,11 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove $ from o to get name
-    String name = o.toString().replaceAll("[$]", "");
+    String name = o.toString().replaceAll("[$]", "").replaceAll("_dot_", "_");
 
     // Remove $ and numbers after it to get type
     String type = o.toString().replaceAll("[$]\\d*", "");
-    type = type.replaceAll("[_]", ".");
+    type = type.replaceAll("_dot_", ".");
 
     // Generate output
     od.append(name);
@@ -537,7 +537,12 @@ public class Alloy2ODGenerator {
       if (o.atom(0).equals(t.atom(0))) {
         for (A4Tuple superType : superTypes) {
           if (t.atom(1).equals(superType.atom(0))) {
-            typeDecl.append(superType.atom(1).replaceAll("Type_", ", ").replaceAll("[$]\\d*", ""));
+            typeDecl.append(
+                superType
+                    .atom(1)
+                    .replaceAll("Type_", ", ")
+                    .replaceAll("[$]\\d*", "")
+                    .replaceAll("_dot_", "\\."));
           }
         }
       }

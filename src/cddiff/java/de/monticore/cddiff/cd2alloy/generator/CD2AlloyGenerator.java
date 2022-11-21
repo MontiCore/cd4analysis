@@ -382,7 +382,7 @@ public class CD2AlloyGenerator {
               .printType()
               .replaceAll("<", "_of__")
               .replaceAll(">", "__")
-              .replaceAll("\\.", "_");
+              .replaceAll("\\.", "_dot_");
       if (!ciTypes.contains(typeName) && !enumNameUnion.contains(typeName)) {
         puTypes.add(typeName);
       }
@@ -418,7 +418,7 @@ public class CD2AlloyGenerator {
       for (ASTCDEnumConstant astcdEnumConstant : v) {
         enumTypeNameUnion.add(
             CDDiffUtil.processQName(e.getSymbol().getFullName())
-                + "_"
+                + "_dot_"
                 + astcdEnumConstant.getName());
       }
     }
@@ -766,7 +766,7 @@ public class CD2AlloyGenerator {
           classFunctions
               .append("enum_")
               .append(CDDiffUtil.processQName(e.getSymbol().getFullName()))
-              .append("_")
+              .append("_dot_")
               .append(enumVal.getName());
           classFunctions.append(" + ");
         }
@@ -991,7 +991,7 @@ public class CD2AlloyGenerator {
                         .printType()
                         .replaceAll("<", "_of__")
                         .replaceAll(">", "__")
-                        .replaceAll("\\.", "_"),
+                        .replaceAll("\\.", "_dot_"),
                     cd))
             .append("]")
             .append(System.lineSeparator());

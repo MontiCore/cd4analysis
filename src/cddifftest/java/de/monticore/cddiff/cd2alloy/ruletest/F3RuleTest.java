@@ -116,11 +116,12 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_expert + enum_DrivingExp_beginner"
+        "fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_dot_expert + "
+            + "enum_DrivingExp_dot_beginner"
             + " }");
     expectedResult.add(
-        "fun InsuranceKindEnumCDcd1: set EnumVal { enum_InsuranceKind_international + "
-            + "enum_InsuranceKind_transport }");
+        "fun InsuranceKindEnumCDcd1: set EnumVal { enum_InsuranceKind_dot_international + "
+            + "enum_InsuranceKind_dot_transport }");
 
     checkF3(lines, expectedResult);
   }
@@ -133,8 +134,8 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_partTime + "
-            + "enum_PositionKind_fullTime }");
+        "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_dot_partTime + "
+            + "enum_PositionKind_dot_fullTime }");
 
     checkF3(lines, expectedResult);
   }
@@ -147,8 +148,8 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_partTime + "
-            + "enum_PositionKind_external + enum_PositionKind_fullTime }");
+        "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_dot_partTime + "
+            + "enum_PositionKind_dot_external + enum_PositionKind_dot_fullTime }");
 
     checkF3(lines, expectedResult);
   }
