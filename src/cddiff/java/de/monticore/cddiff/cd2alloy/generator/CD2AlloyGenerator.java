@@ -377,8 +377,7 @@ public class CD2AlloyGenerator {
     Set<String> puTypes = new HashSet<>();
     for (ASTCDAttribute astcdAttribute : attributeUnion) {
       // TODO: Im Tech.-Report sind enums drin, im Beispiel nicht, klären!
-      String typeName = CDDiffUtil.escape2Alloy(astcdAttribute
-              .printType());
+      String typeName = CDDiffUtil.escape2Alloy(astcdAttribute.printType());
       if (!ciTypes.contains(typeName) && !enumNameUnion.contains(typeName)) {
         puTypes.add(typeName);
       }
@@ -413,9 +412,8 @@ public class CD2AlloyGenerator {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
         enumTypeNameUnion.add(
-            CDDiffUtil.escape2Alloy(e.getSymbol().getFullName()
-                + "."
-                + astcdEnumConstant.getName()));
+            CDDiffUtil.escape2Alloy(
+                e.getSymbol().getFullName() + "." + astcdEnumConstant.getName()));
       }
     }
 
@@ -761,7 +759,8 @@ public class CD2AlloyGenerator {
         for (ASTCDEnumConstant enumVal : enumVals) {
           classFunctions
               .append("enum_")
-              .append(CDDiffUtil.escape2Alloy(e.getSymbol().getFullName() + "." + enumVal.getName()));
+              .append(
+                  CDDiffUtil.escape2Alloy(e.getSymbol().getFullName() + "." + enumVal.getName()));
           classFunctions.append(" + ");
         }
         // Remove last '+'
@@ -979,9 +978,7 @@ public class CD2AlloyGenerator {
             .append(", ");
         predicate.append(astcdAttribute.getName()).append(", ");
         predicate
-            .append(
-                executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute
-                            .printType()),cd))
+            .append(executeRuleH1(CDDiffUtil.escape2Alloy(astcdAttribute.printType()), cd))
             .append("]")
             .append(System.lineSeparator());
       }
@@ -1205,15 +1202,15 @@ public class CD2AlloyGenerator {
         // Generation
         predicate.append("BidiAssoc[");
 
-        predicate.append(executeRuleH1(CDDiffUtil.escape2Alloy(a.getLeftQualifiedName().getQName()),
-            cd));
+        predicate.append(
+            executeRuleH1(CDDiffUtil.escape2Alloy(a.getLeftQualifiedName().getQName()), cd));
         predicate.append(",");
 
         predicate.append(CDDiffUtil.escape2Alloy(CDDiffUtil.inferRole(a.getRight())));
         predicate.append(",");
 
-        predicate.append(executeRuleH1(CDDiffUtil.escape2Alloy(a.getRightQualifiedName().getQName())
-            , cd));
+        predicate.append(
+            executeRuleH1(CDDiffUtil.escape2Alloy(a.getRightQualifiedName().getQName()), cd));
         predicate.append(",");
 
         predicate.append(CDDiffUtil.escape2Alloy(CDDiffUtil.inferRole(a.getLeft())));

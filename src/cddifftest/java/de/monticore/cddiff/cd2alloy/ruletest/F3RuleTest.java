@@ -7,11 +7,10 @@ import static org.junit.Assert.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffTestBasis;
 import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
+import de.se_rwth.commons.logging.Log;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 

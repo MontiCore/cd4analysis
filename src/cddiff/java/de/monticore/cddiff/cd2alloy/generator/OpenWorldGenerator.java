@@ -92,7 +92,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
       List<ASTCDEnumConstant> v = e.getCDEnumConstantList();
       for (ASTCDEnumConstant astcdEnumConstant : v) {
         enumTypeNameUnion.add(
-            CDDiffUtil.escape2Alloy(e.getSymbol().getFullName() + "." + astcdEnumConstant.getName()));
+            CDDiffUtil.escape2Alloy(
+                e.getSymbol().getFullName() + "." + astcdEnumConstant.getName()));
       }
     }
 

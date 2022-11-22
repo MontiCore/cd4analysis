@@ -482,8 +482,7 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Get attribute type by replacing alloy-specific elements
-    String type =
-        CDDiffUtil.unescape2Type(val.replaceAll("type_", "").replaceAll("[$]\\d*", ""));
+    String type = CDDiffUtil.unescape2Type(val.replaceAll("type_", "").replaceAll("[$]\\d*", ""));
 
     // Get name from fName by removing $number from fName
     String name = CDDiffUtil.unescape2Name(fName.replaceAll("[$]\\d*", ""));
@@ -534,10 +533,8 @@ public class Alloy2ODGenerator {
         for (A4Tuple superType : superTypes) {
           if (t.atom(1).equals(superType.atom(0))) {
             typeDecl.append(
-                CDDiffUtil.unescape2Type(superType
-                    .atom(1)
-                    .replaceAll("Type_", ", ")
-                    .replaceAll("[$]\\d*", "")));
+                CDDiffUtil.unescape2Type(
+                    superType.atom(1).replaceAll("Type_", ", ").replaceAll("[$]\\d*", "")));
           }
         }
       }

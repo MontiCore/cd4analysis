@@ -138,16 +138,18 @@ public class FullExpander implements CDExpander {
     for (ASTCDAssociation original : originals) {
 
       if (original.getCDAssocDir().isDefinitiveNavigableRight()) {
-        buildDummyAssociation(original.getLeftQualifiedName().getQName(),
-            CDDiffUtil.inferRole(original.getRight()),
-            dummyClassName)
+        buildDummyAssociation(
+                original.getLeftQualifiedName().getQName(),
+                CDDiffUtil.inferRole(original.getRight()),
+                dummyClassName)
             .ifPresent(superSet::add);
       }
 
       if (original.getCDAssocDir().isDefinitiveNavigableLeft()) {
-        buildDummyAssociation(original.getRightQualifiedName().getQName(),
-            CDDiffUtil.inferRole(original.getLeft()),
-            dummyClassName)
+        buildDummyAssociation(
+                original.getRightQualifiedName().getQName(),
+                CDDiffUtil.inferRole(original.getLeft()),
+                dummyClassName)
             .ifPresent(superSet::add);
       }
     }
