@@ -255,26 +255,6 @@ public class CDAssociationHelper {
   }
 
   public static boolean matchRoleNames(ASTCDAssocSide side1, ASTCDAssocSide side2) {
-    String roleName1;
-    String roleName2;
-
-    // check left role names
-    if (side1.isPresentCDRole()) {
-      roleName1 = side1.getCDRole().getName();
-    } else {
-      roleName1 =
-          CDDiffUtil.processQName2RoleName(
-              side1.getMCQualifiedType().getMCQualifiedName().getQName());
-    }
-
-    if (side2.isPresentCDRole()) {
-      roleName2 = side2.getCDRole().getName();
-    } else {
-      roleName2 =
-          CDDiffUtil.processQName2RoleName(
-              side2.getMCQualifiedType().getMCQualifiedName().getQName());
-    }
-
-    return roleName1.equals(roleName2);
+    return CDDiffUtil.inferRole(side1).equals(CDDiffUtil.inferRole(side2));
   }
 }

@@ -19,40 +19,25 @@ import org.apache.commons.io.FileUtils;
 
 public class CDDiffUtil {
 
-  /**
-   * This helper functions processes parts of a name such that they can be used in Alloy
-   *
-   * @return The processed name
-   */
-  public static String partHandler(List<String> parts, boolean toRoleName) {
-    StringBuilder completeName = new StringBuilder();
-
-    // Process to role name only
-    if (toRoleName) {
-      char[] roleName = parts.get(parts.size() - 1).toCharArray();
-      roleName[0] = Character.toLowerCase(roleName[0]);
-      return new String(roleName);
-    }
-
-    // Combine all parts using "_" as separator instead of "."
-    for (String part : parts) {
-      completeName.append(part).append("_dot_");
-    }
-    // Remove last "_"
-    completeName = new StringBuilder(completeName.substring(0, completeName.length() - 5));
-
-    return completeName.toString();
+  public static String escape2Alloy(String type) {
+    return type.replaceAll("_", "__")
+        .replaceAll("\\.", "_q_dot_")
+        .replaceAll("<", "_l_br_")
+        .replaceAll(">", "_r_br_");
   }
 
-  /**
-   * This helper functions processes a qualified name such that it can be used in Alloy
-   *
-   * @return The processed name
-   */
-  public static String processQName(String qname) {
-    List<String> nameList = new ArrayList<>();
-    Collections.addAll(nameList, qname.split("\\."));
-    return partHandler(nameList, false);
+  public static String unescape2Name(String name) {
+    return name.replaceAll("_q_dot_", "_")
+        .replaceAll("_l_br_", "_of_")
+        .replaceAll("_r_br_", "")
+        .replaceAll("__", "_");
+  }
+
+  public static String unescape2Type(String type) {
+    return type.replaceAll("_l_br_", "<")
+        .replaceAll("_r_br_", ">")
+        .replaceAll("_q_dot_", "\\.")
+        .replaceAll("__", "_");
   }
 
   /**
@@ -65,15 +50,19 @@ public class CDDiffUtil {
   public static String processQName2RoleName(String qname) {
     List<String> nameList = new ArrayList<>();
     Collections.addAll(nameList, qname.split("\\."));
-    return partHandler(nameList, true);
+    char[] roleName = nameList.get(nameList.size() - 1).toCharArray();
+    roleName[0] = Character.toLowerCase(roleName[0]);
+    return new String(roleName);
   }
 
   public static String inferRole(ASTCDAssocSide assocSide) {
     if (assocSide.isPresentCDRole()) {
       return assocSide.getCDRole().getName();
     }
-    return CDDiffUtil.processQName2RoleName(
-        assocSide.getMCQualifiedType().getMCQualifiedName().getQName());
+    char[] roleName =
+        assocSide.getMCQualifiedType().getMCQualifiedName().getBaseName().toCharArray();
+    roleName[0] = Character.toLowerCase(roleName[0]);
+    return new String(roleName);
   }
 
   protected static void saveDiffCDs2File(

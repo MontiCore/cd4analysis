@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.alloy2od;
 
+import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
@@ -422,13 +423,13 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Get left name
-    String lObj = sourceName.replaceAll("[$]", "").replaceAll("_dot_", "_");
+    String lObj = CDDiffUtil.unescape2Name(sourceName.replaceAll("[$]", ""));
 
     // Get link name
     String link = a.replaceAll("[$.*]\\d*", "");
 
     // Get right name
-    String rObj = targetName.replaceAll("[$]", "").replaceAll("_dot_", "_");
+    String rObj = CDDiffUtil.unescape2Name(targetName.replaceAll("[$]", ""));
 
     // Generate output
     od.append("link ");
@@ -450,15 +451,15 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove enum_ and $number from val
-    String type = val.replaceAll("enum_", "").replaceAll("_dot_", ".").replaceAll("[$]\\d*", "");
+    String type = CDDiffUtil.unescape2Type(val.replaceAll("enum_", "").replaceAll("[$]\\d*", ""));
     // type = type.replaceAll("_.*", "");
 
     // Get name from fName by removing $number from fName
-    String name = fName.replaceAll("[$]\\d*", "").replaceAll("_dot_", "_");
+    String name = CDDiffUtil.unescape2Name(fName.replaceAll("[$]\\d*", ""));
 
-    // Get value from val by removing "*_*_" part and $number from fName
+    // Get value from val by removing $number and "*_*_q_dot_" from fName
     String value = val.replaceAll("[$]\\d*", "");
-    value = value.replaceAll(".*_dot_", "");
+    value = CDDiffUtil.unescape2Name(value.replaceAll(".*_q_dot_", ""));
 
     type = type.substring(0, type.length() - value.length() - 1);
 
@@ -482,17 +483,13 @@ public class Alloy2ODGenerator {
 
     // Get attribute type by replacing alloy-specific elements
     String type =
-        val.replaceAll("_of__", "<")
-            .replaceAll("__", ">")
-            .replaceAll("type_", "")
-            .replaceAll("[$]\\d*", "")
-            .replaceAll("_dot_", ".");
+        CDDiffUtil.unescape2Type(val.replaceAll("type_", "").replaceAll("[$]\\d*", ""));
 
     // Get name from fName by removing $number from fName
-    String name = fName.replaceAll("[$]\\d*", "").replaceAll("_dot_", "_");
+    String name = CDDiffUtil.unescape2Name(fName.replaceAll("[$]\\d*", ""));
 
     // Get value from val by $number from fName
-    String value = val.replaceAll("[$]\\d*", "");
+    String value = CDDiffUtil.unescape2Name(val.replaceAll("type_", "").replaceAll("[$]\\d*", ""));
 
     // Generate output
     od.append(type);
@@ -515,11 +512,10 @@ public class Alloy2ODGenerator {
     StringBuilder od = new StringBuilder();
 
     // Remove $ from o to get name
-    String name = o.toString().replaceAll("[$]", "").replaceAll("_dot_", "_");
+    String name = CDDiffUtil.unescape2Name(o.toString().replaceAll("[$]", ""));
 
     // Remove $ and numbers after it to get type
-    String type = o.toString().replaceAll("[$]\\d*", "");
-    type = type.replaceAll("_dot_", ".");
+    String type = CDDiffUtil.unescape2Type(o.toString().replaceAll("[$]\\d*", ""));
 
     // Generate output
     od.append(name);
@@ -538,11 +534,10 @@ public class Alloy2ODGenerator {
         for (A4Tuple superType : superTypes) {
           if (t.atom(1).equals(superType.atom(0))) {
             typeDecl.append(
-                superType
+                CDDiffUtil.unescape2Type(superType
                     .atom(1)
                     .replaceAll("Type_", ", ")
-                    .replaceAll("[$]\\d*", "")
-                    .replaceAll("_dot_", "\\."));
+                    .replaceAll("[$]\\d*", "")));
           }
         }
       }

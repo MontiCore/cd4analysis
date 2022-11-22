@@ -67,12 +67,12 @@ public class U4RuleTest extends CDDiffTestBasis {
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("one sig enum_InsuranceKind_dot_international extends EnumVal {}");
-    expectedResult.add("one sig enum_DrivingExp_dot_expert extends EnumVal {}");
+    expectedResult.add("one sig enum_InsuranceKind_q_dot_international extends EnumVal {}");
+    expectedResult.add("one sig enum_DrivingExp_q_dot_expert extends EnumVal {}");
     // TODO Does not exist in example
     // expectedResult.add("one sig enum_InsuranceKind_workAcc extends EnumVal {}");
-    expectedResult.add("one sig enum_InsuranceKind_dot_transport extends EnumVal {}");
-    expectedResult.add("one sig enum_DrivingExp_dot_beginner extends EnumVal {}");
+    expectedResult.add("one sig enum_InsuranceKind_q_dot_transport extends EnumVal {}");
+    expectedResult.add("one sig enum_DrivingExp_q_dot_beginner extends EnumVal {}");
 
     checkU4(lines, expectedResult);
   }
@@ -88,9 +88,9 @@ public class U4RuleTest extends CDDiffTestBasis {
 
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
-    expectedResult.add("one sig enum_PositionKind_dot_partTime extends EnumVal {}");
-    expectedResult.add("one sig enum_PositionKind_dot_external extends EnumVal {}");
-    expectedResult.add("one sig enum_PositionKind_dot_fullTime extends EnumVal {}");
+    expectedResult.add("one sig enum_PositionKind_q_dot_partTime extends EnumVal {}");
+    expectedResult.add("one sig enum_PositionKind_q_dot_external extends EnumVal {}");
+    expectedResult.add("one sig enum_PositionKind_q_dot_fullTime extends EnumVal {}");
 
     checkU4(lines, expectedResult);
   }

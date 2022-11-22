@@ -154,13 +154,7 @@ public class AssociationsMatcher {
     ASTCDAssocSide targetSide = getTargetSide4Object(object, assoc);
 
     String targetType = targetSide.getMCQualifiedType().getMCQualifiedName().getQName();
-    String targetRole;
-
-    if (targetSide.isPresentCDRole()) {
-      targetRole = targetSide.getCDRole().getName();
-    } else {
-      targetRole = CDDiffUtil.processQName2RoleName(targetType);
-    }
+    String targetRole = CDDiffUtil.inferRole(targetSide);
     if (outgoingLinks.stream()
         .anyMatch(
             link ->
@@ -305,24 +299,8 @@ public class AssociationsMatcher {
 
   /** Checks if link matches association. */
   private boolean matchLinkAgainstAssociation(ASTODLink link, ASTCDAssociation association) {
-
-    String leftType = association.getLeftQualifiedName().getQName();
-    String rightType = association.getRightQualifiedName().getQName();
-
-    String leftRole;
-    String rightRole;
-
-    if (association.getLeft().isPresentCDRole()) {
-      leftRole = association.getLeft().getCDRole().getName();
-    } else {
-      leftRole = CDDiffUtil.processQName2RoleName(leftType);
-    }
-
-    if (association.getRight().isPresentCDRole()) {
-      rightRole = association.getRight().getCDRole().getName();
-    } else {
-      rightRole = CDDiffUtil.processQName2RoleName(rightType);
-    }
+    String leftRole = CDDiffUtil.inferRole(association.getLeft());
+    String rightRole = CDDiffUtil.inferRole(association.getRight());
 
     if (association.getCDAssocDir().isDefinitiveNavigableRight()
         && !association.getCDAssocDir().isDefinitiveNavigableLeft()) {

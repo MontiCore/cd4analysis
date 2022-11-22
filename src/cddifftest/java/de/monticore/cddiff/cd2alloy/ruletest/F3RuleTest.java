@@ -10,6 +10,8 @@ import de.monticore.cddiff.cd2alloy.generator.CD2AlloyGenerator;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import de.se_rwth.commons.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,6 +73,7 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Check correctnesslines[i]
     for (int i = 1; i < result.length; i++) {
       // Check structure
+      Log.println(result[i]);
       assertTrue(
           result[i].matches("fun [\\w]+\\: set EnumVal \\{ ([\\w]+|([\\w]+ [\\+ [\\w]+]*)) \\}"));
 
@@ -116,12 +119,12 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_dot_expert + "
-            + "enum_DrivingExp_dot_beginner"
+        "fun DrivingExpEnumCDcd1: set EnumVal { enum_DrivingExp_q_dot_expert + "
+            + "enum_DrivingExp_q_dot_beginner"
             + " }");
     expectedResult.add(
-        "fun InsuranceKindEnumCDcd1: set EnumVal { enum_InsuranceKind_dot_international + "
-            + "enum_InsuranceKind_dot_transport }");
+        "fun InsuranceKindEnumCDcd1: set EnumVal { enum_InsuranceKind_q_dot_international + "
+            + "enum_InsuranceKind_q_dot_transport }");
 
     checkF3(lines, expectedResult);
   }
@@ -134,8 +137,8 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_dot_partTime + "
-            + "enum_PositionKind_dot_fullTime }");
+        "fun PositionKindEnumCDcd2v1: set EnumVal { enum_PositionKind_q_dot_partTime + "
+            + "enum_PositionKind_q_dot_fullTime }");
 
     checkF3(lines, expectedResult);
   }
@@ -148,8 +151,8 @@ public class F3RuleTest extends CDDiffTestBasis {
     // Definition of expected result
     Set<String> expectedResult = new HashSet<>();
     expectedResult.add(
-        "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_dot_partTime + "
-            + "enum_PositionKind_dot_external + enum_PositionKind_dot_fullTime }");
+        "fun PositionKindEnumCDcd2v2: set EnumVal { enum_PositionKind_q_dot_partTime + "
+            + "enum_PositionKind_q_dot_external + enum_PositionKind_q_dot_fullTime }");
 
     checkF3(lines, expectedResult);
   }

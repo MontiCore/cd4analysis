@@ -203,13 +203,13 @@ public class CDWrapper4AssocHelper {
    */
   public static void generateASTCDAssociationRoleName(ASTCDAssociation astcdAssociation) {
     if (!astcdAssociation.getLeft().isPresentCDRole()) {
-      String leftRoleName = CDDiffUtil.partHandler(astcdAssociation.getLeftReferenceName(), true);
+      String leftRoleName = CDDiffUtil.inferRole(astcdAssociation.getLeft());
       astcdAssociation
           .getLeft()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(leftRoleName).build());
     }
     if (!astcdAssociation.getRight().isPresentCDRole()) {
-      String rightRoleName = CDDiffUtil.partHandler(astcdAssociation.getRightReferenceName(), true);
+      String rightRoleName = CDDiffUtil.inferRole(astcdAssociation.getRight());
       astcdAssociation
           .getRight()
           .setCDRole(CD4AnalysisMill.cDRoleBuilder().setName(rightRoleName).build());
