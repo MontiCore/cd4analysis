@@ -134,31 +134,32 @@ To try them out for yourself download and put the files
 [MyAddress.cd](doc/MyAddress.cd) and [MyLife.cd](doc/MyLife.cd) into your `src` directory. The second command needs to be executed before the third.
 
 The possible options are:
-| Option                     | Explanation |
-| ------                     | ------ |
-| `-ct,--configTemplate <file>` | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional, `-fp` is needed to specify the template path). |
-| `-d,--defaultpackage <boolean>` | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
-| `--difflimit <int>` | Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1, i.e. only one witness is shown). |
-| `--diffsize <int>` | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is based on a heuristic, but at least 20). This constrains long searches. |
+
+| Option                            | Explanation |
+|-----------------------------------| ------ |
+| `-ct,--configTemplate <file>`     | Executes this template at the beginning of a generation with `--gen`. This allows configuration of the generation process (optional, `-fp` is needed to specify the template path). |
+| `-d,--defaultpackage <boolean>`   | Configures if a default package should be created. Default: false. If `true`, all classes, that are not already in a package, are moved to the default package. |
+| `--difflimit <int>`               | Maximum number of shown witnesses when using `--semdiff` (optional; default is: 1, i.e. only one witness is shown). |
+| `--diffsize <int>`                | Maximum number of objects in witnesses when comparing the semantic diff with `--semdiff` (optional; default is based on a heuristic, but at least 20). This constrains long searches. |
 | `--fieldfromrole <fieldfromrole>` | Configures if explicit field symbols, which are typically used for implementing associations, should be added, if derivable from role symbols (default: none). Values: `none` is typical for modeling, `all` adds always on both classes, `navigable` adds only if the association is navigable. |
-|  `-fp,--templatePath <pathlist>` | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
-| `--gen` | Generate .java-files corresponding to the classes defined in the input class diagram. |
-| `-h,--help` | Prints short help; other options are ignored. |
-| `-i,--input <file>` | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for all further operations. |
-| `--json` | Writes a "Schema.json" to the output directory. |
-| `-nt,--nobuiltintypes` | If this option is used, built-in-types will not be considered. |
-| `--merge <file>` | Parses the file as a second CD and merges it with the input CD (iff semantically sound). The result is stored in memory. |
-| `-o,--output <dir>` | Defines the path for generated files (optional; default is: `.`). |
-| `--open-world` | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
-| `--path <dirlist>` | Artifact path for importable symbols, separated by spaces (default is: `.`). |
-| `-pp,--prettyprint <file>` | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
-| `-r,--report <dir>` | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
-| `--rule-based` | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
-| `-s,--symboltable <file>` | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
-| `--semdiff <file>` | Parses the file as a second CD and compares it semantically with the first CD that is currently in memory. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
-| `--show <printoption>` | Specifies the print option for `--syntaxdiff`: `diff` (default) prints the matched CD-elements with color-coded diffs (red for deleted, yellow for changed, and green for newly added elements). `cd1` will print only the old CD with color-coded diffs and `cd2` only the new CD. `all` combines all the previous options. `nocolor` prints the matched CD-elements with lines marked as - (deleted), ~ (changed), + (added). |
-| `--stdin` | Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for all further operations. |
-| `--syntaxdiff <file>` | Performs a syntactical difference analysis on the current CD in memory (old) and a second CD (new) and prints the result to stdout. Default: outputs the matched CD-elements with color-coded diffs (red for deleted, yellow for changed, and green for newly added elements) to stdout. |
+| `-fp,--templatePath <pathlist>`   | Directories and jars for handwritten templates to integrate when using `--gen` (optional, but needed, when `-ct` is used). |
+| `--gen`                           | Generate .java-files corresponding to the classes defined in the input class diagram. |
+| `-h,--help`                       | Prints short help; other options are ignored. |
+| `-i,--input <file>`               | Reads the source file and parses the contents as a CD. Alternatively, `--stdin` can be used to read the input CD from stdin. Using one of the two options is mandatory for all further operations. |
+| `--json`                          | Writes a "Schema.json" to the output directory. |
+| `-nt,--nobuiltintypes`            | If this option is used, built-in-types will not be considered. |
+| `--merge <file>`                  | Parses the file as a second CD and merges it with the input CD (iff semantically sound). The result is stored in memory. |
+| `-o,--output <dir>`               | Defines the path for generated files (optional; default is: `.`). |
+| `--open-world`                    | Compute the multi-instance open-world difference of 2 class diagrams when using `--semdiff` (optional). The method is either `reduction-based` or `alloy-based` (default is: `reduction-based`). |
+| `--path <dirlist>`                | Artifact path for importable symbols, separated by spaces (default is: `.`). |
+| `-pp,--prettyprint <file>`        | Prints the input CDs to stdout or to the specified file (optional). The output directory is specified by `-o`. |
+| `-r,--report <dir>`               | Prints reports of the parsed artifact to the specified directory (optional) or the output directory specified by `-o` (default is: `.`) This includes e.g. all defined packages, classes, interfaces, enums, and associations. The file name is "report.{CDName}" |
+| `--rule-based`                    | Uses a rule-based approach to `--semdiff` instead of the model-checker Alloy to compute the diff witnesses. Improved performance. |
+| `-s,--symboltable <file>`         | Stores the symbol table of the CD. The default value is `{CDName}.cdsym`. This option does not use the output directory specified by `-o`. |
+| `--semdiff <file>`                | Parses the file as a second CD and compares it semantically with the first CD that is currently in memory. Output: object diagrams (witnesses) that are valid in the first CD, but invalid in the second CD. This is a semantics-based, asymmetric diff. Details: https://www.se-rwth.de/topics/Semantics.php |
+| `--show <printoption>`            | Specifies the print option for `--syntaxdiff`: `diff` (default) prints the matched CD-elements with color-coded diffs (red for deleted, yellow for changed, and green for newly added elements). `cd1` will print only the old CD with color-coded diffs and `cd2` only the new CD. `all` combines all the previous options. `nocolor` prints the matched CD-elements with lines marked as - (deleted), ~ (changed), + (added). |
+| `--stdin`                         | Reads the input CD from stdin instead of the source file specified by `-i`. Using one of the two options is mandatory for all further operations. |
+| `--syntaxdiff <file>`             | Performs a syntactical difference analysis on the current CD in memory (old) and a second CD (new) and prints the result to stdout. Default: outputs the matched CD-elements with color-coded diffs (red for deleted, yellow for changed, and green for newly added elements) to stdout. |
 
 ### Building the Tool from the Sources (if desired)
  
@@ -496,7 +497,7 @@ For the following examples, download the files
 save them in `src`:
 
 ```shell
-java -jar MCCD.jar -i src/MyEmployees2.cd --merge src/MyWorkplace.cd -o out -pp
+java -jar MCCD.jar -i src/MyEmployees2.cd --merge src/MyWorkplace.cd -pp
 ```
 
 If `-pp` is used in conjunction with `--merge`, the name of the merged CD always corresponds to the name of the file (without the suffix `.cd`):
