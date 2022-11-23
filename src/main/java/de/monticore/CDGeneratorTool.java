@@ -7,10 +7,7 @@ import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeScopesGenitor;
-import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
-import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -220,17 +217,8 @@ public class CDGeneratorTool {
    * @return the symboltable of the ast
    */
   protected ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
-    ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
-    gs.clear();
-
-    CD4CodeScopesGenitor genitor = CD4CodeMill.scopesGenitor();
-    CD4CodeTraverser traverser = CD4CodeMill.traverser();
-    traverser.setCD4CodeHandler(genitor);
-    traverser.add4CD4Code(genitor);
-    genitor.putOnStack(gs);
-
+    CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
-    gs.addSubScope(scope);
     return scope;
   }
 
