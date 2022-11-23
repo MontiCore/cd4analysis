@@ -35,6 +35,7 @@ public class CDGeneratorTool {
 
   /**
    * main method of the CDGeneratorTool
+   *
    * @param args array of the command line arguments
    */
   public static void main(String[] args) {
@@ -46,6 +47,7 @@ public class CDGeneratorTool {
    * executes the arguments stated in the command line like parsing a given model to an ast,
    * creating and printing out a corresponding symbol table, checking cocos or generating java
    * files based of additional configuration templates or handwritten code
+   *
    * @param args array of the command line arguments
    */
   public void run(String[] args) {
@@ -77,7 +79,7 @@ public class CDGeneratorTool {
 
       String outputPath = (cmd.hasOption("o")) ? cmd.getOptionValue("o") : "";
       if(cmd.hasOption("s")) {
-        storeSymTab(scope, outputPath+cmd.getOptionValue("s"));
+        storeSymTab(scope, outputPath + cmd.getOptionValue("s"));
       }
 
       if(cmd.hasOption("gen")) {
@@ -110,12 +112,13 @@ public class CDGeneratorTool {
       }
 
     } catch(ParseException e) {
-      Log.error("0xA7105 Could not process parameters: "+e.getMessage());
+      Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
   }
 
   /**
    * initializes the input options
+   *
    * @return the collection of possible command options
    */
   protected Options initOptions() {
@@ -126,6 +129,7 @@ public class CDGeneratorTool {
 
   /**
    * adds additional options to the cli tool
+   *
    * @param options collection of all the possible options
    */
   protected void addOptions(org.apache.commons.cli.Options options) {
@@ -135,6 +139,11 @@ public class CDGeneratorTool {
       .argName("file")
       .hasArg()
       .desc("Reads the source file (mandatory) and parses the contents")
+      .build());
+
+    options.addOption(Option.builder("c")
+      .longOpt("checkcococs")
+      .desc("Checks all CoCos on the given mode.")
       .build());
 
     options.addOption(Option.builder("s")
@@ -173,6 +182,7 @@ public class CDGeneratorTool {
 
   /**
    * prints out all options as well as their description in case of there bein no input model
+   *
    * @param options collection of all options of commands line inputs
    */
   protected void printHelp(Options options) {
@@ -183,6 +193,7 @@ public class CDGeneratorTool {
 
   /**
    * parses the input model into an ast
+   *
    * @param model the location of the file containing the model
    * @return an ast representation of the input model
    */
@@ -204,6 +215,7 @@ public class CDGeneratorTool {
 
   /**
    * creates a symboltable for the current ast using the CD4CodeScopesGenitor
+   *
    * @param ast the current ast
    * @return the symboltable of the ast
    */
@@ -224,6 +236,7 @@ public class CDGeneratorTool {
 
   /**
    * checks all cocos on the current ast
+   *
    * @param ast the current ast
    */
   protected void runCoCos(ASTCDCompilationUnit ast) {
@@ -233,6 +246,7 @@ public class CDGeneratorTool {
 
   /**
    * prints the symboltable of the given ast out to a file
+   *
    * @param scope symboltable of the current ast
    * @param path location of the file containing the printed table
    */
