@@ -12,7 +12,6 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
-import de.monticore.cd4code.cocos.CD4CodeCoCos;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.generating.GeneratorSetup;
@@ -34,7 +33,22 @@ import java.util.stream.Collectors;
 
 public class CDGeneratorTool {
 
+  /**
+   * main method of the CDGeneratorTool
+   * @param args array of the command line arguments
+   */
   public static void main(String[] args) {
+    CDGeneratorTool tool = new CDGeneratorTool();
+    tool.run(args);
+  }
+
+  /**
+   * executes the arguments stated in the command line like parsing a given model to an ast,
+   * creating and printing out a corresponding symbol table, checking cocos or generating java
+   * files based of additional configuration templates or handwritten code
+   * @param args array of the command line arguments
+   */
+  public void run(String[] args) {
 
     Options options = initOptions();
 
@@ -49,11 +63,16 @@ public class CDGeneratorTool {
       Log.init();
       CD4CodeMill.init();
 
+      Log.enableFailQuick(false);
       ASTCDCompilationUnit ast = parse(cmd.getOptionValue("i"));
+      Log.enableFailQuick(true);
+
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
 
       if(cmd.hasOption("c")) {
+        Log.enableFailQuick(false);
         runCoCos(ast);
+        Log.enableFailQuick(true);
       }
 
       String outputPath = (cmd.hasOption("o")) ? cmd.getOptionValue("o") : "";
@@ -95,13 +114,21 @@ public class CDGeneratorTool {
     }
   }
 
-  protected static Options initOptions() {
+  /**
+   * initializes the input options
+   * @return the collection of possible command options
+   */
+  protected Options initOptions() {
     Options options = new Options();
     addOptions(options);
     return options;
   }
 
-  public static void addOptions(org.apache.commons.cli.Options options) {
+  /**
+   * adds additional options to the cli tool
+   * @param options collection of all the possible options
+   */
+  protected void addOptions(org.apache.commons.cli.Options options) {
 
     options.addOption(Option.builder("i")
       .longOpt("input")
@@ -144,13 +171,22 @@ public class CDGeneratorTool {
       .build());
   }
 
-  private static void printHelp(Options options) {
+  /**
+   * prints out all options as well as their description in case of there bein no input model
+   * @param options collection of all options of commands line inputs
+   */
+  protected void printHelp(Options options) {
     HelpFormatter formatter = new HelpFormatter();
     formatter.setWidth(80);
     formatter.printHelp("CDGeneratorTool", options);
   }
 
-  private static ASTCDCompilationUnit parse(String model) {
+  /**
+   * parses the input model into an ast
+   * @param model the location of the file containing the model
+   * @return an ast representation of the input model
+   */
+  protected ASTCDCompilationUnit parse(String model) {
     try {
       CD4CodeParser parser = CD4CodeMill.parser();
       Optional<ASTCDCompilationUnit> optAST = parser.parse(model);
@@ -166,7 +202,12 @@ public class CDGeneratorTool {
     return null;
   }
 
-  private static ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
+  /**
+   * creates a symboltable for the current ast using the CD4CodeScopesGenitor
+   * @param ast the current ast
+   * @return the symboltable of the ast
+   */
+  protected ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
     ICD4CodeGlobalScope gs = CD4CodeMill.globalScope();
     gs.clear();
 
@@ -181,12 +222,21 @@ public class CDGeneratorTool {
     return scope;
   }
 
-  private static void runCoCos(ASTCDCompilationUnit ast) {
+  /**
+   * checks all cocos on the current ast
+   * @param ast the current ast
+   */
+  protected void runCoCos(ASTCDCompilationUnit ast) {
     CD4CodeCoCoChecker checker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
     checker.checkAll(ast);
   }
 
-  private static void storeSymTab(ICD4CodeArtifactScope scope, String path) {
+  /**
+   * prints the symboltable of the given ast out to a file
+   * @param scope symboltable of the current ast
+   * @param path location of the file containing the printed table
+   */
+  protected void storeSymTab(ICD4CodeArtifactScope scope, String path) {
     CD4CodeSymbols2Json s2j = new CD4CodeSymbols2Json();
     s2j.store(scope, path);
   }
