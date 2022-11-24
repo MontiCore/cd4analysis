@@ -9,6 +9,7 @@ import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.*;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -66,6 +67,8 @@ public class CDGeneratorTool {
       ASTCDCompilationUnit ast = parse(cmd.getOptionValue("i"));
       Log.enableFailQuick(true);
 
+      ast = transform(ast);
+
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
 
       if (cmd.hasOption("c")) {
@@ -86,7 +89,7 @@ public class CDGeneratorTool {
 
         if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
-              Arrays.stream(cmd.getOptionValues("fp"))
+              Arrays.stream(cmd.getOptionValues("tp"))
                   .map(Paths::get)
                   .map(Path::toFile)
                   .collect(Collectors.toList()));
@@ -183,6 +186,14 @@ public class CDGeneratorTool {
             .argName("path")
             .desc("Sets the path for additional templates.")
             .build());
+
+    options.addOption(
+      Option.builder("hwc")
+        .longOpt("handwrittencode")
+        .hasArg()
+        .argName("hwcpath")
+        .desc("Sets the path for additional, handwritten classes.")
+        .build());
   }
 
   /**
@@ -250,6 +261,12 @@ public class CDGeneratorTool {
   protected void storeSymTab(ICD4CodeArtifactScope scope, String path) {
     CD4CodeSymbols2Json s2j = new CD4CodeSymbols2Json();
     s2j.store(scope, path);
+  }
+
+  protected ASTCDCompilationUnit transform(ASTCDCompilationUnit ast) {
+    CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
+    ast.accept(trafo.getTraverser());
+    return ast;
   }
 
 }

@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram Example {
+
+  class A extends B;
+
+  class B implements C {
+    B();
+    boolean foo(int i);
+  }
+
+  association A <-> B;
+
+  interface C;
+
+}
