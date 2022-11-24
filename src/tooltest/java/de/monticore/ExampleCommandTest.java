@@ -302,10 +302,7 @@ public class ExampleCommandTest extends OutTestBasis {
   @Test
   public void testTwoCDsMergeExample1() {
     final String fileName = "doc/MyEmployees2.cd";
-    CD4CodeTool.main(
-        new String[] {
-          "-i", fileName, "--merge", "doc/MyWorkplace.cd", "-o", outputPath + "out", "-pp"
-        });
+    CD4CodeTool.main(new String[] {"-i", fileName, "--merge", "doc/MyWorkplace.cd", "-pp"});
     assertTrue(getErr(), getErr().isEmpty());
   }
 
