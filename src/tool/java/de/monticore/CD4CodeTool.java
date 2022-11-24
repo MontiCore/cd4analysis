@@ -115,17 +115,29 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           ast = parse(modelReader);
         }
 
+        final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
+        boolean useBuiltInTypes = !cmd.hasOption("nt");
+
         if (cmd.hasOption("merge")) {
+          if (useBuiltInTypes) {
+            BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+          }
           mergeCDs();
-          init();
+          CD4CodeMill.globalScope().clear();
         }
 
         if (cmd.hasOption("semdiff")) {
+          if (useBuiltInTypes) {
+            BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+          }
           computeSemDiff();
           CD4CodeMill.globalScope().clear();
         }
 
         if (cmd.hasOption("syntaxdiff")) {
+          if (useBuiltInTypes) {
+            BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+          }
           computeSyntaxDiff();
           CD4CodeMill.globalScope().clear();
         }
@@ -168,8 +180,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           new CD4CodeDirectCompositionTrafo().transform(ast);
         }
 
-        boolean useBuiltInTypes = !cmd.hasOption("nt");
-
         // create a symbol table with provided model paths
         String[] modelPath = {"."};
         if (cmd.hasOption("path")) {
@@ -177,7 +187,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         artifactScope = createSymbolTable(ast);
-        final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
         for (String path : modelPath) {
           globalScope.getSymbolPath().addEntry(Paths.get(path));
         }
@@ -637,7 +646,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
 
     // use fully qualified names for attributes and associations
-    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CDFullNameTrafo().transform(ast1);
     new CDFullNameTrafo().transform(ast2);
 
@@ -686,14 +694,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
 
     // use fully qualified names for attributes and associations
-    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CDFullNameTrafo().transform(ast1);
     new CDFullNameTrafo().transform(ast2);
 
     ast1 = ast1.deepClone();
     ast2 = ast2.deepClone();
 
-    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     new CD4CodeDirectCompositionTrafo().transform(ast1);
     new CD4CodeDirectCompositionTrafo().transform(ast2);
     CD4CodeMill.scopesGenitorDelegator().createFromAST(ast1);

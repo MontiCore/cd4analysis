@@ -45,6 +45,6 @@ classdiagram mergedCD{
 
   association assoc1  [*]  A <-> C  [*]  ;
 
-  association assoc1  [1]  D [[test]](typeD) -> (typeE) E ;
-
+  //todo: fix for association assoc1 [1] D [[test]] (typeD) -> (typeE) E ;
+  association assoc1 [1] D [String] (typeD) -> (typeE) E ;
 }
