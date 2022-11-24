@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram MyLectures {
+  class Student {
+    int studentID;
+  }
+  class Professor {
+    String chair;
+  }
+  class Lecture{
+    int credits;
+  }
+
+  association [1] Professor (lecturer) <-> (holds) Lecture;
+  association Student (attendee) -> (attends) Lecture [*];
+}

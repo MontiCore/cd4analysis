@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram MyTeaching {
+  abstract class Employee{
+    int salary;
+  }
+	class Professor extends Employee{
+	  String chair;
+	}
+	class Lecture {
+    String description;
+  }
+	class Room {
+	  int roomNumber;
+	}
+
+	association teaching [1] Professor -> (holds) Lecture [1..*];
+	association assignment Room -- Lecture;
+}
