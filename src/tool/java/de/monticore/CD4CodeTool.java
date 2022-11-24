@@ -37,7 +37,6 @@ import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
-import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -730,21 +729,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
   /** perform merge of 2 CDs */
   public void mergeCDs() {
     Set<ASTCDCompilationUnit> mergeSet = new HashSet<>();
-
-    // prepare CD1
-    new CD4CodeAfterParseTrafo().transform(ast);
-    new CD4CodeDirectCompositionTrafo().transform(ast);
-    CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
-    ast.accept(pp.getTraverser());
-    mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast)).get());
-
-    // prepare CD2
-    ASTCDCompilationUnit ast2 = parse(cmd.getOptionValue("merge"));
-    new CD4CodeAfterParseTrafo().transform(ast2);
-    new CD4CodeDirectCompositionTrafo().transform(ast2);
-    pp = new CD4CodeFullPrettyPrinter();
-    ast2.accept(pp.getTraverser());
-    mergeSet.add(CDUtils.parseCDCompilationUnit(pp.prettyprint(ast2)).get());
+    mergeSet.add(ast);
+    mergeSet.add(parse(cmd.getOptionValue("merge")));
 
     String cdName = "Merge.cd";
     if (cmd.hasOption("pp")
