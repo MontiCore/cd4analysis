@@ -225,6 +225,7 @@ public class CDGeneratorTool {
   protected ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
     return scope;
   }
 
