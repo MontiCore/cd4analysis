@@ -15,6 +15,7 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +60,7 @@ public class CDGeneratorTool {
       }
       Log.init();
       CD4CodeMill.init();
+      BasicSymbolsMill.initializePrimitives();
 
       Log.enableFailQuick(false);
       ASTCDCompilationUnit ast = parse(cmd.getOptionValue("i"));
