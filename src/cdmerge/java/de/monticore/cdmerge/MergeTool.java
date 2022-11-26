@@ -24,6 +24,7 @@ import de.monticore.cdmerge.merging.mergeresult.MergeBlackBoard;
 import de.monticore.cdmerge.merging.mergeresult.MergeResult;
 import de.monticore.cdmerge.merging.mergeresult.MergeStepResult;
 import de.monticore.cdmerge.refactor.PostMergeRefactoring;
+import de.monticore.cdmerge.util.CDMergeInheritanceHelper;
 import de.monticore.cdmerge.util.CDUtils;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
 import de.monticore.cdmerge.validation.PostMergeValidation;
@@ -407,7 +408,9 @@ public class MergeTool {
       return mergeBlackBoard.finalizeMerge(false);
     }
 
-    ASTCDCompilationUnit mergedCD = mergeResult.get();
+    ASTCDCompilationUnit mergedCD =
+        CDMergeInheritanceHelper.mergeRedundantAttributes(
+            mergeResult.get(), getConfig().allowPrimitiveTypeConversion());
 
     // Set the final name
     mergedCD

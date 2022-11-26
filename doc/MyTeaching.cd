@@ -11,10 +11,6 @@ classdiagram MyTeaching {
 	class Lecture {
     String description;
   }
-	class Room {
-	  int roomNumber;
-	}
 
-	association teaching [1] Professor -> (holds) Lecture [1..*];
-	association assignment Room -- Lecture;
+	association [1] Professor -> (holds) Lecture [1..*];
 }

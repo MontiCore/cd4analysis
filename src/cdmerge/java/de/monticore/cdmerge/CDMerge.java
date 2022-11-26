@@ -50,8 +50,7 @@ public class CDMerge {
     CDMergeConfig.Builder builder =
         new CDMergeConfig.Builder(false)
             .withParam(MergeParameter.AST_BASED)
-            .withParam(MergeParameter.OUTPUT_NAME, name)
-            .withParam(MergeParameter.LOG_SILENT);
+            .withParam(MergeParameter.OUTPUT_NAME, name);
 
     mergeParameters.forEach(builder::withParam);
 
