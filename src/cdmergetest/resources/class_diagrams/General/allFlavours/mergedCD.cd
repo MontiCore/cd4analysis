@@ -23,7 +23,6 @@ classdiagram mergedCD{
 	 String test;
 
     //Lastname from class E
-    String lastname;
     int drei;
   }
 

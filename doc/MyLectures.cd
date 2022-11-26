@@ -6,6 +6,7 @@ classdiagram MyLectures {
     int studentID;
   }
   class Professor {
+    int salary;
     String chair;
   }
   class Lecture{
@@ -13,5 +14,5 @@ classdiagram MyLectures {
   }
 
   association [1] Professor (lecturer) <-> (holds) Lecture;
-  association Student (attendee) -> (attends) Lecture [*];
+  association attendance Student -- Lecture [*];
 }

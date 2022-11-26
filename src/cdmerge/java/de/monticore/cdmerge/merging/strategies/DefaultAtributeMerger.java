@@ -158,43 +158,40 @@ public class DefaultAtributeMerger extends AttributeMerger {
 
           } else {
             if (getConfig().allowPrimitiveTypeConversion()) {
-              if (CDUtils.getTypeName(attr1.getElement().getMCType())
-                  .equals(CDUtils.getTypeName(matches.get(0).getElement().getMCType()))) {
+              Optional<ASTMCType> commonSuperType =
+                  JPrimitiveType.getCommonSuperType(
+                      attr1.getElement().getMCType(), matches.get(0).getElement().getMCType());
 
-                Optional<ASTMCType> commonSuperType =
-                    JPrimitiveType.getCommonSuperType(
-                        attr1.getElement().getMCType(), matches.get(0).getElement().getMCType());
-                if (commonSuperType.isPresent()) {
-                  attr1.getElement().setMCType(commonSuperType.get());
-                  mergedAttr = Optional.of(attr1.getElement());
-                  log(
-                      ErrorLevel.INFO,
-                      "Merged attribute "
-                          + getBlackBoard().getCurrentInputCd1().getCDDefinition().getName()
-                          + "."
-                          + input1.getName()
-                          + "."
-                          + attr1.getElement().getName()
-                          + "["
-                          + CDUtils.getTypeName(attr1.getElement().getMCType())
-                          + "]"
-                          + " with "
-                          + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
-                          + "."
-                          + input2.getName()
-                          + "."
-                          + matches.get(0).getElement().getName()
-                          + "["
-                          + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
-                          + "] with result type "
-                          + CDUtils.getTypeName(commonSuperType.get()));
-                } else {
-                  logError(
-                      "Could not detect common super type for attributes! Merged Class will only "
-                          + "contain attribute with type from first attribute",
-                      attr1.getElement(),
-                      matches.get(0).getElement());
-                }
+              if (commonSuperType.isPresent()) {
+                attr1.getElement().setMCType(commonSuperType.get());
+                mergedAttr = Optional.of(attr1.getElement());
+                log(
+                    ErrorLevel.INFO,
+                    "Merged attribute "
+                        + getBlackBoard().getCurrentInputCd1().getCDDefinition().getName()
+                        + "."
+                        + input1.getName()
+                        + "."
+                        + attr1.getElement().getName()
+                        + "["
+                        + CDUtils.getTypeName(attr1.getElement().getMCType())
+                        + "]"
+                        + " with "
+                        + getBlackBoard().getCurrentInputCd2().getCDDefinition().getName()
+                        + "."
+                        + input2.getName()
+                        + "."
+                        + matches.get(0).getElement().getName()
+                        + "["
+                        + CDUtils.getTypeName(matches.get(0).getElement().getMCType())
+                        + "] with result type "
+                        + CDUtils.getTypeName(commonSuperType.get()));
+              } else {
+                logError(
+                    "Could not detect common super type for attributes! Merged Class will only "
+                        + "contain attribute with type from first attribute",
+                    attr1.getElement(),
+                    matches.get(0).getElement());
               }
             } else {
               log(
