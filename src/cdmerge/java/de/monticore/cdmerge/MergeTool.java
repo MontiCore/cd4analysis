@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-
 import org.apache.commons.io.FileUtils;
 
 /** Merges a list of class diagrams according to a provided configuration and returns the results */
@@ -414,9 +413,7 @@ public class MergeTool {
             mergeResult.get(), getConfig().allowPrimitiveTypeConversion());
 
     // Set the final name
-    mergedCD
-        .getCDDefinition()
-        .setName(mergedName.orElseGet(() -> getConfig().getOutputName()));
+    mergedCD.getCDDefinition().setName(mergedName.orElseGet(() -> getConfig().getOutputName()));
 
     // First see if already some severe errors occurred during the merging
     // process
