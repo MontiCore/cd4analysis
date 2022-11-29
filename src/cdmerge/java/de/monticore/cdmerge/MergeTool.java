@@ -35,6 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.FileUtils;
 
 /** Merges a list of class diagrams according to a provided configuration and returns the results */
@@ -85,7 +87,7 @@ public class MergeTool {
 
   private void mergeImports(
       MergeBlackBoard mergeBlackBoard, ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2) {
-    Map<String, ASTMCImportStatement> newImports = new HashMap<String, ASTMCImportStatement>();
+    Map<String, ASTMCImportStatement> newImports = new HashMap<>();
     for (ASTMCImportStatement impStatement : cd1.getMCImportStatementList()) {
       newImports.put(impStatement.getQName(), impStatement);
     }
@@ -93,8 +95,7 @@ public class MergeTool {
       newImports.put(impStatement.getQName(), impStatement);
     }
 
-    mergeBlackBoard.setImportStatementList(
-        new ArrayList<ASTMCImportStatement>(newImports.values()));
+    mergeBlackBoard.setImportStatementList(new ArrayList<>(newImports.values()));
   }
 
   private void setPackage(
@@ -317,8 +318,8 @@ public class MergeTool {
                 cd2Opt.get());
             return false;
           }
-        } else if ((!cd1Opt.isPresent() && cd2Opt.isPresent())
-            || (cd1Opt.isPresent() && !cd2Opt.isPresent())) {
+        } else if ((cd1Opt.isEmpty() && cd2Opt.isPresent())
+            || (cd1Opt.isPresent() && cd2Opt.isEmpty())) {
           mergeBlackBoard.addLog(
               ErrorLevel.ERROR,
               "Different merge results (one empty) for different merge sequence",
@@ -340,16 +341,16 @@ public class MergeTool {
 
   private <E> List<List<E>> generatePermutations(List<E> original) {
     if (original.isEmpty()) {
-      List<List<E>> result = new ArrayList<List<E>>();
-      result.add(new ArrayList<E>());
+      List<List<E>> result = new ArrayList<>();
+      result.add(new ArrayList<>());
       return result;
     }
     E firstElement = original.remove(0);
-    List<List<E>> returnValue = new ArrayList<List<E>>();
+    List<List<E>> returnValue = new ArrayList<>();
     List<List<E>> permutations = generatePermutations(original);
     for (List<E> smallerPermutated : permutations) {
       for (int index = 0; index <= smallerPermutated.size(); index++) {
-        List<E> temp = new ArrayList<E>(smallerPermutated);
+        List<E> temp = new ArrayList<>(smallerPermutated);
         temp.add(index, firstElement);
         returnValue.add(temp);
       }
@@ -367,7 +368,7 @@ public class MergeTool {
       ASTCDCompilationUnit cd1, ASTCDCompilationUnit cd2, Optional<String> mergedName)
       throws MergingException {
 
-    List<ASTCDDefinition> inputCds = new ArrayList<ASTCDDefinition>();
+    List<ASTCDDefinition> inputCds = new ArrayList<>();
     inputCds.add(cd1.getCDDefinition());
     inputCds.add(cd2.getCDDefinition());
 
@@ -415,7 +416,7 @@ public class MergeTool {
     // Set the final name
     mergedCD
         .getCDDefinition()
-        .setName(mergedName.isPresent() ? mergedName.get() : getConfig().getOutputName());
+        .setName(mergedName.orElseGet(() -> getConfig().getOutputName()));
 
     // First see if already some severe errors occurred during the merging
     // process
@@ -516,10 +517,10 @@ public class MergeTool {
         "Checking CD4Code context conditions for merged class diagram.",
         MergePhase.VALIDATION);
     // Ensure that the CoCos won't terminate the program
-
+    boolean failQuick = Log.isFailQuickEnabled();
     Log.enableFailQuick(false);
 
-    Log.getFindings().clear();
+    long findingCount = Log.getFindingsCount();
     // FIXME Workaround for faulty CoCos CD4CodeCoCoChecker checker = new
     // CD4CodeCoCosDelegator().getCheckerForAllCoCos();
     // We should check all default cocos here as this is the merge result
@@ -533,7 +534,9 @@ public class MergeTool {
           ErrorLevel.ERROR, "CoCo-Error: " + e.getMessage(), MergePhase.VALIDATION, cd);
     }
 
-    for (Finding found : Log.getFindings()) {
+    List<Finding> logs = Log.getFindings().stream().skip(findingCount).collect(Collectors.toList());
+
+    for (Finding found : logs) {
       if (found.isError()) {
         mergeBlackBoard.addLog(
             ErrorLevel.ERROR, "CoCo-Error: " + found.getMsg(), MergePhase.VALIDATION, cd);
@@ -544,6 +547,7 @@ public class MergeTool {
     }
     mergeBlackBoard.addLog(
         ErrorLevel.FINE, "Context conditions check completed.", MergePhase.VALIDATION);
+    Log.enableFailQuick(failQuick);
   }
 
   public CDMergeConfig getConfig() {
