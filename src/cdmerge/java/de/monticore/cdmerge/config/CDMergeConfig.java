@@ -4,11 +4,8 @@ package de.monticore.cdmerge.config;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdmerge.log.ErrorLevel;
@@ -357,10 +354,6 @@ public class CDMergeConfig {
   public void processCDs(List<ASTCDCompilationUnit> inputCDs) {
     this.inputCDs = new ArrayList<>();
     for (ASTCDCompilationUnit inputCD : inputCDs) {
-      final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-      globalScope.clear();
-      BuiltInTypes.addBuiltInTypes(globalScope);
-
       CDUtils.RefreshSymbolTable(inputCD);
       // Ensure every CDElement is in a package and perform default AST Trafos
       final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
@@ -401,9 +394,6 @@ public class CDMergeConfig {
 
   private Optional<ASTCDCompilationUnit> parseCDFile(String modelfile) {
     try {
-      final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-      globalScope.clear();
-      BuiltInTypes.addBuiltInTypes(globalScope);
       return CDUtils.parseCDFile(modelfile, true);
     } catch (IOException e) {
       Log.error("Unable to parse modelfile " + modelfile + ". " + e.getMessage());

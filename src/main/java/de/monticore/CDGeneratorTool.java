@@ -218,12 +218,12 @@ public class CDGeneratorTool {
       CD4CodeParser parser = CD4CodeMill.parser();
       Optional<ASTCDCompilationUnit> optAST = parser.parse(model);
 
-      if(!parser.hasErrors() && optAST.isPresent()) {
+      if (!parser.hasErrors() && optAST.isPresent()) {
         return optAST.get();
       }
       Log.error("0xA1051 Model could not be parsed");
 
-    } catch(NullPointerException | IOException e) {
+    } catch (NullPointerException | IOException e) {
       Log.error("0xA1051 Failed to parse " + model, e);
     }
     return null;
