@@ -25,6 +25,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithCoCos() {
     CDGeneratorTool.main(new String[] {
       "-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc",
       "-c"});
     assertTrue(true);
   }
@@ -33,6 +34,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithSymbolTable() {
     CDGeneratorTool.main(new String[] {
       "-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc",
       "-s", "target/generated/example/cdgentool/Example.cdsym"});
     assertTrue(new File("target/generated/example/cdgentool/Example.cdsym").isFile());
   }
@@ -41,6 +43,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithJavaGeneration() {
     CDGeneratorTool.main(new String[] {
       "-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc",
       "-o", "target/generated/example/standard/",
       "-gen"});
     assertTrue(new File("target/generated/example/standard/de/monticore/A.java").isFile());
@@ -50,6 +53,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithCustomGeneratorTemplate() {
     CDGeneratorTool.main(new String[] {
       "-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc",
       "-o", "target/generated/example/ct/",
       "-gen",
       "-ct", "de.monticore.cdgentool.NewCustomTemplate"});
@@ -60,6 +64,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithAdditionalTemplates() {
     CDGeneratorTool.main(new String[] {
       "-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc",
       "-o", "target/generated/example/tp/",
       "-gen",
       "-tp", "src/test/resources/de/monticore/cdgentool/templates/"});
@@ -70,6 +75,7 @@ public class CDGeneratorToolTest {
   public void testGeneratorToolWithHWC() {
     CDGeneratorTool.main(new String[] {
       "-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc",
       "-o", "target/generated/example/hwc/",
       "-gen",
       "-hwc", "src/test/resources/de/monticore/cdgentool/hwc"

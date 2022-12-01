@@ -2,7 +2,9 @@
 
 classdiagram Example {
 
-  class A extends B;
+  class A extends B {
+    String s;
+  }
 
   class B implements C {
     B();
