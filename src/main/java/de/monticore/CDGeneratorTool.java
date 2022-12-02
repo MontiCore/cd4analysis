@@ -59,10 +59,11 @@ public class CDGeneratorTool {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
-      if(!cmd.hasOption("i")) {
+      if(!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
       }
+
       Log.init();
       CD4CodeMill.init();
       BasicSymbolsMill.initializePrimitives();
@@ -75,6 +76,11 @@ public class CDGeneratorTool {
       Log.enableFailQuick(true);
 
       ast = transform(ast);
+
+      if(cmd.hasOption("sym")) {
+        MCPath path = new MCPath(cmd.getOptionValue("sym"));
+        CD4CodeMill.globalScope().setSymbolPath(path);
+      }
 
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
 
@@ -143,6 +149,12 @@ public class CDGeneratorTool {
   protected void addOptions(org.apache.commons.cli.Options options) {
 
     options.addOption(
+      Option.builder("h")
+        .longOpt("help")
+        .desc("Prints out the help options")
+        .build());
+
+    options.addOption(
       Option.builder("i")
         .longOpt("input")
         .argName("file")
@@ -162,6 +174,14 @@ public class CDGeneratorTool {
         .argName("file")
         .hasArg()
         .desc("Serialized the Symbol table of the given artifact.")
+        .build());
+
+    options.addOption(
+      Option.builder("sym")
+        .longOpt("symbolpath")
+        .hasArg()
+        .argName("symbolpath")
+        .desc("Sets the Symbol Path in the global scope.")
         .build());
 
     options.addOption(
