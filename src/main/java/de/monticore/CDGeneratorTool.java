@@ -65,9 +65,10 @@ public class CDGeneratorTool {
       }
       Log.init();
       CD4CodeMill.init();
-      BasicSymbolsMill.initializePrimitives();
       if(cmd.hasOption("c2mc")) {
         initializeClass2MC();
+      } else {
+        BasicSymbolsMill.initializePrimitives();
       }
 
       Log.enableFailQuick(false);

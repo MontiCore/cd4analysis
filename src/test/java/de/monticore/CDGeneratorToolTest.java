@@ -16,6 +16,7 @@ public class CDGeneratorToolTest {
 
   @BeforeEach
   public void before() {
+    CD4CodeMill.globalScope().clear();
     CD4CodeMill.reset();
     BasicSymbolsMill.reset();
     LogStub.init();
