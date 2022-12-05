@@ -29,6 +29,6 @@ ${defineHookPoint("InterfaceContent:Elements")}
 </#list>
 
 <#list ast.getCDMethodList() as method>
-  <#if !method.getModifier().isAbstract()>default </#if>${tc.include("cd2java.Method", method)}
+  ${tc.include("cd2java.InterfaceMethod", method)}
 </#list>
 }
