@@ -15,8 +15,4 @@ classdiagram Example {
 
   interface C;
 
-  interface D {
-    boolean bar();
-  }
-
 }
