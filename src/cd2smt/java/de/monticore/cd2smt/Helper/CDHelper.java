@@ -4,10 +4,12 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd2smt.Helper.visitor.RemoveAssocCardinality;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
@@ -190,7 +192,7 @@ public class CDHelper {
     return attr.get();
   }
 
-  public static boolean containsAttribute(ASTCDType astcdType, String attributeName) {
+  public static boolean containsProperAttribute(ASTCDType astcdType, String attributeName) {
     for (ASTCDAttribute attribute1 : astcdType.getCDAttributeList()) {
       if (attribute1.getName().equals(attributeName)) {
         return true;
@@ -231,5 +233,14 @@ public class CDHelper {
       res.add(astcType1);
       getAllSuperType(astcType1, cd, res);
     }
+  }
+
+  public static void removeAssocCard(ASTCDCompilationUnit ast) {
+    // transformations that need an already created symbol table
+    createCDSymTab(ast);
+    final CDAssociationVisitor2 visitor2 = new RemoveAssocCardinality();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(visitor2);
+    ast.accept(traverser);
   }
 }

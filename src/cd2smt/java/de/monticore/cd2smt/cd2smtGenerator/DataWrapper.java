@@ -120,7 +120,7 @@ public class DataWrapper implements ClassData, AssociationsData, InheritanceData
 
   protected Optional<Expr<? extends Sort>> getAttributeHelper(
       ASTCDType astCdType, String attributeName, Expr<? extends Sort> cDTypeExpr) {
-    if (CDHelper.containsAttribute(astCdType, attributeName)) {
+    if (CDHelper.containsProperAttribute(astCdType, attributeName)) {
       return Optional.of(classStrategy.getAttribute(astCdType, attributeName, cDTypeExpr));
     }
     List<ASTCDType> superclassList =
