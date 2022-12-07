@@ -21,3 +21,4 @@ The possible options are:
 | `-tp` `--template`         | Sets the path of additional templates that can be used in the generation process                         |
 | `-hwc` `--handwrittencode` | Sets the path for additional handwritten code to be considered in the generation process                 |
 | `-ct` `--configtemplate`   | Sets a different template for generator configurations to replace the default template                   |
+| `-v` `--version`           | Prints out the current version of the tool to the console                                                |
