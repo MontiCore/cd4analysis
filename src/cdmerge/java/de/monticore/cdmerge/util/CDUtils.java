@@ -1,13 +1,11 @@
 package de.monticore.cdmerge.util;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -446,10 +444,9 @@ public class CDUtils {
   }
 
   public static void RefreshSymbolTable(ASTCDCompilationUnit cd) {
-    final ICD4CodeGlobalScope globalScope = CD4CodeMill.globalScope();
-    // We parse CDs that contain identical symbols so we need a fresh symbol table for each parse
-    globalScope.clear();
-    BuiltInTypes.addBuiltInTypes(globalScope);
+    if (cd.getEnclosingScope() != null) {
+      CD4CodeMill.globalScope().removeSubScope(cd.getEnclosingScope());
+    }
 
     // Resolve the symboltable
     CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
