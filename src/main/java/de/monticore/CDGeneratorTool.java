@@ -16,7 +16,6 @@ import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.class2mc.OOClass2MCResolver;
 import de.monticore.cli.updateChecker.UpdateCheckerRunnable;
-import de.monticore.codegen.cd2java._symboltable.SymbolTableService;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -26,7 +25,6 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,7 +32,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class CDGeneratorTool {
@@ -92,7 +89,7 @@ public class CDGeneratorTool {
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
 
       if(cmd.hasOption("v")) {
-        printVersion(ast);
+        printVersion();
       }
 
       if(cmd.hasOption("c")) {
@@ -324,7 +321,7 @@ public class CDGeneratorTool {
     CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
   }
 
-  protected void printVersion(ASTCDCompilationUnit ast) {
+  protected void printVersion() {
     String mcVersion = new UpdateCheckerRunnable().getLocalVersion();
     System.out.println("version " + mcVersion);
   }
