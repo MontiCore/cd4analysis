@@ -5,9 +5,13 @@ import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code.CD4CodeTool;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -19,6 +23,8 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -27,9 +33,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.*;
 
-public class CDGeneratorTool {
+public class CDGeneratorTool extends CD4CodeTool {
 
   /**
    * main method of the CDGeneratorTool
@@ -82,31 +87,35 @@ public class CDGeneratorTool {
 
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
 
-      if (cmd.hasOption("c")) {
+      if(cmd.hasOption("v")) {
+        printVersion();
+      }
+
+      if(cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         runCoCos(ast);
         Log.enableFailQuick(true);
       }
 
       String outputPath = (cmd.hasOption("o")) ? cmd.getOptionValue("o") : "";
-      if (cmd.hasOption("s")) {
+      if(cmd.hasOption("s")) {
         storeSymTab(scope, outputPath + cmd.getOptionValue("s"));
       }
 
-      if (cmd.hasOption("gen")) {
+      if(cmd.hasOption("gen")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
 
-        if (cmd.hasOption("tp")) {
+        if(cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
-              Arrays.stream(cmd.getOptionValues("tp"))
-                  .map(Paths::get)
-                  .map(Path::toFile)
-                  .collect(Collectors.toList()));
+            Arrays.stream(cmd.getOptionValues("tp"))
+              .map(Paths::get)
+              .map(Path::toFile)
+              .collect(Collectors.toList()));
         }
 
-        if (cmd.hasOption("hwc")) {
+        if(cmd.hasOption("hwc")) {
           setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
           TopDecorator topDecorator = new TopDecorator(setup.getHandcodedPath());
           ast = topDecorator.decorate(ast);
@@ -123,20 +132,9 @@ public class CDGeneratorTool {
         hpp.processValue(tc, ast, configTemplateArgs);
       }
 
-    } catch (ParseException e) {
+    } catch(ParseException e) {
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
-  }
-
-  /**
-   * initializes the input options
-   *
-   * @return the collection of possible command options
-   */
-  protected Options initOptions() {
-    Options options = new Options();
-    addOptions(options);
-    return options;
   }
 
   /**
@@ -144,35 +142,13 @@ public class CDGeneratorTool {
    *
    * @param options collection of all the possible options
    */
-  protected void addOptions(org.apache.commons.cli.Options options) {
+  public Options addAdditionalOptions(Options options) {
 
     options.addOption(
-      Option.builder("h")
-        .longOpt("help")
-        .desc("Prints out the help options")
+      Option.builder("c")
+        .longOpt("checkcococs")
+        .desc("Checks all CoCos on the given mode.")
         .build());
-
-    options.addOption(
-      Option.builder("i")
-        .longOpt("input")
-        .argName("file")
-        .hasArg()
-        .desc("Reads the source file (mandatory) and parses the contents")
-        .build());
-
-    options.addOption(
-        Option.builder("c")
-            .longOpt("checkcococs")
-            .desc("Checks all CoCos on the given mode.")
-            .build());
-
-    options.addOption(
-        Option.builder("s")
-            .longOpt("symboltable")
-            .argName("file")
-            .hasArg()
-            .desc("Serialized the Symbol table of the given artifact.")
-            .build());
 
     options.addOption(
       Option.builder("sym")
@@ -191,86 +167,42 @@ public class CDGeneratorTool {
         .build());
 
     options.addOption(
-        Option.builder("gen")
-            .longOpt("generate")
-            .desc("Generates the java code of the given artifact.")
-            .build());
+      Option.builder("gen")
+        .longOpt("generate")
+        .desc("Generates the java code of the given artifact.")
+        .build());
 
     options.addOption(
-        Option.builder("ct")
-            .longOpt("configtemplate")
-            .hasArg()
-            .argName("template")
-            .desc("Sets a template for configuration.")
-            .build());
+      Option.builder("ct")
+        .longOpt("configtemplate")
+        .hasArg()
+        .argName("template")
+        .desc("Sets a template for configuration.")
+        .build());
 
     options.addOption(
-        Option.builder("tp")
-            .longOpt("template")
-            .hasArg()
-            .argName("path")
-            .desc("Sets the path for additional templates.")
-            .build());
+      Option.builder("tp")
+        .longOpt("template")
+        .hasArg()
+        .argName("path")
+        .desc("Sets the path for additional templates.")
+        .build());
 
     options.addOption(
-        Option.builder("hwc")
-            .longOpt("handwrittencode")
-            .hasArg()
-            .argName("hwcpath")
-            .desc("Sets the path for additional, handwritten classes.")
-            .build());
+      Option.builder("hwc")
+        .longOpt("handwrittencode")
+        .hasArg()
+        .argName("hwcpath")
+        .desc("Sets the path for additional, handwritten classes.")
+        .build());
 
     options.addOption(
-        Option.builder("c2mc")
-            .longOpt("class2mc")
-            .desc("Enables to resolve java classes in the model path")
-            .build());
-  }
+      Option.builder("c2mc")
+        .longOpt("class2mc")
+        .desc("Enables to resolve java classes in the model path")
+        .build());
 
-  /**
-   * prints out all options as well as their description in case of there bein no input model
-   *
-   * @param options collection of all options of commands line inputs
-   */
-  protected void printHelp(Options options) {
-    HelpFormatter formatter = new HelpFormatter();
-    formatter.setWidth(80);
-    formatter.printHelp("CDGeneratorTool", options);
-  }
-
-  /**
-   * parses the input model into an ast
-   *
-   * @param model the location of the file containing the model
-   * @return an ast representation of the input model
-   */
-  protected ASTCDCompilationUnit parse(String model) {
-    try {
-      CD4CodeParser parser = CD4CodeMill.parser();
-      Optional<ASTCDCompilationUnit> optAST = parser.parse(model);
-
-      if (!parser.hasErrors() && optAST.isPresent()) {
-        return optAST.get();
-      }
-      Log.error("0xA1051 Model could not be parsed");
-
-    } catch (NullPointerException | IOException e) {
-      Log.error("0xA1051 Failed to parse " + model, e);
-    }
-    return null;
-  }
-
-  /**
-   * creates a symboltable for the current ast using the CD4CodeScopesGenitor
-   *
-   * @param ast the current ast
-   * @return the symboltable of the ast
-   */
-  protected ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
-    CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
-    ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
-    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
-    return scope;
+    return options;
   }
 
   /**
@@ -294,14 +226,35 @@ public class CDGeneratorTool {
     s2j.store(scope, path);
   }
 
+  /**
+   * transforms the ast using th
+   *
+   * @param ast
+   * @return
+   */
   protected ASTCDCompilationUnit transform(ASTCDCompilationUnit ast) {
     CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
     ast.accept(trafo.getTraverser());
     return ast;
   }
 
+  /**
+   * creates a symboltable for the current ast using the CD4CodeScopesGenitor
+   *
+   * @param ast the current ast
+   * @return the symboltable of the ast
+   */
+  public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
+    CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
+    ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
+    return scope;
+  }
+
+
   protected void initializeClass2MC() {
     CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
     CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
   }
+
 }
