@@ -32,7 +32,7 @@ ext {
   testGrammarDir = "src/test/grammars"
   testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
   findbugs_version = "3.0.2"
-  guava_version = "30.0-jre"
+  guava_version = "31.1-jre"
   antlr_version = "4.7-1"
   plantuml_version = "1.2020.15"
   jackson_version = "2.13.4"
@@ -235,7 +235,7 @@ grammarDependencies.each {
   task "generateGrammar${grammarName}"(type: MCTask) {
     def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
     dependsOn dependsOnGrammars
-
+    templatePath("$projectDir/src/main/grammars")
     def grammarFile = file g
     grammar = grammarFile
     outputDir = file grammarOutDir
@@ -256,9 +256,8 @@ grammarDependencies.each {
   task "generateTRGrammar${grammarName}"(type: MCTask) {
     def dependsOnTRGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateTRGrammar${name}"] }
     dependsOn dependsOnTRGrammars
-
+    templatePath("$projectDir/src/main/grammars")
     def grammarFile = file(grammarOutDir + "/" + de.monticore.dstlgen.util.DSTLPathUtil.getTRGrammar([file("src/main/grammars").toString()], file (g))) // Replace with getTRFile(file (g)) once the plugin is updated and in the upstream
-
     grammar = grammarFile
     outputDir = file grammarOutDir
     handcodedPath "$projectDir/src/main/java"
@@ -283,7 +282,7 @@ testGrammarDependencies.each {
   task "generateTestGrammar${grammarName}"(type: MCTask) {
     def dependsOnGrammars = grammarDependencies[grammarName].collect { name -> tasks["generateGrammar${name}"] }
     dependsOn dependsOnGrammars
-
+    templatePath("$projectDir/src/main/grammars")
     def grammarFile = file g
     grammar = file g
     outputDir = file testGrammarOutDir
