@@ -23,7 +23,6 @@ classdiagram mergedCD{
 	 String test;
 
     //Lastname from class E
-    String lastname;
     int drei;
   }
 
@@ -45,6 +44,6 @@ classdiagram mergedCD{
 
   association assoc1  [*]  A <-> C  [*]  ;
 
-  association assoc1  [1]  D [[test]](typeD) -> (typeE) E ;
-
+  //todo: fix for association assoc1 [1] D [[test]] (typeD) -> (typeE) E ;
+  association assoc1 [1] D [String] (typeD) -> (typeE) E ;
 }

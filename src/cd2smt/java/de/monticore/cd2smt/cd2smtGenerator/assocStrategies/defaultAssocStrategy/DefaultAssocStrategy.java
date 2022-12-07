@@ -19,6 +19,7 @@ import java.util.*;
 public class DefaultAssocStrategy implements AssociationStrategy {
   private final Map<ASTCDAssociation, FuncDecl<BoolSort>> associationsFuncMap;
   private final Set<IdentifiableBoolExpr> associationConstraints;
+
   ASTCDCompilationUnit astCD;
 
   public DefaultAssocStrategy() {

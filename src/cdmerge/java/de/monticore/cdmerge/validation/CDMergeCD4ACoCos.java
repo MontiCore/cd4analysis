@@ -9,7 +9,7 @@ import de.monticore.cdbasis.cocos.mcg.ModifierNotMultipleVisibilitiesCoCo;
 import de.monticore.cdbasis.cocos.mcg2ebnf.CDPackageNotContainingCDPackage;
 import de.monticore.cdinterfaceandenum.cocos.ebnf.*;
 
-/** This CoCos Set is adapt from the CD4ACoCo Set as several CoCos are disabled */
+/** This CoCos Set is adapted from the CD4ACoCo Set as several CoCos are disabled */
 @Deprecated
 public class CDMergeCD4ACoCos {
 
