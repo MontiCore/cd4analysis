@@ -103,6 +103,12 @@ public class CDGeneratorToolTest {
     assertTrue(new File("target/generated/example/hwc/de/monticore/ATOP.java").isFile());
   }
 
+  @Test
+  public void testToolPrintHelpOptions() {
+    CDGeneratorTool.main(new String[] {"-h"});
+    assertTrue(true);
+  }
+
   @After
   public void after() {
     CD4CodeMill.globalScope().clear();

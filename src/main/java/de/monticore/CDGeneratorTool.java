@@ -56,10 +56,11 @@ public class CDGeneratorTool {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
-      if (!cmd.hasOption("i")) {
+      if(!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
       }
+
       Log.init();
       CD4CodeMill.init();
       if (cmd.hasOption("c2mc")) {
@@ -73,6 +74,11 @@ public class CDGeneratorTool {
       Log.enableFailQuick(true);
 
       ast = transform(ast);
+
+      if(cmd.hasOption("sym")) {
+        MCPath path = new MCPath(cmd.getOptionValue("sym"));
+        CD4CodeMill.globalScope().setSymbolPath(path);
+      }
 
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
 
@@ -141,12 +147,18 @@ public class CDGeneratorTool {
   protected void addOptions(org.apache.commons.cli.Options options) {
 
     options.addOption(
-        Option.builder("i")
-            .longOpt("input")
-            .argName("file")
-            .hasArg()
-            .desc("Reads the source file (mandatory) and parses the contents")
-            .build());
+      Option.builder("h")
+        .longOpt("help")
+        .desc("Prints out the help options")
+        .build());
+
+    options.addOption(
+      Option.builder("i")
+        .longOpt("input")
+        .argName("file")
+        .hasArg()
+        .desc("Reads the source file (mandatory) and parses the contents")
+        .build());
 
     options.addOption(
         Option.builder("c")
@@ -163,12 +175,20 @@ public class CDGeneratorTool {
             .build());
 
     options.addOption(
-        Option.builder("o")
-            .longOpt("output")
-            .argName("dir")
-            .hasArg()
-            .desc("Sets the output path.")
-            .build());
+      Option.builder("sym")
+        .longOpt("symbolpath")
+        .hasArg()
+        .argName("symbolpath")
+        .desc("Sets the Symbol Path in the global scope.")
+        .build());
+
+    options.addOption(
+      Option.builder("o")
+        .longOpt("output")
+        .argName("dir")
+        .hasArg()
+        .desc("Sets the output path.")
+        .build());
 
     options.addOption(
         Option.builder("gen")
