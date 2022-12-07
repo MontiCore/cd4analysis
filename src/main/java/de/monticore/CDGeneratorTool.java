@@ -1,18 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore;
 
-import com.google.common.base.Preconditions;
 import de.monticore.cd.codegen.CDGenerator;
 import de.monticore.cd.codegen.CdUtilsPrinter;
 import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.*;
+import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.class2mc.OOClass2MCResolver;
+import de.monticore.cli.updateChecker.UpdateCheckerRunnable;
+import de.monticore.codegen.cd2java._symboltable.SymbolTableService;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -20,7 +24,9 @@ import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.*;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -28,9 +34,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.stream.Collectors;
-
-import org.apache.commons.cli.*;
 
 public class CDGeneratorTool {
 
@@ -59,6 +64,8 @@ public class CDGeneratorTool {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
+
+
       if(!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
@@ -83,6 +90,10 @@ public class CDGeneratorTool {
       }
 
       ICD4CodeArtifactScope scope = createSymbolTable(ast);
+
+      if(cmd.hasOption("v")) {
+        printVersion(ast);
+      }
 
       if(cmd.hasOption("c")) {
         Log.enableFailQuick(false);
@@ -227,6 +238,12 @@ public class CDGeneratorTool {
         .longOpt("class2mc")
         .desc("Enables to resolve java classes in the model path")
         .build());
+
+    options.addOption(
+      Option.builder("v")
+        .longOpt("version")
+        .desc("Prints out the current version")
+        .build());
   }
 
   /**
@@ -305,5 +322,10 @@ public class CDGeneratorTool {
   protected void initializeClass2MC() {
     CD4CodeMill.globalScope().addAdaptedTypeSymbolResolver(new OOClass2MCResolver());
     CD4CodeMill.globalScope().addAdaptedOOTypeSymbolResolver(new OOClass2MCResolver());
+  }
+
+  protected void printVersion(ASTCDCompilationUnit ast) {
+    String mcVersion = new UpdateCheckerRunnable().getLocalVersion();
+    System.out.println("version " + mcVersion);
   }
 }

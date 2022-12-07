@@ -138,6 +138,7 @@ dependencies {
   }
   implementation "$var_path:monticore-grammar:${project.properties['mc_version']}"
   implementation "$var_path:monticore-runtime:${project.properties['mc_version']}"
+  implementation "$var_path:monticore-generator:${project.properties['mc_version']}"
   implementation "$var_path:class2mc:${project.properties['mc_version']}"
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"

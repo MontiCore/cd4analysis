@@ -89,6 +89,13 @@ public class CDGeneratorToolTest {
     assertTrue(true);
   }
 
+  @Test
+  public void testToolPrintVersion() {
+    CDGeneratorTool.main(new String[] {"-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+      "-c2mc", "-v"});
+    assertTrue(true);
+  }
+
   @After
   public void after() {
     CD4CodeMill.globalScope().clear();
