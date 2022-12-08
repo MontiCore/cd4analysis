@@ -10,6 +10,7 @@ import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cd.facade.CDMethodFacade;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTestBasis;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
@@ -21,6 +22,7 @@ import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -271,7 +273,8 @@ public class CD4CTest extends CD4CodeTestBasis {
 
     // add class to the AST and create a symbol table to we can resolve the types
     node.getCDDefinition().addCDElement(clazz);
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(node);
+    scope.addImports(new ImportStatement("java.lang", true));
 
     CD4C.getInstance().addDefaultPredicates();
 

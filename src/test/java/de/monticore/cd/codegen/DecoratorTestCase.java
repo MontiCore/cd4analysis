@@ -59,7 +59,7 @@ public abstract class DecoratorTestCase {
     List<ImportStatement> imports = Lists.newArrayList();
     comp.getMCImportStatementList()
         .forEach(i -> imports.add(new ImportStatement(i.getQName(), i.isStar())));
-    scope.setImportsList(imports);
+    scope.addAllImports(imports);
     scope.setPackageName(packageName);
     for (ASTMCImportStatement imp : comp.getMCImportStatementList()) {
       if (!CD4CodeMill.globalScope().resolveDiagram(imp.getQName()).isPresent()) {

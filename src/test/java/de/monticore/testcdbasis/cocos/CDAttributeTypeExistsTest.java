@@ -9,6 +9,7 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis.cocos.ebnf.CDAttributeTypeExists;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class CDAttributeTypeExistsTest extends CD4AnalysisTestBasis {
 
   private ICD4AnalysisArtifactScope createSymTab(ASTCDCompilationUnit ast) {
     ICD4AnalysisArtifactScope as = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+    as.addImports(new ImportStatement("java.lang", true));
     CD4AnalysisSymbolTableCompleter c =
         new CD4AnalysisSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());

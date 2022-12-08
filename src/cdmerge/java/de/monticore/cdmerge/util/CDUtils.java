@@ -6,6 +6,7 @@ import de.monticore.cd4code._ast.ASTCD4CodeNode;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
@@ -17,6 +18,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterfaceAndEnumNode;
 import de.monticore.cdmerge.validation.CDMergeCD4ACoCos;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCBasicTypesNode;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -449,7 +451,8 @@ public class CDUtils {
     }
 
     // Resolve the symboltable
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    ICD4CodeArtifactScope scope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    scope.addImports(new ImportStatement("java.lang", true));
 
     final CD4CodeTraverser completer = new CD4CodeSymbolTableCompleter(cd).getTraverser();
 
