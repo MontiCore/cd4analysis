@@ -35,7 +35,7 @@ public class CDBasisSymbolTableCompleter implements CDBasisVisitor2, OOSymbolsVi
     final ICDBasisScope artifactScope = node.getCDDefinition().getEnclosingScope();
     if (artifactScope instanceof ICD4AnalysisArtifactScope) {
       ((ICD4AnalysisArtifactScope) artifactScope)
-          .setImportsList(
+          .addAllImports(
               node.getMCImportStatementList().stream()
                   .map(i -> new ImportStatement(i.getQName(), i.isStar()))
                   .collect(Collectors.toList()));

@@ -7,7 +7,6 @@ import de.monticore.cd.codegen.TopDecorator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.CD4CodeTool;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4code._symboltable.CD4CodeScopesGenitorDelegatorTOP;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
@@ -22,16 +21,15 @@ import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
+import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CDGeneratorTool extends CD4CodeTool {
@@ -85,7 +83,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         CD4CodeMill.globalScope().setSymbolPath(path);
       }
 
-      ICD4CodeArtifactScope scope = createSymbolTable(ast);
+      ICD4CodeArtifactScope scope = createSymbolTable(ast, cmd.hasOption("c2mc"));
 
       if(cmd.hasOption("v")) {
         printVersion();
@@ -135,6 +133,10 @@ public class CDGeneratorTool extends CD4CodeTool {
     } catch(ParseException e) {
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
+  }
+
+  public void addDefaultImports(ICD4CodeArtifactScope scope, boolean java) {
+    if (java) scope.addImports(new ImportStatement("java.lang", true));
   }
 
   /**
@@ -244,9 +246,10 @@ public class CDGeneratorTool extends CD4CodeTool {
    * @param ast the current ast
    * @return the symboltable of the ast
    */
-  public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast) {
+  public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast, boolean java) {
     CD4CodeScopesGenitorDelegatorTOP genitor = CD4CodeMill.scopesGenitorDelegator();
     ICD4CodeArtifactScope scope = genitor.createFromAST(ast);
+    this.addDefaultImports(scope, java);
     ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
     return scope;
   }

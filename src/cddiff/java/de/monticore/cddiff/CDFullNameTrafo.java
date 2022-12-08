@@ -16,6 +16,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class CDFullNameTrafo {
                           .build());
             });
     ICD4CodeArtifactScope artifactScope = CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
+    artifactScope.addImports(new ImportStatement("java.lang", true));
     CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(cd);
     cd.accept(c.getTraverser());
 

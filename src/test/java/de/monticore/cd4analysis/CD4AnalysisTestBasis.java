@@ -7,6 +7,7 @@ import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbols2Json;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
@@ -15,6 +16,7 @@ import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.MCPath;
+import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
@@ -56,7 +58,8 @@ public class CD4AnalysisTestBasis extends TestBasis {
 
   protected void prepareST(ASTCDCompilationUnit node) throws IOException {
     // First pass for symbol table
-    CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    ICD4AnalysisArtifactScope scope = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(node);
+    scope.addImports(new ImportStatement("java.lang", true));
     checkLogError();
 
     // Second pass for symbol table

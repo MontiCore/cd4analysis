@@ -7,6 +7,7 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cd4code.trafo.CD4CodeDirectCompositionTrafo;
@@ -16,6 +17,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiffUtil;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.odvalidity.OD2CDMatcher;
+import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -340,7 +342,8 @@ public class ExampleCommandTest extends OutTestBasis {
       assertTrue(optCD.isPresent());
       new CD4CodeAfterParseTrafo().transform(optCD.get());
       new CD4CodeDirectCompositionTrafo().transform(optCD.get());
-      CD4CodeMill.scopesGenitorDelegator().createFromAST(optCD.get());
+      ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(optCD.get());
+      as.addImports(new ImportStatement("java.lang", true));
       CD4CodeSymbolTableCompleter c = new CD4CodeSymbolTableCompleter(optCD.get());
       optCD.get().accept(c.getTraverser());
       final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =

@@ -42,6 +42,7 @@ import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
 import de.monticore.generating.templateengine.TemplateHookPoint;
 import de.monticore.io.paths.MCPath;
+import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -187,6 +188,8 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         }
 
         artifactScope = createSymbolTable(ast);
+        artifactScope.addImports(new ImportStatement("java.lang", true));
+
         for (String path : modelPath) {
           globalScope.getSymbolPath().addEntry(Paths.get(path));
         }
