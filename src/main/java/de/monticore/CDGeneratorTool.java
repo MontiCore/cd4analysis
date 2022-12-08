@@ -59,7 +59,7 @@ public class CDGeneratorTool extends CD4CodeTool {
       CommandLineParser cliParser = new DefaultParser();
       CommandLine cmd = cliParser.parse(options, args);
 
-      if(!cmd.hasOption("i") || cmd.hasOption("h")) {
+      if (!cmd.hasOption("i") || cmd.hasOption("h")) {
         printHelp(options);
         return;
       }
@@ -78,34 +78,34 @@ public class CDGeneratorTool extends CD4CodeTool {
 
       ast = transform(ast);
 
-      if(cmd.hasOption("sym")) {
+      if (cmd.hasOption("sym")) {
         MCPath path = new MCPath(cmd.getOptionValue("sym"));
         CD4CodeMill.globalScope().setSymbolPath(path);
       }
 
       ICD4CodeArtifactScope scope = createSymbolTable(ast, cmd.hasOption("c2mc"));
 
-      if(cmd.hasOption("v")) {
+      if (cmd.hasOption("v")) {
         printVersion();
       }
 
-      if(cmd.hasOption("c")) {
+      if (cmd.hasOption("c")) {
         Log.enableFailQuick(false);
         runCoCos(ast);
         Log.enableFailQuick(true);
       }
 
       String outputPath = (cmd.hasOption("o")) ? cmd.getOptionValue("o") : "";
-      if(cmd.hasOption("s")) {
+      if (cmd.hasOption("s")) {
         storeSymTab(scope, outputPath + cmd.getOptionValue("s"));
       }
 
-      if(cmd.hasOption("gen")) {
+      if (cmd.hasOption("gen")) {
         GlobalExtensionManagement glex = new GlobalExtensionManagement();
         glex.setGlobalValue("cdPrinter", new CdUtilsPrinter());
         GeneratorSetup setup = new GeneratorSetup();
 
-        if(cmd.hasOption("tp")) {
+        if (cmd.hasOption("tp")) {
           setup.setAdditionalTemplatePaths(
             Arrays.stream(cmd.getOptionValues("tp"))
               .map(Paths::get)
@@ -113,7 +113,7 @@ public class CDGeneratorTool extends CD4CodeTool {
               .collect(Collectors.toList()));
         }
 
-        if(cmd.hasOption("hwc")) {
+        if (cmd.hasOption("hwc")) {
           setup.setHandcodedPath(new MCPath(Paths.get(cmd.getOptionValue("hwc"))));
           TopDecorator topDecorator = new TopDecorator(setup.getHandcodedPath());
           ast = topDecorator.decorate(ast);
@@ -130,7 +130,7 @@ public class CDGeneratorTool extends CD4CodeTool {
         hpp.processValue(tc, ast, configTemplateArgs);
       }
 
-    } catch(ParseException e) {
+    } catch (ParseException e) {
       Log.error("0xA7105 Could not process parameters: " + e.getMessage());
     }
   }
@@ -221,7 +221,7 @@ public class CDGeneratorTool extends CD4CodeTool {
    * prints the symboltable of the given ast out to a file
    *
    * @param scope symboltable of the current ast
-   * @param path location of the file containing the printed table
+   * @param path  location of the file containing the printed table
    */
   protected void storeSymTab(ICD4CodeArtifactScope scope, String path) {
     CD4CodeSymbols2Json s2j = new CD4CodeSymbols2Json();
@@ -231,8 +231,8 @@ public class CDGeneratorTool extends CD4CodeTool {
   /**
    * transforms the ast using th
    *
-   * @param ast
-   * @return
+   * @param ast The input AST
+   * @return The transformed AST
    */
   protected ASTCDCompilationUnit transform(ASTCDCompilationUnit ast) {
     CD4CodeAfterParseTrafo trafo = new CD4CodeAfterParseTrafo();
@@ -243,7 +243,7 @@ public class CDGeneratorTool extends CD4CodeTool {
   /**
    * creates a symboltable for the current ast using the CD4CodeScopesGenitor
    *
-   * @param ast the current ast
+   * @param ast the input ast
    * @return the symboltable of the ast
    */
   public ICD4CodeArtifactScope createSymbolTable(ASTCDCompilationUnit ast, boolean java) {

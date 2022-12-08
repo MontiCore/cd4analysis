@@ -26,14 +26,14 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithCoCos() {
     CDGeneratorTool.main(
-      new String[] {"-i", "src/test/resources/de/monticore/cdgentool/Example.cd", "-c2mc", "-c"});
+      new String[]{"-i", "src/test/resources/de/monticore/cdgentool/Example.cd", "-c2mc", "-c"});
     assertTrue(true);
   }
 
   @Test
   public void testGeneratorToolWithSymbolTable() {
     CDGeneratorTool.main(
-      new String[] {
+      new String[]{
         "-i",
         "src/test/resources/de/monticore/cdgentool/Example.cd",
         "-c2mc",
@@ -46,7 +46,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithJavaGeneration() {
     CDGeneratorTool.main(
-      new String[] {
+      new String[]{
         "-i",
         "src/test/resources/de/monticore/cdgentool/Example.cd",
         "-c2mc",
@@ -60,7 +60,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithCustomGeneratorTemplate() {
     CDGeneratorTool.main(
-      new String[] {
+      new String[]{
         "-i",
         "src/test/resources/de/monticore/cdgentool/Example.cd",
         "-c2mc",
@@ -76,7 +76,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithAdditionalTemplates() {
     CDGeneratorTool.main(
-      new String[] {
+      new String[]{
         "-i",
         "src/test/resources/de/monticore/cdgentool/Example.cd",
         "-c2mc",
@@ -92,7 +92,7 @@ public class CDGeneratorToolTest {
   @Test
   public void testGeneratorToolWithHWC() {
     CDGeneratorTool.main(
-      new String[] {
+      new String[]{
         "-i",
         "src/test/resources/de/monticore/cdgentool/Example.cd",
         "-c2mc",
@@ -107,13 +107,13 @@ public class CDGeneratorToolTest {
 
   @Test
   public void testToolPrintHelpOptions() {
-    CDGeneratorTool.main(new String[] {"-h"});
+    CDGeneratorTool.main(new String[]{"-h"});
     assertTrue(true);
   }
 
   @Test
   public void testToolPrintVersion() {
-    CDGeneratorTool.main(new String[] {"-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
+    CDGeneratorTool.main(new String[]{"-i", "src/test/resources/de/monticore/cdgentool/Example.cd",
       "-c2mc", "-v"});
     assertTrue(true);
   }
