@@ -303,8 +303,8 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsMergeExample1() {
-    final String fileName = "doc/MyEmployees2.cd";
-    CD4CodeTool.main(new String[] {"-i", fileName, "--merge", "doc/MyWorkplace.cd", "-pp"});
+    final String fileName = "doc/Teaching.cd";
+    CD4CodeTool.main(new String[] {"-i", fileName, "--merge", "doc/Management.cd", "-pp"});
     assertTrue(getErr(), getErr().isEmpty());
   }
 
@@ -314,19 +314,19 @@ public class ExampleCommandTest extends OutTestBasis {
    */
   @Test
   public void testTwoCDsMergeExample2() {
-    final String fileName = "doc/MyEmployees2.cd";
+    final String fileName = "doc/Teaching.cd";
     CD4CodeTool.main(
         new String[] {
           "-i",
           fileName,
           "--merge",
-          "doc/MyWorkplace.cd",
+          "doc/Management.cd",
           "-o",
           outputPath + "out",
           "-pp",
-          "MyJob.cd"
+          "UniversitySystem.cd"
         });
-    assertTrue(Files.exists(Paths.get(outputPath + "out/MyJob.cd")));
+    assertTrue(Files.exists(Paths.get(outputPath + "out/UniversitySystem.cd")));
     assertTrue(getErr(), getErr().isEmpty());
   }
 

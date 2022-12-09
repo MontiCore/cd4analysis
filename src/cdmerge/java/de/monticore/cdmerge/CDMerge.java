@@ -12,17 +12,25 @@ import java.util.Set;
 
 public class CDMerge {
 
+  @Deprecated
   public static ASTCDCompilationUnit merge(Set<ASTCDCompilationUnit> inputs) {
     return merge(inputs, "Merge", new HashSet<>());
   }
 
+  /**
+   * merges inputCDs into composite CD according to specified mergeParameters
+   *
+   * @return composite CD
+   */
   public static ASTCDCompilationUnit merge(
-      Set<ASTCDCompilationUnit> inputs, String name, Set<MergeParameter> mergeParameters) {
+      Set<ASTCDCompilationUnit> inputCDs,
+      String compositeCDName,
+      Set<MergeParameter> mergeParameters) {
 
     Optional<ASTCDCompilationUnit> optAST;
 
-    if (inputs.size() < 2) {
-      optAST = inputs.stream().findAny();
+    if (inputCDs.size() < 2) {
+      optAST = inputCDs.stream().findAny();
       if (optAST.isPresent()) {
         return optAST.get();
       }
@@ -31,7 +39,10 @@ public class CDMerge {
     }
 
     try {
-      optAST = new MergeTool(getConfig(inputs, name, mergeParameters)).mergeCDs().getMergedCD();
+      optAST =
+          new MergeTool(getConfig(inputCDs, compositeCDName, mergeParameters))
+              .mergeCDs()
+              .getMergedCD();
 
       if (optAST.isPresent()) {
         return optAST.get();
@@ -45,6 +56,7 @@ public class CDMerge {
     return null;
   }
 
+  /** helper-method that constructs the CDMergeConfig */
   private static CDMergeConfig getConfig(
       Set<ASTCDCompilationUnit> inputModels, String name, Set<MergeParameter> mergeParameters) {
     CDMergeConfig.Builder builder =

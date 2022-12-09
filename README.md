@@ -493,20 +493,26 @@ iff the two are semantically compatible.
 The result is stored in memory as the current CD.
 
 For the following examples, download the files 
-[MyEmployees2.cd](doc/MyEmployees2.cd) and [MyWorkplace.cd](doc/MyWorkplace.cd) and 
+[Teaching.cd](doc/Teaching.cd) and [Management.cd](doc/Management.cd) and 
 save them in `src`:
 
 ```shell
-java -jar MCCD.jar -i src/MyEmployees2.cd --merge src/MyWorkplace.cd -pp
+java -jar MCCD.jar -i src/Teaching.cd --merge src/Management.cd -pp
 ```
 
-If `-pp` is used in conjunction with `--merge`, the name of the merged CD always corresponds to the name of the file (without the suffix `.cd`):
+If `-pp` is used in conjunction with `--merge`, the name of the merged CD always corresponds to the 
+name of the file (without the suffix `.cd`):
 
 ```shell
-java -jar MCCD.jar -i src/MyEmployees2.cd --merge src/MyWorkplace.cd -o out -pp MyJob.cd
+java -jar MCCD.jar -i src/Teaching.cd --merge src/Management.cd -o out -pp UniversitySystem.cd
 ```
 
-Note that `--merge` does not use symbols from symbol files.
+Note that `--merge` does not use symbols from symbol files. Instead of using the `--merge` option 
+from the command line, you may also call the static method 
+[`CDMerge.merge()`](src/cdmerge/java/de/monticore/cdmerge/CDMerge.java) 
+with a set of appropriate 
+[`MergeParameter`](src/cdmerge/java/de/monticore/cdmerge/config/MergeParameter.java)
+
 
 [ExampleModels]: src/test/resources/de/monticore/cd4analysis/examples
 [ToolDownload]: https://monticore.de/download/MCCD.jar
