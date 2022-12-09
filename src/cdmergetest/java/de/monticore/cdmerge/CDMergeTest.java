@@ -26,7 +26,7 @@ public class CDMergeTest extends BaseTest {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
 
-    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet);
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "ABC", new HashSet<>());
 
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
     Assert.assertNotNull(mergedCD);
@@ -39,8 +39,8 @@ public class CDMergeTest extends BaseTest {
     final String srcDir = "doc/";
     Set<ASTCDCompilationUnit> inputSet = new HashSet<>();
     try {
-      inputSet.add(loadModel(srcDir + "MyTeaching.cd"));
-      inputSet.add(loadModel(srcDir + "MyLectures.cd"));
+      inputSet.add(loadModel(srcDir + "Teaching.cd"));
+      inputSet.add(loadModel(srcDir + "Management.cd"));
     } catch (IOException e) {
       fail("IO exception while accessing input models: " + e.getMessage());
     }
@@ -50,7 +50,7 @@ public class CDMergeTest extends BaseTest {
     params.add(MergeParameter.LOG_VERBOSE);
     params.add(MergeParameter.LOG_TO_CONSOLE);
 
-    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "MyUniversity", params);
+    ASTCDCompilationUnit mergedCD = CDMerge.merge(inputSet, "UniversitySystem", params);
 
     CD4CodeFullPrettyPrinter pp = new CD4CodeFullPrettyPrinter();
     Assert.assertNotNull(mergedCD);
