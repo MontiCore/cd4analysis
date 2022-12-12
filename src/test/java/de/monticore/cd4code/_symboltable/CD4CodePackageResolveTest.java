@@ -63,7 +63,7 @@ public class CD4CodePackageResolveTest extends CD4CodeTestBasis {
     final Optional<CDRoleSymbol> c2_0 = artifactScope.resolveCDRole("C1.c2");
     assertTrue(c2_0.isPresent());
 
-    final List<CDRoleSymbol> c2_1 = artifactScope.resolveCDRoleMany("C1.one_to_two");
+    final List<CDRoleSymbol> c2_1 = artifactScope.resolveCDRoleMany("C1.c2");
     assertEquals(1, c2_1.size());
 
     final Optional<CDRoleSymbol> c2_2 = artifactScope.resolveCDRole("C1.c2_custom");

@@ -113,9 +113,6 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
   }
 
   public static String getRoleName(ASTCDAssociation assoc, ASTCDAssocSide side) {
-    if (assoc != null && assoc.isPresentName()) {
-      return assoc.getName();
-    }
     return StringTransformations.uncapitalize(side.getName());
   }
 }
