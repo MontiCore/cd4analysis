@@ -11,6 +11,7 @@ import de.monticore.cdassociation._visitor.CDAssociationVisitor2;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.umlmodifier.UMLModifierMill;
+import de.se_rwth.commons.Names;
 import de.se_rwth.commons.StringTransformations;
 import java.util.Collections;
 
@@ -113,6 +114,6 @@ public class CDAssociationDirectCompositionTrafo extends CDAfterParseHelper
   }
 
   public static String getRoleName(ASTCDAssociation assoc, ASTCDAssocSide side) {
-    return StringTransformations.uncapitalize(side.getName());
+    return StringTransformations.uncapitalize(Names.getSimpleName(side.getName()));
   }
 }
