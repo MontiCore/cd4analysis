@@ -3,9 +3,9 @@ package de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy;
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.Helper.SMTNameHelper;
+import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -17,15 +17,21 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import java.util.*;
+
+import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
+import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
 
 public class DefaultInhrStrategy implements InheritanceStrategy {
   private final Set<IdentifiableBoolExpr> inheritanceConstraints;
   private final Map<ASTCDType, InheritanceFeatures> inheritanceFeaturesMap;
 
-  private ASTCDCompilationUnit astCd;
+  private final ClassData classData;
 
-  public DefaultInhrStrategy() {
+  public DefaultInhrStrategy(ClassData classData) {
+    this.classData = classData;
     inheritanceConstraints = new HashSet<>();
     inheritanceFeaturesMap = new HashMap<>();
   }
@@ -46,18 +52,17 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   }
 
   @Override
-  public void cd2smt(ASTCDCompilationUnit astCd, Context ctx, ClassStrategy classStrategy) {
-    this.astCd = astCd;
+  public void cd2smt(ASTCDCompilationUnit astCd, Context ctx, ClassData classData) {
     astCd
         .getCDDefinition()
         .getCDInterfacesList()
-        .forEach(i -> declareInheritanceFeatures(astCd.getCDDefinition(), i, classStrategy, ctx));
+        .forEach(i -> declareInheritanceFeatures(astCd.getCDDefinition(), i, classData, ctx));
     astCd
         .getCDDefinition()
         .getCDClassesList()
-        .forEach(c -> declareInheritanceFeatures(astCd.getCDDefinition(), c, classStrategy, ctx));
+        .forEach(c -> declareInheritanceFeatures(astCd.getCDDefinition(), c, classData, ctx));
     inheritanceConstraints.addAll(
-        buildInheritanceConstraints(astCd.getCDDefinition(), classStrategy, ctx));
+        buildInheritanceConstraints(astCd.getCDDefinition(), classData, ctx));
   }
 
   @Override
@@ -65,12 +70,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
 
     for (SMTObject obj : objectSet) {
       Map<ASTCDType, FuncDecl<Sort>> convert2SuperInterfaceList =
-          inheritanceFeaturesMap
-              .get(
-                  CDHelper.getASTCDType(
-                      SMTNameHelper.sort2CDTypeName(obj.getSmtExpr().getSort()),
-                      astCd.getCDDefinition()))
-              .getConvert2SuperTypeFuncMap();
+          inheritanceFeaturesMap.get(obj.getASTCDType()).getConvert2SuperTypeFuncMap();
 
       for (FuncDecl<Sort> convert2SuperInterface : convert2SuperInterfaceList.values()) {
         Expr<? extends Sort> superObj =
@@ -86,9 +86,9 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   }
 
   protected void declareInheritanceFeatures(
-      ASTCDDefinition cd, ASTCDType astcdType, ClassStrategy classStrategy, Context ctx) {
+      ASTCDDefinition cd, ASTCDType astcdType, ClassData classData, Context ctx) {
     InheritanceFeatures inheritanceFeatures = new InheritanceFeatures();
-    Sort sort = classStrategy.getSort(astcdType);
+    Sort sort = classData.getSort(astcdType);
 
     // (declare-datatype B_subclasses ((TT_NO_SUBTYPE) (TT_B)))
     buildSubclassConstructorList(astcdType, cd, ctx)
@@ -102,7 +102,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
           ctx.mkDatatypeSort(astcdType.getName() + "_subclasses", constructors));
       inheritanceFeatures.setGetSubClass(
           ctx.mkFuncDecl(
-              SMTNameHelper.printSubclassFuncName(astcdType),
+              SMTHelper.printSubclassFuncName(astcdType),
               sort,
               inheritanceFeatures.getSubclassDatatype()));
     }
@@ -144,7 +144,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   }
 
   List<IdentifiableBoolExpr> buildInheritanceConstraints(
-      ASTCDDefinition cd, ClassStrategy classStrategy, Context ctx) {
+      ASTCDDefinition cd, ClassData classData, Context ctx) {
     List<IdentifiableBoolExpr> constraints = new LinkedList<>();
 
     for (ASTCDClass myClass : cd.getCDClassesList()) {
@@ -161,7 +161,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
                     cd));
         assert superClass.isPresent();
         constraints.addAll(
-            buildCDTypeInheritanceConstraint(myClass, superClass.get(), classStrategy, ctx));
+            buildCDTypeInheritanceConstraint(myClass, superClass.get(), classData, ctx));
       }
 
       // add constraint for  classes that  inherit  from interfacees
@@ -172,7 +172,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
                     superC.printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter())), cd));
         assert superInterface.isPresent();
         constraints.addAll(
-            buildCDTypeInheritanceConstraint(myClass, superInterface.get(), classStrategy, ctx));
+            buildCDTypeInheritanceConstraint(myClass, superInterface.get(), classData, ctx));
       }
     }
     // add constraint for  interfaces that  inherit from  interfaces
@@ -186,49 +186,45 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
         assert superInterface.isPresent();
 
         constraints.addAll(
-            buildCDTypeInheritanceConstraint(
-                myInterface, superInterface.get(), classStrategy, ctx));
+            buildCDTypeInheritanceConstraint(myInterface, superInterface.get(), classData, ctx));
       }
     }
     // asset each Interface Obj muss have a super instance Object
-    constraints.addAll(mkConstrExistSubclass4Interf(cd, classStrategy, ctx));
+    constraints.addAll(mkConstrExistSubclass4Interf(cd, classData, ctx));
     return constraints;
   }
 
   protected List<IdentifiableBoolExpr> mkConstrExistSubclass4Interf(
-      ASTCDDefinition cd, ClassStrategy classStrategy, Context ctx) {
+      ASTCDDefinition cd, ClassData classData, Context ctx) {
     List<IdentifiableBoolExpr> constraints = new ArrayList<>();
     for (ASTCDInterface myInterface : cd.getCDInterfacesList()) {
       // make constraint for existence of super Instance of each Interface instance
       Expr<? extends Sort> interfObj =
-          ctx.mkConst(myInterface.getName(), classStrategy.getSort(myInterface));
+          ctx.mkConst(myInterface.getName(), classData.getSort(myInterface));
       BoolExpr helpConstr = ctx.mkFalse();
       for (ASTCDType subInstance :
           inheritanceFeaturesMap.get(myInterface).getSubClassConstructorList().keySet()) {
 
         InheritanceFeatures subSMTInstance = inheritanceFeaturesMap.get(subInstance);
         Expr<Sort> subInstanceObj =
-            ctx.mkConst(subInstance.getName(), classStrategy.getSort(subInstance));
+            ctx.mkConst(subInstance.getName(), classData.getSort(subInstance));
 
         helpConstr =
             ctx.mkOr(
                 helpConstr,
-                ctx.mkExists(
-                    new Expr[] {subInstanceObj},
+                mkExists(
+                    ctx,
+                    Set.of(new ImmutablePair<>(subInstance, subInstanceObj)),
                     ctx.mkEq(
                         ctx.mkApp(
                             subSMTInstance.getConvert2SuperTypeFuncMap().get(myInterface),
                             subInstanceObj),
                         interfObj),
-                    0,
-                    null,
-                    null,
-                    null,
-                    null));
+                    classData));
       }
 
       BoolExpr superInstanceConstraint =
-          ctx.mkForall(new Expr[] {interfObj}, helpConstr, 0, null, null, null, null);
+          mkForAll(ctx, Set.of(new ImmutablePair<>(myInterface, interfObj)), helpConstr, classData);
       constraints.add(
           IdentifiableBoolExpr.buildIdentifiable(
               superInstanceConstraint,
@@ -239,7 +235,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   }
 
   List<IdentifiableBoolExpr> buildCDTypeInheritanceConstraint(
-      ASTCDType subType, ASTCDType superType, ClassStrategy classStrategy, Context ctx) {
+      ASTCDType subType, ASTCDType superType, ClassData classData, Context ctx) {
     InheritanceFeatures smtSubType = inheritanceFeaturesMap.get(subType);
     InheritanceFeatures smtSuperType = inheritanceFeaturesMap.get(superType);
 
@@ -252,68 +248,56 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
     FuncDecl<Sort> convert2Super =
         ctx.mkFuncDecl(
             "Convert_" + subType.getName() + "_to_" + superType.getName(),
-            classStrategy.getSort(subType),
-            classStrategy.getSort(superType));
+            classData.getSort(subType),
+            classData.getSort(superType));
     smtSubType.addConvert2SuperTypeFunc(superType, convert2Super);
 
     // constraints to make sure that the function convert_to will be defined
-    Expr<Sort> subclassObj =
-        ctx.mkConst(subType.getName() + "subtype", classStrategy.getSort(subType));
+    Expr<Sort> subclassObj = ctx.mkConst(subType.getName() + "subtype", classData.getSort(subType));
     Expr<Sort> superClassObj =
-        ctx.mkConst(superType.getName() + "supertype", classStrategy.getSort(superType));
+        ctx.mkConst(superType.getName() + "supertype", classData.getSort(superType));
 
     BoolExpr constrConvert =
-        ctx.mkForall(
-            new Expr[] {subclassObj},
-            ctx.mkExists(
-                new Expr[] {superClassObj},
+        mkForAll(
+            ctx,
+            Set.of(new ImmutablePair<>(subType, subclassObj)),
+            mkExists(
+                ctx,
+                Set.of(new ImmutablePair<>(superType, superClassObj)),
                 ctx.mkEq(ctx.mkApp(convert2Super, subclassObj), superClassObj),
-                0,
-                null,
-                null,
-                null,
-                null),
-            0,
-            null,
-            null,
-            null,
-            null);
+                classData),
+            classData);
+
     constraints.add(
         IdentifiableBoolExpr.buildIdentifiable(
             constrConvert, srcPos, Optional.of(subType.getName() + "_inheritance_convert")));
 
     // the conversion must be a bijection
-    Expr<Sort> b1 = ctx.mkConst("b1", classStrategy.getSort(subType));
-    Expr<Sort> b2 = ctx.mkConst("b2", classStrategy.getSort(subType));
+    Expr<Sort> b1 = ctx.mkConst("b1", classData.getSort(subType));
+    Expr<Sort> b2 = ctx.mkConst("b2", classData.getSort(subType));
     BoolExpr bijection =
-        ctx.mkForall(
-            new Expr[] {b1, b2},
+        mkForAll(
+            ctx,
+            Set.of(new ImmutablePair<>(subType, b1), new ImmutablePair<>(subType, b2)),
             ctx.mkEq(
                 ctx.mkEq(ctx.mkApp(convert2Super, b1), ctx.mkApp(convert2Super, b2)),
                 ctx.mkEq(b1, b2)),
-            0,
-            null,
-            null,
-            null,
-            null);
+            classData);
     constraints.add(
         IdentifiableBoolExpr.buildIdentifiable(
             bijection, srcPos, Optional.of(subType.getName() + "_inheritance_bijection")));
 
     if (smtSuperType.getSubClassConstructorList().size() > 0) {
       // type Constraint
-      Expr<Sort> b3 = ctx.mkConst("b3", classStrategy.getSort(subType));
+      Expr<Sort> b3 = ctx.mkConst("b3", classData.getSort(subType));
       Expr<? extends Sort> sort =
           ctx.mkConst(smtSuperType.getSubClassConstructorList().get(subType).ConstructorDecl());
       BoolExpr typeConstr =
-          ctx.mkForall(
-              new Expr[] {b3},
+          mkForAll(
+              ctx,
+              Set.of(new ImmutablePair<>(subType, b3)),
               ctx.mkEq(ctx.mkApp(smtSuperType.getSubClass(), ctx.mkApp(convert2Super, b1)), sort),
-              0,
-              null,
-              null,
-              null,
-              null);
+              classData);
 
       // add the constraints to the list
       constraints.add(

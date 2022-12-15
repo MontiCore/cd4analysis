@@ -47,7 +47,7 @@ public class PrintODTest extends CDDiffTestBasis {
 
     cd2SMTGenerator.cd2smt(ast, new Context(cfg));
     Solver solver = cd2SMTGenerator.makeSolver(new ArrayList<>());
-    Assertions.assertSame(solver.check(), Status.SATISFIABLE);
+    Assertions.assertSame(Status.SATISFIABLE, solver.check());
     Optional<ASTODArtifact> optOd = cd2SMTGenerator.smt2od(solver.getModel(), false, "MyOD");
     assert optOd.isPresent();
 

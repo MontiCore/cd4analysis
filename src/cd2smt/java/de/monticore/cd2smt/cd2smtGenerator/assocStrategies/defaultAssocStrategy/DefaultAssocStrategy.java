@@ -4,23 +4,28 @@ import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.Helper.SMTNameHelper;
+import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.LinkedSMTObject;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.SourcePosition;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
 
+import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
+import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
+
 public class DefaultAssocStrategy implements AssociationStrategy {
+  ClassData classData;
   private final Map<ASTCDAssociation, FuncDecl<BoolSort>> associationsFuncMap;
   private final Set<IdentifiableBoolExpr> associationConstraints;
-
-  ASTCDCompilationUnit astCD;
 
   public DefaultAssocStrategy() {
     associationsFuncMap = new HashMap<>();
@@ -29,11 +34,15 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
   @Override
   public BoolExpr evaluateLink(
-      ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right) {
+      ASTCDAssociation association,
+      ASTCDType type1,
+      ASTCDType type2,
+      Expr<? extends Sort> expr1,
+      Expr<? extends Sort> expr2) {
     FuncDecl<BoolSort> assocFunc = associationsFuncMap.get(association);
-    return left.getSort().equals(assocFunc.getDomain()[0])
-        ? (BoolExpr) assocFunc.apply(left, right)
-        : (BoolExpr) assocFunc.apply(right, left);
+    return association.getLeftQualifiedName().getQName().equals(type1.getName())
+        ? (BoolExpr) assocFunc.apply(expr1, expr2)
+        : (BoolExpr) assocFunc.apply(expr2, expr1);
   }
 
   @Override
@@ -42,28 +51,25 @@ public class DefaultAssocStrategy implements AssociationStrategy {
   }
 
   @Override
-  public void cd2smt(ASTCDCompilationUnit ast, Context ctx, ClassStrategy classStrategy) {
-    this.astCD = ast;
+  public void cd2smt(ASTCDCompilationUnit ast, Context ctx, ClassData classData) {
+    this.classData = classData;
     ast.getCDDefinition()
         .getCDAssociationsList()
-        .forEach(assoc -> declareAssociation(ast.getCDDefinition(), assoc, classStrategy, ctx));
-    associationConstraints.addAll(buildAssocConstraints(ast.getCDDefinition(), classStrategy, ctx));
+        .forEach(assoc -> declareAssociation(ast.getCDDefinition(), assoc, classData, ctx));
+    associationConstraints.addAll(buildAssocConstraints(ast.getCDDefinition(), classData, ctx));
   }
 
   protected void declareAssociation(
-      ASTCDDefinition cd,
-      ASTCDAssociation myAssociation,
-      ClassStrategy classStrategy,
-      Context ctx) {
-    String assocName = SMTNameHelper.printSMTAssociationName(myAssociation);
+      ASTCDDefinition cd, ASTCDAssociation myAssociation, ClassData classData, Context ctx) {
+    String assocName = SMTHelper.printSMTAssociationName(myAssociation);
     ASTCDType leftClass =
         CDHelper.getASTCDType(myAssociation.getLeftQualifiedName().getQName(), cd);
     ASTCDType rightClass =
         CDHelper.getASTCDType(myAssociation.getRightQualifiedName().getQName(), cd);
 
     // set the Association function
-    Sort rightSort = classStrategy.getSort(rightClass);
-    Sort leftSort = classStrategy.getSort(leftClass);
+    Sort rightSort = classData.getSort(rightClass);
+    Sort leftSort = classData.getSort(leftClass);
 
     associationsFuncMap.put(
         myAssociation,
@@ -71,24 +77,28 @@ public class DefaultAssocStrategy implements AssociationStrategy {
   }
 
   List<IdentifiableBoolExpr> buildAssocConstraints(
-      ASTCDDefinition cd, ClassStrategy classStrategy, Context ctx) {
+      ASTCDDefinition cd, ClassData classData, Context ctx) {
     List<IdentifiableBoolExpr> constraints = new LinkedList<>();
 
     for (ASTCDAssociation myAssoc : cd.getCDAssociationsList()) {
       // get the sort for the left and right objects
-      Sort rightSortSMT =
-          classStrategy.getSort(
-              CDHelper.getASTCDType(myAssoc.getRightQualifiedName().getQName(), cd));
-      Sort leftSortSMT =
-          classStrategy.getSort(
-              CDHelper.getASTCDType(myAssoc.getLeftQualifiedName().getQName(), cd));
-      String assocName = SMTNameHelper.printSMTAssociationName(myAssoc);
+      ASTCDType rightClass = CDHelper.getASTCDType(myAssoc.getRightQualifiedName().getQName(), cd);
+      ASTCDType leftClass = CDHelper.getASTCDType(myAssoc.getLeftQualifiedName().getQName(), cd);
+      assert rightClass != null;
+      assert leftClass != null;
+      Sort leftSort = classData.getSort(leftClass);
+      Sort rightSort = classData.getSort(rightClass);
       FuncDecl<BoolSort> assocFunc = associationsFuncMap.get(myAssoc);
+
       // build constants for quantifiers scope
-      Expr<Sort> r1 = ctx.mkConst(assocName + "r1", rightSortSMT);
-      Expr<Sort> l1 = ctx.mkConst(assocName + "l1", leftSortSMT);
-      Expr<Sort> l2 = ctx.mkConst(assocName + "l2", leftSortSMT);
-      Expr<Sort> r2 = ctx.mkConst(assocName + "r2", rightSortSMT);
+      Pair<ASTCDType, Expr<? extends Sort>> r1 =
+          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "1", rightSort));
+      Pair<ASTCDType, Expr<? extends Sort>> l1 =
+          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "1", leftSort));
+      Pair<ASTCDType, Expr<? extends Sort>> l2 =
+          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "2", leftSort));
+      Pair<ASTCDType, Expr<? extends Sort>> r2 =
+          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "2", rightSort));
 
       // position
       SourcePosition srcPos = myAssoc.get_SourcePositionStart();
@@ -145,44 +155,45 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
   protected BoolExpr buildAtLeastOneConstraint(
       FuncDecl<BoolSort> assocFunc,
-      Expr<? extends Sort> obj,
-      Expr<? extends Sort> otherObj,
+      Pair<ASTCDType, Expr<? extends Sort>> obj,
+      Pair<ASTCDType, Expr<? extends Sort>> otherObj,
       boolean isLeft,
       Context ctx) {
-    Expr<? extends Sort> left = !isLeft ? obj : otherObj;
-    Expr<? extends Sort> right = isLeft ? obj : otherObj;
-    return ctx.mkForall(
-        new Expr[] {obj},
-        ctx.mkExists(
-            new Expr[] {otherObj}, ctx.mkApp(assocFunc, left, right), 0, null, null, null, null),
-        0,
-        null,
-        null,
-        null,
-        null);
+
+    Pair<ASTCDType, Expr<? extends Sort>> left = !isLeft ? obj : otherObj;
+    Pair<ASTCDType, Expr<? extends Sort>> right = isLeft ? obj : otherObj;
+
+    return mkForAll(
+        ctx,
+        Set.of(obj),
+        mkExists(
+            ctx,
+            Set.of(otherObj),
+            (BoolExpr) ctx.mkApp(assocFunc, left.getRight(), right.getRight()),
+            classData),
+        classData);
   }
 
   protected BoolExpr buildOptionalConstraint(
       FuncDecl<BoolSort> assocFunc,
-      Expr<? extends Sort> obj1,
-      Expr<? extends Sort> otherObj1,
-      Expr<? extends Sort> otherObj2,
+      Pair<ASTCDType, Expr<? extends Sort>> obj1,
+      Pair<ASTCDType, Expr<? extends Sort>> otherObj1,
+      Pair<ASTCDType, Expr<? extends Sort>> otherObj2,
       boolean isLeft,
       Context ctx) {
-    Expr<? extends Sort> left1 = !isLeft ? obj1 : otherObj1;
-    Expr<? extends Sort> left2 = !isLeft ? obj1 : otherObj2;
-    Expr<? extends Sort> right1 = isLeft ? obj1 : otherObj1;
-    Expr<? extends Sort> right2 = isLeft ? obj1 : otherObj1;
-    return ctx.mkForall(
-        new Expr[] {obj1, otherObj1, otherObj2},
+    Pair<ASTCDType, Expr<? extends Sort>> left1 = !isLeft ? obj1 : otherObj1;
+    Pair<ASTCDType, Expr<? extends Sort>> left2 = !isLeft ? obj1 : otherObj2;
+    Pair<ASTCDType, Expr<? extends Sort>> right1 = isLeft ? obj1 : otherObj1;
+    Pair<ASTCDType, Expr<? extends Sort>> right2 = isLeft ? obj1 : otherObj1;
+    return mkForAll(
+        ctx,
+        Set.of(obj1, otherObj1, otherObj2),
         ctx.mkImplies(
-            ctx.mkAnd(ctx.mkApp(assocFunc, left1, right1), ctx.mkApp(assocFunc, left2, right2)),
-            ctx.mkEq(otherObj1, otherObj2)),
-        0,
-        null,
-        null,
-        null,
-        null);
+            ctx.mkAnd(
+                ctx.mkApp(assocFunc, left1.getRight(), right1.getRight()),
+                ctx.mkApp(assocFunc, left2.getRight(), right2.getRight())),
+            ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
+        classData);
   }
 
   @Override

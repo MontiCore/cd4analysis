@@ -5,6 +5,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.Set;
 
 public interface AssociationsData {
@@ -18,7 +19,11 @@ public interface AssociationsData {
    * @return the result of the evaluation as BoolExpr
    */
   BoolExpr evaluateLink(
-      ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right);
+      ASTCDAssociation association,
+      ASTCDType type1,
+      ASTCDType type2,
+      Expr<? extends Sort> left,
+      Expr<? extends Sort> right);
 
   /** @return the associations Constraints as Set of Bool-Expressions */
   Set<IdentifiableBoolExpr> getAssociationsConstraints();
