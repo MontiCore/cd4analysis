@@ -33,7 +33,7 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
 
   private ASTCDCompilationUnit astCd;
   private final ClassStrategy classStrategy = new DistinctSort();
-  private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy();
+  private final InheritanceStrategy inheritanceStrategy = new DefaultInhrStrategy(classStrategy);
   private final AssociationStrategy associationStrategy = new DefaultAssocStrategy();
   private DataWrapper dataWrapper;
   private final SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
@@ -79,8 +79,8 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
   }
 
   @Override
-  public Expr<? extends Sort> getSortFilter(ASTCDType astcdType) {
-    return dataWrapper.getSortFilter(astcdType);
+  public BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType) {
+    return dataWrapper.isInstanceOf(expr, astCdType);
   }
 
   @Override
@@ -91,8 +91,12 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
 
   @Override
   public BoolExpr evaluateLink(
-      ASTCDAssociation association, Expr<? extends Sort> left, Expr<? extends Sort> right) {
-    return dataWrapper.evaluateLink(association, left, right);
+      ASTCDAssociation association,
+      ASTCDType type1,
+      ASTCDType type2,
+      Expr<? extends Sort> expr1,
+      Expr<? extends Sort> expr2) {
+    return dataWrapper.evaluateLink(association, type1, type2, expr1, expr2);
   }
 
   @Override
@@ -134,7 +138,7 @@ public class CD2SMTGenerator implements ClassData, AssociationsData, Inheritance
     // get link between Objects
     objectSet2 = associationStrategy.smt2od(model, objectSet2);
 
-    //// remove the subclass instances and their links and Interface  objects
+    // remove the subclass instances and their links and Interface  objects
     Set<SMTObject> objectSet = new HashSet<>();
     for (SMTObject entry : objectSet2) {
       if (!entry.isAbstract()) {

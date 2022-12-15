@@ -4,6 +4,7 @@ import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
 import com.microsoft.z3.UninterpretedSort;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,8 +13,11 @@ public class SMTType {
   private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributes;
   private Sort sort;
 
-  public SMTType(boolean isInterface) {
+  private final ASTCDType astcdType;
+
+  public SMTType(boolean isInterface, ASTCDType astcdType) {
     this.isInterface = isInterface;
+    this.astcdType = astcdType;
     attributes = new HashMap<>();
   }
 
@@ -43,6 +47,10 @@ public class SMTType {
 
   public boolean isClass() {
     return !isInterface;
+  }
+
+  public ASTCDType getAstcdType() {
+    return astcdType;
   }
 
   public Map<ASTCDAttribute, FuncDecl<? extends Sort>> getAttributesMap() {

@@ -2,17 +2,17 @@ package de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
-import de.monticore.cd2smt.Helper.SMTNameHelper;
+import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
 public class DistinctSort implements ClassStrategy {
-  Map<ASTCDType, SMTType> smtTypesMap;
+  protected Map<ASTCDType, SMTType> smtTypesMap;
+  protected Context ctx;
 
   public DistinctSort() {
     smtTypesMap = new HashMap<>();
@@ -24,10 +24,9 @@ public class DistinctSort implements ClassStrategy {
   }
 
   @Override
-  public Expr<? extends Sort> getSortFilter(ASTCDType astcdType) {
-    Log.error("function getSortFilter() not implemented for the class-strategy DistinctSort");
-    return null;
-  } // TODO:implement and introduce it
+  public BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType) {
+    return ctx.mkTrue();
+  }
 
   @Override
   public Expr<? extends Sort> getAttribute(
@@ -40,6 +39,7 @@ public class DistinctSort implements ClassStrategy {
 
   @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
+    ctx = context;
     ast.getCDDefinition().getCDClassesList().forEach(Class -> declareCDType(Class, context, false));
     ast.getCDDefinition()
         .getCDInterfacesList()
@@ -47,19 +47,18 @@ public class DistinctSort implements ClassStrategy {
   }
 
   private void declareCDType(ASTCDType astcdType, Context ctx, boolean isInterface) {
-    SMTType smtType = new SMTType(isInterface);
+    SMTType smtType = new SMTType(isInterface, astcdType);
 
     // (declare-sort A_obj 0)
     UninterpretedSort typeSort =
-        ctx.mkUninterpretedSort(ctx.mkSymbol(SMTNameHelper.printSMTCDTypeName(astcdType)));
+        ctx.mkUninterpretedSort(ctx.mkSymbol(SMTHelper.printSMTCDTypeName(astcdType)));
     smtType.setSort(typeSort);
 
     // (declare-fun a_attrib_something (A_obj) String) declare all attributes
     for (ASTCDAttribute myAttribute : astcdType.getCDAttributeList()) {
       Sort sort = CDHelper.parseAttribType2SMT(ctx, myAttribute);
       FuncDecl<Sort> attributeFunc =
-          ctx.mkFuncDecl(
-              SMTNameHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
+          ctx.mkFuncDecl(SMTHelper.printAttributeNameSMT(astcdType, myAttribute), typeSort, sort);
       smtType.addAttribute(myAttribute, attributeFunc);
     }
 
@@ -73,10 +72,10 @@ public class DistinctSort implements ClassStrategy {
     // interfaces , abstract and superInstance must be deleted
     for (Sort mySort : model.getSorts()) {
       for (Expr<Sort> smtExpr : model.getSortUniverse(mySort)) {
-        SMTType smtType = getSMTType(SMTNameHelper.sort2CDTypeName(mySort)).orElse(null);
+        SMTType smtType = getSMTType(symbol2CDTypeName(mySort.getName())).orElse(null);
         assert smtType != null;
         boolean isAbstract = smtType.isInterface();
-        MinObject obj = new MinObject(isAbstract, smtExpr, smtType);
+        MinObject obj = new MinObject(isAbstract, smtExpr, smtType.getAstcdType());
 
         for (Map.Entry<ASTCDAttribute, FuncDecl<? extends Sort>> attribute :
             smtType.getAttributesMap().entrySet()) {
@@ -98,5 +97,12 @@ public class DistinctSort implements ClassStrategy {
       }
     }
     return Optional.empty();
+  }
+
+  private String symbol2CDTypeName(Symbol symbol) {
+    int length = symbol.toString().length();
+    StringBuilder stringBuilder = new StringBuilder(symbol.toString());
+    stringBuilder.delete(length - 4, length); // remove the 4 last Characters
+    return stringBuilder.toString();
   }
 }

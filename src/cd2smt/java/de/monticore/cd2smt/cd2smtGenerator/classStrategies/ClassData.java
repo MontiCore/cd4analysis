@@ -1,5 +1,6 @@
 package de.monticore.cd2smt.cd2smtGenerator.classStrategies;
 
+import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -13,10 +14,11 @@ public interface ClassData {
   Sort getSort(ASTCDType astCdType);
 
   /**
+   * @param expr SMT Expression
    * @param astCdType the ASTCDType (class or interface)
-   * @return a filter, to filter elements of the ASTCDType form the other Sort-elements
+   * @return true, iff expr represent an expression with the type astCdType
    */
-  Expr<? extends Sort> getSortFilter(ASTCDType astCdType);
+  BoolExpr isInstanceOf(Expr<? extends Sort> expr, ASTCDType astCdType);
 
   /**
    * this function calculate the value of an Expr that represent a ASTCDType Object .

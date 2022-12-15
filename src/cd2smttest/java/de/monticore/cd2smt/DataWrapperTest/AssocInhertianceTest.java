@@ -60,7 +60,7 @@ public class AssocInhertianceTest extends CDDiffTestBasis {
     Expr<? extends Sort> obj2 = ctx.mkConst("obj2", cd2SMTGenerator.getSort(class2));
 
     Optional<Expr<? extends Sort>> link =
-        Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, obj1, obj2));
+        Optional.ofNullable(cd2SMTGenerator.evaluateLink(association, class1, class2, obj1, obj2));
     Assertions.assertTrue(link.isPresent());
   }
 
