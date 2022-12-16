@@ -92,13 +92,13 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
       // build constants for quantifiers scope
       Pair<ASTCDType, Expr<? extends Sort>> r1 =
-          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "1", rightSort));
+          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "r1", rightSort));
       Pair<ASTCDType, Expr<? extends Sort>> l1 =
-          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "1", leftSort));
+          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "l1", leftSort));
       Pair<ASTCDType, Expr<? extends Sort>> l2 =
-          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "2", leftSort));
+          new ImmutablePair<>(leftClass, ctx.mkConst(leftClass.getName() + "l2", leftSort));
       Pair<ASTCDType, Expr<? extends Sort>> r2 =
-          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "2", rightSort));
+          new ImmutablePair<>(rightClass, ctx.mkConst(rightClass.getName() + "r2", rightSort));
 
       // position
       SourcePosition srcPos = myAssoc.get_SourcePositionStart();
