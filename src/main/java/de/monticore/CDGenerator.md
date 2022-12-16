@@ -1,10 +1,13 @@
 ## CDGeneratorTool
 
-The CDGeneratorTool provides a lightweight way to interact with the CD Language using the command line and processing classdiagram models including:
+The CDGeneratorTool provides a lightweight way to use the 
+functionality provided for the CD Language 
+from a command line (i.e. a shell) and processing classdiagram 
+models including:
 
-- inputting and parsing a classdiagram-model with coco-checking and symbol table creation
+- loading classdiagram, coco-checking and symboltable creation
 - storing symbols in symbol files
-- generating java code out of the class diagram
+- generating a core set of Java classes from of the class diagram
 
 The possible options are:
 
@@ -19,6 +22,7 @@ The possible options are:
 | `-s` `--symboltable`       | Sets the additional path and file for a serialized version of the symbol-table                           |
 | `-gen` `--generate`        | Generates Java Classes and Code in the given output path corresponding to the current classdiagram-model |
 | `-tp` `--template`         | Sets the path of additional templates that can be used in the generation process                         |
-| `-hwc` `--handwrittencode` | Sets the path for additional handwritten code to be considered in the generation process                 |
-| `-ct` `--configtemplate`   | Sets a different template for generator configurations to replace the default template                   |
+| `-hwc` `--handwrittencode` | Sets the path for additional handwritten code to be integrated in the generation process                 |
+|                            | (see explanation for details)                                                                            |
+| `-ct` `--configtemplate`   | Sets a template for generator configurations to replace the default template                   |
 | `-v` `--version`           | Prints out the current version of the tool to the console                                                |
