@@ -11,7 +11,7 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
-import net.sourceforge.plantuml.Log;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
