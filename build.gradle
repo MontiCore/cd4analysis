@@ -82,6 +82,9 @@ sourceSets {
       include "**/*.mc4"
     }
   }
+  cd2plantuml {
+    java {}
+  }
   cddiff {
     java {}
   }
@@ -109,6 +112,8 @@ sourceSets {
 }
 
 configurations {
+  cd2plantumlImplementation.extendsFrom(implementation)
+
   cddiffImplementation.extendsFrom(implementation)
   cddifftestImplementation.extendsFrom(testImplementation)
   cddifftestImplementation.extendsFrom(cddiffImplementation)
@@ -142,7 +147,6 @@ dependencies {
   implementation "de.se_rwth.commons:se-commons-logging:$commons_version"
   implementation "de.se_rwth.commons:se-commons-utilities:$commons_version"
   implementation "com.google.guava:guava:$guava_version"
-  implementation "net.sourceforge.plantuml:plantuml:$plantuml_version"
   implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
   implementation "commons-cli:commons-cli:$commons_cli_version"
   implementation "org.apache.commons:commons-lang3:$commons_lang_version"
@@ -150,11 +154,14 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
   testImplementation "org.junit.vintage:junit-vintage-engine:$junit_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") {capabilities {
+  testImplementation ("de.monticore:monticore-runtime:${project.properties['mc_version']}") capabilities {
     requireCapability("de.monticore:monticore-runtime-tests") }
   testImplementation "org.mockito:mockito-core:$mockito_version"
   testImplementation group: 'com.google.code.findbugs', name: 'jsr305', version: findbugs_version
-  }
+
+  // dependencies for cd2plantuml
+  cd2plantumlImplementation(sourceSets.main.output.classesDirs)
+  cd2plantumlImplementation("net.sourceforge.plantuml:plantuml:$plantuml_version")
 
   // dependencies for cddiff
   cddiffImplementation("de.monticore.lang:od:$mc_version") {
@@ -179,6 +186,7 @@ dependencies {
   cd2smttestImplementation(sourceSets.cd2smt.output.classesDirs)
   cd2smttestImplementation(sourceSets.cddifftest.output.classesDirs)
 
+  toolImplementation(sourceSets.cd2plantuml.output.classesDirs)
   toolImplementation(sourceSets.cddiff.output.classesDirs)
   toolImplementation(sourceSets.cdmerge.output.classesDirs)
   tooltestImplementation(sourceSets.tool.output.classesDirs)
@@ -430,6 +438,12 @@ javadoc.failOnError(false)
 task testSourcesJar(type: Jar) {
   from sourceSets.test.output + sourceSets.test.allSource
   archiveClassifier = "testSources"
+}
+
+// build test sources jar in addition
+task cd2plantumlJar(type: Jar) {
+  from sourceSets.cd2plantuml.output + sourceSets.cd2plantuml.allSource
+  archiveClassifier = "cd2plantuml"
 }
 
 // build test sources jar in addition
