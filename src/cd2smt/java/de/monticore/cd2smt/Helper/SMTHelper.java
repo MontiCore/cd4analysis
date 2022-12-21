@@ -8,10 +8,9 @@ import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class SMTHelper {
   public static String fCharToLowerCase(String str) {

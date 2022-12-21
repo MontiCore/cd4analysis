@@ -1,5 +1,8 @@
 package de.monticore.cd2smt.cd2smtGenerator.assocStrategies.defaultAssocStrategy;
 
+import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
+import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
+
 import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
@@ -14,13 +17,9 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.SourcePosition;
+import java.util.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.*;
-
-import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
-import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
 
 public class DefaultAssocStrategy implements AssociationStrategy {
   ClassData classData;

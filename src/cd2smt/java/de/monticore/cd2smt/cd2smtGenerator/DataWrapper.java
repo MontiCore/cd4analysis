@@ -12,7 +12,6 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

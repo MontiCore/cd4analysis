@@ -5,7 +5,6 @@ import com.microsoft.z3.Model;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
 import java.util.Set;
 
 public interface AssociationStrategy extends AssociationsData {

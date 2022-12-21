@@ -1,5 +1,8 @@
 package de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy;
 
+import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
+import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -17,12 +20,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-
 import java.util.*;
-
-import static de.monticore.cd2smt.Helper.SMTHelper.mkExists;
-import static de.monticore.cd2smt.Helper.SMTHelper.mkForAll;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class DefaultInhrStrategy implements InheritanceStrategy {
   private final Set<IdentifiableBoolExpr> inheritanceConstraints;
