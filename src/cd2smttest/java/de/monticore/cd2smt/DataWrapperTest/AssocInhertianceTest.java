@@ -36,10 +36,7 @@ public class AssocInhertianceTest extends CDDiffTestBasis {
   @BeforeEach
   public void setup() {
     Log.init();
-    Log.enableFailQuick(false);
-    CD4CodeMill.reset();
     CD4CodeMill.init();
-    CD4CodeMill.globalScope().clear();
 
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");

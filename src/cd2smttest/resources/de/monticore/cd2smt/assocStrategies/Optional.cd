@@ -1,0 +1,8 @@
+classdiagram STTest {
+ class Car;
+ class Motor;
+
+
+  association  Car(car)      --  (motor) Motor[0..1];
+
+}

@@ -1,3 +1,4 @@
+import java.util.lang.* ;
 classdiagram STTest {
  class Car {
     boolean isExpensive ;
