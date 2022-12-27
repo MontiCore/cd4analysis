@@ -180,19 +180,31 @@ public class DefaultAssocStrategy implements AssociationStrategy {
       Pair<ASTCDType, Expr<? extends Sort>> otherObj2,
       boolean isLeft,
       Context ctx) {
-    Pair<ASTCDType, Expr<? extends Sort>> left1 = !isLeft ? obj1 : otherObj1;
-    Pair<ASTCDType, Expr<? extends Sort>> left2 = !isLeft ? obj1 : otherObj2;
-    Pair<ASTCDType, Expr<? extends Sort>> right1 = isLeft ? obj1 : otherObj1;
-    Pair<ASTCDType, Expr<? extends Sort>> right2 = isLeft ? obj1 : otherObj1;
-    return mkForAll(
-        ctx,
-        Set.of(obj1, otherObj1, otherObj2),
-        ctx.mkImplies(
-            ctx.mkAnd(
-                ctx.mkApp(assocFunc, left1.getRight(), right1.getRight()),
-                ctx.mkApp(assocFunc, left2.getRight(), right2.getRight())),
-            ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
-        classData);
+    BoolExpr res;
+    if (isLeft) {
+      res =
+          mkForAll(
+              ctx,
+              Set.of(obj1, otherObj1, otherObj2),
+              ctx.mkImplies(
+                  ctx.mkAnd(
+                      ctx.mkApp(assocFunc, otherObj1.getRight(), obj1.getRight()),
+                      ctx.mkApp(assocFunc, otherObj2.getRight(), obj1.getRight())),
+                  ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
+              classData);
+    } else {
+      res =
+          mkForAll(
+              ctx,
+              Set.of(obj1, otherObj1, otherObj2),
+              ctx.mkImplies(
+                  ctx.mkAnd(
+                      ctx.mkApp(assocFunc, obj1.getRight(), otherObj1.getRight()),
+                      ctx.mkApp(assocFunc, obj1.getRight(), otherObj2.getRight())),
+                  ctx.mkEq(otherObj1.getRight(), otherObj2.getRight())),
+              classData);
+    }
+    return res;
   }
 
   @Override

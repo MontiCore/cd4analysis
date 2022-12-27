@@ -33,10 +33,7 @@ public class PrintODTest extends CDDiffTestBasis {
   @BeforeEach
   public void setup() {
     Log.init();
-    Log.enableFailQuick(false);
-    CD4CodeMill.reset();
     CD4CodeMill.init();
-    CD4CodeMill.globalScope().clear();
   }
 
   public void printOD(String CDFileName, String targetNumber) {

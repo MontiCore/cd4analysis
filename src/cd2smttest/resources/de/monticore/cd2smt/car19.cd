@@ -1,3 +1,4 @@
+import java.util.lang.* ;
 classdiagram STTest {
 
   class Car extends CarAbstract implements CarInterface, CarInterface2{
