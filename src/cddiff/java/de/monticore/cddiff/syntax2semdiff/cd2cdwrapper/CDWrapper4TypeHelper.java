@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syntax2semdiff.cd2cdwrapper;
 
 import de.monticore.cdbasis._ast.ASTCDClass;

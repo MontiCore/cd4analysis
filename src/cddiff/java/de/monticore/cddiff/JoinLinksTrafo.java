@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff;
 
 import de.monticore.cd4code.CD4CodeMill;

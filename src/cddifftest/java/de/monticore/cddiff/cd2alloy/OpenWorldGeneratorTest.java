@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy;
 
 import static org.junit.Assert.assertNotNull;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4code.cocos;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;

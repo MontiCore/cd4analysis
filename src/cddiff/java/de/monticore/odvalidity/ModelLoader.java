@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.odvalidity;
 
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;

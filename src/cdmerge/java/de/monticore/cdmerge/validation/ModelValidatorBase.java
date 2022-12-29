@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.validation;
 
 import de.monticore.cdmerge.log.MergePhase;

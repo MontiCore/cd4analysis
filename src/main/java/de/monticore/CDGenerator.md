@@ -1,3 +1,4 @@
+<!-- (c) https://github.com/MontiCore/monticore -->
 ## CDGeneratorTool
 
 The CDGeneratorTool provides a lightweight way to use the 

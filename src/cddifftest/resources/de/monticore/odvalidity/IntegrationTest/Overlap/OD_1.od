@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 objectdiagram OD_1 {
 
   manager_0:Manager{};

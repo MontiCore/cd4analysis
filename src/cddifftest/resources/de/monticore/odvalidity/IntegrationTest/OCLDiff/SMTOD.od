@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 objectdiagram SMTOD {
 
   Motor_obj3:Motor{

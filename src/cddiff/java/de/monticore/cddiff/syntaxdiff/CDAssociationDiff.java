@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syntaxdiff;
 
 import de.monticore.ast.ASTNode;

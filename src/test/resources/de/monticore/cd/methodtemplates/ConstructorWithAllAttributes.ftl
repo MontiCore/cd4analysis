@@ -1,3 +1,4 @@
+<#-- (c) https://github.com/MontiCore/monticore -->
 ${tc.signature()}
 <#assign parameter = ast.getCDAttributeList()?filter(a -> a.getModifier().isPublic())>
 ${cd4c.constructor("public HelloWorldWithConstructor(" + parameter?map(a -> a.printType() + " " + a.getName())?join(", ") + ")")}

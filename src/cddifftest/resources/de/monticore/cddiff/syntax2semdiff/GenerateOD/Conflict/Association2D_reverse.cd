@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram ABC4R{
   class A;
   class B;

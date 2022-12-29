@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.Helper.visitor;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;

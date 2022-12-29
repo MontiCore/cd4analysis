@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.merging.mergeresult;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;

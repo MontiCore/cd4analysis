@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram ClassToInterface2 {
   interface A;
   class B;

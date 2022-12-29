@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.matching.matchresult;
 
 import de.monticore.cdassociation._ast.ASTCDAssociation;

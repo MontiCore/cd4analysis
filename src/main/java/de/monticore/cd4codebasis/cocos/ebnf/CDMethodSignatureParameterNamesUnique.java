@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd4codebasis.cocos.ebnf;
 
 import de.monticore.cd.cocos.CoCoHelper;

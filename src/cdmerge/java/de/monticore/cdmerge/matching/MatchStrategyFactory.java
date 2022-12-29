@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.matching;
 
 import de.monticore.cdmerge.matching.strategies.AssociationMatcher;

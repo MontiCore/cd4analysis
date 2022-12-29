@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.cd2alloy.generator;
 
 import de.monticore.cdbasis._ast.ASTCDClass;

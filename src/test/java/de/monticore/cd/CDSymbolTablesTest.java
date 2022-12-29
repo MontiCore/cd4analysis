@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd;
 
 import static org.junit.Assert.assertEquals;

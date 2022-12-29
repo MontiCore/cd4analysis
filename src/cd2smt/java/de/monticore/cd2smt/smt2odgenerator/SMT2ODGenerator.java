@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.smt2odgenerator;
 
 import com.microsoft.z3.Expr;

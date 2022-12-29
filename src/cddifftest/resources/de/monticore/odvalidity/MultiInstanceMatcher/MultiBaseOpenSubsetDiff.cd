@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram CD_Base_2 {
 
   class A;

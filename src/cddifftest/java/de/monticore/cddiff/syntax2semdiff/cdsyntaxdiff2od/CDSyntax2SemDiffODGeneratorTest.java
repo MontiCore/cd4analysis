@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.syntax2semdiff.cdsyntaxdiff2od;
 
 import static org.junit.Assert.assertNotNull;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.defaultInhrStratregy;
 
 import com.microsoft.z3.Constructor;

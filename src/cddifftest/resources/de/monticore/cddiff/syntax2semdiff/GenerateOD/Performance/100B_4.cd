@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram CD2 {
 
   enum EnumA {enumA1, enumA2;}

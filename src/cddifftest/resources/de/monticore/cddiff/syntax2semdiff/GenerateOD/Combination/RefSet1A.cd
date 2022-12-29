@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram Employees1 {
   enum PositionKind {fullTime, partTime;}
 

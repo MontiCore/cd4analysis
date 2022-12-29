@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram AssocInheritance {
 
    class  Car implements CarInterface;

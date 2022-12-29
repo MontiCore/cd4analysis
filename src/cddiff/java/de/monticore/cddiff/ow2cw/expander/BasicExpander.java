@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cddiff.ow2cw.expander;
 
 import de.monticore.cd.facade.CDExtendUsageFacade;

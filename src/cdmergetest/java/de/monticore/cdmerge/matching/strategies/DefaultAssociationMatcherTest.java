@@ -1,8 +1,4 @@
-/*
- * Copyright (c) 2018 RWTH Aachen. All rights reserved.
- *
- * http://www.se-rwth.de/
- */
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.matching.strategies;
 
 import static org.junit.Assert.*;

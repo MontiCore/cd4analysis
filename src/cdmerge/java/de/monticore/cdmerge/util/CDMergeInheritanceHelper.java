@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cdmerge.util;
 
 import de.monticore.cdbasis._ast.ASTCDAttribute;

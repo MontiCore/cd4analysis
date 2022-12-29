@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
 import de.monticore.ast.ASTNode;

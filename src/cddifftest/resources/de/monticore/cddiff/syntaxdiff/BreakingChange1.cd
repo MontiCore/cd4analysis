@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 classdiagram BreakingChange1 {
   class A;
   class B;

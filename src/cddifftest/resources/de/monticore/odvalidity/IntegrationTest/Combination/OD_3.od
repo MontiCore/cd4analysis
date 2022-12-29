@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 objectdiagram OD_3 {
 
   employee_0:Employee{
