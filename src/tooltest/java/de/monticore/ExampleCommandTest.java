@@ -177,7 +177,7 @@ public class ExampleCommandTest extends OutTestBasis {
       CD4CodeTool.main(new String[] {"-i", fileName});
     } catch (Error e) {
       Assert.assertTrue(
-          e.getMessage().contains("MyLife.cd:<18,9>: 0xA0324 Cannot find symbol Address"));
+          e.getMessage().contains("MyLife.cd:<19,9>: 0xA0324 Cannot find symbol Address"));
       Log.clearFindings();
       return;
     }
