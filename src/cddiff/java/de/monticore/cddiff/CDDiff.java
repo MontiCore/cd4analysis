@@ -166,9 +166,13 @@ public class CDDiff {
   public static String printWitnesses2stdout(List<ASTODArtifact> witnesses) {
 
     StringBuilder result = new StringBuilder();
-    result.append("\t *************************  Diff Witnesses  ************************* \n");
-    for (ASTODArtifact od : witnesses) {
-      result.append(printOD(od)).append(System.lineSeparator());
+    if (witnesses.isEmpty()) {
+      result.append("\t ************************ No Diff Witnesses  ************************ \n");
+    } else {
+      result.append("\t *************************  Diff Witnesses  ************************* \n");
+      for (ASTODArtifact od : witnesses) {
+        result.append(printOD(od)).append(System.lineSeparator());
+      }
     }
     return result.toString();
   }

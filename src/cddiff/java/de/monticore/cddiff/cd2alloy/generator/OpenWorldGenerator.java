@@ -58,14 +58,14 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
         + System.lineSeparator()
         + "fact GetConsistency {"
         + System.lineSeparator()
-        + " all src: Obj | all q : FName | src.get[q] in EnumVal => {some e:Enum | ObjAttrib[src"
-        + ".type.inst,q,e.values]}"
+        + " all src: Obj | all q : FName | {#src.get[q] > 0 and src.get[q] in EnumVal} => {some e:Enum | "
+        + "ObjAttrib[src.type.inst,q,e.values]}"
         + System.lineSeparator()
-        + " all src: Obj | all q : FName | src.get[q] in Val => {some v:Val | ObjAttrib[src.type"
-        + ".inst,q,v]}"
+        + " all src: Obj | all q : FName | {#src.get[q] > 0 and src.get[q] in Val} => {some v:Val"
+        + " | ObjAttrib[src.type.inst,q,v]}"
         + System.lineSeparator()
-        + " all src: Obj | all q : FName | src.get[q] in Obj  => {some target : Type | all o : "
-        + "src.type.inst | o.get[q] in target.inst}"
+        + " all src: Obj | all q : FName | {#src.get[q] > 0 and src.get[q] in Obj}  => {some "
+        + "target : Type | all o : src.type.inst | o.get[q] in target.inst}"
         + System.lineSeparator()
         + "}"
         + System.lineSeparator()
@@ -100,6 +100,9 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
     // Generate rule output
     commonSigs.append("// U4: Concrete enum values ").append(System.lineSeparator());
+    if (enumTypeNameUnion.isEmpty()) {
+      commonSigs.append("fact {no EnumVal}").append(System.lineSeparator());
+    }
     for (String enumTypeName : enumTypeNameUnion) {
       commonSigs.append("one sig enum_");
       commonSigs.append(enumTypeName);

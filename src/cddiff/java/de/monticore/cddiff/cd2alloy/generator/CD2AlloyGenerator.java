@@ -223,7 +223,10 @@ public class CD2AlloyGenerator {
     }
 
     // Output generation
-    commonSigs.append("// U1: Common classes ").append(System.lineSeparator());
+    commonSigs.append("// U1: Common types ").append(System.lineSeparator());
+    if (typeNameUnion.isEmpty()) {
+      commonSigs.append("fact {no Obj}").append(System.lineSeparator());
+    }
     for (String typeName : typeNameUnion) {
       commonSigs.append("sig ");
       commonSigs.append(typeName);
@@ -308,6 +311,9 @@ public class CD2AlloyGenerator {
 
     // Generate output of U2 rule
     commonSigs.append("// U2: Common names ").append(System.lineSeparator());
+    if (nameUnion.isEmpty()) {
+      commonSigs.append("fact {no FName}").append(System.lineSeparator());
+    }
     for (String n : nameUnion) {
       commonSigs
           .append("one sig ")
@@ -385,6 +391,9 @@ public class CD2AlloyGenerator {
 
     // Generate rule output
     commonSigs.append("// U3: Concrete primitive or unknown types ").append(System.lineSeparator());
+    if (puTypes.isEmpty()) {
+      commonSigs.append("fact {no Val}").append(System.lineSeparator());
+    }
     for (String type : puTypes) {
       commonSigs
           .append("one sig type_")
@@ -419,6 +428,9 @@ public class CD2AlloyGenerator {
 
     // Generate rule output
     commonSigs.append("// U4: Concrete enum values ").append(System.lineSeparator());
+    if (enumTypeNameUnion.isEmpty()) {
+      commonSigs.append("fact {no EnumVal}").append(System.lineSeparator());
+    }
     for (String enumTypeName : enumTypeNameUnion) {
       commonSigs.append("one sig enum_");
       commonSigs.append(enumTypeName);
