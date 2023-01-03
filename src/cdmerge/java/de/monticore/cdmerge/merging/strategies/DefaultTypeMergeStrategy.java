@@ -416,7 +416,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
       } else {
         List<String> existingInterfaces =
             en.getInterfaceList().stream()
-                .map(i -> CDUtils.getTypeName(i))
+                .map(CDUtils::getTypeName)
                 .collect(Collectors.toList());
         for (ASTMCObjectType iface : inface.getInterfaceList()) {
           if (!existingInterfaces.contains(CDUtils.getTypeName(iface))) {
@@ -436,7 +436,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     List<String> additionalConstNames = precedences.getPrecedenceConstantsForEnum(astEnum, cd);
     for (String constName : additionalConstNames) {
       constant = CDUtils.getConstFromEnum(constName, astEnum);
-      if (constant.isPresent() && !CDUtils.getConstFromEnum(constName, res).isPresent()) {
+      if (constant.isPresent() && CDUtils.getConstFromEnum(constName, res).isEmpty()) {
         res.getCDEnumConstantList().add(constant.get());
       }
     }
@@ -513,20 +513,17 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     Iterator<ASTCDEnumConstant> constantIterator2 = enum2.getCDEnumConstantList().iterator();
     if (!constantIterator1.hasNext()) {
       mergedEnum.setCDEnumConstantList(enum2.getCDEnumConstantList());
-      return orderStrictConsistent;
+      return true;
     }
     if (!constantIterator2.hasNext()) {
       mergedEnum.setCDEnumConstantList(enum1.getCDEnumConstantList());
-      return orderStrictConsistent;
+      return true;
     }
     ASTCDEnumConstant constant1;
     ASTCDEnumConstant constant2 = constantIterator2.next();
     List<ASTCDEnumConstant> constants = new ArrayList<>();
     while (constantIterator1.hasNext()) {
       constant1 = constantIterator1.next();
-      if (!ok) {
-        break;
-      }
       // Same constant: Add to Merged and move forward in both enums
       if (constant1.getName().equalsIgnoreCase(constant2.getName())) {
         if (constant1.deepEquals(constant2)) {
@@ -534,11 +531,15 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
           constants.add(constant1);
           if (constantIterator2.hasNext()) {
             constant2 = constantIterator2.next();
+            // if there are no more elements left in enum1, we add constant2
+            if (!constantIterator1.hasNext()
+                && !constant1.getName().equalsIgnoreCase(constant2.getName())) {
+              constants.add(constant2);
+            }
           } else {
             break;
           }
         } else {
-          ok = false;
           logError(
               "Constant '"
                   + enum1.getName()
@@ -623,13 +624,6 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
       constants.add(constantIterator2.next());
     }
 
-    if (!ok) {
-      mergedEnum.add_PreComment(
-          new Comment(
-              "<ERROR> Constants for enum '"
-                  + mergedEnum.getName()
-                  + "'  where not merged due to conflicts, check merge Log for details"));
-    }
     mergedEnum.setCDEnumConstantList(constants);
     return orderStrictConsistent;
   }
