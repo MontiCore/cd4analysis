@@ -8,7 +8,7 @@ plugins {
   id "monticore" version "$mc_version" // MontiCore Plugin
   id "maven-publish"
   id "com.github.johnrengelman.shadow" version "6.0.0" apply false
-  id "io.github.themrmilchmann.ecj" version "0.1.0" // id "de.set.ecj" version "1.4.1" // Eclipse compiler as it's much faster than javac
+  id "io.github.themrmilchmann.ecj" version "0.1.0" // Eclipse compiler as it's much faster than javac
   id 'org.unbroken-dome.test-sets' version '4.0.0'
   id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
@@ -384,10 +384,6 @@ tasks.withType(JavaCompile) {
   options.warnings = false
   options.fork = true
   options.headerOutputDirectory.convention(null)
-//  options.forkOptions.with {
-//    executable = 'java'
-//    jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn', "-Xmx2048m"]
-//  }
 }
 
 tasks.withType(Test) {
