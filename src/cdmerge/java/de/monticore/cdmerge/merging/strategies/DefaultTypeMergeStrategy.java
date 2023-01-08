@@ -415,9 +415,7 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
                 .build());
       } else {
         List<String> existingInterfaces =
-            en.getInterfaceList().stream()
-                .map(CDUtils::getTypeName)
-                .collect(Collectors.toList());
+            en.getInterfaceList().stream().map(CDUtils::getTypeName).collect(Collectors.toList());
         for (ASTMCObjectType iface : inface.getInterfaceList()) {
           if (!existingInterfaces.contains(CDUtils.getTypeName(iface))) {
             mergedEnum.getInterfaceList().add(iface);

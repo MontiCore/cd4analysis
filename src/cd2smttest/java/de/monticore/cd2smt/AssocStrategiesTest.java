@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach;
 
 public class AssocStrategiesTest extends CDDiffTestBasis {
   protected final String RELATIVE_MODEL_PATH = "src/cd2smttest/resources/de/monticore/cd2smt";
-  protected final String RELATIVE_TARGET_PATH = "target/generated/cd2smt-test";
 
   @BeforeEach
   public void setup() {

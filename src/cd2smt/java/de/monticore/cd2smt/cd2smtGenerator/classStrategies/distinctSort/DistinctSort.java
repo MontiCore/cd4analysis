@@ -3,6 +3,7 @@ package de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.MinObject;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
@@ -14,6 +15,7 @@ import java.util.*;
 public class DistinctSort implements ClassStrategy {
   protected Map<ASTCDType, SMTType> smtTypesMap;
   protected Context ctx;
+  protected ASTCDCompilationUnit ast;
 
   public DistinctSort() {
     smtTypesMap = new HashMap<>();
@@ -39,7 +41,18 @@ public class DistinctSort implements ClassStrategy {
   }
 
   @Override
+  public ASTCDCompilationUnit getClassDiagram() {
+    return ast;
+  }
+
+  @Override
+  public Set<IdentifiableBoolExpr> getClassConstraints() {
+    return new HashSet<>();
+  }
+
+  @Override
   public void cd2smt(ASTCDCompilationUnit ast, Context context) {
+    this.ast = ast;
     ctx = context;
     ast.getCDDefinition().getCDClassesList().forEach(Class -> declareCDType(Class, context, false));
     ast.getCDDefinition()

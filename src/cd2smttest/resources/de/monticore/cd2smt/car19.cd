@@ -41,7 +41,7 @@ classdiagram STTest {
          boolean extendsAutoInterface2 ;
   }
 
-  association [1] AutoInterface1      --      Dummy1[1];
+ // association [1] AutoInterface1      --      Dummy1[1];
   association [1] AutoInterface2      --      Dummy2[1];
    association [1] CarInterface2      --      Dummy3[1];
 }

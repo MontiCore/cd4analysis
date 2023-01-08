@@ -1,9 +1,8 @@
-/* (c) https://github.com/MontiCore/monticore */
-package de.monticore.cd2smt.cd2smtGenerator.classStrategies.distinctSort;
+package de.monticore.cd2smt.cd2smtGenerator.classStrategies.singleSort;
 
+import com.microsoft.z3.Constructor;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
-import com.microsoft.z3.UninterpretedSort;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDType;
 import java.util.HashMap;
@@ -12,9 +11,13 @@ import java.util.Map;
 class SMTType {
   private final boolean isInterface;
   private final Map<ASTCDAttribute, FuncDecl<? extends Sort>> attributes;
-  private Sort sort;
+  private Constructor<Sort> type;
 
   private final ASTCDType astcdType;
+
+  public ASTCDType getAstcdType() {
+    return astcdType;
+  }
 
   public SMTType(boolean isInterface, ASTCDType astcdType) {
     this.isInterface = isInterface;
@@ -30,16 +33,12 @@ class SMTType {
     attributes.put(attribute, attrFunc);
   }
 
-  public Sort getSort() {
-    return sort;
+  public Constructor<? extends Sort> getType() {
+    return type;
   }
 
-  public void setSort(UninterpretedSort sort) {
-    this.sort = sort;
-  }
-
-  public void setSort(Sort sort) {
-    this.sort = sort;
+  public void setType(Constructor<Sort> type) {
+    this.type = type;
   }
 
   public boolean isInterface() {
@@ -50,7 +49,7 @@ class SMTType {
     return !isInterface;
   }
 
-  public ASTCDType getAstcdType() {
+  public ASTCDType getAsCdType() {
     return astcdType;
   }
 

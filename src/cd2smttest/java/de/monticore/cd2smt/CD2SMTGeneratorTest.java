@@ -21,12 +21,11 @@ public class CD2SMTGeneratorTest extends CDDiffTestBasis {
   CD2SMTGenerator cd2SMTGenerator;
   Context context;
 
-  // setup
-
   void setup(String fileName) {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     context = new Context(cfg);
+
     astCD = parseModel(Paths.get(RELATIVE_MODEL_PATH, fileName).toString());
     cd2SMTGenerator = new CD2SMTGenerator();
     cd2SMTGenerator.cd2smt(astCD, context);

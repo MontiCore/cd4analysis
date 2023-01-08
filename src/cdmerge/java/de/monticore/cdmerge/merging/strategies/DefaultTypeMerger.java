@@ -82,90 +82,111 @@ public class DefaultTypeMerger extends TypeMerger {
     for (MatchNode<ASTCDType, ASTCDDefinition> cd1Type : cd1Types) {
       // A lonely type in cd1 - add it to result cd and done
       if (!cd1Type.hasMatch(cd2)) {
-        addTypeToMergedCD(cd1Type.getElement(),
+        addTypeToMergedCD(
+            cd1Type.getElement(),
             getBlackBoard().getASTCDHelperInputCD1().getCDPackageName(cd1Type.getElement()));
-      }
-      else {
+      } else {
 
         if (cd1Type.getMatchedNodes(cd2).size() > 1) {
-          logError("Ambiguous matching of type " + cd1Type.getElement().getName() + " from CD "
-              + cd1.getName() + " in CD " + cd2.getName()
-              + "  . Will not process this type further!", cd1Type.getElement());
+          logError(
+              "Ambiguous matching of type "
+                  + cd1Type.getElement().getName()
+                  + " from CD "
+                  + cd1.getName()
+                  + " in CD "
+                  + cd2.getName()
+                  + "  . Will not process this type further!",
+              cd1Type.getElement());
         }
         List<ASTCDType> matches = cd1Type.getMatchedElements();
         ASTCDType mergedType = null;
         // Check Precedences first
-        if (getConfig().getPrecedences()
+        if (getConfig()
+            .getPrecedences()
             .hasPrecedence(cd1Type.getElement(), matches.get(0), cd1, cd2)) {
           mergedType = cd1Type.getElement();
-          log(ErrorLevel.FINE, "Type " + cd1.getName() + "." + cd1Type.getElement().getName()
-              + " has precedence and will not be merged with " + cd2.getName() + "." + matches.get(
-              0).getName());
-        }
-        else if (getConfig().getPrecedences()
+          log(
+              ErrorLevel.FINE,
+              "Type "
+                  + cd1.getName()
+                  + "."
+                  + cd1Type.getElement().getName()
+                  + " has precedence and will not be merged with "
+                  + cd2.getName()
+                  + "."
+                  + matches.get(0).getName());
+        } else if (getConfig()
+            .getPrecedences()
             .hasPrecedence(matches.get(0), cd1Type.getElement(), cd2, cd1)) {
           mergedType = matches.get(0);
-          log(ErrorLevel.FINE, "Type " + cd2.getName() + "." + matches.get(0).getName()
-              + " has precedence and will not be merged with " + cd1.getName() + "."
-              + cd1Type.getElement().getName());
-        }
-        else {
+          log(
+              ErrorLevel.FINE,
+              "Type "
+                  + cd2.getName()
+                  + "."
+                  + matches.get(0).getName()
+                  + " has precedence and will not be merged with "
+                  + cd1.getName()
+                  + "."
+                  + cd1Type.getElement().getName());
+        } else {
 
           if (cd1Type.getElement() instanceof ASTCDClass && matches.get(0) instanceof ASTCDClass) {
-            mergedType = typeMergeStrategy.merge((ASTCDClass) cd1Type.getElement(),
-                (ASTCDClass) matches.get(0),
-                matchresult.getMatchedAttributes(cd1Type.getElement().getName()));
-          }
-          else if (cd1Type.getElement() instanceof ASTCDInterface && matches.get(
-              0) instanceof ASTCDInterface) {
-            mergedType = typeMergeStrategy.merge((ASTCDInterface) cd1Type.getElement(),
-                (ASTCDInterface) matches.get(0));
-          }
-          else if (cd1Type.getElement() instanceof ASTCDEnum && matches.get(
-              0) instanceof ASTCDEnum) {
-            mergedType = typeMergeStrategy.merge((ASTCDEnum) cd1Type.getElement(),
-                (ASTCDEnum) matches.get(0));
-          }
-          else if (cd1Type.getElement() instanceof ASTCDClass && matches.get(
-              0) instanceof ASTCDInterface) {
-            mergedType = typeMergeStrategy.merge((ASTCDClass) cd1Type.getElement(),
-                (ASTCDInterface) matches.get(0));
-          }
-          else if (cd1Type.getElement() instanceof ASTCDClass && matches.get(
-              0) instanceof ASTCDEnum) {
-            mergedType = typeMergeStrategy.merge((ASTCDClass) cd1Type.getElement(),
-                (ASTCDEnum) matches.get(0));
-          }
-          else if (cd1Type.getElement() instanceof ASTCDInterface && matches.get(
-              0) instanceof ASTCDClass) {
-            mergedType = typeMergeStrategy.merge((ASTCDClass) matches.get(0),
-                (ASTCDInterface) cd1Type.getElement());
-          }
-          else if (cd1Type.getElement() instanceof ASTCDEnum && matches.get(
-              0) instanceof ASTCDClass) {
-            mergedType = typeMergeStrategy.merge((ASTCDClass) matches.get(0),
-                (ASTCDEnum) cd1Type.getElement());
-          }
-          else if (cd1Type.getElement() instanceof ASTCDInterface && matches.get(
-              0) instanceof ASTCDEnum) {
-            mergedType = typeMergeStrategy.merge((ASTCDInterface) cd1Type.getElement(),
-                (ASTCDEnum) matches.get(0));
-          }
-          else if (cd1Type.getElement() instanceof ASTCDEnum && matches.get(
-              0) instanceof ASTCDInterface) {
-            mergedType = typeMergeStrategy.merge((ASTCDInterface) matches.get(0),
-                (ASTCDEnum) cd1Type.getElement());
-          }
-          else if (cd1Type.getElement() instanceof ASTCDInterface && matches.get(
-              0) instanceof ASTCDEnum) {
-            mergedType = typeMergeStrategy.merge((ASTCDInterface) cd1Type.getElement(),
-                (ASTCDEnum) matches.get(0));
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDClass) cd1Type.getElement(),
+                    (ASTCDClass) matches.get(0),
+                    matchresult.getMatchedAttributes(cd1Type.getElement().getName()));
+          } else if (cd1Type.getElement() instanceof ASTCDInterface
+              && matches.get(0) instanceof ASTCDInterface) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDInterface) cd1Type.getElement(), (ASTCDInterface) matches.get(0));
+          } else if (cd1Type.getElement() instanceof ASTCDEnum
+              && matches.get(0) instanceof ASTCDEnum) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDEnum) cd1Type.getElement(), (ASTCDEnum) matches.get(0));
+          } else if (cd1Type.getElement() instanceof ASTCDClass
+              && matches.get(0) instanceof ASTCDInterface) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDClass) cd1Type.getElement(), (ASTCDInterface) matches.get(0));
+          } else if (cd1Type.getElement() instanceof ASTCDClass
+              && matches.get(0) instanceof ASTCDEnum) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDClass) cd1Type.getElement(), (ASTCDEnum) matches.get(0));
+          } else if (cd1Type.getElement() instanceof ASTCDInterface
+              && matches.get(0) instanceof ASTCDClass) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDClass) matches.get(0), (ASTCDInterface) cd1Type.getElement());
+          } else if (cd1Type.getElement() instanceof ASTCDEnum
+              && matches.get(0) instanceof ASTCDClass) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDClass) matches.get(0), (ASTCDEnum) cd1Type.getElement());
+          } else if (cd1Type.getElement() instanceof ASTCDInterface
+              && matches.get(0) instanceof ASTCDEnum) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDInterface) cd1Type.getElement(), (ASTCDEnum) matches.get(0));
+          } else if (cd1Type.getElement() instanceof ASTCDEnum
+              && matches.get(0) instanceof ASTCDInterface) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDInterface) matches.get(0), (ASTCDEnum) cd1Type.getElement());
+          } else if (cd1Type.getElement() instanceof ASTCDInterface
+              && matches.get(0) instanceof ASTCDEnum) {
+            mergedType =
+                typeMergeStrategy.merge(
+                    (ASTCDInterface) cd1Type.getElement(), (ASTCDEnum) matches.get(0));
           }
         }
         if (mergedType == null) {
           logError("There is no merge Result!", cd1Type.getElement(), matches.get(0));
-        }
-        else {
+        } else {
           mergeComments(mergedType, cd1Type.getElement(), matches.get(0));
           addTypeToMergedCD(mergedType, getMergedPackage(cd1Type.getElement(), matches.get(0)));
         }
