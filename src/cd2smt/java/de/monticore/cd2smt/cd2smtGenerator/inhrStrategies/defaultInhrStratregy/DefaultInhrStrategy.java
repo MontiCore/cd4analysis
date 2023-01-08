@@ -28,10 +28,9 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
   private final Set<IdentifiableBoolExpr> inheritanceConstraints;
   private final Map<ASTCDType, InheritanceFeatures> inheritanceFeaturesMap;
 
-  private final ClassData classData;
+  private ClassData classData;
 
-  public DefaultInhrStrategy(ClassData classData) {
-    this.classData = classData;
+  public DefaultInhrStrategy() {
     inheritanceConstraints = new HashSet<>();
     inheritanceFeaturesMap = new HashMap<>();
   }
@@ -53,6 +52,7 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
 
   @Override
   public void cd2smt(ASTCDCompilationUnit astCd, Context ctx, ClassData classData) {
+    this.classData = classData;
     astCd
         .getCDDefinition()
         .getCDInterfacesList()
@@ -75,8 +75,10 @@ public class DefaultInhrStrategy implements InheritanceStrategy {
       for (FuncDecl<Sort> convert2SuperInterface : convert2SuperInterfaceList.values()) {
         Expr<? extends Sort> superObj =
             model.eval(convert2SuperInterface.apply(obj.getSmtExpr()), true);
+
         SMTObject superSMTObj =
             objectSet.stream().filter(o -> o.getSmtExpr().equals(superObj)).findAny().orElse(null);
+
         assert superSMTObj != null;
         obj.addSuperInterfaceList(superSMTObj);
         superSMTObj.setAbstract();

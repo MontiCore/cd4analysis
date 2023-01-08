@@ -175,11 +175,12 @@ public class CDHelper {
         return association;
       }
     }
-    Log.error(
+    Log.info(
         "Association with the other-role "
             + otherRole
             + " not found for the ASTCDType"
-            + objType.getName());
+            + objType.getName(),
+        "Assoc Not Found");
     return null;
   }
 
@@ -236,6 +237,12 @@ public class CDHelper {
     }
   }
 
+  public static List<ASTCDType> getASTCDTypes(ASTCDCompilationUnit ast) {
+    List<ASTCDType> res = new ArrayList<>(ast.getCDDefinition().getCDClassesList());
+    res.addAll(ast.getCDDefinition().getCDInterfacesList());
+    return res;
+  }
+
   public static void removeAssocCard(ASTCDCompilationUnit ast) {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
@@ -243,5 +250,13 @@ public class CDHelper {
     final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(visitor2);
     ast.accept(traverser);
+  }
+
+  public static ASTCDType getLeftType(ASTCDAssociation association, ASTCDDefinition cd) {
+    return getASTCDType(association.getLeftQualifiedName().getQName(), cd);
+  }
+
+  public static ASTCDType getRightType(ASTCDAssociation association, ASTCDDefinition cd) {
+    return getASTCDType(association.getRightQualifiedName().getQName(), cd);
   }
 }

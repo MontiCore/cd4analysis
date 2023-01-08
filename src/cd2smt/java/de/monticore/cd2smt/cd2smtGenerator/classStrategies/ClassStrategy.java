@@ -20,4 +20,9 @@ public interface ClassStrategy extends ClassData {
    * @return set of MinObject (object self and attributes as SMT-expressions )
    */
   Set<MinObject> smt2od(Model model, Boolean partial);
+
+  enum Strategy {
+    SS,
+    DS
+  };
 }

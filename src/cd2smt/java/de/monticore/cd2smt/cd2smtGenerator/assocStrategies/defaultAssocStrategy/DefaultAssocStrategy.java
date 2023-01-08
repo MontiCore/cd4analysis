@@ -210,29 +210,50 @@ public class DefaultAssocStrategy implements AssociationStrategy {
 
   @Override
   public Set<SMTObject> smt2od(Model model, Set<SMTObject> objectSet) {
-
     for (Map.Entry<ASTCDAssociation, FuncDecl<BoolSort>> assoc : associationsFuncMap.entrySet()) {
-      Sort leftSort = assoc.getValue().getDomain()[0];
-      Sort rightSort = assoc.getValue().getDomain()[1];
-
       for (SMTObject leftObj : objectSet) {
         for (SMTObject rightObj : objectSet) {
-          if ((leftObj.hasSort(leftSort)) && (rightObj.hasSort(rightSort))) {
-            if ((model
-                    .eval(assoc.getValue().apply(leftObj.getSmtExpr(), rightObj.getSmtExpr()), true)
-                    .getBoolValue()
-                == Z3_lbool.Z3_L_TRUE)) {
-              leftObj
-                  .getLinkedObjects()
-                  .add(new LinkedSMTObject(assoc.getKey(), rightObj, assoc.getValue(), false));
-              rightObj
-                  .getLinkedObjects()
-                  .add(new LinkedSMTObject(assoc.getKey(), leftObj, assoc.getValue(), true));
-            }
+
+          if (hasLink(leftObj, rightObj, assoc, model)) {
+            leftObj
+                .getLinkedObjects()
+                .add(new LinkedSMTObject(assoc.getKey(), rightObj, assoc.getValue(), false));
+
+            rightObj
+                .getLinkedObjects()
+                .add(new LinkedSMTObject(assoc.getKey(), leftObj, assoc.getValue(), true));
           }
         }
       }
     }
     return objectSet;
+  }
+
+  private boolean hasLink(
+      SMTObject leftObj,
+      SMTObject rightObj,
+      Map.Entry<ASTCDAssociation, FuncDecl<BoolSort>> assoc,
+      Model model) {
+    ASTCDDefinition cd = classData.getClassDiagram().getCDDefinition();
+    ASTCDType leftASTCDType = CDHelper.getLeftType(assoc.getKey(), cd);
+    ASTCDType rightASTCDType = CDHelper.getRightType(assoc.getKey(), cd);
+    Sort leftSort = assoc.getValue().getDomain()[0];
+
+    Sort rightSort = assoc.getValue().getDomain()[1];
+    if (leftObj.hasSort(leftSort)
+        && hasType(leftObj.getSmtExpr(), leftASTCDType, model)
+        && (rightObj.hasSort(rightSort) && hasType(rightObj.getSmtExpr(), rightASTCDType, model))) {
+      return model
+              .eval(assoc.getValue().apply(leftObj.getSmtExpr(), rightObj.getSmtExpr()), true)
+              .getBoolValue()
+          == Z3_lbool.Z3_L_TRUE;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean hasType(Expr<? extends Sort> expr, ASTCDType astcdType, Model model) {
+    BoolExpr hasType = (BoolExpr) model.evaluate(classData.isInstanceOf(expr, astcdType), true);
+    return hasType.getBoolValue() == Z3_lbool.Z3_L_TRUE;
   }
 }
