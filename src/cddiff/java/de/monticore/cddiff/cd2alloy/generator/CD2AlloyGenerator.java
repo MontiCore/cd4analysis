@@ -96,14 +96,14 @@ public class CD2AlloyGenerator {
         + System.lineSeparator()
 
         // Comment for Parametrized predicates
-        + "// Predicates used to specify cardinality constraints for navigable association"
-        + System.lineSeparator()
-        + "// ends and for association ends of undirected associations."
-        + System.lineSeparator()
         + "pred ObjTypes[obj: set Obj, types: set Type]{"
         + System.lineSeparator()
         + " all o:obj| o.type.super = types}"
         + System.lineSeparator()
+        + System.lineSeparator()
+        + "// Predicates used to specify cardinality constraints for navigable association"
+        + System.lineSeparator()
+        + "// ends and for association ends of undirected associations."
         + System.lineSeparator()
         + "pred ObjAttrib[objs: set Obj, fName: one FName,"
         + System.lineSeparator()

@@ -32,18 +32,6 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
         + System.lineSeparator()
 
         // additional facts
-        + "fact NonEmptyInstancesOnly {"
-        + System.lineSeparator()
-        + " some Obj"
-        + System.lineSeparator()
-        + "}"
-        + System.lineSeparator()
-        + System.lineSeparator()
-        + "fact InstancesOfTypes {"
-        + System.lineSeparator()
-        + " all t: Type | t.inst = {o:Obj | t in o.type.super}}"
-        + System.lineSeparator()
-        + System.lineSeparator()
         + "fact NoCyclicalInheritance {"
         + System.lineSeparator()
         + " all t1: Type | all t2: Type | {t2 in t1.super} && {t1 in t2.super} => {t1 = t2}}"
