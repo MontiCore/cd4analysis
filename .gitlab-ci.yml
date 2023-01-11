@@ -79,6 +79,14 @@ trigger-montiarc-dev:
   only:
     - develop
 
+trigger-umlp:
+  stage: trigger
+  trigger:
+    project: monticore/umlp
+    branch: dev
+  only:
+    - develop
+
 deploy:
   stage: deploy
   only:
