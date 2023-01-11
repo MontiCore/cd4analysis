@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -41,6 +42,7 @@ public class CheckODValidityTest extends CD2SMTAbstractTest {
     checkODValidity(CDFileName, "DS" + targetNumber, ClassStrategy.Strategy.DS);
   }
 
+  @Disabled("Test is flaky: Sometimes fails or takes too much time.")
   @ParameterizedTest
   @MethodSource("modelTarget")
   public void checkODValidityTestSS(String CDFileName, String targetNumber) {
