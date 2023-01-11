@@ -20,7 +20,13 @@ import java.util.Optional;
 
 public class CDDiff {
 
-  public static void computeSyntax2SemDiff(
+  /**
+   * Computes the semantic difference between ast1 and ast2 by applying Syntax2SemDiff and prints
+   * the resulting diff-witness(es) to stdout or the specified directory. Applies open-to-closed
+   * world reduction to enable open-world diff. todo: open-world diff does not work because
+   * Syntax2SemDiff is currently incompatible
+   */
+  public static void computeRuleBasedSemDiff(
       ASTCDCompilationUnit ast1,
       ASTCDCompilationUnit ast2,
       String outputPath,
@@ -47,7 +53,11 @@ public class CDDiff {
     }
   }
 
-  public static void computeAlloySemDiff(
+  /**
+   * Computes the semantic difference between ast1 and ast2 by applying AlloySemDiff and prints the
+   * resulting diff-witness(es) to stdout or the specified directory.
+   */
+  public static void computeSemDiff(
       ASTCDCompilationUnit ast1,
       ASTCDCompilationUnit ast2,
       String outputPath,
@@ -72,7 +82,9 @@ public class CDDiff {
         ast1 = CDDiffUtil.reparseCD(ast1);
         ast2 = CDDiffUtil.reparseCD(ast2);
 
-        CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
+        if (toDir) {
+          CDDiffUtil.saveDiffCDs2File(ast1, ast2, outputPath);
+        }
         semantics = CDSemantics.MULTI_INSTANCE_CLOSED_WORLD;
       } else {
 
@@ -119,6 +131,15 @@ public class CDDiff {
     return diffsize;
   }
 
+  /**
+   * Computes the semantic difference between cd1 and cd2 via translation to Alloy.
+   *
+   * @param diffsize defines the search space for alloy (number of objects in witness)
+   * @param difflimit defines the maximum number of witnesses that should be computed
+   * @param semantics can be: SIMPLE_CLOSED_WORLD, MULTI_INSTANCE_CLOSED_WORLD,
+   *     MULTI_INSTANCE_OPEN_WORLD
+   * @return list of diff-witnesses
+   */
   public static List<ASTODArtifact> computeAlloySemDiff(
       ASTCDCompilationUnit cd1,
       ASTCDCompilationUnit cd2,
@@ -151,6 +172,12 @@ public class CDDiff {
     return diffWitnesses;
   }
 
+  /**
+   * Computes the semantic difference between cd1 and cd2 via syntax analysis.
+   *
+   * @param cdSemantics can be: SIMPLE_CLOSED_WORLD, MULTI_INSTANCE_CLOSED_WORLD
+   * @return list of diff-witnesses
+   */
   public static List<ASTODArtifact> computeSyntax2SemDiff(
       ASTCDCompilationUnit ast1, ASTCDCompilationUnit ast2, CDSemantics cdSemantics) {
 

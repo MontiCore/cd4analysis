@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram DigitalTwin2 {
+
+class Machine;
+class DigitalTwin {
+  -> (models) Model [1..*];
+  -> (shadows) DigitalShadow [1..*];
+}
+abstract class Model;
+class DataModel extends Model;
+class ProcessModel extends Model;
+class DigitalShadow{
+  -> (traces) DataTrace [1..*];
+}
+class DataTrace;
+
+association [*] DigitalTwin (twins) -> (original) Machine [1];
+association [*] DataTrace (traces) <-> (of) Machine [1];
+
+
+}

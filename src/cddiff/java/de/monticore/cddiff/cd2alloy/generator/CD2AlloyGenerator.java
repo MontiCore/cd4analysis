@@ -825,7 +825,7 @@ public class CD2AlloyGenerator {
       // Generate Alloy function
       classFunctions
           .append("fun ")
-          .append(part)
+          .append(CDDiffUtil.escape2Alloy(part))
           .append("CompFieldsCD")
           .append(cdDefinition.getName())
           .append(": Obj->Obj {")
@@ -1250,11 +1250,11 @@ public class CD2AlloyGenerator {
         if (a.getCDAssocType().isComposition()) {
           // Generation
           predicate.append("Composition[");
-          predicate.append(part);
+          predicate.append(CDDiffUtil.escape2Alloy(a.getRightQualifiedName().getQName()));
           predicate.append("CompFieldsCD");
           predicate.append(cdDefinition.getName());
           predicate.append(",");
-          predicate.append(part);
+          predicate.append(CDDiffUtil.escape2Alloy(a.getRightQualifiedName().getQName()));
           predicate.append("SubsCD");
           predicate.append(cdDefinition.getName());
           predicate.append("]").append(System.lineSeparator());

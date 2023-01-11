@@ -666,12 +666,12 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     boolean openWorld = cmd.hasOption("open-world");
 
     if (cmd.hasOption("rule-based")) {
-      CDDiff.computeSyntax2SemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
+      CDDiff.computeRuleBasedSemDiff(ast1, ast2, outputPath, openWorld, cmd.hasOption("o"));
     } else {
       boolean reductionBased =
           !(cmd.hasOption("open-world")
               && cmd.getOptionValue("open-world", "reduction-based").equals("alloy-based"));
-      CDDiff.computeAlloySemDiff(
+      CDDiff.computeSemDiff(
           ast1,
           ast2,
           outputPath,
