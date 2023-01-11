@@ -113,4 +113,70 @@ public class WitnessTest extends CDDiffTestBasis {
 
     assertTrue(ods.isEmpty());
   }
+
+  @Test
+  public void testOWAlloyDiff2() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin3.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+    assertNotNull(astV2);
+
+    Optional<AlloyDiffSolution> optS =
+        AlloyCDDiff.getAlloyDiffSolution(
+            astV1,
+            astV2,
+            20,
+            CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
+            "target/generated/cddiff-test/");
+
+    // Test if generation was successful
+    assertTrue(optS.isPresent());
+
+    // Extract solution
+    AlloyDiffSolution s = optS.get();
+
+    // limit number of generated diff-witnesses
+    s.setSolutionLimit(1);
+    s.setLimited(true);
+
+    List<ASTODArtifact> ods = s.generateODs();
+
+    assertFalse(ods.isEmpty());
+  }
+
+  @Test
+  public void testNoOWAlloyDiff2() {
+    // Parse Test Modules
+    final ASTCDCompilationUnit astV1 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin2.cd");
+    assertNotNull(astV1);
+    final ASTCDCompilationUnit astV2 =
+        parseModel("src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwin1.cd");
+    assertNotNull(astV2);
+
+    Optional<AlloyDiffSolution> optS =
+        AlloyCDDiff.getAlloyDiffSolution(
+            astV1,
+            astV2,
+            20,
+            CDSemantics.MULTI_INSTANCE_OPEN_WORLD,
+            "target/generated/cddiff-test/");
+
+    // Test if generation was successful
+    assertTrue(optS.isPresent());
+
+    // Extract solution
+    AlloyDiffSolution s = optS.get();
+
+    // limit number of generated diff-witnesses
+    s.setSolutionLimit(1);
+    s.setLimited(true);
+
+    List<ASTODArtifact> ods = s.generateODs();
+
+    assertTrue(ods.isEmpty());
+  }
 }
