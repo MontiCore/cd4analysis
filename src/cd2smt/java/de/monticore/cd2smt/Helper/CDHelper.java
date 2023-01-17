@@ -22,6 +22,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class CDHelper {
@@ -142,15 +143,16 @@ public class CDHelper {
   }
 
   protected static Map<String, ASTMCType> buildJavaTypeMap() {
-    Map<String, ASTMCType> typeMap = new HashMap<>();
-    typeMap.put("Int", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build());
-    typeMap.put("Real", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build());
-    typeMap.put("Bool", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build());
-    typeMap.put(
+    Map<String, ASTMCType> typeMap_temp = new HashMap<>();
+    typeMap_temp.put("Int", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build());
+    typeMap_temp.put("Real", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(4).build());
+    typeMap_temp.put("Bool", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build());
+    typeMap_temp.put(
         "String",
         OD4ReportMill.mCQualifiedTypeBuilder()
             .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String"))
             .build());
+    Map<String, ASTMCType> typeMap = Collections.unmodifiableMap(typeMap_temp);
     return typeMap;
   }
 
