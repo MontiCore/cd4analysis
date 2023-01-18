@@ -1,11 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.methodtemplates;
 
-import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethodSignature;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class CD4CTemplateHelper {
 
     try {
       this.astcdMethod =
-          new CD4CodeParser()
+        CD4CodeMill.parser()
               .parseCDMethod(new StringReader(methodSignature))
               .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
       // Optional<ASTCDMethod>
@@ -55,7 +56,7 @@ public class CD4CTemplateHelper {
     }
     try {
       this.astcdMethod =
-          new CD4CodeParser()
+        CD4CodeMill.parser()
               .parseCDConstructor(new StringReader(constructorSignature))
               .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
       // Optional<ASTCDConstructor>
@@ -77,7 +78,7 @@ public class CD4CTemplateHelper {
 
     try {
       this.astcdAttribute =
-          new CD4CodeParser()
+        CD4CodeMill.parser()
               .parseCDAttribute(new StringReader(attributeSignature))
               .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
       // Optional<ASTCDMethod>
@@ -103,7 +104,7 @@ public class CD4CTemplateHelper {
 
     try {
       this.astcdImport =
-          new CD4CodeParser()
+        CD4CodeMill.parser()
               .parseMCImportStatement(new StringReader(importSignature))
               .map(m -> m); // needed because we need Optional<ASTCDMethodSignature> and not
       // Optional<ASTCDMethod>

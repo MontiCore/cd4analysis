@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import de.monticore.cd.facade.exception.CDFactoryErrorCode;
 import de.monticore.cd.facade.exception.CDFactoryException;
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._parser.CD4CodeParser;
 import de.monticore.cd4codebasis.CD4CodeBasisMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cd4codebasis._ast.ASTCDMethodBuilder;
@@ -17,6 +16,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -227,7 +227,7 @@ public class CDMethodFacade {
   public ASTCDMethod createMethodByDefinition(final String signature) {
     Optional<ASTCDMethod> method;
     try {
-      method = new CD4CodeParser().parse_StringCDMethod(signature);
+      method = CD4CodeMill.parser().parse_StringCDMethod(signature);
     } catch (IOException e) {
       throw new CDFactoryException(CDFactoryErrorCode.COULD_NOT_CREATE_METHOD, signature, e);
     }
