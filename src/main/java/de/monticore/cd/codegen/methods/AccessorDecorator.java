@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.methods.accessor.ListAccessorDecorator;
 import de.monticore.cd.codegen.methods.accessor.MandatoryAccessorDecorator;
 import de.monticore.cd.codegen.methods.accessor.OptionalAccessorDecorator;
@@ -16,6 +17,14 @@ public class AccessorDecorator extends SpecificMethodDecorator {
         new ListAccessorDecorator(glex));
   }
 
+  public AccessorDecorator(final GlobalExtensionManagement glex,
+                           final CDGenService service) {
+    super(
+      glex,
+      new MandatoryAccessorDecorator(glex, service),
+      new OptionalAccessorDecorator(glex, service),
+      new ListAccessorDecorator(glex, service));
+  }
   public AccessorDecorator(
       final GlobalExtensionManagement glex,
       final AbstractMethodDecorator mandatoryMethodDecorator,

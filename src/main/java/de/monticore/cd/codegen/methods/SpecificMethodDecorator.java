@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.cd.codegen.methods;
 
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
@@ -18,16 +19,27 @@ abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
   protected final AbstractMethodDecorator listMethodDecorator;
 
   SpecificMethodDecorator(
-      final GlobalExtensionManagement glex,
-      final AbstractMethodDecorator mandatoryMethodDecorator,
-      final AbstractMethodDecorator optionalMethodDecorator,
-      final AbstractMethodDecorator listMethodDecorator) {
+    final GlobalExtensionManagement glex,
+    final AbstractMethodDecorator mandatoryMethodDecorator,
+    final AbstractMethodDecorator optionalMethodDecorator,
+    final AbstractMethodDecorator listMethodDecorator) {
     super(glex);
     this.mandatoryMethodDecorator = mandatoryMethodDecorator;
     this.optionalMethodDecorator = optionalMethodDecorator;
     this.listMethodDecorator = listMethodDecorator;
   }
 
+  SpecificMethodDecorator(
+    final GlobalExtensionManagement glex,
+    final AbstractMethodDecorator mandatoryMethodDecorator,
+    final AbstractMethodDecorator optionalMethodDecorator,
+    final AbstractMethodDecorator listMethodDecorator,
+    final CDGenService service) {
+    super(glex, service);
+    this.mandatoryMethodDecorator = mandatoryMethodDecorator;
+    this.optionalMethodDecorator = optionalMethodDecorator;
+    this.listMethodDecorator = listMethodDecorator;
+  }
   @Override
   public void enableTemplates() {
     mandatoryMethodDecorator.enableTemplates();

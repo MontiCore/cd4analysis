@@ -5,6 +5,7 @@ import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 import static de.monticore.cd.facade.CDModifier.PUBLIC;
 
 import com.google.common.collect.Lists;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.methods.AbstractMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -21,6 +22,11 @@ public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
 
   public MandatoryMutatorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
+  }
+
+  public MandatoryMutatorDecorator(final GlobalExtensionManagement glex,
+                                   final CDGenService service) {
+    super(glex, service);
   }
 
   @Override

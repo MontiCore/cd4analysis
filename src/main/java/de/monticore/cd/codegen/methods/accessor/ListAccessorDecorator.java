@@ -3,6 +3,7 @@ package de.monticore.cd.codegen.methods.accessor;
 
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.methods.ListMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -37,6 +38,11 @@ public class ListAccessorDecorator extends ListMethodDecorator {
 
   public ListAccessorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
+  }
+
+  public ListAccessorDecorator(final GlobalExtensionManagement glex,
+                               final CDGenService service) {
+    super(glex, service);
   }
 
   @Override

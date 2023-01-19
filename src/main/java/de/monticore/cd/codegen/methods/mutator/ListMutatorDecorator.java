@@ -4,6 +4,7 @@ package de.monticore.cd.codegen.methods.mutator;
 import static de.monticore.cd.codegen.CD2JavaTemplates.EMPTY_BODY;
 
 import com.google.common.collect.Lists;
+import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd.codegen.methods.ListMethodDecorator;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
@@ -38,6 +39,11 @@ public class ListMutatorDecorator extends ListMethodDecorator {
 
   public ListMutatorDecorator(final GlobalExtensionManagement glex) {
     super(glex);
+  }
+
+  public ListMutatorDecorator(final GlobalExtensionManagement glex,
+                              final CDGenService service) {
+    super(glex, service);
   }
 
   @Override
