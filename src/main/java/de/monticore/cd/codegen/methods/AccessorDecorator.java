@@ -17,14 +17,14 @@ public class AccessorDecorator extends SpecificMethodDecorator {
         new ListAccessorDecorator(glex));
   }
 
-  public AccessorDecorator(final GlobalExtensionManagement glex,
-                           final CDGenService service) {
+  public AccessorDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     super(
-      glex,
-      new MandatoryAccessorDecorator(glex, service),
-      new OptionalAccessorDecorator(glex, service),
-      new ListAccessorDecorator(glex, service));
+        glex,
+        new MandatoryAccessorDecorator(glex, service),
+        new OptionalAccessorDecorator(glex, service),
+        new ListAccessorDecorator(glex, service));
   }
+
   public AccessorDecorator(
       final GlobalExtensionManagement glex,
       final AbstractMethodDecorator mandatoryMethodDecorator,

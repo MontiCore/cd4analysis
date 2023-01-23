@@ -5,7 +5,6 @@ import de.monticore.cd.codegen.CDGenService;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
-
 import java.util.ArrayList;
 import java.util.List;
 

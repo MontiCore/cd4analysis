@@ -41,8 +41,7 @@ public class ListMutatorDecorator extends ListMethodDecorator {
     super(glex);
   }
 
-  public ListMutatorDecorator(final GlobalExtensionManagement glex,
-                              final CDGenService service) {
+  public ListMutatorDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 

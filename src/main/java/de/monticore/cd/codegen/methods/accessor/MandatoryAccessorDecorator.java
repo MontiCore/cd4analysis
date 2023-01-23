@@ -26,8 +26,8 @@ public class MandatoryAccessorDecorator extends AbstractMethodDecorator {
     super(glex);
   }
 
-  public MandatoryAccessorDecorator(final GlobalExtensionManagement glex,
-                                    final CDGenService service) {
+  public MandatoryAccessorDecorator(
+      final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 

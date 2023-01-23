@@ -40,8 +40,7 @@ public class ListAccessorDecorator extends ListMethodDecorator {
     super(glex);
   }
 
-  public ListAccessorDecorator(final GlobalExtensionManagement glex,
-                               final CDGenService service) {
+  public ListAccessorDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 

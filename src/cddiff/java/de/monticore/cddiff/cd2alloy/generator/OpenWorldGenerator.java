@@ -136,9 +136,9 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
       // Computation of Superclasses
       Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
-      Set<ASTCDType> superList = new HashSet<>(superClasses(astcdClass, classes));
-      for (ASTCDClass superclass : superClasses(astcdClass, classes)) {
-        superList.addAll(interfaces(superclass, allInterfaces));
+      Set<ASTCDType> superList = new HashSet<>(CDDiffUtil.getAllSuperclasses(astcdClass, classes));
+      for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, classes)) {
+        superList.addAll(CDDiffUtil.getAllInterfaces(superclass, allInterfaces));
       }
 
       // Output P0
@@ -167,7 +167,8 @@ public class OpenWorldGenerator extends CD2AlloyGenerator {
 
       // Computation of Superclasses
       Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
-      Set<ASTCDType> superList = new HashSet<>(interfaces(astcdInterface, allInterfaces));
+      Set<ASTCDType> superList =
+          new HashSet<>(CDDiffUtil.getAllInterfaces(astcdInterface, allInterfaces));
 
       // Output P0
       // Functions + Names

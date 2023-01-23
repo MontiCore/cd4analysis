@@ -24,8 +24,8 @@ public class MandatoryMutatorDecorator extends AbstractMethodDecorator {
     super(glex);
   }
 
-  public MandatoryMutatorDecorator(final GlobalExtensionManagement glex,
-                                   final CDGenService service) {
+  public MandatoryMutatorDecorator(
+      final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 

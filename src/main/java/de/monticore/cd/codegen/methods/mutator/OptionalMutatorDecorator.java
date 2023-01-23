@@ -29,8 +29,8 @@ public class OptionalMutatorDecorator extends AbstractMethodDecorator {
     super(glex);
   }
 
-  public OptionalMutatorDecorator(final GlobalExtensionManagement glex,
-                                  final CDGenService service) {
+  public OptionalMutatorDecorator(
+      final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 

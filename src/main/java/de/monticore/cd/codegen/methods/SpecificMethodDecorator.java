@@ -19,10 +19,10 @@ abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
   protected final AbstractMethodDecorator listMethodDecorator;
 
   SpecificMethodDecorator(
-    final GlobalExtensionManagement glex,
-    final AbstractMethodDecorator mandatoryMethodDecorator,
-    final AbstractMethodDecorator optionalMethodDecorator,
-    final AbstractMethodDecorator listMethodDecorator) {
+      final GlobalExtensionManagement glex,
+      final AbstractMethodDecorator mandatoryMethodDecorator,
+      final AbstractMethodDecorator optionalMethodDecorator,
+      final AbstractMethodDecorator listMethodDecorator) {
     super(glex);
     this.mandatoryMethodDecorator = mandatoryMethodDecorator;
     this.optionalMethodDecorator = optionalMethodDecorator;
@@ -30,16 +30,17 @@ abstract class SpecificMethodDecorator extends AbstractMethodDecorator {
   }
 
   SpecificMethodDecorator(
-    final GlobalExtensionManagement glex,
-    final AbstractMethodDecorator mandatoryMethodDecorator,
-    final AbstractMethodDecorator optionalMethodDecorator,
-    final AbstractMethodDecorator listMethodDecorator,
-    final CDGenService service) {
+      final GlobalExtensionManagement glex,
+      final AbstractMethodDecorator mandatoryMethodDecorator,
+      final AbstractMethodDecorator optionalMethodDecorator,
+      final AbstractMethodDecorator listMethodDecorator,
+      final CDGenService service) {
     super(glex, service);
     this.mandatoryMethodDecorator = mandatoryMethodDecorator;
     this.optionalMethodDecorator = optionalMethodDecorator;
     this.listMethodDecorator = listMethodDecorator;
   }
+
   @Override
   public void enableTemplates() {
     mandatoryMethodDecorator.enableTemplates();

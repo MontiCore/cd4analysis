@@ -17,13 +17,12 @@ public class MutatorDecorator extends SpecificMethodDecorator {
         new ListMutatorDecorator(glex));
   }
 
-  public MutatorDecorator(final GlobalExtensionManagement glex,
-                          final CDGenService service) {
+  public MutatorDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     super(
-      glex,
-      new MandatoryMutatorDecorator(glex, service),
-      new OptionalMutatorDecorator(glex, service),
-      new ListMutatorDecorator(glex, service));
+        glex,
+        new MandatoryMutatorDecorator(glex, service),
+        new OptionalMutatorDecorator(glex, service),
+        new ListMutatorDecorator(glex, service));
   }
 
   public MutatorDecorator(

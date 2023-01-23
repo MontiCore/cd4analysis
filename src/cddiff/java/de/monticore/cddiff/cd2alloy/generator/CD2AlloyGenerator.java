@@ -15,8 +15,6 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -548,7 +546,7 @@ public class CD2AlloyGenerator {
 
       // Computation of Superclasses
       for (ASTCDClass sub : classes) {
-        Set<ASTCDClass> superclasses = superClasses(sub, classes);
+        Set<ASTCDClass> superclasses = CDDiffUtil.getAllSuperclasses(sub, classes);
 
         if (superclasses.contains(astcdClass)) {
           subs.add(sub);
@@ -578,42 +576,6 @@ public class CD2AlloyGenerator {
   }
 
   /**
-   * A helper function to compute the transitive hull of all Superclasses of a class astcdClass in
-   * classes.
-   *
-   * @return All superclasses of a Class
-   */
-  static Set<ASTCDClass> superClasses(ASTCDClass astcdClass, Set<ASTCDClass> classes) {
-    // Initialize variables
-    Set<ASTCDClass> superclasses = new HashSet<>();
-    LinkedList<ASTCDClass> toProcess = new LinkedList<>();
-    toProcess.add(astcdClass);
-    superclasses.add(astcdClass);
-
-    // Add all superclasses of the superclasses
-    while (!toProcess.isEmpty()) {
-      ASTCDClass currentClass = toProcess.pop();
-      superclasses.add(currentClass);
-
-      String superName;
-      if (currentClass.isPresentCDExtendUsage()) {
-        for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
-          assert objectType.getDefiningSymbol().isPresent();
-          superName = objectType.getDefiningSymbol().get().getFullName();
-
-          for (ASTCDClass astClass : classes) {
-            if (superName.equals(astClass.getSymbol().getFullName())) {
-              toProcess.add(astClass);
-            }
-          }
-        }
-      }
-    }
-
-    return superclasses;
-  }
-
-  /**
    * Executes the F2 rule, which generates functions returning all atoms of all interfaces of all
    * classes implementing the interfaces in class diagram cd.
    */
@@ -638,10 +600,10 @@ public class CD2AlloyGenerator {
       // Compute the set of all classes implementing the interface.
       Set<ASTCDClass> impls = new HashSet<>();
       for (ASTCDClass astcdClass : classes) {
-        Set<ASTCDClass> superclasses = superClasses(astcdClass, classes);
+        Set<ASTCDClass> superclasses = CDDiffUtil.getAllSuperclasses(astcdClass, classes);
 
         for (ASTCDClass superClass : superclasses) {
-          Set<ASTCDInterface> implInterfaces = interfaces(superClass, interfaces);
+          Set<ASTCDInterface> implInterfaces = CDDiffUtil.getAllInterfaces(superClass, interfaces);
 
           if (implInterfaces.contains(astcdInterface)) {
             impls.add(astcdClass);
@@ -663,77 +625,6 @@ public class CD2AlloyGenerator {
     }
 
     return classFunctions.toString();
-  }
-
-  /**
-   * A helper function to compute the transitive hull of all interfaces implemented by a class
-   * superClass in environment classes.
-   */
-  static Set<ASTCDInterface> interfaces(
-      ASTCDClass superClass, Set<ASTCDInterface> allowedInterfaces) {
-    // Initialize variables
-    Set<ASTCDInterface> interfaces = new HashSet<>();
-    LinkedList<ASTCDInterface> toProcess = new LinkedList<>();
-
-    // Add all interfaces of the superclass to the processing List
-
-    String interfaceName;
-    for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
-      assert objectType.getDefiningSymbol().isPresent();
-      interfaceName = objectType.getDefiningSymbol().get().getFullName();
-
-      for (ASTCDInterface allowedInterface : allowedInterfaces) {
-        if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
-          toProcess.add(allowedInterface);
-          break;
-        }
-      }
-    }
-
-    // Add all interfaces implemented by superclass or its superclasses and
-    // implemented interfaces
-    while (!toProcess.isEmpty()) {
-      // Pop element from processing list and add it to the result
-      ASTCDInterface currentInterface = toProcess.pop();
-      interfaces.add(currentInterface);
-
-      // Add all interfaces implemented by the current interface to the
-      // processing list
-      for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
-        assert objectType.getDefiningSymbol().isPresent();
-        interfaceName = objectType.getDefiningSymbol().get().getFullName();
-
-        for (ASTCDInterface allowedInterface : allowedInterfaces) {
-          if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
-            toProcess.add(allowedInterface);
-            break;
-          }
-        }
-      }
-    }
-
-    return interfaces;
-  }
-
-  static Set<ASTCDInterface> interfaces(
-      ASTCDInterface astcdInterface, Set<ASTCDInterface> allowedInterfaces) {
-    Set<ASTCDInterface> interfaces = new HashSet<>();
-    interfaces.add(astcdInterface);
-
-    Set<ASTCDInterface> remaining = new HashSet<>(allowedInterfaces);
-    remaining.remove(astcdInterface);
-
-    for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
-      for (ASTCDInterface superInterface : allowedInterfaces) {
-        if (typeExp.getTypeInfo().getFullName().equals(superInterface.getSymbol().getFullName())) {
-          interfaces.add(superInterface);
-          remaining.remove(superInterface);
-          interfaces.addAll(interfaces(superInterface, remaining));
-        }
-      }
-    }
-
-    return interfaces;
   }
 
   /**
@@ -929,9 +820,9 @@ public class CD2AlloyGenerator {
 
       // Computation of Superclasses
       Set<ASTCDInterface> allInterfaces = new HashSet<>(cd.getCDDefinition().getCDInterfacesList());
-      Set<ASTCDType> superList = new HashSet<>(superClasses(astcdClass, classes));
-      for (ASTCDClass superclass : superClasses(astcdClass, classes)) {
-        superList.addAll(interfaces(superclass, allInterfaces));
+      Set<ASTCDType> superList = new HashSet<>(CDDiffUtil.getAllSuperclasses(astcdClass, classes));
+      for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, classes)) {
+        superList.addAll(CDDiffUtil.getAllInterfaces(superclass, allInterfaces));
       }
 
       // Output P0
@@ -975,10 +866,11 @@ public class CD2AlloyGenerator {
     for (ASTCDClass astcdClass : cdClasses) {
       // Compute the attribute union of all superclasses
       Set<ASTCDAttribute> attributeUnion = new HashSet<>();
-      for (ASTCDClass attributeClass : superClasses(astcdClass, cdClasses)) {
+      for (ASTCDClass attributeClass : CDDiffUtil.getAllSuperclasses(astcdClass, cdClasses)) {
         attributeUnion.addAll(attributeClass.getCDAttributeList());
       }
-      for (ASTCDInterface attributeInterface : interfaces(astcdClass, cdInterfaces)) {
+      for (ASTCDInterface attributeInterface :
+          CDDiffUtil.getAllInterfaces(astcdClass, cdInterfaces)) {
         attributeUnion.addAll(attributeInterface.getCDAttributeList());
       }
 
@@ -1024,12 +916,12 @@ public class CD2AlloyGenerator {
     for (ASTCDClass astcdClass : cdClasses) {
       // All names of superclasses and their interfaces
       Set<String> superNames = new HashSet<>();
-      for (ASTCDClass superclass : superClasses(astcdClass, cdClasses)) {
+      for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, cdClasses)) {
         // Add all names of super classes
         superNames.add(CDDiffUtil.escape2Alloy(superclass.getSymbol().getFullName()));
 
         // Add all names of implemented interfaces by this class
-        for (ASTCDInterface i : interfaces(superclass, cdInterfaces)) {
+        for (ASTCDInterface i : CDDiffUtil.getAllInterfaces(superclass, cdInterfaces)) {
           superNames.add(CDDiffUtil.escape2Alloy(i.getSymbol().getFullName()));
         }
       }
@@ -1038,14 +930,14 @@ public class CD2AlloyGenerator {
       Set<String> fields = new HashSet<>();
 
       // All attributes of the superclasses
-      for (ASTCDClass superclass : superClasses(astcdClass, cdClasses)) {
+      for (ASTCDClass superclass : CDDiffUtil.getAllSuperclasses(astcdClass, cdClasses)) {
         for (ASTCDAttribute a : superclass.getCDAttributeList()) {
           fields.add(a.getName());
         }
       }
 
       // All attributes of the superclasses
-      for (ASTCDInterface astcdInterface : interfaces(astcdClass, cdInterfaces)) {
+      for (ASTCDInterface astcdInterface : CDDiffUtil.getAllInterfaces(astcdClass, cdInterfaces)) {
         for (ASTCDAttribute a : astcdInterface.getCDAttributeList()) {
           fields.add(a.getName());
         }

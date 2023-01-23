@@ -10,7 +10,6 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.HookPoint;
 import de.monticore.types.MCTypeFacade;
-
 import java.util.List;
 
 public abstract class AbstractMethodDecorator {
@@ -38,11 +37,11 @@ public abstract class AbstractMethodDecorator {
 
   public AbstractMethodDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     this(
-      glex,
-      MCTypeFacade.getInstance(),
-      CDMethodFacade.getInstance(),
-      CDParameterFacade.getInstance(),
-      service);
+        glex,
+        MCTypeFacade.getInstance(),
+        CDMethodFacade.getInstance(),
+        CDParameterFacade.getInstance(),
+        service);
   }
 
   public AbstractMethodDecorator(

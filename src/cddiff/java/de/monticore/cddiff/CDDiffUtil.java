@@ -4,18 +4,19 @@ package de.monticore.cddiff;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCObjectType;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import org.apache.commons.io.FileUtils;
 
 public class CDDiffUtil {
@@ -131,5 +132,113 @@ public class CDDiffUtil {
       Log.warn("Could not reparse CD: " + cd.getCDDefinition().getName());
     }
     return cd;
+  }
+
+  /**
+   * A helper function to compute the transitive hull of all superclasses of a class astcdClass in
+   * classes.
+   *
+   * @return All superclasses of a class
+   */
+  public static Set<ASTCDClass> getAllSuperclasses(
+      ASTCDClass astcdClass, Collection<ASTCDClass> classes) {
+    // Initialize variables
+    Set<ASTCDClass> superclasses = new HashSet<>();
+    LinkedList<ASTCDClass> toProcess = new LinkedList<>();
+    toProcess.add(astcdClass);
+    superclasses.add(astcdClass);
+
+    // Add all superclasses of the superclasses
+    while (!toProcess.isEmpty()) {
+      ASTCDClass currentClass = toProcess.pop();
+      superclasses.add(currentClass);
+
+      String superName;
+      if (currentClass.isPresentCDExtendUsage()) {
+        for (ASTMCObjectType objectType : currentClass.getCDExtendUsage().getSuperclassList()) {
+          assert objectType.getDefiningSymbol().isPresent();
+          superName = objectType.getDefiningSymbol().get().getFullName();
+
+          for (ASTCDClass astClass : classes) {
+            if (superName.equals(astClass.getSymbol().getFullName())) {
+              toProcess.add(astClass);
+            }
+          }
+        }
+      }
+    }
+
+    return superclasses;
+  }
+
+  /**
+   * A helper function to compute the transitive hull of all interfaces implemented by a class
+   * superClass in environment classes.
+   */
+  public static Set<ASTCDInterface> getAllInterfaces(
+      ASTCDClass superClass, Collection<ASTCDInterface> allowedInterfaces) {
+    // Initialize variables
+    Set<ASTCDInterface> interfaces = new HashSet<>();
+    LinkedList<ASTCDInterface> toProcess = new LinkedList<>();
+
+    // Add all interfaces of the superclass to the processing List
+
+    String interfaceName;
+    for (ASTMCObjectType objectType : superClass.getInterfaceList()) {
+      assert objectType.getDefiningSymbol().isPresent();
+      interfaceName = objectType.getDefiningSymbol().get().getFullName();
+
+      for (ASTCDInterface allowedInterface : allowedInterfaces) {
+        if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
+          toProcess.add(allowedInterface);
+          break;
+        }
+      }
+    }
+
+    // Add all interfaces implemented by superclass or its superclasses and
+    // implemented interfaces
+    while (!toProcess.isEmpty()) {
+      // Pop element from processing list and add it to the result
+      ASTCDInterface currentInterface = toProcess.pop();
+      interfaces.add(currentInterface);
+
+      // Add all interfaces implemented by the current interface to the
+      // processing list
+      for (ASTMCObjectType objectType : currentInterface.getInterfaceList()) {
+        assert objectType.getDefiningSymbol().isPresent();
+        interfaceName = objectType.getDefiningSymbol().get().getFullName();
+
+        for (ASTCDInterface allowedInterface : allowedInterfaces) {
+          if (interfaceName.equals(allowedInterface.getSymbol().getFullName())) {
+            toProcess.add(allowedInterface);
+            break;
+          }
+        }
+      }
+    }
+
+    return interfaces;
+  }
+
+  public static Set<ASTCDInterface> getAllInterfaces(
+      ASTCDInterface astcdInterface, Collection<ASTCDInterface> allowedInterfaces) {
+    Set<ASTCDInterface> interfaces = new HashSet<>();
+    interfaces.add(astcdInterface);
+
+    Set<ASTCDInterface> remaining = new HashSet<>(allowedInterfaces);
+    remaining.remove(astcdInterface);
+
+    for (SymTypeExpression typeExp : astcdInterface.getSymbol().getInterfaceList()) {
+      for (ASTCDInterface superInterface : allowedInterfaces) {
+        if (typeExp.getTypeInfo().getFullName().equals(superInterface.getSymbol().getFullName())) {
+          interfaces.add(superInterface);
+          remaining.remove(superInterface);
+          interfaces.addAll(getAllInterfaces(superInterface, remaining));
+        }
+      }
+    }
+
+    return interfaces;
   }
 }

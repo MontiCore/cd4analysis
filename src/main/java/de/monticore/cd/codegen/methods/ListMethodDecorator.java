@@ -29,8 +29,7 @@ public abstract class ListMethodDecorator extends AbstractMethodDecorator {
     super(glex);
   }
 
-  public ListMethodDecorator(final GlobalExtensionManagement glex,
-                             final CDGenService service) {
+  public ListMethodDecorator(final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 

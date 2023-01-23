@@ -27,8 +27,8 @@ public class OptionalAccessorDecorator extends AbstractMethodDecorator {
     super(glex);
   }
 
-  public OptionalAccessorDecorator(final GlobalExtensionManagement glex,
-                                   final CDGenService service) {
+  public OptionalAccessorDecorator(
+      final GlobalExtensionManagement glex, final CDGenService service) {
     super(glex, service);
   }
 
