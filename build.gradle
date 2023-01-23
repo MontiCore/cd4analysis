@@ -248,7 +248,6 @@ grammarDependencies.each {
     grammar = grammarFile
     outputDir = file grammarOutDir
     handcodedPath "$projectDir/src/main/java"
-    dstlGen = true
     def grammarIncludingPackage = file(grammarDir).toURI().relativize(grammarFile.toURI()).toString()
 
     def uptoDate = incCheck(grammarIncludingPackage)
@@ -269,13 +268,13 @@ grammarDependencies.each {
     grammar = grammarFile
     outputDir = file grammarOutDir
     handcodedPath "$projectDir/src/main/java"
-    dstlGen = false // Do NOT generate TR grammars for TR grammars
+    isDSTL = true // Generate DST infrastructure
     def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(grammarFile.toURI()).toString()
 
     def uptoDate = incCheck(grammarIncludingPackage)
 
     modelPath(grammarOutDir)
-    modelPath(grammarDir)
+    modelPath("$projectDir/$grammarDir")
 
     outputs.upToDateWhen { uptoDate }
   }
