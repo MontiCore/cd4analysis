@@ -7,6 +7,7 @@ import com.microsoft.z3.Sort;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.ODHelper;
+import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.ODArtifacts.LinkedSMTObject;
 import de.monticore.cd2smt.ODArtifacts.SMTLink;
 import de.monticore.cd2smt.ODArtifacts.SMTObject;
@@ -40,9 +41,7 @@ public class SMT2ODGenerator {
     attributeList = getAllSuperInstanceAttribute(obj, attributeList);
 
     return ODHelper.buildObject(
-        obj.getSmtExpr().toString().replace("!val!", ""),
-        obj.getASTCDType().getName(),
-        attributeList);
+        SMTHelper.buildObjectName(obj.getSmtExpr()), obj.getASTCDType().getName(), attributeList);
   }
 
   protected List<ASTODAttribute> getAllSuperInstanceAttribute(

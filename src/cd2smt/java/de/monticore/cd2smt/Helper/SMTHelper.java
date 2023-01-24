@@ -79,4 +79,8 @@ public class SMTHelper {
     }
     return constraint;
   }
+
+  public static String buildObjectName(Expr<? extends Sort> expr) {
+    return expr.toString().replace("!val!", "");
+  }
 }
