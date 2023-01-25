@@ -2,7 +2,7 @@
 package abstractClasses;
 classdiagram mergedCD {
 
-	class Person {
+	abstract class Person {
 		String name;
 		int id;
 	}
