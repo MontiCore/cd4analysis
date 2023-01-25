@@ -37,6 +37,7 @@ import de.monticore.cddiff.syntaxdiff.CDSyntaxDiff;
 import de.monticore.cdinterfaceandenum._ast.ASTCDEnum;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.cdmerge.CDMerge;
+import de.monticore.cdmerge.config.MergeParameter;
 import de.monticore.generating.GeneratorSetup;
 import de.monticore.generating.templateengine.GlobalExtensionManagement;
 import de.monticore.generating.templateengine.TemplateController;
@@ -749,7 +750,9 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     }
     cdName = cdName.substring(0, cdName.length() - 3);
 
-    ASTCDCompilationUnit mergeResult = CDMerge.merge(mergeSet, cdName, new HashSet<>());
+    Set<MergeParameter> paramSet = new HashSet<>();
+    paramSet.add(MergeParameter.LOG_TO_CONSOLE);
+    ASTCDCompilationUnit mergeResult = CDMerge.merge(mergeSet, cdName, paramSet);
 
     if (mergeResult != null) {
       ast = mergeResult;

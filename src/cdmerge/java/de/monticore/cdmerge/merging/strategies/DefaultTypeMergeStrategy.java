@@ -63,9 +63,9 @@ public class DefaultTypeMergeStrategy extends MergerBase implements TypeMergeStr
     // ================
 
     // == ABSTRACT ==
-    // Abstract if both source classes are abstract
+    // Abstract if either of the source classes is abstract
     modifier.setAbstract(
-        classFromCd1.getModifier().isAbstract() && classFromCd2.getModifier().isAbstract());
+        classFromCd1.getModifier().isAbstract() || classFromCd2.getModifier().isAbstract());
 
     // == FINAL ==
     if (classFromCd1.getModifier().isFinal() || classFromCd2.getModifier().isFinal()) {
