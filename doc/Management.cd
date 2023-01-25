@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-
-classdiagram MyLectures {
-  class Employee {
+classdiagram Management {
+  abstract class Employee {
     String name;
   }
   class Professor extends Employee{
@@ -11,7 +10,5 @@ classdiagram MyLectures {
   class Lecture{
     int courseID;
   }
-
   association Professor (lecturer) -> (holds) Lecture [1..*];
-
 }
