@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public class ConformanceChecker {
 
+  // todo: (1) Strategy Pattern, (2) Mapping concrete -> reference, (3) Resolve?
   public static boolean check(
       ASTCDCompilationUnit concreteCD, ASTCDCompilationUnit referenceCD, String mappingID) {
     return new ConformanceChecker(concreteCD, referenceCD, mappingID).checkConformance();
@@ -18,7 +19,6 @@ public class ConformanceChecker {
 
   protected ASTCDCompilationUnit conCD;
   protected ASTCDCompilationUnit refCD;
-
   protected String mappingID;
 
   protected ConformanceChecker(

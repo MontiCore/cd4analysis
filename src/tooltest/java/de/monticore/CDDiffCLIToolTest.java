@@ -512,4 +512,52 @@ public class CDDiffCLIToolTest {
       }
     }
   }
+
+  @Test
+  public void testValidityOfOW2CWReduction2() {
+    // given 2 CDs such that the first is a refinement of the second under an open-world assumption
+    final String cd1 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwins3.cd";
+    final String cd2 = "src/cddifftest/resources/de/monticore/cddiff/DigitalTwins/DigitalTwins2.cd";
+    final String output = "target/generated/cddiff-test/ValidityOfOW2CWReduction";
+
+    // when CD4CodeTool is used to compute the semantic difference
+    String[] args = {
+      "-i",
+      cd1,
+      "--semdiff",
+      cd2,
+      "--diffsize",
+      "21",
+      "-o",
+      output,
+      "--difflimit",
+      "20",
+      "--open-world",
+      "reduction-based"
+    };
+    CD4CodeTool.main(args);
+
+    // no corresponding .od files are generated
+    File[] odFiles = Paths.get(output).toFile().listFiles();
+    Assert.assertNotNull(odFiles);
+
+    try {
+      for (File odFile : odFiles) {
+        if (odFile.getName().endsWith(".od")) {
+          Assert.assertTrue(
+              new OD2CDMatcher()
+                  .checkIfDiffWitness(
+                      CDSemantics.MULTI_INSTANCE_CLOSED_WORLD,
+                      Paths.get(output + "/Employees7.cd").toFile(),
+                      Paths.get(output + "/Employees8.cd").toFile(),
+                      odFile));
+        }
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      Log.warn("This should not happen!");
+      Assert.fail();
+    }
+  }
 }
