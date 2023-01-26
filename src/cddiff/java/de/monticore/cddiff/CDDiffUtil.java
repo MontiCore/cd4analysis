@@ -6,6 +6,8 @@ import de.monticore.cd4code.prettyprint.CD4CodeFullPrettyPrinter;
 import de.monticore.cdassociation._ast.ASTCDAssocSide;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdinterfaceandenum._ast.ASTCDInterface;
 import de.monticore.od4report._parser.OD4ReportParser;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -240,5 +242,22 @@ public class CDDiffUtil {
     }
 
     return interfaces;
+  }
+
+  public static Set<ASTCDType> getAllSuperTypes(ASTCDClass type, ASTCDDefinition cd) {
+    Set<ASTCDType> superTypes = new HashSet<>();
+    superTypes.addAll(getAllSuperclasses(type, cd.getCDClassesList()));
+    superTypes.addAll(getAllInterfaces(type, cd.getCDInterfacesList()));
+    return superTypes;
+  }
+
+  public static Set<ASTCDType> getAllSuperTypes(ASTCDType type, ASTCDDefinition cd) {
+    if (type instanceof ASTCDClass) {
+      return getAllSuperTypes((ASTCDClass) type, cd);
+    }
+    if (type instanceof ASTCDInterface) {
+      return new HashSet<>(getAllInterfaces((ASTCDInterface) type, cd.getCDInterfacesList()));
+    }
+    return new HashSet<>();
   }
 }

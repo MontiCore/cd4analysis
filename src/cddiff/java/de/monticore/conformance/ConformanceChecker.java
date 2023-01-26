@@ -69,7 +69,7 @@ public class ConformanceChecker {
       return cAssoc.getModifier().isPresentStereotype()
           && rAssoc.getModifier().getStereotype().contains(mappingID, cAssoc.getName());
     }
-    //todo: resolve types and check for role-names in navigable direction
+    // todo: resolve types and check for role-names in navigable direction
     return false;
   }
 
@@ -113,8 +113,8 @@ public class ConformanceChecker {
   }
 
   protected boolean conforms(ASTCDAssociation incarnation, ASTCDAssociation refAssoc) {
-    //todo: resolve types and check if incarnation
-    //todo: check modifier, role-names, navigation, cardinalities, etc...
+    // todo: resolve types and check if incarnation
+    // todo: check modifier, role-names, navigation, cardinalities, etc...
     return true;
   }
 
@@ -126,5 +126,4 @@ public class ConformanceChecker {
   protected boolean checkIncarnations(ASTCDEnum refEnum) {
     return false;
   }
-
 }
