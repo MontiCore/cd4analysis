@@ -323,12 +323,17 @@ testGrammarDependencies.each {
   }
 }
 
+task generateTest {
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
+}
+
 
 task generateTestTrafos {}
 fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each {
   def g = it
   def taskname = "generateTestTrafo${it.getName().substring(0, it.getName().lastIndexOf('.'))}"
   task "$taskname"(type: MontiTransExec) {
+    dependsOn(generateTest)
     getClassPath().setFrom(sourceSets.test.compileClasspath)
     TFGenTool = 'de.monticore.tr.CD4CodeTFGenTool'
     input = file(g)
@@ -337,10 +342,6 @@ fileTree(dir: "$projectDir/src/test/transformations", include: '**/**.mtr').each
   generateTestTrafos.dependsOn("$taskname")
 }
 
-
-task generateTest {
-  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateTestGrammar") } }
-}
 
 compileJava {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
@@ -495,8 +496,11 @@ if(("false").equals(getProperty('publishMain'))) {
   assemble.dependsOn(shadowJar)
 }
 
+processGrammarsResources.dependsOn(generateTR)
+processGrammarsResources.dependsOn(project.tasks.withType(MCTask))
 tasks.withType(Jar) {
   duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  dependsOn(processGrammarsResources)
 }
 
 
