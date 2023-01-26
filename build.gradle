@@ -29,6 +29,7 @@ ext {
   grammar_classifier = "grammars"
   grammarDir = "src/main/grammars"
   grammarOutDir = "$buildDir/generated-sources/monticore/sourcecode"
+  trGrammarOutDir = "$buildDir/generated-sources/monticore-tr/sourcecode"
   testGrammarDir = "src/test/grammars"
   testGrammarOutDir = "$buildDir/generated-test-sources/monticore/sourcecode"
   findbugs_version = "3.0.2"
@@ -71,14 +72,14 @@ def testGenDir = "$buildDir/generated-test-sources/monticore/sourcecode"
 
 sourceSets {
   main {
-    java.srcDirs += ["$genDir"]
+    java.srcDirs += ["$genDir", "$trGrammarOutDir"]
   }
   test {
     java.srcDirs += ["$testGenDir"]
   }
   grammars {
     resources {
-      srcDirs([grammarDir, grammarOutDir])
+      srcDirs([grammarDir, grammarOutDir, trGrammarOutDir])
       include "**/*.mc4"
     }
   }
@@ -266,7 +267,7 @@ grammarDependencies.each {
     templatePath("$projectDir/src/main/grammars")
     def grammarFile = file(grammarOutDir + "/" + de.monticore.dstlgen.util.DSTLPathUtil.getTRGrammar([file("src/main/grammars").toString()], file (g))) // Replace with getTRFile(file (g)) once the plugin is updated and in the upstream
     grammar = grammarFile
-    outputDir = file grammarOutDir
+    outputDir = file trGrammarOutDir
     handcodedPath "$projectDir/src/main/java"
     isDSTL = true // Generate DST infrastructure
     def grammarIncludingPackage = file(grammarOutDir).toURI().relativize(grammarFile.toURI()).toString()
