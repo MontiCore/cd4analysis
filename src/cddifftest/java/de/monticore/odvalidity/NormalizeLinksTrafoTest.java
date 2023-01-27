@@ -8,7 +8,8 @@ import de.monticore.odlink._ast.ASTODBiDir;
 import de.monticore.odlink._ast.ASTODLeftToRightDir;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odlink._ast.ASTODRightToLeftDir;
-import de.monticore.odlink.prettyprinter.ODLinkFullPrettyPrinter;
+import de.monticore.odlink._prettyprint.ODLinkFullPrettyPrinter;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +54,7 @@ public class NormalizeLinksTrafoTest {
     // check roles
     result.forEach(l -> Assert.assertTrue(l.getODLinkRightSide().isPresentRole()));
 
-    ODLinkFullPrettyPrinter p = new ODLinkFullPrettyPrinter();
+    ODLinkFullPrettyPrinter p = new ODLinkFullPrettyPrinter(new IndentPrinter(), false);
     result.forEach(l -> System.out.println(p.prettyprint(l)));
   }
 
