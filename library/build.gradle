@@ -39,7 +39,7 @@ configurations { grammar }
 dependencies {
   implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
   implementation group: 'de.monticore', name: 'monticore-grammar', version: mc_version
-  implementation group: 'de.monticore', name: 'monticore-grammar-trafo', version: monticore_version
+  implementation group: 'de.monticore', name: 'monticore-grammar-trafo', version: mc_version
   grammar group: 'de.monticore', name: 'monticore-grammar', version: mc_version, classifier: 'grammars'
 
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: version
