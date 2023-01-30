@@ -144,7 +144,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        new CD4CodeAfterParseTrafo().transform(ast);
+        //new CD4CodeAfterParseTrafo().transform(ast);
         modelName = ast.getCDDefinition().getName();
 
         // don't output to stdout when the prettyprint is output to stdout
@@ -153,15 +153,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         boolean defaultPackage =
             cmd.hasOption("defaultpackage")
                 && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
-        if (defaultPackage) {
-          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
-          final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
-          traverser.add4CDBasis(cdBasis);
-          traverser.setCDBasisHandler(cdBasis);
-          cdBasis.setTraverser(traverser);
 
-          ast.accept(traverser);
-        }
 
         if (doPrintToStdOut) {
           String model = modelFile;
@@ -180,6 +172,18 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         // transformations which are necessary to do after parsing
         {
           new CD4CodeDirectCompositionTrafo().transform(ast);
+        }
+
+        new CD4CodeAfterParseTrafo().transform(ast);
+
+        if (defaultPackage) {
+          final CD4CodeTraverser traverser = CD4CodeMill.traverser();
+          final CDBasisDefaultPackageTrafo cdBasis = new CDBasisDefaultPackageTrafo();
+          traverser.add4CDBasis(cdBasis);
+          traverser.setCDBasisHandler(cdBasis);
+          cdBasis.setTraverser(traverser);
+
+          ast.accept(traverser);
         }
 
         // create a symbol table with provided model paths
@@ -656,7 +660,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
     ast1 = ast1.deepClone();
     ast2 = ast2.deepClone();
 
-    // determine the diffsize, default is max(20,2*(|Classes|+|Interfaces|))
+    // determine the diffsize, default is 2*(|Classes|+|Interfaces|)
     int diffsize = CDDiff.getDefaultDiffsize(ast1, ast2);
     String defaultVal = Integer.toString(diffsize);
     if (cmd.hasOption("diffsize") && cmd.getOptionValue("diffsize") != null) {

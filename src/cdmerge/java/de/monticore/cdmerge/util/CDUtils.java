@@ -426,8 +426,8 @@ public class CDUtils {
       // Always ensure clean Symboltable for each model
       RefreshSymbolTable(cd);
       // Ensure every CDElement is in a package and perform default AST Trafos
-      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
-      afterParseTrafo.transform(cd);
+      //final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
+      //afterParseTrafo.transform(cd);
 
       if (checkCoCos) {
         if (checkCoCos) {

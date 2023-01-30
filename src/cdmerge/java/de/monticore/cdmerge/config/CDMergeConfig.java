@@ -356,8 +356,8 @@ public class CDMergeConfig {
     for (ASTCDCompilationUnit inputCD : inputCDs) {
       CDUtils.RefreshSymbolTable(inputCD);
       // Ensure every CDElement is in a package and perform default AST Trafos
-      final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
-      afterParseTrafo.transform(inputCD);
+      //final CD4CodeAfterParseTrafo afterParseTrafo = new CD4CodeAfterParseTrafo();
+      //afterParseTrafo.transform(inputCD);
 
       CD4CodeCoCoChecker checker = new CDMergeCD4ACoCos().getCheckerForMergedCDs();
       checker.checkAll(inputCD);

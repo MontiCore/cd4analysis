@@ -25,7 +25,7 @@ import java.util.Set;
 public class CDFullNameTrafo {
 
   public void transform(ASTCDCompilationUnit cd) {
-    new CD4CodeAfterParseTrafo().transform(cd);
+    //new CD4CodeAfterParseTrafo().transform(cd);
     new CD4CodeDirectCompositionTrafo().transform(cd);
     cd.getCDDefinition()
         .getCDAssociationsList()

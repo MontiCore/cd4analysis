@@ -472,7 +472,7 @@ public class MergeTool {
 
     this.postMergeRefactoring.execute(mergedCD);
 
-    new CD4CodeAfterParseTrafo().transform(mergedCD);
+    //new CD4CodeAfterParseTrafo().transform(mergedCD);
     // TODO this is likley not needed. Maybe Provide a paramater if default CD4A TraFos should be
     // applied on merged CD
     // CD4CodeMill.globalScope().clear();

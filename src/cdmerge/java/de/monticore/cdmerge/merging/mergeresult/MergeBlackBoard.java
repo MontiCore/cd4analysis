@@ -333,7 +333,7 @@ public class MergeBlackBoard {
           MergePhase.TYPE_MERGING,
           astClass.get());
     } else {
-      mergedCD.getCDDefinition().addCDElement(astClass.get());
+      mergedCD.getCDDefinition().getCDElementList().add(astClass.get());
       addLog(
           ErrorLevel.FINE,
           "Class '" + astClass.get().getName() + "' added to default Package.",
@@ -356,7 +356,7 @@ public class MergeBlackBoard {
     if (cdPackageName.isPresent()) {
       mergedCD.getCDDefinition().addCDElementToPackage(astAssociation.get(), cdPackageName.get());
     } else {
-      mergedCD.getCDDefinition().addCDElement(astAssociation.get());
+      mergedCD.getCDDefinition().getCDElementList().add(astAssociation.get());
     }
 
     String logPname = "to default package.";
@@ -469,7 +469,7 @@ public class MergeBlackBoard {
           MergePhase.TYPE_MERGING,
           astEnum.get());
     } else {
-      mergedCD.getCDDefinition().addCDElement(astEnum.get());
+      mergedCD.getCDDefinition().getCDElementList().add(astEnum.get());
       addLog(
           ErrorLevel.FINE,
           "Enum '" + astEnum.get().getName() + "' added to default Package.",
@@ -499,7 +499,7 @@ public class MergeBlackBoard {
           MergePhase.TYPE_MERGING,
           astInterface.get());
     } else {
-      mergedCD.getCDDefinition().addCDElement(astInterface.get());
+      mergedCD.getCDDefinition().getCDElementList().add(astInterface.get());
       addLog(
           ErrorLevel.FINE,
           "Interface '" + astInterface.get().getName() + "' added to default package.",

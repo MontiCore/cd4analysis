@@ -127,7 +127,7 @@ public class CDDiff {
         ast2.getCDDefinition().getCDClassesList().size()
             + ast2.getCDDefinition().getCDInterfacesList().size();
 
-    diffsize = Math.max(20, 2 * Math.max(cd1size, cd2size));
+    diffsize = 2 * Math.max(cd1size, cd2size);
     return diffsize;
   }
 
