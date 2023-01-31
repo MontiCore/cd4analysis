@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdmerge.config.CDMergeConfig;
@@ -472,7 +471,7 @@ public class MergeTool {
 
     this.postMergeRefactoring.execute(mergedCD);
 
-    //new CD4CodeAfterParseTrafo().transform(mergedCD);
+    // new CD4CodeAfterParseTrafo().transform(mergedCD);
     // TODO this is likley not needed. Maybe Provide a paramater if default CD4A TraFos should be
     // applied on merged CD
     // CD4CodeMill.globalScope().clear();

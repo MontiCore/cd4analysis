@@ -241,38 +241,39 @@ public class ASTNodeDiff<T1 extends ASTNode, T2 extends ASTNode> implements IAST
           this.interpretation = Interpretation.DEFAULTVALUECHANGED;
         }
       }
-    }
-    if (cd2Value.isPresent()) {
-      if (cd2Value.get() instanceof ASTModifier) {
-        ASTModifier cd2 = (ASTModifier) cd2Value.get();
-        if (!cd1Value.isPresent()) {
-          if (cd2.isPublic()) {
-            this.interpretation = Interpretation.EQUAL;
+    } else {
+      if (cd2Value.isPresent()) {
+        if (cd2Value.get() instanceof ASTModifier) {
+          ASTModifier cd2 = (ASTModifier) cd2Value.get();
+          if (!cd1Value.isPresent()) {
+            if (cd2.isPublic()) {
+              this.interpretation = Interpretation.EQUAL;
+            }
           }
         }
-      }
-      if (cd2Value.get() instanceof ASTCDCardinality) {
-        // Default value is [*]
-        int cd2Lower = ((ASTCDCardinality) cd2Value.get()).getLowerBound();
-        int cd2Upper = ((ASTCDCardinality) cd2Value.get()).getUpperBound();
-        if (cd2Lower == 0 && cd2Upper == 0) {
-          // [*] to [0..*]
-          this.interpretation = Interpretation.EQUAL_INTERVAL;
-        } else {
-          // [*] to [n..m] (n != 0) or ( m != inf)
-          this.interpretation = Interpretation.RESTRICT_INTERVAL;
+        if (cd2Value.get() instanceof ASTCDCardinality) {
+          // Default value is [*]
+          int cd2Lower = ((ASTCDCardinality) cd2Value.get()).getLowerBound();
+          int cd2Upper = ((ASTCDCardinality) cd2Value.get()).getUpperBound();
+          if (cd2Lower == 0 && cd2Upper == 0) {
+            // [*] to [0..*]
+            this.interpretation = Interpretation.EQUAL_INTERVAL;
+          } else {
+            // [*] to [n..m] (n != 0) or ( m != inf)
+            this.interpretation = Interpretation.RESTRICT_INTERVAL;
+          }
         }
-      }
-      if (cd2Value.get() instanceof ASTCDRole) {
-        this.interpretation = Interpretation.REFINEMENT;
-      }
-      if (cd2Value.get() instanceof ASTMCType) {
-        this.interpretation = Interpretation.TYPECHANGE;
-        // Todo: check for Sub/Supertype
-      }
-      if (cd2Value.get() instanceof ASTExpression) {
-        if (!cd1Value.isPresent()) {
-          this.interpretation = Interpretation.DEFAULTVALUE_ADDED;
+        if (cd2Value.get() instanceof ASTCDRole) {
+          this.interpretation = Interpretation.REFINEMENT;
+        }
+        if (cd2Value.get() instanceof ASTMCType) {
+          this.interpretation = Interpretation.TYPECHANGE;
+          // Todo: check for Sub/Supertype
+        }
+        if (cd2Value.get() instanceof ASTExpression) {
+          if (!cd1Value.isPresent()) {
+            this.interpretation = Interpretation.DEFAULTVALUE_ADDED;
+          }
         }
       }
     }

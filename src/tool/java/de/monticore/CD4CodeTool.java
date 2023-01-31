@@ -144,7 +144,7 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
           CD4CodeMill.globalScope().clear();
         }
 
-        //new CD4CodeAfterParseTrafo().transform(ast);
+        // new CD4CodeAfterParseTrafo().transform(ast);
         modelName = ast.getCDDefinition().getName();
 
         // don't output to stdout when the prettyprint is output to stdout
@@ -153,7 +153,6 @@ public class CD4CodeTool extends de.monticore.cd4code.CD4CodeTool {
         boolean defaultPackage =
             cmd.hasOption("defaultpackage")
                 && Boolean.parseBoolean(cmd.getOptionValue("defaultpackage", "true"));
-
 
         if (doPrintToStdOut) {
           String model = modelFile;

@@ -75,7 +75,7 @@ public class CDWrapperSyntaxDiffGenerator {
     CDTypeWrapper compareCDTypeWrapper = null;
 
     Map<String, CDTypeWrapper> mapT = compareCDW.getCDTypeWrapperGroupOnlyWithStatusOPEN();
-    System.out.println(mapT);
+    // System.out.println(mapT);
 
     if (cdSemantics == CDSemantics.SIMPLE_CLOSED_WORLD) {
       isInCompareSG =
