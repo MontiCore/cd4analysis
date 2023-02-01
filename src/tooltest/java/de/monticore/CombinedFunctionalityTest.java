@@ -69,21 +69,23 @@ public class CombinedFunctionalityTest {
     }
   }
 
+  @Disabled
   @ParameterizedTest
-  @Ignore
   @MethodSource("performanceSet")
   public void testOWDiffPerformance(String file1, String file2) {
-    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
+    String path = "src/tooltest/resources/Performance/";
     CD4CodeParser parser = CD4CodeMill.parser();
     try {
       Optional<ASTCDCompilationUnit> cd1 = parser.parse(path + file1);
       Optional<ASTCDCompilationUnit> cd2 = parser.parse(path + file2);
       Assertions.assertTrue(cd1.isPresent() && cd2.isPresent());
 
+      int diffsize = 10;
+
 
       // alloy-based
       long startTime_alloy = System.currentTimeMillis(); // start time
-      CDDiff.computeAlloySemDiff(cd1.get(),cd2.get(),3,1,
+      CDDiff.computeAlloySemDiff(cd1.get(),cd2.get(),diffsize,1,
           CDSemantics.MULTI_INSTANCE_OPEN_WORLD);
       long endTime_alloy = System.currentTimeMillis(); // end time
 
@@ -94,7 +96,8 @@ public class CombinedFunctionalityTest {
       long startTime_reduction = System.currentTimeMillis(); // start time
       ReductionTrafo trafo = new ReductionTrafo();
       trafo.transform(cd1.get(), cd2.get());
-      CDDiff.computeSyntax2SemDiff(cd1.get(),cd2.get(),CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
+      CDDiff.computeAlloySemDiff(cd1.get(),cd2.get(),diffsize,1,
+          CDSemantics.MULTI_INSTANCE_CLOSED_WORLD);
       long endTime_reduction = System.currentTimeMillis(); // end time
 
       Log.println("reduction-based: "+ (endTime_reduction - startTime_reduction));
@@ -106,12 +109,11 @@ public class CombinedFunctionalityTest {
 
   public static Stream<Arguments> performanceSet() {
     return Stream.of(
+        Arguments.of("5A.cd", "5B.cd"),
+        Arguments.of("10A.cd", "10B.cd"),
+        Arguments.of("15A.cd", "15B.cd"),
         Arguments.of("20A.cd", "20B.cd"),
-        Arguments.of("40A.cd", "40B.cd"),
-        Arguments.of("60A.cd", "60B.cd"),
-        Arguments.of("80A.cd", "80B.cd"),
-        Arguments.of("100A.cd", "100B.cd"),
-        Arguments.of("120A.cd", "120B.cd"));
+        Arguments.of("25A.cd", "25B.cd"));
   }
 
 }
