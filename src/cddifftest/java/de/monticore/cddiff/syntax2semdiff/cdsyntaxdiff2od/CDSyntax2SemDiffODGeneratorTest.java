@@ -652,78 +652,18 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testRuntime4Performance() {
-    String filePath1_20 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/20A.cd";
-    String filePath2_20 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/20B.cd";
 
-    String filePath1_40 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/40A.cd";
-    String filePath2_40 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/40B.cd";
-
-    String filePath1_60 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/60A.cd";
-    String filePath2_60 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/60B.cd";
-
-    String filePath1_80 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/80A.cd";
-    String filePath2_80 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/80B.cd";
-
-    String filePath1_100 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A.cd";
-    String filePath2_100 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B.cd";
-
-    String filePath1_120 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/120A.cd";
-    String filePath2_120 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/120B.cd";
+    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 
-    String filePath1 = null;
-    String filePath2 = null;
+    String filePath1;
+    String filePath2;
     for (int i = 1; i <= 6; i++) {
-      if (i == 1) {
-        filePath1 = filePath1_20;
-        filePath2 = filePath2_20;
-        System.out.println("*******  Test for 20  *******");
-      } else if (i == 2) {
-        filePath1 = filePath1_40;
-        filePath2 = filePath2_40;
-        System.out.println("*******  Test for 40  *******");
-      } else if (i == 3) {
-        filePath1 = filePath1_60;
-        filePath2 = filePath2_60;
-        System.out.println("*******  Test for 60  *******");
-      } else if (i == 4) {
-        filePath1 = filePath1_80;
-        filePath2 = filePath2_80;
-        System.out.println("*******  Test for 80  *******");
-      } else if (i == 5) {
-        filePath1 = filePath1_100;
-        filePath2 = filePath2_100;
-        System.out.println("*******  Test for 100  *******");
-      } else if (i == 6) {
-        filePath1 = filePath1_120;
-        filePath2 = filePath2_120;
-        System.out.println("*******  Test for 120  *******");
-      }
+
+      filePath1 = path + 20*i + "A.cd";
+      filePath2 = path + 20*i + "B.cd";
+      System.out.println("*******  Test for " +20*i+ "  *******");
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
       ASTCDCompilationUnit ast1_old = parseModel(filePath1);
@@ -758,78 +698,17 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testRunTime4PerformanceNoLink() {
-    String filePath1_20 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/20A.cd";
-    String filePath2_20 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/20B.cd";
-
-    String filePath1_40 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/40A_NoLink.cd";
-    String filePath2_40 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/40B_NoLink.cd";
-
-    String filePath1_60 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/60A_NoLink.cd";
-    String filePath2_60 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/60B_NoLink.cd";
-
-    String filePath1_80 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/80A_NoLink.cd";
-    String filePath2_80 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/80B_NoLink.cd";
-
-    String filePath1_100 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A_NoLink.cd";
-    String filePath2_100 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B_NoLink.cd";
-
-    String filePath1_120 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/120A_NoLink.cd";
-    String filePath2_120 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/120B_NoLink.cd";
+    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 
-    String filePath1 = null;
-    String filePath2 = null;
+    String filePath1;
+    String filePath2;
     for (int i = 1; i <= 6; i++) {
-      if (i == 1) {
-        filePath1 = filePath1_20;
-        filePath2 = filePath2_20;
-        System.out.println("*******  Test for 20  *******");
-      } else if (i == 2) {
-        filePath1 = filePath1_40;
-        filePath2 = filePath2_40;
-        System.out.println("*******  Test for 40  *******");
-      } else if (i == 3) {
-        filePath1 = filePath1_60;
-        filePath2 = filePath2_60;
-        System.out.println("*******  Test for 60  *******");
-      } else if (i == 4) {
-        filePath1 = filePath1_80;
-        filePath2 = filePath2_80;
-        System.out.println("*******  Test for 80  *******");
-      } else if (i == 5) {
-        filePath1 = filePath1_100;
-        filePath2 = filePath2_100;
-        System.out.println("*******  Test for 100  *******");
-      } else if (i == 6) {
-        filePath1 = filePath1_120;
-        filePath2 = filePath2_120;
-        System.out.println("*******  Test for 120  *******");
-      }
+
+      filePath1 = path + 20*i + "A_NoLink.cd";
+      filePath2 = path + 20*i + "B_NoLink.cd";
+      System.out.println("*******  Test for " +20*i+ "  *******");
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
       ASTCDCompilationUnit ast1_old = parseModel(filePath1);
@@ -864,67 +743,17 @@ public class CDSyntax2SemDiffODGeneratorTest extends CDDiffTestBasis {
   @Test
   @Ignore
   public void testRunTime4Performance100() {
-    String filePath1_1 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A_1.cd";
-    String filePath2_1 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B_1.cd";
-
-    String filePath1_2 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A_2.cd";
-    String filePath2_2 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B_2.cd";
-
-    String filePath1_3 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A_3.cd";
-    String filePath2_3 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B_3.cd";
-
-    String filePath1_4 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A_4.cd";
-    String filePath2_4 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B_4.cd";
-
-    String filePath1_5 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100A_5.cd";
-    String filePath2_5 =
-        "src/cddifftest/resources/de/monticore/cddiff/syntax2semdiff/GenerateOD"
-            + "/Performance/100B_5.cd";
+    String path = "src/cddifftest/resources/de/monticore/cddiff/Performance/";
 
     String output = "./target/runtime-test/";
 
-    String filePath1 = null;
-    String filePath2 = null;
-    for (int i = 1; i <= 5; i++) {
-      if (i == 1) {
-        filePath1 = filePath1_1;
-        filePath2 = filePath2_1;
-        System.out.println("*******  Test for 1  *******");
-      } else if (i == 2) {
-        filePath1 = filePath1_2;
-        filePath2 = filePath2_2;
-        System.out.println("*******  Test for 2  *******");
-      } else if (i == 3) {
-        filePath1 = filePath1_3;
-        filePath2 = filePath2_3;
-        System.out.println("*******  Test for 3  *******");
-      } else if (i == 4) {
-        filePath1 = filePath1_4;
-        filePath2 = filePath2_4;
-        System.out.println("*******  Test for 4  *******");
-      } else if (i == 5) {
-        filePath1 = filePath1_5;
-        filePath2 = filePath2_5;
-        System.out.println("*******  Test for 5  *******");
-      }
+    String filePath1;
+    String filePath2;
+    for (int i = 1; i <= 6; i++) {
+
+      filePath1 = path + "100A_"+i+".cd";
+      filePath2 = path + "100B_"+i+".cd";
+      System.out.println("*******  Test for " +i+ "  *******");
 
       CDSemantics cdSemantics = CDSemantics.SIMPLE_CLOSED_WORLD;
       ASTCDCompilationUnit ast1_old = parseModel(filePath1);
